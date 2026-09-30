@@ -75,3 +75,9 @@ seconds, peak RSS 57,080 KiB. [Environment setup](environment-setup.txt) used
 the locked offline cache. The independent [helper lint/format check](helper-checks.txt)
 passed and formatted three experiment scripts. These are local checks;
 no GitHub CI run or scientific task validation is claimed.
+
+After helper formatting and the archive documentation were added, the focused
+[final verification](final-verification.json) passed against checkpoint
+`261a86d97401ae75c5d0dd4b96ff7a7b82d9458b`: the same 879 hashes and 37 records,
+now with 652 navigation paths. See its [resource record](final-verification.txt).
+Unchanged package checks were not rerun.
