@@ -32,7 +32,8 @@ filtering, sorting, no-result states, detail links and CSV export.
 
 ## Result
 
-[Open or download the explorer](explorer.html). Issue #5 links the published,
+[Open the HTMLPreview explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/f1daa27965facc3a774f6647329e34d5f5912211/experiments/5-source-discovery/runs/2026-09-30-explorer/explorer.html)
+or [download the HTML](explorer.html). Issue #5 links the published,
 commit-pinned HTMLPreview version. The 562,189-byte file includes all 672 sources
 and 800 rank entries, with source details, search, filters, sorting and CSV
 export. Its SHA-256 is
@@ -118,3 +119,12 @@ browser testing; it was terminated after 64 seconds, with no owned workers
 remaining. [Attempt 5](browser-checks-05.txt) passed on the final source checkpoint
 outside that sandbox, with the browser context still offline. Shared-node
 resource checks applied to every attempt.
+
+The [final public preview check](public-preview-checks-02.txt) passed against the
+exact linked artifact at commit `f1daa27965facc3a774f6647329e34d5f5912211`, using
+verifier checkpoint `eb3082693bb39cd39be692e03591a4fb4ceb318b`. It exercised the
+same interactions and numerical comparisons on HTMLPreview, with no page errors
+or narrow-screen overflow: exit 0, 3.25 seconds, 257,620 KiB reported peak RSS.
+Invoke `check_browser.py` with `--url` set to the full preview URL to repeat this
+hosted check. The hosted wrapper makes network requests to load the page; the
+downloaded file remains independently usable offline.
