@@ -5,11 +5,12 @@ Archive the 950 files (72,973,920 bytes) identified by the
 `open-athena/biotasks` Hugging Face Storage Bucket. Preserve the original
 inventory and source cache; archival does not change the scientific baseline.
 
-Scope: private archival of the existing cache, local preparation, one upload and
+Scope: public archival of the existing cache, local preparation, one upload and
 download verification, then a focused storage-documentation PR to `main`.
 No new provider collection, model calls, scientific analyses, paid compute,
-billing-plan changes, or local source deletion. Public redistribution terms for
-the raw cache remain unreviewed. Private visibility is the initial default.
+billing-plan changes, or local source deletion. The user explicitly requested public bucket visibility. Archival preserves
+source material and does not grant a new license to third-party content; original
+source terms still apply.
 
 The executable helper is `../../scripts/archive_cache.py`. Run it from the
 repository root under `../../scripts/run_bounded.py`. `prepare` takes the old
@@ -20,7 +21,7 @@ deterministic gzip/tar bundle, and verifies every member. It writes
 the bucket prefix. Commit these small files before transfer.
 
 `transfer` takes the snapshot directory, a new download directory, and a receipt
-path. It creates the private bucket if absent, refuses a populated prefix,
+path. It creates the public bucket if absent, refuses a populated prefix,
 uploads the archive and then its manifest, downloads both into the new
 directory, and verifies object hashes and every archive member without
 extracting it. `--verify-only` supports read-only verification after an
