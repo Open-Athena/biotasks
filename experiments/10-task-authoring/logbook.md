@@ -22,3 +22,14 @@ authoring trials with native references and independent validation. None is
 launched by this handoff. Candidate prompt improvements are deferred; the
 separate reconciliation stage is not adopted. No scientific prompt promotion,
 PR or merge is claimed.
+
+## 2026-09-30 — prepare the old chat for archival
+
+The user asked whether the original authoring chat could be archived, which
+can delete its managed worktree. The source checkout and all 73 local evidence
+files were unchanged. Copied and verified the six HF-excluded UCSC files into
+private storage outside managed worktrees; see the
+[retention record](../3-authoring-migration/runs/2026-09-30-worktree-retention/README.md).
+The other evidence is already on GitHub or in the verified public HF archive.
+This preserves the migrated research through source-worktree removal without
+redistributing the excluded source bytes. No chat or worktree was archived here.

@@ -82,7 +82,10 @@ def prepare(args):
             ["git", "rev-parse", "HEAD"], text=True
         ).strip(),
         "source_root": str(root),
-        "scope": "Exact reviewed authoring cache allowlist, including failed launches and partial model execution, plus license notices. No scientific validation or task release.",
+        "scope": inventory.get(
+            "scope",
+            "Exact reviewed authoring cache allowlist, including failed launches and partial model execution, plus license notices. No scientific validation or task release.",
+        ),
         "exclusions": inventory["exclusions"],
         "provenance": inventory["provenance"],
         "eligibility": inventory["eligibility"],

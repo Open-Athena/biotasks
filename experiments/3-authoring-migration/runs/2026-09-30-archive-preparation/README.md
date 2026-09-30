@@ -22,6 +22,12 @@ Git blobs at their pinned upstream revision; the directory/help pages remain
 local-only mutable-source captures. Upstream availability is not controlled by
 BioTasks. Any later public archival needs a new reviewed allowlist and prefix.
 
+Later retention update: all six excluded files now also have a
+[verified private copy outside managed worktrees](../2026-09-30-worktree-retention/README.md).
+The source worktree is no longer their only local copy. Preserve that separate
+copy if the old chat/worktree is removed; these bytes remain outside public HF
+storage and are not backed up off this VM.
+
 ## Preparation and provenance
 
 The staging and archive inputs were checkpointed at
