@@ -95,3 +95,18 @@ heads still matched `249d919641d20cc1a06ac6a7ae84b34848547363`, and the working
 checkout remained clean. No intervening committed or uncommitted delta was
 observed. Future discovery work continues here; the Marin branch is retained.
 Repository licenses match, and original script attribution is preserved.
+
+## 2026-09-30 — Rebase after the GitHub guidance promotion
+
+[PR #6](https://github.com/Open-Athena/biotasks/pull/6) merged as
+`86f0b1c149788c1ae5e86a210c218df36665bd72`. The continuing research branch was
+rebased onto that `main` revision without conflicts. Git range-diff showed both
+research patches unchanged, and the research tree matched the pre-rebase tree
+byte-for-byte before this log entry was added. No scientific analysis was rerun.
+
+The published archive tag
+[`archive/research/5-source-discovery-20260930-pre-rebase`](https://github.com/Open-Athena/biotasks/tree/archive/research/5-source-discovery-20260930-pre-rebase)
+retains `67a4fb69924fa57a9a8de11a7aeb291a3419d524` and its ancestors so existing
+evidence permalinks remain reachable. Recorded experiment baselines and
+validation checkpoints still identify the original runs; this rebase does not
+change those historical records.
