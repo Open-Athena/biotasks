@@ -105,8 +105,10 @@ Run one test worker. The tests include building and installing the package into 
 clean environment to exercise the real CLI outside the checkout. Keep default
 checks free of model calls, biological data downloads, and paid compute. Run
 focused checks during development; repeat broader checks when changes justify it.
-Pre-commit fixes lint/formatting locally and checks types. CI checks formatting
-before hooks can modify files.
+Pre-commit fixes lint/formatting locally and checks types. CI runs two independent
+jobs: Code quality checks Ruff lint/formatting and ty without modifying files;
+Tests runs pytest, including the distribution checks. Run each check once in CI
+and keep CI coverage aligned with the local hooks when changing them.
 
 ## Scientific evidence
 
