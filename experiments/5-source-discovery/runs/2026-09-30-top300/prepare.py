@@ -465,7 +465,10 @@ def enrich():
         for r in sources
         if r["source_id"].startswith("github:") and not r["github"]
     ]
-    records = []
+    saved = HERE / "github-identities.json"
+    records = json.loads(saved.read_text())["records"] if saved.exists() else []
+    previous = {r["requested_name"] for r in records}
+    names = [name for name in names if name not in previous]
     for start in range(0, len(names), 35):
         batch = names[start : start + 35]
         fields = "nameWithOwner url description stargazerCount isArchived isFork homepageUrl defaultBranchRef { name target { oid } } repositoryTopics(first:100) { nodes { topic { name } } pageInfo { hasNextPage } }"
@@ -477,8 +480,9 @@ def enrich():
             )
             + "}"
         )
-        req = HERE / f"metadata/github-{start // 35 + 1:02}-request.json"
-        resp = HERE / f"metadata/github-{start // 35 + 1:02}-response.json"
+        batch_id = hashlib.sha256(query.encode()).hexdigest()[:12]
+        req = HERE / f"metadata/github-{batch_id}-request.json"
+        resp = HERE / f"metadata/github-{batch_id}-response.json"
         req.write_text(json.dumps({"query": query}) + "\n")
         proc = subprocess.run(
             ["gh", "api", "graphql", "--input", str(req)],
