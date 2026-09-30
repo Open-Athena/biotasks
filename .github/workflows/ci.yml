@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UV_CONCURRENT_BUILDS: "1"
+  UV_CONCURRENT_INSTALLS: "1"
+  RAYON_NUM_THREADS: "1"
+
+jobs:
+  quality:
+    name: Code quality
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version-file: uv.lock
+          enable-cache: true
+      - name: Install the pinned environment
+        run: |
+          uv python install
+          uv sync --locked --python "$(cat .python-version)"
+          uv run --locked python -c 'import platform, pathlib; assert platform.python_version() == pathlib.Path(".python-version").read_text().strip()'
+      - name: Lint
+        run: uv run --locked ruff check .
+      - name: Check formatting
+        run: uv run --locked ruff format --check .
+      - name: Check types
+        run: uv run --locked ty check
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version-file: uv.lock
+          enable-cache: true
+      - name: Install the pinned environment
+        run: |
+          uv python install
+          uv sync --locked --python "$(cat .python-version)"
+          uv run --locked python -c 'import platform, pathlib; assert platform.python_version() == pathlib.Path(".python-version").read_text().strip()'
+      - name: Test the CLI and installed distributions
+        run: uv run --locked pytest

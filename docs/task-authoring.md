@@ -1,0 +1,154 @@
+# Task authoring
+
+[Planning overview](README.md) · [Requirements](requirements.md) · [Validation](validation.md)
+
+Turn inspected scientific use cases into Harbor tasks. Optimize for using established tools: analysis scripts, metadata handling, method configuration and connected scientific decisions. Release-note bug fixes and new algorithm implementation are not the initial target.
+
+## Tool use and tool creation
+
+The initial goal is an agent that uses bioinformatics tools to answer scientific questions. For every candidate unit, record its source location and provisional boundary, such as a function, cell group or workflow rule, then classify whether it uses existing tools, implements a tool, or combines both. Detailed extraction rules remain a separate work item. Separately state what the proposed task requires the solver to do. A tool implementation can supply an API to use without becoming an implementation assignment.
+
+Tool use includes selecting and configuring methods, calling packages, connecting stages and writing analysis or data-handling code. Writing a function to run an existing differential-expression package can be tool use; implementing the package's statistical method is tool creation. The scientific objective and required work determine this distinction, not whether the answer contains code or a function definition.
+
+Inspect units within repositories. One repository can contain library internals, analysis functions, tutorials and complete workflows. Notebooks and workflow rules are promising places to find tool use, but inspect their contents: they can also define new methods. For functions and classes, inspect their bodies, call sites and examples to distinguish analysis code from tool implementation. Prioritize units that support using existing tools; defer tasks whose main objective is building or modifying the tools themselves. For mixed units, identify a tool-use task boundary and supply the tool implementation as a solver-accessible package or source file where feasible. Record what is supplied and what the solver must write, configure or execute.
+
+## Task units
+
+Use two independent categorization axes: **scientific context** (for example, transcriptomics) and **operation** (for example, statistical inference). Single-cell can be an additional tag. Assign operations only when a task requires and verifies that work; receiving precomputed clusters does not establish clustering coverage.
+
+Recipes and instances define the generation structure:
+
+- A **recipe** specifies how to construct and validate tasks: input boundary, scientific objective, required stages, permitted variations and a deterministic verification contract. For example, fit a donor-adjusted treatment contrast from paired RNA-seq counts and metadata.
+- A **task instance** is a concrete question, pinned inputs, environment and executable grading contract.
+
+Describe the capability being tested in the recipe's scientific objective. Workflow names such as differential expression can be searchable labels; neither capabilities nor workflow families require another taxonomy level. One recipe can exercise several operations, and several recipes can share the same categories.
+
+Review one substantial instance to establish each recipe, then target ten validated, meaningfully varied instances for recipes intended to scale. There is no task-count cap or easy/medium/hard quota. A complete task is complete relative to its starting point: a count-matrix-to-result analysis need not repeat alignment. Connected tasks should require their stages to inform one another.
+
+## Initial instance target
+
+The first instance establishes the scientific contract and verifier. The first ten test whether generation supports the recipe's declared variation axes without redesigning its scientific contract or verifier for each instance. Ten is an initial breadth target, not evidence that a downstream capability evaluation has enough samples.
+
+Use meaningful differences in compatible datasets, sample structures or scientific comparisons. Ten instances need not come from ten independent studies, but report the number of source studies and the variation represented. Cosmetic changes, arbitrary threshold changes or new seeds alone do not demonstrate this breadth. Focused and integrated tasks sharing observations retain shared lineage.
+
+If a recipe cannot reach ten, record the reason: limited eligible inputs, dependence on one tutorial, repeated bespoke repairs or an inherently narrow scientific use case. Useful narrow recipes may remain with a documented exception; prioritize recipes that support repeatable variation for large-scale generation. Beyond ten, expand according to scientific usefulness, available variation, validation reliability and downstream demand. Track eligible candidate inputs separately from released, validated instances.
+
+## Focused and integrated recipes
+
+Recipes can overlap and compose. A quality-control recipe can be used within several complete analyses. Record reusable stages and compatible input/output contracts without requiring a strict recipe hierarchy. See the [STAR–DESeq2 candidate recipes](examples/star-deseq2.md#candidate-recipes).
+
+Focused tasks isolate scientific operations and make failures easier to diagnose. Integrated tasks test coordination across stages, including data representations, identifiers and the consequences of upstream decisions. Each integrated recipe needs its own scientific contract and end-to-end verification; passing its components separately does not establish correctness of their composition.
+
+Internal component reuse does not require exposing a procedural checklist to the solver. Instructions can state a scientific objective and the methodological constraints needed for deterministic verification. Completing a workflow means delivering its defined scientific result; executing every plotting or demonstration cell in a source notebook is not required.
+
+## Deriving recipes from pipelines
+
+Inspect each rule or process as a candidate recipe boundary. For Snakemake, use the rules together with their input/output dependencies and configuration; apply the same procedure to other workflow engines. Record each candidate's inputs, outputs, scientific work, verification approach and resource needs.
+
+| Pipeline component | Candidate treatment |
+| --- | --- |
+| A rule producing a useful scientific artifact, such as gene counts | Focused recipe with staged upstream inputs |
+| Closely coupled rules, such as model fitting and contrast extraction | Integrated recipe spanning those rules; keep separate recipes only where each supports a useful question |
+| A connected set of rules with branching or aggregation | Integrated recipe with explicit interfaces and all required inputs |
+| Download, indexing or format-handling rule | Usually prepared infrastructure; a separate task is useful only when it tests a substantive input-selection, format or configuration decision |
+| Plot or report rule | Grade numerical artifacts underlying the report when they preserve the scientific objective; visual appearance is not a reward |
+
+The rule is a discovery unit; the recipe is the scientific generation contract. One recipe may use several rules, and one configurable rule may suggest several recipes with different scientific assumptions. Avoid enumerating every possible subgraph. Prioritize useful scientific endpoints and reusable intermediate artifacts. Instantiating a rule for many samples produces executions, not automatically distinct recipes.
+
+For each selected boundary, stage compatible upstream artifacts, expose meaningful scientific decisions, define a deterministic verifier and identify variation sufficient for the initial ten-instance target. Record whether the task executes the source workflow or reuses its component packages. See the [STAR–DESeq2 worked example](examples/star-deseq2.md).
+
+## Work item: extraction rules for code and notebooks
+
+Define how to identify candidate recipes from functions, methods, entire classes, individual cells or chunks, connected groups of cells, and complete notebooks or analysis documents. Cover multiple languages and formats, including Python and R, Jupyter notebooks, R Markdown and Quarto. The extraction rules and recipe boundaries for these artifacts remain to be designed.
+
+Apply the [tool-use priority](#tool-use-and-tool-creation) when designing these extraction rules. Determine when an artifact supports a useful focused task, when several artifacts should form an integrated task, and when code only supplies setup or implementation details. Include dependencies and hidden state, meaningful instance variation, and deterministic verification in that design.
+
+Use the [reference cases](reference-cases.md) to develop and review these rules, including tutorial and paper-analysis sources that expose different languages, document formats or code organization. Record source-specific examples as the rules are developed; this work item does not establish recipes or validated tasks.
+
+## Proposal contract
+
+| Field | Required contents |
+| --- | --- |
+| Question and boundary | Scientific result sought and the supplied starting stage |
+| Input data | Observed/adapted/simulated provenance; accessions or simulator/version; units, dimensions, transformations and redistribution terms |
+| Data adequacy | Recipe-specific design, coverage and quality checks, with rejection criteria defined before selecting a subset or computing expected outputs |
+| Required work | Target capabilities, scientific decisions and operations the solver performs; source-unit role (tool use, tool creation or mixed), whether the solver uses or creates tools, and which code is supplied versus left for the solver |
+| Outputs | Complete artifacts, identities, units and necessary intermediate evidence |
+| Reference | An input-reading script running the actual packages |
+| Verification | Acceptance criteria, tolerances, valid alternatives and incorrect-output controls |
+| Resources | Pinned environment, CPU, memory, disk, timeouts and network policy |
+| Coverage | Operations, scientific contexts, formats, repositories, study lineage and source links |
+| Variation | What can change, validity constraints and the additional practice provided |
+
+The proposal worker should expose unresolved assumptions before construction. Freeze the scientific contract before computing expected outputs. Initially, an explicit analysis protocol is easier to validate than unrestricted method choice; it can still require substantial input handling, experimental design and integration.
+
+## Reusing datasets across recipes
+
+Select inputs from the [reusable input collection](discovery.md#reusable-input-collection) before curating new inputs for an individual task. Record which dataset–recipe combinations are scientifically compatible, including required processing stage, metadata, replication and design. Generate only compatible combinations; do not assume every recipe applies to every dataset. Run the reference on each instance's inputs to derive its expected results, and validate that instance separately. The recipe's acceptance rules stay fixed; expected values and input-specific identities change with the instance.
+
+One observed RNA-seq study with counts and suitable sample metadata can support separate normalization, sample-level exploratory analysis and differential-expression tasks, plus a connected analysis. A reads-to-counts task additionally needs compatible reads and a reference. These tasks broaden the operations exercised while retaining shared study lineage. Expand the collection when a recipe lacks meaningful variation; reuse does not replace the [initial ten-instance target](#initial-instance-target), and ten instances do not require ten studies.
+
+## Input variation
+
+| Input source | Transcriptomics example | Contribution |
+| --- | --- | --- |
+| Observed | Published counts and sample metadata | Experimental variation, annotation issues and confounding |
+| Adapted observed | Supported contrasts, valid subsets or different starting stages | Additional work grounded in actual research |
+| Simulated | Counts with specified effects, library sizes and dispersion | Controlled variation and known truth for targeted checks |
+
+Prioritize breadth across independent studies, organisms, designs, questions and workflow stages before making many variants of one dataset. Keep shared-study and recipe identifiers so instance counts do not imply independent scientific coverage. No observed/simulated percentage is set.
+
+Every instance needs validation. Preserve biological replication and estimable contrasts where required by the scientific design; do not relabel conditions while retaining the original interpretation or represent fabricated replicates as observed samples. Document simulation assumptions and check relevant properties. New seeds can supply repeated practice but do not add new workflow coverage. Changing identifiers alone supplies little useful diversity.
+
+Subsetting is a standard authoring technique for fitting realistic workflows into the sandbox. Consider reads, samples, features or reference regions according to the task's objective. Preserve paired reads and required design structure; declare the subset and any narrowed scientific scope. Pin the selection procedure, seed where used, source asset and resulting hashes, then recompute expected results on the subset. Measure both resource use and scientific adequacy. Several subsets of one study retain shared lineage, and changing subset seeds alone does not establish recipe breadth.
+
+Define adequacy criteria for the recipe before selecting a subset. Depending on the question, these might check usable counts, retained feature coverage, biological replication or design estimability. Record their results on the delivered inputs and reject or revise inadequate candidates. Criteria need not require significant effects or universal numerical thresholds; do not select subsets merely because they produce a desired conclusion.
+
+## Recipe variation and instance relationships
+
+For each recipe, specify the target capabilities, eligible inputs and prerequisites, permitted variation axes, scientific validity constraints, and how the reference and verifier are constructed for every instance. State which decisions remain constant and which change across instances.
+
+For paired differential expression, a different observed study with a compatible design can supply another instance. A supported contrast within the same study can also supply an instance, but both retain shared study lineage. Starting from transcript quantifications instead of counts adds import and aggregation work and may warrant a separate recipe. Record that boundary explicitly. Cosmetic changes to filenames or thresholds do not establish capability generalization.
+
+Export operation and scientific-context labels, stable recipe and task identifiers, recipe versions, source-study and input-asset identifiers, generation parameters, and derivation links between assets. Record component recipe IDs and versions when composition uses them. A task can use multiple studies or assets. Preserve shared lineage across focused and integrated recipes as well as within them; different starting stages can still derive from the same observations.
+
+This metadata lets downstream users group instances by shared studies, inputs or recipes when designing their evaluations. Task generation supplies the relationships and meaningful variation; split assignment and evaluation protocols remain outside scope. Review a few transcriptomics recipes and their variations before committing to a comprehensive category vocabulary.
+
+## Build and orchestration
+
+1. Consume an inspected source record and structured proposal. Deduplicate by workflow, study and scientific question.
+2. Screen source-record license and access information for obvious publication blockers before building. Reject incompatible inputs or hold candidates whose eligibility needs clarification. This lightweight check does not replace final release-eligibility validation.
+3. Give one candidate to an authoring worker in an isolated workspace. It produces instructions, input manifest, pinned environment, executable reference and grader.
+4. Submit the candidate to the independently controlled [validation process](validation.md). The author cannot accept its own task by editing a validation record.
+5. Record failures and repair or reject the candidate. Release accepted artifacts through the [publication process](storage.md).
+
+Use bounded parallel workers and resumable candidate states when implementation starts. Cache source inputs and environments, avoid duplicate downloads, and record authoring cost, validation time and rejection causes. Model, concurrency, budget and repair limits remain to be decided. This design does not launch workers.
+
+## Prompt and run versioning
+
+Version prompts, output schemas, orchestration and validation rules together. Keep shared [requirements](requirements.md) authoritative and reusable; separate instructions from task-specific structured inputs.
+
+For a selected repository, use four prompt roles. Finding repositories remains an upstream [discovery activity](discovery.md#discovery-prompt).
+
+| Prompt role | Inputs | Outputs |
+| --- | --- | --- |
+| [Find units](../src/biotasks/prompts/find-units.md) | Repository and any supplied scientific focus or dataset inventory | Tutorials, functions, notebook sections, workflow stages and associated data, with source locations, revisions, dependencies and scientific uses |
+| [Author a task](../src/biotasks/prompts/author-task.md) | A unit or related group of units, surrounding source context and compatible data | A saved scientific proposal, followed by a Harbor package, input manifest, native reference and executable grader |
+| Solve independently | Only solver-visible instructions, inputs and tools | Submitted artifacts and a recorded execution trace |
+| Reflect on and validate the task | Task package, reference, grader, automated checks, solver submissions and traces | Evidence-backed task critique, proposed revisions and an accept/revise/reject recommendation |
+
+### Worker contexts and handoffs
+
+Start with one explorer per repository and an author for each candidate task. A unit is an inspection starting point: one tutorial may yield several tasks, and several functions may support one task. Let authors inspect adjacent code and combine related units. Discover datasets alongside units and record them in the [reusable input collection](discovery.md#reusable-input-collection); the author checks suitability and prepares inputs for its task.
+
+Initially, reuse the author's context across proposal, construction and repair. Save the proposal before building and record changes when construction exposes missing assumptions. The separate phase outputs make these jobs inspectable without requiring a separate LLM worker for each phase. Model choice and worker concurrency remain independent configuration decisions.
+
+Use a fresh solver context for each independent trial, isolated from the reference and grader internals. Existing agent instructions may supply most of the solve prompt, with the generated task providing the problem statement. A separate validation reviewer can combine adversarial inspection and trace analysis. Send its concrete findings to the author for repair, then repeat affected checks and trials. See [reflection on solver attempts](validation.md#reflection-on-solver-attempts).
+
+Automated Harbor execution, reference and grader checks are harness operations between these roles. The reviewer recommends a disposition; it cannot waive required evidence or edit the acceptance decision. LLM review during development does not introduce an LLM into the released reward.
+
+### Versioned artifacts
+
+For each run record the prompt revision, resolved prompt, structured inputs, source revisions/hashes, model configuration, orchestration/validation revisions, outputs and results. These enable auditing and reruns, not deterministic model generation. Exclude credentials from records.
+
+Develop prompts using the [reference cases](reference-cases.md). Revisit affected cases when the pipeline or prompts change, comparing task framing and verification before scaling. The [find-units prompt](../src/biotasks/prompts/find-units.md) produces linked unit and data inventories. The [task-authoring prompt](../src/biotasks/prompts/author-task.md) consumes selected records and covers proposal, construction, author checks, handoff and repair from review feedback. The reflection prompt and worker orchestration remain to be implemented; independent solving may reuse the existing agent instructions. This integration snapshot contains no prompt trials against the reference cases; newer authoring research is tracked in [issue #3](https://github.com/Open-Athena/biotasks/issues/3).
