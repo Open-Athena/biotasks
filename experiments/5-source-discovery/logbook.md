@@ -157,3 +157,26 @@ Git-pinned manifests, upload receipts, bucket README links and original run
 checkpoints remain reachable and unchanged. The earlier pre-rebase archive tag
 is retained too. The recorded historical statements that PR #8 was open describe
 publication at that time; the storage guidance is now on `main`.
+
+## 2026-09-30 — Interactive discovery explorer
+
+The user requested a standalone HTML page, previewed through HTMLPreview and
+linked from issue #5, to browse every source selected by any top-200 route and
+compare ranks, source types, subdomains, overlap and correlation. The
+[explorer run](runs/2026-09-30-explorer/README.md) uses only the preserved inputs;
+no collection, annotation, model call or paid computation was performed.
+
+All 672 canonical sources are included, including non-GitHub repositories and
+archives. Absent ranks mean not selected. Linked table and comparison views
+support exploring exact set membership, pairwise overlap, rank agreement, type
+and topic composition, and depth gains. The original 95-source adoption study
+has a separate view because its population and measurements differ. Labels are
+explicitly assistant-assigned, and popularity is not presented as task quality.
+
+Executable inputs were checkpointed before the final build at
+`fec1407d4739e6961d3708d77ca91077ac7765bf`. Exact data checks and browser checks
+passed, including all twelve saved pairwise correlations, offline operation,
+sorting, filters, details, CSV export and mobile layout. Earlier browser startup
+and layout failures are retained separately with their fixes. The resulting
+HTML embeds all data and assets and is about 562 KB. This is a research artifact
+on the continuing branch; no promotion to `main` is proposed.

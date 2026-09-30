@@ -8,6 +8,10 @@ for biological task generation?**
 
 ## Start here
 
+- [Interactive explorer](runs/2026-09-30-explorer/explorer.html): all 672 sources
+  from the four top-200 lists, sortable ranks, linked overlap and coverage views,
+  and the separate adoption cohort. Download and open the HTML, or use the
+  commit-pinned HTMLPreview link in issue #5. [Build and validation record](runs/2026-09-30-explorer/README.md).
 - [Preserved study](baseline/index.md): the 95-source inventory, adoption
   comparison, four top-100 rankings, and expansion to top-200.
 - [Logbook](logbook.md): decisions, observations, open questions, and run records.
