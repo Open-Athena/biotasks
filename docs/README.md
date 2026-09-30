@@ -16,6 +16,7 @@ Task generation includes repository discovery, input curation, model-assisted au
 | [Task authoring](task-authoring.md) | Convert sources into tasks and generate meaningful variations |
 | [Validation](validation.md) | Execute references, challenge graders, trial tasks and decide release readiness |
 | [Storage and publication](storage.md) | Public artifacts, release layout, provenance and solver isolation |
+| [Improvement opportunities](improvements/README.md) | Literature-grounded changes to code and analysis artifacts across software, statistics/ML and biology, with conditions and evidence |
 | [STAR–DESeq2 worked example](examples/star-deseq2.md) | Inspect a source workflow, define focused and integrated recipes, and plan instance variation |
 
 ## Direction
