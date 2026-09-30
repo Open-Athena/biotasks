@@ -23,6 +23,9 @@ layouts and then the exact published HTMLPreview link. Preserve earlier checks.
 
 ## Result and checks
 
+[Open the published explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/20cef08c51d7b5a6ce23296a80287d58a85b29c6/experiments/5-source-discovery/runs/2026-09-30-explorer/explorer.html)
+and select **Composition**. This URL pins the artifact revision.
+
 The updated [HTML](../2026-09-30-explorer/explorer.html) is 565,346 bytes, SHA-256
 `fd4298a10b19bbd0196d270fb65feaee5f8345aee0031bb39e4e98c6a1f4358b`.
 Its source checkpoint is `dc96a50ac3ec581b48be08b38efb443ad12e79df`.
@@ -40,6 +43,10 @@ The default denominator is 200 in each route and 672 in the merged column.
   existing interaction and twelve correlation checks also pass. Desktop and
   narrow-screen screenshots were inspected; tables scroll inside their panels.
 - Python lint/format, JavaScript syntax and Git whitespace checks passed.
+- [Public preview checks](public-preview-checks.txt): exit 0, 4.11 seconds,
+  278,548 KiB reported peak RSS. The same numerical and interaction checks passed
+  through the exact published URL above with no page errors. To repeat, add
+  `--url` with that full URL to the browser command below.
 
 Commands use the existing builder and verifier from the repository root:
 
