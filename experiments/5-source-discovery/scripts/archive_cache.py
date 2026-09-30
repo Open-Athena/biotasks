@@ -181,6 +181,11 @@ def transfer(args):
             )
             print(f"Uploaded {item['path']}", flush=True)
     args.download.mkdir(parents=True, exist_ok=False)
+    # Verify the intended public access, not just the uploader's credentials.
+    api = HfApi(token=False)
+    info = api.bucket_info(plan["bucket"])
+    if info.private:
+        raise ValueError("Bucket is not public at verification time")
     for item in plan["objects"]:
         target = args.download / item["path"]
         api.download_bucket_files(
@@ -200,6 +205,7 @@ def transfer(args):
         "manifest_sha256": plan["manifest_sha256"],
         "verified_objects": plan["objects"],
         "verified_files_after_download": count,
+        "download_authentication": "anonymous",
         "total_uncompressed_bytes": manifest["total_bytes"],
         "download_destination": str(args.download),
         "transfer_environment": settings,
