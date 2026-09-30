@@ -307,6 +307,9 @@ group(
 )
 
 
+group("Gene regulation", "MicroRNA target analysis", "microrna")
+
+
 def types(kind, names):
     for name in names.split():
         a[short[name]]["source_type"] = kind
