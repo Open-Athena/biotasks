@@ -62,8 +62,25 @@ installed package and load independently of the working directory.
 - Keep large inputs and traces in versioned external storage, with checksums and
   retention recorded. Do not commit credentials, environments, or downloaded data.
 - Follow the user's publication instructions. Distinguish local, committed,
-  pushed, PR-opened, and merged states. Use `gh` with `--body-file` for multiline
-  issue and PR bodies, and verify the published text.
+  pushed, PR-opened, and merged states.
+
+## GitHub writing and publication
+
+- Write for someone outside the chat. Lead with the problem, changed behavior,
+  or current research finding. Include the evidence and limitations needed to
+  assess it.
+- Use structure proportionately. Short issues and PRs usually need a few
+  paragraphs. Research issues can use headings for their evolving question,
+  findings, and next steps. Link detailed logs and artifacts.
+- Let GitHub wrap prose in issue bodies, PR descriptions, and comments. Keep
+  each prose paragraph or simple list item on one source line; do not manually
+  wrap it to a fixed width. Separate paragraphs with blank lines and preserve
+  intentional structure in code blocks, tables, and nested lists. Repository
+  Markdown can retain its existing wrapping style.
+- Draft the exact title and body, using a uniquely named temporary file for the
+  body. Inspect it before publishing, and use `gh` with `--body-file` where
+  supported or a structured API body. After creating or editing, fetch the
+  published text and correct unexpected content or formatting changes.
 
 ## Implementation
 
