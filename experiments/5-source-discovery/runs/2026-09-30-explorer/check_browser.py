@@ -175,7 +175,8 @@ def main():
                             "overlap and exact-membership drilldown",
                             "empty correlation pairs",
                             "mobile horizontal overflow",
-                        ] + (["offline operation"] if args.url.startswith("file:") else []),
+                        ]
+                        + (["offline operation"] if args.url.startswith("file:") else []),
                     }
                 )
             )
