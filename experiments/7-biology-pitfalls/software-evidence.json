@@ -1,0 +1,68 @@
+{
+  "review_date": "2026-09-30",
+  "collection": "https://github.com/soarsmu/BugsInPy",
+  "collection_revision": "11c5f1eea954a42132cfd06bf257766a7963e0fd",
+  "selection": "Convenience screen of pandas patch records 1 through 6; metadata and upstream changes checked for retained records.",
+  "execution": "No downloaded source or tests executed.",
+  "retained": [
+    {
+      "record": "pandas/1",
+      "source_id": "S08",
+      "entry": "I46",
+      "fixed_revision": "e41ee47a90bb1d8a1fa28fcefcd45ed8ef5cb946",
+      "test_file": "pandas/tests/dtypes/test_dtypes.py",
+      "tests": [
+        "TestCategoricalDtype.test_not_string"
+      ]
+    },
+    {
+      "record": "pandas/2",
+      "source_id": "S09",
+      "entry": "I47",
+      "fixed_revision": "55e8891f6d33be14e0db73ac06513129503f995c",
+      "test_file": "pandas/tests/indexing/test_scalar.py",
+      "tests": [
+        "test_at_with_tuple_index_get",
+        "test_at_with_tuple_index_set",
+        "test_multiindex_at_get",
+        "test_multiindex_at_set"
+      ]
+    },
+    {
+      "record": "pandas/3",
+      "source_id": "S10",
+      "entry": "I36",
+      "fixed_revision": "d3a6a3a58e1a6eb68b8b8399ff252b8f4501950e",
+      "test_files": [
+        "pandas/tests/series/methods/test_to_period.py",
+        "pandas/tests/series/methods/test_to_timestamp.py"
+      ],
+      "tests": [
+        "TestToPeriod.test_to_period_raises",
+        "TestToTimestamp.test_to_timestamp_raises"
+      ]
+    },
+    {
+      "record": "pandas/4",
+      "source_id": "S11",
+      "entry": "I48",
+      "fixed_revision": "2250ddfaff92abaff20a5bcd78315f5d4bd44981",
+      "test_file": "pandas/tests/indexes/multi/test_join.py",
+      "tests": [
+        "test_join_multi_return_indexers"
+      ]
+    }
+  ],
+  "excluded_or_deferred": [
+    {
+      "record": "pandas/5",
+      "reason": "Patch repeats record 4 join-return change, but metadata identifies a different fixed commit and groupby test. Excluded as inconsistent evidence.",
+      "metadata_fixed_revision": "0babe10f1f3f19bb6183b6fb4cc958583c6860c8",
+      "metadata_test": "pandas/tests/groupby/test_function.py::test_ops_not_as_index"
+    },
+    {
+      "record": "pandas/6",
+      "reason": "Exception-handler expansion deferred without deeper behavioral-context review."
+    }
+  ]
+}

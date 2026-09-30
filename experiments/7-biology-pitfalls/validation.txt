@@ -1,0 +1,29 @@
+Issue 7 final documentation audit — 2026-09-30
+
+Command: python experiments/7-biology-pitfalls/check_docs.py
+Exit status: 0
+PASS: 48 unique entries and 45 unique sources; expected IDs and fields.
+PASS: every entry has indexed navigation and reciprocal source mapping.
+PASS: 190 local links/anchors and Markdown whitespace.
+External links were inspected during research, not batch re-fetched.
+This audit does not test scientific claims or reproduce source analyses.
+
+Command: git diff --check
+Exit status: 0
+Research JSON records were parsed successfully using the standard library.
+The structural audit also checked the new Markdown files before staging.
+
+Semantic self-review: completed for evidence classification, biological relevance,
+conditional benefits, limitations, source versions and consolidation decisions.
+The final pass strengthened generic software evidence with four upstream fixes
+and recovered the previously inaccessible BugsInPy paper. A benchmark record
+with inconsistent patch/metadata was excluded; see software-evidence.json.
+
+Evidence: 41 publications plus four upstream fixes; 48 opportunities spanning
+correctness, scientific validity, robustness, reproducibility, efficiency and
+maintainability. Neither these counts nor passing checks establish prevalence,
+exhaustiveness, scientific truth or suitability for task generation.
+
+No runtime code or prompt templates changed. No local package tests, builds,
+dependency installs, model calls, biological data downloads, upstream regression
+runs or source-study reruns were performed. This is documentation validation.

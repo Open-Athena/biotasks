@@ -1,0 +1,29 @@
+Issue 7 documentation audit — 2026-09-30
+
+Command: python experiments/7-biology-pitfalls/check_docs.py
+Exit status: 0
+PASS: 45 unique entries and 41 unique sources; expected IDs and fields.
+PASS: every entry has indexed navigation and reciprocal source mapping.
+PASS: 178 local links/anchors and Markdown whitespace.
+External links were inspected during research, not batch re-fetched.
+This audit does not test scientific claims or reproduce source analyses.
+
+Command: git diff --check
+Exit status: 0
+No whitespace errors in the tracked diff. The bounded audit above also
+checks the new Markdown files, which are not yet tracked.
+
+Saved publication snapshot check: passed exact approved body, exact title,
+agent-generated label and OPEN state against the fetched issue-scope.json.
+
+Semantic self-review: completed for evidence classification, documented versus
+inferred biological relevance, conditional benefits, diagnostic/reporting limits,
+source-version distinctions and consolidation decisions. This was not a second
+independent review and does not establish exhaustive scientific coverage.
+
+The first structural audit identified missing explicit relevance labeling in
+I27. The entry was corrected to state that its biological application is
+documented theoretically; the full bounded audit then passed.
+
+No CLI/runtime behavior changed. No package tests, builds, dependency installs,
+model calls, biological data downloads or source-study reruns were performed.
