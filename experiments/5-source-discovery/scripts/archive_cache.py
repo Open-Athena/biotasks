@@ -1,4 +1,4 @@
-"""One-off migration archive: prepare locally, then upload and verify a private snapshot.
+"""One-off migration archive: prepare locally, then upload and verify a public snapshot.
 
 Run under run_bounded.py. Transfer requires huggingface_hub==1.6.0 and hf-xet==1.6.0.
 This is an experiment helper, not a supported BioTasks storage CLI.
@@ -84,7 +84,7 @@ def prepare(args):
         "source_root": str(root),
         "scope": "Exact allowlisted cache bytes, including partial and failed provider responses; not a scientific validation or public data release.",
         "exclusions": inventory["exclusions"],
-        "visibility": "private",
+        "visibility": "public",
         "retention": "Preserve while cited by research or release evidence. No automatic deletion or overwriting; record any deliberate retention change. Local source is retained.",
         "files": files,
         "total_bytes": sum(item["bytes"] for item in files),
@@ -105,7 +105,7 @@ def prepare(args):
     manifest_hash = digest(args.output / "manifest.json")
     plan = {
         "bucket": "open-athena/biotasks",
-        "private": True,
+        "private": False,
         "prefix": f"research/5-source-discovery/2026-09-29/{manifest_hash}",
         "manifest_sha256": manifest_hash,
         "objects": [
@@ -149,8 +149,8 @@ def transfer(args):
     from huggingface_hub.errors import BucketNotFoundError
 
     plan = json.loads((args.snapshot / "plan.json").read_text())
-    if not plan["private"] or plan["bucket"] != "open-athena/biotasks":
-        raise ValueError("This migration helper only supports the approved private bucket")
+    if plan["private"] or plan["bucket"] != "open-athena/biotasks":
+        raise ValueError("This migration helper only supports the approved public bucket")
     for item in plan["objects"]:
         path = args.snapshot / item["path"]
         if path.stat().st_size != item["bytes"] or digest(path) != item["sha256"]:
@@ -164,10 +164,10 @@ def transfer(args):
     except BucketNotFoundError:
         if args.verify_only:
             raise
-        api.create_bucket(plan["bucket"], private=True)
+        api.create_bucket(plan["bucket"], private=False)
         info = api.bucket_info(plan["bucket"])
-    if not info.private:
-        raise ValueError("Bucket visibility differs from private plan")
+    if info.private:
+        raise ValueError("Bucket visibility differs from public plan")
     if not args.verify_only:
         existing = list(api.list_bucket_tree(plan["bucket"], prefix=plan["prefix"], recursive=True))
         if existing:
