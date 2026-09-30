@@ -242,8 +242,33 @@ def assemble():
             return "bioconductor:" + url.rsplit("/", 1)[1].lower(), url
         return url.lower().rstrip("/"), url
 
+    # Canonicalize newly screened cached records, preserving all frozen baseline IDs.
+    normalized = {}
+    for old_key, record in records.items():
+        if old_key in baseline:
+            key, url = old_key, record["source_url"]
+        else:
+            key, url = canonical(
+                decisions.get("source_identity", {}).get(old_key, record["source_url"])
+            )
+        record["source_id"], record["source_url"] = key, url
+        if not record.get("github") and key.startswith("github:"):
+            record["github"] = metadata.get(key[7:])
+        if key in normalized:
+            existing = {(o["route"], o["package"]) for o in normalized[key]["observations"]}
+            normalized[key]["observations"].extend(
+                o for o in record["observations"] if (o["route"], o["package"]) not in existing
+            )
+            normalized[key]["evidence_urls"] = list(
+                dict.fromkeys(normalized[key]["evidence_urls"] + record["evidence_urls"])
+            )
+        else:
+            normalized[key] = record
+    records = normalized
+
     def insert(name, url, summary, route, package, score, rank, evidence, details=None):
         url = decisions["identity"].get(route + ":" + package, url)
+        url = decisions.get("source_identity", {}).get(url.lower().rstrip("/"), url)
         key, url = canonical(url)
         if key not in records:
             records[key] = {
