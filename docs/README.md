@@ -1,6 +1,3 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/index.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # Computational biology task generation
 
 This document describes the proposed pipeline. The scientific design remains
@@ -19,7 +16,6 @@ Task generation includes repository discovery, input curation, model-assisted au
 | [Task authoring](task-authoring.md) | Convert sources into tasks and generate meaningful variations |
 | [Validation](validation.md) | Execute references, challenge graders, trial tasks and decide release readiness |
 | [Storage and publication](storage.md) | Public artifacts, release layout, provenance and solver isolation |
-| [Transcriptomics examples](examples/transcriptomics.md) | Concrete candidates for reviewing the process |
 | [STAR–DESeq2 worked example](examples/star-deseq2.md) | Inspect a source workflow, define focused and integrated recipes, and plan instance variation |
 
 ## Direction
@@ -47,7 +43,7 @@ regression suite.
 ## Open decisions
 
 - [Extraction rules for code and notebooks](task-authoring.md#work-item-extraction-rules-for-code-and-notebooks): define candidate boundaries for functions, classes, cells or chunks, and complete analysis documents across languages and formats.
-- Recipe boundaries, composition and permitted variation axes, to be calibrated through [transcriptomics examples](examples/transcriptomics.md).
+- Recipe boundaries, composition and permitted variation axes, to be calibrated through the [STAR–DESeq2 worked example](examples/star-deseq2.md).
 - The vocabulary for operations and scientific contexts, and how demand and missing coverage influence selection. No uniform allocation rule or numerical weighting formula is adopted.
 - How much retrieval-only or generic statistical work belongs in the corpus, and how much benchmark analysis to retain.
 - The size and composition of the [reusable input collection](discovery.md#reusable-input-collection). Around ten datasets per initial scientific area is a provisional idea; study diversity and recipe compatibility guide selection.

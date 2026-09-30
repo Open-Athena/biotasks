@@ -1,6 +1,3 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/validation.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # Validation and release readiness
 
 [Planning overview](README.md) · [Task requirements](requirements.md)

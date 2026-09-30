@@ -1,6 +1,3 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/task-authoring.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # Task authoring
 
 [Planning overview](README.md) · [Requirements](requirements.md) · [Validation](validation.md)
@@ -38,7 +35,7 @@ If a recipe cannot reach ten, record the reason: limited eligible inputs, depend
 
 ## Focused and integrated recipes
 
-Recipes can overlap and compose. A quality-control recipe can be used within several complete analyses. Record reusable stages and compatible input/output contracts without requiring a strict recipe hierarchy. See the [Scanpy example](examples/transcriptomics.md#scanpy-focused-and-integrated-recipes).
+Recipes can overlap and compose. A quality-control recipe can be used within several complete analyses. Record reusable stages and compatible input/output contracts without requiring a strict recipe hierarchy. See the [STAR–DESeq2 candidate recipes](examples/star-deseq2.md#candidate-recipes).
 
 Focused tasks isolate scientific operations and make failures easier to diagnose. Integrated tasks test coordination across stages, including data representations, identifiers and the consequences of upstream decisions. Each integrated recipe needs its own scientific contract and end-to-end verification; passing its components separately does not establish correctness of their composition.
 
@@ -66,7 +63,7 @@ Define how to identify candidate recipes from functions, methods, entire classes
 
 Apply the [tool-use priority](#tool-use-and-tool-creation) when designing these extraction rules. Determine when an artifact supports a useful focused task, when several artifacts should form an integrated task, and when code only supplies setup or implementation details. Include dependencies and hidden state, meaningful instance variation, and deterministic verification in that design.
 
-Use the [reference cases](reference-cases.md) to develop and review these rules. Revisit the [Scanpy example](examples/transcriptomics.md#scanpy-focused-and-integrated-recipes) and select additional examples that expose different languages, document formats or code organization. Record source-specific examples as the rules are developed; this work item does not establish recipes or validated tasks.
+Use the [reference cases](reference-cases.md) to develop and review these rules, including tutorial and paper-analysis sources that expose different languages, document formats or code organization. Record source-specific examples as the rules are developed; this work item does not establish recipes or validated tasks.
 
 ## Proposal contract
 

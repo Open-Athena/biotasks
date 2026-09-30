@@ -1,9 +1,6 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/examples/star-deseq2.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # STAR–DESeq2: from a workflow to task recipes
 
-[Planning overview](../README.md) · [Authoring](../task-authoring.md) · [Transcriptomics examples](transcriptomics.md)
+[Planning overview](../README.md) · [Authoring](../task-authoring.md) · [Requirements](../requirements.md)
 
 Use the [Snakemake workflow catalog entry](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/snakemake-workflows/rna-seq-star-deseq2.html) as a discovery source and the implementation as evidence for recipe design. Inspected on 2026-09-25: release `v3.1.1`, commit [`aa6b17edf3396230165c18709d04cd982bdaaa4c`](https://github.com/snakemake-workflows/rna-seq-star-deseq2/tree/aa6b17edf3396230165c18709d04cd982bdaaa4c). This is a source review and task proposal; no tasks or runtime measurements are produced here.
 
@@ -57,7 +54,7 @@ Count-based tasks can use studies whose reads are too large for the sandbox. Rea
 
 Do not treat upstream integration-test fixtures as scientific studies. In this release, the [test unit sheet](https://github.com/snakemake-workflows/rna-seq-star-deseq2/blob/aa6b17edf3396230165c18709d04cd982bdaaa4c/.test/config_basic/units.tsv) reuses the same FASTQ pair for A2 and B1, while the [sample sheet](https://github.com/snakemake-workflows/rna-seq-star-deseq2/blob/aa6b17edf3396230165c18709d04cd982bdaaa4c/.test/config_basic/samples.tsv) assigns them different conditions. That is useful for testing workflow execution, but cannot supply independent treatment/control observations for our tasks.
 
-No input pool supporting ten instances has been selected or validated for this example. Record eligible candidates separately from accepted task instances. Existing [paired-treatment candidates](transcriptomics.md#candidate-tasks) can inform count-based authoring, but do not establish eligibility for every recipe above.
+No input pool supporting ten instances has been selected or validated for this example. Record eligible candidates separately from accepted task instances and check their eligibility for each recipe.
 
 ## Sandbox adaptations and candidate order
 

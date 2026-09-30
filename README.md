@@ -14,4 +14,4 @@ The project is in early development. The scientific design and initial prompt
 templates are under review; there is no runnable generator yet.
 
 Read the [design documentation](docs/README.md) for the proposed pipeline,
-task requirements, and worked examples.
+task requirements, and a worked example.

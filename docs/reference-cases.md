@@ -1,13 +1,10 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/index.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # Reference cases
 
 Revisit these examples when changing discovery, recipe extraction, instance generation or validation. They are reference cases for diagnosing the pipeline and reviewing task framing, not a ranked source list or a requirement to implement every example now.
 
 | Reference case | What to examine when the pipeline changes |
 | --- | --- |
-| [Scanpy tutorial](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html), with our [recipe discussion](examples/transcriptomics.md#scanpy-focused-and-integrated-recipes) | Extract focused and integrated tasks from a teaching workflow; distinguish numerical verification from open-ended interpretation |
+| [Scanpy tutorial](https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering.html) | Extract focused and integrated tasks from a teaching workflow; distinguish numerical verification from open-ended interpretation |
 | [Snakemake STAR–DESeq2 workflow](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/snakemake-workflows/rna-seq-star-deseq2.html), with our [worked example](examples/star-deseq2.md) | Use rule boundaries and dependencies; preserve scientific decisions while composing stages and subsetting data |
 | Gonzalo Benegas's [papers](https://gonzalobenegas.github.io/), [Scholar profile](https://scholar.google.com/citations?user=tJbZmiUAAAAJ) and [repositories](https://github.com/gonzalobenegas) | Find useful tasks in paper-specific code with varying documentation and portability; obtain feedback from a researcher familiar with the original scientific intent |
 | [Tim O'Donnell's work](https://timodonnell.github.io/) | Add collaborator-familiar papers and software as further cases for reviewing scientific task framing; select specific examples as the pipeline develops |

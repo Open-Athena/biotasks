@@ -1,6 +1,3 @@
-<!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/discovery.md.
-Modified for BioTasks documentation structure and repository context. -->
-
 # Repository discovery and inspection
 
 [Planning overview](README.md) · [Task requirements](requirements.md)
@@ -18,7 +15,7 @@ Discover scientific use cases from tools, reusable pipelines, paper-analysis rep
 
 Use the [Snakemake workflow catalog](https://snakemake.github.io/snakemake-workflow-catalog/) and its [topic index](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows_by_topic.html) as discovery routes. The topic index says its groups were clustered with a language model and include only standardized workflows. Treat the groups as search aids; they are not the adopted competency taxonomy or estimates of field importance.
 
-Other concrete sources include [nf-core pipelines](https://nf-co.re/pipelines), [Galaxy transcriptomics training](https://training.galaxyproject.org/training-material/topics/transcriptomics/), and [Bioconductor workflows](https://bioconductor.org/packages/release/BiocViews.html#___Workflow). The [transcriptomics examples](examples/transcriptomics.md) identify specific starting points.
+Other concrete sources include [nf-core pipelines](https://nf-co.re/pipelines), [Galaxy transcriptomics training](https://training.galaxyproject.org/training-material/topics/transcriptomics/), and [Bioconductor workflows](https://bioconductor.org/packages/release/BiocViews.html#___Workflow). The [STAR–DESeq2 worked example](examples/star-deseq2.md) illustrates inspection of a specific workflow.
 
 Follow catalog entries to workflow repositories, underlying packages, cited papers, analysis code and public data. Search from papers and tutorials back toward code as well. Institutional analysis-core courses, documented support questions and methods comparisons may reveal additional needs. Support answers are candidate leads, not trusted numerical references. Tiny package fixtures are useful installation checks, not evidence of realistic task size.
 
