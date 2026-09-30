@@ -33,11 +33,11 @@ filtering, sorting, no-result states, detail links and CSV export.
 ## Result
 
 [Open or download the explorer](explorer.html). Issue #5 links the published,
-commit-pinned HTMLPreview version. The 562,235-byte file includes all 672 sources
+commit-pinned HTMLPreview version. The 562,189-byte file includes all 672 sources
 and 800 rank entries, with source details, search, filters, sorting and CSV
 export. Its SHA-256 is
-`d74d7d4fc45a61f03d228d7bd54786a94b015d2b4700045290ecf5bf78ee0434`.
-The executable checkpoint is `fec1407d4739e6961d3708d77ca91077ac7765bf`;
+`74d377e395cadda58508572723d9c9079599b800e8e05754fa82652ab58bfe49`.
+The executable checkpoint is `86c3d038b8c565435f539d08b6eafe8ced08f365`;
 [provenance.json](provenance.json) records every input hash.
 
 The four views separate source exploration, ranking comparisons, the original
@@ -82,12 +82,12 @@ environment's Python in the last command. The builder embeds the current Git
 revision, so rebuilding from a later revision changes the output hash even if
 the saved data are unchanged. Use the recorded checkpoint for byte reproduction.
 
-- [Build](build.txt): exit 0, 0.05 seconds, 27,832 KiB peak RSS.
-- [Data checks](data-checks.txt): exit 0, 0.04 seconds, 24,872 KiB peak RSS.
+- [Build](build.txt): exit 0, 0.06 seconds, 27,596 KiB peak RSS.
+- [Data checks](data-checks.txt): exit 0, 0.04 seconds, 24,780 KiB peak RSS.
   All identities, ranks, scores, package mappings, annotations, source links,
   list composition, expansion cutoffs, adoption observations and hashes match.
-- [Browser checks](browser-checks-03.txt): exit 0, 3.00 seconds,
-  123,864 KiB reported peak RSS. All six ranking and six adoption correlations
+- [Browser checks](browser-checks-05.txt): exit 0, 2.90 seconds,
+  266,148 KiB reported peak RSS. All six ranking and six adoption correlations
   match the saved results within 1e-12, including empty intersections and ties.
   Sorting, filtering, drilldowns, source details, CSV export and narrow-screen
   layout pass. The downloaded file works with the browser offline and makes
@@ -104,5 +104,17 @@ Two earlier attempts are preserved. [Attempt 1](browser-checks-01.txt) failed
 during Chromium startup with the single-process flag; removing that flag and
 disabling GPU rendering resolved it. [Attempt 2](browser-checks-02.txt) exposed
 mobile overflow from long select values; constraining filter widths resolved it.
-Neither is a scientific-data or correlation failure. The successful attempt
-used the final recorded source checkpoint.
+Neither is a scientific-data or correlation failure. [Attempt 3](browser-checks-03.txt)
+passed offline on the first published build. The [first public preview check](public-preview-checks-01.txt)
+then found that HTMLPreview executes even `application/json` script blocks,
+causing a console syntax error despite working interactions. The final build
+embeds data as a JavaScript assignment instead. This changes serialization, not
+scientific inputs. The first build and data checks remain in `build-01.txt` and
+`data-checks-01.txt`, and that HTML remains at commit
+`a6afbfdf62347db14387e691a8cb45eb69dd72d9`.
+
+[Attempt 4](browser-checks-04.txt) stalled inside the process sandbox before
+browser testing; it was terminated after 64 seconds, with no owned workers
+remaining. [Attempt 5](browser-checks-05.txt) passed on the final source checkpoint
+outside that sandbox, with the browser context still offline. Shared-node
+resource checks applied to every attempt.

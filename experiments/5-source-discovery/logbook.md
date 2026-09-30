@@ -174,9 +174,11 @@ has a separate view because its population and measurements differ. Labels are
 explicitly assistant-assigned, and popularity is not presented as task quality.
 
 Executable inputs were checkpointed before the final build at
-`fec1407d4739e6961d3708d77ca91077ac7765bf`. Exact data checks and browser checks
+`86c3d038b8c565435f539d08b6eafe8ced08f365`. Exact data checks and browser checks
 passed, including all twelve saved pairwise correlations, offline operation,
 sorting, filters, details, CSV export and mobile layout. Earlier browser startup
 and layout failures are retained separately with their fixes. The resulting
-HTML embeds all data and assets and is about 562 KB. This is a research artifact
+HTML embeds all data and assets and is about 562 KB. Hosted testing found that
+HTMLPreview executes JSON script tags; embedding a JavaScript assignment fixed
+the compatibility issue without changing scientific inputs. This is a research artifact
 on the continuing branch; no promotion to `main` is proposed.
