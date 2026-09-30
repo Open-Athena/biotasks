@@ -8,11 +8,15 @@ for biological task generation?**
 
 ## Start here
 
-- [Interactive explorer](runs/2026-09-30-explorer/explorer.html): all 672 sources
-  from the four top-200 lists, sortable ranks, type and primary-group distributions
-  for each list and the merged union, linked overlap and coverage views,
-  and the separate adoption cohort. Download and open the HTML, or use the
-  commit-pinned HTMLPreview link in issue #5. [Build and validation record](runs/2026-09-30-explorer/README.md).
+- [Interactive explorer](runs/2026-09-30-top300/explorer.html): all 1,014 sources
+  from the four top-300 lists, sortable ranks, source-type and primary-group
+  distributions, overlap/correlation views and the separate adoption cohort.
+  The **Primary-group tail** tab compares counts and shares at 100 / 200 / 300
+  for each route and the merged union. Download and open the HTML, or use the
+  commit-pinned HTMLPreview link in issue #5.
+  [Depth analysis, methods and validation](runs/2026-09-30-top300/README.md).
+- [Known-repository gap audit](runs/2026-09-30-discovery-gaps/README.md):
+  a purposive 112-repository panel, separate from the controlled depth expansion.
 - [Preserved study](baseline/index.md): the 95-source inventory, adoption
   comparison, four top-100 rankings, and expansion to top-200.
 - [Logbook](logbook.md): decisions, observations, open questions, and run records.

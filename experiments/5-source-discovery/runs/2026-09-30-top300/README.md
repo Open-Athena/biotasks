@@ -154,3 +154,21 @@ caught one unassigned microRNA package; it was labeled before export. Runtime
 records preserve completed collection and analysis commands, exit status and peak
 RSS. Browser validation and public-preview results are recorded separately after
 execution. Earlier explorer permalinks remain valid; no research merge is proposed.
+
+## Validation
+
+The independent data check verifies all 800 original ranking rows and all 672
+original labels exactly, all 1,200 new ranking positions, all 330 group/cohort/depth
+cells, embedded source data and input/output hashes. Browser checks cover all
+18 ranking-pair calculations (at 100/200/300), all six separate adoption pairs,
+count/share scales, all tail selectors, every cohort, zeroes, source drilldown,
+CSV export, filters, sorting and desktop/mobile layouts. Chromium
+152.0.7977.64 / Playwright 1.56.0 runs with networking disabled for the local
+check. See `data-check.txt` and `browser-check-01.txt` for the initial passing
+checks; the subsequent two-decimal tail percentage adjustment is checked in
+`browser-check-02.txt`. No model calls or candidate execution are part of validation.
+
+The generated HTML is about 807 KB, contains all data/assets and has no runtime
+provider requests. Earlier preview versions are preserved. This result remains
+on the research branch; no PR to or merge into `main` is proposed. Public-preview
+verification is recorded in `public-preview-check.txt` after publication.
