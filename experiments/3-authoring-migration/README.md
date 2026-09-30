@@ -86,8 +86,11 @@ statements do not measure those outcomes interchangeably.
 
 As in [discovery migration #2](https://github.com/Open-Athena/biotasks/issues/2),
 the migration issue can close after preservation and handoff while a separate
-research issue remains open. A continuing authoring issue has not yet been
-published. New model calls, paid compute and parallel agents are outside this
+research issue remains open. Continue under [research issue #10](https://github.com/Open-Athena/biotasks/issues/10),
+with its [working entry point](../10-task-authoring/README.md) and
+[logbook](../10-task-authoring/logbook.md), on `codex/research/10-task-authoring`.
+The published migration branch is retained separately. New model calls, paid
+compute and parallel agents are outside this
 migration's execution budget. The current work is bounded preservation and
 saved-input verification only, targeting under ten minutes of local computation
 per command and at most 100 MiB for preservation/analysis.

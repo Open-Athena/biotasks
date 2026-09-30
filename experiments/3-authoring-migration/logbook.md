@@ -119,3 +119,8 @@ UCSC cache redistribution, source checkout modification, new model call,
 scientific execution, paid compute, PR or merge occurred. A continuing research
 issue will carry the scientific questions; this migration accounts for every
 source path without promoting unsupported behavior to `main`.
+
+The continuing study is now [issue #10](https://github.com/Open-Athena/biotasks/issues/10)
+on `codex/research/10-task-authoring`, with a
+[separate logbook](../10-task-authoring/logbook.md). The original migration
+branch is retained. No new research experiment is started by the handoff.

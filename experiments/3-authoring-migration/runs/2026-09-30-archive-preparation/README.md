@@ -15,7 +15,7 @@ in `allowlist.json` and `manifest.json`. They are the UCSC README, liftOver
 source, two utility source files, and downloaded directory/help pages. The
 liftOver override has custom terms; the rest need file-specific review before
 public redistribution. Neither durable external archival of those six files
-nor permission to delete the originals is claimed. This remains a migration
+nor permission to delete the originals is claimed. The migration's
 retained-at-source disposition is explicit, rather than silently treating the
 files as archived. [Four source files](retained-upstream.json) also match the
 Git blobs at their pinned upstream revision; the directory/help pages remain
