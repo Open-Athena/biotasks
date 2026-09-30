@@ -125,7 +125,7 @@ function scatter(points,xLabel,yLabel,{rank=false,maxRank=200}={}) {
   const xmin=rank?1:0,ymin=rank?1:0;
   const x=v=>left+(v-xmin)/(xmax-xmin)*pw;
   const y=v=>top+(rank?(v-ymin)/(ymax-ymin):1-(v-ymin)/(ymax-ymin))*ph;
-  const ticks=rank?[1,...[25,50,100,150,200].filter(v=>v<=maxRank)]:[0,1,2,3,4,5];
+  const ticks=rank?[...new Set([1,...[25,50,100,150,200].filter(v=>v<=maxRank),maxRank])].sort((a,b)=>a-b):[0,1,2,3,4,5];
   const xt=rank?ticks:ticks.map(i=>i*xmax/5),yt=rank?ticks:ticks.map(i=>i*ymax/5);
   let inner=xt.map(v=>`<line class="grid" x1="${x(v)}" x2="${x(v)}" y1="${top}" y2="${top+ph}"/><text x="${x(v)}" y="${top+ph+21}" text-anchor="middle">${rank?v:v.toFixed(1)}</text>`).join("");
   inner+=yt.map(v=>`<line class="grid" x1="${left}" x2="${left+pw}" y1="${y(v)}" y2="${y(v)}"/><text x="${left-10}" y="${y(v)+4}" text-anchor="end">${rank?v:v.toFixed(1)}</text>`).join("");
