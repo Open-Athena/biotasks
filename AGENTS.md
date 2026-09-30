@@ -1,24 +1,64 @@
 # Working on BioTasks
 
 Build an open pipeline for generating and independently validating computational
-biology tasks. Read the README for implemented behavior and `docs/pipeline.md`
-for the proposed scientific workflow. Planning text is not execution evidence.
+biology tasks. Read the [design documentation](docs/README.md) for the proposed
+scientific workflow. There is no runnable generator yet; the implemented CLI
+lists and reads packaged prompt templates. Planning text is not execution evidence.
+
+## Setup and CLI
+
+Use the Python patch in `.python-version` and the uv development dependency pinned
+in `pyproject.toml`. Install that uv release using the
+[uv installation instructions](https://docs.astral.sh/uv/getting-started/installation/),
+then run from the checkout:
+
+```bash
+uv python install
+uv sync --locked --python "$(cat .python-version)"
+uv run --locked pre-commit install
+```
+
+This installs the package in editable mode and the locked development tools,
+including uv. CI selects uv from `uv.lock`.
+
+```bash
+uv run --locked biotasks prompts list
+uv run --locked biotasks prompts show find-units
+uv run --locked biotasks prompts show author-task > author-task.md
+```
+
+`show` writes the original template text, preserving placeholders such as
+`{{REPO}}`. It does not render prompts or call a model. Templates ship with the
+installed package and load independently of the working directory.
+`python -m biotasks` exposes the same commands.
 
 ## Research and promotion
 
 - `main` holds the supported pipeline, packaged prompts, tests, and maintained
   documentation. Keep experiments and their raw evidence on research branches.
-- Use one issue per research question. Keep its current conclusion and decisive
-  links concise. Record dated observations, decisions, failed hypotheses, and
-  next steps in a branch-local logbook under `experiments/<issue>-<topic>/`.
+- Use one issue per research question. Include the goal or hypothesis, baseline,
+  comparison criteria, scope, and execution budget. Keep its current conclusion
+  and decisive links concise.
 - Start research from a recorded `main` commit, using `codex/research/<issue>-<topic>`.
-  Record exact source revisions, prompts, inputs, configuration, environment,
-  commands, budgets, outcomes, and artifact locations. Link results with commit
-  permalinks. Preserve original evidence and distinguish corrections from it.
+  Candidate changes use the normal source and prompt paths. Keep a branch-local
+  `experiments/<issue>-<topic>/logbook.md`, with one-off scripts and run records
+  alongside it. Record dated observations, decisions, failed hypotheses, and
+  next steps. The issue summarizes conclusions; the logbook explains decisions;
+  artifacts preserve execution evidence. Avoid duplicating the narrative.
+- Checkpoint executable inputs before a reproducible run. Record exact source
+  revisions, rendered prompts, input versions, model settings, configuration,
+  environment, commands, budgets, outcomes, and artifact locations. Explicitly
+  record unavailable information. Commit small evidence files afterward and link
+  results with commit permalinks; branch links are only for navigation. Preserve
+  original evidence and distinguish corrections from it.
 - Never merge a research branch, including by squash. Extract a supported change
   into a fresh `codex/pipeline/<topic>` branch from current `main`. Validate the
-  consolidated change, add meaningful regression coverage, and link the evidence
-  in its PR. Retain research branches or preserve an archive tag before deletion.
+  consolidated change, update documentation, add meaningful regression coverage,
+  and link the evidence in its PR. Scientific changes also need relevant
+  executable comparisons. State the resulting behavior, validation, and limits.
+- Close a completed experiment's issue with a conclusion even if no pipeline
+  change is promoted. Retain research branches or preserve a published archive
+  tag before deletion. Preserve referenced external artifacts too.
 - Keep large inputs and traces in versioned external storage, with checksums and
   retention recorded. Do not commit credentials, environments, or downloaded data.
 - Follow the user's publication instructions. Distinguish local, committed,
@@ -34,17 +74,26 @@ for the proposed scientific workflow. Planning text is not execution evidence.
   them. Experiment-only scripts and checks belong with their experiment.
 - Keep reference-case descriptions in `docs/`. No skills directory or issue/PR
   templates are required. Add structure when there is content to justify it.
+- Keep the root README focused on project purpose, current maturity, and design
+  documentation. Keep setup, CLI, and research instructions here. Use issues for
+  migration records, progress, and follow-up work.
 - Pin Python in `.python-version`, direct and development dependencies in
   `pyproject.toml`, and transitive dependencies in `uv.lock`. Pin uv as a
   development dependency; CI reads its version from the lockfile. Avoid an exact
   `tool.uv.required-version` guard, which blocks Dependabot's own uv runtime.
   Use the same locked environment for hooks and CI. Upgrade deliberately and
   revalidate affected behavior.
+- Dependabot proposes monthly dependency and GitHub Actions updates. Group minor
+  and patch development-tool updates; review runtime and major updates separately.
+  Validate before merging, with pipeline evidence for changes affecting scientific
+  outputs. Upgrade Python explicitly. Preserve recorded research environments.
+- Workflow YAML defines checks; repository settings control required checks,
+  branch protection, and Dependabot alerts/security updates. Report local checks,
+  GitHub CI, and actual Dependabot runs separately.
 
 ## Checks
 
 ```bash
-uv sync --locked --python "$(cat .python-version)"
 uv run --locked ruff check .
 uv run --locked ruff format --check .
 uv run --locked ty check
@@ -56,11 +105,13 @@ Run one test worker. The tests include building and installing the package into 
 clean environment to exercise the real CLI outside the checkout. Keep default
 checks free of model calls, biological data downloads, and paid compute. Run
 focused checks during development; repeat broader checks when changes justify it.
+Pre-commit fixes lint/formatting locally and checks types. CI checks formatting
+before hooks can modify files.
 
 ## Scientific evidence
 
 - Use observed biological data as the backbone; label adaptations and simulations.
-  Preserve lineage, source terms, and benchmark exclusions from the migrated plan.
+  Preserve lineage, source terms, and benchmark exclusions from the design docs.
 - Grade artifacts deterministically. LLM review can guide development but cannot
   supply the reward. Keep oracle and grading assets outside solver-visible inputs.
 - Distinguish discovery, implementation, native execution, independent validation,

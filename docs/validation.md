@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/validation.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Validation and release readiness
 
-[Planning overview](pipeline.md) · [Task requirements](requirements.md)
+[Planning overview](README.md) · [Task requirements](requirements.md)
 
 An independently controlled harness validates each candidate using executable checks, independent trial solves and LLM review of task design and solver behavior. A model's recommendation must cite evidence and cannot substitute for required execution or scientific review. Passing an oracle alone is insufficient: the oracle and grader can share the same error.
 

@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/storage.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Storage and public publication
 
-[Planning overview](pipeline.md) · [Validation](validation.md)
+[Planning overview](README.md) · [Validation](validation.md)
 
 The project is public by default. Publish documentation, prompts, generation code, eligible inputs, references, graders and validation evidence. The proposed storage arrangement is below; the release account, repository name and exact artifact layout are not yet selected.
 

@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/discovery.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Repository discovery and inspection
 
-[Planning overview](pipeline.md) · [Task requirements](requirements.md)
+[Planning overview](README.md) · [Task requirements](requirements.md)
 
 Discover scientific use cases from tools, reusable pipelines, paper-analysis repositories and tutorials. Expand beyond the original 50-repository inventory. Scientific workflows are the primary source; eligible benchmarks can suggest omissions without controlling the allocation of tasks.
 

@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/examples/star-deseq2.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # STAR–DESeq2: from a workflow to task recipes
 
-[Planning overview](../pipeline.md) · [Authoring](../task-authoring.md) · [Transcriptomics examples](transcriptomics.md)
+[Planning overview](../README.md) · [Authoring](../task-authoring.md) · [Transcriptomics examples](transcriptomics.md)
 
 Use the [Snakemake workflow catalog entry](https://snakemake.github.io/snakemake-workflow-catalog/docs/workflows/snakemake-workflows/rna-seq-star-deseq2.html) as a discovery source and the implementation as evidence for recipe design. Inspected on 2026-09-25: release `v3.1.1`, commit [`aa6b17edf3396230165c18709d04cd982bdaaa4c`](https://github.com/snakemake-workflows/rna-seq-star-deseq2/tree/aa6b17edf3396230165c18709d04cd982bdaaa4c). This is a source review and task proposal; no tasks or runtime measurements are produced here.
 

@@ -1,9 +1,10 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/index.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Computational biology task generation
 
-This plan was migrated from [Marin issue #9257](https://github.com/marin-community/marin/issues/9257) at the [pinned integration snapshot](migration.md). It describes a proposed pipeline; no runnable generator exists yet. The scientific design remains under review. See the [README](../README.md) for the implemented prompt-inspection commands. Earlier prototypes remain historical references and do not impose compatibility requirements on this design.
+This document describes the proposed pipeline. The scientific design remains
+under review, and no runnable generator exists yet.
 
 Generate realistic computational biology tasks with deterministic executable rewards, packaged for Harbor and usable by other people's pipelines. Optimize for using bioinformatics software to answer scientific questions. Analysis scripting, metadata reconciliation and workflow configuration belong in scope. Developing new bioinformatics algorithms or fixing package internals is not the initial target.
 
@@ -55,13 +56,3 @@ regression suite.
 - The public release repository name and account, storage quota and final packaging layout. The storage page proposes Hugging Face; no release repository has been created by this plan.
 
 Next, compare a focused transcriptomics task and a connected analysis from the same observed study. Review their prompts, input boundaries, references and grading contracts, then broaden the candidate portfolio before scaling authoring.
-
-## Earlier work and supporting catalogs
-
-Earlier implementation and planning are preserved at [checkpoint d3f09bbb3b](https://github.com/marin-community/marin/tree/d3f09bbb3ba2e74c4c3073ed20087cd5f97139af). Their rules and status claims are historical, not the specification for this pipeline. No new task validation or release is claimed by this documentation change.
-
-- [Repository adoption inventory](https://github.com/marin-community/marin/blob/d3f09bbb3ba2e74c4c3073ed20087cd5f97139af/docs/experiments/computational_biology_bioinformatics_packages.md): the original 50 repositories, including dated downloads, stars and citations. Discovery has no 50-repository cutoff.
-- [Task catalog and validation evidence](https://github.com/marin-community/marin/blob/d3f09bbb3ba2e74c4c3073ed20087cd5f97139af/docs/experiments/bio-task-catalog.md): earlier candidates and executable checks, with readiness varying by task.
-- [Benchmark source inventory](https://github.com/marin-community/marin/blob/d3f09bbb3ba2e74c4c3073ed20087cd5f97139af/experiments/post_training/bio_tasks/benchmark_sources.json) and [question inventories](https://github.com/marin-community/marin/tree/d3f09bbb3ba2e74c4c3073ed20087cd5f97139af/experiments/post_training/bio_tasks/benchmark_tasks): auxiliary discovery material; preserve recorded exclusions, including Terminal-Bench-Science, GeneBench, BioMysteryBench and SciCode.
-
-Maintain accepted decisions in the relevant page and unresolved choices here. Track research in [BioTasks issues](https://github.com/Open-Athena/biotasks/issues), with branch-local logbooks and evidence linked by commit permalink. See the [research workflow](research-workflow.md).

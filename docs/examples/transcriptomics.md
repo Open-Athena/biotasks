@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/examples/transcriptomics.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Transcriptomics examples
 
-[Planning overview](../pipeline.md) · [Authoring](../task-authoring.md) · [Requirements](../requirements.md)
+[Planning overview](../README.md) · [Authoring](../task-authoring.md) · [Requirements](../requirements.md)
 
 Use transcriptomics to review the curation process before broadening it. These are candidate sketches, not newly built or runtime-validated tasks. The eventual corpus remains broad.
 

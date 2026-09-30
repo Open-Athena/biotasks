@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/task-authoring.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Task authoring
 
-[Planning overview](pipeline.md) · [Requirements](requirements.md) · [Validation](validation.md)
+[Planning overview](README.md) · [Requirements](requirements.md) · [Validation](validation.md)
 
 Turn inspected scientific use cases into Harbor tasks. Optimize for using established tools: analysis scripts, metadata handling, method configuration and connected scientific decisions. Release-note bug fixes and new algorithm implementation are not the initial target.
 

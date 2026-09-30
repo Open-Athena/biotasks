@@ -1,9 +1,9 @@
 <!-- Adapted from Marin 72008dd68247318a367a840a4f41e27fb15ff7e1:docs/experiments/bio-task-generation/requirements.md.
-Migration changes are documented in docs/migration.md. -->
+Modified for BioTasks documentation structure and repository context. -->
 
 # Task requirements
 
-[Planning overview](pipeline.md)
+[Planning overview](README.md)
 
 These requirements define the future generation pipeline and belong in shared authoring instructions. They do not impose compatibility with the earlier implementation.
 

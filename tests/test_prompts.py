@@ -25,7 +25,7 @@ def test_list_and_read_prompts_outside_checkout(
         assert capsys.readouterr().out == template
 
 
-@pytest.mark.parametrize("name", ["missing", "../NOTICE", "author-task.md"])
+@pytest.mark.parametrize("name", ["missing", "../cli.py", "author-task.md"])
 def test_reject_unknown_prompt(name: str, capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(ValueError, match="Unknown prompt"):
         load_prompt(name)
