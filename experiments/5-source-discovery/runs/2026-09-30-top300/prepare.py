@@ -218,6 +218,19 @@ def assemble():
         else {"exclude": {}, "identity": {}}
     )
 
+    # Apply the final published exclusions, including post-cache review corrections.
+    for route in ["bioconda", "bioconductor", "pypi", "github"]:
+        path = STUDY / f"baseline/data/top200-2026-09-29/ranking-candidates-{route}-2026-09-29.csv"
+        with path.open() as handle:
+            for row in csv.DictReader(handle):
+                if row["status"] == "excluded":
+                    key = (
+                        "github:" + row["package"].lower()
+                        if route == "github"
+                        else route + ":" + row["package"]
+                    )
+                    decisions["exclude"].setdefault(key, row["reason"])
+
     def canonical(url):
         names = github_names(url)
         if names:
@@ -420,8 +433,60 @@ def assemble():
             )
 
 
+def enrich():
+    sources = json.loads((HERE / "provisional.json").read_text())["sources"]
+    names = [
+        r["source_id"][7:]
+        for r in sources
+        if r["source_id"].startswith("github:") and not r["github"]
+    ]
+    records = []
+    for start in range(0, len(names), 35):
+        batch = names[start : start + 35]
+        fields = "nameWithOwner url description stargazerCount isArchived isFork homepageUrl defaultBranchRef { name target { oid } } repositoryTopics(first:100) { nodes { topic { name } } pageInfo { hasNextPage } }"
+        query = (
+            "query {"
+            + "\n".join(
+                f"r{i}: repository(owner:{json.dumps(name.split('/')[0])},name:{json.dumps(name.split('/')[1])}) {{ {fields} }}"
+                for i, name in enumerate(batch)
+            )
+            + "}"
+        )
+        req = HERE / f"metadata/github-{start // 35 + 1:02}-request.json"
+        resp = HERE / f"metadata/github-{start // 35 + 1:02}-response.json"
+        req.write_text(json.dumps({"query": query}) + "\n")
+        proc = subprocess.run(
+            ["gh", "api", "graphql", "--input", str(req)],
+            capture_output=True,
+            text=True,
+            timeout=50,
+        )
+        data = json.loads(proc.stdout)
+        assert "data" in data
+        assert all(e.get("type") == "NOT_FOUND" for e in data.get("errors", []))
+        resp.write_text(proc.stdout)
+        for i, name in enumerate(batch):
+            records.append(
+                {
+                    "requested_name": name,
+                    "metadata": data["data"].get(f"r{i}"),
+                    "observed_at": datetime.datetime.now(datetime.UTC).isoformat(),
+                    "response_sha256": sha(resp),
+                    "discovery_sources": ["top300-identity-only"],
+                }
+            )
+        print("Resolved additional identities", len(records), "/", len(names), flush=True)
+    dump(
+        "github-identities.json",
+        {
+            "records": records,
+            "scope": "Identity and annotation metadata only; never changes frozen GitHub ranking scores or pool.",
+        },
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["collect", "assemble"])
+    parser.add_argument("action", choices=["collect", "assemble", "enrich"])
     args = parser.parse_args()
-    collect() if args.action == "collect" else assemble()
+    {"collect": collect, "assemble": assemble, "enrich": enrich}[args.action]()
