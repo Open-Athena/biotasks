@@ -152,6 +152,8 @@ def main():
                 json.dumps(
                     {
                         "result": "PASS",
+                        "url": args.url,
+                        "offline": args.url.startswith("file:"),
                         "chromium": browser.version,
                         "sources": 672,
                         "ranking_pairs": 6,
@@ -173,8 +175,7 @@ def main():
                             "overlap and exact-membership drilldown",
                             "empty correlation pairs",
                             "mobile horizontal overflow",
-                            "offline operation",
-                        ],
+                        ] + (["offline operation"] if args.url.startswith("file:") else []),
                     }
                 )
             )
