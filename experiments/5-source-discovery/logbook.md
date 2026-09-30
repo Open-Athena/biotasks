@@ -132,3 +132,10 @@ append-only snapshots and retention of cited evidence are operational project
 conventions. A separate PR from current `main` documents these conventions and
 the bucket's research role. This resolves the remaining archival item in
 migration #2; continuing research remains tracked in #5.
+
+The bucket root README is published and verified by anonymous readback and a
+public page check. Its source and maintained storage guidance are proposed in
+[PR #8](https://github.com/Open-Athena/biotasks/pull/8), open against `main`.
+Research evidence is committed and pushed separately; no research branch is
+being merged. The root README can evolve as a catalog without changing the
+retained snapshot.

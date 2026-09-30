@@ -77,3 +77,23 @@ environment. The original `/tmp/bio-discovery-20260929` cache remains in place.
 No billing plan was changed. This completes the durable archival handoff item;
 research continues under issue #5. The original migration inventory remains an
 unchanged historical record of its earlier, non-durable state.
+
+## Bucket landing page and main guidance
+
+At the user's request, a root `README.md` was uploaded separately from the
+retained snapshot. Its reviewed source is `docs/bucket-README.md` in pipeline
+commit `b6d0ad9691ee137e2d7a068d0296082434c187cc`, proposed with the storage and
+AGENTS guidance in [PR #8](https://github.com/Open-Athena/biotasks/pull/8) to
+`main`. The PR is open, not merged. The bucket README is already published.
+
+[Anonymous readback](readme-verification.json) matched all 3,371 source bytes
+and their SHA-256. The [public page check](readme-page-check.json) received HTTP
+200 and found the README title and both snapshot/evidence references in the
+served HTML. Its [transfer record](readme-transfer.txt) reports exit zero,
+0.88 seconds and 54,928 KiB peak RSS. The landing page is a mutable catalog;
+it is outside the retained snapshot prefix.
+
+The [focused archive checks](checks.txt) also cross-checked the manifest against
+the prior allowlist and the upload receipt, and rejected corrupted, missing,
+extra and duplicate members in small synthetic archives. These checks test
+byte-integrity behavior, not the science represented by the cache.
