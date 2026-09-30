@@ -178,6 +178,7 @@ def verify(local_source=False):
     text = (catalog_dir / "outputs/inspection.md").read_text()
     section = text.split("## Utilities command catalog: entry-level status", 1)[1].split("\n## ", 1)[0]
     entries = re.findall(r"^\| `([^`]+)` \| (.*?) \|$", section, re.M)
+    entries.extend((name, "pending") for name in re.findall(r"^`([^`]+)`$", section, re.M))
     names = [x[0] for x in entries]
     counts = collections.Counter("inspected" if x[1].startswith("inspected:") else "pending" if x[1].lower().startswith("pending") else "unknown" for x in entries)
     saved_catalog = read(catalog_dir / "catalog-review.json")
