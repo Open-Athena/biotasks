@@ -1,5 +1,10 @@
 # Source discovery explorer
 
+The current HTML includes the [Composition follow-up](../2026-09-30-composition/README.md),
+which adds distributions for source type and primary group across all four lists
+and the distinct-source union. That record has the current build and validation;
+the initial artifact and checks below remain preserved at their cited revisions.
+
 Build a self-contained HTML explorer of the saved four top-200 lists for issue
 #5. Include every canonical source, including non-GitHub sources and archives;
 preserve the existing identities, scores, labels and missing values. Add linked
@@ -30,10 +35,10 @@ No persistent server or detached browser. The UI must work offline, with
 keyboard controls and at narrow viewport widths. Check counts, correlations,
 filtering, sorting, no-result states, detail links and CSV export.
 
-## Result
+## Initial result (preserved revision)
 
 [Open the HTMLPreview explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/f1daa27965facc3a774f6647329e34d5f5912211/experiments/5-source-discovery/runs/2026-09-30-explorer/explorer.html)
-or [download the HTML](explorer.html). Issue #5 links the published,
+or [download that initial HTML](https://github.com/Open-Athena/biotasks/blob/f1daa27965facc3a774f6647329e34d5f5912211/experiments/5-source-discovery/runs/2026-09-30-explorer/explorer.html). Issue #5 links the current published,
 commit-pinned HTMLPreview version. The 562,189-byte file includes all 672 sources
 and 800 rank entries, with source details, search, filters, sorting and CSV
 export. Its SHA-256 is

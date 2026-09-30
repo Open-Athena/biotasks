@@ -182,3 +182,22 @@ HTML embeds all data and assets and is about 562 KB. Hosted testing found that
 HTMLPreview executes JSON script tags; embedding a JavaScript assignment fixed
 the compatibility issue without changing scientific inputs. This is a research artifact
 on the continuing branch; no promotion to `main` is proposed.
+
+## 2026-09-30 — Compare list composition with the merged union
+
+The user requested source-type and primary-group distributions for each list
+and their merged set. The [Composition follow-up](runs/2026-09-30-composition/README.md)
+adds a dedicated tab with aligned bars for Bioconda, Bioconductor, PyPI, GitHub
+and the canonical-source union. Counts and percentages appear together, with
+selectable common bar scales. Each column shows its denominator. The merged
+set has 672 distinct sources, not 800 ranking positions; its percentages are
+computed from those sources rather than by averaging the four lists.
+
+Both distributions respond to search, type/group/topic filters and list depth.
+Category buttons apply filters, and empty columns have undefined percentages.
+The previous type bars and group heatmap moved from Compare rankings into this
+expanded view. Source labels and rankings remain frozen. Independent checks
+against the original CSVs passed for all five populations, both dimensions,
+both scales, top-100 and top-200, filtered populations and empty states, alongside
+the existing offline interaction and correlation checks. Earlier published
+artifacts and their validation remain reachable in Git history.
