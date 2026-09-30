@@ -110,3 +110,25 @@ retains `67a4fb69924fa57a9a8de11a7aeb291a3419d524` and its ancestors so existing
 evidence permalinks remain reachable. Recorded experiment baselines and
 validation checkpoints still identify the original runs; this rebase does not
 change those historical records.
+
+## 2026-09-30 — Public HF bucket archival
+
+The user selected the public `open-athena/biotasks` Hugging Face Storage Bucket
+for early research artifacts, with HF dataset repositories reserved for eventual
+task releases. The [archive run](runs/2026-09-30-bucket-archive/README.md) preserves
+the exact 950-file migration allowlist (72,973,920 bytes) in a compressed bundle
+with a per-file SHA-256 manifest. The prior inventory and frozen baseline remain
+unchanged; no new scientific measurements or source collection were performed.
+
+Preparation rechecked every source hash. Upload followed a committed object
+plan, and anonymous download into a new directory verified both object hashes
+and all archive members. The public archive is complete. No credential-pattern
+matches were found; this limited scan is not a source-eligibility review. Raw
+provider errors and partial responses remain part of the evidence, and original
+third-party terms still apply. The local source cache was retained.
+
+The manifest hash names the snapshot prefix. Bucket storage itself is mutable;
+append-only snapshots and retention of cited evidence are operational project
+conventions. A separate PR from current `main` documents these conventions and
+the bucket's research role. This resolves the remaining archival item in
+migration #2; continuing research remains tracked in #5.

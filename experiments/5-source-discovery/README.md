@@ -15,6 +15,8 @@ for biological task generation?**
   path, migrated paths and hashes, and recovered local scripts.
 - [Migration validation](runs/2026-09-30-migration/README.md): reproduced results,
   resource records, historical-hash reconciliation, and cache retention limits.
+- [Public cache archive](runs/2026-09-30-bucket-archive/README.md): manifest,
+  artifact locations and anonymous download verification of all 950 retained files.
 - `scripts/verify_baseline.py`: offline, read-only reproduction checks.
 - `baseline/local-scripts/`: original local collection, plotting, and checking
   helpers recovered during migration. These retain historical absolute paths

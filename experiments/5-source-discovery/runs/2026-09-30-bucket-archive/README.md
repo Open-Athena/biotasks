@@ -49,3 +49,31 @@ credential review, or redistribution permission. HF buckets are mutable and
 unversioned: retention and append-only prefixes are project conventions, not
 server-enforced immutability. Preserve cited snapshots while their evidence is
 referenced; record any deliberate retention change.
+
+## Outcome
+
+The public [bucket](https://huggingface.co/buckets/open-athena/biotasks) was created
+and the snapshot uploaded on 2026-09-30. The manifest and upload plan were
+checkpointed at `085787999a27b66eaed6088c06260e8e6e49b121` before transfer; the preparation
+checkpoint is recorded in the manifest. See [manifest.json](manifest.json),
+[plan.json](plan.json), and [verification.json](verification.json).
+
+Anonymous download into a fresh directory verified both objects and all 950
+archive members: 72,973,920 original bytes. The gzip archive is 13,587,211 bytes;
+the manifest is 159,933 bytes. Every source file matched the prior migration
+inventory. The high-confidence credential-pattern scan found no matches; it is
+not a complete secret or redistribution review. The archive retains partial
+and failed responses as evidence, not successful observations.
+
+The exact prefix is
+`hf://buckets/open-athena/biotasks/research/5-source-discovery/2026-09-29/ecea93611df1d0e65dd3ce05b552f4cea5fba886c8fea2a06402aa59f94207f1/`.
+It contains `manifest.json` and `cache.tar.gz`; the upload plan records their
+SHA-256 values. The digest in the prefix matches the exact manifest bytes.
+
+[Preparation](preparation.txt) exited zero in 3.29 seconds at 22,600 KiB peak
+RSS. [Upload and verification](transfer.txt) exited zero in 2.87 seconds at
+81,888 KiB peak RSS. [environment.txt](environment.txt) pins the isolated client
+environment. The original `/tmp/bio-discovery-20260929` cache remains in place.
+No billing plan was changed. This completes the durable archival handoff item;
+research continues under issue #5. The original migration inventory remains an
+unchanged historical record of its earlier, non-durable state.
