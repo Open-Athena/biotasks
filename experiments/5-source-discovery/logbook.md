@@ -201,3 +201,22 @@ against the original CSVs passed for all five populations, both dimensions,
 both scales, top-100 and top-200, filtered populations and empty states, alongside
 the existing offline interaction and correlation checks. Earlier published
 artifacts and their validation remain reachable in Git history.
+
+## 2026-09-30 — Known-source gaps and requested top-300 work
+
+The user requested a knowledge-based discovery-gap audit, all four rankings
+extended to top 300, and the tail of primary-group coverage at top 100/200/300.
+All three directions were published and read back in issue #5 before further
+execution. The [112-repository audit](runs/2026-09-30-discovery-gaps/README.md)
+finds 37 absent from the saved GitHub pool, including 11 currently above its
+889-star cutoff. The latter include MONAI, Evo 2, OpenFold, RFdiffusion, ESM,
+RoseTTAFold, Protenix, Chai, nf-core/rnaseq, StarDist and Flye. Sixteen targeted
+search probes reveal vocabulary, compound-topic matching and sparse-metadata
+gaps. Three erroneous nominee paths were corrected explicitly. This purposive
+panel is not an unbiased recall estimate, and live counts are a separate snapshot.
+
+The depth expansion will remain distinguishable from discovery-pool expansion.
+Additional sources due solely to deeper cutoffs should not be confused with
+known-source additions or broader queries. Tail comparisons will show all
+primary-group counts/shares at the three depths plus explicit low-count summaries
+for each list and the distinct-source union.
