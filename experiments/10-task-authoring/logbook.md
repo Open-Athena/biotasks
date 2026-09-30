@@ -51,3 +51,20 @@ not established; this is not a blanket claim that UCSC or non-commercial
 material cannot be archived on HF. The local copy protects the migrated evidence
 from old-worktree removal, but not loss of the VM. No chat or worktree was
 archived or deleted.
+
+## 2026-09-30 — complete public cache archival
+
+The user explicitly requested archival of the three remaining UCSC files.
+The [final snapshot](../3-authoring-migration/runs/2026-09-30-ucsc-remaining/README.md)
+preserves those exact bytes with upstream notices and source provenance,
+without changing their terms. Its manifest was pushed before transfer. The
+first attempt stopped at the shared-node lock before starting a worker; a
+subsequent guarded transfer succeeded and all objects/members matched after
+anonymous download.
+
+Combined verification across the three snapshots accounts for all 73
+original cache files (8,912,921 bytes), with no missing or duplicate originals.
+None remains local-only. All earlier snapshots and local copies remain
+intact. The migrated evidence no longer depends on retaining the old managed
+worktree. No chat or worktree was archived or deleted here, and no scientific
+run or prompt promotion was performed.

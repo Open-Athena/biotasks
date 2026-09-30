@@ -36,3 +36,8 @@ added the README and two utility source files after file-specific license
 review. Seventy of the 73 original cache files are now publicly archived;
 three still depend on this separate local copy. The manifest above continues
 to describe the original six-file copy operation without rewriting its history.
+
+Final update: the [remaining three-file snapshot](../2026-09-30-ucsc-remaining/README.md)
+is also uploaded and anonymously verified. All 73 original cache files now
+have public HF copies. The local retention directory remains intact but is
+no longer the only retained location for any migrated cache file.

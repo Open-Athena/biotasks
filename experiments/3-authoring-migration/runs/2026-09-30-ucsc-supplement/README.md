@@ -57,3 +57,9 @@ cache files publicly (8,261,560 bytes). The remaining three files total
 That copy survives source-worktree deletion but is not backed up off this VM.
 Preserve the original snapshot, this append-only supplement and the private
 copy while cited.
+
+Final retention update: the user subsequently instructed archival of the
+[remaining three UCSC files](../2026-09-30-ucsc-remaining/README.md). That
+separate snapshot has now been verified anonymously. All 73 original cache
+files are publicly archived with their notices; none remains local-only.
+The counts and exclusions above describe this first supplement's publication.

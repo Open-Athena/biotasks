@@ -33,6 +33,13 @@ the two mixed directory/help captures remain local-only and are not backed up
 off this VM. The original allowlist and manifest describe the first snapshot
 and remain unchanged.
 
+Final update: a [third snapshot](../2026-09-30-ucsc-remaining/README.md) now
+preserves the last three UCSC files with their original notices, following
+the user's instruction. Anonymous download and combined coverage verification
+confirm that all 73 original cache files are publicly archived. No original
+is now local-only; historical exclusions in the first two manifests remain
+unchanged as records of those snapshots.
+
 ## Preparation and provenance
 
 The staging and archive inputs were checkpointed at
