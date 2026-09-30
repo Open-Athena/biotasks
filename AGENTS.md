@@ -66,9 +66,11 @@ installed package and load independently of the working directory.
 
 ## GitHub writing and publication
 
-- Apply the `agent-generated` label to every issue created by an agent,
-  including human-reviewed drafts. Set it when filing (for example, with
-  `gh issue create --label agent-generated`) and verify it after publication.
+- Apply the `agent-generated` label to issues and PRs with agent-authored
+  bodies, including human-reviewed drafts. Set the label when publishing and
+  verify it after publication.
+- Begin agent-authored comments on issues and PRs with `🤖`. Use this marker
+  only in comments, never in issue or PR bodies or commit messages.
 - Write for someone outside the chat. Lead with the problem, changed behavior,
   or current research finding. Include the evidence and limitations needed to
   assess it.
