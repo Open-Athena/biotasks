@@ -13,6 +13,8 @@ for biological task generation?**
 - [Logbook](logbook.md): decisions, observations, open questions, and run records.
 - [Migration manifest](migration.json): source revisions, every changed source
   path, migrated paths and hashes, and recovered local scripts.
+- [Migration validation](runs/2026-09-30-migration/README.md): reproduced results,
+  resource records, historical-hash reconciliation, and cache retention limits.
 - `scripts/verify_baseline.py`: offline, read-only reproduction checks.
 - `baseline/local-scripts/`: original local collection, plotting, and checking
   helpers recovered during migration. These retain historical absolute paths

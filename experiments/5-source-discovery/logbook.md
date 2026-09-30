@@ -65,3 +65,33 @@ calls, biological-data download, paid compute, or figure regeneration.
 Publication plan: push the preservation and validation commits to this research
 branch, link exact commits from issues #5 and #2, and record the remaining
 external-cache archival limitation. No PR or merge is part of this handoff.
+
+### Validation outcome
+
+Executable inputs were checkpointed in `d0e52828229127776a1a5b94b669c711f39e0a5c`.
+The [first verification](runs/2026-09-30-migration/verification-01.txt) passed:
+92 migrated hashes, 400 top-100 positions, 800 top-200 positions, the expansion
+comparison, 27 adoption comparisons, the outlier sensitivity, all 95 adoption
+export rows, topic summaries, and 76 local links. This is saved-input
+reproduction, not fresh collection or independent scientific eligibility review.
+The analysis took 0.21 seconds and peaked at 33,620 KiB RSS; exit status was zero.
+
+Three hashes in the original top-200 baseline provenance refer to the pre-review
+versions of the top-100 GitHub candidate table, exclusions, and provenance.
+Each matches Marin commit `96a144591cced7b577962e0041f0f8b49386a32d` exactly;
+`249d919641` contains the documented eligibility correction. Original provenance
+was preserved, and the migration manifest identifies the imported current
+bytes. The [reconciliation](runs/2026-09-30-migration/historical-hash-check.json)
+records both. No historical result was silently rewritten.
+
+The [retained-cache inventory](runs/2026-09-30-migration/retained-cache.json)
+accounts for 950 local files totaling 72,973,920 bytes after the stated exclusions.
+It is a content inventory, not a copy or durable archive. Cache inventory peaked
+at 30,764 KiB RSS and exited zero. Durable archival remains the outstanding item
+in migration #2; research can continue from the migrated curated inputs.
+
+At the final source check on September 30, the local and remote Marin discovery
+heads still matched `249d919641d20cc1a06ac6a7ae84b34848547363`, and the working
+checkout remained clean. No intervening committed or uncommitted delta was
+observed. Future discovery work continues here; the Marin branch is retained.
+Repository licenses match, and original script attribution is preserved.
