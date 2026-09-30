@@ -1,0 +1,6 @@
+from pathlib import Path
+import datetime,json,hashlib,re,sys
+p=Path('docs/experiments/bio-task-generation/prompt-experiments')/sys.argv[1];p=p.resolve();r=json.loads((p/'run.json').read_text());now=datetime.datetime.now(datetime.timezone.utc);deadline=(now+datetime.timedelta(minutes=r['execution']['budget_minutes'])).isoformat()
+launch=(p/'launch-message.txt').read_text();launch=re.sub(r'Your maximum budget ends at [^.]+\.[0-9]+\+00:00\.',f'Your maximum budget ends at {deadline}.',launch);(p/'launch-message.txt').write_text(launch)
+r['status']='launch requested';r['execution'].update(prepared_at_utc=now.isoformat(),deadline_utc=deadline,launch_message_sha256=hashlib.sha256(launch.encode()).hexdigest(),agent_task='/root/'+sys.argv[2],launch_observed_at_utc=now.isoformat(),spawn_message=f'Read {p}/launch-message.txt and carry out that assignment. Read only that launch file, its referenced resolved prompt and source-access instructions, and the external repository sources you discover. Do not read parent documentation, review criteria, sibling experiments, or previous outputs. Write only to the assigned outputs directory.')
+(p/'run.json').write_text(json.dumps(r,indent=2)+'\n');print(deadline)

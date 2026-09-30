@@ -1,0 +1,30 @@
+from pathlib import Path
+import json,hashlib,datetime,sys
+p=Path(sys.argv[1]); now=datetime.datetime.now(datetime.timezone.utc).isoformat()
+required={'units':'unit_id title repo repo_revision source_kind sources scientific_use tool_role tool_role_basis inputs outputs dependencies dataset_ids related_unit_ids evidence limitations'.split(),'datasets':'dataset_id title kind study_ids provenance biological_context assets access_and_terms inspection limitations'.split()}
+rows={}; errors=[]
+for kind in required:
+ rows[kind]=[json.loads(x) for x in (p/'outputs'/f'{kind}.jsonl').read_text().splitlines() if x.strip()]
+ ids=[]
+ for i,row in enumerate(rows[kind]):
+  missing=set(required[kind])-row.keys()
+  if missing: errors.append(f'{kind}[{i}]: missing {sorted(missing)}')
+  ids.append(row['unit_id' if kind=='units' else 'dataset_id'])
+ if len(ids)!=len(set(ids)): errors.append(f'{kind}: duplicate IDs')
+uids={r['unit_id'] for r in rows['units']}; dids={r['dataset_id'] for r in rows['datasets']}
+for row in rows['units']:
+ if row['tool_role'] not in ['tool_use','tool_creation','mixed']:errors.append(f"role: {row['unit_id']}")
+ for key,allowed in [('dataset_ids',dids),('related_unit_ids',uids)]:
+  for ref in row[key]:
+   if ref not in allowed: errors.append(f"{row['unit_id']}: dangling {key} {ref}")
+review={'counts':{k:len(v) for k,v in rows.items()},'structural_errors':errors,'scope':'JSONL parsing, required fields, unique IDs, role vocabulary and inventory references only; semantic review is separate.'}
+(p/'structural-review.json').write_text(json.dumps(review,indent=2)+'\n')
+inspection=p/'outputs/inspection.md'; raw=inspection.read_text(); normalized='\n'.join(x.rstrip() for x in raw.splitlines())+'\n'
+run=json.loads((p/'run.json').read_text())
+if normalized!=raw:
+ (p/'original-inspection.json').write_text(json.dumps({'path':'outputs/inspection.md','sha256':hashlib.sha256(raw.encode()).hexdigest(),'content':raw},indent=2)+'\n'); inspection.write_text(normalized)
+ run['normalization']='Markdown trailing spaces only; exact original bytes retained in original-inspection.json.'
+run['status']='completed and parent-reviewed'; run['outputs']=review.copy(); run['outputs']['artifact_sha256']={str(f.relative_to(p)):hashlib.sha256(f.read_bytes()).hexdigest() for f in [*sorted((p/'outputs').iterdir()),p/'worker-final.txt',p/'structural-review.json'] if f.exists()}
+if (p/'original-inspection.json').exists():run['outputs']['artifact_sha256']['original-inspection.json']=hashlib.sha256((p/'original-inspection.json').read_bytes()).hexdigest()
+run['review_recorded_at_utc']=now; run['execution'].setdefault('completion_observed_at_utc',now);run['execution'].setdefault('completion_timestamp_precision','Parent observation after result arrival; not measured model runtime.')
+(p/'run.json').write_text(json.dumps(run,indent=2)+'\n');print(p.name,review)

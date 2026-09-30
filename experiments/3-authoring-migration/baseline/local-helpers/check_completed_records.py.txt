@@ -1,0 +1,17 @@
+from pathlib import Path
+import datetime, json, os, resource, subprocess
+r=Path('docs/experiments/bio-task-generation/prompt-experiments')
+files=[Path('docs/experiments/bio-task-generation/prompts/find-units.md'),r/'index.md',r/'2026-09-30-comparison.json',r/'2026-09-30-model-effort-comparison.json',r/'2026-09-30-uncapped-model-effort-comparison.json',r/'2026-09-30-round2-deseq2-luna/index.md']
+for pattern in ['2026-09-30-round3-*','2026-09-30-round4-*','2026-09-30-knobs-*','2026-09-30-uncapped-*','2026-09-30-catalog-*']:
+ for d in sorted(r.glob(pattern)):
+  if (d/'index.md').exists() and (d/'structural-review.json').exists(): files.extend(sorted(x for x in d.rglob('*') if x.is_file()))
+mem=int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:')))*1024
+load=os.getloadavg()[0]; estimate=150*1024**2
+if load>=1.5 or mem<2.5*1024**3 or mem-estimate<2*1024**3:raise SystemExit(f'Resource gate: load={load}, available={mem}')
+record={'start_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'working_set_estimate_mib':150,'files':len(files),'load':load,'available_bytes':mem}
+before={str(p):p.read_bytes() for p in files}
+a=subprocess.run(['./infra/pre-commit.py','--fix',*map(str,files)])
+b=subprocess.run(['uv','run','--no-sync','python','infra/check_docs_source_links.py'])
+record.update(end_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),lint_exit_status=a.returncode,source_links_exit_status=b.returncode,peak_child_rss_kib=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,formatter_changed_files=[str(p) for p in files if p.read_bytes()!=before[str(p)]])
+Path('artifacts/bio-task-generation/latest-record-checks.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record))
+raise SystemExit(a.returncode or b.returncode)
