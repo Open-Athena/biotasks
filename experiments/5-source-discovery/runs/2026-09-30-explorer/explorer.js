@@ -73,7 +73,7 @@ function showTab(tab) {
   state.tab=tab;
   document.querySelectorAll(".view").forEach(el=>el.hidden=el.id!==tab);
   document.querySelectorAll("[data-tab]").forEach(el=>{ if(el.dataset.tab===tab) el.setAttribute("aria-current","page"); else el.removeAttribute("aria-current"); });
-  $("filters").hidden=!["explore","compare"].includes(tab);
+  $("filters").hidden=!["explore","composition","compare"].includes(tab);
   render();
 }
 function applyType(type){state.type=type;$("type").value=type;resetSelection();render();}
@@ -84,6 +84,7 @@ function render() {
   const rows=filtered();
   $("filter-status").innerHTML=`<strong>${fmt(rows.length)}</strong> of 672 sources · ${new Set(rows.map(r=>r.domain)).size} primary groups · ${new Set(rows.map(r=>r.topic)).size} finer topics · at least one rank ≤ ${state.depth}`;
   if(state.tab==="explore") renderTable();
+  if(state.tab==="composition") renderComposition(rows);
   if(state.tab==="compare") renderComparison(rows);
   if(state.tab==="adoption") renderAdoption();
 }
@@ -116,7 +117,7 @@ function renderComparison(rows) {
   const combinations=[...groups].sort((a,b)=>b[1]-a[1]||a[0]-b[0]);
   const maximum=Math.max(1,...groups.values());
   $("intersections").innerHTML=`<div class="upset-head">${M.map(m=>`<span title="${N[m]}">${SHORT[m]}</span>`).join("")}<span>Sources</span><span>n</span></div>`+combinations.map(([bits,n])=>`<button class="intersection" data-mask="${bits}" aria-label="Only ${esc(M.filter((m,i)=>bits&(1<<i)).map(m=>N[m]).join(' and '))}: ${n} sources">${M.map((m,i)=>`<span class="membership-dot ${bits&(1<<i)?"on":""}"></span>`).join("")}<span class="intersection-track"><span style="width:${100*n/maximum}%"></span></span><span class="intersection-value">${n}</span></button>`).join("")+(combinations.length?"":"<p class=\"empty\">No matching sources.</p>");
-  renderRank(rows);renderTypes(rows);renderCoverage(rows);renderDepth();
+  renderRank(rows);renderDepth();
 }
 function scatter(points,xLabel,yLabel,{rank=false,maxRank=200}={}) {
   const w=760,h=390,left=70,right=22,top=25,bottom=58,pw=w-left-right,ph=h-top-bottom;
@@ -142,17 +143,37 @@ function renderRank(rows) {
   $("rank-summary").innerHTML=`<span>Spearman ρ</span><strong class="rho">${rhoLabel(s.rho)}</strong><strong>${s.shared.length} shared sources</strong><p>${s.first} in ${esc(N[a])}<br>${s.second} in ${esc(N[b])}<br>${s.jaccard===null?"—":pct(s.jaccard)} Jaccard overlap</p><p>${s.shared.length<10?"Very small intersection: interpret cautiously.":"Agreement is conditional on selection in both lists."}</p><p>Rank 1 is at the top left. Dotted line: equal recorded ranks. Color indicates source type.</p><button class="quiet" id="inspect-rank-pair">Inspect shared sources →</button>`;
   $("inspect-rank-pair").onclick=()=>inspectSelection({kind:"pair",pair:[a,b]});
 }
-function renderTypes(rows) {
-  $("types").innerHTML=M.map(m=>{
-    const list=rows.filter(r=>selected(r,m));
-    return `<div class="type-row"><div class="type-label"><span><span class="dot ${m}"></span>${N[m]}</span><span>n = ${list.length}</span></div><div class="stack">${TYPES.map((t,i)=>{const count=list.filter(r=>r.type===t).length;return count?`<button data-type="${esc(t)}" style="width:${100*count/list.length}%;background:${TYPE_COLORS[i]}" aria-label="${esc(N[m]+': '+t)}, ${count} of ${list.length}" title="${esc(t)}: ${count} (${pct(count/list.length)})"></button>`:"";}).join("")}</div></div>`;
-  }).join("");
-  $("type-legend").innerHTML=TYPES.map((t,i)=>`<button data-type="${esc(t)}"><i style="background:${TYPE_COLORS[i]}"></i>${esc(t)}</button>`).join("");
+function compositionData(rows,field) {
+  const cohorts=[...M,"merged"].map(key=>{
+    const members=key==="merged"?rows:rows.filter(r=>selected(r,key));
+    const counts={};
+    for(const r of members) counts[r[field]]=(counts[r[field]]||0)+1;
+    return {key,name:key==="merged"?"Merged union":N[key],n:members.length,counts};
+  });
+  const totals=cohorts.at(-1).counts;
+  const categories=Object.keys(totals).sort((a,b)=>totals[b]-totals[a]||a.localeCompare(b));
+  return {cohorts,categories};
 }
-function renderCoverage(rows) {
-  const domains=[...new Set(rows.map(r=>r.domain))].sort((a,b)=>rows.filter(r=>r.domain===b).length-rows.filter(r=>r.domain===a).length||a.localeCompare(b));
-  const mode=$("coverage-mode").value;
-  $("coverage").innerHTML=`<table class="coverage-table"><thead><tr><th scope="col">Primary group</th>${M.map(m=>`<th scope="col">${SHORT[m]}</th>`).join("")}</tr></thead><tbody>${domains.map(domain=>`<tr><td><button data-domain="${esc(domain)}">${esc(domain)}</button></td>${M.map(m=>{const n=rows.filter(r=>selected(r,m)).length,count=rows.filter(r=>selected(r,m)&&r.domain===domain).length,value=n?count/n:0;return `<td><div class="coverage-cell" title="${esc(domain)}: ${count} of ${n} ${N[m]} sources" style="background:rgba(0,109,114,${count?.06+.42*Math.min(1,value/.4):0})">${mode==="count"?count:n?pct(value):"—"}</div></td>`;}).join("")}</tr>`).join("")}</tbody></table>`;
+function distributionTable(rows,field,title) {
+  const {cohorts,categories}=compositionData(rows,field);
+  const percent=$("composition-mode").value==="percent";
+  const maximum=percent?1:Math.max(1,...Object.values(cohorts.at(-1).counts));
+  const scale=percent?"0–100% of each filtered column":`0–${fmt(maximum)} sources in every column`;
+  const header=`<thead><tr><th scope="col">${title}<small>Ordered by merged count</small></th>${cohorts.map(c=>`<th scope="col" data-cohort="${c.key}" class="${c.key==="merged"?"merged-column":""}"><span class="cohort-dot" style="background:${COLORS[c.key]||"#153543"}"></span>${esc(c.name)}<small>n = ${fmt(c.n)} sources</small></th>`).join("")}</tr></thead>`;
+  const body=categories.map(category=>`<tr><th scope="row"><button data-${field==="type"?"type":"domain"}="${esc(category)}">${esc(category)}</button></th>${cohorts.map(c=>{
+    const count=c.counts[category]||0,share=c.n?count/c.n:null;
+    const width=100*(percent?(share||0):count)/maximum;
+    return `<td data-cohort="${c.key}" data-count="${count}" data-total="${c.n}" class="${c.key==="merged"?"merged-column":""}" title="${esc(category)} · ${esc(c.name)}: ${count} of ${c.n} sources${share===null?"; no sources in this column":` (${pct(share)})`}"><div class="distribution-value"><strong>${fmt(count)}</strong><span>${share===null?"—":pct(share)}</span></div><div class="distribution-track" aria-hidden="true"><span style="width:${width}%;background:${COLORS[c.key]||"#153543"}"></span></div></td>`;
+  }).join("")}</tr>`).join("");
+  return {html:`<table class="distribution-table" aria-label="${title} distribution; bars ${scale}">${header}<tbody>${body||'<tr><td colspan="6" class="empty">No sources match these filters. Reset filters to restore the distributions.</td></tr>'}</tbody></table>`,scale};
+}
+function renderComposition(rows) {
+  $("composition-scope").textContent=`${fmt(rows.length)} distinct sources in the filtered union · top ${state.depth} per list.`;
+  for(const [id,field,title] of [["types","type","Source type"],["coverage","domain","Primary group"]]) {
+    const result=distributionTable(rows,field,title);
+    $(id).innerHTML=result.html;
+    $(id).nextElementSibling.textContent=`Bar scale: ${result.scale}. Shares sum to 100% in each nonempty column before rounding. — means an empty column, not zero share.`;
+  }
 }
 function depthData() {return [10,25,50,75,100,125,150,175,200].map(k=>{const rows=filtered(k);return {k,n:rows.length,topics:new Set(rows.map(r=>r.topic)).size,domains:new Set(rows.map(r=>r.domain)).size};});}
 function renderDepth() {
@@ -206,7 +227,8 @@ $("reset").onclick=()=>{Object.assign(state,{search:"",type:"",domain:"",topic:"
 document.querySelectorAll("[data-sort]").forEach(b=>b.onclick=()=>{const sort=b.dataset.sort;state.direction=sort===state.sort?-state.direction:sort==="lists"?-1:1;state.sort=sort;state.page=0;renderTable();});
 $("page-size").onchange=()=>{state.pageSize=Number($("page-size").value);state.page=0;renderTable();};
 $("previous").onclick=()=>{state.page--;renderTable();};$("next").onclick=()=>{state.page++;renderTable();};$("export").onclick=exportCSV;
-for(const id of ["overlap-mode","coverage-mode"])$(id).onchange=()=>renderComparison(filtered());
+$("overlap-mode").onchange=()=>renderComparison(filtered());
+$("composition-mode").onchange=()=>renderComposition(filtered());
 $("rank-pair").onchange=()=>{state.rankPair=Number($("rank-pair").value);renderRank(filtered());};
 $("adoption-pair").onchange=()=>{state.adoptionPair=Number($("adoption-pair").value);renderAdoption();};
 $("close-dialog").onclick=()=>$("source-dialog").close();
@@ -223,5 +245,5 @@ document.addEventListener("click",event=>{
 document.addEventListener("keydown",event=>{if(["Enter"," "].includes(event.key)&&event.target.matches("svg .point")){event.preventDefault();event.target.dispatchEvent(new MouseEvent("click",{bubbles:true}));}});
 renderMethods();render();
 // Expose the pure calculations for research-side numerical checks, without a server.
-window.DiscoveryExplorer={data:D,state,filtered,tableRows,pairStats,adoptionStats,depthData,spearman,csvContent,render,showTab};
+window.DiscoveryExplorer={data:D,state,filtered,tableRows,pairStats,adoptionStats,depthData,compositionData,spearman,csvContent,render,showTab};
 })();

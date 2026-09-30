@@ -5,11 +5,99 @@ import csv
 import io
 import json
 import math
+from collections import Counter
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
 
 HERE = Path(__file__).resolve().parent
+
+
+def check_composition(page, depth=200, source_type=None, primary_group=None):
+    """Compare rendered cells to independent sets built from the original CSVs."""
+    baseline = HERE.parent.parent / "baseline/data/top200-2026-09-29"
+    with (baseline / "source-annotations-2026-09-29.csv").open() as handle:
+        labels = {r["source_id"]: r for r in csv.DictReader(handle)}
+    cohorts = {key: set() for key in ("bioconda", "bioconductor", "pypi", "github")}
+    with (baseline / "rankings-2026-09-29.csv").open() as handle:
+        for row in csv.DictReader(handle):
+            annotation = labels[row["source_id"]]
+            if int(row["rank"]) > depth:
+                continue
+            if source_type and annotation["source_type"] != source_type:
+                continue
+            if primary_group and annotation["primary_domain"] != primary_group:
+                continue
+            cohorts[row["ranking"]].add(row["source_id"])
+    cohorts["merged"] = set().union(*cohorts.values())
+    mode = page.locator("#composition-mode").input_value()
+    for container, field, attribute in (
+        ("types", "source_type", "type"),
+        ("coverage", "primary_domain", "domain"),
+    ):
+        counts = {
+            key: Counter(labels[source][field] for source in ids) for key, ids in cohorts.items()
+        }
+        cells = page.locator(f"#{container}").evaluate(
+            """(el, attr) => [...el.querySelectorAll('tbody tr')].map(row => ({
+              category: row.querySelector('button').dataset[attr],
+              cells: [...row.querySelectorAll('td')].map(cell => ({
+                key: cell.dataset.cohort, count: Number(cell.dataset.count),
+                total: Number(cell.dataset.total),
+                share: cell.querySelector('.distribution-value span').textContent,
+                width: parseFloat(cell.querySelector('.distribution-track span').style.width)
+              }))
+            }))""",
+            attribute,
+        )
+        assert {row["category"] for row in cells} == set(counts["merged"])
+        maximum = 1 if mode == "percent" else max(counts["merged"].values())
+        for row in cells:
+            assert [cell["key"] for cell in row["cells"]] == list(cohorts)
+            for cell in row["cells"]:
+                key = cell["key"]
+                count, total = counts[key][row["category"]], len(cohorts[key])
+                assert (cell["count"], cell["total"]) == (count, total)
+                share = count / total if total else None
+                if share is None:
+                    assert cell["share"] == "—"
+                else:
+                    assert abs(float(cell["share"].rstrip("%")) - 100 * share) <= 0.050001
+                expected_width = 100 * ((share or 0) if mode == "percent" else count) / maximum
+                assert math.isclose(cell["width"], expected_width, abs_tol=0.0001)
+        for key in cohorts:
+            assert sum(
+                cell["count"] for row in cells for cell in row["cells"] if cell["key"] == key
+            ) == len(cohorts[key])
+
+
+def exercise_composition(page, screenshots):
+    page.locator('[data-tab="composition"]').click()
+    assert page.locator("#filters").is_visible()
+    assert "672 distinct" in page.locator("#composition-scope").inner_text()
+    check_composition(page)
+    page.screenshot(path=str(screenshots / "composition-desktop.png"), full_page=True)
+    page.locator("#composition-mode").select_option("count")
+    check_composition(page)
+    page.locator("#depth").select_option("100")
+    assert "335 distinct" in page.locator("#composition-scope").inner_text()
+    check_composition(page, depth=100)
+    page.locator("#composition-mode").select_option("percent")
+    check_composition(page, depth=100)
+    page.locator("#reset").click()
+    page.locator('#types [data-type="Agent instructions"]').click()
+    assert page.locator("#type").input_value() == "Agent instructions"
+    check_composition(page, source_type="Agent instructions")
+    assert "—" in page.locator("#types").inner_text()
+    page.locator("#reset").click()
+    page.locator('#coverage [data-domain="Immunology"]').click()
+    check_composition(page, primary_group="Immunology")
+    page.locator("#reset").click()
+    page.locator("#search").fill("not-a-source-unique-test")
+    assert page.locator("#composition .empty").count() == 2
+    assert "NaN" not in page.locator("#composition").inner_text()
+    page.locator("#reset").click()
+    page.locator('[data-tab="explore"]').click()
 
 
 def main():
@@ -48,6 +136,7 @@ def main():
             page.wait_for_function("window.DiscoveryExplorer !== undefined", timeout=30000)
             assert page.locator("#source-rows tr").count() == 25
             assert "672" in page.locator("#filter-status").inner_text()
+            exercise_composition(page, args.screenshots)
             comparison = page.evaluate("""() => {
                 const e=window.DiscoveryExplorer;
                 return {pairs:e.data.baselinePairs.map(p=>({expected:p,actual:e.pairStats(e.data.sources,p.first,p.second,200)})),
@@ -145,6 +234,11 @@ def main():
             page.screenshot(path=str(args.screenshots / "explorer-mobile.png"), full_page=True)
             page.locator('[data-tab="compare"]').click()
             assert page.evaluate("document.documentElement.scrollWidth<=window.innerWidth")
+            page.locator('[data-tab="composition"]').click()
+            assert page.evaluate("document.documentElement.scrollWidth<=window.innerWidth")
+            assert page.locator("#types").evaluate("el=>el.scrollWidth>el.clientWidth")
+            page.locator("#types").evaluate("el=>el.scrollLeft=el.scrollWidth")
+            page.screenshot(path=str(args.screenshots / "composition-mobile.png"), full_page=True)
             assert not errors, errors
             if args.url.startswith("file:"):
                 assert not [url for url in requests if url.startswith(("https:", "http:"))]
@@ -164,6 +258,9 @@ def main():
                         "page_errors": errors,
                         "network_requests": len(requests),
                         "checks": [
+                            "type and primary-group distributions against original CSVs",
+                            "deduplicated union, top-100 depth, filters, zero and empty populations",
+                            "count and percentage bar scales and denominators",
                             "exact saved correlations and counts",
                             "ties and missing values",
                             "all four rank sorts in both directions, nulls last",
