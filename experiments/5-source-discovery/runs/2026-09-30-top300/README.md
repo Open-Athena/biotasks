@@ -99,6 +99,14 @@ not establish complete biological discovery. The separate
 [known-repository audit](../2026-09-30-discovery-gaps/README.md) remains a diagnostic
 of that pool. None of its newly nominated repositories is seeded into these lists.
 
+A separate [panel crosswalk](gap-crosswalk.json) finds that depth alone recovers
+10 of the 50 panel repositories absent from the top-200 union: HyenaDNA, ProGen,
+scVelo, the older CellChat, BWA-MEM2, hifiasm, Flye, IGV, FreeSurfer and fMRIPrep.
+Forty remain absent. Flye appears through Bioconda at rank 223 even though it was
+absent from the saved GitHub pool. The other ten high-star pool misses—including
+MONAI, Evo 2, OpenFold and RFdiffusion—remain absent from all four top-300 lists.
+This purposive-panel comparison is not an unbiased recall estimate.
+
 [decisions.json](decisions.json) records exclusions and identity corrections.
 General interval/graph/optimization utilities, nonbiological materials tools and
 an ambiguous packaging-only bundle are excluded. Dedicated ecosystem support is
