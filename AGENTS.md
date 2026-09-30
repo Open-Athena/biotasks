@@ -59,8 +59,12 @@ installed package and load independently of the working directory.
 - Close a completed experiment's issue with a conclusion even if no pipeline
   change is promoted. Retain research branches or preserve a published archive
   tag before deletion. Preserve referenced external artifacts too.
-- Keep large inputs and traces in versioned external storage, with checksums and
-  retention recorded. Do not commit credentials, environments, or downloaded data.
+- Keep large research inputs and traces in the public `open-athena/biotasks` HF
+  bucket, following the [storage conventions](docs/storage.md#research-bucket-snapshots).
+  Use append-only snapshot paths with Git-versioned manifests, checksums,
+  verified downloads and recorded retention; buckets themselves are unversioned.
+  Review public eligibility before uploading. Keep credentials, environments and
+  downloaded data out of Git. Task releases use commit-pinned dataset repositories.
 - Follow the user's publication instructions. Distinguish local, committed,
   pushed, PR-opened, and merged states.
 
