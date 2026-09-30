@@ -180,3 +180,8 @@ The generated HTML is about 807 KB, contains all data/assets and has no runtime
 provider requests. Earlier preview versions are preserved. This result remains
 on the research branch; no PR to or merge into `main` is proposed. Public-preview
 verification is recorded in `public-preview-check.txt` after publication.
+
+[Open the verified HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/2059b5d1a0ca124d18ebaec6e0a71a84de73856c/experiments/5-source-discovery/runs/2026-09-30-top300/explorer.html). The exact public URL passed the same
+browser checks as the offline artifact, with no page errors.
+[Publication record](publication.json) identifies the immutable HTML commit,
+its SHA-256 and runtime environment.

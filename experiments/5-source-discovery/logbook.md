@@ -235,3 +235,11 @@ This prevents a changing count of sparse groups from being mistaken for coverage
 improvement. Counts and shares tell different stories. Next useful work is targeted
 discovery in thin groups and the missed vocabulary exposed by the gap audit,
 with any broader pool kept separate from this controlled depth comparison.
+
+Saved-table checks and offline/public browser validation passed for the new
+explorer, including all 18 ranking correlations at three depths, six adoption
+pairs, all tail selectors and desktop/mobile layouts. The gap-panel crosswalk
+shows that depth alone recovers 10 of the 50 previously absent panel sources,
+including Flye through Bioconda; 40 remain absent from the top-300 union. This
+is a purposive diagnostic, not unbiased recall. The original 37 GitHub-pool
+misses remain pool misses because this run does not broaden that pool.
