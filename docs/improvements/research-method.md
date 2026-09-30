@@ -5,6 +5,8 @@
 The [research checkpoint](https://github.com/Open-Athena/biotasks/tree/aabc8012f4b23f9bd48cd8ea108b9e2efdc39cf2/experiments/7-biology-pitfalls)
 preserves the issue scope, logbook, software-record selection and validation
 evidence behind this synthesis.
+The [subsequent review checkpoint](https://github.com/Open-Athena/biotasks/tree/94f5aa685bc3b809335b26b5270c6244a029b372/experiments/7-biology-pitfalls)
+preserves the independent report, corrections and initial hypothesis entries.
 
 ## Question and boundary
 
