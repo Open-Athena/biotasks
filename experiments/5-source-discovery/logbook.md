@@ -139,3 +139,21 @@ public page check. Its source and maintained storage guidance are proposed in
 Research evidence is committed and pushed separately; no research branch is
 being merged. The root README can evolve as a catalog without changing the
 retained snapshot.
+
+## 2026-09-30 — Rebase after storage guidance merged
+
+[PR #8](https://github.com/Open-Athena/biotasks/pull/8) merged as
+`37271415c4c201ba9dbbda66c203caa4050744c3`. The continuing research branch was
+rebased onto that freshly fetched `origin/main` revision, which also includes
+the agent-attribution guidance from PR #9. The rebase completed without
+conflicts. Git range-diff matched all eight research patches exactly, and the
+entire experiment tree was byte-identical to the previous tip before this
+logbook entry. No scientific analysis or storage transfer was rerun.
+
+The published archive tag
+[`archive/research/5-source-discovery-20260930-pre-storage-rebase`](https://github.com/Open-Athena/biotasks/tree/archive/research/5-source-discovery-20260930-pre-storage-rebase)
+preserves `6bb14ef5eea9a58b6b704808ff21bdecb8791170` and its ancestors. Existing
+Git-pinned manifests, upload receipts, bucket README links and original run
+checkpoints remain reachable and unchanged. The earlier pre-rebase archive tag
+is retained too. The recorded historical statements that PR #8 was open describe
+publication at that time; the storage guidance is now on `main`.
