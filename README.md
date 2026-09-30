@@ -20,8 +20,9 @@ uv sync --locked --python "$(cat .python-version)"
 uv run --locked pre-commit install
 ```
 
-This installs the package in editable mode and the locked development tools.
-Dependency upgrades require intentional changes to the pins and lockfile.
+This installs the package in editable mode and the locked development tools,
+including uv. CI selects uv from `uv.lock`. Dependency upgrades require
+intentional changes to the pins and lockfile.
 
 ## Inspect prompts
 

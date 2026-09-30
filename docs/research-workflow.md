@@ -44,16 +44,20 @@ before deleting it. Referenced external artifacts need durable retention too.
 
 ## Maintain the environment
 
-Use the Python patch in `.python-version` and the uv version required by
-`pyproject.toml`. Direct dependencies and development tools use exact versions;
-`uv.lock` pins the resolved environment. Use `uv sync --locked` and
-`uv run --locked` so metadata drift requires an intentional lockfile update.
+Use the Python patch in `.python-version` and the uv development dependency pinned
+in `pyproject.toml`. Direct dependencies and development tools use exact versions;
+`uv.lock` pins the resolved environment and supplies CI's uv version. Use
+`uv sync --locked` and `uv run --locked` so metadata drift requires an intentional
+lockfile update. Keep the uv pin in the development dependencies rather than an
+exact `tool.uv.required-version` guard: Dependabot uses its own uv runtime to
+propose lockfile updates, and CI validates them with the project's pinned version.
 
 Dependabot proposes monthly dependency and GitHub Actions updates. Grouped minor
 and patch updates reduce development-tool churn; runtime and major changes stay
 separate. Review and validate before merging. Changes that could affect scientific
-outputs need relevant pipeline evidence. Python and uv upgrades are explicit
-maintenance changes. Preserved research environments remain unchanged.
+outputs need relevant pipeline evidence. Python upgrades are explicit maintenance
+changes; uv upgrades go through the same reviewed dependency-update process.
+Preserved research environments remain unchanged.
 
 The workflow YAML configures checks; repository settings control required checks,
 branch protection, and Dependabot alerts/security updates. Verify those settings

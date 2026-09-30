@@ -35,9 +35,11 @@ for the proposed scientific workflow. Planning text is not execution evidence.
 - Keep reference-case descriptions in `docs/`. No skills directory or issue/PR
   templates are required. Add structure when there is content to justify it.
 - Pin Python in `.python-version`, direct and development dependencies in
-  `pyproject.toml`, transitive dependencies in `uv.lock`, and uv through
-  `tool.uv.required-version`. Use the same locked environment for hooks and CI.
-  Upgrade deliberately and revalidate affected behavior.
+  `pyproject.toml`, and transitive dependencies in `uv.lock`. Pin uv as a
+  development dependency; CI reads its version from the lockfile. Avoid an exact
+  `tool.uv.required-version` guard, which blocks Dependabot's own uv runtime.
+  Use the same locked environment for hooks and CI. Upgrade deliberately and
+  revalidate affected behavior.
 
 ## Checks
 
