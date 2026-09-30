@@ -27,8 +27,20 @@ def now():
     return datetime.datetime.now(datetime.UTC).isoformat()
 
 
-def collect():
+def collect(corrections=False):
     nominees = read_rows(HERE / "nominees.tsv")
+    prefix = "correction-" if corrections else ""
+    if corrections:
+        mapping = json.loads((HERE / "identity-corrections.json").read_text())
+        nominees = [
+            {
+                **r,
+                "original_nominee": r["repository"],
+                "repository": mapping[r["repository"]]["repository"],
+            }
+            for r in nominees
+            if r["repository"] in mapping
+        ]
     assert len(nominees) <= 150
     assert len({r["repository"].lower() for r in nominees}) == len(nominees)
     fields = """id nameWithOwner url description stargazerCount isArchived isFork createdAt
@@ -43,8 +55,8 @@ def collect():
             clauses.append(
                 f"r{i}: repository(owner:{json.dumps(owner)},name:{json.dumps(name)}) {{ {fields} }}"
             )
-        request = HERE / f"query-{offset // 30 + 1:02}.json"
-        response = HERE / f"response-{offset // 30 + 1:02}.json"
+        request = HERE / f"{prefix}query-{offset // 30 + 1:02}.json"
+        response = HERE / f"{prefix}response-{offset // 30 + 1:02}.json"
         request.write_text(json.dumps({"query": "query {" + "\n".join(clauses) + "}"}) + "\n")
         start = now()
         proc = subprocess.run(
@@ -79,11 +91,21 @@ def collect():
         "requests": requests,
         "records": records,
     }
-    (HERE / "observations.json").write_text(json.dumps(output, indent=2) + "\n")
+    (HERE / f"{prefix}observations.json").write_text(json.dumps(output, indent=2) + "\n")
 
 
 def analyze():
     observations = json.loads((HERE / "observations.json").read_text())
+    correction_file = HERE / "correction-observations.json"
+    if correction_file.exists():
+        corrected = {
+            r["original_nominee"]: r for r in json.loads(correction_file.read_text())["records"]
+        }
+        for i, row in enumerate(observations["records"]):
+            if row["repository"] in corrected:
+                assert row["metadata"] is None
+                replacement = corrected[row["repository"]]
+                observations["records"][i] = {**replacement, "repository": row["repository"]}
     pool = {
         r["package"].lower(): r for r in read_rows(TOP / "ranking-candidates-github-2026-09-29.csv")
     }
@@ -164,6 +186,9 @@ def analyze():
     }
     result = {
         "observation_sha256": digest(HERE / "observations.json"),
+        "correction_observation_sha256": digest(correction_file)
+        if correction_file.exists()
+        else None,
         "baseline_sha256": {
             str(p.relative_to(BASE)): digest(p)
             for p in [
@@ -178,8 +203,52 @@ def analyze():
     print(json.dumps(summary, indent=2))
 
 
+def probe():
+    results = []
+    for case in json.loads((HERE / "probes.json").read_text()):
+        query = f"{case['term']} repo:{case['repo']} in:{case['fields']} fork:false is:public stars:>=500"
+        proc = subprocess.run(
+            [
+                "gh",
+                "api",
+                "search/repositories",
+                "--method",
+                "GET",
+                "-f",
+                "q=" + query,
+                "-F",
+                "per_page=10",
+            ],
+            capture_output=True,
+            text=True,
+            timeout=40,
+        )
+        if proc.returncode:
+            raise RuntimeError(proc.stderr)
+        data = json.loads(proc.stdout)
+        result = {
+            **case,
+            "query": query,
+            "observed_at": now(),
+            "total_count": data["total_count"],
+            "incomplete_results": data["incomplete_results"],
+            "matches": [r["full_name"] for r in data["items"]],
+        }
+        assert not result["incomplete_results"]
+        results.append(result)
+        (HERE / "probe-results.json").write_text(json.dumps(results, indent=2) + "\n")
+        print(case["repo"], case["term"], case["fields"], result["total_count"], flush=True)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("action", choices=["collect", "analyze"])
+    parser.add_argument("action", choices=["collect", "collect-corrections", "analyze", "probe"])
     args = parser.parse_args()
-    collect() if args.action == "collect" else analyze()
+    if args.action == "collect":
+        collect()
+    elif args.action == "collect-corrections":
+        collect(corrections=True)
+    elif args.action == "probe":
+        probe()
+    else:
+        analyze()
