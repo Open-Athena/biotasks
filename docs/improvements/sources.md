@@ -3,9 +3,10 @@
 [Catalog](README.md) · [Research method](research-method.md)
 
 This register records inclusion rationale and the catalog mapping for 41 selected
-publications and four upstream software fixes. Source IDs are local citation keys,
-not quality scores. Locations
-supporting individual claims appear in the entries. Access codes record what was
+publications and four upstream software fixes. Hypotheses can also originate in
+this synthesis without an external citation; their entries say so explicitly.
+Source IDs are local citation keys, not quality scores. Locations supporting
+individual claims appear in the entries. Access codes record what was
 inspected on 2026-09-30: **T**, relevant article/PDF text; **E**, indexed section
 excerpts or captions, sometimes after a publisher/PMC access failure; **C**,
 pinned source changes and regression-test text. None means every supplement or
@@ -83,7 +84,7 @@ Whalen et al. (2022; online 2021).
 [Navigating the pitfalls of applying machine learning in genomics](https://escholarship.org/content/qt6f5210xq/qt6f5210xq.pdf).
 DOI: 10.1038/s41576-021-00434-9.
 
-Issue seed; [I07](README.md#i07), [I08](README.md#i08). Access: T,
+Issue seed; [I06](README.md#i06), [I07](README.md#i07), [I08](README.md#i08). Access: T,
 institutional manuscript after publisher access failed.
 
 ### B09
@@ -324,7 +325,8 @@ Shen et al. (2026).
 [SERA: Soft-Verified Efficient Repository Agents, version 3](https://arxiv.org/html/2601.20789v3#S3.SS1).
 arXiv:2601.20789v3, 29 May 2026.
 
-Discovery source, not evidence that every suggested change is beneficial.
+Discovery source and origin of the [I50](README.md#i50) hypothesis, not evidence
+that every suggested change is beneficial.
 Inspected §3.1 and the linked
 [prompt-generation script](https://github.com/allenai/SERA/blob/1ca8673bd527b164dc9eb89841c96416ec8ce1a7/sera/datagen/data/create_rollout_one_prompts.py)
 at commit `1ca8673bd527b164dc9eb89841c96416ec8ce1a7`. The script contains 30

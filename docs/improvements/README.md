@@ -4,25 +4,29 @@
 [Research method and consolidation](research-method.md)
 
 This catalog addresses [issue #7](https://github.com/Open-Athena/biotasks/issues/7)
-with 48 improvement opportunities drawn from software engineering, statistics/ML,
-and computational biology. It includes repairs, preventive checks, changes to
+with 50 improvement opportunities drawn from software engineering, statistics/ML,
+and computational biology: 48 sourced descriptions and two explicit hypotheses.
+It includes repairs, preventive checks, changes to
 otherwise valid code, and better reporting of irreparable limitations. The
 source register contains 41 publications and four upstream software fixes,
 including the SERA discovery source and its linked implementation. Literature
 and source changes were inspected on 2026-09-30; the cited analyses and tests
 were not rerun.
 
-The organizing unit is a starting condition, a possible change, and a benefit
-under stated conditions. These are research findings, not a checklist that every
-artifact must satisfy. No entry establishes suitability for synthetic tasks, and
-this work does not implement or evaluate tasks.
+The organizing unit is a starting condition, a possible change, and an intended
+benefit under stated conditions. Evidence is an attribute of an opportunity,
+not an admission requirement: plausible ideas without supporting studies or
+observations belong here when labeled as hypotheses. No entry establishes
+suitability for synthetic tasks, and this work does not implement or evaluate tasks.
 
 ## Reading the catalog
 
 **Scope** identifies the knowledge area and biological relevance. **Documented**
 means the source discusses the named biological application; it does not mean
 the recommended change was experimentally validated there. **Inferred** means
-this synthesis proposes a transfer from general evidence to biological software.
+this synthesis proposes a biological application, either by transferring general
+evidence or by developing an explicitly unvalidated idea. Evidence status is
+recorded separately.
 An entry may combine knowledge areas. Group headings are navigation, not a fixed
 ontology or a ranking.
 
@@ -33,7 +37,10 @@ defect or a measured improvement. Diagnostic and reporting changes can be useful
 when the underlying experiment cannot be repaired computationally.
 
 **Evidence and conditions** distinguishes observed defects, demonstrated
-mechanisms, conditional risks, intrinsic limitations and recommendations. It also
+mechanisms, conditional risks, intrinsic limitations, recommendations and
+unvalidated hypotheses. A hypothesis records its **Origin** and **Validation
+needed**, including absent supporting evidence. These describe how its proposed
+benefit could be investigated, not a task grader. The evidence field also
 identifies evidence from audits, controlled comparisons, modified observed data,
 simulations, theory or guidance. Demonstrating a mechanism does not establish its
 prevalence. Historical benchmarks do not rank current software releases.
@@ -43,7 +50,7 @@ prevalence. Historical benchmarks do not rank current software releases.
 | Workflow area | Opportunities |
 | --- | --- |
 | Identifiers and study design | [I01](#i01) preserve identifiers; [I02](#i02) reconcile nomenclature; [I03](#i03) diagnose batch confounding; [I04](#i04) respect biological replication; [I05](#i05) account for ancestry |
-| Prediction and evaluation | [I06](#i06) fit feature selection within training; [I07](#i07) split by prediction unit; [I08](#i08) validate transfer; [I09](#i09) assess rare-positive precision; [I33](#i33) separate tuning and evaluation |
+| Prediction and evaluation | [I06](#i06) fit preprocessing within training; [I07](#i07) split by prediction unit; [I08](#i08) validate transfer; [I09](#i09) assess rare-positive precision; [I33](#i33) separate tuning and evaluation |
 | Expression and enrichment | [I10](#i10) assess composition; [I11](#i11) account for gene-selection bias |
 | Single-cell analysis | [I12](#i12) assess ambient RNA; [I13](#i13) assess multiplets; [I14](#i14) contextualize QC; [I15](#i15) preserve relevant biology; [I16](#i16) validate inference after imputation; [I17](#i17) qualify trajectories; [I18](#i18) assess CNA references |
 | Microbiome and networks | [I19](#i19) assess contamination; [I20](#i20) respect compositional data; [I21](#i21) assess abundance-test calibration |
@@ -54,6 +61,7 @@ prevalence. Historical benchmarks do not rank current software releases.
 | General inference | [I34](#i34) account for multiplicity; [I35](#i35) report effect and uncertainty |
 | Scientific software and workflows | [I36](#i36) check contracts; [I37](#i37) consolidate repeated logic; [I38](#i38) profile bottlenecks; [I39](#i39) document an executable example; [I40](#i40) preserve workflow provenance; [I41](#i41) record randomness; [I42](#i42) specify environments; [I43](#i43) reuse compatible environments; [I44](#i44) preserve argument grouping; [I45](#i45) retain defect regressions |
 | Data-processing software | [I46](#i46) distinguish logical types; [I47](#i47) preserve compound labels; [I48](#i48) honor optional-return contracts |
+| Candidate opportunities | [I49](#i49) reduce intermediate memory use; [I50](#i50) isolate mutable analysis state |
 
 ## Identifiers and study design
 
@@ -143,19 +151,20 @@ require different covariates even though both can confound inference.
 
 ### I06
 
-**Fit supervised feature selection inside each training partition.**
+**Fit learned preprocessing inside each training partition.**
 
-**Scope:** statistics/ML; documented biological sequence classification.
+**Scope:** statistics/ML; documented biological prediction workflows.
 
-**Opportunity — scientific validity:** when outcome-associated features are
-selected using the full dataset, move selection into the training procedure and
-apply the learned selection to held-out examples. This removes direct use of
-evaluation labels in feature choice.
+**Opportunity — scientific validity:** for prediction on unseen samples, fit
+feature selection and learned transformations using training data, then apply
+them to held-out examples. Fitting scaling, PCA or imputation on the full dataset
+can leak evaluation information even without using labels.
 
 **Evidence and conditions:** demonstrated optimistic estimates in random-data
-and randomized-label experiments, [B07](sources.md#b07), Figs. 1–2. This claim
-concerns supervised selection; it does not make every fixed, label-independent
-transformation invalid. Tuning the complete procedure needs a further separation
+and randomized-label feature-selection experiments, [B07](sources.md#b07),
+Figs. 1–2; broader preprocessing guidance in [B08](sources.md#b08), pitfall 4.
+Fixed external transformations and explicitly transductive objectives have
+different information boundaries. Tuning still needs separate evaluation
 ([I33](#i33)).
 
 ### I07
@@ -829,11 +838,60 @@ indexers despite `return_indexers=False`. The inspected fix returns the index
 alone in that case. Preserve the public contract rather than forcing a uniform
 shape where an API intentionally permits several forms.
 
+## Candidate opportunities
+
+These entries preserve plausible ideas whose benefit has not been established
+by the evidence reviewed here. They use the same catalog IDs and fields as the
+sourced entries; their explicit hypothesis status prevents an intended benefit
+from being mistaken for a finding.
+
+### I49
+
+**Reduce peak memory by processing bounded portions of intermediate data.**
+
+**Scope:** software; inferred application to large biological annotation tables.
+
+**Opportunity — efficiency and robustness:** when a workflow materializes a large
+table before a transformation that can operate on bounded portions, try streaming
+or chunked processing to reduce peak memory and avoid resource failures.
+
+**Evidence and conditions:** **unvalidated hypothesis** for this application.
+No supporting comparison was reviewed. Global statistics, joins and ordering
+may require cross-chunk state; serialization overhead could worsen runtime.
+
+**Origin:** proposed during this synthesis, rather than extracted from a source.
+
+**Validation needed:** compare outputs, peak memory and elapsed time against
+the existing implementation on representative inputs, including chunk-boundary
+cases. Record whether the tradeoff benefits the actual workflow.
+
+### I50
+
+**Isolate mutable state between reusable analysis steps.**
+
+**Scope:** software; inferred application to notebooks and parameter sweeps.
+
+**Opportunity — correctness and reproducibility:** when repeated calls share
+mutable tables or configuration, try explicit state ownership, scoped copies
+or documented mutation boundaries to prevent unintended dependence on call order.
+
+**Evidence and conditions:** **unvalidated hypothesis** for these workflows.
+The SERA direction suggests a search area; it does not establish that a
+particular artifact has the problem. Copying may increase memory use, and
+intentional accumulation or in-place operations can be appropriate.
+
+**Origin:** developed from a shared-state direction in [S01](sources.md#s01);
+no concrete biological instance was established here.
+
+**Validation needed:** inspect the intended mutation contract, compare repeated
+and reordered calls, and measure the resource cost of any proposed isolation.
+
 ## Coverage and limits
 
 This is a bounded, purposive synthesis. It is strongest on sequencing/omics and
 Python-oriented scientific workflows. Some opportunities have one selected
-source. No prevalence ranking, exhaustive bug taxonomy, or systematic-review
+source; the hypotheses do not have established benefits in the proposed workflows.
+No prevalence ranking, exhaustive bug taxonomy, or systematic-review
 claim is made. The [method](research-method.md) records access limitations,
 selection and consolidation decisions, and areas not covered. The
 [source register](sources.md) distinguishes SERA's discovery role from evidence
