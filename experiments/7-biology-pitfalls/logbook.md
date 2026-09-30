@@ -91,3 +91,51 @@ preserves the source-selection records, issue scope and validation evidence.
 The maintained documentation is extracted to a fresh pipeline branch from current
 main for review, with a permalink to this checkpoint. The research branch itself
 must not be merged. The PR and issue provide the current publication state.
+
+
+## 2026-09-30 — independent review and hypotheses
+
+Issue #7 was reopened after the user clarified that it must remain open until
+PR #12 merges. The PR uses a closing reference; no merge has been performed.
+The user requested independent review and clarified that plausible opportunities
+without established evidence should also be tracked. Supporting evidence is
+therefore an entry attribute, not an inclusion requirement. This clarification
+does not change the separate task-verifiability and teacher-data discussion in
+issue #11 or authorize execution of catalog ideas.
+
+The [independent report](independent-review-b2f021a.md) preserves the review of
+pipeline head `b2f021a30166fd782dc569b6c3b3e7095a56b9af`, including its scope and
+limits, and separately identifies inspections of subsequent working-tree edits.
+Its P2 finding identified missing fitted-preprocessing leakage. I06 now covers
+learned transformations as well as supervised selection, cites B08 pitfall 4,
+and preserves fixed-transform and transductive alternatives. The reviewer
+confirmed that this correction addresses the finding.
+
+The hypothesis follow-up identified a P3 wording inconsistency: the definition
+of inferred application assumed general evidence, while I49–I50 did not claim
+such support. The author broadened the definition to cover proposed applications
+of unvalidated ideas and separately records evidence status. The author also
+revised the extension guidance so it does not require new evidence for admission.
+These resolutions are in pipeline commit
+`f361fc7fe3bd84fd234096da347e9ab537d5b7b3` and are mirrored in this snapshot.
+The review report retains its original observations rather than rewriting them.
+
+I49 proposes bounded intermediate processing; I50 develops shared-state isolation
+from a visible SERA direction. Both are explicitly unvalidated hypotheses with
+origin, conditions, tradeoffs and validation needs. Neither claims an observed
+biological defect or demonstrated improvement. There are now 50 entries: the
+original 48 sourced descriptions and two hypotheses. The 45 source records are
+unchanged in count. Broader generic software coverage remains incomplete.
+
+SERA describes 51 bug types, but its pinned generator contains 30 seed directions
+and constructs one initial plus 50 generated prompts. The output JSON was absent
+from the inspected revision. No complete 51-to-catalog mapping was recovered or
+performed, and no model generation was run. Different units and selective
+coverage explain the counts; fewer entries are not evidence of better coverage.
+
+`validation-review.txt` preserves the revised structural audit. The checker now
+allows absent citations for explicit hypotheses with origin and validation fields;
+all cited mappings remain reciprocal. The independent review is a targeted source
+check, not a rerun of scientific analyses or upstream regressions. The source
+universe was not independently double screened. Original scope and validation
+records remain intact at their existing paths and in checkpoint `aabc801`.

@@ -16,28 +16,35 @@ source_pairs = re.findall(
 )
 entries = dict(entry_pairs)
 sources = dict(source_pairs)
-assert len(entries) == len(entry_pairs) == 48
-assert set(entries) == {f"I{i:02}" for i in range(1, 49)}
+assert len(entries) == len(entry_pairs) == 50
+assert set(entries) == {f"I{i:02}" for i in range(1, 51)}
 assert len(sources) == len(source_pairs) == 45
 assert set(sources) == {f"B{i:02}" for i in range(1, 35)} | {
     f"S{i:02}" for i in range(1, 12)
 }
 
+hypotheses = set()
 for entry, body in entries.items():
     for field in ("**Scope:", "**Opportunity", "**Evidence and conditions:"):
         assert field in body, (entry, field)
     assert re.search(r"\b(documented|inferred)\b", body), entry
     refs = re.findall(r"sources\.md#([bs]\d+)", body)
-    assert refs, entry
+    if "**unvalidated hypothesis**" in body:
+        hypotheses.add(entry)
+        for field in ("**Origin:**", "**Validation needed:**"):
+            assert field in body, (entry, field)
+    else:
+        assert refs, entry
     for ref in refs:
         assert ref.upper() in sources, (entry, ref)
         assert f"README.md#{entry.lower()}" in sources[ref.upper()], (entry, ref)
     assert f"](#{entry.lower()})" in catalog.split("## Identifiers")[0], entry
 
+assert hypotheses == {"I49", "I50"}
+
 for source, body in sources.items():
     assert "https://" in body and "Access:" in body, source
-    if source != "S01":
-        assert f"sources.md#{source.lower()}" in catalog, source
+    assert f"sources.md#{source.lower()}" in catalog, source
 
 
 def anchors(path):
@@ -69,8 +76,8 @@ for path in files:
 
 assert "improvements/README.md" in (ROOT / "docs/README.md").read_text()
 assert not (ROOT / "docs/pitfalls").exists()
-print("PASS: 48 unique entries and 45 unique sources; expected IDs and fields.")
-print("PASS: every entry has indexed navigation and reciprocal source mapping.")
+print("PASS: 50 unique entries (48 sourced, 2 hypotheses) and 45 unique sources; expected IDs and fields.")
+print("PASS: indexed navigation; reciprocal source mapping where cited; hypothesis origin/validation fields.")
 print(f"PASS: {link_count} local links/anchors and Markdown whitespace.")
 print("External links were inspected during research, not batch re-fetched.")
 print("This audit does not test scientific claims or reproduce source analyses.")
