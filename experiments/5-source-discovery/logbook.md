@@ -220,3 +220,18 @@ Additional sources due solely to deeper cutoffs should not be confused with
 known-source additions or broader queries. Tail comparisons will show all
 primary-group counts/shares at the three depths plus explicit low-count summaries
 for each list and the distinct-source union.
+
+## 2026-09-30 — Controlled top-300 expansion and primary-group tail
+
+The [top-300 run](runs/2026-09-30-top300/README.md) extends all four lists while
+preserving every first-200 ranking row and annotation. The merged union grows
+335 → 672 → 1,014 sources at top 100/200/300 and reaches 18 → 22 → 22 primary
+groups. More depth strengthens gene regulation (5 → 24 → 54) but leaves
+biomechanics (0 → 1 → 1), RNA structure (1 → 2 → 3) and ecology (0 → 1 → 4) thin.
+
+The new tail view tracks groups sparse at 100 with fixed membership, distinguishes
+initially absent groups and shows all count bands with explicit denominators.
+This prevents a changing count of sparse groups from being mistaken for coverage
+improvement. Counts and shares tell different stories. Next useful work is targeted
+discovery in thin groups and the missed vocabulary exposed by the gap audit,
+with any broader pool kept separate from this controlled depth comparison.
