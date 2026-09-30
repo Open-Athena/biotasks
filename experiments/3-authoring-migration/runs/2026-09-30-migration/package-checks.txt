@@ -1,0 +1,22 @@
+{"start": "2026-09-30T21:02:27.714138+00:00", "estimate_mib": 200, "available_mib": 4374, "load": 0.283203125, "report": "/tmp/biotasks-resources-s04k5qnu.txt", "command": ["bash", "-c", "set -e\nexport PATH=\"$PWD/.venv/bin:$PATH\"\nuv run --locked ruff check .\nuv run --locked ruff format --check .\nuv run --locked ty check\nuv run --locked pytest\nuv run --locked pre-commit run --all-files\n"]}
+All checks passed!
+19 files already formatted
+All checks passed!
+============================= test session starts ==============================
+platform linux -- Python 3.13.13, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/exedev/.codex/worktrees/1784/biotasks
+configfile: pyproject.toml
+testpaths: tests
+plugins: platformdirs-4.12.2
+collected 5 items
+
+tests/test_distribution.py .                                             [ 20%]
+tests/test_prompts.py ....                                               [100%]
+
+============================== 5 passed in 1.00s ===============================
+Ruff lint................................................................Passed
+Ruff format..............................................................Passed
+ty type checking.........................................................Passed
+{"end": "2026-09-30T21:02:29.880850+00:00", "exit_status": 0, "reason": null}
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:02.12
+Maximum resident set size (kbytes): 57080

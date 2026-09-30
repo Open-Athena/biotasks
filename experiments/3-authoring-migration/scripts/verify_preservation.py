@@ -25,8 +25,12 @@ def read(path):
 
 
 def verify(local_source=False):
-    report = {"scope": "Saved-byte integrity, navigation, counts and comparison consistency only",
-              "errors": [], "hash_claims": [], "runs": []}
+    report = {
+        "scope": "Saved-byte integrity, navigation, counts and comparison consistency only",
+        "errors": [],
+        "hash_claims": [],
+        "runs": [],
+    }
     errors = report["errors"]
 
     def check(condition, message):
@@ -36,9 +40,14 @@ def verify(local_source=False):
     def hash_check(path, expected, claim):
         actual = digest(path) if path.is_file() else None
         check(actual == expected, f"Hash mismatch: {claim}: {path}")
-        report["hash_claims"].append({"claim": claim,
-            "path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
-            "expected": expected, "actual": actual})
+        report["hash_claims"].append(
+            {
+                "claim": claim,
+                "path": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
+                "expected": expected,
+                "actual": actual,
+            }
+        )
 
     migration = read(STUDY / "migration.json")
     for item in migration["tracked_files"]:
@@ -48,9 +57,13 @@ def verify(local_source=False):
     changed = [x for x in migration["tracked_files"] if x["change"] != "unchanged-context"]
     check(len(changed) == migration["tracked_changed_paths"], "Changed-path count mismatch")
     expected_paths = {ROOT / x["destination"] for x in migration["tracked_files"]}
-    actual_paths = {p for p in BASELINE.rglob("*") if p.is_file()
-                    and "local-helpers" not in p.relative_to(BASELINE).parts
-                    and "historical-prompts" not in p.relative_to(BASELINE).parts}
+    actual_paths = {
+        p
+        for p in BASELINE.rglob("*")
+        if p.is_file()
+        and "local-helpers" not in p.relative_to(BASELINE).parts
+        and "historical-prompts" not in p.relative_to(BASELINE).parts
+    }
     check(expected_paths == actual_paths, "Preserved source file set mismatch")
 
     local = read(STUDY / "runs/2026-09-30-migration/local-files.json")
@@ -58,9 +71,15 @@ def verify(local_source=False):
         if "destination" in item:
             hash_check(ROOT / item["destination"], item["sha256"], "recovered local helper")
         if local_source:
-            hash_check(Path(local["source_root"]) / item["path"], item["sha256"], "retained local file")
+            hash_check(
+                Path(local["source_root"]) / item["path"], item["sha256"], "retained local file"
+            )
     if local_source:
-        actual = {str(p.relative_to(local["source_root"])) for p in Path(local["source_root"]).rglob("*") if p.is_file()}
+        actual = {
+            str(p.relative_to(local["source_root"]))
+            for p in Path(local["source_root"]).rglob("*")
+            if p.is_file()
+        }
         check(actual == {x["path"] for x in local["files"]}, "Local source inventory changed")
 
     links = 0
@@ -78,7 +97,9 @@ def verify(local_source=False):
             check((path.parent / target).exists(), f"Broken local link: {path}: {target}")
             links += 1
     report["local_navigation_paths_checked"] = links
-    report["link_scope"] = "Relative Markdown target paths; external URL availability and fragment anchors are not checked."
+    report["link_scope"] = (
+        "Relative Markdown target paths; external URL availability and fragment anchors are not checked."
+    )
 
     def visit_hashes(value, parent, label):
         if isinstance(value, dict):
@@ -101,16 +122,25 @@ def verify(local_source=False):
         if "snapshot" in prompt:
             hash_check(parent / prompt["snapshot"], prompt["sha256"], label + "/template")
         else:
-            hash_check(BASELINE / "historical-prompts/72008dd682-find-units.md",
-                       prompt["template_sha256"], label + "/historical-template")
-        hash_check(parent / prompt["resolved_snapshot"], prompt["resolved_sha256"], label + "/resolved")
+            hash_check(
+                BASELINE / "historical-prompts/72008dd682-find-units.md",
+                prompt["template_sha256"],
+                label + "/historical-template",
+            )
+        hash_check(
+            parent / prompt["resolved_snapshot"], prompt["resolved_sha256"], label + "/resolved"
+        )
         execution = run["execution"]
         for key in ("launch_message", "source_access"):
             if key + "_sha256" in execution:
                 hash_check(parent / execution[key], execution[key + "_sha256"], label + "/" + key)
         records = {}
         for kind in ("units", "datasets"):
-            records[kind] = [json.loads(line) for line in (parent / "outputs" / (kind + ".jsonl")).read_text().splitlines() if line.strip()]
+            records[kind] = [
+                json.loads(line)
+                for line in (parent / "outputs" / (kind + ".jsonl")).read_text().splitlines()
+                if line.strip()
+            ]
         counts = {key: len(value) for key, value in records.items()}
         recorded_counts = run.get("outputs", run.get("review", {})).get("counts")
         check(counts == recorded_counts, f"Recorded count mismatch: {label}")
@@ -119,15 +149,29 @@ def verify(local_source=False):
         check(len(unit_ids) == len(set(unit_ids)), f"Duplicate unit IDs: {label}")
         check(len(dataset_ids) == len(set(dataset_ids)), f"Duplicate data IDs: {label}")
         for unit in records["units"]:
-            check(set(unit["dataset_ids"]) <= set(dataset_ids), f"Unknown data IDs: {label}/{unit['unit_id']}")
-            check(set(unit["related_unit_ids"]) <= set(unit_ids), f"Unknown related units: {label}/{unit['unit_id']}")
-        report["runs"].append({"run_id": label, "status": run["status"], **counts,
-                               "template_sha256": prompt.get("sha256", prompt.get("template_sha256"))})
+            check(
+                set(unit["dataset_ids"]) <= set(dataset_ids),
+                f"Unknown data IDs: {label}/{unit['unit_id']}",
+            )
+            check(
+                set(unit["related_unit_ids"]) <= set(unit_ids),
+                f"Unknown related units: {label}/{unit['unit_id']}",
+            )
+        report["runs"].append(
+            {
+                "run_id": label,
+                "status": run["status"],
+                **counts,
+                "template_sha256": prompt.get("sha256", prompt.get("template_sha256")),
+            }
+        )
 
     for path in RUNS.glob("*/original-*.json"):
         original = read(path)
-        check(hashlib.sha256(original["content"].encode()).hexdigest() == original["sha256"],
-              f"Original embedded bytes mismatch: {path}")
+        check(
+            hashlib.sha256(original["content"].encode()).hexdigest() == original["sha256"],
+            f"Original embedded bytes mismatch: {path}",
+        )
     runner = read(RUNS / "2026-09-30-cli-runner.json")
     hash_check(RUNS / runner["snapshot"], runner["sha256"], "post-run CLI wrapper snapshot")
 
@@ -145,7 +189,9 @@ def verify(local_source=False):
         metrics = read(parent / "runner-metrics.json")
         template_hashes.add(digest(parent / "template.md"))
         resolved_hashes.add(digest(parent / "resolved-prompt.md"))
-        check(run["source_revision"] == matrix["source_revision"], f"Matrix source revision: {name}")
+        check(
+            run["source_revision"] == matrix["source_revision"], f"Matrix source revision: {name}"
+        )
         with gzip.open(parent / "runner-events.jsonl.gz", "rt") as stream:
             events = collections.Counter()
             usage = None
@@ -157,36 +203,78 @@ def verify(local_source=False):
         setting = name.removeprefix("2026-09-30-uncapped-deseq2-")
         summary = matrix["results"][setting]
         counts = run["outputs"]["counts"]
-        check(counts["units"] == summary.get("units", summary.get("units_at_checkpoint")), f"Matrix units: {setting}")
-        check(counts["datasets"] == summary.get("datasets", summary.get("datasets_at_checkpoint")), f"Matrix datasets: {setting}")
+        check(
+            counts["units"] == summary.get("units", summary.get("units_at_checkpoint")),
+            f"Matrix units: {setting}",
+        )
+        check(
+            counts["datasets"] == summary.get("datasets", summary.get("datasets_at_checkpoint")),
+            f"Matrix datasets: {setting}",
+        )
         check(metrics["elapsed_seconds"] == summary["wall_seconds"], f"Matrix time: {setting}")
         check(usage == summary["reported_tokens"], f"Matrix token usage: {setting}")
         if metrics["exit_status"] == 0:
-            check(events["turn.completed"] == 1 and events["turn.failed"] == 0, f"CLI completion: {setting}")
+            check(
+                events["turn.completed"] == 1 and events["turn.failed"] == 0,
+                f"CLI completion: {setting}",
+            )
             check((parent / "worker-final.txt").is_file(), f"Missing final response: {setting}")
         else:
-            check(events["turn.failed"] == 1 and events["turn.completed"] == 0, f"CLI failure: {setting}")
-            check(not (parent / "worker-final.txt").exists(), f"Unexpected blocked final: {setting}")
-        matrix_records.append({"setting": setting, **counts, "exit_status": metrics["exit_status"],
-                               "seconds": metrics["elapsed_seconds"], "event_types": dict(events)})
+            check(
+                events["turn.failed"] == 1 and events["turn.completed"] == 0,
+                f"CLI failure: {setting}",
+            )
+            check(
+                not (parent / "worker-final.txt").exists(), f"Unexpected blocked final: {setting}"
+            )
+        matrix_records.append(
+            {
+                "setting": setting,
+                **counts,
+                "exit_status": metrics["exit_status"],
+                "seconds": metrics["elapsed_seconds"],
+                "event_types": dict(events),
+            }
+        )
     check(len(template_hashes) == len(resolved_hashes) == 1, "Matrix prompt differences")
     check(template_hashes == {matrix["prompt_sha256"]}, "Matrix template claim")
     report["uncapped_matrix"] = matrix_records
 
     catalog_dir = RUNS / "2026-09-30-catalog-ucsc-luna-high"
-    check(digest(BASELINE / "prompts/find-units.md") == digest(catalog_dir / "template.md"), "Catalog trial/live source template mismatch")
+    check(
+        digest(BASELINE / "prompts/find-units.md") == digest(catalog_dir / "template.md"),
+        "Catalog trial/live source template mismatch",
+    )
     text = (catalog_dir / "outputs/inspection.md").read_text()
-    section = text.split("## Utilities command catalog: entry-level status", 1)[1].split("\n## ", 1)[0]
+    section = text.split("## Utilities command catalog: entry-level status", 1)[1].split(
+        "\n## ", 1
+    )[0]
     entries = re.findall(r"^\| `([^`]+)` \| (.*?) \|$", section, re.M)
     entries.extend((name, "pending") for name in re.findall(r"^`([^`]+)`$", section, re.M))
     names = [x[0] for x in entries]
-    counts = collections.Counter("inspected" if x[1].startswith("inspected:") else "pending" if x[1].lower().startswith("pending") else "unknown" for x in entries)
+    counts = collections.Counter(
+        "inspected"
+        if x[1].startswith("inspected:")
+        else "pending"
+        if x[1].lower().startswith("pending")
+        else "unknown"
+        for x in entries
+    )
     saved_catalog = read(catalog_dir / "catalog-review.json")
-    check(len(names) == len(set(names)) == saved_catalog["unique_accounted_entries"], "Catalog entry identities/count")
+    check(
+        len(names) == len(set(names)) == saved_catalog["unique_accounted_entries"],
+        "Catalog entry identities/count",
+    )
     check(counts["inspected"] == saved_catalog["inspected_entries"], "Catalog inspected count")
-    check(counts["pending"] == saved_catalog["pending_entries"] and not counts["unknown"], "Catalog pending count")
-    report["catalog"] = {"entries": len(names), **counts,
-                         "scope": "Recounted saved table; no fresh binary/source inspection"}
+    check(
+        counts["pending"] == saved_catalog["pending_entries"] and not counts["unknown"],
+        "Catalog pending count",
+    )
+    report["catalog"] = {
+        "entries": len(names),
+        **counts,
+        "scope": "Recounted saved table; no fresh binary/source inspection",
+    }
     report["tracked_files_checked"] = len(expected_paths)
     report["run_records_checked"] = len(report["runs"])
     report["hash_claims_checked"] = len(report["hash_claims"])

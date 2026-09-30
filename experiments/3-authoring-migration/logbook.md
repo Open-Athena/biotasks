@@ -74,3 +74,31 @@ separate steps. No promotion PR is currently warranted. Record the final
 committed/pushed/PR/merged state and source-head recheck with the handoff.
 Retain the Marin source branch and all original local evidence until archival
 verification and explicit disposition are complete.
+
+## 2026-09-30 — verification and archival preparation
+
+The preservation checkpoint is `f08bbdc` and the corrected verifier/archive
+input checkpoint is `3aef93310e4be3255e8df30f748b9b626a7631d8`. Saved-input
+verification passed after correcting a parser that missed the catalog's
+separate pending-entry list; the first failed check is retained. No original
+research artifact was edited to make a check pass. The local package checks,
+including distribution/CLI tests, also passed. See the
+[recorded results](runs/2026-09-30-migration/README.md#recorded-outcomes).
+
+The [proposed public archive](runs/2026-09-30-archive-preparation/README.md)
+contains 67 original cache files plus notices, verified locally. Six UCSC
+cache files remain at source; liftOver's custom notice and unresolved
+file-specific terms prevent treating the whole cache as uniformly permissive.
+Public upload and anonymous download verification are pending. License
+notices were captured now, not retroactively claimed as run-time evidence.
+
+A final source check still found local/GitHub head
+`37973a95c71d5e1d38bb15c238f1d40369255359` and a clean checkout. BioTasks
+`main` remained at `37271415c4c201ba9dbbda66c203caa4050744c3`. No new source
+delta was observed; this observation does not freeze or resume the source
+owner's session. Any later source work needs its own migration delta.
+
+State at this handoff: local research commits, no push, no new issue/comment,
+no PR, no merge and no bucket upload. Exact publication drafts are prepared
+separately for review. Continuing authoring research and unresolved archival
+terms remain distinct from this completed local preservation checkpoint.
