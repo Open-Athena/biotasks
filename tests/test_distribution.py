@@ -18,7 +18,6 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
         cwd=root,
         env=environment,
         check=True,
-        capture_output=True,
         timeout=60,
     )
     (wheel,) = dist.glob("*.whl")
@@ -40,58 +39,32 @@ def test_installed_distribution_contains_and_loads_prompts(tmp_path: Path) -> No
                 assert member.read() == content
 
     venv = tmp_path / "installed"
+    # Reuse locked artifact URLs; an offline requirements-file install also needs
+    # registry metadata that a fresh `uv sync --locked` does not populate.
     subprocess.run(
-        [sys.executable, "-I", "-m", "venv", "--without-pip", str(venv)],
-        cwd=outside,
-        env=environment,
+        [
+            "uv",
+            "sync",
+            "--locked",
+            "--offline",
+            "--no-dev",
+            "--no-install-project",
+            "--python",
+            sys.executable,
+        ],
+        cwd=root,
+        env=environment | {"UV_PROJECT_ENVIRONMENT": str(venv)},
         check=True,
-        capture_output=True,
         timeout=60,
     )
     scripts = venv / ("Scripts" if os.name == "nt" else "bin")
     python = scripts / ("python.exe" if os.name == "nt" else "python")
     cli = scripts / ("biotasks.exe" if os.name == "nt" else "biotasks")
-    requirements = tmp_path / "runtime-requirements.txt"
-    subprocess.run(
-        [
-            "uv",
-            "export",
-            "--locked",
-            "--offline",
-            "--no-dev",
-            "--no-emit-project",
-            "--output-file",
-            str(requirements),
-        ],
-        cwd=root,
-        env=environment,
-        check=True,
-        capture_output=True,
-        timeout=60,
-    )
-    subprocess.run(
-        [
-            "uv",
-            "pip",
-            "sync",
-            "--python",
-            str(python),
-            "--offline",
-            "--require-hashes",
-            str(requirements),
-        ],
-        cwd=outside,
-        env=environment,
-        check=True,
-        capture_output=True,
-        timeout=60,
-    )
     subprocess.run(
         ["uv", "pip", "install", "--python", str(python), "--offline", "--no-deps", str(wheel)],
         cwd=outside,
         env=environment,
         check=True,
-        capture_output=True,
         timeout=60,
     )
     listing = subprocess.check_output(
