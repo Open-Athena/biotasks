@@ -1,6 +1,6 @@
 "use strict";
 (() => {
-const D = JSON.parse(document.getElementById("research-data").textContent);
+const D = window.BIOTASKS_DATA;
 const M = ["bioconda", "bioconductor", "pypi", "github"];
 const N = {bioconda:"Bioconda", bioconductor:"Bioconductor", pypi:"PyPI", github:"GitHub stars"};
 const SHORT = {bioconda:"Conda", bioconductor:"Bioc", pypi:"PyPI", github:"GitHub"};

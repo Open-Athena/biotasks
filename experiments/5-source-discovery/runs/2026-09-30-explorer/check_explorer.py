@@ -20,7 +20,7 @@ def rows(path):
 def main():
     html = (HERE / "explorer.html").read_text()
     match = re.search(
-        r'<script id="research-data" type="application/json">(.*?)</script>', html, re.S
+        r'<script id="research-data">window\.BIOTASKS_DATA=(.*?);</script>', html, re.S
     )
     data = json.loads(match.group(1))
     sources = {r["id"]: r for r in data["sources"]}
