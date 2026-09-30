@@ -1,0 +1,15 @@
+{"start": "2026-09-30T21:55:37.240550+00:00", "estimate_mib": 200, "available_mib": 4838, "load": 0.0, "report": "/tmp/biotasks-resources-axgpxwmb.txt", "command": [".venv/bin/python", "experiments/5-source-discovery/runs/2026-09-30-top300/prepare.py", "collect"]}
+Traceback (most recent call last):
+  File "/home/exedev/.codex/worktrees/9734/biotasks/experiments/5-source-discovery/runs/2026-09-30-top300/prepare.py", line 419, in <module>
+    collect() if args.action == "collect" else assemble()
+    ~~~~~~~^^
+  File "/home/exedev/.codex/worktrees/9734/biotasks/experiments/5-source-discovery/runs/2026-09-30-top300/prepare.py", line 71, in collect
+    imports()
+    ~~~~~~~^^
+  File "/home/exedev/.codex/worktrees/9734/biotasks/experiments/5-source-discovery/runs/2026-09-30-top300/prepare.py", line 46, in imports
+    assert actual == by_path[rel]["sha256"], rel
+                     ~~~~~~~^^^^^
+KeyError: 'top200/pypi-counts-without-mirrors.json'
+{"end": "2026-09-30T21:55:37.357873+00:00", "exit_status": 1, "reason": null}
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.07
+Maximum resident set size (kbytes): 30764

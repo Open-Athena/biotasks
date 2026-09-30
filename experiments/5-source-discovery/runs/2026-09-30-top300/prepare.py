@@ -43,8 +43,16 @@ def imports():
     for rel in IMPORTS:
         path = CACHE / rel
         actual = sha(path)
-        assert actual == by_path[rel]["sha256"], rel
-        checked.append({"path": rel, "bytes": path.stat().st_size, "sha256": actual})
+        archive_path = str(path.resolve().relative_to(CACHE))
+        assert actual == by_path[archive_path]["sha256"], (rel, archive_path)
+        checked.append(
+            {
+                "path": rel,
+                "archive_path": archive_path,
+                "bytes": path.stat().st_size,
+                "sha256": actual,
+            }
+        )
     dump(
         "imported-inputs.json",
         {
