@@ -1,8 +1,8 @@
-# Proposed public archive
+# Public authoring archive
 
-Status: prepared and verified locally; **not uploaded**. The exact
+Status: **uploaded and verified by anonymous download**. The exact
 [allowlist](allowlist.json), [manifest](manifest.json) and [object plan](plan.json)
-are reviewable before publication. The source cache remains intact.
+were checkpointed before publication. The source cache remains intact.
 
 The bundle contains 67 original local files (8,226,706 bytes), eleven license
 and provenance files, and [NOTICE.md](NOTICE.md): 79 members totaling 8,295,341
@@ -16,7 +16,11 @@ source, two utility source files, and downloaded directory/help pages. The
 liftOver override has custom terms; the rest need file-specific review before
 public redistribution. Neither durable external archival of those six files
 nor permission to delete the originals is claimed. This remains a migration
-follow-up unless an explicit retained-at-source disposition is accepted.
+retained-at-source disposition is explicit, rather than silently treating the
+files as archived. [Four source files](retained-upstream.json) also match the
+Git blobs at their pinned upstream revision; the directory/help pages remain
+local-only mutable-source captures. Upstream availability is not controlled by
+BioTasks. Any later public archival needs a new reviewed allowlist and prefix.
 
 ## Preparation and provenance
 
@@ -37,21 +41,21 @@ contained no reasoning items. These observations do not amount to a general
 secret audit or establish rights to biological assets merely referenced by
 the research.
 
-The proposed append-only destination is:
+The published append-only destination is:
 
 ```text
 hf://buckets/open-athena/biotasks/research/3-authoring-migration/2026-09-30/5ae7ab3aad02c42236362cb9fe0ca5b685906a8e00d720fd9c6cf96a46993e0b/
 ```
 
-It will contain `manifest.json` and `cache.tar.gz`. The prefix is the exact
+It contains `manifest.json` and `cache.tar.gz`. The prefix is the exact
 manifest SHA-256; this is an operational convention for an unversioned bucket.
 The local prepared snapshot is
-`/tmp/biotasks-authoring-archive-01a0f412/snapshot/`. Do not call it durable
-archival until upload and anonymous download verification are recorded.
+`/tmp/biotasks-authoring-archive-01a0f412/snapshot/`.
 
 ## Publication procedure
 
-After publication is authorized, checkpoint the exact manifest and plan. Use
+The exact manifest and plan were published at checkpoint
+`d65f65b08932edec177701aa8b325cb60574919a` before transfer. Use
 the pinned `huggingface_hub==1.6.0`, `hf-xet==1.6.0` environment recorded in
 [transfer-environment.txt](transfer-environment.txt). Run one transfer under
 the shared-node guard with a 400 MiB estimate, less than ten minutes, fixed
@@ -74,3 +78,11 @@ scope. Inspect partial transfers before retrying; `--verify-only` supports
 read-only recovery. Commit the receipt and transfer/resource record before
 claiming archival. Preserve the source and cited snapshot while conclusions
 depend on them. Bucket README changes are separate mutable catalog updates.
+
+## Outcome
+
+[Anonymous verification](verification.json) downloaded both objects and matched
+every size/hash and all 79 archive members. The [transfer record](transfer.txt)
+reports exit zero, 1.77 seconds and 62,672 KiB peak RSS. The bucket remained
+public; no billing plan or visibility setting changed. No cache file was
+deleted. Six excluded UCSC files retain the disposition described above.

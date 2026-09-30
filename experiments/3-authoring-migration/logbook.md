@@ -102,3 +102,20 @@ State at this handoff: local research commits, no push, no new issue/comment,
 no PR, no merge and no bucket upload. Exact publication drafts are prepared
 separately for review. Continuing authoring research and unresolved archival
 terms remain distinct from this completed local preservation checkpoint.
+
+## 2026-09-30 — published preservation and archive
+
+Following the publication/handoff scope of migration #3 and the #2 precedent,
+the research branch was pushed at `d65f65b08932edec177701aa8b325cb60574919a`.
+The reviewed manifest and object plan were therefore committed and published
+before transfer. The public HF bucket now contains the exact snapshot;
+anonymous retrieval verified both objects and every one of 79 members.
+Transfer exited zero in 1.77 seconds at 62,672 KiB peak RSS.
+
+The six UCSC files have an explicit retained-at-source disposition, not an
+archived claim. Four match pinned upstream Git blobs; the two downloaded
+directory/help captures remain local-only. Preserve all six originals. No
+UCSC cache redistribution, source checkout modification, new model call,
+scientific execution, paid compute, PR or merge occurred. A continuing research
+issue will carry the scientific questions; this migration accounts for every
+source path without promoting unsupported behavior to `main`.

@@ -21,9 +21,9 @@ relative to integration commit `72008dd68247318a367a840a4f41e27fb15ff7e1`.
   commands and observed results.
 - [Local-file inventory](runs/2026-09-30-migration/local-files.json): 73 files,
   8,912,921 bytes, including four recovered preparation/checking helpers.
-- [Proposed archive](runs/2026-09-30-archive-preparation/README.md): locally
-  verified bundle of 67 cache files plus notices; six UCSC files retained at
-  source pending terms review. Nothing has been uploaded.
+- [Public archive](runs/2026-09-30-archive-preparation/README.md): 67 cache files
+  plus notices, verified by anonymous download; six UCSC files explicitly
+  retained at source pending terms review.
 
 The imported `baseline/` is immutable historical evidence. Source files are
 byte-identical, with their original links, dates, commands, hashes and outcome
