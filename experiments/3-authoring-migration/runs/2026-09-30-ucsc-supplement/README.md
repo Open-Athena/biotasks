@@ -32,5 +32,28 @@ and guarded transfer command, with a 400 MiB estimate and concurrency one.
 Download both objects anonymously and verify every member before claiming
 publication. No model calls or scientific execution are involved.
 
-Status: inputs checkpointed for preparation; no supplemental upload yet.
-Preserve the original snapshot and this append-only supplement while cited.
+## Published outcome
+
+Status: **uploaded and verified by anonymous download**. Executable inputs were
+checkpointed at `7163261`; the exact [allowlist](allowlist.json),
+[manifest](manifest.json) and [plan](plan.json) were published at `0c958f0`
+before transfer. The original snapshot remains unchanged.
+
+```text
+hf://buckets/open-athena/biotasks/research/3-authoring-migration/2026-09-30/1e8e1a890a62529cdcf69200769fb1c5fa7bd4aefb37f62611d3996ae66c73e5/
+```
+
+The [receipt](verification.json) confirms anonymous download of both objects,
+matching sizes and hashes, and all seven members: three source files and four
+license/provenance/notice files. The compressed archive is 14,037 bytes;
+uncompressed contents total 43,782 bytes. The [transfer record](transfer.txt)
+reports exit zero, 1.30 seconds and 56,856 KiB peak RSS. No worker remains.
+Focused Ruff lint and formatting checks passed for both experiment helpers;
+the staging and archive checks verified the actual retained bytes.
+
+Together, the original archive and supplement preserve 70 of the 73 original
+cache files publicly (8,261,560 bytes). The remaining three files total
+651,361 bytes and have a verified private copy outside managed worktrees.
+That copy survives source-worktree deletion but is not backed up off this VM.
+Preserve the original snapshot, this append-only supplement and the private
+copy while cited.

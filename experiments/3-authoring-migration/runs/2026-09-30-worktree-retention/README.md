@@ -30,3 +30,9 @@ missing files. The other 67 local files are in the anonymously verified HF
 archive; tracked source research and the continuing branch are pushed to GitHub.
 This accounts for the migrated authoring research, not unrelated ignored files
 or environments elsewhere in the source checkout.
+
+Later the same day, a [supplemental HF archive](../2026-09-30-ucsc-supplement/README.md)
+added the README and two utility source files after file-specific license
+review. Seventy of the 73 original cache files are now publicly archived;
+three still depend on this separate local copy. The manifest above continues
+to describe the original six-file copy operation without rewriting its history.

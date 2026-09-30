@@ -33,3 +33,21 @@ private storage outside managed worktrees; see the
 The other evidence is already on GitHub or in the verified public HF archive.
 This preserves the migrated research through source-worktree removal without
 redistributing the excluded source bytes. No chat or worktree was archived here.
+
+## 2026-09-30 — correct the blanket UCSC exclusion
+
+The user challenged the exclusion of all UCSC files from HF. A file-specific
+review confirmed the root README's default license and the explicit MIT
+license for the two cached utility sources. The blanket hold was too broad.
+A [supplemental archive](../3-authoring-migration/runs/2026-09-30-ucsc-supplement/README.md)
+now preserves these three original files with their exact upstream notices.
+Both objects and all seven archive members matched after anonymous download.
+The original snapshot and manifests remain unchanged.
+
+Public HF snapshots now contain 70 of the 73 original cache files. The liftOver
+source and two mixed directory/help captures remain in verified private storage
+outside managed worktrees. Public redistribution of those complete files was
+not established; this is not a blanket claim that UCSC or non-commercial
+material cannot be archived on HF. The local copy protects the migrated evidence
+from old-worktree removal, but not loss of the VM. No chat or worktree was
+archived or deleted.

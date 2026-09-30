@@ -25,8 +25,13 @@ BioTasks. Any later public archival needs a new reviewed allowlist and prefix.
 Later retention update: all six excluded files now also have a
 [verified private copy outside managed worktrees](../2026-09-30-worktree-retention/README.md).
 The source worktree is no longer their only local copy. Preserve that separate
-copy if the old chat/worktree is removed; these bytes remain outside public HF
-storage and are not backed up off this VM.
+copy if the old chat/worktree is removed. A subsequent
+[file-specific license review and supplemental archive](../2026-09-30-ucsc-supplement/README.md)
+corrected the blanket UCSC exclusion: the README and two utility source files
+are now also publicly archived with their notices. Only liftOver source and
+the two mixed directory/help captures remain local-only and are not backed up
+off this VM. The original allowlist and manifest describe the first snapshot
+and remain unchanged.
 
 ## Preparation and provenance
 
