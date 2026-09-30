@@ -38,7 +38,14 @@
     "https://genome.sph.umich.edu/wiki/vt": "https://github.com/atks/vt",
     "https://github.com/biolib": "https://pypi.io/packages/source/p/pybiolib/pybiolib-1.4.551.tar.gz",
     "https://omics.informatics.indiana.edu/abundancebin": "https://depot.galaxyproject.org/software/abundancebin/abundancebin_1.0.1_src_all.tar.gz",
-    "github:mirditalab/colabfold-legacy-kernels": "https://github.com/sokrypton/ColabFold"
+    "https://emboss.sourceforge.net": "https://depot.galaxyproject.org/software/emboss/emboss_6.6.0_src_all.tar.gz",
+    "https://sourceforge.net/projects/poamsa": "https://downloads.sourceforge.net/project/poamsa/poamsa/2.0/poaV2.tar.gz"
   },
-  "notes": "Assistant review follows the preserved eligibility scope. Baseline published exclusions are also applied. Source-identity corrections apply only outside the frozen 672-source baseline."
+  "notes": "Assistant review follows the preserved eligibility scope. Baseline published exclusions are also applied. Source-identity corrections apply only outside the frozen 672-source baseline.",
+  "review_notes": {
+    "colabfold-legacy-kernels": "README inspection shows native CUDA replacement kernels and build scripts, not just repackaging. Retain independently implemented biological-model support as Infrastructure. An earlier proposed upstream collapse was withdrawn before final export.",
+    "SAX-NeRF": "Mixed anatomical and object CT benchmark. Retained for explicit anatomical CT reconstruction; whole-repository stars, not biology-specific adoption.",
+    "EMBOSS": "Pinned recipe names EMBOSS-6.6.0.tar.gz at official FTP host. HTTPS official host unavailable. Galaxy versioned source mirror returned HTTP 200 to HEAD on 2026-09-30 (117962028 bytes). Archive content not downloaded or checksum-compared.",
+    "POA": "Use exact source URL from pinned recipe, whose SHA-256 is recorded in metadata/recipe-poa.json."
+  }
 }
