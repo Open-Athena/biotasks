@@ -1,0 +1,5 @@
+{"start": "2026-09-30T20:17:59.440528+00:00", "estimate_mib": 200, "available_mib": 4381, "load": 0.0322265625, "report": "/tmp/biotasks-resources-l2_qgwyb.txt", "command": ["env", "HF_DEBUG=0", "HF_HUB_DISABLE_PROGRESS_BARS=1", "HF_XET_HIGH_PERFORMANCE=0", "HF_XET_HP=0", "HF_XET_FIXED_UPLOAD_CONCURRENCY=1", "HF_XET_FIXED_DOWNLOAD_CONCURRENCY=1", "HF_XET_DATA_MAX_CONCURRENT_FILE_INGESTION=1", "HF_XET_DATA_MAX_CONCURRENT_FILE_DOWNLOADS=1", "HF_XET_CACHE=/tmp/biotasks-hf-archive.uVSXzq/readme-xet", "/tmp/biotasks-hf-archive.uVSXzq/venv/bin/python", "-"]}
+{"verified_at_utc": "2026-09-30T20:18:00.276520+00:00", "bucket": "open-athena/biotasks", "path": "README.md", "source_commit": "b6d0ad9691ee137e2d7a068d0296082434c187cc", "source_path": "docs/bucket-README.md", "bytes": 3371, "sha256": "bef8902a66ac5f41542e5598affe6fd530727cf2b9916bd003e1766ad05e8ee3", "download_authentication": "anonymous"}
+{"end": "2026-09-30T20:18:00.357331+00:00", "exit_status": 0, "reason": null}
+Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.88
+Maximum resident set size (kbytes): 54928
