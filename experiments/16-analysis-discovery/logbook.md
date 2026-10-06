@@ -137,3 +137,5 @@ The 13-label display keeps original 8/10-label comparisons fixed. The explorer
 now separates identified counts, substantive inspection and pending access work.
 
 Local browser validation passed at 20:34:46–20:34:50 UTC, exit 0, maximum child RSS 114,080 KiB. Checked all counts, new stage filters, expansion drilldown, frozen Kaggle export IDs, every coverage cell, offline reload and desktop/mobile layout. Desktop screenshot inspected. The source-only metadata clarification afterward changes hosting/format/path labels, not counts or UI behavior. No issue closure or promotion is requested.
+
+Published 100-candidate preview at 68ae856a26acf4b08369431e443163f61d53e5a2 passed public browser checks at 20:36:15–20:36:19 UTC, exit 0, no page errors, maximum child RSS 119,748 KiB. Counts, stage filters, export, every coverage cell and desktop/mobile layouts passed. Evidence is in evidence/browser-expansion-public.json. Browser closed in finally and command returned. GitHub issue #16 was verified OPEN; no issue comment, closure, PR or merge was performed.
