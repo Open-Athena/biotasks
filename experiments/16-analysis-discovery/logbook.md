@@ -101,3 +101,9 @@ Hugging Face. Record searches with no useful document and access failures; do no
 force every route to contribute positive examples. Add biology labels only when
 actual documents justify them, while retaining original 8/10-label summaries.
 No source execution, biological data downloads, cloud spend or child agents.
+
+User expanded the discovery allowance to 100 candidates. Interpreted as 100
+unique candidate documents overall, communicated in chat. The twelve-document
+second-pass cap is superseded; original cohorts stay frozen. Expand by new biology,
+workflow and route, not by filling quotas with mirrors. Discovery-only permission
+continues; no biological execution or paid compute is implied.

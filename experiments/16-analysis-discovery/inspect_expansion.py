@@ -1,6 +1,11 @@
-"""Second-pass static sources only: bounded to 12 selected files, no execution."""
+"""Bounded, sequential static-source retrieval; never executes analysis code.
+
+Optional arguments: selection JSON name, output metadata JSON name.
+Each response is capped at 4 MB with a 12-second timeout. Raw sources stay in /tmp.
+"""
 import hashlib
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 from urllib.request import urlopen
@@ -13,8 +18,10 @@ def fetch(url):
     if len(raw)>4_000_000: raise ValueError('4 MB source cap exceeded')
     return raw
 
+selection = sys.argv[1] if len(sys.argv)>1 else 'selected-expansion.json'
+output = sys.argv[2] if len(sys.argv)>2 else 'expansion-documents.json'
 records=[]
-for item in json.loads((ROOT/'selected-expansion.json').read_text()):
+for item in json.loads((ROOT/selection).read_text()):
     r=dict(item, started_at=datetime.now(UTC).isoformat())
     try:
         raw=fetch(item['fetch_url'])
@@ -31,5 +38,5 @@ for item in json.loads((ROOT/'selected-expansion.json').read_text()):
         r['access']='source_read'
     except Exception as e:r.update(access='unresolved',error=f'{type(e).__name__}: {e}')
     r['ended_at']=datetime.now(UTC).isoformat();records.append(r)
-    (ROOT/'evidence/expansion-documents.json').write_text(json.dumps(records,indent=2)+'\n')
+    (ROOT/'evidence'/output).write_text(json.dumps(records,indent=2)+'\n')
     print(r['id'],r['access'],r.get('bytes'),flush=True)
