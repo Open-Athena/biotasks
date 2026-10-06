@@ -86,3 +86,59 @@ or its worktree. Before execution, select a question and comparison criteria,
 record exact inputs and budget, and obtain the applicable execution
 authorization. No model calls, paid compute or concurrent agents are launched
 or authorized by this wrap-up.
+
+## 2026-10-06 — research conclusion
+
+The user clarified that this research study should conclude with its current
+findings and next steps, rather than remain open for hypothetical future work.
+This supersedes the earlier same-day plan to keep #10 open. The study is
+concluded without promoting candidate prompts or claiming validated task
+authoring. No new experiment was performed for closure.
+
+### Conclusions
+
+- Source inventories can expose useful operations and candidate task inputs,
+  but the saved trials do not demonstrate reliable source fidelity or complete
+  coverage. Structural validity and worker readiness claims missed scientific
+  and metadata errors; independent source-backed review remains necessary.
+- Retain a single explorer as the research starting point. Reject a separate
+  reconciliation worker as an active pipeline stage: the trials repaired some
+  identities but left semantic defects, without demonstrated equal-cost or
+  downstream authoring benefit. This is not a general proof that reconciliation
+  cannot help.
+- Retain access fallbacks, inspection queues, identity/processing-state checks
+  and operation-level catalog accounting as candidates. Do not promote the
+  bundled prompt changes: gains were mixed, repeated results unstable, and
+  clause-specific contributions were not isolated. The UCSC catalog accounted
+  for 328 entries but left 283 pending; removing artificial caps did not establish
+  reliable completion.
+- Do not select a default model or reasoning effort from the DESeq2 matrix:
+  three cells completed, one was service-blocked, with one run per cell and
+  unknown served settings/billed cost. Infrastructure failures remain separate
+  from scientific outcomes.
+- The authoring template remains untested. There is no demonstrated new
+  independently validated task, maintained solve/reflection orchestration or
+  portable generator from this study. Preserve historical helpers as evidence,
+  not maintained runtime code.
+- No supported pipeline change or promotion PR is warranted from the current
+  evidence. The [candidate decision table](../3-authoring-migration/logbook.md#candidate-decisions)
+  records each disposition and its decisive evidence. The 37 run records,
+  487 original tracked files and all 73 local cache files remain preserved.
+
+### Possible follow-up studies
+
+1. Measure source fidelity and completion on fixed inputs across repository
+   types, with withheld source-backed criteria, repeated trials and comparable
+   execution budgets. Isolate prompt changes instead of attributing bundled
+   gains to individual clauses.
+2. Trial focused and connected task authoring from independently audited
+   inventories, using observed data, native references, deterministic artifact
+   grading, meaningful incorrect submissions and independent solving.
+3. Promote only changes supported by those comparisons through a fresh focused
+   branch from current main. Keep source ranking in #5; any new research issue
+   should record its own hypothesis, baseline, scope and execution budget.
+
+These are optional next studies, not outstanding work required to close #10.
+They are not launched or funded by closure. Retain the published research
+branch and all three HF snapshots; closing the issue does not delete evidence
+from GitHub, HF or local storage.
