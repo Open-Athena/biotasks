@@ -25,3 +25,14 @@ with `python experiments/17-notebook2task/explorer/build.py`. Its browser checke
 uses an existing Playwright environment and Chromium (`CHROMIUM` can override
 its executable); pass a public preview URL as the optional positional argument.
 Apply the shared-node guard before any browser, test, or build invocation.
+
+## Full original notebook view
+
+The pinned TAL1 notebook loaded in the embedded nbviewer frame: more than ten
+code blocks and full text were present, the visible frame was inspected, and
+returning to task ideas worked. Saved Colab output JavaScript initially raised
+`google is not defined`; output scripts are now disabled in the frame. Static
+cells and saved static outputs render, but interactive widgets and script-based
+math rendering may be unavailable. External links allow opening the source.
+Earlier viewer checks also assumed an incorrect nbviewer CSS selector; retained
+failed receipts are test/setup outcomes, not notebook-conversion outcomes.

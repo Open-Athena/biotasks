@@ -21,3 +21,15 @@ rendered documentation; AlphaGenome and gReLU additionally link to repository
 revisions recorded that day. Mutable documentation URLs can change. Historical
 #10 locators are preserved as originally reported, not reclassified as a fresh
 independent source audit. References contain no credentials or downloaded data.
+
+## Full original source view
+
+Use “Show full original notebook” to embed a commit-pinned nbviewer rendering,
+including all cells and saved outputs. Other entries embed their original hosted
+analysis/API document. Embedding is lazy and sandboxed; no kernel or custom
+server is needed. The service/site must allow framing and be reachable. An
+external link remains available if it does not. The candidate catalog works
+fully offline, while full-source embedding requires internet. No saved outputs
+are represented as freshly executed evidence. The PBMC3k notebook source was
+located at the same recorded Scanpy revision used by the older study; it is
+still an additional shortlist suggestion, not a reused #10 unit record.

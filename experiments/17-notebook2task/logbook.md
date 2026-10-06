@@ -60,3 +60,11 @@ export, and desktop/mobile layouts. Environment/browser setup failures and
 resource receipts are retained under `validation/`. This is packaging/UI
 validation only. No worker runner, replay service, source analysis execution,
 independent task acceptance, or prompt comparison has been completed.
+
+### Full original notebook display
+
+Gonzalo requested full original notebook display. Added lazy nbviewer embeds for
+10 commit-pinned notebooks, with full original hosted documents for the other
+four entries, a return-to-task-ideas control, sandboxed frames, and external
+fallback links. This requires no kernel or custom hosting, but the full-source
+view depends on external services. Display is distinct from fresh execution.
