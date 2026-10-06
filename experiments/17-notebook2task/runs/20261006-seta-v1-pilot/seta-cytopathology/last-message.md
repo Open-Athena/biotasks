@@ -1,0 +1,1 @@
+# EARLY_DITCH: The notebook requires training and comparing classifiers, conflicting with the explicit no-model-training constraint.

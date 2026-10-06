@@ -1,0 +1,1 @@
+# EARLY_DITCH: The source's core objective requires training and comparing cytopathology classifiers (Random Forest, GBM, LightGBM, and XGBoost), which conflicts with the task constraints explicitly prohibiting model training.
