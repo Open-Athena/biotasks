@@ -21,9 +21,10 @@ relative to integration commit `72008dd68247318a367a840a4f41e27fb15ff7e1`.
   commands and observed results.
 - [Local-file inventory](runs/2026-09-30-migration/local-files.json): 73 files,
   8,912,921 bytes, including four recovered preparation/checking helpers.
-- [Public archive](runs/2026-09-30-archive-preparation/README.md): 67 cache files
-  plus notices, verified by anonymous download; six UCSC files explicitly
-  retained at source pending terms review.
+- [Complete public archive](runs/2026-09-30-ucsc-remaining/README.md): all 73
+  original cache files across three snapshots, with notices and anonymous
+  download verification. The [combined coverage record](runs/2026-09-30-ucsc-remaining/coverage-verification.json)
+  lists exact bucket paths and confirms no missing or duplicate originals.
 
 The imported `baseline/` is immutable historical evidence. Source files are
 byte-identical, with their original links, dates, commands, hashes and outcome

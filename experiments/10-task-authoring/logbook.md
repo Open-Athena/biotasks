@@ -68,3 +68,21 @@ None remains local-only. All earlier snapshots and local copies remain
 intact. The migrated evidence no longer depends on retaining the old managed
 worktree. No chat or worktree was archived or deleted here, and no scientific
 run or prompt promotion was performed.
+
+## 2026-10-06 — final issue handoff
+
+The migration and archival work is complete. Issue #10's handoff is updated
+to the final three-snapshot archive rather than the initial six-file exclusion.
+The migration and continuing-study entry points now link complete archival
+and coverage evidence. Original dated records and snapshot manifests remain
+unchanged. The publication receipts record September 30 verification; this
+documentation handoff does not claim a fresh download or scientific run.
+
+Migration #3 is closed. Research #10 remains open for source-fidelity and
+completion comparisons, followed by authoring trials with native references
+and independent validation. A future worker can start from the published
+research branch and linked immutable evidence without either previous chat
+or its worktree. Before execution, select a question and comparison criteria,
+record exact inputs and budget, and obtain the applicable execution
+authorization. No model calls, paid compute or concurrent agents are launched
+or authorized by this wrap-up.

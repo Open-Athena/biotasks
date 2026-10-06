@@ -11,7 +11,10 @@ This branch is never merged; adopted changes receive focused promotion PRs.
   prompts, inputs, 37 run records, outputs and independent parent reviews.
 - [Decisions and missing evidence](../3-authoring-migration/logbook.md#candidate-decisions).
 - [Integrity and package checks](../3-authoring-migration/runs/2026-09-30-migration/README.md).
-- [Public archive and source-retained exceptions](../3-authoring-migration/runs/2026-09-30-archive-preparation/README.md).
+- [Complete public archive](../3-authoring-migration/runs/2026-09-30-ucsc-remaining/README.md):
+  all 73 original cache files, with upstream notices, manifests, hashes and
+  anonymous-download verification across three snapshots. No migrated cache
+  file depends on a local worktree for retention.
 - [Continuing logbook](logbook.md).
 - Candidate [find-units](../../src/biotasks/prompts/find-units.md) and
   [author-task](../../src/biotasks/prompts/author-task.md) templates at the normal
