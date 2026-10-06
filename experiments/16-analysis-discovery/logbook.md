@@ -80,3 +80,8 @@ and using one renderer completed local checks in 2.23 seconds with no page error
 and 111,164 KiB maximum child RSS. No scientific analysis ran in these attempts.
 Screenshots were visually inspected at desktop and 390px mobile widths. Final
 validation additionally reconciles every matrix cell with candidate records.
+
+The first published HTMLPreview exercised the controls successfully but emitted a
+page error because the preview loader evaluated the application/json data script.
+Changed the embedded payload to a JavaScript assignment (still escaping `<`) for
+compatibility. Local and published UI checks are repeated for this concrete fix.
