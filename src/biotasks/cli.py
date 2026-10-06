@@ -11,7 +11,7 @@ from biotasks.prompts import list_prompts, load_prompt
 
 app = App(
     name="biotasks",
-    help="Inspect BioTasks pipeline prompts.",
+    help="Inspect bundled BioTasks prompt templates.",
     version=f"biotasks {version('biotasks')}",
 )
 prompts = App(name="prompts", help="List or read bundled prompt templates.")

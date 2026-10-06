@@ -1,17 +1,22 @@
 # BioTasks
 
-BioTasks is an open effort to generate realistic computational biology tasks
-with reproducible inputs and executable grading. The aim is to turn scientific
-workflows into tasks that require agents to use bioinformatics tools to
-answer biological questions.
+BioTasks develops open tools for creating and validating computational biology
+tasks. Inspired by [Marin](https://github.com/marin-community/marin), it combines
+research through code, experiments and recorded results with focused, reusable
+pipelines and helpers.
 
-The proposed pipeline discovers source workflows, curates observed biological
-data, authors task variants, and independently validates their reference
-solutions and graders. Tasks are intended to be packaged for Harbor and usable
-by other pipelines.
+The project is in early development. The implemented CLI lists and reads bundled
+prompt templates. It does not render prompts, call models, generate tasks or
+validate scientific results.
 
-The project is in early development. The scientific design and initial prompt
-templates are under review; there is no runnable generator yet.
+`main` holds reasonably established tools, tests and the documentation needed to
+use and maintain them. Experiments and their evidence live on permanent research
+branches; useful results need not produce a change to `main`. Focused pipelines
+can develop independently, with common helpers extracted when useful. Broader
+research directions and literature synthesis belong in a separate, evolving
+research document or knowledge base outside the repository.
 
-Read the [design documentation](docs/README.md) for the proposed pipeline,
-task requirements, and a worked example.
+Read the [documentation](docs/README.md) for existing functionality and storage
+practices, and [AGENTS.md](AGENTS.md) for setup and contribution guidance.
+See [issues](https://github.com/Open-Athena/biotasks/issues) for experiments and
+results.

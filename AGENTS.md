@@ -1,9 +1,11 @@
 # Working on BioTasks
 
-Build an open pipeline for generating and independently validating computational
-biology tasks. Read the [design documentation](docs/README.md) for the proposed
-scientific workflow. There is no runnable generator yet; the implemented CLI
-lists and reads packaged prompt templates. Planning text is not execution evidence.
+Develop open tools for creating and validating computational biology tasks.
+Following Marin's approach to research through code, experiments and recorded
+results, keep reasonably established pipelines and reusable helpers on `main`
+and preserve experiments independently. Read the [documentation](docs/README.md)
+for existing tools and operational practices. The implemented CLI lists and reads
+packaged prompt templates; it does not generate or validate tasks.
 
 ## Setup and CLI
 
@@ -34,11 +36,24 @@ installed package and load independently of the working directory.
 
 ## Research and promotion
 
-- `main` holds the supported pipeline, packaged prompts, tests, and maintained
-  documentation. Keep experiments and their raw evidence on research branches.
+- `main` holds reasonably established pipelines, reusable helpers, packaged
+  assets, tests and documentation needed to use and maintain them. Established
+  does not mean finished or universally applicable: state actual capabilities
+  and limitations. Focused pipelines such as `notebook2tasks` may emerge without
+  a general task-generation framework; this example is not implemented here.
+  Extract common helpers when their usefulness becomes clear.
+- Keep experimental code and evidence on permanent research branches by default.
+  An experiment can be useful and complete without a change to `main`.
+  Broader research directions, literature synthesis and open-ended ideas belong
+  in an evolving research document or knowledge base outside the repository.
+  Each experiment's issue explains its own motivation and scope; tools document
+  the rationale needed to use them without access to external planning.
 - Use one issue per research question. Include the goal or hypothesis, baseline,
-  comparison criteria, scope, and execution budget. Keep its current conclusion
-  and decisive links concise.
+  comparison criteria, scope, and execution budget. Describe the approach,
+  findings and limitations, with concise conclusions and decisive code/artifact
+  links. See [issues](https://github.com/Open-Athena/biotasks/issues) for experiments
+  and results; do not maintain an experiment index or individual research-issue
+  links in source documentation. Issues and PRs may cite related work and evidence.
 - Start research from a recorded `main` commit, using `codex/research/<issue>-<topic>`.
   Candidate changes use the normal source and prompt paths. Keep a branch-local
   `experiments/<issue>-<topic>/logbook.md`, with one-off scripts and run records
@@ -56,15 +71,16 @@ installed package and load independently of the working directory.
   consolidated change, update documentation, add meaningful regression coverage,
   and link the evidence in its PR. Scientific changes also need relevant
   executable comparisons. State the resulting behavior, validation, and limits.
-- Close a completed experiment's issue with a conclusion even if no pipeline
-  change is promoted. Retain research branches or preserve a published archive
-  tag before deletion. Preserve referenced external artifacts too.
+- Close a completed experiment's issue with a conclusion, including negative or
+  inconclusive findings, even if no improvement is promoted. Retain research
+  branches by default; preserve a published archive tag before any deliberate
+  deletion. Preserve referenced external artifacts too.
 - Keep large research inputs and traces in the public `open-athena/biotasks` HF
   bucket, following the [storage conventions](docs/storage.md#research-bucket-snapshots).
   Use append-only snapshot paths with Git-versioned manifests, checksums,
   verified downloads and recorded retention; buckets themselves are unversioned.
   Review public eligibility before uploading. Keep credentials, environments and
-  downloaded data out of Git. Task releases use commit-pinned dataset repositories.
+  downloaded data out of Git.
 - Follow the user's publication instructions. Distinguish local, committed,
   pushed, PR-opened, and merged states.
 
@@ -98,11 +114,13 @@ installed package and load independently of the working directory.
   of the current working directory. Keep a single canonical copy.
 - Keep ordinary tests in `tests/`; introduce small fixtures when a test needs
   them. Experiment-only scripts and checks belong with their experiment.
-- Keep reference-case descriptions in `docs/`. No skills directory or issue/PR
-  templates are required. Add structure when there is content to justify it.
-- Keep the root README focused on project purpose, current maturity, and design
-  documentation. Keep setup, CLI, and research instructions here. Use issues for
-  migration records, progress, and follow-up work.
+- Keep documentation for established tools and operational practices in `docs/`.
+  Experimental reference cases belong with the experiment. No skills directory
+  or issue/PR templates are required. Add structure when content justifies it.
+- Keep the root README focused on purpose, actual capabilities and documentation
+  navigation. Keep setup, CLI and contribution instructions here. Use issues for
+  experiment findings, migration records and follow-up work, not a repository-wide
+  future research program.
 - Pin Python in `.python-version`, direct and development dependencies in
   `pyproject.toml`, and transitive dependencies in `uv.lock`. Pin uv as a
   development dependency; CI reads its version from the lockfile. Avoid an exact
@@ -138,8 +156,9 @@ and keep CI coverage aligned with the local hooks when changing them.
 
 ## Scientific evidence
 
-- Use observed biological data as the backbone; label adaptations and simulations.
-  Preserve lineage, source terms, and benchmark exclusions from the design docs.
+- Record whether biological inputs are observed, adapted or simulated. Preserve
+  lineage, source terms and any benchmark exclusions recorded by the experiment
+  or tool.
 - Grade artifacts deterministically. LLM review can guide development but cannot
   supply the reward. Keep oracle and grading assets outside solver-visible inputs.
 - Distinguish discovery, implementation, native execution, independent validation,
