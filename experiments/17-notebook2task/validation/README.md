@@ -75,3 +75,8 @@ cases, the 17-cell BixBench source viewer and mobile overflow, with no page erro
 exit status and sampled peak process-group RSS (~118 MiB). Browser subprocesses
 were closed; no Chromium/Playwright worker remained. No scientific or authoring
 execution occurred. Prompt/case manifests retain source hashes and revisions.
+
+The same checks passed against published HTMLPreview commit `aa3bd5e`, including
+the reference-answer disclosure. See `public-comparison-browser-resources.json`.
+This does not revalidate every external author-hosted source; their previously
+recorded availability limitations still apply.

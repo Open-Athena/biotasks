@@ -51,6 +51,6 @@ terms remain unresolved for any future Atlas work. This is not an implemented se
 
 [Validation records](validation/README.md) cover the prompt package and explorer.
 
-[Open the published explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/365a27799a1dc936d9f3b2ccefd8e282d53227be/experiments/17-notebook2task/explorer/index.html).
-The public controls and one full notebook embed were browser-verified; see the
+[Open the published explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/aa3bd5e7d4774da402f931a20354dbfba061bb85/experiments/17-notebook2task/explorer/index.html).
+The public controls, both comparison cases and bundled BixBench notebook were browser-verified; see the
 validation records for exact scope. The source remains on the research branch.
