@@ -1,0 +1,22 @@
+--- seta-v1/idea_agent_base_prompt.md
++++ cpu-training-v1/idea_agent_base_prompt.md
+@@ -192,7 +192,7 @@
+ - Use common base images: `ubuntu:24.04`, `python:3.13`, `node:20`, etc.
+ - Pre-install `uv` and `tmux` in the Dockerfile — `uv` avoids network at test time; `tmux` is required by the agent's shell tool
+ - **No GPU tasks** — the container has CPU only; do not design tasks that require a GPU or CUDA
+-- **No model training** — tasks must not require training or fine-tuning ML models (inference on tiny pre-existing models is acceptable only if the model fits in the image and loads in seconds)
++- **Bounded CPU model training is allowed** — small classical statistical/ML models may be fit and cross-validated when a measured reference run fits 1 CPU, 2 GB RAM and five minutes. No neural-network training or fine-tuning. Keep larger training excluded.
+ - **No heavy compute** — tasks must complete well within the agent timeout; avoid anything that would take tens of minutes of CPU (e.g. compiling a large codebase from scratch, brute-force search over large datasets)
+ - Container resources: 1 CPU, 2 GB RAM, 10 GB storage — design tasks that fit comfortably within these limits
+ - Tasks must be completable within 50 agent turns
+--- seta-v1/agent.md
++++ cpu-training-v1/agent.md
+@@ -392,7 +392,7 @@
+ - If `judge_report.md` already exists with FAIL items, address every FAIL before proceeding
+ - **No heavy Docker images** — do not use `nvidia/cuda`, `pytorch/pytorch`, or any large base image; target image size ~500 MB, hard limit 1 GB; build must complete in under 5 minutes
+ - **No GPU tasks** — the container is CPU-only; never design tasks that require a GPU or CUDA
+-- **No model training** — do not create tasks that train or fine-tune ML models; inference on a tiny pre-existing model is only acceptable if it loads in seconds and fits within the 2 GB memory limit
++- **Bounded CPU model training is allowed** — small classical statistical/ML models may be fit and cross-validated when a measured reference run fits 1 CPU, 2 GB RAM and five minutes. No neural-network training or fine-tuning. Keep larger training excluded.
+ - **No heavy compute** — tasks must complete well within the agent timeout; avoid tasks that require tens of minutes of CPU (e.g. compiling a huge codebase, brute-force over large datasets)
+ - Container resources are fixed: 1 CPU, 2 GB RAM, 10 GB storage — keep the environment well within these limits
+ - **Absolutely NO symlinks** — never create symlinks (`ln -s` or any other method) to directories or files outside your task directory; this is strictly forbidden and will be treated as a security violation
