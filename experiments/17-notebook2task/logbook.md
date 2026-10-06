@@ -91,3 +91,38 @@ cause remains unknown. Eleven of twelve author pages passed browser embed checks
 the bedtools host timed out. Added the pinned full bedtools Markdown with its
 MIT license as a local rendering fallback. Its explicit puzzles provide candidate
 objectives, with independent answer validation still required.
+
+### 2026-10-06: published comparison pairs and released-prompt baseline
+
+Gonzalo requested concrete published notebook/task pairs from SETA and BixBench,
+then proposed starting prompt v1 from released SETA prompts. Added two reference
+cases, distinct from the source shortlist: SETA cytopathology classification and
+BixBench v1.5 ASXL1 RNA-seq question bix-1-q1. Source release hashes and retrieved
+artifact hashes are under explorer/comparisons/. Only static inspection occurred.
+
+The BixBench capsule's ZIP tail contains the complete 17-cell notebook. Extracted
+that member with CRC verification, retaining original source and saved outputs;
+no count matrix or other biological input was extracted. The explorer displays
+all cells and text representations of saved outputs offline. Its question,
+reference answer (collapsed), release links and proposed recipe are visible.
+The SETA case displays the full released instruction and links to tests,
+solution and environment. The Kaggle source currently returns R Markdown v96;
+the generation-time version is unresolved. It is a partial source pair, labeled
+as such, with a source link rather than a falsely pinned or mirrored notebook.
+
+SETA's verifier computes ensemble AUC using solver-supplied labels and checks
+reported CV summaries; this is a static grading concern, not an executed exploit.
+BixBench's source specifies covariates and GO-analysis details beyond its short
+question; its revised ideal answer differs from the capsule-level narrative.
+These motivate possible recipe changes but establish no execution outcome.
+
+Preserved SETA's unchanged notebook adapter, shared idea prompt and builder
+under baselines/seta-v1/, with license, hashes and upstream paths. This supersedes
+the earlier bespoke v0 as the planned baseline. Baseline should preserve SETA's
+ML-specific filters, record rejected biology sources, and keep harness/input
+porting separate. A biology adaptation must be a separate explicit diff. The
+original BioTasks draft remains an untested candidate. AutoSDT releases actual
+adaptation and instruction templates and is a plausible second baseline;
+a comparable BixBench authoring prompt and the specific LongDS authoring skill
+were not established in the inspected trees. No authoring/model/scientific run
+has been launched; runtime porting, fixed inputs and budgets remain outstanding.

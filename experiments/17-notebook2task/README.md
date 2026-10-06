@@ -11,7 +11,8 @@ Base main commit: `2a1950d239f1ada467c35393991dac87debe35f7`.
 Permanent research branch: `codex/research/17-notebook2task`.
 Never merge this branch wholesale.
 
-- [Baseline prompt](../../src/biotasks/prompts/notebook2task.md)
+- [Released SETA v1 baseline and other prompt candidates](baselines/seta-v1/README.md)
+- [Earlier BioTasks draft (separate candidate)](../../src/biotasks/prompts/notebook2task.md)
 - [Protocol and proposed budget](protocol.md)
 - [Worker output contract](output-contract.md)
 - [Source intake](sources.json)
@@ -37,8 +38,8 @@ Then implement and exercise the minimal batch runner against that backend,
 including interruption, timeout, failed-job retention, and telemetry checks.
 Checkpoint executable inputs before any scientific/model run.
 
-Research publication, paid services, and concurrent worker launches have not
-been performed. Shared-VM safety rules still apply; the issue's desired parallel
+The research branch and explorer have been published. Paid services and
+concurrent worker launches have not been used. Shared-VM safety rules still apply; the issue's desired parallel
 workflow does not by itself allocate remote resources or authorize local workers.
 
 ## Replay API option

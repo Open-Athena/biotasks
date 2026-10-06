@@ -46,3 +46,13 @@ separate original-source link remains available for framing or network failures.
 `check_notebook.py` checks every full-source view and both original links.
 Both need an existing Playwright/Chromium installation and the shared-node guard.
 No generated or accepted tasks exist. The shortlist is not the run input manifest.
+
+## Published comparisons
+
+A separate panel shows two released tasks, their source links, inspected
+artifacts and proposed BioTasks recipes. The BixBench ASXL1 example includes an
+offline 17-cell original notebook display; rich outputs use text representations.
+The SETA cytopathology source is currently R Markdown and its original revision
+is unresolved, so its full source remains an external link. These are comparison
+references, not additional candidates or generated BioTasks tasks. See
+`comparisons/README.md` for lineage and limitations.

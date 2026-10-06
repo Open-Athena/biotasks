@@ -1,0 +1,65 @@
+[
+  {
+    "id": "seta-cytopathology",
+    "title": "SETA \u00b7 Breast cancer from cytopathology",
+    "status": "Released task inspected; source-version match unresolved",
+    "source_url": "https://www.kaggle.com/code/gpreda/breast-cancer-prediction-from-cytopathology-data",
+    "source_note": "The release ID identifies Gabriel Preda\u2019s Kaggle analysis. Its public source currently returns R Markdown, version 96 (retrieved October 6, 2026), not an .ipynb. The release does not pin the original version here: this is a source match by identifier, not a verified exact-version pair. Full source opens on Kaggle; it is not bundled pending source-license verification.",
+    "instruction_file": "seta-instruction.md",
+    "artifacts": [
+      [
+        "Released task",
+        "https://huggingface.co/datasets/camel-ai/SETA-Env/blob/3c3bc8975b05826bf41769bd6b2da76ad1b6dd42/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/instruction.md"
+      ],
+      [
+        "Verifier",
+        "https://huggingface.co/datasets/camel-ai/SETA-Env/blob/3c3bc8975b05826bf41769bd6b2da76ad1b6dd42/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/tests/test_outputs.py"
+      ],
+      [
+        "Reference solution",
+        "https://huggingface.co/datasets/camel-ai/SETA-Env/blob/3c3bc8975b05826bf41769bd6b2da76ad1b6dd42/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/solution/solve.sh"
+      ],
+      [
+        "Environment",
+        "https://huggingface.co/datasets/camel-ai/SETA-Env/blob/3c3bc8975b05826bf41769bd6b2da76ad1b6dd42/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/environment/Dockerfile"
+      ],
+      [
+        "Task configuration",
+        "https://huggingface.co/datasets/camel-ai/SETA-Env/blob/3c3bc8975b05826bf41769bd6b2da76ad1b6dd42/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/task.toml"
+      ]
+    ],
+    "observations": [
+      "The task requests three classifiers, feature selection, a weighted ensemble and CSV/report artifacts. The environment declares one CPU; execution and resource use have not been measured here.",
+      "The verifier computes ensemble AUC against true_label supplied by the solver, without recovering the prescribed split or labels from the input dataset. Report checks use length and keywords; cross-validation checks use reported metrics. This is static inspection, not a demonstrated exploit.",
+      "The current source is R Markdown; the released task specifies Python. The exact upstream source version remains necessary before attributing which constraints were preserved or introduced."
+    ],
+    "recipe": "Proposed comparison recipe: use grader-owned held-out IDs and labels, require a saved prediction pipeline, recompute metrics independently, and inspect preprocessing within folds. Compare whether a focused classification objective needs all three-model/ensemble requirements. Not implemented or validated.",
+    "revision": "3c3bc8975b05826bf41769bd6b2da76ad1b6dd42"
+  },
+  {
+    "id": "bix-asxl1",
+    "title": "BixBench \u00b7 ASXL1 RNA-seq and GO enrichment",
+    "status": "Released question and capsule notebook inspected; not rerun",
+    "source_url": "https://huggingface.co/datasets/futurehouse/BixBench/blob/f8cc3bdcc6357c88b8c3648306522b9c422dc95a/CapsuleFolder-33b801bb-9b47-4a0a-9314-05325c82fde7.zip",
+    "source_note": "Full 17-cell R notebook extracted from the pinned release capsule. All source cells and saved outputs are retained in the snapshot. The reading view uses text representations of outputs, without rich HTML/LaTeX styling. No new execution. Only the ZIP tail was retrieved; no count matrix or other biological input was extracted.",
+    "notebook_file": "bix-1.ipynb",
+    "question_file": "bix-question.json",
+    "artifacts": [
+      [
+        "Released questions (bix-1-q1)",
+        "https://huggingface.co/datasets/futurehouse/BixBench/blob/f8cc3bdcc6357c88b8c3648306522b9c422dc95a/BixBench.jsonl"
+      ],
+      [
+        "Source capsule",
+        "https://huggingface.co/datasets/futurehouse/BixBench/blob/f8cc3bdcc6357c88b8c3648306522b9c422dc95a/CapsuleFolder-33b801bb-9b47-4a0a-9314-05325c82fde7.zip"
+      ]
+    ],
+    "observations": [
+      "The source uses design ~sex+condition, disease-vs-control shrinkage, an annotation-derived gene universe, BP enrichment and redundancy reduction. These choices matter when assessing whether the short question fully specifies the intended analysis.",
+      "The v1.5 question stores ideal answer 0.0002; the capsule-level narrative reports a different T-cell activation value. Do not treat the narrative as the question oracle; execution is needed to reconcile the values.",
+      "The question records eval_mode=str_verifier. Answer-oriented grading does not itself establish correctness of intermediate analysis artifacts."
+    ],
+    "recipe": "Proposed comparison recipe: ask for differential-expression and simplified GO tables, specify design, contrast, gene universe and annotation versions, and grade intermediate invariants as well as the requested term. Keep this evaluation example outside training and transfer pools. Not implemented or validated.",
+    "revision": "f8cc3bdcc6357c88b8c3648306522b9c422dc95a"
+  }
+]

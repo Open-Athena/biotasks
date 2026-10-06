@@ -3,9 +3,12 @@
 ## Question and baseline
 
 Can independent workers preserve a source analysis's science while producing
-runnable, deterministically graded tasks? Baseline `v0` is the first candidate
-in `src/biotasks/prompts/notebook2task.md`, identified for each run by Git revision
-and SHA-256. It is not a supported or experimentally selected prompt.
+runnable, deterministically graded tasks? Baseline `v1-seta-original` starts from the released SETA notebook adapter,
+shared idea prompt and datapoint builder, pinned under `baselines/seta-v1/`.
+Keep their text unchanged for the baseline; record input/harness porting separately.
+The original BioTasks draft in `src/biotasks/prompts/notebook2task.md` is retained
+as `v0-biotasks-draft`, a separate untested candidate, not the default baseline.
+Neither prompt has been executed or experimentally selected.
 
 Issue #10 established no successful task authoring or supported prompt winner.
 Use its fixed inputs, evidence preservation, failure inspection, and repeated

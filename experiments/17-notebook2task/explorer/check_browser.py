@@ -53,7 +53,23 @@ with sync_playwright() as pw:
         page.select_option('#group', 'AlphaGenome')
         assert page.locator('#list .card').count() == 2
         page.screenshot(path='/tmp/biotasks17-mobile.png', full_page=True)
+        assert page.locator('#comparison-select option').count() == 2
+        page.select_option('#comparison-select', 'bix-asxl1')
+        assert 'DESeq2' in page.locator('.released-task').inner_text()
+        page.click('#comparison-notebook')
+        frame = page.frame_locator('#comparison-frame iframe')
+        assert frame.locator('section').count() == 17
+        assert '~sex+condition' in frame.locator('body').inner_text()
+        page.locator('#comparison-detail summary').click()
+        assert '0.0002' in page.locator('#comparison-detail details').inner_text()
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        page.set_viewport_size({'width':1280,'height':900})
+        page.locator('#comparisons').scroll_into_view_if_needed()
+        page.screenshot(path='/tmp/biotasks17-comparisons.png')
+        page.select_option('#comparison-select', 'seta-cytopathology')
+        assert 'AUC of at least 0.93' in page.locator('.released-task').inner_text()
+        assert page.locator('#comparison-frame iframe').count() == 0
         assert not errors, errors
-        print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow'],'page_errors':errors}))
+        print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow','two released-task comparisons','17-cell offline notebook','published answer disclosure'],'page_errors':errors}))
     finally:
         browser.close()

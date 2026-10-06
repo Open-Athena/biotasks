@@ -66,3 +66,12 @@ vignettes, bedtools, gReLU, and AlphaGenome splicing (11/12). The TAL1 author pa
 which passed the earlier content check, timed out on this later request. Remote
 service availability remains a limitation; direct GitHub and optional nbviewer
 links remain available. Do not describe all external services as reliably online.
+
+## October 6: released task comparisons and SETA prompt snapshots
+
+Local offline browser checks passed for 12 candidate controls, two comparison
+cases, the 17-cell BixBench source viewer and mobile overflow, with no page errors.
+`comparison-browser-resources.json` records the guarded command, timestamps,
+exit status and sampled peak process-group RSS (~118 MiB). Browser subprocesses
+were closed; no Chromium/Playwright worker remained. No scientific or authoring
+execution occurred. Prompt/case manifests retain source hashes and revisions.

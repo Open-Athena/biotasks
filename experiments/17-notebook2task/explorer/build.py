@@ -25,6 +25,37 @@ for row in catalog["sources"]:
             '<p>Original bedtools tutorial by Aaron Quinlan. MIT-licensed source snapshot; no code executed.</p>'
             + MarkdownIt("commonmark", {"html": False}).render(original)
             + '<hr><pre>' + html.escape(license_text) + '</pre></body></html>')
+# Published reference examples are separate from source candidates.
+comparison_root = root / "comparisons"
+catalog["comparisons"] = json.loads((comparison_root / "cases.json").read_text())
+md = MarkdownIt("commonmark", {"html": False})
+for case in catalog["comparisons"]:
+    if "instruction_file" in case:
+        case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
+    if "question_file" in case:
+        question = json.loads((comparison_root / case["question_file"]).read_text())
+        case["instruction"] = question["question"]
+        case["reference_answer"] = question["ideal"]
+        case["canary"] = question["canary"]
+    if "notebook_file" in case:
+        notebook = json.loads((comparison_root / case["notebook_file"]).read_text())
+        cells = []
+        for number, cell in enumerate(notebook["cells"]):
+            source = "".join(cell["source"])
+            body = md.render(source) if cell["cell_type"] == "markdown" else "<pre>" + html.escape(source) + "</pre>"
+            for output in cell.get("outputs", []):
+                text = output.get("text", output.get("data", {}).get("text/plain", ""))
+                if not text and output.get("output_type") == "error":
+                    text = output.get("traceback", [])
+                if not text:
+                    text = str(output.get("data", {}))
+                body += '<pre class="output">' + html.escape("".join(text)) + '</pre>'
+            cells.append(f'<section><small>Cell {number} · {cell["cell_type"]}</small>{body}</section>')
+        case["notebook_html"] = ('<!doctype html><html><head><meta charset="utf-8"><style>'
+            'body{font:15px/1.6 system-ui;padding:20px}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f3f6f4;padding:12px}'
+            'section{border-bottom:1px solid #ddd;padding:15px 0}.output{background:#fff8e9}a{color:#087b77}</style></head><body>'
+            '<h1>BixBench original capsule notebook</h1><p>FutureHouse · Apache-2.0 · Saved outputs; not rerun.</p>'
+            + ''.join(cells) + '</body></html>')
 # Escaping '<' prevents even a source-provided closing script tag from breaking out.
 payload = json.dumps(catalog, ensure_ascii=True).replace("<", "\\u003c")
 template = (root / "template.html").read_text()
