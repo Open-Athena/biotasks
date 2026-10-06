@@ -74,9 +74,9 @@ try:
                     status='request_failed';log.write(json.dumps({'turn':turn,'error_type':type(e).__name__,'http_status':getattr(e,'code',None)})+'\n');break
                 usage.append(result.get('usage',{}))
                 msg=result['choices'][0]['message'];log.write(json.dumps({'turn':turn,'response':result})+'\n');log.flush()
-                history_message={k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning_content','reasoning'}}
-                if msg.get('reasoning') and not msg.get('reasoning_content'):
-                    history_message['reasoning_content']=msg['reasoning']
+                history_message={k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning'}}
+                if msg.get('reasoning_content') and not msg.get('reasoning'):
+                    history_message['reasoning']=msg['reasoning_content']
                 messages.append(history_message)
                 calls=msg.get('tool_calls',[])
                 if not calls:
