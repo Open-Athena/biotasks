@@ -91,3 +91,13 @@ same UI checks with zero page errors (2.72 seconds, max child RSS 118,056 KiB).
 Recorded the exact URL and checks in evidence/browser-public.json. Browser contexts
 were closed in finally blocks and every launched command returned; no persistent
 preview server is needed. Remote issue #16 was verified OPEN after publication.
+
+## 2026-10-06 — broader discovery, second pass
+
+User authorized continued discovery and preview updates. Preserve the 40-row
+checkpoint and all original cohorts. New scope: up to twelve candidate documents
+across challenge expansion, package vignettes/curated paths, Quarto, marimo and
+Hugging Face. Record searches with no useful document and access failures; do not
+force every route to contribute positive examples. Add biology labels only when
+actual documents justify them, while retaining original 8/10-label summaries.
+No source execution, biological data downloads, cloud spend or child agents.
