@@ -5,6 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
+- [Published HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/871d12533204242831cd2e3a9d16389dd0d58f1f/experiments/16-analysis-discovery/explorer.html) (commit-pinned; public browser checks passed)
 - [Provisional findings](findings.md)
 - [Interactive explorer](explorer.html), self-contained and usable offline
 - [Candidate manifest](candidates.json) and [CSV](candidates.csv)

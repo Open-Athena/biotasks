@@ -85,3 +85,9 @@ The first published HTMLPreview exercised the controls successfully but emitted 
 page error because the preview loader evaluated the application/json data script.
 Changed the embedded payload to a JavaScript assignment (still escaping `<`) for
 compatibility. Local and published UI checks are repeated for this concrete fix.
+
+Public preview at commit 871d12533204242831cd2e3a9d16389dd0d58f1f passed the
+same UI checks with zero page errors (2.72 seconds, max child RSS 118,056 KiB).
+Recorded the exact URL and checks in evidence/browser-public.json. Browser contexts
+were closed in finally blocks and every launched command returned; no persistent
+preview server is needed. Remote issue #16 was verified OPEN after publication.
