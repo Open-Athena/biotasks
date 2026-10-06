@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="2.164" timestamp="2026-10-06T22:39:35.534327+00:00" hostname="g7387bc"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.276" /><testcase classname="test_outputs" name="test_row_key_integrity" time="0.003"><failure message="AssertionError: oof_predictions has duplicate ids for logistic_regression&#10;assert False&#10; +  where False = 0          925311\n3          925311\n6          895100\n9          869218\n12         898678\n          ...    \n1350     90317302\n1353       859471\n1356    901034302\n1359       871149\n1362       896839\nName: id, Length: 455, dtype: int64.is_unique">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_row_key_integrity(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        raw_ids = set(int(i) for i in reference["ids"])
+        label_by_id = {int(i): int(v) for i, v in zip(reference["ids"], reference["y"])}
+    
+        for frame, expected_rows, name in (
+            (oof, len(reference["ids_train"]), "oof_predictions"),
+            (tst, len(reference["ids_test"]), "test_predictions"),
+        ):
+            assert set(frame["model"].unique().tolist()) == set(MODELS), (
+                "%s must contain exactly the three declared model identifiers" % name
+            )
+            for m in MODELS:
+                sub = frame[frame["model"] == m]
+                assert len(sub) == expected_rows, (
+                    "%s has %d rows for %s, expected %d"
+                    % (name, len(sub), m, expected_rows)
+                )
+&gt;               assert sub["id"].is_unique, "%s has duplicate ids for %s" % (name, m)
+E               AssertionError: oof_predictions has duplicate ids for logistic_regression
+E               assert False
+E                +  where False = 0          925311\n3          925311\n6          895100\n9          869218\n12         898678\n          ...    \n1350     90317302\n1353       859471\n1356    901034302\n1359       871149\n1362       896839\nName: id, Length: 455, dtype: int64.is_unique
+
+/tests/test_outputs.py:303: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.003"><failure message="AssertionError: OOF id set for logistic_regression does not match the regenerated training split&#10;assert {8670, 8913, ...1, 86355, ...} == {8670, 8913, ...1, 86355, ...}&#10;  &#10;  Extra items in the right set:&#10;  86730502&#10;  Use -v to get more diff">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_split_and_fold_membership(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        train_ids = set(int(i) for i in reference["ids_train"])
+        test_ids = set(int(i) for i in reference["ids_test"])
+        assert len(train_ids) == 455 and len(test_ids) == 114
+        assert not (train_ids &amp; test_ids)
+    
+        for m in MODELS:
+            got_train = set(int(i) for i in oof[oof["model"] == m]["id"])
+            got_test = set(int(i) for i in tst[tst["model"] == m]["id"])
+&gt;           assert got_train == train_ids, (
+                "OOF id set for %s does not match the regenerated training split" % m
+            )
+E           AssertionError: OOF id set for logistic_regression does not match the regenerated training split
+E           assert {8670, 8913, ...1, 86355, ...} == {8670, 8913, ...1, 86355, ...}
+E             
+E             Extra items in the right set:
+E             86730502
+E             Use -v to get more diff
+
+/tests/test_outputs.py:347: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.003"><failure message="AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 0.99115 (tolerance 1e-06)&#10;assert 0.9911502424398042 &lt;= 1e-06">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_probabilities_match_reference(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        # Discrimination guard: an intentionally leaky pipeline (preprocessing and
+        # model fit on the full dataset before splitting) must fall outside the
+        # tolerance, so a match below genuinely certifies the honest protocol.
+        honest_oof = reference["oof"]["logistic_regression"]
+        honest_test = reference["test_prob"]["logistic_regression"]
+        leak_gap = max(
+            float(np.max(np.abs(reference["leaky_oof"] - honest_oof))),
+            float(np.max(np.abs(reference["leaky_test"] - honest_test))),
+        )
+        assert leak_gap &gt; TOL, (
+            "leaky reference variant is not distinguishable at tolerance %g "
+            "(gap %g)" % (TOL, leak_gap)
+        )
+    
+        ref_oof = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_train"], reference["oof"][m]):
+                ref_oof[(int(i), m)] = float(p)
+        ref_test = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_test"], reference["test_prob"][m]):
+                ref_test[(int(i), m)] = float(p)
+    
+        for m in MODELS:
+            sub = oof[oof["model"] == m]
+            expected = np.array(
+                [ref_oof[(int(i), m)] for i in sub["id"]], dtype=float
+            )
+            got = sub["y_proba"].to_numpy(dtype=float)
+            diff = float(np.max(np.abs(got - expected)))
+&gt;           assert diff &lt;= TOL, (
+                "OOF probabilities for %s deviate from the independent reference "
+                "by %g (tolerance %g)" % (m, diff, TOL)
+            )
+E           AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 0.99115 (tolerance 1e-06)
+E           assert 0.9911502424398042 &lt;= 1e-06
+
+/tests/test_outputs.py:413: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.051" /><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.017" /><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.004" /><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000" /><testcase classname="test_outputs" name="test_report_content" time="0.000" /></testsuite></testsuites>

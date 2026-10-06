@@ -186,3 +186,30 @@ the shared prompt prohibition and proposes weak held-out integrity checks;
 these static concerns are documented separately from the verbatim draft.
 The explorer displays both GLM outcomes; offline browser interaction checks
 passed. No GLM builder or scientific validation was run.
+
+
+### 2026-10-06: CPU-training variant and native validation
+
+Changed the training policy and grading contract separately, then asked GLM-5.3
+to revise the SETA cytopathology idea. Reasoning-output ceilings required saved
+continuations. Parent review corrected the resulting specification before builder
+submission; the explicit patch records those interventions. The builder initially
+hit its reasoning limit, then produced a package in 12 bounded continuation
+responses. Its staged input specification remained byte-identical.
+
+Reasoning history handling differs from the original baseline: the endpoint
+returns `reasoning`, which the original loop dropped. Current outgoing history
+retains both aliases for deployed-endpoint compatibility but counts identical
+text once toward the harness ceiling. Token counts did not fully agree with
+current upstream behavior; exact served history semantics remain uncertain.
+This is not a faithful SETA reproduction or an isolated prompt-only comparison.
+
+Native-01 found the generated solution numerically correct, but its grader
+contained an unsupported >=30 correlation-pairs assertion (actual count 21).
+Preserved the failure and removed that assertion only, retaining exact data-based
+checking. Corrected a parent duplicate-ID mutation that originally made no change
+to interleaved rows. Native-02 then passed 9 tests, independent recomputation,
+entry-point reproduction and 8 control expectations on one CPU. Full details
+and the scientific boundary are in validation/cpu-training-v1/README.md.
+Both CPU jobs are terminal; no inference service or GPU was provisioned.
+Docker/Harbor execution and solver evaluation remain untested.

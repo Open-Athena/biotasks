@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="0" tests="9" time="2.298" timestamp="2026-10-06T22:39:20.945830+00:00" hostname="g7387bc"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.345"><failure message="Failed: required artifact /app/results/oof_predictions.csv does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_artifacts_exist_and_schema(reference):
+&gt;       oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+
+/tests/test_outputs.py:233: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:209: in _load_csv
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/oof_predictions.csv')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/oof_predictions.csv does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_row_key_integrity" time="0.000"><failure message="Failed: required artifact /app/results/oof_predictions.csv does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_row_key_integrity(reference):
+&gt;       oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+
+/tests/test_outputs.py:278: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:209: in _load_csv
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/oof_predictions.csv')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/oof_predictions.csv does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.000"><failure message="Failed: required artifact /app/results/oof_predictions.csv does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_split_and_fold_membership(reference):
+&gt;       oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+
+/tests/test_outputs.py:330: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:209: in _load_csv
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/oof_predictions.csv')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/oof_predictions.csv does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.000"><failure message="Failed: required artifact /app/results/oof_predictions.csv does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_probabilities_match_reference(reference):
+&gt;       oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+
+/tests/test_outputs.py:374: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:209: in _load_csv
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/oof_predictions.csv')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/oof_predictions.csv does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.000"><failure message="Failed: required artifact /app/results/metrics.json does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_metrics_recomputed_consistent(reference):
+&gt;       metrics = _load_json(RESULTS / "metrics.json")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:432: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:217: in _load_json
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/metrics.json')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/metrics.json does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.000"><failure message="Failed: required artifact /app/results/metrics.json does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_selection_rule_consistent(reference):
+&gt;       metrics = _load_json(RESULTS / "metrics.json")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:489: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:217: in _load_json
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/metrics.json')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/metrics.json does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.000"><failure message="Failed: required artifact /app/results/metrics.json does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_three_distinct_model_families(reference):
+&gt;       metrics = _load_json(RESULTS / "metrics.json")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:540: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:217: in _load_json
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/metrics.json')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/metrics.json does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000"><failure message="Failed: required artifact /app/results/eda.json does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_eda_facts_match_trusted_data(reference):
+&gt;       eda = _load_json(RESULTS / "eda.json")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:576: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:217: in _load_json
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/eda.json')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/eda.json does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase><testcase classname="test_outputs" name="test_report_content" time="0.000"><failure message="Failed: required artifact /app/results/metrics.json does not exist">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_report_content(reference):
+&gt;       metrics = _load_json(RESULTS / "metrics.json")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+/tests/test_outputs.py:601: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/tests/test_outputs.py:217: in _load_json
+    _require(path)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('/app/results/metrics.json')
+
+    def _require(path):
+        if not path.is_file():
+&gt;           pytest.fail("required artifact %s does not exist" % path)
+E           Failed: required artifact /app/results/metrics.json does not exist
+
+/tests/test_outputs.py:204: Failed</failure></testcase></testsuite></testsuites>

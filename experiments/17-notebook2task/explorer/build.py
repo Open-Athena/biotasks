@@ -41,6 +41,11 @@ for case in catalog["comparisons"]:
         draft = glm / "artifacts/draft_spec.md"
         final = glm / "last-message.md"
         case["glm_output"] = draft.read_text() if draft.exists() else ((final.read_text() or "No draft or final response was written.") if final.exists() else "No draft or final response was written.")
+    if case["id"] == "seta-cytopathology":
+        generated = root.parent / "runs/20261006-glm53-cpu-training-v1-builder-continuation/results/seta-cytopathology/artifacts"
+        case["cpu_variant_instruction"] = (generated / "instruction.md").read_text()
+        case["cpu_variant_tests"] = (root.parent / "validation/cpu-training-v1/candidate/tests/test_outputs.py").read_text()
+        case["cpu_variant_validation"] = (root.parent / "validation/cpu-training-v1/README.md").read_text()
     if "instruction_file" in case:
         case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
     if "question_file" in case:

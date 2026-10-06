@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="2.320" timestamp="2026-10-06T22:39:26.151350+00:00" hostname="g7387bc"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.351" /><testcase classname="test_outputs" name="test_row_key_integrity" time="0.005"><failure message="AssertionError: oof_predictions y_true does not match the raw labels under B=0/M=1&#10;assert False&#10; +  where False = &lt;function array_equal at 0x74d951799cb0&gt;(array([0., 0., 0., ..., 1., 1., 1.], shape=(1365,)), array([1., 1., 1., ..., 0., 0., 0.], shape=(1365,)))&#10; +    where &lt;function array_equal at 0x74d951799cb0&gt; = np.array_equal&#10; +    and   array([0., 0., 0., ..., 1., 1., 1.], shape=(1365,)) = to_numpy(dtype=float)&#10; +      where to_numpy = 0       0\n1       0\n2       0\n3       1\n4       1\n       ..\n1360    0\n1361    0\n1362    1\n1363    1\n1364    1\nName: y_true, Length: 1365, dtype: int64.to_numpy">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_row_key_integrity(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        raw_ids = set(int(i) for i in reference["ids"])
+        label_by_id = {int(i): int(v) for i, v in zip(reference["ids"], reference["y"])}
+    
+        for frame, expected_rows, name in (
+            (oof, len(reference["ids_train"]), "oof_predictions"),
+            (tst, len(reference["ids_test"]), "test_predictions"),
+        ):
+            assert set(frame["model"].unique().tolist()) == set(MODELS), (
+                "%s must contain exactly the three declared model identifiers" % name
+            )
+            for m in MODELS:
+                sub = frame[frame["model"] == m]
+                assert len(sub) == expected_rows, (
+                    "%s has %d rows for %s, expected %d"
+                    % (name, len(sub), m, expected_rows)
+                )
+                assert sub["id"].is_unique, "%s has duplicate ids for %s" % (name, m)
+            assert set(int(i) for i in frame["id"]) &lt;= raw_ids, (
+                "%s contains ids outside the raw file" % name
+            )
+            mapped = np.array(
+                [label_by_id[int(i)] for i in frame["id"]], dtype=float
+            )
+&gt;           assert np.array_equal(frame["y_true"].to_numpy(dtype=float), mapped), (
+                "%s y_true does not match the raw labels under B=0/M=1" % name
+            )
+E           AssertionError: oof_predictions y_true does not match the raw labels under B=0/M=1
+E           assert False
+E            +  where False = &lt;function array_equal at 0x74d951799cb0&gt;(array([0., 0., 0., ..., 1., 1., 1.], shape=(1365,)), array([1., 1., 1., ..., 0., 0., 0.], shape=(1365,)))
+E            +    where &lt;function array_equal at 0x74d951799cb0&gt; = np.array_equal
+E            +    and   array([0., 0., 0., ..., 1., 1., 1.], shape=(1365,)) = to_numpy(dtype=float)
+E            +      where to_numpy = 0       0\n1       0\n2       0\n3       1\n4       1\n       ..\n1360    0\n1361    0\n1362    1\n1363    1\n1364    1\nName: y_true, Length: 1365, dtype: int64.to_numpy
+
+/tests/test_outputs.py:310: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.007"><failure message="AssertionError: fold assignment for logistic_regression does not match the regenerated StratifiedKFold(5, shuffle=True, random_state=20250607)&#10;assert {8670: 0, 891...86208: 1, ...} == {8670: 2, 891...86208: 4, ...}&#10;  &#10;  Omitting 95 identical items, use -vv to show&#10;  Differing items:&#10;  {919555: 0} != {919555: 3}&#10;  {911366: 2} != {911366: 4}&#10;  {843786: 0} != {843786: 1}&#10;  {8912909: 3} != {8912909: 4}...&#10;  &#10;  ...Full output truncated (357 lines hidden), use '-vv' to show">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_split_and_fold_membership(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        train_ids = set(int(i) for i in reference["ids_train"])
+        test_ids = set(int(i) for i in reference["ids_test"])
+        assert len(train_ids) == 455 and len(test_ids) == 114
+        assert not (train_ids &amp; test_ids)
+    
+        for m in MODELS:
+            got_train = set(int(i) for i in oof[oof["model"] == m]["id"])
+            got_test = set(int(i) for i in tst[tst["model"] == m]["id"])
+            assert got_train == train_ids, (
+                "OOF id set for %s does not match the regenerated training split" % m
+            )
+            assert got_test == test_ids, (
+                "test id set for %s does not match the regenerated test split" % m
+            )
+    
+        ref_fold_by_id = {
+            int(i): int(f)
+            for i, f in zip(reference["ids_train"], reference["fold_of_pos"])
+        }
+        for m in MODELS:
+            sub = oof[oof["model"] == m]
+            got = {int(i): int(f) for i, f in zip(sub["id"], sub["fold"])}
+&gt;           assert got == ref_fold_by_id, (
+                "fold assignment for %s does not match the regenerated "
+                "StratifiedKFold(5, shuffle=True, random_state=%d)" % (m, SEED)
+            )
+E           AssertionError: fold assignment for logistic_regression does not match the regenerated StratifiedKFold(5, shuffle=True, random_state=20250607)
+E           assert {8670: 0, 891...86208: 1, ...} == {8670: 2, 891...86208: 4, ...}
+E             
+E             Omitting 95 identical items, use -vv to show
+E             Differing items:
+E             {919555: 0} != {919555: 3}
+E             {911366: 2} != {911366: 4}
+E             {843786: 0} != {843786: 1}
+E             {8912909: 3} != {8912909: 4}...
+E             
+E             ...Full output truncated (357 lines hidden), use '-vv' to show
+
+/tests/test_outputs.py:361: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.003"><failure message="AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 1 (tolerance 1e-06)&#10;assert 0.9999995608349601 &lt;= 1e-06">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_probabilities_match_reference(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        # Discrimination guard: an intentionally leaky pipeline (preprocessing and
+        # model fit on the full dataset before splitting) must fall outside the
+        # tolerance, so a match below genuinely certifies the honest protocol.
+        honest_oof = reference["oof"]["logistic_regression"]
+        honest_test = reference["test_prob"]["logistic_regression"]
+        leak_gap = max(
+            float(np.max(np.abs(reference["leaky_oof"] - honest_oof))),
+            float(np.max(np.abs(reference["leaky_test"] - honest_test))),
+        )
+        assert leak_gap &gt; TOL, (
+            "leaky reference variant is not distinguishable at tolerance %g "
+            "(gap %g)" % (TOL, leak_gap)
+        )
+    
+        ref_oof = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_train"], reference["oof"][m]):
+                ref_oof[(int(i), m)] = float(p)
+        ref_test = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_test"], reference["test_prob"][m]):
+                ref_test[(int(i), m)] = float(p)
+    
+        for m in MODELS:
+            sub = oof[oof["model"] == m]
+            expected = np.array(
+                [ref_oof[(int(i), m)] for i in sub["id"]], dtype=float
+            )
+            got = sub["y_proba"].to_numpy(dtype=float)
+            diff = float(np.max(np.abs(got - expected)))
+&gt;           assert diff &lt;= TOL, (
+                "OOF probabilities for %s deviate from the independent reference "
+                "by %g (tolerance %g)" % (m, diff, TOL)
+            )
+E           AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 1 (tolerance 1e-06)
+E           assert 0.9999995608349601 &lt;= 1e-06
+
+/tests/test_outputs.py:413: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.053" /><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.018" /><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.004" /><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000" /><testcase classname="test_outputs" name="test_report_content" time="0.000" /></testsuite></testsuites>

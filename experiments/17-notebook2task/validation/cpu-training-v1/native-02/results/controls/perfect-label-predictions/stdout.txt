@@ -1,0 +1,131 @@
+...F..F.F                                                                [100%]
+=================================== FAILURES ===================================
+______________________ test_probabilities_match_reference ______________________
+
+reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_probabilities_match_reference(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        # Discrimination guard: an intentionally leaky pipeline (preprocessing and
+        # model fit on the full dataset before splitting) must fall outside the
+        # tolerance, so a match below genuinely certifies the honest protocol.
+        honest_oof = reference["oof"]["logistic_regression"]
+        honest_test = reference["test_prob"]["logistic_regression"]
+        leak_gap = max(
+            float(np.max(np.abs(reference["leaky_oof"] - honest_oof))),
+            float(np.max(np.abs(reference["leaky_test"] - honest_test))),
+        )
+        assert leak_gap > TOL, (
+            "leaky reference variant is not distinguishable at tolerance %g "
+            "(gap %g)" % (TOL, leak_gap)
+        )
+    
+        ref_oof = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_train"], reference["oof"][m]):
+                ref_oof[(int(i), m)] = float(p)
+        ref_test = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_test"], reference["test_prob"][m]):
+                ref_test[(int(i), m)] = float(p)
+    
+        for m in MODELS:
+            sub = oof[oof["model"] == m]
+            expected = np.array(
+                [ref_oof[(int(i), m)] for i in sub["id"]], dtype=float
+            )
+            got = sub["y_proba"].to_numpy(dtype=float)
+            diff = float(np.max(np.abs(got - expected)))
+>           assert diff <= TOL, (
+                "OOF probabilities for %s deviate from the independent reference "
+                "by %g (tolerance %g)" % (m, diff, TOL)
+            )
+E           AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 0.998946 (tolerance 1e-06)
+E           assert 0.9989458023813804 <= 1e-06
+
+/tests/test_outputs.py:413: AssertionError
+______________________ test_three_distinct_model_families ______________________
+
+reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_three_distinct_model_families(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+        assert set(metrics["models"].keys()) == set(MODELS)
+    
+        vectors = {}
+        for m in MODELS:
+            sub = oof[oof["model"] == m].sort_values("id")
+            assert len(sub) == 455
+            vectors[m] = sub["y_proba"].to_numpy(dtype=float)
+        pairs = [
+            ("logistic_regression", "random_forest"),
+            ("logistic_regression", "gradient_boosting"),
+            ("random_forest", "gradient_boosting"),
+        ]
+        for a, b in pairs:
+            gap = float(np.max(np.abs(vectors[a] - vectors[b])))
+>           assert gap > TOL, (
+                "OOF probability vectors for %s and %s are indistinguishable "
+                "(max abs difference %g); three distinct model families must be "
+                "compared, not copies of one another" % (a, b, gap)
+            )
+E           AssertionError: OOF probability vectors for logistic_regression and random_forest are indistinguishable (max abs difference 0); three distinct model families must be compared, not copies of one another
+E           assert 0.0 > 1e-06
+
+/tests/test_outputs.py:563: AssertionError
+_____________________________ test_report_content ______________________________
+
+reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_report_content(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        _require(REPORT)
+        text = REPORT.read_text()
+    
+        assert len(text.split()) >= 300, "report.md must contain at least 300 words"
+        for m in MODELS:
+            assert m in text, "report.md must name %s" % m
+        selected = metrics["selected_model"]
+        assert selected in text, "report.md must name the selected model"
+        assert str(SEED) in text, "report.md must state the random seed"
+    
+        sel_metrics = metrics["models"][selected]
+        for value in (
+            sel_metrics["cv_roc_auc_mean"],
+            sel_metrics["test_roc_auc"],
+            sel_metrics["test_accuracy"],
+        ):
+            formatted = "%.6f" % float(value)
+>           assert formatted in text, (
+                "report.md must report the headline number %s to six decimal "
+                "places" % formatted
+            )
+E           AssertionError: report.md must report the headline number 1.000000 to six decimal places
+E           assert '1.000000' in '# Breast Cancer FNA Cytopathology: Fixed Three-Model Comparison\n\n## Data quality and cleaning\n\nThe raw file `/app...sample of FNA measurements; a false negative remains possible and any deployment\nwould require external validation.\n'
+
+/tests/test_outputs.py:619: AssertionError
+- generated xml file: /app/validation-results/controls/perfect-label-predictions/junit.xml -
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::test_probabilities_match_reference - Asserti...
+FAILED ../tests/test_outputs.py::test_three_distinct_model_families - Asserti...
+FAILED ../tests/test_outputs.py::test_report_content - AssertionError: report...
+3 failed, 6 passed in 2.18s

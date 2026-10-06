@@ -1,0 +1,119 @@
+[
+  {
+    "control": "honest",
+    "expected_pass": true,
+    "actual_pass": true,
+    "expectation_met": true,
+    "exit_code": 0,
+    "testcases": 9,
+    "failed_components": [],
+    "errored_components": [],
+    "seconds": 2.418
+  },
+  {
+    "control": "empty",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_artifacts_exist_and_schema",
+      "test_row_key_integrity",
+      "test_split_and_fold_membership",
+      "test_probabilities_match_reference",
+      "test_metrics_recomputed_consistent",
+      "test_selection_rule_consistent",
+      "test_three_distinct_model_families",
+      "test_eda_facts_match_trusted_data",
+      "test_report_content"
+    ],
+    "errored_components": [],
+    "seconds": 2.668
+  },
+  {
+    "control": "perfect-label-predictions",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_probabilities_match_reference",
+      "test_three_distinct_model_families",
+      "test_report_content"
+    ],
+    "errored_components": [],
+    "seconds": 2.519
+  },
+  {
+    "control": "shuffled-ids",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_row_key_integrity",
+      "test_split_and_fold_membership",
+      "test_probabilities_match_reference"
+    ],
+    "errored_components": [],
+    "seconds": 2.668
+  },
+  {
+    "control": "fabricated-cv-metrics",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_metrics_recomputed_consistent",
+      "test_selection_rule_consistent",
+      "test_report_content"
+    ],
+    "errored_components": [],
+    "seconds": 2.819
+  },
+  {
+    "control": "global-scaler-leakage",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_probabilities_match_reference",
+      "test_report_content"
+    ],
+    "errored_components": [],
+    "seconds": 2.568
+  },
+  {
+    "control": "duplicate-id",
+    "expected_pass": false,
+    "actual_pass": false,
+    "expectation_met": true,
+    "exit_code": 1,
+    "testcases": 9,
+    "failed_components": [
+      "test_row_key_integrity",
+      "test_split_and_fold_membership",
+      "test_probabilities_match_reference"
+    ],
+    "errored_components": [],
+    "seconds": 2.468
+  },
+  {
+    "control": "within-tolerance-probability",
+    "expected_pass": true,
+    "actual_pass": true,
+    "expectation_met": true,
+    "exit_code": 0,
+    "testcases": 9,
+    "failed_components": [],
+    "errored_components": [],
+    "seconds": 2.518
+  }
+]

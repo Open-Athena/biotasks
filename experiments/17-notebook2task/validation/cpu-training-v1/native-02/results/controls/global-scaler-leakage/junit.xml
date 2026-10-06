@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="9" time="2.180" timestamp="2026-10-06T22:39:32.959814+00:00" hostname="g7387bc"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.321" /><testcase classname="test_outputs" name="test_row_key_integrity" time="0.005" /><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.006" /><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.003"><failure message="AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 0.0527116 (tolerance 1e-06)&#10;assert 0.05271164225269476 &lt;= 1e-06">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_probabilities_match_reference(reference):
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        # Discrimination guard: an intentionally leaky pipeline (preprocessing and
+        # model fit on the full dataset before splitting) must fall outside the
+        # tolerance, so a match below genuinely certifies the honest protocol.
+        honest_oof = reference["oof"]["logistic_regression"]
+        honest_test = reference["test_prob"]["logistic_regression"]
+        leak_gap = max(
+            float(np.max(np.abs(reference["leaky_oof"] - honest_oof))),
+            float(np.max(np.abs(reference["leaky_test"] - honest_test))),
+        )
+        assert leak_gap &gt; TOL, (
+            "leaky reference variant is not distinguishable at tolerance %g "
+            "(gap %g)" % (TOL, leak_gap)
+        )
+    
+        ref_oof = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_train"], reference["oof"][m]):
+                ref_oof[(int(i), m)] = float(p)
+        ref_test = {}
+        for m in MODELS:
+            for i, p in zip(reference["ids_test"], reference["test_prob"][m]):
+                ref_test[(int(i), m)] = float(p)
+    
+        for m in MODELS:
+            sub = oof[oof["model"] == m]
+            expected = np.array(
+                [ref_oof[(int(i), m)] for i in sub["id"]], dtype=float
+            )
+            got = sub["y_proba"].to_numpy(dtype=float)
+            diff = float(np.max(np.abs(got - expected)))
+&gt;           assert diff &lt;= TOL, (
+                "OOF probabilities for %s deviate from the independent reference "
+                "by %g (tolerance %g)" % (m, diff, TOL)
+            )
+E           AssertionError: OOF probabilities for logistic_regression deviate from the independent reference by 0.0527116 (tolerance 1e-06)
+E           assert 0.05271164225269476 &lt;= 1e-06
+
+/tests/test_outputs.py:413: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.054" /><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.019" /><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.004" /><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000" /><testcase classname="test_outputs" name="test_report_content" time="0.001"><failure message="AssertionError: report.md must report the headline number 0.993808 to six decimal places&#10;assert '0.993808' in '# Breast Cancer FNA Cytopathology: Fixed Three-Model Comparison\n\n## Data quality and cleaning\n\nThe raw file `/app...sample of FNA measurements; a false negative remains possible and any deployment\nwould require external validation.\n'">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_report_content(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        _require(REPORT)
+        text = REPORT.read_text()
+    
+        assert len(text.split()) &gt;= 300, "report.md must contain at least 300 words"
+        for m in MODELS:
+            assert m in text, "report.md must name %s" % m
+        selected = metrics["selected_model"]
+        assert selected in text, "report.md must name the selected model"
+        assert str(SEED) in text, "report.md must state the random seed"
+    
+        sel_metrics = metrics["models"][selected]
+        for value in (
+            sel_metrics["cv_roc_auc_mean"],
+            sel_metrics["test_roc_auc"],
+            sel_metrics["test_accuracy"],
+        ):
+            formatted = "%.6f" % float(value)
+&gt;           assert formatted in text, (
+                "report.md must report the headline number %s to six decimal "
+                "places" % formatted
+            )
+E           AssertionError: report.md must report the headline number 0.993808 to six decimal places
+E           assert '0.993808' in '# Breast Cancer FNA Cytopathology: Fixed Three-Model Comparison\n\n## Data quality and cleaning\n\nThe raw file `/app...sample of FNA measurements; a false negative remains possible and any deployment\nwould require external validation.\n'
+
+/tests/test_outputs.py:619: AssertionError</failure></testcase></testsuite></testsuites>

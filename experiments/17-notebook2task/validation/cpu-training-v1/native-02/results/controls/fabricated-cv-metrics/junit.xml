@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="9" time="2.181" timestamp="2026-10-06T22:39:28.831147+00:00" hostname="g7387bc"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.306" /><testcase classname="test_outputs" name="test_row_key_integrity" time="0.005" /><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.006" /><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.004" /><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.009"><failure message="AssertionError: per-fold CV ROC-AUC mismatch for logistic_regression&#10;assert 0.9943240454076367 &lt;= 1e-06&#10; +  where 0.9943240454076367 = abs((0.0 - 0.9943240454076367))&#10; +    where 0.0 = float(0.0)">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_metrics_recomputed_consistent(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+        tst = _load_csv(
+            RESULTS / "test_predictions.csv",
+            ["id", "model", "y_true", "y_pred", "y_proba"],
+        )
+    
+        for m in MODELS:
+            reported = metrics["models"][m]
+            sub = oof[oof["model"] == m]
+            tsub = tst[tst["model"] == m]
+            assert len(sub) == 455 and len(tsub) == 114
+    
+            per_fold = _per_fold_aucs(oof, m)
+            reported_folds = reported["cv_roc_auc_per_fold"]
+            assert len(reported_folds) == N_SPLITS
+            for got, exp in zip(reported_folds, per_fold):
+&gt;               assert abs(float(got) - exp) &lt;= TOL, (
+                    "per-fold CV ROC-AUC mismatch for %s" % m
+                )
+E               AssertionError: per-fold CV ROC-AUC mismatch for logistic_regression
+E               assert 0.9943240454076367 &lt;= 1e-06
+E                +  where 0.9943240454076367 = abs((0.0 - 0.9943240454076367))
+E                +    where 0.0 = float(0.0)
+
+/tests/test_outputs.py:452: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.009"><failure message="AssertionError: reported cv_roc_auc_mean for logistic_regression disagrees with its OOF rows&#10;assert 0.9936016511867904 &lt;= 1e-06&#10; +  where 0.9936016511867904 = abs((0.9936016511867904 - 0.0))&#10; +    where 0.0 = float(0.0)">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_selection_rule_consistent(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        oof = _load_csv(
+            RESULTS / "oof_predictions.csv",
+            ["id", "model", "fold", "y_true", "y_pred", "y_proba"],
+        )
+    
+        means = {}
+        for m in MODELS:
+            per_fold = _per_fold_aucs(oof, m)
+            means[m] = float(np.mean(per_fold))
+&gt;           assert (
+                abs(means[m] - float(metrics["models"][m]["cv_roc_auc_mean"])) &lt;= TOL
+            ), "reported cv_roc_auc_mean for %s disagrees with its OOF rows" % m
+E           AssertionError: reported cv_roc_auc_mean for logistic_regression disagrees with its OOF rows
+E           assert 0.9936016511867904 &lt;= 1e-06
+E            +  where 0.9936016511867904 = abs((0.9936016511867904 - 0.0))
+E            +    where 0.0 = float(0.0)
+
+/tests/test_outputs.py:499: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.005" /><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000" /><testcase classname="test_outputs" name="test_report_content" time="0.001"><failure message="AssertionError: report.md must report the headline number 0.000000 to six decimal places&#10;assert '0.000000' in '# Breast Cancer FNA Cytopathology: Fixed Three-Model Comparison\n\n## Data quality and cleaning\n\nThe raw file `/app...sample of FNA measurements; a false negative remains possible and any deployment\nwould require external validation.\n'">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_report_content(reference):
+        metrics = _load_json(RESULTS / "metrics.json")
+        _require(REPORT)
+        text = REPORT.read_text()
+    
+        assert len(text.split()) &gt;= 300, "report.md must contain at least 300 words"
+        for m in MODELS:
+            assert m in text, "report.md must name %s" % m
+        selected = metrics["selected_model"]
+        assert selected in text, "report.md must name the selected model"
+        assert str(SEED) in text, "report.md must state the random seed"
+    
+        sel_metrics = metrics["models"][selected]
+        for value in (
+            sel_metrics["cv_roc_auc_mean"],
+            sel_metrics["test_roc_auc"],
+            sel_metrics["test_accuracy"],
+        ):
+            formatted = "%.6f" % float(value)
+&gt;           assert formatted in text, (
+                "report.md must report the headline number %s to six decimal "
+                "places" % formatted
+            )
+E           AssertionError: report.md must report the headline number 0.000000 to six decimal places
+E           assert '0.000000' in '# Breast Cancer FNA Cytopathology: Fixed Three-Model Comparison\n\n## Data quality and cleaning\n\nThe raw file `/app...sample of FNA measurements; a false negative remains possible and any deployment\nwould require external validation.\n'
+
+/tests/test_outputs.py:619: AssertionError</failure></testcase></testsuite></testsuites>

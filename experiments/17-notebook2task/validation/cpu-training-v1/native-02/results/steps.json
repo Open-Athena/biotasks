@@ -1,0 +1,52 @@
+[
+  {
+    "label": "oracle",
+    "command": [
+      "bash",
+      "/solution/solve.sh"
+    ],
+    "start": "2026-10-06T22:39:02.885187+00:00",
+    "seconds": 6.325,
+    "exit_code": 0,
+    "cumulative_children_peak_rss_kib": 170240
+  },
+  {
+    "label": "native-tests",
+    "command": [
+      "python",
+      "-m",
+      "pytest",
+      "-q",
+      "-o",
+      "addopts=",
+      "/tests/test_outputs.py",
+      "--junitxml=/app/validation-results/native-tests.xml"
+    ],
+    "start": "2026-10-06T22:39:09.210106+00:00",
+    "seconds": 2.669,
+    "exit_code": 0,
+    "cumulative_children_peak_rss_kib": 171416
+  },
+  {
+    "label": "parent-audit",
+    "command": [
+      "python",
+      "/tests/parent_audit.py"
+    ],
+    "start": "2026-10-06T22:39:11.879394+00:00",
+    "seconds": 2.269,
+    "exit_code": 0,
+    "cumulative_children_peak_rss_kib": 171416
+  },
+  {
+    "label": "negative-controls",
+    "command": [
+      "python",
+      "/app/mutations.py"
+    ],
+    "start": "2026-10-06T22:39:14.149056+00:00",
+    "seconds": 26.353,
+    "exit_code": 0,
+    "cumulative_children_peak_rss_kib": 173936
+  }
+]
