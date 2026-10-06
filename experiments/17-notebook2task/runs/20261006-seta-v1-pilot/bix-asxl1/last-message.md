@@ -1,0 +1,1 @@
+# EARLY_DITCH: Notebook fits only one DESeq2 model; downstream GO enrichment does not meet the required multi-model comparison criterion.
