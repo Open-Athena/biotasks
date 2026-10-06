@@ -41,3 +41,10 @@ The first public HTMLPreview check exercised the controls successfully but
 reported a script error: HTMLPreview tried to execute the JSON data block as
 JavaScript. Replaced the inert JSON block with a safe JavaScript data assignment
 (the builder still escapes `<`). This is a hosting compatibility correction.
+
+Final public verification passed at explorer commit
+`365a27799a1dc936d9f3b2ccefd8e282d53227be`: all 14 detail cards, filters,
+reset, empty search, JSON export, and desktop/mobile checks, without page errors.
+A separate check on that public URL loaded the full TAL1 nbviewer notebook and
+returned to task proposals successfully, with no page errors. Other external
+notebook/document embeds were not individually browser-validated.

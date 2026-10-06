@@ -49,3 +49,7 @@ for avoiding live model inference, with artifact-specific training-use terms
 still unresolved. This is not an implemented service.
 
 [Validation records](validation/README.md) cover the prompt package and explorer.
+
+[Open the published explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/365a27799a1dc936d9f3b2ccefd8e282d53227be/experiments/17-notebook2task/explorer/index.html).
+The public controls and one full notebook embed were browser-verified; see the
+validation records for exact scope. The source remains on the research branch.
