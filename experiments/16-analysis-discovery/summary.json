@@ -1,0 +1,988 @@
+{
+  "stage": "discovery and static inspection",
+  "review_state": "provisional; awaiting user satisfaction",
+  "all": {
+    "reviewed": 40,
+    "unique": 40,
+    "statuses": {
+      "apparently_suitable": 26,
+      "excluded": 6,
+      "unresolved": 8
+    },
+    "coverage": {
+      "genomics": {
+        "reviewed": 6,
+        "apparently_suitable": 4
+      },
+      "transcriptomics": {
+        "reviewed": 13,
+        "apparently_suitable": 8
+      },
+      "epigenomics": {
+        "reviewed": 3,
+        "apparently_suitable": 3
+      },
+      "proteomics": {
+        "reviewed": 4,
+        "apparently_suitable": 2
+      },
+      "structural biology": {
+        "reviewed": 1,
+        "apparently_suitable": 1
+      },
+      "metabolomics": {
+        "reviewed": 2,
+        "apparently_suitable": 2
+      },
+      "systems biology": {
+        "reviewed": 4,
+        "apparently_suitable": 3
+      },
+      "ecology/evolution": {
+        "reviewed": 6,
+        "apparently_suitable": 3
+      },
+      "RNA biology": {
+        "reviewed": 3,
+        "apparently_suitable": 3
+      },
+      "cellular phenotyping": {
+        "reviewed": 4,
+        "apparently_suitable": 4
+      }
+    },
+    "suitable_breadth_original8": 8,
+    "suitable_breadth_revised10": 10,
+    "dominant_suitable_subdomain_share": 0.3076923076923077,
+    "workflow_labels_suitable": 25,
+    "workflows_by_subdomain": {
+      "genomics": [
+        "ORF prediction and annotation comparison",
+        "range and variant annotation",
+        "sequence composition and origin inference",
+        "translation and mutation interpretation"
+      ],
+      "transcriptomics": [
+        "TSS enhancer identification and differential usage",
+        "differential expression coexpression and enrichment",
+        "microarray preprocessing and differential expression",
+        "normalization and differential expression",
+        "perturbation prediction with convolution",
+        "perturbation prediction with reduced targets",
+        "single-cell QC, clustering and marker comparison",
+        "single-cell metadata and protein-target exploration"
+      ],
+      "epigenomics": [
+        "ChIP-seq differential binding quick start",
+        "ChIP-seq differential enrichment",
+        "TSS enhancer identification and differential usage"
+      ],
+      "proteomics": [
+        "protein function classification"
+      ],
+      "structural biology": [
+        "structure parsing and torsion analysis"
+      ],
+      "metabolomics": [
+        "metabolic network enrichment",
+        "metabolite preprocessing and differential abundance"
+      ],
+      "systems biology": [
+        "differential expression coexpression and enrichment",
+        "flux interpretation and knockout ranking",
+        "metabolic network enrichment"
+      ],
+      "ecology/evolution": [
+        "dissimilarity and ordination",
+        "metabolite preprocessing and differential abundance",
+        "phylogenetic diversity, ordination and group testing"
+      ],
+      "RNA biology": [
+        "RNA degradation prediction",
+        "RNA structure probability exploration",
+        "translation and mutation interpretation"
+      ],
+      "cellular phenotyping": [
+        "cell clustering and differential abundance/state",
+        "microscopy thresholding, seeded segmentation and cell characterization",
+        "single-cell QC, clustering and marker comparison",
+        "single-cell metadata and protein-target exploration"
+      ]
+    },
+    "study_clusters": {
+      "G01": 1,
+      "G02": 1,
+      "G03": 1,
+      "G04": 1,
+      "G05": 1,
+      "G06": 1,
+      "G07": 1,
+      "G08": 1,
+      "G09": 1,
+      "G10": 1,
+      "B01": 1,
+      "B02": 1,
+      "B03": 1,
+      "B04": 1,
+      "B05": 1,
+      "B06": 1,
+      "B07": 1,
+      "B08": 1,
+      "B09": 1,
+      "B10": 1,
+      "cafa-5-protein-function-prediction": 3,
+      "stanford-covid-vaccine": 2,
+      "open-problems-single-cell-perturbations": 3,
+      "open-problems-multimodal": 2,
+      "O01": 1,
+      "O02": 1,
+      "Arabidopsis-herbivory-demo": 1,
+      "FELLA-multiple-case-studies": 1,
+      "CAZyLingua": 1,
+      "Data-Carpentry-rodent-survey": 1,
+      "scikit-bio-toy-six-samples": 1,
+      "Biopython-tree-demo": 1,
+      "10x-PBMC3k": 1,
+      "EBImage-example-cells": 1
+    }
+  },
+  "main_comparison": {
+    "reviewed": 30,
+    "unique": 30,
+    "statuses": {
+      "apparently_suitable": 21,
+      "excluded": 5,
+      "unresolved": 4
+    },
+    "coverage": {
+      "genomics": {
+        "reviewed": 6,
+        "apparently_suitable": 4
+      },
+      "transcriptomics": {
+        "reviewed": 12,
+        "apparently_suitable": 7
+      },
+      "epigenomics": {
+        "reviewed": 3,
+        "apparently_suitable": 3
+      },
+      "proteomics": {
+        "reviewed": 3,
+        "apparently_suitable": 2
+      },
+      "structural biology": {
+        "reviewed": 1,
+        "apparently_suitable": 1
+      },
+      "metabolomics": {
+        "reviewed": 0,
+        "apparently_suitable": 0
+      },
+      "systems biology": {
+        "reviewed": 3,
+        "apparently_suitable": 2
+      },
+      "ecology/evolution": {
+        "reviewed": 2,
+        "apparently_suitable": 1
+      },
+      "RNA biology": {
+        "reviewed": 3,
+        "apparently_suitable": 3
+      },
+      "cellular phenotyping": {
+        "reviewed": 2,
+        "apparently_suitable": 2
+      }
+    },
+    "suitable_breadth_original8": 7,
+    "suitable_breadth_revised10": 9,
+    "dominant_suitable_subdomain_share": 0.3333333333333333,
+    "workflow_labels_suitable": 20,
+    "workflows_by_subdomain": {
+      "genomics": [
+        "ORF prediction and annotation comparison",
+        "range and variant annotation",
+        "sequence composition and origin inference",
+        "translation and mutation interpretation"
+      ],
+      "transcriptomics": [
+        "TSS enhancer identification and differential usage",
+        "differential expression coexpression and enrichment",
+        "microarray preprocessing and differential expression",
+        "normalization and differential expression",
+        "perturbation prediction with convolution",
+        "perturbation prediction with reduced targets",
+        "single-cell metadata and protein-target exploration"
+      ],
+      "epigenomics": [
+        "ChIP-seq differential binding quick start",
+        "ChIP-seq differential enrichment",
+        "TSS enhancer identification and differential usage"
+      ],
+      "proteomics": [
+        "protein function classification"
+      ],
+      "structural biology": [
+        "structure parsing and torsion analysis"
+      ],
+      "metabolomics": [],
+      "systems biology": [
+        "differential expression coexpression and enrichment",
+        "flux interpretation and knockout ranking"
+      ],
+      "ecology/evolution": [
+        "dissimilarity and ordination"
+      ],
+      "RNA biology": [
+        "RNA degradation prediction",
+        "RNA structure probability exploration",
+        "translation and mutation interpretation"
+      ],
+      "cellular phenotyping": [
+        "cell clustering and differential abundance/state",
+        "single-cell metadata and protein-target exploration"
+      ]
+    },
+    "study_clusters": {
+      "G01": 1,
+      "G02": 1,
+      "G03": 1,
+      "G04": 1,
+      "G05": 1,
+      "G06": 1,
+      "G07": 1,
+      "G08": 1,
+      "G09": 1,
+      "G10": 1,
+      "B01": 1,
+      "B02": 1,
+      "B03": 1,
+      "B04": 1,
+      "B05": 1,
+      "B06": 1,
+      "B07": 1,
+      "B08": 1,
+      "B09": 1,
+      "B10": 1,
+      "cafa-5-protein-function-prediction": 3,
+      "stanford-covid-vaccine": 2,
+      "open-problems-single-cell-perturbations": 3,
+      "open-problems-multimodal": 2
+    }
+  },
+  "groups": {
+    "awesome-biology / curated_extension": {
+      "reviewed": 4,
+      "unique": 4,
+      "statuses": {
+        "apparently_suitable": 3,
+        "excluded": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 2,
+          "apparently_suitable": 1
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 2,
+          "apparently_suitable": 2
+        }
+      },
+      "suitable_breadth_original8": 2,
+      "suitable_breadth_revised10": 3,
+      "dominant_suitable_subdomain_share": 0.6666666666666666,
+      "workflow_labels_suitable": 3,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [
+          "single-cell QC, clustering and marker comparison"
+        ],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [
+          "phylogenetic diversity, ordination and group testing"
+        ],
+        "RNA biology": [],
+        "cellular phenotyping": [
+          "microscopy thresholding, seeded segmentation and cell characterization",
+          "single-cell QC, clustering and marker comparison"
+        ]
+      },
+      "study_clusters": {
+        "scikit-bio-toy-six-samples": 1,
+        "Biopython-tree-demo": 1,
+        "10x-PBMC3k": 1,
+        "EBImage-example-cells": 1
+      }
+    },
+    "bioconductor / initial": {
+      "reviewed": 10,
+      "unique": 10,
+      "statuses": {
+        "apparently_suitable": 7,
+        "excluded": 1,
+        "unresolved": 2
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "transcriptomics": {
+          "reviewed": 6,
+          "apparently_suitable": 3
+        },
+        "epigenomics": {
+          "reviewed": 3,
+          "apparently_suitable": 3
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 2,
+          "apparently_suitable": 1
+        },
+        "ecology/evolution": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        }
+      },
+      "suitable_breadth_original8": 4,
+      "suitable_breadth_revised10": 5,
+      "dominant_suitable_subdomain_share": 0.42857142857142855,
+      "workflow_labels_suitable": 7,
+      "workflows_by_subdomain": {
+        "genomics": [
+          "range and variant annotation"
+        ],
+        "transcriptomics": [
+          "TSS enhancer identification and differential usage",
+          "differential expression coexpression and enrichment",
+          "microarray preprocessing and differential expression"
+        ],
+        "epigenomics": [
+          "ChIP-seq differential binding quick start",
+          "ChIP-seq differential enrichment",
+          "TSS enhancer identification and differential usage"
+        ],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [
+          "differential expression coexpression and enrichment"
+        ],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [
+          "cell clustering and differential abundance/state"
+        ]
+      },
+      "study_clusters": {
+        "B01": 1,
+        "B02": 1,
+        "B03": 1,
+        "B04": 1,
+        "B05": 1,
+        "B06": 1,
+        "B07": 1,
+        "B08": 1,
+        "B09": 1,
+        "B10": 1
+      }
+    },
+    "bioconductor / targeted_gap": {
+      "reviewed": 1,
+      "unique": 1,
+      "statuses": {
+        "apparently_suitable": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "systems biology": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "ecology/evolution": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 2,
+      "suitable_breadth_revised10": 2,
+      "dominant_suitable_subdomain_share": 1.0,
+      "workflow_labels_suitable": 1,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [
+          "metabolic network enrichment"
+        ],
+        "systems biology": [
+          "metabolic network enrichment"
+        ],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "FELLA-multiple-case-studies": 1
+      }
+    },
+    "gallery / targeted_gap": {
+      "reviewed": 1,
+      "unique": 1,
+      "statuses": {
+        "unresolved": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 1,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "dominant_suitable_subdomain_share": null,
+      "workflow_labels_suitable": 0,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "CAZyLingua": 1
+      }
+    },
+    "github / initial": {
+      "reviewed": 10,
+      "unique": 10,
+      "statuses": {
+        "apparently_suitable": 7,
+        "excluded": 2,
+        "unresolved": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 5,
+          "apparently_suitable": 3
+        },
+        "transcriptomics": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "ecology/evolution": {
+          "reviewed": 2,
+          "apparently_suitable": 1
+        },
+        "RNA biology": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 5,
+      "suitable_breadth_revised10": 6,
+      "dominant_suitable_subdomain_share": 0.42857142857142855,
+      "workflow_labels_suitable": 7,
+      "workflows_by_subdomain": {
+        "genomics": [
+          "ORF prediction and annotation comparison",
+          "sequence composition and origin inference",
+          "translation and mutation interpretation"
+        ],
+        "transcriptomics": [
+          "normalization and differential expression"
+        ],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [
+          "structure parsing and torsion analysis"
+        ],
+        "metabolomics": [],
+        "systems biology": [
+          "flux interpretation and knockout ranking"
+        ],
+        "ecology/evolution": [
+          "dissimilarity and ordination"
+        ],
+        "RNA biology": [
+          "translation and mutation interpretation"
+        ],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "G01": 1,
+        "G02": 1,
+        "G03": 1,
+        "G04": 1,
+        "G05": 1,
+        "G06": 1,
+        "G07": 1,
+        "G08": 1,
+        "G09": 1,
+        "G10": 1
+      }
+    },
+    "github / targeted_gap": {
+      "reviewed": 1,
+      "unique": 1,
+      "statuses": {
+        "apparently_suitable": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 2,
+      "suitable_breadth_revised10": 2,
+      "dominant_suitable_subdomain_share": 1.0,
+      "workflow_labels_suitable": 1,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [
+          "metabolite preprocessing and differential abundance"
+        ],
+        "systems biology": [],
+        "ecology/evolution": [
+          "metabolite preprocessing and differential abundance"
+        ],
+        "RNA biology": [],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "Arabidopsis-herbivory-demo": 1
+      }
+    },
+    "kaggle / competition_first": {
+      "reviewed": 10,
+      "unique": 10,
+      "statuses": {
+        "apparently_suitable": 7,
+        "unresolved": 1,
+        "excluded": 2
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 5,
+          "apparently_suitable": 3
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 3,
+          "apparently_suitable": 2
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 2,
+          "apparently_suitable": 2
+        },
+        "cellular phenotyping": {
+          "reviewed": 1,
+          "apparently_suitable": 1
+        }
+      },
+      "suitable_breadth_original8": 2,
+      "suitable_breadth_revised10": 4,
+      "dominant_suitable_subdomain_share": 0.42857142857142855,
+      "workflow_labels_suitable": 6,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [
+          "perturbation prediction with convolution",
+          "perturbation prediction with reduced targets",
+          "single-cell metadata and protein-target exploration"
+        ],
+        "epigenomics": [],
+        "proteomics": [
+          "protein function classification"
+        ],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [
+          "RNA degradation prediction",
+          "RNA structure probability exploration"
+        ],
+        "cellular phenotyping": [
+          "single-cell metadata and protein-target exploration"
+        ]
+      },
+      "study_clusters": {
+        "cafa-5-protein-function-prediction": 3,
+        "stanford-covid-vaccine": 2,
+        "open-problems-single-cell-perturbations": 3,
+        "open-problems-multimodal": 2
+      }
+    },
+    "kaggle / original_search": {
+      "reviewed": 2,
+      "unique": 2,
+      "statuses": {
+        "unresolved": 2
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "dominant_suitable_subdomain_share": null,
+      "workflow_labels_suitable": 0,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "O01": 1,
+        "O02": 1
+      }
+    },
+    "teaching / targeted_gap": {
+      "reviewed": 1,
+      "unique": 1,
+      "statuses": {
+        "unresolved": 1
+      },
+      "coverage": {
+        "genomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "reviewed": 1,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "dominant_suitable_subdomain_share": null,
+      "workflow_labels_suitable": 0,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": []
+      },
+      "study_clusters": {
+        "Data-Carpentry-rodent-survey": 1
+      }
+    }
+  },
+  "main_route_unique_subdomains_suitable": {
+    "bioconductor": [
+      "epigenomics"
+    ],
+    "github": [
+      "ecology/evolution",
+      "structural biology"
+    ],
+    "kaggle": [
+      "proteomics"
+    ]
+  },
+  "notes": "Multilabel counts; purposive sample. Suitability is not execution, scientific validation, or reuse permission."
+}

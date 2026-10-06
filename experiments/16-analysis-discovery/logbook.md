@@ -1,5 +1,15 @@
 # Logbook
 
+## 2026-10-06 — user-directed extension and review state
+
+The user requested exploration of raivivek/awesome-biology and an HTMLPreview
+results explorer like issue #5. Treat the curated-list route as a separate,
+purposively selected extension: inspect its link inventory, follow up to six
+promising paths to concrete analysis documents, and record intervening indexes.
+Do not pool its yield with the frozen initial routes. The user explicitly retains
+the completion decision: keep issue #16 OPEN and findings provisional until they
+are satisfied. Publishing a reviewable preview does not complete the experiment.
+
 ## 2026-10-06 — setup
 
 Read issues #16 and #5 and repository guidance. Remote main matches the checkout.
@@ -40,3 +50,33 @@ Survey opened the Bioconductor workflow landing page, marimo gallery and the two
 linked notebook-pipeline reports. The workflow page redirects discovery to
 workflow packages. The gallery includes general demonstrations and simulation;
 its presence alone is not evidence of an observed-biological-analysis corpus.
+
+## 2026-10-06 — inspection findings and explorer checkpoint
+
+Preserved the 30-document main comparison, the two original Kaggle access failures,
+four targeted probes, and four newly reviewed curated-list documents (40 total).
+Six selected awesome-biology paths yielded four concrete documents; three passed
+static criteria. Retained two unresolved index/access paths without inflating the
+document denominator. Single-cell index rediscovery of B07 is recorded as overlap.
+
+GitHub within-repository choices were purposive for biological breadth, deviating
+from a strict returned-file order. B05/B06 initially appeared to converge on a book;
+resolving the specific H3K9ac and NF-YA examples showed distinct studies within one
+tool family. No claim of globally deduplicated analysis code follows.
+
+Saved metadata and own observations rather than republishing full reader extracts.
+Original extracts remain temporary only. Input source bytes, browser caches and
+biological data are not durably archived; source hashes cannot substitute for them.
+No analysis execution, independent scientific validation or task authoring occurred.
+
+Built an offline HTML explorer with separate cohorts, coverage drilldowns, source
+limitations and filtered CSV export. The ongoing-review state is prominent. The
+user authorized HTMLPreview publication; retain a commit-pinned preview and leave
+the issue open. No research PR or promotion to main is planned at this checkpoint.
+
+Browser verification: the sandboxed launch timed out before checks; an elevated
+single-process Chromium attempt failed during page creation. Removing that flag
+and using one renderer completed local checks in 2.23 seconds with no page errors
+and 111,164 KiB maximum child RSS. No scientific analysis ran in these attempts.
+Screenshots were visually inspected at desktop and 390px mobile widths. Final
+validation additionally reconciles every matrix cell with candidate records.

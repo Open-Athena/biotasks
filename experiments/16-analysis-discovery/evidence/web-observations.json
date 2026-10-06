@@ -1,0 +1,114 @@
+[
+  {
+    "id": "B01",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/annotation/inst/doc/Annotating_Genomic_Ranges.html",
+    "date": "2026-10-06",
+    "observation": "Genome/seqlevel reconciliation and annotation choices are explicit. Hub queries drift; page and package versions differ.",
+    "input_observation": "AnnotationHub ClinVar GRCh37 query and TxDb packages; mouse ranges created inline."
+  },
+  {
+    "id": "B02",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/arrays/inst/doc/arrays.html",
+    "date": "2026-10-06",
+    "observation": "RMA preprocessing, design matrix and empirical-Bayes testing form an identifiable workflow. Full biological provenance needs a follow-up check.",
+    "input_observation": "Package extdata CEL files and pdata.txt via system.file."
+  },
+  {
+    "id": "B03",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/BP4RNAseq/inst/doc/vignette.html",
+    "date": "2026-10-06",
+    "observation": "Primarily automated-tool usage demonstration; no developed biological comparison in this document. Latest-reference retrieval also drifts.",
+    "input_observation": "SRR11486115/SRR11486114 named in down2quan call."
+  },
+  {
+    "id": "B04",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/CAGEWorkflow/inst/doc/CAGEWorkflow.html",
+    "date": "2026-10-06",
+    "observation": "Documented contrast, clustering and enhancer/TSS decisions. Suggested parallel settings are not appropriate for this VM.",
+    "input_observation": "nanotubes package, 5 control and 6 exposed mouse lung samples."
+  },
+  {
+    "id": "B05",
+    "url": "https://bioconductor.org/books/3.22/csawBook/h3k9ac-pro-b-versus-mature-b.html",
+    "date": "2026-10-06",
+    "observation": "Recovered specific chapter after old vignette redirected to book. Window size, filtering, normalization and testing decisions are explicit.",
+    "input_observation": "chipseqDBData::H3K9acData returns BAMs/indexes; ENCODE blacklist link."
+  },
+  {
+    "id": "B06",
+    "url": "https://bioconductor.org/books/3.22/csawBook/",
+    "date": "2026-10-06",
+    "observation": "PDF stub points to book; use welcome chapter quick start as review unit. Distinct from B05 H3K9ac case, but shared book/tool family.",
+    "input_observation": "chipseqDBData::NFYAData, excludes input control in example."
+  },
+  {
+    "id": "B07",
+    "url": "https://raw.githubusercontent.com/markrobinsonuzh/cytofWorkflow/master/vignettes/cytofWorkflow.Rmd",
+    "date": "2026-10-06",
+    "observation": "HTML exceeds web-reader size cap; official linked GitHub Rmd source exposes inputs and choices. Eight donors, paired reference/stimulation; source may differ from release.",
+    "input_observation": "HDCytoData::Bodenmiller_BCR_XL_flowSet; PBMC8 metadata and panel via Zenodo 10039274."
+  },
+  {
+    "id": "B08",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/EGSEA123/inst/doc/EGSEAWorkflow.html",
+    "date": "2026-10-06",
+    "observation": "Biological comparisons and method choices clear, but this pass has not resolved the exact expression input acquisition path. Gene-set package access alone is insufficient.",
+    "input_observation": "Mouse mammary populations and example preprocessing; EGSEAdata signature collections; inspect expression input acquisition separately."
+  },
+  {
+    "id": "B09",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/ExpHunterSuite/inst/doc/hunter.html",
+    "date": "2026-10-06",
+    "observation": "Control/epm2a count comparison with selectable methods and design terms. Complete study lineage not independently verified.",
+    "input_observation": "toc/target data objects and extData table_of_counts.txt/target.txt in package."
+  },
+  {
+    "id": "B10",
+    "url": "https://bioconductor.org/packages/release/workflows/vignettes/ExpressionNormalizationWorkflow/inst/doc/genExpNrm.html",
+    "date": "2026-10-06",
+    "observation": "Biological example and normalization decisions exist, but input location is not resolved by this inspection.",
+    "input_observation": "CAD_Expression.csv and CAD_ExptDsgn.csv in placeholder folder shown in extracted code; exact recovery unresolved."
+  },
+  {
+    "id": "O01",
+    "url": "https://www.kaggle.com/code/markgaponyuk/bioinformatics-example",
+    "date": "2026-10-06",
+    "observation": "Original search access failure, not a scientific or Kaggle corpus failure.",
+    "input_observation": "Web extraction returned no notebook cells; no API retry in this frozen cohort."
+  },
+  {
+    "id": "O02",
+    "url": "https://www.kaggle.com/code/shtrausslearning/biopython-bioinformatics-basics",
+    "date": "2026-10-06",
+    "observation": "Original search access failure, not a scientific or Kaggle corpus failure.",
+    "input_observation": "Web extraction returned no notebook cells; no API retry in this frozen cohort."
+  },
+  {
+    "id": "T01",
+    "url": "https://phytoecia.github.io/eCOMET/articles/Tutorial_1_Treatment_based_study.html",
+    "date": "2026-10-06",
+    "observation": "Resolvable example-file paths and treatment contrasts. Whether demo values are observed, adapted or simulated remains unresolved.",
+    "input_observation": "Package extdata/tutorials/treatment_based: feature_table_demo.csv, metadata_demo.csv, annotation and similarity files."
+  },
+  {
+    "id": "T02",
+    "url": "https://www.bioconductor.org/packages/release/bioc/vignettes/FELLA/inst/doc/FELLA.pdf",
+    "date": "2026-10-06",
+    "observation": "Compound mapping, background and propagation choices explicit. KEGG terms and network snapshot require review; not a locally approved execution workload.",
+    "input_observation": "Vignette supplies study-derived compound lists for epithelial, ovarian and malaria cases; KEGG network must be constructed/recovered separately."
+  },
+  {
+    "id": "T03",
+    "url": "https://marimo.io/gallery/l/cazylingua",
+    "date": "2026-10-06",
+    "observation": "Useful biological marimo lead; exact input/checkpoint recovery and source terms not resolved.",
+    "input_observation": "Requires user-supplied H5 ProtT5 embeddings and classifier/checkpoint assets; gallery does not supply an audited example study."
+  },
+  {
+    "id": "T04",
+    "url": "https://carpentry.library.ucsb.edu/R-ecology-lesson-2024-10-08/quarto.html",
+    "date": "2026-10-06",
+    "observation": "A reporting lesson with biological code chunks; complete standalone qmd and prepared input not resolved.",
+    "input_observation": "Lesson references cleaned surveys_complete_77_89.csv from preceding lessons; recovery chain not checked."
+  }
+]
