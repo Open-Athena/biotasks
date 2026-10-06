@@ -88,3 +88,8 @@ at 551,813,120 bytes RSS, above the 500 MiB local limit. This is a resource stop
 not a failed product assertion. Earlier process-group-only browser receipts can
 undercount Chromium descendants; do not use those peaks as full-tree estimates.
 The next bounded check uses Chromium single-process mode to reduce local memory.
+
+The single-process check passed against published commit `1194151`, including
+both actual baseline-output disclosures. Full descendant peak RSS was
+417,800,192 bytes, below 500 MiB. No page errors or mobile overflow occurred.
+See `pilot-public-browser-resources.json`.

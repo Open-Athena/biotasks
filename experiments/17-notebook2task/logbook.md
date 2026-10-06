@@ -153,3 +153,11 @@ no inference deployment) for two sequential idea-stage runs with the same real
 comparison inputs. Runtime service configuration remains private. The service's
 billing terms are not observable in this session. GLM uses a small recorded
 read/list/write tool loop, so this is not a controlled model-only comparison.
+
+The GLM dispatch remained pending on peer acceptance and produced no worker
+logs or model output. Requested cancellation at 21:34 UTC; confirmed terminal
+KILLED at 21:35 UTC. Read-only direct checks did not establish a reachable
+service route. No inference deployment or accelerator was provisioned. Saved
+the sanitized outcome in runs/20261006-glm53-seta-v1/README.md; this is an
+infrastructure-blocked attempt, not a GLM task-generation result. Resuming
+requires a working approved route to the existing bulk service.
