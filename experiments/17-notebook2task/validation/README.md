@@ -36,3 +36,8 @@ cells and saved static outputs render, but interactive widgets and script-based
 math rendering may be unavailable. External links allow opening the source.
 Earlier viewer checks also assumed an incorrect nbviewer CSS selector; retained
 failed receipts are test/setup outcomes, not notebook-conversion outcomes.
+
+The first public HTMLPreview check exercised the controls successfully but
+reported a script error: HTMLPreview tried to execute the JSON data block as
+JavaScript. Replaced the inert JSON block with a safe JavaScript data assignment
+(the builder still escapes `<`). This is a hosting compatibility correction.
