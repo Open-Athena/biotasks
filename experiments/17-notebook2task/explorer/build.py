@@ -34,6 +34,13 @@ for case in catalog["comparisons"]:
     pilot = root.parent / "runs/20261006-seta-v1-pilot" / pilot_name
     case["baseline_draft"] = (pilot / "draft_spec.md").read_text()
     case["baseline_status"] = "Rejected by multi-model gate" if case["id"] == "bix-asxl1" else "Draft produced; changed to frozen-model evaluation; not validated"
+    glm = root.parent / "runs/20261006-glm53-seta-v1-budget-retry/results" / case["id"]
+    case["glm_initial_status"] = "Context ceiling reached; no draft" if case["id"] == "seta-cytopathology" else "Output ceiling reached in reasoning; no draft (raw runner status corrected)"
+    if (glm / "summary.json").exists():
+        case["glm_summary"] = json.loads((glm / "summary.json").read_text())
+        draft = glm / "artifacts/draft_spec.md"
+        final = glm / "last-message.md"
+        case["glm_output"] = draft.read_text() if draft.exists() else ((final.read_text() or "No draft or final response was written.") if final.exists() else "No draft or final response was written.")
     if "instruction_file" in case:
         case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
     if "question_file" in case:

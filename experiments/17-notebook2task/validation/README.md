@@ -93,3 +93,10 @@ The single-process check passed against published commit `1194151`, including
 both actual baseline-output disclosures. Full descendant peak RSS was
 417,800,192 bytes, below 500 MiB. No page errors or mobile overflow occurred.
 See `pilot-public-browser-resources.json`.
+
+GLM explorer update (October 6): offline browser checks passed for both GLM
+outcomes, alongside existing filters, released tasks and full notebook display.
+The cytopathology disclosure contains the actual draft; the ASXL1 disclosure
+explicitly shows no final output. No page errors. Descendant peak RSS was
+372,117,504 bytes. A preceding sandboxed browser startup timed out before the
+browser ran (peak 32,010,240 bytes); elevated startup resolved it.

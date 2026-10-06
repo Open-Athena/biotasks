@@ -161,3 +161,28 @@ service route. No inference deployment or accelerator was provisioned. Saved
 the sanitized outcome in runs/20261006-glm53-seta-v1/README.md; this is an
 infrastructure-blocked attempt, not a GLM task-generation result. Resuming
 requires a working approved route to the existing bulk service.
+
+
+### 2026-10-06: GLM access recovered using Marin #9775
+
+The successful recent collection used the same bulk service. Its launch snapshot
+and the service owner's detailed guide exposed the required published package
+pins, HTTPX pin and region-local relay mapping. The original region stayed queued;
+confirmed cancellation before moving the sequential one-CPU pilot. Preserved
+three setup failures before obtaining 12 successful GLM responses on the alternate
+route. No inference deployment or GPU allocation was made.
+
+The first live idea-stage pilot produced no draft: cytopathology exceeded the
+serialized context ceiling; ASXL1 exhausted its final output budget in reasoning.
+The runner mislabeled the latter completed; original evidence is retained and
+the interpretation corrected in the run README. A separate retry keeps source
+prompts identical and records increased bounded context/output budgets plus
+explicit medium reasoning. Scientific execution and acceptance remain separate.
+
+The bounded GLM retry completed authoring for cytopathology (8 responses,
+85.53 seconds) and hit the output limit for ASXL1 (9 responses, 71.87 seconds).
+Retrieved and hash-verified both cases. Cytopathology retains training despite
+the shared prompt prohibition and proposes weak held-out integrity checks;
+these static concerns are documented separately from the verbatim draft.
+The explorer displays both GLM outcomes; offline browser interaction checks
+passed. No GLM builder or scientific validation was run.

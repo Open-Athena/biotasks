@@ -73,6 +73,12 @@ with sync_playwright() as pw:
         assert page.locator('#comparison-frame iframe').count() == 0
         page.get_by_text('Read the actual baseline output', exact=True).click()
         assert 'frozen' in page.locator('.baseline-output').inner_text()
+        page.get_by_text('Read GLM baseline output', exact=True).click()
+        assert 'three distinct model families' in page.locator('.glm-output').inner_text()
+        page.select_option('#comparison-select', 'bix-asxl1')
+        assert 'output_limit' in page.locator('#comparison-detail').inner_text()
+        page.get_by_text('Read GLM baseline output', exact=True).click()
+        assert 'No draft or final response' in page.locator('.glm-output').inner_text()
         assert not errors, errors
         print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow','two released-task comparisons','17-cell offline notebook','published answer disclosure'],'page_errors':errors}))
     finally:
