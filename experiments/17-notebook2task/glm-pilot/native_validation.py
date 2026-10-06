@@ -89,6 +89,12 @@ try:
                     dest = OUT / 'oracle-artifacts' / dirname / p.relative_to(source)
                     dest.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(p, dest)
+    for name in ('report.md', 'run_pipeline.py'):
+        source = Path('/app') / name
+        if source.is_file():
+            dest = OUT / 'oracle-artifacts' / name
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, dest)
 finally:
     (OUT / 'steps.json').write_text(json.dumps(steps, indent=2) + '\n')
     files = {}
