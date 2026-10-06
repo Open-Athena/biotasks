@@ -4,33 +4,6 @@
   "scope": "Purposive brainstorming shortlist, not a ranking or an approved batch. Task ideas are assistant proposals, not generated tasks.",
   "sources": [
     {
-      "id": "ag-atlas",
-      "group": "AlphaGenome",
-      "title": "Atlas: precomputed variant scores",
-      "format": "API guide / analysis seed",
-      "decision": "Investigate access",
-      "question": "Which variants in a bounded locus have high predicted impact, and which score components explain that ranking?",
-      "data": "Precomputed molecular-effect scores, AVI scores, and feature importances. Model-derived predictions, not newly measured biology.",
-      "ideas": [
-        "Query a bounded set of variants, align score metadata, and produce a component-aware prioritization table. A fixture-backed replay API could preserve the query interface offline."
-      ],
-      "grader": "Check variant/allele identity, requested scorers, missing-versus-zero handling, ranking ties, and component provenance against verified snapshots.",
-      "risk": "No local GPU inference for score lookup. API key and bounded query sizes still matter. Official README restricts model-training use except specified permissive downloadable artifacts; exact eligibility unresolved. A replay API does not remove those restrictions. No dedicated Atlas notebook was found in the inspected colabs/v1 directory; an analysis example must still be selected.",
-      "source_url": "https://github.com/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/src/alphagenome/atlas/atlas.py",
-      "read_url": "https://www.alphagenomedocs.com/api/generated/alphagenome.atlas.atlas.AtlasClient.html",
-      "prior": null,
-      "stage": "Candidate",
-      "split": "Unassigned",
-      "reference": "Not run",
-      "acceptance": "Not reviewed",
-      "eligibility": "Training-use hold pending artifact-specific terms",
-      "revision": "038d253a5ca2fec46f4874f592d9ec67984cb497",
-      "access": "API / precomputed scores",
-      "terms_url": "https://github.com/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/README.md#terms",
-      "viewer_url": "https://www.alphagenomedocs.com/api/generated/alphagenome.atlas.atlas.AtlasClient.html",
-      "viewer_kind": "document"
-    },
-    {
       "id": "airway",
       "group": "DESeq2",
       "title": "Airway response to dexamethasone",
@@ -112,30 +85,83 @@
       "viewer_kind": "document"
     },
     {
-      "id": "pbmc3k",
+      "id": "multiome",
       "group": "Scanpy",
-      "title": "PBMC3k: from counts to cell populations",
+      "title": "Scanpy: current preprocessing and clustering tutorial",
       "format": "Python notebook",
       "decision": "Start here",
-      "question": "Which blood-cell populations are supported by these expression profiles?",
-      "data": "Observed 10x PBMC3k counts from a healthy donor.",
+      "question": "How does the modern Scanpy introductory workflow organize QC and annotation?",
+      "data": "Bone-marrow inputs from the Open Problems NeurIPS 2021 benchmarking dataset.",
       "ideas": [
-        "Produce QC decisions, a processed count-derived representation, and a marker-evidence table for cell populations."
+        "Produce sample-aware QC decisions, a processed representation, and marker-supported cell-population annotations from the current tutorial inputs."
       ],
-      "grader": "Check identities and processing stages; evaluate marker support and allow cluster-label permutations. Do not grade UMAP pixel positions.",
-      "risk": "Legacy tutorial; very familiar data may encourage recall. Pin dependencies and audit overlap. Exact population labels are not an automatic biological oracle.",
-      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering-2017.ipynb",
-      "read_url": "https://scanpy.readthedocs.io/en/stable/tutorials/basics/clustering-2017.html",
-      "prior": null,
+      "grader": "Check cell/gene identity, count-processing stages, sample-aware QC, and marker support; allow equivalent cluster labels rather than grading UMAP coordinates.",
+      "risk": "Real donor measurements originally used in the Open Problems NeurIPS 2021 single-cell benchmark. That is not an LLM benchmark and is not an exclusion for this study, as clarified by Gonzalo. Still verify input terms, resource requirements, and overlap with evaluations relevant to our models.",
+      "source_url": "https://github.com/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/basics/clustering.ipynb",
+      "read_url": "https://scanpy.scverse.org/en/stable/tutorials/basics/clustering.html",
+      "prior": {
+        "record": {
+          "unit_id": "scanpy:clustering-cell-annotation-multiome",
+          "title": "Preprocessing, clustering, and marker-based annotation of bone-marrow cells",
+          "repo": "scverse/scanpy",
+          "repo_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+          "source_kind": "Jupyter tutorial",
+          "sources": [
+            {
+              "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+              "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+              "locator": "Markdown headings Preprocessing and clustering; Quality Control; Normalization; Feature selection; Dimensionality Reduction; Nearest neighbor graph construction and visualization; Clustering; Re-assess quality control and cell filtering; Manual cell-type annotation; Differentially-expressed Genes as Markers; setup and code cells"
+            }
+          ],
+          "scientific_use": "Analyze two healthy-donor bone-marrow mononuclear-cell samples from 10x Multiome gene-expression data: compute QC metrics and doublet scores; filter cells/genes; normalize and log-transform counts; select highly variable genes; compute PCA, a neighbor graph, UMAP and Leiden clusters at several resolutions; inspect marker expression and rank cluster markers for manual cell-type annotation. The tutorial warns that cells are not independent biological replicates for differential expression and suggests sample-aware pseudobulk aggregation as a follow-up.",
+          "tool_role": "tool_use",
+          "tool_role_basis": "The notebook composes Scanpy and AnnData APIs (read_10x_h5, pp.calculate_qc_metrics, pp.scrublet, pp.normalize_total, pp.highly_variable_genes, tl.pca, pp.neighbors, tl.umap, tl.leiden, tl.rank_genes_groups) over external count matrices; it does not implement these algorithms.",
+          "inputs": [
+            "Two 10x filtered feature-barcode HDF5 matrices, s1d1_filtered_feature_bc_matrix.h5 and s1d3_filtered_feature_bc_matrix.h5, loaded as AnnData and concatenated with a sample label; narrative reports about 8,000 cells per sample and 36,601 measured genes.",
+            "Counts are retained in adata.layers['counts']; downstream workflow uses normalized/log1p values and the count layer for some analyses."
+          ],
+          "outputs": [
+            "AnnData with QC annotations, filtered cells/genes, count layer, highly-variable-gene flags, PCA, neighbors, UMAP, Leiden labels at multiple resolutions, marker-based manual cell_type_lvl1 annotation and differential-expression results in uns.",
+            "Figures illustrating QC, embeddings, cluster marker expression and ranked genes; figure export is shown."
+          ],
+          "dependencies": [
+            "Scanpy, AnnData, pooch; optional dependencies for Scrublet and Leiden implementation are environment-dependent and need pinning by task author.",
+            "Input files are resolved through Pooch DOI registry 10.6084/m9.figshare.22716739.v1 and require network access unless staged.",
+            "Manual annotation relies on marker gene knowledge/resources; notebook marker list is adapted from Single Cell Best Practices annotation guidance.",
+            "Potential pseudobulk follow-up requires grouping counts by sample and cell type and an external differential-expression package such as PyDESeq2."
+          ],
+          "dataset_ids": [
+            "scanpy-data:openproblems-bone-marrow-multiome-s1d1-s1d3"
+          ],
+          "related_unit_ids": [
+            "scanpy:pbmc-pearson-residual-workflow"
+          ],
+          "evidence": [
+            "Tutorial narrative identifies healthy human donor bone-marrow mononuclear cells, OpenProblems NeurIPS 2021 data, 10x Multiome Gene Expression and Chromatin Accessibility, and approximate per-sample cell/gene counts.",
+            "Setup code declares Figshare DOI registry, filenames, read_10x_h5 and sample concatenation.",
+            "Workflow cells show filtering, Scrublet, count-layer preservation, normalization, HVGs, PCA, neighbors, UMAP, Leiden, manual labels, rank_genes_groups and rank_genes_groups_df.",
+            "Final discussion warns about cell-level p-values and suggests pseudobulk by sample/cell type."
+          ],
+          "limitations": [
+            "Counts and notebook outputs were inspected as source only; no execution or result validation was performed.",
+            "The DOI landing metadata, individual file sizes, exact cell counts, and license/redistribution terms were not independently verified.",
+            "Manual annotation is partly subjective; task author must define expected label vocabulary and grading criteria.",
+            "The notebook uses two samples; inference/generalization beyond these samples is not established.",
+            "Need pin optional dependency versions and decide whether to supply raw files or pre-stage them."
+          ]
+        },
+        "url": "https://github.com/Open-Athena/biotasks/blob/a4075ff9cc6cdf50a6e760b438b9dc4b91f758c1/experiments/3-authoring-migration/baseline/prompt-experiments/2026-09-30-round3-scanpy-luna/outputs/units.jsonl"
+      },
       "stage": "Candidate",
       "split": "Unassigned",
       "reference": "Not run",
       "acceptance": "Not reviewed",
-      "eligibility": "Unresolved",
-      "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "eligibility": "No exclusion from single-cell benchmark provenance; ordinary terms and relevant evaluation-overlap checks pending",
+      "revision": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
       "access": "Data / software staging",
-      "viewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering-2017.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://scanpy.scverse.org/en/stable/tutorials/basics/clustering.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/basics/clustering.ipynb"
     },
     {
       "id": "dnase",
@@ -147,10 +173,11 @@
       "data": "Tutorial describes 20 fetal-tissue DNase BED files, CpG islands, exons, GWAS SNPs, and hESC ChromHMM states.",
       "ideas": [
         "Quantify unique DNase bases overlapping annotations with explicit interval semantics.",
-        "Build a pairwise tissue Jaccard matrix from interval unions."
+        "Build a pairwise tissue Jaccard matrix from interval unions.",
+        "Adapt the source\u2019s explicit puzzles: count exonic GWAS variants without duplicate counting, summarize exon density by genomic window, or compare CpG overlap with enhancers and promoters."
       ],
       "grader": "Exact interval identities and covered-base totals; compare matrix entries to an independent interval implementation. Test double-counted overlaps and mixed coordinate conventions.",
-      "risk": "Old input URLs, exact assembly, accessions, and terms need verification. Both ideas share one source and cannot count as two independent source conversions.",
+      "risk": "Old input URLs, exact assembly, accessions, and terms need verification. Both ideas share one source and cannot count as two independent source conversions. The source has an explicit Puzzles section; its questions are authoring seeds, not independently validated tasks.",
       "source_url": "https://github.com/arq5x/bedtools2/blob/614e9a5c5935ab86e873dab9072fbbaf003c1b7e/tutorial/bedtools.md",
       "read_url": "https://quinlanlab.org/tutorials/bedtools.html",
       "prior": {
@@ -297,9 +324,9 @@
         "Produce residual-based feature statistics and selected-gene identities under a declared count model."
       ],
       "grader": "Check raw-count provenance and gene-wise statistics; test log-normalized input mistakenly treated as counts.",
-      "risk": "Dense residuals may require substantial memory. PBMC3k overlaps the clustering candidate: keep that study in the same split. This is not independent transfer on PBMC3k.",
-      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/experimental/pearson_residuals.ipynb",
-      "read_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/experimental/pearson_residuals.ipynb",
+      "risk": "Dense residuals may require substantial memory. The PBMC3k and PBMC10k examples need study-level overlap checks before split assignment. Model-free preprocessing does not establish eligibility or a deterministic biological truth oracle.",
+      "source_url": "https://github.com/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/experimental/pearson_residuals.ipynb",
+      "read_url": "https://scanpy.scverse.org/en/stable/tutorials/experimental/pearson_residuals.html",
       "prior": {
         "record": {
           "unit_id": "scanpy:pbmc-pearson-residual-workflow",
@@ -358,10 +385,11 @@
       "reference": "Not run",
       "acceptance": "Not reviewed",
       "eligibility": "Unresolved",
-      "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "revision": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
       "access": "Data / software staging",
-      "viewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/experimental/pearson_residuals.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://scanpy.scverse.org/en/stable/tutorials/experimental/pearson_residuals.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/experimental/pearson_residuals.ipynb"
     },
     {
       "id": "paga",
@@ -376,7 +404,7 @@
       ],
       "grader": "Assess graph/path and trend artifacts under declared conventions; do not equate pseudotime with measured physical time.",
       "risk": "Root and topology ambiguity make grading harder. Prior inspection did not establish an accession or redistribution permission; these are unresolved prerequisites.",
-      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/trajectories/paga-paul15.ipynb",
+      "source_url": "https://github.com/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/trajectories/paga-paul15.ipynb",
       "read_url": "https://scanpy.scverse.org/en/stable/tutorials/trajectories/paga-paul15.html",
       "prior": {
         "record": {
@@ -432,10 +460,11 @@
       "reference": "Not run",
       "acceptance": "Not reviewed",
       "eligibility": "Unresolved",
-      "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "revision": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
       "access": "Data / software staging",
-      "viewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/trajectories/paga-paul15.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://scanpy.scverse.org/en/stable/tutorials/trajectories/paga-paul15.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/trajectories/paga-paul15.ipynb"
     },
     {
       "id": "ingest",
@@ -450,8 +479,8 @@
       ],
       "grader": "Check held-out query identities, reference-only fitting, and declared mapping outputs; separate mapping agreement from biological truth.",
       "risk": "Exact study-to-batch mappings, processed-state provenance, and terms remain unresolved. Could overlap PBMC3k; do not assign across splits before checking.",
-      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/integrating-data-using-ingest.ipynb",
-      "read_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/integrating-data-using-ingest.ipynb",
+      "source_url": "https://github.com/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/basics/integrating-data-using-ingest.ipynb",
+      "read_url": "https://scanpy.scverse.org/en/stable/tutorials/basics/integrating-data-using-ingest.html",
       "prior": {
         "record": {
           "unit_id": "scanpy:ingest-bbknn-integration",
@@ -511,88 +540,11 @@
       "reference": "Not run",
       "acceptance": "Not reviewed",
       "eligibility": "Unresolved",
-      "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "revision": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
       "access": "Data / software staging",
-      "viewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/integrating-data-using-ingest.ipynb",
-      "viewer_kind": "notebook"
-    },
-    {
-      "id": "multiome",
-      "group": "Scanpy",
-      "title": "Current introductory bone-marrow workflow",
-      "format": "Python notebook",
-      "decision": "Exclude from training",
-      "question": "How does the modern Scanpy introductory workflow organize QC and annotation?",
-      "data": "Bone-marrow inputs from the Open Problems NeurIPS 2021 benchmarking dataset.",
-      "ideas": [
-        "No training-task proposal while the evaluation-dataset exclusion applies."
-      ],
-      "grader": "Retain only as a source-selection exclusion example.",
-      "risk": "Known benchmark-derived input: excluded from the training candidate pool under issue #17. Source inspection or runnable code does not override this boundary.",
-      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
-      "read_url": "https://scanpy.scverse.org/en/stable/tutorials/basics/clustering.html",
-      "prior": {
-        "record": {
-          "unit_id": "scanpy:clustering-cell-annotation-multiome",
-          "title": "Preprocessing, clustering, and marker-based annotation of bone-marrow cells",
-          "repo": "scverse/scanpy",
-          "repo_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
-          "source_kind": "Jupyter tutorial",
-          "sources": [
-            {
-              "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
-              "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
-              "locator": "Markdown headings Preprocessing and clustering; Quality Control; Normalization; Feature selection; Dimensionality Reduction; Nearest neighbor graph construction and visualization; Clustering; Re-assess quality control and cell filtering; Manual cell-type annotation; Differentially-expressed Genes as Markers; setup and code cells"
-            }
-          ],
-          "scientific_use": "Analyze two healthy-donor bone-marrow mononuclear-cell samples from 10x Multiome gene-expression data: compute QC metrics and doublet scores; filter cells/genes; normalize and log-transform counts; select highly variable genes; compute PCA, a neighbor graph, UMAP and Leiden clusters at several resolutions; inspect marker expression and rank cluster markers for manual cell-type annotation. The tutorial warns that cells are not independent biological replicates for differential expression and suggests sample-aware pseudobulk aggregation as a follow-up.",
-          "tool_role": "tool_use",
-          "tool_role_basis": "The notebook composes Scanpy and AnnData APIs (read_10x_h5, pp.calculate_qc_metrics, pp.scrublet, pp.normalize_total, pp.highly_variable_genes, tl.pca, pp.neighbors, tl.umap, tl.leiden, tl.rank_genes_groups) over external count matrices; it does not implement these algorithms.",
-          "inputs": [
-            "Two 10x filtered feature-barcode HDF5 matrices, s1d1_filtered_feature_bc_matrix.h5 and s1d3_filtered_feature_bc_matrix.h5, loaded as AnnData and concatenated with a sample label; narrative reports about 8,000 cells per sample and 36,601 measured genes.",
-            "Counts are retained in adata.layers['counts']; downstream workflow uses normalized/log1p values and the count layer for some analyses."
-          ],
-          "outputs": [
-            "AnnData with QC annotations, filtered cells/genes, count layer, highly-variable-gene flags, PCA, neighbors, UMAP, Leiden labels at multiple resolutions, marker-based manual cell_type_lvl1 annotation and differential-expression results in uns.",
-            "Figures illustrating QC, embeddings, cluster marker expression and ranked genes; figure export is shown."
-          ],
-          "dependencies": [
-            "Scanpy, AnnData, pooch; optional dependencies for Scrublet and Leiden implementation are environment-dependent and need pinning by task author.",
-            "Input files are resolved through Pooch DOI registry 10.6084/m9.figshare.22716739.v1 and require network access unless staged.",
-            "Manual annotation relies on marker gene knowledge/resources; notebook marker list is adapted from Single Cell Best Practices annotation guidance.",
-            "Potential pseudobulk follow-up requires grouping counts by sample and cell type and an external differential-expression package such as PyDESeq2."
-          ],
-          "dataset_ids": [
-            "scanpy-data:openproblems-bone-marrow-multiome-s1d1-s1d3"
-          ],
-          "related_unit_ids": [
-            "scanpy:pbmc-pearson-residual-workflow"
-          ],
-          "evidence": [
-            "Tutorial narrative identifies healthy human donor bone-marrow mononuclear cells, OpenProblems NeurIPS 2021 data, 10x Multiome Gene Expression and Chromatin Accessibility, and approximate per-sample cell/gene counts.",
-            "Setup code declares Figshare DOI registry, filenames, read_10x_h5 and sample concatenation.",
-            "Workflow cells show filtering, Scrublet, count-layer preservation, normalization, HVGs, PCA, neighbors, UMAP, Leiden, manual labels, rank_genes_groups and rank_genes_groups_df.",
-            "Final discussion warns about cell-level p-values and suggests pseudobulk by sample/cell type."
-          ],
-          "limitations": [
-            "Counts and notebook outputs were inspected as source only; no execution or result validation was performed.",
-            "The DOI landing metadata, individual file sizes, exact cell counts, and license/redistribution terms were not independently verified.",
-            "Manual annotation is partly subjective; task author must define expected label vocabulary and grading criteria.",
-            "The notebook uses two samples; inference/generalization beyond these samples is not established.",
-            "Need pin optional dependency versions and decide whether to supply raw files or pre-stage them."
-          ]
-        },
-        "url": "https://github.com/Open-Athena/biotasks/blob/a4075ff9cc6cdf50a6e760b438b9dc4b91f758c1/experiments/3-authoring-migration/baseline/prompt-experiments/2026-09-30-round3-scanpy-luna/outputs/units.jsonl"
-      },
-      "stage": "Candidate",
-      "split": "Unassigned",
-      "reference": "Not run",
-      "acceptance": "Not reviewed",
-      "eligibility": "Unresolved",
-      "revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
-      "access": "Data / software staging",
-      "viewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://scanpy.scverse.org/en/stable/tutorials/basics/integrating-data-using-ingest.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/scverse/scanpy/blob/7ad567d9f7ca52b23b0ffb964e486034ef14283e/docs/tutorials/basics/integrating-data-using-ingest.ipynb"
     },
     {
       "id": "ag-tal1",
@@ -618,8 +570,9 @@
       "revision": "038d253a5ca2fec46f4874f592d9ec67984cb497",
       "access": "API / live prediction",
       "terms_url": "https://github.com/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/README.md#terms",
-      "viewer_url": "https://nbviewer.org/github/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/colabs/v1/example_analysis_workflow.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://www.alphagenomedocs.com/colabs/v1/example_analysis_workflow.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/colabs/v1/example_analysis_workflow.ipynb"
     },
     {
       "id": "ag-splicing",
@@ -645,8 +598,9 @@
       "revision": "038d253a5ca2fec46f4874f592d9ec67984cb497",
       "access": "API / live prediction",
       "terms_url": "https://github.com/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/README.md#terms",
-      "viewer_url": "https://nbviewer.org/github/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/colabs/v1/splicing_variant_scoring.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://www.alphagenomedocs.com/colabs/v1/splicing_variant_scoring.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/google-deepmind/alphagenome/blob/038d253a5ca2fec46f4874f592d9ec67984cb497/colabs/v1/splicing_variant_scoring.ipynb"
     },
     {
       "id": "grelu-variant",
@@ -671,8 +625,9 @@
       "eligibility": "Unresolved",
       "revision": "e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9",
       "access": "Model weights / compute review",
-      "viewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/5_variant.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://genentech.github.io/gReLU/tutorials/5_variant.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/5_variant.ipynb"
     },
     {
       "id": "grelu-borzoi",
@@ -697,8 +652,9 @@
       "eligibility": "Unresolved",
       "revision": "e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9",
       "access": "Model weights / compute review",
-      "viewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/1_inference.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://genentech.github.io/gReLU/tutorials/1_inference.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/1_inference.ipynb"
     },
     {
       "id": "grelu-design",
@@ -723,8 +679,9 @@
       "eligibility": "Unresolved",
       "revision": "e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9",
       "access": "Model weights / compute review",
-      "viewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/4_design.ipynb",
-      "viewer_kind": "notebook"
+      "viewer_url": "https://genentech.github.io/gReLU/tutorials/4_design.html",
+      "viewer_kind": "notebook",
+      "nbviewer_url": "https://nbviewer.org/github/Genentech/gReLU/blob/e6fd1d4c3bec4cb3a864e09320662bc3844d0ea9/docs/tutorials/4_design.ipynb"
     }
   ]
 }

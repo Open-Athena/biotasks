@@ -44,9 +44,9 @@ workflow does not by itself allocate remote resources or authorize local workers
 ## Replay API option
 
 [Replay API design notes](replay-api.md) describe the user-requested option for
-serving verified recorded responses offline. Atlas is a priority investigation
-for avoiding live model inference, with artifact-specific training-use terms
-still unresolved. This is not an implemented service.
+serving verified recorded responses offline. These notes remain separate from the notebook shortlist: Atlas was removed
+because the identified source was an API guide. Artifact-specific training-use
+terms remain unresolved for any future Atlas work. This is not an implemented service.
 
 [Validation records](validation/README.md) cover the prompt package and explorer.
 

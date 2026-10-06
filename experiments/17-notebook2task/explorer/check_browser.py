@@ -17,8 +17,11 @@ with sync_playwright() as pw:
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(url, wait_until='networkidle', timeout=45000)
         page.wait_for_selector('#list .card')
-        assert page.locator('#list .card').count() == 14
-        assert 'Atlas' in page.locator('#detail h2').inner_text()
+        assert page.locator('#list .card').count() == 12
+        assert 'Airway' in page.locator('#detail h2').inner_text()
+        ids = page.evaluate('window.NOTEBOOK_CATALOG.sources.map(r => r.id)')
+        assert 'ag-atlas' not in ids and 'pbmc3k' not in ids
+        assert 'multiome' in ids
         page.select_option('#group', 'gReLU')
         assert page.locator('#list .card').count() == 3
         with page.expect_download() as event:
@@ -48,9 +51,9 @@ with sync_playwright() as pw:
         page.set_viewport_size({'width':390,'height':844})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.select_option('#group', 'AlphaGenome')
-        assert page.locator('#list .card').count() == 3
+        assert page.locator('#list .card').count() == 2
         page.screenshot(path='/tmp/biotasks17-mobile.png', full_page=True)
         assert not errors, errors
-        print(json.dumps({'url':url,'status':'passed','candidates':14,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow'],'page_errors':errors}))
+        print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow'],'page_errors':errors}))
     finally:
         browser.close()

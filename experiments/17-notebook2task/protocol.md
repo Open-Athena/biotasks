@@ -39,6 +39,11 @@ No launch until those are explicit and the execution backend can enforce them.
 Do not treat this wall-clock proposal as authorization for paid services.
 Record validation and solver costs separately from authoring.
 
+The user clarified that the NeurIPS single-cell benchmark is not an LLM
+evaluation exclusion. Retain dataset provenance and check overlap against
+evaluations relevant to our models; do not reject a source merely because it
+was used in a biological method benchmark.
+
 ## Batch runner requirements
 
 Implement a small runner once the backend is selected. It must create one

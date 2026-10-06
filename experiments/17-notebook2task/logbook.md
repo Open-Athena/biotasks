@@ -68,3 +68,26 @@ Gonzalo requested full original notebook display. Added lazy nbviewer embeds for
 four entries, a return-to-task-ideas control, sandboxed frames, and external
 fallback links. This requires no kernel or custom hosting, but the full-source
 view depends on external services. Display is distinct from fresh execution.
+
+### User corrections: current tutorials, links, and benchmark scope
+
+Removed Atlas from the notebook shortlist because the identified item was an
+API guide. Retained replay-API design notes separately. Removed the legacy
+PBMC3k introduction and retained the current Scanpy preprocessing/clustering
+notebook; refreshed Scanpy source links to current main
+`7ad567d9f7ca52b23b0ffb964e486034ef14283e`. This yields 12 candidates.
+
+Gonzalo clarified that the NeurIPS 2021 single-cell benchmark is not an LLM
+benchmark and is no exclusion for this experiment. Corrected the overly broad
+training hold. Its origin remains provenance; evaluate overlap against relevant
+model evaluations rather than rejecting every dataset used in any benchmark.
+This supersedes the earlier bone-marrow exclusion in this logbook.
+
+Added prominent original documentation/GitHub links, including Pearson residuals
+and ingest/BBKNN. Replaced nbviewer as the default viewer with authors' rendered
+pages; optional nbviewer links remain. The two reported Scanpy URLs returned 200
+on our HTTP checks, so the reported 503 failures were not reproduced and their
+cause remains unknown. Eleven of twelve author pages passed browser embed checks;
+the bedtools host timed out. Added the pinned full bedtools Markdown with its
+MIT license as a local rendering fallback. Its explicit puzzles provide candidate
+objectives, with independent answer validation still required.

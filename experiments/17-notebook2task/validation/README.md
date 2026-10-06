@@ -48,3 +48,21 @@ reset, empty search, JSON export, and desktop/mobile checks, without page errors
 A separate check on that public URL loaded the full TAL1 nbviewer notebook and
 returned to task proposals successfully, with no page errors. Other external
 notebook/document embeds were not individually browser-validated.
+
+## Revised shortlist and original-source viewers
+
+The 12-candidate controls check passed. The initial full-source check passed
+11 author-hosted pages; the bedtools host timed out. After adding the pinned
+MIT-licensed bedtools Markdown fallback, all 12 full-source views and their two
+original links passed in one serial browser run. The current Scanpy tutorial
+was visually inspected. No source analysis was executed. Scanpy source links
+now point to current main; the historical #10 records remain unchanged.
+
+A stricter visibility follow-up exposed hidden first-heading elements on several
+rendered notebook pages; the final check asserts visible code instead. Remote
+documentation rendering JavaScript is now allowed within the sandbox; no notebook
+kernel runs. Final visible-code checks passed for all four Scanpy pages, both R
+vignettes, bedtools, gReLU, and AlphaGenome splicing (11/12). The TAL1 author page,
+which passed the earlier content check, timed out on this later request. Remote
+service availability remains a limitation; direct GitHub and optional nbviewer
+links remain available. Do not describe all external services as reliably online.
