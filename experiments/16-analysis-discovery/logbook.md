@@ -107,3 +107,33 @@ unique candidate documents overall, communicated in chat. The twelve-document
 second-pass cap is superseded; original cohorts stay frozen. Expand by new biology,
 workflow and route, not by filling quotas with mirrors. Discovery-only permission
 continues; no biological execution or paid compute is implied.
+
+The expansion reaches 100 candidate documents: 91 substantive static inspections,
+eight access-only records and one pending inspection. Computed assessments are
+65 apparently suitable, 25 unresolved, nine excluded and one not reviewed. These
+include the unchanged first 40; the original 30-document comparison remains
+21 apparently suitable, five excluded and four unresolved.
+
+Acquisition inputs were checkpointed at 95a84cd (core), 52b7715 (catalog) and
+752e5f1 (embedded PlantCV sources). Each request was capped at 4 MB and 12 seconds,
+run sequentially under the shared nonblocking lock. Earlier lock contention
+caused immediate aborts; successful retrieval happened after later resource
+checks. The three successful batches started/ended at 20:23:57/20:24:00,
+20:27:27/20:27:34 and 20:28:38/20:28:41 UTC, exit 0. Peak RSS was 27,684,
+49,744 and 48,120 KiB. Tree metadata ran 20:25:29–20:25:33 UTC, exit 0,
+45,352 KiB peak RSS. Load checks remained below 1.5 with >4 GiB available.
+All commands returned, no detached acquisition workers remained.
+
+Direct Bioconductor requests returned 403, while some rendered pages were
+readable through the web reader. Scirpy's 3k raw notebook and PlantCV multi-object
+notebook exceeded the cap; the former was screened through rendered documentation,
+the latter remains access-only. Allen rendered 404s were recovered via repository
+trees and pinned sources. Preserve the original failures alongside recovery.
+
+Review noted duplicate studies, untraced DREAM prediction assets, Geneformer
+prepared-input/model mismatches, two Allen examples that overwrite an older
+dataset assignment, and conceptual/unfinished Quarto decks. None were executed.
+The 13-label display keeps original 8/10-label comparisons fixed. The explorer
+now separates identified counts, substantive inspection and pending access work.
+
+Local browser validation passed at 20:34:46–20:34:50 UTC, exit 0, maximum child RSS 114,080 KiB. Checked all counts, new stage filters, expansion drilldown, frozen Kaggle export IDs, every coverage cell, offline reload and desktop/mobile layout. Desktop screenshot inspected. The source-only metadata clarification afterward changes hosting/format/path labels, not counts or UI behavior. No issue closure or promotion is requested.

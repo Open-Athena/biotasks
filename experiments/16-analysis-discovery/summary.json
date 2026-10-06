@@ -2,74 +2,112 @@
   "stage": "discovery and static inspection",
   "review_state": "provisional; awaiting user satisfaction",
   "all": {
-    "reviewed": 40,
-    "unique": 40,
+    "identified": 100,
+    "reviewed": 91,
+    "review_stages": {
+      "static_inspection": 91,
+      "access_only": 8,
+      "identified": 1
+    },
+    "unique": 100,
     "statuses": {
-      "apparently_suitable": 26,
-      "excluded": 6,
-      "unresolved": 8
+      "apparently_suitable": 65,
+      "excluded": 9,
+      "unresolved": 25,
+      "not_reviewed": 1
     },
     "coverage": {
       "genomics": {
-        "reviewed": 6,
-        "apparently_suitable": 4
+        "identified": 7,
+        "reviewed": 7,
+        "apparently_suitable": 5
       },
       "transcriptomics": {
-        "reviewed": 13,
-        "apparently_suitable": 8
+        "identified": 20,
+        "reviewed": 19,
+        "apparently_suitable": 12
       },
       "epigenomics": {
+        "identified": 4,
         "reviewed": 3,
         "apparently_suitable": 3
       },
       "proteomics": {
-        "reviewed": 4,
-        "apparently_suitable": 2
+        "identified": 5,
+        "reviewed": 5,
+        "apparently_suitable": 3
       },
       "structural biology": {
-        "reviewed": 1,
-        "apparently_suitable": 1
+        "identified": 9,
+        "reviewed": 9,
+        "apparently_suitable": 9
       },
       "metabolomics": {
-        "reviewed": 2,
-        "apparently_suitable": 2
+        "identified": 8,
+        "reviewed": 5,
+        "apparently_suitable": 5
       },
       "systems biology": {
-        "reviewed": 4,
+        "identified": 5,
+        "reviewed": 5,
         "apparently_suitable": 3
       },
       "ecology/evolution": {
-        "reviewed": 6,
-        "apparently_suitable": 3
+        "identified": 14,
+        "reviewed": 12,
+        "apparently_suitable": 6
       },
       "RNA biology": {
+        "identified": 3,
         "reviewed": 3,
         "apparently_suitable": 3
       },
       "cellular phenotyping": {
+        "identified": 5,
+        "reviewed": 5,
+        "apparently_suitable": 5
+      },
+      "plant biology": {
+        "identified": 14,
+        "reviewed": 13,
+        "apparently_suitable": 13
+      },
+      "neuroscience": {
+        "identified": 14,
+        "reviewed": 14,
+        "apparently_suitable": 7
+      },
+      "immunology": {
+        "identified": 5,
         "reviewed": 4,
         "apparently_suitable": 4
       }
     },
     "suitable_breadth_original8": 8,
     "suitable_breadth_revised10": 10,
-    "dominant_suitable_subdomain_share": 0.3076923076923077,
-    "workflow_labels_suitable": 25,
+    "suitable_breadth_expanded13": 13,
+    "dominant_suitable_subdomain_share": 0.2,
+    "workflow_labels_suitable": 64,
     "workflows_by_subdomain": {
       "genomics": [
         "ORF prediction and annotation comparison",
+        "SNP subsampling, population PCA and flowering-time association",
         "range and variant annotation",
         "sequence composition and origin inference",
         "translation and mutation interpretation"
       ],
       "transcriptomics": [
+        "RNA-seq PCA and differential expression",
+        "RNA-seq input curation and expression exploration",
         "TSS enhancer identification and differential usage",
         "differential expression coexpression and enrichment",
+        "gene-expression clustering",
         "microarray preprocessing and differential expression",
         "normalization and differential expression",
         "perturbation prediction with convolution",
         "perturbation prediction with reduced targets",
         "single-cell QC, clustering and marker comparison",
+        "single-cell QC, clustering and marker selection",
         "single-cell metadata and protein-target exploration"
       ],
       "epigenomics": [
@@ -78,14 +116,26 @@
         "TSS enhancer identification and differential usage"
       ],
       "proteomics": [
+        "MS processing, annotation and quantification",
         "protein function classification"
       ],
       "structural biology": [
-        "structure parsing and torsion analysis"
+        "alignment and residue RMSF",
+        "backbone and side-chain dihedral analysis",
+        "channel pore geometry",
+        "hydrogen-bond lifetime fitting",
+        "native contact cutoff comparison",
+        "reference selection and RMSD",
+        "structure parsing and torsion analysis",
+        "trajectory path similarity and clustering",
+        "trajectory principal components"
       ],
       "metabolomics": [
+        "LC-MS feature grouping",
+        "cross-omics correlation analysis",
         "metabolic network enrichment",
-        "metabolite preprocessing and differential abundance"
+        "metabolite preprocessing and differential abundance",
+        "profile-spectrum smoothing and centroiding"
       ],
       "systems biology": [
         "differential expression coexpression and enrichment",
@@ -93,8 +143,11 @@
         "metabolic network enrichment"
       ],
       "ecology/evolution": [
+        "alpha diversity and phylogenetic diversity",
+        "cross-omics correlation analysis",
         "dissimilarity and ordination",
         "metabolite preprocessing and differential abundance",
+        "microbiome ordination and distance choices",
         "phylogenetic diversity, ordination and group testing"
       ],
       "RNA biology": [
@@ -104,9 +157,40 @@
       ],
       "cellular phenotyping": [
         "cell clustering and differential abundance/state",
+        "cytometry clustering and manual-gate comparison",
         "microscopy thresholding, seeded segmentation and cell characterization",
         "single-cell QC, clustering and marker comparison",
         "single-cell metadata and protein-target exploration"
+      ],
+      "plant biology": [
+        "RGB/NIR alignment and intensity analysis",
+        "RNA-seq PCA and differential expression",
+        "RNA-seq input curation and expression exploration",
+        "SNP subsampling, population PCA and flowering-time association",
+        "binary threshold, ROI and size/color measurements",
+        "color correction and plant morphology",
+        "gene-expression clustering",
+        "leaf-disease image exploration and classification",
+        "seed segmentation and per-seed traits",
+        "skeleton pruning and leaf/stem morphology",
+        "thermal segmentation and temperature measurement",
+        "tray segmentation and 20 plant labels",
+        "watershed segmentation"
+      ],
+      "neuroscience": [
+        "EEG and spectrogram exploration",
+        "optotagged-cell response comparison",
+        "receptive-field estimation",
+        "spectrogram classification with grouped folds",
+        "stimulus-aligned LFP responses",
+        "stimulus-aligned neuronal response analysis",
+        "unit quality selection"
+      ],
+      "immunology": [
+        "BCR clonotype clustering and mutation analysis",
+        "TCR chain QC and clonotype networks",
+        "clonotype calling, diversity and repertoire comparison",
+        "cytometry clustering and manual-gate comparison"
       ]
     },
     "study_clusters": {
@@ -142,12 +226,60 @@
       "Data-Carpentry-rodent-survey": 1,
       "scikit-bio-toy-six-samples": 1,
       "Biopython-tree-demo": 1,
-      "10x-PBMC3k": 1,
-      "EBImage-example-cells": 1
+      "10x-PBMC3k": 2,
+      "EBImage-example-cells": 1,
+      "Geneformer-cardiomyopathy": 2,
+      "DREAM-olfaction": 4,
+      "Arabidopsis-1001-genomes": 1,
+      "Gupta2019": 1,
+      "Kaggle-plant-pathology-2020": 1,
+      "Kaggle-HMS": 2,
+      "FlowSOM-68983": 1,
+      "scRepertoire-ARDS": 1,
+      "PlantCV-B73-photo": 2,
+      "unresolved:L02": 1,
+      "PlantCV-arabidopsis-tray": 1,
+      "PlantCV-arabidopsis-watershed": 1,
+      "PlantCV-sorghum": 1,
+      "PlantCV-beans": 1,
+      "PlantCV-VIS-NIR": 1,
+      "PlantCV-thermal": 1,
+      "AdK-test-trajectories": 6,
+      "AdK-equilibrium": 1,
+      "MDAnalysis-PDB-HOLE": 1,
+      "Allen-719161530": 2,
+      "Allen-757970808": 1,
+      "Allen-001768": 1,
+      "Allen-001637": 1,
+      "Allen-1213341633": 1,
+      "Allen-739448407": 1,
+      "Allen-optotagging": 1,
+      "Wu2020-3k": 1,
+      "Stephenson2021-5k": 1,
+      "unresolved:L27": 1,
+      "Tengeler2020": 2,
+      "L30": 1,
+      "HintikkaXOData": 1,
+      "L32": 1,
+      "E-GEOD-72806": 3,
+      "unresolved:L39": 1,
+      "unresolved:L40": 1,
+      "unresolved:L41": 1,
+      "unresolved:L42": 1,
+      "MSnbase-iTRAQ": 1,
+      "msdata-sciex-serum": 1,
+      "unresolved:L45": 1,
+      "unresolved:L46": 1,
+      "faahKO": 1,
+      "unresolved:L48": 1
     }
   },
   "main_comparison": {
+    "identified": 30,
     "reviewed": 30,
+    "review_stages": {
+      "static_inspection": 30
+    },
     "unique": 30,
     "statuses": {
       "apparently_suitable": 21,
@@ -156,48 +288,74 @@
     },
     "coverage": {
       "genomics": {
+        "identified": 6,
         "reviewed": 6,
         "apparently_suitable": 4
       },
       "transcriptomics": {
+        "identified": 12,
         "reviewed": 12,
         "apparently_suitable": 7
       },
       "epigenomics": {
+        "identified": 3,
         "reviewed": 3,
         "apparently_suitable": 3
       },
       "proteomics": {
+        "identified": 3,
         "reviewed": 3,
         "apparently_suitable": 2
       },
       "structural biology": {
+        "identified": 1,
         "reviewed": 1,
         "apparently_suitable": 1
       },
       "metabolomics": {
+        "identified": 0,
         "reviewed": 0,
         "apparently_suitable": 0
       },
       "systems biology": {
+        "identified": 3,
         "reviewed": 3,
         "apparently_suitable": 2
       },
       "ecology/evolution": {
+        "identified": 2,
         "reviewed": 2,
         "apparently_suitable": 1
       },
       "RNA biology": {
+        "identified": 3,
         "reviewed": 3,
         "apparently_suitable": 3
       },
       "cellular phenotyping": {
+        "identified": 2,
         "reviewed": 2,
         "apparently_suitable": 2
+      },
+      "plant biology": {
+        "identified": 0,
+        "reviewed": 0,
+        "apparently_suitable": 0
+      },
+      "neuroscience": {
+        "identified": 0,
+        "reviewed": 0,
+        "apparently_suitable": 0
+      },
+      "immunology": {
+        "identified": 0,
+        "reviewed": 0,
+        "apparently_suitable": 0
       }
     },
     "suitable_breadth_original8": 7,
     "suitable_breadth_revised10": 9,
+    "suitable_breadth_expanded13": 9,
     "dominant_suitable_subdomain_share": 0.3333333333333333,
     "workflow_labels_suitable": 20,
     "workflows_by_subdomain": {
@@ -243,7 +401,10 @@
       "cellular phenotyping": [
         "cell clustering and differential abundance/state",
         "single-cell metadata and protein-target exploration"
-      ]
+      ],
+      "plant biology": [],
+      "neuroscience": [],
+      "immunology": []
     },
     "study_clusters": {
       "G01": 1,
@@ -274,7 +435,11 @@
   },
   "groups": {
     "awesome-biology / curated_extension": {
+      "identified": 4,
       "reviewed": 4,
+      "review_stages": {
+        "static_inspection": 4
+      },
       "unique": 4,
       "statuses": {
         "apparently_suitable": 3,
@@ -282,48 +447,74 @@
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 2,
           "reviewed": 2,
           "apparently_suitable": 1
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 2,
           "reviewed": 2,
           "apparently_suitable": 2
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 2,
       "suitable_breadth_revised10": 3,
+      "suitable_breadth_expanded13": 3,
       "dominant_suitable_subdomain_share": 0.6666666666666666,
       "workflow_labels_suitable": 3,
       "workflows_by_subdomain": {
@@ -343,7 +534,10 @@
         "cellular phenotyping": [
           "microscopy thresholding, seeded segmentation and cell characterization",
           "single-cell QC, clustering and marker comparison"
-        ]
+        ],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "scikit-bio-toy-six-samples": 1,
@@ -352,8 +546,136 @@
         "EBImage-example-cells": 1
       }
     },
+    "bioconductor / breadth_expansion": {
+      "identified": 12,
+      "reviewed": 5,
+      "review_stages": {
+        "static_inspection": 5,
+        "access_only": 7
+      },
+      "unique": 12,
+      "statuses": {
+        "apparently_suitable": 5,
+        "unresolved": 7
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 1,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 1,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 5,
+          "reviewed": 2,
+          "apparently_suitable": 2
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 2,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 2,
+          "reviewed": 2,
+          "apparently_suitable": 2
+        }
+      },
+      "suitable_breadth_original8": 2,
+      "suitable_breadth_revised10": 3,
+      "suitable_breadth_expanded13": 4,
+      "dominant_suitable_subdomain_share": 0.4,
+      "workflow_labels_suitable": 5,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [
+          "MS processing, annotation and quantification"
+        ],
+        "structural biology": [],
+        "metabolomics": [
+          "LC-MS feature grouping",
+          "profile-spectrum smoothing and centroiding"
+        ],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [
+          "cytometry clustering and manual-gate comparison"
+        ],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": [
+          "clonotype calling, diversity and repertoire comparison",
+          "cytometry clustering and manual-gate comparison"
+        ]
+      },
+      "study_clusters": {
+        "FlowSOM-68983": 1,
+        "scRepertoire-ARDS": 1,
+        "unresolved:L39": 1,
+        "unresolved:L40": 1,
+        "unresolved:L41": 1,
+        "unresolved:L42": 1,
+        "MSnbase-iTRAQ": 1,
+        "msdata-sciex-serum": 1,
+        "unresolved:L45": 1,
+        "unresolved:L46": 1,
+        "faahKO": 1,
+        "unresolved:L48": 1
+      }
+    },
     "bioconductor / initial": {
+      "identified": 10,
       "reviewed": 10,
+      "review_stages": {
+        "static_inspection": 10
+      },
       "unique": 10,
       "statuses": {
         "apparently_suitable": 7,
@@ -362,48 +684,74 @@
       },
       "coverage": {
         "genomics": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "transcriptomics": {
+          "identified": 6,
           "reviewed": 6,
           "apparently_suitable": 3
         },
         "epigenomics": {
+          "identified": 3,
           "reviewed": 3,
           "apparently_suitable": 3
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 2,
           "reviewed": 2,
           "apparently_suitable": 1
         },
         "ecology/evolution": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 4,
       "suitable_breadth_revised10": 5,
+      "suitable_breadth_expanded13": 5,
       "dominant_suitable_subdomain_share": 0.42857142857142855,
       "workflow_labels_suitable": 7,
       "workflows_by_subdomain": {
@@ -430,7 +778,10 @@
         "RNA biology": [],
         "cellular phenotyping": [
           "cell clustering and differential abundance/state"
-        ]
+        ],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "B01": 1,
@@ -446,55 +797,85 @@
       }
     },
     "bioconductor / targeted_gap": {
+      "identified": 1,
       "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
       "unique": 1,
       "statuses": {
         "apparently_suitable": 1
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "systems biology": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "ecology/evolution": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 2,
       "suitable_breadth_revised10": 2,
+      "suitable_breadth_expanded13": 2,
       "dominant_suitable_subdomain_share": 1.0,
       "workflow_labels_suitable": 1,
       "workflows_by_subdomain": {
@@ -511,62 +892,95 @@
         ],
         "ecology/evolution": [],
         "RNA biology": [],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "FELLA-multiple-case-studies": 1
       }
     },
-    "gallery / targeted_gap": {
-      "reviewed": 1,
-      "unique": 1,
+    "challenge_project / breadth_expansion": {
+      "identified": 4,
+      "reviewed": 4,
+      "review_stages": {
+        "static_inspection": 4
+      },
+      "unique": 4,
       "statuses": {
-        "unresolved": 1
+        "unresolved": 4
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
-          "reviewed": 1,
+          "identified": 0,
+          "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 4,
+          "reviewed": 4,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 0,
       "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 0,
       "dominant_suitable_subdomain_share": null,
       "workflow_labels_suitable": 0,
       "workflows_by_subdomain": {
@@ -579,14 +993,225 @@
         "systems biology": [],
         "ecology/evolution": [],
         "RNA biology": [],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
+      },
+      "study_clusters": {
+        "DREAM-olfaction": 4
+      }
+    },
+    "gallery / targeted_gap": {
+      "identified": 1,
+      "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
+      "unique": 1,
+      "statuses": {
+        "unresolved": 1
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 0,
+      "dominant_suitable_subdomain_share": null,
+      "workflow_labels_suitable": 0,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "CAZyLingua": 1
       }
     },
+    "github / breadth_expansion": {
+      "identified": 1,
+      "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
+      "unique": 1,
+      "statuses": {
+        "apparently_suitable": 1
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 1,
+      "dominant_suitable_subdomain_share": 1.0,
+      "workflow_labels_suitable": 1,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [
+          "spectrogram classification with grouped folds"
+        ],
+        "immunology": []
+      },
+      "study_clusters": {
+        "Kaggle-HMS": 1
+      }
+    },
     "github / initial": {
+      "identified": 10,
       "reviewed": 10,
+      "review_stages": {
+        "static_inspection": 10
+      },
       "unique": 10,
       "statuses": {
         "apparently_suitable": 7,
@@ -595,48 +1220,74 @@
       },
       "coverage": {
         "genomics": {
+          "identified": 5,
           "reviewed": 5,
           "apparently_suitable": 3
         },
         "transcriptomics": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "ecology/evolution": {
+          "identified": 2,
           "reviewed": 2,
           "apparently_suitable": 1
         },
         "RNA biology": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 5,
       "suitable_breadth_revised10": 6,
+      "suitable_breadth_expanded13": 6,
       "dominant_suitable_subdomain_share": 0.42857142857142855,
       "workflow_labels_suitable": 7,
       "workflows_by_subdomain": {
@@ -663,7 +1314,10 @@
         "RNA biology": [
           "translation and mutation interpretation"
         ],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "G01": 1,
@@ -679,55 +1333,85 @@
       }
     },
     "github / targeted_gap": {
+      "identified": 1,
       "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
       "unique": 1,
       "statuses": {
         "apparently_suitable": 1
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 2,
       "suitable_breadth_revised10": 2,
+      "suitable_breadth_expanded13": 2,
       "dominant_suitable_subdomain_share": 1.0,
       "workflow_labels_suitable": 1,
       "workflows_by_subdomain": {
@@ -744,14 +1428,228 @@
           "metabolite preprocessing and differential abundance"
         ],
         "RNA biology": [],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "Arabidopsis-herbivory-demo": 1
       }
     },
+    "hugging_face / breadth_expansion": {
+      "identified": 2,
+      "reviewed": 2,
+      "review_stages": {
+        "static_inspection": 2
+      },
+      "unique": 2,
+      "statuses": {
+        "unresolved": 2
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 2,
+          "reviewed": 2,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 0,
+      "dominant_suitable_subdomain_share": null,
+      "workflow_labels_suitable": 0,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
+      },
+      "study_clusters": {
+        "Geneformer-cardiomyopathy": 2
+      }
+    },
+    "kaggle / breadth_expansion": {
+      "identified": 2,
+      "reviewed": 2,
+      "review_stages": {
+        "static_inspection": 2
+      },
+      "unique": 2,
+      "statuses": {
+        "apparently_suitable": 2
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "neuroscience": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 0,
+      "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 2,
+      "dominant_suitable_subdomain_share": 0.5,
+      "workflow_labels_suitable": 2,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [
+          "leaf-disease image exploration and classification"
+        ],
+        "neuroscience": [
+          "EEG and spectrogram exploration"
+        ],
+        "immunology": []
+      },
+      "study_clusters": {
+        "Kaggle-plant-pathology-2020": 1,
+        "Kaggle-HMS": 1
+      }
+    },
     "kaggle / competition_first": {
+      "identified": 10,
       "reviewed": 10,
+      "review_stages": {
+        "static_inspection": 10
+      },
       "unique": 10,
       "statuses": {
         "apparently_suitable": 7,
@@ -760,48 +1658,74 @@
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 5,
           "reviewed": 5,
           "apparently_suitable": 3
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 3,
           "reviewed": 3,
           "apparently_suitable": 2
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 2,
           "reviewed": 2,
           "apparently_suitable": 2
         },
         "cellular phenotyping": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 1
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 2,
       "suitable_breadth_revised10": 4,
+      "suitable_breadth_expanded13": 4,
       "dominant_suitable_subdomain_share": 0.42857142857142855,
       "workflow_labels_suitable": 6,
       "workflows_by_subdomain": {
@@ -825,7 +1749,10 @@
         ],
         "cellular phenotyping": [
           "single-cell metadata and protein-target exploration"
-        ]
+        ],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "cafa-5-protein-function-prediction": 3,
@@ -835,55 +1762,85 @@
       }
     },
     "kaggle / original_search": {
+      "identified": 2,
       "reviewed": 2,
+      "review_stages": {
+        "static_inspection": 2
+      },
       "unique": 2,
       "statuses": {
         "unresolved": 2
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 0,
       "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 0,
       "dominant_suitable_subdomain_share": null,
       "workflow_labels_suitable": 0,
       "workflows_by_subdomain": {
@@ -896,63 +1853,325 @@
         "systems biology": [],
         "ecology/evolution": [],
         "RNA biology": [],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "O01": 1,
         "O02": 1
       }
     },
-    "teaching / targeted_gap": {
+    "marimo / breadth_expansion": {
+      "identified": 1,
       "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
+      "unique": 1,
+      "statuses": {
+        "apparently_suitable": 1
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 1,
+      "suitable_breadth_revised10": 1,
+      "suitable_breadth_expanded13": 1,
+      "dominant_suitable_subdomain_share": 1.0,
+      "workflow_labels_suitable": 1,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [
+          "single-cell QC, clustering and marker selection"
+        ],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
+      },
+      "study_clusters": {
+        "10x-PBMC3k": 1
+      }
+    },
+    "quarto / breadth_expansion": {
+      "identified": 10,
+      "reviewed": 10,
+      "review_stages": {
+        "static_inspection": 10
+      },
+      "unique": 10,
+      "statuses": {
+        "apparently_suitable": 7,
+        "unresolved": 1,
+        "excluded": 2
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "transcriptomics": {
+          "identified": 3,
+          "reviewed": 3,
+          "apparently_suitable": 3
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "metabolomics": {
+          "identified": 1,
+          "reviewed": 1,
+          "apparently_suitable": 1
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 6,
+          "reviewed": 6,
+          "apparently_suitable": 3
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 4,
+          "reviewed": 4,
+          "apparently_suitable": 4
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        }
+      },
+      "suitable_breadth_original8": 4,
+      "suitable_breadth_revised10": 4,
+      "suitable_breadth_expanded13": 5,
+      "dominant_suitable_subdomain_share": 0.5714285714285714,
+      "workflow_labels_suitable": 7,
+      "workflows_by_subdomain": {
+        "genomics": [
+          "SNP subsampling, population PCA and flowering-time association"
+        ],
+        "transcriptomics": [
+          "RNA-seq PCA and differential expression",
+          "RNA-seq input curation and expression exploration",
+          "gene-expression clustering"
+        ],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [],
+        "metabolomics": [
+          "cross-omics correlation analysis"
+        ],
+        "systems biology": [],
+        "ecology/evolution": [
+          "alpha diversity and phylogenetic diversity",
+          "cross-omics correlation analysis",
+          "microbiome ordination and distance choices"
+        ],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [
+          "RNA-seq PCA and differential expression",
+          "RNA-seq input curation and expression exploration",
+          "SNP subsampling, population PCA and flowering-time association",
+          "gene-expression clustering"
+        ],
+        "neuroscience": [],
+        "immunology": []
+      },
+      "study_clusters": {
+        "Arabidopsis-1001-genomes": 1,
+        "Gupta2019": 1,
+        "Tengeler2020": 2,
+        "L30": 1,
+        "HintikkaXOData": 1,
+        "L32": 1,
+        "E-GEOD-72806": 3
+      }
+    },
+    "teaching / targeted_gap": {
+      "identified": 1,
+      "reviewed": 1,
+      "review_stages": {
+        "static_inspection": 1
+      },
       "unique": 1,
       "statuses": {
         "unresolved": 1
       },
       "coverage": {
         "genomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "transcriptomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "epigenomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "proteomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "structural biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "metabolomics": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "systems biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "ecology/evolution": {
+          "identified": 1,
           "reviewed": 1,
           "apparently_suitable": 0
         },
         "RNA biology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         },
         "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "neuroscience": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "immunology": {
+          "identified": 0,
           "reviewed": 0,
           "apparently_suitable": 0
         }
       },
       "suitable_breadth_original8": 0,
       "suitable_breadth_revised10": 0,
+      "suitable_breadth_expanded13": 0,
       "dominant_suitable_subdomain_share": null,
       "workflow_labels_suitable": 0,
       "workflows_by_subdomain": {
@@ -965,10 +2184,166 @@
         "systems biology": [],
         "ecology/evolution": [],
         "RNA biology": [],
-        "cellular phenotyping": []
+        "cellular phenotyping": [],
+        "plant biology": [],
+        "neuroscience": [],
+        "immunology": []
       },
       "study_clusters": {
         "Data-Carpentry-rodent-survey": 1
+      }
+    },
+    "tool_documentation / breadth_expansion": {
+      "identified": 28,
+      "reviewed": 26,
+      "review_stages": {
+        "static_inspection": 26,
+        "access_only": 1,
+        "identified": 1
+      },
+      "unique": 28,
+      "statuses": {
+        "apparently_suitable": 23,
+        "unresolved": 3,
+        "excluded": 1,
+        "not_reviewed": 1
+      },
+      "coverage": {
+        "genomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "transcriptomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "epigenomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "proteomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "structural biology": {
+          "identified": 8,
+          "reviewed": 8,
+          "apparently_suitable": 8
+        },
+        "metabolomics": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "systems biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "ecology/evolution": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "RNA biology": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "cellular phenotyping": {
+          "identified": 0,
+          "reviewed": 0,
+          "apparently_suitable": 0
+        },
+        "plant biology": {
+          "identified": 9,
+          "reviewed": 8,
+          "apparently_suitable": 8
+        },
+        "neuroscience": {
+          "identified": 8,
+          "reviewed": 8,
+          "apparently_suitable": 5
+        },
+        "immunology": {
+          "identified": 3,
+          "reviewed": 2,
+          "apparently_suitable": 2
+        }
+      },
+      "suitable_breadth_original8": 1,
+      "suitable_breadth_revised10": 1,
+      "suitable_breadth_expanded13": 4,
+      "dominant_suitable_subdomain_share": 0.34782608695652173,
+      "workflow_labels_suitable": 23,
+      "workflows_by_subdomain": {
+        "genomics": [],
+        "transcriptomics": [],
+        "epigenomics": [],
+        "proteomics": [],
+        "structural biology": [
+          "alignment and residue RMSF",
+          "backbone and side-chain dihedral analysis",
+          "channel pore geometry",
+          "hydrogen-bond lifetime fitting",
+          "native contact cutoff comparison",
+          "reference selection and RMSD",
+          "trajectory path similarity and clustering",
+          "trajectory principal components"
+        ],
+        "metabolomics": [],
+        "systems biology": [],
+        "ecology/evolution": [],
+        "RNA biology": [],
+        "cellular phenotyping": [],
+        "plant biology": [
+          "RGB/NIR alignment and intensity analysis",
+          "binary threshold, ROI and size/color measurements",
+          "color correction and plant morphology",
+          "seed segmentation and per-seed traits",
+          "skeleton pruning and leaf/stem morphology",
+          "thermal segmentation and temperature measurement",
+          "tray segmentation and 20 plant labels",
+          "watershed segmentation"
+        ],
+        "neuroscience": [
+          "optotagged-cell response comparison",
+          "receptive-field estimation",
+          "stimulus-aligned LFP responses",
+          "stimulus-aligned neuronal response analysis",
+          "unit quality selection"
+        ],
+        "immunology": [
+          "BCR clonotype clustering and mutation analysis",
+          "TCR chain QC and clonotype networks"
+        ]
+      },
+      "study_clusters": {
+        "PlantCV-B73-photo": 2,
+        "unresolved:L02": 1,
+        "PlantCV-arabidopsis-tray": 1,
+        "PlantCV-arabidopsis-watershed": 1,
+        "PlantCV-sorghum": 1,
+        "PlantCV-beans": 1,
+        "PlantCV-VIS-NIR": 1,
+        "PlantCV-thermal": 1,
+        "AdK-test-trajectories": 6,
+        "AdK-equilibrium": 1,
+        "MDAnalysis-PDB-HOLE": 1,
+        "Allen-719161530": 2,
+        "Allen-757970808": 1,
+        "Allen-001768": 1,
+        "Allen-001637": 1,
+        "Allen-1213341633": 1,
+        "Allen-739448407": 1,
+        "Allen-optotagging": 1,
+        "Wu2020-3k": 1,
+        "Stephenson2021-5k": 1,
+        "unresolved:L27": 1
       }
     }
   },

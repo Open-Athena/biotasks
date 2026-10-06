@@ -20,6 +20,9 @@ def resources():
 
 available,load=resources()
 assert available >= 2.5*1024**3 and available-450*1024**2 >= 2*1024**3 and load<1.5,(available,load)
+manifest=json.loads((ROOT/'candidates.json').read_text())
+summary=json.loads((ROOT/'summary.json').read_text())
+expected_count=len(manifest)
 started=datetime.now(timezone.utc).isoformat(); checks=[]; errors=[]
 with sync_playwright() as p:
     browser=p.chromium.launch(executable_path='/home/exedev/.local/bin/chromium',headless=True,args=['--no-sandbox','--disable-dev-shm-usage','--disable-gpu','--renderer-process-limit=1'])
@@ -28,38 +31,45 @@ with sync_playwright() as p:
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
         page.locator('#resultCount').wait_for(state='attached',timeout=10000)
-        assert page.locator('#stats .stat strong').all_text_contents()==['40','26','8','0']
+        assert page.locator('#stats .stat strong').all_text_contents()==[str(expected_count),str(summary['all']['reviewed']),str(summary['all']['statuses']['apparently_suitable']),'0']
         page.locator('button[data-tab=sources]').click()
-        assert page.locator('#rows > tr').count()==40
+        assert page.locator('#rows > tr').count()==expected_count
         page.locator('#route').select_option('kaggle')
-        assert page.locator('#rows > tr').count()==12
+        assert page.locator('#rows > tr').count()==sum(r['route']=='kaggle' for r in manifest)
         page.locator('#cohort').select_option('competition_first')
         page.locator('#assessment').select_option('apparently_suitable')
         assert page.locator('#rows > tr').count()==7
         with page.expect_download() as d: page.locator('#export').click()
         exported=list(csv.DictReader(io.StringIO(Path(d.value.path()).read_text())))
         assert {r['id'] for r in exported}=={'K01','K03','K04','K05','K07','K08','K09'}
-        checks.append('Kaggle route/cohort/status filters and exact exported IDs')
+        checks.append('Frozen Kaggle cohort filters and exact exported IDs')
+        page.locator('#reset').click();page.locator('#review_stage').select_option('access_only')
+        assert page.locator('#rows > tr').count()==8
+        page.locator('#reset').click();page.locator('#review_stage').select_option('identified')
+        assert page.locator('#rows > tr').count()==1
+        page.locator('button[data-tab=overview]').click();page.locator('#showExpansion').click()
+        assert page.locator('#rows > tr').count()==60
+        checks.append('Expansion drilldown and access-only versus identified stage filters')
         page.locator('#reset').click();page.locator('#search').fill('EBImage')
         assert page.locator('#rows > tr').count()==1
         page.locator('#rows summary').click()
         assert 'nuclei.tif' in page.locator('#rows').inner_text()
         page.locator('#reset').click();page.locator('[data-sort=title]').click()
-        titles=page.locator('.source-title').all_text_contents(); assert len(titles)==40
+        titles=page.locator('.source-title').all_text_contents(); assert len(titles)==expected_count
         page.locator('[data-sort=title]').click()
         assert page.locator('.source-title').all_text_contents()==list(reversed(titles))
         page.locator('#search').fill('nothing-matches-this-123');assert page.locator('.empty').count()==1
         checks.append('Search, detail expansion, sort interaction and empty state')
         page.locator('button[data-tab=coverage]').click()
-        assert page.locator('#matrix tbody tr').count()==10
+        assert page.locator('#matrix tbody tr').count()==13
         groups=sorted({r['route']+' / '+r['cohort'] for r in json.loads((ROOT/'candidates.json').read_text())})
         manifest=json.loads((ROOT/'candidates.json').read_text())
-        assert page.locator('#matrix td').count()==10*len(groups)
+        assert page.locator('#matrix td').count()==13*len(groups)
         for b in page.locator('#matrix button').all():
             group=groups[int(b.get_attribute('data-group'))]; domain=b.get_attribute('data-domain')
             members=[r for r in manifest if r['route']+' / '+r['cohort']==group and domain in r['subdomains']]
             good=sum(r['assessment']=='apparently_suitable' for r in members)
-            assert b.inner_text()==f'{good} / {len(members)}'
+            assert b.inner_text()==f"{good} / {sum(r.get('review_stage', 'static_inspection') == 'static_inspection' for r in members)}"
         cells=page.locator('#matrix [data-domain="metabolomics"]')
         for i in range(cells.count()):
             cell=cells.nth(i)

@@ -60,3 +60,19 @@ be reported as such. Reproduce counts offline from the frozen manifest.
 Issue #5's live conclusion was read on 2026-10-06: deeper rankings filled some
 groups but did not fix vocabulary/pool omissions. Keep this initial sample fixed
 and targeted probes separate; repository coverage is not document usability.
+
+## User-authorized breadth expansion, 6 October 2026
+
+The initial caps describe the frozen comparison, not an ongoing limit. The user
+expanded the allowance to 100 candidate documents overall. Additional candidates
+use the `breadth_expansion` cohort and purposive biology/workflow selection from
+challenge projects, package/tool catalogs, community curation and model examples.
+Keep the first 40 records unchanged. Preserve original taxonomy comparisons;
+plant biology, neuroscience and immunology extend the display to 13 labels.
+
+Distinguish `identified`, `access_only` and `static_inspection`. Count only the
+last in inspected coverage denominators. An acquired source is not automatically
+an inspected analysis; an access failure is not a scientific result. Retain
+excluded and unresolved candidates rather than replacing them to inflate yield.
+Record aliases separately from shared-study clusters. A URL-distinct inventory
+does not establish semantic uniqueness or independent datasets.
