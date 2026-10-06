@@ -1,0 +1,12 @@
+{
+  "setup_command": "uv venv --python 3.12 \"$IRIS_VENV\"\nuv pip install --prerelease=allow --python \"$IRIS_VENV/bin/python\" marin-iris==0.2.141.dev37311598536 marin-rigging==0.2.141.dev37311598536 httpx==0.28.1",
+  "change": "enable prerelease transitive dependencies, matching the working collection pyproject policy",
+  "preceding_attempt": "failed during dependency setup; no model calls",
+  "upstream_reference": "https://github.com/marin-community/marin/issues/9775",
+  "additional_correction": "Pin HTTPX 0.28.1 from the working collection environment after unrestricted prerelease resolution selected incompatible HTTPX 1.0.dev6.",
+  "failed_setup_attempts": [
+    "unpublished marin-iris==0.2.0",
+    "prerelease transitive dependencies disabled",
+    "HTTPX 1.0.dev6 incompatible with aiobotocore"
+  ]
+}
