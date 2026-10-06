@@ -1,0 +1,29 @@
+.......F.                                                                [100%]
+=================================== FAILURES ===================================
+______________________ test_eda_facts_match_trusted_data _______________________
+
+reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_eda_facts_match_trusted_data(reference):
+        eda = _load_json(RESULTS / "eda.json")
+        df = reference["df"]
+        feature_cols = reference["feature_cols"]
+    
+        assert eda["class_counts"] == reference["class_counts"]
+        assert reference["class_counts"] == {"B": 357, "M": 212}
+    
+        assert eda["missing_values"] == reference["missing_values"], (
+            "missing_values must report per-raw-column missing counts, including "
+            "the spurious all-empty column"
+        )
+    
+        expected_pairs = reference["high_corr_pairs"]
+>       assert expected_pairs >= 30
+E       assert 21 >= 30
+
+/tests/test_outputs.py:589: AssertionError
+--------- generated xml file: /app/validation-results/native-tests.xml ---------
+=========================== short test summary info ============================
+FAILED ../tests/test_outputs.py::test_eda_facts_match_trusted_data - assert 2...
+1 failed, 8 passed in 2.20s

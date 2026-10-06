@@ -122,7 +122,10 @@ try:
     restore()
     path = ROOT / 'oof_predictions.csv'
     frame = pd.read_csv(path, dtype={'id': str})
-    frame.loc[1, 'id'] = frame.loc[0, 'id']
+    same_model = frame.index[frame.model == NAMES[0]]
+    assert frame.loc[same_model[1], 'id'] != frame.loc[same_model[0], 'id']
+    frame.loc[same_model[1], 'id'] = frame.loc[same_model[0], 'id']
+    assert frame.duplicated(['id', 'model']).any()
     frame.to_csv(path, index=False)
     grade('duplicate-id', False)
 

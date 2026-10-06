@@ -1,0 +1,10 @@
+--- raw/tests/test_outputs.py
++++ candidate/tests/test_outputs.py
+@@ -586,7 +586,6 @@
+     )
+ 
+     expected_pairs = reference["high_corr_pairs"]
+-    assert expected_pairs >= 30
+     assert int(eda["high_correlation_pairs"]) == expected_pairs, (
+         "high_correlation_pairs must count feature pairs with |Pearson r| > 0.9"
+     )

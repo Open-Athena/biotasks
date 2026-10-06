@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="9" time="2.210" timestamp="2026-10-06T22:36:47.539664+00:00" hostname="g83d142"><testcase classname="test_outputs" name="test_artifacts_exist_and_schema" time="1.324" /><testcase classname="test_outputs" name="test_row_key_integrity" time="0.006" /><testcase classname="test_outputs" name="test_split_and_fold_membership" time="0.007" /><testcase classname="test_outputs" name="test_probabilities_match_reference" time="0.004" /><testcase classname="test_outputs" name="test_metrics_recomputed_consistent" time="0.063" /><testcase classname="test_outputs" name="test_selection_rule_consistent" time="0.020" /><testcase classname="test_outputs" name="test_three_distinct_model_families" time="0.004" /><testcase classname="test_outputs" name="test_eda_facts_match_trusted_data" time="0.000"><failure message="assert 21 &gt;= 30">reference = {'class_counts': {'B': 357, 'M': 212}, 'df':            id diagnosis  ...  fractal_dimension_worst  Unnamed: 32
+0     ...cols': ['radius_mean', 'texture_mean', 'perimeter_mean', 'area_mean', 'smoothness_mean', 'compactness_mean', ...], ...}
+
+    def test_eda_facts_match_trusted_data(reference):
+        eda = _load_json(RESULTS / "eda.json")
+        df = reference["df"]
+        feature_cols = reference["feature_cols"]
+    
+        assert eda["class_counts"] == reference["class_counts"]
+        assert reference["class_counts"] == {"B": 357, "M": 212}
+    
+        assert eda["missing_values"] == reference["missing_values"], (
+            "missing_values must report per-raw-column missing counts, including "
+            "the spurious all-empty column"
+        )
+    
+        expected_pairs = reference["high_corr_pairs"]
+&gt;       assert expected_pairs &gt;= 30
+E       assert 21 &gt;= 30
+
+/tests/test_outputs.py:589: AssertionError</failure></testcase><testcase classname="test_outputs" name="test_report_content" time="0.000" /></testsuite></testsuites>
