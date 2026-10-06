@@ -10,6 +10,7 @@ import resource
 import shutil
 import signal
 import subprocess
+import sys
 import time
 import zipfile
 
@@ -100,3 +101,6 @@ finally:
     for n in range(0, len(encoded), 24000):
         print('BIO17_ARTIFACT_CHUNK ' + encoded[n:n + 24000], flush=True)
     print('BIO17_ARTIFACT_END', flush=True)
+
+if any(step["exit_code"] != 0 for step in steps):
+    sys.exit(1)
