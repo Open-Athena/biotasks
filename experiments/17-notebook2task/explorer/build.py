@@ -30,6 +30,10 @@ comparison_root = root / "comparisons"
 catalog["comparisons"] = json.loads((comparison_root / "cases.json").read_text())
 md = MarkdownIt("commonmark", {"html": False})
 for case in catalog["comparisons"]:
+    pilot_name = {"seta-cytopathology": "seta-cytopathology-retry", "bix-asxl1": "bix-asxl1"}[case["id"]]
+    pilot = root.parent / "runs/20261006-seta-v1-pilot" / pilot_name
+    case["baseline_draft"] = (pilot / "draft_spec.md").read_text()
+    case["baseline_status"] = "Rejected by multi-model gate" if case["id"] == "bix-asxl1" else "Draft produced; changed to frozen-model evaluation; not validated"
     if "instruction_file" in case:
         case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
     if "question_file" in case:

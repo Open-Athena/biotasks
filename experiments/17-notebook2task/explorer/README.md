@@ -45,7 +45,7 @@ separate original-source link remains available for framing or network failures.
 `check_browser.py` covers the catalog controls and mobile width.
 `check_notebook.py` checks every full-source view and both original links.
 Both need an existing Playwright/Chromium installation and the shared-node guard.
-No generated or accepted tasks exist. The shortlist is not the run input manifest.
+No independently accepted tasks exist. The shortlist is not the run input manifest.
 
 ## Published comparisons
 
@@ -56,3 +56,8 @@ The SETA cytopathology source is currently R Markdown and its original revision
 is unresolved, so its full source remains an external link. These are comparison
 references, not additional candidates or generated BioTasks tasks. See
 `comparisons/README.md` for lineage and limitations.
+
+The comparison panel now also displays the actual SETA idea-stage pilot output:
+a rejected DESeq2 source and a cytopathology draft that evaluates frozen models.
+These are model-produced authoring artifacts, not executed or accepted tasks.
+The first confounded cytopathology attempt is preserved in the run evidence.

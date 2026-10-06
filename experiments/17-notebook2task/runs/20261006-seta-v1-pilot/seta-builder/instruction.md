@@ -1,0 +1,17 @@
+**Goal**: A research team needs a trustworthy comparison of supplied classifiers for the Wisconsin breast-cancer cytopathology dataset. Produce an executable evaluation, select a candidate using development data, and report its performance on an independent holdout. Explain how preprocessing, correlated measurements, and false negatives affect the choice. This is a retrospective benchmark, not a clinical deployment.
+
+**Entry Points**: `/workspace/data/development.csv`, `/workspace/data/holdout_features.csv`, `/workspace/data/folds.csv`, `/workspace/models/catalog.json`, and `/workspace/reference/analysis.Rmd`. The catalog documents the frozen inference bundles and their feature contracts. `/workspace/CONTRACT.md` describes artifact schemas and the evaluator interface.
+
+**Acceptance Criteria**:
+- Audit the development data: schema, class counts, missingness, duplicate identifiers, feature scales, extreme observations, and redundant measurements. Explain which fields should be predictors and how supplied transformations address the observed data.
+- Evaluate all four supplied candidates, representing two model families and two preprocessing strategies. Produce one genuine out-of-fold malignant-class probability per development record per candidate using the supplied five-fold assignments and fold-specific models.
+- Compare probability-based ROC AUC, accuracy, malignant precision, recall, F1, and confusion matrices. Use malignant as the positive class and a probability threshold of 0.5 for discrete predictions.
+- Select the largest mean five-fold ROC AUC; resolve exact ties by lexicographic candidate identifier. Report variability and limitations of this selection estimate. Do not use holdout results to select the candidate.
+- Generate holdout probabilities with the selected full-development model. The private evaluator requires holdout ROC AUC at least 0.95 and malignant recall at least 0.85. These thresholds must be validated by the builder before release.
+- Measure and explain at least three influential features using a reproducible perturbation analysis on development folds; discuss correlated predictors and avoid causal claims.
+- Document at least two measured comparisons and the decisions they support in an incremental experiment journal. Include an audit of the reference notebook's evaluation logic, distinguishing demonstrated code issues from unverified numerical claims.
+- Supply a repeatable CLI, development predictions, fold metrics, candidate comparison, selected-model record, feature effects, holdout predictions, and a concise report. A clean rerun must recreate numeric results within stated tolerances.
+
+**Environment Constraints**: Ubuntu 24.04, one CPU, 2 GB RAM, 10 GB disk; under one hour and preferably under 15 minutes for computation. Packages and artifacts are available locally. No network, GPU, model fitting, fine-tuning, or package installation is needed. Only frozen-model inference and bounded statistical calculations are required.
+
+**Visible Paths**: Inputs above are read-only. Work under `/workspace`; deliver outputs under `/workspace/output`. Implement the documented `evaluate` and `predict` interfaces; implementation files and language organization are the agent's choice. `predict` accepts a feature CSV and output path and preserves input row identities and order. `evaluate` accepts the supplied data, fold, and model locations plus a fresh output directory. Required output schemas are public acceptance contracts, not hidden discoveries.

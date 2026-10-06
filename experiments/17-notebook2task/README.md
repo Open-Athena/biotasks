@@ -1,9 +1,11 @@
 # Notebook2task prompt experiment
 
 Preparation for [issue #17](https://github.com/Open-Athena/biotasks/issues/17).
-This branch contains an untested baseline prompt and experiment design. There
-are no approved source assignments, worker runs, generated tasks, or acceptance
-results yet. The batch runner is not implemented yet. At Gonzalo's request,
+This branch contains a released SETA prompt baseline, experiment design and
+[a first bounded pilot](runs/20261006-seta-v1-pilot/README.md). Comparison examples
+were used for idea-stage trials; the development/transfer set remains unassigned.
+No runnable task has been independently accepted. The general batch runner is
+not implemented; pilot scripts run one bounded trial at a time. At Gonzalo's request,
 source selection now includes brainstorming from familiar repositories and
 reusing issue #10 inspections, rather than waiting for manually supplied files.
 

@@ -1,0 +1,32 @@
+# Cytopathology evaluation handoff
+
+Inputs in `/workspace/data`, `/workspace/models`, and `/workspace/reference` are read-only. Write code under `/workspace` and final results under `/workspace/output`. Provide an executable `/workspace/evaluator` with these two subcommands (all flags required):
+
+- `evaluate --development CSV --holdout CSV --folds CSV --models DIRECTORY --output DIRECTORY`: evaluate supplied frozen candidates, create a fresh output directory and every artifact below. Reject an existing output directory. Development rows and fold assignments are matched by `id`, never by position. Persisted order within each validation partition is development CSV order.
+- `predict --input CSV --output CSV --models DIRECTORY --selection JSON`: use the selection's candidate full-development bundle. Preserve input identity and order. Validation failure must exit nonzero, identify the offending column or identity field in stderr, and leave no successful output artifact.
+
+Both commands must run offline. No fitting. Python packages are available in `/opt/venv`; its `bin` directory is on PATH. The inference bundle is a joblib dictionary with `features` (ordered retained feature names) and `model` (a scikit-learn estimator or pipeline exposing `predict_proba` and `classes_`). Feed the retained features in bundle order and select the `M` class column. The catalog's `features` contains the original 30-feature input contract, including spaces in names. Its candidates describe preprocessing and each of five fold artifacts plus a full-development artifact. Artifact paths are relative to the model directory. Catalog validation IDs, training-ID digests, SHA256 hashes, and class order document provenance. Training digests use sorted string IDs joined with a newline and no trailing newline. Folds are numbered 0–4.
+
+Require all 30 raw predictors even when a selected bundle prunes some. Accept reordered columns. Ignore `diagnosis`, `Unnamed: 32`, and an empty-named trailing column for inference. Do not use these or `id` as predictors. Reject missing/empty/duplicate IDs, absent predictors, malformed numeric values, and nonfinite predictors. Preserve IDs as strings. Development labels must be B or M. Evaluation requires disjoint development/holdout IDs, exhaustive unique development fold assignments and catalog-matching validation IDs. Each candidate supplies exactly five folds and one full-development model.
+
+## Output tables
+
+Use UTF-8 CSV, header rows, no index columns, and at least 15 significant digits for probabilities and floating point metrics. Numeric reproducibility tolerance is absolute 1e-8. `M` is positive; predict M at p >= 0.5, otherwise B. Precision and F1 are zero if their denominators vanish. Confusion order is actual B/M rows, predicted B/M columns (`tn,fp,fn,tp`). All AUC uses continuous malignant probability.
+
+- `oof_predictions.csv`: `candidate_id,fold,id,p_malignant,predicted_label`; exactly one validation prediction per development ID per candidate.
+- `fold_metrics.csv`: `candidate_id,fold,n,n_malignant,tn,fp,fn,tp,auc,accuracy,precision,recall,f1`; one row per candidate/fold.
+- `comparison.csv`: `candidate_id,family,strategy,n,n_folds` and `mean_METRIC,sd_METRIC` for METRIC in `auc,accuracy,precision,recall,f1`. Means are unweighted over five folds, SD is sample SD (ddof=1), n is total development rows.
+- `selection.json`: `candidate_id,rule,mean_auc`; rule is `max_mean_fold_auc_then_lexicographic_id`. Select by largest unrounded mean fold AUC, exact ties by ascending candidate identifier. Never select using holdout.
+- `holdout_predictions.csv`: `id,p_malignant,predicted_label` in original holdout order. Labels are private; do not claim a measured holdout score without labels. The private evaluator checks AUC >= 0.95 and recall >= 0.85.
+- `feature_effects.csv`: `feature,fold,repeat,seed,baseline_auc,permuted_auc,delta`. Use selected candidate fold models for all 30 raw features, folds 0–4, repeats 0–4. For catalog feature index j, fold f, repeat r, seed is `314000+1000*f+10*j+r`. Apply `numpy.random.default_rng(seed).permutation` to that raw feature's values within validation rows in development order, before frozen preprocessing. Delta is baseline AUC minus permuted AUC. Pruned features can have zero effect.
+- `feature_ranking.csv`: `feature,mean_delta`, all 30 features ranked by mean delta over the 25 fold/repeat values, descending, with feature name ascending for exact ties.
+
+## Audit and evidence
+
+`audit.json` includes `rows`, `columns` (development column names in order), `predictors` (catalog feature order), `class_counts`, `positive_class`, `missing_counts` (all development columns), `duplicate_ids`, and `feature_summary` mapping each predictor to `min,max,mean,std,extreme_count`. std is sample SD; extremes are outside [Q1-1.5 IQR, Q3+1.5 IQR] using linear-interpolated quantiles, descriptive flags rather than deletions. Include `redundancy`, at least three distinct pairs with `feature_a,feature_b,pearson_r` and absolute correlation >= 0.9.
+
+Include a structured `source_audit` after inspecting `reference/analysis.Rmd`: booleans `rounded_predictions_used_for_auc`, `lightgbm_prediction_active`, `xgboost_final_uses_cv_best_iteration`, `notebook_numeric_claims_independently_verified`, plus `lightgbm_metrics_reuse` (model family whose prediction variable is reused, or null). Explain supporting notebook code in the report; numerical claims in prose are not independently validated scores.
+
+`experiments.jsonl` is an incremental journal with at least two distinct measured candidate comparisons. Each entry contains `candidate_a,candidate_b,metric,value_a,value_b,artifact_a,artifact_b,decision`; metric is `mean_auc`, artifacts refer to catalog full-development paths, and decision explains the implication. Optional timestamps are ignored for reproducibility. Write entries as comparisons become available.
+
+`report.md` explains audit findings, predictor exclusions, scales and extreme observations, preprocessing and within-family comparisons, selection variability and optimistic selection bias, false negatives at the fixed threshold, at least three measured influential features, correlated predictors and noncausal interpretation, and notebook evidence versus unverified claims. Describe how to rerun your CLI. No arbitrary accuracy improvements or ranking agreement with the notebook are required. Human review assesses explanatory quality; machine grading checks factual artifacts.

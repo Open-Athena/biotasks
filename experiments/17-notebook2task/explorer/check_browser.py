@@ -9,7 +9,7 @@ root = Path(__file__).resolve().parent
 url = sys.argv[1] if len(sys.argv) > 1 else (root / 'index.html').as_uri()
 errors = []
 with sync_playwright() as pw:
-    browser = pw.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/home/exedev/.local/bin/chromium'), headless=True, args=['--no-sandbox', '--disable-gpu', '--no-zygote', '--disable-gpu-compositing', '--disable-software-rasterizer', '--use-gl=disabled', '--renderer-process-limit=1', '--disable-extensions'])
+    browser = pw.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/home/exedev/.local/bin/chromium'), headless=True, args=['--single-process', '--no-sandbox', '--disable-gpu', '--no-zygote', '--disable-gpu-compositing', '--disable-software-rasterizer', '--use-gl=disabled', '--renderer-process-limit=1', '--disable-extensions'])
     try:
         page = browser.new_page(viewport={'width': 1280, 'height': 900}, accept_downloads=True)
         if url.startswith('file:'):
@@ -55,20 +55,24 @@ with sync_playwright() as pw:
         page.screenshot(path='/tmp/biotasks17-mobile.png', full_page=True)
         assert page.locator('#comparison-select option').count() == 2
         page.select_option('#comparison-select', 'bix-asxl1')
-        assert 'DESeq2' in page.locator('.released-task').inner_text()
+        assert 'DESeq2' in page.locator('.released-task:not(.baseline-output)').inner_text()
         page.click('#comparison-notebook')
         frame = page.frame_locator('#comparison-frame iframe')
         assert frame.locator('section').count() == 17
         assert '~sex+condition' in frame.locator('body').inner_text()
-        page.locator('#comparison-detail summary').click()
-        assert '0.0002' in page.locator('#comparison-detail details').inner_text()
+        page.get_by_text('Published reference answer (evaluation material)', exact=True).click()
+        assert '0.0002' in page.locator('#comparison-detail details').first.inner_text()
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.set_viewport_size({'width':1280,'height':900})
         page.locator('#comparisons').scroll_into_view_if_needed()
         page.screenshot(path='/tmp/biotasks17-comparisons.png')
+        page.get_by_text('Read the actual baseline output', exact=True).click()
+        assert 'EARLY_DITCH' in page.locator('.baseline-output').inner_text()
         page.select_option('#comparison-select', 'seta-cytopathology')
-        assert 'AUC of at least 0.93' in page.locator('.released-task').inner_text()
+        assert 'AUC of at least 0.93' in page.locator('.released-task:not(.baseline-output)').inner_text()
         assert page.locator('#comparison-frame iframe').count() == 0
+        page.get_by_text('Read the actual baseline output', exact=True).click()
+        assert 'frozen' in page.locator('.baseline-output').inner_text()
         assert not errors, errors
         print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow','two released-task comparisons','17-cell offline notebook','published answer disclosure'],'page_errors':errors}))
     finally:

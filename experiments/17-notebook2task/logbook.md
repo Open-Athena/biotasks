@@ -126,3 +126,30 @@ adaptation and instruction templates and is a plausible second baseline;
 a comparable BixBench authoring prompt and the specific LongDS authoring skill
 were not established in the inspected trees. No authoring/model/scientific run
 has been launched; runtime porting, fixed inputs and budgets remain outstanding.
+
+### 2026-10-06: first requested baseline pilot
+
+Executed SETA idea prompts through authenticated Codex CLI, requested
+`gpt-6-astra`, medium reasoning. Preserved the initial confounded cytopathology
+rejection and retried with the stage boundary clarified. Corrected trial wrote
+a frozen-model evaluation draft; the RNA-seq trial rejected its single DESeq2
+model under the adapter's multi-model gate. Shared idea and builder prompts ban
+model training, in tension with the notebook adapter. The generated draft moves
+training to artifact preparation and changes the original task boundary.
+
+A bounded builder continuation timed out after five minutes with partial task
+artifacts. Parent static checks passed but no frozen models, reference execution,
+or grading validation exists. Exact rendered prompts, real input hashes, traces,
+usage and resource receipts are under runs/20261006-seta-v1-pilot/. First monitor
+undercounted descendants; corrected monitoring is explicitly recorded.
+
+User authorized Iris CPU or Daytona execution; no remote job submitted before
+an intervening billing question. Existing ChatGPT auth was used, no API key;
+plan/credit charges are not observable. No new inference or compute is active.
+
+Gonzalo then requested GLM-5.3 through the existing bulk service, superseding
+Codex for subsequent trials. Submitted one bounded Iris CPU job (no accelerator,
+no inference deployment) for two sequential idea-stage runs with the same real
+comparison inputs. Runtime service configuration remains private. The service's
+billing terms are not observable in this session. GLM uses a small recorded
+read/list/write tool loop, so this is not a controlled model-only comparison.

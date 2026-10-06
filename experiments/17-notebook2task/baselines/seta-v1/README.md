@@ -3,7 +3,7 @@
 Start with SETA's released prompts, not the earlier bespoke BioTasks draft.
 `manifest.json` pins byte hashes, original paths and commit
 `5868a1b5e6ae7528db5904ccb87ff245c2761651`. Files in `upstream/` are unchanged
-Apache-2.0 source snapshots. No baseline run has occurred.
+Apache-2.0 source snapshots. The first bounded pilot has run; see [run evidence](../../runs/20261006-seta-v1-pilot/README.md). No native task validation or acceptance is established.
 
 ## Stages and remaining porting work
 
@@ -14,8 +14,8 @@ Apache-2.0 source snapshots. No baseline run has occurred.
    and appends the shared base. Do not use Python format on the whole prompt.
 2. Stage 2: `agent.md` plus the draft spec builds the Harbor task, including
    instructions, environment, solution and tests. It expects the upstream
-   `example/hello-world/` boilerplate and a compatible Harbor runtime. Those
-   runtime inputs must be pinned and staged before a run; these prompt snapshots
+   `example/hello-world/` boilerplate and a compatible Harbor runtime. The upstream boilerplate is now staged and hashed. A compatible runtime
+   is still required; these prompt snapshots
    alone are not an executable replication of the SETA pipeline.
 3. Independent BioTasks validation evaluates resulting artifacts. Do not inject
    our desired scientific/grader fixes into the baseline author prompt and then

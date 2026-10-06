@@ -80,3 +80,11 @@ The same checks passed against published HTMLPreview commit `aa3bd5e`, including
 the reference-answer disclosure. See `public-comparison-browser-resources.json`.
 This does not revalidate every external author-hosted source; their previously
 recorded availability limitations still apply.
+
+## Pilot-output UI verification
+
+The first check with the corrected descendant-tree resource monitor was stopped
+at 551,813,120 bytes RSS, above the 500 MiB local limit. This is a resource stop,
+not a failed product assertion. Earlier process-group-only browser receipts can
+undercount Chromium descendants; do not use those peaks as full-tree estimates.
+The next bounded check uses Chromium single-process mode to reduce local memory.
