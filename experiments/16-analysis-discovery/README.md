@@ -6,7 +6,8 @@ The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
 - [Published HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/68ae856a26acf4b08369431e443163f61d53e5a2/experiments/16-analysis-discovery/explorer.html) (100 candidates; commit-pinned; public browser checks passed)
-- [100-candidate expansion and remaining gaps](expansion.md)
+- [Latest source recovery and input tracing](resolution.md)
+- [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
 - [Interactive explorer](explorer.html), self-contained and usable offline
 - [Candidate manifest](candidates.json) and [CSV](candidates.csv)

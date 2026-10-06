@@ -139,3 +139,29 @@ now separates identified counts, substantive inspection and pending access work.
 Local browser validation passed at 20:34:46–20:34:50 UTC, exit 0, maximum child RSS 114,080 KiB. Checked all counts, new stage filters, expansion drilldown, frozen Kaggle export IDs, every coverage cell, offline reload and desktop/mobile layout. Desktop screenshot inspected. The source-only metadata clarification afterward changes hosting/format/path labels, not counts or UI behavior. No issue closure or promotion is requested.
 
 Published 100-candidate preview at 68ae856a26acf4b08369431e443163f61d53e5a2 passed public browser checks at 20:36:15–20:36:19 UTC, exit 0, no page errors, maximum child RSS 119,748 KiB. Counts, stage filters, export, every coverage cell and desktop/mobile layouts passed. Evidence is in evidence/browser-expansion-public.json. Browser closed in finally and command returned. GitHub issue #16 was verified OPEN; no issue comment, closure, PR or merge was performed.
+
+## 2026-10-06 — resolve remaining inspections and report on the issue
+
+User requested continued work and explicitly requested progress recording on
+issue #16. Posted and read back comment 6025488796 with the existing published
+checkpoint and source-recovery status. Continue substantive checkpoint comments;
+the instruction does not authorize closing the issue.
+
+Initial metadata recovery used an incorrect LoveMI/DESeq2 repository guess and
+failed with 404 at 21:06:43–21:06:44 UTC, exit 1, peak RSS 45,096 KiB. Official
+package/search evidence identified thelovelab/DESeq2. Corrected retrieval ran
+21:06:56–21:07:00 UTC, exit 0, peak RSS 45,420 KiB. Source inputs were checkpointed
+at 4b1dc40. Twelve source/helper documents were retrieved at 21:07:53–21:07:55 UTC,
+exit 0, 1.84 seconds and peak RSS 55,212 KiB. Commands held the shared lock,
+used one worker and thread limits, and returned without persistent workers.
+
+All nine previously pending records now have static inspections. Five became
+apparently suitable, two excluded, two remain unresolved. Overall: 100 inspected,
+70 apparently suitable, 19 unresolved, 11 excluded, zero executions. Preserved
+the original first 40 records. Changes to 14 extension records, including
+additional input tracing, are explicit in the before/after ledger. The report
+records version differences, source recovery limits and negative findings.
+
+Browser validation attempt aborted immediately because the shared heavy-work lock was occupied; no Playwright process started. No retry/polling was performed. Current manifest/hash checks and unchanged-identity checks pass; browser verification of the revised data/text remains pending, separate from the previous successful preview. The 70 suitable records have 54 provisional study-cluster labels, including 11 repeated labels; this is not a validated independent-study count.
+
+Correction after the source-recovery count audit: O01/O02 explicitly had no notebook cells recovered, but the builder default had treated all first-40 records as substantive inspections. Preserve those records and apply evidence/legacy-review-stages.json in current summaries. The prior 91-inspected checkpoint actually had 89 substantive inspections plus two legacy access-only leads. Current counts are 98 substantively inspected and two legacy access-only leads, with 70 suitable, 19 unresolved and 11 excluded. Original main-comparison denominators and suitability counts do not change. The earlier 100-inspected statement above records the superseded intermediate calculation.

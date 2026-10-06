@@ -1635,7 +1635,7 @@
     "input_evidence": "Challenge perceptual-data loader, data/sc2_yg.mat, and ../../data/rg.npy; latter absent from captured tree.",
     "dependencies": "Legacy gerkin.dream, project utils, scipy, numpy, pandas, matplotlib",
     "assessment": "unresolved",
-    "assessment_reason": "Concrete subject-variability analysis recovered via challenge website. Required prediction asset remains unresolved.",
+    "assessment_reason": "Concrete subject-variability analysis recovered via challenge website. Required prediction asset remains unresolved. Follow-up source audit found a shared loader requesting data/LeaderboardSet.txt while the tree contains data/leaderboard_set.txt. This is a static case/spelling mismatch, not an observed execution failure.",
     "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
@@ -1645,7 +1645,9 @@
     "evidence": [
       "evidence/expansion-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-input-audit.json"
     ],
     "discovery_path": [
       "https://github.com/raivivek/awesome-biology",
@@ -1712,10 +1714,10 @@
     "hosting": "GitHub",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
     "lineage": "observed-derived",
-    "input_evidence": "readRDS(Gupta2019.rds); matching asset absent from captured repository tree.",
+    "input_evidence": "Companion quarto/gupta2019.qmd supplies TreeSummarizedExperiment construction from microbiome/data/GuptaA_2019 taxonomy, metadata and phylogeny files. The DAA deck expects Gupta2019.rds; exact saved-object/column match is unverified.",
     "dependencies": "R, mia, dplyr",
     "assessment": "unresolved",
-    "assessment_reason": "Contains analysis code and choices but local input preparation is unresolved. A slide deck is not automatically a self-contained workflow.",
+    "assessment_reason": "Upstream preparation path recovered from the companion lesson. Remains unresolved until the expected RDS artifact and phenotype fields are reconciled; no input data downloaded.",
     "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
@@ -1725,7 +1727,8 @@
     "evidence": [
       "evidence/expansion-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json"
     ],
     "discovery_path": [
       "https://github.com/microbiome/outreach",
@@ -2019,33 +2022,39 @@
     "subdomains": [
       "plant biology"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "multi-object segmentation and per-leaf traits",
     "language": "Python",
     "format": "ipynb",
     "hosting": "GitHub",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "ValueError: 4 MB source cap exceeded",
-    "review_stage": "access_only",
+    "lineage": "observed-derived",
+    "input_evidence": "imgs/O_HLP_1_P_LEAF_2022-12-07_09_32_15.jpg exists in the pinned repository tree; image bytes not fetched.",
+    "dependencies": "Python, PlantCV v4; interactive ROI points with a scripted fallback.",
+    "assessment": "apparently_suitable",
+    "assessment_reason": "Color correction, thresholding, object labeling, alternative ROIs and size/color measurements are explicit. Notebook recovered under a documented 8 MB cap after the original 4 MB attempt. Interaction must be fixed before automated execution.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L02",
+    "study_cluster": "PlantCV-multiobject-leaves",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/embedded-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://plantcv.org/tutorials",
       "https://plantcv.org/tutorials/multi-object",
       "https://github.com/danforthcenter/plantcv-tutorial-v4-multiobject/blob/main/index.ipynb"
     ],
-    "source_revision": "main (unresolved immutable revision)"
+    "source_revision": "a299680f7feee431015c3f411f2875786989698d",
+    "inspection_url": "https://github.com/danforthcenter/plantcv-tutorial-v4-multiobject/blob/a299680f7feee431015c3f411f2875786989698d/index.ipynb",
+    "source_sha256": "6610204fb49410bd63ef41fecaed7c753620c7f3416b15faf0fd436d608a3b1b",
+    "source_locator": "index.ipynb"
   },
   {
     "id": "L03",
@@ -3024,31 +3033,37 @@
     "subdomains": [
       "immunology"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "scaling pairwise receptor distances",
     "language": "Python",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "not_reviewed",
-    "assessment_reason": "Catalog identity found; full substantive screening pending. Reader access does not establish a biological analysis.",
-    "review_stage": "identified",
+    "lineage": "not applicable",
+    "input_evidence": "Uses an assumed mdata object; no concrete input experiment is supplied.",
+    "dependencies": "scirpy, joblib, optional Dask/CuPy; described only.",
+    "assessment": "excluded",
+    "assessment_reason": "Performance guidance with example parallelization settings, not a worked biological analysis. Exclusion concerns this document, not the scirpy package.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L27",
+    "study_cluster": "not-a-study:L27",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://scirpy.scverse.org/en/latest/tutorials/large-datasets.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "998c66a4338f4a5413d5e03dbc46d0dc048db574",
+    "inspection_url": "https://github.com/scverse/scirpy/blob/998c66a4338f4a5413d5e03dbc46d0dc048db574/docs/tutorials/large-datasets.md",
+    "source_sha256": "1ad39e5ed6f30746be5b571d24bd0b114436968267d1912c2d557138bbd1a053",
+    "source_locator": "docs/tutorials/large-datasets.md"
   },
   {
     "id": "L28",
@@ -3272,7 +3287,7 @@
     "input_evidence": "Project challenge loaders plus forest_rs and linear-ranking cached arrays.",
     "dependencies": "Legacy project utils, gerkin.dream, numpy, pandas, modeling stack",
     "assessment": "unresolved",
-    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access.",
+    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access. Follow-up source audit found a shared loader requesting data/LeaderboardSet.txt while the tree contains data/leaderboard_set.txt. This is a static case/spelling mismatch, not an observed execution failure.",
     "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
@@ -3282,7 +3297,9 @@
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-input-audit.json"
     ],
     "discovery_path": [
       "https://github.com/raivivek/awesome-biology",
@@ -3315,7 +3332,7 @@
     "input_evidence": "Replicated challenge loaders plus rfcs_norep_1.pickle and linear ranks.",
     "dependencies": "Legacy project utils, gerkin.dream, numpy, pandas, modeling stack",
     "assessment": "unresolved",
-    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access.",
+    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access. Follow-up source audit found a shared loader requesting data/LeaderboardSet.txt while the tree contains data/leaderboard_set.txt. This is a static case/spelling mismatch, not an observed execution failure.",
     "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
@@ -3325,7 +3342,9 @@
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-input-audit.json"
     ],
     "discovery_path": [
       "https://github.com/raivivek/awesome-biology",
@@ -3355,10 +3374,10 @@
     "hosting": "GitHub",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
     "lineage": "observed-derived",
-    "input_evidence": "newdata_cids.txt and 0869 final data Pablo.xlsx; notebook describes new unpublished perceptual data.",
+    "input_evidence": "The perceptual-data and Dragon-descriptor spreadsheets are present in the repository tree; newdata_cids.txt and CID64832_dragon_descriptors.txt are absent. No spreadsheet data fetched.",
     "dependencies": "Legacy project utils, gerkin.dream, numpy, pandas, modeling stack",
     "assessment": "unresolved",
-    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access.",
+    "assessment_reason": "Concrete analysis, but full local assets and helper/model versions have not been traced. Preserve as unresolved; do not infer dataset rights from repository access. Follow-up source audit found a shared loader requesting data/LeaderboardSet.txt while the tree contains data/leaderboard_set.txt. This is a static case/spelling mismatch, not an observed execution failure.",
     "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
@@ -3368,7 +3387,9 @@
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-input-audit.json"
     ],
     "discovery_path": [
       "https://github.com/raivivek/awesome-biology",
@@ -3513,32 +3534,38 @@
     "subdomains": [
       "transcriptomics"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "RNA-seq differential expression and design contrasts",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "lineage": "mixed observed-derived and demonstration labels",
+    "input_evidence": "Pinned source uses DESeq2 extdata/pasilla_gene_counts.tsv.gz and pasilla_sample_annotation.csv; also airway and tximportData examples.",
+    "dependencies": "R, DESeq2, SummarizedExperiment; optional tximport/tximeta and shrinkage packages.",
+    "assessment": "apparently_suitable",
+    "assessment_reason": "Explicit count/metadata alignment, design, filtering, differential expression, shrinkage and visualization. Current repository source copies pasilla files into DESeq2, unlike some older rendered versions; do not mix versions. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L39",
+    "study_cluster": "DESeq2-pasilla-plus-examples",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/DESeq2",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/DESeq2/inst/doc/DESeq2.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "76c5f8523716804dbe0a9500b4b7e216c6af225c",
+    "inspection_url": "https://github.com/thelovelab/DESeq2/blob/76c5f8523716804dbe0a9500b4b7e216c6af225c/vignettes/DESeq2.Rmd",
+    "source_sha256": "a2b1c8b8601a4cb3af68a06b1cca372211a9bfe492d320a7c94c1e8bfd52896d",
+    "source_locator": "vignettes/DESeq2.Rmd"
   },
   {
     "id": "L40",
@@ -3550,32 +3577,38 @@
     "subdomains": [
       "epigenomics"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "methylation-array import and object conversion",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "lineage": "observed-derived",
+    "input_evidence": "minfiData extdata contains six IDAT examples and a sample sheet.",
+    "dependencies": "R, minfi, minfiData, Biobase.",
+    "assessment": "excluded",
+    "assessment_reason": "Worked content focuses on import and object classes. QC, normalization and differential-methylation sections are largely lists/placeholders, so this vignette does not meet the substantive biological-analysis criterion. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L40",
+    "study_cluster": "minfiData-six-arrays",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/minfi",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/minfi/inst/doc/minfi.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "6e9859aae23dcf9a19af060e0ed2b95f20f541ec",
+    "inspection_url": "https://github.com/hansenlab/minfi/blob/6e9859aae23dcf9a19af060e0ed2b95f20f541ec/vignettes/minfi.Rmd",
+    "source_sha256": "1c4f236797ca23fa11be60f2b311281cc0fb58779ee1480319cf0dcb0469e7da",
+    "source_locator": "vignettes/minfi.Rmd"
   },
   {
     "id": "L41",
@@ -3587,32 +3620,38 @@
     "subdomains": [
       "ecology/evolution"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "microbiome diversity, ordination and ecological testing",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "lineage": "mixed observed-derived and mock communities",
+    "input_evidence": "Packaged GlobalPatterns and enterotype objects; GlobalPatterns includes environmental and mock-community samples.",
+    "dependencies": "R, phyloseq, ggplot2 and ecological analysis packages.",
+    "assessment": "apparently_suitable",
+    "assessment_reason": "Shows filtering, diversity estimators, environmental grouping and ordination/testing on named package data. Repository Rmd recovered after the rendered HTML exceeded the reader limit. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L41",
+    "study_cluster": "phyloseq-GlobalPatterns-enterotype",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/phyloseq",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/phyloseq/inst/doc/phyloseq-analysis.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "8a6c2350b985afb909428d396081605e9b3e2f0b",
+    "inspection_url": "https://github.com/joey711/phyloseq/blob/8a6c2350b985afb909428d396081605e9b3e2f0b/vignettes/phyloseq-analysis.Rmd",
+    "source_sha256": "73292276b1ac38601d7e7f7f0967f734ad3897570abccfa660aefbddb3576a75",
+    "source_locator": "vignettes/phyloseq-analysis.Rmd"
   },
   {
     "id": "L42",
@@ -3624,32 +3663,38 @@
     "subdomains": [
       "ecology/evolution"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "microbiome differential abundance with negative-binomial models",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "lineage": "observed-derived",
+    "input_evidence": "phyloseq extdata/study_1457_split_library_seqs_and_mapping.zip; Kostic colorectal-cancer study.",
+    "dependencies": "R, phyloseq, DESeq2, ggplot2.",
+    "assessment": "apparently_suitable",
+    "assessment_reason": "Explicit diagnosis contrast, sample-depth filtering, size-factor handling and taxonomic result plots. Paired-study design adequacy and statistical correctness still require independent review. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L42",
+    "study_cluster": "Kostic-2012-study1457",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/phyloseq",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/phyloseq/inst/doc/phyloseq-mixture-models.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "8a6c2350b985afb909428d396081605e9b3e2f0b",
+    "inspection_url": "https://github.com/joey711/phyloseq/blob/8a6c2350b985afb909428d396081605e9b3e2f0b/vignettes/phyloseq-mixture-models.Rmd",
+    "source_sha256": "753d7d9043ea43288289e8c961e781bc6633686478cb2782c25f9eb4bdca8b5c",
+    "source_locator": "vignettes/phyloseq-mixture-models.Rmd"
   },
   {
     "id": "L43",
@@ -3740,32 +3785,38 @@
     "subdomains": [
       "metabolomics"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "direct-injection MS peak detection, calibration and correspondence",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
+    "lineage": "measured spectra with artificial calibration example; biological provenance unresolved",
+    "input_evidence": "MsDataHub HAM004/HAM005 mzML accessors point to Zenodo 18494293; source has two samples per group. Sample biological identity not established here.",
+    "dependencies": "R, xcms, MSnbase, MassSpecWavelet, MsDataHub.",
     "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "assessment_reason": "Source/input locator recovered, but biological provenance and question remain unresolved. Group names alone are insufficient to infer a biological experiment; calibration values are deliberately perturbed in the example. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L45",
+    "study_cluster": "HAM004-HAM005",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/xcms",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/xcms/inst/doc/xcms-direct-injection.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "d430faeb343625ec556fd4d931e67f34bec8d6ab",
+    "inspection_url": "https://github.com/sneumann/xcms/blob/d430faeb343625ec556fd4d931e67f34bec8d6ab/vignettes/xcms-direct-injection.Rmd",
+    "source_sha256": "9235d0b4e1898c71b1561f5b43b1d479dda77a35d691429b4fc982773c27d189",
+    "source_locator": "vignettes/xcms-direct-injection.Rmd"
   },
   {
     "id": "L46",
@@ -3777,32 +3828,38 @@
     "subdomains": [
       "metabolomics"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "LC-MS peak detection, alignment and feature comparison",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
-    "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "lineage": "observed-derived",
+    "input_evidence": "faahKO package CDF files: fatty-acid-amide-hydrolase knockout and wild-type mouse samples.",
+    "dependencies": "R, xcms, faahKO, MsExperiment, Spectra and plotting packages.",
+    "assessment": "apparently_suitable",
+    "assessment_reason": "Concrete peak detection, QC, retention-time alignment, correspondence, gap filling and downstream feature analysis. Shares the faahKO study with L47; current source may differ from the selected release page. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L46",
+    "study_cluster": "faahKO",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/xcms",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/xcms/inst/doc/xcms.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "d430faeb343625ec556fd4d931e67f34bec8d6ab",
+    "inspection_url": "https://github.com/sneumann/xcms/blob/d430faeb343625ec556fd4d931e67f34bec8d6ab/vignettes/xcms.Rmd",
+    "source_sha256": "4b6ea152eab306084910823e40406fea4f56821bbe5243d924ae49c144c8d210",
+    "source_locator": "vignettes/xcms.Rmd"
   },
   {
     "id": "L47",
@@ -3854,31 +3911,37 @@
     "subdomains": [
       "metabolomics"
     ],
-    "workflow": "Not yet screened",
+    "workflow": "DDA/SWATH fragmentation reconstruction and library matching",
     "language": "R",
     "format": "rendered document",
     "hosting": "publisher website",
     "discovery_index": "Selected primary documentation or repository catalog; see discovery_path",
-    "lineage": "unknown",
-    "input_evidence": "Not yet traced.",
-    "dependencies": "Not yet screened.",
+    "lineage": "measured chemical reference mixture",
+    "input_evidence": "MsDataHub PestMix1_DDA.mzML and SWATH counterpart; measured Agilent pesticide reference mixture, not a biological specimen.",
+    "dependencies": "R, xcms, MsExperiment, MsDataHub, Spectra, MsBackendMgf.",
     "assessment": "unresolved",
-    "assessment_reason": "HTTPError: HTTP Error 403: Forbidden",
-    "review_stage": "access_only",
+    "assessment_reason": "Detailed analytical workflow, but the inspected example uses chemical standards without a biological specimen or biological contrast. Keep biological-task relevance unresolved rather than presenting this as observed biological coverage. Inspected repository revision is not certified byte-equivalent to the rendered 3.23 page.",
+    "review_stage": "static_inspection",
     "code_terms": "Not reviewed; do not infer permission from public access.",
     "data_terms": "Not reviewed separately from code.",
-    "study_cluster": "unresolved:L48",
+    "study_cluster": "Agilent-pesticide-mixture",
     "executed": false,
     "observed_date": "2026-10-06",
     "evidence": [
       "evidence/catalog-documents.json",
       "evidence/expansion-web-ledger.json",
-      "evidence/expansion-web-followups.json"
+      "evidence/expansion-web-followups.json",
+      "evidence/resolution-documents.json",
+      "evidence/resolution-trees.json",
+      "evidence/resolution-web.json"
     ],
     "discovery_path": [
       "https://bioconductor.org/packages/xcms",
       "https://bioconductor.org/packages/3.23/bioc/vignettes/xcms/inst/doc/xcms-lcms-ms.html"
     ],
-    "source_revision": "Unpinned rendered page"
+    "source_revision": "d430faeb343625ec556fd4d931e67f34bec8d6ab",
+    "inspection_url": "https://github.com/sneumann/xcms/blob/d430faeb343625ec556fd4d931e67f34bec8d6ab/vignettes/xcms-lcms-ms.Rmd",
+    "source_sha256": "0f58827b64c66c07cf12a0a561c5037231a5e25b146939f1d26cc73b9d4f1cdf",
+    "source_locator": "vignettes/xcms-lcms-ms.Rmd"
   }
 ]

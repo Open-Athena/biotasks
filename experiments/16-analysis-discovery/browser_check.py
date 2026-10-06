@@ -21,6 +21,8 @@ def resources():
 available,load=resources()
 assert available >= 2.5*1024**3 and available-450*1024**2 >= 2*1024**3 and load<1.5,(available,load)
 manifest=json.loads((ROOT/'candidates.json').read_text())
+stage_corrections=json.loads((ROOT/'evidence/legacy-review-stages.json').read_text())
+for r in manifest:r.setdefault('review_stage',stage_corrections.get(r['id'],'static_inspection'))
 summary=json.loads((ROOT/'summary.json').read_text())
 expected_count=len(manifest)
 started=datetime.now(timezone.utc).isoformat(); checks=[]; errors=[]
@@ -44,12 +46,14 @@ with sync_playwright() as p:
         assert {r['id'] for r in exported}=={'K01','K03','K04','K05','K07','K08','K09'}
         checks.append('Frozen Kaggle cohort filters and exact exported IDs')
         page.locator('#reset').click();page.locator('#review_stage').select_option('access_only')
-        assert page.locator('#rows > tr').count()==8
+        assert page.locator('#rows .source-title').count()==sum(r.get('review_stage')=='access_only' for r in manifest)
         page.locator('#reset').click();page.locator('#review_stage').select_option('identified')
-        assert page.locator('#rows > tr').count()==1
+        assert page.locator('#rows .source-title').count()==sum(r.get('review_stage')=='identified' for r in manifest)
         page.locator('button[data-tab=overview]').click();page.locator('#showExpansion').click()
         assert page.locator('#rows > tr').count()==60
-        checks.append('Expansion drilldown and access-only versus identified stage filters')
+        page.locator('#reset').click();page.locator('#search').fill('L27');page.locator('#rows summary').click()
+        assert 'Performance guidance' in page.locator('#rows').inner_text()
+        checks.append('Expansion drilldown, legacy access-only and empty identified-stage filters and recovered exclusion evidence')
         page.locator('#reset').click();page.locator('#search').fill('EBImage')
         assert page.locator('#rows > tr').count()==1
         page.locator('#rows summary').click()
@@ -63,7 +67,6 @@ with sync_playwright() as p:
         page.locator('button[data-tab=coverage]').click()
         assert page.locator('#matrix tbody tr').count()==13
         groups=sorted({r['route']+' / '+r['cohort'] for r in json.loads((ROOT/'candidates.json').read_text())})
-        manifest=json.loads((ROOT/'candidates.json').read_text())
         assert page.locator('#matrix td').count()==13*len(groups)
         for b in page.locator('#matrix button').all():
             group=groups[int(b.get_attribute('data-group'))]; domain=b.get_attribute('data-domain')

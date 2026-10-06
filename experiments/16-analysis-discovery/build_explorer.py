@@ -40,13 +40,14 @@ def summarize(rows):
 
 def build():
     rows = json.loads((ROOT / 'candidates.json').read_text())
+    stage_corrections = json.loads((ROOT/'evidence/legacy-review-stages.json').read_text())
     required = {'id', 'route', 'cohort', 'title', 'canonical_url', 'aliases', 'subdomains',
                 'workflow', 'language', 'format', 'hosting', 'discovery_index', 'lineage',
                 'input_evidence', 'dependencies', 'assessment', 'assessment_reason',
                 'code_terms', 'data_terms', 'study_cluster', 'executed', 'evidence'}
     identities = {}; ids = set()
     for r in rows:
-        r.setdefault('review_stage', 'static_inspection')
+        r.setdefault('review_stage', stage_corrections.get(r['id'], 'static_inspection'))
         assert required <= r.keys(), (r['id'], required - r.keys())
         assert r['id'] not in ids; ids.add(r['id'])
         assert r['assessment'] in STATUSES and r['executed'] is False
@@ -65,7 +66,7 @@ def build():
                 e = evidence[r['id']]
                 assert r['source_sha256'] == e.get('source_sha256', e['sha256']), r['id']
     acquisitions = {}
-    for name in ['expansion-documents.json', 'catalog-documents.json', 'embedded-documents.json']:
+    for name in ['expansion-documents.json', 'catalog-documents.json', 'embedded-documents.json', 'resolution-documents.json']:
         for e in json.loads((ROOT/'evidence'/name).read_text()): acquisitions[e['id']] = e
     for r in rows:
         if r['id'] in acquisitions and r.get('source_sha256'):
@@ -95,7 +96,7 @@ def build():
     assert '__PAYLOAD__' not in page
     (ROOT/'explorer.html').write_text(page)
     inputs = ['candidates.json', 'protocol.md', 'logbook.md', 'explorer.template.html', 'build_explorer.py']
-    inputs += ['expansion.md', 'selected-expansion.json', 'selected-catalog.json', 'selected-embedded.json', 'inspect_expansion.py']
+    inputs += ['expansion.md', 'resolution.md', 'selected-expansion.json', 'selected-catalog.json', 'selected-embedded.json', 'selected-resolution.json', 'inspect_expansion.py', 'resolve_trees.py']
     inputs += [str(p.relative_to(ROOT)) for p in sorted((ROOT/'evidence').glob('*')) if p.is_file()]
     (ROOT/'manifest-sha256.json').write_text(json.dumps({p: hashlib.sha256((ROOT/p).read_bytes()).hexdigest() for p in inputs}, indent=2)+'\n')
     print(json.dumps({'rows':len(rows),'main':summary['main_comparison']['statuses'], 'all':summary['all']['statuses'], 'marginal':marginal}))

@@ -3,18 +3,16 @@
   "review_state": "provisional; awaiting user satisfaction",
   "all": {
     "identified": 100,
-    "reviewed": 91,
+    "reviewed": 98,
     "review_stages": {
-      "static_inspection": 91,
-      "access_only": 8,
-      "identified": 1
+      "static_inspection": 98,
+      "access_only": 2
     },
     "unique": 100,
     "statuses": {
-      "apparently_suitable": 65,
-      "excluded": 9,
-      "unresolved": 25,
-      "not_reviewed": 1
+      "apparently_suitable": 70,
+      "excluded": 11,
+      "unresolved": 19
     },
     "coverage": {
       "genomics": {
@@ -24,12 +22,12 @@
       },
       "transcriptomics": {
         "identified": 20,
-        "reviewed": 19,
-        "apparently_suitable": 12
+        "reviewed": 20,
+        "apparently_suitable": 13
       },
       "epigenomics": {
         "identified": 4,
-        "reviewed": 3,
+        "reviewed": 4,
         "apparently_suitable": 3
       },
       "proteomics": {
@@ -44,8 +42,8 @@
       },
       "metabolomics": {
         "identified": 8,
-        "reviewed": 5,
-        "apparently_suitable": 5
+        "reviewed": 8,
+        "apparently_suitable": 6
       },
       "systems biology": {
         "identified": 5,
@@ -54,8 +52,8 @@
       },
       "ecology/evolution": {
         "identified": 14,
-        "reviewed": 12,
-        "apparently_suitable": 6
+        "reviewed": 14,
+        "apparently_suitable": 8
       },
       "RNA biology": {
         "identified": 3,
@@ -69,8 +67,8 @@
       },
       "plant biology": {
         "identified": 14,
-        "reviewed": 13,
-        "apparently_suitable": 13
+        "reviewed": 14,
+        "apparently_suitable": 14
       },
       "neuroscience": {
         "identified": 14,
@@ -79,7 +77,7 @@
       },
       "immunology": {
         "identified": 5,
-        "reviewed": 4,
+        "reviewed": 5,
         "apparently_suitable": 4
       }
     },
@@ -87,7 +85,7 @@
     "suitable_breadth_revised10": 10,
     "suitable_breadth_expanded13": 13,
     "dominant_suitable_subdomain_share": 0.2,
-    "workflow_labels_suitable": 64,
+    "workflow_labels_suitable": 69,
     "workflows_by_subdomain": {
       "genomics": [
         "ORF prediction and annotation comparison",
@@ -98,6 +96,7 @@
       ],
       "transcriptomics": [
         "RNA-seq PCA and differential expression",
+        "RNA-seq differential expression and design contrasts",
         "RNA-seq input curation and expression exploration",
         "TSS enhancer identification and differential usage",
         "differential expression coexpression and enrichment",
@@ -132,6 +131,7 @@
       ],
       "metabolomics": [
         "LC-MS feature grouping",
+        "LC-MS peak detection, alignment and feature comparison",
         "cross-omics correlation analysis",
         "metabolic network enrichment",
         "metabolite preprocessing and differential abundance",
@@ -147,6 +147,8 @@
         "cross-omics correlation analysis",
         "dissimilarity and ordination",
         "metabolite preprocessing and differential abundance",
+        "microbiome differential abundance with negative-binomial models",
+        "microbiome diversity, ordination and ecological testing",
         "microbiome ordination and distance choices",
         "phylogenetic diversity, ordination and group testing"
       ],
@@ -171,6 +173,7 @@
         "color correction and plant morphology",
         "gene-expression clustering",
         "leaf-disease image exploration and classification",
+        "multi-object segmentation and per-leaf traits",
         "seed segmentation and per-seed traits",
         "skeleton pruning and leaf/stem morphology",
         "thermal segmentation and temperature measurement",
@@ -237,7 +240,7 @@
       "FlowSOM-68983": 1,
       "scRepertoire-ARDS": 1,
       "PlantCV-B73-photo": 2,
-      "unresolved:L02": 1,
+      "PlantCV-multiobject-leaves": 1,
       "PlantCV-arabidopsis-tray": 1,
       "PlantCV-arabidopsis-watershed": 1,
       "PlantCV-sorghum": 1,
@@ -256,22 +259,21 @@
       "Allen-optotagging": 1,
       "Wu2020-3k": 1,
       "Stephenson2021-5k": 1,
-      "unresolved:L27": 1,
+      "not-a-study:L27": 1,
       "Tengeler2020": 2,
       "L30": 1,
       "HintikkaXOData": 1,
       "L32": 1,
       "E-GEOD-72806": 3,
-      "unresolved:L39": 1,
-      "unresolved:L40": 1,
-      "unresolved:L41": 1,
-      "unresolved:L42": 1,
+      "DESeq2-pasilla-plus-examples": 1,
+      "minfiData-six-arrays": 1,
+      "phyloseq-GlobalPatterns-enterotype": 1,
+      "Kostic-2012-study1457": 1,
       "MSnbase-iTRAQ": 1,
       "msdata-sciex-serum": 1,
-      "unresolved:L45": 1,
-      "unresolved:L46": 1,
-      "faahKO": 1,
-      "unresolved:L48": 1
+      "HAM004-HAM005": 1,
+      "faahKO": 2,
+      "Agilent-pesticide-mixture": 1
     }
   },
   "main_comparison": {
@@ -548,15 +550,15 @@
     },
     "bioconductor / breadth_expansion": {
       "identified": 12,
-      "reviewed": 5,
+      "reviewed": 12,
       "review_stages": {
-        "static_inspection": 5,
-        "access_only": 7
+        "static_inspection": 12
       },
       "unique": 12,
       "statuses": {
-        "apparently_suitable": 5,
-        "unresolved": 7
+        "apparently_suitable": 9,
+        "excluded": 1,
+        "unresolved": 2
       },
       "coverage": {
         "genomics": {
@@ -566,12 +568,12 @@
         },
         "transcriptomics": {
           "identified": 1,
-          "reviewed": 0,
-          "apparently_suitable": 0
+          "reviewed": 1,
+          "apparently_suitable": 1
         },
         "epigenomics": {
           "identified": 1,
-          "reviewed": 0,
+          "reviewed": 1,
           "apparently_suitable": 0
         },
         "proteomics": {
@@ -586,8 +588,8 @@
         },
         "metabolomics": {
           "identified": 5,
-          "reviewed": 2,
-          "apparently_suitable": 2
+          "reviewed": 5,
+          "apparently_suitable": 3
         },
         "systems biology": {
           "identified": 0,
@@ -596,8 +598,8 @@
         },
         "ecology/evolution": {
           "identified": 2,
-          "reviewed": 0,
-          "apparently_suitable": 0
+          "reviewed": 2,
+          "apparently_suitable": 2
         },
         "RNA biology": {
           "identified": 0,
@@ -625,14 +627,16 @@
           "apparently_suitable": 2
         }
       },
-      "suitable_breadth_original8": 2,
-      "suitable_breadth_revised10": 3,
-      "suitable_breadth_expanded13": 4,
-      "dominant_suitable_subdomain_share": 0.4,
-      "workflow_labels_suitable": 5,
+      "suitable_breadth_original8": 4,
+      "suitable_breadth_revised10": 5,
+      "suitable_breadth_expanded13": 6,
+      "dominant_suitable_subdomain_share": 0.3333333333333333,
+      "workflow_labels_suitable": 9,
       "workflows_by_subdomain": {
         "genomics": [],
-        "transcriptomics": [],
+        "transcriptomics": [
+          "RNA-seq differential expression and design contrasts"
+        ],
         "epigenomics": [],
         "proteomics": [
           "MS processing, annotation and quantification"
@@ -640,10 +644,14 @@
         "structural biology": [],
         "metabolomics": [
           "LC-MS feature grouping",
+          "LC-MS peak detection, alignment and feature comparison",
           "profile-spectrum smoothing and centroiding"
         ],
         "systems biology": [],
-        "ecology/evolution": [],
+        "ecology/evolution": [
+          "microbiome differential abundance with negative-binomial models",
+          "microbiome diversity, ordination and ecological testing"
+        ],
         "RNA biology": [],
         "cellular phenotyping": [
           "cytometry clustering and manual-gate comparison"
@@ -658,16 +666,15 @@
       "study_clusters": {
         "FlowSOM-68983": 1,
         "scRepertoire-ARDS": 1,
-        "unresolved:L39": 1,
-        "unresolved:L40": 1,
-        "unresolved:L41": 1,
-        "unresolved:L42": 1,
+        "DESeq2-pasilla-plus-examples": 1,
+        "minfiData-six-arrays": 1,
+        "phyloseq-GlobalPatterns-enterotype": 1,
+        "Kostic-2012-study1457": 1,
         "MSnbase-iTRAQ": 1,
         "msdata-sciex-serum": 1,
-        "unresolved:L45": 1,
-        "unresolved:L46": 1,
-        "faahKO": 1,
-        "unresolved:L48": 1
+        "HAM004-HAM005": 1,
+        "faahKO": 2,
+        "Agilent-pesticide-mixture": 1
       }
     },
     "bioconductor / initial": {
@@ -1763,9 +1770,9 @@
     },
     "kaggle / original_search": {
       "identified": 2,
-      "reviewed": 2,
+      "reviewed": 0,
       "review_stages": {
-        "static_inspection": 2
+        "access_only": 2
       },
       "unique": 2,
       "statuses": {
@@ -2195,18 +2202,15 @@
     },
     "tool_documentation / breadth_expansion": {
       "identified": 28,
-      "reviewed": 26,
+      "reviewed": 28,
       "review_stages": {
-        "static_inspection": 26,
-        "access_only": 1,
-        "identified": 1
+        "static_inspection": 28
       },
       "unique": 28,
       "statuses": {
-        "apparently_suitable": 23,
-        "unresolved": 3,
-        "excluded": 1,
-        "not_reviewed": 1
+        "apparently_suitable": 24,
+        "unresolved": 2,
+        "excluded": 2
       },
       "coverage": {
         "genomics": {
@@ -2261,8 +2265,8 @@
         },
         "plant biology": {
           "identified": 9,
-          "reviewed": 8,
-          "apparently_suitable": 8
+          "reviewed": 9,
+          "apparently_suitable": 9
         },
         "neuroscience": {
           "identified": 8,
@@ -2271,15 +2275,15 @@
         },
         "immunology": {
           "identified": 3,
-          "reviewed": 2,
+          "reviewed": 3,
           "apparently_suitable": 2
         }
       },
       "suitable_breadth_original8": 1,
       "suitable_breadth_revised10": 1,
       "suitable_breadth_expanded13": 4,
-      "dominant_suitable_subdomain_share": 0.34782608695652173,
-      "workflow_labels_suitable": 23,
+      "dominant_suitable_subdomain_share": 0.375,
+      "workflow_labels_suitable": 24,
       "workflows_by_subdomain": {
         "genomics": [],
         "transcriptomics": [],
@@ -2304,6 +2308,7 @@
           "RGB/NIR alignment and intensity analysis",
           "binary threshold, ROI and size/color measurements",
           "color correction and plant morphology",
+          "multi-object segmentation and per-leaf traits",
           "seed segmentation and per-seed traits",
           "skeleton pruning and leaf/stem morphology",
           "thermal segmentation and temperature measurement",
@@ -2324,7 +2329,7 @@
       },
       "study_clusters": {
         "PlantCV-B73-photo": 2,
-        "unresolved:L02": 1,
+        "PlantCV-multiobject-leaves": 1,
         "PlantCV-arabidopsis-tray": 1,
         "PlantCV-arabidopsis-watershed": 1,
         "PlantCV-sorghum": 1,
@@ -2343,7 +2348,7 @@
         "Allen-optotagging": 1,
         "Wu2020-3k": 1,
         "Stephenson2021-5k": 1,
-        "unresolved:L27": 1
+        "not-a-study:L27": 1
       }
     }
   },
