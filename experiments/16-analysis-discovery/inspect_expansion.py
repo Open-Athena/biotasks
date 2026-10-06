@@ -1,7 +1,8 @@
 """Bounded, sequential static-source retrieval; never executes analysis code.
 
 Optional arguments: selection JSON name, output metadata JSON name.
-Each response is capped at 4 MB with a 12-second timeout. Raw sources stay in /tmp.
+Responses default to a 4 MB cap; a selection can explicitly allow up to 8 MB.
+Each request has a 12-second timeout. Raw sources stay in /tmp.
 """
 import hashlib
 import json
@@ -13,9 +14,10 @@ from urllib.request import urlopen
 ROOT=Path(__file__).resolve().parent
 CACHE=Path('/tmp/biotasks16-expansion'); CACHE.mkdir(exist_ok=True)
 
-def fetch(url):
-    with urlopen(url,timeout=12) as r: raw=r.read(4_000_001)
-    if len(raw)>4_000_000: raise ValueError('4 MB source cap exceeded')
+def fetch(url, cap):
+    assert 0 < cap <= 8_000_000
+    with urlopen(url,timeout=12) as r: raw=r.read(cap+1)
+    if len(raw)>cap: raise ValueError(f'{cap} byte source cap exceeded')
     return raw
 
 selection = sys.argv[1] if len(sys.argv)>1 else 'selected-expansion.json'
@@ -24,7 +26,7 @@ records=[]
 for item in json.loads((ROOT/selection).read_text()):
     r=dict(item, started_at=datetime.now(UTC).isoformat())
     try:
-        raw=fetch(item['fetch_url'])
+        raw=fetch(item['fetch_url'], item.get('max_bytes', 4_000_000))
         r.update(bytes=len(raw),response_sha256=hashlib.sha256(raw).hexdigest())
         source=raw.decode()
         if item['kind']=='kaggle':
