@@ -5,8 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
-- [Latest HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/7bedce5beda1aebbfc3ad047c8056409359bdce4/experiments/16-analysis-discovery/explorer.html) (98 inspected; browser recheck pending because the shared work lock was occupied)
-- [Previous HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/68ae856a26acf4b08369431e443163f61d53e5a2/experiments/16-analysis-discovery/explorer.html) (earlier checkpoint; public browser checks passed then)
+- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b4c73c84811dc5b9999a0c0cc9a05e4c440029a1/experiments/16-analysis-discovery/explorer.html) (unified 100-document results; public browser checks passed)
 - [Latest source recovery and input tracing](resolution.md)
 - [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
