@@ -90,9 +90,15 @@ with sync_playwright() as p:
         page.locator('#auditStatus').select_option('located')
         assert page.locator('#auditRows tbody tr').count()==502
         page.locator('#auditFormat').select_option('R Markdown')
-        assert page.locator('#auditRows tbody tr').count()==186
+        assert page.locator('#auditRows tbody tr').count()==187
         page.locator('#auditFormat').select_option('')
         page.locator('#auditStatus').select_option('')
+        page.locator('#auditQuery').fill('alabaster.matrix')
+        assert page.locator('#auditRows tbody tr').count()==1
+        page.locator('#auditRows summary').click()
+        assert 'Authoring source' in page.locator('#auditRows').inner_text()
+        assert 'Extracted R code' in page.locator('#auditRows').inner_text()
+        assert page.locator('#auditRows td').nth(2).locator('a').first.get_attribute('href').endswith('userguide.Rmd')
         page.locator('#auditQuery').fill('cell-eval2')
         assert page.locator('#auditRows tbody tr').count()==1
         page.locator('#auditRows summary').click()

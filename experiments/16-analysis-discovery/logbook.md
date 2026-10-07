@@ -245,3 +245,9 @@ Local and published HTMLPreview checks passed for 03c179538337986c61c64c81f9a23f
 User approved two linked sites organized around different research questions. workbench.html now opens discovery methods, with selected-source inspection, collection composition and the curated source index. inventory.html opens the complete 1,014-source inventory with shared search/domain/format/result filters. Each has its own title, navigation and footer, with reciprocal links that preserve the HTMLPreview commit URL or work offline. Both remain current-state presentations sharing one builder and visual template. No discovery evidence or screening classifications changed.
 
 Both sites passed local and public browser checks at b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be, including reciprocal HTMLPreview links, filters and desktop/mobile layouts. Issue body updated and verified exactly; OPEN and agent-generated label confirmed.
+
+### 2026-10-07 — Canonical authoring documents for LLM input
+
+Consolidated same-version, same-directory Bioconductor vignette representations by document stem. Authoring formats take priority over rendered output and extracted R scripts; HTML remains an optional output reference. No arbitrary repository basename pairs or distinct versions are merged. Underlying discovery observations remain intact.
+
+For alabaster.matrix 1.12.0, inspected the 281,000-byte source archive without installation/execution. DESCRIPTION declares knitr, the Rmd declares knitr::rmarkdown with BiocStyle::html_document. The published userguide.Rmd hash equals the archived vignettes/userguide.Rmd hash. Added that verified source and grouped Rmd/HTML/R into one entry. Other missing authoring sources remain explicitly unrecovered; no Rmd links were guessed. Source-level totals remain unchanged. First browser assertion selected the project link instead of the primary document link; corrected that selector and reran.
