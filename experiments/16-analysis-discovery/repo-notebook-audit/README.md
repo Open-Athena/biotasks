@@ -1,52 +1,62 @@
-# Notebook presence in the issue #5 inventory
+# Notebook and literate-document formats in the issue #5 inventory
 
-Scope: fixed 1,014-source top-300 union from issue #5 at commit
-`4d1efa0593f40be515b0428fa30be783a54407e9`. Preserve its primary-domain labels,
-source identities and ranking memberships. Scan all 871 GitHub-mapped repositories
-at their previously recorded commits, not current HEAD. The other 143 sources
-have no GitHub mapping in the frozen inventory and remain outside the scan denominator.
+This audit reuses the fixed 1,014-source top-300 union from issue #5 at commit
+`4d1efa0593f40be515b0428fa30be783a54407e9`, with its original source identities,
+primary-domain labels and ranking memberships. All 871 GitHub-mapped repositories
+are checked at their previously recorded revisions, not current HEAD. The other
+143 sources have no GitHub mapping in the frozen inventory and remain outside
+the repository denominator. No new mapping or biological classification is inferred.
 
-Collect GitHub recursive Git-tree metadata only. A positive is at least one blob
-path ending in `.ipynb` (case insensitive), excluding `.ipynb_checkpoints` folders.
-A complete tree without such paths is absent. Failed requests or truncated trees
-without matches are unknown; positives in truncated trees have lower-bound counts.
-Submodule contents, separate documentation repositories, other branches, external
-Colab links, R Markdown/Quarto and marimo Python files are outside this definition.
-Presence does not establish valid notebook JSON, biological content, input access,
-runnability, independent-study coverage or task suitability. No notebook contents
-or biological data are downloaded or executed.
+## Detection protocol
 
-Budget: one sequential worker, at most one tree request per mapped repository on
-the initial pass, 25-second timeout, 16 MiB response parsing cap, estimated peak
-180 MiB. Use shared nonblocking lock, thread caps and reduced priority. Check
-resources between requests; stop on rate limits. Preserve each result immediately
-and resume only missing records. Inputs and scanner are checkpointed before run.
-
-Report by the original primary domains and ranking routes: total sources, mapped
-repositories, present, absent, unknown, and sources without mapping. Fractions use
-explicit repository denominators. This measures notebook presence in a fixed,
-previously selected software inventory, not population-wide biological coverage.
-
-## Superseding scope: multiple notebook and literate-document formats
-
-The user corrected the initial Jupyter-only interpretation before completion.
-The 298-record interrupted run is preserved in `ipynb-only-incomplete/` and is
-not the reported audit. Repeat the fixed inventory scan with these detectors:
-
-- File extensions: Jupyter `.ipynb`, R Markdown `.Rmd`/`.Rmarkdown`, Quarto `.qmd`,
-  Sweave/knitr `.Rnw`/`.Rtex`, Wolfram `.nb`, MATLAB Live Script `.mlx`, Livebook
-  `.livemd`, .NET Interactive `.dib`, and rendered R notebook `.Rnb.html`.
+- Tree-path extensions: Jupyter `.ipynb`, R Markdown `.Rmd`/`.Rmarkdown`, Quarto
+  `.qmd`, Sweave/knitr `.Rnw`/`.Rtex`, Wolfram `.nb`, MATLAB Live Script `.mlx`,
+  Livebook `.livemd`, .NET Interactive `.dib`, and rendered R notebooks `.Rnb.html`.
 - Source signatures: marimo Python, Pluto Julia and Jupytext text documents.
-  Probe at most six `.py`/`.jl`/`.R`/`.md` paths per repository containing
+  Probe at most six `.py`/`.jl`/`.R`/`.md` paths per repository whose names contain
   `marimo`, `jupytext`, `pluto` or `notebook`, reading at most 64 KiB each.
-  This is a targeted, incomplete probe; arbitrary filenames can be missed.
+  This is a targeted, incomplete check; arbitrary filenames can be missed.
+- Exclude paths under `.ipynb_checkpoints`. Record file/blob identity, format,
+  detection mechanism, unprobed text-file counts and request failures.
 
-Record detections by format and unprobed text-file counts. A complete tree with
-no supported detections is **none detected**, not proof of no notebooks. Keep
-truncated/error trees without detections **unknown**. Extension hits have not
-been content-validated; a Quarto/R Markdown file may be prose-only, and exports
-or paired files may duplicate the same document. Report repository presence,
-not unique notebook/document counts or analytical suitability. External links,
-submodules and other branches remain out of scope. Source-prefix reads are
-static metadata/content inspection, never execution; no biological inputs are
-retrieved. Per-prefix timeout 12 seconds; max six per repository, one worker.
+**Present** means at least one supported extension/signature was detected.
+**None detected** requires a complete tree without supported detections; it is
+not proof of no notebooks. **Unknown** means an incomplete/error tree without
+a positive. A positive in a truncated tree establishes presence but only a
+lower bound on detected file count. Missing GitHub mappings are **unmapped**.
+
+Extension matches are not content validation. R Markdown/Quarto may be prose-only;
+files may be tests, demonstrations or exports. Paired files and exports can
+represent the same document. Counts by format overlap. Repository labels are
+not independent classifications of the notebooks within them. External Colab
+links, submodules, other branches, separate documentation repositories and
+unrecognized notebook formats can be missed. Presence does not establish
+biological relevance, input access, reproducibility or task suitability.
+
+No biological input files or models are downloaded; no analyses are executed.
+The only source content retrieved is bounded text prefixes for signature checks.
+
+## Execution and reproduction
+
+`input-provenance.json` hashes original issue-5 files copied directly from Git.
+`inventory.json` fixes the source-to-repository mapping and labels before scanning.
+`scan.py` appends one record per mapped repository to `observations.jsonl`;
+`runs.jsonl` records resources and timing. Re-running skips saved records.
+`summary.json`, `domain-coverage.csv` and `domain-formats.csv` are derived by
+`summarize.py`. `validate.py` independently checks accounting, labels, input
+hashes, ranking membership and format counts against raw observations.
+
+The scanner was checkpointed at `c5d9d62` before the multi-format run. Budget:
+one sequential worker, one recursive-tree request per mapped repository, up to
+six prefix requests per repository, 25-second tree/12-second prefix timeouts,
+16 MiB tree parsing cap, 64 KiB prefix cap, estimated peak 180 MiB. Use shared
+nonblocking lock, thread caps, reduced CPU/I/O priority and per-request resource
+guards. Stop on API rate limits. No paid compute or model calls.
+
+The interrupted 298-repository Jupyter-only attempt is preserved separately in
+`ipynb-only-incomplete/`. It was stopped when the user corrected the scope and is
+not the reported multi-format audit. Its shell exit was 130 (interruption); the
+scanner's finally block records non-success as 1.
+
+Results and interpretation are in `results.md`; the issue-16 workbench embeds the
+summary and shows per-domain and per-ranking denominators with repository links.

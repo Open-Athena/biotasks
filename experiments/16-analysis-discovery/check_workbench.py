@@ -25,10 +25,11 @@ with sync_playwright() as p:
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
         assert page.locator('h1').inner_text()=='How the source collection was built'
-        assert page.locator('[data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Source index']
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Repository notebook coverage','Source index']
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
+        assert page.locator('#hfSurfaces').get_attribute('open') is None
         assert page.locator('#toolProvenance tbody tr').count()==4
         assert '24 of 28' in page.locator('#toolProvenance').inner_text()
         assert page.locator('.method-flow article').count()==4
@@ -36,8 +37,8 @@ with sync_playwright() as p:
         exported=json.loads(Path(download.value.path()).read_text())
         assert len(exported)==100
         assert exported==page.evaluate('window.BIOTASKS_DATA.rows')
-        for mode in ['methods','workbench','coverage','curated']:
-            page.locator(f'[data-layout={mode}]').click()
+        for mode in ['methods','workbench','coverage','repository','curated']:
+            page.locator(f'.choices [data-layout={mode}]').click()
             for width in [1440,390]:
                 page.set_viewport_size({'width':width,'height':1000})
                 assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),(mode,width)
@@ -74,7 +75,22 @@ with sync_playwright() as p:
         page.locator('[data-layout=curated]').click()
         page.locator('#curatedSources').click()
         assert page.locator('[data-select]').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in exported)
+        page.locator('.choices [data-layout=repository]').click()
+        audit=page.evaluate('window.BIOTASKS_DATA.repository_audit')
+        assert audit['all']['sources']==1014 and audit['all']['mapped']==871
+        assert page.locator('#repoDomains tbody tr').count()==len(audit['domains'])
+        assert page.locator('#auditRows tbody tr').count()==1014
+        page.locator('#auditStatus').select_option('present')
+        assert page.locator('#auditRows tbody tr').count()==audit['all']['present']
+        page.locator('#auditFormat').select_option('R Markdown')
+        assert page.locator('#auditRows tbody tr').count()==audit['all']['formats']['R Markdown']
+        page.locator('#auditFormat').select_option('')
+        page.locator('#auditStatus').select_option('')
+        first=next(iter(audit['domains']))
+        page.locator(f'[data-audit-domain="{first}"]').click()
+        assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['sources']
+        guard()
         assert not errors,errors
     finally:
         browser.close()
-print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':4,'checks':['methods opens first','11 route drilldowns and 4 screening steps','four views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
+print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':5,'checks':['methods opens first','11 route drilldowns and 4 screening steps','five views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown','HF collapsed by default','fixed inventory totals and format/domain filters'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
