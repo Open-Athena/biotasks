@@ -40,6 +40,12 @@ with sync_playwright() as pw:
         page.select_option('#task-select', 'own')
         page.click('#tab-task')
         assert '20250607' in page.locator('.task-instruction').inner_text()
+        assert page.locator('.task-instruction h1, .task-instruction h2').count() > 0
+        assert page.locator('.task-instruction li').count() > 0
+        assert page.locator('.task-instruction code').count() > 0
+        assert page.locator('pre.task-instruction').count() == 0
+        page.get_by_text('View Markdown source', exact=True).click()
+        assert '20250607' in page.locator('#workspace-panel details').first.inner_text()
         page.click('#tab-solution')
         assert 'GLM-5.3' in page.locator('#model-select').inner_text()
         assert 'HistGradientBoostingClassifier' in page.locator('.solution-code').inner_text()

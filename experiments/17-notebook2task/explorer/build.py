@@ -28,7 +28,7 @@ for row in catalog["sources"]:
 # Published reference examples are separate from source candidates.
 comparison_root = root / "comparisons"
 catalog["comparisons"] = json.loads((comparison_root / "cases.json").read_text())
-md = MarkdownIt("commonmark", {"html": False})
+md = MarkdownIt("commonmark", {"html": False}).enable("table").enable("strikethrough")
 for case in catalog["comparisons"]:
     pilot_name = {"seta-cytopathology": "seta-cytopathology-retry", "bix-asxl1": "bix-asxl1"}[case["id"]]
     pilot = root.parent / "runs/20261006-seta-v1-pilot" / pilot_name
@@ -78,6 +78,9 @@ for case in catalog["comparisons"]:
         case["instruction"] = question["question"]
         case["reference_answer"] = question["ideal"]
         case["canary"] = question["canary"]
+    case["instruction_html"] = md.render(case["instruction"])
+    if case.get("cpu_variant_instruction"):
+        case["cpu_variant_instruction_html"] = md.render(case["cpu_variant_instruction"])
     if "notebook_file" in case:
         notebook = json.loads((comparison_root / case["notebook_file"]).read_text())
         cells = []
