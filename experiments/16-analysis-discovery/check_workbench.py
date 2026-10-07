@@ -25,7 +25,7 @@ with sync_playwright() as p:
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
         assert page.locator('h1').inner_text()=='How the source collection was built'
-        assert page.locator('.choices [data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Repository notebook coverage','Source index']
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Source coverage','Source index']
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
@@ -76,24 +76,20 @@ with sync_playwright() as p:
         page.locator('#curatedSources').click()
         assert page.locator('[data-select]').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in exported)
         page.locator('.choices [data-layout=repository]').click()
-        alt=page.evaluate('window.BIOTASKS_DATA.alternative_audit')
-        assert alt['all']['searched']==143
-        assert page.locator('#altRows tbody tr').count()==143
-        page.locator('#altResult').select_option('document_located')
-        assert page.locator('#altRows tbody tr').count()==alt['all']['document_located']
-        page.locator('#altRows summary').first.click()
-        assert page.locator('#altRows details[open] a').count()>0
-        page.locator('#altResult').select_option('')
-        audit=page.evaluate('window.BIOTASKS_DATA.repository_audit')
-        assert audit['all']['sources']==1014 and audit['all']['mapped']==871
-        assert page.locator('#repoDomains tbody tr').count()==len(audit['domains'])
+        audit=page.evaluate('window.BIOTASKS_DATA.source_inventory')
+        assert audit['all']=={'sources':1014,'located':502,'lead':2,'none_detected':509,'unknown':1}
         assert page.locator('#auditRows tbody tr').count()==1014
-        page.locator('#auditStatus').select_option('present')
-        assert page.locator('#auditRows tbody tr').count()==audit['all']['present']
+        page.locator('#auditStatus').select_option('located')
+        assert page.locator('#auditRows tbody tr').count()==502
         page.locator('#auditFormat').select_option('R Markdown')
-        assert page.locator('#auditRows tbody tr').count()==audit['all']['formats']['R Markdown']
+        assert page.locator('#auditRows tbody tr').count()==186
         page.locator('#auditFormat').select_option('')
         page.locator('#auditStatus').select_option('')
+        page.locator('#auditQuery').fill('cell-eval2')
+        assert page.locator('#auditRows tbody tr').count()==1
+        page.locator('#auditRows summary').click()
+        assert 'ArcInstitute/cell-eval' in page.locator('#auditRows').inner_text()
+        page.locator('#auditQuery').fill('')
         first=next(iter(audit['domains']))
         page.locator(f'[data-audit-domain="{first}"]').click()
         assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['sources']

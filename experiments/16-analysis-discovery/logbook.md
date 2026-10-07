@@ -233,3 +233,7 @@ Published final UI/data revision `dc614d1b0215b3b9e9d0174b02200ada7daba711` pass
 - Added an alternative-source evidence section to the existing repository view, with all 143 rows, original-domain/result filters, document links, request fingerprints, failures and archive/tree limits. Kept selected-document screening separate. Issue remains open for user review.
 
 - Published HTML revision 45f74e7216afe0e1bb45c7cba81de5750301527c passed local and public HTMLPreview browser checks, including all 143 rows, result filtering and expanded evidence. Issue body published and read back exactly; state OPEN and agent-generated label verified.
+
+### 2026-10-07 — Unified current-state source coverage
+
+User requested that the website present current results, without Git/non-Git or chronological search-pass divisions. Replaced the split audit interface with one 1,014-source inventory, shared text/domain/format/result filters, unified domain counts and per-source expandable evidence. Counts are 502 identities with a document located, two tutorial leads, 509 no detections and one unresolved search. These are heterogeneous discovery-evidence counts, not a comparable detection-rate estimate, unique-document count or scientific validation. Original acquisition records remain unchanged; methods and limits live in collapsed details. Methods links to the unified view.
