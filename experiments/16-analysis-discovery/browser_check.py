@@ -38,22 +38,21 @@ with sync_playwright() as p:
         assert page.locator('#rows > tr').count()==expected_count
         page.locator('#route').select_option('kaggle')
         assert page.locator('#rows > tr').count()==sum(r['route']=='kaggle' for r in manifest)
-        page.locator('#cohort').select_option('competition_first')
         page.locator('#assessment').select_option('apparently_suitable')
-        assert page.locator('#rows > tr').count()==7
+        assert page.locator('#rows > tr').count()==sum(r['route']=='kaggle' and r['assessment']=='apparently_suitable' for r in manifest)
         with page.expect_download() as d: page.locator('#export').click()
         exported=list(csv.DictReader(io.StringIO(Path(d.value.path()).read_text())))
-        assert {r['id'] for r in exported}=={'K01','K03','K04','K05','K07','K08','K09'}
-        checks.append('Frozen Kaggle cohort filters and exact exported IDs')
+        assert {r['id'] for r in exported}=={r['id'] for r in manifest if r['route']=='kaggle' and r['assessment']=='apparently_suitable'}
+        checks.append('Unified Kaggle route filters and exact exported IDs')
         page.locator('#reset').click();page.locator('#review_stage').select_option('access_only')
         assert page.locator('#rows .source-title').count()==sum(r.get('review_stage')=='access_only' for r in manifest)
         page.locator('#reset').click();page.locator('#review_stage').select_option('identified')
         assert page.locator('#rows .source-title').count()==sum(r.get('review_stage')=='identified' for r in manifest)
-        page.locator('button[data-tab=overview]').click();page.locator('#showExpansion').click()
-        assert page.locator('#rows > tr').count()==60
+        page.locator('button[data-tab=overview]').click();page.locator('#showAll').click()
+        assert page.locator('#rows > tr').count()==expected_count
         page.locator('#reset').click();page.locator('#search').fill('L27');page.locator('#rows summary').click()
         assert 'Performance guidance' in page.locator('#rows').inner_text()
-        checks.append('Expansion drilldown, legacy access-only and empty identified-stage filters and recovered exclusion evidence')
+        checks.append('All-document drilldown, legacy access-only and empty identified-stage filters and recovered exclusion evidence')
         page.locator('#reset').click();page.locator('#search').fill('EBImage')
         assert page.locator('#rows > tr').count()==1
         page.locator('#rows summary').click()
@@ -66,11 +65,11 @@ with sync_playwright() as p:
         checks.append('Search, detail expansion, sort interaction and empty state')
         page.locator('button[data-tab=coverage]').click()
         assert page.locator('#matrix tbody tr').count()==13
-        groups=sorted({r['route']+' / '+r['cohort'] for r in json.loads((ROOT/'candidates.json').read_text())})
+        groups=sorted({r['route'] for r in json.loads((ROOT/'candidates.json').read_text())})
         assert page.locator('#matrix td').count()==13*len(groups)
         for b in page.locator('#matrix button').all():
             group=groups[int(b.get_attribute('data-group'))]; domain=b.get_attribute('data-domain')
-            members=[r for r in manifest if r['route']+' / '+r['cohort']==group and domain in r['subdomains']]
+            members=[r for r in manifest if r['route']==group and domain in r['subdomains']]
             good=sum(r['assessment']=='apparently_suitable' for r in members)
             assert b.inner_text()==f"{good} / {sum(r.get('review_stage', 'static_inspection') == 'static_inspection' for r in members)}"
         cells=page.locator('#matrix [data-domain="metabolomics"]')
@@ -80,7 +79,7 @@ with sync_playwright() as p:
         assert 'metabolomics'==page.locator('#domain').input_value()
         checks.append('Coverage matrix shape and cell drilldown')
         page.locator('button[data-tab=curated]').click();page.locator('#showAwesome').click()
-        assert page.locator('#rows > tr').count()==4
+        assert page.locator('#rows > tr').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in manifest)
         page.locator('button[data-tab=overview]').click()
         page.screenshot(path='/tmp/biotasks16-explorer-desktop.png',full_page=True)
         page.set_viewport_size({'width':390,'height':844})

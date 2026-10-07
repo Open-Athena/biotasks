@@ -81,6 +81,7 @@ def build():
         other = {d for r in main if r['route'] != route and r['assessment'] == 'apparently_suitable' for d in r['subdomains']}
         marginal[route] = sorted(own - other)
     summary = {'stage': 'discovery and static inspection', 'review_state': 'provisional; awaiting user satisfaction',
+               'routes': {route: summarize([r for r in rows if r['route'] == route]) for route in sorted({r['route'] for r in rows})},
                'all': summarize(rows), 'main_comparison': summarize(main),
                'groups': {k: summarize(v) for k,v in sorted(groups.items())},
                'main_route_unique_subdomains_suitable': marginal,
