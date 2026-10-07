@@ -273,3 +273,7 @@ First run stopped on an archive-locator path assumption; resumable correction ha
 The requested biological-domain chart is included in this publication: document-located or all-source scope, clickable domain filters, detailed domain table collapsed. No historical acquisition sections were added to the sites.
 
 Local and public browser checks passed for 425613f6ddb678c26f05e6ef4a682fffc22aaad9, including updated format counts, domain-chart scope switches, source filters and both-site navigation on desktop/mobile. Issue body read back exactly, OPEN and agent-generated verified.
+
+### 2026-10-07 — Investigation accepted and closed
+
+User accepted the investigation and authorized closure. Updated the issue body with the conclusion, bounded evidence and possible follow-up investigations. Closed #16 as completed and verified the exact published body, CLOSED/COMPLETED state and agent-generated label. Research branch, both sites and original evidence retained; no merge or pipeline promotion.

@@ -77,8 +77,14 @@ The HTML is a current results document; chronological checkpoints and historical
 
 Methodological leads include [Jupyter Agents](https://huggingface.co/blog/jupyter-agent-2), [Jupiter/NbQA](https://arxiv.org/html/2509.09245v2) and [ExeDS](https://aclanthology.org/2022.dash-1.5.pdf): document identity, input recovery and execution evidence must be assessed separately.
 
-### Remaining work and completion
+### Conclusion and completion
 
-Use the repository audit as a pool for content-level inspection, screen the newly located external documents and improve text-notebook detection; resolve the 19 uncertain document assessments where evidence permits; check independent-study breadth and source/input terms for promising candidates. Discovery approaches are not exhausted: systematic paper-to-code and citation searches, other challenge platforms, and multilingual resources remain untested. Task authoring, native execution and independent validation are separate subsequent stages.
+Investigation completed with user acceptance on 2026-10-07. Discovery methods and the fixed source inventory are presented as two linked, current-state sites. The methods collection contains 100 selected documents: 98 substantive static inspections, 70 apparently suitable, 19 unresolved and 11 excluded. The inventory covers 1,014 source identities: 502 with a document located, two tutorial leads, 509 with none detected under the search bounds and one unresolved search. Authoring-source recovery checked all 176 rendered-vignette entries and recovered 167 R Markdown/Sweave documents, leaving nine explicit fallbacks.
 
-The issue remains open until the user is satisfied. Keep this body current as findings change. Research is preserved on `codex/research/16-analysis-discovery`; this branch is not intended for merging.
+The investigation supports a practical discovery workflow: identify projects through indexes, challenges and curated resources; inspect repositories and documentation for concrete analysis documents; consolidate representations and prefer substantive authoring source for LLM input. Preserve rendered output when it adds results, and distinguish extracted scripts or PDF wrappers from full authoring content. The purposive sample does not establish a ranking of discovery-method efficiency or platform-wide coverage.
+
+The sites, source evidence and reproducible builders are preserved on the permanent `codex/research/16-analysis-discovery` branch; no merge or pipeline promotion is part of this conclusion. Public browser checks passed for the linked presentation revision. No biological analyses were executed, and discovery or static suitability does not establish reproducibility, scientific validity or reuse permission.
+
+### Possible follow-up investigations
+
+Content-level screening of newly located documents, stronger text-notebook detection, resolution of uncertain assessments, independent-study breadth and source/input terms remain possible follow-ups. Paper-to-code and citation searches, other challenge platforms and multilingual resources are not exhausted. Task authoring, native execution and independent validation are separate subsequent stages, not completion requirements for this investigation.
