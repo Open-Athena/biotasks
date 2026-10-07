@@ -16,73 +16,91 @@ with sync_playwright() as pw:
             page.context.set_offline(True)
         page.on('pageerror', lambda error: errors.append(str(error)))
         page.goto(url, wait_until='networkidle', timeout=45000)
-        page.wait_for_selector('#list .card')
-        assert page.locator('#list .card').count() == 12
-        assert 'Airway' in page.locator('#detail h2').inner_text()
-        ids = page.evaluate('window.NOTEBOOK_CATALOG.sources.map(r => r.id)')
-        assert 'ag-atlas' not in ids and 'pbmc3k' not in ids
-        assert 'multiome' in ids
+        page.wait_for_selector('.notebook-link')
+        assert page.locator('.notebook-link').count() == 14
+        page.select_option('#origin', 'benchmark')
+        assert page.locator('.notebook-link').count() == 2
+        page.select_option('#origin', 'BixBench')
+        assert page.locator('.notebook-link').count() == 1
+        page.locator('.notebook-link').click()
+        page.wait_for_selector('#notebook-select')
+        assert '/notebooks/bix-asxl1.html' in page.url
+        assert page.frame_locator('#source-frame iframe').locator('section').count() == 17
+        page.click('#tab-task')
+        assert 'DESeq2' in page.locator('.task-instruction').inner_text()
+        page.click('#tab-solution')
+        assert 'No independent' in page.locator('#workspace-panel').inner_text()
+        page.click('#back')
+        page.wait_for_selector('.notebook-link')
+        assert page.locator('#origin').input_value() == 'BixBench'
+        assert page.locator('.notebook-link').count() == 1
+        page.select_option('#origin', 'SETA')
+        page.locator('.notebook-link').click()
+        page.select_option('#task-select', 'own')
+        page.click('#tab-task')
+        assert '20250607' in page.locator('.task-instruction').inner_text()
+        page.click('#tab-solution')
+        assert 'GLM-5.3' in page.locator('#model-select').inner_text()
+        assert 'HistGradientBoostingClassifier' in page.locator('.solution-code').inner_text()
+        page.click('#tab-results')
+        assert page.locator('#workspace-panel tbody tr').count() == 8
+        page.select_option('#artifact-select', 'eda.json')
+        assert 'high_correlation_pairs' in page.locator('#artifact-content').inner_text()
+        page.get_by_text('Authoring trace · GLM-5.3 · 12 responses', exact=True).click()
+        assert 'write_file' in page.locator('#workspace-panel').inner_text()
+        page.screenshot(path='/tmp/bio17-workspace-results.png', full_page=True)
+        page.select_option('#task-select', 'released')
+        assert page.locator('#artifact-select').count() == 0
+        page.select_option('#notebook-select', 'dnase')
+        page.wait_for_selector('#source-frame iframe')
+        assert 'bedtools' in page.frame_locator('#source-frame iframe').locator('body').inner_text()
+        page.click('#tab-task')
+        assert 'Not generated' in page.locator('#detail').inner_text()
+        page.click('#tab-results')
+        assert page.locator('#detail').is_hidden()
+        page.click('#back')
+        page.click('#reset')
         page.select_option('#group', 'gReLU')
-        assert page.locator('#list .card').count() == 3
+        assert page.locator('.notebook-link').count() == 3
         with page.expect_download() as event:
             page.click('#export')
         exported = json.loads(Path(event.value.path()).read_text())
-        assert len(exported['sources']) == 3
-        assert all(x['group'] == 'gReLU' for x in exported['sources'])
+        assert len(exported['entries']) == 3
+        page.fill('#search', 'zzzz-not-found')
+        assert page.locator('.notebook-link').count() == 0
+        assert page.locator('#empty').is_visible()
         page.click('#reset')
-        page.select_option('#role', 'Start here')
-        assert page.locator('#list .card').count() == 3
-        page.click('#reset')
-        page.fill('#search', 'zzzz-no-such-analysis')
-        assert page.locator('#list .card').count() == 0
-        assert 'No matching' in page.locator('#detail').inner_text()
-        page.click('#reset')
-        for group in ['Scanpy', 'DESeq2', 'bedtools', 'AlphaGenome', 'gReLU']:
-            page.select_option('#group', group)
-            n = page.locator('#list .card').count()
-            for i in range(n):
-                page.locator('#list .card').nth(i).click()
-                assert page.locator('#detail h2').inner_text()
-                assert 'Not generated' in page.locator('#detail').inner_text()
-                assert page.locator('#list .card[aria-pressed=true]').count() == 1
-        page.click('#reset')
-        page.locator('#list .card').first.click()
-        page.screenshot(path='/tmp/biotasks17-desktop.png', full_page=True)
+        page.screenshot(path='/tmp/bio17-directory.png', full_page=True)
         page.set_viewport_size({'width':390,'height':844})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-        page.select_option('#group', 'AlphaGenome')
-        assert page.locator('#list .card').count() == 2
-        page.screenshot(path='/tmp/biotasks17-mobile.png', full_page=True)
-        assert page.locator('#comparison-select option').count() == 2
-        page.select_option('#comparison-select', 'bix-asxl1')
-        assert 'DESeq2' in page.locator('.released-task:not(.baseline-output)').inner_text()
-        page.click('#comparison-notebook')
-        frame = page.frame_locator('#comparison-frame iframe')
-        assert frame.locator('section').count() == 17
-        assert '~sex+condition' in frame.locator('body').inner_text()
-        page.get_by_text('Published reference answer (evaluation material)', exact=True).click()
-        assert '0.0002' in page.locator('#comparison-detail details').first.inner_text()
-        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-        page.set_viewport_size({'width':1280,'height':900})
-        page.locator('#comparisons').scroll_into_view_if_needed()
-        page.screenshot(path='/tmp/biotasks17-comparisons.png')
-        page.get_by_text('Read the actual baseline output', exact=True).click()
-        assert 'EARLY_DITCH' in page.locator('.baseline-output').inner_text()
-        page.select_option('#comparison-select', 'seta-cytopathology')
-        assert 'AUC of at least 0.93' in page.locator('.released-task:not(.baseline-output)').inner_text()
-        assert page.locator('#comparison-frame iframe').count() == 0
-        page.get_by_text('Read the actual baseline output', exact=True).click()
-        assert 'frozen' in page.locator('.baseline-output').inner_text()
-        page.get_by_text('Read GLM baseline output', exact=True).click()
-        assert 'three distinct model families' in page.locator('.glm-output').inner_text()
-        page.get_by_text('Read generated CPU task', exact=True).click()
-        assert '20250607' in page.locator('.variant-instruction').inner_text()
-        assert 'Native CPU' in page.locator('.variant-validation').inner_text()
-        page.select_option('#comparison-select', 'bix-asxl1')
-        assert 'output_limit' in page.locator('#comparison-detail').inner_text()
-        page.get_by_text('Read GLM baseline output', exact=True).click()
-        assert 'No draft or final response' in page.locator('.glm-output').inner_text()
+        page.select_option('#origin', 'SETA')
+        page.locator('.notebook-link').click()
+        page.select_option('#task-select', 'own')
+        for tab in ['original', 'task', 'solution', 'results']:
+            page.click('#tab-' + tab)
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), tab
+        # URL routing must preserve HTMLPreview's pinned source revision.
+        routed = page.evaluate("pageURL('index.html', '#origin=SETA')")
+        assert '/explorer/index.html#origin=SETA' in routed
+        # Serve built files under the actual preview URL shape, without network.
+        def preview_route(route):
+            from urllib.parse import urlparse, unquote
+            requested = urlparse(route.request.url)
+            target = unquote(requested.query).split('/explorer/', 1)[-1]
+            file = (root / target).resolve()
+            assert file.is_relative_to(root.resolve())
+            route.fulfill(path=str(file), content_type='text/html')
+        page.route('https://htmlpreview.github.io/**', preview_route)
+        preview = 'https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/test-revision/experiments/17-notebook2task/'
+        page.goto(preview + 'explorer/index.html')
+        page.select_option('#origin', 'SETA')
+        page.locator('.notebook-link').click()
+        page.wait_for_selector('#notebook-select')
+        assert 'test-revision/experiments/17-notebook2task/explorer/notebooks/seta-cytopathology.html' in page.url
+        page.click('#back')
+        page.wait_for_selector('.notebook-link')
+        assert page.locator('#origin').input_value() == 'SETA'
         assert not errors, errors
-        print(json.dumps({'url':url,'status':'passed','candidates':12,'checks':['all detail cards','repository and role filters','empty search','reset','filtered JSON export','desktop layout','390px layout without overflow','two released-task comparisons','17-cell offline notebook','published answer disclosure'],'page_errors':errors}))
+        print(json.dumps({'url':url,'status':'passed','entries':14,'checks':['14 unified entries','provenance and repository filters','empty search and reset','filtered export','separate detail pages','filter-preserving return navigation','17-cell offline notebook','dependent task/solution/results panels','result artifact selection','authoring timeline','390px layout','HTMLPreview URL routing'],'page_errors':errors}))
     finally:
         browser.close()

@@ -213,3 +213,21 @@ entry-point reproduction and 8 control expectations on one CPU. Full details
 and the scientific boundary are in validation/cpu-training-v1/README.md.
 Both CPU jobs are terminal; no inference service or GPU was provisioned.
 Docker/Harbor execution and solver evaluation remain untested.
+
+
+### 2026-10-07: notebook directory and task workspace
+
+Replaced the split candidate list / comparison section with one 14-entry table,
+using the compact analytical style of issue #16. Added provenance filters for
+SETA/BixBench and generated separate static detail pages. Each workspace exposes
+notebook and dependent task selectors with Original, Task, Solution and Run &
+results tabs. GLM reference code is labeled authoring output, not an independent
+solver attempt. Native metrics and control results are inspectable; a collapsed
+authoring timeline reports tool requests and response stops without inferring
+solver behavior. The raw evidence remains unchanged.
+
+Browser checks pass for filters/export, filter-preserving navigation, original
+notebook rendering, dependent task panels, artifact selection, trace disclosure,
+390px layout and HTMLPreview-shaped routing using intercepted local files. That
+routing test does not establish live HTMLPreview service availability. No new
+scientific execution or model call was made for this UI change.

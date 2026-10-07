@@ -46,6 +46,31 @@ for case in catalog["comparisons"]:
         case["cpu_variant_instruction"] = (generated / "instruction.md").read_text()
         case["cpu_variant_tests"] = (root.parent / "validation/cpu-training-v1/candidate/tests/test_outputs.py").read_text()
         case["cpu_variant_validation"] = (root.parent / "validation/cpu-training-v1/README.md").read_text()
+        case["reference_solution"] = (generated / "solution/run_pipeline.py").read_text()
+        validation = root.parent / "validation/cpu-training-v1/native-02/results"
+        case["validation_steps"] = json.loads((validation / "steps.json").read_text())
+        case["validation_controls"] = json.loads((validation / "controls.json").read_text())
+        case["validation_audit"] = json.loads((validation / "parent-audit.json").read_text())
+        case["result_artifacts"] = {name: (validation / "oracle-artifacts/results" / name).read_text()
+                                    for name in ["metrics.json", "selected_model_report.json", "eda.json"]}
+        case["trace"] = []
+        for line in (generated.parent / "events.jsonl").read_text().splitlines():
+            event = json.loads(line)
+            if "response" not in event:
+                continue
+            response = event["response"]
+            choice = response["choices"][0]
+            calls = []
+            for call in choice["message"].get("tool_calls") or []:
+                fn = call["function"]
+                try:
+                    args = json.loads(fn["arguments"])
+                except (ValueError, TypeError):
+                    args = {}
+                calls.append({"tool": fn["name"], "path": args.get("path", "")})
+            case["trace"].append({"turn": event["turn"], "finish": choice.get("finish_reason"),
+                                  "calls": calls, "completion_tokens": response.get("usage", {}).get("completion_tokens")})
+
     if "instruction_file" in case:
         case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
     if "question_file" in case:
@@ -72,9 +97,28 @@ for case in catalog["comparisons"]:
             'section{border-bottom:1px solid #ddd;padding:15px 0}.output{background:#fff8e9}a{color:#087b77}</style></head><body>'
             '<h1>BixBench original capsule notebook</h1><p>FutureHouse · Apache-2.0 · Saved outputs; not rerun.</p>'
             + ''.join(cells) + '</body></html>')
-# Escaping '<' prevents even a source-provided closing script tag from breaking out.
-payload = json.dumps(catalog, ensure_ascii=True).replace("<", "\\u003c")
+# One directory and a real static detail page per source; no runtime fetch needed.
+entries = [{"id": r["id"], "title": r["title"], "group": r["group"],
+            "format": r["format"], "question": r["question"], "decision": r["decision"],
+            "origin": "candidate", "evidence": "Proposal · not generated"} for r in catalog["sources"]]
+for c in catalog["comparisons"]:
+    entries.append({"id": c["id"], "title": c["title"], "group": "SETA" if c["id"].startswith("seta") else "BixBench",
+                    "format": "R Markdown" if c["id"].startswith("seta") else "R notebook",
+                    "decision": "Comparison only", "origin": "SETA" if c["id"].startswith("seta") else "BixBench",
+                    "evidence": "Native validation · repaired recipe" if c.get("cpu_variant_instruction") else "Released task · baseline attempted"})
+assert len({r["id"] for r in entries}) == len(entries)
 template = (root / "template.html").read_text()
 assert template.count("__CATALOG__") == 1
-(root / "index.html").write_text(template.replace("__CATALOG__", payload))
-print(f"Built explorer for {len(catalog['sources'])} candidate analyses")
+
+def emit(path, payload):
+    encoded = json.dumps(payload, ensure_ascii=True).replace("<", "\\u003c")
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(template.replace("__CATALOG__", encoded))
+
+emit(root / "index.html", {"entries": entries, "page": None, "sources": [], "comparisons": []})
+for row in entries:
+    emit(root / "notebooks" / (row["id"] + ".html"), {
+        "entries": entries, "page": row["id"],
+        "sources": [r for r in catalog["sources"] if r["id"] == row["id"]],
+        "comparisons": [c for c in catalog["comparisons"] if c["id"] == row["id"]]})
+print(f"Built directory and {len(entries)} notebook detail pages")
