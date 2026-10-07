@@ -133,8 +133,10 @@ alias/version handling, vignette pairing, text-notebook detection, all four pinn
 submodule regressions, MDAnalysis reconciliation and exclusion of generic PyTorch
 content. [Local browser checks](../evidence/browser-reassessment-local.json)
 passed on the rebuilt presentation, including responsive views, filtering,
-notebook sorting, export and evidence inspection. Public checks are recorded
-separately after publication.
+notebook sorting, export and evidence inspection. [Public browser checks](../evidence/browser-reassessment-public.json) also
+passed against published presentation commit
+`dd5bc22f54102f6165b2c3e940b2d90a9ddd7880`, with no page errors
+and 284,184 KiB peak child RSS.
 
 A sandbox browser invocation stalled before Chromium startup and was terminated
 (exit 143), with no result claimed. Follow-up UI checks exposed a lazy-inspector
