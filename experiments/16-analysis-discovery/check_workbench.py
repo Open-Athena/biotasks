@@ -76,6 +76,14 @@ with sync_playwright() as p:
         page.locator('#curatedSources').click()
         assert page.locator('[data-select]').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in exported)
         page.locator('.choices [data-layout=repository]').click()
+        alt=page.evaluate('window.BIOTASKS_DATA.alternative_audit')
+        assert alt['all']['searched']==143
+        assert page.locator('#altRows tbody tr').count()==143
+        page.locator('#altResult').select_option('document_located')
+        assert page.locator('#altRows tbody tr').count()==alt['all']['document_located']
+        page.locator('#altRows summary').first.click()
+        assert page.locator('#altRows details[open] a').count()>0
+        page.locator('#altResult').select_option('')
         audit=page.evaluate('window.BIOTASKS_DATA.repository_audit')
         assert audit['all']['sources']==1014 and audit['all']['mapped']==871
         assert page.locator('#repoDomains tbody tr').count()==len(audit['domains'])

@@ -1,0 +1,389 @@
+# Alternative-source discovery results
+
+All 143 previously unmapped source identities were searched. Original issue-5 labels are unchanged. This is a bounded locator search, not content screening or execution.
+
+| Route | Searched | Document locators | Tutorial leads only | No detection | Any access/budget limit |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Bioconductor package pages | 106 | 96 | 0 | 10 | 4 |
+| distribution | 31 | 1 | 2 | 28 | 14 |
+| bitbucket.org | 2 | 0 | 0 | 2 | 2 |
+| gitlab.com | 4 | 0 | 0 | 4 | 1 |
+
+Recovered 14 declared GitHub repository links; 12 resolved to inspected trees. These are current metadata links, not replacements for the historical inventory mappings.
+
+Counts are source identities, not unique notebooks, documents or repositories. Vignette HTML/PDF and R scripts are often paired representations. A located link is not evidence that its target was inspected or that its content is suitable. Tutorial leads use only HTML code-block/example markers and need manual screening.
+
+A source with an access/budget limit may still have usable evidence through another route. No detection is not absence. The previous 871-repository tree audit and this external-document pass have different detectors and time anchors; their positive counts should not be treated as one comparable notebook fraction.
+
+## Sources
+
+- **alabaster.matrix** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/alabaster.matrix/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.matrix/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/alabaster.matrix/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.matrix/inst/doc/userguide.R)
+- **alabaster.ranges** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/alabaster.ranges/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.ranges/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/alabaster.ranges/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.ranges/inst/doc/userguide.R)
+- **alabaster.sce** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/alabaster.sce/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.sce/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/alabaster.sce/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.sce/inst/doc/userguide.R)
+- **alabaster.schemas** (Computing infrastructure): document_located; 1 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/alabaster.schemas/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.schemas/inst/doc/userguide.html)
+- **alabaster.se** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/alabaster.se/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.se/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/alabaster.se/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/alabaster.se/inst/doc/userguide.R)
+- **annotate** (Genome assembly & annotation): document_located; 14 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/annotate/inst/doc/annotate.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/annotate/inst/doc/annotate.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/annotate/inst/doc/annotate.R](https://bioconductor.org/packages/3.23/bioc/vignettes/annotate/inst/doc/annotate.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/annotate/inst/doc/GOusage.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/annotate/inst/doc/GOusage.pdf)
+- **apeglm** (Gene expression): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/apeglm/inst/doc/apeglm.html](https://bioconductor.org/packages/3.23/bioc/vignettes/apeglm/inst/doc/apeglm.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/apeglm/inst/doc/apeglm.R](https://bioconductor.org/packages/3.23/bioc/vignettes/apeglm/inst/doc/apeglm.R)
+- **AUCell** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/AUCell/inst/doc/AUCell.html](https://bioconductor.org/packages/3.23/bioc/vignettes/AUCell/inst/doc/AUCell.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/AUCell/inst/doc/AUCell.R](https://bioconductor.org/packages/3.23/bioc/vignettes/AUCell/inst/doc/AUCell.R)
+- **basilisk.utils** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/basilisk.utils/inst/doc/purpose.html](https://bioconductor.org/packages/3.23/bioc/vignettes/basilisk.utils/inst/doc/purpose.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/basilisk.utils/inst/doc/purpose.R](https://bioconductor.org/packages/3.23/bioc/vignettes/basilisk.utils/inst/doc/purpose.R)
+- **batchelor** (Single-cell & spatial omics): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/batchelor/inst/doc/correction.html](https://bioconductor.org/packages/3.23/bioc/vignettes/batchelor/inst/doc/correction.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/batchelor/inst/doc/correction.R](https://bioconductor.org/packages/3.23/bioc/vignettes/batchelor/inst/doc/correction.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/batchelor/inst/doc/extension.html](https://bioconductor.org/packages/3.23/bioc/vignettes/batchelor/inst/doc/extension.html)
+- **beadarray** (Gene expression): document_located; 8 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/beadarray/inst/doc/beadlevel.html](https://bioconductor.org/packages/3.23/bioc/vignettes/beadarray/inst/doc/beadlevel.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/beadarray/inst/doc/beadlevel.R](https://bioconductor.org/packages/3.23/bioc/vignettes/beadarray/inst/doc/beadlevel.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/beadarray/inst/doc/beadsummary.html](https://bioconductor.org/packages/3.23/bioc/vignettes/beadarray/inst/doc/beadsummary.html)
+- **BiocNeighbors** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/BiocNeighbors/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/BiocNeighbors/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/BiocNeighbors/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/BiocNeighbors/inst/doc/userguide.R)
+- **BiocVersion** (Computing infrastructure): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **biovizBase** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/biovizBase/inst/doc/intro.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/biovizBase/inst/doc/intro.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/biovizBase/inst/doc/intro.R](https://bioconductor.org/packages/3.23/bioc/vignettes/biovizBase/inst/doc/intro.R)
+- **bluster** (Computing infrastructure): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/bluster/inst/doc/clusterRows.html](https://bioconductor.org/packages/3.23/bioc/vignettes/bluster/inst/doc/clusterRows.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/bluster/inst/doc/clusterRows.R](https://bioconductor.org/packages/3.23/bioc/vignettes/bluster/inst/doc/clusterRows.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/bluster/inst/doc/diagnostics.html](https://bioconductor.org/packages/3.23/bioc/vignettes/bluster/inst/doc/diagnostics.html)
+- **Category** (Systems biology & ontologies): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Category/inst/doc/Category.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Category/inst/doc/Category.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/Category/inst/doc/Category.R](https://bioconductor.org/packages/3.23/bioc/vignettes/Category/inst/doc/Category.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Category/inst/doc/ChromBand.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Category/inst/doc/ChromBand.pdf)
+- **ChAMP** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ChAMP/inst/doc/ChAMP.html](https://bioconductor.org/packages/3.23/bioc/vignettes/ChAMP/inst/doc/ChAMP.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ChAMP/inst/doc/ChAMP.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ChAMP/inst/doc/ChAMP.R)
+- **ChIPpeakAnno** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ChIPpeakAnno/inst/doc/ChIPpeakAnno.html](https://bioconductor.org/packages/3.23/bioc/vignettes/ChIPpeakAnno/inst/doc/ChIPpeakAnno.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ChIPpeakAnno/inst/doc/ChIPpeakAnno.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ChIPpeakAnno/inst/doc/ChIPpeakAnno.R)
+- **chipseq** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/chipseq/inst/doc/Workflow.html](https://bioconductor.org/packages/3.23/bioc/vignettes/chipseq/inst/doc/Workflow.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/chipseq/inst/doc/Workflow.R](https://bioconductor.org/packages/3.23/bioc/vignettes/chipseq/inst/doc/Workflow.R)
+- **chromVAR** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/chromVAR/inst/doc/Introduction.html](https://bioconductor.org/packages/3.23/bioc/vignettes/chromVAR/inst/doc/Introduction.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/chromVAR/inst/doc/Introduction.R](https://bioconductor.org/packages/3.23/bioc/vignettes/chromVAR/inst/doc/Introduction.R)
+- **ConsensusClusterPlus** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ConsensusClusterPlus/inst/doc/ConsensusClusterPlus.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/ConsensusClusterPlus/inst/doc/ConsensusClusterPlus.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ConsensusClusterPlus/inst/doc/ConsensusClusterPlus.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ConsensusClusterPlus/inst/doc/ConsensusClusterPlus.R)
+- **cytolib** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/cytolib/inst/doc/cytolib.html](https://bioconductor.org/packages/3.23/bioc/vignettes/cytolib/inst/doc/cytolib.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/cytolib/inst/doc/cytolib.R](https://bioconductor.org/packages/3.23/bioc/vignettes/cytolib/inst/doc/cytolib.R)
+- **DECIPHER** (Sequence processing): document_located; 30 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DECIPHER/inst/doc/ClassifySequences.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/DECIPHER/inst/doc/ClassifySequences.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DECIPHER/inst/doc/ClassifySequences.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DECIPHER/inst/doc/ClassifySequences.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DECIPHER/inst/doc/DesignProbes.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/DECIPHER/inst/doc/DesignProbes.pdf)
+- **DEXSeq** (Gene expression): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html](https://bioconductor.org/packages/3.23/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DEXSeq/inst/doc/DEXSeq.R)
+- **DiffBind** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DiffBind/inst/doc/DiffBind.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/DiffBind/inst/doc/DiffBind.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DiffBind/inst/doc/DiffBind.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DiffBind/inst/doc/DiffBind.R)
+- **dir.expiry** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/dir.expiry/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/dir.expiry/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/dir.expiry/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/dir.expiry/inst/doc/userguide.R)
+- **dittoSeq** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/dittoSeq/inst/doc/dittoSeq.html](https://bioconductor.org/packages/3.23/bioc/vignettes/dittoSeq/inst/doc/dittoSeq.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/dittoSeq/inst/doc/dittoSeq.R](https://bioconductor.org/packages/3.23/bioc/vignettes/dittoSeq/inst/doc/dittoSeq.R)
+- **DMRcate** (Gene regulation): document_located; 6 document representations, 0 tutorial leads; 2 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DMRcate/inst/doc/EPICv2.pdf](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/DMRcate/inst/doc/EPICv2.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DMRcate/inst/doc/EPICv2.R](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/DMRcate/inst/doc/EPICv2.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DMRcate/inst/doc/sequencing.pdf](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/DMRcate/inst/doc/sequencing.pdf)
+- **DNAcopy** (Genetic variation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DNAcopy/inst/doc/DNAcopy.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/DNAcopy/inst/doc/DNAcopy.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DNAcopy/inst/doc/DNAcopy.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DNAcopy/inst/doc/DNAcopy.R)
+- **DropletUtils** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html](https://bioconductor.org/packages/3.23/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DropletUtils/inst/doc/DropletUtils.R)
+- **DSS** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/DSS/inst/doc/DSS.html](https://bioconductor.org/packages/3.23/bioc/vignettes/DSS/inst/doc/DSS.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/DSS/inst/doc/DSS.R](https://bioconductor.org/packages/3.23/bioc/vignettes/DSS/inst/doc/DSS.R)
+- **DynDoc** (Computing infrastructure): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **edgeR** (Gene expression): document_located; 3 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/edgeR/inst/doc/intro.html](https://bioconductor.org/packages/3.23/bioc/vignettes/edgeR/inst/doc/intro.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/edgeR/inst/doc/intro.R](https://bioconductor.org/packages/3.23/bioc/vignettes/edgeR/inst/doc/intro.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/edgeR/inst/doc/edgeRUsersGuide.pdf)
+- **flowClust** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/flowClust/inst/doc/flowClust.html](https://bioconductor.org/packages/3.23/bioc/vignettes/flowClust/inst/doc/flowClust.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/flowClust/inst/doc/flowClust.R](https://bioconductor.org/packages/3.23/bioc/vignettes/flowClust/inst/doc/flowClust.R)
+- **flowCore** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/flowCore/inst/doc/HowTo-flowCore.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/flowCore/inst/doc/HowTo-flowCore.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/flowCore/inst/doc/HowTo-flowCore.R](https://bioconductor.org/packages/3.23/bioc/vignettes/flowCore/inst/doc/HowTo-flowCore.R)
+- **FlowSOM** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 2 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/FlowSOM/inst/doc/FlowSOM.pdf](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/FlowSOM/inst/doc/FlowSOM.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/FlowSOM/inst/doc/FlowSOM.R](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/FlowSOM/inst/doc/FlowSOM.R)
+- **flowViz** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/flowViz/inst/doc/filters.html](https://bioconductor.org/packages/3.23/bioc/vignettes/flowViz/inst/doc/filters.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/flowViz/inst/doc/filters.R](https://bioconductor.org/packages/3.23/bioc/vignettes/flowViz/inst/doc/filters.R)
+- **flowWorkspace** (General biology & multi-omics): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/flowWorkspace-Introduction.html](https://bioconductor.org/packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/flowWorkspace-Introduction.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/flowWorkspace-Introduction.R](https://bioconductor.org/packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/flowWorkspace-Introduction.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/HowToMergeGatingSet.html](https://bioconductor.org/packages/3.23/bioc/vignettes/flowWorkspace/inst/doc/HowToMergeGatingSet.html)
+- **gcrma** (Gene expression): document_located; 1 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/gcrma/inst/doc/gcrma2.0.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/gcrma/inst/doc/gcrma2.0.pdf)
+- **genefilter** (Gene expression): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/genefilter/inst/doc/howtogenefinder.html](https://bioconductor.org/packages/3.23/bioc/vignettes/genefilter/inst/doc/howtogenefinder.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/genefilter/inst/doc/howtogenefinder.R](https://bioconductor.org/packages/3.23/bioc/vignettes/genefilter/inst/doc/howtogenefinder.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/genefilter/inst/doc/independent_filtering_plots.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/genefilter/inst/doc/independent_filtering_plots.pdf)
+- **GeneOverlap** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GeneOverlap/inst/doc/GeneOverlap.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/GeneOverlap/inst/doc/GeneOverlap.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GeneOverlap/inst/doc/GeneOverlap.R](https://bioconductor.org/packages/3.23/bioc/vignettes/GeneOverlap/inst/doc/GeneOverlap.R)
+- **geneplotter** (Computing infrastructure): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/geneplotter/inst/doc/byChroms.html](https://bioconductor.org/packages/3.23/bioc/vignettes/geneplotter/inst/doc/byChroms.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/geneplotter/inst/doc/byChroms.R](https://bioconductor.org/packages/3.23/bioc/vignettes/geneplotter/inst/doc/byChroms.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/geneplotter/inst/doc/visualize.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/geneplotter/inst/doc/visualize.pdf)
+- **GENIE3** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GENIE3/inst/doc/GENIE3.html](https://bioconductor.org/packages/3.23/bioc/vignettes/GENIE3/inst/doc/GENIE3.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GENIE3/inst/doc/GENIE3.R](https://bioconductor.org/packages/3.23/bioc/vignettes/GENIE3/inst/doc/GENIE3.R)
+- **GenomeInfoDbData** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **GlobalAncova** (Systems biology & ontologies): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncova.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncova.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncova.R](https://bioconductor.org/packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncova.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncovaDecomp.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/GlobalAncova/inst/doc/GlobalAncovaDecomp.pdf)
+- **globaltest** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/globaltest/inst/doc/GlobalTest.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/globaltest/inst/doc/GlobalTest.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/globaltest/inst/doc/GlobalTest.R](https://bioconductor.org/packages/3.23/bioc/vignettes/globaltest/inst/doc/GlobalTest.R)
+- **go.db** (Systems biology & ontologies): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 3 request errors.
+- **GOstats** (Systems biology & ontologies): document_located; 6 document representations, 0 tutorial leads; 2 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsForUnsupportedOrganisms.html](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsForUnsupportedOrganisms.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsForUnsupportedOrganisms.R](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsForUnsupportedOrganisms.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsHyperG.html](https://bioconductor.posit.co/packages/3.23/bioc/vignettes/GOstats/inst/doc/GOstatsHyperG.html)
+- **graph** (Computing infrastructure): document_located; 10 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/graph/inst/doc/graphAttributes.html](https://bioconductor.org/packages/3.23/bioc/vignettes/graph/inst/doc/graphAttributes.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/graph/inst/doc/graphAttributes.R](https://bioconductor.org/packages/3.23/bioc/vignettes/graph/inst/doc/graphAttributes.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/graph/inst/doc/clusterGraph.html](https://bioconductor.org/packages/3.23/bioc/vignettes/graph/inst/doc/clusterGraph.html)
+- **GreyListChIP** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GreyListChIP/inst/doc/GreyList-demo.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/GreyListChIP/inst/doc/GreyList-demo.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GreyListChIP/inst/doc/GreyList-demo.R](https://bioconductor.org/packages/3.23/bioc/vignettes/GreyListChIP/inst/doc/GreyList-demo.R)
+- **GSEABase** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/GSEABase/inst/doc/GSEABase.html](https://bioconductor.org/packages/3.23/bioc/vignettes/GSEABase/inst/doc/GSEABase.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/GSEABase/inst/doc/GSEABase.R](https://bioconductor.org/packages/3.23/bioc/vignettes/GSEABase/inst/doc/GSEABase.R)
+- **IHW** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/IHW/inst/doc/introduction_to_ihw.html](https://bioconductor.org/packages/3.23/bioc/vignettes/IHW/inst/doc/introduction_to_ihw.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/IHW/inst/doc/introduction_to_ihw.R](https://bioconductor.org/packages/3.23/bioc/vignettes/IHW/inst/doc/introduction_to_ihw.R)
+- **impute** (Gene expression): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **InteractionSet** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/InteractionSet/inst/doc/interactions.html](https://bioconductor.org/packages/3.23/bioc/vignettes/InteractionSet/inst/doc/interactions.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/InteractionSet/inst/doc/interactions.R](https://bioconductor.org/packages/3.23/bioc/vignettes/InteractionSet/inst/doc/interactions.R)
+- **interactiveDisplayBase** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 4 requests, 3 request errors.
+  - [Rendered vignette: /packages/3.22/bioc/vignettes/interactiveDisplayBase/inst/doc/interactiveDisplayBase.html](https://bioconductor.posit.co/packages/3.22/bioc/vignettes/interactiveDisplayBase/inst/doc/interactiveDisplayBase.html)
+  - [Vignette R script: /packages/3.22/bioc/vignettes/interactiveDisplayBase/inst/doc/interactiveDisplayBase.R](https://bioconductor.posit.co/packages/3.22/bioc/vignettes/interactiveDisplayBase/inst/doc/interactiveDisplayBase.R)
+- **KEGGgraph** (Systems biology & ontologies): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraphApp.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraphApp.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraphApp.R](https://bioconductor.org/packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraphApp.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraph.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/KEGGgraph/inst/doc/KEGGgraph.pdf)
+- **limma** (Gene expression): document_located; 3 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/limma/inst/doc/intro.html](https://bioconductor.org/packages/3.23/bioc/vignettes/limma/inst/doc/intro.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/limma/inst/doc/intro.R](https://bioconductor.org/packages/3.23/bioc/vignettes/limma/inst/doc/intro.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/limma/inst/doc/usersguide.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/limma/inst/doc/usersguide.pdf)
+- **lumi** (Gene expression): document_located; 4 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+  - [Rendered vignette: lumi/vignettes/IlluminaAnnotation.pdf](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/lumi_2.64.0.tar.gz)
+  - [Rendered vignette: lumi/vignettes/lumi.pdf](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/lumi_2.64.0.tar.gz)
+  - [Rendered vignette: lumi/vignettes/lumi_VST_evaluation.pdf](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/lumi_2.64.0.tar.gz)
+- **marray** (Gene expression): document_located; 12 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/marray/inst/doc/marrayNorm.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/marray/inst/doc/marrayNorm.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/marray/inst/doc/marrayNorm.R](https://bioconductor.org/packages/3.23/bioc/vignettes/marray/inst/doc/marrayNorm.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/marray/inst/doc/marray.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/marray/inst/doc/marray.pdf)
+- **Mfuzz** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Mfuzz/inst/doc/Mfuzz.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Mfuzz/inst/doc/Mfuzz.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/Mfuzz/inst/doc/Mfuzz.R](https://bioconductor.org/packages/3.23/bioc/vignettes/Mfuzz/inst/doc/Mfuzz.R)
+- **microRNA** (Gene regulation): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **minet** (Systems biology & ontologies): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **missMethyl** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/missMethyl/inst/doc/missMethyl.html](https://bioconductor.org/packages/3.23/bioc/vignettes/missMethyl/inst/doc/missMethyl.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/missMethyl/inst/doc/missMethyl.R](https://bioconductor.org/packages/3.23/bioc/vignettes/missMethyl/inst/doc/missMethyl.R)
+- **MLInterfaces** (Computing infrastructure): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLprac2_2.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLprac2_2.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLprac2_2.R](https://bioconductor.org/packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLprac2_2.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLint_devel.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MLInterfaces/inst/doc/MLint_devel.html)
+- **monocle** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/monocle/inst/doc/monocle-vignette.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/monocle/inst/doc/monocle-vignette.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/monocle/inst/doc/monocle-vignette.R](https://bioconductor.org/packages/3.23/bioc/vignettes/monocle/inst/doc/monocle-vignette.R)
+- **MotifDb** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MotifDb/inst/doc/MotifDb.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MotifDb/inst/doc/MotifDb.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/MotifDb/inst/doc/MotifDb.R](https://bioconductor.org/packages/3.23/bioc/vignettes/MotifDb/inst/doc/MotifDb.R)
+- **motifmatchr** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/motifmatchr/inst/doc/motifmatchr.html](https://bioconductor.org/packages/3.23/bioc/vignettes/motifmatchr/inst/doc/motifmatchr.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/motifmatchr/inst/doc/motifmatchr.R](https://bioconductor.org/packages/3.23/bioc/vignettes/motifmatchr/inst/doc/motifmatchr.R)
+- **motifStack** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/motifStack/inst/doc/motifStack_HTML.html](https://bioconductor.org/packages/3.23/bioc/vignettes/motifStack/inst/doc/motifStack_HTML.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/motifStack/inst/doc/motifStack_HTML.R](https://bioconductor.org/packages/3.23/bioc/vignettes/motifStack/inst/doc/motifStack_HTML.R)
+- **MSstats** (Proteomics): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstatsWorkflow.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstatsWorkflow.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstatsWorkflow.R](https://bioconductor.org/packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstatsWorkflow.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstats.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MSstats/inst/doc/MSstats.html)
+- **MultiDataSet** (General biology & multi-omics): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet_Extending_Proteome.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet_Extending_Proteome.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet_Extending_Proteome.R](https://bioconductor.org/packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet_Extending_Proteome.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet.html](https://bioconductor.org/packages/3.23/bioc/vignettes/MultiDataSet/inst/doc/MultiDataSet.html)
+- **multtest** (Computing infrastructure): document_located; 6 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+  - [Sweave/knitr: multtest/inst/otherDocs/MTP.Rnw](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/multtest_2.68.0.tar.gz)
+  - [Sweave/knitr: multtest/inst/otherDocs/MTPALL.Rnw](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/multtest_2.68.0.tar.gz)
+  - [Sweave/knitr: multtest/inst/otherDocs/multtest.Rnw](https://bioconductor.posit.co/packages/3.23/bioc/src/contrib/multtest_2.68.0.tar.gz)
+- **mzID** (Proteomics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/mzID/inst/doc/HOWTO_mzID.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/mzID/inst/doc/HOWTO_mzID.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/mzID/inst/doc/HOWTO_mzID.R](https://bioconductor.org/packages/3.23/bioc/vignettes/mzID/inst/doc/HOWTO_mzID.R)
+- **ncdfFlow** (General biology & multi-omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ncdfFlow/inst/doc/ncdfFlow.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/ncdfFlow/inst/doc/ncdfFlow.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ncdfFlow/inst/doc/ncdfFlow.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ncdfFlow/inst/doc/ncdfFlow.R)
+- **oligoClasses** (Gene expression): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 0 request errors.
+- **openCyto** (General biology & multi-omics): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/openCyto/inst/doc/openCytoVignette.html](https://bioconductor.org/packages/3.23/bioc/vignettes/openCyto/inst/doc/openCytoVignette.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/openCyto/inst/doc/openCytoVignette.R](https://bioconductor.org/packages/3.23/bioc/vignettes/openCyto/inst/doc/openCytoVignette.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/openCyto/inst/doc/HowToAutoGating.html](https://bioconductor.org/packages/3.23/bioc/vignettes/openCyto/inst/doc/HowToAutoGating.html)
+- **org.hs.eg.db** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 3 request errors.
+- **OrganismDbi** (Genome assembly & annotation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/OrganismDbi/inst/doc/OrganismDbi.html](https://bioconductor.org/packages/3.23/bioc/vignettes/OrganismDbi/inst/doc/OrganismDbi.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/OrganismDbi/inst/doc/OrganismDbi.R](https://bioconductor.org/packages/3.23/bioc/vignettes/OrganismDbi/inst/doc/OrganismDbi.R)
+- **quantiseqr** (Immunology): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/quantiseqr/inst/doc/using_quantiseqr.html](https://bioconductor.org/packages/3.23/bioc/vignettes/quantiseqr/inst/doc/using_quantiseqr.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/quantiseqr/inst/doc/using_quantiseqr.R](https://bioconductor.org/packages/3.23/bioc/vignettes/quantiseqr/inst/doc/using_quantiseqr.R)
+- **RBGL** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/RBGL/inst/doc/RBGL.html](https://bioconductor.org/packages/3.23/bioc/vignettes/RBGL/inst/doc/RBGL.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/RBGL/inst/doc/RBGL.R](https://bioconductor.org/packages/3.23/bioc/vignettes/RBGL/inst/doc/RBGL.R)
+- **regioneR** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/regioneR/inst/doc/regioneR.html](https://bioconductor.org/packages/3.23/bioc/vignettes/regioneR/inst/doc/regioneR.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/regioneR/inst/doc/regioneR.R](https://bioconductor.org/packages/3.23/bioc/vignettes/regioneR/inst/doc/regioneR.R)
+- **ReportingTools** (Computing infrastructure): document_located; 8 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ReportingTools/inst/doc/microarrayAnalysis.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/ReportingTools/inst/doc/microarrayAnalysis.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ReportingTools/inst/doc/microarrayAnalysis.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ReportingTools/inst/doc/microarrayAnalysis.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ReportingTools/inst/doc/rnaseqAnalysis.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/ReportingTools/inst/doc/rnaseqAnalysis.pdf)
+- **Rgraphviz** (Computing infrastructure): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/newRgraphvizInterface.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/newRgraphvizInterface.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/newRgraphvizInterface.R](https://bioconductor.org/packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/newRgraphvizInterface.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/Rgraphviz.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Rgraphviz/inst/doc/Rgraphviz.pdf)
+- **ropls** (Metabolomics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/ropls/inst/doc/ropls-vignette.html](https://bioconductor.org/packages/3.23/bioc/vignettes/ropls/inst/doc/ropls-vignette.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/ropls/inst/doc/ropls-vignette.R](https://bioconductor.org/packages/3.23/bioc/vignettes/ropls/inst/doc/ropls-vignette.R)
+- **RProtoBufLib** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/RProtoBufLib/inst/doc/UsingRProtoBufLib.html](https://bioconductor.org/packages/3.23/bioc/vignettes/RProtoBufLib/inst/doc/UsingRProtoBufLib.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/RProtoBufLib/inst/doc/UsingRProtoBufLib.R](https://bioconductor.org/packages/3.23/bioc/vignettes/RProtoBufLib/inst/doc/UsingRProtoBufLib.R)
+- **Rsubread** (Sequence processing): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/Rsubread/inst/doc/Rsubread.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/Rsubread/inst/doc/Rsubread.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/Rsubread/inst/doc/Rsubread.R](https://bioconductor.org/packages/3.23/bioc/vignettes/Rsubread/inst/doc/Rsubread.R)
+- **rtracklayer** (Genome assembly & annotation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.R](https://bioconductor.org/packages/3.23/bioc/vignettes/rtracklayer/inst/doc/rtracklayer.R)
+- **safe** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/safe/inst/doc/SAFEmanual3.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/safe/inst/doc/SAFEmanual3.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/safe/inst/doc/SAFEmanual3.R](https://bioconductor.org/packages/3.23/bioc/vignettes/safe/inst/doc/SAFEmanual3.R)
+- **scater** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/scater/inst/doc/overview.html](https://bioconductor.org/packages/3.23/bioc/vignettes/scater/inst/doc/overview.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/scater/inst/doc/overview.R](https://bioconductor.org/packages/3.23/bioc/vignettes/scater/inst/doc/overview.R)
+- **scds** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/scds/inst/doc/scds.html](https://bioconductor.org/packages/3.23/bioc/vignettes/scds/inst/doc/scds.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/scds/inst/doc/scds.R](https://bioconductor.org/packages/3.23/bioc/vignettes/scds/inst/doc/scds.R)
+- **scuttle** (Single-cell & spatial omics): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/scuttle/inst/doc/userguide.html](https://bioconductor.org/packages/3.23/bioc/vignettes/scuttle/inst/doc/userguide.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/scuttle/inst/doc/userguide.R](https://bioconductor.org/packages/3.23/bioc/vignettes/scuttle/inst/doc/userguide.R)
+- **seqPattern** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/seqPattern/inst/doc/seqPattern.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/seqPattern/inst/doc/seqPattern.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/seqPattern/inst/doc/seqPattern.R](https://bioconductor.org/packages/3.23/bioc/vignettes/seqPattern/inst/doc/seqPattern.R)
+- **siggenes** (Gene expression): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/siggenes/inst/doc/siggenes.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/siggenes/inst/doc/siggenes.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/siggenes/inst/doc/siggenes.R](https://bioconductor.org/packages/3.23/bioc/vignettes/siggenes/inst/doc/siggenes.R)
+- **SingleCellExperiment** (Single-cell & spatial omics): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html](https://bioconductor.org/packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/intro.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/intro.R](https://bioconductor.org/packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/intro.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/apply.html](https://bioconductor.org/packages/3.23/bioc/vignettes/SingleCellExperiment/inst/doc/apply.html)
+- **snpStats** (Genetic variation): document_located; 15 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/snpStats/inst/doc/data-input-vignette.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/snpStats/inst/doc/data-input-vignette.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/snpStats/inst/doc/data-input-vignette.R](https://bioconductor.org/packages/3.23/bioc/vignettes/snpStats/inst/doc/data-input-vignette.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/snpStats/inst/doc/Fst-vignette.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/snpStats/inst/doc/Fst-vignette.pdf)
+- **SPIA** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/SPIA/inst/doc/SPIA.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/SPIA/inst/doc/SPIA.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/SPIA/inst/doc/SPIA.R](https://bioconductor.org/packages/3.23/bioc/vignettes/SPIA/inst/doc/SPIA.R)
+- **STRINGdb** (Systems biology & ontologies): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/STRINGdb/inst/doc/STRINGdb.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/STRINGdb/inst/doc/STRINGdb.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/STRINGdb/inst/doc/STRINGdb.R](https://bioconductor.org/packages/3.23/bioc/vignettes/STRINGdb/inst/doc/STRINGdb.R)
+- **survcomp** (Biomedical text & clinical data): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/survcomp/inst/doc/survcomp.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/survcomp/inst/doc/survcomp.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/survcomp/inst/doc/survcomp.R](https://bioconductor.org/packages/3.23/bioc/vignettes/survcomp/inst/doc/survcomp.R)
+- **sva** (Gene expression): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/sva/inst/doc/sva.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/sva/inst/doc/sva.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/sva/inst/doc/sva.R](https://bioconductor.org/packages/3.23/bioc/vignettes/sva/inst/doc/sva.R)
+- **tkWidgets** (Computing infrastructure): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/tkWidgets/inst/doc/tkWidgets.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/tkWidgets/inst/doc/tkWidgets.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/tkWidgets/inst/doc/tkWidgets.R](https://bioconductor.org/packages/3.23/bioc/vignettes/tkWidgets/inst/doc/tkWidgets.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/tkWidgets/inst/doc/importWizard.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/tkWidgets/inst/doc/importWizard.pdf)
+- **trackViewer** (Genome assembly & annotation): document_located; 10 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/trackViewer/inst/doc/changeTracksStyles.html](https://bioconductor.org/packages/3.23/bioc/vignettes/trackViewer/inst/doc/changeTracksStyles.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/trackViewer/inst/doc/changeTracksStyles.R](https://bioconductor.org/packages/3.23/bioc/vignettes/trackViewer/inst/doc/changeTracksStyles.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/trackViewer/inst/doc/dandelionPlot.html](https://bioconductor.org/packages/3.23/bioc/vignettes/trackViewer/inst/doc/dandelionPlot.html)
+- **TreeSummarizedExperiment** (Phylogenetics & evolution): document_located; 4 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/Introduction_to_treeSummarizedExperiment.html](https://bioconductor.org/packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/Introduction_to_treeSummarizedExperiment.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/Introduction_to_treeSummarizedExperiment.R](https://bioconductor.org/packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/Introduction_to_treeSummarizedExperiment.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/The_combination_of_multiple_TSEs.html](https://bioconductor.org/packages/3.23/bioc/vignettes/TreeSummarizedExperiment/inst/doc/The_combination_of_multiple_TSEs.html)
+- **VariantAnnotation** (Genetic variation): document_located; 6 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/VariantAnnotation.html](https://bioconductor.org/packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/VariantAnnotation.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/VariantAnnotation.R](https://bioconductor.org/packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/VariantAnnotation.R)
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/filterVcf.html](https://bioconductor.org/packages/3.23/bioc/vignettes/VariantAnnotation/inst/doc/filterVcf.html)
+- **viper** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/viper/inst/doc/viper.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/viper/inst/doc/viper.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/viper/inst/doc/viper.R](https://bioconductor.org/packages/3.23/bioc/vignettes/viper/inst/doc/viper.R)
+- **wateRmelon** (Gene regulation): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/wateRmelon/inst/doc/wateRmelon.html](https://bioconductor.org/packages/3.23/bioc/vignettes/wateRmelon/inst/doc/wateRmelon.html)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/wateRmelon/inst/doc/wateRmelon.R](https://bioconductor.org/packages/3.23/bioc/vignettes/wateRmelon/inst/doc/wateRmelon.R)
+- **widgetTools** (Computing infrastructure): document_located; 2 document representations, 0 tutorial leads; 1 requests, 0 request errors.
+  - [Rendered vignette: /packages/3.23/bioc/vignettes/widgetTools/inst/doc/widgetTools.pdf](https://bioconductor.org/packages/3.23/bioc/vignettes/widgetTools/inst/doc/widgetTools.pdf)
+  - [Vignette R script: /packages/3.23/bioc/vignettes/widgetTools/inst/doc/widgetTools.R](https://bioconductor.org/packages/3.23/bioc/vignettes/widgetTools/inst/doc/widgetTools.R)
+- **zlibbioc** (Computing infrastructure): none_detected; 0 document representations, 0 tutorial leads; 4 requests, 4 request errors.
+- **circos** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 4 request errors.
+- **perl-bio-featureio** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **gmap** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **aragorn** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **segemehl** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **clustalo** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 4 request errors.
+- **kma** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 12 requests, 1 request errors.
+- **qualimap** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 61 requests, 8 request errors.
+- **stacks** (Genetic variation): none_detected; 0 document representations, 0 tutorial leads; 7 requests, 2 request errors.
+- **glimmerhmm** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 1 request errors.
+- **perl-bio-tools-phylo-paml** (Phylogenetics & evolution): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **perl-bio-tools-run-alignment-clustalw** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **perl-bio-tools-run-alignment-tcoffee** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **perl-bio-asn1-entrezgene** (General biology & multi-omics): none_detected; 0 document representations, 0 tutorial leads; 9 requests, 0 request errors.
+- **perl-bio-coordinate** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **perl-bio-searchio-hmmer** (Protein structure & biophysics): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **perl-bioperl** (General biology & multi-omics): none_detected; 0 document representations, 0 tutorial leads; 12 requests, 0 request errors.
+- **perl-bioperl-run** (General biology & multi-omics): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 0 request errors.
+- **perl-bio-samtools** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 0 request errors.
+- **abundancebin** (Microbiome & metagenomics): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 2 request errors.
+- **emboss** (General biology & multi-omics): none_detected; 0 document representations, 0 tutorial leads; 11 requests, 1 request errors.
+- **poa** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **subread** (Sequence processing): tutorial_lead; 0 document representations, 2 tutorial leads; 16 requests, 1 request errors.
+  - [Worked tutorial lead: /featureCounts.html](https://subread.sourceforge.net/featureCounts.html)
+  - [Worked tutorial lead: /exactSNP.html](https://subread.sourceforge.net/exactSNP.html)
+- **sccoord** (Single-cell & spatial omics): none_detected; 0 document representations, 0 tutorial leads; 15 requests, 1 request errors.
+- **mol-hume** (Cheminformatics & drug discovery): none_detected; 0 document representations, 0 tutorial leads; 10 requests, 1 request errors.
+- **cell-eval2** (Single-cell & spatial omics): document_located; 1 document representations, 0 tutorial leads; 11 requests, 2 request errors.
+  - [Jupyter: tutorials/vcc/vcc.ipynb](https://github.com/ArcInstitute/cell-eval/blob/6928cf8bd7a706040ccfd13119e4085726dee64a/tutorials/vcc/vcc.ipynb)
+- **pdex** (Single-cell & spatial omics): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 2 request errors.
+- **gprofiler-official** (Systems biology & ontologies): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **clustalw** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 7 requests, 0 request errors.
+- **rpsbproc** (Protein structure & biophysics): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 0 request errors.
+- **Entrez Direct** (General biology & multi-omics): none_detected; 0 document representations, 0 tutorial leads; 5 requests, 2 request errors.
+- **BUSCO** (Genome assembly & annotation): none_detected; 0 document representations, 0 tutorial leads; 11 requests, 0 request errors.
+- **LAST** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 9 requests, 1 request errors.
+- **proteinortho** (Phylogenetics & evolution): none_detected; 0 document representations, 0 tutorial leads; 6 requests, 0 request errors.
+- **MAFFT** (Sequence processing): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
+- **MEME Suite** (Gene regulation): tutorial_lead; 0 document representations, 4 tutorial leads; 18 requests, 1 request errors.
+  - [Worked tutorial lead: /meme/doc/overview.html](https://meme-suite.org/meme/doc/overview.html#guides)
+  - [Worked tutorial lead: /meme/doc/glam2_tut.html](https://meme-suite.org/meme/doc/glam2_tut.html)
+  - [Worked tutorial lead: /doc/overview.html](https://meme-suite.org/doc/overview.html#guides)
+- **pybiolib** (Computing infrastructure): none_detected; 0 document representations, 0 tutorial leads; 8 requests, 0 request errors.
