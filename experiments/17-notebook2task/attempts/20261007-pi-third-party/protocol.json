@@ -1,0 +1,34 @@
+{
+  "stage": "independent solver attempts on released third-party tasks",
+  "tasks": ["seta-cytopathology", "bix-1-q1"],
+  "attempts_per_task": 1,
+  "concurrency": 1,
+  "trial_retries": 0,
+  "harbor_commit": "8feaa38768b3bc452b8d61d8de2dfbb34bcd8757",
+  "model": "hosted_vllm/glm-5.3",
+  "weights_revision": null,
+  "agent_kwargs": {
+    "version": "0.87.0",
+    "thinking": "medium",
+    "thinking_format": "chat-template",
+    "model_info": {"max_input_tokens": 131072, "max_output_tokens": 32768}
+  },
+  "solver_requests_per_task_cap": 64,
+  "sampling": {"temperature": 0.7, "top_p": 0.95, "seed": 0},
+  "agent_timeout_sec": 3600,
+  "agent_setup_timeout_sec": 360,
+  "judge": {
+    "provider": "Together",
+    "model": "openai/gpt-oss-120b",
+    "max_upstream_calls": 1,
+    "retries": 0,
+    "max_output_tokens": 1024,
+    "rubric": "Unchanged Harbor BixBench adapter",
+    "failure_policy": "Keep missing or failed grading unscored; no recovery call"
+  },
+  "environment": "Daytona CPU sandboxes; existing Iris CPU orchestrator",
+  "storage_override_mb": 10240,
+  "resource_notes": "Original CPU/memory requests and verifier deadlines retained. Explicit 10 GiB sandbox disk override for Daytona account limit. No new inference deployment.",
+  "retention": "Native Pi sessions, trajectories, requests/responses, verifier logs and submitted artifacts retained in Iris output archive. Public copies require credential and private-route redaction.",
+  "interpretation": "Two public example attempts, not a benchmark-wide score. Original released task and verifier limitations remain. Our generated tasks are excluded."
+}
