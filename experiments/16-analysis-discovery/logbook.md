@@ -257,3 +257,5 @@ Canonical grouping and both-site browser checks passed locally and on public HTM
 ### 2026-10-07 — Format distribution and separate source browsing
 
 Added a descending horizontal bar chart of source identities with each detected document format. Bars are labeled with counts, keyboard-accessible and open the Sources tab with the format applied. Counts overlap for multi-format sources and reflect consolidated vignette representations; they are not unique-notebook totals. Inventory now opens an Overview with metrics, format visualization and domain summary; the 1,014-row table and filters live only in Sources. Domain buttons also open filtered Sources. Local checks verify all bar counts against the inventory, Jupyter drilldown, absence of source rows on Overview, domain navigation and desktop/mobile overflow.
+
+Published revision f709793f8237812baf32f14377a7465627c53906 passed public browser checks. Issue body updated and read back exactly, OPEN.

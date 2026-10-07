@@ -5,7 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
-- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
+- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/f709793f8237812baf32f14377a7465627c53906/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
 - [Latest source recovery and input tracing](resolution.md)
 - [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
@@ -55,4 +55,4 @@ Build the current methods-first presentation after regenerating the explorer dat
 
 The [fixed issue-5 repository audit](repo-notebook-audit/results.md) checks multiple notebook/literate-document formats across 871 mapped repositories. Its original 1,014-source universe and labels are separate from the 100-document collection.
 
-Current sites: [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/workbench.html) · [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/inventory.html). Both are standalone HTML files with reciprocal links; build both with `python experiments/16-analysis-discovery/build_workbench.py`.
+Current sites: [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/f709793f8237812baf32f14377a7465627c53906/experiments/16-analysis-discovery/workbench.html) · [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/f709793f8237812baf32f14377a7465627c53906/experiments/16-analysis-discovery/inventory.html). Both are standalone HTML files with reciprocal links; build both with `python experiments/16-analysis-discovery/build_workbench.py`.
