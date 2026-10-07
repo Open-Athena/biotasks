@@ -185,3 +185,11 @@ Published `style-options.html` at `164861177de5ed9794cda0f85f3cdfa41d31e0e7`: Ed
 Replaced palette-only comparison as the issue's primary design link with five distinct interaction layouts: source-card catalog, sidebar dashboard, coverage-first matrix with drilldowns, long-form editorial report, and searchable split-pane inspector. All consume the same normalized explorer payload. No forced heading line break; default results explorer remains unchanged pending user choice. Builders and templates are branch-local.
 
 First public check at `31d827f` failed on dashboard source-table mobile overflow (exit 1); browser closed through finally. Fixed grid-child minimum width at `86d3bf8a64b6a212a4c4529500a90f5567dae1f6`. The public rerun passed 14:57:14–14:57:17 UTC, exit 0, peak child RSS 116896 KiB (450 MiB estimate). Checks cover all five layouts at desktop/mobile widths, filtering, details, CSV exports, empty states, reset and matrix navigation; zero page errors. Public evidence: `evidence/browser-layout-options.json`. Issue body updated and exact readback/OPEN state verified.
+
+## 2026-10-07 — Methods-first workbench
+
+Applied the user's preferred dark workbench style across Methods, Sources, Coverage, Findings and Source index. The opening methods map documents all 11 recorded routes and four common screening steps, with counts and route-to-source drilldowns. Every candidate field is rendered in the complete record; JSON export preserves the normalized payload. The awesome-biology inventory remains accessible. Scientific assessments are unchanged.
+
+Published revision `13735c0f64955f9fdb75983c70c7113f89c8c98f` passed public checks at 15:06:26–15:06:30 UTC (exit 0, peak child RSS 115876 KiB, 450 MiB estimate). All five views fit desktop/mobile widths; all route drilldowns, manifest export, detail metadata, filters, coverage and curated drilldowns passed without page errors. Browser closed normally. Evidence: `evidence/browser-workbench.json`.
+
+GitHub GraphQL issue edits failed twice with server errors; REST PATCH returned an empty response parse error. Subsequent readback: issue body matches intended update = False; issue state = OPEN. Exact pending body saved in evidence/issue-body-pending.md; published body preserved separately.

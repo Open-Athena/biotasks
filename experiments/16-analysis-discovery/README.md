@@ -5,7 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
-- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b4c73c84811dc5b9999a0c0cc9a05e4c440029a1/experiments/16-analysis-discovery/explorer.html) (unified 100-document results; public browser checks passed)
+- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/13735c0f64955f9fdb75983c70c7113f89c8c98f/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
 - [Latest source recovery and input tracing](resolution.md)
 - [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
@@ -50,3 +50,5 @@ limitation. `manifest-sha256.json` hashes the small evidence and builder inputs.
 HTMLPreview publication uses a Git commit permalink rather than a moving branch.
 The explorer embeds its data and has no external script, font or data dependency.
 Publication is a review checkpoint, not scientific validation or issue completion.
+
+Build the current methods-first presentation after regenerating the explorer data with `python3 experiments/16-analysis-discovery/build_workbench.py`. The historical design comparisons remain separate.
