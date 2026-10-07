@@ -60,6 +60,7 @@ for case in catalog["comparisons"]:
         case["glm_output"] = draft.read_text() if draft.exists() else ((final.read_text() or "No draft or final response was written.") if final.exists() else "No draft or final response was written.")
     if case["id"] == "seta-cytopathology":
         generated = root.parent / "runs/20261006-glm53-cpu-training-v1-builder-continuation/results/seta-cytopathology/artifacts"
+        case["released_solution"] = (comparison_root / "seta-solve.sh").read_text()
         case["released_verifier"] = (comparison_root / "seta-tests.txt").read_text()
         case["cpu_variant_instruction"] = (generated / "instruction.md").read_text()
         case["cpu_variant_tests"] = (root.parent / "validation/cpu-training-v1/candidate/tests/test_outputs.py").read_text()
@@ -111,9 +112,9 @@ for case in catalog["comparisons"]:
                     token.attrSet("target", "_blank")
                     token.attrSet("rel", "noopener noreferrer")
         case[field + "_html"] = md.renderer.render(tokens, md.options, {})
-    for field in ["released_verifier", "cpu_variant_tests", "reference_solution", "reference_record"]:
+    for field in ["released_verifier", "cpu_variant_tests", "reference_solution", "reference_record", "released_solution"]:
         if field in case:
-            case[field + "_html"] = syntax(case[field], "json" if field == "reference_record" else "python")
+            case[field + "_html"] = syntax(case[field], "json" if field == "reference_record" else "bash" if field == "released_solution" else "python")
     if "result_artifacts" in case:
         case["result_artifacts_html"] = {name: syntax(text, "json") for name, text in case["result_artifacts"].items()}
     case["instruction_html"] = md.render(case["instruction"])
