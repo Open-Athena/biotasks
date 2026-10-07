@@ -25,6 +25,7 @@ with sync_playwright() as p:
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
         assert page.locator('h1').inner_text()=='How the source collection was built'
+        assert page.locator('[data-layout]').all_text_contents()==['Methods','Sources','Coverage','Source index']
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
@@ -33,7 +34,7 @@ with sync_playwright() as p:
         exported=json.loads(Path(download.value.path()).read_text())
         assert len(exported)==100
         assert exported==page.evaluate('window.BIOTASKS_DATA.rows')
-        for mode in ['methods','workbench','coverage','report','curated']:
+        for mode in ['methods','workbench','coverage','curated']:
             page.locator(f'[data-layout={mode}]').click()
             for width in [1440,390]:
                 page.set_viewport_size({'width':width,'height':1000})
@@ -74,4 +75,4 @@ with sync_playwright() as p:
         assert not errors,errors
     finally:
         browser.close()
-print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':5,'checks':['methods opens first','11 route drilldowns and 4 screening steps','five views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
+print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':4,'checks':['methods opens first','11 route drilldowns and 4 screening steps','four views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
