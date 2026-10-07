@@ -51,6 +51,9 @@ with sync_playwright() as pw:
         assert 'HistGradientBoostingClassifier' in page.locator('.solution-code').inner_text()
         page.click('#tab-results')
         assert page.locator('#workspace-panel tbody tr').count() == 8
+        page.get_by_text('Validation evidence, repairs and limitations', exact=True).click()
+        assert page.locator('.cpu-variant-validation h1').count() == 1
+        assert '/validation/cpu-training-v1/native-02/' in page.locator('.cpu-variant-validation a').first.get_attribute('href')
         page.select_option('#artifact-select', 'eda.json')
         assert 'high_correlation_pairs' in page.locator('#artifact-content').inner_text()
         page.get_by_text('Authoring trace · GLM-5.3 · 12 responses', exact=True).click()
@@ -58,6 +61,10 @@ with sync_playwright() as pw:
         page.screenshot(path='/tmp/bio17-workspace-results.png', full_page=True)
         page.select_option('#task-select', 'released')
         assert page.locator('#artifact-select').count() == 0
+        page.get_by_text('GLM baseline output', exact=True).click()
+        assert page.locator('.glm-output h1, .glm-output h2, .glm-output h3').count() > 0
+        page.get_by_text('Earlier Codex baseline', exact=True).click()
+        assert page.locator('.baseline-draft h1, .baseline-draft h2, .baseline-draft h3').count() > 0
         page.select_option('#notebook-select', 'dnase')
         page.wait_for_selector('#source-frame iframe')
         assert 'bedtools' in page.frame_locator('#source-frame iframe').locator('body').inner_text()

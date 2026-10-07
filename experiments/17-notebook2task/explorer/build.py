@@ -4,6 +4,7 @@ import hashlib
 import html
 from markdown_it import MarkdownIt
 from pathlib import Path
+from urllib.parse import urljoin
 
 root = Path(__file__).resolve().parent
 catalog = json.loads((root / "catalog.json").read_text())
@@ -78,6 +79,20 @@ for case in catalog["comparisons"]:
         case["instruction"] = question["question"]
         case["reference_answer"] = question["ideal"]
         case["canary"] = question["canary"]
+    for field in ["baseline_draft", "glm_output", "cpu_variant_validation"]:
+        if field not in case:
+            continue
+        tokens = md.parse(case[field])
+        for block in tokens:
+            for token in block.children or []:
+                if token.type == "link_open":
+                    if field == "cpu_variant_validation":
+                        token.attrSet("href", urljoin(
+                            "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/validation/cpu-training-v1/",
+                            token.attrGet("href") or ""))
+                    token.attrSet("target", "_blank")
+                    token.attrSet("rel", "noopener noreferrer")
+        case[field + "_html"] = md.renderer.render(tokens, md.options, {})
     case["instruction_html"] = md.render(case["instruction"])
     if case.get("cpu_variant_instruction"):
         case["cpu_variant_instruction_html"] = md.render(case["cpu_variant_instruction"])
