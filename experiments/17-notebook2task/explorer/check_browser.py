@@ -44,8 +44,11 @@ with sync_playwright() as pw:
         assert page.locator('.task-instruction li').count() > 0
         assert page.locator('.task-instruction code').count() > 0
         assert page.locator('pre.task-instruction').count() == 0
-        page.get_by_text('View Markdown source', exact=True).click()
-        assert '20250607' in page.locator('#workspace-panel details').first.inner_text()
+        assert page.get_by_text('View Markdown source', exact=True).count() == 0
+        assert page.locator('.task-card').count() == 2
+        assert 'def test_' in page.locator('.verifier-code').inner_text()
+        assert 'parent repair' in page.locator('.annotations').last.inner_text()
+        assert page.locator('.artifact-scroll').first.evaluate('(el) => el.scrollHeight > el.clientHeight')
         page.click('#tab-solution')
         assert 'GLM-5.3' in page.locator('#model-select').inner_text()
         assert 'HistGradientBoostingClassifier' in page.locator('.solution-code').inner_text()

@@ -1,0 +1,24 @@
+{
+  "seta-cytopathology": {
+    "released": {
+      "prompt": "Classify malignant versus benign samples from cytopathology measurements. The prompt asks for at least three classifiers, feature selection, cross-validation, a weighted ensemble, prediction artifacts and a report, with test AUC at least 0.93.",
+      "prompt_notes": ["The released task is broader than a single prediction question: it specifies several modeling and reporting requirements.", "The original Kaggle analysis is identifiable, but the release does not establish an exact source-version match."],
+      "verifier": "The released Python tests check output files, row counts, columns, model names, metric ranges and report content. Ensemble AUC is computed against true_label from the submitted predictions file.",
+      "verifier_notes": ["Labels and the prescribed split are not independently recovered from trusted input data in these tests. Solver-supplied labels and reported metrics therefore remain a grading weakness identified by static inspection.", "This upstream verifier has not been executed here. The separate native validation applies to our CPU-training variant, not this released task."]
+    },
+    "own": {
+      "prompt": "Reproduce a fixed three-model comparison: logistic regression, random forest and histogram gradient boosting. Use the published train/test split and cross-validation protocol; emit row-keyed predictions, metrics, EDA facts and a report. Select the model by mean training-fold ROC-AUC.",
+      "prompt_notes": ["A parent-reviewed specification fixes the algorithms, seed and schemas. This measures reproduction of the specified analysis rather than open-ended model selection.", "This variant changes both the training policy and the grading contract; it is not an unchanged SETA baseline."],
+      "verifier": "Nine Python tests regenerate the split, folds, model predictions and EDA facts from a trusted CSV. They check row identity, probabilities within absolute tolerance 1e-6, recomputed metrics, model selection and report content.",
+      "verifier_notes": ["The displayed code includes one parent repair: removal of an unsupported assertion requiring at least 30 correlated feature pairs. Exact recomputation remains required; the observed count is 21.", "All nine native tests pass, along with an independent reference check and eight control expectations. Docker/Harbor execution and independent solver evaluation remain untested."]
+    }
+  },
+  "bix-asxl1": {
+    "released": {
+      "prompt": "Run DESeq2 differential expression, then simplified GO enrichment, and report the adjusted p-value for regulation of T cell activation rounded to four decimal places.",
+      "prompt_notes": ["The released question names padj < 0.05 and clusterProfiler::simplify() with similarity > 0.7.", "The linked capsule supplies the original analysis; this is existing benchmark comparison material."],
+      "verifier": "A published reference-answer record is available, but executable grading code has not been captured for this example. The record below is evidence of the expected answer, not a verifier implementation.",
+      "verifier_notes": ["The published ideal answer is 0.0002. This alone does not establish the evaluator's answer-matching rules or tolerances.", "Neither the released analysis nor its evaluator has been rerun here."]
+    }
+  }
+}
