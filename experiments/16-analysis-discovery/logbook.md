@@ -263,3 +263,11 @@ Published revision f709793f8237812baf32f14377a7465627c53906 passed public browse
 ### 2026-10-07 — Biological-domain visualization
 
 Added descending clickable domain bars, defaulting to the 502 source identities with a document located and switchable to all 1,014 sources. Each source uses its single original primary-domain label; labels do not classify notebook content. Clicking a bar opens Sources with the domain and selected evidence scope applied. Detailed domain/result counts are collapsed to keep Overview concise. Local browser checks validate the 502/1,014 sums and drilldowns. Clarified the rendered-vignette chart label: authoring source not recovered, not evidence that R Markdown is unavailable; many records are locators rather than fetched HTML.
+
+### 2026-10-07 — Authoring-source recovery across all rendered vignettes
+
+User requested going beyond rendered links for all entries. Checked all 176 rendered-vignette locators from 96 sources. Recovered 167 authoring documents (88 R Markdown, 79 Sweave/knitr), covering 94 sources; nine remain unresolved across edgeR, limma, lumi and multtest. Excluded edgeR/limma PDF-inclusion Rnw wrappers from authoring promotion. Recovered lowercase GlobalAncova .rnw and substantive prose-only snpStats Rnw through targeted inspection. The remaining multtest TeX is an unconfirmed authoring lead, not automatically promoted.
+
+First run stopped on an archive-locator path assumption; resumable correction handled archive members. Initial mirror then returned rate-limit errors; main site returned 403. Added pacing and stop-on-429 behavior, then recovered remaining accessible text through the officially listed TU Dortmund mirror. Preserved attempts and resource logs; no installation or analysis execution. Final reconciliation checks all 176 locators, canonical pairing and unchanged 1,014-source identities/totals. Source format counts now include 245 R Markdown, 197 Jupyter, 77 Sweave/knitr and four rendered-vignette fallback sources. Counts overlap; they are not document totals. Raw authoring text was inspected but only fingerprints and links retained.
+
+The requested biological-domain chart is included in this publication: document-located or all-source scope, clickable domain filters, detailed domain table collapsed. No historical acquisition sections were added to the sites.

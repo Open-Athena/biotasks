@@ -4,12 +4,12 @@ from collections import Counter
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 rows={}
-for filename in ['observations.jsonl','followup.jsonl','archive-followup.jsonl']:
+for filename in ['observations.jsonl','followup.jsonl','archive-followup.jsonl','refinement.jsonl']:
     if not (ROOT/filename).exists():continue
     for line in (ROOT/filename).read_text().splitlines():
         x=json.loads(line);sid=x['source_id']
         if sid not in rows:rows[sid]=x;continue
-        r=rows[sid];r['requests']+=x['requests'];r['documents']+=x['documents'];r['unresolved']=x['unresolved'];r['end']=x['end']
+        r=rows[sid];r['requests']+=x['requests'];r['documents']+=x['documents'];r['unresolved']=x['unresolved'];r['end']=x['end'];r.setdefault('notes',[]).extend(x.get('notes',[]))
         if x.get('archive'):r.setdefault('archive_followups',[]).append(x['archive'])
 original=json.loads((ROOT.parent/'alternative-source-audit/summary.json').read_text())['rows']
 expected={r['source_id']:[n for n in r['documents'] if n['format']=='Rendered vignette'] for r in original if any(n['format']=='Rendered vignette' for n in r['documents'])}

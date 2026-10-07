@@ -12,6 +12,8 @@ data['alternative_audit'] = json.loads((root/'alternative-source-audit/summary.j
 data['repository_audit'] = json.loads((root/'repo-notebook-audit/summary.json').read_text())
 # Present one inventory; retain acquisition-specific evidence inside each record.
 alt = {r['source_id']: r for r in data['alternative_audit']['rows']}
+recovery_path=root/'authoring-recovery/final-observations.jsonl'
+recovered_sources={r['source_id']:r for r in (json.loads(line) for line in recovery_path.read_text().splitlines())}
 unified = []
 for r in data['repository_audit']['rows']:
     a = alt.get(r['source_id'])
@@ -29,9 +31,10 @@ for r in data['repository_audit']['rows']:
         url = 'https://github.com/' + r['repo']
         formats = r['formats']
         method = 'Repository tree and bounded text signatures'
-    if r['source_id']=='bioconductor:alabaster.matrix':
-        recovered=json.loads((root/'evidence/alabaster-matrix-source-link.json').read_text())
-        docs=[*docs, {'path':'vignettes/userguide.Rmd','url':recovered['url'],'format':'R Markdown','detection':'Source fetched and matched to package authoring-source SHA-256','sha256':recovered['sha256']}]
+    recovery=recovered_sources.get(r['source_id'])
+    if recovery:
+        docs=[*docs,*recovery['documents']]
+        evidence={**evidence,'authoring_recovery':recovery}
     docs=consolidate(docs)
     formats=sorted({n['format'] for n in docs}) if a else formats
     unified.append({'source_id':r['source_id'],'name':r['name'],'primary_domain':r['primary_domain'],'url':url,'result':result,'formats':formats,'documents':docs,'method':method,'evidence':evidence})
@@ -45,6 +48,6 @@ for filename, site in [('workbench.html','methods'), ('inventory.html','inventor
     site_data = {**data, 'site':site}
     payload = json.dumps(site_data, ensure_ascii=False).replace('<', '\\u003c')
     (root/filename).write_text(template.replace('__PAYLOAD__',payload))
-inputs=['consolidate_documents.py','evidence/alabaster-matrix-build.json','evidence/alabaster-matrix-source-link.json','alternative-source-audit/summary.json','explorer.html','workbench.template.html','build_workbench.py','repo-notebook-audit/summary.json','evidence/tool-discovery-provenance.json']
+inputs=['authoring-recovery/final-observations.jsonl','consolidate_documents.py','evidence/alabaster-matrix-build.json','evidence/alabaster-matrix-source-link.json','alternative-source-audit/summary.json','explorer.html','workbench.template.html','build_workbench.py','repo-notebook-audit/summary.json','evidence/tool-discovery-provenance.json']
 (root/'workbench-sha256.json').write_text(json.dumps({p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in inputs},indent=2)+'\n')
 print('Built methods-first workbench with full candidate metadata and repository audit')

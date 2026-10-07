@@ -103,7 +103,7 @@ with sync_playwright() as p:
         page.locator('#auditStatus').select_option('located')
         assert page.locator('#auditRows tbody tr').count()==502
         page.locator('#auditFormat').select_option('R Markdown')
-        assert page.locator('#auditRows tbody tr').count()==187
+        assert page.locator('#auditRows tbody tr').count()==sum('R Markdown' in r['formats'] and r['result']=='located' for r in audit['rows'])
         page.locator('#auditFormat').select_option('')
         page.locator('#auditStatus').select_option('')
         page.locator('#auditQuery').fill('alabaster.matrix')

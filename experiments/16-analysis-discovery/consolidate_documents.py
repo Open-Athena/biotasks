@@ -11,12 +11,13 @@ AUTHORING = {'R Markdown', 'Quarto', 'Sweave/knitr', 'Jupyter', 'marimo', 'Pluto
 def consolidate(documents):
     groups = {}
     for n in documents:
-        path = urlsplit(n['url']).path
+        pair_url = n.get('group_url', n['url'])
+        path = urlsplit(pair_url).path
         is_vignette = '/vignettes/' in path and '/inst/doc/' in path
         # Mirror hosts share the same versioned Bioconductor path.
-        host = urlsplit(n['url']).hostname
+        host = urlsplit(pair_url).hostname
         known_host = host in {'bioconductor.org', 'bioconductor.posit.co'}
-        key = ('vignette', str(PurePosixPath(path).with_suffix(''))) if is_vignette and known_host else ('artifact', n['url'], n['path'])
+        key = ('vignette', str(PurePosixPath(path).with_suffix(''))) if is_vignette and known_host else ('artifact', pair_url, n.get('group_path',n['path']))
         groups.setdefault(key, []).append(dict(n))
     result = []
     for key, items in groups.items():
