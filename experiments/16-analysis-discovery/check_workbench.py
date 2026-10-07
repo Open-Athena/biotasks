@@ -85,14 +85,25 @@ with sync_playwright() as p:
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.set_viewport_size({'width':1440,'height':1000})
         audit=page.evaluate('window.BIOTASKS_DATA.source_inventory')
-        assert audit['all']=={'sources':1014,'located':502,'lead':2,'none_detected':509,'unknown':1}
+        assert audit['all']['sources']==1014
+        assert sum(audit['all'][k] for k in ['located','lead','none_detected','unknown'])==1014
+        assert audit['completed_source_ledgers']==1014
+        assert int(page.locator('#notebookTotal').inner_text().replace(',',''))==audit['notebooks']['total']
+        assert int(page.locator('#repositoryNotebookTotal').inner_text().replace(',',''))==sum(r['notebook_count'] for r in audit['repositories'])
+        assert sum(int(v) for v in page.locator('#notebookFormats td:nth-child(2)').all_text_contents())==audit['notebooks']['total']
+        with page.expect_download() as event:
+            page.locator('#downloadRepositoryCounts').click()
+        import csv
+        downloaded=list(csv.DictReader(Path(event.value.path()).read_text().splitlines()))
+        assert len(downloaded)==len(audit['repositories'])
+        assert sum(int(r['notebooks']) for r in downloaded)==audit['notebooks']['across_repositories']
         assert page.locator('#formatDistribution [data-format-bar]').count()==len(audit['formats'])
         for fmt in audit['formats']:
             bar=page.locator(f'[data-format-bar="{fmt}"]')
             expected=sum(fmt in r['formats'] for r in audit['rows'])
             assert int(bar.locator('strong').inner_text())==expected
         page.locator('[data-format-bar="Jupyter"]').click()
-        assert page.locator('#auditRows tbody tr').count()==197
+        assert page.locator('#auditRows tbody tr').count()==sum('Jupyter' in r['formats'] for r in audit['rows'])
         assert page.locator('h1').inner_text()=='Explore source documents'
         for width in [1440,390]:
             page.set_viewport_size({'width':width,'height':1000})
@@ -101,17 +112,28 @@ with sync_playwright() as p:
         page.locator('#auditFormat').select_option('')
         assert page.locator('#auditRows tbody tr').count()==1014
         page.locator('#auditStatus').select_option('located')
-        assert page.locator('#auditRows tbody tr').count()==502
+        assert page.locator('#auditRows tbody tr').count()==audit['all']['located']
         page.locator('#auditFormat').select_option('R Markdown')
         assert page.locator('#auditRows tbody tr').count()==sum('R Markdown' in r['formats'] and r['result']=='located' for r in audit['rows'])
         page.locator('#auditFormat').select_option('')
         page.locator('#auditStatus').select_option('')
+        for sid,minimum in [('github:scverse/scvi-tools',65),('github:scverse/squidpy',50),('github:scverse/liana',14),('github:scverse/decoupler',9),('github:mdanalysis/mdanalysis',8)]:
+            page.locator('#auditQuery').fill(sid)
+            assert page.locator('#auditRows tbody tr').count()==1
+            assert int(page.locator('.notebook-count strong').inner_text())==next(r['notebook_count'] for r in audit['rows'] if r['source_id']==sid)
+            assert int(page.locator('.notebook-count strong').inner_text())>0
+        page.locator('#auditQuery').fill('')
+        page.locator('#auditOrder').select_option('notebooks')
+        counts=[int(v) for v in page.locator('.notebook-count strong').all_text_contents()]
+        assert counts==sorted(counts,reverse=True)
+        assert f"{audit['notebooks']['total']:,} distinct notebooks" in page.locator('#filteredNotebookTotal').inner_text()
+        page.locator('#auditOrder').select_option('inventory')
         page.locator('#auditQuery').fill('alabaster.matrix')
         assert page.locator('#auditRows tbody tr').count()==1
         page.locator('#auditRows summary').click()
         assert 'Authoring source' in page.locator('#auditRows').inner_text()
         assert 'Extracted R code' in page.locator('#auditRows').inner_text()
-        assert page.locator('#auditRows td').nth(2).locator('a').first.get_attribute('href').endswith('userguide.Rmd')
+        assert page.locator('#auditRows td').nth(3).locator('a').first.get_attribute('href').endswith('userguide.Rmd')
         page.locator('#auditQuery').fill('cell-eval2')
         assert page.locator('#auditRows tbody tr').count()==1
         page.locator('#auditRows summary').click()
@@ -122,7 +144,7 @@ with sync_playwright() as p:
         assert page.locator('#auditRows').count()==0
         bars=page.locator('#domainDistribution [data-domain-bar]')
         assert bars.count()==len(audit['domains'])
-        assert sum(int(v) for v in bars.locator('strong').all_text_contents())==502
+        assert sum(int(v) for v in bars.locator('strong').all_text_contents())==audit['all']['located']
         page.locator(f'[data-domain-bar="{first}"]').click()
         assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['located']
         page.locator('.choices [data-layout=repository]').click()
@@ -139,4 +161,4 @@ with sync_playwright() as p:
         assert not errors,errors
     finally:
         browser.close()
-print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':5,'checks':['methods opens first','11 route drilldowns and 4 screening steps','five views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown','HF collapsed by default','fixed inventory totals and format/domain filters'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
+print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':5,'checks':['methods opens first','11 route drilldowns and 4 screening steps','five views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown','HF collapsed by default','fixed inventory identities and format/domain filters','all-format notebook totals and repository CSV','submodule and MDAnalysis regression examples','notebook count sorting and filtered totals'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))

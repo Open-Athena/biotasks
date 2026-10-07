@@ -105,6 +105,8 @@ def get(url, rec, api=False, cap=1024**2):
         if cache.exists():
             raw = cache.read_bytes()
             event['cache_reused'] = True
+            if cache.with_suffix('.meta').exists():
+                event.update(json.loads(cache.with_suffix('.meta').read_text()))
         elif api:
             p = subprocess.run(['gh', 'api', url.removeprefix('https://api.github.com/')], capture_output=True, timeout=15)
             if p.returncode:
@@ -122,6 +124,7 @@ def get(url, rec, api=False, cap=1024**2):
             raise ValueError(f'response exceeds {cap}-byte cap')
         if not cache.exists():
             cache.write_bytes(raw)
+            cache.with_suffix('.meta').write_text(json.dumps({k: event[k] for k in ('final_url',) if k in event}))
         return json.loads(raw) if api else raw.decode(errors='replace')
     except RuntimeError:
         raise
@@ -281,11 +284,12 @@ def follow_documentation(seeds, main_repo, rec):
         rec['routes'].append({'route': 'declared_documentation', 'target': url, 'parent': parent, 'status': 'read' if text is not None else 'access_failed'})
         if text is None:
             continue
-        page_links = list(links(text, url))
+        resolved_url = rec['requests'][-1].get('final_url', url)
+        page_links = list(links(text, resolved_url))
         for target, label in page_links:
-            consider(target, label, url, trusted=True)
+            consider(target, label, resolved_url, trusted=True)
             kind = fmt(urlsplit(target).path)
-            if kind and not repo_from(target) and urlsplit(target).hostname == urlsplit(url).hostname:
+            if kind and not repo_from(target) and urlsplit(target).hostname == urlsplit(resolved_url).hostname:
                 rec['documents'].append({'path': urlsplit(target).path, 'format': kind, 'url': target, 'detection': 'Official documentation download link; target not inspected'})
         if DOC.search(url) and re.search(r'<pre|<code|code-cell', text, re.I):
             rec['tutorial_leads'].append({'url': url, 'detection': 'Documentation code blocks; not counted as authoring notebook'})

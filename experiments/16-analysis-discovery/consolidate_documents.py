@@ -6,7 +6,7 @@ Arbitrary repository files with matching stems are not assumed equivalent.
 from pathlib import PurePosixPath
 from urllib.parse import urlsplit
 
-AUTHORING = {'R Markdown', 'Quarto', 'Sweave/knitr', 'Jupyter', 'marimo', 'Pluto', 'Jupytext', 'Wolfram notebook', 'MATLAB Live Script', 'Livebook', '.NET Interactive'}
+AUTHORING = {'R Markdown', 'Quarto', 'Sweave/knitr', 'Jupyter', 'marimo', 'Pluto', 'Jupytext', 'MyST notebook', 'Percent-cell notebook', 'Wolfram notebook', 'MATLAB Live Script', 'Livebook', '.NET Interactive'}
 
 def consolidate(documents):
     groups = {}

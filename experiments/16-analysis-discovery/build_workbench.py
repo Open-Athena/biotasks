@@ -10,44 +10,16 @@ data = json.loads(payload)
 data['tool_provenance'] = json.loads((root/'evidence/tool-discovery-provenance.json').read_text())
 data['alternative_audit'] = json.loads((root/'alternative-source-audit/summary.json').read_text())
 data['repository_audit'] = json.loads((root/'repo-notebook-audit/summary.json').read_text())
-# Present one inventory; retain acquisition-specific evidence inside each record.
-alt = {r['source_id']: r for r in data['alternative_audit']['rows']}
-recovery_path=root/'authoring-recovery/final-observations.jsonl'
-recovered_sources={r['source_id']:r for r in (json.loads(line) for line in recovery_path.read_text().splitlines())}
-unified = []
-for r in data['repository_audit']['rows']:
-    a = alt.get(r['source_id'])
-    if a:
-        result = {'document_located':'located','tutorial_lead':'lead','none_detected':'none_detected'}[a['result']]
-        docs = a['documents']
-        evidence = a
-        url = a['source_url']
-        formats = a['formats']
-        method = a['route']
-    else:
-        result = {'present':'located','unknown':'unknown','none_detected':'none_detected'}[r['status']]
-        docs = [{**n, 'url': f"https://github.com/{r['repo']}/blob/{r['revision']}/{n['path']}", 'detection':'Repository file / signature'} for n in r['examples']]
-        evidence = r
-        url = 'https://github.com/' + r['repo']
-        formats = r['formats']
-        method = 'Repository tree and bounded text signatures'
-    recovery=recovered_sources.get(r['source_id'])
-    if recovery:
-        docs=[*docs,*recovery['documents']]
-        evidence={**evidence,'authoring_recovery':recovery}
-    docs=consolidate(docs)
-    formats=sorted({n['format'] for n in docs}) if a else formats
-    unified.append({'source_id':r['source_id'],'name':r['name'],'primary_domain':r['primary_domain'],'url':url,'result':result,'formats':formats,'documents':docs,'method':method,'evidence':evidence})
-assert len(unified) == len({r['source_id'] for r in unified}) == 1014
-statuses = ['located','lead','none_detected','unknown']
-def tally(rs):
-    return {'sources':len(rs), **{k:sum(r['result']==k for r in rs) for k in statuses}}
-data['source_inventory'] = {'rows':unified,'all':tally(unified),'domains':{d:tally([r for r in unified if r['primary_domain']==d]) for d in sorted({r['primary_domain'] for r in unified})},'formats':sorted({f for r in unified for f in r['formats']})}
+# Reassessment reconciles every route and counts complete recorded observations.
+reassessment = json.loads((root/'reassessment/summary.json').read_text())
+assert reassessment['completed_source_ledgers'] == 1014
+data['source_inventory'] = reassessment
 template = (root/'workbench.template.html').read_text()
 for filename, site in [('workbench.html','methods'), ('inventory.html','inventory')]:
     site_data = {**data, 'site':site}
     payload = json.dumps(site_data, ensure_ascii=False).replace('<', '\\u003c')
     (root/filename).write_text(template.replace('__PAYLOAD__',payload))
 inputs=['authoring-recovery/final-observations.jsonl','consolidate_documents.py','evidence/alabaster-matrix-build.json','evidence/alabaster-matrix-source-link.json','alternative-source-audit/summary.json','explorer.html','workbench.template.html','build_workbench.py','repo-notebook-audit/summary.json','evidence/tool-discovery-provenance.json']
+inputs += ['reassessment/summary.json', 'reassessment/reconcile.py', 'reassessment/documents.jsonl', 'reassessment/input-sha256.json']
 (root/'workbench-sha256.json').write_text(json.dumps({p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in inputs},indent=2)+'\n')
 print('Built methods-first workbench with full candidate metadata and repository audit')

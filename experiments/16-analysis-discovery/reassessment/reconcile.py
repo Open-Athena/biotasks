@@ -55,7 +55,7 @@ def merge(documents, aliases=None):
         else:
             old = groups[key]
             representations = old['representations'] + doc['representations']
-            if doc['format'] in NOTEBOOK_FORMATS and old['format'] not in NOTEBOOK_FORMATS:
+            if (doc['format'] in NOTEBOOK_FORMATS and old['format'] not in NOTEBOOK_FORMATS) or (repository_locator(doc['url']) and not repository_locator(old['url'])):
                 groups[key] = {**doc, 'document_key': key}
             groups[key]['representations'] = list({(v['url'], v['path'], v['format']): v for v in representations}.values())
     return list(groups.values())
@@ -80,6 +80,7 @@ def main():
         old = previous.get(sid)
         alt = alternative.get(sid)
         rec = current[sid]
+        extras = [s for s in supplements if s['source_id'] == sid]
         docs = []
         if old:
             docs += [{**n, 'repo': old['repo'], 'revision': old['revision'], 'url': f"https://github.com/{old['repo']}/blob/{old['revision']}/{n['path']}"} for n in old['notebooks']]
@@ -111,16 +112,19 @@ def main():
             if key not in registry:
                 registry[key] = {**doc, 'source_ids': []}
             global_doc = registry[key]
+            if (doc['format'] in NOTEBOOK_FORMATS and global_doc['format'] not in NOTEBOOK_FORMATS) or (repository_locator(doc['url']) and not repository_locator(global_doc['url'])):
+                registry[key] = {**doc, 'source_ids': global_doc['source_ids'], 'representations': global_doc['representations']}
+                global_doc = registry[key]
             global_doc['source_ids'].append(sid)
             combined = global_doc['representations'] + doc['representations']
             global_doc['representations'] = list({(v['url'], v['path'], v['format']): v for v in combined}.values())
-        for tree in rec['trees']:
+        for tree in rec['trees'] + [t for s in extras for t in s.get('trees', [])]:
             repository_sources[tree['repo'].lower()].add(sid)
             repository_revisions[tree['repo'].lower()].add(tree['revision'])
         if main_repo:
             repository_sources[main_repo].add(sid)
             repository_revisions[main_repo].add(item['revision'])
-        row = {**item, 'url': 'https://github.com/' + item['repo'] if item['repo'] else alt['source_url'], 'result': result, 'previous_result': prior_status, 'formats': sorted({d['format'] for d in notebooks + fallbacks}), 'documents': consolidated, 'notebook_count': len(notebooks), 'rendered_fallback_count': len(fallbacks), 'main_repository_count': direct, 'linked_or_package_count': len(notebooks)-direct, 'format_counts': dict(Counter(d['format'] for d in notebooks)), 'document_keys': [d['document_key'] for d in notebooks], 'method': 'Reconciled pinned trees, declared submodules and documentation, package/source recovery and explicit candidate relationships', 'evidence': {'routes': rec['routes'], 'trees': rec['trees'], 'submodules': rec['submodules'], 'collection_links': rec['collection_links'], 'limits': rec['limits'], 'request_errors': rec['request_errors'], 'project_search_complete': False, 'excluded_additions': excluded, 'observation_path': 'reassessment/observations.jsonl'}}
+        row = {**item, 'url': 'https://github.com/' + item['repo'] if item['repo'] else alt['source_url'], 'result': result, 'previous_result': prior_status, 'formats': sorted({d['format'] for d in notebooks + fallbacks}), 'documents': consolidated, 'notebook_count': len(notebooks), 'rendered_fallback_count': len(fallbacks), 'main_repository_count': direct, 'linked_or_package_count': len(notebooks)-direct, 'format_counts': dict(Counter(d['format'] for d in notebooks)), 'document_keys': [d['document_key'] for d in notebooks], 'method': 'Reconciled pinned trees, declared submodules and documentation, package/source recovery and explicit candidate relationships', 'evidence': {'routes': rec['routes'] + [r for s in extras for r in s.get('routes', [])], 'trees': rec['trees'] + [t for s in extras for t in s.get('trees', [])], 'submodules': rec['submodules'], 'collection_links': rec['collection_links'] + [c for s in extras for c in s.get('collection_links', [])], 'limits': rec['limits'] + [v for s in extras for v in s.get('limits', [])], 'request_errors': rec['request_errors'] + sum(s.get('request_errors', 0) for s in extras), 'project_search_complete': False, 'excluded_additions': excluded, 'observation_path': 'reassessment/observations.jsonl'}}
         rows.append(row)
         if result != prior_status:
             changes.append({'source_id': sid, 'name': item['name'], 'before': prior_status, 'after': result, 'notebook_count': len(notebooks), 'formats': row['formats']})
@@ -140,7 +144,7 @@ def main():
     repo_total = sum(r['notebook_count'] for r in repositories)
     def tally(rs):
         return {'sources': len(rs), **{k: sum(r['result'] == k for r in rs) for k in ('located', 'lead', 'none_detected', 'unknown')}}
-    summary = {'all': tally(rows), 'notebooks': {'total': len(counted), 'across_repositories': repo_total, 'package_archive_or_download': len(counted)-repo_total, 'rendered_fallbacks': sum(d['format'] == 'Rendered vignette' for d in registry.values()), 'source_attributions': sum(r['notebook_count'] for r in rows), 'format_counts': dict(Counter(d['format'] for d in counted)), 'repositories_with_notebooks': sum(r['notebook_count'] > 0 for r in repositories), 'definition': 'All supported notebook/literate authoring formats. One repository/path across recorded snapshots; versions and known paired representations retained as evidence. Shared collections count once globally. Rendered-only fallbacks and unconfirmed tutorial leads are separate. Counts describe located source documents, not independent analyses, current-checkout totals or validated biological workflows.'}, 'domains': {d: tally([r for r in rows if r['primary_domain'] == d]) for d in sorted({r['primary_domain'] for r in rows})}, 'formats': sorted({f for r in rows for f in r['formats']}), 'repositories': repositories, 'changes': changes, 'rows': rows, 'protocol': 'reassessment/protocol.md', 'completed_source_ledgers': len(current), 'request_errors': sum(r['request_errors'] for r in current.values()), 'limited_sources': sum(bool(r['limits'] or r['request_errors']) for r in current.values())}
+    summary = {'all': tally(rows), 'notebooks': {'total': len(counted), 'across_repositories': repo_total, 'package_archive_or_download': len(counted)-repo_total, 'rendered_fallbacks': sum(d['format'] == 'Rendered vignette' for d in registry.values()), 'source_attributions': sum(r['notebook_count'] for r in rows), 'format_counts': dict(Counter(d['format'] for d in counted)), 'repositories_with_notebooks': sum(r['notebook_count'] > 0 for r in repositories), 'definition': 'All supported notebook/literate authoring formats. One repository/path across recorded snapshots; versions and known paired representations retained as evidence. Shared collections and verified exact-byte copies count once globally. Rendered-only fallbacks and unconfirmed tutorial leads are separate. Counts describe located source documents, not independent analyses, current-checkout totals or validated biological workflows.'}, 'domains': {d: tally([r for r in rows if r['primary_domain'] == d]) for d in sorted({r['primary_domain'] for r in rows})}, 'formats': sorted({f for r in rows for f in r['formats']}), 'repositories': repositories, 'changes': changes, 'rows': rows, 'protocol': 'reassessment/protocol.md', 'completed_source_ledgers': len(current), 'request_errors': sum(r['evidence']['request_errors'] for r in rows), 'limited_sources': sum(bool(r['evidence']['limits'] or r['evidence']['request_errors']) for r in rows)}
     (ROOT/'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     with (ROOT/'documents.jsonl').open('w') as f:
         for key in sorted(registry):
