@@ -7,9 +7,6 @@ import resource
 import subprocess
 import tempfile
 import time
-import urllib.request
-import urllib.parse
-import urllib.error
 from datetime import datetime, timezone
 
 ROOT=Path(__file__).resolve().parent
@@ -21,34 +18,6 @@ def guard(start=False):
     assert available >= (2.5 if start else 2)*1024**3 and load < (1.5 if start else 2.5),(available,load)
     if start:assert available-180*1024**2>=2*1024**3
     return {'available_bytes':available,'load1':load}
-
-EXTENSIONS={'.ipynb':'Jupyter','.rmd':'R Markdown','.rmarkdown':'R Markdown','.qmd':'Quarto','.rnw':'Sweave/knitr','.rtex':'Sweave/knitr','.nb':'Wolfram notebook','.mlx':'MATLAB Live Script','.livemd':'Livebook','.dib':'.NET Interactive','.rnb.html':'R notebook HTML export'}
-TEXT_EXTENSIONS={'.py','.jl','.r','.md'}
-def classify(path):
-    return next((v for k,v in EXTENSIONS.items() if path.lower().endswith(k)),None)
-def inspect_signatures(item,tree):
-    candidates=[x for x in tree if x.get('type')=='blob' and Path(x['path']).suffix.lower() in TEXT_EXTENSIONS and '.ipynb_checkpoints' not in x['path'].split('/')]
-    # Bounded targeted probe; do not interpret unprobed scripts as notebook-free.
-    terms=('marimo','jupytext','pluto','notebook')
-    priority=lambda x:(not any(t in x['path'].lower() for t in terms),x['path'])
-    chosen=sorted([x for x in candidates if any(t in x['path'].lower() for t in terms)],key=priority)[:6]
-    probes=[];found=[]
-    for x in chosen:
-        guard();result={'path':x['path'],'sha':x['sha']}
-        url='https://raw.githubusercontent.com/'+item['repo']+'/'+item['revision']+'/'+urllib.parse.quote(x['path'])
-        try:
-            request=urllib.request.Request(url,headers={'Range':'bytes=0-65535','User-Agent':'BioTasks-static-notebook-audit'})
-            with urllib.request.urlopen(request,timeout=12) as response:raw=response.read(65536)
-            result['prefix_bytes']=len(raw);result['prefix_sha256']=hashlib.sha256(raw).hexdigest();text=raw.decode('utf-8',errors='replace')
-            kind=None
-            if ('import marimo' in text or 'from marimo' in text) and ('marimo.App(' in text or '@app.cell' in text):kind='marimo'
-            elif '### A Pluto.jl notebook ###' in text:kind='Pluto'
-            elif 'jupytext:' in text and ('text_representation:' in text or 'formats:' in text):kind='Jupytext'
-            result['format']=kind
-            if kind:found.append({'path':x['path'],'sha':x['sha'],'size':x.get('size'),'format':kind,'detection':'source-prefix signature'})
-        except (OSError,TimeoutError) as e:result['error']=str(e)[:500]
-        probes.append(result)
-    return found,probes,len(candidates)
 
 def main():
     initial=guard(True);started=now();exit_status=1;completed=0
@@ -73,11 +42,9 @@ def main():
                                 data=json.loads(raw);rec['tree_sha']=data.get('sha');rec['truncated']=data.get('truncated',True)
                                 tree=data.get('tree',[]);rec['entries_received']=len(tree)
                                 rec['submodules']=sum(x.get('type')=='commit' for x in tree)
-                                rec['notebooks']=[{'path':x['path'],'sha':x['sha'],'size':x.get('size'),'format':classify(x['path']),'detection':'filename extension'} for x in tree if x.get('type')=='blob' and classify(x['path']) and '.ipynb_checkpoints' not in x['path'].split('/')]
-                                found,probes,text_count=inspect_signatures(item,tree)
-                                rec['notebooks']+=found;rec['signature_probes']=probes;rec['text_files_received']=text_count;rec['unprobed_text_files']=text_count-len(probes)
-                                rec['status']='present' if rec['notebooks'] else ('unknown' if rec['truncated'] else 'none_detected')
-                                rec['notebook_count_complete']=not rec['truncated'] and not rec['unprobed_text_files'] and not any('error' in p for p in probes)
+                                rec['notebooks']=[{'path':x['path'],'sha':x['sha'],'size':x.get('size')} for x in tree if x.get('type')=='blob' and x['path'].lower().endswith('.ipynb') and '.ipynb_checkpoints' not in x['path'].split('/')]
+                                rec['status']='present' if rec['notebooks'] else ('unknown' if rec['truncated'] else 'absent')
+                                rec['notebook_count_complete']=not rec['truncated']
                     except (subprocess.TimeoutExpired,json.JSONDecodeError) as e:rec['error']=str(e)[:1000]
                 rec['elapsed_seconds']=round(time.monotonic()-t,3);rec['finished_at']=now()
                 output.write(json.dumps(rec)+'\n');output.flush();completed+=1

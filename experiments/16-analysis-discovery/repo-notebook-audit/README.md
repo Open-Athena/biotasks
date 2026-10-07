@@ -26,3 +26,27 @@ Report by the original primary domains and ranking routes: total sources, mapped
 repositories, present, absent, unknown, and sources without mapping. Fractions use
 explicit repository denominators. This measures notebook presence in a fixed,
 previously selected software inventory, not population-wide biological coverage.
+
+## Superseding scope: multiple notebook and literate-document formats
+
+The user corrected the initial Jupyter-only interpretation before completion.
+The 298-record interrupted run is preserved in `ipynb-only-incomplete/` and is
+not the reported audit. Repeat the fixed inventory scan with these detectors:
+
+- File extensions: Jupyter `.ipynb`, R Markdown `.Rmd`/`.Rmarkdown`, Quarto `.qmd`,
+  Sweave/knitr `.Rnw`/`.Rtex`, Wolfram `.nb`, MATLAB Live Script `.mlx`, Livebook
+  `.livemd`, .NET Interactive `.dib`, and rendered R notebook `.Rnb.html`.
+- Source signatures: marimo Python, Pluto Julia and Jupytext text documents.
+  Probe at most six `.py`/`.jl`/`.R`/`.md` paths per repository containing
+  `marimo`, `jupytext`, `pluto` or `notebook`, reading at most 64 KiB each.
+  This is a targeted, incomplete probe; arbitrary filenames can be missed.
+
+Record detections by format and unprobed text-file counts. A complete tree with
+no supported detections is **none detected**, not proof of no notebooks. Keep
+truncated/error trees without detections **unknown**. Extension hits have not
+been content-validated; a Quarto/R Markdown file may be prose-only, and exports
+or paired files may duplicate the same document. Report repository presence,
+not unique notebook/document counts or analytical suitability. External links,
+submodules and other branches remain out of scope. Source-prefix reads are
+static metadata/content inspection, never execution; no biological inputs are
+retrieved. Per-prefix timeout 12 seconds; max six per repository, one worker.
