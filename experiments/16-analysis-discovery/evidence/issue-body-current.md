@@ -1,6 +1,6 @@
 ### Current results
 
-[Compare four UI styles](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/164861177de5ed9794cda0f85f3cdfa41d31e0e7/experiments/16-analysis-discovery/style-options.html): Editorial, Atlas, Lab console and Botanical. These share the same 100-document collection; the default explorer stays unchanged pending the user’s choice.
+[Compare five distinct UI layouts](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/86d3bf8a64b6a212a4c4529500a90f5567dae1f6/experiments/16-analysis-discovery/layout-options.html): a source-first catalog, sidebar dashboard, coverage-first matrix, editorial report and split-pane workbench. These vary navigation, hierarchy and source-inspection interactions. They share the same 100-document collection; the default explorer stays unchanged pending the user’s choice.
 
 [Explore the 100 analysis documents in HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b4c73c84811dc5b9999a0c0cc9a05e4c440029a1/experiments/16-analysis-discovery/explorer.html). The explorer presents one combined collection, with source details, screening reasons, route filters, biology coverage and CSV export.
 

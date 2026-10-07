@@ -179,3 +179,9 @@ Published revision `b4c73c84811dc5b9999a0c0cc9a05e4c440029a1` passed public HTML
 ## 2026-10-07 — Four UI options
 
 Published `style-options.html` at `164861177de5ed9794cda0f85f3cdfa41d31e0e7`: Editorial, Atlas, Lab console and Botanical share the unchanged candidate payload and interactions. `build_style_options.py` derives them from the current explorer plus `style-options.css`. Default explorer is unchanged pending user selection. Public browser checks passed for all four styles and five views at desktop/mobile widths, counts and suitability filtering; no page errors. Run 14:44:49–14:44:55 UTC, exit 0, peak child RSS 124924 KiB, 450 MiB estimate, browser closed normally. Evidence: `evidence/browser-style-options.json`. Added comparison link to issue body and verified exact readback and OPEN state.
+
+## 2026-10-07 — Structural design alternatives
+
+Replaced palette-only comparison as the issue's primary design link with five distinct interaction layouts: source-card catalog, sidebar dashboard, coverage-first matrix with drilldowns, long-form editorial report, and searchable split-pane inspector. All consume the same normalized explorer payload. No forced heading line break; default results explorer remains unchanged pending user choice. Builders and templates are branch-local.
+
+First public check at `31d827f` failed on dashboard source-table mobile overflow (exit 1); browser closed through finally. Fixed grid-child minimum width at `86d3bf8a64b6a212a4c4529500a90f5567dae1f6`. The public rerun passed 14:57:14–14:57:17 UTC, exit 0, peak child RSS 116896 KiB (450 MiB estimate). Checks cover all five layouts at desktop/mobile widths, filtering, details, CSV exports, empty states, reset and matrix navigation; zero page errors. Public evidence: `evidence/browser-layout-options.json`. Issue body updated and exact readback/OPEN state verified.
