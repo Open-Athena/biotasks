@@ -277,3 +277,9 @@ Local and public browser checks passed for 425613f6ddb678c26f05e6ef4a682fffc22aa
 ### 2026-10-07 — Investigation accepted and closed
 
 User accepted the investigation and authorized closure. Updated the issue body with the conclusion, bounded evidence and possible follow-up investigations. Closed #16 as completed and verified the exact published body, CLOSED/COMPLETED state and agent-generated label. Research branch, both sites and original evidence retained; no merge or pipeline promotion.
+
+## 2026-10-07: reopened after scvi-tools false negative
+
+Reopened issue #16 at the user's request. The parent-tree scan counted but did not traverse Git submodules, while external documentation follow-up was restricted to unmapped sources. Four pinned probes recovered 138 Jupyter paths across scvi-tools (65), Squidpy (50), LIANA (14) and decoupler (9). One small notebook was parsed; no notebook was executed or newly screened for suitability. MDAnalysis exposes an additional join gap between the selected-document manifest and the source inventory.
+
+See [diagnosis and reassessment scope](discovery-gap-audit/results.md), pinned [evidence](discovery-gap-audit/evidence.json), and the [871-source queue](discovery-gap-audit/reassessment-queue.json). There are 66 sources with unexpanded submodules (49 negative, 17 positive). The next pass must prioritize these, extend documentation traversal to mapped projects, and reconcile candidate evidence without changing the frozen source identities. Existing explorer totals remain historical pending reconciliation. This checkpoint diagnoses scope; it does not claim the full re-audit or presentation refresh is complete. Three probe acquisition failures and their fixes are recorded in the diagnosis; final run resource evidence is retained.
