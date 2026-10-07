@@ -29,6 +29,8 @@ with sync_playwright() as p:
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
+        assert page.locator('#toolProvenance tbody tr').count()==4
+        assert '24 of 28' in page.locator('#toolProvenance').inner_text()
         assert page.locator('.method-flow article').count()==4
         with page.expect_download() as download:page.locator('#downloadAll').click()
         exported=json.loads(Path(download.value.path()).read_text())
