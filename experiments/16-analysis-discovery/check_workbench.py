@@ -78,7 +78,7 @@ with sync_playwright() as p:
         page.locator('#companionSite').click()
         page.wait_for_load_state('networkidle')
         assert page.locator('h1').inner_text()=='Analysis documents across the source inventory'
-        assert page.locator('.choices [data-layout]').all_text_contents()==['Source coverage']
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Overview','Sources']
         assert 'inventory.html' in page.url
         for width in [1440,390]:
             page.set_viewport_size({'width':width,'height':1000})
@@ -86,6 +86,19 @@ with sync_playwright() as p:
         page.set_viewport_size({'width':1440,'height':1000})
         audit=page.evaluate('window.BIOTASKS_DATA.source_inventory')
         assert audit['all']=={'sources':1014,'located':502,'lead':2,'none_detected':509,'unknown':1}
+        assert page.locator('#formatDistribution [data-format-bar]').count()==len(audit['formats'])
+        for fmt in audit['formats']:
+            bar=page.locator(f'[data-format-bar="{fmt}"]')
+            expected=sum(fmt in r['formats'] for r in audit['rows'])
+            assert int(bar.locator('strong').inner_text())==expected
+        page.locator('[data-format-bar="Jupyter"]').click()
+        assert page.locator('#auditRows tbody tr').count()==197
+        assert page.locator('h1').inner_text()=='Explore source documents'
+        for width in [1440,390]:
+            page.set_viewport_size({'width':width,'height':1000})
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        page.set_viewport_size({'width':1440,'height':1000})
+        page.locator('#auditFormat').select_option('')
         assert page.locator('#auditRows tbody tr').count()==1014
         page.locator('#auditStatus').select_option('located')
         assert page.locator('#auditRows tbody tr').count()==502
@@ -105,6 +118,8 @@ with sync_playwright() as p:
         assert 'ArcInstitute/cell-eval' in page.locator('#auditRows').inner_text()
         page.locator('#auditQuery').fill('')
         first=next(iter(audit['domains']))
+        page.locator('.choices [data-layout=repository]').click()
+        assert page.locator('#auditRows').count()==0
         page.locator(f'[data-audit-domain="{first}"]').click()
         assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['sources']
         guard()
