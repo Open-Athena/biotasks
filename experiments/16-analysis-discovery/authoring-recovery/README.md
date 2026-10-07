@@ -1,0 +1,5 @@
+# Vignette authoring-source recovery
+
+Scope: every rendered-vignette locator in alternative-source-audit/summary.json. Try version-preserving source links (.Rmd, .Rnw, .qmd, .Rtex) on the Bioconductor mirror. Reject HTML error pages and require vignette metadata or executable chunk syntax. If no direct source is recovered, inspect the package archive linked from that same release page for a matching authoring filename in vignettes/ or inst/doc/. Archive URLs identify the archive plus member path, not a directly downloadable text document. Do not execute or install sources.
+
+Requests: 12 seconds, 1 MiB text; 16 MiB archive compressed, 64 MiB expanded, 20,000 members. Sequential under the shared resource lock; 150 MiB estimated working set. Record requests, hashes, recovered source paths and unresolved locators. Pairing is by versioned document path or release/archive member stem, not proof of matching an earlier HTML build byte-for-byte. Mutable mirror revisions remain a limitation. Raw source text is inspected in memory; this pass preserves hashes and locators, not a complete source corpus.
