@@ -24,6 +24,6 @@ notebook includes its saved outputs; these are historical evidence only.
 
 The SETA source identifier resolves to Gabriel Preda's Kaggle R Markdown source,
 currently version 96. Its exact generation-time version is not supplied by the
-inspected release. Its source hash was recorded, but the source is not vendored
-pending source-license verification. This is a partial pair, visibly labeled;
-the full original analysis remains linked on Kaggle.
+inspected release. Its source hash was recorded. The explorer displays Kaggle’s hosted embed,
+with an external source link as fallback; no source redistribution is needed
+for that view. The exact generation-time version remains unresolved.

@@ -36,6 +36,7 @@ with sync_playwright() as pw:
         assert page.locator('.notebook-link').count() == 1
         page.select_option('#origin', 'SETA')
         page.locator('.notebook-link').click()
+        assert page.locator('#source-frame iframe').get_attribute('src') == 'https://www.kaggle.com/embed/gpreda/breast-cancer-prediction-from-cytopathology-data'
         page.select_option('#task-select', 'own')
         page.click('#tab-task')
         assert '20250607' in page.locator('.task-instruction').inner_text()
