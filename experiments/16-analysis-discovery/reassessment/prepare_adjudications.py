@@ -36,6 +36,8 @@ def main():
     # An official AlphaGenome page links this individual notebook. That does not
     # make all notebooks in Google's general cloud sample repository AlphaGenome.
     data['allowed_repository_paths'] = {'github:google-deepmind/alphagenome': {'googlecloudplatform/vertex-ai-samples': ['notebooks/community/alphagenome/cloudai_alphagenome_vai_quickstart.ipynb']}}
+    data['allowed_repository_paths']['github:project-monai/generativemodels'] = {'project-monai/tutorials': ['2d_registration/registration_mednist.ipynb']}
+    data['allowed_repository_prefixes'] = {'github:project-monai/monailabel': {'project-monai/tutorials': ['monailabel/']}, 'github:mdanalysis/mdanalysis': {'mdanalysis/userguide': ['doc/source/examples/']}}
     data['excluded_repositories'].setdefault('github:google-deepmind/alphagenome', {})['googlecloudplatform/java-docs-samples'] = 'Generic Java deployment examples, not an AlphaGenome notebook collection'
     data['excluded_lead_hosts'] = {record['source_id']: spec['exclude_url_hosts'] for record in records if (spec := json.loads((BASE/'alternative-source-audit/adjudications.json').read_text()).get(record['name']))}
     path.write_text(json.dumps(data, indent=2) + '\n')

@@ -89,14 +89,14 @@ with sync_playwright() as p:
         assert sum(audit['all'][k] for k in ['located','lead','none_detected','unknown'])==1014
         assert audit['completed_source_ledgers']==1014
         assert int(page.locator('#notebookTotal').inner_text().replace(',',''))==audit['notebooks']['total']
-        assert int(page.locator('#repositoryNotebookTotal').inner_text().replace(',',''))==sum(r['notebook_count'] for r in audit['repositories'])
+        assert int(page.locator('#repositoryNotebookTotal').inner_text().replace(',',''))==audit['notebooks']['across_repositories']
         assert sum(int(v) for v in page.locator('#notebookFormats td:nth-child(2)').all_text_contents())==audit['notebooks']['total']
         with page.expect_download() as event:
             page.locator('#downloadRepositoryCounts').click()
         import csv
         downloaded=list(csv.DictReader(Path(event.value.path()).read_text().splitlines()))
         assert len(downloaded)==len(audit['repositories'])
-        assert sum(int(r['notebooks']) for r in downloaded)==audit['notebooks']['across_repositories']
+        assert sum(int(r['notebooks']) for r in downloaded)==audit['notebooks']['repository_attributions']
         assert page.locator('#formatDistribution [data-format-bar]').count()==len(audit['formats'])
         for fmt in audit['formats']:
             bar=page.locator(f'[data-format-bar="{fmt}"]')

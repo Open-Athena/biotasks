@@ -35,6 +35,25 @@ def main():
         by_source[rec['source_id']] += rec['documents']
     for rec in read_rows(BASE/'repo-notebook-audit/observations.jsonl'):
         by_source[rec['source_id']] += [{**n, 'url': f"https://github.com/{rec['repo']}/blob/{rec['revision']}/{n['path']}"} for n in rec['notebooks']]
+    reviewed = json.loads((ROOT/'adjudications.json').read_text())
+    for sid, docs in by_source.items():
+        accepted = []
+        for doc in docs:
+            loc = repository_locator(doc['url'])
+            if doc['url'] in reviewed['excluded_urls']:
+                continue
+            if loc:
+                repo, revision, path = loc
+                if repo in reviewed['excluded_repositories'].get(sid, {}):
+                    continue
+                allowed = reviewed.get('allowed_repository_paths', {}).get(sid, {}).get(repo)
+                prefixes = reviewed.get('allowed_repository_prefixes', {}).get(sid, {}).get(repo)
+                if allowed is not None and path not in allowed:
+                    continue
+                if prefixes is not None and not any(path.startswith(prefix) for prefix in prefixes):
+                    continue
+            accepted.append(doc)
+        by_source[sid] = accepted
     same_blob = defaultdict(list)
     for docs in by_source.values():
         for doc in docs:
@@ -47,6 +66,18 @@ def main():
             union(unique[0], key)
         if len(unique) > 1:
             proof.append({'mechanism': 'Identical complete Git blob within repository', 'repo': repo, 'format': kind, 'blob_sha': sha, 'keys': unique})
+    for sid, docs in by_source.items():
+        shared = defaultdict(list)
+        for doc in docs:
+            if repository_locator(doc['url']) and doc.get('sha') and doc['format'] in NOTEBOOK_FORMATS:
+                shared[(doc['format'], doc['sha'])].append(identity(doc))
+        for (kind, sha), keys in shared.items():
+            unique = sorted(set(keys))
+            if len({key.split(':')[1] for key in unique}) < 2:
+                continue
+            for key in unique[1:]:
+                union(unique[0], key)
+            proof.append({'mechanism': 'Identical complete Git blob in collections linked to the same project', 'source_id': sid, 'format': kind, 'blob_sha': sha, 'keys': unique})
     # Explicit Jupytext pairing declarations are stronger than matching stems.
     for docs in by_source.values():
         by_location = {(loc[0], loc[2]): d for d in docs if (loc := repository_locator(d['url']))}

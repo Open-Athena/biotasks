@@ -28,9 +28,9 @@ def main():
     assert set(counted) == {key for r in rows.values() for key in r['document_keys']}
     assert dict(Counter(d['format'] for d in counted.values())) == summary['notebooks']['format_counts']
     assert summary['notebooks']['across_repositories'] + summary['notebooks']['package_archive_or_download'] == len(counted)
-    assert sum(r['notebook_count'] for r in summary['repositories']) == summary['notebooks']['across_repositories']
+    assert sum(r['notebook_count'] for r in summary['repositories']) == summary['notebooks']['repository_attributions']
     with (ROOT/'repository-counts.csv').open() as f:
-        assert sum(int(r['notebook_count']) for r in csv.DictReader(f)) == summary['notebooks']['across_repositories']
+        assert sum(int(r['notebook_count']) for r in csv.DictReader(f)) == summary['notebooks']['repository_attributions']
     # The old displayed five examples must not have truncated the notebook corpus.
     represented = {v['url'] for d in documents.values() for v in d['representations']}
     for record in read_rows(BASE/'repo-notebook-audit/observations.jsonl'):

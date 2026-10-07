@@ -108,6 +108,9 @@ def main():
             allowed = adjudications.get('allowed_repository_paths', {}).get(sid, {}).get(repo)
             if allowed is not None and repository_locator(d['url'])[2] not in allowed:
                 reason = 'Outside the specifically linked project notebook paths in a general-purpose repository'
+            prefixes = adjudications.get('allowed_repository_prefixes', {}).get(sid, {}).get(repo)
+            if prefixes is not None and not any(repository_locator(d['url'])[2].startswith(prefix) for prefix in prefixes):
+                reason = 'Outside the explicitly linked tutorial directory'
             if reason:
                 excluded.append({'url': d['url'], 'reason': reason})
             else:
@@ -119,7 +122,7 @@ def main():
         result = 'located' if notebooks or fallbacks else 'lead' if leads or prior_status == 'lead' else 'unknown' if rec['request_errors'] or prior_status == 'unknown' else 'none_detected'
         # Zero files plus a failed route is unresolved, not negative evidence.
         main_repo = canonical_repo(item['repo'] or '')
-        direct = sum(bool(repository_locator(d['url'])) and repository_locator(d['url'])[0] == main_repo for d in notebooks)
+        direct = sum(any(repository_locator(v['url']) and repository_locator(v['url'])[0] == main_repo for v in d['representations']) for d in notebooks)
         for doc in notebooks + fallbacks:
             key = doc['document_key']
             if key not in registry:
@@ -145,9 +148,11 @@ def main():
             changes.append({'source_id': sid, 'name': item['name'], 'before': prior_status, 'after': result, 'notebook_count': len(notebooks), 'formats': row['formats']})
     repository_documents = defaultdict(list)
     for d in registry.values():
-        if d['format'] in NOTEBOOK_FORMATS and (loc := repository_locator(d['url'])):
-            repository_documents[loc[0]].append(d)
-            repository_sources[loc[0]].update(d['source_ids'])
+        if d['format'] in NOTEBOOK_FORMATS:
+            represented_repos = {loc[0] for v in d['representations'] if (loc := repository_locator(v['url']))}
+            for repo in represented_repos:
+                repository_documents[repo].append(d)
+                repository_sources[repo].update(d['source_ids'])
             for representation in d['representations']:
                 if rloc := repository_locator(representation['url']):
                     repository_revisions[rloc[0]].add(rloc[1])
@@ -156,10 +161,10 @@ def main():
         ds = repository_documents[repo]
         repositories.append({'repository': repo, 'notebook_count': len(ds), 'formats': dict(Counter(d['format'] for d in ds)), 'source_ids': sorted(repository_sources[repo]), 'revisions': sorted(repository_revisions[repo])})
     counted = [d for d in registry.values() if d['format'] in NOTEBOOK_FORMATS]
-    repo_total = sum(r['notebook_count'] for r in repositories)
+    repo_total = sum(any(repository_locator(v['url']) for v in d['representations']) for d in counted)
     def tally(rs):
         return {'sources': len(rs), **{k: sum(r['result'] == k for r in rs) for k in ('located', 'lead', 'none_detected', 'unknown')}}
-    summary = {'all': tally(rows), 'notebooks': {'total': len(counted), 'across_repositories': repo_total, 'package_archive_or_download': len(counted)-repo_total, 'rendered_fallbacks': sum(d['format'] == 'Rendered vignette' for d in registry.values()), 'source_attributions': sum(r['notebook_count'] for r in rows), 'format_counts': dict(Counter(d['format'] for d in counted)), 'repositories_with_notebooks': sum(r['notebook_count'] > 0 for r in repositories), 'definition': 'All supported notebook/literate authoring formats. One repository/path across recorded snapshots; versions and known paired representations retained as evidence. Shared collections and verified exact-byte copies count once globally. Rendered-only fallbacks and unconfirmed tutorial leads are separate. Counts describe located source documents, not independent analyses, current-checkout totals or validated biological workflows.'}, 'domains': {d: tally([r for r in rows if r['primary_domain'] == d]) for d in sorted({r['primary_domain'] for r in rows})}, 'formats': sorted({f for r in rows for f in r['formats']}), 'repositories': repositories, 'changes': changes, 'rows': rows, 'protocol': 'reassessment/protocol.md', 'completed_source_ledgers': len(current), 'request_errors': sum(r['evidence']['request_errors'] for r in rows), 'limited_sources': sum(bool(r['evidence']['limits'] or r['evidence']['request_errors']) for r in rows)}
+    summary = {'all': tally(rows), 'notebooks': {'total': len(counted), 'across_repositories': repo_total, 'repository_attributions': sum(r['notebook_count'] for r in repositories), 'package_archive_or_download': len(counted)-repo_total, 'rendered_fallbacks': sum(d['format'] == 'Rendered vignette' for d in registry.values()), 'source_attributions': sum(r['notebook_count'] for r in rows), 'format_counts': dict(Counter(d['format'] for d in counted)), 'repositories_with_notebooks': sum(r['notebook_count'] > 0 for r in repositories), 'definition': 'All supported notebook/literate authoring formats. One repository/path across recorded snapshots; versions and known paired representations retained as evidence. Shared collections and verified exact-byte copies count once globally. Rendered-only fallbacks and unconfirmed tutorial leads are separate. Counts describe located source documents, not independent analyses, current-checkout totals or validated biological workflows.'}, 'domains': {d: tally([r for r in rows if r['primary_domain'] == d]) for d in sorted({r['primary_domain'] for r in rows})}, 'formats': sorted({f for r in rows for f in r['formats']}), 'repositories': repositories, 'changes': changes, 'rows': rows, 'protocol': 'reassessment/protocol.md', 'completed_source_ledgers': len(current), 'request_errors': sum(r['evidence']['request_errors'] for r in rows), 'limited_sources': sum(bool(r['evidence']['limits'] or r['evidence']['request_errors']) for r in rows)}
     (ROOT/'summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     with (ROOT/'documents.jsonl').open('w') as f:
         for key in sorted(registry):
