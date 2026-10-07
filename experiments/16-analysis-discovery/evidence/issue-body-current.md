@@ -1,44 +1,24 @@
 ### Current results
 
-[Explore the methods, source documents and repository audit](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/workbench.html). Methods opens first. The selected-document matrix is now **Collection composition**, not a claim about platform-wide biological coverage. Hugging Face surface details are collapsed. **Repository notebook coverage** is a separate analysis of the fixed issue #5 inventory, with subdomain, format and status filters and revision-pinned file links.
+[Explore the methods, source documents and source inventory](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/workbench.html). Methods opens first. **Source coverage** presents one current-state inventory with shared search, domain, format and result filters. Hosting and retrieval methods are evidence details, not separate result sections. The selected-document matrix remains **Collection composition**; Hugging Face details are collapsed.
 
-### Notebook and literate-document formats in the issue #5 inventory
+### Source coverage
 
-Reused issue #5’s 1,014-source top-300 union and original primary-domain labels from commit `4d1efa0593f40be515b0428fa30be783a54407e9`. Checked all 871 GitHub-mapped repositories at their previously recorded revisions. The 143 sources without GitHub mappings stay outside the repository denominator.
+All 1,014 source identities in issue #5's fixed inventory have been searched, retaining their primary-domain labels. Discovery follows repository trees, notebook signatures, package pages and mirrors, archives and declared project documentation.
 
-| Repository outcome | Count |
+| Current source-level evidence | Count |
 | --- | ---: |
-| Detected supported notebook/literate-document formats | 405 |
-| None detected under this protocol | 465 |
-| Unknown (truncated tree: epam/ketcher) | 1 |
-| Total mapped repositories checked | 871 |
+| Document located | 502 |
+| Tutorial lead only | 2 |
+| None detected under search bounds | 509 |
+| Unresolved search | 1 |
+| Total source identities | 1,014 |
 
-The detected set spans **21 of 22 original primary-domain labels**, including infrastructure/general-purpose labels; RNA structure has none detected in its three mapped repositories. This describes the fixed software inventory, not all available biological notebooks, and repository labels do not independently establish notebook content.
+These counts describe source identities with discovery evidence, not unique documents or validated biological analyses. A document may be established by a file/signature or a link whose target has not yet been inspected. Search depth, detectors and revision dates differ, so the totals are not a comparable detection rate or platform-wide coverage estimate. Domains classify source projects, not document content. No detection does not establish absence.
 
-Formats overlap: **196 repositories with Jupyter, 186 R Markdown, 37 Sweave/knitr, 10 Quarto, 3 marimo, 3 Wolfram, and one each MATLAB Live Script, .NET Interactive and Jupytext**. Supporting multiple formats adds 209 repositories beyond the Jupyter-only detected set. A notebook/literate document need not be an `.ipynb` file: worked rendered vignettes such as DESeq2 are in scope for the document collection (candidate L39), and DESeq2's repository is detected through R Markdown.
+The workbench exposes domain summaries and one filterable source table, with document links, revisions, request fingerprints, errors and limits in each source's details. Supported formats include Jupyter, R Markdown, Quarto, Sweave/knitr, marimo and other notebook formats, plus rendered vignettes. Tutorial leads include Subread and MEME Suite. Generic PyTorch tutorials reached through scCoord were excluded as dependency-documentation false positives.
 
-The audit uses supported file extensions plus 118 bounded text-prefix probes for marimo/Pluto/Jupytext signatures. It leaves 100,836 other text files unprobed. “None detected” is not proof of absence: arbitrary text-notebook names, external HTML/Colab links, other branches and submodules can be missed. Extension hits can be prose, tests, demos or exports; paired files can duplicate a document. No biological inputs or models were retrieved, and no analyses were executed. No analytical-quality claim follows from file presence.
-
-[Protocol and scope](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/repo-notebook-audit/README.md) · [Results by domain, format and ranking route](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/repo-notebook-audit/results.md) · [Machine-readable summary](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/repo-notebook-audit/summary.json) · [Scan observations](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/repo-notebook-audit/observations.jsonl) · [Independent accounting validation](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/repo-notebook-audit/validation.json).
-
-### Alternative sources: all 143 searched
-
-Searched all 143 issue-5 identities without a GitHub mapping, retaining their original primary-domain labels. The search covered **106 Bioconductor packages, four GitLab repositories, two Bitbucket repositories and 31 other distributions** (CPAN, PyPI, Galaxy, SourceForge and project/FTP downloads). It followed package/mirror vignette links, repository trees, declared project documentation and bounded archives. The workbench now exposes all 143 sources with domain/result filters and per-request evidence.
-
-| Source-level outcome | Count |
-| --- | ---: |
-| Document locators found | 97 |
-| Tutorial leads only | 2 |
-| No detection under the search bounds | 44 |
-| Total identities searched | 143 |
-
-The 97 positives comprise 96 Bioconductor sources with vignette links and cell-eval2's metadata link to a notebook in ArcInstitute/cell-eval. Subread and MEME Suite have tutorial leads requiring content review. These are **source identities with locators, not 97 screened analyses or unique notebooks**. The original 100-candidate collection is unchanged. Generic PyTorch tutorials reached from scCoord were explicitly excluded as dependency-documentation false positives.
-
-Recovered 14 GitHub repository links, of which 12 resolved to inspected trees; links can refer to related projects and are not proof of ownership or historical-version equivalence. Twenty-one source identities encountered at least one access or budget limit, including failures recovered through other routes. Qualimap's tree is incomplete after Bitbucket rate limiting; some archives exceeded the 16 MiB compressed / 64 MiB expanded bounds. No detection is not proof of absence. The external-document search and the historical GitHub-tree audit use different detectors and time anchors, so their positives do not form a comparable combined notebook fraction.
-
-[Protocol](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/alternative-source-audit/README.md) · [Results and source links](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/alternative-source-audit/results.md) · [Full request evidence](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/alternative-source-audit/final-observations.jsonl) · [Accounting validation](https://github.com/Open-Athena/biotasks/blob/45f74e7216afe0e1bb45c7cba81de5750301527c/experiments/16-analysis-discovery/alternative-source-audit/validation.json).
-
-Source archives were inspected without installation or execution and may contain packaged biological fixtures. No standalone datasets, model calls or paid compute were requested. Document links have not all been fetched or screened for biological suitability.
+[Repository acquisition evidence](https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/repo-notebook-audit/results.md) · [Package, archive and documentation evidence](https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/alternative-source-audit/results.md) · [Unified presentation builder](https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/build_workbench.py). Acquisition-specific records remain available for reproducibility; the website presents the integrated current result. No source analysis was executed. Archives may include packaged fixtures; no standalone datasets or paid compute were requested.
 
 ### Selected-document collection: unchanged 100 candidates
 

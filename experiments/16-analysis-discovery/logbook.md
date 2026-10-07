@@ -237,3 +237,5 @@ Published final UI/data revision `dc614d1b0215b3b9e9d0174b02200ada7daba711` pass
 ### 2026-10-07 — Unified current-state source coverage
 
 User requested that the website present current results, without Git/non-Git or chronological search-pass divisions. Replaced the split audit interface with one 1,014-source inventory, shared text/domain/format/result filters, unified domain counts and per-source expandable evidence. Counts are 502 identities with a document located, two tutorial leads, 509 no detections and one unresolved search. These are heterogeneous discovery-evidence counts, not a comparable detection-rate estimate, unique-document count or scientific validation. Original acquisition records remain unchanged; methods and limits live in collapsed details. Methods links to the unified view.
+
+Local and published HTMLPreview checks passed for 03c179538337986c61c64c81f9a23f1bb8ed460f, including desktop/mobile layouts and unified filters. Issue body updated, read back exactly, OPEN with agent-generated label.
