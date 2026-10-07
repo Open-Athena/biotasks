@@ -86,6 +86,16 @@ and domain totals from the reconciled records, while retaining old observations
 and selected-document screening counts. A deliberately excluded dependency-doc
 example such as scCoord → generic PyTorch should remain excluded.
 
+The user additionally requested **per-repository notebook counts and a total
+across repositories**, covering **all supported notebook and literate-analysis
+formats**, not only Jupyter. Deliver these with the full reassessment, not as an
+interim partial result. Include format breakdowns, distinguish main-repository
+files from declared external collections, and deduplicate established paired
+representations and shared collections before aggregating. Label rendered
+fallbacks separately from recovered authoring source. The count must use complete
+recorded observations rather than the five example paths in the old summary;
+report remaining search limits without presenting zero located as absence.
+
 ## Execution and limits
 
 This is a bounded diagnosis and reassessment specification, not the completed
