@@ -81,8 +81,11 @@ def links(text, base):
     pairs += [(m.group(), text[max(0, m.start()-100):m.start()]) for m in re.finditer(r'https?://[^\s<>"\')\]]+', text)]
     seen = set()
     for href, label in pairs:
-        url = urljoin(base, href).rstrip('.,;`')
-        p = urlsplit(url)
+        try:
+            url = urljoin(base, href).rstrip('.,;`')
+            p = urlsplit(url)
+        except ValueError:
+            continue
         url = urlunsplit((p.scheme, p.netloc, p.path, p.query, ''))
         if p.scheme in {'http', 'https'} and url not in seen:
             seen.add(url)
