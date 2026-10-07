@@ -120,7 +120,17 @@ with sync_playwright() as p:
         first=next(iter(audit['domains']))
         page.locator('.choices [data-layout=repository]').click()
         assert page.locator('#auditRows').count()==0
-        page.locator(f'[data-audit-domain="{first}"]').click()
+        bars=page.locator('#domainDistribution [data-domain-bar]')
+        assert bars.count()==len(audit['domains'])
+        assert sum(int(v) for v in bars.locator('strong').all_text_contents())==502
+        page.locator(f'[data-domain-bar="{first}"]').click()
+        assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['located']
+        page.locator('.choices [data-layout=repository]').click()
+        page.locator('#domainChartScope').select_option('sources')
+        for d,counts in audit['domains'].items():
+            assert int(page.locator(f'[data-domain-bar="{d}"] strong').inner_text())==counts['sources']
+        assert sum(int(v) for v in page.locator('[data-domain-bar] strong').all_text_contents())==1014
+        page.locator(f'[data-domain-bar="{first}"]').click()
         assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['sources']
         guard()
         page.locator('#companionSite').click()

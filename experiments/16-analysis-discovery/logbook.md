@@ -259,3 +259,7 @@ Canonical grouping and both-site browser checks passed locally and on public HTM
 Added a descending horizontal bar chart of source identities with each detected document format. Bars are labeled with counts, keyboard-accessible and open the Sources tab with the format applied. Counts overlap for multi-format sources and reflect consolidated vignette representations; they are not unique-notebook totals. Inventory now opens an Overview with metrics, format visualization and domain summary; the 1,014-row table and filters live only in Sources. Domain buttons also open filtered Sources. Local checks verify all bar counts against the inventory, Jupyter drilldown, absence of source rows on Overview, domain navigation and desktop/mobile overflow.
 
 Published revision f709793f8237812baf32f14377a7465627c53906 passed public browser checks. Issue body updated and read back exactly, OPEN.
+
+### 2026-10-07 — Biological-domain visualization
+
+Added descending clickable domain bars, defaulting to the 502 source identities with a document located and switchable to all 1,014 sources. Each source uses its single original primary-domain label; labels do not classify notebook content. Clicking a bar opens Sources with the domain and selected evidence scope applied. Detailed domain/result counts are collapsed to keep Overview concise. Local browser checks validate the 502/1,014 sums and drilldowns. Clarified the rendered-vignette chart label: authoring source not recovered, not evidence that R Markdown is unavailable; many records are locators rather than fetched HTML.
