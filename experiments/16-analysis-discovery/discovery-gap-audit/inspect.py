@@ -57,7 +57,7 @@ def main():
         modules = api(f'repos/{repo}/contents/.gitmodules?ref={revision}')
         module_text = base64.b64decode(modules['content']).decode()
         config = configparser.ConfigParser()
-        config.read_string(module_text)
+        config.read_string('\n'.join(line.lstrip() for line in module_text.splitlines()))
         tree = api(f'repos/{repo}/git/trees/{revision}?recursive=1')
         assert not tree['truncated']
         links = []
