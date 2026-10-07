@@ -231,3 +231,22 @@ notebook rendering, dependent task panels, artifact selection, trace disclosure,
 390px layout and HTMLPreview-shaped routing using intercepted local files. That
 routing test does not establish live HTMLPreview service availability. No new
 scientific execution or model call was made for this UI change.
+
+
+### 2026-10-07: released-task solver pilot checkpoint
+
+Prepared one Pi 0.87.0 / GLM-5.3 attempt on each of the original SETA
+cytopathology task and BixBench bix-1-q1. User selected 131072 total context,
+32768 output and medium thinking, and authorized exactly one Together
+GPT-OSS-120B BixBench judge call with no retries. The scoped relay enforces
+the paid-call ceiling; failed grading remains unscored. Original task/grader
+bytes and adapter provenance are pinned in attempts/20261007-pi-third-party.
+Generated tasks are excluded. Native sessions and submitted artifacts are
+configured for retention. Python syntax and JSON checks passed; remote runtime
+preflight has not run. No claims of end-to-end validation yet.
+
+Checkpoint 22f977e precedes execution. Automatic approval review rejected
+credential delivery through terminal tool arguments despite disabled echo.
+The waiting submitter was interrupted before submission; no job receipt or
+owned submitter remains. No solver or judge calls were made. Launch remains
+pending a permitted credential-delivery mechanism.
