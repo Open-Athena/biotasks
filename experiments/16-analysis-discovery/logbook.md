@@ -193,3 +193,9 @@ Applied the user's preferred dark workbench style across Methods, Sources, Cover
 Published revision `13735c0f64955f9fdb75983c70c7113f89c8c98f` passed public checks at 15:06:26–15:06:30 UTC (exit 0, peak child RSS 115876 KiB, 450 MiB estimate). All five views fit desktop/mobile widths; all route drilldowns, manifest export, detail metadata, filters, coverage and curated drilldowns passed without page errors. Browser closed normally. Evidence: `evidence/browser-workbench.json`.
 
 GitHub GraphQL issue edits failed twice with server errors; REST PATCH returned an empty response parse error. Subsequent readback: issue body matches intended update = False; issue state = OPEN. Exact pending body saved in evidence/issue-body-pending.md; published body preserved separately.
+
+## 2026-10-07 — Candidate definition and HF surface coverage
+
+Clarified the screening unit before the methods diagram: one selected analysis document, not a repository or platform inventory. All route cards now label counts as selected for this collection; GitHub's 12 is explicitly not a population estimate, and other routes can lead to GitHub-hosted files. Added HF repository-notebook, article and Spaces distinctions using primary platform documentation, with unsearched surfaces explicitly labeled. No new candidates or assessment changes.
+
+Published revision `37bdad211253826fd9b7b8fdb47705f7576454c5` passed public browser checks at 17:55:54–17:55:57 UTC, exit 0, peak child RSS 116760 KiB, 450 MiB estimate; no page errors and browser closed normally. Checks include candidate-definition text and the three HF surfaces, all route drilldowns and desktop/mobile behavior. Evidence: `evidence/browser-candidate-definition.json`. Prior pending evidence push recovered. Issue body now updated successfully, exact readback verified, issue OPEN. The earlier issue-body-pending.md remains historical evidence of the server-failed attempt and is superseded by issue-body-current.md.
