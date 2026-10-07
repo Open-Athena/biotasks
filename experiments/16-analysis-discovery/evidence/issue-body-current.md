@@ -1,6 +1,27 @@
 ### Current results
 
-[Explore the methods and 100 source documents](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/89bbd01f896c2e78b6acd72b47a9de1b13c0a00e/experiments/16-analysis-discovery/workbench.html). The selected workbench visual style now opens with a schematic of all 11 discovery routes and the four common screening steps. Each route links to its source records. Navigation also provides the split-pane source inspector, coverage and curated source inventory. The four views are Methods, Sources, Coverage and Source index; study-reuse and unresolved-input conclusions sit with Coverage. Every recorded candidate field is available in the complete source record and JSON export. Public browser checks passed for the methods map, all route drilldowns, desktop/mobile layouts, filtering, evidence details and full-manifest export.
+[Explore the methods, source documents and repository audit](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/workbench.html). Methods opens first. The selected-document matrix is now **Collection composition**, not a claim about platform-wide biological coverage. Hugging Face surface details are collapsed. **Repository notebook coverage** is a separate analysis of the fixed issue #5 inventory, with subdomain, format and status filters and revision-pinned file links.
+
+### Notebook and literate-document formats in the issue #5 inventory
+
+Reused issue #5’s 1,014-source top-300 union and original primary-domain labels from commit `4d1efa0593f40be515b0428fa30be783a54407e9`. Checked all 871 GitHub-mapped repositories at their previously recorded revisions. The 143 sources without GitHub mappings stay outside the repository denominator.
+
+| Repository outcome | Count |
+| --- | ---: |
+| Detected supported notebook/literate-document formats | 405 |
+| None detected under this protocol | 465 |
+| Unknown (truncated tree: epam/ketcher) | 1 |
+| Total mapped repositories checked | 871 |
+
+The detected set spans **21 of 22 original primary-domain labels**, including infrastructure/general-purpose labels; RNA structure has none detected in its three mapped repositories. This describes the fixed software inventory, not all available biological notebooks, and repository labels do not independently establish notebook content.
+
+Formats overlap: **196 repositories with Jupyter, 186 R Markdown, 37 Sweave/knitr, 10 Quarto, 3 marimo, 3 Wolfram, and one each MATLAB Live Script, .NET Interactive and Jupytext**. Supporting multiple formats adds 209 repositories beyond the Jupyter-only detected set. A notebook/literate document need not be an `.ipynb` file: worked rendered vignettes such as DESeq2 are in scope for the document collection (candidate L39), and DESeq2's repository is detected through R Markdown.
+
+The audit uses supported file extensions plus 118 bounded text-prefix probes for marimo/Pluto/Jupytext signatures. It leaves 100,836 other text files unprobed. “None detected” is not proof of absence: arbitrary text-notebook names, external HTML/Colab links, other branches and submodules can be missed. Extension hits can be prose, tests, demos or exports; paired files can duplicate a document. No biological inputs or models were retrieved, and no analyses were executed. No analytical-quality claim follows from file presence.
+
+[Protocol and scope](https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/repo-notebook-audit/README.md) · [Results by domain, format and ranking route](https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/repo-notebook-audit/results.md) · [Machine-readable summary](https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/repo-notebook-audit/summary.json) · [Scan observations](https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/repo-notebook-audit/observations.jsonl) · [Independent accounting validation](https://github.com/Open-Athena/biotasks/blob/dc614d1b0215b3b9e9d0174b02200ada7daba711/experiments/16-analysis-discovery/repo-notebook-audit/validation.json).
+
+### Selected-document collection: unchanged 100 candidates
 
 A **candidate** is one specific analysis document selected into this screening collection. It may be a notebook, vignette, R Markdown/Quarto document or worked tutorial, and may still be unresolved or excluded. Confirmed mirrors count once; different documents using the same study remain separate. **GitHub’s 12 records are 12 selected documents, not the total notebooks available through repository search.** Other routes also lead to GitHub-hosted material; platform population sizes and recall are unknown.
 
@@ -46,6 +67,6 @@ Methodological leads include [Jupyter Agents](https://huggingface.co/blog/jupyte
 
 ### Remaining work and completion
 
-Resolve the 19 uncertain assessments where evidence permits; check independent-study breadth and source/input terms for promising candidates. Discovery approaches are not exhausted: systematic paper-to-code and citation searches, other challenge platforms, and multilingual resources remain untested. Task authoring, native execution and independent validation are separate subsequent stages.
+Use the repository audit as a pool for content-level inspection, trace external vignette/documentation locations and improve text-notebook detection; resolve the 19 uncertain document assessments where evidence permits; check independent-study breadth and source/input terms for promising candidates. Discovery approaches are not exhausted: systematic paper-to-code and citation searches, other challenge platforms, and multilingual resources remain untested. Task authoring, native execution and independent validation are separate subsequent stages.
 
 The issue remains open until the user is satisfied. Keep this body current as findings change. Research is preserved on `codex/research/16-analysis-discovery`; this branch is not intended for merging.
