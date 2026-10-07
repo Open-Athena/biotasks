@@ -361,6 +361,8 @@ def scan(item, source, old_alt):
 
 def main():
     started = now()
+    execution_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
+    script_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     initial = guard(True)
     code = 1
     completed = 0
@@ -386,7 +388,7 @@ def main():
                     break
         code = 0
     finally:
-        record = {'start': started, 'end': now(), 'exit_status': code, 'completed': completed, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()}
+        record = {'start': started, 'end': now(), 'exit_status': code, 'completed': completed, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': execution_commit, 'script_sha256': script_sha256}
         with (ROOT/'runs.jsonl').open('a') as out:
             out.write(json.dumps(record) + '\n')
         print(json.dumps(record), flush=True)

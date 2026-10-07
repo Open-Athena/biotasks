@@ -12,6 +12,7 @@ from scan import BASE, ROOT, CACHE, get, guard, now
 
 def main():
     start = now()
+    execution_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
     initial = guard(True)
     code = 1
     requests = []
@@ -107,7 +108,7 @@ def main():
         (ROOT/'alias-evidence.json').write_text(json.dumps({'proof': proof, 'requests': requests, 'aliases': aliases, 'limits': 'Only identical complete Git blobs within a repository and byte-verified download aliases are merged automatically. Different-content exports and uncertain pairings remain distinct; counts are not independent-analysis counts.'}, indent=2) + '\n')
         code = 0
     finally:
-        record = {'pass': 'exact-byte alias verification', 'start': start, 'end': now(), 'exit_status': code, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()}
+        record = {'pass': 'exact-byte alias verification', 'start': start, 'end': now(), 'exit_status': code, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': execution_commit}
         with (ROOT/'runs.jsonl').open('a') as out:
             out.write(json.dumps(record) + '\n')
         print(json.dumps(record))

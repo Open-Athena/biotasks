@@ -15,6 +15,7 @@ def blank(sid, name, repo):
 def main():
     initial = guard(True)
     start = now()
+    execution_commit = subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()
     code = 1
     count = 0
     inventory = json.loads((BASE/'repo-notebook-audit/inventory.json').read_text())
@@ -78,7 +79,7 @@ def main():
                 print(json.dumps({'followup_source': rec['name'], 'documents': len(rec['documents']), 'requests': len(rec['requests']), 'resources': guard()}), flush=True)
         code = 0
     finally:
-        record = {'pass': 'redirect repair and candidate reconciliation', 'start': start, 'end': now(), 'exit_status': code, 'completed': count, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip()}
+        record = {'pass': 'redirect repair and candidate reconciliation', 'start': start, 'end': now(), 'exit_status': code, 'completed': count, 'estimate_mib': 250, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss, 'initial_resources': initial, 'final_resources': guard(), 'source_commit': execution_commit}
         with (ROOT/'runs.jsonl').open('a') as out:
             out.write(json.dumps(record) + '\n')
         print(json.dumps(record))

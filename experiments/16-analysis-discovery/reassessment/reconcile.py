@@ -13,6 +13,16 @@ sys.path.insert(0, str(BASE))
 from consolidate_documents import AUTHORING, consolidate
 
 NOTEBOOK_FORMATS = AUTHORING | {'MyST notebook', 'Percent-cell notebook', 'R notebook HTML export'}
+REPOSITORY_ALIASES = json.loads((ROOT/'adjudications.json').read_text()).get('repository_aliases', {}) if (ROOT/'adjudications.json').exists() else {}
+
+
+def canonical_repo(repo):
+    repo = repo.lower()
+    seen = set()
+    while repo in REPOSITORY_ALIASES and repo not in seen:
+        seen.add(repo)
+        repo = REPOSITORY_ALIASES[repo]
+    return repo
 
 
 def read_rows(path):
@@ -24,9 +34,9 @@ def repository_locator(url):
     p = urlsplit(url)
     parts = unquote(p.path).strip('/').split('/')
     if p.hostname == 'github.com' and len(parts) >= 5 and parts[2] == 'blob':
-        return '/'.join(parts[:2]).lower(), parts[3], '/'.join(parts[4:])
+        return canonical_repo('/'.join(parts[:2])), parts[3], '/'.join(parts[4:])
     if p.hostname == 'raw.githubusercontent.com' and len(parts) >= 4:
-        return '/'.join(parts[:2]).lower(), parts[2], '/'.join(parts[3:])
+        return canonical_repo('/'.join(parts[:2])), parts[2], '/'.join(parts[3:])
     return None
 
 
@@ -95,6 +105,9 @@ def main():
         for d in additions:
             repo = (repository_locator(d['url']) or ('', '', ''))[0]
             reason = adjudications['excluded_repositories'].get(sid, {}).get(repo) or adjudications['excluded_urls'].get(d['url'])
+            allowed = adjudications.get('allowed_repository_paths', {}).get(sid, {}).get(repo)
+            if allowed is not None and repository_locator(d['url'])[2] not in allowed:
+                reason = 'Outside the specifically linked project notebook paths in a general-purpose repository'
             if reason:
                 excluded.append({'url': d['url'], 'reason': reason})
             else:
@@ -102,10 +115,10 @@ def main():
         consolidated = merge(docs, adjudications.get('aliases', {}))
         notebooks = [d for d in consolidated if d['format'] in NOTEBOOK_FORMATS]
         fallbacks = [d for d in consolidated if d['format'] == 'Rendered vignette']
-        leads = rec['tutorial_leads'] + [d for d in consolidated if d['format'] == 'Worked tutorial lead']
+        leads = [lead for lead in rec['tutorial_leads'] if urlsplit(lead['url']).hostname not in adjudications.get('excluded_lead_hosts', {}).get(sid, [])] + [d for d in consolidated if d['format'] == 'Worked tutorial lead']
         result = 'located' if notebooks or fallbacks else 'lead' if leads or prior_status == 'lead' else 'unknown' if rec['request_errors'] or prior_status == 'unknown' else 'none_detected'
         # Zero files plus a failed route is unresolved, not negative evidence.
-        main_repo = (item['repo'] or '').lower()
+        main_repo = canonical_repo(item['repo'] or '')
         direct = sum(bool(repository_locator(d['url'])) and repository_locator(d['url'])[0] == main_repo for d in notebooks)
         for doc in notebooks + fallbacks:
             key = doc['document_key']
@@ -119,8 +132,10 @@ def main():
             combined = global_doc['representations'] + doc['representations']
             global_doc['representations'] = list({(v['url'], v['path'], v['format']): v for v in combined}.values())
         for tree in rec['trees'] + [t for s in extras for t in s.get('trees', [])]:
-            repository_sources[tree['repo'].lower()].add(sid)
-            repository_revisions[tree['repo'].lower()].add(tree['revision'])
+            repo = canonical_repo(tree['repo'])
+            if repo not in adjudications['excluded_repositories'].get(sid, {}):
+                repository_sources[repo].add(sid)
+                repository_revisions[repo].add(tree['revision'])
         if main_repo:
             repository_sources[main_repo].add(sid)
             repository_revisions[main_repo].add(item['revision'])
