@@ -24,6 +24,7 @@ with sync_playwright() as pw:
         assert page.locator('.notebook-link').count() == 1
         page.locator('.notebook-link').click()
         page.wait_for_selector('#notebook-select')
+        assert page.locator('[role=tab]').all_text_contents() == ['Notebook', 'Task', 'Attempt']
         assert '/notebooks/bix-asxl1.html' in page.url
         assert page.frame_locator('#source-frame iframe').locator('section').count() == 17
         page.click('#tab-task')
@@ -57,7 +58,9 @@ with sync_playwright() as pw:
         page.click('#tab-solution')
         assert 'No independent LLM solver attempts' in page.locator('#workspace-panel').inner_text()
         assert page.locator('.solution-code').count() == 0
-        page.click('#tab-results')
+        page.click('#tab-task')
+        if page.locator('#task-diagnostics').count():
+            page.locator('#task-diagnostics > summary').click()
         assert page.locator('#workspace-panel tbody tr').count() == 8
         page.get_by_text('Validation evidence, repairs and limitations', exact=True).click()
         assert page.locator('.cpu-variant-validation h1').count() == 1
@@ -69,16 +72,19 @@ with sync_playwright() as pw:
         page.screenshot(path='/tmp/bio17-workspace-results.png', full_page=True)
         page.select_option('#task-select', 'released')
         assert page.locator('#artifact-select').count() == 0
-        page.get_by_text('GLM baseline output', exact=True).click()
-        assert page.locator('.glm-output h1, .glm-output h2, .glm-output h3').count() > 0
-        page.get_by_text('Earlier Codex baseline', exact=True).click()
-        assert page.locator('.baseline-draft h1, .baseline-draft h2, .baseline-draft h3').count() > 0
+        page.select_option('#task-select', 'glm')
+        assert 'Idea-stage' in page.locator('#workspace-panel').inner_text()
+        page.select_option('#task-select', 'codex')
+        assert 'Draft task specification' in page.locator('#workspace-panel').inner_text()
         page.select_option('#notebook-select', 'dnase')
         page.wait_for_selector('#source-frame iframe')
         assert 'bedtools' in page.frame_locator('#source-frame iframe').locator('body').inner_text()
         page.click('#tab-task')
         assert 'Not generated' in page.locator('#detail').inner_text()
-        page.click('#tab-results')
+        page.click('#tab-task')
+        if page.locator('#task-diagnostics').count():
+            page.locator('#task-diagnostics > summary').click()
+        page.click('#tab-solution')
         assert page.locator('#detail').is_hidden()
         page.click('#back')
         page.click('#reset')
@@ -98,7 +104,7 @@ with sync_playwright() as pw:
         page.select_option('#origin', 'SETA')
         page.locator('.notebook-link').click()
         page.select_option('#task-select', 'own')
-        for tab in ['original', 'task', 'solution', 'results']:
+        for tab in ['original', 'task', 'solution']:
             page.click('#tab-' + tab)
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'), tab
         # URL routing must preserve HTMLPreview's pinned source revision.
