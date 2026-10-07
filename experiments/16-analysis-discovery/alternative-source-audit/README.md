@@ -1,0 +1,9 @@
+# Alternative-host discovery
+
+Search all 143 fixed issue-5 source identities without a GitHub mapping. Original identities and primary-domain labels are preserved in inputs.json. This is a follow-up to the fixed-revision GitHub audit, not a new ranking or an exhaustive platform census.
+
+Protocol: check Bioconductor 3.23 package pages and their official Posit mirror for vignette/notebook links; inspect paginated GitLab/Bitbucket trees at resolved current revisions; use pinned recipe, PyPI and MetaCPAN metadata to recover project documentation/repository links; inspect distribution archive filenames and small text-file signatures. No package installation or source execution. Current recovered repositories need not match the historical distribution version. Package-page links are locators, not target-content validation or suitability judgments. Rendered vignettes and their R scripts are separate representations, not independent analysis counts.
+
+Bounds: requests 15 seconds/2 MiB, archives 16 MiB compressed and 64 MiB expanded/20,000 files, GitLab 20 pages, Bitbucket 60 directory/page requests. Archive text signatures inspect Python/Julia/R/Markdown members at most 64 KiB; large text and tree-only text formats remain uninspected. Up to four explicitly declared project links are followed. No-detection means no detection under these bounds, never absence. HTTP errors and caps remain in per-source request evidence. SHA-256 values fingerprint received responses; complete upstream content is not redistributed.
+
+Execution uses the shared nonblocking heavy-work lock, one process, thread limits, reduced priority, 250 MiB estimated peak working set, and resource guards before each request. Runs are resumable by source identity. All 143 must have one final observation before reporting completion of this pass.
