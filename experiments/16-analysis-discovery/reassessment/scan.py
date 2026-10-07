@@ -238,13 +238,23 @@ def follow_documentation(seeds, main_repo, rec):
     queue = []
     collections = []
     main_owner = main_repo.split('/')[0].lower() if main_repo else ''
+    prior_adjudications = json.loads((BASE/'alternative-source-audit/adjudications.json').read_text())
+    excluded_hosts = set(prior_adjudications.get(rec['name'], {}).get('exclude_url_hosts', []))
+    reviewed = json.loads((ROOT/'adjudications.json').read_text()) if (ROOT/'adjudications.json').exists() else {}
+    excluded_repos = reviewed.get('excluded_repositories', {}).get(rec['source_id'], {})
     def consider(url, label, parent, trusted=False):
         parsed = urlsplit(url)
+        if parsed.hostname in excluded_hosts or urlsplit(parent).hostname in excluded_hosts:
+            rec['rejected_or_unresolved_links'].append({'url': url, 'parent': parent, 'reason': 'Previously adjudicated dependency documentation; exclusion retained'})
+            return
         if parsed.hostname in BAD_HOSTS or any(x in parsed.path.lower() for x in ('/issues', '/pull/', '/actions', '/badge', '.svg', '.png', '.jpg')):
             return
         target = repo_from(url)
         if target:
             repo, ref = target
+            if repo.lower() in excluded_repos:
+                rec['rejected_or_unresolved_links'].append({'url': url, 'parent': parent, 'reason': excluded_repos[repo.lower()]})
+                return
             if main_repo and repo.lower() == main_repo.lower():
                 return
             own = repo.split('/')[0].lower() == main_owner and bool(main_owner)

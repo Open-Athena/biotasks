@@ -2,6 +2,7 @@
 from collections import defaultdict
 import hashlib
 import json
+import re
 import resource
 import subprocess
 
@@ -45,6 +46,37 @@ def main():
             union(unique[0], key)
         if len(unique) > 1:
             proof.append({'mechanism': 'Identical complete Git blob within repository', 'repo': repo, 'format': kind, 'blob_sha': sha, 'keys': unique})
+    # Explicit Jupytext pairing declarations are stronger than matching stems.
+    for docs in by_source.values():
+        by_location = {(loc[0], loc[2]): d for d in docs if (loc := repository_locator(d['url']))}
+        for doc in docs:
+            loc = repository_locator(doc['url'])
+            if doc['format'] != 'Jupytext' or not loc:
+                continue
+            repo, revision, path = loc
+            raw_url = f'https://raw.githubusercontent.com/{repo}/{revision}/{path}'
+            cache = CACHE/hashlib.sha256(raw_url.encode()).hexdigest()
+            if not cache.exists():
+                # Cache keys retain original repository capitalization.
+                owner_repo = '/'.join(doc['url'].split('/')[3:5])
+                raw_url = f'https://raw.githubusercontent.com/{owner_repo}/{revision}/{path}'
+                cache = CACHE/hashlib.sha256(raw_url.encode()).hexdigest()
+            if not cache.exists():
+                continue
+            text = cache.read_text(errors='replace')
+            match = re.search(r'formats:\s*["\']?([^\n"\']+)', text)
+            if not match:
+                continue
+            for token in match[1].split(','):
+                extension = token.strip().split(':')[0]
+                if not re.fullmatch(r'[A-Za-z0-9]+', extension):
+                    continue
+                paired_path = str(__import__('pathlib').Path(path).with_suffix('.'+extension))
+                paired = by_location.get((repo, paired_path))
+                if paired and paired['format'] in NOTEBOOK_FORMATS:
+                    left, right = identity(doc), identity(paired)
+                    union(left, right)
+                    proof.append({'mechanism': 'Explicit Jupytext formats declaration and existing sibling', 'url': doc['url'], 'formats': match[1], 'keys': [left, right]})
     try:
         for sid, docs in by_source.items():
             git_blobs = defaultdict(list)
