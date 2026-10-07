@@ -26,6 +26,8 @@ with sync_playwright() as p:
         page.goto(url,wait_until='networkidle',timeout=25000)
         assert page.locator('h1').inner_text()=='How the source collection was built'
         assert page.locator('[data-method-route]').count()==11
+        assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
+        assert page.locator('#hfSurfaces tbody tr').count()==3
         assert page.locator('.method-flow article').count()==4
         with page.expect_download() as download:page.locator('#downloadAll').click()
         exported=json.loads(Path(download.value.path()).read_text())

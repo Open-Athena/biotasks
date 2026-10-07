@@ -76,3 +76,9 @@ an inspected analysis; an access failure is not a scientific result. Retain
 excluded and unresolved candidates rather than replacing them to inflate yield.
 Record aliases separately from shared-study clusters. A URL-distinct inventory
 does not establish semantic uniqueness or independent datasets.
+
+## Candidate unit and platform coverage clarification, 7 October 2026
+
+A candidate is a specific analysis document selected into this screening manifest, not a repository, search hit count or platform inventory. It can be a notebook, vignette, R Markdown/Quarto document or worked tutorial; it need not pass screening. Confirmed document mirrors count once; distinct documents sharing a study remain separate and are clustered. Access-only document leads retain that stage. The 12 records assigned to GitHub describe this selected sample, not all notebooks discoverable on GitHub; other discovery routes also lead to GitHub-hosted sources. Available population size and recall are unknown.
+
+Hugging Face has distinct repository-notebook, blog/article and Spaces surfaces. Only two Geneformer repository notebooks are currently selected. HF biology articles and Spaces have not been systematically searched or screened in this collection. A blog can provide a worked analysis or links to code; a Space can expose an interactive workflow. Neither format establishes reproducibility or suitability by itself. Trace linked artifacts and mirrors before admitting new candidate records. Platform documentation checked on 2026-10-07; see `evidence/hf-discovery-surfaces.json`.
