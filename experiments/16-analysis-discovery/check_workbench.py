@@ -24,8 +24,8 @@ with sync_playwright() as p:
         page=browser.new_page(viewport={'width':1440,'height':1000})
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
-        assert page.locator('h1').inner_text()=='How the source collection was built'
-        assert page.locator('.choices [data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Source coverage','Source index']
+        assert page.locator('h1').inner_text()=='How we discover useful analyses'
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Source index']
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
@@ -37,7 +37,7 @@ with sync_playwright() as p:
         exported=json.loads(Path(download.value.path()).read_text())
         assert len(exported)==100
         assert exported==page.evaluate('window.BIOTASKS_DATA.rows')
-        for mode in ['methods','workbench','coverage','repository','curated']:
+        for mode in ['methods','workbench','coverage','curated']:
             page.locator(f'.choices [data-layout={mode}]').click()
             for width in [1440,390]:
                 page.set_viewport_size({'width':width,'height':1000})
@@ -75,7 +75,15 @@ with sync_playwright() as p:
         page.locator('[data-layout=curated]').click()
         page.locator('#curatedSources').click()
         assert page.locator('[data-select]').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in exported)
-        page.locator('.choices [data-layout=repository]').click()
+        page.locator('#companionSite').click()
+        page.wait_for_load_state('networkidle')
+        assert page.locator('h1').inner_text()=='Analysis documents across the source inventory'
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Source coverage']
+        assert 'inventory.html' in page.url
+        for width in [1440,390]:
+            page.set_viewport_size({'width':width,'height':1000})
+            assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+        page.set_viewport_size({'width':1440,'height':1000})
         audit=page.evaluate('window.BIOTASKS_DATA.source_inventory')
         assert audit['all']=={'sources':1014,'located':502,'lead':2,'none_detected':509,'unknown':1}
         assert page.locator('#auditRows tbody tr').count()==1014
@@ -94,6 +102,9 @@ with sync_playwright() as p:
         page.locator(f'[data-audit-domain="{first}"]').click()
         assert page.locator('#auditRows tbody tr').count()==audit['domains'][first]['sources']
         guard()
+        page.locator('#companionSite').click()
+        page.wait_for_load_state('networkidle')
+        assert page.locator('h1').inner_text()=='How we discover useful analyses'
         assert not errors,errors
     finally:
         browser.close()

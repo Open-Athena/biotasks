@@ -34,8 +34,11 @@ statuses = ['located','lead','none_detected','unknown']
 def tally(rs):
     return {'sources':len(rs), **{k:sum(r['result']==k for r in rs) for k in statuses}}
 data['source_inventory'] = {'rows':unified,'all':tally(unified),'domains':{d:tally([r for r in unified if r['primary_domain']==d]) for d in sorted({r['primary_domain'] for r in unified})},'formats':sorted({f for r in unified for f in r['formats']})}
-payload = json.dumps(data, ensure_ascii=False).replace('<', '\\u003c')
-(root/'workbench.html').write_text((root/'workbench.template.html').read_text().replace('__PAYLOAD__',payload))
+template = (root/'workbench.template.html').read_text()
+for filename, site in [('workbench.html','methods'), ('inventory.html','inventory')]:
+    site_data = {**data, 'site':site}
+    payload = json.dumps(site_data, ensure_ascii=False).replace('<', '\\u003c')
+    (root/filename).write_text(template.replace('__PAYLOAD__',payload))
 inputs=['alternative-source-audit/summary.json','explorer.html','workbench.template.html','build_workbench.py','repo-notebook-audit/summary.json','evidence/tool-discovery-provenance.json']
 (root/'workbench-sha256.json').write_text(json.dumps({p:hashlib.sha256((root/p).read_bytes()).hexdigest() for p in inputs},indent=2)+'\n')
 print('Built methods-first workbench with full candidate metadata and repository audit')
