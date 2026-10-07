@@ -75,7 +75,8 @@ def main():
         findings.append({'source_id': old['source_id'], 'repo': repo, 'parent_revision': revision, 'previous_status': old['status'], 'gitmodules': module_text, 'submodules': links})
         print(repo, [(x['repository'], len(x['ipynb_paths'])) for x in links], flush=True)
     scvi = findings[0]['submodules'][0]
-    sample = next(x for x in scvi['ipynb_paths'] if x['path'].endswith('api_overview.ipynb'))
+    sample = min(scvi['ipynb_paths'], key=lambda x: x['size'])
+    assert sample['size'] < 1024**2
     raw = api(f"repos/{scvi['repository']}/contents/{sample['path']}?ref={scvi['revision']}")
     content = base64.b64decode(raw['content'])
     notebook = json.loads(content)
@@ -88,6 +89,13 @@ def main():
 
 
 if __name__ == '__main__':
-    run = main()
-    (ROOT/'run.json').write_text(json.dumps(run, indent=2) + '\n')
-    print(json.dumps(run))
+    start = now()
+    try:
+        run = main()
+    except Exception as exc:
+        run = {'start': start, 'end': now(), 'exit_status': 1, 'error': str(exc), 'requests': requests, 'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss, 'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss}
+        raise
+    finally:
+        with (ROOT/'runs.jsonl').open('a') as output:
+            output.write(json.dumps(run) + '\n')
+        print(json.dumps(run))
