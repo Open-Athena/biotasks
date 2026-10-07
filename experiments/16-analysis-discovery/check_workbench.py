@@ -25,7 +25,7 @@ with sync_playwright() as p:
         page.on('pageerror',lambda e:errors.append(str(e)))
         page.goto(url,wait_until='networkidle',timeout=25000)
         assert page.locator('h1').inner_text()=='How the source collection was built'
-        assert page.locator('[data-layout]').all_text_contents()==['Methods','Sources','Coverage','Source index']
+        assert page.locator('[data-layout]').all_text_contents()==['Methods','Sources','Collection composition','Source index']
         assert page.locator('[data-method-route]').count()==11
         assert 'not only 12 notebooks available on GitHub' in page.locator('#candidateDefinition').inner_text()
         assert page.locator('#hfSurfaces tbody tr').count()==3
