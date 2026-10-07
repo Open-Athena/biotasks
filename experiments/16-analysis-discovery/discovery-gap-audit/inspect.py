@@ -65,7 +65,7 @@ def main():
             path = config[section]['path']
             url = config[section]['url']
             assert url.startswith('https://github.com/')
-            child_repo = url.removeprefix('https://github.com/').removesuffix('.git')
+            child_repo = url.removeprefix('https://github.com/').rstrip('/').removesuffix('.git')
             gitlink = next(x for x in tree['tree'] if x['path'] == path and x['type'] == 'commit')
             child_revision = gitlink['sha']
             child = api(f'repos/{child_repo}/git/trees/{child_revision}?recursive=1')
