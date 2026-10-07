@@ -243,3 +243,5 @@ Local and published HTMLPreview checks passed for 03c179538337986c61c64c81f9a23f
 ### 2026-10-07 — Separate discovery-methods and inventory sites
 
 User approved two linked sites organized around different research questions. workbench.html now opens discovery methods, with selected-source inspection, collection composition and the curated source index. inventory.html opens the complete 1,014-source inventory with shared search/domain/format/result filters. Each has its own title, navigation and footer, with reciprocal links that preserve the HTMLPreview commit URL or work offline. Both remain current-state presentations sharing one builder and visual template. No discovery evidence or screening classifications changed.
+
+Both sites passed local and public browser checks at b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be, including reciprocal HTMLPreview links, filters and desktop/mobile layouts. Issue body updated and verified exactly; OPEN and agent-generated label confirmed.

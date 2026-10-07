@@ -1,6 +1,11 @@
 ### Current results
 
-[Explore the methods, source documents and source inventory](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/workbench.html). Methods opens first. **Source coverage** presents one current-state inventory with shared search, domain, format and result filters. Hosting and retrieval methods are evidence details, not separate result sections. The selected-document matrix remains **Collection composition**; Hugging Face details are collapsed.
+Two linked sites present the research by question:
+
+- [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/workbench.html): discovery approaches, the 100 selected documents, screening evidence, collection composition and the curated source index. The sample supports qualitative comparison, not a ranking of platform yield.
+- [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/inventory.html): all 1,014 source identities from issue #5, with unified domain summaries, search, format/result filters and document evidence.
+
+Both use the source-workbench visual style and present current results. Retrieval methods and limitations appear in source details; there are no separate Git/non-Git result sections. Each site links directly to the other.
 
 ### Source coverage
 

@@ -5,7 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
-- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/03c179538337986c61c64c81f9a23f1bb8ed460f/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
+- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
 - [Latest source recovery and input tracing](resolution.md)
 - [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
@@ -54,3 +54,5 @@ Publication is a review checkpoint, not scientific validation or issue completio
 Build the current methods-first presentation after regenerating the explorer data with `python3 experiments/16-analysis-discovery/build_workbench.py`. The historical design comparisons remain separate.
 
 The [fixed issue-5 repository audit](repo-notebook-audit/results.md) checks multiple notebook/literate-document formats across 871 mapped repositories. Its original 1,014-source universe and labels are separate from the 100-document collection.
+
+Current sites: [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/workbench.html) · [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/inventory.html). Both are standalone HTML files with reciprocal links; build both with `python experiments/16-analysis-discovery/build_workbench.py`.
