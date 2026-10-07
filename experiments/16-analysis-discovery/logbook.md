@@ -203,3 +203,9 @@ Published revision `37bdad211253826fd9b7b8fdb47705f7576454c5` passed public brow
 ## 2026-10-07 — Remove redundant Findings view
 
 User approved removing Findings. Navigation now contains Methods, Sources, Coverage and Source index. Preserved distinct study-reuse and unresolved-input conclusions beside the coverage matrix; removed the duplicate narrative/source directory. Published revision `40bdd07e5f4562f03e451dedf465466794901057` passed public browser checks at 18:00:00–18:00:03 UTC, exit 0, peak child RSS 114568 KiB, 450 MiB estimate. Four-tab navigation, desktop/mobile layout and existing source interactions passed; browser closed normally. Evidence: `evidence/browser-four-tabs.json`. Updated issue body and verified exact readback and OPEN state.
+
+## 2026-10-07 — Project-entry provenance
+
+At user request, separated tool/project entry from within-project document retrieval. Saved four project mappings and exact recorded search queries in `evidence/tool-discovery-provenance.json`; the workbench now displays the mappings in Methods and relevant source inspectors. Renamed the UI group to Selected-tool tutorial inspection while retaining manifest keys and assessments. Explicitly limited 24/28 to the four selected catalogs, not comparative discovery efficiency.
+
+Public preview `89bbd01f896c2e78b6acd72b47a9de1b13c0a00e` passed browser checks at 18:04:45–18:04:49 UTC, exit 0, peak child RSS 115424 KiB, 450 MiB estimate. Four-project table, counts, source interactions and desktop/mobile views passed, with no page errors; browser closed normally. Issue body updated with provenance evidence and exact readback verified; issue OPEN.

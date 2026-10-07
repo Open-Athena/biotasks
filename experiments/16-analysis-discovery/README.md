@@ -5,7 +5,7 @@ Issue: https://github.com/Open-Athena/biotasks/issues/16
 The user retains the completion decision. Keep this experiment and issue open
 until they are satisfied. This research branch is not intended for merging.
 
-- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/40bdd07e5f4562f03e451dedf465466794901057/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
+- [Current HTMLPreview](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/89bbd01f896c2e78b6acd72b47a9de1b13c0a00e/experiments/16-analysis-discovery/workbench.html) (methods-first workbench; public browser checks passed)
 - [Latest source recovery and input tracing](resolution.md)
 - [First 100-candidate checkpoint](expansion.md) (91 inspected at that time)
 - [Original 40-candidate findings](findings.md) (frozen checkpoint)
