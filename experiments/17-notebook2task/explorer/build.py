@@ -106,6 +106,8 @@ for c in catalog["comparisons"]:
                     "format": "R Markdown" if c["id"].startswith("seta") else "R notebook",
                     "decision": "Comparison only", "origin": "SETA" if c["id"].startswith("seta") else "BixBench",
                     "evidence": "Native validation · repaired recipe" if c.get("cpu_variant_instruction") else "Released task · baseline attempted"})
+# Show released-task comparisons first, preserving order within each group.
+entries.sort(key=lambda row: row["origin"] == "candidate")
 assert len({r["id"] for r in entries}) == len(entries)
 template = (root / "template.html").read_text()
 assert template.count("__CATALOG__") == 1
