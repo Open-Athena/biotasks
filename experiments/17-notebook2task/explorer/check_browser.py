@@ -47,11 +47,15 @@ with sync_playwright() as pw:
         assert page.get_by_text('View Markdown source', exact=True).count() == 0
         assert page.locator('.task-card').count() == 2
         assert 'def test_' in page.locator('.verifier-code').inner_text()
+        assert page.locator('.verifier-code span[style]').count() > 10
+        assert page.locator('.code-surface').evaluate('(el) => getComputedStyle(el).backgroundColor') == 'rgb(39, 40, 34)'
+        assert page.locator('.artifact-scroll').first.evaluate('(el) => getComputedStyle(el).backgroundColor') == 'rgb(229, 238, 248)'
         assert 'parent repair' in page.locator('.annotations').last.inner_text()
         assert page.locator('.artifact-scroll').first.evaluate('(el) => el.scrollHeight > el.clientHeight')
         page.click('#tab-solution')
         assert 'GLM-5.3' in page.locator('#model-select').inner_text()
         assert 'HistGradientBoostingClassifier' in page.locator('.solution-code').inner_text()
+        assert page.locator('.solution-code span[style]').count() > 10
         page.click('#tab-results')
         assert page.locator('#workspace-panel tbody tr').count() == 8
         page.get_by_text('Validation evidence, repairs and limitations', exact=True).click()

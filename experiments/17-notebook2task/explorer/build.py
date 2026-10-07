@@ -5,6 +5,20 @@ import html
 from markdown_it import MarkdownIt
 from pathlib import Path
 from urllib.parse import urljoin
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import get_lexer_by_name
+from pygments.util import ClassNotFound
+
+formatter = HtmlFormatter(nowrap=True, noclasses=True, style="monokai")
+
+def syntax(source, language):
+    try:
+        lexer = get_lexer_by_name(language or "text")
+    except ClassNotFound:
+        lexer = get_lexer_by_name("text")
+    return highlight(source, lexer, formatter)
+
 
 root = Path(__file__).resolve().parent
 catalog = json.loads((root / "catalog.json").read_text())
@@ -29,7 +43,7 @@ for row in catalog["sources"]:
 # Published reference examples are separate from source candidates.
 comparison_root = root / "comparisons"
 catalog["comparisons"] = json.loads((comparison_root / "cases.json").read_text())
-md = MarkdownIt("commonmark", {"html": False}).enable("table").enable("strikethrough")
+md = MarkdownIt("commonmark", {"html": False, "highlight": lambda text, lang, attrs: syntax(text, lang)}).enable("table").enable("strikethrough")
 annotations = json.loads((comparison_root / "task-annotations.json").read_text())
 for case in catalog["comparisons"]:
     case["task_annotations"] = annotations[case["id"]]
@@ -97,6 +111,11 @@ for case in catalog["comparisons"]:
                     token.attrSet("target", "_blank")
                     token.attrSet("rel", "noopener noreferrer")
         case[field + "_html"] = md.renderer.render(tokens, md.options, {})
+    for field in ["released_verifier", "cpu_variant_tests", "reference_solution", "reference_record"]:
+        if field in case:
+            case[field + "_html"] = syntax(case[field], "json" if field == "reference_record" else "python")
+    if "result_artifacts" in case:
+        case["result_artifacts_html"] = {name: syntax(text, "json") for name, text in case["result_artifacts"].items()}
     case["instruction_html"] = md.render(case["instruction"])
     if case.get("cpu_variant_instruction"):
         case["cpu_variant_instruction_html"] = md.render(case["cpu_variant_instruction"])
