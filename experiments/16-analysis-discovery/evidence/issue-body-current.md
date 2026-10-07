@@ -2,12 +2,14 @@
 
 Two linked sites present the research by question:
 
-- [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/workbench.html): discovery approaches, the 100 selected documents, screening evidence, collection composition and the curated source index. The sample supports qualitative comparison, not a ranking of platform yield.
-- [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/b8fba55207b32c71bf1f274fc7e9e7dfb9c4c5be/experiments/16-analysis-discovery/inventory.html): all 1,014 source identities from issue #5, with unified domain summaries, search, format/result filters and document evidence.
+- [Discovery methods](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/workbench.html): discovery approaches, the 100 selected documents, screening evidence, collection composition and the curated source index. The sample supports qualitative comparison, not a ranking of platform yield.
+- [Inventory explorer](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/inventory.html): all 1,014 source identities from issue #5, with unified domain summaries, search, format/result filters and document evidence.
 
 Both use the source-workbench visual style and present current results. Retrieval methods and limitations appear in source details; there are no separate Git/non-Git result sections. Each site links directly to the other.
 
 ### Source coverage
+
+For LLM input, authoring documents are preferred over extracted code: R Markdown retains narrative, code order and chunk settings. Versioned Bioconductor vignette representations are consolidated into one entry; rendered output and extracted R remain secondary links. For alabaster.matrix, the published Rmd hash matches the authoring Rmd in version 1.12.0, and Rmd/HTML/R now appear as one document. Other unrecovered authoring sources are explicitly labeled; arbitrary repository files and distinct versions are not merged. Source-level totals are unchanged. [Build and source evidence](https://github.com/Open-Athena/biotasks/blob/52c573b532d4f4fa5fff4ca666a2a6ecead0e9f0/experiments/16-analysis-discovery/evidence/alabaster-matrix-build.json).
 
 All 1,014 source identities in issue #5's fixed inventory have been searched, retaining their primary-domain labels. Discovery follows repository trees, notebook signatures, package pages and mirrors, archives and declared project documentation.
 
