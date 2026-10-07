@@ -131,12 +131,14 @@ with sync_playwright() as p:
         page.locator('#auditQuery').fill('alabaster.matrix')
         assert page.locator('#auditRows tbody tr').count()==1
         page.locator('#auditRows summary').click()
+        page.wait_for_function("document.querySelector('#auditRows details[open]')?.dataset.loaded === 'true'")
         assert 'Authoring source' in page.locator('#auditRows').inner_text()
         assert 'Extracted R code' in page.locator('#auditRows').inner_text()
         assert page.locator('#auditRows td').nth(3).locator('a').first.get_attribute('href').endswith('userguide.Rmd')
         page.locator('#auditQuery').fill('cell-eval2')
         assert page.locator('#auditRows tbody tr').count()==1
         page.locator('#auditRows summary').click()
+        page.wait_for_function("document.querySelector('#auditRows details[open]')?.dataset.loaded === 'true'")
         assert 'ArcInstitute/cell-eval' in page.locator('#auditRows').inner_text()
         page.locator('#auditQuery').fill('')
         first=next(iter(audit['domains']))
@@ -159,6 +161,9 @@ with sync_playwright() as p:
         page.wait_for_load_state('networkidle')
         assert page.locator('h1').inner_text()=='How we discover useful analyses'
         assert not errors,errors
+    except Exception as error:
+        print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':1,'error':str(error),'page_errors':errors,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss}))
+        raise
     finally:
         browser.close()
 print(json.dumps({'url':url,'start':started,'end':datetime.now(timezone.utc).isoformat(),'exit_status':0,'layouts':5,'checks':['methods opens first','11 route drilldowns and 4 screening steps','five views on desktop/mobile','complete JSON export equals payload','all source metadata fields rendered','source selection and filtering','coverage evidence dialog','curated index drilldown','HF collapsed by default','fixed inventory identities and format/domain filters','all-format notebook totals and repository CSV','submodule and MDAnalysis regression examples','notebook count sorting and filtered totals'],'page_errors':errors,'estimated_working_set_mib':450,'max_child_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss},indent=2))
