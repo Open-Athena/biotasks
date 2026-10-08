@@ -52,8 +52,7 @@ No independently accepted tasks exist. The shortlist is not the run input manife
 A separate panel shows two released tasks, their source links, inspected
 artifacts and proposed BioTasks recipes. The BixBench ASXL1 example includes an
 offline 17-cell original notebook display; rich outputs use text representations.
-The SETA cytopathology source is currently R Markdown and its original revision
-is unresolved, so its full source remains an external link. These are comparison
+The SETA cytopathology source is R Markdown; its generation-time revision remains unresolved. The captured version 96 is retained in the closure input snapshot, while the Explorer uses the author-hosted embed. These are comparison
 references, not additional candidates or generated BioTasks tasks. See
 `comparisons/README.md` for lineage and limitations.
 
@@ -61,3 +60,7 @@ The comparison panel now also displays the actual SETA idea-stage pilot output:
 a rejected DESeq2 source and a cytopathology draft that evaluates frozen models.
 These are model-produced authoring artifacts, not executed or accepted tasks.
 The first confounded cytopathology attempt is preserved in the run evidence.
+
+## Final state
+
+See the [experiment conclusion and code/evidence map](../README.md) for the final scope, authoring runs, native validation and both third-party solver attempts. Earlier inspection-only statements above describe initial discovery, not the final execution state.

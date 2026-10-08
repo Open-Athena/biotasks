@@ -1,0 +1,29 @@
+# Bounded edits to the two existing generated documents; no bundle build.
+import json,html
+from pathlib import Path
+from markdown_it import MarkdownIt
+root=Path('experiments/17-notebook2task/explorer')
+template=(root/'template.html').read_text();prefix,suffix=template.split('__CATALOG__')
+for name in ['bix-asxl1','seta-cytopathology']:
+ path=root/'notebooks'/f'{name}.html';old=path.read_text()
+ assert old.startswith(prefix) and old.endswith(suffix)
+ payload=json.loads(old[len(prefix):-len(suffix)])
+ case=payload['comparisons'][0]
+ if name=='bix-asxl1':
+  attempt=json.loads((root/'attempts/bix-asxl1.json').read_text())[0]
+  attempt['answer_html']=MarkdownIt('commonmark',{'html':False}).render(attempt['answer'])
+  # Reuse the byte-identical, already built viewer and substitute only its data/title.
+  viewer=(root/'traces/seta-cytopathology.html').read_text()
+  start='<script id="trajectory-data" type="application/json">'
+  before,data=viewer.split(start,1);_,after=data.split('</script>',1)
+  viewer=before+start+(root/'attempts/bix-asxl1.atif.json').read_text().replace('<','\\u003c')+'</script>'+after
+  attempt['trace_viewer_html']=viewer
+  case['solver_attempts']=[attempt]
+ for attempt in case['solver_attempts']:
+  viewer=attempt['trace_viewer_html']
+  a,b=viewer.split('<title>',1);_,c=b.split('</title>',1)
+  viewer=a+'<title>'+html.escape(case['title'])+' · GLM-5.3 solver trace</title>'+c
+  attempt['trace_viewer_html']=viewer
+  (root/'traces'/f'{name}.html').write_text(viewer)
+ path.write_text(prefix+json.dumps(payload,ensure_ascii=True).replace('<','\\u003c')+suffix)
+print('Updated only the two existing detail documents and their trace snapshots.')

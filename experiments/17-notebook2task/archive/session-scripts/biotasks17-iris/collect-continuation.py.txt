@@ -1,0 +1,33 @@
+import json,re
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/biotasks17-iris')) as client:
+        name=json.loads(Path('/tmp/biotasks17-iris/job.json').read_text())['job_id']
+        job=client.job(JobName.from_string(name))
+        status=job.status()
+        print('FEDERATION',status.federation_state,'TASK_COUNT',status.task_count)
+        print('STATE',status.state.name,'REASON',status.pending_reason,'STATUS',status.status_message,'ERROR',status.error_message)
+        for task in status.tasks: print('TASK',task.state.name,task.pending_reason,task.status_message,task.error_message)
+        lines=job.logs(max_lines=500,tail=True)
+        text='\n'.join(x.data for x in lines)
+        Path('/tmp/biotasks17-iris/latest-logs.txt').write_text(text)
+        import base64,gzip,hashlib
+        marker='BIO17_ARTIFACT_SHA256 '
+        sha=next(x.split(marker,1)[1].strip() for x in text.splitlines() if x.startswith(marker))
+        assert 'BIO17_ARTIFACT_END' in text
+        blob=base64.b64decode(''.join(x.split(' ',1)[1] for x in text.splitlines() if x.startswith('BIO17_ARTIFACT_CHUNK ')))
+        assert hashlib.sha256(blob).hexdigest()==sha
+        artifacts=json.loads(gzip.decompress(blob))
+        out=Path('/home/exedev/.codex/worktrees/fc68/biotasks/experiments/17-notebook2task/runs/20261006-glm53-cpu-training-v1-continuation/results')
+        out.mkdir(exist_ok=True)
+        for key,value in artifacts.items():
+            dest=(out/key).resolve()
+            assert dest.is_relative_to(out.resolve())
+            dest.parent.mkdir(parents=True,exist_ok=True)
+            dest.write_text(value)
+        (out/'transport.json').write_text(json.dumps({'gzip_sha256':sha,'file_count':len(artifacts),'compressed_bytes':len(blob)},indent=2)+'\n')
+        print('Retrieved and hash-verified',len(artifacts),'files')
+        print((out/'summary.json').read_text())

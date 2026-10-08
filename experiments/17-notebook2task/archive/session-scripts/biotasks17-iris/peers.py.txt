@@ -1,0 +1,12 @@
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, workspace=Path('/tmp/biotasks17-iris')) as client:
+        from iris.rpc import controller_pb2
+        from google.protobuf.json_format import MessageToDict
+        import json
+        peers=MessageToDict(client._cluster_client._client.list_peers(controller_pb2.Controller.ListPeersRequest(),timeout_ms=15000),preserving_proto_field_name=True)
+        Path('/tmp/biotasks17-iris/peers.json').write_text(json.dumps(peers))
+        print(json.dumps(peers)[:18000])

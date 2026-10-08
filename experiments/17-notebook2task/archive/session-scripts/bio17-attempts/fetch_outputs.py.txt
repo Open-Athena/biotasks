@@ -1,0 +1,92 @@
+import datetime
+import hashlib
+import json
+import os
+from pathlib import Path
+import resource
+import shutil
+import subprocess
+import tarfile
+
+
+root = Path(__file__).resolve().parent
+estimate = 400 * 1024**2
+
+
+def check_resources(start=False):
+    available = next(int(line.split()[1]) * 1024 for line in Path('/proc/meminfo').read_text().splitlines() if line.startswith('MemAvailable:'))
+    load = os.getloadavg()[0]
+    if start:
+        if available < 2.5 * 1024**3 or available - estimate < 2 * 1024**3 or load >= 1.5:
+            raise RuntimeError('Shared-node start threshold exceeded')
+    elif available < 2 * 1024**3 or load > 2.5:
+        raise RuntimeError('Shared-node stop threshold exceeded')
+
+
+def main():
+    check_resources(start=True)
+    state = json.loads((root / 'latest-job-state.json').read_text())
+    archive = state['tasks'][0]['attempts'][0]['output_archive']
+    assert archive['state'] == 'uploaded' and archive['size_bytes'] < 200 * 1024**2
+    env = dict(os.environ)
+    for name, secret in [('CW_KEY_ID', 'PRIVATE_OBJECT_STORAGE_SECRET'), ('CW_KEY_SECRET', 'PRIVATE_OBJECT_STORAGE_SECRET')]:
+        if not env.get(name):
+            result = subprocess.run([
+                '/home/exedev/.local/google-cloud-sdk/bin/gcloud', 'secrets', 'versions', 'access', 'latest',
+                '--secret', secret, '--project', 'PRIVATE_SECRET_PROJECT',
+            ], capture_output=True, text=True, timeout=30)
+            if result.returncode or not result.stdout.strip():
+                raise RuntimeError('Configured CoreWeave storage secret unavailable: ' + secret)
+            env[name] = result.stdout.strip()
+    env['PYTHONPATH'] = '/PRIVATE_MARIN_CHECKOUT/lib/rigging/src'
+    env['UV_PROJECT_ENVIRONMENT'] = '/PRIVATE_MARIN_CHECKOUT/.venv'
+    target = root / 'outputs.tar.zst'
+    subprocess.run(['/PRIVATE_MARIN_CHECKOUT/.venv/bin/python', '-c', 'import os; from rigging.filesystem.s3_compat import configure_fsspec_s3; configure_fsspec_s3("https://PRIVATE_OBJECT_STORAGE", key=os.environ["CW_KEY_ID"], secret=os.environ["CW_KEY_SECRET"]); from rigging.fsutil.cli import main; main()', 'cp', archive['uri'], str(target)], env=env, check=True)
+    check_resources()
+    assert target.stat().st_size == archive['size_bytes']
+    with target.open('rb') as handle:
+        assert hashlib.file_digest(handle, 'sha256').hexdigest() == archive['sha256']
+    evidence = root / 'evidence'
+    evidence.mkdir()
+    expanded_bytes = 0
+    members = 0
+    process = subprocess.Popen(['zstd', '-dc', str(target)], stdout=subprocess.PIPE)
+    try:
+        with tarfile.open(fileobj=process.stdout, mode='r|') as stream:
+            for member in stream:
+                check_resources()
+                path = Path(member.name)
+                if path.is_absolute() or '..' in path.parts or not (member.isfile() or member.isdir()):
+                    raise ValueError('Unexpected archive member: ' + member.name)
+                expanded_bytes += member.size
+                if expanded_bytes > 400 * 1024**2:
+                    raise ValueError('Archive expanded beyond the inspected local extraction budget')
+                stream.extract(member, evidence, filter='data')
+                members += 1
+        if process.wait(timeout=15):
+            raise RuntimeError('Archive decompression failed')
+    finally:
+        process.stdout.close()
+        if process.poll() is None:
+            process.terminate()
+            process.wait(timeout=15)
+    record = {'archive_sha256': archive['sha256'], 'compressed_bytes': archive['size_bytes'], 'expanded_bytes': expanded_bytes, 'members': members}
+    (root / 'extraction-receipt.json').write_text(json.dumps(record, indent=2) + '\n')
+    print(json.dumps(record), flush=True)
+
+
+if __name__ == '__main__':
+    started = datetime.datetime.now(datetime.UTC).isoformat()
+    status = 1
+    try:
+        main()
+        status = 0
+    finally:
+        report = {
+            'started_at': started, 'finished_at': datetime.datetime.now(datetime.UTC).isoformat(),
+            'exit_status': status, 'estimated_peak_bytes': estimate,
+            'peak_self_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+            'peak_child_rss_kib': resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
+        }
+        (root / 'fetch-resources.json').write_text(json.dumps(report, indent=2) + '\n')
+        print(json.dumps(report), flush=True)

@@ -1,0 +1,8 @@
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, workspace=Path('/tmp/biotasks17-iris')) as client:
+        state = client.job_state(JobName.from_string('/PRIVATE_OWNER/PRIVATE_SERVICE'))
+        print('Existing inference relay state:', state.name)

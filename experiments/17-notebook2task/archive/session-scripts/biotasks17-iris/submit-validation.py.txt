@@ -1,0 +1,36 @@
+import io,json,re,zipfile,datetime,hashlib
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import Entrypoint,EnvironmentSpec,ResourceSpec
+from iris.cluster.constraints import Constraint,ConstraintOp
+from iris.rpc import job_pb2
+from rigging.timing import Duration
+
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks')
+experiment=root/'experiments/17-notebook2task'
+plan=json.loads(Path('/tmp/biotasks17-iris/validation-launch.json').read_text())
+package=root/plan['package']
+archive=io.BytesIO()
+with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+    for p in package.rglob('*'):
+        if p.is_file():z.write(p,str(p.relative_to(package)))
+data=(root/'downloads/notebook2task-pilot-20261006/seta-cytopathology/seed/datasets/data/data.csv').read_bytes()
+expected='1425d9affa78ba8e53afc81d0ef8a19069ee10c4b21fe89b3cf514071b12ee33'
+assert hashlib.sha256(data).hexdigest()==expected
+config={'data_sha256':expected,'output_directories':['results']}
+files={'worker.py':(experiment/'glm-pilot/native_validation.py').read_bytes(),
+       'package.zip':archive.getvalue(),'observed-data.csv':data,
+       'validation-config.json':json.dumps(config).encode(),
+       'audit.py':(experiment/'validation/cpu-training-v1/audit.py').read_bytes(),
+       'mutations.py':(experiment/'validation/cpu-training-v1/mutations.py').read_bytes()}
+name='biotasks17-native-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d-%H%M%S')
+env={key:'1' for key in ['OMP_NUM_THREADS','OPENBLAS_NUM_THREADS','MKL_NUM_THREADS','NUMEXPR_NUM_THREADS','POLARS_MAX_THREADS','RAYON_NUM_THREADS']}
+setup='set -e\nuv venv --python 3.12 "$IRIS_VENV"\nuv pip install --python "$IRIS_VENV/bin/python" numpy==2.3.3 scipy==1.16.2 pandas==2.3.3 scikit-learn==1.7.2 pytest==8.4.2'
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/biotasks17-iris'),bundle_exclude=re.compile('.*')) as client:
+        job=client.submit(name=name,entrypoint=Entrypoint(command=['python','worker.py'],workdir_files=files),resources=ResourceSpec(cpu=1,memory='4g',disk='8g'),environment=EnvironmentSpec(setup_scripts=[setup],env_vars=env),constraints=[Constraint.create(key='cluster',op=ConstraintOp.EQ,value='PRIVATE_CPU_CLUSTER')],timeout=Duration.from_seconds(1200),scheduling_timeout=Duration.from_seconds(300),max_retries_failure=0,max_retries_preemption=0,priority_band=job_pb2.PRIORITY_BAND_BATCH)
+        Path('/tmp/biotasks17-iris/job.json').write_text(json.dumps({'job_id':str(job.job_id),'run_id':name},indent=2))
+        receipt={'package_sha256':hashlib.sha256(archive.getvalue()).hexdigest(),'file_sha256':{name:hashlib.sha256(blob).hexdigest() for name,blob in files.items()},'setup_command':setup,'cpu':1,'memory_gib':4,'native_child_address_space_gib':2,'native_child_cpu_seconds':300,'timeout_seconds':1200,'inference_credentials_supplied':False}
+        (root/plan['receipt']).write_text(json.dumps(receipt,indent=2)+'\n')
+        print('SUBMITTED_NATIVE_CPU_VALIDATION',flush=True)

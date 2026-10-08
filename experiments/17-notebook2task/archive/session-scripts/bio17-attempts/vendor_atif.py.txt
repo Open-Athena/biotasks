@@ -1,0 +1,15 @@
+import json,urllib.request,hashlib
+from pathlib import Path
+sha='78a8a247bdd9cae30897134f22864b6d1d3c9733'
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks/experiments/17-notebook2task/explorer/trace-viewer')
+files=[]
+for entry in json.loads(Path('/tmp/bio17-attempts/atif-tree.json').read_text())['tree']:
+ p=entry['path']
+ if entry['type']!='blob':continue
+ if not (p.startswith(('apps/web/app/components/atif-lens/','apps/web/app/lib/atif/')) or p in ['LICENSE','apps/web/app/lib/utils.ts','apps/web/app/components/ui/badge.tsx','apps/web/app/components/ui/button.tsx','apps/web/app/components/ui/collapsible.tsx','apps/web/app/components/ui/separator.tsx']):continue
+ data=urllib.request.urlopen(f'https://raw.githubusercontent.com/Eli-Chandler/atif-lens/{sha}/{p}',timeout=30).read()
+ target=root/'vendor'/p.removeprefix('apps/web/app/')
+ target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+ files.append({'source_path':p,'sha256':hashlib.sha256(data).hexdigest()})
+(root/'vendor-manifest.json').write_text(json.dumps({'repository':'https://github.com/Eli-Chandler/atif-lens','revision':sha,'license':'MIT','files':files},indent=2)+'\n')
+print('Vendored',len(files),'small component/support files at pinned revision')

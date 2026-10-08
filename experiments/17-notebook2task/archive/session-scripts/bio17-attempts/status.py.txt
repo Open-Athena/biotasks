@@ -1,0 +1,25 @@
+import json,re,dataclasses
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+from google.protobuf.json_format import MessageToDict
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/bio17-attempts')) as client:
+        name=json.loads(Path('/tmp/bio17-attempts/job.json').read_text())['job_id']
+        job=client.job(JobName.from_string(name))
+        status=job.status()
+        Path('/tmp/bio17-attempts/latest-status.txt').write_text(str(status))
+        print('STATE',status.state.name)
+        report={'state':status.state.name,'tasks':[]}
+        for task in job.tasks():
+            info=task.status()
+            report['tasks'].append({'state':info.state.name,'attempts':[{'state':a.state.name,'output_archive':dataclasses.asdict(a.output_archive) if a.output_archive else None} for a in info.attempts]})
+        Path('/tmp/bio17-attempts/latest-job-state.json').write_text(json.dumps(report,indent=2,default=str))
+        for task in status.tasks: print('TASK',task.state.name)
+        lines=job.logs(max_lines=120,tail=True)
+        text='\n'.join(x.data for x in lines)
+        Path('/tmp/bio17-attempts/latest-logs.txt').write_text(text)
+        text=re.sub(r'https?://\S+', '[URL]',text)
+        text=re.sub(r'\b[a-zA-Z0-9_-]{48,}\b','[redacted long value]',text)
+        print(text[-4500:])

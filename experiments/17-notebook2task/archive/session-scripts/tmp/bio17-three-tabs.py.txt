@@ -1,0 +1,39 @@
+from pathlib import Path
+p=Path('experiments/17-notebook2task/explorer/template.html');s=p.read_text()
+s=s.replace("[['original','Original'],['task','Task'],['solution','Solution'],['results','Run & results']]", "[['original','Notebook'],['task','Task'],['solution','Attempt']]")
+s=s.replace('<label>Task<select id="task-select">','<label>Task recipe / comparison<select id="task-select">')
+s=s.replace("+' task</option>'", "+' task · comparison</option><option value=\"glm\">SETA baseline · GLM-5.3</option><option value=\"codex\">SETA baseline · Codex</option>'")
+s=s.replace('Our CPU-training variant</option>', 'CPU-training recipe · GLM-5.3</option>')
+s=s.replace('in the Original tab','in the Notebook tab')
+# Move the actual validation UI into a helper rendered inside Task.
+a=s.index(" panel.innerHTML='<h1>Run & results</h1>'+")
+b=s.index('\n if(generated){const show=',a)
+expression=s[a:b].replace(" panel.innerHTML='<h1>Run & results</h1>'+", " return '<h2>Creation & validation</h2>'+")
+helper=' function diagnostics(generated){\n'+expression+'\n }\n'
+s=s[:a]+s[b:]
+# Delete the now empty fourth-tab branch and attach artifact handlers to Task.
+a=s.index(" }else if(tab==='solution'){")
+b=s.index(' panel.hidden=false;',a)
+s=s[:a]+''' const diagnosticsHTML=generated?diagnostics(true):'<h2>Creation & validation</h2><p>This released comparison has not been rerun here. Select a creation recipe above to inspect its authoring outputs and diagnostics.</p>';
+ panel.insertAdjacentHTML('beforeend', '<details id="task-diagnostics"><summary>Creation & validation diagnostics</summary>'+diagnosticsHTML+'</details>');
+ if(generated){const show=()=>{$('artifact-content').innerHTML=c.result_artifacts_html[$('artifact-select').value];};$('artifact-select').onchange=show;show();}
+ }else if(tab==='solution'){
+ panel.innerHTML='<h1>Attempt</h1><p>No independent LLM solver attempts have been recorded for the selected task.</p><p class="status">Model and attempt selection will appear here when solver runs are available, with their answer, trace, artifacts and score. Task creation, reference solutions and validation diagnostics are in Task.</p>';
+ }
+''' +s[b:]
+s=s.replace(' function workspace(){',helper+' function workspace(){')
+needle=" const notes=c.task_annotations[generated?'own':'released'];"
+s=s.replace(needle,''' if(task==='glm'||task==='codex'){
+ const glm=task==='glm';
+ panel.innerHTML=`<h1>${glm?'SETA baseline · GLM-5.3':'SETA baseline · Codex'}</h1><p class="status">Idea-stage recipe output; not a validated task package.</p><section class="task-card"><h2>Draft task specification</h2><div class="artifact-scroll" tabindex="0" role="region" aria-label="Draft specification"><div class="markdown">${glm?c.glm_output_html:c.baseline_draft_html}</div></div><div class="annotations"><h3>Summary & annotations</h3><p>${glm?'Recorded authoring status: '+esc(c.glm_summary?.status):esc(c.baseline_status)}</p><p>This is the recipe's draft or rejection, not a solver answer. No validated verifier or reference solution is attached to this selection.</p></div></section><details id="task-diagnostics"><summary>Creation & validation diagnostics</summary><p>${glm?esc(c.glm_summary?.request_count)+' responses · '+esc(c.glm_summary?.seconds)+' seconds':esc(c.baseline_status)}</p><p>No native task validation for this baseline. The CPU-training recipe is a separate selection with recorded parent intervention and validation.</p></details>`;
+ panel.hidden=false;$('detail').hidden=true;return;
+ }
+''' +needle)
+p.write_text(s)
+p=Path('experiments/17-notebook2task/explorer/check_browser.py');s=p.read_text().replace("page.click('#tab-results')", "page.click('#tab-task')\n        if page.locator('#task-diagnostics').count():\n            page.locator('#task-diagnostics > summary').click()")
+s=s.replace("        assert page.locator('#artifact-select').count() == 0\n        page.get_by_text('GLM baseline output', exact=True).click()\n        assert page.locator('.glm-output h1, .glm-output h2, .glm-output h3').count() > 0\n        page.get_by_text('Earlier Codex baseline', exact=True).click()\n        assert page.locator('.baseline-draft h1, .baseline-draft h2, .baseline-draft h3').count() > 0", "        assert page.locator('#artifact-select').count() == 0\n        page.select_option('#task-select', 'glm')\n        assert 'Idea-stage' in page.locator('#workspace-panel').inner_text()\n        page.select_option('#task-select', 'codex')\n        assert 'Draft task specification' in page.locator('#workspace-panel').inner_text()")
+s=s.replace("assert 'No independent LLM solver attempts'", "assert 'No independent LLM solver attempts'")
+s=s.replace("        assert page.locator('#detail').is_hidden()", "        page.click('#tab-solution')\n        assert page.locator('#detail').is_hidden()")
+s=s.replace("['original', 'task', 'solution', 'results']", "['original', 'task', 'solution']")
+s=s.replace("        page.wait_for_selector('#notebook-select')\n        assert '/notebooks", "        page.wait_for_selector('#notebook-select')\n        assert page.locator('[role=tab]').all_text_contents() == ['Notebook', 'Task', 'Attempt']\n        assert '/notebooks",1)
+p.write_text(s)

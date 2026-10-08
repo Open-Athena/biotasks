@@ -1,0 +1,33 @@
+import json, importlib.util, hashlib, re, gzip
+from pathlib import Path
+base=Path('experiments/17-notebook2task')
+viewer=base/'explorer'
+source=Path('/tmp/bio17-attempts/evidence')
+trial=source/'trials/bix-1-q1-pi-glm53'
+spec=importlib.util.spec_from_file_location('convert_pi',viewer/'trace-viewer/convert_pi.py');module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+trace=module.convert(trial/'agent/pi.txt','bix-1-q1-pi-glm53')
+(viewer/'attempts/bix-asxl1.atif.json').write_text(json.dumps(trace,indent=2)+'\n')
+agent_steps=sum(s['source']=='agent' for s in trace['steps']);calls=sum(len(s.get('tool_calls',[])) for s in trace['steps']);pending=len(trace['extra']['pending_tool_call_ids'])
+result=json.loads((source/'bix-1-q1-result.json').read_text())
+counts=json.loads((source/'request-counts.json').read_text())
+log=(trial/'trial.log').read_text()
+assert 'Overwriting earlier exception_info (AgentTimeoutError)' in log
+assert counts.get('judge',0)==0
+assert not trace['extra']['agent_end_observed'] and pending==1
+summary={k:result[k] for k in ['task_name','task_checksum','agent_info','agent_result','verifier_result','started_at','finished_at','agent_execution','verifier']}
+summary.update({'status':'agent_timeout_then_verifier_timeout','exceptions':['AgentTimeoutError','VerifierTimeoutError'],'agent_timeout_seconds':3600,'verifier_timeout_seconds':600,'answer_file_recovered':False,'answer_download_error':'File not found: /workspace/answer.txt','proxy_request_counts':counts,'trace_messages':len(trace['steps']),'trace_agent_messages':agent_steps,'trace_tool_calls':calls,'pending_tool_calls':pending,'agent_end_observed':False,'trace_sha256':trace['extra']['source_sha256']})
+out=base/'attempts/20261007-pi-third-party/results/bix-1-q1';out.mkdir(exist_ok=True)
+(out/'summary.json').write_text(json.dumps(summary,indent=2)+'\n')
+(out/'artifact-manifest.json').write_text((trial/'artifacts/manifest.json').read_text())
+# Preserve the small source event log in compressed form, stripping private service routes.
+raw=(trial/'agent/pi.txt').read_text()
+clean=re.sub(r'https?://[^\s"<>]*iris\.oa\.dev[^\s"<>]*','[private service URL]',raw)
+assert not re.search(r'eyJhbGci|sk-[A-Za-z0-9]{12}|Bearer [A-Za-z0-9]{15}',clean)
+compressed=gzip.compress(clean.encode(),mtime=0)
+(out/'pi-events.jsonl.gz').write_bytes(compressed)
+(out/'trace-provenance.json').write_text(json.dumps({'original_sha256':hashlib.sha256(raw.encode()).hexdigest(),'published_uncompressed_sha256':hashlib.sha256(clean.encode()).hexdigest(),'published_gzip_sha256':hashlib.sha256(compressed).hexdigest(),'compressed_bytes':len(compressed),'redaction':'Private service URLs replaced if present; original evidence retained locally.','source_archive_sha256':json.loads(Path('/tmp/bio17-attempts/extraction-receipt.json').read_text())['archive_sha256']},indent=2)+'\n')
+baseurl='https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/'+str(out)+'/'
+a={'id':'2026-10-08 · released BixBench · attempt 1','model':'GLM-5.3 / Pi 0.87.0','status':'Agent timed out · verifier timed out','reward':None,'settings':'128k context · 32k output · medium thinking · 60-minute agent limit · 10-minute verifier limit · 29 solver requests','summary':'The solver reached its one-hour limit without submitting answer.txt. The verifier then timed out; no judge request reached the proxy and no grade was produced.','answer':'No submitted answer was recovered. The artifact collector reported that `/workspace/answer.txt` did not exist.','answer_note':'The intermediate value 0.0013 appears in the trace, but was not submitted or graded.','grading':'Unscored. Harbor’s final result records VerifierTimeoutError (600 seconds); its trial log also records the earlier AgentTimeoutError (3600 seconds), overwritten by the later exception.','notes':['The solver observed p.adjust = 0.001285039 and proposed 0.0013, then began a further Wang-similarity check. This is an intermediate observation, not a verified answer.','The final tool call has no recorded result and there is no agent_end event. The viewer shows all saved completed messages, without inventing a completion.','No Together judge call reached the proxy (judge counter absent/zero); no solver or judge retry was launched.'],'trace_note':f'Saved interrupted attempt · {len(trace["steps"])} messages · {calls} tool calls · {pending} tool call without a recorded result. Reasoning and tool output are expandable.','atif_file':'bix-asxl1.atif.json','trace':[],'artifacts':[{'label':'Outcome and timing evidence','url':baseurl+'summary.json'},{'label':'Artifact collection manifest','url':baseurl+'artifact-manifest.json'},{'label':'Saved Pi events (gzip)','url':baseurl+'pi-events.jsonl.gz'},{'label':'Trace provenance','url':baseurl+'trace-provenance.json'}]}
+(viewer/'attempts/bix-asxl1.json').write_text(json.dumps([a],indent=2)+'\n')
+status_path=base/'attempts/20261007-pi-third-party/launch-status.json';status=json.loads(status_path.read_text());status.update({'checked_at':'2026-10-08T16:03:10Z','stage':'pilot_finished','evidence':'Final Iris archive, native results, Pi message stream, artifact manifest and proxy request counts. BixBench has no grade.'});status['bix-1-q1']={'status':'agent_timeout_then_verifier_timeout','native_rewards':None,'answer_file_recovered':False,'solver_requests':29,'judge_requests':0};status_path.write_text(json.dumps(status,indent=2)+'\n')
+print(json.dumps({'messages':len(trace['steps']),'agent_messages':agent_steps,'calls':calls,'pending':pending,'compressed_source_bytes':len(compressed)}))

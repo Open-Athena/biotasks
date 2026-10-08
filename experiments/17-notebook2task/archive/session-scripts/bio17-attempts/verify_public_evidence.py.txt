@@ -1,0 +1,18 @@
+import json,hashlib,urllib.request,subprocess,gzip
+from pathlib import Path
+sha=subprocess.check_output(['git','rev-parse','HEAD'],text=True).strip()
+r=Path('experiments/17-notebook2task/attempts/20261007-pi-third-party/results')
+base='https://raw.githubusercontent.com/Open-Athena/biotasks/'+sha+'/'+str(r)+'/'
+def get(path):
+ with urllib.request.urlopen(base+path,timeout=30) as f:
+  data=f.read(1024*1024+1)
+ assert len(data)<=1024*1024
+ return data
+raw=get('retention-manifest.json');assert raw==(r/'retention-manifest.json').read_bytes();manifest=json.loads(raw)
+for e in manifest['files']:
+ data=get(e['path']);assert len(data)==e['bytes'] and hashlib.sha256(data).hexdigest()==e['sha256']
+ if e['path'].endswith('pi-events.jsonl.gz'):
+  case='seta-cytopathology' if e['path'].startswith('seta') else 'bix-asxl1'
+  trace=json.loads(Path('experiments/17-notebook2task/explorer/attempts/'+case+'.atif.json').read_text());assert hashlib.sha256(gzip.decompress(data)).hexdigest()==trace['extra']['source_sha256']
+receipt={'publication_commit':sha,'manifest_url':base+'retention-manifest.json','manifest_sha256':hashlib.sha256(raw).hexdigest(),'anonymous_download':True,'files_verified':len(manifest['files']),'all_sizes_and_hashes_match':True,'both_native_event_hashes_match_displayed_traces':True}
+Path('experiments/17-notebook2task/reviews/20261008-retention-verification.json').write_text(json.dumps(receipt,indent=2)+'\n');print(json.dumps(receipt))

@@ -1,0 +1,8 @@
+import os
+from iris.client.client import iris_ctx
+from iris.cluster.types import JobName
+
+def connect():
+    base=iris_ctx().client.resolver_for_job(JobName.from_string('/PRIVATE_OWNER/PRIVATE_SERVICE')).resolve('glm-5.3').endpoints[0].url.rstrip('/')
+    if not base.endswith('/v1'): base+='/v1'
+    return base,os.environ['GLM_BULK_TOKEN']

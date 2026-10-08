@@ -1,0 +1,20 @@
+import json,subprocess,collections
+from pathlib import Path
+from daytona import Daytona,DaytonaConfig
+r=subprocess.run(['/home/exedev/.local/google-cloud-sdk/bin/gcloud','secrets','versions','access','latest','--secret','DAYTONA_EVAL_API_KEY','--project','PRIVATE_SECRET_PROJECT'],capture_output=True,text=True,timeout=30)
+if r.returncode:raise RuntimeError('Approved Daytona key unavailable')
+client=Daytona(DaytonaConfig(api_key=r.stdout.strip()))
+records=json.loads(Path('/tmp/bio17-attempts/sandboxes.json').read_text())
+for record in records:
+ if record['task']!='bix-1-q1':continue
+ box=client.get(record['id'])
+ data=box.fs.download_file('/logs/agent/pi.txt')
+ Path('/tmp/bio17-attempts/bix-live-pi.txt').write_bytes(data)
+ counts=collections.Counter();tools=collections.Counter();last=None
+ for line in data.decode(errors='replace').splitlines():
+  try:e=json.loads(line)
+  except ValueError:continue
+  counts[e.get('type','unknown')]+=1
+  if e.get('type')=='tool_execution_start':tools[e.get('toolName','unknown')]+=1
+  if e.get('type')=='message_end':last={'role':e.get('message',{}).get('role'),'stopReason':e.get('message',{}).get('stopReason')}
+ print(json.dumps({'task':record['task'],'trace_bytes':len(data),'events':dict(counts),'tools':dict(tools),'last_message':last}))

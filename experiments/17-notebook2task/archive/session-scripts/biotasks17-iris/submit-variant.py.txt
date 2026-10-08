@@ -1,0 +1,31 @@
+import io,json,re,sys,zipfile,datetime,termios
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import Entrypoint,EnvironmentSpec,ResourceSpec
+from iris.cluster.constraints import Constraint,ConstraintOp
+from iris.rpc import job_pb2
+from rigging.timing import Duration
+
+terminal=termios.tcgetattr(sys.stdin.fileno())
+quiet=termios.tcgetattr(sys.stdin.fileno());quiet[3] &= ~termios.ECHO
+termios.tcsetattr(sys.stdin.fileno(),termios.TCSANOW,quiet)
+print('READY_FOR_PRIVATE_STDIN',flush=True)
+try: token=json.loads(sys.stdin.readline())['GLM_BULK_TOKEN']
+finally: termios.tcsetattr(sys.stdin.fileno(),termios.TCSANOW,terminal)
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks')
+r=root/'experiments/17-notebook2task/runs/20261006-glm53-cpu-training-v1'
+archive=io.BytesIO()
+with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+    for name in ['seta-cytopathology']:
+        seed=root/'downloads/notebook2task-pilot-20261006'/name/'seed'
+        for p in seed.rglob('*'):
+            if p.is_file(): z.write(p,'seeds/'+name+'/'+str(p.relative_to(seed)))
+files={'worker.py':(root/'experiments/17-notebook2task/glm-pilot/worker.py').read_bytes(),'service_adapter.py':Path('/tmp/biotasks17-iris/service_adapter.py').read_bytes(),'pilot-config.json':(r/'pilot-config.json').read_bytes(),'seeds.zip':archive.getvalue()}
+for p in (r/'prompts').glob('*.md'): files['prompts/'+p.name]=p.read_bytes()
+name='biotasks17-glm53-cpuvariant-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d-%H%M%S')
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/biotasks17-iris'),bundle_exclude=re.compile('.*')) as client:
+        job=client.submit(name=name,entrypoint=Entrypoint(command=['python','worker.py'],workdir_files=files),resources=ResourceSpec(cpu=1,memory='4g',disk='8g'),environment=EnvironmentSpec(setup_scripts=['set -e\nuv venv --python 3.12 "$IRIS_VENV"\nuv pip install --prerelease=allow --python "$IRIS_VENV/bin/python" marin-iris==0.2.141.dev37311598536 marin-rigging==0.2.141.dev37311598536 httpx==0.28.1'],env_vars={'GLM_BULK_TOKEN':token,'OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','NUMEXPR_NUM_THREADS':'1'}),constraints=[Constraint.create(key='cluster',op=ConstraintOp.EQ,value='PRIVATE_CPU_CLUSTER')],timeout=Duration.from_seconds(1200),scheduling_timeout=Duration.from_seconds(300),max_retries_failure=0,max_retries_preemption=0,priority_band=job_pb2.PRIORITY_BAND_BATCH)
+        Path('/tmp/biotasks17-iris/job.json').write_text(json.dumps({'job_id':str(job.job_id),'run_id':name},indent=2))
+        print('SUBMITTED_CPU_PILOT',flush=True)

@@ -1,0 +1,7 @@
+set -eu
+export PYTHONPATH="$PWD/src"
+export UV_CACHE_DIR=/tmp/biotasks-ci-repro-cache
+/tmp/biotasks-ci-repro-env/bin/ruff check .
+/tmp/biotasks-ci-repro-env/bin/ruff format --check .
+/tmp/biotasks-ci-repro-env/bin/ty check
+/tmp/biotasks-ci-repro-env/bin/python -m pytest -q

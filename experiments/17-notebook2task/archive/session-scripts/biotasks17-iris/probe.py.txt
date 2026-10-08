@@ -1,0 +1,20 @@
+import json,sys,termios,urllib.request
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+terminal=termios.tcgetattr(sys.stdin.fileno());quiet=termios.tcgetattr(sys.stdin.fileno());quiet[3] &= ~termios.ECHO
+termios.tcsetattr(sys.stdin.fileno(),termios.TCSANOW,quiet)
+print('READY_FOR_PRIVATE_STDIN',flush=True)
+try:token=json.loads(sys.stdin.readline())['GLM_BULK_TOKEN']
+finally:termios.tcsetattr(sys.stdin.fileno(),termios.TCSANOW,terminal)
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/biotasks17-iris')) as client:
+        base=client.resolver_for_job(JobName.from_string('/PRIVATE_OWNER/PRIVATE_SERVICE')).resolve('glm-5.3').endpoints[0].url.rstrip('/')
+        if not base.endswith('/v1'):base+='/v1'
+        req=urllib.request.Request(base+'/models',headers={'Authorization':'Bearer '+token})
+        try:
+            with urllib.request.urlopen(req,timeout=12) as response:
+                data=json.load(response)
+                print(json.dumps({'http_status':response.status,'models':[x.get('id') for x in data.get('data',[])]}))
+        except Exception as e:print(json.dumps({'error_type':type(e).__name__,'http_status':getattr(e,'code',None)}))

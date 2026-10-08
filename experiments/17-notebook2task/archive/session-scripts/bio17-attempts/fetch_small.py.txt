@@ -1,0 +1,32 @@
+import json, subprocess, hashlib, tarfile, io
+from pathlib import Path
+from urllib.parse import urlsplit
+import botocore.session
+from botocore.config import Config
+import zstandard
+root=Path('/tmp/bio17-attempts')
+a=json.loads((root/'latest-job-state.json').read_text())['tasks'][0]['attempts'][0]['output_archive']
+assert a['size_bytes'] < 1024*1024
+keys=[]
+for name in ['PRIVATE_OBJECT_STORAGE_SECRET','PRIVATE_OBJECT_STORAGE_SECRET']:
+ p=subprocess.run(['/home/exedev/.local/google-cloud-sdk/bin/gcloud','secrets','versions','access','latest','--secret',name,'--project','PRIVATE_SECRET_PROJECT'],capture_output=True,text=True,timeout=30)
+ if p.returncode: raise RuntimeError('Storage credential unavailable')
+ keys.append(p.stdout.strip())
+s=botocore.session.get_session().create_client('s3',endpoint_url='https://PRIVATE_OBJECT_STORAGE',aws_access_key_id=keys[0],aws_secret_access_key=keys[1],region_name='auto',config=Config(s3={'addressing_style':'virtual'},connect_timeout=15,read_timeout=30,retries={'max_attempts':0}))
+u=urlsplit(a['uri']); response=s.get_object(Bucket=u.netloc,Key=u.path.lstrip('/'))
+data=response['Body'].read(1024*1024+1)
+assert len(data)==a['size_bytes'] and hashlib.sha256(data).hexdigest()==a['sha256']
+(root/'outputs.tar.zst').write_bytes(data)
+dest=root/'evidence';dest.mkdir(exist_ok=True)
+total=0; count=0
+with zstandard.ZstdDecompressor().stream_reader(io.BytesIO(data)) as reader:
+ with tarfile.open(fileobj=reader,mode='r|') as archive:
+  for member in archive:
+   total+=member.size;count+=1
+   assert total<20*1024*1024 and count<1000
+   assert not Path(member.name).is_absolute() and '..' not in Path(member.name).parts
+   assert member.isfile() or member.isdir()
+   archive.extract(member,dest,filter='data')
+receipt={'archive_sha256':a['sha256'],'compressed_bytes':len(data),'expanded_bytes':total,'members':count}
+(root/'extraction-receipt.json').write_text(json.dumps(receipt,indent=2)+'\n')
+print(json.dumps(receipt))

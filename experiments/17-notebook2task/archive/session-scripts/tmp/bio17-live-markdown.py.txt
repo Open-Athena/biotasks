@@ -1,0 +1,24 @@
+"""Focused explorer interaction checks; requires an existing Playwright/Chromium."""
+import json
+import os
+import sys
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+root = Path(__file__).resolve().parent
+url = sys.argv[1] if len(sys.argv) > 1 else (root / 'index.html').as_uri()
+errors = []
+with sync_playwright() as pw:
+    browser = pw.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/home/exedev/.local/bin/chromium'), headless=True, args=['--single-process', '--no-sandbox', '--disable-gpu', '--no-zygote', '--disable-gpu-compositing', '--disable-software-rasterizer', '--use-gl=disabled', '--renderer-process-limit=1', '--disable-extensions'])
+    try:
+        page = browser.new_page(viewport={'width': 1280, 'height': 900}, accept_downloads=True)
+        if url.startswith('file:'):
+            page.context.set_offline(True)
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.goto(url, wait_until='domcontentloaded', timeout=25000)
+        page.wait_for_selector('#tab-task', timeout=15000)
+        page.click('#tab-task')
+        print(json.dumps({'url':page.url,'rendered_headings':page.locator('.task-instruction h1, .task-instruction h2').count(),'raw_pre':page.locator('pre.task-instruction').count(),'source_disclosure':page.get_by_text('View Markdown source',exact=True).count()}))
+        page.screenshot(path='/tmp/bio17-live-markdown.png')
+    finally:
+        browser.close()

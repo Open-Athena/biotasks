@@ -1,0 +1,8 @@
+set -eu
+export UV_CACHE_DIR=/tmp/biotasks17-uv-cache
+uv sync --locked --python 3.13.13
+uv run --locked ruff check .
+uv run --locked ruff format --check .
+uv run --locked ty check
+uv run --locked pytest -q
+uv run --locked pre-commit run --all-files

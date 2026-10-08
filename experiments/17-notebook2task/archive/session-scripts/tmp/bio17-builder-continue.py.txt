@@ -1,0 +1,36 @@
+from pathlib import Path
+import json,shutil
+root=Path('experiments/17-notebook2task');p=root/'glm-pilot/worker.py';s=p.read_text()
+s=s.replace("        messages.extend(CONFIG.get('resume_messages', []))", "        messages.extend(CONFIG.get('resume_messages', []))\n        length_continuations=0")
+s=s.replace("len(json.dumps(messages))>CONFIG['context_character_limit']", "len(json.dumps([{k:v for k,v in m.items() if k!='reasoning_content' or not m.get('reasoning')} for m in messages]))>CONFIG['context_character_limit']")
+s=s.replace("                messages.append(history_message)","                if history_message.get('reasoning'):\n                    history_message['reasoning_content']=history_message['reasoning']\n                messages.append(history_message)")
+s=s.replace("                    status='output_limit' if result['choices'][0].get('finish_reason')=='length' else 'completed';break", """                    status='output_limit' if result['choices'][0].get('finish_reason')=='length' else 'completed'
+                    if status=='output_limit' and length_continuations < CONFIG.get('length_continuations',0):
+                        length_continuations+=1
+                        messages.append({'role':'user','content':'Your response reached its output cap. Continue from the saved plan and write the required files with write_file now, one complete file per call. Avoid restarting the full design audit.'})
+                        continue
+                    break""")
+p.write_text(s)
+old=root/'runs/20261006-glm53-cpu-training-v1-builder';new=root/'runs/20261006-glm53-cpu-training-v1-builder-continuation';new.mkdir(exist_ok=True)
+for directory in ['prompts','input']:shutil.copytree(old/directory,new/directory,dirs_exist_ok=True)
+cfg=json.loads((old/'pilot-config.json').read_text())
+m=json.loads((old/'results/seta-cytopathology/events.jsonl').read_text().splitlines()[0])['response']['choices'][0]['message']
+msg={k:v for k,v in m.items() if k in {'role','content','tool_calls','reasoning'}};msg['reasoning_content']=msg['reasoning']
+cfg['resume_messages']=[msg,{'role':'user','content':'Continue from your saved package design. You reached the output limit without writing package files. Begin writing complete files now using write_file, one file per call; no further broad design audit is needed. All native execution must still be marked NOT RUN.'}];cfg['length_continuations']=2
+(new/'pilot-config.json').write_text(json.dumps(cfg,indent=2)+'\n')
+(new/'plan.md').write_text('''# Bounded builder continuation
+
+The first builder request spent 16,384 tokens in reasoning and wrote no new
+files; draft_spec.md was its pre-staged input. Continue from the saved response,
+retaining both reasoning field aliases for this deployed endpoint. Its observed
+prompt-token counts differ between single-field and dual-field requests, so the
+exact server-side history treatment remains an implementation uncertainty. The
+local serialized-context budget counts the identical reasoning value once.
+
+Retain the builder's 24-request, 15-minute and 16,384-output-token limits, with
+at most two explicit finish-writing continuations after length-limited responses.
+Those requests count against the existing request/time caps. Preserve all raw
+responses; do not silently turn a cutoff into completion. Native validation is
+still a subsequent parent stage.
+''')
+print('Prepared bounded builder continuation.')

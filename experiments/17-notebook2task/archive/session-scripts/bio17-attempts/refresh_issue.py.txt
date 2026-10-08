@@ -1,0 +1,70 @@
+import json
+from pathlib import Path
+r=Path('/tmp/bio17-attempts');old=json.loads((r/'issue-current-state.json').read_text())['body'];sha='8fe742a8b84c7022ca52a6f987c97007efe4c453';base='https://github.com/Open-Athena/biotasks/blob/'+sha+'/experiments/17-notebook2task/'
+def section(name,next_name):return old[old.index('### '+name):old.index('### '+next_name)].strip()
+body=section('Question','Published notebook-to-task comparison examples')+'''
+
+### Current state — October 8, 2026
+
+The research remains exploratory: no general notebook-to-task prompt has been selected or shown to transfer reliably. We have inspected source documents and published task pairs, run bounded authoring pilots, validated one manually reviewed and repaired variant natively, and completed two third-party solver attempts. These are separate kinds of evidence.
+
+[Open the current explorer](https://htmlpreview.github.io/?'''+base+'''explorer/index.html) · [Refreshable research-branch link](https://htmlpreview.github.io/?https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/explorer/index.html). Commit links identify tested artifacts; branch previews can be cached.
+
+- **Approaches** opens first. Select SETA or BixBench, then click a workflow stage to see its explanation and relevant prompt. SETA includes three complete, hash-verified released prompt components, assembly notes and upstream attribution. BixBench's exact authoring prompt remains not located in the inspected public sources; its solver/evaluation prompts are not presented as authoring prompts.
+- **Notebooks** lists 14 analyses with provenance filters, including the two released comparison examples. Each detail page separates **Notebook**, **Task** and **Attempt**. Task contains instructions, verifier, reference solution and creation/validation diagnostics. Attempt contains the model trace, submitted artifacts, native outcome and separate review annotations.
+- Both retained solver traces use the bundled atif-lens viewer with search, expandable tool calls/results and syntax highlighting. Offline desktop/mobile checks passed for the attempt views and latest workflow navigation, including keyboard activation and saved selection. Earlier SETA live HTMLPreview checks passed; the latest navigation check was offline.
+
+### Baseline and authoring findings
+
+Start v1 from SETA's unchanged released notebook adapter, shared idea prompt and task builder, pinned to `5868a1b5e6ae7528db5904ccb87ff245c2761651`. Keep staging and harness deviations explicit. [Prompt snapshots and protocol notes]('''+base+'''baselines/seta-v1/README.md). The earlier bespoke BioTasks prompt remains a separate candidate. AutoSDT's released adaptation/instruction prompts are a possible second baseline; no notebook adaptation has been validated. An equivalent BixBench authoring prompt and the specific LongDS authoring skill were not established in the inspected sources.
+
+Bounded SETA-prompt trials exposed a domain mismatch: ASXL1/DESeq2 is rejected by the multiple-model gate. Cytopathology authoring encountered conflicting training requirements, output/context limits and incomplete packaging. These failures are outcomes, not evidence that the underlying biology cannot yield a task. GLM-5.3 runs through the existing service; no inference deployment or accelerator was provisioned. [Initial baseline evidence](https://github.com/Open-Athena/biotasks/blob/1194151a7fdfb10b451f00736529875874f88ad4/experiments/17-notebook2task/runs/20261006-seta-v1-pilot/README.md) · [Subsequent run records]('''+base.replace('/blob/','/tree/')+'''runs).
+
+The CPU-training variant fixes the split, folds, model choices and grading contract. Its unchanged generated solution ran in 6.3 seconds on one CPU and matched an independent implementation to 2.22e-16 in OOF/test probabilities. After a recorded parent repair removing an unsupported correlation-count bound, all nine native tests and eight control expectations passed. The specification also received parent edits and the model needed continuations: this is not autonomous authoring success, faithful SETA reproduction or an isolated prompt-only comparison. Container/Harbor execution and independent solver evaluation of this generated variant remain untested. [Validation, failures and repair](https://github.com/Open-Athena/biotasks/blob/1dc9e8eea3fcc7c7bd4b4fc3717d4c84c3644909/experiments/17-notebook2task/validation/cpu-training-v1/README.md).
+
+### Released-task solver results
+
+One sequential Pi 0.87.0 / GLM-5.3 attempt per original released task used 128k context, 32k output, medium thinking and original one-hour agent limits. Generated tasks were excluded. No solver retries were launched; both Daytona sandboxes are removed.
+
+| Example | Recorded outcome | Interpretation |
+|---|---|---|
+| SETA cytopathology | Native reward 1.0; all ten released tests passed; 12 saved messages and ten tool calls | Verifier pass, not an independent scientific audit |
+| BixBench ASXL1 (`bix-1-q1`) | Agent timeout at 3,600 seconds, missing `answer.txt`, then verifier timeout at 600 seconds; 31 saved messages and 32 calls, one unfinished | Unscored; the final exception overwrote the earlier timeout, preserved in the diagnostic excerpts |
+
+Proxy counters record ten SETA and 29 BixBench solver requests, with zero judge requests. The authorized allowance was at most one Together `openai/gpt-oss-120b` judge call without retries; none reached the proxy. BixBench's intermediate `0.0013` was not submitted or graded. [Retained outcomes and provenance]('''+base.replace('/blob/','/tree/')+'''attempts/20261007-pi-third-party/results).
+
+### Scientific review and provenance limits
+
+- SETA's report test checks length and keywords; it does not establish sound explanations. Its verifier also relies on solver-supplied labels and reported metrics. Proposed improvements combine trusted numerical checks with separately evaluated, advisory LLM report review; no new reward is claimed.
+- SETA advertises specific modeling libraries and requires multiple classifiers plus an ensemble. Package-list steering is a hypothesis; task constraints directly limit the strategy. The precise generation-time Kaggle source version remains unresolved.
+- BixBench uses expert-prepared capsules, then model-drafted and human-reviewed questions. Its ASXL1 capsule references an earlier study, but that study's original code format and any prior notebook lineage are unverified. Notebook access during authoring differs from solver inputs.
+- BixBench's brief question omits analysis choices that affect its numerical answer. The capsule narrative, published question reference and attempt's intermediate result are not interchangeable. Their discrepancy remains unresolved. A justified deterministic numerical comparator is a proposed alternative, not the released grading contract.
+
+### Next steps and scope
+
+1. Resolve source/version gaps and freeze a small development set plus reserved transfer examples; keep SETA/BixBench evaluation material outside training and transfer pools.
+2. Make focused prompt changes addressing observed baseline failures, preserving matched inputs, settings and explicit budgets. Record human interventions separately.
+3. Complete container validation and independent solver assessment for the generated variant before claiming acceptance; do not infer these from its native tests or the third-party solver pilot.
+4. Test transfer on non-benchmark examples and report failure rates, scientific fidelity, grader robustness and cost. No reliable prompt recommendation is established yet.
+
+Future model calls or compute remain subject to the agreed execution budget; listing a next step does not launch it. Prior use in a scientific-method benchmark alone is not an LLM-training exclusion. Keep large evidence in durable, versioned-manifest storage and retain research on the permanent branch.
+
+### Issue maintenance
+
+Keep this body as the current synthesis of the question, goals, findings, limitations, links and next steps. Use new comments as append-only iteration logs; preserve existing comments and add corrections in subsequent comments. Detailed decisions and executable evidence remain in the branch logbook and artifacts.
+
+<details><summary>Experiment design and assessment</summary>
+
+'''+section('Worker job','Released-task solver pilot')+'''
+
+</details>
+
+<details><summary>Literature hypotheses</summary>
+
+'''+section('Literature ideas to test in the prompt','Worker job')+'''
+
+</details>
+'''
+(r/'issue-current-refresh.md').write_text(body)
+comment='🤖 Refreshed the issue body into a current-state synthesis: latest clickable Approaches explorer, Notebook/Task/Attempt navigation, authoring findings, both solver outcomes, provenance/grading limits and next steps. Future iterations go in new append-only comments; the body stays current. No existing comment was edited or deleted.\n\n<details><summary>Preserved issue-body snapshot before consolidation</summary>\n\n'+old+'\n\n</details>\n';(r/'issue-refresh-log.md').write_text(comment)
+print(body[:2400]);print('\nBody characters:',len(body),'Archive-comment characters:',len(comment))

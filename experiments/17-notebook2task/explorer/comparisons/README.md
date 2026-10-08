@@ -3,7 +3,7 @@
 Two purposively selected examples: SETA breast-cancer cytopathology classification
 and BixBench v1.5 `bix-1-q1` (ASXL1 RNA-seq / DESeq2 / GO enrichment).
 These are reference examples outside the 12-source candidate list, not generated
-BioTasks tasks and not transfer examples. No source or solution was executed.
+BioTasks tasks and not transfer examples. At initial inspection no source or solution was executed; later authoring/native/solver results are indexed in the [final experiment summary](../../README.md).
 
 `cases.json` records links, exact release revisions, inspection findings, proposed
 recipes and missing evidence. `manifest.json` records retrieval and SHA-256 hashes.

@@ -1,0 +1,18 @@
+import json,re
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/biotasks17-iris')) as client:
+        name=json.loads(Path('/tmp/biotasks17-iris/job.json').read_text())['job_id']
+        job=client.job(JobName.from_string(name))
+        if job.state.name not in {'SUCCEEDED','FAILED','KILLED'}: job.cancel()
+        status=job.status()
+        print('STATE',status.state.name,'REASON',status.pending_reason,'STATUS',status.status_message,'ERROR',status.error_message)
+        for task in status.tasks: print('TASK',task.state.name,task.pending_reason,task.status_message,task.error_message)
+        lines=job.logs(max_lines=25,tail=True)
+        text='\n'.join(str(x) for x in lines)
+        Path('/tmp/biotasks17-iris/latest-logs.txt').write_text(text)
+        text=re.sub(r'\b[a-zA-Z0-9_-]{60,}\b','[redacted long value]',text)
+        print(text[-5000:])

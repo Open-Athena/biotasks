@@ -1,0 +1,35 @@
+import io,json,re,sys,zipfile,datetime,termios,subprocess,hashlib
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import Entrypoint,EnvironmentSpec,ResourceSpec
+from iris.cluster.constraints import Constraint,ConstraintOp
+from iris.rpc import job_pb2
+from rigging.timing import Duration
+
+state=Path('/tmp/bio17-attempts/job.json')
+if state.exists(): raise RuntimeError('Submission receipt exists; inspect it before any new launch')
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks')
+r=root/'experiments/17-notebook2task/attempts/20261007-pi-third-party'
+manifest=json.loads((r/'task-manifest.json').read_text())
+archive=io.BytesIO()
+with zipfile.ZipFile(archive,'w',zipfile.ZIP_DEFLATED) as z:
+    for item in manifest['files']:
+        path=root/item['local'] if 'local' in item else r/'tasks'/item['task']/item['path']
+        data=path.read_bytes()
+        assert hashlib.sha256(data).hexdigest()==item['sha256']
+        z.writestr('tasks/'+item['task']+'/'+item['path'],data)
+files={name:(r/name).read_bytes() for name in ['bootstrap.py','collect.py','model_proxy.py','protocol.json','task-manifest.json']}
+files['service_adapter.py']=Path('/tmp/biotasks17-iris/service_adapter.py').read_bytes()
+files['tasks.zip']=archive.getvalue()
+env={'OMP_NUM_THREADS':'1','OPENBLAS_NUM_THREADS':'1','MKL_NUM_THREADS':'1','NUMEXPR_NUM_THREADS':'1'}
+for var,secret in [('GLM_BULK_TOKEN','GLM_BULK_TOKEN'),('DAYTONA_API_KEY','DAYTONA_EVAL_API_KEY'),('TOGETHER_API_KEY','TOGETHER_API_KEY')]:
+    result=subprocess.run(['/home/exedev/.local/google-cloud-sdk/bin/gcloud','secrets','versions','access','latest','--secret',secret,'--project','PRIVATE_SECRET_PROJECT'],capture_output=True,text=True,timeout=30)
+    if result.returncode or not result.stdout.strip(): raise RuntimeError('Approved secret unavailable: '+secret)
+    env[var]=result.stdout.strip()
+name='biotasks17-pi-thirdparty-'+datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%d-%H%M%S')
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+    with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/bio17-attempts'),bundle_exclude=re.compile('.*')) as client:
+        job=client.submit(name=name,entrypoint=Entrypoint(command=['python','bootstrap.py'],workdir_files=files),resources=ResourceSpec(cpu=2,memory='8g',disk='16g'),environment=EnvironmentSpec(setup_scripts=['set -e\nuv venv --python 3.12 "$IRIS_VENV"\nuv pip install --prerelease=allow --python "$IRIS_VENV/bin/python" marin-iris==0.2.141.dev37311598536 marin-rigging==0.2.141.dev37311598536 httpx==0.28.1 starlette==0.50.0 uvicorn==0.35.0'],env_vars=env),constraints=[Constraint.create(key='cluster',op=ConstraintOp.EQ,value='PRIVATE_CPU_CLUSTER')],timeout=Duration.from_seconds(14400),scheduling_timeout=Duration.from_seconds(300),max_retries_failure=0,max_retries_preemption=0,priority_band=job_pb2.PRIORITY_BAND_BATCH)
+        state.write_text(json.dumps({'job_id':str(job.job_id),'run_id':name},indent=2))
+        print('SUBMITTED_TWO_TASK_CPU_PILOT',flush=True)

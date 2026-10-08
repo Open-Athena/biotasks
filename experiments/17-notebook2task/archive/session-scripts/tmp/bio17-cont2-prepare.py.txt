@@ -1,0 +1,35 @@
+from pathlib import Path
+import json,shutil
+root=Path('experiments/17-notebook2task')
+p=root/'glm-pilot/worker.py';s=p.read_text()
+s=s.replace("history_message={k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning_content','reasoning'}}\n                if msg.get('reasoning') and not msg.get('reasoning_content'):\n                    history_message['reasoning_content']=msg['reasoning']", "history_message={k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning'}}\n                if msg.get('reasoning_content') and not msg.get('reasoning'):\n                    history_message['reasoning']=msg['reasoning_content']")
+p.write_text(s)
+old=root/'runs/20261006-glm53-cpu-training-v1-continuation';new=root/'runs/20261006-glm53-cpu-training-v1-continuation2';new.mkdir(exist_ok=True);shutil.copytree(old/'prompts',new/'prompts',dirs_exist_ok=True)
+cfg=json.loads((old/'pilot-config.json').read_text())
+for m in cfg['resume_messages']:
+ v=m.pop('reasoning_content',None)
+ if v and not m.get('reasoning'):m['reasoning']=v
+for line in (old/'results/seta-cytopathology/events.jsonl').read_text().splitlines():
+ e=json.loads(line)
+ if 'response' in e:
+  m=e['response']['choices'][0]['message'];msg={k:v for k,v in m.items() if k in {'role','content','tool_calls','reasoning'}}
+  if m.get('reasoning_content') and not m.get('reasoning'):msg['reasoning']=m['reasoning_content']
+  cfg['resume_messages'].append(msg)
+ else:cfg['resume_messages'].append({'role':'tool','tool_call_id':e['tool_call_id'],'content':e['output']})
+cfg['resume_messages'].append({'role':'user','content':'The previous continuation stopped at the harness serialized-context ceiling before writing. The duplicate reasoning alias is now removed without dropping any reasoning or tool observations. Finish writing the complete draft_spec.md based on the accumulated source evidence and plan; no further broad audit is needed.'})
+(new/'pilot-config.json').write_text(json.dumps(cfg,indent=2)+'\n')
+(new/'plan.md').write_text('''# Continue with canonical reasoning history
+
+Preserve the original truncated response, two follow-up responses and all tool
+observations. Send reasoning once under `reasoning`, rather than duplicating its
+text under an alias and consuming the serialized-context ceiling. No source text
+or model observation is discarded. All other limits and model settings stay the
+same. The prior continuation was context-limited before it wrote any artifact.
+
+vLLM's current primary source normalizes the deprecated reasoning_content field
+to reasoning:
+https://github.com/vllm-project/vllm/blob/main/vllm/entrypoints/openai/chat_completion/protocol.py
+The served vLLM fingerprint is recorded separately; this inspected source is not
+proof of the precise served source revision. Actual responses use reasoning.
+''')
+print('Resumed messages:',len(cfg['resume_messages']),'serialized characters:',len(json.dumps(cfg['resume_messages'])))

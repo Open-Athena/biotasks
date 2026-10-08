@@ -1,0 +1,27 @@
+from pathlib import Path
+import json,shutil
+root=Path('experiments/17-notebook2task');p=root/'glm-pilot/worker.py';s=p.read_text()
+s=s.replace("        started=time.monotonic();", "        messages.extend(CONFIG.get('resume_messages', []))\n        started=time.monotonic();")
+s=s.replace("messages.append({k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning_content'}})","history_message={k:v for k,v in msg.items() if k in {'role','content','tool_calls','reasoning_content','reasoning'}}\n                if msg.get('reasoning') and not msg.get('reasoning_content'):\n                    history_message['reasoning_content']=msg['reasoning']\n                messages.append(history_message)")
+p.write_text(s)
+old=root/'runs/20261006-glm53-cpu-training-v1';new=root/'runs/20261006-glm53-cpu-training-v1-continuation';new.mkdir(exist_ok=True);shutil.copytree(old/'prompts',new/'prompts',dirs_exist_ok=True)
+cfg=json.loads((old/'pilot-config.json').read_text())
+m=json.loads((old/'results/seta-cytopathology/events.jsonl').read_text().splitlines()[0])['response']['choices'][0]['message']
+msg={k:v for k,v in m.items() if k in {'role','content','tool_calls','reasoning_content','reasoning'}}
+msg['reasoning_content']=m['reasoning']
+cfg['resume_messages']=[msg,{'role':'user','content':'Continue from the saved reasoning above. Complete the draft_spec.md now using write_file; do not restart the full constraint audit. The prior response reached its output cap before writing any file. Preserve the agreed recipe and explicit agent-visible protocol, and do not claim execution.'}]
+(new/'pilot-config.json').write_text(json.dumps(cfg,indent=2)+'\n')
+(new/'plan.md').write_text('''# Continue the saved idea revision
+
+The preceding one-request revision reached 16,384 reasoning tokens without a
+file. Continue from that exact saved assistant message, plus an explicit request
+to finish writing. Keep medium reasoning, 16,384 output tokens, 16 requests and
+ten minutes. This is a disclosed continuation, not a fresh independent trial.
+
+The endpoint returned `reasoning`, while the initial tool loop retained only
+`reasoning_content`. The corrected loop retains both and normalizes a missing
+reasoning_content from reasoning. The earlier baseline turns therefore did not
+carry this field forward. Preserve earlier raw evidence; do not interpret the
+runs as a clean model comparison. No scientific execution occurs in this stage.
+''')
+print('Prepared exact-response continuation and reasoning-history correction.')

@@ -1,0 +1,76 @@
+"""Build a reviewed public view from retained native artifacts (no inference)."""
+import hashlib,json,re
+from pathlib import Path
+from urllib.parse import urlsplit
+
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks')
+run=root/'experiments/17-notebook2task/attempts/20261007-pi-third-party'
+evidence=Path('/tmp/bio17-attempts/evidence')
+output=run/'results'
+output.mkdir(exist_ok=True)
+ui=root/'experiments/17-notebook2task/explorer/attempts'
+ui.mkdir(exist_ok=True)
+summary_path=next(evidence.rglob('summary.json'))
+base=summary_path.parent
+counts=json.loads((base/'request-counts.json').read_text())
+assert counts.get('judge',0)<=1
+sensitive=[]
+for path in base.glob('*-result.json'):
+    native=json.loads(path.read_text())
+    config=native.get('config') or {}
+    agent=(config.get('agent') or {}).get('kwargs') or {}
+    value=agent.get('api_base')
+    if value:sensitive.append(value.split('/trial/')[0])
+
+def clean(text):
+    for value in sensitive:text=text.replace(value,'[private model relay]')
+    return re.sub(r'https?://[^\s<>"\']+',lambda m:'[private service URL]' if any(s in urlsplit(m[0]).netloc.lower() for s in ('iris.oa.dev','coreweave','daytona')) else m[0],text)
+
+def textpart(content):
+    if isinstance(content,str):return content
+    return json.dumps(content,indent=2) if content else ''
+
+records=[]
+for task,case in [('seta-cytopathology','seta-cytopathology'),('bix-1-q1','bix-asxl1')]:
+    native=json.loads((base/f'{task}-result.json').read_text())
+    rewards=(native.get('verifier_result') or {}).get('rewards')
+    reward=next(iter(rewards.values())) if rewards else None
+    trial=base/'trials'/f'{task}-pi-glm53'
+    trajectories=sorted((trial/'agent').glob('trajectory*.json'))
+    traces=[]
+    for path in trajectories:
+        trajectory=json.loads(path.read_text())
+        for step in trajectory.get('steps',[]):
+            content=textpart(step.get('message'))
+            if step.get('reasoning_content'):
+                content+='\n\n### Recorded model reasoning\n\n'+step['reasoning_content']
+            for call in step.get('tool_calls') or []:
+                content+='\n\n### Tool: '+call['function_name']+'\n\n```json\n'+json.dumps(call['arguments'],indent=2)+'\n```'
+            for observation in (step.get('observation') or {}).get('results',[]):
+                content+='\n\n### Tool output\n\n```text\n'+textpart(observation.get('content'))+'\n```'
+            traces.append({'label':step['source']+' · step '+str(step['step_id']),'content':clean(content)})
+    answer_names=['analysis_report.md'] if task.startswith('seta') else ['answer.txt']
+    answers=[p for name in answer_names for p in (trial/'artifacts').rglob(name)]
+    answer=answers[0].read_text() if answers else 'No submitted answer recovered.'
+    reqs=[p for p in (base/'model-requests'/task).glob('request-*.json') if not p.name.endswith('.metadata.json')]
+    settings=[]
+    for path in reqs:
+        r=json.loads(path.read_text());settings.append({'max_tokens':r.get('max_tokens',r.get('max_completion_tokens')),'thinking_enabled':r.get('chat_template_kwargs',{}).get('enable_thinking'),'reasoning_effort':r.get('reasoning_effort')})
+    record={'id':'2026-10-08 · released task · attempt 1','model':'GLM-5.3 / Pi 0.87.0','status':'Completed' if not native.get('exception_info') else 'Attempt ended with '+native['exception_info']['exception_type'],'reward':reward,'settings':'128k total context · 32k output · medium thinking · 1 attempt · original task/grader','summary':'Native released-task evaluation; independent scientific audit not performed.','answer':clean(answer),'answer_note':'Verbatim submitted analysis report.' if task.startswith('seta') else 'Verbatim submitted answer.txt.','grading':'Original released SETA Python verifier.' if task.startswith('seta') else 'Harbor BixBench grader; Together openai/gpt-oss-120b; one upstream call maximum, no retries.','notes':[],'trace':traces,'artifacts':[]}
+    dest=output/task;dest.mkdir(exist_ok=True)
+    # Publish only explicit submitted text artifacts, never runtime configuration.
+    manifest=[]
+    for path in sorted((trial/'artifacts').rglob('*')):
+        if not path.is_file() or path.suffix not in {'.md','.csv','.json','.txt','.py'}:continue
+        data=path.read_bytes()
+        if len(data)>2_000_000:continue
+        relative=path.relative_to(trial/'artifacts')
+        target=dest/relative;target.parent.mkdir(parents=True,exist_ok=True)
+        target.write_text(clean(data.decode()))
+        manifest.append({'path':str(relative),'native_sha256':hashlib.sha256(data).hexdigest(),'public_sha256':hashlib.sha256(target.read_bytes()).hexdigest()})
+        record['artifacts'].append({'label':path.name,'url':'https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/'+str(target.relative_to(root))})
+    (dest/'artifact-manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+    (ui/f'{case}.json').write_text(json.dumps([record],indent=2)+'\n')
+    records.append({'task':task,'reward':reward,'exception_type':(native.get('exception_info') or {}).get('exception_type'),'solver_requests':counts.get(task,0),'recorded_request_settings':settings,'trajectory_files':len(trajectories),'trace_steps':len(traces),'submitted_artifact_files':len(manifest),'answer_recovered':bool(answers),'agent_result':{k:(native.get('agent_result') or {}).get(k) for k in ['n_input_tokens','n_output_tokens','n_cache_tokens']}})
+(output/'summary.json').write_text(clean(json.dumps({'records':records,'judge_calls':counts.get('judge',0)},indent=2))+'\n')
+print(json.dumps([{k:v for k,v in r.items() if k not in {'agent_result','recorded_request_settings'}} for r in records],indent=2))

@@ -1,0 +1,26 @@
+from pathlib import Path
+import urllib.request,json,hashlib,ast,types,sys,importlib.util
+root=Path('/home/exedev/.codex/worktrees/fc68/biotasks');run=root/'experiments/17-notebook2task/attempts/20261007-pi-third-party';tasks=run/'tasks';manifest=[]
+revision='3c3bc8975b05826bf41769bd6b2da76ad1b6dd42'
+base=f'https://huggingface.co/datasets/camel-ai/SETA-Env/resolve/{revision}/SETA_Synth/kaggle_notebook__gpreda_breast-cancer-prediction-from-cytopathology-data/'
+# Original release, no generated/repaired files.
+for name in ['instruction.md','task.toml','environment/Dockerfile','environment/data.csv','tests/test.sh','tests/test_outputs.py','solution/solve.sh']:
+ with urllib.request.urlopen(base+name,timeout=30) as r:data=r.read(500001)
+ assert len(data)<=500000
+ # Keep biological input staging outside Git.
+ dest=(root/'downloads/pi-third-party-seta/environment/data.csv') if name=='environment/data.csv' else tasks/'seta-cytopathology'/name
+ dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(data)
+ manifest.append({'task':'seta-cytopathology','path':name,'source':base+name,'sha256':hashlib.sha256(data).hexdigest(),'bytes':len(data),'local':str(dest.relative_to(root))})
+# Run the existing Harbor adapter itself, replacing only its unavailable datasets
+# import: generate_task consumes a pinned saved record and never calls the loader.
+harbor=Path('/home/exedev/.codex/worktrees/3e66/harbor');modulepath=harbor/'adapters/bixbench/src/bixbench/adapter.py'
+sys.modules['datasets']=types.ModuleType('datasets')
+spec=importlib.util.spec_from_file_location('pinned_bix_adapter',modulepath);mod=importlib.util.module_from_spec(spec);sys.modules[spec.name]=mod;spec.loader.exec_module(mod)
+q=json.loads((root/'experiments/17-notebook2task/explorer/comparisons/bix-question.json').read_text())
+adapter=object.__new__(mod.BixBenchAdapter);adapter.out_root=tasks;adapter.commit='8feaa38768b3bc452b8d61d8de2dfbb34bcd8757';adapter.cli=True;adapter.correction_set=None;adapter.template_dir=modulepath.parent/'task-template'
+record=mod.BixBenchRecord(q['question_id'],q['data_folder'],q['question'],q['ideal'],q['eval_mode'])
+dest=adapter.generate_task(record)
+for p in dest.rglob('*'):
+ if p.is_file():manifest.append({'task':q['question_id'],'path':str(p.relative_to(dest)),'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),'bytes':p.stat().st_size})
+(run/'task-manifest.json').write_text(json.dumps({'seta_revision':revision,'bixbench_revision':mod.HF_REVISION,'harbor_revision':adapter.commit,'bixbench_adapter':'existing generate_task(cli=True), no correction set, saved pinned source record','files':manifest},indent=2)+'\n')
+print('Prepared original SETA task and Harbor BixBench CLI adapter task')

@@ -1,0 +1,8 @@
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.cluster.types import JobName
+with connect_controller(controller_url='https://PRIVATE_IRIS_CONTROLLER') as endpoint:
+    with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, workspace=Path('/tmp/biotasks17-iris')) as client:
+        state = client.job_state(JobName.from_string('/PRIVATE_OWNER/PRIVATE_SERVICE'))
+        print('Existing inference relay state:', state.name)

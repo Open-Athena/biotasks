@@ -1,0 +1,20 @@
+import json
+from pathlib import Path
+root=Path('experiments/17-notebook2task/explorer')
+p=root/'catalog.json';d=json.loads(p.read_text())
+for row in d['sources']:
+ if row['id']=='pbmc3k':
+  row['source_url']='https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering-2017.ipynb'
+  row['revision']='8c1463d5d97272d5811ad3f4efb57483e23b4c7e'
+ if row['source_url'].endswith('.ipynb'):
+  row['viewer_url']=row['source_url'].replace('https://github.com/','https://nbviewer.org/github/')
+  row['viewer_kind']='notebook'
+ else:
+  row['viewer_url']=row['read_url'];row['viewer_kind']='document'
+p.write_text(json.dumps(d,indent=2)+'\n')
+p=root/'template.html';s=p.read_text()
+s=s.replace('button{cursor:pointer}', 'button{cursor:pointer}iframe{display:block;width:100%;height:78vh;border:1px solid var(--line);border-radius:6px;background:white}.viewer-help{font-size:12px;color:var(--muted)}[hidden]{display:none!important}')
+s=s.replace("</div><div class=\"flow\">", "</div><button id=\"toggle-source\" aria-expanded=\"false\">Show full original ${r.viewer_kind==='notebook'?'notebook':'document'}</button><section id=\"original-source\" hidden><p class=\"viewer-help\">${r.viewer_kind==='notebook'?'Commit-pinned original, rendered by nbviewer with all cells and any saved outputs.':'Original hosted documentation; this entry is not a Jupyter notebook.'} Viewing does not execute the analysis. External viewer needs internet. If embedding is unavailable, ${link(r.viewer_url,'open full source separately')}.</p><div id=\"frame-slot\"></div></section><section id=\"proposal-detail\"><div class=\"flow\">")
+s=s.replace("not asserted to be an issue #10 record.</p>'}`;", "not asserted to be an issue #10 record.</p>'}</section>`;\n$('toggle-source').onclick=()=>{const open=$('original-source').hidden;$('original-source').hidden=!open;$('proposal-detail').hidden=open;$('toggle-source').setAttribute('aria-expanded',String(open));$('toggle-source').textContent=open?'Return to task ideas':`Show full original ${r.viewer_kind==='notebook'?'notebook':'document'}`;if(open&&!$('frame-slot').firstChild){const frame=document.createElement('iframe');frame.title=`Original source: ${r.title}`;frame.setAttribute('sandbox','allow-scripts allow-same-origin allow-popups');frame.referrerPolicy='no-referrer';frame.src=r.viewer_url;$('frame-slot').append(frame);}};")
+s=s.replace('This explorer shows descriptions and task proposals; it is not a notebook runtime. It works offline after saving this HTML, except for external source links.', 'The full-source view embeds original notebooks through nbviewer, including cells and saved outputs, or the original hosted analysis document. It does not run code. The shortlist works offline after saving this HTML; embedded full sources and external links require internet.')
+p.write_text(s)

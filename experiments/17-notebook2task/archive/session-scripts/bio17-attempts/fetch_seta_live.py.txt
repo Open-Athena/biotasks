@@ -1,0 +1,27 @@
+import base64,io,json,tarfile,hashlib
+from pathlib import Path
+from iris.cli.connect import connect_controller
+from iris.client.client import IrisClient
+from iris.rpc import controller_pb2
+code='''import os,io,tarfile,base64
+from pathlib import Path
+root=Path(os.environ['IRIS_OUTPUT_DIR'])
+paths=[root/'seta-cytopathology-result.json',root/'request-counts.json']
+paths += [p for p in (root/'trials/seta-cytopathology-pi-glm53').rglob('*') if p.is_file()]
+paths += [p for p in (root/'model-requests/seta-cytopathology').glob('*.metadata.json')]
+assert sum(p.stat().st_size for p in paths) < 20*1024*1024
+buffer=io.BytesIO()
+with tarfile.open(fileobj=buffer,mode='w:gz') as archive:
+ for p in paths:archive.add(p,arcname=str(p.relative_to(root)))
+print(base64.b64encode(buffer.getvalue()).decode())
+'''
+receipt=json.loads(Path('/tmp/bio17-attempts/job.json').read_text())
+with connect_controller(config_file=Path('/PRIVATE_MARIN_CHECKOUT/lib/iris/config/marin.yaml')) as endpoint:
+ with IrisClient.remote(endpoint.url,credentials=endpoint.credentials,workspace=Path('/tmp/bio17-attempts')) as client:
+  response=client._cluster_client._client.exec_in_container(controller_pb2.Controller.ExecInContainerRequest(task_id=receipt['job_id']+'/0',command=['python','-c',code],timeout_seconds=40))
+  if response.error or response.exit_code:raise RuntimeError('Remote read failed: '+response.error+' '+response.stderr)
+  data=base64.b64decode(response.stdout.strip())
+  dest=Path('/tmp/bio17-attempts/seta-evidence');dest.mkdir(exist_ok=True)
+  with tarfile.open(fileobj=io.BytesIO(data),mode='r:gz') as archive:archive.extractall(dest,filter='data')
+  (dest/'transport.json').write_text(json.dumps({'archive_sha256':hashlib.sha256(data).hexdigest(),'compressed_bytes':len(data),'source':'Read-only copy from active Iris orchestrator after completed SETA trial'},indent=2))
+  print('Retrieved completed SETA artifacts:',len(data),'compressed bytes')

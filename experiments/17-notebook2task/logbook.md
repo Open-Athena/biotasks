@@ -343,3 +343,11 @@ Explorer rebuild, generated-content assertions and JavaScript syntax checks pass
 ### 2026-10-08 — Stage-specific authoring explanations
 
 Moved specification-input and construction-input explanations into their respective selected workflow panels, aligned names with steps 02 and 03, and removed misleading component numbering. Clarified that the notebook adapter and shared instructions form one combined authoring input; the component selector changes only the reading view. Focused offline browser checks passed for panel isolation, prompts, keyboard navigation, persistence and mobile layout. The final explanatory wording was rebuilt afterward. No model calls or baseline changes.
+
+### 2026-10-08 — Conclusion and preservation audit
+
+At the user’s request, close the completed investigation of existing notebook-to-task approaches and released examples; do not open a new issue. The original reusable-prompt ambition remains unachieved and is now explicitly outside the completed scope. Preserved 70 historical launch/collection/edit scripts as inert text with original/archived hashes and private-identifier redaction records. Preserved available check receipts and the pre-closure issue body. Rechecked all 17 retained native solver-evidence hashes.
+
+Uploaded the 11 exact source-input files (30,561,344 bytes) to the public HF bucket under the manifest-hash prefix recorded in archive/input-snapshot-receipt.json. Anonymous downloads matched all sizes and hashes, including the manifest. The upload used huggingface_hub 1.33.0, sequential file calls and the shared-node guard; peak sampled process-tree RSS was 130,560,000 bytes. Credentials/private runtime configurations are excluded; the private orchestrator bundle is not represented as fully mirrored. No model calls or scientific reruns.
+
+The rewritten README maps all maintained code, historical scripts, prompts, generated pages, authoring runs, native validation, solver traces and preservation records. The permanent research branch remains unmerged; the issue closure will link its immutable final snapshot. New prompt development is future work, with no new issue or execution authorization implied.

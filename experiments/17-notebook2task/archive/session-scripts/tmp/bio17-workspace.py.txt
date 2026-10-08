@@ -1,0 +1,63 @@
+from pathlib import Path
+p=Path('experiments/17-notebook2task/explorer/build.py');s=p.read_text();needle='        case["cpu_variant_validation"] =';idx=s.index(needle);end=s.index('\n',idx)
+s=s[:end]+'''
+        case["reference_solution"] = (generated / "solution/run_pipeline.py").read_text()
+        validation = root.parent / "validation/cpu-training-v1/native-02/results"
+        case["validation_steps"] = json.loads((validation / "steps.json").read_text())
+        case["validation_controls"] = json.loads((validation / "controls.json").read_text())
+        case["validation_audit"] = json.loads((validation / "parent-audit.json").read_text())
+        case["result_artifacts"] = {name: (validation / "oracle-artifacts/results" / name).read_text()
+                                    for name in ["metrics.json", "selected_model_report.json", "eda.json"]}
+        case["trace"] = []
+        for line in (generated.parent / "events.jsonl").read_text().splitlines():
+            event = json.loads(line)
+            if "response" not in event:
+                continue
+            response = event["response"]
+            choice = response["choices"][0]
+            calls = []
+            for call in choice["message"].get("tool_calls") or []:
+                fn = call["function"]
+                try:
+                    args = json.loads(fn["arguments"])
+                except (ValueError, TypeError):
+                    args = {}
+                calls.append({"tool": fn["name"], "path": args.get("path", "")})
+            case["trace"].append({"turn": event["turn"], "finish": choice.get("finish_reason"),
+                                  "calls": calls, "completion_tokens": response.get("usage", {}).get("completion_tokens")})
+''' +s[end:]
+s=s.replace('"entries": [], "page": row["id"]','"entries": entries, "page": row["id"]');p.write_text(s)
+p=Path('experiments/17-notebook2task/explorer/template.html');s=p.read_text();a=s.index('function comparison()');b=s.index('if(data.page)',a);s=s[:a]+s[b:];a=s.index('if(data.page)');b=s.index('}else{\n for(const name',a)
+workspace='''if(data.page){
+ $('directory').hidden=true;$('notebook-page').hidden=false;$('back').href=pageURL('index.html');
+ const r=data.sources[0], c=data.comparisons[0], own=!!c?.cpu_variant_instruction;
+ document.title=(r||c).title+' · BioTasks';
+ $('sections').outerHTML=`<div class="toolbar"><label class="search">Notebook<select id="notebook-select">${rows.map(x=>`<option value="${esc(x.id)}" ${x.id===data.page?'selected':''}>${esc(x.title)}</option>`).join('')}</select></label><label>Task<select id="task-select">${c?'<option value="released">Released '+(c.id.startsWith('seta')?'SETA':'BixBench')+' task</option>':'<option value="proposal">Task proposal · not generated</option>'}${own?'<option value="own">Our CPU-training variant</option>':''}</select></label></div><nav role="tablist" aria-label="Notebook workspace">${[['original','Original'],['task','Task'],['solution','Solution'],['results','Run & results']].map(([id,label])=>`<button role="tab" id="tab-${id}" aria-controls="workspace-panel" data-tab="${id}">${label}</button>`).join('')}</nav><section id="workspace-panel" class="panel" role="tabpanel"></section>`;
+ $('detail').hidden=true;
+ $('notebook-select').onchange=()=>{location.href=pageURL('notebooks/'+$('notebook-select').value+'.html');};
+ let tab='original';
+ function pre(text,cls=''){return `<pre class="${cls}">${esc(text)}</pre>`;}
+ function workspace(){
+ const task=$('task-select').value, generated=task==='own';
+ for(const button of document.querySelectorAll('[data-tab]')){button.setAttribute('aria-selected',String(button.dataset.tab===tab));}
+ const panel=$('workspace-panel');panel.setAttribute('aria-labelledby','tab-'+tab);
+ if(tab==='original'){
+ panel.innerHTML=`<h1>${esc((r||c).title)}</h1><p class="status">${esc(r?r.format:c.source_note)}</p><div class="links">${link(r?r.source_url:c.source_url,'Original source')}${r?link(r.read_url,'Authors’ reading view'):''}</div><div id="source-frame"></div>`;
+ const snapshot=r?.snapshot_html||c?.notebook_html;
+ if(snapshot||r){const frame=document.createElement('iframe');frame.title='Full original: '+(r||c).title;frame.setAttribute('sandbox',snapshot?'allow-popups':'allow-scripts allow-same-origin allow-popups');frame.referrerPolicy='no-referrer';if(snapshot)frame.srcdoc=snapshot;else frame.src=r.viewer_url;$('source-frame').append(frame);}
+ else $('source-frame').innerHTML='<p>The SETA source is available on Kaggle. Its full source is not bundled because source-license verification is pending; the exact released-task source version remains unresolved.</p>';
+ }else if(tab==='task'){
+ if(r){panel.innerHTML='<div id="proposal-slot"></div>';$('detail').hidden=false;detail(r);panel.hidden=true;return;}
+ panel.innerHTML=`<h1>${generated?'Our CPU-training variant':'Released task'}</h1><p class="status">${generated?'Parent-reviewed specification; GLM-authored package; one recorded grader repair.':'Verbatim released instructions · '+c.status}</p>`+pre(generated?c.cpu_variant_instruction:c.instruction,'task-instruction')+(generated?`<details><summary>Grader with recorded parent repair</summary>${pre(c.cpu_variant_tests)}</details>`:`<div class="links">${c.artifacts.map(a=>link(a[1],a[0])).join('')}</div>${c.reference_answer?`<details><summary>Published reference answer (evaluation material)</summary><p>${esc(c.reference_answer)}</p><p>${esc(c.canary)}</p></details>`:''}<details><summary>Inspection findings and proposed recipe</summary><ul>${c.observations.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p>${esc(c.recipe)}</p></details>`);
+ }else if(tab==='solution'){
+ panel.innerHTML='<h1>Solution</h1>'+(generated?`<label>Model / solution<select id="model-select"><option>GLM-5.3 · authored reference solution</option></select></label><p class="status">This is the task-authoring model’s reference implementation, not an independent solver attempt. No independent model solutions are available yet.</p>${pre(c.reference_solution,'solution-code')}`:c?'<p>No independent model-solver attempt recorded for this released task.</p><div class="links">'+c.artifacts.filter(a=>/solution/i.test(a[0])).map(a=>link(a[1],'Upstream reference solution · model not recorded')).join('')+'</div>':'<p>No solution yet: this analysis has task proposals only.</p>');
+ }else{
+ panel.innerHTML='<h1>Run & results</h1>'+(generated?`<p class="pill start">Native CPU validation passed after repair</p><p>No independent solver run or Docker/Harbor acceptance result.</p><div class="metrics"><span><b>9/9</b>tests</span><span><b>8/8</b>control expectations</span><span><b>6.3s</b>reference runtime</span></div><h3>Validation controls</h3><div class="table-wrap"><table><thead><tr><th>Control</th><th>Expected</th><th>Observed</th></tr></thead><tbody>${c.validation_controls.map(x=>`<tr><td>${esc(x.control)}</td><td>${x.expected_pass?'Accept':'Reject'}</td><td>${x.actual_pass?'Accepted':'Rejected'} · ${x.expectation_met?'as expected':'unexpected'}</td></tr>`).join('')}</tbody></table></div><h3>Result inspector</h3><label>Artifact<select id="artifact-select">${Object.keys(c.result_artifacts).map(x=>`<option>${esc(x)}</option>`).join('')}</select></label><pre id="artifact-content"></pre><details><summary>Authoring trace · GLM-5.3 · ${c.trace.length} responses</summary><p>This timeline shows recorded tool requests and response stops, not an independent solver trace. The first response exhausted its output limit; a bounded continuation produced package files. Scientific validation ran separately. Tool requests alone do not establish success.</p><ol>${c.trace.map(x=>`<li>Response ${x.turn+1} · ${esc(x.finish)} · ${x.completion_tokens} output tokens${x.calls.length?'<ul>'+x.calls.map(t=>`<li>${esc(t.tool)} <code>${esc(t.path)}</code></li>`).join('')+'</ul>':''}</li>`).join('')}</ol></details><details><summary>Validation evidence, repairs and limitations</summary>${pre(c.cpu_variant_validation)}</details>`:c?`<p>The released task has not been rerun. Authoring baseline outcomes below are separate from solving or grading that released task.</p><h3>GLM-5.3 authoring baseline</h3><p>${esc(c.glm_summary?.status)} · ${c.glm_summary?.request_count} responses</p><details><summary>GLM baseline output</summary>${pre(c.glm_output)}</details><details><summary>Earlier Codex baseline</summary><p>${esc(c.baseline_status)}</p>${pre(c.baseline_draft)}</details>`:'<p>No authoring, solver or validation run recorded for this candidate.</p>');
+ if(generated){const show=()=>{$('artifact-content').textContent=c.result_artifacts[$('artifact-select').value];};$('artifact-select').onchange=show;show();}
+ }
+ panel.hidden=false;$('detail').hidden=true;
+ }
+ for(const button of document.querySelectorAll('[data-tab]'))button.onclick=()=>{tab=button.dataset.tab;workspace();};
+ $('task-select').onchange=workspace;workspace();
+'''
+s=s[:a]+workspace+s[b:];s=s.replace('nav{display:flex;', 'nav button[aria-selected=true]{background:#245ca0;color:white;border-color:#245ca0}nav{display:flex;');p.write_text(s)

@@ -1,0 +1,14 @@
+import json,subprocess
+from pathlib import Path
+from daytona import Daytona,DaytonaConfig,ListSandboxesQuery
+r=subprocess.run(['/home/exedev/.local/google-cloud-sdk/bin/gcloud','secrets','versions','access','latest','--secret','DAYTONA_EVAL_API_KEY','--project','PRIVATE_SECRET_PROJECT'],capture_output=True,text=True,timeout=30)
+if r.returncode:raise RuntimeError('Approved Daytona key unavailable')
+client=Daytona(DaytonaConfig(api_key=r.stdout.strip()))
+records=[]
+for box in client.list(ListSandboxesQuery(limit=100),request_timeout=20):
+ label=(box.labels or {}).get('harbor.instance','')
+ task=next((n for n in ['seta-cytopathology','bix-1-q1'] if label.startswith('harbor-'+n+'-pi-glm53-')),None)
+ if task:
+  records.append({'task':task,'state':str(box.state),'id':box.id})
+Path('/tmp/bio17-attempts/sandboxes.json').write_text(json.dumps(records))
+print(json.dumps([{k:v for k,v in r.items() if k!='id'} for r in records]))

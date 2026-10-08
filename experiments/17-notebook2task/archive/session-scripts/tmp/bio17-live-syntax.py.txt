@@ -1,0 +1,25 @@
+"""Focused explorer interaction checks; requires an existing Playwright/Chromium."""
+import json
+import os
+import sys
+from pathlib import Path
+from playwright.sync_api import sync_playwright
+
+root = Path(__file__).resolve().parent
+url = sys.argv[1] if len(sys.argv) > 1 else (root / 'index.html').as_uri()
+errors = []
+with sync_playwright() as pw:
+    browser = pw.chromium.launch(executable_path=os.environ.get('CHROMIUM', '/home/exedev/.local/bin/chromium'), headless=True, args=['--single-process', '--no-sandbox', '--disable-gpu', '--no-zygote', '--disable-gpu-compositing', '--disable-software-rasterizer', '--use-gl=disabled', '--renderer-process-limit=1', '--disable-extensions'])
+    try:
+        page = browser.new_page(viewport={'width': 1280, 'height': 900}, accept_downloads=True)
+        if url.startswith('file:'):
+            page.context.set_offline(True)
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        page.goto(url, wait_until='domcontentloaded', timeout=25000)
+        page.wait_for_selector('#tab-task', timeout=15000)
+        page.click('#tab-task')
+        print(json.dumps({'url':page.url,'highlighted_tokens':page.locator('.verifier-code span[style]').count(),'code_background':page.locator('.code-surface').evaluate('(el)=>getComputedStyle(el).backgroundColor') if page.locator('.code-surface').count() else None,'prompt_background':page.locator('.artifact-scroll').first.evaluate('(el)=>getComputedStyle(el).backgroundColor') if page.locator('.artifact-scroll').count() else None,'errors':errors}))
+        page.locator('#verifier-title').scroll_into_view_if_needed()
+        page.screenshot(path='/tmp/bio17-live-syntax.png')
+    finally:
+        browser.close()
