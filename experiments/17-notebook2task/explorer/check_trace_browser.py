@@ -1,8 +1,12 @@
-"""Focused offline checks for the bundled SETA trace component."""
+"""Focused offline checks for the bundled SETA/BixBench trace and annotations."""
+import sys
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 root = Path(__file__).resolve().parent
+case = sys.argv[1] if len(sys.argv) > 1 else 'seta-cytopathology'
+assert case in ['seta-cytopathology', 'bix-asxl1']
+bix = case == 'bix-asxl1'
 errors = []
 with sync_playwright() as pw:
     browser = pw.chromium.launch(executable_path='/home/exedev/.local/bin/chromium', headless=True,
@@ -11,14 +15,16 @@ with sync_playwright() as pw:
         page = browser.new_page(viewport={'width': 1120, 'height': 900})
         page.context.set_offline(True)
         page.on('pageerror', lambda e: errors.append(str(e)))
-        page.goto((root/'notebooks/seta-cytopathology.html').as_uri(), wait_until='domcontentloaded')
+        page.goto((root/'notebooks'/f'{case}.html').as_uri(), wait_until='domcontentloaded')
         page.click('#tab-solution')
         frame = page.frame_locator('#trace-frame')
         frame.locator('[data-slot=atif-trace-step]').first.wait_for(timeout=15000)
-        assert frame.locator('[data-slot=atif-trace-step]').count() == 10
-        assert '1' in page.locator('#attempt-record .metrics').inner_text()
+        assert frame.locator('[data-slot=atif-trace-step]').count() == (29 if bix else 10)
+        assert ('Unscored' if bix else '1') in page.locator('#attempt-record .metrics').inner_text()
+        assert page.locator('#attempt-review-title').inner_text() == 'Summary & annotations'
+        assert page.locator('[aria-labelledby=attempt-review-title] h3').count() == 4
         frame.get_by_label('Show setup messages').check()
-        assert frame.locator('[data-slot=atif-trace-step]').count() == 12
+        assert frame.locator('[data-slot=atif-trace-step]').count() == (31 if bix else 12)
         frame.get_by_label('Show setup messages').uncheck()
         search = frame.get_by_placeholder('e.g. DESeq2, error, simplify')
         search.fill('no-such-step-xyz')
@@ -30,18 +36,20 @@ with sync_playwright() as pw:
         assert tool.locator('[data-slot=atif-tool-call-results]').is_visible()
         assert tool.locator('.trace-code').evaluate('(el) => getComputedStyle(el).color') == 'rgb(248, 248, 242)'
         assert tool.locator('.trace-code .token').count() > 0
-        page.screenshot(path='/tmp/bio17-attempts/seta-trace-desktop.png')
+        page.screenshot(path=f'/tmp/bio17-attempts/{case}-annotations-desktop.png')
         frame.get_by_label('Group intermediate steps').check()
         assert frame.locator('[data-slot=atif-trace]').count() == 1
-        page.select_option('#task-select', 'own')
-        assert page.locator('#trace-frame').count() == 0
-        assert 'No independent LLM solver attempts' in page.locator('#workspace-panel').inner_text()
-        page.select_option('#task-select', 'released')
+        if not bix:
+            page.select_option('#task-select', 'own')
+            assert page.locator('#trace-frame').count() == 0
+            assert 'No independent LLM solver attempts' in page.locator('#workspace-panel').inner_text()
+            page.select_option('#task-select', 'released')
+        frame.get_by_label('Group intermediate steps').uncheck()
         page.set_viewport_size({'width':390,'height':844})
         frame.locator('[data-slot=atif-trace-step]').first.wait_for()
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert frame.locator('body').evaluate('el => el.scrollWidth <= innerWidth')
-        page.screenshot(path='/tmp/bio17-attempts/seta-trace-mobile.png')
+        page.screenshot(path=f'/tmp/bio17-attempts/{case}-annotations-mobile.png')
         assert not errors, errors
         print('PASS: offline trace, setup toggle, search, tool arguments/results, recipe isolation, mobile width; no page errors')
     finally:

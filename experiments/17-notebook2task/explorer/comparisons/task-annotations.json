@@ -4,12 +4,16 @@
       "prompt": "Classify malignant versus benign samples from cytopathology measurements. The prompt asks for at least three classifiers, feature selection, cross-validation, a weighted ensemble, prediction artifacts and a report, with test AUC at least 0.93.",
       "prompt_notes": [
         "The released task is broader than a single prediction question: it specifies several modeling and reporting requirements.",
-        "The original Kaggle analysis is identifiable, but the release does not establish an exact source-version match."
+        "The original Kaggle analysis is identifiable, but the release does not establish an exact source-version match.",
+        "The environment explicitly advertises scikit-learn, XGBoost and LightGBM. These available tools may steer classifier choice; the three-classifier and weighted-ensemble requirements constrain the analysis more directly. This is suitable for a prescribed workflow, but does not measure unconstrained model selection.",
+        "Package-list steering is a hypothesis, not a demonstrated effect. A matched comparison could keep the environment fixed while changing how the package list is presented."
       ],
       "verifier": "The released Python tests check output files, row counts, columns, model names, metric ranges and report content. Ensemble AUC is computed against true_label from the submitted predictions file.",
       "verifier_notes": [
         "Labels and the prescribed split are not independently recovered from trusted input data in these tests. Solver-supplied labels and reported metrics therefore remain a grading weakness identified by static inspection.",
-        "This upstream verifier has not been executed here. The separate native validation applies to our CPU-training variant, not this released task."
+        "The original verifier was executed on the released-task GLM-5.3 attempt: all ten tests passed. This is its native result, not an independent scientific audit.",
+        "The report test checks at least 500 characters, topic keywords and two model-name keywords. These are presence checks; they do not establish sound reasoning, numerical accuracy or agreement with the executed analysis.",
+        "Proposed improvement: independently recompute quantitative claims and audit the split and predictions. Separately, an evidence-linked LLM review could assess explanations, justification and limitations against a rubric. Its reliability would need evaluation; such review remains advisory and separate from the native reward."
       ],
       "solution": "The released shell script writes and runs a Python pipeline with random forest, gradient boosting and XGBoost, then exports predictions, a weighted ensemble and a report.",
       "solution_notes": [
@@ -40,16 +44,20 @@
       "prompt": "Run DESeq2 differential expression, then simplified GO enrichment, and report the adjusted p-value for regulation of T cell activation rounded to four decimal places.",
       "prompt_notes": [
         "The released question names padj < 0.05 and clusterProfiler::simplify() with similarity > 0.7.",
-        "The linked capsule supplies the original analysis; this is existing benchmark comparison material."
+        "The linked capsule supplies the original analysis; this is existing benchmark comparison material.",
+        "The prompt directly prescribes DESeq2, enrichGO and simplify(), so this task measures execution and interpretation of a specified analysis rather than independent method selection. Package availability may also constrain execution, but its causal effect has not been tested.",
+        "An approximate p-value depends on analysis choices and versions. A useful task audit would make the intended contrast, gene universe, mapping, enrichment and simplification settings reproducible without supplying the answer."
       ],
-      "verifier": "A published reference-answer record is available, but executable grading code has not been captured for this example. The record below is evidence of the expected answer, not a verifier implementation.",
+      "verifier": "This card displays the published reference-answer record. The executed pilot used the Harbor BixBench adapter with a Together gpt-oss-120b judge configuration; its executable adapter is checkpointed with the pilot, rather than displayed in this card.",
       "verifier_notes": [
         "The published ideal answer is 0.0002. This alone does not establish the evaluator's answer-matching rules or tolerances.",
-        "Neither the released analysis nor its evaluator has been rerun here."
+        "The released-task solver attempt ended with an agent timeout followed by a verifier timeout. No judge request reached the proxy and no grade was produced; inspect Attempt for evidence.",
+        "For this numerical question, a deterministic comparison could parse a submitted value and apply an explicitly justified rounding/tolerance rule against a trusted reference. An LLM judge may help interpret free-form answers, but does not by itself validate the underlying analysis. This is a proposed alternative, not the released grading contract.",
+        "The reference value and the attempt\u2019s intermediate value differ. The retained evidence does not establish the cause; neither answer equivalence nor scientific correctness should be inferred from the timeout."
       ],
       "solution": "The original capsule notebook contains the published analysis; view it in the Original tab. No separate executable reference-solution script has been captured.",
       "solution_notes": [
-        "The answer record is shown in the verifier card. No independent LLM solver attempt is recorded."
+        "The answer record is shown in the verifier card. The independent GLM-5.3 attempt is available in Attempt; it did not submit an answer."
       ]
     }
   }
