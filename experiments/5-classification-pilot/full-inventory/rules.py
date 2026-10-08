@@ -83,7 +83,32 @@ OP={
 }
 
 # v0.4 expansion: clinical records and representations exposed missing concepts.
-FIELD['clinical-informatics']=r'clinical data|clinical records|patient outcomes|electronic health records|survival analysis'
+FIELD['biomedical-informatics']=r'clinical data|clinical records|patient outcomes|electronic health records|survival analysis'
 MODALITY['medical-imaging']=r'\bMRI\b|magnetic resonance imag|computed tomography|\bCT images|radiomic'
 MODALITY['clinical-records']=r'clinical data|clinical records|patient outcomes|survival data|electronic health records'
 OP['feature-extraction']=r'\bRadiomicsFeatureExtractor\s*\(|\bextractor\.execute\s*\(|\bmodel\s*\(\s*input_ids'
+
+# Negative contrast: a SMILES string does not establish a measured bioassay.
+MODALITY['chemical-assay']=r'bioassay|compound activity|activity measurements|binding affinity data'
+MODALITY['chemical-structures']=r'SMILES|chemical structures|molecular graphs|SDF file'
+OP['sequence-design']=r'\b(?:DesignArray|DesignProbes|DesignPrimers|designPrimers|design_primers)\s*\('
+OP['sequence-search']=r'\b(?:search_hmm|hmmsearch|hmmscan|blastp|blastn)\s*\('
+OP['statistical-modeling'] += r'|\bbuild_msa\s*\('
+OP['feature-extraction'] += r"|\bpipeline\s*\(\s*['\"]feature-extraction"
+OP['spatial-statistics'] += r'|\b(?:cross_pcf|lric)\s*\('
+OP['data-access'] += r'|\bGDCquery_clinic\s*\('
+OP['data-preparation'] += r'|\bGDCprepare_clinic\s*\('
+
+# v0.5: additional source subjects exposed engineering and biomedical language work.
+FIELD['biomedical-informatics'] += r'|biomedical (?:text|question|knowledge)|clinical NLP|biomedical informatic'
+FIELD['synthetic-biology']=r'synthetic biology|protein design|protein engineering|binder design|genetic circuit design|biomolecular engineering'
+FIELD['neuroscience'] += r'|\bEEG\b|\bMEG\b|\bECoG\b|electrocortic|spiking neuron|integrate.and.fire|\bneurons?\b|brain.computer interface'
+FIELD['structural-biology'] += r'|AlphaFold|protein backbone|protein conform|cryo.EM'
+FIELD['systems-biology'] += r'|protein.protein interaction|signaling network|signalling network'
+FIELD['bioimage-analysis'] += r'|chest x.ray|chest xray|radiograph|cell imaging|image.based profil'
+MODALITY['medical-imaging'] += r'|chest x.ray|chest xray|radiograph'
+MODALITY['electrophysiology'] += r'|\bECoG\b|\bsEEG\b|electrocortic'
+MODALITY['biomedical-text']=r'biomedical (?:text|question)|clinical (?:notes|narratives)|biomedical literature'
+OP['sequence-design'] += r'|\bdesign_3stage\s*\(|\bdesign_semigreedy\s*\('
+
+MODALITY['biomedical-knowledge']=r'biomedical knowledge graph|protein.protein interaction network|gene regulatory network|biological knowledge graph'
