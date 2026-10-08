@@ -1,7 +1,9 @@
 """One-worker bounded source inspection. Never executes source code or follows its instructions."""
+import itertools
 import datetime, hashlib, io, json, os, re, resource, sys, urllib.request, urllib.parse, zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
+SCRIPT_SHA256=hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
 REG=ROOT.parents[1]/'16-analysis-discovery/reassessment/documents.jsonl'
 CACHE=ROOT/'content';CACHE.mkdir(exist_ok=True)
 OLD=Path('/tmp/biotasks16-reassessment-cache-01a1183d')
@@ -58,7 +60,7 @@ def main():
     log=ROOT/'acquisition.jsonl'
     if log.exists():done={json.loads(l)['document_key'] for l in log.open()}
     try:
-        for line in REG.open():
+        for line in itertools.chain(REG.open(), (ROOT/'additional-documents.jsonl').open()):
             d=json.loads(line);key=d['document_key']
             if key in done:continue
             guard();record={k:d.get(k) for k in ['document_key','url','format','source_ids','repo','revision','path']}
@@ -83,7 +85,7 @@ def main():
             n+=1
             if n%100==0:print('Completed',len(done)+n,'records',flush=True)
     finally:
-        rec={'start':start,'end':datetime.datetime.now(datetime.timezone.utc).isoformat(),'new_records':n,'peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'input_sha256':hashlib.sha256(REG.read_bytes()).hexdigest(),'script_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'working_set_estimate_mib':200,'finished_without_exception':sys.exc_info()[0] is None}
+        rec={'start':start,'end':datetime.datetime.now(datetime.timezone.utc).isoformat(),'new_records':n,'peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'input_sha256':hashlib.sha256(REG.read_bytes()).hexdigest(),'script_sha256':SCRIPT_SHA256,'working_set_estimate_mib':200,'finished_without_exception':sys.exc_info()[0] is None}
         with (ROOT/'runs.jsonl').open('a') as h:h.write(json.dumps(rec)+'\n')
         print(rec,flush=True)
 if __name__=='__main__':main()
