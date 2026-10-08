@@ -34,7 +34,7 @@ env.pop('VIRTUAL_ENV', None)
 env.pop('PYTHONPATH', None)
 env['UV_PROJECT_ENVIRONMENT'] = str(Path('harbor/.venv').resolve())
 subprocess.run(['uv', 'sync', '--directory', 'harbor', '--frozen', '--no-dev', '--python', '3.12', '--extra', 'daytona'], env=env, check=True, timeout=1800)
-python = str(Path('harbor/.venv/bin/python').resolve())
+python = str(Path('harbor/.venv/bin/python').absolute())
 (output / 'harbor-packages.txt').write_text(subprocess.check_output(['uv', 'pip', 'freeze', '--python', python], env=env, text=True))
 judge_token = secrets.token_urlsafe(32)
 for name in ['GLM_BULK_TOKEN', 'TOGETHER_API_KEY', 'OPENAI_API_KEY', 'HOSTED_VLLM_API_KEY']:
