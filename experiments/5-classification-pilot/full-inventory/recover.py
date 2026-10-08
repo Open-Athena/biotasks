@@ -4,12 +4,13 @@ from pathlib import Path
 sys.path.insert(0,'/tmp/biotasks-classification-ijson-351')
 import ijson
 from acquire import ROOT,REG,guard,raw_url,extract,get
+STREAM_CAP=64*1024**2
 class Reader:
  def __init__(self,h):
   self.h=h;self.n=0;self.digest=hashlib.sha256();self.length=int(h.headers.get('Content-Length','0'));self.git=hashlib.sha1(b'blob '+str(self.length).encode()+b'\0')
  def read(self,size=-1):
   guard();b=self.h.read(size);self.n+=len(b)
-  if self.n>64*1024**2:raise ValueError('stream_over_64MiB_cap')
+  if self.n>STREAM_CAP:raise ValueError(f'stream_over_{STREAM_CAP//1024**2}MiB_cap')
   self.digest.update(b);self.git.update(b);return b
 
 def stream(url):
