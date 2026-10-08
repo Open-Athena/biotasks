@@ -53,3 +53,11 @@ checks pass. The bounded milestone is complete. No independent biological review
 notebook execution, model calls, paid compute, or full-inventory annotation was
 performed. Future vocabulary changes require new evidence and affected-record
 review. Final publication is recorded in the issue comment, with immutable links.
+
+## Full inventory continuation, October 8, 2026
+
+The user rejected the 35-document stopping point and clarified that the requested endpoint includes both iterative vocabulary refinement and the full inventory/explorer. Inspected every baseline locator plus 15 earlier pilot additions; independently checked all 952 resulting repository rows. Source format validation exposed 25 Git symlink references and three extension/content collisions. Exact-byte reconciliation removed another 19 duplicate locations. Retained total: 4,245 authoring locators, comprising 4,239 confirmed sources and six unresolved historical locators; nine rendered fallbacks remain separate.
+
+Expanded individual review by 22 cases to 57. Clinical/textual knowledge work and protein design exposed missing fields; v0.5 has 20 fields, 31 modalities and 30 operations. Last contrasts C/D fit this version without more terms, but this is not independent semantic validation or proof of saturation. Inventory-wide rule assignments remain provisional and are visibly separated from individual review and insufficient evidence. The final report gives all denominators.
+
+Streaming recovery used ijson 3.5.1, verified source hashes, and discarded outputs; one known 72 MB source was recovered under a targeted 96 MiB transfer cap. Source inspections remained below 150 MiB peak RSS; the local classifier/build/check stages stayed below 150 MiB. Browser startup first encountered an unavailable bundled executable, then an unsupported single-process configuration. Reusing the installed headless Chromium with the prior successful renderer limit passed search, filters, evidence, export and responsive layout checks. Browser contexts were closed. No biological analysis, model API or paid compute was run. Publication links are recorded in issue comments.

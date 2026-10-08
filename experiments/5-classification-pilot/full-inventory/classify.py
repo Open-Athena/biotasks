@@ -75,12 +75,13 @@ def main():
    r['narrative_excerpt']=' '.join(t for _,k,t in fs if k=='narrative')[:1500]
   p=bykey.get(key) or pilot_by_url.get(d['url'])
   if p and acq.get('sha256')==p['source_sha256']:
-   r.update(labels=p['labels'],review='assistant_individual_source_review',source_role=p.get('source_role','analysis_or_teaching_document'),pilot_id=p['id'],input_origin=p.get('input_origin'),withheld_labels=p.get('withheld_labels',[]))
+   r.update(labels=p['labels'],review='assistant_individual_source_review',source_role=p.get('source_role','analysis_or_teaching_document'),pilot_id=p['id'],reviewed_facet_states=p.get('facet_review',{}),input_origin=p.get('input_origin'),withheld_labels=p.get('withheld_labels',[]))
   if key in manual:
    m=manual[key];assert m['source_sha256']==acq.get('sha256'),key
    r.update({k:v for k,v in m.items() if k not in ['document_key','source_sha256']})
   r['facet_states']={f:('assistant_reviewed' if r['review']=='assistant_individual_source_review' else 'rule_assigned') if any(a['facet']==f for a in r['labels']) else 'insufficient_evidence' for f in ['scientific_field','modality','operation']}
-  if r.get('reviewed_facet_states',{}).get('scientific_field')=='not_applicable':r['facet_states']['scientific_field']='not_applicable'
+  for facet,state in r.get('reviewed_facet_states',{}).items():
+   if state=='not_applicable':r['facet_states'][facet]='not_applicable'
   if status!='confirmed':r['facet_states']={f:'source_unresolved' for f in r['facet_states']}
   records.append(r)
  # Exact original-byte copies are one global document, retaining all locations.

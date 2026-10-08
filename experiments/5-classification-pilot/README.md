@@ -1,3 +1,5 @@
+> Current result: [full-inventory reassessment and classification](full-inventory/README.md), with the [new explorer](full-inventory/inventory.html). The v0.3 pilot below is retained as an earlier milestone.
+
 # Iterative classification pilot: completed bounded pass
 
 The working vocabulary was refined against **35 source documents across 31 hosting repositories**, expanding from 10 to 14, 27, 31 and finally 35 documents. All **18 candidate scientific fields** now have substantive source examples. The vocabulary contains 26 data modalities and 27 operations; unexercised terms remain explicitly marked. These are overlapping navigation categories, not an independently validated ontology or a representative coverage estimate.
