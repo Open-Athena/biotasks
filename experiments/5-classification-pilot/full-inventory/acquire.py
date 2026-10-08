@@ -1,5 +1,5 @@
 """One-worker bounded source inspection. Never executes source code or follows its instructions."""
-import datetime, hashlib, io, json, os, re, resource, sys, urllib.request, zipfile
+import datetime, hashlib, io, json, os, re, resource, sys, urllib.request, urllib.parse, zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parent
 REG=ROOT.parents[1]/'16-analysis-discovery/reassessment/documents.jsonl'
@@ -22,6 +22,7 @@ def get(url,cap=CAP):
     old=OLD/hashlib.sha256(url.encode()).hexdigest()
     if old.exists() and old.stat().st_size<=cap:
         return old.read_bytes(),'prior_cache'
+    url=urllib.parse.quote(url,safe=':/?=&%')
     with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':'BioTasks-source-inspection/3.0'}),timeout=12) as h:
         raw=h.read(cap+1)
     if len(raw)>cap:raise ValueError('source_over_8MiB_cap')
