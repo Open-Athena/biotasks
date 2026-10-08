@@ -94,7 +94,7 @@ if(data.page){
  if(intro){const parts=[];let n=intro;while(n&&n!==cards[0]){parts.push(n);n=n.nextElementSibling;}parts.forEach(x=>p[1].append(x));}
  const label=document.createElement('label');label.htmlFor='seta-prompt-component';label.textContent='Prompt component';
  const select=document.createElement('select');select.id=label.htmlFor;select.innerHTML='<option value="0">Notebook adapter</option><option value="1">Shared idea-agent instructions</option>';p[1].append(label,select,cards[0],cards[1]);
- function component(){cards[0].hidden=select.value!=='0';cards[1].hidden=select.value!=='1';}select.onchange=component;component();p[2].append(cards[2]);
+ function component(){cards[0].hidden=select.value!=='0';cards[1].hidden=select.value!=='1';}select.onchange=component;component();p[2].append(cards[2]);p[1].append($('seta-recipe-limitations'));
  p[0].insertAdjacentHTML('beforeend','<p>The seed context is assembled before authoring. Select step 2 to inspect the notebook adapter and shared instructions. These are full templates with placeholders, not a rendered model-call transcript.</p>');
  p[3].insertAdjacentHTML('beforeend','<p>Solver instructions are task-specific outputs of the builder, not another universal authoring prompt. The cytopathology Task view shows its actual instructions and verifier; Attempt shows the GLM run.</p><p><a href="'+esc(pageURL('notebooks/seta-cytopathology.html'))+'">Open SETA example →</a></p>');
  }else{
