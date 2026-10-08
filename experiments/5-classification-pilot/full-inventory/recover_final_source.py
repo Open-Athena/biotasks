@@ -1,14 +1,14 @@
 """Known 72,238,389-byte notebook: bounded 96 MiB streaming retry."""
 import datetime,hashlib,json,resource,urllib.request
 import recover
-from acquire import ROOT,REG,guard
+from acquire import ROOT,REG,guard,raw_url
 start=datetime.datetime.now(datetime.timezone.utc).isoformat();guard(True)
 key='github:3dmol/3dmol.js:py3Dmol/volumetric.ipynb'
 r=next(json.loads(l) for l in (ROOT/'acquisition.jsonl').open() if json.loads(l)['document_key']==key)
 d=next(json.loads(l) for l in REG.open() if json.loads(l)['document_key']==key)
 assert d['size']==72238389
 recover.STREAM_CAP=96*1024**2
-chunks,f=recover.stream(r['acquisition_url'])
+chunks,f=recover.stream(raw_url(r['url']))
 assert f.n==d['size'] and f.git.hexdigest()==d['sha']
 r.update(status='confirmed',sha256=f.digest.hexdigest(),bytes=f.n,identity='git_blob_verified',route='streamed_ijson_3.5.1_96MiB_cap')
 r.pop('error',None);r['content_file']=hashlib.sha256(key.encode()).hexdigest()+'.json'
