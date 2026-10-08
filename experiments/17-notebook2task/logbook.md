@@ -268,3 +268,24 @@ Added local Attempt-view support for evidence-backed answers, grading and traces
 Static build passed. Browser verification is incomplete: sandboxed startup timed
 out; the elevated shared-node guard stopped Chromium above the 500 MiB limit.
 No claim of browser validation for this change.
+
+
+### 2026-10-08: completed SETA trace viewer
+
+Retrieved SETA's completed output read-only from the active Iris orchestrator,
+without waiting for BixBench or changing its run. The retained Pi event stream
+contains 12 completed messages and 10 paired tool calls/results, with agent_end
+and no pending calls. Converted message_end records to ATIF for display; Harbor
+did not emit an ATIF file or session directory in this run. The source hash is
+preserved and streaming deltas are omitted. Token totals match the native result.
+All 10 released SETA verifier tests passed; this remains a native grade, not an
+independent scientific audit.
+
+Vendored the MIT atif-lens components at 78a8a247bdd9cae30897134f22864b6d1d3c9733
+with hashes/license. Embedded the bundled viewer in the released SETA Attempt
+tab, with search, grouping, setup-message toggle, highlighted Pi code, expandable
+results, and the submitted report below. The viewer runs offline with no CDN or
+backend. A focused browser check passed at desktop/mobile widths with no page
+errors; recipe switching hides this trace for generated tasks. Peak sampled RSS
+was 429 MB, within the shared-node limit. Live HTMLPreview remains a separate
+publication check.

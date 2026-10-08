@@ -51,6 +51,19 @@ for case in catalog["comparisons"]:
     case["solver_attempts"] = json.loads(attempt_file.read_text()) if attempt_file.exists() else []
     for attempt in case["solver_attempts"]:
         attempt["answer_html"] = md.render(attempt.get("answer", "No submitted answer recovered."))
+        if attempt.get("atif_file"):
+            trace_json = (root / "attempts" / attempt["atif_file"]).read_text().replace("<", "\\u003c")
+            viewer_js = (root / "trace-viewer/dist/viewer.js").read_text().replace("</script", "<\\/script")
+            viewer_css = (root / "trace-viewer/dist/viewer.css").read_text()
+            attempt["trace_viewer_html"] = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
+                '<meta name="viewport" content="width=device-width,initial-scale=1">'
+                "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'\">"
+                '<title>SETA · GLM-5.3 solver trace</title><style>' + viewer_css + '</style></head>'
+                '<body><div id="root"></div><script id="trajectory-data" type="application/json">'
+                + trace_json + '</script><script>' + viewer_js + '</script></body></html>')
+            trace_dir = root / "traces"
+            trace_dir.mkdir(exist_ok=True)
+            (trace_dir / (case["id"] + ".html")).write_text(attempt["trace_viewer_html"])
         for event in attempt.get("trace", []):
             event["content_html"] = md.render(event.get("content", ""))
     pilot_name = {"seta-cytopathology": "seta-cytopathology-retry", "bix-asxl1": "bix-asxl1"}[case["id"]]
