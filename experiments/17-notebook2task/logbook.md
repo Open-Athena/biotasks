@@ -321,3 +321,9 @@ Replaced the side-by-side overview with a persistent SETA/BixBench selector and 
 Rechecked BixBench's official tree at `49311180bdacb324c596f2e07596c126f2004008` and `bixbench/prompts.py`, alongside the original paper. Found evaluation/answering prompts, not an equivalent question-generation prompt. The BixBench panel records that scoped gap, describes the documented authoring inputs and review stages, and keeps the ASXL1 research-code format unresolved. No invented authoring prompt is displayed.
 
 Build and focused offline browser checks passed: only the selected approach is visible, three scrollable SETA prompts are present, BixBench's prompt-availability statement is visible, selection survives reload, notebook filters/navigation work, and both approaches fit mobile width without page errors. No model or judge calls.
+
+### 2026-10-08 — Clickable approach stages
+
+Converted the workflow into compact numbered buttons controlling one detail panel per approach. SETA authoring displays one of its two prompt components via a component selector; construction displays the complete builder prompt. Source preparation and solver/grading show stage-specific explanations and example links. BixBench maps provenance, missing-authoring-prompt evidence, human review and solver information to their respective stages. Broader limits remain in a collapsed disclosure. Selected steps persist in the URL, and full prompts remain unchanged.
+
+Focused offline browser checks passed for stage/prompt mapping, single-panel visibility, keyboard activation, reload persistence, both approaches, notebook filtering and mobile width. An initial test selector matched Markdown headings within prompts as well as card titles; narrowed it to direct card headings and reran successfully. No model calls or grading changes.

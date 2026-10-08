@@ -18,7 +18,20 @@ with sync_playwright() as pw:
         assert page.locator('#approach-bix').is_hidden()
         assert page.locator('.authoring-prompt').count()==3
         assert page.locator('.authoring-prompt .artifact-scroll').first.evaluate('e=>e.scrollHeight>e.clientHeight')
-        assert page.get_by_text('Does the authoring model see the notebook?',exact=False).is_visible()
+        assert page.locator('#seta-step-2').is_visible()
+        assert page.locator('.authoring-prompt:visible').count()==1
+        page.select_option('#seta-prompt-component','1')
+        assert 'Shared idea-agent instructions' in page.locator('.authoring-prompt:visible > h2').inner_text()
+        page.click('#seta-step-button-3')
+        assert page.locator('#seta-step-2').is_hidden()
+        assert 'Task-package builder' in page.locator('.authoring-prompt:visible > h2').inner_text()
+        page.reload()
+        assert page.locator('#seta-step-3').is_visible()
+        page.click('#seta-step-button-1')
+        assert page.locator('.authoring-prompt:visible').count()==0
+        page.locator('#seta-step-button-4').focus()
+        page.keyboard.press('Enter')
+        assert page.locator('#seta-step-4').is_visible()
         page.select_option('#approach-select','bix')
         assert page.locator('#approach-seta').is_hidden()
         assert page.locator('#approach-bix').is_visible()
@@ -38,9 +51,10 @@ with sync_playwright() as pw:
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.screenshot(path='/tmp/bio17-attempts/approaches-mobile.png')
         page.select_option('#approach-select','seta')
-        assert page.locator('.authoring-prompt').first.is_visible()
+        page.click('#seta-step-button-2')
+        assert page.locator('.authoring-prompt:visible').count()==1
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert not errors,errors
-        print('PASS: default overview, eight stages, disclosure, tabs, filtering, reload, mobile width')
+        print('PASS: stage selection, prompt-component selection, keyboard, persistence, both approaches, notebook filters, mobile width')
     finally:
         browser.close()
