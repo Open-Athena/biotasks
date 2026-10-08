@@ -7,7 +7,12 @@ def main():
  guard(True);start=datetime.datetime.now(datetime.timezone.utc).isoformat();log=ROOT/'repository-acquisition.jsonl';done=set();n=0
  if log.exists():done={json.loads(l)['repository'] for l in log.open()}
  try:
-  for r in csv.DictReader(COUNTS.open()):
+  base=list(csv.DictReader(COUNTS.open()))
+  known={r['repository'] for r in base}
+  for line in (ROOT/'additional-documents.jsonl').open():
+   d=json.loads(line);repo=d['repo'].lower()
+   if repo not in known:base.append({'repository':repo,'revisions':json.dumps([d['revision']])});known.add(repo)
+  for r in base:
    repo=r['repository']
    if repo in done:continue
    revs=json.loads(r['revisions']);rec={'repository':repo,'revisions':revs,'status':'unavailable','attempts':[]}
