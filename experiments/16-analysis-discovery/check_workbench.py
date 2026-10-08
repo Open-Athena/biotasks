@@ -77,9 +77,11 @@ with sync_playwright() as p:
         assert page.locator('[data-select]').count()==sum('raivivek/awesome-biology' in json.dumps(r) for r in exported)
         page.locator('#companionSite').click()
         page.wait_for_load_state('networkidle')
-        assert page.locator('h1').inner_text()=='Analysis documents across the source inventory'
-        assert page.locator('.choices [data-layout]').all_text_contents()==['Overview','Sources']
+        assert page.locator('h1').inner_text()=='Source inventory distributions'
+        assert page.locator('.choices [data-layout]').all_text_contents()==['Distributions','Sources']
         assert 'inventory.html' in page.url
+        assert page.locator('#domainDistribution').bounding_box()['y'] < page.locator('#notebookCounts').bounding_box()['y']
+        assert sum(map(int,page.locator('#repositorySizeDistribution strong').all_text_contents()))==page.evaluate('window.BIOTASKS_DATA.source_inventory.repositories.length')
         for width in [1440,390]:
             page.set_viewport_size({'width':width,'height':1000})
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')

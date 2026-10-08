@@ -10,7 +10,7 @@ with sync_playwright() as p:
  browser=p.chromium.launch(executable_path='/home/exedev/.local/bin/chromium',headless=True,args=['--no-sandbox','--disable-gpu','--renderer-process-limit=1','--disable-dev-shm-usage'])
  page=browser.new_page(viewport={'width':1440,'height':1000});page.on('pageerror',lambda e:errors.append(str(e)))
  url=sys.argv[1] if len(sys.argv)>1 else (ROOT/'inventory.html').as_uri()
- page.goto(url,wait_until='load',timeout=45000);page.wait_for_selector('#table tbody tr')
+ page.goto(url,wait_until='load',timeout=45000);page.wait_for_selector('#charts:not(.hidden)');assert page.locator('#distributions').evaluate("e=>e.classList.contains('active')");page.click('#documents');page.wait_for_selector('#table tbody tr')
  assert page.title()=='BioTasks · Source classification'
  total=page.evaluate('window.biotasksExplorer.data.documents.length');assert total==4301
  assert page.evaluate('window.biotasksExplorer.getFiltered().length')==4245

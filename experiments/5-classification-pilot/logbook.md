@@ -67,3 +67,5 @@ The first HTMLPreview check exposed an inert JSON block being evaluated as JavaS
 ## 2026-10-08 — Distribution views
 
 Added a Distributions tab with separate document categories and declared repository scope, reviewed/provisional segments, facet coverage, repository size bins including zeros, largest collections and all authoring formats. Counts deduplicate each term per source. Category drilldowns and reviewed-only views retain evidence access; percentages state their denominators and categories remain nonexclusive. No source labels or inventory counts changed. Browser checks cover all three facets, 4,245-document and 952-repository denominator reconciliation, reviewed-only segments, source drilldown and mobile layout. Local build peak RSS was 159 MiB, within the 250 MiB estimate; browser budget was 400 MiB.
+
+Both the classification explorer and the original source inventory now open with distributions. Moved the original source-level domain/format charts ahead of inventory details and added repository-size bins, preserving historical discovery counts with an explicit snapshot label. The classification explorer defaults to its Distributions tab.
