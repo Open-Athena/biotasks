@@ -1,6 +1,6 @@
 # Classification pilot protocol
 
-Status: local research draft for discussion, October 8, 2026. Based on the agreed
+Status: bounded iterative pass completed, October 8, 2026. Historical acquisition stages below are retained; the v0.3 section records current scope. Based on the agreed
 classification proposal in BioTasks issue #5, following notebook discovery in #16.
 This pilot does not reopen either completed study or change its published results.
 
@@ -48,8 +48,8 @@ are selected, not exhaustive; absence of a label is not proven absence.
 
 Checks validate vocabulary membership, source locators and identity/count
 consistency. Biological judgment has no independent reviewer yet. The full
-inventory's classified denominator is unchanged: these pilot candidates have
-not been reconciled to its canonical registry. A scale-up must join by canonical
+inventory's classified denominator is unchanged. The final v0.3 section records
+the later source-identity reconciliation, without applying corpus labels. A scale-up must join by canonical
 document identity, deduplicate representations, and count separate annotation
 statuses before calculating classified fractions.
 
@@ -87,3 +87,36 @@ under the same shared-resource guard, then build_pilot.py and render_vocabulary.
 Run validate_pilot.py for source-backed accounting and boundary checks. These
 checks do not substitute for an independent biological review. The v0.1 draft
 is retained in Git at commit 543e514.
+
+## v0.3 iterative pass and stopping rule
+
+Expand sources, refine definitions, and revisit prior assignments as one cycle.
+Round 3 acquired 13 of 14 attempted sources; N09 exceeded its 8 MiB cap and remains
+excluded. Round 4 added four contrasts, and the final challenge added four more,
+including the substantive chapter behind a migrated stub. The completed sample
+has 35 documents across 31 hosts, with 29 acquired root READMEs and two explicit
+unavailable states. New inputs and acquisition helpers were checkpointed before
+fetches. Acquisition records retain times, exit status and peak RSS. Readers used
+one worker, the shared lock and resource guards; the estimate was 150 MiB and
+observed acquisition peaks were below 60 MiB. Only static source text was fetched.
+
+Stop this bounded pass when all retained fields have substantive examples,
+negative/generic cases and migrated documentation are checked, old assignments
+are revisited under changed rules, and source/count checks pass. This is an
+operational milestone, not proof of vocabulary saturation. Late contrast cases
+were reviewed by the same assistant and are not independent held-out validation.
+Full-corpus annotation and independent biological adjudication remain separate.
+
+The 35-source reconciliation yields 20 exact pinned-source registry matches and
+15 external candidates. It changes no frozen inventory labels or counts.
+
+For reconstruction, fetch the five source manifests using inspect_sources.py
+with prefixes empty, extension-, round3-, round4-, and challenge- respectively.
+N09's cap failure is expected and retained. Fetch sample.json root READMEs with
+inspect_repositories.py and the 23 additional hosts with
+`--sample repository-expansion-sample.json --prefix expanded-`.
+Apply the resource guards for network acquisition. Then run build_pilot.py
+(v0.2 baseline), refine_iterations.py, refine_repositories.py,
+render_vocabulary.py, validate_pilot.py and reconcile_registry.py in order.
+The checked-in iteration-diff.json compares the result against the published
+v0.2 commit. No inspected source code is executed by these materializers.

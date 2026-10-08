@@ -8,11 +8,11 @@ rows = json.loads((root/'annotations.json').read_text())
 vocab = json.loads((root/'vocabulary.json').read_text())
 repos = json.loads((root/'repository-annotations.json').read_text())
 sources = {}
-for name in ['source-content.json','extension-source-content.json']:
+for name in ['source-content.json','extension-source-content.json','round3-source-content.json','round4-source-content.json','challenge-source-content.json']:
     sources.update({r['id']:r for r in json.loads((root/name).read_text())})
-assert len(rows)==len(sources)==14
-assert len({r['hosting_repository'] for r in rows})==len(repos)==12
-assert sum(r['status']=='unreviewed' for r in repos)==4
+assert len(rows)==len(sources)==35
+assert len({r['hosting_repository'] for r in rows})==len(repos)==31
+assert not any(r['status']=='unreviewed' for r in repos)
 role_counts = {}
 for r in rows:
     src=sources[r['id']]
@@ -51,6 +51,33 @@ assert 'rgb-image' in {a['term'] for r in rows if r['id']=='L01' for a in r['lab
 assert 'microscopy' not in {a['term'] for r in rows if r['id']=='L01' for a in r['labels']}
 assert not roles('L17','clustering')
 counts={f:{term:len({r['id'] for r in rows if any(a['facet']==f and a['term']==term for a in r['labels'])}) for term in vocab[f]} for f in ['scientific_field','modality']}
-result={'passed':True,'scope':'Identity, source-locator, deduplicated counts and source-backed boundary checks; not independent biological validation', 'documents':14,'hosting_repositories':12,'readmes_reviewed':8,'repository_fields_supported':4,'repository_fields_insufficient':4,'repository_unreviewed':4,'counts':counts,'operation_counts_by_role':{term:{role:len(ids) for role,ids in byrole.items()} for term,byrole in role_counts.items()},'fingerprints':{name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in ['sample.json','extension-sample.json','annotations.json','repository-annotations.json','vocabulary.json']}}
+# Repository evidence is independently checked, including absent README states.
+repo_sources={r['repo']:r for name in ['repository-content.json','expanded-repository-content.json'] for r in json.loads((root/name).read_text())}
+for r in repos:
+    src=repo_sources[r['repository']]
+    assert set(r['scientific_fields']) <= set(vocab['scientific_field'])
+    if r['status']=='access_unavailable':
+        assert src.get('status')!='acquired' and not r['scientific_fields']
+    else:
+        assert r['source_sha256']==src['sha256']
+        assert r['evidence_anchor'] in src['text']
+
+def terms(id,facet):
+    return {a['term'] for r in rows if r['id']==id for a in r['labels'] if a['facet']==facet}
+assert 'model-construction' in terms('N04','operation') and not roles('N04','simulation')
+assert 'inverse-modeling' in terms('N05','operation') and not roles('N05','normalization')
+assert 'spatial-statistics' in terms('N10','operation')
+assert not terms('C02','operation') and roles('C05','quantification')=={'implemented'}
+assert not terms('H01','scientific_field') and not terms('N12','scientific_field')
+assert terms('N03','scientific_field')=={'bioimage-analysis'}
+assert 'ecology' in next(r for r in repos if r['repository']=='weecology/DeepForest')['scientific_fields']
+assert 'ecology' in terms('C03','scientific_field')
+assert not roles('H03','simulation')
+assert 'simulated' in next(r for r in rows if r['id']=='H02')['input_origin']
+substantive=[r for r in rows if r.get('source_role') not in ['navigation_stub','tool_development']]
+field_counts={t:sum(t in terms(r['id'],'scientific_field') for r in substantive) for t in vocab['scientific_field']}
+assert all(field_counts.values())
+from collections import Counter
+result={'passed':True,'scope':'Identity, source-locator, deduplicated counts and source-backed boundary checks; not independent biological validation', 'documents':len(rows),'hosting_repositories':len(repos),'readmes_acquired':sum('sha256' in r for r in repo_sources.values()),'repository_review_states':dict(Counter(r['status'] for r in repos)),'source_roles':dict(Counter(r.get('source_role','analysis_or_teaching_document') for r in rows)),'substantive_scientific_field_counts':field_counts,'counts':counts,'operation_counts_by_role':{term:{role:len(ids) for role,ids in byrole.items()} for term,byrole in role_counts.items()},'fingerprints':{name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in ['sample.json','extension-sample.json','round3-sample.json','round4-sample.json','challenge-sample.json','annotations.json','repository-annotations.json','vocabulary.json']}}
 (root/'validation.json').write_text(json.dumps(result,indent=2)+'\n')
-print('PASS: 14 documents, 12 hosts, 8 separately inspected READMEs; source-backed boundary and distinct-count checks.')
+print('PASS:',len(rows),'documents,',len(repos),'hosts; evidence, boundary and distinct-count checks.')

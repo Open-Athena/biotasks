@@ -1,5 +1,5 @@
 {
-  "version": "0.2-draft",
+  "version": "0.3-working",
   "scientific_field": {
     "genomics-genetics": {
       "label": "Genomics and genetics",
@@ -19,7 +19,7 @@
     "proteomics": {
       "label": "Proteomics",
       "definition": "Protein abundance, identification and modification at proteome scale; coordinate analysis alone is structural biology.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "structural-biology": {
       "label": "Structural biology",
@@ -44,16 +44,16 @@
     "evolution": {
       "label": "Evolutionary biology",
       "definition": "Evolutionary relationships, processes and selection; merely consuming a tree is insufficient.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "ecology": {
       "label": "Ecology",
       "definition": "Organism-environment and community ecological questions; not automatically assigned to every microbiome tutorial.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "immunology": {
       "label": "Immunology",
-      "definition": "Immune populations, repertoires and immune function; immune sample origin alone can remain setting metadata.",
+      "definition": "Immune populations, repertoires or function as an analytical subject; immune sample origin alone remains setting metadata.",
       "pilot_status": "exercised_in_sample"
     },
     "neuroscience": {
@@ -63,33 +63,33 @@
     },
     "bioimage-analysis": {
       "label": "Bioimage analysis",
-      "definition": "Biological image-based measurement and characterization. Boundary with cell biology remains under review.",
+      "definition": "Image-based biological detection, measurement and characterization; cell biology or ecology needs additional objective/interpretation evidence.",
       "pilot_status": "exercised_in_sample"
     },
     "cell-development": {
       "label": "Cell and developmental biology",
       "definition": "Cellular organization, differentiation and developmental processes; single-cell resolution alone is insufficient.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "biochemistry": {
       "label": "Biochemistry",
       "definition": "Molecular biochemical mechanisms not adequately described by another assigned field.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "pharmacology": {
       "label": "Pharmacology and toxicology",
       "definition": "Drug action, dose response and toxicity.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "epidemiology": {
       "label": "Epidemiology",
       "definition": "Population-level disease occurrence, exposures and risk.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "physiology": {
       "label": "Physiology and biomechanics",
       "definition": "Organism or organ function and physical mechanics.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     }
   },
   "modality": {
@@ -104,8 +104,8 @@
       "pilot_status": "exercised_in_sample"
     },
     "rgb-image": {
-      "label": "RGB organism images",
-      "definition": "Visible-light organism images; not automatically microscopy.",
+      "label": "RGB organism or habitat images",
+      "definition": "Visible-light organism or habitat images; not automatically microscopy or ecological inference.",
       "pilot_status": "exercised_in_sample"
     },
     "scrna": {
@@ -116,7 +116,7 @@
     "bulk-rna": {
       "label": "Bulk RNA-seq",
       "definition": "Bulk RNA sequencing measurements or derived expression matrices.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "dna-variants": {
       "label": "Genotypes and sequence variants",
@@ -151,7 +151,7 @@
     "mass-cytometry": {
       "label": "Mass cytometry",
       "definition": "Metal-tag cytometry measurements; not inferred solely from tool compatibility.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "microscopy": {
       "label": "Microscopy",
@@ -171,22 +171,57 @@
     "atac": {
       "label": "ATAC-seq",
       "definition": "Chromatin accessibility sequencing.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "chip": {
       "label": "ChIP-seq",
       "definition": "Chromatin immunoprecipitation sequencing.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "mass-spectrometry": {
       "label": "Mass spectrometry",
       "definition": "Mass-spectral measurements; analyte type described separately.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "spatial-expression": {
       "label": "Spatial expression profiling",
       "definition": "Expression observations with spatial registration; retain assay subtype if known.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
+    },
+    "sequences": {
+      "label": "Biological sequences",
+      "definition": "Nucleotide or amino-acid sequences; record molecule subtype and source when known.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "ancestral-trees": {
+      "label": "Ancestral trees and tree sequences",
+      "definition": "Ancestral relationships along genomes, including simulated genealogies.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "model-data": {
+      "label": "Model specifications and parameters",
+      "definition": "Equations, reaction schemes, parameters or initial conditions; a model input, not an experimental assay.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "motion-force": {
+      "label": "Motion capture and forces",
+      "definition": "Body-marker trajectories and force measurements for biomechanical inference.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "chemical-assay": {
+      "label": "Molecular structures and bioassay outcomes",
+      "definition": "Chemical representations paired with activity outcomes; do not infer clinical efficacy.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "community-vegetation": {
+      "label": "Community species and environment tables",
+      "definition": "Species/community observations with environmental covariates.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "protein-profile": {
+      "label": "Protein abundance profiles",
+      "definition": "Derived protein measurements; underlying assay must be separately evidenced.",
+      "pilot_status": "exercised_in_sample"
     }
   },
   "operation": {
@@ -277,33 +312,53 @@
     },
     "simulation": {
       "label": "Simulation or mechanistic modeling",
-      "definition": "Generate model outcomes; supplied simulated data do not establish this operation.",
+      "definition": "Run a mechanistic or stochastic model to generate outcomes; model construction and supplied simulations are separate.",
       "pilot_status": "exercised_in_sample"
     },
     "prediction": {
       "label": "Predictive modeling",
       "definition": "Fit or apply a predictive model; consuming predictions alone is insufficient.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "integration": {
       "label": "Data integration",
       "definition": "Combine datasets/modalities or correct cross-dataset effects.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "alignment": {
       "label": "Sequence alignment",
       "definition": "Compute sequence/read alignments; supplied alignments alone are insufficient.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "quantification": {
       "label": "Quantification",
       "definition": "Estimate abundances or feature measurements from lower-level observations.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
     },
     "enrichment": {
       "label": "Enrichment analysis",
       "definition": "Test or score sets/pathways against an explicit background or ranking.",
-      "pilot_status": "proposed_not_tested"
+      "pilot_status": "exercised_in_sample"
+    },
+    "model-construction": {
+      "label": "Mechanistic model construction",
+      "definition": "Define reactions, equations, parameters or constraints; distinguish specification from running simulations.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "inverse-modeling": {
+      "label": "Inverse modeling",
+      "definition": "Infer physical states, forces or parameters from observations with a forward model.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "statistical-modeling": {
+      "label": "Statistical model fitting",
+      "definition": "Fit a statistical model for a stated inferential target; fitting alone does not establish predictive validation.",
+      "pilot_status": "exercised_in_sample"
+    },
+    "spatial-statistics": {
+      "label": "Spatial statistics",
+      "definition": "Compute spatial organization, autocorrelation or neighborhood statistics; not gene-set enrichment.",
+      "pilot_status": "exercised_in_sample"
     }
   },
   "assignment_states": [
@@ -318,5 +373,19 @@
     "discussed_only",
     "upstream_supplied"
   ],
-  "coverage_rule": "Count distinct notebook IDs per content-supported label. Operation implemented/exercise counts stay separate; exclude discussed-only/upstream-supplied. Multi-label totals overlap. Static inspection is not execution validation."
+  "coverage_rule": "Count distinct notebook IDs per content-supported label. Operation implemented/exercise counts stay separate; exclude discussed-only/upstream-supplied. Multi-label totals overlap. Static inspection is not execution validation.",
+  "facet_states": [
+    "unreviewed",
+    "content_supported",
+    "insufficient_evidence",
+    "not_applicable",
+    "disputed"
+  ],
+  "source_roles": [
+    "analysis_or_teaching_document",
+    "infrastructure_demonstration",
+    "tool_development",
+    "navigation_stub",
+    "generic_method_demonstration"
+  ]
 }

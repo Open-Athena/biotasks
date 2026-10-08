@@ -72,3 +72,23 @@ verified dataset provenance.
 The pilot is not a corpus-wide classification pass. Do not divide its sample size
 by the full notebook inventory before identity reconciliation. No task competence
 is claimed until the task requires and independently verifies the corresponding work.
+
+## v0.3 refinements from expanded sources
+
+- Keep model construction distinct from forward simulation; inverse kinematics
+  and dynamics are inverse modeling. Statistical fitting and spatial statistics
+  have separate operation IDs. A recommendation to run enrichment is not an
+  implemented enrichment analysis.
+- Generic sequence methods and developer guides may have a reviewed,
+  not-applicable field facet. Missing evidence remains insufficient, not an
+  automatic negative label. A missing root README is access-unavailable.
+- Store document role separately from file format. Navigation stubs remain
+  discovered documents but do not count as implemented analysis. Follow explicit
+  migration links, preserve both identities, and avoid double-counting their work.
+- Direct ecological analysis supports Ecology; detecting a biological object
+  alone supports image analysis without establishing an ecological inference.
+  Repository declarations may therefore be broader than notebook assignments.
+- Expand and revise iteratively. Version each batch, preserve earlier annotations,
+  and revisit all affected records when a definition changes. All 18 fields now
+  have sample evidence, which is a stopping point for this bounded pass, not a
+  claim of saturation or independent semantic validation.
