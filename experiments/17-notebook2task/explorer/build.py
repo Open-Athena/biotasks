@@ -180,9 +180,9 @@ baseline = root.parent / "baselines/seta-v1"
 manifest = json.loads((baseline / "manifest.json").read_text())
 prompt_cards = []
 for filename, title, explanation in [
-    ("kaggle_notebook_adapter.md", "1 · Notebook adapter", "Reads the seed context, applies a viability gate and specifies how to turn the analysis into a terminal task."),
-    ("idea_agent_base_prompt.md", "2 · Shared idea-agent instructions", "Appended to the adapter with the seed context; inspect the full text for its output and reasoning requirements."),
-    ("agent.md", "3 · Task-package builder", "Consumes the draft specification and constructs the environment, solver instructions, reference solution and executable verifier.")]:
+    ("kaggle_notebook_adapter.md", "Notebook adapter", "Reads the seed context, applies a viability gate and specifies how to turn the analysis into a terminal task."),
+    ("idea_agent_base_prompt.md", "Shared idea-agent instructions", "Appended to the adapter with the seed context; inspect the full text for its output and reasoning requirements."),
+    ("agent.md", "Task-package builder", "Consumes the draft specification and constructs the environment, solver instructions, reference solution and executable verifier.")]:
     record = next(item for item in manifest["files"] if item["path"] == "upstream/" + filename)
     source = (baseline / record["path"]).read_text()
     assert hashlib.sha256(source.encode()).hexdigest() == record["sha256"]

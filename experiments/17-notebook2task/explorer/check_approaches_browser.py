@@ -19,11 +19,16 @@ with sync_playwright() as pw:
         assert page.locator('.authoring-prompt').count()==3
         assert page.locator('.authoring-prompt .artifact-scroll').first.evaluate('e=>e.scrollHeight>e.clientHeight')
         assert page.locator('#seta-step-2').is_visible()
+        assert page.locator('#seta-specification-intro').is_visible()
+        assert page.locator('#seta-construction-intro').is_hidden()
+        assert page.locator('#seta-step-2 #seta-recipe-limitations').is_visible()
         assert page.locator('.authoring-prompt:visible').count()==1
         page.select_option('#seta-prompt-component','1')
         assert 'Shared idea-agent instructions' in page.locator('.authoring-prompt:visible > h2').inner_text()
         page.click('#seta-step-button-3')
         assert page.locator('#seta-step-2').is_hidden()
+        assert page.locator('#seta-specification-intro').is_hidden()
+        assert page.locator('#seta-construction-intro').is_visible()
         assert 'Task-package builder' in page.locator('.authoring-prompt:visible > h2').inner_text()
         page.reload()
         assert page.locator('#seta-step-3').is_visible()

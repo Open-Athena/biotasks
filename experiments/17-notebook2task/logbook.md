@@ -339,3 +339,7 @@ Retention follow-up: anonymously downloaded all 17 files in the published manife
 Recorded four user-agreed limitations in the Explorer authoring stage and issue synthesis: conflicting training instructions, the model-count gate, EDA-only rejection and broad modality/keyword exclusions. Linked both pinned prompt components and separated observed restrictions from proposed revisions and unmeasured aggregate/causal effects. Resource budgets remain execution constraints; browser/network restrictions remain outside the agreed limitations. Original baseline prompts and scientific artifacts are unchanged.
 
 Explorer rebuild, generated-content assertions and JavaScript syntax checks passed. The focused offline browser check timed out during startup after 45 seconds (peak sampled process-tree RSS 31.7 MB); it did not establish a navigation result for this update. No browser retry or model call was launched.
+
+### 2026-10-08 — Stage-specific authoring explanations
+
+Moved specification-input and construction-input explanations into their respective selected workflow panels, aligned names with steps 02 and 03, and removed misleading component numbering. Clarified that the notebook adapter and shared instructions form one combined authoring input; the component selector changes only the reading view. Focused offline browser checks passed for panel isolation, prompts, keyboard navigation, persistence and mobile layout. The final explanatory wording was rebuilt afterward. No model calls or baseline changes.
