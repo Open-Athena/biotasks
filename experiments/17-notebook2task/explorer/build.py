@@ -170,7 +170,7 @@ for c in catalog["comparisons"]:
 # Show released-task comparisons first, preserving order within each group.
 entries.sort(key=lambda row: row["origin"] == "candidate")
 assert len({r["id"] for r in entries}) == len(entries)
-template = (root / "template.html").read_text()
+template = (root / "template.html").read_text().replace("__APPROACHES__", (root / "approaches.html").read_text())
 assert template.count("__CATALOG__") == 1
 
 def emit(path, payload):

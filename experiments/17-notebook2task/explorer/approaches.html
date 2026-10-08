@@ -1,0 +1,28 @@
+<section id="approaches" aria-labelledby="approaches-title">
+<h1 id="approaches-title">How notebooks become tasks</h1>
+<p class="muted">Two published approaches, followed by the notebooks and task evidence we are inspecting. Authoring a task and solving it are separate stages.</p>
+<p><button id="browse-notebooks">Browse notebooks →</button></p>
+<div class="approach-grid">
+<article class="approach-card" aria-labelledby="seta-approach"><h2 id="seta-approach">SETA</h2><p class="status">Inspected Kaggle-notebook pathway · released prompts</p>
+<ol class="approach-flow">
+<li><span>01 · Source</span><strong>Kaggle notebook + local datasets</strong><p>Metadata, dataset manifests and a cell-by-cell notebook outline are preloaded. The authoring agent can read the original notebook for details.</p></li>
+<li><span>02 · Authoring model</span><strong>Seed → task specification</strong><p>A viability check can reject the seed. Otherwise the agent designs a terminal task around the analysis objective and writes a draft specification.</p></li>
+<li><span>03 · Construction model</span><strong>Specification → Harbor package</strong><p>Produces instructions, environment, reference solution and executable tests. The builder prompt requires preflight checks, including reference success and empty-submission failure.</p></li>
+<li><span>04 · Solver and grading</span><strong>Fresh attempt → artifact checks</strong><p>The solver works from task instructions and staged inputs. The reference solution and verifier are separate assets; this pathway asks the solver to solve the problem using its own approach.</p></li>
+</ol>
+<details><summary>Inputs, review and limits</summary><p><b>Does the authoring model see the notebook?</b> Yes: a preloaded outline and tool access to the notebook when present.</p><p><b>Review:</b> the inspected builder guide specifies model self-review and execution checks. It does not establish a mandatory human-review step equivalent to BixBench’s expert question review.</p><p><b>Scope:</b> this is one released SETA pathway, not every SETA source adapter. Its model-comparison and CPU constraints can reject otherwise useful biology analyses. Prompt requirements do not prove that every released task passed those checks.</p><p><b>Our evidence:</b> released prompts and a cytopathology task are available here. Our GLM authoring experiments and repaired variant are separate from reproducing SETA’s full pipeline.</p></details>
+<p class="links"><a href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/seed2idea_prompts/kaggle_notebook_adapter.md" target="_blank" rel="noopener noreferrer">Notebook adapter ↗</a> · <a href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/datapoint_agent_guide/agent.md" target="_blank" rel="noopener noreferrer">Builder guide ↗</a></p>
+</article>
+<article class="approach-card" aria-labelledby="bix-approach"><h2 id="bix-approach">BixBench</h2><p class="status">Original paper’s workflow · expert-prepared capsules</p>
+<ol class="approach-flow">
+<li><span>01 · Human analyst</span><strong>Study or new analysis → capsule</strong><p>An expert prepares a Colab notebook, input data, hypothesis and result. A prior public notebook is not required.</p></li>
+<li><span>02 · Authoring model</span><strong>Reference notebook → questions</strong><p>Claude 3.5 Sonnet receives a modified notebook, hypothesis and result, then drafts eight multiple-choice questions.</p></li>
+<li><span>03 · Human review</span><strong>Review, edit and deduplicate</strong><p>Experts inspect questions with the source capsule available. Model-assisted duplicate detection is followed by human verification.</p></li>
+<li><span>04 · Solver and grading</span><strong>Data + questions → fresh analysis</strong><p>The solver receives an empty notebook, data and questions—not the reference notebook. Open answers are compared with reference answers by an LLM judge.</p></li>
+</ol>
+<details><summary>Inputs, review and limits</summary><p><b>Unknown:</b> the precise notebook modification is unresolved in our inspection; an equivalent released authoring prompt has not been identified.</p><p><b>Our example:</b> ASXL1’s underlying study is known; its original code format is not. Our Harbor/Pi attempt uses a terminal rather than the paper’s notebook agent.</p></details>
+<p class="links"><a href="https://arxiv.org/html/2503.00096v1#S3.SS1" target="_blank" rel="noopener noreferrer">Generation methods ↗</a> · <a href="https://arxiv.org/html/2503.00096v1#S3.SS2" target="_blank" rel="noopener noreferrer">Evaluation methods ↗</a> · <a href="https://insight.jci.org/articles/view/167744" target="_blank" rel="noopener noreferrer">Underlying ASXL1 study ↗</a></p>
+</article>
+</div>
+<p class="idea"><b>What to compare here:</b> SETA’s inspected pathway builds an executable task package; BixBench’s paper describes generating reviewed questions from expert analyses. In both, notebook access during authoring is different from the inputs given to a fresh solver.</p>
+</section>
