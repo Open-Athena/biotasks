@@ -21,7 +21,7 @@ Per-repository counts sum to 4,088; a shared document may belong to several repo
 
 ## Classification and vocabulary
 
-The working vocabulary now has **20 scientific fields, 31 modalities and 30 operations**. [Vocabulary](vocabulary.md) and [machine-readable definitions](vocabulary.json) retain the separate facets and overlapping labels. [Open the offline explorer](inventory.html) to inspect notebooks, independent repository scope, evidence, review states and filtered CSV exports.
+The working vocabulary now has **20 scientific fields, 31 modalities and 30 operations**. [Vocabulary](vocabulary.md) and [machine-readable definitions](vocabulary.json) retain the separate facets and overlapping labels. [Open the offline explorer](inventory.html) to inspect notebooks, independent repository scope, evidence, review states and filtered CSV exports. The Distributions tab shows document categories across all three axes, reviewed versus provisional labels, facet coverage, independent repository scope, repository size bins, the 20 largest collections and authoring formats. Category bars drill through to source records; percentages and denominators are explicit, and overlapping categories are not summed.
 
 - Broader sources added biomedical informatics and synthetic biology/biomolecular engineering. Clinical records and biomedical question answering fit the former; protein design required the latter. Generic language modeling, chemical structures and protein embeddings do not automatically establish a biological field.
 - Added medical images, clinical records, chemical structures without assays, biomedical text and structured biological relationships as modalities. Input origin and assay details remain separate metadata.
