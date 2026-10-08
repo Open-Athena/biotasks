@@ -1,10 +1,10 @@
-# Draft classification vocabulary v0.1
+# Draft classification vocabulary 0.2-draft
 
-This is a local proposal, not an adopted ontology. Terms can overlap. A term exercised in the pilot has at least one source-backed assignment, not independent validation. An empty assignment must have a reason: not inspected, insufficient evidence, not applicable, or disputed. General-purpose infrastructure should not be forced into a biological field.
+This is a working navigation vocabulary, not an adopted ontology. Terms overlap. Exercised means at least one pilot assignment, not independent validation. See [working rules](decisions.md) for field/setting boundaries and operation roles.
 
-Use scientific field for browsing; modality describes observations/inputs; operation describes analytical work. Biological question, experimental design and setting remain optional evidence-backed metadata. Keep notebook file format separate from biological modality. Record technical origin (observed, adapted, simulated, predicted, mixed or unknown) separately from experimental design.
+Use scientific field for browsing, data modality for observations/inputs, and operation for analytical work. Keep file format, input origin, assay subtype, design and biological setting separate. An assignment needs subject/revision, evidence, rationale and review status. Operation assignments also need a role and target. No automatic repository-to-notebook inheritance.
 
-Every assignment needs a stable term ID, subject ID/revision, status, evidence location, rationale and reviewer. Operations additionally need a role: implemented, exercise, discussed-only or upstream-supplied. “Implemented” means source code is present, not executed or verified. If code is disabled or incomplete, state that limitation. Multiple labels are allowed, never inherited silently.
+Review states for a facet are unreviewed, content-supported, insufficient evidence, not applicable or disputed. Label-level states can be suggested, content-supported, needs-review or rejected. Do not force a biological field onto a generic utility. None of these states claims executable validation.
 
 ## Scientific field
 
@@ -12,7 +12,7 @@ Every assignment needs a stable term ID, subject ID/revision, status, evidence l
 | --- | --- | --- | --- |
 | `genomics-genetics` | Genomics and genetics | Genome organization, variation, inheritance and genotype-phenotype relationships; not every operation on sequence files. | Exercised |
 | `transcriptomics` | Transcriptomics | RNA abundance, expression, splicing and transcript-level analysis. | Exercised |
-| `epigenomics` | Epigenomics | Chromatin state, accessibility and DNA modification analyses. | Untested proposal |
+| `epigenomics` | Epigenomics | Chromatin state, accessibility and DNA modification analyses. | Exercised |
 | `proteomics` | Proteomics | Protein abundance, identification and modification at proteome scale; coordinate analysis alone is structural biology. | Untested proposal |
 | `structural-biology` | Structural biology | Molecular structures, conformations and structural dynamics. | Exercised |
 | `metabolomics` | Metabolomics | Profiles and changes in metabolite measurements; network optimization alone does not establish metabolomics. | Exercised |
@@ -33,6 +33,9 @@ Every assignment needs a stable term ID, subject ID/revision, status, evidence l
 
 | ID | Label | Definition | Pilot |
 | --- | --- | --- | --- |
+| `airr` | Immune receptor sequencing | Adaptive immune receptor sequences and derived clonotypes. | Exercised |
+| `methylation-array` | DNA methylation array | Probe-level DNA methylation array measurements. | Exercised |
+| `rgb-image` | RGB organism images | Visible-light organism images; not automatically microscopy. | Exercised |
 | `scrna` | Single-cell RNA-seq | Cell-resolved RNA sequencing measurements or derived expression matrices. | Exercised |
 | `bulk-rna` | Bulk RNA-seq | Bulk RNA sequencing measurements or derived expression matrices. | Untested proposal |
 | `dna-variants` | Genotypes and sequence variants | Variant/genotype observations; do not infer sequencing versus array assay when unspecified. | Exercised |
@@ -54,6 +57,8 @@ Every assignment needs a stable term ID, subject ID/revision, status, evidence l
 
 | ID | Label | Definition | Pilot |
 | --- | --- | --- | --- |
+| `data-access` | Data access | Retrieve or stream supplied data; retrieval alone does not establish biological inference. | Exercised |
+| `phenotyping` | Image phenotyping | Extract organism/object shape or color measurements from images. | Exercised |
 | `data-preparation` | Data preparation | Import, subset, transform and reconcile data identities or representations. | Exercised |
 | `qc` | Quality assessment and filtering | Compute or inspect quality evidence and optionally filter; record whether metrics are supplied. | Exercised |
 | `normalization` | Normalization and scaling | Adjust measurements for scale or technical effects. | Exercised |
@@ -67,7 +72,7 @@ Every assignment needs a stable term ID, subject ID/revision, status, evidence l
 | `structural-comparison` | Structural comparison | Align structures or measure coordinate differences such as RMSD. | Exercised |
 | `geometry` | Structural geometry | Compute molecular angles, contacts or other geometric descriptors. | Exercised |
 | `segmentation` | Image segmentation | Partition image content into objects or regions. | Exercised |
-| `diversity` | Diversity estimation | Compute community richness, evenness or related diversity measures. | Exercised |
+| `diversity` | Diversity estimation | Compute diversity measures for a specified target, such as communities or immune repertoires. | Exercised |
 | `descriptive-analysis` | Descriptive analysis and visualization | Summarize or visualize biological observations; not automatically inferential statistics. | Exercised |
 | `simulation` | Simulation or mechanistic modeling | Generate model outcomes; supplied simulated data do not establish this operation. | Exercised |
 | `prediction` | Predictive modeling | Fit or apply a predictive model; consuming predictions alone is insufficient. | Untested proposal |

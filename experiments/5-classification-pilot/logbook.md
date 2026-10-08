@@ -18,3 +18,9 @@ inference distinction and two taxonomy questions: Immunology versus immune-cell
 setting, and Bioimage analysis versus Cell biology. See README.md for the sample
 matrix, caveats and proposed decisions. Structural validation passed; no
 independent biological review, execution, inventory relabeling or publication.
+
+## Boundary follow-up
+
+Working rules are in decisions.md. The immune repertoire source exceeded the initial 4 MiB cap; GitHub metadata reports 7,926,146 bytes, so the pinned source alone is allowed 8 MiB with a 150 MiB working-set estimate. The first resumed acquisition aborted at the nonblocking shared lock (exit 1; reader did not launch). No blocking wait or polling loop was started.
+
+Extension acquisition completed after the independent rule-writing work, with a 56,096 KiB peak RSS. Four additional documents yielded v0.2: immune receptor and expression fields can coexist, operation targets distinguish computed clonotype clusters from supplied expression clusters, minfi method lists remain discussion-only, and whole-plant RGB imaging does not inherit microscopy or cell-biology labels. Source-backed structural and accounting checks pass for 14 documents and 12 hosts. Eight READMEs were reviewed; four extension hosts remain explicitly unreviewed. No independent biological review or execution is claimed.

@@ -5,13 +5,14 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 sources = {r['id']: r for r in json.loads((ROOT / 'source-content.json').read_text())}
+sources.update({r['id']: r for r in json.loads((ROOT / 'extension-source-content.json').read_text())})
 repo_sources = {r['repo']: r for r in json.loads((ROOT / 'repository-content.json').read_text())}
 
 def term(label, definition):
     return {'label': label, 'definition': definition}
 
 vocabulary = {
- 'version': '0.1-draft',
+ 'version': '0.2-draft',
  'scientific_field': {
   'genomics-genetics': term('Genomics and genetics', 'Genome organization, variation, inheritance and genotype-phenotype relationships; not every operation on sequence files.'),
   'transcriptomics': term('Transcriptomics', 'RNA abundance, expression, splicing and transcript-level analysis.'),
@@ -33,6 +34,9 @@ vocabulary = {
   'physiology': term('Physiology and biomechanics', 'Organism or organ function and physical mechanics.'),
  },
  'modality': {
+  'airr': term('Immune receptor sequencing', 'Adaptive immune receptor sequences and derived clonotypes.'),
+  'methylation-array': term('DNA methylation array', 'Probe-level DNA methylation array measurements.'),
+  'rgb-image': term('RGB organism images', 'Visible-light organism images; not automatically microscopy.'),
   'scrna': term('Single-cell RNA-seq', 'Cell-resolved RNA sequencing measurements or derived expression matrices.'),
   'bulk-rna': term('Bulk RNA-seq', 'Bulk RNA sequencing measurements or derived expression matrices.'),
   'dna-variants': term('Genotypes and sequence variants', 'Variant/genotype observations; do not infer sequencing versus array assay when unspecified.'),
@@ -51,6 +55,8 @@ vocabulary = {
   'spatial-expression': term('Spatial expression profiling', 'Expression observations with spatial registration; retain assay subtype if known.'),
  },
  'operation': {
+  'data-access': term('Data access', 'Retrieve or stream supplied data; retrieval alone does not establish biological inference.'),
+  'phenotyping': term('Image phenotyping', 'Extract organism/object shape or color measurements from images.'),
   'data-preparation': term('Data preparation', 'Import, subset, transform and reconcile data identities or representations.'),
   'qc': term('Quality assessment and filtering', 'Compute or inspect quality evidence and optionally filter; record whether metrics are supplied.'),
   'normalization': term('Normalization and scaling', 'Adjust measurements for scale or technical effects.'),
@@ -64,7 +70,7 @@ vocabulary = {
   'structural-comparison': term('Structural comparison', 'Align structures or measure coordinate differences such as RMSD.'),
   'geometry': term('Structural geometry', 'Compute molecular angles, contacts or other geometric descriptors.'),
   'segmentation': term('Image segmentation', 'Partition image content into objects or regions.'),
-  'diversity': term('Diversity estimation', 'Compute community richness, evenness or related diversity measures.'),
+  'diversity': term('Diversity estimation', 'Compute diversity measures for a specified target, such as communities or immune repertoires.'),
   'descriptive-analysis': term('Descriptive analysis and visualization', 'Summarize or visualize biological observations; not automatically inferential statistics.'),
   'simulation': term('Simulation or mechanistic modeling', 'Generate model outcomes; supplied simulated data do not establish this operation.'),
   'prediction': term('Predictive modeling', 'Fit or apply a predictive model; consuming predictions alone is insufficient.'),
@@ -93,7 +99,7 @@ def add(id, fields, modalities, operations, context_refs, rationale, questions, 
                            'evidence': evidence(context_refs), 'rationale': rationale})
     for value, role, refs, why in operations:
         labels.append({'facet': 'operation', 'term': value, 'status': 'content_supported',
-                       'role': role, 'evidence': evidence(refs), 'rationale': why})
+                       'role': role, 'target': 'document analysis; see rationale', 'evidence': evidence(refs), 'rationale': why})
     rows.append({'id': id, 'title': source['title'], 'hosting_repository': source['repo'],
                  'source_url': source['url'], 'revision': source['revision'], 'source_sha256': source['sha256'],
                  'review': 'assistant_static_pilot', 'independent_review': False, 'executed': False,
@@ -170,6 +176,51 @@ add('L17',['neuroscience'],['electrophysiology'],[
  'Assess neural unit quality', [], ['neural units'], 'source-described observed recording; derived metrics supplied',
  ['Spike sorting, waveform PCA and discrimination are upstream; explanations do not establish implementation.'], ['OpenScope databook utilities','NWB','DANDI','NumPy'])
 
+
+add('G04',['genomics-genetics'],['dna-variants'],[
+ ('data-access','implemented',['cell:2','cell:5','cell:6','cell:7'],'Downloads a supplied VCF and index from blob storage.'),
+ ('descriptive-analysis','implemented',['cell:8','cell:10'],'Displays supplied variant tracks in IGV.')],
+ ['cell:0','cell:2','cell:10'], 'Genomic variants are the subject of a cloud access/display demonstration, not variant calling.',
+ None, [], ['human hg38 reference'], 'supplied example VCF; provenance not independently checked',
+ ['No variant calling, association testing or clinical interpretation.'], ['Azure Blob Storage','IGV'])
+add('L25',['immunology','transcriptomics'],['airr','scrna'],[
+ ('normalization','implemented',['cell:12'],'Normalizes supplied expression measurements.'),
+ ('dimension-reduction','implemented',['cell:12'],'Computes expression PCA.'),
+ ('dimension-reduction','upstream_supplied',['cell:13','cell:14'],'Uses supplied expression UMAP coordinates.'),
+ ('clustering','upstream_supplied',['cell:13','cell:15'],'Uses supplied gene-expression clusters.'),
+ ('clustering','implemented',['cell:51','cell:52'],'Computes receptor clonotype clusters from CDR3 similarity.'),
+ ('qc','implemented',['cell:25','cell:33','cell:35'],'Assesses receptor chains and filters chain configurations.'),
+ ('marker-testing','implemented',['cell:133'],'Tests expression markers between clonotypes.'),
+ ('annotation','implemented',['cell:138','cell:140','cell:142'],'Queries reference receptor sequences for epitope annotations.')],
+ ['cell:4','cell:8','cell:12','cell:39','cell:43'], 'The same notebook analyzes gene expression and receptor clonotypes; both field labels have direct content evidence.',
+ 'Characterize T-cell clonotypes and their expression in cancer samples', [], ['T cells','cancer'],
+ 'adapted subset of source-described observed single-cell data',
+ ['Do not attribute implemented expression clustering or UMAP from supplied coordinates; clonotype clustering is a distinct target.'], ['Scirpy','Scanpy','MuData'])
+add('L40',['epigenomics'],['methylation-array'],[
+ ('data-preparation','implemented',['line:125','line:140','line:147'],'Reads methylation-array sample sheets and intensities.'),
+ ('qc','discussed_only',['line:204','line:206','line:208'],'Quality-control section is a list of suggestions, not implemented analysis.'),
+ ('normalization','discussed_only',['line:214','line:220','line:221','line:223'],'Lists normalization methods; no normalization call is implemented here.'),
+ ('group-comparison','discussed_only',['line:235','line:237','line:238'],'Differential methylation section lists methods only.')],
+ ['line:23','line:25','line:125','line:140'], 'Array introduction supports epigenomics and methylation-array modality; a method inventory is not implementation coverage.',
+ None, [], [], 'packaged example intensities; biological provenance not independently checked',
+ ['No implemented normalization, differential methylation or cell-composition estimation inferred from headings.'], ['minfi'])
+add('L01',['bioimage-analysis'],['rgb-image'],[
+ ('segmentation','implemented',['cell:19','cell:21','cell:25'],'Thresholds and filters the plant mask.'),
+ ('phenotyping','implemented',['cell:28','cell:29'],'Extracts shape and color measurements from a whole-plant image.')],
+ ['cell:0','cell:4','cell:9','cell:28'], 'Whole-plant image analysis supports bioimage analysis without implying cellular imaging or developmental inference.',
+ 'Measure plant shape and color', [], ['plant'], 'supplied RGB image; biological provenance not independently checked',
+ ['Not microscopy; no cell biology or developmental process inferred from segmentation alone.'], ['PlantCV'])
+
+for r in rows:
+    r['annotation_version'] = '0.2-draft'
+    r['reviewed_date'] = '2026-10-08'
+    r['source_role'] = 'infrastructure_demonstration' if r['id']=='G04' else 'analysis_or_teaching_document'
+    r['facet_review'] = {f: 'content_supported' if any(a['facet']==f for a in r['labels']) else 'insufficient_evidence' for f in ['scientific_field','modality','operation']}
+    if r['id']=='L25':
+        targets={('normalization','implemented'):'gene expression',('dimension-reduction','implemented'):'gene-expression PCA',('dimension-reduction','upstream_supplied'):'gene-expression UMAP',('clustering','upstream_supplied'):'gene-expression cell populations',('clustering','implemented'):'receptor clonotypes',('qc','implemented'):'receptor chain configurations',('marker-testing','implemented'):'expression across clonotypes',('annotation','implemented'):'receptor epitope matching'}
+        for a in r['labels']:
+            if a['facet']=='operation': a['target']=targets[(a['term'],a['role'])]
+
 repo_specs = {
  'Brunk-Lab/Digital-Upskilling-BioScience': (['structural-biology','metabolomics','transcriptomics','proteomics','epigenomics'], 'curriculum', 'Levels Overview', 'Broad curriculum explicitly lists several omics areas; individual notebooks need not cover them all.'),
  'wolf5996/scanpy-done-right': (['transcriptomics'], 'tutorial', 'single-cell RNA-seq', 'README describes a PBMC expression workflow; its DEA exclusion requires a distinction between marker testing and treatment inference.'),
@@ -190,6 +241,9 @@ for repo, (fields, kind, anchor, rationale) in repo_specs.items():
                   'rationale': rationale, 'review_scope': 'Pinned root README only; no notebook-to-repository inheritance.',
                   'review': 'assistant_static_pilot'})
 
+for source in json.loads((ROOT / 'extension-sample.json').read_text()):
+    repos.append({'repository': source['repo'], 'kind': 'unreviewed', 'scientific_fields': [], 'status': 'unreviewed', 'review_scope': 'Notebook inspected; repository scope not inspected in this extension.'})
+
 for facet in ['scientific_field','modality','operation']:
     used = {a['term'] for r in rows for a in r['labels'] if a['facet'] == facet}
     for key, t in vocabulary[facet].items():
@@ -198,8 +252,8 @@ for name, data in [('vocabulary.json',vocabulary),('annotations.json',rows),('re
     (ROOT / name).write_text(json.dumps(data,indent=2)+'\n')
 
 # Validate structure and evidence locators, not the correctness of biological judgments.
-assert len(rows) == 10 and len({r['id'] for r in rows}) == 10
-assert len(repos) == 8
+assert len(rows) == 14 and len({r['id'] for r in rows}) == 14
+assert len(repos) == 12
 for row in rows:
     for label in row['labels']:
         assert label['term'] in vocabulary[label['facet']]
@@ -208,16 +262,16 @@ for row in rows:
 assert not any(a['term']=='clustering' for a in next(r for r in rows if r['id']=='L17')['labels'])
 assert all(a['role']=='exercise' for a in next(r for r in rows if r['id']=='E05')['labels'] if a['term'] in ['association','dimension-reduction'])
 counts = {facet: {key: len({r['id'] for r in rows if any(a['facet']==facet and a['term']==key and (facet!='operation' or a['role']=='implemented') for a in r['labels'])}) for key in vocabulary[facet]} for facet in ['scientific_field','modality','operation']}
-(ROOT/'validation.json').write_text(json.dumps({'passed':True,'scope':'Structural checks only; no independent semantic review or execution', 'documents':len(rows),'repositories':len(repos),'repository_fields_supported':sum(bool(r['scientific_fields']) for r in repos),'counts':counts},indent=2)+'\n')
+(ROOT/'validation.json').write_text(json.dumps({'passed':True,'scope':'Structural checks only; no independent semantic review or execution', 'documents':len(rows),'repositories':len(repos),'repository_readmes_reviewed':8,'repository_fields_supported':sum(bool(r['scientific_fields']) for r in repos),'counts':counts},indent=2)+'\n')
 
 lines=['# Notebook classification pilot: draft for discussion','',
-'Ten purposively selected documents from eight repositories were statically inspected at pinned revisions. Formats include Jupyter, marimo, Quarto, R Markdown and Sweave. The sample tests distinctions and failure cases; it is not representative and provides no population coverage estimate. The published inventory and inherited labels are unchanged.','',
+'Fourteen purposively selected documents from twelve hosting repositories were statically inspected at pinned revisions. Formats include Jupyter, marimo, Quarto, R Markdown and Sweave. The sample tests distinctions and failure cases; it is not representative and provides no population coverage estimate. The published inventory and inherited labels are unchanged.','',
 '## Sample assignments','',
 '| Source | Scientific fields | Modality/data type | Selected operations |',
 '| --- | --- | --- | --- |']
 for r in rows:
     def fmt(f):
-        return ', '.join(vocabulary[f][a['term']]['label'] + (' (exercise)' if a.get('role')=='exercise' else '') for a in r['labels'] if a['facet']==f)
+        return ', '.join(vocabulary[f][a['term']]['label'] + (' [' + a['target'] + ']' if r['id']=='L25' and f=='operation' else '') + (' (' + a['role'].replace('_',' ') + ')' if a.get('role') and a['role']!='implemented' else '') for a in r['labels'] if a['facet']==f)
     lines.append(f"| [{r['id']}: {r['title']}]({r['source_url']}) | {fmt('scientific_field')} | {fmt('modality')} | {fmt('operation')} |")
 lines += ['', '## What the pilot changes', '',
 '1. **Operation role matters.** The Arabidopsis GWAS is a learner exercise, with no implemented GWAS call. Its PCA teaching block is disabled for rendering and replaced by precomputed results. The metabolic tutorial similarly sends learners to an external FBA tool. Report exercises separately from implemented operations.',
@@ -225,18 +279,21 @@ lines += ['', '## What the pilot changes', '',
 '3. **Data modality cannot always mean assay.** Predicted structures, trajectories and derived community tables are meaningful inputs. Call this facet “Data modality,” retain the original assay separately when evidenced, and track observed/adapted/simulated/predicted/mixed origin.',
 '4. **A method name can hide different scientific questions.** Scanpy marker tests characterize clusters; they do not establish replicated treatment-effect inference. Its README excludes differential expression while its code runs marker tests: preserve the scope distinction rather than erasing either evidence.',
 '5. **Repository scope is not notebook scope.** The Brunk curriculum declares multiple omics areas; its structure notebook does not inherit transcriptomics or metabolomics. The two MDAnalysis examples share a field/modality but have different operations. Four of eight root READMEs support field assignments in this bounded pass; four remain insufficient, even though their sampled notebook contents support labels.',
-'6. **Cross-cutting fields need conservative rules.** Immune origin alone is setting metadata for PBMC expression analysis; explicit immune-population identification supports immunology for FlowSOM. This boundary needs human review. Likewise, Bioimage analysis is a useful browse field, but its relation to cell biology remains open.',
+'6. **Cross-cutting fields need conservative rules.** Immune origin alone is setting metadata for PBMC expression analysis; explicit immune-population identification supports immunology for FlowSOM. The v0.2 working rules use the analysis objective to distinguish field from setting. Bioimage analysis remains a browse field; generic masks do not imply cell/developmental biology. These are provisional reviewer judgments, not an independently validated taxonomy.',
 '', '## Evidence and status', '',
 '[Readable vocabulary](vocabulary.md) and [machine-readable vocabulary](vocabulary.json) give stable IDs, definitions and whether each term was exercised in this sample. Untested terms are proposals, not an established ontology. [Notebook annotations](annotations.json) retain field-specific evidence locators, operation roles, withheld labels and provenance. [Repository annotations](repository-annotations.json) use separate README evidence. [Validation](validation.json) checks IDs, vocabulary membership, evidence locators and count arithmetic, not biological correctness.',
 '',
-'All ten selected documents have pilot annotations. This says nothing about the classified fraction of the 4,277-document inventory: the sample comes from the separate historical 100-candidate screening collection, and has not been joined to the full registry. Zero additional corpus-wide labels were applied. Assignment review is assistant static inspection, with no independent human review and no notebook execution. Operations listed are selected, not exhaustive.',
+'All fourteen selected documents have pilot annotations. Eight hosting READMEs were inspected separately; the four extension hosts remain unreviewed at repository level. This says nothing about the classified fraction of the 4,277-document inventory: the sample comes from the separate historical 100-candidate screening collection, and has not been joined to the full registry. Zero additional corpus-wide labels were applied. Assignment review is assistant static inspection, with no independent human review and no notebook execution. Operations listed are selected, not exhaustive.',
 '',
-'`source-content.json` and `repository-content.json` are local inspection caches containing upstream text, retained for review but not published. Acquisition records preserve pinned URLs and hashes. Notebook cell locators are zero-based; text line locators are one-based. No biological inputs or source analyses were downloaded/executed. Only source documents and root READMEs were fetched.',
-'', '## Proposed next decisions', '',
+'`source-content.json`, `extension-source-content.json` and `repository-content.json` are local inspection caches containing upstream text, retained for review but not published. Acquisition records preserve pinned URLs and hashes. Notebook cell locators are zero-based; text line locators are one-based. No biological inputs or source analyses were downloaded/executed. Only source documents and root READMEs were fetched.',
+'', '## Extension findings', '',
+'The immune-repertoire notebook supports both Immunology and Transcriptomics. It computes receptor clonotype clusters while consuming precomputed expression clusters, so every operation assignment now has an explicit target or a rationale identifying it. Its supplied UMAP and computed PCA also need different roles. The minfi source lists normalization and differential methylation without implementing them. The PlantCV source measures a whole plant, supporting RGB imaging rather than microscopy or cellular biology. The Azure notebook supports a Genomics context but its role is infrastructure demonstration: access and visualization, not variant calling.', '',
+'The plant source was newly pinned from a formerly floating link; the extension source record preserves its resolved revision. This pilot does not reclassify the earlier frozen snapshot. The immune notebook required a verified 8 MiB cap because of embedded outputs, which are excluded from the local inspection text. The initial cap failure and lock stop are recorded.', '',
+'## Proposed next decisions', '',
 '- Keep the field/modality/operation scheme, with operation roles and input origin added as demonstrated by this pilot.',
-'- Review the Immunology versus immune-setting boundary and Bioimage analysis versus Cell biology boundary on these examples.',
+'- The [v0.2 rules](decisions.md) resolve the pilot boundaries provisionally; review them against the contrasting Scirpy, PBMC, EBImage and PlantCV examples.',
 '- Before scaling, add contrasting cases for the untested fields and general infrastructure, and independently review disagreements. Do not infer broad field coverage from this purposive sample.',
 '- The current vocabulary has 18 candidate fields, not a mutually exclusive partition. Report notebook counts by distinct ID and show overlaps; do not sum field counts as a corpus total.',
 '']
 (ROOT/'README.md').write_text('\n'.join(lines))
-print('Built 10 notebook annotations, 8 independent repository records and structural validation.')
+print('Built 14 notebook annotations, 12 repository records (8 README-reviewed, 4 unreviewed) and structural validation.')

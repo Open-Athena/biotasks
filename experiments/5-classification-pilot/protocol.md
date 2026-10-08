@@ -64,3 +64,26 @@ companion to vocabulary.json; both must remain aligned when the draft changes.
 No source code from inspected documents is executed. Upstream text caches remain
 local and ignored by Git. Pinned URLs, revisions, original-byte hashes and exact
 locators are retained for review and reacquisition.
+
+## v0.2 extension
+
+Four additional static inspections test the boundaries: G04 cloud/IGV access,
+L25 T-cell receptor and expression analysis, L40 methylation-array introduction,
+and L01 whole-plant RGB imaging. This brings the pilot to 14 documents and 12
+hosting repositories. Eight root READMEs remain independently inspected; the four
+new hosts are explicitly unreviewed rather than inheriting notebook labels.
+
+L01 resolves the old floating `main` link to an immutable revision and is not
+assumed to be the historical bytes. L40 uses the prior recovered source revision,
+not the rendered page. L25 has a verified 7,926,146-byte source, so it alone gets
+an 8 MiB cap; embedded outputs are omitted from inspection text. Estimated memory
+for the extension reader is 150 MiB. The executable inputs were committed before
+acquisition. The initial 4 MiB cap failure and one nonblocking lock rejection are
+preserved in extension-acquisition-failure.json and logbook.md. See the successful
+extension-acquisition.json for start/end, exit and peak RSS.
+
+Reproduce with `inspect_sources.py --sample extension-sample.json --prefix extension-`
+under the same shared-resource guard, then build_pilot.py and render_vocabulary.py.
+Run validate_pilot.py for source-backed accounting and boundary checks. These
+checks do not substitute for an independent biological review. The v0.1 draft
+is retained in Git at commit 543e514.

@@ -1,6 +1,6 @@
 # Notebook classification pilot: draft for discussion
 
-Ten purposively selected documents from eight repositories were statically inspected at pinned revisions. Formats include Jupyter, marimo, Quarto, R Markdown and Sweave. The sample tests distinctions and failure cases; it is not representative and provides no population coverage estimate. The published inventory and inherited labels are unchanged.
+Fourteen purposively selected documents from twelve hosting repositories were statically inspected at pinned revisions. Formats include Jupyter, marimo, Quarto, R Markdown and Sweave. The sample tests distinctions and failure cases; it is not representative and provides no population coverage estimate. The published inventory and inherited labels are unchanged.
 
 ## Sample assignments
 
@@ -16,6 +16,10 @@ Ten purposively selected documents from eight repositories were statically inspe
 | [L14: Principal component analysis of a trajectory](https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/reduced_dimensions/pca.ipynb) | Structural biology | Molecular trajectories | Structural comparison, Dimensionality reduction, Quality assessment and filtering |
 | [L28: Microbiome alpha diversity](https://github.com/microbiome/outreach/blob/ab143c2bf2c9cfd309d2c090a95c197f6df9a94f/quarto/alpha_diversity.qmd) | Microbiome science | Microbial community profiles | Diversity estimation, Descriptive analysis and visualization |
 | [L17: visualize unit metrics](https://github.com/AllenInstitute/openscope_databook/blob/eebe00fc15654772249a4cee53e0e3eba55ef413/docs/visualization/visualize_unit_metrics.ipynb) | Neuroscience | Electrophysiology | Quality assessment and filtering, Descriptive analysis and visualization |
+| [G04: Azure data lake with IGV](https://github.com/microsoft/genomicsnotebook/blob/e91b69768c74c7f9a277194e95b7c30631c142f5/sample-notebooks/igv_jupyter_extension_sample.ipynb) | Genomics and genetics | Genotypes and sequence variants | Data access, Descriptive analysis and visualization |
+| [L25: Analysis of 3k T cells from cancer](https://github.com/scverse/scirpy/blob/998c66a4338f4a5413d5e03dbc46d0dc048db574/docs/tutorials/tutorial_3k_tcr.ipynb) | Immunology, Transcriptomics | Immune receptor sequencing, Single-cell RNA-seq | Normalization and scaling [gene expression], Dimensionality reduction [gene-expression PCA], Dimensionality reduction [gene-expression UMAP] (upstream supplied), Clustering [gene-expression cell populations] (upstream supplied), Clustering [receptor clonotypes], Quality assessment and filtering [receptor chain configurations], Marker testing [expression across clonotypes], Biological annotation [receptor epitope matching] |
+| [L40: Methylation array analysis](https://github.com/hansenlab/minfi/blob/6e9859aae23dcf9a19af060e0ed2b95f20f541ec/vignettes/minfi.Rmd) | Epigenomics | DNA methylation array | Data preparation, Quality assessment and filtering (discussed only), Normalization and scaling (discussed only), Group comparison (discussed only) |
+| [L01: Simple RGB image workflow](https://github.com/danforthcenter/plantcv-tutorial-simple-rgb-workflow/blob/a19ab864a8346bb83f6a753fdf50a7d231bf390a/index.ipynb) | Bioimage analysis | RGB organism images | Image segmentation, Image phenotyping |
 
 ## What the pilot changes
 
@@ -24,19 +28,25 @@ Ten purposively selected documents from eight repositories were statically inspe
 3. **Data modality cannot always mean assay.** Predicted structures, trajectories and derived community tables are meaningful inputs. Call this facet “Data modality,” retain the original assay separately when evidenced, and track observed/adapted/simulated/predicted/mixed origin.
 4. **A method name can hide different scientific questions.** Scanpy marker tests characterize clusters; they do not establish replicated treatment-effect inference. Its README excludes differential expression while its code runs marker tests: preserve the scope distinction rather than erasing either evidence.
 5. **Repository scope is not notebook scope.** The Brunk curriculum declares multiple omics areas; its structure notebook does not inherit transcriptomics or metabolomics. The two MDAnalysis examples share a field/modality but have different operations. Four of eight root READMEs support field assignments in this bounded pass; four remain insufficient, even though their sampled notebook contents support labels.
-6. **Cross-cutting fields need conservative rules.** Immune origin alone is setting metadata for PBMC expression analysis; explicit immune-population identification supports immunology for FlowSOM. This boundary needs human review. Likewise, Bioimage analysis is a useful browse field, but its relation to cell biology remains open.
+6. **Cross-cutting fields need conservative rules.** Immune origin alone is setting metadata for PBMC expression analysis; explicit immune-population identification supports immunology for FlowSOM. The v0.2 working rules use the analysis objective to distinguish field from setting. Bioimage analysis remains a browse field; generic masks do not imply cell/developmental biology. These are provisional reviewer judgments, not an independently validated taxonomy.
 
 ## Evidence and status
 
 [Readable vocabulary](vocabulary.md) and [machine-readable vocabulary](vocabulary.json) give stable IDs, definitions and whether each term was exercised in this sample. Untested terms are proposals, not an established ontology. [Notebook annotations](annotations.json) retain field-specific evidence locators, operation roles, withheld labels and provenance. [Repository annotations](repository-annotations.json) use separate README evidence. [Validation](validation.json) checks IDs, vocabulary membership, evidence locators and count arithmetic, not biological correctness.
 
-All ten selected documents have pilot annotations. This says nothing about the classified fraction of the 4,277-document inventory: the sample comes from the separate historical 100-candidate screening collection, and has not been joined to the full registry. Zero additional corpus-wide labels were applied. Assignment review is assistant static inspection, with no independent human review and no notebook execution. Operations listed are selected, not exhaustive.
+All fourteen selected documents have pilot annotations. Eight hosting READMEs were inspected separately; the four extension hosts remain unreviewed at repository level. This says nothing about the classified fraction of the 4,277-document inventory: the sample comes from the separate historical 100-candidate screening collection, and has not been joined to the full registry. Zero additional corpus-wide labels were applied. Assignment review is assistant static inspection, with no independent human review and no notebook execution. Operations listed are selected, not exhaustive.
 
-`source-content.json` and `repository-content.json` are local inspection caches containing upstream text, retained for review but not published. Acquisition records preserve pinned URLs and hashes. Notebook cell locators are zero-based; text line locators are one-based. No biological inputs or source analyses were downloaded/executed. Only source documents and root READMEs were fetched.
+`source-content.json`, `extension-source-content.json` and `repository-content.json` are local inspection caches containing upstream text, retained for review but not published. Acquisition records preserve pinned URLs and hashes. Notebook cell locators are zero-based; text line locators are one-based. No biological inputs or source analyses were downloaded/executed. Only source documents and root READMEs were fetched.
+
+## Extension findings
+
+The immune-repertoire notebook supports both Immunology and Transcriptomics. It computes receptor clonotype clusters while consuming precomputed expression clusters, so every operation assignment now has an explicit target or a rationale identifying it. Its supplied UMAP and computed PCA also need different roles. The minfi source lists normalization and differential methylation without implementing them. The PlantCV source measures a whole plant, supporting RGB imaging rather than microscopy or cellular biology. The Azure notebook supports a Genomics context but its role is infrastructure demonstration: access and visualization, not variant calling.
+
+The plant source was newly pinned from a formerly floating link; the extension source record preserves its resolved revision. This pilot does not reclassify the earlier frozen snapshot. The immune notebook required a verified 8 MiB cap because of embedded outputs, which are excluded from the local inspection text. The initial cap failure and lock stop are recorded.
 
 ## Proposed next decisions
 
 - Keep the field/modality/operation scheme, with operation roles and input origin added as demonstrated by this pilot.
-- Review the Immunology versus immune-setting boundary and Bioimage analysis versus Cell biology boundary on these examples.
+- The [v0.2 rules](decisions.md) resolve the pilot boundaries provisionally; review them against the contrasting Scirpy, PBMC, EBImage and PlantCV examples.
 - Before scaling, add contrasting cases for the untested fields and general infrastructure, and independently review disagreements. Do not infer broad field coverage from this purposive sample.
 - The current vocabulary has 18 candidate fields, not a mutually exclusive partition. Report notebook counts by distinct ID and show overlaps; do not sum field counts as a corpus total.
