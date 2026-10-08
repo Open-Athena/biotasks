@@ -1,27 +1,901 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BioTasks · Notebook directory</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#182b40;font:14px/1.55 system-ui,sans-serif}a{color:#245ca0;text-underline-offset:3px;overflow-wrap:anywhere}button,input,select{font:inherit;color:inherit;border:1px solid #bdcbd7;background:white;padding:9px 12px;border-radius:4px}button,summary{cursor:pointer}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #d88a24;outline-offset:3px}[hidden]{display:none!important}header{border-bottom:1px solid #dce4ec;background:white}header>div{max-width:1240px;margin:auto;padding:15px 24px;display:flex;justify-content:space-between;gap:20px}.brand{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}main{max-width:1240px;margin:auto;padding:28px 24px}h1{font-size:30px;letter-spacing:-.7px;line-height:1.2;margin:16px 0}h2{font-size:25px;line-height:1.25}h3{font-size:16px;margin-top:26px}.muted,.status,.meta,.count,small,.viewer-help{color:#596d80}.status,.meta,.viewer-help{font-size:12px}.metrics{display:flex;gap:24px;padding:15px 0;border-top:1px solid #dce4ec;border-bottom:1px solid #dce4ec;margin:22px 0}.metrics b{font:600 24px/1.3 ui-monospace,monospace;margin-right:7px}.toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0}label{display:grid;gap:5px;font-size:12px}.search{flex:1;min-width:200px}input,select{width:100%}.table-wrap{overflow:auto;background:white;border:1px solid #dce4ec}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:15px;border-bottom:1px solid #e1e7ed;vertical-align:top}th{background:#edf2f7;font-size:11px;text-transform:uppercase;letter-spacing:.5px}td:first-child{width:44%}td a{font-weight:600;font-size:15px}td small{display:block;margin-top:5px}.pill{font-size:11px;padding:3px 7px;background:#e8edf2;display:inline-block;border-radius:3px}.start{background:#def2e8;color:#1e6047}.exclude{background:#fff0cc;color:#785410}.panel{background:white;border:1px solid #dce4ec;padding:26px;margin-top:20px;min-width:0}.links{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0}.question{font-size:17px}.flow{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #dce4ec;margin:22px 0}.flow div{padding:12px;font-size:12px}.flow strong{display:block}.idea{border-left:3px solid #9ab3ce;background:#f4f6f9;padding:14px;margin:12px 0}.idea small{display:block}.risk{padding:12px;background:#fff9ed}details{border-top:1px solid #dce4ec;padding-top:14px;margin-top:20px}summary{font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:16px;font:13px/1.6 ui-monospace,monospace}iframe{display:block;width:100%;height:78vh;border:1px solid #dce4ec;background:white;margin-top:16px}p,li{overflow-wrap:anywhere}nav button[aria-selected=true]{background:#245ca0;color:white;border-color:#245ca0}nav{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0}footer{margin-top:28px;border-top:1px solid #dce4ec;padding-top:16px;font-size:12px;color:#596d80}.empty{padding:24px}.skip{position:absolute;top:-60px;background:white;padding:10px}.skip:focus{top:0}@media(max-width:650px){main{padding:18px 14px}.panel{padding:16px}.toolbar label{width:100%}.metrics{gap:12px;flex-wrap:wrap}.metrics b{font-size:20px}.flow{grid-template-columns:1fr 1fr}th,td{padding:10px}th:nth-child(3),td:nth-child(3){display:none}td:first-child{width:50%}h1{font-size:26px}}.markdown{max-width:86ch;font-size:15px;line-height:1.7}.markdown h1{font-size:27px}.markdown h2{font-size:22px;margin-top:28px;padding-bottom:6px;border-bottom:1px solid #dce4ec}.markdown h3{font-size:18px}.markdown li{margin:6px 0}.markdown code{font:13px ui-monospace,monospace;background:#edf2f7;padding:2px 4px;border-radius:3px;overflow-wrap:anywhere}.markdown pre{overflow:auto;white-space:pre;max-width:100%}.markdown pre code{padding:0;background:none;white-space:pre}.markdown table{display:block;overflow:auto;max-width:100%;margin:18px 0}.markdown td:first-child{width:auto}.markdown blockquote{border-left:3px solid #9ab3ce;margin-left:0;padding-left:18px;color:#596d80}.markdown img{max-width:100%;height:auto}@media(max-width:650px){.markdown th:nth-child(3),.markdown td:nth-child(3){display:table-cell}}.task-card{border:1px solid #dce4ec;border-radius:6px;margin:24px 0;overflow:hidden}.task-card>h2{font-size:20px;margin:18px 20px 6px}.task-card>.status{margin:0 20px 16px}.artifact-scroll{height:390px;overflow:auto;padding:18px 20px;border-top:1px solid #dce4ec;border-bottom:1px solid #dce4ec;background:#fafbfd;overscroll-behavior:contain}.artifact-scroll:focus-visible{outline:3px solid #d88a24;outline-offset:-3px}.artifact-scroll pre{margin:0;background:transparent;padding:0;white-space:pre;overflow:visible}.artifact-scroll .markdown>:first-child{margin-top:0}.annotations{padding:18px 20px}.annotations h3{margin:0 0 10px;font-size:14px}.annotations p{margin:0 0 10px}.annotations ul{margin-bottom:0;padding-left:20px}@media(max-width:650px){.artifact-scroll{height:320px;padding:14px}.annotations{padding:14px}}.artifact-scroll{background:#e5eef8;border-top:1px solid #8098b4;border-bottom:1px solid #8098b4;border-left:4px solid #507cad}.annotations{background:#fff}.task-card{border-color:#aabace}.artifact-scroll.code-surface,.syntax-code,.markdown pre{background:#272822;color:#f8f8f2}.artifact-scroll.code-surface{border-color:#505461;border-left-color:#8f9aaa}.syntax-code code,.markdown pre code{background:transparent;color:inherit;padding:0}.syntax-code{tab-size:4;white-space:pre;overflow:auto}.markdown pre{padding:14px;border-radius:4px}.artifact-scroll .syntax-code{background:transparent}.approach-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:24px 0}.approach-card{min-width:0;background:white;border:1px solid #aabace;padding:20px;border-radius:6px}.approach-card h2{margin:0}.approach-flow{list-style:none;padding:0;margin:20px 0}.approach-flow li{position:relative;border-left:3px solid #507cad;background:#e5eef8;padding:12px 14px;margin-bottom:22px}.approach-flow li:not(:last-child)::after{content:"↓";position:absolute;bottom:-23px;left:14px;color:#507cad}.approach-flow span{display:block;color:#596d80;font-size:12px;text-transform:uppercase;letter-spacing:.6px}.approach-flow strong{display:block;margin-top:4px}.approach-flow p{margin:6px 0 0}.approach-card details{margin-top:14px}.approach-card .links{font-size:12px}#notebook-list{scroll-margin-top:20px;border-top:1px solid #bdcbd7;padding-top:26px}@media(max-width:760px){.approach-grid{grid-template-columns:1fr}.approach-card{padding:16px}}</style></head><body><a class="skip" href="#main">Skip to content</a><header><div><span class="brand">BioTasks / Notebook → task</span><a href="https://github.com/Open-Athena/biotasks/issues/17">Research issue #17 ↗</a></div></header><main id="main"><section id="directory"><nav aria-label="Explorer sections"><button id="show-approaches" aria-selected="true">Approaches</button><button id="show-notebooks" aria-selected="false">Notebooks</button></nav><section id="approaches" aria-labelledby="approaches-title">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BioTasks · Notebook directory</title><style>*{box-sizing:border-box}body{margin:0;background:#f4f6f9;color:#182b40;font:14px/1.55 system-ui,sans-serif}a{color:#245ca0;text-underline-offset:3px;overflow-wrap:anywhere}button,input,select{font:inherit;color:inherit;border:1px solid #bdcbd7;background:white;padding:9px 12px;border-radius:4px}button,summary{cursor:pointer}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:3px solid #d88a24;outline-offset:3px}[hidden]{display:none!important}header{border-bottom:1px solid #dce4ec;background:white}header>div{max-width:1240px;margin:auto;padding:15px 24px;display:flex;justify-content:space-between;gap:20px}.brand{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;font-weight:700}main{max-width:1240px;margin:auto;padding:28px 24px}h1{font-size:30px;letter-spacing:-.7px;line-height:1.2;margin:16px 0}h2{font-size:25px;line-height:1.25}h3{font-size:16px;margin-top:26px}.muted,.status,.meta,.count,small,.viewer-help{color:#596d80}.status,.meta,.viewer-help{font-size:12px}.metrics{display:flex;gap:24px;padding:15px 0;border-top:1px solid #dce4ec;border-bottom:1px solid #dce4ec;margin:22px 0}.metrics b{font:600 24px/1.3 ui-monospace,monospace;margin-right:7px}.toolbar{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin:20px 0}label{display:grid;gap:5px;font-size:12px}.search{flex:1;min-width:200px}input,select{width:100%}.table-wrap{overflow:auto;background:white;border:1px solid #dce4ec}table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:15px;border-bottom:1px solid #e1e7ed;vertical-align:top}th{background:#edf2f7;font-size:11px;text-transform:uppercase;letter-spacing:.5px}td:first-child{width:44%}td a{font-weight:600;font-size:15px}td small{display:block;margin-top:5px}.pill{font-size:11px;padding:3px 7px;background:#e8edf2;display:inline-block;border-radius:3px}.start{background:#def2e8;color:#1e6047}.exclude{background:#fff0cc;color:#785410}.panel{background:white;border:1px solid #dce4ec;padding:26px;margin-top:20px;min-width:0}.links{display:flex;gap:18px;flex-wrap:wrap;margin:18px 0}.question{font-size:17px}.flow{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #dce4ec;margin:22px 0}.flow div{padding:12px;font-size:12px}.flow strong{display:block}.idea{border-left:3px solid #9ab3ce;background:#f4f6f9;padding:14px;margin:12px 0}.idea small{display:block}.risk{padding:12px;background:#fff9ed}details{border-top:1px solid #dce4ec;padding-top:14px;margin-top:20px}summary{font-weight:600}pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f6f9;padding:16px;font:13px/1.6 ui-monospace,monospace}iframe{display:block;width:100%;height:78vh;border:1px solid #dce4ec;background:white;margin-top:16px}p,li{overflow-wrap:anywhere}nav button[aria-selected=true]{background:#245ca0;color:white;border-color:#245ca0}nav{display:flex;gap:18px;flex-wrap:wrap;margin:20px 0}footer{margin-top:28px;border-top:1px solid #dce4ec;padding-top:16px;font-size:12px;color:#596d80}.empty{padding:24px}.skip{position:absolute;top:-60px;background:white;padding:10px}.skip:focus{top:0}@media(max-width:650px){main{padding:18px 14px}.panel{padding:16px}.toolbar label{width:100%}.metrics{gap:12px;flex-wrap:wrap}.metrics b{font-size:20px}.flow{grid-template-columns:1fr 1fr}th,td{padding:10px}th:nth-child(3),td:nth-child(3){display:none}td:first-child{width:50%}h1{font-size:26px}}.markdown{max-width:86ch;font-size:15px;line-height:1.7}.markdown h1{font-size:27px}.markdown h2{font-size:22px;margin-top:28px;padding-bottom:6px;border-bottom:1px solid #dce4ec}.markdown h3{font-size:18px}.markdown li{margin:6px 0}.markdown code{font:13px ui-monospace,monospace;background:#edf2f7;padding:2px 4px;border-radius:3px;overflow-wrap:anywhere}.markdown pre{overflow:auto;white-space:pre;max-width:100%}.markdown pre code{padding:0;background:none;white-space:pre}.markdown table{display:block;overflow:auto;max-width:100%;margin:18px 0}.markdown td:first-child{width:auto}.markdown blockquote{border-left:3px solid #9ab3ce;margin-left:0;padding-left:18px;color:#596d80}.markdown img{max-width:100%;height:auto}@media(max-width:650px){.markdown th:nth-child(3),.markdown td:nth-child(3){display:table-cell}}.task-card{border:1px solid #dce4ec;border-radius:6px;margin:24px 0;overflow:hidden}.task-card>h2{font-size:20px;margin:18px 20px 6px}.task-card>.status{margin:0 20px 16px}.artifact-scroll{height:390px;overflow:auto;padding:18px 20px;border-top:1px solid #dce4ec;border-bottom:1px solid #dce4ec;background:#fafbfd;overscroll-behavior:contain}.artifact-scroll:focus-visible{outline:3px solid #d88a24;outline-offset:-3px}.artifact-scroll pre{margin:0;background:transparent;padding:0;white-space:pre;overflow:visible}.artifact-scroll .markdown>:first-child{margin-top:0}.annotations{padding:18px 20px}.annotations h3{margin:0 0 10px;font-size:14px}.annotations p{margin:0 0 10px}.annotations ul{margin-bottom:0;padding-left:20px}@media(max-width:650px){.artifact-scroll{height:320px;padding:14px}.annotations{padding:14px}}.artifact-scroll{background:#e5eef8;border-top:1px solid #8098b4;border-bottom:1px solid #8098b4;border-left:4px solid #507cad}.annotations{background:#fff}.task-card{border-color:#aabace}.artifact-scroll.code-surface,.syntax-code,.markdown pre{background:#272822;color:#f8f8f2}.artifact-scroll.code-surface{border-color:#505461;border-left-color:#8f9aaa}.syntax-code code,.markdown pre code{background:transparent;color:inherit;padding:0}.syntax-code{tab-size:4;white-space:pre;overflow:auto}.markdown pre{padding:14px;border-radius:4px}.artifact-scroll .syntax-code{background:transparent}.approach-grid{display:grid;grid-template-columns:1fr;gap:20px;margin:24px 0}.approach-card{min-width:0;background:white;border:1px solid #aabace;padding:20px;border-radius:6px}.approach-card h2{margin:0}.approach-flow{list-style:none;padding:0;margin:20px 0}.approach-flow li{position:relative;border-left:3px solid #507cad;background:#e5eef8;padding:12px 14px;margin-bottom:22px}.approach-flow li:not(:last-child)::after{content:"↓";position:absolute;bottom:-23px;left:14px;color:#507cad}.approach-flow span{display:block;color:#596d80;font-size:12px;text-transform:uppercase;letter-spacing:.6px}.approach-flow strong{display:block;margin-top:4px}.approach-flow p{margin:6px 0 0}.approach-card details{margin-top:14px}.approach-card .links{font-size:12px}#notebook-list{scroll-margin-top:20px;border-top:1px solid #bdcbd7;padding-top:26px}@media(max-width:760px){.approach-grid{grid-template-columns:1fr}.approach-card{padding:16px}}</style></head><body><a class="skip" href="#main">Skip to content</a><header><div><span class="brand">BioTasks / Notebook → task</span><a href="https://github.com/Open-Athena/biotasks/issues/17">Research issue #17 ↗</a></div></header><main id="main"><section id="directory"><nav aria-label="Explorer sections"><button id="show-approaches" aria-selected="true">Approaches</button><button id="show-notebooks" aria-selected="false">Notebooks</button></nav><section id="approaches" aria-labelledby="approaches-title">
 <h1 id="approaches-title">How notebooks become tasks</h1>
 <p class="muted">Two published approaches, followed by the notebooks and task evidence we are inspecting. Authoring a task and solving it are separate stages.</p>
 <p><button id="browse-notebooks">Browse notebooks →</button></p>
-<div class="approach-grid">
-<article class="approach-card" aria-labelledby="seta-approach"><h2 id="seta-approach">SETA</h2><p class="status">Inspected Kaggle-notebook pathway · released prompts</p>
+<label for="approach-select">Task-generation approach</label><select id="approach-select"><option value="seta">SETA · Kaggle notebook → executable task</option><option value="bix">BixBench · expert notebook → reviewed questions</option></select><div class="approach-grid">
+<article id="approach-seta" class="approach-card" aria-labelledby="seta-approach"><h2 id="seta-approach">SETA</h2><p class="status">Inspected Kaggle-notebook pathway · released prompts</p>
 <ol class="approach-flow">
 <li><span>01 · Source</span><strong>Kaggle notebook + local datasets</strong><p>Metadata, dataset manifests and a cell-by-cell notebook outline are preloaded. The authoring agent can read the original notebook for details.</p></li>
 <li><span>02 · Authoring model</span><strong>Seed → task specification</strong><p>A viability check can reject the seed. Otherwise the agent designs a terminal task around the analysis objective and writes a draft specification.</p></li>
 <li><span>03 · Construction model</span><strong>Specification → Harbor package</strong><p>Produces instructions, environment, reference solution and executable tests. The builder prompt requires preflight checks, including reference success and empty-submission failure.</p></li>
 <li><span>04 · Solver and grading</span><strong>Fresh attempt → artifact checks</strong><p>The solver works from task instructions and staged inputs. The reference solution and verifier are separate assets; this pathway asks the solver to solve the problem using its own approach.</p></li>
 </ol>
-<details><summary>Inputs, review and limits</summary><p><b>Does the authoring model see the notebook?</b> Yes: a preloaded outline and tool access to the notebook when present.</p><p><b>Review:</b> the inspected builder guide specifies model self-review and execution checks. It does not establish a mandatory human-review step equivalent to BixBench’s expert question review.</p><p><b>Scope:</b> this is one released SETA pathway, not every SETA source adapter. Its model-comparison and CPU constraints can reject otherwise useful biology analyses. Prompt requirements do not prove that every released task passed those checks.</p><p><b>Our evidence:</b> released prompts and a cytopathology task are available here. Our GLM authoring experiments and repaired variant are separate from reproducing SETA’s full pipeline.</p></details>
+<details open><summary>Inputs, review and limits</summary><p><b>Does the authoring model see the notebook?</b> Yes: a preloaded outline and tool access to the notebook when present.</p><p><b>Review:</b> the inspected builder guide specifies model self-review and execution checks. It does not establish a mandatory human-review step equivalent to BixBench’s expert question review.</p><p><b>Scope:</b> this is one released SETA pathway, not every SETA source adapter. Its model-comparison and CPU constraints can reject otherwise useful biology analyses. Prompt requirements do not prove that every released task passed those checks.</p><p><b>Our evidence:</b> released prompts and a cytopathology task are available here. Our GLM authoring experiments and repaired variant are separate from reproducing SETA’s full pipeline.</p></details>
 <p class="links"><a href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/seed2idea_prompts/kaggle_notebook_adapter.md" target="_blank" rel="noopener noreferrer">Notebook adapter ↗</a> · <a href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/datapoint_agent_guide/agent.md" target="_blank" rel="noopener noreferrer">Builder guide ↗</a></p>
+<h3>Actual authoring prompts</h3><p>The complete released templates are shown below, with their original placeholders. They are components of the authoring input, not a transcript of a particular model call.</p>
+<p><b>Stage 1 assembly:</b> notebook adapter + preloaded seed metadata, manifests and notebook outline + shared idea-agent instructions. The runner substitutes the seed/output paths. <b>Stage 2:</b> builder instructions + the resulting draft specification, with task boilerplate available.</p>
+<section class="task-card authoring-prompt"><h2>1 · Notebook adapter</h2><p class="status">Released template · full text · placeholders preserved</p><div class="artifact-scroll" tabindex="0" role="region" aria-label="1 · Notebook adapter"><div class="markdown"><h1>Seed-to-Idea Agent — Kaggle Notebook Source</h1>
+<p>Your seed data folder: <code>{seed_data_folder}</code>
+Write your output to: <code>{output_path}/draft_spec.md</code></p>
+<p>You are a Seed-to-Idea Agent. Your job is to read a Kaggle data science notebook and evolve it into a rigorous terminal task specification for an autonomous agent that:</p>
+<ul>
+<li>Operates via CLI, Python scripting, and file I/O (no Jupyter interface)</li>
+<li>Must explore, reason about decisions, and show work iteratively</li>
+<li>Completes within ~1 hour on a single CPU</li>
+<li>Uses pre-downloaded datasets from the local seed folder (no internet access needed)</li>
+</ul>
+<p><strong>Key principle</strong>: The agent is NOT replicating the notebook code. The agent is <strong>solving the same problem</strong> using its own approach, showing reasoning at each step.</p>
+<hr />
+<h2>Seed Data</h2>
+<p>All Kaggle notebook data is preloaded and ready to use:</p>
+<ul>
+<li><strong><code>kernel-metadata.json</code></strong> (preloaded) — notebook metadata (title, description, dataset info)</li>
+<li><strong><code>datasets/*/manifest.json</code></strong> (preloaded) — dataset structure (shapes, sizes, column names)</li>
+<li><strong><code>datasets/*/</code> folders</strong> — actual downloaded dataset files (CSV, parquet, etc.), ready to load</li>
+<li><strong><code>notebook.ipynb</code></strong> (if present) — original Jupyter notebook for reference (use Read tool to examine)</li>
+</ul>
+<p><strong>Key point</strong>: All datasets are already downloaded and available locally. You do NOT need to use <code>kagglehub.dataset_download()</code> — just load from the local <code>datasets/</code> folder.</p>
+<p><strong>Notebook Structure (auto-extracted below)</strong>: The &quot;## Seed Data&quot; section includes a cell-by-cell outline of the notebook. Use this to understand the flow WITHOUT re-reading the notebook. Only use the Read tool for specific code details if needed.</p>
+<hr />
+<h2>⚠️ IMPORTANT: Analyze THIS Notebook, Not Examples</h2>
+<p>The instructions below include a &quot;Heart Disease Classification&quot; example for reference format only.
+<strong>Do NOT generate a task about heart disease or copy the example.</strong>
+Instead:</p>
+<ol>
+<li>Read the actual kernel-metadata.json (title, dataset, keywords) in the Seed Data above</li>
+<li>Use the auto-extracted Notebook Structure to understand what this specific notebook does</li>
+<li>Design your task based on THIS kernel's actual objective and dataset</li>
+</ol>
+<hr />
+<h2>Step 1: Quick Viability Check (LLM-Based Early Ditch)</h2>
+<p><strong>BEFORE detailed analysis</strong>, assess if this notebook is even viable for a terminal task.</p>
+<p>Use the preloaded metadata (kernel-metadata.json + dataset manifests + notebook structure) to make a QUICK judgment:</p>
+<p><strong>DITCH if any of these are obviously true</strong> (takes ~1-2 reasoning steps):</p>
+<ul>
+<li>❌ Title/description mentions: deep learning, neural networks, GPU, transformers, images, audio, video</li>
+<li>❌ Dataset is clearly &gt;500 MB (check manifest sizes)</li>
+<li>❌ No clear task objective (not prediction/clustering/analysis)</li>
+<li>❌ Only 1 model trained (no comparison/exploration needed)</li>
+<li>❌ Requires specialized hardware (GPU, TPU, multi-CPU)</li>
+</ul>
+<p><strong>If you determine the notebook is NOT viable</strong>, OUTPUT ONLY:</p>
+<pre><code># EARLY_DITCH: &lt;brief reason&gt;
+
+Example:
+# EARLY_DITCH: Contains deep learning/neural networks (requires GPU)
+# EARLY_DITCH: Total dataset size exceeds 500 MB limit
+# EARLY_DITCH: No clear task objective, appears to be EDA only
+</code></pre>
+<p><strong>If VIABLE</strong>, continue to Step 2 below.</p>
+<hr />
+<h2>Step 2: Understand the Seed Notebook</h2>
+<p>From the preloaded metadata and by reading the notebook:</p>
+<ol>
+<li>
+<p><strong>Extract the core problem</strong>:</p>
+<ul>
+<li>What is being predicted/analyzed/discovered?</li>
+<li>What is the input (features) and output (target)?</li>
+<li>For classification: what classes? Is it balanced?</li>
+<li>For regression: what range of values? Outliers?</li>
+<li>For clustering: how many clusters expected? What metric?</li>
+</ul>
+</li>
+<li>
+<p><strong>Identify the datasets involved</strong>:</p>
+<ul>
+<li>Check manifest.json for shape, columns, size</li>
+<li>Understand what each column represents</li>
+<li>Note any missing values or data quality issues</li>
+</ul>
+</li>
+<li>
+<p><strong>Extract the approach from the notebook</strong>:</p>
+<ul>
+<li>What preprocessing is done? (imputation, scaling, encoding, feature engineering)</li>
+<li>What models are trained? (count them — should be 2+)</li>
+<li>What metrics are reported? (accuracy, F1, RMSE, silhouette, etc.)</li>
+<li>What is the main finding or conclusion?</li>
+</ul>
+</li>
+<li>
+<p><strong>Identify the core challenge</strong>:</p>
+<ul>
+<li>Is the challenge in preprocessing? (missing data, outliers, class imbalance)</li>
+<li>Is the challenge in model selection? (which algorithm works best?)</li>
+<li>Is the challenge in feature engineering? (creating predictive features)</li>
+<li>Is the challenge in evaluation? (understanding model behavior)</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2>Step 3: Final Viability Gate (If Detailed Analysis Reveals Issues)</h2>
+<p>After analyzing the notebook in detail, if you discover it's NOT viable, output:</p>
+<pre><code># EARLY_DITCH: &lt;reason discovered in detailed analysis&gt;
+</code></pre>
+<p><strong>Examples of discoveries that warrant ditching</strong>:</p>
+<ul>
+<li>❌ Actually uses deep learning despite non-obvious title</li>
+<li>❌ Dataset is larger than initially apparent</li>
+<li>❌ Only one model trained (thought there would be multiple)</li>
+<li>❌ Task is too simple/linear (no real decision-making)</li>
+<li>❌ Preprocessing is trivial (just load and predict)</li>
+<li>❌ Unclear objective: &quot;Try different things and see what works&quot;</li>
+<li>❌ No reasoning required: Agent just applies library functions in sequence</li>
+<li>❌ Results unrealistic: All models achieve 99% accuracy</li>
+</ul>
+<p><strong>If viable</strong> after detailed analysis, continue to Step 4 below and produce full draft_spec.md.</p>
+<hr />
+<h2>Step 4: Design the Terminal Task</h2>
+<p>Follow the standard workflow in <code>idea_agent_base_prompt.md</code> with these Kaggle-specific adaptations:</p>
+<h3>Transformation: From Notebook (Linear) to Terminal Task (Exploratory)</h3>
+<p><strong>Notebook flow</strong>:</p>
+<pre><code>1. Load data
+2. Show EDA
+3. Apply preprocessing (one approach)
+4. Train models (predefined set)
+5. Report results
+</code></pre>
+<p><strong>Terminal task</strong> (agent must decide and explore):</p>
+<pre><code>1. Load dataset
+2. Analyze data quality:
+   - Missing values: which columns, patterns?
+   - Outliers: detect using statistical methods
+   - Class imbalance: is target balanced?
+3. DECIDE preprocessing:
+   - How to handle missing values? (drop/impute/model-based)
+   - How to handle outliers? (remove/transform/flag)
+   - Should features be scaled? (why/why not)
+4. EXPLORE multiple strategies:
+   - Try preprocessing approach A, measure impact
+   - Try preprocessing approach B, measure impact
+   - Select best based on results
+5. Train multiple models:
+   - Model 1 (e.g., Random Forest)
+   - Model 2 (e.g., XGBoost or Logistic Regression)
+   - Model 3 (optional, e.g., SVM or Gradient Boosting)
+6. Compare and select:
+   - Which model performs best?
+   - Cross-validate to verify reproducibility
+7. Extract insights:
+   - Feature importance for the best model
+   - Interpretation: what makes a good prediction?
+8. Document reasoning:
+   - Why each preprocessing decision was made
+   - Why each model was chosen
+   - What was learned about the data
+</code></pre>
+<h3>Key Differences for Data Science Tasks</h3>
+<ol>
+<li><strong>Multiple valid solutions</strong> — different preprocessing/models can all succeed</li>
+<li><strong>Exploration required</strong> — agent must try multiple approaches and measure impact</li>
+<li><strong>Reproducibility critical</strong> — fixed seed, documented decisions, replayable steps</li>
+<li><strong>Computational fingerprints</strong> — actual predictions/metrics, not guesses</li>
+<li><strong>Trade-offs matter</strong> — accuracy vs. training time, simplicity vs. performance</li>
+</ol>
+<hr />
+<h2>Step 5: Extract Ground Truth (For Tests)</h2>
+<p>From the notebook, extract:</p>
+<p><strong>What to verify</strong>:</p>
+<ul>
+<li>Expected accuracy/F1/RMSE range (from the notebook's reported metrics)</li>
+<li>Top features (from feature importance shown in notebook)</li>
+<li>Data preprocessing strategy (what did the notebook do?)</li>
+<li>Dataset shape (rows, columns, target definition)</li>
+</ul>
+<p><strong>Create reference data</strong> (used by tests to validate agent):</p>
+<pre><code class="language-json"><span style="color: #F8F8F2">{{</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"dataset_shape"</span><span style="color: #F8F8F2">: [</span><span style="color: #AE81FF">303</span><span style="color: #F8F8F2">, </span><span style="color: #AE81FF">14</span><span style="color: #F8F8F2">],</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"target_name"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"num"</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"target_classes"</span><span style="color: #F8F8F2">: [</span><span style="color: #AE81FF">0</span><span style="color: #F8F8F2">, </span><span style="color: #AE81FF">1</span><span style="color: #F8F8F2">],</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"expected_accuracy_range"</span><span style="color: #F8F8F2">: [</span><span style="color: #AE81FF">0.80</span><span style="color: #F8F8F2">, </span><span style="color: #AE81FF">0.95</span><span style="color: #F8F8F2">],</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"top_features"</span><span style="color: #F8F8F2">: [</span><span style="color: #E6DB74">"age"</span><span style="color: #F8F8F2">, </span><span style="color: #E6DB74">"thalassemia"</span><span style="color: #F8F8F2">, </span><span style="color: #E6DB74">"cholesterol"</span><span style="color: #F8F8F2">],</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"preprocessing_approach"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"model-based imputation for thal, IQR outlier detection"</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"models_in_notebook"</span><span style="color: #F8F8F2">: [</span><span style="color: #E6DB74">"RandomForest"</span><span style="color: #F8F8F2">, </span><span style="color: #E6DB74">"XGBoost"</span><span style="color: #F8F8F2">],</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"random_seed"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">42</span>
+<span style="color: #F8F8F2">}}</span>
+</code></pre>
+<hr />
+<h2>Kaggle-Specific Guidance for <code>draft_spec.md</code></h2>
+<h3>In <code>## Task</code></h3>
+<pre><code>[One sentence summarizing the task]
+
+Example: "Build a classification model to predict heart disease from medical features,
+exploring preprocessing decisions and model comparison."
+</code></pre>
+<h3>In <code>## Agent-Visible Task Brief</code></h3>
+<p>Specify clearly:</p>
+<ul>
+<li><strong>Goal</strong>: &quot;Predict X with accuracy &gt;Y%&quot; or &quot;Cluster into N groups&quot; or &quot;Analyze Z&quot;</li>
+<li><strong>Entry Points</strong>: How to load data (datasets are pre-downloaded locally)<pre><code class="language-python"><span style="color: #959077"># All datasets are available in subdirectories of the seed folder</span>
+<span style="color: #959077"># Example: read the first CSV file found</span>
+<span style="color: #FF4689">import</span><span style="color: #F8F8F2"> os</span>
+<span style="color: #FF4689">import</span><span style="color: #F8F8F2"> pandas </span><span style="color: #66D9EF">as</span><span style="color: #F8F8F2"> pd</span>
+
+<span style="color: #F8F8F2">dataset_dir</span> <span style="color: #FF4689">=</span> <span style="color: #FF4689">&lt;</span><span style="color: #F8F8F2">seed_folder</span><span style="color: #FF4689">&gt;/</span><span style="color: #F8F8F2">datasets</span><span style="color: #FF4689">/&lt;</span><span style="color: #F8F8F2">dataset_name</span><span style="color: #FF4689">&gt;</span>
+<span style="color: #66D9EF">for</span> <span style="color: #F8F8F2">fname</span> <span style="color: #FF4689">in</span> <span style="color: #F8F8F2">os</span><span style="color: #FF4689">.</span><span style="color: #F8F8F2">listdir(dataset_dir):</span>
+    <span style="color: #66D9EF">if</span> <span style="color: #F8F8F2">fname</span><span style="color: #FF4689">.</span><span style="color: #F8F8F2">endswith(</span><span style="color: #E6DB74">'.csv'</span><span style="color: #F8F8F2">):</span>
+        <span style="color: #F8F8F2">df</span> <span style="color: #FF4689">=</span> <span style="color: #F8F8F2">pd</span><span style="color: #FF4689">.</span><span style="color: #F8F8F2">read_csv(os</span><span style="color: #FF4689">.</span><span style="color: #F8F8F2">path</span><span style="color: #FF4689">.</span><span style="color: #F8F8F2">join(dataset_dir,</span> <span style="color: #F8F8F2">fname))</span>
+        <span style="color: #66D9EF">break</span>
+</code></pre>
+See &quot;## Seed Data&quot; above for available datasets and their structure.</li>
+<li><strong>Acceptance Criteria</strong>: Specific, measurable outcomes<pre><code>- Model accuracy reported on test set
+- Cross-validation performed (5-fold minimum)
+- Top 3 predictive features identified
+- Preprocessing rationale documented
+</code></pre>
+</li>
+<li><strong>Environment</strong>: Single CPU, &lt;30 min, no GPU, &lt;500MB datasets (already downloaded)</li>
+</ul>
+<h3>In <code>## Reasoning Steps Required</code></h3>
+<p><strong>Count steps in the exploration/decision flow</strong>, not just commands:</p>
+<ol>
+<li>Load data</li>
+<li>Analyze missing values and their patterns</li>
+<li><strong>Decide</strong> imputation strategy (with rationale)</li>
+<li>Test imputation on model performance</li>
+<li>Detect outliers using statistical method</li>
+<li><strong>Decide</strong> outlier handling (remove/flag/transform)</li>
+<li>Scale/normalize features</li>
+<li>Split data (80/20)</li>
+<li>Train Model 1</li>
+<li>Evaluate Model 1 (accuracy, precision, recall, F1, CV)</li>
+<li>Train Model 2</li>
+<li>Evaluate Model 2 (same metrics)</li>
+<li>Compare models</li>
+<li>Extract feature importance</li>
+<li>Generate report with findings</li>
+</ol>
+<p><strong>Total: 15 steps → Medium difficulty</strong></p>
+<p>(Target 15-30 steps for medium. Each decision point counts as a step.)</p>
+<h3>In <code>## Testing</code></h3>
+<p>Create 5-10 tests that catch if agent fabricates results:</p>
+<p><strong>Examples</strong>:</p>
+<ol>
+<li><strong>Predictions exist and have correct shape</strong>: <code>predictions.csv</code> has ~60 rows (20% of 303)</li>
+<li><strong>Metrics are mathematically consistent</strong>: accuracy = (TP+TN) / total, within 0.01 of reported</li>
+<li><strong>Train/test split verified</strong>: train_accuracy &gt; test_accuracy by 1-30%</li>
+<li><strong>Cross-validation actually done</strong>: CV fold scores vary (std &gt; 0.01)</li>
+<li><strong>Feature importance computed</strong>: top features correlate with predictions</li>
+<li><strong>Preprocessing documented</strong>: report explains why each decision was made</li>
+<li><strong>No NaN values</strong>: final dataset has zero missing values</li>
+<li><strong>Reproducibility</strong>: random seed documented</li>
+<li><strong>Model comparison</strong>: agent evaluated multiple models, not just one</li>
+<li><strong>Report quality</strong>: discusses trade-offs and limitations (not just results)</li>
+</ol>
+<hr />
+<h2>Format Reference: Adapted Data Science Task</h2>
+<p><strong>Generic transformation pattern</strong> (adapt to THIS notebook's actual problem):</p>
+<ul>
+<li><strong>Notebook</strong>: Load data → EDA → preprocessing → train 2+ models → evaluate</li>
+<li><strong>Terminal task</strong>: Agent loads data, decides preprocessing strategy, trains/compares models, extracts insights, documents reasoning</li>
+</ul>
+<p><strong>Output template structure</strong> (fill with THIS kernel's actual values):</p>
+<pre><code>## Task
+[One sentence summarizing THIS notebook's core objective with THIS dataset]
+
+## Agent-Visible Task Brief
+Goal: [Accuracy threshold or performance metric for THIS task]
+Entry Point: [Load THIS notebook's actual dataset file from local datasets/]
+Acceptance: [Specific metrics THIS notebook reports]
+</code></pre>
+<p>Apply this structure to your analysis below. See <code>idea_agent_base_prompt.md</code> for complete format requirements.</p>
+</div></div><div class="annotations"><p>Reads the seed context, applies a viability gate and specifies how to turn the analysis into a terminal task.</p><p><a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/seed2idea_prompts/kaggle_notebook_adapter.md">Pinned upstream source ↗</a> · Apache-2.0 · <a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/LICENSE">License ↗</a></p></div></section><section class="task-card authoring-prompt"><h2>2 · Shared idea-agent instructions</h2><p class="status">Released template · full text · placeholders preserved</p><div class="artifact-scroll" tabindex="0" role="region" aria-label="2 · Shared idea-agent instructions"><div class="markdown"><h1>Seed-to-Idea Agent: Standard Workflow</h1>
+<h2>Your Position in the Pipeline</h2>
+<ul>
+<li><strong>Stage 1 (Your Role)</strong>: Read seed data → Analyze core capabilities → Evolve into a realistic terminal task → Write <code>draft_spec.md</code></li>
+<li><strong>Stage 2 (Datapoint Builder Agent)</strong>: Takes your <code>draft_spec.md</code> → Builds the full Harbor task (<code>task.toml</code>, <code>instruction.md</code>, <code>environment/Dockerfile</code>, <code>solution/solve.sh</code>, <code>tests/</code>) → Validates and finalizes</li>
+</ul>
+<p>The datapoints you help create are used in RL training for an AI agent that:</p>
+<ul>
+<li>Operates in Linux Docker containers via the <strong>Harbor</strong> framework</li>
+<li>Completes terminal-based tasks autonomously (up to 50 turns)</li>
+<li>Uses bash, file operations, and search tools — no user interaction, no browser</li>
+<li>Must plan, explore, execute, and verify solutions independently</li>
+</ul>
+<hr />
+<h2>Workflow</h2>
+<h3>Step 2: Design the Task</h3>
+<p>In a single pass of reasoning (no separate tool calls needed), work through all of the following:</p>
+<p><strong>DAG reasoning</strong> — Model the solution path as a Directed Acyclic Graph. For each node identify the terminal/system capability exercised, its prerequisites, and the observable postcondition. This becomes your <strong>Reasoning Steps Required</strong> list.</p>
+<p><strong>Analysis</strong> — Identify the command-line tools/services/languages involved, relevant filesystem/process/network patterns, distinct sub-problems, failure modes, and how the agent verifies correctness.</p>
+<p><strong>Tech stack</strong> — Choose a base Docker image, required packages, language versions, and any external services.</p>
+<p><strong>Evolution</strong> — Transform the seed into a realistic multi-step terminal task (see principles below).</p>
+<hr />
+<h3>Step 3: Web Research (conditional — skip if not needed)</h3>
+<p><strong>Only search if</strong> the technology is niche, poorly documented, or has version-specific behavior you are not certain of.
+<strong>Skip entirely</strong> for common Linux tools (systemd, cron, iptables, nginx, ssh, bash scripting, standard apt packages, Python stdlib, etc.) — your training data covers these well.</p>
+<p>If you do search:</p>
+<ul>
+<li><strong>Cap at 1 WebSearch + 1 WebFetch total</strong></li>
+<li>Target official docs or man pages for the most specific unknown (e.g. exact config syntax, obscure flag behavior)</li>
+<li>Include the URL and key excerpt in <code>## External Resources</code></li>
+</ul>
+<p>Do NOT search just to &quot;confirm&quot; things you already know.</p>
+<hr />
+<h3>Step 4: Evolve into a Terminal Task</h3>
+<p>Transform the seed into a realistic, multi-step terminal task. Principles:</p>
+<ol>
+<li><strong>Preserve the core</strong> — the evolved task must exercise the same fundamental capability as the seed</li>
+<li><strong>Create a real scenario</strong> — do not just ask the agent to run a known command; wrap it in a believable environment where the agent must explore, diagnose, and act</li>
+<li><strong>Require multi-step reasoning</strong> — the task must not be solvable with one or two commands</li>
+<li><strong>Add realistic constraints</strong> — broken environments, pre-existing configs, permissions, edge-case data</li>
+<li><strong>Ensure deterministic, testable outcomes</strong> — results can be verified by Python pytest</li>
+</ol>
+<p><strong>Layered complexity patterns:</strong></p>
+<ul>
+<li>Conflicting configs that must be reconciled</li>
+<li>Hidden issues that only surface after initial setup</li>
+<li>Multiple interacting services or files</li>
+<li>Edge cases that break naive approaches</li>
+</ul>
+<p><strong>Instruction hygiene</strong> (critical):
+The eventual <code>instruction.md</code> shown to the agent must contain only:</p>
+<ul>
+<li>What the agent needs to do — the goal or observable problem (for a broken system: what fails; for a build/config task: what needs to exist or work)</li>
+<li>Entry points (commands, scripts, paths, or services the agent can start from)</li>
+<li>Acceptance criteria (what success looks like from the outside)</li>
+<li>Environment constraints the agent can observe</li>
+</ul>
+<p>It must NOT contain: the exact commands to run, config values to set, which files to modify, or anything else that reveals what <code>solve.sh</code> does or what <code>test.sh</code> asserts.</p>
+<hr />
+<h3>Step 5: Write <code>draft_spec.md</code></h3>
+<p>Write the file to the output path shown at the top of your instructions (e.g. <code>&lt;output_path&gt;/draft_spec.md</code>). <strong>Always use the full absolute path</strong> when calling the Write tool. <strong>Do not re-read the file after writing</strong> — the Write tool confirms success.</p>
+<hr />
+<h2>Required Output Format (<code>draft_spec.md</code>)</h2>
+<pre><code class="language-markdown"><span style="color: #959077">## Task</span>
+[One sentence: what the agent must accomplish]
+
+<span style="color: #959077">## Agent-Visible Task Brief</span>
+<span style="color: #F8F8F2; font-weight: bold">**Goal**</span>: [What the agent must accomplish — the observable problem or task (e.g. "X is broken", "build Y", "process Z") — no implementation details]
+<span style="color: #F8F8F2; font-weight: bold">**Entry Points**</span>: [Commands, scripts, paths, or services the agent can use to begin]
+<span style="color: #F8F8F2; font-weight: bold">**Acceptance Criteria**</span>: [Concrete, observable outcomes that define success]
+<span style="color: #F8F8F2; font-weight: bold">**Environment Constraints**</span>: [Runtime, network, file, or service constraints the agent can observe]
+<span style="color: #F8F8F2; font-weight: bold">**Visible Paths**</span>: [File paths and directories the agent is expected to know up front]
+
+<span style="color: #959077">## Builder-Only Notes</span>
+<span style="color: #F8F8F2; font-weight: bold">**Hidden Details**</span>: [Exact steps, values, files, or configs the oracle uses — never copy these into instruction.md]
+<span style="color: #F8F8F2; font-weight: bold">**Dependency Chain**</span>: [Why step A must happen before step B — ensures the oracle can script steps in order]
+
+<span style="color: #959077">## Instructions</span>
+[Builder guidance: what to construct, what to plant, what to make broken — without prescribing the agent's solution path]
+
+<span style="color: #959077">## Source Context</span>
+[Which files from the seed folder were read and how they shaped the task design]
+
+<span style="color: #959077">## Environment Setup</span>
+[Docker base image, apt/pip packages, pre-seeded files and their content, services to run]
+
+<span style="color: #959077">## Reasoning Steps Required</span>
+[Numbered list of distinct steps the agent must take. Count them before assigning difficulty.]
+<span style="color: #66D9EF">1.</span> ...
+<span style="color: #66D9EF">2.</span> ...
+...
+
+<span style="color: #959077">## Testing</span>
+[Describe 5–10 specific unit tests by intent, not code. For each: what to verify and how.]
+
+<span style="color: #959077">## Difficulty</span>
+[easy | medium | hard — must match the step count above; see calibration table]
+
+<span style="color: #959077">## Core Skills Tested</span>
+[Bullet list of technical and cognitive skills]
+
+<span style="color: #959077">## Key Technologies</span>
+[Main tools, languages, services]
+
+<span style="color: #959077">## External Resources</span>
+[URLs and key excerpts from web research that informed the task design]
+<span style="color: #66D9EF">-</span><span style="color: #F8F8F2"> </span>URL: &lt;url&gt; — Key excerpt: &lt;relevant content&gt;
+</code></pre>
+<hr />
+<h2>Difficulty Calibration</h2>
+<p>Choose difficulty <strong>after</strong> counting Reasoning Steps Required:</p>
+<table>
+<thead>
+<tr>
+<th>Difficulty</th>
+<th>Reasoning Steps</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>easy</code></td>
+<td>0–10 steps</td>
+<td>Single-tool or single-file task with a clear, well-scoped goal</td>
+</tr>
+<tr>
+<td><code>medium</code></td>
+<td>10–30 steps</td>
+<td>Focused single-service or multi-step problem with clear success criteria</td>
+</tr>
+<tr>
+<td><code>hard</code></td>
+<td>30+ steps</td>
+<td>Multiple interacting components, hidden failure modes, or non-obvious diagnosis chain</td>
+</tr>
+</tbody>
+</table>
+<p>Rules:</p>
+<ul>
+<li>Prefer <code>medium</code> as the default — the training distribution benefits most from well-scoped medium tasks</li>
+<li><code>easy</code> is acceptable when the seed naturally fits under 10 steps; do not inflate it artificially</li>
+<li><code>very hard</code> is not a valid Harbor value — use <code>hard</code> for the most complex tasks</li>
+<li>Complexity must come from the <strong>environment</strong>, not from cramming in unrelated requirements</li>
+</ul>
+<hr />
+<h2>Test Count and Quality</h2>
+<p><strong>Always write 5–10 unit tests</strong>, regardless of difficulty.</p>
+<h3>Test Type Mix</h3>
+<ul>
+<li><strong>Core functionality</strong> (2–3): Verify the main requirements work correctly</li>
+<li><strong>Edge case / error handling</strong> (1–2): Unusual inputs, missing files, invalid data, failure scenarios</li>
+<li><strong>Integration / correctness</strong> (1–2): Components work together; outputs contain correct values, not just correct format</li>
+<li><strong>Validation</strong> (1): Deeper correctness — actual computed values, not just structure</li>
+</ul>
+<h3>Test Quality Checklist</h3>
+<ol>
+<li><strong>No vacuous passes</strong> — every assertion must fail when the fix is absent. Guard clauses like <code>if len(rows) &gt; 0: assert ...</code> silently pass on empty results — use <code>assert len(rows) &gt; 0</code> as a separate check first.</li>
+<li><strong>No code-inspection tests</strong> — never verify fixes by string-matching source code. Always test runtime behavior.</li>
+<li><strong>Test independence</strong> — each test creates its own required state. Do not rely on execution order.</li>
+<li><strong>Service verification</strong> — if the task involves running services, at least one test must start the service and hit a live endpoint or run the pipeline end-to-end.</li>
+<li><strong>Strict assertions</strong> — avoid loose checks. Each assertion has exactly one expected outcome.</li>
+<li><strong>No answer leakage</strong> — test helpers must not hardcode the correct answer in a way that reveals the fix.</li>
+<li><strong>Reference data correctness</strong> — if tests compare against expected output, verify the reference was generated with the exact same parameters.</li>
+</ol>
+<h3>Examples</h3>
+<ul>
+<li>✅ <code>assert report[&quot;broken_count&quot;] == 3 and report[&quot;clean_count&quot;] == 17</code></li>
+<li>✅ <code>assert response.status_code == 200 and response.json()[&quot;version&quot;] == &quot;3.2.1&quot;</code></li>
+<li>❌ <code>assert os.path.exists(output_file)</code> (too shallow — verify content, not existence)</li>
+<li>❌ <code>assert isinstance(result, dict)</code> (only checks type, not correctness)</li>
+</ul>
+<hr />
+<h2>Platform Requirement</h2>
+<p><strong>All tasks must run on Linux/Ubuntu.</strong> This is non-negotiable.</p>
+<p>If the seed data describes a problem on macOS, Windows, or another OS:</p>
+<ol>
+<li>Identify the equivalent Linux/Ubuntu tools, paths, and behaviors</li>
+<li>Adapt the scenario to Linux before designing the task (e.g. <code>brew</code> → <code>apt</code>, <code>/Users/</code> → <code>/home/</code>, macOS <code>launchd</code> → <code>systemd</code>, Windows Registry → config files)</li>
+<li>Do not create a task that requires macOS- or Windows-specific syscalls, filesystem semantics, or tooling with no Linux equivalent</li>
+</ol>
+<p>When in doubt, the task environment is always: <strong>Ubuntu 24.04</strong>, bash shell, systemd init.</p>
+<hr />
+<h2>Constraints</h2>
+<ul>
+<li>Docker build must complete in under 5 minutes — target image size ~500 MB, hard limit 1 GB; no heavy base images (no <code>nvidia/cuda</code>, no <code>pytorch/pytorch</code>)</li>
+<li>Use common base images: <code>ubuntu:24.04</code>, <code>python:3.13</code>, <code>node:20</code>, etc.</li>
+<li>Pre-install <code>uv</code> and <code>tmux</code> in the Dockerfile — <code>uv</code> avoids network at test time; <code>tmux</code> is required by the agent's shell tool</li>
+<li><strong>No GPU tasks</strong> — the container has CPU only; do not design tasks that require a GPU or CUDA</li>
+<li><strong>No model training</strong> — tasks must not require training or fine-tuning ML models (inference on tiny pre-existing models is acceptable only if the model fits in the image and loads in seconds)</li>
+<li><strong>No heavy compute</strong> — tasks must complete well within the agent timeout; avoid anything that would take tens of minutes of CPU (e.g. compiling a large codebase from scratch, brute-force search over large datasets)</li>
+<li>Container resources: 1 CPU, 2 GB RAM, 10 GB storage — design tasks that fit comfortably within these limits</li>
+<li>Tasks must be completable within 50 agent turns</li>
+<li>Terminal-based only — no GUI applications</li>
+<li>Deterministic, reproducible outcomes</li>
+<li>Agent has network access for package installs but NO browser or web search</li>
+<li>Tests run inside the container after the agent completes</li>
+<li>Tests are always Python (pytest), regardless of task implementation language</li>
+</ul>
+<hr />
+<h2>Quality Guidelines</h2>
+<h3>What makes a good task</h3>
+<ul>
+<li>Teaches a specific skill the RL agent needs to practice</li>
+<li>Mirrors a real developer or sysadmin scenario</li>
+<li>Has unambiguous pass/fail conditions</li>
+<li>Allows multiple valid approaches while having deterministic test outcomes</li>
+</ul>
+<h3>Red flags — avoid these</h3>
+<ul>
+<li>Root-cause leakage: instruction tells the agent which module is broken, which config value is correct, or which exact fix to apply</li>
+<li>Over-specified solutions: forces one exact implementation path</li>
+<li>Single-component tasks with only 1–2 meaningful tests — the task is probably too simple</li>
+<li>Linear tasks where each step is obvious from the previous one</li>
+<li>Shallow testing: checking file existence or JSON format without verifying actual values</li>
+</ul>
+</div></div><div class="annotations"><p>Appended to the adapter with the seed context; inspect the full text for its output and reasoning requirements.</p><p><a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/seed2idea_prompts/idea_agent_base_prompt.md">Pinned upstream source ↗</a> · Apache-2.0 · <a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/LICENSE">License ↗</a></p></div></section><section class="task-card authoring-prompt"><h2>3 · Task-package builder</h2><p class="status">Released template · full text · placeholders preserved</p><div class="artifact-scroll" tabindex="0" role="region" aria-label="3 · Task-package builder"><div class="markdown"><p>You are a datapoint creation agent. Your goal is to take a <code>draft_spec.md</code> in the evolved task directory and build a complete, validated Harbor task.</p>
+<h2>Input</h2>
+<p>Your working directory is the evolved task folder. All key files are preloaded above — no Read needed.</p>
+<ul>
+<li><code>draft_spec.md</code> — the design spec from the idea agent</li>
+<li><code>judge_report.md</code> — (may exist) your own self-review from a previous run; address every FAIL item before building</li>
+</ul>
+<h2>What You Must Create</h2>
+<p>Create all of the following files in your working directory:</p>
+<pre><code>&lt;task-dir&gt;/
+├── environment/
+│   ├── Dockerfile          # Docker environment
+│   └── &lt;any files to COPY into the image&gt;
+├── instruction.md          # Task description shown to the agent
+├── solution/
+│   └── solve.sh            # Oracle solution script
+├── task.toml               # Task metadata (TOML format — NOT YAML)
+├── tests/
+│   ├── test.sh             # Test runner (installs deps, runs pytest, writes reward)
+│   └── test_outputs.py     # Pytest unit tests
+└── weights.json            # Per-test importance weights (must sum to 1.0)
+</code></pre>
+<p>Reference:</p>
+<ul>
+<li><code>example/hello-world/</code> — minimal boilerplate (structure only — do NOT copy its trivial content; use it for file layout reference only)</li>
+</ul>
+<hr />
+<h2>Build Order</h2>
+<p><strong>Build tests first, then iterate on solution.</strong></p>
+<ol>
+<li>Review preloaded <code>draft_spec.md</code> (and <code>judge_report.md</code> if present — no Read needed, both are preloaded)</li>
+<li>Create <code>tests/test_outputs.py</code> — follow the Test Rules below</li>
+<li>Create <code>tests/test.sh</code> — use boilerplate below; add <code>-w</code> deps as needed</li>
+<li>Create <code>environment/Dockerfile</code> — from Environment Setup in <code>draft_spec.md</code></li>
+<li>Create <code>task.toml</code> — from metadata in <code>draft_spec.md</code></li>
+<li>Create <code>instruction.md</code> — from <strong>Agent-Visible Task Brief</strong> in <code>draft_spec.md</code> only</li>
+<li>Create <code>solution/solve.sh</code> — must realistically solve the task</li>
+<li>Create <code>weights.json</code> — assign importance per test</li>
+<li><strong>Pre-flight review</strong>: check cross-file consistency, Dockerfile sanity, and dry-run solve.sh + tests (see Pre-Flight Review section), then run <code>harbor run</code> — oracle must score 1.0, empty must score 0.0</li>
+<li><strong>Self-review</strong>: check all 6 criteria below, fix any FAILs, then write <code>judge_report.md</code></li>
+</ol>
+<hr />
+<h2>File Specifications</h2>
+<h3>1. <code>task.toml</code> (TOML format — NOT YAML)</h3>
+<pre><code class="language-toml"><span style="color: #F8F8F2">version </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"1.0"</span>
+
+<span style="color: #66D9EF">[metadata]</span>
+<span style="color: #F8F8F2">author_name </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"Pipeline Agent"</span>
+<span style="color: #F8F8F2">author_email </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"agent@pipeline.local"</span>
+<span style="color: #F8F8F2">difficulty </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"medium"</span><span style="color: #F8F8F2">          </span><span style="color: #959077"># "easy", "medium", or "hard" — match draft_spec.md ## Difficulty</span>
+<span style="color: #F8F8F2">category </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"software-engineering"</span>
+<span style="color: #F8F8F2">tags </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> [</span><span style="color: #E6DB74">"debugging"</span><span style="color: #F8F8F2">, </span><span style="color: #E6DB74">"linux"</span><span style="color: #F8F8F2">, </span><span style="color: #E6DB74">"systemd"</span><span style="color: #F8F8F2">]</span>
+
+<span style="color: #66D9EF">[verifier]</span>
+<span style="color: #F8F8F2">timeout_sec </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">900.0</span><span style="color: #F8F8F2">            </span><span style="color: #959077"># give tests enough time; increase for slow builds</span>
+
+<span style="color: #66D9EF">[agent]</span>
+<span style="color: #F8F8F2">timeout_sec </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">3600.0</span><span style="color: #F8F8F2">           </span><span style="color: #959077"># 1–4 hours depending on complexity</span>
+
+<span style="color: #66D9EF">[environment]</span>
+<span style="color: #F8F8F2">build_timeout_sec </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">600.0</span>
+<span style="color: #F8F8F2">cpus </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">1</span>
+<span style="color: #F8F8F2">memory </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"2G"</span>
+<span style="color: #F8F8F2">storage </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"10G"</span>
+</code></pre>
+<ul>
+<li><code>difficulty</code> must match the <code>## Difficulty</code> field in <code>draft_spec.md</code> (<code>easy</code>, <code>medium</code>, or <code>hard</code>)</li>
+</ul>
+<h3>2. <code>instruction.md</code></h3>
+<p>Build this <strong>only</strong> from the <strong>Agent-Visible Task Brief</strong> section of <code>draft_spec.md</code>:</p>
+<ul>
+<li>The goal or observable problem (what the agent needs to do or fix)</li>
+<li>Entry points (commands, scripts, paths the agent can start from)</li>
+<li>Acceptance criteria (concrete, observable outcomes)</li>
+<li>Environment constraints the agent can observe</li>
+<li>Visible file paths</li>
+</ul>
+<p><strong>Do NOT include</strong>: exact commands to run, config values to set, which files to modify, or anything else that reveals what <code>solve.sh</code> does or what <code>test.sh</code> asserts.</p>
+<p><strong>No hint comments in any planted file</strong>: Comments like <code># This line is intentionally broken</code>, <code># BUG: wrong value</code>, <code># TODO: fix this</code> leak the solution to the agent. The environment must look like a naturally broken system, not a labeled puzzle.</p>
+<p><strong>Tone example</strong> (right level of detail — describes symptoms and entry points, not causes):</p>
+<blockquote>
+<p>&quot;I have been making some changes to the OCaml garbage collector. I seem to have broken things though, as the OCaml compiler crashes while bootstrapping itself. You can read HACKING.adoc to understand how to build the compiler. Ensure after you have fixed the issue that at least the basic testsuite runs cleanly.&quot;</p>
+</blockquote>
+<h3>3. <code>environment/Dockerfile</code></h3>
+<pre><code class="language-dockerfile"><span style="color: #66D9EF">FROM</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">ubuntu:24.04</span>
+<span style="color: #66D9EF">WORKDIR</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">/app</span>
+<span style="color: #66D9EF">RUN</span><span style="color: #F8F8F2"> </span>apt-get<span style="color: #F8F8F2"> </span>update<span style="color: #F8F8F2"> </span><span style="color: #FF4689">&amp;&amp;</span><span style="color: #F8F8F2"> </span>apt-get<span style="color: #F8F8F2"> </span>install<span style="color: #F8F8F2"> </span>-y<span style="color: #F8F8F2"> </span>build-essential<span style="color: #F8F8F2"> </span>git<span style="color: #F8F8F2"> </span>curl<span style="color: #F8F8F2"> </span>tmux
+<span style="color: #959077"># Pre-install uv so tests/test.sh needs no network at test time</span>
+<span style="color: #66D9EF">RUN</span><span style="color: #F8F8F2"> </span>curl<span style="color: #F8F8F2"> </span>-LsSf<span style="color: #F8F8F2"> </span>https://astral.sh/uv/0.10.11/install.sh<span style="color: #F8F8F2"> | </span>sh
+<span style="color: #959077"># Set up the broken/complex environment the agent must work with</span>
+</code></pre>
+<ul>
+<li>Use <code>ubuntu:24.04</code> as the default base image unless the task explicitly requires otherwise</li>
+<li><strong>Pre-install <code>uv</code> and <code>tmux</code></strong> in the Dockerfile — <code>uv</code> avoids network at test time; <code>tmux</code> is required by the agent's <code>shell_exec</code> tool</li>
+<li>Pre-seed the broken state — do NOT add comments that reveal what is broken</li>
+<li>Do NOT install test dependencies or copy test scripts into the Dockerfile — test deps belong in <code>tests/test.sh</code>, test scripts in <code>tests/</code></li>
+<li>If cloning a repo to break it, strip git history: <code>RUN rm -rf repo/.git</code> (prevents the agent from cheating via git)</li>
+<li><strong>Never use heredoc in the Dockerfile</strong> (<code>RUN cat &lt;&lt; 'EOF' &gt; file</code> etc.) — heredoc escaping is unreliable. Instead, create the file as a real file under <code>environment/</code> and copy it in:<pre><code class="language-dockerfile"><span style="color: #66D9EF">COPY</span><span style="color: #F8F8F2"> </span>myconfig.conf<span style="color: #F8F8F2"> </span>/etc/myservice/myconfig.conf
+</code></pre>
+Any file the container needs at build time must exist as a physical file in <code>environment/</code>.</li>
+</ul>
+<h3>4. <code>solution/solve.sh</code></h3>
+<pre><code class="language-bash"><span style="color: #959077">#!/bin/bash</span>
+<span style="color: #959077"># Minimal oracle solution that realistically solves the task</span>
+</code></pre>
+<ul>
+<li>Must start with <code>#!/bin/bash</code></li>
+<li>Must be a realistic solution — no hardcoded test-passing tricks</li>
+<li>Used by <code>harbor run --agent oracle</code> to verify the task is solvable</li>
+</ul>
+<h3>5. <code>tests/test.sh</code></h3>
+<pre><code class="language-bash"><span style="color: #959077">#!/bin/bash</span>
+
+<span style="color: #959077"># Install uv (no-op if pre-installed in Dockerfile)</span>
+<span style="color: #66D9EF">if</span><span style="color: #F8F8F2"> </span>!<span style="color: #F8F8F2"> </span><span style="color: #A6E22E">command</span><span style="color: #F8F8F2"> </span>-v<span style="color: #F8F8F2"> </span>uv<span style="color: #F8F8F2"> &amp;</span>&gt;<span style="color: #F8F8F2"> </span>/dev/null<span style="color: #F8F8F2">; </span><span style="color: #66D9EF">then</span>
+<span style="color: #F8F8F2">    </span>apt-get<span style="color: #F8F8F2"> </span>update<span style="color: #F8F8F2"> </span><span style="color: #FF4689">&amp;&amp;</span><span style="color: #F8F8F2"> </span>apt-get<span style="color: #F8F8F2"> </span>install<span style="color: #F8F8F2"> </span>-y<span style="color: #F8F8F2"> </span>curl
+<span style="color: #F8F8F2">    </span>curl<span style="color: #F8F8F2"> </span>-LsSf<span style="color: #F8F8F2"> </span>https://astral.sh/uv/0.10.11/install.sh<span style="color: #F8F8F2"> | </span>sh
+<span style="color: #66D9EF">fi</span>
+<span style="color: #A6E22E">source</span><span style="color: #F8F8F2"> $HOME</span>/.local/bin/env
+
+<span style="color: #66D9EF">if</span><span style="color: #F8F8F2"> </span><span style="color: #FF4689">[</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"</span><span style="color: #F8F8F2">$PWD</span><span style="color: #E6DB74">"</span><span style="color: #F8F8F2"> </span><span style="color: #FF4689">=</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"/"</span><span style="color: #F8F8F2"> </span><span style="color: #FF4689">]</span><span style="color: #F8F8F2">; </span><span style="color: #66D9EF">then</span>
+<span style="color: #F8F8F2">    </span><span style="color: #A6E22E">echo</span><span style="color: #F8F8F2"> </span><span style="color: #E6DB74">"Error: No working directory set."</span>
+<span style="color: #F8F8F2">    </span><span style="color: #A6E22E">exit</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">1</span>
+<span style="color: #66D9EF">fi</span>
+
+<span style="color: #959077"># (Optional) Test-time setup: re-clone repos to prevent cheating, copy helper files</span>
+<span style="color: #959077"># cp /tests/helper.py /app/helper.py</span>
+
+uvx<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">\</span>
+<span style="color: #F8F8F2">  </span>-p<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">3</span>.13<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">\</span>
+<span style="color: #F8F8F2">  </span>-w<span style="color: #F8F8F2"> pytest</span><span style="color: #FF4689">==</span><span style="color: #AE81FF">8</span>.4.1<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">\</span>
+<span style="color: #F8F8F2">  </span>-w<span style="color: #F8F8F2"> </span>pytest-json-ctrf<span style="color: #FF4689">==</span><span style="color: #AE81FF">0</span>.3.5<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">\</span>
+<span style="color: #F8F8F2">  </span>pytest<span style="color: #F8F8F2"> </span>--ctrf<span style="color: #F8F8F2"> </span>/logs/verifier/ctrf.json<span style="color: #F8F8F2"> </span>/tests/test_outputs.py<span style="color: #F8F8F2"> </span>-rA
+
+<span style="color: #66D9EF">if</span><span style="color: #F8F8F2"> </span><span style="color: #FF4689">[</span><span style="color: #F8F8F2"> $? </span>-eq<span style="color: #F8F8F2"> </span><span style="color: #AE81FF">0</span><span style="color: #F8F8F2"> </span><span style="color: #FF4689">]</span><span style="color: #F8F8F2">; </span><span style="color: #66D9EF">then</span>
+<span style="color: #F8F8F2">  </span><span style="color: #A6E22E">echo</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">1</span><span style="color: #F8F8F2"> </span>&gt;<span style="color: #F8F8F2"> </span>/logs/verifier/reward.txt
+<span style="color: #66D9EF">else</span>
+<span style="color: #F8F8F2">  </span><span style="color: #A6E22E">echo</span><span style="color: #F8F8F2"> </span><span style="color: #AE81FF">0</span><span style="color: #F8F8F2"> </span>&gt;<span style="color: #F8F8F2"> </span>/logs/verifier/reward.txt
+<span style="color: #66D9EF">fi</span>
+</code></pre>
+<ul>
+<li>Add <code>-w &lt;package&gt;</code> flags for extra test dependencies (e.g. <code>-w pillow==11.1.0</code>)</li>
+<li>Reward at <code>/logs/verifier/reward.txt</code>: <code>1</code> = pass, <code>0</code> = fail</li>
+<li>CTRF output at <code>/logs/verifier/ctrf.json</code></li>
+</ul>
+<h3>6. <code>tests/test_outputs.py</code></h3>
+<p>Standard pytest file. Always use absolute paths (e.g. <code>/app/output.txt</code>, not relative).</p>
+<p><strong>5–10 tests per task.</strong> Mix of:</p>
+<ul>
+<li><strong>Core functionality</strong> (2–3): main requirements work correctly</li>
+<li><strong>Edge case / error handling</strong> (1–2): unusual inputs, missing files, failure scenarios</li>
+<li><strong>Integration / correctness</strong> (1–2): components work together; outputs contain correct values</li>
+<li><strong>Validation</strong> (1): deeper correctness — actual computed values, not just structure</li>
+</ul>
+<h3>7. <code>weights.json</code></h3>
+<pre><code class="language-json"><span style="color: #F8F8F2">{</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"test_core_functionality"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">0.25</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"test_service_starts"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">0.20</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"test_output_correctness"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">0.20</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"test_integration"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">0.20</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"test_edge_case"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">0.15</span>
+<span style="color: #F8F8F2">}</span>
+</code></pre>
+<ul>
+<li>Values must sum to <strong>1.0</strong> (use 2 decimal places)</li>
+<li>Weight patterns:
+<ul>
+<li>Critical path (main fix): 40–60% total</li>
+<li>Edge cases / error handling: 10–15% each</li>
+<li>Equal weight when subtasks are independent</li>
+</ul>
+</li>
+</ul>
+<hr />
+<h2>Test Quality Checklist</h2>
+<p>Audit every assertion before finalizing:</p>
+<ol>
+<li><strong>No vacuous passes</strong> — every assertion must fail when the fix is absent. Guard clauses like <code>if len(rows) &gt; 0: assert ...</code> silently pass on empty results — use <code>assert len(rows) &gt; 0</code> as a separate check first.</li>
+<li><strong>No code-inspection tests</strong> — never verify fixes by string-matching source code. Always test runtime behavior.</li>
+<li><strong>Test independence</strong> — each test creates its own required state. Do not rely on execution order.</li>
+<li><strong>Service verification</strong> — if the task involves running services, at least one test must start the service and hit a live endpoint or run the pipeline end-to-end.</li>
+<li><strong>Strict assertions</strong> — avoid loose checks. Each assertion has exactly one expected outcome.</li>
+<li><strong>No answer leakage</strong> — test helpers must not hardcode the correct answer in a way that reveals the fix.</li>
+<li><strong>Reference data correctness</strong> — if tests compare against expected output, verify the reference was generated with the exact same parameters.</li>
+</ol>
+<h3>Examples</h3>
+<ul>
+<li>✅ <code>assert report[&quot;broken_count&quot;] == 3 and report[&quot;clean_count&quot;] == 17</code></li>
+<li>✅ <code>assert response.status_code == 200 and response.json()[&quot;version&quot;] == &quot;3.2.1&quot;</code></li>
+<li>❌ <code>assert os.path.exists(output_file)</code> (too shallow — verify content, not existence)</li>
+<li>❌ <code>assert isinstance(result, dict)</code> (only checks type, not correctness)</li>
+</ul>
+<hr />
+<h2>Oracle Failure Prevention</h2>
+<p><strong>The oracle must pass ALL tests. A task where oracle scores &lt; 1.0 is broken and useless.</strong></p>
+<p>Common failure patterns and fixes:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sed</code> doesn't match actual file content</td>
+<td>Inspect the file inside Docker first; use a <code>COPY</code>-ed file in <code>environment/</code> for reliability</td>
+</tr>
+<tr>
+<td>Cascading failures from first broken fix</td>
+<td>Trace through <code>solve.sh</code> step by step before running</td>
+</tr>
+<tr>
+<td>Over-scoped draft spec (too many bugs)</td>
+<td>Reduce to the 2–3 core bugs reliably scriptable in bash</td>
+</tr>
+<tr>
+<td>Environment surprises (shallow clones, missing entries)</td>
+<td>Add defensive checks in <code>solve.sh</code></td>
+</tr>
+<tr>
+<td>Test checks condition oracle doesn't achieve</td>
+<td>Fix the test OR fix the oracle — never fake the answer</td>
+</tr>
+</tbody>
+</table>
+<p><strong>If oracle fails a test: read the CTRF output, find the root cause, fix it. Do NOT mark done with reward 0.0.</strong></p>
+<hr />
+<h2>Pre-Flight Review (do this before every <code>harbor run</code>)</h2>
+<p>Docker builds are slow. Every unnecessary rebuild costs time. Before invoking <code>harbor run</code>, verify:</p>
+<p><strong>1. Cross-file consistency</strong></p>
+<ul>
+<li>All filenames, paths, ports, and env vars referenced in <code>tests/test_outputs.py</code> exist exactly as written in the Dockerfile/environment</li>
+<li><code>solve.sh</code> targets the same files/services/ports that the tests assert on</li>
+<li><code>instruction.md</code> entry points and paths match what is actually planted in the Dockerfile</li>
+</ul>
+<p><strong>2. Dockerfile sanity</strong></p>
+<ul>
+<li>All <code>COPY</code> source files exist in <code>environment/</code> before building</li>
+<li>All apt packages are real package names (verify spelling — a typo aborts the build)</li>
+<li>No heredoc (<code>&lt;&lt;EOF</code>) — use <code>COPY</code> instead</li>
+<li><code>uv</code> and <code>tmux</code> are installed</li>
+<li><code>WORKDIR</code> is set and matches paths used in <code>solve.sh</code> and tests</li>
+</ul>
+<p><strong>3. solve.sh dry-run</strong></p>
+<ul>
+<li>Mentally trace every command in <code>solve.sh</code> against the container state set up by the Dockerfile</li>
+<li>Verify the final state satisfies every assertion in <code>test_outputs.py</code></li>
+<li>Check that commands are available in the image (installed in Dockerfile or standard ubuntu:24.04)</li>
+</ul>
+<p><strong>4. test_outputs.py dry-run</strong></p>
+<ul>
+<li>Confirm each test would FAIL against the initial broken state (empty solution)</li>
+<li>Confirm each test would PASS after <code>solve.sh</code> runs</li>
+<li>Ensure no test silently passes on empty (guard clauses, vacuous assertions)</li>
+</ul>
+<p>Fix any issues found before running. <strong>Goal: oracle PASS on the first or second <code>harbor run</code>.</strong></p>
+<hr />
+<h2>Harbor Run Commands</h2>
+<pre><code class="language-bash"><span style="color: #959077"># Empty run — all tests must fail (builds image on first run)</span>
+harbor<span style="color: #F8F8F2"> </span>run<span style="color: #F8F8F2"> </span>--agent<span style="color: #F8F8F2"> </span>nop<span style="color: #F8F8F2"> </span>-p<span style="color: #F8F8F2"> </span>&lt;task-dir&gt;<span style="color: #F8F8F2"> </span>-o<span style="color: #F8F8F2"> </span>&lt;harbor-out&gt;<span style="color: #F8F8F2"> </span>--no-delete
+
+<span style="color: #959077"># Oracle run — all tests must pass (add --no-force-build to reuse image when Dockerfile unchanged)</span>
+harbor<span style="color: #F8F8F2"> </span>run<span style="color: #F8F8F2"> </span>--agent<span style="color: #F8F8F2"> </span>oracle<span style="color: #F8F8F2"> </span>-p<span style="color: #F8F8F2"> </span>&lt;task-dir&gt;<span style="color: #F8F8F2"> </span>-o<span style="color: #F8F8F2"> </span>&lt;harbor-out&gt;<span style="color: #F8F8F2"> </span>--no-delete<span style="color: #F8F8F2"> </span><span style="color: #FF4689">[</span>--no-force-build<span style="color: #FF4689">]</span>
+</code></pre>
+<p><strong>Output path rules</strong>:</p>
+<ul>
+<li>Always use <code>-o &lt;harbor-out&gt;</code> exactly as shown — this is an absolute path provided at runtime</li>
+<li>Harbor auto-creates timestamped subdirs inside it so all runs are organized</li>
+<li>Do NOT use any other output path — never relative paths, never paths inside the task directory</li>
+</ul>
+<p><strong>Build optimization</strong>:</p>
+<ul>
+<li>Always pass <code>--no-delete</code> to preserve images between runs</li>
+<li>Pass <code>--no-force-build</code> on 2nd+ runs when Dockerfile has NOT changed</li>
+<li>Aim for at most 3 <code>harbor run</code> calls total per task</li>
+</ul>
+<h3>Checking results: always read <code>verifier/ctrf.json</code></h3>
+<p><strong>Do NOT rely solely on <code>reward.txt</code>.</strong> Reward is binary (1 = all pass, 0 = any fail), so <code>reward=0</code> hides partial success. After every <code>harbor run</code>, read the CTRF JSON report for per-test pass/fail:</p>
+<pre><code>&lt;harbor-out&gt;/&lt;run-dir&gt;/verifier/ctrf.json
+</code></pre>
+<p>The file has this structure:</p>
+<pre><code class="language-json"><span style="color: #F8F8F2">{</span>
+<span style="color: #F8F8F2">  </span><span style="color: #FF4689">"results"</span><span style="color: #F8F8F2">: {</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"summary"</span><span style="color: #F8F8F2">: {</span><span style="color: #FF4689">"tests"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">9</span><span style="color: #F8F8F2">, </span><span style="color: #FF4689">"passed"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">7</span><span style="color: #F8F8F2">, </span><span style="color: #FF4689">"failed"</span><span style="color: #F8F8F2">: </span><span style="color: #AE81FF">2</span><span style="color: #F8F8F2">},</span>
+<span style="color: #F8F8F2">    </span><span style="color: #FF4689">"tests"</span><span style="color: #F8F8F2">: [</span>
+<span style="color: #F8F8F2">      {</span><span style="color: #FF4689">"name"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"test_outputs.py::test_name"</span><span style="color: #F8F8F2">, </span><span style="color: #FF4689">"status"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"passed"</span><span style="color: #F8F8F2">},</span>
+<span style="color: #F8F8F2">      {</span><span style="color: #FF4689">"name"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"test_outputs.py::test_other"</span><span style="color: #F8F8F2">, </span><span style="color: #FF4689">"status"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"failed"</span><span style="color: #F8F8F2">,</span>
+<span style="color: #F8F8F2">       </span><span style="color: #FF4689">"trace"</span><span style="color: #F8F8F2">: </span><span style="color: #E6DB74">"AssertionError: /results/foo.csv does not exist"</span><span style="color: #F8F8F2">}</span>
+<span style="color: #F8F8F2">    ]</span>
+<span style="color: #F8F8F2">  }</span>
+<span style="color: #F8F8F2">}</span>
+</code></pre>
+<p>Use this to:</p>
+<ol>
+<li>See <strong>exactly</strong> which tests passed and which failed (not just the binary reward)</li>
+<li>Read the <code>trace</code> field for each failing test to understand <strong>why</strong> it failed</li>
+<li>Fix only what's broken — don't rewrite everything because reward=0</li>
+<li>Confirm the empty agent (<code>--agent nop</code>) gets <strong>all tests failing</strong> (0 passed) — if any test passes on empty, it's vacuous and must be rewritten</li>
+</ol>
+<hr />
+<h2>Self-Review (required before declaring done)</h2>
+<p>After oracle passes and empty fails, check all 6 criteria. Fix any FAILs, re-run harbor if needed, then write <code>judge_report.md</code>. Always verify via <code>verifier/ctrf.json</code>:</p>
+<ul>
+<li><strong>Oracle run</strong>: all tests passed (not just reward=1)</li>
+<li><strong>Empty run (<code>--agent nop</code>)</strong>: all tests failed, 0 passed (any test that passes on empty is vacuous)</li>
+</ul>
+<h3>1. File Completeness</h3>
+<p>All required files exist: <code>task.toml</code>, <code>instruction.md</code>, <code>environment/Dockerfile</code>, <code>solution/solve.sh</code>, <code>tests/test.sh</code>, <code>tests/test_outputs.py</code>, <code>weights.json</code></p>
+<h3>2. Coherence</h3>
+<ul>
+<li><code>instruction.md</code> matches the <strong>Agent-Visible Task Brief</strong> in <code>draft_spec.md</code> (not the Hidden Root Causes)</li>
+<li>Tests verify what the instruction asks for — no more, no less</li>
+<li>Dockerfile environment matches the tech stack in <code>draft_spec.md</code></li>
+<li>Filenames, ports, and values are consistent across <code>instruction.md</code>, tests, and <code>solution/solve.sh</code></li>
+</ul>
+<h3>3. Test Quality</h3>
+<ul>
+<li>5–10 tests (fewer than 5 is too shallow)</li>
+<li>Each test checks a specific, observable runtime outcome — not file existence or type checks</li>
+<li>Tests are deterministic (no random elements, no time-dependent checks without waits)</li>
+<li>Test function names exactly match the keys in <code>weights.json</code></li>
+<li>All weights in <code>weights.json</code> sum to 1.0</li>
+<li>Tests would fail if <code>solution/solve.sh</code> were replaced with an empty script</li>
+</ul>
+<h3>4. Instruction Hygiene</h3>
+<ul>
+<li><code>instruction.md</code> contains ONLY: the goal/observable problem, entry points, acceptance criteria, environment constraints, visible paths</li>
+<li>Does NOT reveal exact commands to run, config values to set, which files to modify, or anything that exposes what <code>solve.sh</code> does or what <code>test.sh</code> asserts</li>
+<li>No planted config files or scripts contain hint comments like <code># BUG:</code>, <code># intentionally wrong</code>, <code># TODO: fix</code></li>
+</ul>
+<h3>5. Long Horizon</h3>
+<ul>
+<li>Task requires ≥5 distinct, non-trivial steps to solve</li>
+<li>A one- or two-line solution would fail the tests</li>
+</ul>
+<h3>6. Solution Validity</h3>
+<ul>
+<li><code>solution/solve.sh</code> logically addresses each step in the task</li>
+<li>Commands are realistic for the Dockerfile environment</li>
+<li>Solution addresses all test assertions</li>
+<li>Starts with <code>#!/bin/bash</code></li>
+</ul>
+<h3>Write <code>judge_report.md</code></h3>
+<p>After all criteria pass, write <code>judge_report.md</code> to your task directory using this format:</p>
+<pre><code class="language-markdown"><span style="color: #F8F8F2"># Judge Report: &lt;task_id&gt;</span>
+
+<span style="color: #959077">## Verdict: PASS | FAIL</span>
+
+<span style="color: #959077">## Criteria Assessment</span>
+
+<span style="color: #959077">### File Completeness: PASS | FAIL</span>
+&lt;notes&gt;
+
+<span style="color: #959077">### Coherence: PASS | FAIL</span>
+&lt;notes&gt;
+
+<span style="color: #959077">### Test Quality: PASS | FAIL</span>
+&lt;notes&gt;
+
+<span style="color: #959077">### Instruction Hygiene: PASS | FAIL</span>
+&lt;notes&gt;
+
+<span style="color: #959077">### Long Horizon: PASS | FAIL</span>
+&lt;notes&gt;
+
+<span style="color: #959077">### Solution Validity: PASS | FAIL</span>
+&lt;notes&gt;
+</code></pre>
+<p>Overall verdict is <strong>PASS</strong> only if ALL 6 criteria pass. If any criterion fails, fix the issue first, then re-run harbor validation, then write <code>judge_report.md</code> with the final PASS verdict.</p>
+<hr />
+<h2>Important Rules</h2>
+<ul>
+<li>Do not modify <code>draft_spec.md</code> (protected)</li>
+<li><code>instruction.md</code> content comes <strong>only</strong> from the Agent-Visible Task Brief in <code>draft_spec.md</code></li>
+<li>Solution must be realistic — actually solves the task, not test-passing tricks</li>
+<li>Tests check final container state, not implementation details</li>
+<li>All tasks run in <strong>Linux/Ubuntu</strong> — use <code>ubuntu:24.04</code> as the default base image</li>
+<li>If <code>judge_report.md</code> already exists with FAIL items, address every FAIL before proceeding</li>
+<li><strong>No heavy Docker images</strong> — do not use <code>nvidia/cuda</code>, <code>pytorch/pytorch</code>, or any large base image; target image size ~500 MB, hard limit 1 GB; build must complete in under 5 minutes</li>
+<li><strong>No GPU tasks</strong> — the container is CPU-only; never design tasks that require a GPU or CUDA</li>
+<li><strong>No model training</strong> — do not create tasks that train or fine-tune ML models; inference on a tiny pre-existing model is only acceptable if it loads in seconds and fits within the 2 GB memory limit</li>
+<li><strong>No heavy compute</strong> — tasks must complete well within the agent timeout; avoid tasks that require tens of minutes of CPU (e.g. compiling a huge codebase, brute-force over large datasets)</li>
+<li>Container resources are fixed: 1 CPU, 2 GB RAM, 10 GB storage — keep the environment well within these limits</li>
+<li><strong>Absolutely NO symlinks</strong> — never create symlinks (<code>ln -s</code> or any other method) to directories or files outside your task directory; this is strictly forbidden and will be treated as a security violation</li>
+</ul>
+</div></div><div class="annotations"><p>Consumes the draft specification and constructs the environment, solver instructions, reference solution and executable verifier.</p><p><a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/datasynth/seed2synth_pipeline/agents/datapoint_agent_guide/agent.md">Pinned upstream source ↗</a> · Apache-2.0 · <a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/5868a1b5e6ae7528db5904ccb87ff245c2761651/LICENSE">License ↗</a></p></div></section>
+<p class="status">Our local baseline preserves these templates. Our later repairs and GLM experiments are separate variants, not upstream SETA prompts or a reproduction of its reported results.</p>
 </article>
-<article class="approach-card" aria-labelledby="bix-approach"><h2 id="bix-approach">BixBench</h2><p class="status">Original paper’s workflow · expert-prepared capsules</p>
+<article id="approach-bix" class="approach-card" aria-labelledby="bix-approach" hidden><h2 id="bix-approach">BixBench</h2><p class="status">Original paper’s workflow · expert-prepared capsules</p>
 <ol class="approach-flow">
 <li><span>01 · Human analyst</span><strong>Study or new analysis → capsule</strong><p>An expert prepares a Colab notebook, input data, hypothesis and result. A prior public notebook is not required.</p></li>
 <li><span>02 · Authoring model</span><strong>Reference notebook → questions</strong><p>Claude 3.5 Sonnet receives a modified notebook, hypothesis and result, then drafts eight multiple-choice questions.</p></li>
 <li><span>03 · Human review</span><strong>Review, edit and deduplicate</strong><p>Experts inspect questions with the source capsule available. Model-assisted duplicate detection is followed by human verification.</p></li>
 <li><span>04 · Solver and grading</span><strong>Data + questions → fresh analysis</strong><p>The solver receives an empty notebook, data and questions—not the reference notebook. Open answers are compared with reference answers by an LLM judge.</p></li>
 </ol>
-<details><summary>Inputs, review and limits</summary><p><b>Unknown:</b> the precise notebook modification is unresolved in our inspection; an equivalent released authoring prompt has not been identified.</p><p><b>Our example:</b> ASXL1’s underlying study is known; its original code format is not. Our Harbor/Pi attempt uses a terminal rather than the paper’s notebook agent.</p></details>
+<details open><summary>Inputs, review and limits</summary><p><b>Unknown:</b> the precise notebook modification is unresolved in our inspection; an equivalent released authoring prompt has not been identified.</p><p><b>Our example:</b> ASXL1’s underlying study is known; its original code format is not. Our Harbor/Pi attempt uses a terminal rather than the paper’s notebook agent.</p></details>
 <p class="links"><a href="https://arxiv.org/html/2503.00096v1#S3.SS1" target="_blank" rel="noopener noreferrer">Generation methods ↗</a> · <a href="https://arxiv.org/html/2503.00096v1#S3.SS2" target="_blank" rel="noopener noreferrer">Evaluation methods ↗</a> · <a href="https://insight.jci.org/articles/view/167744" target="_blank" rel="noopener noreferrer">Underlying ASXL1 study ↗</a></p>
+<section class="task-card"><h2>Question-generation prompt</h2><div class="annotations"><p><b>Exact prompt not located in the inspected public sources.</b> The paper describes a specially crafted prompt combined with a modified notebook, hypothesis and result. We cannot show the exact generation message or precisely identify which notebook cells/outputs were included.</p><p>The public <a href="https://github.com/Future-House/BixBench/blob/49311180bdacb324c596f2e07596c126f2004008/bixbench/prompts.py" target="_blank" rel="noopener noreferrer">prompts.py</a> contains answering, answer-selection and grading prompts. These serve evaluation, not notebook-to-question authoring. The paper’s appendix also gives a solver initiation prompt. None is substituted here for the missing authoring prompt.</p></div></section>
+<section class="task-card"><h2>What the authoring request contains</h2><div class="annotations"><p><b>Documented inputs:</b> a modified reference notebook, the capsule hypothesis and result, and generation instructions. The paper identifies Claude 3.5 Sonnet (20241022) as the question author.</p><p><b>Documented output:</b> two rounds of four multiple-choice drafts. Each round asks for one question centered on the hypothesis. Experts may edit, approve or reject drafts with the full capsule available; duplicate candidates are checked by a model and then humans.</p><p><b>Boundary:</b> this is a description of the paper’s procedure, not a reconstructed prompt. The released benchmark questions and answers are artifacts of that process. Our GLM solver attempt does not reproduce the authoring stage.</p></div></section>
+<section class="task-card"><h2>Notebook provenance for our example</h2><div class="annotations"><p>The ASXL1 notebook was prepared in a FutureHouse capsule template using an earlier published study and its data. The study describes an in-house analysis pipeline; we have not established whether its original code was a notebook, scripts or another format. “BixBench source notebook” therefore means the notebook used to make the benchmark questions, not necessarily the original research notebook.</p></div></section>
 </article>
 </div>
 <p class="idea"><b>What to compare here:</b> SETA’s inspected pathway builds an executable task package; BixBench’s paper describes generating reviewed questions from expert analyses. In both, notebook access during authoring is different from the inputs given to a fresh solver.</p>
@@ -101,12 +975,15 @@ if(data.page){
  for(const name of ['group','role'])for(const value of [...new Set(rows.map(r=>r[name==='role'?'decision':'group']))].filter(Boolean).sort()){
  const option=document.createElement('option');option.value=value;option.textContent=value;$(name).append(option);}
  const saved=new URLSearchParams(location.hash.slice(1));
+ $('approach-select').value=saved.get('approach')==='bix'?'bix':'seta';
+ function selectApproach(){const bix=$('approach-select').value==='bix';$('approach-seta').hidden=bix;$('approach-bix').hidden=!bix;}
+ $('approach-select').onchange=()=>{selectApproach();render();};selectApproach();
  let directoryView=saved.get('view')==='notebooks'||(!saved.has('view')&&['search','origin','group','role'].some(k=>saved.has(k)));
  function switchDirectory(show){directoryView=show;$('approaches').hidden=show;$('notebook-directory').hidden=!show;$('show-approaches').setAttribute('aria-selected',String(!show));$('show-notebooks').setAttribute('aria-selected',String(show));render();}
  $('show-approaches').onclick=()=>switchDirectory(false);$('show-notebooks').onclick=()=>switchDirectory(true);$('browse-notebooks').onclick=()=>switchDirectory(true);
 for(const id of ['search','origin','group','role'])$(id).value=saved.get(id)||'';
  function filtered(){const q=$('search').value.trim().toLowerCase(),origin=$('origin').value;return rows.filter(r=>(!origin||(origin==='benchmark'?r.origin!=='candidate':r.origin===origin))&&(!$('group').value||r.group===$('group').value)&&(!$('role').value||r.decision===$('role').value)&&(!q||JSON.stringify(r).toLowerCase().includes(q)));}
- function render(){ $('approaches').hidden=directoryView;$('notebook-directory').hidden=!directoryView;$('show-approaches').setAttribute('aria-selected',String(!directoryView));$('show-notebooks').setAttribute('aria-selected',String(directoryView));const params=new URLSearchParams();params.set('view',directoryView?'notebooks':'approaches');for(const id of ['search','origin','group','role'])if($(id).value)params.set(id,$(id).value);const hash=params.size?'#'+params:'';try{history.replaceState(null,'',location.pathname+location.search+hash);}catch{}
+ function render(){ $('approaches').hidden=directoryView;$('notebook-directory').hidden=!directoryView;$('show-approaches').setAttribute('aria-selected',String(!directoryView));$('show-notebooks').setAttribute('aria-selected',String(directoryView));const params=new URLSearchParams();params.set('view',directoryView?'notebooks':'approaches');params.set('approach',$('approach-select').value);for(const id of ['search','origin','group','role'])if($(id).value)params.set(id,$(id).value);const hash=params.size?'#'+params:'';try{history.replaceState(null,'',location.pathname+location.search+hash);}catch{}
  const shown=filtered();$('count').textContent=shown.length+' of '+rows.length+' analyses';$('empty').hidden=shown.length>0;
  $('list').innerHTML=shown.map(r=>`<tr><td><a class="notebook-link" href="${esc(pageURL('notebooks/'+r.id+'.html',hash))}">${esc(r.title)}</a><small>${esc(r.group)} · ${esc(r.question||r.decision)}</small></td><td><span class="pill">${esc(r.origin==='candidate'?'Candidate':r.origin)}</span></td><td>${esc(r.format)}</td><td>${esc(r.evidence)}</td></tr>`).join('');}
  for(const id of ['search','origin','group','role'])$(id).addEventListener(id==='search'?'input':'change',render);

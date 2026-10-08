@@ -14,8 +14,17 @@ with sync_playwright() as pw:
         assert page.locator('#approaches').is_visible()
         assert page.locator('#notebook-directory').is_hidden()
         assert page.locator('.approach-flow li').count()==8
-        page.locator('.approach-card summary').first.click()
+        assert page.locator('#approach-seta').is_visible()
+        assert page.locator('#approach-bix').is_hidden()
+        assert page.locator('.authoring-prompt').count()==3
+        assert page.locator('.authoring-prompt .artifact-scroll').first.evaluate('e=>e.scrollHeight>e.clientHeight')
         assert page.get_by_text('Does the authoring model see the notebook?',exact=False).is_visible()
+        page.select_option('#approach-select','bix')
+        assert page.locator('#approach-seta').is_hidden()
+        assert page.locator('#approach-bix').is_visible()
+        assert page.get_by_text('Exact prompt not located',exact=False).is_visible()
+        page.reload()
+        assert page.locator('#approach-select').input_value()=='bix'
         page.click('#browse-notebooks')
         assert page.locator('#notebook-directory').is_visible()
         page.select_option('#origin','BixBench')
@@ -28,6 +37,9 @@ with sync_playwright() as pw:
         page.set_viewport_size({'width':390,'height':844})
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         page.screenshot(path='/tmp/bio17-attempts/approaches-mobile.png')
+        page.select_option('#approach-select','seta')
+        assert page.locator('.authoring-prompt').first.is_visible()
+        assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert not errors,errors
         print('PASS: default overview, eight stages, disclosure, tabs, filtering, reload, mobile width')
     finally:

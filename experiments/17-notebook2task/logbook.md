@@ -313,3 +313,11 @@ Rebuilt all explorer pages. Focused offline browser checks passed for SETA and B
 Added a default Approaches section with two source-linked, four-stage schematics: SETA's inspected Kaggle seed-to-specification-to-Harbor pathway and the original BixBench paper's expert-capsule-to-reviewed-question pathway. Distinguishes authoring-model notebook access from solver inputs, explicit human review from builder self-review, and reported workflows from our experiment. Documents unresolved BixBench notebook preprocessing and original ASXL1 code format. The separate Notebooks section retains filtering and shareable section/filter state.
 
 Explorer generation and JavaScript syntax checks passed. A focused browser check was prepared but could not launch because another task held the shared heavy-work lock; no lock polling or competing browser was started. The generated pages also received the template's small correction to preserve the Approaches selection on reload when filters are set.
+
+### 2026-10-08 — One approach at a time, with actual prompt components
+
+Replaced the side-by-side overview with a persistent SETA/BixBench selector and full-width approach details. SETA displays the complete released notebook adapter, shared idea-agent instructions and builder guide as Markdown cards with scrolling, assembly notes, pinned source links and license attribution. Build-time hashes verify the original snapshots; placeholders remain intact and templates are not presented as rendered model-call transcripts.
+
+Rechecked BixBench's official tree at `49311180bdacb324c596f2e07596c126f2004008` and `bixbench/prompts.py`, alongside the original paper. Found evaluation/answering prompts, not an equivalent question-generation prompt. The BixBench panel records that scoped gap, describes the documented authoring inputs and review stages, and keeps the ASXL1 research-code format unresolved. No invented authoring prompt is displayed.
+
+Build and focused offline browser checks passed: only the selected approach is visible, three scrollable SETA prompts are present, BixBench's prompt-availability statement is visible, selection survives reload, notebook filters/navigation work, and both approaches fit mobile width without page errors. No model or judge calls.

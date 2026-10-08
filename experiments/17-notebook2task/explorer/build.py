@@ -170,7 +170,26 @@ for c in catalog["comparisons"]:
 # Show released-task comparisons first, preserving order within each group.
 entries.sort(key=lambda row: row["origin"] == "candidate")
 assert len({r["id"] for r in entries}) == len(entries)
-template = (root / "template.html").read_text().replace("__APPROACHES__", (root / "approaches.html").read_text())
+approaches = (root / "approaches.html").read_text()
+baseline = root.parent / "baselines/seta-v1"
+manifest = json.loads((baseline / "manifest.json").read_text())
+prompt_cards = []
+for filename, title, explanation in [
+    ("kaggle_notebook_adapter.md", "1 · Notebook adapter", "Reads the seed context, applies a viability gate and specifies how to turn the analysis into a terminal task."),
+    ("idea_agent_base_prompt.md", "2 · Shared idea-agent instructions", "Appended to the adapter with the seed context; inspect the full text for its output and reasoning requirements."),
+    ("agent.md", "3 · Task-package builder", "Consumes the draft specification and constructs the environment, solver instructions, reference solution and executable verifier.")]:
+    record = next(item for item in manifest["files"] if item["path"] == "upstream/" + filename)
+    source = (baseline / record["path"]).read_text()
+    assert hashlib.sha256(source.encode()).hexdigest() == record["sha256"]
+    prompt_cards.append('<section class="task-card authoring-prompt"><h2>' + html.escape(title)
+        + '</h2><p class="status">Released template · full text · placeholders preserved</p>'
+        + '<div class="artifact-scroll" tabindex="0" role="region" aria-label="' + html.escape(title) + '"><div class="markdown">'
+        + md.render(source) + '</div></div><div class="annotations"><p>' + html.escape(explanation)
+        + '</p><p><a target="_blank" rel="noopener noreferrer" href="' + html.escape(record["url"])
+        + '">Pinned upstream source ↗</a> · Apache-2.0 · <a target="_blank" rel="noopener noreferrer" href="https://github.com/camel-ai/seta/blob/'
+        + manifest["revision"] + '/LICENSE">License ↗</a></p></div></section>')
+approaches = approaches.replace("__SETA_PROMPTS__", "".join(prompt_cards))
+template = (root / "template.html").read_text().replace("__APPROACHES__", approaches)
 assert template.count("__CATALOG__") == 1
 
 def emit(path, payload):
