@@ -47,6 +47,12 @@ md = MarkdownIt("commonmark", {"html": False, "highlight": lambda text, lang, at
 annotations = json.loads((comparison_root / "task-annotations.json").read_text())
 for case in catalog["comparisons"]:
     case["task_annotations"] = annotations[case["id"]]
+    attempt_file = root / "attempts" / (case["id"] + ".json")
+    case["solver_attempts"] = json.loads(attempt_file.read_text()) if attempt_file.exists() else []
+    for attempt in case["solver_attempts"]:
+        attempt["answer_html"] = md.render(attempt.get("answer", "No submitted answer recovered."))
+        for event in attempt.get("trace", []):
+            event["content_html"] = md.render(event.get("content", ""))
     pilot_name = {"seta-cytopathology": "seta-cytopathology-retry", "bix-asxl1": "bix-asxl1"}[case["id"]]
     pilot = root.parent / "runs/20261006-seta-v1-pilot" / pilot_name
     case["baseline_draft"] = (pilot / "draft_spec.md").read_text()

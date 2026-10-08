@@ -250,3 +250,21 @@ credential delivery through terminal tool arguments despite disabled echo.
 The waiting submitter was interrupted before submission; no job receipt or
 owned submitter remains. No solver or judge calls were made. Launch remains
 pending a permitted credential-delivery mechanism.
+
+
+### 2026-10-08: protected credential loading and CPU launch
+
+Resolved the earlier transfer blocker: the private launcher reads the approved
+GLM credential directly from Secret Manager into process memory, as it does
+for the other services. No credential value enters a tool argument or repository.
+Two preliminary jobs terminated before task execution: incompatible Starlette
+0.48.0 versus Iris >=0.50.0, then resolving the virtualenv Python symlink to the
+system interpreter. Corrected the pin to 0.50.0 and retained the virtualenv
+interpreter path in f5598ab. GLM model discovery/authentication succeeded.
+The corrected CPU pilot was submitted with the original approved task/model/
+judge budgets; these setup failures did not consume solver or judge attempts.
+
+Added local Attempt-view support for evidence-backed answers, grading and traces.
+Static build passed. Browser verification is incomplete: sandboxed startup timed
+out; the elevated shared-node guard stopped Chromium above the 500 MiB limit.
+No claim of browser validation for this change.
