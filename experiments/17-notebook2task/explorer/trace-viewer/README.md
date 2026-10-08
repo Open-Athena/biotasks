@@ -40,3 +40,5 @@ audit or a regrade.
 `check_trace_browser.py` in the parent directory checks the real trace offline,
 including search, tool expansion, recipe isolation and mobile width. Browser
 checks need an existing Playwright/Chromium environment and the shared-node guard.
+
+The original SETA and BixBench Pi streams are also retained as small, lossless gzip files in `../../attempts/20261007-pi-third-party/results/`, with `retention-manifest.json` documenting checksums, publication and exclusions. The temporary Iris archive is not the durable evidence locator.

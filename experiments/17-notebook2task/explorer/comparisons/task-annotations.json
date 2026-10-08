@@ -46,18 +46,19 @@
         "The released question names padj < 0.05 and clusterProfiler::simplify() with similarity > 0.7.",
         "The linked capsule supplies the original analysis; this is existing benchmark comparison material.",
         "The prompt directly prescribes DESeq2, enrichGO and simplify(), so this task measures execution and interpretation of a specified analysis rather than independent method selection. Package availability may also constrain execution, but its causal effect has not been tested.",
-        "An approximate p-value depends on analysis choices and versions. A useful task audit would make the intended contrast, gene universe, mapping, enrichment and simplification settings reproducible without supplying the answer."
+        "An approximate p-value depends on analysis choices and versions. A useful task audit would make the intended contrast, gene universe, mapping, enrichment and simplification settings reproducible without supplying the answer.",
+        "The displayed prompt now includes the pinned Harbor adapter wrapper used for the pilot: notebook.py, answer.txt, XML answer tags and analysis guidelines. These requirements extend the original published question."
       ],
-      "verifier": "This card displays the published reference-answer record. The executed pilot used the Harbor BixBench adapter with a Together gpt-oss-120b judge configuration; its executable adapter is checkpointed with the pilot, rather than displayed in this card.",
+      "verifier": "The pinned Harbor adapter judge parses answer.txt and asks a configured LLM whether it matches the reference answer. The Bash launcher and original reference-answer record are shown separately. No judge request reached the proxy in this attempt.",
       "verifier_notes": [
         "The published ideal answer is 0.0002. This alone does not establish the evaluator's answer-matching rules or tolerances.",
         "The released-task solver attempt ended with an agent timeout followed by a verifier timeout. No judge request reached the proxy and no grade was produced; inspect Attempt for evidence.",
         "For this numerical question, a deterministic comparison could parse a submitted value and apply an explicitly justified rounding/tolerance rule against a trusted reference. An LLM judge may help interpret free-form answers, but does not by itself validate the underlying analysis. This is a proposed alternative, not the released grading contract.",
         "The reference value and the attempt\u2019s intermediate value differ. The retained evidence does not establish the cause; neither answer equivalence nor scientific correctness should be inferred from the timeout."
       ],
-      "solution": "The original capsule notebook contains the published analysis; view it in the Original tab. No separate executable reference-solution script has been captured.",
+      "solution": "The original capsule notebook contains the published analysis; view it in the Notebook tab. No separate executable reference-solution script has been captured.",
       "solution_notes": [
-        "The answer record is shown in the verifier card. The independent GLM-5.3 attempt is available in Attempt; it did not submit an answer."
+        "The answer record is shown in the separate Published reference-answer record card. The independent GLM-5.3 attempt is available in Attempt; it did not submit an answer."
       ]
     }
   }

@@ -16,6 +16,16 @@ with sync_playwright() as pw:
         page.context.set_offline(True)
         page.on('pageerror', lambda e: errors.append(str(e)))
         page.goto((root/'notebooks'/f'{case}.html').as_uri(), wait_until='domcontentloaded')
+        from urllib.parse import urlsplit,parse_qs
+        assert parse_qs(urlsplit(page.locator('#back').get_attribute('href')).fragment)['view']==['notebooks']
+        if bix:
+            page.click('#tab-task')
+            assert '/workspace/answer.txt' in page.locator('[aria-label="Task prompt"]').inner_text()
+            assert '<answer>' in page.locator('[aria-label="Task prompt"]').inner_text()
+            assert 'OPEN_ENDED_EVAL_PROMPT' in page.locator('[aria-label="Verifier code or reference record"]').inner_text()
+            assert 'openai==2.14.0' in page.locator('[aria-label="Verifier launcher"]').inner_text()
+            assert '0.0002' in page.locator('[aria-label="Reference-answer record"]').inner_text()
+            assert 'Executable verifier unavailable' not in page.locator('#workspace-panel').inner_text()
         page.click('#tab-solution')
         frame = page.frame_locator('#trace-frame')
         frame.locator('[data-slot=atif-trace-step]').first.wait_for(timeout=15000)
@@ -50,6 +60,9 @@ with sync_playwright() as pw:
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         assert frame.locator('body').evaluate('el => el.scrollWidth <= innerWidth')
         page.screenshot(path=f'/tmp/bio17-attempts/{case}-annotations-mobile.png')
+        page.click('#back')
+        assert page.locator('#notebook-directory').is_visible()
+        assert page.locator('#approaches').is_hidden()
         assert not errors, errors
         print('PASS: offline trace, setup toggle, search, tool arguments/results, recipe isolation, mobile width; no page errors')
     finally:

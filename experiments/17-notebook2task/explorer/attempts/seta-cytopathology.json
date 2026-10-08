@@ -32,6 +32,10 @@
       {
         "label": "Verifier log",
         "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/seta-cytopathology/test-stdout.txt"
+      },
+      {
+        "label": "Original Pi events (gzip)",
+        "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/seta-cytopathology/pi-events.jsonl.gz"
       }
     ],
     "annotations": [
@@ -49,15 +53,15 @@
       },
       {
         "title": "Review observations",
-        "kind": "Interpretation",
-        "text": "Used both boosting libraries explicitly advertised in the prompt. This is consistent with package-list steering, but one attempt cannot establish that the wording caused those choices.",
-        "evidence": "Task environment; trace step 4."
+        "kind": "Confirmed by static code inspection",
+        "text": "Supervised feature ranking uses all training labels before a fixed feature set is passed to downstream model and ensemble cross-validation. Feature selection is therefore outside those validation folds. The k search also evaluates SelectKBest on all features, whereas final features come from a separate correlation-pruned ranking: these are different selection procedures. The report\u2019s fully nested characterization is overstated.",
+        "evidence": "Trace step 4 (analysis.py) and step 7 (submitted report). Original code, report and native reward are preserved."
       },
       {
         "title": "Unresolved questions",
-        "kind": "Follow-up review",
-        "text": "Independently inspect whether feature selection and ensemble weighting remain inside the appropriate cross-validation folds, then compare reported metrics to trusted recomputation. Assess the report with an explicit rubric and supporting code/artifacts; keep any LLM review separate from the native reward.",
-        "evidence": "Proposed audit, not a completed check."
+        "kind": "Requires independent execution",
+        "text": "The magnitude of any CV optimism has not been measured. This inspection does not by itself invalidate the held-out test result. Quantify the effect with fold-local selection and trusted recomputation before drawing numerical conclusions. Use of advertised XGBoost and LightGBM remains consistent with possible prompt steering, not proof of causation.",
+        "evidence": "Static review only; no scientific rerun or regrade."
       }
     ]
   }

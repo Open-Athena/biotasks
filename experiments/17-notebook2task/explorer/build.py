@@ -113,7 +113,12 @@ for case in catalog["comparisons"]:
         case["instruction"] = (comparison_root / case["instruction_file"]).read_text()
     if "question_file" in case:
         question = json.loads((comparison_root / case["question_file"]).read_text())
-        case["instruction"] = question["question"]
+        adapter = root.parent / "attempts/20261007-pi-third-party/tasks/bix-1-q1"
+        case["instruction"] = (adapter / "instruction.md").read_text()
+        case["instruction_label"] = "Actual pilot instructions · original question plus pinned Harbor adapter submission contract"
+        case["released_verifier"] = (adapter / "tests/llm_judge.py").read_text()
+        case["verifier_label"] = "Pinned Harbor adapter judge · Python · no judge request occurred in this attempt"
+        case["verifier_launcher_html"] = syntax((adapter / "tests/test.sh").read_text(), "bash")
         case["reference_answer"] = question["ideal"]
         case["reference_record"] = json.dumps(question, indent=2)
         case["canary"] = question["canary"]
