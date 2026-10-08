@@ -33,4 +33,4 @@ with sync_playwright() as p:
  browser.close()
 assert not errors,errors
 (ROOT/('browser-public-validation.json' if len(sys.argv)>1 else 'browser-validation.json')).write_text(json.dumps({'passed':True,'url':url,'child_peak_rss_kib':resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,'start':start,'end':datetime.datetime.now(datetime.timezone.utc).isoformat(),'records':total,'checks':['initial render','search','facet filter','individual review filter','evidence expansion','CSV download','repository tab','vocabulary tab','mobile and desktop rendering'],'page_errors':errors,'python_peak_rss_kib':resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,'estimated_combined_working_set_mib':400},indent=2)+'\n')
-print('PASS: offline browser controls and mobile/desktop rendering.')
+print('PASS: browser controls and mobile/desktop rendering.')
