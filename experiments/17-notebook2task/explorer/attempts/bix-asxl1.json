@@ -1,0 +1,39 @@
+[
+  {
+    "id": "2026-10-08 \u00b7 released BixBench \u00b7 attempt 1",
+    "model": "GLM-5.3 / Pi 0.87.0",
+    "status": "Agent timed out \u00b7 verifier timed out",
+    "reward": null,
+    "settings": "128k context \u00b7 32k output \u00b7 medium thinking \u00b7 60-minute agent limit \u00b7 10-minute verifier limit \u00b7 29 solver requests",
+    "summary": "The solver reached its one-hour limit without submitting answer.txt. The verifier then timed out; no judge request reached the proxy and no grade was produced.",
+    "answer": "No submitted answer was recovered. The artifact collector reported that `/workspace/answer.txt` did not exist.",
+    "answer_note": "The intermediate value 0.0013 appears in the trace, but was not submitted or graded.",
+    "grading": "Unscored. Harbor\u2019s final result records VerifierTimeoutError (600 seconds); its trial log also records the earlier AgentTimeoutError (3600 seconds), overwritten by the later exception.",
+    "notes": [
+      "The solver observed p.adjust = 0.001285039 and proposed 0.0013, then began a further Wang-similarity check. This is an intermediate observation, not a verified answer.",
+      "The final tool call has no recorded result and there is no agent_end event. The viewer shows all saved completed messages, without inventing a completion.",
+      "No Together judge call reached the proxy (judge counter absent/zero); no solver or judge retry was launched."
+    ],
+    "trace_note": "Saved interrupted attempt \u00b7 31 messages \u00b7 32 tool calls \u00b7 1 tool call without a recorded result. Reasoning and tool output are expandable.",
+    "atif_file": "bix-asxl1.atif.json",
+    "trace": [],
+    "artifacts": [
+      {
+        "label": "Outcome and timing evidence",
+        "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/bix-1-q1/summary.json"
+      },
+      {
+        "label": "Artifact collection manifest",
+        "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/bix-1-q1/artifact-manifest.json"
+      },
+      {
+        "label": "Saved Pi events (gzip)",
+        "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/bix-1-q1/pi-events.jsonl.gz"
+      },
+      {
+        "label": "Trace provenance",
+        "url": "https://github.com/Open-Athena/biotasks/blob/codex/research/17-notebook2task/experiments/17-notebook2task/attempts/20261007-pi-third-party/results/bix-1-q1/trace-provenance.json"
+      }
+    ]
+  }
+]

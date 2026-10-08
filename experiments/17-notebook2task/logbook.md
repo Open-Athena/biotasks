@@ -293,3 +293,11 @@ publication check.
 Live HTMLPreview verification subsequently passed for 147357b with the same
 interaction checks (the unrelated Kaggle source iframe was blocked). The
 validation receipt is in explorer/trace-viewer/validation.json.
+
+### 2026-10-08 — BixBench interrupted attempt published
+
+Recovered the final pilot archive (SHA256 `128feaa38c8db2283b93b4d2b10ae9de452b3a634e4912971ba6e16ad7135ab4`; 474,796 compressed bytes). A bounded lightweight download and streaming extraction recovered 4,678,607 bytes. The final Harbor result's `VerifierTimeoutError` hid an earlier `AgentTimeoutError`, explicitly recorded in the trial log. GLM used its 3,600-second agent limit; `answer.txt` was missing at artifact collection; verification then exceeded 600 seconds. Proxy counters show 29 BixBench solver requests and zero judge requests. No reruns or judge retries were made.
+
+The BixBench Attempt view now includes all 31 retained messages (29 assistant messages), 32 tool calls, and one pending call with no observed result. No `agent_end` event exists. The trace's intermediate `0.0013` is not a submitted or graded answer. Display status remains unscored. The small compressed source event log, its hashes, artifact manifest and selected result fields are retained alongside the attempt; private launcher configuration is excluded.
+
+Generalized the Pi converter's session ID and trace document title. Reused the already bundled viewer, editing only the two existing detail documents and trace snapshots. The shared heavy-work lock prevented a full rebuild and browser validation in this update; no competing build/browser worker was launched. Data consistency and script syntax checks are recorded separately from the earlier SETA browser validation.

@@ -7,7 +7,7 @@ from pathlib import Path
 import re
 
 
-def convert(path):
+def convert(path, session_id='seta-cytopathology-pi-glm53'):
     raw = path.read_bytes()
     steps, calls, completed = [], {}, False
     for line in raw.decode().splitlines():
@@ -53,7 +53,7 @@ def convert(path):
             step['extra'] = {'pi_stop_reason': msg.get('stopReason')}
         steps.append(step)
     pending = [call_id for call_id,step in calls.items() if not any(r.get('source_call_id') == call_id for r in step.get('observation', {}).get('results', []))]
-    trace = {'schema_version': 'ATIF-v1.7', 'session_id': 'seta-cytopathology-pi-glm53',
+    trace = {'schema_version': 'ATIF-v1.7', 'session_id': session_id,
              'agent': {'name': 'Pi', 'version': '0.87.0', 'model_name': 'GLM-5.3'}, 'steps': steps,
              'notes': 'Converted from retained Pi message_end events. Intermediate streaming deltas are omitted; messages, reasoning, tool calls and observed outputs are preserved. No missing output is invented.',
              'extra': {'source_sha256': hashlib.sha256(raw).hexdigest(), 'conversion': 'pi-message-events-to-atif-v1', 'agent_end_observed': completed, 'pending_tool_call_ids': pending}}
@@ -68,8 +68,9 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('source', type=Path)
     parser.add_argument('destination', type=Path)
+    parser.add_argument('--session-id', default='seta-cytopathology-pi-glm53')
     args = parser.parse_args()
-    trace = convert(args.source)
+    trace = convert(args.source, args.session_id)
     args.destination.parent.mkdir(parents=True, exist_ok=True)
     args.destination.write_text(json.dumps(trace, indent=2) + '\n')
     print(json.dumps({'steps': len(trace['steps']), 'complete': trace['extra']['agent_end_observed'], 'pending_tools': len(trace['extra']['pending_tool_call_ids'])}))

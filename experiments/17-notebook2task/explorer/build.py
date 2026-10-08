@@ -58,7 +58,7 @@ for case in catalog["comparisons"]:
             attempt["trace_viewer_html"] = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
                 '<meta name="viewport" content="width=device-width,initial-scale=1">'
                 "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'none'\">"
-                '<title>SETA · GLM-5.3 solver trace</title><style>' + viewer_css + '</style></head>'
+                '<title>' + html.escape(case['title']) + ' · GLM-5.3 solver trace</title><style>' + viewer_css + '</style></head>'
                 '<body><div id="root"></div><script id="trajectory-data" type="application/json">'
                 + trace_json + '</script><script>' + viewer_js + '</script></body></html>')
             trace_dir = root / "traces"
