@@ -1,0 +1,945 @@
+[
+  {
+    "id": "G01",
+    "title": "Hemoglobin structural analysis",
+    "hosting_repository": "Brunk-Lab/Digital-Upskilling-BioScience",
+    "source_url": "https://github.com/Brunk-Lab/Digital-Upskilling-BioScience/blob/3ea7943222925bd8977af8046ff2f6451135fbe8/Tutorials/DU_Level_0/2_Intro_Structure_Bioinformatics/Basic_Structural_Tutorial.ipynb",
+    "revision": "3ea7943222925bd8977af8046ff2f6451135fbe8",
+    "source_sha256": "b39a1d3b1f8d9c3925130df9e9cf11b4c10ea91496841dd19cbbffcbed153c71",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "structural-biology",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:3",
+          "cell:13",
+          "cell:17"
+        ],
+        "rationale": "AlphaFold coordinates are downloaded and analyzed, not predicted locally."
+      },
+      {
+        "facet": "modality",
+        "term": "structure",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:3",
+          "cell:13",
+          "cell:17"
+        ],
+        "rationale": "AlphaFold coordinates are downloaded and analyzed, not predicted locally."
+      },
+      {
+        "facet": "operation",
+        "term": "geometry",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:17",
+          "cell:18"
+        ],
+        "rationale": "Computes backbone dihedral angles."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:4",
+          "cell:20"
+        ],
+        "rationale": "Displays coordinates and angle scatter plot."
+      }
+    ],
+    "biological_question": null,
+    "design": [],
+    "setting": [],
+    "input_origin": "predicted coordinates",
+    "metadata_evidence": [
+      "cell:0",
+      "cell:3",
+      "cell:13",
+      "cell:17"
+    ],
+    "withheld_labels": [
+      "Protein prediction is upstream supplied; no proteome-scale measurement."
+    ],
+    "tools_used": [
+      "Gemmi",
+      "Biopython",
+      "py3Dmol"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "G02",
+    "title": "E. coli metabolic engineering",
+    "hosting_repository": "Brunk-Lab/Digital-Upskilling-BioScience",
+    "source_url": "https://github.com/Brunk-Lab/Digital-Upskilling-BioScience/blob/3ea7943222925bd8977af8046ff2f6451135fbe8/Tutorials/DU_Level_0/3_Intro_Metabolic_Networks/Tutorial_Workflow.ipynb",
+    "revision": "3ea7943222925bd8977af8046ff2f6451135fbe8",
+    "source_sha256": "7fe0aa7b1b66924bace084c3d3c5cd607b62455d5f51d4f62310b763ce97b49f",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "systems-biology",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:12",
+          "cell:19",
+          "cell:25"
+        ],
+        "rationale": "Metabolic network exercises and measured metabolite/growth comparisons address engineered E. coli."
+      },
+      {
+        "facet": "scientific_field",
+        "term": "metabolomics",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:12",
+          "cell:19",
+          "cell:25"
+        ],
+        "rationale": "Metabolic network exercises and measured metabolite/growth comparisons address engineered E. coli."
+      },
+      {
+        "facet": "modality",
+        "term": "metabolite-profile",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:12",
+          "cell:19",
+          "cell:25"
+        ],
+        "rationale": "Metabolic network exercises and measured metabolite/growth comparisons address engineered E. coli."
+      },
+      {
+        "facet": "modality",
+        "term": "growth",
+        "status": "content_supported",
+        "evidence": [
+          "cell:0",
+          "cell:12",
+          "cell:19",
+          "cell:25"
+        ],
+        "rationale": "Metabolic network exercises and measured metabolite/growth comparisons address engineered E. coli."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:14",
+          "cell:43",
+          "cell:45"
+        ],
+        "rationale": "Ranks growth measurements and plots strain concentration differences."
+      },
+      {
+        "facet": "operation",
+        "term": "simulation",
+        "status": "content_supported",
+        "role": "exercise",
+        "evidence": [
+          "cell:5",
+          "cell:7",
+          "cell:8",
+          "cell:9"
+        ],
+        "rationale": "An external Escher-FBA exercise asks learners to perturb reactions; no local FBA solver call."
+      }
+    ],
+    "biological_question": "How engineering changes growth and metabolite profiles",
+    "design": [
+      "perturbational",
+      "time-course"
+    ],
+    "setting": [
+      "E. coli"
+    ],
+    "input_origin": "mixed: source-described measured data plus model exercise",
+    "metadata_evidence": [
+      "cell:0",
+      "cell:12",
+      "cell:19",
+      "cell:25"
+    ],
+    "withheld_labels": [
+      "No mass-spectrometry assay inferred from metabolite concentrations."
+    ],
+    "tools_used": [
+      "pandas",
+      "Escher (external exercise)"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "E01",
+    "title": "PBMC3k Scanpy pipeline in marimo",
+    "hosting_repository": "wolf5996/scanpy-done-right",
+    "source_url": "https://github.com/wolf5996/scanpy-done-right/blob/64034862dc8c7fe31b5321b2fdda0604d76495b2/scripts/pbmc3k-default-pipeline.py",
+    "revision": "64034862dc8c7fe31b5321b2fdda0604d76495b2",
+    "source_sha256": "72ed3e62616ac014bf3d33db939c723f723235fdec05f94268226e707bd8c84f",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "transcriptomics",
+        "status": "content_supported",
+        "evidence": [
+          "line:102",
+          "line:111",
+          "line:459",
+          "line:460"
+        ],
+        "rationale": "PBMC single-cell expression analysis with computed clusters and marker testing."
+      },
+      {
+        "facet": "modality",
+        "term": "scrna",
+        "status": "content_supported",
+        "evidence": [
+          "line:102",
+          "line:111",
+          "line:459",
+          "line:460"
+        ],
+        "rationale": "PBMC single-cell expression analysis with computed clusters and marker testing."
+      },
+      {
+        "facet": "operation",
+        "term": "qc",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:150",
+          "line:237"
+        ],
+        "rationale": "Computes QC metrics and filters cells."
+      },
+      {
+        "facet": "operation",
+        "term": "normalization",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:275",
+          "line:276"
+        ],
+        "rationale": "Normalizes totals and log transforms."
+      },
+      {
+        "facet": "operation",
+        "term": "feature-selection",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:278"
+        ],
+        "rationale": "Selects highly variable genes."
+      },
+      {
+        "facet": "operation",
+        "term": "dimension-reduction",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:341",
+          "line:401"
+        ],
+        "rationale": "Computes PCA and UMAP."
+      },
+      {
+        "facet": "operation",
+        "term": "clustering",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:402"
+        ],
+        "rationale": "Runs Leiden clustering."
+      },
+      {
+        "facet": "operation",
+        "term": "marker-testing",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:459",
+          "line:460"
+        ],
+        "rationale": "Runs cluster marker tests."
+      }
+    ],
+    "biological_question": "Characterize expression-defined cell populations",
+    "design": [],
+    "setting": [
+      "PBMC"
+    ],
+    "input_origin": "source-described observed PBMC3k",
+    "metadata_evidence": [
+      "line:102",
+      "line:111",
+      "line:459",
+      "line:460"
+    ],
+    "withheld_labels": [
+      "No replicated treatment differential-expression analysis; immune cell origin alone does not force immunology."
+    ],
+    "tools_used": [
+      "Scanpy",
+      "Polars",
+      "Plotnine"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "E05",
+    "title": "Arabidopsis genotype sampling and GWAS",
+    "hosting_repository": "wur-bioinformatics/exploratory-data-analysis",
+    "source_url": "https://github.com/wur-bioinformatics/exploratory-data-analysis/blob/3480d294d2bdba9702a68bd8e4f95ec002fd31ca/week4/arabidopsis_gwas.qmd",
+    "revision": "3480d294d2bdba9702a68bd8e4f95ec002fd31ca",
+    "source_sha256": "f66f275ee238633d61d97f8c7d3db0c0b962e15b4a70dda234ff068ee87beb3d",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "genomics-genetics",
+        "status": "content_supported",
+        "evidence": [
+          "line:10",
+          "line:38",
+          "line:56",
+          "line:579"
+        ],
+        "rationale": "Arabidopsis genotype and flowering-time data support an association exercise."
+      },
+      {
+        "facet": "modality",
+        "term": "dna-variants",
+        "status": "content_supported",
+        "evidence": [
+          "line:10",
+          "line:38",
+          "line:56",
+          "line:579"
+        ],
+        "rationale": "Arabidopsis genotype and flowering-time data support an association exercise."
+      },
+      {
+        "facet": "operation",
+        "term": "dimension-reduction",
+        "status": "content_supported",
+        "role": "exercise",
+        "evidence": [
+          "line:241",
+          "line:244",
+          "line:245",
+          "line:250"
+        ],
+        "rationale": "PCA code is supplied in an eval:false teaching block; rendered path loads precomputed PCA."
+      },
+      {
+        "facet": "operation",
+        "term": "association",
+        "status": "content_supported",
+        "role": "exercise",
+        "evidence": [
+          "line:599",
+          "line:603",
+          "line:605",
+          "line:611",
+          "line:613"
+        ],
+        "rationale": "GWAS is requested in learner instructions rather than an implemented run call."
+      },
+      {
+        "facet": "operation",
+        "term": "data-preparation",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:77",
+          "line:78",
+          "line:152"
+        ],
+        "rationale": "Reads genotype identifiers and accession metadata."
+      }
+    ],
+    "biological_question": "Genetic associations with flowering time",
+    "design": [],
+    "setting": [
+      "Arabidopsis thaliana"
+    ],
+    "input_origin": "source-described observed panel",
+    "metadata_evidence": [
+      "line:10",
+      "line:38",
+      "line:56",
+      "line:579"
+    ],
+    "withheld_labels": [
+      "Do not claim a completed GWAS or default PCA execution from headings."
+    ],
+    "tools_used": [
+      "rhdf5",
+      "stats",
+      "statgenGWAS (exercise)"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "E09",
+    "title": "FlowSOM cytometry workflow",
+    "hosting_repository": "saeyslab/FlowSOM",
+    "source_url": "https://github.com/saeyslab/FlowSOM/blob/013247af703e8426cd5d244db34cc88c66f8014d/vignettes/FlowSOM.Rnw",
+    "revision": "013247af703e8426cd5d244db34cc88c66f8014d",
+    "source_sha256": "12759e620c25eabf90458a4e888f919d1c775713189e0c26448dfb1c78f1f2ca",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "immunology",
+        "status": "content_supported",
+        "evidence": [
+          "line:69",
+          "line:73",
+          "line:247",
+          "line:248",
+          "line:359",
+          "line:360"
+        ],
+        "rationale": "Optical compensation and immune-cell labels support flow cytometry and immunology; CyTOF is only discussed."
+      },
+      {
+        "facet": "modality",
+        "term": "flow-cytometry",
+        "status": "content_supported",
+        "evidence": [
+          "line:69",
+          "line:73",
+          "line:247",
+          "line:248",
+          "line:359",
+          "line:360"
+        ],
+        "rationale": "Optical compensation and immune-cell labels support flow cytometry and immunology; CyTOF is only discussed."
+      },
+      {
+        "facet": "operation",
+        "term": "normalization",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:73",
+          "line:74",
+          "line:77",
+          "line:78"
+        ],
+        "rationale": "Compensates and transforms optical cytometry measurements."
+      },
+      {
+        "facet": "operation",
+        "term": "clustering",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:93",
+          "line:101"
+        ],
+        "rationale": "Fits FlowSOM and metaclusters."
+      },
+      {
+        "facet": "operation",
+        "term": "annotation",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:247",
+          "line:248",
+          "line:330",
+          "line:332"
+        ],
+        "rationale": "Uses immune-cell labels and a CD8 marker query."
+      },
+      {
+        "facet": "operation",
+        "term": "group-comparison",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:359",
+          "line:364",
+          "line:368",
+          "line:382",
+          "line:383"
+        ],
+        "rationale": "Compares groups generated by resampling a cytometry file."
+      }
+    ],
+    "biological_question": "Identify immune populations and illustrate abundance differences",
+    "design": [
+      "synthetic group contrast"
+    ],
+    "setting": [
+      "immune cells"
+    ],
+    "input_origin": "mixed: supplied FCS plus synthetic resampling",
+    "metadata_evidence": [
+      "line:69",
+      "line:73",
+      "line:247",
+      "line:248",
+      "line:359",
+      "line:360"
+    ],
+    "withheld_labels": [
+      "No observed case-control study; no mass-cytometry demonstration inferred from compatibility."
+    ],
+    "tools_used": [
+      "FlowSOM",
+      "flowCore",
+      "flowWorkspace"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "A04",
+    "title": "EBImage cell segmentation example",
+    "hosting_repository": "aoles/EBImage",
+    "source_url": "https://github.com/aoles/EBImage/blob/5dccf1abc4d15a515058e909b269f88ac6cfc45a/vignettes/EBImage-introduction.Rmd",
+    "revision": "5dccf1abc4d15a515058e909b269f88ac6cfc45a",
+    "source_sha256": "49e8aabad9a65532c351445aa7cd5dfe576de61b56d528dcc67e74e5adce6b7d",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "bioimage-analysis",
+        "status": "content_supported",
+        "evidence": [
+          "line:7",
+          "line:683",
+          "line:685",
+          "line:688",
+          "line:689"
+        ],
+        "rationale": "Fluorescent cell/nucleus examples support image analysis; no disease mechanism established."
+      },
+      {
+        "facet": "modality",
+        "term": "microscopy",
+        "status": "content_supported",
+        "evidence": [
+          "line:7",
+          "line:683",
+          "line:685",
+          "line:688",
+          "line:689"
+        ],
+        "rationale": "Fluorescent cell/nucleus examples support image analysis; no disease mechanism established."
+      },
+      {
+        "facet": "operation",
+        "term": "segmentation",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:555",
+          "line:699",
+          "line:702"
+        ],
+        "rationale": "Watershed and threshold/connected-component segmentation on nuclei images."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:691",
+          "line:692",
+          "line:719"
+        ],
+        "rationale": "Displays cell images and object overlays."
+      }
+    ],
+    "biological_question": null,
+    "design": [],
+    "setting": [
+      "cells; organism unspecified"
+    ],
+    "input_origin": "sample images; biological provenance not independently checked",
+    "metadata_evidence": [
+      "line:7",
+      "line:683",
+      "line:685",
+      "line:688",
+      "line:689"
+    ],
+    "withheld_labels": [
+      "No cancer or cell-development question inferred from generic cell images."
+    ],
+    "tools_used": [
+      "EBImage"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "L09",
+    "title": "Calculating the root mean square deviation of atomic structures",
+    "hosting_repository": "MDAnalysis/UserGuide",
+    "source_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb",
+    "revision": "b20b22d2b050238436c76df0f984be7827854bce",
+    "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "structural-biology",
+        "status": "content_supported",
+        "evidence": [
+          "cell:4",
+          "cell:8",
+          "cell:12"
+        ],
+        "rationale": "AdK structure/trajectory comparison uses supplied files."
+      },
+      {
+        "facet": "modality",
+        "term": "trajectory",
+        "status": "content_supported",
+        "evidence": [
+          "cell:4",
+          "cell:8",
+          "cell:12"
+        ],
+        "rationale": "AdK structure/trajectory comparison uses supplied files."
+      },
+      {
+        "facet": "modality",
+        "term": "structure",
+        "status": "content_supported",
+        "evidence": [
+          "cell:4",
+          "cell:8",
+          "cell:12"
+        ],
+        "rationale": "AdK structure/trajectory comparison uses supplied files."
+      },
+      {
+        "facet": "operation",
+        "term": "structural-comparison",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:8",
+          "cell:12",
+          "cell:25"
+        ],
+        "rationale": "Aligns structures and computes RMSD over a supplied trajectory."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:17",
+          "cell:18"
+        ],
+        "rationale": "Summarizes RMSD over frames."
+      }
+    ],
+    "biological_question": "Compare adenylate kinase conformations",
+    "design": [],
+    "setting": [
+      "adenylate kinase"
+    ],
+    "input_origin": "supplied molecular-dynamics trajectory and reference coordinates",
+    "metadata_evidence": [
+      "cell:4",
+      "cell:8",
+      "cell:12"
+    ],
+    "withheld_labels": [
+      "No simulation execution; no organism inferred."
+    ],
+    "tools_used": [
+      "MDAnalysis"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "L14",
+    "title": "Principal component analysis of a trajectory",
+    "hosting_repository": "MDAnalysis/UserGuide",
+    "source_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/reduced_dimensions/pca.ipynb",
+    "revision": "b20b22d2b050238436c76df0f984be7827854bce",
+    "source_sha256": "9d7d819f42bce2c45cc6dfa4b22a2d999cc6c22b0cf856a031f26321207be4db",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "structural-biology",
+        "status": "content_supported",
+        "evidence": [
+          "cell:2",
+          "cell:3",
+          "cell:8"
+        ],
+        "rationale": "Analyzes adenylate kinase trajectory conformation using PCA."
+      },
+      {
+        "facet": "modality",
+        "term": "trajectory",
+        "status": "content_supported",
+        "evidence": [
+          "cell:2",
+          "cell:3",
+          "cell:8"
+        ],
+        "rationale": "Analyzes adenylate kinase trajectory conformation using PCA."
+      },
+      {
+        "facet": "operation",
+        "term": "structural-comparison",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:6"
+        ],
+        "rationale": "Aligns trajectory frames."
+      },
+      {
+        "facet": "operation",
+        "term": "dimension-reduction",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:8",
+          "cell:17"
+        ],
+        "rationale": "Fits and applies PCA to coordinate trajectories."
+      },
+      {
+        "facet": "operation",
+        "term": "qc",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:30",
+          "cell:31"
+        ],
+        "rationale": "Computes cosine content to assess sampling/convergence."
+      }
+    ],
+    "biological_question": "Characterize conformational motions",
+    "design": [],
+    "setting": [
+      "adenylate kinase"
+    ],
+    "input_origin": "supplied molecular-dynamics trajectory",
+    "metadata_evidence": [
+      "cell:2",
+      "cell:3",
+      "cell:8"
+    ],
+    "withheld_labels": [
+      "No simulation execution; PCA alone does not establish transcriptomics."
+    ],
+    "tools_used": [
+      "MDAnalysis"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "L28",
+    "title": "Microbiome alpha diversity",
+    "hosting_repository": "microbiome/outreach",
+    "source_url": "https://github.com/microbiome/outreach/blob/ab143c2bf2c9cfd309d2c090a95c197f6df9a94f/quarto/alpha_diversity.qmd",
+    "revision": "ab143c2bf2c9cfd309d2c090a95c197f6df9a94f",
+    "source_sha256": "d3bec9f3b6e64429dc578ad1a94ab8f8c12b0ab8c8cd64eed31c6ad1b148be45",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "microbiome",
+        "status": "content_supported",
+        "evidence": [
+          "line:260",
+          "line:271",
+          "line:423",
+          "line:424",
+          "line:428"
+        ],
+        "rationale": "Community-diversity teaching includes random trees and a patient-status example."
+      },
+      {
+        "facet": "modality",
+        "term": "community-profile",
+        "status": "content_supported",
+        "evidence": [
+          "line:260",
+          "line:271",
+          "line:423",
+          "line:424",
+          "line:428"
+        ],
+        "rationale": "Community-diversity teaching includes random trees and a patient-status example."
+      },
+      {
+        "facet": "operation",
+        "term": "diversity",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:423",
+          "line:424",
+          "line:426"
+        ],
+        "rationale": "Computes alpha diversity for a supplied community dataset."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "line:428",
+          "line:429"
+        ],
+        "rationale": "Plots diversity by supplied patient status."
+      }
+    ],
+    "biological_question": "Summarize within-sample community diversity",
+    "design": [],
+    "setting": [],
+    "input_origin": "mixed: random tree plus packaged community example",
+    "metadata_evidence": [
+      "line:260",
+      "line:271",
+      "line:423",
+      "line:424",
+      "line:428"
+    ],
+    "withheld_labels": [
+      "No sequencing assay, disease or observed case-control design inferred without dataset provenance; tree use does not imply phylogenetic inference."
+    ],
+    "tools_used": [
+      "mia",
+      "miaViz",
+      "ape"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  },
+  {
+    "id": "L17",
+    "title": "visualize unit metrics",
+    "hosting_repository": "AllenInstitute/openscope_databook",
+    "source_url": "https://github.com/AllenInstitute/openscope_databook/blob/eebe00fc15654772249a4cee53e0e3eba55ef413/docs/visualization/visualize_unit_metrics.ipynb",
+    "revision": "eebe00fc15654772249a4cee53e0e3eba55ef413",
+    "source_sha256": "c695402169e1ef149e334b64cead1332d2e06d86a0d48674dfc520a2b9385ea7",
+    "review": "assistant_static_pilot",
+    "independent_review": false,
+    "executed": false,
+    "labels": [
+      {
+        "facet": "scientific_field",
+        "term": "neuroscience",
+        "status": "content_supported",
+        "evidence": [
+          "cell:2",
+          "cell:7",
+          "cell:8",
+          "cell:10"
+        ],
+        "rationale": "Neuropixels/NWB unit metrics support neural recording QC."
+      },
+      {
+        "facet": "modality",
+        "term": "electrophysiology",
+        "status": "content_supported",
+        "evidence": [
+          "cell:2",
+          "cell:7",
+          "cell:8",
+          "cell:10"
+        ],
+        "rationale": "Neuropixels/NWB unit metrics support neural recording QC."
+      },
+      {
+        "facet": "operation",
+        "term": "qc",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:10",
+          "cell:17",
+          "cell:20",
+          "cell:22"
+        ],
+        "rationale": "Inspects supplied unit quality measures rather than computing spike sorting."
+      },
+      {
+        "facet": "operation",
+        "term": "descriptive-analysis",
+        "status": "content_supported",
+        "role": "implemented",
+        "evidence": [
+          "cell:17",
+          "cell:25"
+        ],
+        "rationale": "Plots unit metrics and spike amplitudes."
+      }
+    ],
+    "biological_question": "Assess neural unit quality",
+    "design": [],
+    "setting": [
+      "neural units"
+    ],
+    "input_origin": "source-described observed recording; derived metrics supplied",
+    "metadata_evidence": [
+      "cell:2",
+      "cell:7",
+      "cell:8",
+      "cell:10"
+    ],
+    "withheld_labels": [
+      "Spike sorting, waveform PCA and discrimination are upstream; explanations do not establish implementation."
+    ],
+    "tools_used": [
+      "OpenScope databook utilities",
+      "NWB",
+      "DANDI",
+      "NumPy"
+    ],
+    "scope": "Whole document; targeted narrative/code evidence reviewed. Operation list is not exhaustive."
+  }
+]
