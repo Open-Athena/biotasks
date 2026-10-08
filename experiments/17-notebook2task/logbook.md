@@ -289,3 +289,7 @@ backend. A focused browser check passed at desktop/mobile widths with no page
 errors; recipe switching hides this trace for generated tasks. Peak sampled RSS
 was 429 MB, within the shared-node limit. Live HTMLPreview remains a separate
 publication check.
+
+Live HTMLPreview verification subsequently passed for 147357b with the same
+interaction checks (the unrelated Kaggle source iframe was blocked). The
+validation receipt is in explorer/trace-viewer/validation.json.
