@@ -221,3 +221,60 @@ At the first collection, the scheduler reported MDAnalysis SUCCEEDED and nine ot
 A later read recovered the MDAnalysis final text archive with SHA-256 `75bca9061307437207439077588dbb95caa43e92dd836a0f8c3f3a85b9cbead0`. The prior missing header was delayed log availability, not a reason to restart. Its complete final task manifest is empty. Scientific diagnosis remains assigned to GLM review.
 
 At the second whole-batch snapshot, all ten jobs were terminal: nine controller SUCCEEDED and one FAILED. Worker records show one normal exit and nine request-cap endings, totaling 393 model requests. Nine final text archives recovered; five have nonempty task manifests and four have empty manifests. The failed job has only its early export at this point. Preserved results and manifests without editing candidates; no task is accepted. The reservation ledger records the authoritative terminal states while retaining all ten consumed sessions. Review/repair and native validation remain outstanding.
+
+
+## 2026-10-09 — stage design review and recovered request telemetry
+
+The user clarified fixed pipeline stages with bounded tool-use turns within each stage, then requested a review of other pipelines and recent Marin design work before continuing implementation. Read the Taskforge design document (https://docs.google.com/document/d/1fsmRFqvH1LzcByF77_vA0FA0Zwd3RazBEisexFJr1f0/edit), its open builder/validation/review/loop/queue PRs (#9788, #9847, #9848, #9849, #9850 in marin-community/marin), and issues #9978, #9757 and #9638. These are evolving proposals and implementations, not evidence that the full stack is merged or ready for this experiment. The queue PR specifically reports its current Iris path untested and missing image-builder wiring. SETA separates idea specification from package creation; Skill2Env performs host-owned static and Harbor Oracle/NOP acceptance after creator execution; AutoEnvScaling gives its author execution feedback but also filters by solver difficulty for an RL curriculum. That last filter is outside this issue's acceptance policy.
+
+Proposed, not yet implemented or adopted in a new run: explicit specification, build/debug, validation/audit, one conditional repair with revalidation, then freeze and a fresh Pi baseline. Keep scientific review and task-specific repair with versioned GLM prompts. Deterministic factory checks supply evidence and routing; no operator edits to task assets. Borrow Taskforge's immutable artifacts, bounded repair, and separate infrastructure outcomes without silently replacing the agreed ZCode/Harbor/Pi interfaces. Concrete per-stage limits remain unsettled. The previous uniform 40-request ceiling was an implementation choice, not an empirically established stage budget.
+
+Inspected recovered ZCode event records and proxy request ledgers for all ten original seeds, using final text exports for nine and the early author-exit export for Scanpy. The early Scanpy export contains author telemetry but does not establish complete final artifact recovery. Completed model-request events reconcile to 393 proxy requests: 390 main-turn requests plus three `web_fetch_processing` requests in COBRApy. Its 40 requests therefore comprise 37 main-turn requests and three internal requests, not 40 main agent turns. The ten sessions scheduled 446 tool invocations; tool invocations and model requests are different accounting units. No scientific interpretation of generated tasks was performed.
+
+| Seed | Proxy requests | Main-turn requests | Internal web processing | Author wall seconds | Scheduled tools |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| bedtools | 33 | 33 | 0 | 180.515 | 39 |
+| cobrapy | 40 | 37 | 3 | 175.733 | 45 |
+| mdanalysis | 40 | 40 | 0 | 77.163 | 42 |
+| methylkit | 40 | 40 | 0 | 234.820 | 47 |
+| phyloseq | 40 | 40 | 0 | 210.308 | 51 |
+| pyradiomics | 40 | 40 | 0 | 198.941 | 44 |
+| qfeatures | 40 | 40 | 0 | 229.312 | 46 |
+| scanpy | 40 | 40 | 0 | 175.327 | 46 |
+| skbio | 40 | 40 | 0 | 235.904 | 44 |
+| xcms | 40 | 40 | 0 | 159.460 | 42 |
+
+Every forwarded request has recorded HTTP status 200. This does not count the subsequent locally rejected request that triggered the cap. Nine worker results identify request-budget exhaustion; all ten author wall durations are below 236 seconds versus the configured 1200-second author limit. Recorded completion reasons are tool-calls or stop, not output-length truncation. The traces do not mark formal specification/build/audit boundaries, so retrospective tool counts cannot establish time spent in those proposed stages. They also cannot establish scientific correctness, lack of waste, or the number of additional requests required. A cap hit is incomplete execution, not a scientific rejection or proof of source unsuitability.
+
+Added `summarize_worker_telemetry.py` to make this operational accounting reproducible from recovered exports while publishing only counts, usage, and source-file hashes. It excludes commands, prompt text, tool output, request headers and endpoint fields. Its full replay/validation remains pending: the nonblocking shared-lock command aborted before starting, with exit 1 and no worker launched. Lightweight initial record inspection above completed; no model jobs, generated-task edits, changed batch limits or issue edits occurred during this review.
+
+
+## 2026-10-09 — explicit scheduling slots and predecessor identity
+
+Extended the factory dispatcher with explicit slots for the existing frozen author/review/repair/re-review sequence. The two review invocations use the same worker role but different durable session identities. Follow-ups require the exact predecessor's session ID, specification hash, remote job ID, terminal controller observation and artifact-receipt hash. This is a scheduling-lineage check, not scientific acceptance or verification of the receipt's contents. A later stage cannot skip its predecessor or silently rerun a completed slot. Failed author jobs may still be reviewed when their artifacts are recovered; ambiguous observations cannot advance the sequence.
+
+The session ledger now binds a root batch hash to its original factory revision, and rejects follow-up records that change that revision. Older ledgers need an explicit binding from the verified original batch. Updated the Iris adapter to distinguish workflow slot from worker role. Added regression cases for unresolved predecessors, skipped stages, changed remote identities, duplicate re-review and revision drift. The initial authoring dispatch remains compatible with prior batch files. No current campaign database, frozen plan, budget, task or prompt was changed.
+
+This increment does not yet implement the newly proposed specification/build split, prepare follow-up manifests, validate parent artifact receipt contents, enforce review decisions, or run the complete workflow automatically. Those remain required integration work; stage scheduling alone is not an autonomous task factory.
+
+Focused Ruff lint passed; formatting corrections were applied. Runtime tests and the telemetry replay remain unexecuted: the nonblocking lock acquisition returned its explicit busy code 75. A read-only host inspection confirmed an active kernel lock on inode 2732 (PID 2118294); its associated Python process remained live. No lock was removed, no foreign process was stopped, and no model run was launched.
+
+
+## 2026-10-09 — validation blocked by an inherited shared lock
+
+The shared analysis/test lock remained unavailable on a third consecutive continuation: the latest nonblocking acquisition returned code 75. Verified the kernel FLOCK on inode 2732 and traced the inherited descriptor 9 to live bash/time/Python processes 2118289, 2118296 and 2118297, all in the other `/home/exedev/.codex/worktrees/b1ea/marin` checkout. The kernel's original lock PID 2118294 has exited, but the surviving open descriptors retain the lock. This is not a stale file that can safely be deleted. No foreign process or lock was modified.
+
+Whitespace checks pass and the five new/changed Python implementation/test files parsed successfully. This does not substitute for runtime checks. Required regression tests, handoff validation and reproducible telemetry replay remain pending; adding more untested orchestration would not establish a usable factory. The issue remains incomplete: the specification/build split, end-to-end automated stage transitions and acceptance, full-panel GLM verification/repair, native task validation, accepted-task baselines and complete durable evidence are not yet demonstrated for the revised factory. Existing supervised evidence remains separate.
+
+Mark the active goal blocked on the owning task releasing its shared execution lock. Resume by checking node capacity and acquiring the lock nonblockingly, then run focused factory regressions and telemetry replay before expanding implementation or launching another version. Current code changes remain local and uncommitted. No model calls, task edits, issue edits, new budget or worker launch occurred in this continuation.
+
+
+## 2026-10-09 — lightweight checks resumed and handoffs validated
+
+The user explicitly authorized proceeding with the lightweight work despite the shared lock. The initial 24 focused tests passed in 0.26 seconds. Replayed the operational telemetry helper against all ten recovered exports; `factory-batch-001-telemetry.json` reproduces 393 completed/proxied requests and 446 scheduled tools, with hashes of each source result and event file. The earlier blocked entry remains historical; this user instruction resolves the lock constraint for these lightweight checks, not heavy local computation.
+
+Implemented a small follow-up envelope builder that freezes the parent descriptor and execution records, maintains the original factory pin, assigns the fixed stage slot, and refuses to enlarge original session limits. The remote bootstrap now verifies the envelope and descriptor before reconstructing biological files from recorded remote hashes. It checks the complete task manifest and supplied evidence records, checkpoints the prepared stage input, and checks that a review leaves task files unchanged. Earlier `previous-run` evidence is moved into immutable history during subsequent handoffs. Fixed the resulting review-to-repair/re-review directory collision. Wired the Iris adapter to use this bootstrap for follow-up slots; this path is locally tested but has not run remotely.
+
+Eight experiment checks passed (five handoff checks and three original restoration checks), covering remote-input restoration, candidate mismatch, corrupted evidence, descriptor substitution, unexpected worker code, deletions and repeated handoffs. The full test suite initially exposed an old prompt-list expectation missing the already added review/repair prompts, plus the sandbox's read-only shared uv cache. Updated the expected packaged prompt list and ran normal elevated locked-environment checks with the existing cache; no cache or credential workaround was used. All 42 tests then passed in 1.74 seconds. Ruff lint/format, ty, and all pre-commit checks passed. Total recorded check durations were below three seconds, with cumulative peak child RSS 69780 KiB. Exact commands and times are in `checks-20261009-handoffs.json`.
+
+These are factory infrastructure results, not scientific acceptance. No generated task was edited and no GLM/Daytona run or new budget was started. The complete autonomous workflow, proposed specification/build split, remote follow-up validation, and full-panel task/solver outcomes remain outstanding. The original batch's factory revision and incomplete results remain unchanged.

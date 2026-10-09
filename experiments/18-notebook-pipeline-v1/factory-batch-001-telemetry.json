@@ -1,0 +1,407 @@
+{
+  "schema_version": 1,
+  "scope": "operational telemetry; not scientific review or task acceptance",
+  "limitations": [
+    "Early exports can contain complete author telemetry but partial task artifacts.",
+    "Tool-wrapper success does not establish shell-command or scientific success.",
+    "Repeated commands do not establish waste: they may be legitimate polling.",
+    "Reported usage includes reused input context and is not unique-token volume.",
+    "Request durations may overlap tool durations; do not subtract to infer tool time.",
+    "No formal substage boundaries were recorded within these author sessions."
+  ],
+  "totals": {
+    "items": 10,
+    "proxy_requests": 393,
+    "completed_model_requests": 393,
+    "scheduled_tools": 446
+  },
+  "items": [
+    {
+      "item": "bedtools",
+      "export": "final",
+      "event_sha256": "8dcf2632c55d5079caf53bc0dc31f841dbf63ceccc1dc01023ca8743b2339f56",
+      "result_sha256": "8c0ae5146cd03dacc615cf9b8b0d46a92633b5570dc6fd6f7168f1bbcbf34ce1",
+      "worker_outcome": "worker_finished",
+      "elapsed_seconds": 180.515,
+      "proxy_requests": 33,
+      "http_statuses": {
+        "200": 33
+      },
+      "completed_model_requests": 33,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 33
+      },
+      "finish_reasons": {
+        "tool-calls": 32,
+        "stop": 1
+      },
+      "reported_usage": {
+        "inputTokens": 1185986,
+        "outputTokens": 22356,
+        "totalTokens": 1208342,
+        "cacheReadTokens": 1170176,
+        "reasoningTokens": 8804
+      },
+      "scheduled_tools": {
+        "Bash": 18,
+        "Read": 3,
+        "TodoWrite": 3,
+        "Write": 12,
+        "Edit": 3
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 175.978,
+      "max_request_output_tokens": 4266
+    },
+    {
+      "item": "cobrapy",
+      "export": "final",
+      "event_sha256": "2f96c0169c9f2a82b5ce09591cb22ae4fe4f5f795c6111fd30bfd5dfe9b9db38",
+      "result_sha256": "b00acf2497aca85c05838a8b04aa87544f4c2befd5172b3122ed70776925e282",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 175.733,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 37,
+        "web_fetch_processing": 3
+      },
+      "finish_reasons": {
+        "tool-calls": 37,
+        "stop": 3
+      },
+      "reported_usage": {
+        "inputTokens": 1282387,
+        "outputTokens": 19746,
+        "totalTokens": 1302133,
+        "cacheReadTokens": 1250112,
+        "reasoningTokens": 8616
+      },
+      "scheduled_tools": {
+        "Bash": 20,
+        "Read": 5,
+        "WebFetch": 4,
+        "TodoWrite": 4,
+        "Write": 11,
+        "Edit": 1
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 157.645,
+      "max_request_output_tokens": 3695
+    },
+    {
+      "item": "mdanalysis",
+      "export": "final",
+      "event_sha256": "cbd12bcbb1f8a5af086ae57b0ad3bb731ba91312ccd8fe722039b3e081f36348",
+      "result_sha256": "caf38bd23f9c5a5550dbcd2e4450348f1733f3c12d4208234007f95f1c6b8d18",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 77.163,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1467684,
+        "outputTokens": 7339,
+        "totalTokens": 1475023,
+        "cacheReadTokens": 1436672,
+        "reasoningTokens": 2679
+      },
+      "scheduled_tools": {
+        "Bash": 33,
+        "Read": 5,
+        "TodoWrite": 3,
+        "Write": 1
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 66.628,
+      "max_request_output_tokens": 1173
+    },
+    {
+      "item": "methylkit",
+      "export": "final",
+      "event_sha256": "da037d000055c97958e3296e6beead785aa6787527312303b9aec89f3068cac5",
+      "result_sha256": "22480fd567bf42b075f75c4d89f9256b8e56a8807309ad19cd98fdfb76078fcd",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 234.82,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1767924,
+        "outputTokens": 11564,
+        "totalTokens": 1779488,
+        "cacheReadTokens": 1732672,
+        "reasoningTokens": 4929
+      },
+      "scheduled_tools": {
+        "Bash": 31,
+        "Read": 10,
+        "TodoWrite": 2,
+        "Write": 3,
+        "Edit": 1
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 97.472,
+      "max_request_output_tokens": 2042
+    },
+    {
+      "item": "phyloseq",
+      "export": "final",
+      "event_sha256": "8488a21061dbacf22965d97a8e06c1cb8631c1bf2f92d5bb7dce4125c92fa526",
+      "result_sha256": "fd947ad0979ad54657c6007516560a9efe2142643814c84b2ce99b66a35d4f35",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 210.308,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1678840,
+        "outputTokens": 18859,
+        "totalTokens": 1697699,
+        "cacheReadTokens": 1617408,
+        "reasoningTokens": 9457
+      },
+      "scheduled_tools": {
+        "Bash": 33,
+        "Read": 7,
+        "TodoWrite": 3,
+        "Write": 8
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 116.641,
+      "max_request_output_tokens": 3603
+    },
+    {
+      "item": "pyradiomics",
+      "export": "final",
+      "event_sha256": "56aa191cadb591269fb2a8a82f6d66ceb778903c41c54da90a0b651e0425a78a",
+      "result_sha256": "7e04485cdbe513f61b076233a06aa825b8d6524d3e141cdd64874b0f67373a27",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 198.941,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1329506,
+        "outputTokens": 18175,
+        "totalTokens": 1347681,
+        "cacheReadTokens": 1310528,
+        "reasoningTokens": 11175
+      },
+      "scheduled_tools": {
+        "Bash": 27,
+        "Read": 7,
+        "TodoWrite": 2,
+        "Write": 4,
+        "Edit": 4
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 155.847,
+      "max_request_output_tokens": 3995
+    },
+    {
+      "item": "qfeatures",
+      "export": "final",
+      "event_sha256": "3c5aad51fbd838f330c4f2ce139a781a44761f39fe5868665770e906b6a355c7",
+      "result_sha256": "f786f3eafb7ab140f7bff7f51c9ed2a4700dd3c6efe21d9d9450747535f72f95",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 229.312,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1697781,
+        "outputTokens": 21179,
+        "totalTokens": 1718960,
+        "cacheReadTokens": 1655936,
+        "reasoningTokens": 13929
+      },
+      "scheduled_tools": {
+        "Bash": 35,
+        "Read": 9,
+        "TodoWrite": 2
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 180.733,
+      "max_request_output_tokens": 3739
+    },
+    {
+      "item": "scanpy",
+      "export": "early",
+      "event_sha256": "ccc8814026fd4d2148786d1fa2915c3f868e33a60d0c84effc2e8ffc4a699803",
+      "result_sha256": "108351447e38f94d7a98a8fe427f2f2eaa885776ad164148c3311cd6a2958718",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 175.327,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1429967,
+        "outputTokens": 16382,
+        "totalTokens": 1446349,
+        "cacheReadTokens": 1406080,
+        "reasoningTokens": 6616
+      },
+      "scheduled_tools": {
+        "Bash": 31,
+        "Read": 3,
+        "TodoWrite": 3,
+        "Write": 9
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 129.407,
+      "max_request_output_tokens": 2416
+    },
+    {
+      "item": "skbio",
+      "export": "final",
+      "event_sha256": "d9fad7a7e19b25bfa43aaa2568e454947ca46c3876953eb76a5d9e16a1f20d6b",
+      "result_sha256": "c09ac5a7109e94a7c860553b03c6f2d87498f57827394c692956e802a8ab9155",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 235.904,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1666855,
+        "outputTokens": 22308,
+        "totalTokens": 1689163,
+        "cacheReadTokens": 1629440,
+        "reasoningTokens": 15405
+      },
+      "scheduled_tools": {
+        "Bash": 34,
+        "Read": 6,
+        "TodoWrite": 2,
+        "Write": 1,
+        "Edit": 1
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 182.585,
+      "max_request_output_tokens": 3898
+    },
+    {
+      "item": "xcms",
+      "export": "final",
+      "event_sha256": "7f6d3fa042479b136d8c3fb898ec4c678b8c06c6db64494ff81cdbe128721217",
+      "result_sha256": "a051410e46accf403de657b9e41eecef05e8ce82a9f94b3ad0a5aaf177f9ab90",
+      "worker_outcome": "request_budget_exhausted",
+      "elapsed_seconds": 159.46,
+      "proxy_requests": 40,
+      "http_statuses": {
+        "200": 40
+      },
+      "completed_model_requests": 40,
+      "completed_requests_match_proxy_count": true,
+      "requests_by_source": {
+        "main_turn": 40
+      },
+      "finish_reasons": {
+        "tool-calls": 40
+      },
+      "reported_usage": {
+        "inputTokens": 1060601,
+        "outputTokens": 11140,
+        "totalTokens": 1071741,
+        "cacheReadTokens": 1045440,
+        "reasoningTokens": 5597
+      },
+      "scheduled_tools": {
+        "Bash": 35,
+        "Read": 5,
+        "TodoWrite": 2
+      },
+      "tool_wrapper_failures": 0,
+      "repeated_bash_invocations_beyond_first": 0,
+      "max_identical_bash_invocations": 1,
+      "proxy_request_seconds_sum": 103.053,
+      "max_request_output_tokens": 1641
+    }
+  ]
+}

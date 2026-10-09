@@ -58,9 +58,9 @@ class IrisFactoryBackend:
         from iris.rpc import job_pb2
         from rigging.timing import Duration
 
-        _, seed, stage = session.split(":")
+        _, seed, slot = session.split(":")
         spec = batch["entries"][seed]
-        if stage != spec["stage"]:
+        if slot != spec.get("stage_slot", spec["stage"]):
             raise ValueError("Session stage mismatch")
         revision = batch["factory_revision"]
         prompt_name = spec["prompt_name"]
@@ -76,12 +76,21 @@ class IrisFactoryBackend:
             ),
             "zcode.cjs": self.runtime,
             "zcode-builtin.json": self.provider,
-            "inputs.zip": archive.read_bytes(),
             "run-spec.json": (json.dumps(spec, indent=2) + "\n").encode(),
         }
+        command = ["python", "_biotasks_smoke.py"]
+        if slot == "authoring":
+            files["inputs.zip"] = archive.read_bytes()
+        else:
+            files["handoff.zip"] = archive.read_bytes()
+            for script in ("prepare_worker_handoff.py", "restore_authoring.py"):
+                files[script] = checkpoint_file(
+                    self.repo, revision, f"experiments/18-notebook-pipeline-v1/{script}"
+                )
+            command = ["python", "prepare_worker_handoff.py"]
         job = self.client.submit(
             name=name,
-            entrypoint=Entrypoint(command=["python", "_biotasks_smoke.py"], workdir_files=files),
+            entrypoint=Entrypoint(command=command, workdir_files=files),
             resources=ResourceSpec(cpu=4, memory=8589934592, disk=10737418240),
             environment=EnvironmentSpec(
                 setup_scripts=[

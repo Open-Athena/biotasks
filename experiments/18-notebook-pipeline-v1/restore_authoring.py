@@ -35,7 +35,13 @@ def copy_checked(open_remote, uri, path, expected_sha256, expected_size=None):
 
 
 def restore(
-    open_remote, prefix, destination, input_sha256, generated_manifest, parent_workspace=None
+    open_remote,
+    prefix,
+    destination,
+    input_sha256,
+    generated_manifest,
+    parent_workspace=None,
+    require_task=True,
 ):
     """Use a caller-supplied authenticated opener; credentials never enter records."""
     if destination.exists():
@@ -74,7 +80,7 @@ def restore(
             entry["size"],
         )
     task = workspace / "task"
-    if not task.is_dir():
+    if require_task and not task.is_dir():
         raise ValueError("No candidate task directory in preserved assembly")
     manifest = []
     for path in sorted(task.rglob("*")):

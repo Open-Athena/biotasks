@@ -29,6 +29,31 @@ class SessionBudget:
                 "(id TEXT PRIMARY KEY, seed TEXT NOT NULL, stage TEXT NOT NULL, "
                 "spec_sha256 TEXT NOT NULL, state TEXT NOT NULL, job_id TEXT)"
             )
+            db.execute(
+                "CREATE TABLE IF NOT EXISTS batches "
+                "(id TEXT PRIMARY KEY, factory_revision TEXT NOT NULL)"
+            )
+
+    def bind_batch(self, batch_sha256: str, revision: str, *, initial: bool) -> None:
+        """Keep all follow-up workers on the initially checkpointed factory.
+
+        Older ledgers need an explicit binding from their verified original batch
+        before scheduling follow-ups; absence is not permission to choose a pin.
+        """
+        for value, size in ((batch_sha256, 64), (revision, 40)):
+            if len(value) != size or any(c not in "0123456789abcdef" for c in value):
+                raise ValueError("Exact batch hash and factory revision required")
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row = db.execute(
+                "SELECT factory_revision FROM batches WHERE id=?", (batch_sha256,)
+            ).fetchone()
+            if row is None:
+                if not initial:
+                    raise ValueError("Root batch is not registered; reconcile its original pin")
+                db.execute("INSERT INTO batches VALUES (?, ?)", (batch_sha256, revision))
+            elif row[0] != revision:
+                raise ValueError("Factory revision changed within the frozen batch")
 
     @contextmanager
     def connect(self):
