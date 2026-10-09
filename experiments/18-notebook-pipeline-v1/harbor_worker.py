@@ -34,6 +34,26 @@ def digest(path):
     return value.hexdigest()
 
 
+def export_text(records):
+    export = {
+        str(p.relative_to(records)): p.read_text(errors="replace")
+        for p in records.rglob("*")
+        if p.is_file()
+        and p.stat().st_size < 512 * 1024
+        and p.suffix in {".json", ".jsonl", ".txt", ".log"}
+    }
+    packed = gzip.compress(json.dumps(export).encode())
+    encoded = base64.b64encode(packed).decode()
+    chunks = [encoded[i : i + 6000] for i in range(0, len(encoded), 6000)]
+    print(
+        "BIOTASKS_SMOKE_ARCHIVE "
+        + json.dumps({"chunks": len(chunks), "sha256": hashlib.sha256(packed).hexdigest()}),
+        flush=True,
+    )
+    for index, chunk in enumerate(chunks):
+        print(f"BIOTASKS_SMOKE_CHUNK {index} {chunk}", flush=True)
+
+
 def command(args, *, cwd, timeout, log, env=None):
     started = time.monotonic()
     with log.open("ab") as out:
@@ -105,6 +125,7 @@ def main():
             cwd=harbor,
             timeout=600,
             log=records / "harbor-install.txt",
+            env=os.environ | {"UV_PROJECT_ENVIRONMENT": str(harbor / ".venv")},
         )
         python = harbor / ".venv/bin/python"
         command(
@@ -218,6 +239,8 @@ def main():
             for secret in secrets:
                 value = value.replace(secret, "[REDACTED]")
             path.write_text(value)
+        # Recover setup/solver diagnostics even if the independent storage path fails.
+        export_text(records)
         manifest = []
         for path in records.rglob("*"):
             if not path.is_file():
@@ -251,23 +274,11 @@ def main():
                     shutil.copyfile(root / "cleanup.json", records / "cleanup.json")
                     with fsspec.open(prefix + "/cleanup.json", "wt").open() as target:
                         target.write((root / "cleanup.json").read_text())
-        export = {
-            str(p.relative_to(records)): p.read_text(errors="replace")
-            for p in records.rglob("*")
-            if p.is_file()
-            and p.stat().st_size < 512 * 1024
-            and p.suffix in {".json", ".jsonl", ".txt", ".log"}
-        }
-        packed = gzip.compress(json.dumps(export).encode())
-        encoded = base64.b64encode(packed).decode()
-        chunks = [encoded[i : i + 6000] for i in range(0, len(encoded), 6000)]
-        print(
-            "BIOTASKS_SMOKE_ARCHIVE "
-            + json.dumps({"chunks": len(chunks), "sha256": hashlib.sha256(packed).hexdigest()}),
-            flush=True,
-        )
-        for index, chunk in enumerate(chunks):
-            print(f"BIOTASKS_SMOKE_CHUNK {index} {chunk}", flush=True)
+        if (root / "cleanup.json").exists():
+            print(
+                "BIOTASKS_CLEANUP_RESULT " + (root / "cleanup.json").read_text().replace("\n", ""),
+                flush=True,
+            )
         print("BIOTASKS_HARBOR_RESULT " + json.dumps(outcome), flush=True)
 
 

@@ -176,6 +176,11 @@ def main():
     workspace = root / "author-workspace"
     workspace.mkdir()
     if (root / "inputs.zip").exists():
+        if (
+            spec.get("input_zip_sha256")
+            and file_sha256(root / "inputs.zip") != spec["input_zip_sha256"]
+        ):
+            raise ValueError("Authoring input archive checksum mismatch")
         with zipfile.ZipFile(root / "inputs.zip") as archive:
             for member in archive.infolist():
                 target = (workspace / member.filename).resolve()
@@ -348,8 +353,8 @@ def main():
             )
             if (
                 path.suffix in {".md", ".py", ".sh", ".toml", ".json", ".txt"}
-                and path.stat().st_size < 256 * 1024
-            ):
+                or path.name == "Dockerfile"
+            ) and path.stat().st_size < 256 * 1024:
                 artifacts["workspace/" + relative] = path.read_text(errors="replace")
         artifacts["artifact-manifest.json"] = json.dumps(manifest)
         artifacts["input-manifest.json"] = json.dumps(original_inputs)

@@ -1,0 +1,12 @@
+{
+  "stage": "runtime_setup",
+  "status": "failed",
+  "biological_task": false,
+  "harbor_install_exit_code": 0,
+  "package_freeze_exit_code": 2,
+  "solver_started": false,
+  "sandboxes_created": 0,
+  "artifact_export": "failed with botocore DataNotFoundError: Unable to load data for: endpoints",
+  "diagnosis": "Dependency setup did not yield the expected isolated Harbor interpreter. The later missing botocore data suggests the inherited uv environment was modified; this is an inference, not a recovered install log.",
+  "repair": "Set UV_PROJECT_ENVIRONMENT explicitly to the Harbor checkout's .venv; emit small text records before attempting independent durable storage."
+}
