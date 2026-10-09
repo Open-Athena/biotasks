@@ -105,6 +105,9 @@ def run(
         )
         if not checked.compatible:
             raise RuntimeError("Structured completion preflight failed")
+        daytona_usage = BudgetLedger(root / "daytona-budget.sqlite3", limit_usd="1.00")
+        daytona_usage.reserve("storage", "0.058", "Campaign image/storage allowance")
+        daytona_usage.reserve("preflight", "0.030", "Single infrastructure preflight")
         preflight = run_preflight(
             Daytona(), root=root, campaign=config["campaign"], deadline=deadline
         )
@@ -122,6 +125,7 @@ def run(
             max_trials=config["max_trials"],
             max_solver_attempts=config["max_solver_attempts"],
             solver_endpoints=(gate.endpoint("solver-1"), gate.endpoint("solver-2")),
+            usage_ledger=daytona_usage,
         )
         seed = json.loads(notebook_seed.read_text())[0]
         guidance = files("biotasks.prompts").joinpath("notebook-grounding.md").read_text()
@@ -223,3 +227,18 @@ def run(
         }
     finally:
         gate.close()
+
+
+if __name__ == "__main__":
+    configuration = json.loads(Path(__file__).with_name("pilot-config.json").read_text())
+    outcome = run(
+        root=Path("/evidence/pilot"),
+        endpoint=os.environ["BIOTASKS_MODEL_ENDPOINT"],
+        worker_id=os.environ["BIOTASKS_IRIS_WORKER_ID"],
+        deadline=float(os.environ["BIOTASKS_CAMPAIGN_DEADLINE"]),
+        wheel=Path(os.environ["BIOTASKS_RUNTIME_WHEEL"]),
+        notebook_seed=Path(os.environ["BIOTASKS_SEED"]),
+        config=configuration,
+    )
+    save_record(Path("/evidence/pilot/outcome.json"), outcome)
+    print(json.dumps(outcome), flush=True)

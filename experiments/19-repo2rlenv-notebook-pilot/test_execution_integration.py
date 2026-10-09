@@ -1,5 +1,6 @@
 """Control-plane tests only: no scientific candidate, model or sandbox calls."""
 
+import json
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from unittest.mock import Mock
@@ -108,7 +109,7 @@ def test_adapter_bounds_attempts_including_uncertain_dispatch(tmp_path, monkeypa
     )
     dispatch = Mock(side_effect=TimeoutError("uncertain"))
     monkeypatch.setattr(harbor, "run_trial", dispatch)
-    for number in range(2):
+    for number in range(1):
         with pytest.raises(TimeoutError, match="uncertain"):
             adapter.run_trial(
                 adapter.worker,
@@ -117,7 +118,7 @@ def test_adapter_bounds_attempts_including_uncertain_dispatch(tmp_path, monkeypa
                 trial_id=f"solve-{number}",
                 agent="terminus-2",
             )
-    with pytest.raises(RuntimeError, match="Solver attempt allowance"):
+    with pytest.raises(RuntimeError, match="cleanup is unresolved"):
         adapter.run_trial(
             adapter.worker,
             Path("fixture"),
@@ -133,7 +134,7 @@ def test_adapter_bounds_attempts_including_uncertain_dispatch(tmp_path, monkeypa
             trial_id="solve-0",
             agent="terminus-2",
         )
-    assert dispatch.call_count == 2
+    assert dispatch.call_count == 1
     assert all(call.kwargs["agent_timeout_sec"] == 300 for call in dispatch.call_args_list)
 
 
@@ -239,7 +240,12 @@ def test_solver_attempts_use_separate_request_allowances(tmp_path, monkeypatch):
         max_solver_attempts=2,
         solver_endpoints=endpoints,
     )
-    dispatch = Mock()
+
+    def completed(worker, task, output, **kwargs):
+        output.mkdir()
+        (output / "remote-job.json").write_text(json.dumps({"cleanup": {"passed": True}}))
+
+    dispatch = Mock(side_effect=completed)
     monkeypatch.setattr(harbor, "run_trial", dispatch)
     model = LLMSpec(provider="openai", model="fixture", api_key_env="KEY")
     for number in range(2):

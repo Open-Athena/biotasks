@@ -34,6 +34,13 @@ GPU requests are rejected. The adapter caps the whole-trial timeout at 1,500 sec
 The experiment's `iris_execution.py` supplies that adapter and reuses the original
 quality-loop evidence importer. Apply patch 0002 after patch 0001.
 
+The same patch adapts the remote job supervisor's cleanup: Daytona jobs receive
+a unique ownership label and select only that label for deletion and subsequent
+verification. Docker jobs retain their original cleanup. Nonzero or interrupted
+Daytona jobs remain unresolved even if the immediate listing is empty, since a
+provider-side creation could still be pending. The adapter refuses subsequent
+trial dispatches until the previous claim has verified cleanup.
+
 The pinned dependency and Harbor/Daytona extras have now been installed from the
 upstream lock in an isolated local checkout. Affected upstream regression tests
 and mocked control-plane integration tests pass; live execution remains pending.

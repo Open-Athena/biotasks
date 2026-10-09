@@ -10,7 +10,7 @@
  ) -> TrialEvidence:
      if not re.fullmatch(r"[a-z][a-z0-9-]{0,60}", trial_id):
          raise ValueError("Trial ID must be a unique lowercase slug")
-@@ -242,8 +245,40 @@
+@@ -242,8 +245,41 @@
          raise ValueError("Task has changed since emission")
      from harbor.models.task.task import Task
  
@@ -49,10 +49,11 @@
      env = {"REPO2RLENV_REMOTE_WORKER": "1"}
 +    if environment == "daytona":
 +        env["DAYTONA_API_KEY"] = os.environ["DAYTONA_API_KEY"]
++        env["REPO2RLENV_EXECUTION_BACKEND"] = "daytona"
      route_arguments, route_identity = [], None
      if model is not None:
          route_arguments, route_identity = trial_model_route(model, agent=agent)
-@@ -267,6 +302,9 @@
+@@ -267,6 +303,9 @@
          "max_tokens": max_tokens,
          "timeout_sec": timeout_sec,
          "runtime_python": python,
@@ -62,7 +63,7 @@
      }
      if output.exists():
          stored = json.loads(receipt.read_text())
-@@ -359,7 +397,7 @@
+@@ -359,7 +398,7 @@
                  else agent
              ),
              "--env",
@@ -71,7 +72,7 @@
              "--n-concurrent",
              "1",
              "--max-retries",
-@@ -402,6 +440,10 @@
+@@ -402,6 +441,10 @@
                      "llm_call_kwargs=" + json.dumps(completion_token_limit(model, max_tokens)),
                  ]
              )
@@ -82,6 +83,81 @@
          command.extend(route_arguments)
          record.update(state="dispatched", trial_dispatched=True, command=command)
          save_record(receipt, record)
+--- a/src/repo2rlenv/execution/job.py
++++ b/src/repo2rlenv/execution/job.py
+@@ -3,6 +3,7 @@
+ from __future__ import annotations
+ 
+ import argparse
++import json
+ import os
+ import signal
+ import subprocess
+@@ -70,6 +71,13 @@
+ 
+     previous = signal.signal(signal.SIGTERM, terminate)
+     process = None
++    daytona_backend = os.environ.get("REPO2RLENV_EXECUTION_BACKEND") == "daytona"
++    if daytona_backend:
++        if len(command) < 2 or command[1] != "run":
++            raise ValueError("Daytona job supervision requires a Harbor run command")
++        command = [*command, "--ek", "labels=" + json.dumps({JOB_LABEL: record["job_id"]}),
++                   "--ek", "auto_stop_interval_mins=30"]
++        record["command"] = command
+     try:
+         with (
+             (directory / "stdout.txt").open("w") as stdout,
+@@ -97,8 +105,17 @@
+                 pass
+             process.wait()
+         try:
+-            record["cleanup"] = _cleanup_containers(record["job_id"])
+-        except (OSError, subprocess.TimeoutExpired) as exc:
++            if daytona_backend:
++                from repo2rlenv.execution.daytona_cleanup import cleanup
++                record["cleanup"] = cleanup(record["job_id"])
++                if record.get("returncode") != 0:
++                    # A killed/failed create may still complete at the provider.
++                    # Listing no objects is not enough to resume the campaign.
++                    record["cleanup"]["passed"] = False
++                    record["cleanup"]["creation_uncertain"] = True
++            else:
++                record["cleanup"] = _cleanup_containers(record["job_id"])
++        except Exception as exc:
+             record["cleanup"] = {"passed": False, "exception_type": type(exc).__name__}
+         if not record["cleanup"]["passed"]:
+             record.update(state="failed", cleanup_pending=True)
+--- /dev/null
++++ b/src/repo2rlenv/execution/daytona_cleanup.py
+@@ -0,0 +1,28 @@
++"""Delete only sandboxes explicitly labeled by this remote job supervisor."""
++from __future__ import annotations
++
++from daytona import Daytona, ListSandboxesQuery
++from daytona.common.errors import DaytonaNotFoundError
++
++
++def cleanup(job_id: str, client=None) -> dict:
++    client = client or Daytona()
++    labels = {"repo2rlenv.job": job_id}
++    owned = list(client.list(ListSandboxesQuery(labels=labels), request_timeout=15))
++    records = []
++    for sandbox in owned:
++        if any(sandbox.labels.get(key) != value for key, value in labels.items()):
++            raise ValueError("Provider returned a sandbox with different ownership")
++        row = {"id": sandbox.id, "cpu": sandbox.cpu,
++               "memory": sandbox.memory, "disk": sandbox.disk}
++        client.delete(sandbox, timeout=60, wait=True)
++        try:
++            remaining = client.get(sandbox.id, request_timeout=15)
++        except DaytonaNotFoundError:
++            row["deleted"] = True
++        else:
++            row["deleted"] = getattr(remaining.state, "value", remaining.state) == "destroyed"
++        records.append(row)
++    remaining = list(client.list(ListSandboxesQuery(labels=labels), request_timeout=15))
++    return {"passed": not remaining and all(row["deleted"] for row in records),
++            "sandboxes": records, "remaining": [s.id for s in remaining]}
 --- a/src/repo2rlenv/pipelines/recipes/terminal/runner.py
 +++ b/src/repo2rlenv/pipelines/recipes/terminal/runner.py
 @@ -125,6 +125,7 @@

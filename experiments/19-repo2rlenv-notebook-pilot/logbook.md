@@ -214,3 +214,35 @@ uncertain creation. The campaign runner now invokes this preflight after its
 structured model compatibility check. Nothing has been executed remotely;
 campaign cost/cleanup accounting and the Iris submission/export launcher still
 need completion before launch.
+
+### 2026-10-09 — supervisor cleanup and frozen Iris launcher
+
+Source inspection found that the original remote supervisor unconditionally
+executes Docker cleanup. On an Iris host dispatching Daytona tasks, that would
+incorrectly fail even a successful trial. Extended the execution-boundary patch
+to label Daytona sandboxes with the supervisor's job identity, delete only those
+resources, and verify cleanup. Failed/interrupted creation remains uncertain;
+the adapter blocks later trials rather than accumulating possible live resources.
+The default Docker path is retained. Sixteen cleanup/adapter/upstream supervisor
+tests passed (4.15 seconds, peak RSS 127,168 KiB); after adding explicit supervisor
+backend tests, all five focused cleanup tests passed. An initial invocation used
+a nonexistent test filename and ran no tests before the corrected invocation.
+
+Added a separate USD 1 reservation ledger: USD 0.058 for image/storage overhead,
+USD 0.030 for the preflight and USD 0.057 per scientific trial (16 maximum).
+Reservations are retained conservatively rather than treating missing provider
+billing as zero. These are internal allowances, not a provider billing cap or an
+account charge. Provider usage and cleanup evidence still require reconciliation.
+The adapter rejects generated phase timeouts beyond the agreed ceilings.
+
+The Iris submitter packages committed source, the pinned upstream archive and
+the single source-bound seed, records input hashes and claims the submission
+before contacting Iris. It sets the agreed host resources and disables failure
+and preemption restarts. The bootstrap verifies source and patch hashes, installs
+the locked upstream environment, builds its matching wheel, resolves the approved
+model route and runs the bounded campaign. It exports credential-checked evidence
+to private artifact storage and verifies downloads. No credentials are in source
+or submission receipts. One mocked campaign-wiring test passed with the real
+schemas and loopback gate; sandboxed execution first failed to bind the socket,
+then the elevated local-only invocation passed (2.93 seconds, 117,812 KiB).
+Live submission and provider behavior remain unverified.

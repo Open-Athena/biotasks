@@ -81,6 +81,7 @@ class IrisDaytonaExecution:
         max_trials: int,
         max_solver_attempts: int,
         solver_endpoints: tuple[str, str] | None = None,
+        usage_ledger=None,
     ):
         self.worker = AttachedHost(worker_id)
         if deadline.tzinfo is None or deadline <= datetime.now(UTC):
@@ -92,6 +93,7 @@ class IrisDaytonaExecution:
         self.max_trials = max_trials
         self.max_solver_attempts = max_solver_attempts
         self.solver_endpoints = solver_endpoints
+        self.usage_ledger = usage_ledger
 
     def identity(self):
         return dict(
@@ -116,10 +118,22 @@ class IrisDaytonaExecution:
         return self.worker, sys.executable, deadline
 
     def run_trial(self, worker, task, output, *, trial_id, agent="nop", **kwargs):
+        from harbor.models.task.task import Task
         from repo2rlenv.execution.harbor import run_trial
 
         if worker.id != self.worker.id:
             raise ValueError("Execution worker identity mismatch")
+        # Check generated task limits before dispatch. Solver wall time is also
+        # overridden below; reference and verifier timeouts stay bounded here.
+        if (task / "task.toml").exists():
+            contract = Task(task).config
+            for value, ceiling in (
+                (contract.environment.build_timeout_sec, 600),
+                (contract.verifier.timeout_sec, 120),
+                (contract.agent.timeout_sec, 600),
+            ):
+                if value is None or not 0 < value <= ceiling:
+                    raise ValueError("Generated task exceeds the approved phase time limits")
         remaining = (self.deadline - datetime.now(UTC)).total_seconds()
         timeout = min(kwargs.get("timeout_sec", 1500), 1500)
         kwargs["timeout_sec"] = timeout
@@ -133,6 +147,10 @@ class IrisDaytonaExecution:
         if claim.exists():
             raise FileExistsError("Trial already claimed; reconcile its existing upstream receipt")
         previous = [json.loads(p.read_text()) for p in self.records.glob("*.json")]
+        if any(not row.get("cleanup_verified") for row in previous):
+            raise RuntimeError(
+                "Prior trial cleanup is unresolved; reconcile before further dispatch"
+            )
         solving = agent not in {"nop", "oracle", "probe"}
         if len(previous) >= self.max_trials:
             raise RuntimeError("Total trial allowance exhausted")
@@ -147,7 +165,11 @@ class IrisDaytonaExecution:
             )
         with claim.open("x") as stream:
             json.dump(dict(trial_id=trial_id, solving=solving, output=str(output)), stream)
-        return run_trial(
+        if self.usage_ledger is not None:
+            self.usage_ledger.reserve(
+                "trial:" + trial_id, "0.057", "Conservative Daytona trial allowance"
+            )
+        result = run_trial(
             worker,
             task,
             output,
@@ -158,6 +180,16 @@ class IrisDaytonaExecution:
             resource_overrides={"cpus": 1, "memory_mb": 2048, "storage_mb": 10240},
             **kwargs,
         )
+        job = json.loads((output / "remote-job.json").read_text())
+        if not job.get("cleanup", {}).get("passed"):
+            raise RuntimeError("Trial cleanup was not verified by the supervisor")
+        from repo2rlenv.execution.lifecycle import save_record
+
+        save_record(
+            claim,
+            dict(trial_id=trial_id, solving=solving, output=str(output), cleanup_verified=True),
+        )
+        return result
 
     def quality_trials(self, *, directory, budget, options):
         from repo2rlenv.quality.loop.remote import RemoteTrials
