@@ -102,17 +102,22 @@ def main():
     os.environ["BIOTASKS_OWNED_SANDBOXES"] = str(owned)
     prefix = os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/")
     assert prefix.startswith("s3://")
-    upstream = (
-        iris_ctx()
-        .client.resolver_for_job(JobName.from_string(os.environ.pop("GLM_ENDPOINT_JOB")))
-        .resolve("glm-5.3")
-        .endpoints[0]
-        .url.rstrip("/")
-    )
-    os.environ["GLM_API_BASE"] = upstream if upstream.endswith("/v1") else upstream + "/v1"
-    model_key = os.environ.pop("GLM_BULK_TOKEN")
+    native = spec.get("stage") in {"native_suite", "native_reference", "native_control"}
+    model_key = os.environ.pop("GLM_BULK_TOKEN", "")
     daytona_key = os.environ.pop("DAYTONA_API_KEY")
-    secrets = [model_key, daytona_key, upstream, prefix]
+    secrets = [daytona_key, prefix]
+    if model_key:
+        secrets.append(model_key)
+    if not native:
+        upstream = (
+            iris_ctx()
+            .client.resolver_for_job(JobName.from_string(os.environ.pop("GLM_ENDPOINT_JOB")))
+            .resolve("glm-5.3")
+            .endpoints[0]
+            .url.rstrip("/")
+        )
+        os.environ["GLM_API_BASE"] = upstream if upstream.endswith("/v1") else upstream + "/v1"
+        secrets.append(upstream)
     python = None
     outcome = {
         "stage": spec.get("stage", "harbor_pi_integration"),
@@ -120,6 +125,10 @@ def main():
     }
     started = time.monotonic()
     try:
+        if spec.get("development_mode") == "factory_only" and (
+            digest(root / "harbor-input.zip") != spec.get("execution_bundle_sha256")
+        ):
+            raise ValueError("Factory execution bundle differs from its checkpoint")
         with zipfile.ZipFile(root / "harbor-input.zip") as archive:
             for member in archive.infolist():
                 if not (root / member.filename).resolve().is_relative_to(root):
@@ -199,42 +208,46 @@ def main():
             timeout=30,
             log=records / "python-packages.txt",
         )
-        node_version = "v24.14.0"
-        node_archive = root / f"node-{node_version}-linux-x64.tar.xz"
-        node_base = f"https://nodejs.org/dist/{node_version}/"
-        urllib.request.urlretrieve(node_base + node_archive.name, node_archive)
-        checksums = urllib.request.urlopen(node_base + "SHASUMS256.txt", timeout=30).read().decode()
-        expected = next(
-            line.split()[0]
-            for line in checksums.splitlines()
-            if line.split()[-1] == node_archive.name
-        )
-        assert digest(node_archive) == expected
-        with tarfile.open(node_archive) as archive:
-            archive.extractall(root, filter="data")
-        node_bin = root / node_archive.name.removesuffix(".tar.xz") / "bin"
-        os.environ["PATH"] = str(node_bin) + ":" + os.environ["PATH"]
-        pi = root / "pi-runtime"
-        pi.mkdir()
-        command(
-            [
-                str(node_bin / "npm"),
-                "install",
-                "--prefix",
-                str(pi),
-                "--no-audit",
-                "--no-fund",
-                "--save-exact",
-                "@earendil-works/pi-coding-agent@1.1.0",
-            ],
-            cwd=root,
-            timeout=300,
-            log=records / "pi-install.txt",
-        )
-        shutil.copyfile(pi / "package-lock.json", records / "pi-package-lock.json")
-        os.environ["BIOTASKS_PI_COMMAND"] = str(pi / "node_modules/.bin/pi")
-        # Pi loads the explicit extension beside its dependency package.
-        (root / "node_modules").symlink_to(pi / "node_modules", target_is_directory=True)
+        expected = None
+        if not native:
+            node_version = "v24.14.0"
+            node_archive = root / f"node-{node_version}-linux-x64.tar.xz"
+            node_base = f"https://nodejs.org/dist/{node_version}/"
+            urllib.request.urlretrieve(node_base + node_archive.name, node_archive)
+            checksums = (
+                urllib.request.urlopen(node_base + "SHASUMS256.txt", timeout=30).read().decode()
+            )
+            expected = next(
+                line.split()[0]
+                for line in checksums.splitlines()
+                if line.split()[-1] == node_archive.name
+            )
+            assert digest(node_archive) == expected
+            with tarfile.open(node_archive) as archive:
+                archive.extractall(root, filter="data")
+            node_bin = root / node_archive.name.removesuffix(".tar.xz") / "bin"
+            os.environ["PATH"] = str(node_bin) + ":" + os.environ["PATH"]
+            pi = root / "pi-runtime"
+            pi.mkdir()
+            command(
+                [
+                    str(node_bin / "npm"),
+                    "install",
+                    "--prefix",
+                    str(pi),
+                    "--no-audit",
+                    "--no-fund",
+                    "--save-exact",
+                    "@earendil-works/pi-coding-agent@1.1.0",
+                ],
+                cwd=root,
+                timeout=300,
+                log=records / "pi-install.txt",
+            )
+            shutil.copyfile(pi / "package-lock.json", records / "pi-package-lock.json")
+            os.environ["BIOTASKS_PI_COMMAND"] = str(pi / "node_modules/.bin/pi")
+            # Pi loads the explicit extension beside its dependency package.
+            (root / "node_modules").symlink_to(pi / "node_modules", target_is_directory=True)
         os.environ["PYTHONPATH"] = str(root)
         config = {
             "job_name": spec.get("name", "pi-offline-001"),
@@ -288,19 +301,87 @@ def main():
                     "harbor_archive_sha256": digest(archive_path),
                     "harbor_uv_lock_sha256": digest(harbor / "uv.lock"),
                     "node_archive_sha256": expected,
-                    "pi_version": "1.1.0",
+                    "pi_version": None if native else "1.1.0",
                     "input_sha256": digest(root / "harbor-input.zip"),
                 },
                 indent=2,
             )
         )
-        command(
-            [str(python), str(root / "harbor_job.py")],
-            cwd=root,
-            timeout=1900,
-            log=records / "harbor-run.txt",
-            env=os.environ | {"GLM_BULK_TOKEN": model_key, "DAYTONA_API_KEY": daytona_key},
-        )
+        if spec.get("stage") == "native_suite":
+            from native_suite import run_suite
+
+            def run_native(case_root, timeout):
+                command(
+                    [str(python), str(root / "harbor_job.py")],
+                    cwd=case_root,
+                    timeout=timeout,
+                    log=case_root / "harbor-run.txt",
+                    env=os.environ
+                    | {
+                        "DAYTONA_API_KEY": daytona_key,
+                        "BIOTASKS_OWNED_SANDBOXES": str(case_root / "owned-sandboxes.jsonl"),
+                    },
+                )
+
+            def persist_native(case_root, case_id):
+                for path in case_root.rglob("*"):
+                    if not path.is_file():
+                        continue
+                    # Native logs must not publish launcher access values.
+                    try:
+                        value = path.read_text()
+                    except UnicodeError:
+                        pass
+                    else:
+                        for secret in secrets:
+                            value = value.replace(secret, "[REDACTED]")
+                        path.write_text(value)
+                    uri = (
+                        prefix
+                        + "/records/native/"
+                        + case_id
+                        + "/"
+                        + str(path.relative_to(case_root))
+                    )
+                    with path.open("rb") as source, fsspec.open(uri, "wb").open() as target:
+                        shutil.copyfileobj(source, target, 1024 * 1024)
+                    check = hashlib.sha256()
+                    with fsspec.open(uri, "rb").open() as source:
+                        while chunk := source.read(1024 * 1024):
+                            check.update(chunk)
+                    if check.hexdigest() != digest(path):
+                        raise ValueError("Native evidence read-back mismatch")
+
+            def cleanup_native(case_root):
+                command(
+                    [str(python), str(root / "harbor_job.py"), "cleanup"],
+                    cwd=case_root,
+                    timeout=180,
+                    log=case_root / "cleanup-log.txt",
+                    env=os.environ
+                    | {
+                        "DAYTONA_API_KEY": daytona_key,
+                        "BIOTASKS_OWNED_SANDBOXES": str(case_root / "owned-sandboxes.jsonl"),
+                    },
+                )
+
+            outcome["native"] = run_suite(
+                workspace,
+                config,
+                records / "native",
+                spec["native_limits"],
+                run_native,
+                persist_native,
+                cleanup_native,
+            )
+        else:
+            command(
+                [str(python), str(root / "harbor_job.py")],
+                cwd=root,
+                timeout=1900,
+                log=records / "harbor-run.txt",
+                env=os.environ | {"GLM_BULK_TOKEN": model_key, "DAYTONA_API_KEY": daytona_key},
+            )
         outcome["orchestration_finished"] = True
     except Exception as error:
         outcome.update(
@@ -309,6 +390,7 @@ def main():
     finally:
         outcome["seconds_before_export"] = round(time.monotonic() - started, 3)
         for name in [
+            "run-spec.json",
             "harbor-job.json",
             "harbor-result.json",
             "owned-sandboxes.jsonl",

@@ -35,7 +35,7 @@ def test_infrastructure_and_incomplete_artifacts_never_trigger_a_repair(tmp_path
 
 def test_ready_review_cannot_override_native_failure_or_repeat_repair(tmp_path):
     worker = WorkerEvidence("review", "succeeded", "worker_finished", True, "a" * 64)
-    kwargs = {
+    kwargs: dict = {
         "workspace": tmp_path,
         "review_report": ready_report(),
         "reviewed_candidate_sha256": "a" * 64,
@@ -53,7 +53,7 @@ def test_ready_review_cannot_override_native_failure_or_repeat_repair(tmp_path):
 def test_changed_or_unfinished_audit_never_reaches_acceptance(tmp_path):
     worker = WorkerEvidence("review", "succeeded", "worker_finished", True, "a" * 64)
     native = NativeEvidence("a" * 64, "passed")
-    kwargs = {
+    kwargs: dict = {
         "workspace": tmp_path,
         "review_report": ready_report(),
         "reviewed_candidate_sha256": "a" * 64,

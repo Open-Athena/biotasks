@@ -73,7 +73,31 @@ print(json.dumps(result))
                 "requested_cpu": self._effective_cpus,
                 "requested_memory_mb": self._effective_memory_mb,
                 "requested_storage_mb": self._effective_storage_mb,
+                "backend_disk_gib": getattr(self._sandbox, "disk", None),
+                "backend_disk_source": "Daytona Sandbox.disk allocation; not a usage measurement",
             }
+            try:
+                samples = await self._sandbox.get_metrics()
+                latest = await self._sandbox.get_metrics_latest()
+                samples = [*samples, latest]
+                record["backend_metrics"] = [
+                    {
+                        "timestamp": sample.timestamp.isoformat(),
+                        "disk_total": sample.disk_total,
+                        "disk_used": sample.disk_used,
+                        "mem_used": sample.mem_used,
+                        "mem_total": sample.mem_total,
+                        "cpu_count": sample.cpu_count,
+                    }
+                    for sample in samples
+                ]
+                record["disk_usage_sampled_peak_bytes"] = max(
+                    sample.disk_used for sample in samples
+                )
+                record["disk_usage_is_exact_peak"] = False
+                record["backend_metrics_source"] = "Daytona get_metrics/get_metrics_latest"
+            except Exception as error:
+                record["backend_metrics_error_type"] = type(error).__name__
             script = """import json,os
 from pathlib import Path
 names=['cpu.max','cpu.stat','memory.max','memory.peak','memory.events']

@@ -31,12 +31,34 @@ for available software; required dependencies are installed.” Do not recommend
 specific package in the instruction.
 
 Define two to four binary scientific subgoals and positive weights summing to one
-in `grading-contract.json`. State dependency rules and justify numerical
+in `task/grading-contract.json` (schema_version 1, `subgoals` list with `id`,
+`description`, `weight`, `depends_on` referring to earlier subgoal IDs). State dependency rules and justify numerical
 tolerances. Reward is the weighted sum; full success requires every subgoal.
 Grade artifacts deterministically, accepting valid alternative implementations.
 Do not use LLM judging, exact command checks, or smooth numerical-closeness rewards.
 Provide correct, partial, empty and scientifically wrong control submissions,
 including violated dependencies. Keep grading assets separate from the solver.
+
+Write `task/validation-plan.json` with schema_version 1 and `controls`: exactly
+one entry of each kind `correct`, `alternative`, `empty`, `partial`, `wrong`, and
+`dependency`. Each has `kind`, a scientific `rationale`, `expected_subgoals`
+(mapping every subgoal ID to a boolean), and `artifacts` (list of `source` paths
+relative to this workspace, absolute solver `destination` paths, and file
+`sha256` hashes). Prepare real control files under `controls/`, outside the solver
+image. The empty control has no artifacts. Correct and alternative controls pass
+all subgoals; empty passes none; partial earns some but not all credit; wrong and
+dependency controls fail at least one scientifically relevant subgoal. The
+alternative control demonstrates an allowed representation or computation, not
+merely a second copy of the same file. The factory separately runs the native
+reference; no reference numerical answers are supplied by the operator.
+
+Declare every solver output path in `task.toml`'s `artifacts`. Each grader run
+writes `/logs/verifier/grade.json` containing schema_version 1, `subgoals`
+(mapping every ID to a boolean), numerical `reward`, and boolean `full_success`.
+Also emit Harbor's reward file with the same weighted score. Missing or invalid
+submissions must produce a deterministic grade rather than crash the verifier.
+The GLM auditor will check scientific rationales and alternative-solution validity;
+the factory only checks shape and the executable outcomes.
 
 Write `validation-plan.md` explaining native reference and control validation,
 offline checks, expected runtime, resource measurements, and unresolved issues.

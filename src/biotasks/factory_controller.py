@@ -8,6 +8,8 @@ that it is valid or that a solver attempt may already start.
 from dataclasses import dataclass
 from pathlib import Path
 
+from biotasks.factory_acceptance import acceptance
+from biotasks.factory_native import assess_saved_suite
 from biotasks.factory_proposal import proposal_action
 from biotasks.factory_review import next_stage
 from biotasks.factory_stage import STAGE_ROLES
@@ -27,6 +29,12 @@ class NativeEvidence:
     candidate_sha256: str
     status: str  # passed, task_defect, not_runnable, infra_error, incomplete
 
+    @classmethod
+    def from_records(cls, workspace: Path, directory: Path):
+        """Consume recovered native results, not a caller's asserted success flag."""
+        assessed = assess_saved_suite(workspace, directory)
+        return cls(assessed["candidate_sha256"], assessed["status"])
+
 
 @dataclass(frozen=True)
 class Decision:
@@ -42,6 +50,7 @@ def decide(
     review_report: dict | None = None,
     reviewed_candidate_sha256: str | None = None,
     candidate_unchanged: bool | None = None,
+    native_directory: Path | None = None,
 ) -> Decision:
     """Select one operation, preserving failed jobs and the single repair bound.
 
@@ -127,4 +136,20 @@ def decide(
         )
     if review_report["checks_pending"]:
         return Decision("verification_incomplete", "GLM audit still lists unresolved checks")
+    if native_directory is not None:
+        result = acceptance(
+            workspace,
+            native_directory,
+            review_report,
+            {
+                "candidate_unchanged": candidate_unchanged,
+                "candidate_sha256": reviewed_candidate_sha256,
+            },
+        )
+        return Decision(
+            "baseline" if result["status"] == "accepted" else result["status"],
+            "Native evidence and scientific audit passed; run one fresh baseline"
+            if result["status"] == "accepted"
+            else "; ".join(result["reasons"]),
+        )
     return Decision("acceptance_check", "Native checks and audit are ready for the acceptance gate")

@@ -37,3 +37,14 @@ files relative to the workspace. A ready disposition is advisory, not task
 acceptance. Preserve uncertainty and infrastructure failures separately from
 scientific defects. Do not insert an operator-provided answer or seed-specific
 exception into the contract.
+
+For an acceptance-ready audit, also include `acceptance_checks`, with exactly the
+keys `scientific_contract`, `lineage_and_terms`, `alternative_solutions`,
+`solver_asset_separation`, and `methodology_and_tolerances`. Each entry has
+`status` (`satisfied`, `failed`, or `unresolved`), a scientific `rationale`, and
+nonempty `evidence_paths` naming preserved workspace files. Inspect supplied
+native reference/control records alongside the seed, provenance, grader and
+control files. Missing evidence is unresolved. Do not mark a check satisfied
+merely because another worker asserted it or a single reference received credit.
+Acceptance and a fresh baseline remain separate factory steps; do not run the
+baseline or use anticipated model performance to decide scientific validity.
