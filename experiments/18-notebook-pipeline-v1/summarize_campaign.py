@@ -60,6 +60,7 @@ def summarize(campaign_path):
     attempts = [run for row in rows for run in row["solver_attempts"]]
     return {
         "campaign_sha256": hashlib.sha256(campaign_path.read_bytes()).hexdigest(),
+        "evidence_mode": campaign.get("evidence_mode", "unspecified"),
         "campaign_complete": campaign["complete"],
         "scope": "Initial purposive panel only; not a representative benchmark estimate",
         "original_seed_count": len(rows),

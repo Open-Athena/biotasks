@@ -1,0 +1,1 @@
+The author worker finished normally. Its early text checkpoint was recovered; the full workspace export remained incomplete when the job was stopped. The terminal controller state was KILLED. This is historical supervised-campaign evidence, not validation of the revised factory. No scientific acceptance or repair is recorded here.
