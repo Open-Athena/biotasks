@@ -8,10 +8,13 @@ from pathlib import Path
 from convert_pi import convert
 
 
-def trace_viewer(source, session_id):
+def trace_viewer(source, session_id, preconverted=False):
     """Reuse the archived offline viewer; retain source hash and missing-call state."""
     assets = Path(__file__).with_name("explorer-assets")
-    trace = json.dumps(convert(source, session_id)).replace("<", "\\u003c")
+    data = json.loads(source.read_text()) if preconverted else convert(source, session_id)
+    if not str(data.get("schema_version", "")).startswith("ATIF-"):
+        raise ValueError("Unsupported trajectory format")
+    trace = json.dumps(data).replace("<", "\\u003c")
     script = (assets / "viewer.js").read_text().replace("</script", "<\\/script")
     css = (assets / "viewer.css").read_text()
     return (
@@ -100,11 +103,11 @@ def build(manifest, intake, output, campaign=None):
                     + html.escape(evidence(run[field]))
                     + "</pre></details>"
                 )
-        if run.get("pi_trace"):
-            path = (base / run["pi_trace"]).resolve()
+        if run.get("pi_trace") or run.get("atif_trace"):
+            path = (base / (run.get("atif_trace") or run["pi_trace"])).resolve()
             if not path.is_relative_to(base.resolve()):
                 raise ValueError("Trace path escapes campaign directory")
-            viewer = trace_viewer(path, run["id"])
+            viewer = trace_viewer(path, run["id"], preconverted=bool(run.get("atif_trace")))
             parts.append(
                 '<iframe title="Recorded Pi trajectory" sandbox="allow-scripts" '
                 'style="width:100%;height:720px;border:1px solid #cddbd7" srcdoc="'
