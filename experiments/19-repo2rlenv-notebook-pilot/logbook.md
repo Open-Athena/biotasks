@@ -246,3 +246,26 @@ or submission receipts. One mocked campaign-wiring test passed with the real
 schemas and loopback gate; sandboxed execution first failed to bind the socket,
 then the elevated local-only invocation passed (2.93 seconds, 117,812 KiB).
 Live submission and provider behavior remain unverified.
+
+### 2026-10-09 — first approved launch failed; preserve and diagnose
+
+Submitted the single approved campaign from cf222dba3eab6216209aad14427f7ac072fe6255.
+The local submitter used 344,212 KiB peak RSS and completed in 15.61 seconds,
+holding the shared lock; no submitter process remains. Iris first reported RUNNING,
+then FAILED with one failure and no preemptions. The outer traceback reached
+run_pilot.py after bootstrap setup and reported subprocess exit status 1; it does
+not identify the failing pipeline stage. No replacement campaign was submitted.
+
+Direct access to the private S3 evidence returned HTTP 403 from this VM. Asked for
+one separate read-only recovery job on reserved Iris capacity, limited to 1 CPU,
+1 GiB and five minutes, because the approved campaign allowed only one host job.
+Prepared a bounded diagnostic reader that verifies the original export hashes
+and returns selected records through the existing job log. It creates no tasks,
+model calls or sandboxes. Approval is pending. Model-request counts and sandbox
+creation/cleanup are unverified until the saved evidence is inspected. Updated
+the issue decision log with the terminal status and evidence-access limitation.
+
+A read-only Daytona query found zero sandboxes bearing this pilot's preflight
+ownership labels. This is current preflight-resource evidence only: it does not
+establish whether the preflight ran or whether scientific trials created other
+resources. Those questions remain tied to the unrecovered campaign records.
