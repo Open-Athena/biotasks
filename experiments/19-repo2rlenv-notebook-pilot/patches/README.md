@@ -17,10 +17,21 @@ and must not enter public evidence; upstream command/config receipts still need
 publication review.
 
 Validation so far: patch applies to the inspected pinned source files; all patched
-Python parses; ten route-helper tests pass. The upstream package has not yet been
-installed and these tests do not establish full Harbor integration, endpoint
-reachability, scientific validity or offline enforcement.
+Python parses; ten route-helper tests pass. The upstream package has subsequently been installed from its lock, and affected
+regressions plus mocked integration tests pass. These do not establish endpoint
+reachability, scientific validity or live offline enforcement.
 
 Additional execution-boundary work is under discussion: keep the model client
 on its supported compute network and use Harbor's native Daytona environment for
 task tools. The endpoint patch by itself does not implement that arrangement.
+
+`0002-external-execution-adapter.patch` adds a caller-supplied execution adapter to
+SETA's existing runner. The default worker/Docker path remains intact. It also
+lets the upstream trial runner invoke Harbor's native Daytona backend, rejects
+network expansion in any execution phase, and accepts an agent-only time bound.
+The experiment's `iris_execution.py` supplies that adapter and reuses the original
+quality-loop evidence importer. Apply patch 0002 after patch 0001.
+
+The pinned dependency and Harbor/Daytona extras have now been installed from the
+upstream lock in an isolated local checkout. Affected upstream regression tests
+and mocked control-plane integration tests pass; live execution remains pending.

@@ -1,0 +1,141 @@
+--- a/src/repo2rlenv/execution/harbor.py
++++ b/src/repo2rlenv/execution/harbor.py
+@@ -214,6 +214,8 @@
+     resume: bool = False,
+     python: str = "python",
+     agent_mode: str = "solve",
++    environment: str = "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
++    agent_timeout_sec: int | None = None,
+ ) -> TrialEvidence:
+     if not re.fullmatch(r"[a-z][a-z0-9-]{0,60}", trial_id):
+         raise ValueError("Trial ID must be a unique lowercase slug")
+@@ -242,8 +244,33 @@
+         raise ValueError("Task has changed since emission")
+     from harbor.models.task.task import Task
+ 
+-    Task(task)  # Parse the exact pinned Harbor contract before dispatch.
++    parsed_task = Task(task)  # Parse the exact pinned Harbor contract before dispatch.
++    if agent_timeout_sec is not None:
++        base_timeout = parsed_task.config.agent.timeout_sec
++        if model is None or not base_timeout or not 1 <= agent_timeout_sec <= timeout_sec:
++            raise ValueError("An agent limit requires a blind trial and a finite task timeout")
++    if environment not in {
++        "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment", "daytona"
++    }:
++        raise ValueError("Unsupported execution environment")
++    if environment == "daytona":
++        import os
++        import tomllib
++
++        config = tomllib.loads((task / "task.toml").read_text())
++        if config.get("environment", {}).get("network_mode") != "no-network":
++            raise ValueError("Daytona execution requires an offline task")
++        for phase in ("agent", "verifier"):
++            policy = config.get(phase, {})
++            if policy.get("network_mode") not in {None, "no-network"} or policy.get("allowed_hosts"):
++                raise ValueError("All execution phases must remain offline")
++        if (task / "environment/docker-compose.yaml").exists():
++            raise ValueError("Daytona execution requires a single-container task")
++        if not os.environ.get("DAYTONA_API_KEY"):
++            raise ValueError("Daytona execution requires host-side credentials")
+     env = {"REPO2RLENV_REMOTE_WORKER": "1"}
++    if environment == "daytona":
++        env["DAYTONA_API_KEY"] = os.environ["DAYTONA_API_KEY"]
+     route_arguments, route_identity = [], None
+     if model is not None:
+         route_arguments, route_identity = trial_model_route(model, agent=agent)
+@@ -267,6 +294,8 @@
+         "max_tokens": max_tokens,
+         "timeout_sec": timeout_sec,
+         "runtime_python": python,
++        "environment": environment,
++        "agent_timeout_sec": agent_timeout_sec,
+     }
+     if output.exists():
+         stored = json.loads(receipt.read_text())
+@@ -359,7 +388,7 @@
+                 else agent
+             ),
+             "--env",
+-            "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
++            environment,
+             "--n-concurrent",
+             "1",
+             "--max-retries",
+@@ -402,6 +431,8 @@
+                     "llm_call_kwargs=" + json.dumps(completion_token_limit(model, max_tokens)),
+                 ]
+             )
++        if agent_timeout_sec is not None:
++            command.extend(["--agent-timeout-multiplier", str(agent_timeout_sec / base_timeout)])
+         command.extend(route_arguments)
+         record.update(state="dispatched", trial_dispatched=True, command=command)
+         save_record(receipt, record)
+--- a/src/repo2rlenv/pipelines/recipes/terminal/runner.py
++++ b/src/repo2rlenv/pipelines/recipes/terminal/runner.py
+@@ -125,6 +125,7 @@
+     preflight=None,
+     agent_user: str | None = None,
+     materializer=None,
++    execution_adapter=None,
+ ) -> PipelineResult:
+     recipe = get_recipe(input.pipeline.recipe)
+     execution = input.execution
+@@ -141,6 +142,8 @@
+     wheel_hash = check_runtime_wheel(execution.runtime_wheel)
+     settings = input.model_dump(mode="json")
+     settings["execution"].pop("resume")
++    if execution_adapter is not None:
++        settings["execution_adapter"] = execution_adapter.identity()
+     fingerprint = hashlib.sha256(
+         json.dumps(
+             {"input": settings, "seeds": seeds, "runtime": wheel_hash}, sort_keys=True
+@@ -170,20 +173,25 @@
+             out_dir=out_dir,
+             skip_reasons=dict(skipped),
+         )
+-    worker_record = json.loads(execution.worker_receipt.read_text())
+-    if (
+-        worker_record["state"] != "running"
+-        or Path(worker_record["ledger"]).resolve() != ledger.path.resolve()
+-    ):
+-        raise ValueError("Generation requires a running worker from this campaign")
+-    worker = connect_worker(worker_record["spec"]["provider"], worker_record["worker_id"])
+-    prepare_docker(worker)
+-    deadline = min(
+-        datetime.fromisoformat(worker_record["started_at"])
+-        + timedelta(seconds=worker_record["spec"]["timeout_sec"]),
+-        datetime.now(UTC) + timedelta(seconds=execution.timeout_sec),
+-    )
+-    python = runtime_python(install_runtime(worker, execution.runtime_wheel, run))
++    if execution_adapter is None:
++        worker_record = json.loads(execution.worker_receipt.read_text())
++        if (
++            worker_record["state"] != "running"
++            or Path(worker_record["ledger"]).resolve() != ledger.path.resolve()
++        ):
++            raise ValueError("Generation requires a running worker from this campaign")
++        worker = connect_worker(worker_record["spec"]["provider"], worker_record["worker_id"])
++        prepare_docker(worker)
++        deadline = min(
++            datetime.fromisoformat(worker_record["started_at"])
++            + timedelta(seconds=worker_record["spec"]["timeout_sec"]),
++            datetime.now(UTC) + timedelta(seconds=execution.timeout_sec),
++        )
++        python = runtime_python(install_runtime(worker, execution.runtime_wheel, run))
++        execute_trial = run_trial
++    else:
++        worker, python, deadline = execution_adapter.prepare(execution, ledger, run)
++        execute_trial = execution_adapter.run_trial
+ 
+     def event(stage, state, message):
+         on_event(
+@@ -359,7 +367,7 @@
+             for agent in ("nop", "oracle"):
+                 run_key = hashlib.sha256(execution.run_id.encode()).hexdigest()[:12]
+                 trial_id = f"task-{run_key}-{index:03d}-{attempt}-{agent}"
+-                trial = run_trial(
++                trial = execute_trial(
+                     worker,
+                     task,
+                     candidate / f"trial-{attempt}-{agent}",

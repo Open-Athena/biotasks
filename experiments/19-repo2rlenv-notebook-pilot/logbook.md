@@ -102,3 +102,70 @@ validation or resource cleanup; collect their evidence separately without reruns
 Session finished before 21:34:28 UTC, elapsed 2.48 s, peak RSS 249,788 KiB, exit 0.
 No automatic retries or new model calls occurred. Private routing details remain
 outside the repository.
+
+## 2026-10-09: Iris/Daytona integration preparation
+
+User approved preparing the Iris/Daytona integration and requested an ongoing
+issue-body decision log. The dated log and current approach were updated and
+fetched back exactly; `agent-generated` remains set.
+
+Installed the exact upstream lock in an isolated `/tmp` checkout, with Harbor and
+Daytona extras. No live API calls were made. Initial sync peak RSS 55,420 KiB,
+1.33 seconds, exit 0; development dependency sync peak RSS 43,432 KiB, 0.24 seconds.
+All local substantial commands used the shared lock, one-thread/one-worker limits
+and low scheduling priority; available memory remained above 4 GiB.
+
+Prepared patch 0002: an optional execution adapter in the original SETA runner,
+plus a native Daytona environment option in the original trial runner. Preserve
+upstream defaults for other callers. Reject network expansion in solver/verifier
+phases. Apply the five-minute solver bound via Harbor's agent-only timeout
+multiplier without changing the emitted task or other phase limits.
+
+The experiment adapter attaches only to an explicitly allocated host, delegates
+task execution/evidence to upstream Harbor, and reuses upstream quality evidence
+import. Claims consume attempt slots even when the dispatch result is uncertain.
+No endpoint deployment, manual candidate patch or custom quality loop was added.
+
+Tests against the installed pinned source: 28 upstream/helper regressions passed;
+seven new routing/offline/attempt-control checks and two SETA adapter/repair-bound
+checks passed after correcting unit-fixture schema omissions (reward_kinds,
+source tag, executable flag, minimum reference length). These failures involved
+synthetic unit fixtures, not a generated biological task. Maximum test RSS was
+61,236 KiB. The final two synthesis checks passed in 0.30 seconds, peak RSS
+52,420 KiB. No network enforcement or scientific execution claim follows from
+mocked control-plane tests.
+
+A concrete execution budget proposal is in `execution-proposal.md`. Agreement,
+request-gate implementation, reproducible launcher and live preflight remain
+pending. No pilot jobs, task sandboxes, model requests or releases yet.
+
+The user approved the execution proposal: one 2-CPU/4-GiB Iris host on existing
+reserved capacity; one active 1-CPU/2-GiB/10-GiB Daytona task; two hours plus cleanup;
+USD 1 Daytona ceiling; and 80 maximum outgoing inference requests allocated as
+4 compatibility, 4 design/build, 24 quality and 24 per solver attempt. Each solver
+has at most 12 turns and 300 seconds. No repeated permission is needed for these
+bounds once implementation/preflight checks pass. The user's subsequent question
+about Daytona being free was answered as a distinction between account credits
+(not verified) and gross metered usage; it did not revoke authorization.
+
+Implemented a loopback-only inference gate to enforce raw request limits even
+when an upstream harness retries. It forwards to the already approved service;
+no new model or shared service is deployed. Request counts include provider errors
+and uncertain outcomes; budgets cannot silently increase on resume. The ledger
+contains hashes/states rather than credentials or prompts. Two tests passed,
+including concurrent quota claims and an HTTP 503 followed by a blocked retry;
+peak RSS 40,788 KiB, 1.26 seconds. Type checks passed after narrowing validated URL
+hosts and matching the standard HTTP handler method signature. Integration of
+this gate into the launcher remains pending.
+
+Final local integration checkpoint: ten adapter tests pass against the pinned
+upstream installation, including separate per-attempt inference endpoints. Ruff
+lint/format and project type checks pass. The project suite had ten passing tests
+and an offline distribution-build failure when invoked directly; rerunning the
+distribution test with the required `uv run --locked` invocation passed without
+changing the test or source (0.65 seconds, peak RSS 32,144 KiB). Preserve this
+invocation distinction; do not claim the first full-suite command passed.
+
+The approved budget was added to the issue's dated decision log and read back
+exactly. Integration remains preparation-only: launcher, live preflight, scientific
+generation/validation and publication are outstanding.
