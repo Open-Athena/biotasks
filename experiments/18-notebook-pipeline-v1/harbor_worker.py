@@ -304,6 +304,7 @@ def main():
             "owned-sandboxes.jsonl",
             "sandbox-resources.jsonl",
             "network-preflights.jsonl",
+            "package-manifests.jsonl",
         ]:
             if (root / name).exists():
                 shutil.copyfile(root / name, records / name)
