@@ -80,7 +80,7 @@ class IrisFactoryBackend:
         prompt = checkpoint_file(self.repo, revision, f"src/biotasks/prompts/{prompt_name}.md")
         if prompt.decode() != spec["prompt"]:
             raise ValueError("Batch prompt does not match factory revision")
-        name = "biotasks-factory-" + hashlib.sha256(session.encode()).hexdigest()[:32]
+        job_name = "biotasks-factory-" + hashlib.sha256(session.encode()).hexdigest()[:32]
         files = {
             "_biotasks_smoke.py": checkpoint_file(
                 self.repo, revision, "experiments/18-notebook-pipeline-v1/zcode_smoke.py"
@@ -105,7 +105,9 @@ class IrisFactoryBackend:
             if not self.daytona_key:
                 raise ValueError("Whole-seed execution requires approved Daytona access")
             files.pop("_biotasks_smoke.py")
-            for script in ("seed_pipeline_worker.py", "zcode_smoke.py", "harbor_worker.py"):
+            for script in (
+                "seed_pipeline_bootstrap.py", "seed_pipeline_worker.py", "zcode_smoke.py", "harbor_worker.py"
+            ):
                 files[script] = checkpoint_file(
                     self.repo, revision, f"experiments/18-notebook-pipeline-v1/{script}"
                 )
@@ -120,13 +122,21 @@ class IrisFactoryBackend:
                 ).stdout.splitlines()
                 if line.endswith((".py", ".md"))
             ]
-            for path in package_paths:
-                files[path.removeprefix("src/")] = checkpoint_file(self.repo, revision, path)
+            # Keep package directories inside one flat workdir entry. Kubernetes
+            # ConfigMap mounts expose nested directories as symlinks, which a
+            # staging walk may skip. Zip import also avoids an ambient package.
+            package = io.BytesIO()
+            with zipfile.ZipFile(package, "w", compression=zipfile.ZIP_STORED) as target:
+                for path in package_paths:
+                    target.writestr(
+                        path.removeprefix("src/"), checkpoint_file(self.repo, revision, path)
+                    )
+            files["factory-runtime.zip"] = package.getvalue()
             bundle = io.BytesIO()
             with zipfile.ZipFile(bundle, "w", compression=zipfile.ZIP_STORED) as target:
-                for name, value in files.items():
-                    if name.startswith("biotasks/"):
-                        target.writestr(name, value)
+                with zipfile.ZipFile(io.BytesIO(files["factory-runtime.zip"])) as runtime:
+                    for name in runtime.namelist():
+                        target.writestr(name, runtime.read(name))
                 for name in (
                     "control_agent.py",
                     "harbor_job.py",
@@ -160,11 +170,11 @@ class IrisFactoryBackend:
                 **batch["seed_execution"],
             }
             files["pipeline.json"] = (json.dumps(pipeline, indent=2) + "\n").encode()
-            command = ["python", "seed_pipeline_worker.py"]
-            extra_env = {"DAYTONA_API_KEY": self.daytona_key, "PYTHONPATH": "."}
+            command = ["python", "seed_pipeline_bootstrap.py"]
+            extra_env = {"DAYTONA_API_KEY": self.daytona_key}
             timeout_seconds = pipeline["seed_timeout_seconds"] + 300
         job = self.client.submit(
-            name=name,
+            name=job_name,
             entrypoint=Entrypoint(command=command, workdir_files=files),
             resources=ResourceSpec(cpu=4, memory=8589934592, disk=10737418240),
             environment=EnvironmentSpec(
@@ -172,7 +182,7 @@ class IrisFactoryBackend:
                     default_setup_script(packages=["marin-iris"], python_version="3.13")
                 ],
                 env_vars={
-                    "BIOTASKS_ARTIFACT_PREFIX": self.artifact_prefix + "/" + name,
+                    "BIOTASKS_ARTIFACT_PREFIX": self.artifact_prefix + "/" + job_name,
                     "GLM_BULK_TOKEN": self.token,
                     "GLM_ENDPOINT_JOB": self.endpoint_job,
                     "OMP_NUM_THREADS": "1",

@@ -33,3 +33,20 @@ def test_existing_limits_cannot_be_silently_expanded(tmp_path):
     SessionBudget(path, 3, 2, 1)
     with pytest.raises(ValueError, match="limits differ"):
         SessionBudget(path, 30, 20, 10)
+
+
+def test_authoritative_rejection_keeps_slot_and_spec_without_refunding_budget(tmp_path):
+    budget = SessionBudget(tmp_path / "campaign.sqlite", 1, 1, 1)
+    budget.reserve("first", "seed", "specification", "a" * 64)
+    budget.rejected_before_submission("first", "b" * 64, "Server rejected duplicate remote name")
+    with pytest.raises(ValueError, match="Campaign session budget"):
+        budget.reserve("different", "other", "specification", "a" * 64)
+    with pytest.raises(ValueError, match="already reserved"):
+        budget.reserve("first", "seed", "specification", "c" * 64)
+    budget.reserve("first", "seed", "specification", "a" * 64)
+    budget.submitted("first", "actual-job")
+    with pytest.raises(ValueError, match="unacknowledged"):
+        budget.rejected_before_submission("first", "b" * 64, "Cannot undo a created job")
+    with budget.connect() as db:
+        assert db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] == 1
+        assert db.execute("SELECT COUNT(*) FROM submission_rejections").fetchone()[0] == 1

@@ -36,6 +36,10 @@ class SessionBudget:
                 "(id TEXT PRIMARY KEY, factory_revision TEXT NOT NULL)"
             )
 
+            db.execute(
+                "CREATE TABLE IF NOT EXISTS submission_rejections "
+                "(session_id TEXT, evidence_sha256 TEXT, reason TEXT)"
+            )
             columns = {row[1] for row in db.execute("PRAGMA table_info(batches)")}
             if "workflow_sha256" not in columns:
                 db.execute("ALTER TABLE batches ADD COLUMN workflow_sha256 TEXT")
@@ -85,12 +89,16 @@ class SessionBudget:
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             total, per_seed, concurrency = db.execute("SELECT * FROM limits").fetchone()
-            if db.execute("SELECT 1 FROM sessions WHERE id=?", (session_id,)).fetchone():
+            existing = db.execute(
+                "SELECT seed,stage,spec_sha256,state,job_id FROM sessions WHERE id=?", (session_id,)
+            ).fetchone()
+            if existing and existing != (seed, stage, spec_sha256, "not_submitted", None):
                 raise ValueError("Session already reserved; reconcile instead of resubmitting")
-            if db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] >= total:
+            if not existing and db.execute("SELECT COUNT(*) FROM sessions").fetchone()[0] >= total:
                 raise ValueError("Campaign session budget exhausted")
             if (
-                db.execute("SELECT COUNT(*) FROM sessions WHERE seed=?", (seed,)).fetchone()[0]
+                not existing
+                and db.execute("SELECT COUNT(*) FROM sessions WHERE seed=?", (seed,)).fetchone()[0]
                 >= per_seed
             ):
                 raise ValueError("Seed session budget exhausted")
@@ -101,9 +109,40 @@ class SessionBudget:
                 >= concurrency
             ):
                 raise ValueError("Campaign concurrency occupied")
+            if existing:
+                db.execute("UPDATE sessions SET state='reserved' WHERE id=?", (session_id,))
+            else:
+                db.execute(
+                    "INSERT INTO sessions VALUES (?, ?, ?, ?, 'reserved', NULL)",
+                    (session_id, seed, stage, spec_sha256),
+                )
+
+    def rejected_before_submission(
+        self, session_id: str, evidence_sha256: str, reason: str
+    ) -> None:
+        """Explicitly reconcile a server rejection proving no job was created.
+
+        Never use for timeouts, missing acknowledgements or worker failures. Keep
+        the original reservation/spec and rejection evidence; only that same
+        unsubmitted slot may subsequently be submitted. No budget is refunded.
+        """
+        if (
+            len(evidence_sha256) != 64
+            or any(c not in "0123456789abcdef" for c in evidence_sha256)
+            or not reason
+        ):
+            raise ValueError("Authoritative rejection evidence is required")
+        with self.connect() as db:
+            db.execute("BEGIN IMMEDIATE")
+            result = db.execute(
+                "UPDATE sessions SET state='not_submitted' WHERE id=? AND state='reserved' AND job_id IS NULL",
+                (session_id,),
+            )
+            if result.rowcount != 1:
+                raise ValueError("Only an unacknowledged reservation can be reconciled")
             db.execute(
-                "INSERT INTO sessions VALUES (?, ?, ?, ?, 'reserved', NULL)",
-                (session_id, seed, stage, spec_sha256),
+                "INSERT INTO submission_rejections VALUES (?, ?, ?)",
+                (session_id, evidence_sha256, reason),
             )
 
     def submitted(self, session_id: str, job_id: str) -> None:

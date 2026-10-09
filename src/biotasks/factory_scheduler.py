@@ -56,7 +56,7 @@ def resume_batch(
             occupied = db.execute(
                 "SELECT COUNT(*) FROM sessions WHERE state IN ('reserved', 'submitted')"
             ).fetchone()[0]
-        if existing:
+        if existing and existing[0] != "not_submitted":
             state, job = existing
         elif occupied >= concurrency:
             state, job = "pending_capacity", None
