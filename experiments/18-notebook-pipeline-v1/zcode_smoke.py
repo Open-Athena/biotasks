@@ -29,6 +29,41 @@ def file_sha256(path):
     return digest.hexdigest()
 
 
+def export_files(workspace):
+    """Prune author tooling, preserving every regular candidate file.
+
+    Environment markers, not seed identities or scientific filenames, identify
+    installed Python trees. Candidate files are never pruned: packaging a large
+    environment inside task/ is a candidate defect, not permission to lose it.
+    """
+    selected = []
+    excluded = []
+    workspace = workspace.resolve()
+    tooling = {".git", ".zcode", ".venv", "node_modules", "__pycache__", ".cache"}
+    for directory, dirs, filenames in os.walk(workspace, followlinks=False):
+        root = Path(directory)
+        relative = root.relative_to(workspace)
+        in_task = bool(relative.parts) and relative.parts[0] == "task"
+        reason = None
+        if relative.parts and not in_task:
+            if root.name in tooling:
+                reason = "author_tooling"
+            elif "pyvenv.cfg" in filenames:
+                reason = "python_virtual_environment"
+            elif any(name.endswith(".dist-info") for name in dirs):
+                reason = "python_install_target"
+        if reason:
+            excluded.append({"path": str(relative), "reason": reason})
+            dirs[:] = []
+            continue
+        dirs[:] = sorted(name for name in dirs if not (root / name).is_symlink())
+        for name in sorted(filenames):
+            path = root / name
+            if path.is_file() and not path.is_symlink():
+                selected.append(path)
+    return selected, excluded
+
+
 def stop_on_budget_rejection(process, rejected, wall_seconds):
     """Stop only this author process group after an over-budget API request."""
     if not rejected.wait(wall_seconds) or process.poll() is not None:
@@ -417,15 +452,12 @@ def main():
         if not prefix.startswith("s3://"):
             raise ValueError("Private durable artifact prefix required")
         manifest = []
+        eligible, exclusions = export_files(workspace)
+        artifacts["export-exclusions.json"] = json.dumps(exclusions)
         generated = [
             p
-            for p in workspace.rglob("*")
-            if p.is_file()
-            and not p.is_symlink()
-            and p.resolve().is_relative_to(workspace.resolve())
-            and not set(p.relative_to(workspace).parts)
-            & {".git", ".zcode", ".venv", "node_modules", "__pycache__", ".cache"}
-            and file_sha256(p) != original_inputs.get(str(p.relative_to(workspace)))
+            for p in eligible
+            if file_sha256(p) != original_inputs.get(str(p.relative_to(workspace)))
         ]
         for path in generated:
             relative = str(path.relative_to(workspace))
