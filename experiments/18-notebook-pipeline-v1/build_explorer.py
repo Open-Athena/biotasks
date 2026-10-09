@@ -137,6 +137,13 @@ def build(manifest, intake, output, campaign=None):
             + "</pre></details></details>"
         )
 
+    def pipeline_run(run):
+        return (
+            "<details><summary>Factory stages · " + html.escape(run["id"])
+            + "</summary><pre>" + html.escape(evidence(run["summary"]))
+            + "</pre></details>"
+        )
+
     cards = []
     for seed in seeds:
         row = records[seed["id"]]
@@ -153,9 +160,10 @@ def build(manifest, intake, output, campaign=None):
             f"<p>{e(seed['focus'])}</p><p>{e(seed['input_origin'])}</p>"
             f"<pre>{e(text)}</pre></details>"
             "<details><summary>Task</summary>"
+            + "".join(pipeline_run(run) for run in stage.get("pipeline_runs", []))
             + (
                 "".join(authoring(run, stage) for run in stage.get("authoring_runs", []))
-                or "<p>No generated task. Authoring and scientific validation remain pending.</p>"
+                or "<p>No retained candidate text in this view; see the factory stage records.</p>"
             )
             + (
                 "<h3>Acceptance and packaging record</h3><pre>"
@@ -185,9 +193,10 @@ def build(manifest, intake, output, campaign=None):
         "border-radius:10px;padding:20px;margin:20px 0}summary{cursor:pointer;font-weight:600;"
         "padding:12px 0}pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:550px;"
         "overflow:auto;background:#f6f8f7;padding:16px}.status{color:#51635e}a{color:#087b77}"
-        "</style><h1>Notebook → Task → Attempt</h1><p>Ten proposed seeds. "
-        "Authoring drafts and infrastructure tests are not accepted biological tasks. "
-        "This campaign is incomplete; pending seeds remain in the denominator.</p>"
+        "</style><h1>Notebook → Task → Attempt</h1><p>"
+        + html.escape(state.get("description", "Ten proposed seeds. Authoring drafts and "
+            "infrastructure tests are not accepted biological tasks. This campaign is incomplete; "
+            "pending seeds remain in the denominator.")) + "</p>"
         + "".join(cards)
         + "</html>"
     )
