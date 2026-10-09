@@ -38,3 +38,17 @@ Model service use follows node-level guidance. Runtime endpoint addresses and cr
 Author workers now restrict inherited CPU affinity to at most four CPUs. Earlier resource probes established memory enforcement but revealed an unlimited CPU cgroup quota; their allocation requests do not prove compliance. Disk-quota enforcement remains unresolved. See `author-affinity-check.json` for a local inheritance check; remote probes remain authoritative.
 
 The first accepted Scanpy task and recovered Pi trace are publicly archived under `hf://buckets/open-athena/biotasks/research/18-notebook-pipeline-v1/2026-10-09/9eedb0542de5346b2f5e5cec7752604469980a94985193b39b745a322068038b/`. `scanpy-snapshot-manifest.json` freezes the allowlist; `scanpy-upload-receipt.json` records anonymous download and all-member hash verification. This snapshot excludes other seeds, authoring intermediates and the submitted H5AD; the final campaign archive remains pending.
+
+### Factory-only stage preparation
+
+New worker specifications can be prepared without per-seed launch instructions:
+
+```bash
+uv run --locked python -m biotasks.factory_stage \
+  --stage review --input-zip /path/to/checkpointed-inputs.zip \
+  --request-cap 40 --wall-seconds 1200 --output /path/to/new-run-spec.json
+```
+
+The helper supports authoring, review and repair, embedding the corresponding packaged prompt and hashing both prompt and archive. Output must not already exist. The remote worker accepts review stages and checks the prompt hash for these specifications. Review/repair workers need the candidate, original intake and previous evidence in their input archive; repair also needs the GLM review report. Session reservation, stage transitions, report validation and native validation still require orchestration work. This command prepares inputs and makes no model call. Review sessions consume the existing authoring-session budget; this helper does not extend it.
+
+Earlier manually supervised candidates remain historical evidence. Future scientific reviews and repairs must come from GLM workers using shared version-controlled prompts. Do not add seed-specific branches or manually patch generated task files.

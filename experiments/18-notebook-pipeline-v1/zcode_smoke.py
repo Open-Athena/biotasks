@@ -91,7 +91,10 @@ def main():
     request_cap = spec.get("request_cap", 4)
     output_cap = spec.get("output_cap", 8192)
     wall_seconds = spec.get("wall_seconds", 240)
-    assert stage in {"harness_smoke", "authoring", "repair"}
+    assert stage in {"harness_smoke", "authoring", "review", "repair"}
+    if spec.get("development_mode") == "factory_only":
+        if hashlib.sha256(spec["prompt"].encode()).hexdigest() != spec["prompt_sha256"]:
+            raise ValueError("Checkpointed worker prompt hash mismatch")
     assert 1 <= request_cap <= 60 and 1 <= output_cap <= 16384 and 1 <= wall_seconds <= 1200
     token = os.environ.pop("GLM_BULK_TOKEN")
     relay = os.environ.pop("GLM_ENDPOINT_JOB")

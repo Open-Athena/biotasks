@@ -52,6 +52,13 @@ def prepare(manifest: Path, protocol: Path, cache: Path, output: Path) -> dict:
         if not re.fullmatch(r"[0-9a-f]{64}", seed["source_sha256"]):
             raise ValueError("Invalid source SHA-256")
     prompt = load_prompt("notebook-task-v1")
+    worker_prompts = {
+        stage: load_prompt(name)
+        for stage, name in {
+            "review": "notebook-review-v1",
+            "repair": "notebook-repair-v1",
+        }.items()
+    }
     output.mkdir(parents=True, exist_ok=False)
     records = []
     for seed in panel["seeds"]:
@@ -81,10 +88,16 @@ def prepare(manifest: Path, protocol: Path, cache: Path, output: Path) -> dict:
             (workspace / "seed.json").write_text(json.dumps(seed, indent=2) + "\n")
             (workspace / "protocol.json").write_text(json.dumps(settings, indent=2) + "\n")
             (workspace / "prompt.md").write_text(prompt)
+            for stage, stage_prompt in worker_prompts.items():
+                (workspace / f"{stage}-prompt.md").write_text(stage_prompt)
             row.update(
                 status="authoring_prepared",
                 source_text_sha256=hashlib.sha256(text.encode()).hexdigest(),
                 prompt_sha256=hashlib.sha256(prompt.encode()).hexdigest(),
+                worker_prompt_sha256={
+                    stage: hashlib.sha256(value.encode()).hexdigest()
+                    for stage, value in worker_prompts.items()
+                },
             )
         records.append(row)
     result = {

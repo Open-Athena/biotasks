@@ -70,6 +70,12 @@ def test_missing_source_preserves_panel_and_no_overwrite(tmp_path):
     assert result["model_calls"] == 0
     assert all(s["tasks"] == s["attempts"] == [] for s in result["seeds"])
     assert (output / "one/seed.txt").read_text() == "# Analysis\n"
+    for stage in ("review", "repair"):
+        preserved = (output / "one" / f"{stage}-prompt.md").read_bytes()
+        assert (
+            hashlib.sha256(preserved).hexdigest()
+            == result["seeds"][0]["worker_prompt_sha256"][stage]
+        )
     with pytest.raises(FileExistsError):
         prepare(manifest, protocol, cache, output)
 
