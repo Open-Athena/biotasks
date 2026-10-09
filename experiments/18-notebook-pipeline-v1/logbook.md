@@ -203,3 +203,9 @@ Repeated nonblocking attempts have found the shared lock occupied. A host-namesp
 ## 2026-10-09 — correction to local-work classification
 
 The prior input-preparation blocker was overly conservative: measured preparation takes under a second and roughly 26 MiB, and is not an intensive workload. Proceeded with this bounded lightweight preparation after checking node load/memory. All ten revised archives were created (25123082 bytes), using the shared batch protocol and prompts. The test command still honors the explicit shared-test serialization rule and aborted on the held lock. Budget-binding tests remain pending; no claim of full validation follows from input preparation.
+
+## 2026-10-09 — first frozen factory batch submitted
+
+Published factory/input checkpoints through `b032ad2`, then submitted all ten initial authoring jobs using frozen factory revision `e94759377c3a910c474559dbdab6582de1bb8f91` and batch SHA-256 `fb78d2bdaa9236ad86cb76a7fd0cad6424f89021cb3dc4c6253bab571254e9ef`. The lightweight client submits remote workloads; no local biological worker or inference model was launched. All ten reservations are recorded in the private new-batch ledger. Submission exited 0. No automatic retries or task-specific prompt edits occurred.
+
+At 18:22:17 UTC (14:22:17 America/New_York), authoritative Iris state showed seven RUNNING jobs and three PENDING jobs. These are scheduler states, not evidence of completed authoring or scientific validity. The new budget-binding regression remains pending behind the shared test lock; earlier component tests and the local Iris request-construction check passed. This validation limitation is retained explicitly. Private job identifiers and access configuration remain outside the repository. Scientific results, review/repair, native validation and baseline attempts remain outstanding.
