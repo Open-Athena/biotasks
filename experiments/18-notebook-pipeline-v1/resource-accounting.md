@@ -1,0 +1,11 @@
+# Resource accounting evidence and limits
+
+The task profile remains 4 vCPU, 8 GiB memory, 10 GiB disk and no GPU. Do not substitute account defaults for requested allocations or requested allocations for effective measurements.
+
+Daytona's [sandbox documentation](https://www.daytona.io/docs/en/sandboxes/) describes disk allocation as persistent filesystem capacity and allows increasing, not decreasing, that capacity. The [SDK resource fields](https://www.daytona.io/docs/en/typescript-sdk/daytona/) specify disk and memory in GiB. This supports interpreting the recorded 10737418240-byte root filesystem as a 10-GiB persistent-filesystem allocation. It does not establish historical peak writable-layer use or the size of a container image in registry storage.
+
+Daytona's [limits documentation](https://www.daytona.io/docs/limits) distinguishes organization disk quota from billing and describes stopped container sandboxes as retaining disk quota until archived. The campaign deleted its owned sandboxes after durable read-back verification rather than leaving stopped containers allocated. No additional storage mounts were requested by the campaign's direct-container configuration. Documentation was checked on 2026-10-09; these service-level descriptions do not replace measurements of this run.
+
+For the accepted Scanpy trials, preserved probes show four-CPU cgroup ceilings, 8-GiB memory ceilings, no GPU devices and a 10-GiB root filesystem. Reference and baseline resource records preserve cgroup memory peaks. Full disk high-water marks, image storage sizes and explicit cold/warm image-cache classification were not captured. New start/stop filesystem usage readings are point-in-time samples and are labeled as such; they must not be called peak measurements.
+
+The Iris author worker is a different backend. The methylKit second session showed an 8-GiB memory ceiling but unlimited CPU quota and a shared backing filesystem much larger than 10 GiB. Future authors inherit at most four CPUs via affinity. Affinity can restrict this process tree but does not establish a per-job disk quota. These limitations remain explicit in the completion audit and must not be erased when later runs have better instrumentation.
