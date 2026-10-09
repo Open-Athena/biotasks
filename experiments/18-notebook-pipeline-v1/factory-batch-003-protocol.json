@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/Open-Athena/biotasks/issues/18",
+  "base_revision": "2a1950d239f1ada467c35393991dac87debe35f7",
+  "model": "glm-5.3",
+  "authoring_harness": "zcode",
+  "solver_harness": "pi",
+  "zcode_revision": "29628c9acdb81b703bbd4080c207a0e7ce5e276e",
+  "harbor_revision": "9f7b8b404711445b6022f72ff7e5715eb0d1a316",
+  "resources": {
+    "cpus": 4,
+    "memory_mib": 8192,
+    "storage_mib": 10240,
+    "gpus": 0
+  },
+  "solver_timeout_seconds": 300,
+  "solver_internet": false,
+  "verifier_internet": false,
+  "concurrency": 10,
+  "baseline_attempts_per_task": 1,
+  "runtime_verified": false,
+  "unresolved": [
+    "Daytona disk-quota accounting (filesystem size does not prove quota)",
+    "remaining seed input provenance and redistribution terms",
+    "timeout artifact recovery",
+    "authoring host effective resource enforcement, especially per-job disk quota"
+  ],
+  "verified_components": {
+    "zcode_service_smoke": "integration/zcode-smoke-001/result.json",
+    "pi_glm_inference": "integration/pi-offline-004/summary.json",
+    "task_network_cpu_memory_isolation": "integration/pi-offline-004/summary.json",
+    "scanpy_native_reference_and_separate_verifier": "runs/native-reference-002/summary.json",
+    "first_biological_baseline": "runs/scanpy-baseline-001/summary.json",
+    "native_scientific_controls": "scanpy-acceptance.json"
+  },
+  "budget_files": [
+    "factory-batch-002-budget.json"
+  ],
+  "evidence_mode": "factory_only",
+  "historical_evidence_note": "Verified components below are prior supervised infrastructure evidence, not validation of this factory version.",
+  "pipeline_workflow_version": 2,
+  "execution_mode": "one_remote_job_per_seed_with_separate_bounded_worker_stages"
+}
