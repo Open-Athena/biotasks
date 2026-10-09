@@ -269,3 +269,19 @@ A read-only Daytona query found zero sandboxes bearing this pilot's preflight
 ownership labels. This is current preflight-resource evidence only: it does not
 establish whether the preflight ran or whether scientific trials created other
 resources. Those questions remain tied to the unrecovered campaign records.
+
+### 2026-10-09 — prior panel outcome recovery from existing logs
+
+While approval for the issue-19 diagnostic recovery job remains pending, read
+the ten already-existing issue-18 panel-five job logs. All jobs are terminal:
+eight scheduler successes and two failures. Their final emitted pipeline states
+are four validation_incomplete, two review_incomplete, two budget_exhausted and
+two incomplete. None reports acceptance. The qfeatures traceback reports a
+candidate/native-evidence identity mismatch; pyradiomics reports a stage-launcher
+failure. Neither establishes a scientific failure in the generated biology task.
+
+Saved the source-bound stage summaries and original log hashes in
+prior-issue18-panel5.json. The native artifacts and cleanup records are still
+uninspected, so this closes the scheduler/outcome-summary question only, not the
+resource audit or scientific validation. No new issue-18 jobs, model calls or
+sandboxes were launched. The issue-19 recovery approval remains pending.
