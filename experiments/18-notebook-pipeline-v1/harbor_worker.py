@@ -148,6 +148,10 @@ def main():
                 source["input_sha256"],
                 source["generated_manifest"],
                 workspace,
+                # An empty, hash-verified construction is a static task defect.
+                # Let the native suite record it for GLM review; baselines still
+                # require a task. Restoration integrity checks remain mandatory.
+                require_task=spec.get("stage") != "native_suite",
                 deleted_inputs=source.get("deleted_inputs"),
                 expected_task_manifest=source.get("task_manifest"),
             )

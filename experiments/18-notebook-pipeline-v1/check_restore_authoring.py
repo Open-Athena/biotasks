@@ -23,6 +23,39 @@ def sha(data):
 
 
 class AssemblyChecks(unittest.TestCase):
+    def test_empty_verified_construction_reaches_review_without_trials(self):
+        from native_suite import run_suite
+        from biotasks.factory_controller import NativeEvidence, WorkerEvidence, decide
+
+        raw = archive({"construction-report.json": b"{}"})
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            workspace = restore(
+                lambda *_: io.BytesIO(raw), "remote", root / "native", sha(raw), [],
+                require_task=False, deleted_inputs=[], expected_task_manifest=[],
+            )
+
+            def forbidden(*args):
+                self.fail("Empty construction must not launch native trials")
+
+            result = run_suite(
+                workspace, {"n_attempts": 1, "retry": {"max_retries": 0}}, root / "records",
+                {"maximum_trials": 7, "trial_timeout_seconds": 1800,
+                 "reference_timeout_seconds": 600}, forbidden, forbidden, forbidden,
+            )
+            self.assertFalse((workspace / "task").exists())
+            self.assertEqual(result["status"], "not_runnable")
+            evidence = NativeEvidence.from_records(workspace, root / "records")
+            worker = WorkerEvidence("construction", "succeeded", "request_cap", True,
+                                    result["candidate_sha256"])
+            self.assertEqual(decide(worker, evidence, workspace=workspace).action, "review")
+            with self.assertRaisesRegex(ValueError, "No candidate task"):
+                restore(lambda *_: io.BytesIO(raw), "remote", root / "baseline", sha(raw), [])
+            with self.assertRaisesRegex(ValueError, "differs from final parent manifest"):
+                restore(lambda *_: io.BytesIO(raw), "remote", root / "mismatch", sha(raw), [],
+                        require_task=False, expected_task_manifest=[{
+                            "path": "instruction.md", "size": 1, "sha256": sha(b"x")}])
+
     def test_repair_retains_parent_inputs_and_overlays_changed_code(self):
         initial = archive({"task/instruction.md": b"v1"})
         repaired = archive({"task/instruction.md": b"v2"})

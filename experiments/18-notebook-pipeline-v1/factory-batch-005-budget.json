@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "status": "bounded_fifth_factory_batch",
+  "maximum_batches": 1,
+  "rationale": "Evaluate shared worker preflight and identity-preserving static failure routing, including empty constructions, across the unchanged ten-seed panel. No existing generated task is edited or replayed.",
+  "workflow_version": 2,
+  "execution_mode": "seed_pipeline",
+  "seeds_per_batch": 10,
+  "concurrency": 10,
+  "maximum_seed_jobs": 10,
+  "maximum_new_sessions": 50,
+  "maximum_new_sessions_per_seed": 5,
+  "maximum_model_requests_per_seed": 160,
+  "maximum_model_requests_per_session": 60,
+  "maximum_output_tokens_per_request": 16384,
+  "session_wall_seconds": 1200,
+  "stage_limits": {
+    "specification": {
+      "request_cap": 12,
+      "wall_seconds": 300,
+      "output_cap": 16384
+    },
+    "construction": {
+      "request_cap": 60,
+      "wall_seconds": 1200,
+      "output_cap": 16384
+    },
+    "review": {
+      "request_cap": 24,
+      "wall_seconds": 600,
+      "output_cap": 16384
+    },
+    "repair": {
+      "request_cap": 40,
+      "wall_seconds": 900,
+      "output_cap": 16384
+    },
+    "review_after_repair": {
+      "request_cap": 24,
+      "wall_seconds": 600,
+      "output_cap": 16384
+    }
+  },
+  "maximum_native_suites": 20,
+  "maximum_native_trials": 140,
+  "maximum_baselines": 10,
+  "solver_timeout_seconds": 300,
+  "resources": {
+    "cpus": 4,
+    "memory_mib": 8192,
+    "storage_mib": 10240,
+    "gpus": 0
+  },
+  "seed_execution": {
+    "seed_timeout_seconds": 7200,
+    "native_limits": {
+      "maximum_trials": 7,
+      "trial_timeout_seconds": 1800,
+      "reference_timeout_seconds": 600
+    }
+  },
+  "automatic_retries": 0,
+  "automatic_restarts": 0,
+  "cumulative_prior_author_sessions": 49,
+  "additional_factory_versions": "Require a separately recorded finite execution plan; do not change code or prompts within this panel.",
+  "cumulative_prior_seed_jobs": 21,
+  "previous_batch": "factory-batch-004-terminal-observation.json",
+  "maximum_readonly_recovery_jobs": 2
+}
