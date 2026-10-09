@@ -56,6 +56,31 @@ class AssemblyChecks(unittest.TestCase):
             self.assertEqual((second / "task/instruction.md").read_bytes(), b"v2")
             self.assertEqual((second / "task/tests/test.sh").read_bytes(), b"grader")
 
+    def test_native_and_review_replay_apply_deletions_and_check_final_manifest(self):
+        raw = archive({"task/instruction.md": b"keep", "task/obsolete.py": b"delete"})
+        final = [{"path": "instruction.md", "size": 4, "sha256": sha(b"keep")}]
+        with tempfile.TemporaryDirectory() as tmp:
+            workspace = restore(
+                lambda *_: io.BytesIO(raw),
+                "remote",
+                Path(tmp) / "native",
+                sha(raw),
+                [],
+                deleted_inputs=["task/obsolete.py"],
+                expected_task_manifest=final,
+            )
+            self.assertFalse((workspace / "task/obsolete.py").exists())
+            with self.assertRaisesRegex(ValueError, "differs from final parent manifest"):
+                restore(
+                    lambda *_: io.BytesIO(raw),
+                    "remote",
+                    Path(tmp) / "wrong",
+                    sha(raw),
+                    [],
+                    deleted_inputs=[],
+                    expected_task_manifest=final,
+                )
+
     def test_corrupt_input_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp, self.assertRaisesRegex(ValueError, "checksum"):
             restore(

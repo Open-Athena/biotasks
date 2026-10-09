@@ -1,8 +1,8 @@
 """Assemble a candidate from preserved author input plus generated-file overlay.
 
-This is an explicit assembly, not a claim to recover unrecorded deletions from
-the author workspace. Review the assembled package and pin its manifest before
-native validation. Stream all biological files; never execute source on intake.
+Recorded deletions and the final manifest make current worker replay exact.
+Historical records without these fields remain explicitly incomplete evidence.
+Stream all biological files; never execute source on intake.
 """
 
 import hashlib
@@ -34,6 +34,30 @@ def copy_checked(open_remote, uri, path, expected_sha256, expected_size=None):
         raise ValueError("Artifact checksum/size mismatch")
 
 
+def task_manifest(workspace):
+    """One canonical manifest for worker handoffs and native replay."""
+    entries = []
+    task = workspace / "task"
+    if task.is_symlink():
+        raise ValueError("Unsupported candidate symlink")
+    for path in sorted(task.rglob("*")):
+        if path.is_symlink():
+            raise ValueError("Unsupported candidate symlink")
+        if path.is_file():
+            digest = hashlib.sha256()
+            with path.open("rb") as source:
+                while chunk := source.read(1024 * 1024):
+                    digest.update(chunk)
+            entries.append(
+                {
+                    "path": str(path.relative_to(task)),
+                    "size": path.stat().st_size,
+                    "sha256": digest.hexdigest(),
+                }
+            )
+    return entries
+
+
 def restore(
     open_remote,
     prefix,
@@ -42,6 +66,8 @@ def restore(
     generated_manifest,
     parent_workspace=None,
     require_task=True,
+    deleted_inputs=None,
+    expected_task_manifest=None,
 ):
     """Use a caller-supplied authenticated opener; credentials never enter records."""
     if destination.exists():
@@ -79,24 +105,19 @@ def restore(
             entry["sha256"],
             entry["size"],
         )
+    for name in deleted_inputs or []:
+        target = safe_path(workspace, name)
+        if target.is_dir():
+            raise ValueError("Recorded deletion must name a file")
+        target.unlink(missing_ok=True)
     task = workspace / "task"
     if require_task and not task.is_dir():
         raise ValueError("No candidate task directory in preserved assembly")
-    manifest = []
-    for path in sorted(task.rglob("*")):
-        if not path.is_file():
-            continue
-        digest = hashlib.sha256()
-        with path.open("rb") as source:
-            while chunk := source.read(1024 * 1024):
-                digest.update(chunk)
-        manifest.append(
-            {
-                "path": str(path.relative_to(task)),
-                "size": path.stat().st_size,
-                "sha256": digest.hexdigest(),
-            }
-        )
+    manifest = task_manifest(workspace)
+    if expected_task_manifest is not None and manifest != sorted(
+        expected_task_manifest, key=lambda entry: entry["path"]
+    ):
+        raise ValueError("Restored task differs from final parent manifest")
     (destination / "assembly-manifest.json").write_text(
         json.dumps(
             {
@@ -104,6 +125,8 @@ def restore(
                 "input_sha256": input_sha256,
                 "parent_workspace_used": parent_workspace is not None,
                 "unrecorded_deletions_reconstructed": False,
+                "recorded_deletions_applied": deleted_inputs,
+                "final_manifest_verified": expected_task_manifest is not None,
                 "task_files": manifest,
             },
             indent=2,

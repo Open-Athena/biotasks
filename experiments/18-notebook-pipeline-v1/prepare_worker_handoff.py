@@ -14,7 +14,7 @@ import sys
 import zipfile
 from pathlib import Path
 
-from restore_authoring import restore, safe_path
+from restore_authoring import restore, safe_path, task_manifest
 
 
 def sha(path):
@@ -23,22 +23,6 @@ def sha(path):
         while chunk := source.read(1024 * 1024):
             digest.update(chunk)
     return digest.hexdigest()
-
-
-def task_manifest(workspace):
-    entries = []
-    for path in sorted((workspace / "task").rglob("*")):
-        if path.is_symlink():
-            raise ValueError("Unsupported candidate symlink")
-        if path.is_file():
-            entries.append(
-                {
-                    "path": str(path.relative_to(workspace / "task")),
-                    "size": path.stat().st_size,
-                    "sha256": sha(path),
-                }
-            )
-    return entries
 
 
 def unpack_handoff(root, spec):
@@ -93,14 +77,10 @@ def prepare(open_remote, root, parent):
         parent["input_zip_sha256"],
         parent["generated_manifest"],
         require_task=False,
+        deleted_inputs=parent["deleted_inputs"],
+        expected_task_manifest=parent["task_manifest"],
     )
-    for name in parent["deleted_inputs"]:
-        target = safe_path(workspace, name)
-        if target.is_file():
-            target.unlink()
     expected = sorted(parent["task_manifest"], key=lambda entry: entry["path"])
-    if task_manifest(workspace) != expected:
-        raise ValueError("Restored task differs from final parent manifest")
     evidence = workspace / "previous-run"
     if evidence.exists():
         # Review -> repair -> review preserves earlier stage records rather than
@@ -175,7 +155,7 @@ def main():
     print("BIOTASKS_STAGE_INPUT " + json.dumps({"sha256": spec["input_zip_sha256"]}), flush=True)
     result = subprocess.run([sys.executable, "_biotasks_smoke.py"], check=False)
     if spec["stage"] == "review":
-        unchanged = task_manifest(root / "workspace") == expected
+        unchanged = task_manifest(root / "author-workspace") == expected
         receipt = json.dumps({"candidate_unchanged": unchanged})
         with fsspec.open(prefix + "/records/review-integrity.json", "wt").open() as target:
             target.write(receipt)

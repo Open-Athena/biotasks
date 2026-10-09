@@ -12,7 +12,7 @@ from iris_factory_backend import IrisFactoryBackend
 
 from biotasks.factory_batch import execution_limits
 from biotasks.factory_budget import SessionBudget
-from biotasks.factory_dispatch import dispatch
+from biotasks.factory_scheduler import resume_batch
 
 
 def main():
@@ -82,16 +82,18 @@ def main():
                 config["artifact_prefix"],
                 config["cluster"],
             )
-            for seed in batch["entries"]:
-                job = dispatch(
-                    args.batch,
-                    args.batch_sha256,
-                    seed,
-                    args.archives / (seed + ".zip"),
-                    ledger,
-                    backend,
-                )
-                print(json.dumps({"seed": seed, "job_id": job, "status": "submitted"}), flush=True)
+            from iris.cluster.types import JobName
+
+            def observe(job_id):
+                state = client.job(JobName.from_string(job_id)).status().state.name.lower()
+                if state in {"succeeded", "failed", "killed"}:
+                    return state
+                return "unknown"
+
+            for record in resume_batch(
+                args.batch, args.batch_sha256, args.archives, ledger, backend, observe
+            ):
+                print(json.dumps(record), flush=True)
 
 
 if __name__ == "__main__":

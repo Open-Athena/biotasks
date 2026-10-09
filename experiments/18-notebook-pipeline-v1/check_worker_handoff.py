@@ -3,11 +3,15 @@
 import hashlib
 import io
 import json
+import os
 import tempfile
+import types
 import unittest
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
+import prepare_worker_handoff as handoff
 from prepare_worker_handoff import prepare, unpack_handoff
 
 
@@ -35,6 +39,48 @@ def parent_record(root, raw):
 
 
 class HandoffChecks(unittest.TestCase):
+    def test_review_bootstrap_checks_actual_worker_directory(self):
+        for changed in (False, True):
+            with self.subTest(changed=changed), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                prepared = root / "prepared.zip"
+                prepared.write_bytes(b"prepared")
+                (root / "run-spec.json").write_text(
+                    json.dumps({"stage": "review", "input_zip_sha256": "original"})
+                )
+                expected = [entry("instruction.md", b"original")]
+                remote = root / "remote"
+
+                def remote_open(uri, mode, remote=remote):
+                    target = remote / uri.removeprefix("remote/")
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    return types.SimpleNamespace(open=lambda: target.open(mode))
+
+                def worker(*args, root=root, changed=changed, **kwargs):
+                    actual = root / "author-workspace/task"
+                    actual.mkdir(parents=True)
+                    (actual / "instruction.md").write_bytes(b"changed" if changed else b"original")
+                    return types.SimpleNamespace(returncode=0)
+
+                with (
+                    patch.object(Path, "cwd", return_value=root),
+                    patch.object(handoff.os, "sched_setaffinity"),
+                    patch.object(handoff, "unpack_handoff", return_value={}),
+                    patch.object(handoff, "prepare", return_value=(prepared, expected)),
+                    patch.object(handoff.subprocess, "run", side_effect=worker),
+                    patch.dict(os.environ, {"BIOTASKS_ARTIFACT_PREFIX": "remote"}),
+                    patch.dict("sys.modules", {"fsspec": types.SimpleNamespace(open=remote_open)}),
+                ):
+                    if changed:
+                        with self.assertRaisesRegex(ValueError, "Review worker changed"):
+                            handoff.main()
+                    else:
+                        with self.assertRaises(SystemExit) as raised:
+                            handoff.main()
+                        self.assertEqual(raised.exception.code, 0)
+                receipt = json.loads((remote / "records/review-integrity.json").read_text())
+                self.assertEqual(receipt["candidate_unchanged"], not changed)
+
     def test_bootstrap_rejects_descriptor_swap_and_extraneous_worker_code(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

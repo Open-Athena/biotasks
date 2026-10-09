@@ -131,6 +131,8 @@ def main():
                 source["input_sha256"],
                 source["generated_manifest"],
                 workspace,
+                deleted_inputs=source.get("deleted_inputs"),
+                expected_task_manifest=source.get("task_manifest"),
             )
             shutil.copyfile(
                 workspace.parent / "assembly-manifest.json", records / f"assembly-{index}.json"
