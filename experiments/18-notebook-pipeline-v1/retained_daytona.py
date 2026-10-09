@@ -57,7 +57,9 @@ print(json.dumps(result))
             if packages.return_code:
                 raise RuntimeError("Environment package inventory failed")
             with path.with_name("package-manifests.jsonl").open("a") as out:
-                out.write(json.dumps({"id": self._sandbox.id, **json.loads(packages.stdout)}) + "\n")
+                out.write(
+                    json.dumps({"id": self._sandbox.id, **json.loads(packages.stdout)}) + "\n"
+                )
         finally:
             if self._sandbox is not None:
                 path = Path(os.environ["BIOTASKS_OWNED_SANDBOXES"])
