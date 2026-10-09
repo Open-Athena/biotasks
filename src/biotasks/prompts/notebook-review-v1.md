@@ -29,9 +29,11 @@ validation cannot run in this worker, request it explicitly rather than simulati
 success. LLM judgment does not supply the reward or replace deterministic checks.
 
 Write `review/report.json` with schema_version 1, disposition (`ready_for_validation`,
-`repair_required`, or `rejected`), findings (each with id, severity, evidence paths,
-description and the violated requirement), checks_performed (command, exit status
-and evidence paths), and checks_pending. A ready disposition is advisory, not task
+`repair_required`, or `rejected`), findings (each with `id`, `severity` set to
+`blocking` or `advisory`, `evidence_paths`, `description` and `requirement`),
+checks_performed (each with `command`, integer `exit_status` and `evidence_paths`),
+and checks_pending (a list of descriptions). Evidence paths must name preserved
+files relative to the workspace. A ready disposition is advisory, not task
 acceptance. Preserve uncertainty and infrastructure failures separately from
 scientific defects. Do not insert an operator-provided answer or seed-specific
 exception into the contract.
