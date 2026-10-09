@@ -1,15 +1,15 @@
 {
-  "campaign_sha256": "3b35814a5828e3b3040bd51ff5cee407a65999f8cba85de99ce477cbf790133f",
+  "campaign_sha256": "909da3b252150923ef025c7426f0819545f2cf92d5028c3de77725e7e4b87778",
   "campaign_complete": false,
   "scope": "Initial purposive panel only; not a representative benchmark estimate",
   "original_seed_count": 10,
-  "seeds_with_completed_authoring_records": 3,
+  "seeds_with_completed_authoring_records": 4,
   "accepted_tasks": 1,
   "accepted_fraction_of_original_panel": 0.1,
-  "completed_authoring_sessions": 5,
+  "completed_authoring_sessions": 6,
   "authoring_seconds_recorded": 1642.299,
-  "authoring_sessions_missing_time": 0,
-  "authoring_requests_recorded": 200,
+  "authoring_sessions_missing_time": 1,
+  "authoring_requests_recorded": 240,
   "authoring_requests_with_usage": 160,
   "biological_solver_attempts_recorded": 1,
   "full_biological_successes": 1,
@@ -293,9 +293,21 @@
     },
     {
       "id": "cobrapy",
-      "status": "authoring_in_progress",
+      "status": "authoring_infrastructure_failed",
       "accepted": false,
-      "authoring": [],
+      "authoring": [
+        {
+          "id": "author-cobrapy-001",
+          "outcome": "orchestration_timeout_missing_artifact_export",
+          "seconds": null,
+          "requests": 40,
+          "requests_with_usage": 0,
+          "input_tokens_including_cache_recorded": 0,
+          "output_tokens_recorded": 0,
+          "usage_complete": false,
+          "evidence": "runs/author-cobrapy-001/result.json"
+        }
+      ],
       "native_validations": [],
       "solver_attempts": []
     },

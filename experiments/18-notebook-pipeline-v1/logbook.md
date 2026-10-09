@@ -121,3 +121,7 @@ The completion audit confirms the full ten-seed scope remains open. It also foun
 The explorer now exposes the baseline's scientific subgoal grades, sandbox resource records and network evidence directly, alongside the aggregate result and trajectory. Author summaries include captured RSS and before/after resource probes, with unavailable values retained as null. The new HTML passed a structural presence check; the earlier browser receipt remains tied to its original HTML hash.
 
 Added a separately named, checksummed author-exit text checkpoint before object-storage export. It preserves diagnostics and small task source files without claiming that binary inputs/intermediates have been fully archived. A synthetic round-trip test verified chunk/hash integrity and redaction. The current COBRApy job predates this change and is still observed using its original handle; it has not been restarted.
+
+## 2026-10-09 — COBRApy first session execution timeout
+
+The original job reached terminal FAILED with an execution-timeout error and no final artifact export. Forty successful model HTTP responses are preserved, but usage, candidate files and author runtime remain unavailable. The controller terminated it before the planned manual budget stop was issued, so no cancel request or retry occurred. Record this as infrastructure failure, not a scientific grade. One authoring session remains for this seed. MDAnalysis is next in the original panel.
