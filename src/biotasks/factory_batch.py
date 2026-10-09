@@ -19,6 +19,7 @@ def freeze_batch(
     execution_budget: Path | None = None,
     workflow_version: int = 1,
     stage_limits: dict | None = None,
+    seed_execution: dict | None = None,
 ) -> dict:
     """Bind all panel entries to the same initial worker spec and protocol.
 
@@ -77,6 +78,10 @@ def freeze_batch(
     }
     if templates:
         record.update(workflow_version=workflow_version, stage_templates=templates)
+    if seed_execution is not None:
+        if workflow_version != 2:
+            raise ValueError("Whole-seed execution requires workflow v2")
+        record.update(execution_mode="seed_pipeline", seed_execution=seed_execution)
     encoded = json.dumps(record, sort_keys=True, indent=2) + "\n"
     with output.open("x") as destination:
         destination.write(encoded)
@@ -120,4 +125,32 @@ def execution_limits(batch: dict, budget_bytes: bytes) -> dict:
             > limits["maximum_model_requests_per_seed"]
         ):
             raise ValueError("Workflow exceeds per-seed request budget")
+    if batch.get("execution_mode") == "seed_pipeline":
+        if batch["seed_execution"] != limits.get("seed_execution"):
+            raise ValueError("Seed execution differs from its frozen budget")
+        settings = batch["seed_execution"]
+        if (
+            set(settings) != {"seed_timeout_seconds", "native_limits"}
+            or type(settings["seed_timeout_seconds"]) is not int
+            or not 1 <= settings["seed_timeout_seconds"] <= 7200
+        ):
+            raise ValueError("Invalid whole-seed execution ceiling")
+        native = settings["native_limits"]
+        ceilings = {
+            "maximum_trials": 7,
+            "trial_timeout_seconds": 1800,
+            "reference_timeout_seconds": 600,
+        }
+        if set(native) != set(ceilings) or any(
+            type(native[key]) is not int or not 1 <= native[key] <= cap
+            for key, cap in ceilings.items()
+        ):
+            raise ValueError("Invalid native validation ceilings")
+        if limits["maximum_seed_jobs"] != limits["seeds_per_batch"]:
+            raise ValueError("One remote pipeline job per seed is required")
+        if (
+            limits["maximum_new_sessions"]
+            < len(batch["stage_templates"]) * limits["maximum_seed_jobs"]
+        ):
+            raise ValueError("Seed jobs exceed the model-worker budget")
     return limits

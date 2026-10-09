@@ -42,7 +42,11 @@ def resume_batch(
             raise ValueError("Unknown remote observation")
     records = []
     for seed, spec in batch["entries"].items():
-        slot = spec.get("stage_slot", spec["stage"])
+        slot = (
+            "seed_pipeline"
+            if batch.get("execution_mode") == "seed_pipeline"
+            else spec.get("stage_slot", spec["stage"])
+        )
         session = session_identity(root_hash, seed, slot)
         with budget.connect() as db:
             existing = db.execute(

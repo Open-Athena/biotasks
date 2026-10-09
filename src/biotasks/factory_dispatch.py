@@ -11,7 +11,7 @@ from biotasks.factory_stage import STAGE_ROLES, WORKFLOWS, predecessor_slot
 
 def session_identity(batch_sha256: str, seed: str, slot: str) -> str:
     """Name a fixed workflow slot, including the second invocation of review."""
-    if slot not in STAGE_ROLES:
+    if slot not in STAGE_ROLES and slot != "seed_pipeline":
         raise ValueError("Unknown workflow slot")
     return f"{batch_sha256}:{seed}:{slot}"
 
@@ -116,8 +116,11 @@ def dispatch(
     )
     validate_predecessor(budget, root_hash, seed, slot, spec.get("predecessor", {}), version)
     spec_hash = hashlib.sha256(json.dumps(spec, sort_keys=True).encode()).hexdigest()
-    session = session_identity(root_hash, seed, slot)
-    budget.reserve(session, seed, spec["stage"], spec_hash)
+    whole_seed = batch.get("execution_mode") == "seed_pipeline"
+    if whole_seed and (not initial or version != 2):
+        raise ValueError("Whole-seed execution requires the initial v2 specification")
+    session = session_identity(root_hash, seed, "seed_pipeline" if whole_seed else slot)
+    budget.reserve(session, seed, "seed_pipeline" if whole_seed else spec["stage"], spec_hash)
     job_id = submit(session, batch, archive)
     budget.submitted(session, job_id)
     return job_id

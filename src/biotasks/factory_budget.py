@@ -78,7 +78,7 @@ class SessionBudget:
             db.close()
 
     def reserve(self, session_id: str, seed: str, stage: str, spec_sha256: str) -> None:
-        if not session_id or not seed or stage not in STAGE_PROMPTS:
+        if not session_id or not seed or stage not in {*STAGE_PROMPTS, "seed_pipeline"}:
             raise ValueError("Invalid session identity")
         if len(spec_sha256) != 64 or any(c not in "0123456789abcdef" for c in spec_sha256):
             raise ValueError("Exact specification hash required")

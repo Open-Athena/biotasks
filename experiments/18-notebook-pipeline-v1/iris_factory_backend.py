@@ -5,9 +5,11 @@ does not discover credentials, retry submissions, or alter generated tasks.
 """
 
 import hashlib
+import io
 import json
 import re
 import subprocess
+import zipfile
 from pathlib import Path
 
 
@@ -35,6 +37,7 @@ class IrisFactoryBackend:
         endpoint_job: str,
         artifact_prefix: str,
         cluster: str,
+        daytona_key: str | None = None,
     ):
         self.client = client
         self.repo = repo
@@ -50,6 +53,7 @@ class IrisFactoryBackend:
         self.endpoint_job = endpoint_job
         self.artifact_prefix = artifact_prefix.rstrip("/")
         self.cluster = cluster
+        self.daytona_key = daytona_key
 
     def __call__(self, session: str, batch: dict, archive: Path) -> str:
         from iris.cluster.constraints import Constraint, ConstraintOp
@@ -60,7 +64,8 @@ class IrisFactoryBackend:
 
         _, seed, slot = session.split(":")
         spec = batch["entries"][seed]
-        if slot != spec.get("stage_slot", spec["stage"]):
+        whole_seed = batch.get("execution_mode") == "seed_pipeline"
+        if slot != ("seed_pipeline" if whole_seed else spec.get("stage_slot", spec["stage"])):
             raise ValueError("Session stage mismatch")
         revision = batch["factory_revision"]
         prompt_name = spec["prompt_name"]
@@ -85,7 +90,7 @@ class IrisFactoryBackend:
             "run-spec.json": (json.dumps(spec, indent=2) + "\n").encode(),
         }
         command = ["python", "_biotasks_smoke.py"]
-        if slot in {"authoring", "specification"}:
+        if slot in {"authoring", "specification", "seed_pipeline"}:
             files["inputs.zip"] = archive.read_bytes()
         else:
             files["handoff.zip"] = archive.read_bytes()
@@ -94,6 +99,70 @@ class IrisFactoryBackend:
                     self.repo, revision, f"experiments/18-notebook-pipeline-v1/{script}"
                 )
             command = ["python", "prepare_worker_handoff.py"]
+        extra_env = {}
+        timeout_seconds = 1800
+        if whole_seed:
+            if not self.daytona_key:
+                raise ValueError("Whole-seed execution requires approved Daytona access")
+            files.pop("_biotasks_smoke.py")
+            for script in ("seed_pipeline_worker.py", "zcode_smoke.py", "harbor_worker.py"):
+                files[script] = checkpoint_file(
+                    self.repo, revision, f"experiments/18-notebook-pipeline-v1/{script}"
+                )
+            package_paths = [
+                line
+                for line in subprocess.run(
+                    ["git", "ls-tree", "-r", "--name-only", revision, "src/biotasks"],
+                    cwd=self.repo,
+                    check=True,
+                    capture_output=True,
+                    text=True,
+                ).stdout.splitlines()
+                if line.endswith((".py", ".md"))
+            ]
+            for path in package_paths:
+                files[path.removeprefix("src/")] = checkpoint_file(self.repo, revision, path)
+            bundle = io.BytesIO()
+            with zipfile.ZipFile(bundle, "w", compression=zipfile.ZIP_STORED) as target:
+                for name, value in files.items():
+                    if name.startswith("biotasks/"):
+                        target.writestr(name, value)
+                for name in (
+                    "control_agent.py",
+                    "harbor_job.py",
+                    "harbor_pi_remote.py",
+                    "network_probe.py",
+                    "pi_remote.ts",
+                    "remote_paths.mjs",
+                    "restore_authoring.py",
+                    "retained_daytona.py",
+                    "native_suite.py",
+                ):
+                    target.writestr(
+                        name,
+                        checkpoint_file(
+                            self.repo, revision, f"experiments/18-notebook-pipeline-v1/{name}"
+                        ),
+                    )
+            files["harbor-input.zip"] = bundle.getvalue()
+            for template in batch["stage_templates"].values():
+                pinned = checkpoint_file(
+                    self.repo, revision, f"src/biotasks/prompts/{template['prompt_name']}.md"
+                )
+                if pinned.decode() != template["prompt"]:
+                    raise ValueError("A stage prompt differs from the frozen factory")
+            pipeline = {
+                "seed": seed,
+                "factory_revision": revision,
+                "workflow_version": batch["workflow_version"],
+                "stage_templates": batch["stage_templates"],
+                "input_zip_sha256": spec["input_zip_sha256"],
+                **batch["seed_execution"],
+            }
+            files["pipeline.json"] = (json.dumps(pipeline, indent=2) + "\n").encode()
+            command = ["python", "seed_pipeline_worker.py"]
+            extra_env = {"DAYTONA_API_KEY": self.daytona_key, "PYTHONPATH": "."}
+            timeout_seconds = pipeline["seed_timeout_seconds"] + 300
         job = self.client.submit(
             name=name,
             entrypoint=Entrypoint(command=command, workdir_files=files),
@@ -109,10 +178,11 @@ class IrisFactoryBackend:
                     "OMP_NUM_THREADS": "1",
                     "OPENBLAS_NUM_THREADS": "1",
                     "MKL_NUM_THREADS": "1",
+                    **extra_env,
                 },
             ),
             constraints=[Constraint.create(key="cluster", op=ConstraintOp.EQ, value=self.cluster)],
-            timeout=Duration.from_seconds(1800),
+            timeout=Duration.from_seconds(timeout_seconds),
             scheduling_timeout=Duration.from_seconds(600),
             max_retries_failure=0,
             max_retries_preemption=0,

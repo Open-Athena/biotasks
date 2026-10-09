@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import re
+import subprocess
 import sys
 import termios
 from pathlib import Path
@@ -45,8 +46,12 @@ def main():
     config = json.loads(args.private_config.read_text())
     ledger = SessionBudget(
         args.ledger,
-        limits["maximum_new_sessions"],
-        limits["maximum_new_sessions_per_seed"],
+        limits["maximum_seed_jobs"]
+        if batch.get("execution_mode") == "seed_pipeline"
+        else limits["maximum_new_sessions"],
+        1
+        if batch.get("execution_mode") == "seed_pipeline"
+        else limits["maximum_new_sessions_per_seed"],
         limits["concurrency"],
     )
     if not sys.stdin.isatty():
@@ -60,6 +65,14 @@ def main():
         token = json.loads(sys.stdin.readline())["GLM_BULK_TOKEN"]
     finally:
         termios.tcsetattr(sys.stdin.fileno(), termios.TCSANOW, original)
+    daytona_key = None
+    if batch.get("execution_mode") == "seed_pipeline":
+        daytona_key = subprocess.run(
+            config["daytona_credential_command"],
+            check=True,
+            capture_output=True,
+            text=True,
+        ).stdout.strip()
     workspace = Path(config["iris_workspace"])
     with connect_controller(config_file=Path(config["controller_config"])) as endpoint:
         with IrisClient.remote(
@@ -81,6 +94,7 @@ def main():
                 config["endpoint_job"],
                 config["artifact_prefix"],
                 config["cluster"],
+                daytona_key=daytona_key,
             )
             from iris.cluster.types import JobName
 

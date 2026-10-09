@@ -525,6 +525,12 @@ def main():
             clean = value.replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]")
             with fsspec.open(prefix + "/records/" + name, "wt").open() as dst:
                 dst.write(clean)
+    # The seed executor consumes the same records that were durably exported.
+    local_records = root / "records"
+    for name, value in artifacts.items():
+        target = local_records / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(value.replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]"))
     # Only explicitly selected artifacts; no provider config, environment or credentials.
     print("BIOTASKS_SMOKE_RESULT " + json.dumps(result), flush=True)
     emit_text_archive(artifacts, token, upstream, "BIOTASKS_SMOKE")

@@ -20,7 +20,7 @@ def observation_directory(output: Path, seed: str, session: str) -> Path:
         or not re.fullmatch(r"[0-9a-f]{64}", parts[0])
         or parts[1] != seed
         or not re.fullmatch(r"[a-z0-9-]+", seed)
-        or parts[2] not in STAGE_ROLES
+        or parts[2] not in {*STAGE_ROLES, "seed_pipeline"}
     ):
         raise ValueError("Invalid factory session identity")
     destination = output / parts[0] / seed / parts[2]
@@ -69,6 +69,14 @@ def main():
                         count += 1
                     stream.write("]\n")
                 row["log_lines"] = count
+                if row["stage_slot"] == "seed_pipeline":
+                    values = json.loads(logs.read_text())
+                    summaries = [
+                        json.loads(value.split("BIOTASKS_PIPELINE ", 1)[1])
+                        for value in values
+                        if "BIOTASKS_PIPELINE " in value
+                    ]
+                    row["pipeline"] = summaries[-1] if summaries else None
                 row["exports"] = {}
                 for stage in ["early", "final"]:
                     try:
