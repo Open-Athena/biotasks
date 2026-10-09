@@ -1,0 +1,348 @@
+{
+  "name": "scanpy-native-reference-002",
+  "stage": "native_reference",
+  "seed_id": "scanpy",
+  "candidate_version": 2,
+  "model_called": false,
+  "expected_reward": 1.0,
+  "agent": {
+    "name": "oracle",
+    "override_timeout_sec": 600,
+    "max_timeout_sec": 600
+  },
+  "authoring_sources": [
+    {
+      "run": "author-scanpy-001",
+      "input_sha256": "eb42e4ad7b2098dbbcd57a13a2863be49fa0be981ff965bde543f8c57ca9808a",
+      "generated_manifest": [
+        {
+          "path": "reference/run_reference.py",
+          "size": 2119,
+          "sha256": "fa6bf14037916f0f40ebc16764b54b1e8a0468f0ceab26b7004a6e116162d2bd"
+        },
+        {
+          "path": "reference/pbmc3k_qc.h5ad",
+          "size": 11704722,
+          "sha256": "29c8ef859da4604f682894771088314c9d1205f6654c39dd47a887e45a6d3a37"
+        },
+        {
+          "path": "reference/reference_stats.json",
+          "size": 530,
+          "sha256": "33127b184343b0e18750c70e3b8cb3cc8ecf0ba6df3915f933d1502a4ddbc665"
+        },
+        {
+          "path": "task/instruction.md",
+          "size": 3180,
+          "sha256": "042004797d4a21e0b5b4c0487f4b56b8b5181dd0d2d5f0303cb9ae275ede22dc"
+        },
+        {
+          "path": "task/task.toml",
+          "size": 891,
+          "sha256": "fc5d0660111a697fa1c9b0cf70ddcf4008efc99694db9df224b242e96b0b65c6"
+        },
+        {
+          "path": "task/grading-contract.json",
+          "size": 3859,
+          "sha256": "1699a9408db1f472a3920eb742cfe86d428e312b2832752347a43de55d059d38"
+        },
+        {
+          "path": "task/provenance.json",
+          "size": 3813,
+          "sha256": "620a6a4c61ce10c55475a8e084c55b702bdd8af0a31e4592463dc22991875568"
+        },
+        {
+          "path": "controls/make_controls.py",
+          "size": 2432,
+          "sha256": "019fb44f4cfdd6915e537d4b4372475f399716351f3f567d56d4d90dcded8cc4"
+        },
+        {
+          "path": "controls/artifacts/correct.h5ad",
+          "size": 11704722,
+          "sha256": "29c8ef859da4604f682894771088314c9d1205f6654c39dd47a887e45a6d3a37"
+        },
+        {
+          "path": "controls/artifacts/partial-no-log1p.h5ad",
+          "size": 11716654,
+          "sha256": "b6f7a3e96c2b103e75497780210d85c25873d6e961e490edfc643a82b5b3baa9"
+        },
+        {
+          "path": "controls/artifacts/wrong-thresholds.h5ad",
+          "size": 11548743,
+          "sha256": "decb97ab4d4f264a4f8ce6841419e7e9cd61857de8520798e28e436c4f8dcee2"
+        },
+        {
+          "path": "controls/artifacts/dependency-violation.h5ad",
+          "size": 11972939,
+          "sha256": "ec4017908020dc1b85dcd25c87be46ed21ddfbfd526069c9349c5f2348274ba6"
+        },
+        {
+          "path": "task/environment/Dockerfile",
+          "size": 270,
+          "sha256": "01f9e75275b4e9ef5105a996893a3d57f1b4e7f76fbc24bb784a06bf70817135"
+        },
+        {
+          "path": "task/solution/solve.sh",
+          "size": 1051,
+          "sha256": "477965b01f194c62fbfc41bad1d29f559d72350cd89a2d43ce6fede6a6f0c5e2"
+        },
+        {
+          "path": "task/tests/Dockerfile",
+          "size": 293,
+          "sha256": "4afa4a6f9f89bcc37781b50cf2c27023b049283bcf2db91e71c61e8fc40bb2e6"
+        },
+        {
+          "path": "task/tests/grade.py",
+          "size": 6137,
+          "sha256": "183e0449c0b85eaf2edfef606cfd6b9d49730cf015bb5e3b7622191685a0e689"
+        },
+        {
+          "path": "task/tests/test.sh",
+          "size": 499,
+          "sha256": "441d006f0561f2bf2f29ab9c11a85d10a2d1513dedeab080b497533456626d25"
+        },
+        {
+          "path": "task/tests/data/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+          "size": 45900,
+          "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+        },
+        {
+          "path": "task/tests/data/filtered_gene_bc_matrices/hg19/genes.tsv",
+          "size": 816952,
+          "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+        },
+        {
+          "path": "task/tests/data/filtered_gene_bc_matrices/hg19/matrix.mtx",
+          "size": 28179564,
+          "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+        },
+        {
+          "path": "task/environment/inputs/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+          "size": 45900,
+          "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+        },
+        {
+          "path": "task/environment/inputs/filtered_gene_bc_matrices/hg19/genes.tsv",
+          "size": 816952,
+          "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+        },
+        {
+          "path": "task/environment/inputs/filtered_gene_bc_matrices/hg19/matrix.mtx",
+          "size": 28179564,
+          "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/matrix.mtx",
+          "size": 28179564,
+          "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/genes.tsv",
+          "size": 816952,
+          "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+          "size": 45900,
+          "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+        }
+      ]
+    },
+    {
+      "run": "repair-scanpy-002",
+      "input_sha256": "3cc9d164d5ccb6906f19dca10af53dd4493b056560d94d5a98ebaf6e01f04c85",
+      "generated_manifest": [
+        {
+          "path": "controls/make_controls.py",
+          "size": 4970,
+          "sha256": "68f72ae6b752bf38c0a1c13e1ec8f3295ec858735e5243c6385a401b69d0a3aa"
+        },
+        {
+          "path": "controls/run_validation.py",
+          "size": 2858,
+          "sha256": "23dcc8c1af9264f36494b299cf6c090f27cbd32b727aa1ef8c7cb7ef051c4c0f"
+        },
+        {
+          "path": "task/grading-contract.json",
+          "size": 6350,
+          "sha256": "c7493078b65d2d51bb59df6f1e796979f3656771f89f6091601a7c791317ad83"
+        },
+        {
+          "path": "task/instruction.md",
+          "size": 4427,
+          "sha256": "627aa8764a12afc7559318351e01820c4daa38d605788e83491d0e258fcf7d96"
+        },
+        {
+          "path": "reference/pbmc3k_qc.h5ad",
+          "size": 11704722,
+          "sha256": "29c8ef859da4604f682894771088314c9d1205f6654c39dd47a887e45a6d3a37"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/matrix.mtx",
+          "size": 28179564,
+          "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/genes.tsv",
+          "size": 816952,
+          "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+        },
+        {
+          "path": "data/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+          "size": 45900,
+          "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+        },
+        {
+          "path": "task/tests/grade.py",
+          "size": 10735,
+          "sha256": "244f79a6683ff46f7df9dbdfcb011bc77b6e6f55f938824244bcc12199bdb455"
+        },
+        {
+          "path": "task/tests/Dockerfile",
+          "size": 478,
+          "sha256": "f2fc82c1d147de1c99808cc3e6c634ee5044dfed36606109be235dfe008cfab7"
+        },
+        {
+          "path": "task/tests/test.sh",
+          "size": 1077,
+          "sha256": "5afc3c6be30a015c4d10480db332a8ef6b33a6d70e20fed62bcaa0f08ef79992"
+        },
+        {
+          "path": "controls/artifacts/correct.h5ad",
+          "size": 11704722,
+          "sha256": "29c8ef859da4604f682894771088314c9d1205f6654c39dd47a887e45a6d3a37"
+        },
+        {
+          "path": "controls/artifacts/permuted.h5ad",
+          "size": 12708506,
+          "sha256": "c556b9838693c149ff9874bda3aac8ec21cc62982cf25920315aaa2f46f8bee5"
+        },
+        {
+          "path": "controls/artifacts/partial-no-log1p.h5ad",
+          "size": 11716654,
+          "sha256": "b6f7a3e96c2b103e75497780210d85c25873d6e961e490edfc643a82b5b3baa9"
+        },
+        {
+          "path": "controls/artifacts/wrong-thresholds.h5ad",
+          "size": 11548743,
+          "sha256": "decb97ab4d4f264a4f8ce6841419e7e9cd61857de8520798e28e436c4f8dcee2"
+        },
+        {
+          "path": "controls/artifacts/same-shape-wrong-membership.h5ad",
+          "size": 11704722,
+          "sha256": "5a77bad2b3d3dfba3cbac6ac3a0f237d5aedb04ab30fa3eda0e07c5d44fc09b6"
+        },
+        {
+          "path": "controls/artifacts/dependency-violation.h5ad",
+          "size": 11972939,
+          "sha256": "ec4017908020dc1b85dcd25c87be46ed21ddfbfd526069c9349c5f2348274ba6"
+        },
+        {
+          "path": "controls/artifacts/missing-counts-layer.h5ad",
+          "size": 6676363,
+          "sha256": "24612ed7f5a395bdd9daace236be379a4fd9f61f048152b079bb7320ed3d1c8a"
+        },
+        {
+          "path": "controls/artifacts/nonfinite-counts.h5ad",
+          "size": 11954632,
+          "sha256": "ef3fbca1fb894f3fe21301fa3fda3c3903f550f3fd0a3607ac30b359612e2a07"
+        },
+        {
+          "path": "controls/artifacts/malformed.h5ad",
+          "size": 2300,
+          "sha256": "487b07d3cdd72f9a4d846fd747e64c8559817ecdf301f324b0b2c75031cdf410"
+        },
+        {
+          "path": "controls/validation-outputs/validation-results.json",
+          "size": 17463,
+          "sha256": "42e47d24371a4c424c963ceec5fdbc9b5ebc1b66015d62e28736d5f653acb626"
+        }
+      ]
+    }
+  ],
+  "expected_task_files": [
+    {
+      "path": "environment/Dockerfile",
+      "size": 270,
+      "sha256": "01f9e75275b4e9ef5105a996893a3d57f1b4e7f76fbc24bb784a06bf70817135"
+    },
+    {
+      "path": "environment/inputs/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+      "size": 45900,
+      "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+    },
+    {
+      "path": "environment/inputs/filtered_gene_bc_matrices/hg19/genes.tsv",
+      "size": 816952,
+      "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+    },
+    {
+      "path": "environment/inputs/filtered_gene_bc_matrices/hg19/matrix.mtx",
+      "size": 28179564,
+      "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+    },
+    {
+      "path": "grading-contract.json",
+      "size": 6350,
+      "sha256": "c7493078b65d2d51bb59df6f1e796979f3656771f89f6091601a7c791317ad83"
+    },
+    {
+      "path": "instruction.md",
+      "size": 4427,
+      "sha256": "627aa8764a12afc7559318351e01820c4daa38d605788e83491d0e258fcf7d96"
+    },
+    {
+      "path": "provenance.json",
+      "size": 3813,
+      "sha256": "620a6a4c61ce10c55475a8e084c55b702bdd8af0a31e4592463dc22991875568"
+    },
+    {
+      "path": "solution/solve.sh",
+      "size": 1051,
+      "sha256": "477965b01f194c62fbfc41bad1d29f559d72350cd89a2d43ce6fede6a6f0c5e2"
+    },
+    {
+      "path": "task.toml",
+      "size": 900,
+      "sha256": "37c3ef689dad9811b0625726f88985f579328521574b8a124acd8478d4e8e782"
+    },
+    {
+      "path": "tests/Dockerfile",
+      "size": 478,
+      "sha256": "f2fc82c1d147de1c99808cc3e6c634ee5044dfed36606109be235dfe008cfab7"
+    },
+    {
+      "path": "tests/data/filtered_gene_bc_matrices/hg19/barcodes.tsv",
+      "size": 45900,
+      "sha256": "58c2a224a2b4258f7e8799a18890bda6d23824b247b80db2b08a0dcc36a4c660"
+    },
+    {
+      "path": "tests/data/filtered_gene_bc_matrices/hg19/genes.tsv",
+      "size": 816952,
+      "sha256": "8778dd78085086be6dcafa8334f95f7cf76b25526e8ef2b63186db5127a1492c"
+    },
+    {
+      "path": "tests/data/filtered_gene_bc_matrices/hg19/matrix.mtx",
+      "size": 28179564,
+      "sha256": "7d92358b9d29128a225c50f2a662d6ccca9c71bc665e0af82692ed1361eb94e4"
+    },
+    {
+      "path": "tests/grade.py",
+      "size": 10735,
+      "sha256": "244f79a6683ff46f7df9dbdfcb011bc77b6e6f55f938824244bcc12199bdb455"
+    },
+    {
+      "path": "tests/test.sh",
+      "size": 1077,
+      "sha256": "5afc3c6be30a015c4d10480db332a8ef6b33a6d70e20fed62bcaa0f08ef79992"
+    }
+  ],
+  "packaging_revision": 1,
+  "operator_patches": [
+    {
+      "path": "task.toml",
+      "before_sha256": "fc5d0660111a697fa1c9b0cf70ddcf4008efc99694db9df224b242e96b0b65c6",
+      "replacement": "schema_version = \"1.2\"\n\nartifacts = [\"/output/pbmc3k_qc.h5ad\"]\n\n[task]\nname = \"biotasks/pbmc3k-qc-normalization\"\ndescription = \"QC, cell/gene filtering and library-size normalization of the 10x PBMC3k count matrix, emitted as an h5ad with raw counts preserved.\"\nauthors = []\nkeywords = [\"single-cell\", \"transcriptomics\", \"qc\", \"normalization\"]\n\n[metadata]\ndifficulty = \"medium\"\ncategory = \"bioinformatics\"\ntags = [\"scrna-seq\", \"qc\", \"normalization\", \"pbmc3k\"]\n\n[verifier]\ntimeout_sec = 300.0\nenvironment_mode = \"separate\"\n\n[verifier.environment]\nbuild_timeout_sec = 600.0\ncpus = 4\nmemory_mb = 8192\nstorage_mb = 10240\ngpus = 0\nallow_internet = false\nmcp_servers = []\n\n[agent]\ntimeout_sec = 300.0\n\n[environment]\nbuild_timeout_sec = 1200.0\ndocker_image = \"\"\ncpus = 4\nmemory_mb = 8192\nstorage_mb = 10240\ngpus = 0\nallow_internet = false\nmcp_servers = []\n\n[verifier.env]\n\n[environment.env]\n\n[solution.env]\n",
+      "reason": "Harbor requires org/name; deterministic metadata-only packaging correction by Codex."
+    }
+  ]
+}

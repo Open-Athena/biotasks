@@ -1,0 +1,103 @@
+{
+    "id": "0e86b0a2-97ec-4131-8546-57dcc2c2b47b",
+    "task_name": "task",
+    "trial_name": "task__FxSSzwd",
+    "trial_uri": "file:///app/jobs/scanpy-native-reference-001/task__FxSSzwd/attempts/000",
+    "trial_relpath": "task__FxSSzwd/attempts/000",
+    "task_id": {
+        "path": "/app/assembly-1/workspace/task"
+    },
+    "source": null,
+    "task_checksum": "",
+    "config": {
+        "task": {
+            "path": "/app/assembly-1/workspace/task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "task__FxSSzwd",
+        "trials_dir": "/app/jobs/scanpy-native-reference-001",
+        "artifact_authority": null,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "trial_attempt_timeout_sec": 1800.0,
+        "trial_cleanup_grace_sec": 30.0,
+        "resolved_timeouts": null,
+        "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "model_alias": null,
+            "skills": [],
+            "mode": "container",
+            "override_timeout_sec": 600.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": 600.0,
+            "kwargs": {},
+            "env": {},
+            "mcp_servers": [],
+            "upload_agent_logs": true
+        },
+        "user_agent": null,
+        "environment": {
+            "type": null,
+            "import_path": "retained_daytona:RetainedDaytona",
+            "force_build": false,
+            "delete": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {
+                "network_policy": {
+                    "mode": "block_all"
+                },
+                "auto_stop_interval_mins": 10
+            }
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "acae8b99-5783-4918-930e-da3097825ddb"
+    },
+    "agent_info": {
+        "name": "oracle",
+        "version": "unknown",
+        "model_info": null
+    },
+    "agent_result": null,
+    "verifier_result": null,
+    "exception_info": {
+        "exception_type": "ValidationError",
+        "exception_message": "1 validation error for TaskConfig\ntask.name\n  Value error, Package name must be in 'org/name' format with alphanumeric characters, hyphens, underscores, and dots. Cannot start with a dot or contain '..'. Got: pbmc3k-qc-normalization [type=value_error, input_value='pbmc3k-qc-normalization', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/queue.py\", line 380, in _run_admitted_attempt\n    result = await self._supervise_attempt(\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n    )\n    ^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/queue.py\", line 329, in _supervise_attempt\n    return await attempt_task\n           ^^^^^^^^^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/queue.py\", line 223, in _run_attempt_lifecycle\n    trial = await Trial.create(trial_config, attempt_index=attempt)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py\", line 201, in create\n    task = await cls._load_task(config)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py\", line 255, in _load_task\n    return Task(\n        task_dir=config.task.path,\n        extra_instruction_paths=config.extra_instruction_paths,\n        disable_verification=script_not_required,\n    )\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/models/task/task.py\", line 73, in __init__\n    self.config = TaskConfig.model_validate_toml(self.paths.config_path.read_text())\n                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor_config/models/task/config.py\", line 475, in model_validate_toml\n    return cls.model_validate(toml_dict)\n           ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/.venv/lib/python3.13/site-packages/pydantic/main.py\", line 732, in model_validate\n    return cls.__pydantic_validator__.validate_python(\n           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^\n        obj,\n        ^^^^\n    ...<5 lines>...\n        by_name=by_name,\n        ^^^^^^^^^^^^^^^^\n    )\n    ^\npydantic_core._pydantic_core.ValidationError: 1 validation error for TaskConfig\ntask.name\n  Value error, Package name must be in 'org/name' format with alphanumeric characters, hyphens, underscores, and dots. Cannot start with a dot or contain '..'. Got: pbmc3k-qc-normalization [type=value_error, input_value='pbmc3k-qc-normalization', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error\n",
+        "occurred_at": "2026-10-09T16:15:36.648956Z"
+    },
+    "secondary_exception_info": [],
+    "started_at": "2026-10-09T16:15:36.645032Z",
+    "finished_at": "2026-10-09T16:15:36.648282Z",
+    "environment_setup": null,
+    "agent_setup": null,
+    "agent_execution": null,
+    "verifier": null,
+    "step_results": null
+}

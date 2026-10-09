@@ -137,16 +137,32 @@ def main():
             )
             task_path = workspace / "task"
         if spec.get("authoring_sources"):
+            for patch in spec.get("operator_patches", []):
+                from restore_authoring import safe_path
+
+                path = safe_path(task_path, patch["path"])
+                if digest(path) != patch["before_sha256"]:
+                    raise ValueError("Operator patch source checksum mismatch")
+                path.write_text(patch["replacement"])
             actual = json.loads((workspace.parent / "assembly-manifest.json").read_text())[
                 "task_files"
             ]
+            for entry in actual:
+                path = task_path / entry["path"]
+                entry.update(sha256=digest(path), size=path.stat().st_size)
             expected_files = spec["expected_task_files"]
             if sorted(actual, key=lambda row: row["path"]) != sorted(
                 expected_files, key=lambda row: row["path"]
             ):
                 raise ValueError("Assembled task differs from reviewed candidate manifest")
             (records / "candidate-preflight.json").write_text(
-                json.dumps({"matches_reviewed_manifest": True, "files": len(actual)})
+                json.dumps(
+                    {
+                        "matches_reviewed_manifest": True,
+                        "task_files": actual,
+                        "operator_patches": spec.get("operator_patches", []),
+                    }
+                )
             )
         archive_path = root / "harbor.tar.gz"
         urllib.request.urlretrieve(
