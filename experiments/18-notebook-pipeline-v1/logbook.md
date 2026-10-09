@@ -1,0 +1,17 @@
+# Logbook
+
+## 2026-10-09 — source intake and harness inspection
+
+Started from main `2a1950d239f1ada467c35393991dac87debe35f7` on `codex/research/18-notebook-pipeline-v1`. Fetched the filed issue and preserved its body and initial source manifest. The user explicitly pointed to the existing free GLM-5.3 endpoint; read the node-level service guidance. No new model service or alternate harness was selected.
+
+Implemented offline, hash-addressed source intake and a packaged authoring prompt. All ten previously inspected source documents matched their issue SHA-256 values, and all ten authoring workspaces were prepared. This confirms source identity and supported parsing only. No source notebook code, biological analysis, authoring model, reference solution, grader or solver has run. There are zero generated tasks and zero attempts; `intake.json` preserves that distinction.
+
+The source cache and authoring workspaces are local temporary artifacts at `/tmp/biotasks-18-source-cache` and `/tmp/biotasks-18-intake-001`. They contain third-party notebook text whose redistribution has not been cleared. Preserve/re-fetch source bytes by pinned links and hashes; do not mistake these temporary paths for a durable public archive. The small intake result, source manifest, configuration and prompt are recorded on this branch. The generated local `index.html` is a preliminary intake viewer; full reuse of #17's task/trajectory components remains pending.
+
+Static harness inspection found ZCode's headless prompt/event output and custom OpenAI-chat provider schema. Harbor Pi runs inside the task sandbox and stages endpoint settings there. Offline task networking plus reachable, credential-isolated inference therefore needs an actual integration test. No evidence yet establishes this, or ZCode's compatibility with the selected endpoint. See `harness-inspection.md` for pinned public source links and remaining checks. Inspected revisions are preliminary runtime pins, not tested runtime versions.
+
+Validation: 12 tests passed, including source output stripping, hash mismatch rejection, missing-source denominator preservation, path traversal rejection, malformed notebook handling, prompt loading and clean-environment package installation. Ruff lint/format, ty, and pre-commit all passed. `checks.json` records commands, UTC start/end times, exit statuses and cumulative child peak RSS. Final checks ran 14:35:42–14:35:44 UTC, with peak child RSS 58,248 KiB. Expected local working set was under 200 MiB; all substantial commands used the nonblocking shared lock, one-thread settings and reduced priorities. Available memory remained approximately 4.7 GiB and one-minute load below 0.2 during checks. No owned workers remain.
+
+Two sandbox filesystem restrictions were resolved through normal elevated execution: shared Git ref creation and uv cache writes. These were not authentication failures. The first pytest command exited before test execution due to the uv cache restriction; the subsequent locked-environment checks passed. No credentials were requested or copied.
+
+Next: verify ZCode provider/model selection, context/output settings, auxiliary routing and trace capture against the existing service; set finite authoring/repair budgets; prove Pi inference connectivity with task egress denied; then author and natively validate one bedtools candidate. Keep the full panel and all original outcomes. The full issue, five-minute solver goal, separate verifier and effective resource enforcement remain unfinished.

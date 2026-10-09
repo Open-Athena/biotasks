@@ -22,6 +22,7 @@ Use a listed name without the `.md` extension.
 | --- | --- |
 | [find-units](../src/biotasks/prompts/find-units.md) | Inspect a repository for scientific units and associated datasets |
 | [author-task](../src/biotasks/prompts/author-task.md) | Propose and construct a task from selected source material |
+| [notebook-task-v1](../src/biotasks/prompts/notebook-task-v1.md) | Author a compact native Harbor task from a prepared notebook workspace; experimental, not scientifically validated |
 
 These are prompt assets, not implemented workflows. The CLI does not inspect
 repositories, render prompts, call models, orchestrate workers, execute reference
