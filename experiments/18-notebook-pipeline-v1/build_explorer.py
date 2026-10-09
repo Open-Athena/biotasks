@@ -42,7 +42,7 @@ def build(manifest, intake, output, campaign=None):
             raise ValueError("Evidence path escapes campaign directory")
         return path.read_text()
 
-    def authoring(run):
+    def authoring(run, stage):
         result = json.loads(evidence(run["result"]))
         requests = result.get("requests", [])
         usage = [r["usage"] for r in requests if r.get("usage")]
@@ -73,9 +73,12 @@ def build(manifest, intake, output, campaign=None):
             parts.append("<pre>" + html.escape(evidence(run["review"])) + "</pre>")
         if run.get("candidate"):
             files = json.loads(evidence(run["candidate"]))
-            parts.append(
-                f"<h3>Candidate version {run['candidate_version']} · unaccepted draft</h3>"
+            accepted = (
+                stage.get("accepted")
+                and stage.get("accepted_candidate_version") == run["candidate_version"]
             )
+            label = "native validated; see packaging revision" if accepted else "unaccepted draft"
+            parts.append(f"<h3>Candidate version {run['candidate_version']} · {label}</h3>")
             for name, content in files.items():
                 parts.append(
                     "<details><summary>"
@@ -88,6 +91,15 @@ def build(manifest, intake, output, campaign=None):
 
     def attempt(run):
         parts = ["<pre>" + html.escape(json.dumps(run, indent=2)) + "</pre>"]
+        for field, title in [("summary", "Attempt summary"), ("result", "Harbor result")]:
+            if run.get(field):
+                parts.append(
+                    "<details><summary>"
+                    + title
+                    + "</summary><pre>"
+                    + html.escape(evidence(run[field]))
+                    + "</pre></details>"
+                )
         if run.get("pi_trace"):
             path = (base / run["pi_trace"]).resolve()
             if not path.is_relative_to(base.resolve()):
@@ -129,8 +141,15 @@ def build(manifest, intake, output, campaign=None):
             f"<pre>{e(text)}</pre></details>"
             "<details><summary>Task</summary>"
             + (
-                "".join(authoring(run) for run in stage.get("authoring_runs", []))
+                "".join(authoring(run, stage) for run in stage.get("authoring_runs", []))
                 or "<p>No generated task. Authoring and scientific validation remain pending.</p>"
+            )
+            + (
+                "<h3>Acceptance and packaging record</h3><pre>"
+                + html.escape(evidence(stage["acceptance"]))
+                + "</pre>"
+                if stage.get("acceptance")
+                else ""
             )
             + "".join(validation(run) for run in stage.get("native_validations", []))
             + "</details><details><summary>Attempt</summary>"

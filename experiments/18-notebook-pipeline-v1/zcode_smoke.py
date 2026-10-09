@@ -361,9 +361,13 @@ def main():
         # Future repairs must distinguish deliberate deletions from omitted exports.
         # Preserve a complete final task-file inventory, including unchanged inputs.
         task_manifest = []
+        unsupported_paths = []
         for path in sorted((workspace / "task").rglob("*")):
             if path.is_symlink():
-                raise ValueError("Task symlinks are not supported by the artifact contract")
+                unsupported_paths.append(
+                    {"path": str(path.relative_to(workspace / "task")), "type": "symlink"}
+                )
+                continue
             if path.is_file():
                 task_manifest.append(
                     {
@@ -373,6 +377,8 @@ def main():
                     }
                 )
         artifacts["final-task-manifest.json"] = json.dumps(task_manifest)
+        artifacts["unsupported-task-paths.json"] = json.dumps(unsupported_paths)
+        result["candidate_has_unsupported_links"] = bool(unsupported_paths)
         artifacts["deleted-inputs.json"] = json.dumps(
             sorted(name for name in original_inputs if not (workspace / name).exists())
         )

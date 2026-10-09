@@ -1,0 +1,138 @@
+{
+    "id": "77c70831-2b3f-43e5-a491-ab719505aff4",
+    "task_name": "biotasks/pbmc3k-qc-normalization",
+    "trial_name": "task__5qEZUpm",
+    "trial_uri": "file:///app/jobs/scanpy-control-empty/task__5qEZUpm/attempts/000",
+    "trial_relpath": "task__5qEZUpm/attempts/000",
+    "task_id": {
+        "path": "/app/assembly-1/workspace/task"
+    },
+    "source": null,
+    "task_checksum": "4936d9fbc02e72f58b7f05f137b545d3bea8128f8b193ba157ce45099c8c317f",
+    "config": {
+        "task": {
+            "path": "/app/assembly-1/workspace/task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "task__5qEZUpm",
+        "trials_dir": "/app/jobs/scanpy-control-empty",
+        "artifact_authority": null,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "trial_attempt_timeout_sec": 1800.0,
+        "trial_cleanup_grace_sec": 30.0,
+        "resolved_timeouts": {
+            "agent": 60.0,
+            "verifier": 300.0,
+            "agent_setup": 60.0,
+            "environment_build": 1200.0,
+            "trial_attempt": 1800.0,
+            "trial_cleanup_grace": 30.0,
+            "steps": []
+        },
+        "agent": {
+            "name": null,
+            "import_path": "control_agent:ArtifactControlAgent",
+            "model_name": null,
+            "model_alias": null,
+            "skills": [],
+            "mode": "container",
+            "override_timeout_sec": 60.0,
+            "override_setup_timeout_sec": 60.0,
+            "max_timeout_sec": null,
+            "kwargs": {
+                "artifact_path": null,
+                "destination": "/output/pbmc3k_qc.h5ad"
+            },
+            "env": {},
+            "mcp_servers": [],
+            "upload_agent_logs": true
+        },
+        "user_agent": null,
+        "environment": {
+            "type": null,
+            "import_path": "retained_daytona:RetainedDaytona",
+            "force_build": false,
+            "delete": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {
+                "network_policy": {
+                    "mode": "block_all"
+                },
+                "auto_stop_interval_mins": 10
+            }
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "06c88778-338d-4444-83fe-2664895b009d"
+    },
+    "agent_info": {
+        "name": "artifact-control",
+        "version": "1",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": 0,
+        "n_cache_tokens": null,
+        "n_output_tokens": 0,
+        "cost_usd": 0.0,
+        "rollout_details": null,
+        "metadata": {
+            "stage": "control_submission",
+            "model_called": false,
+            "empty": true
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        },
+        "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/output/pbmc3k_qc.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/output/pbmc3k_qc.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/output/pbmc3k_qc.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/output/pbmc3k_qc.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    }\n  },\n  \"reward\": 0.0\n}\n",
+        "stderr": ""
+    },
+    "exception_info": null,
+    "secondary_exception_info": [],
+    "started_at": "2026-10-09T16:28:35.698376Z",
+    "finished_at": "2026-10-09T16:29:10.159559Z",
+    "environment_setup": {
+        "started_at": "2026-10-09T16:28:35.752991Z",
+        "finished_at": "2026-10-09T16:28:45.418464Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-09T16:28:45.418550Z",
+        "finished_at": "2026-10-09T16:28:45.418619Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-09T16:28:45.418675Z",
+        "finished_at": "2026-10-09T16:28:45.418738Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-09T16:28:54.099273Z",
+        "finished_at": "2026-10-09T16:29:10.159520Z"
+    },
+    "step_results": null
+}

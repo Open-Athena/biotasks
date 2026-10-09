@@ -1,0 +1,138 @@
+{
+    "id": "f3948eaf-c8f7-4178-b91d-f4ea4e0735c9",
+    "task_name": "biotasks/pbmc3k-qc-normalization",
+    "trial_name": "task__DEriDWt",
+    "trial_uri": "file:///app/jobs/scanpy-control-wrong-thresholds/task__DEriDWt/attempts/000",
+    "trial_relpath": "task__DEriDWt/attempts/000",
+    "task_id": {
+        "path": "/app/assembly-1/workspace/task"
+    },
+    "source": null,
+    "task_checksum": "4936d9fbc02e72f58b7f05f137b545d3bea8128f8b193ba157ce45099c8c317f",
+    "config": {
+        "task": {
+            "path": "/app/assembly-1/workspace/task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "task__DEriDWt",
+        "trials_dir": "/app/jobs/scanpy-control-wrong-thresholds",
+        "artifact_authority": null,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "trial_attempt_timeout_sec": 1800.0,
+        "trial_cleanup_grace_sec": 30.0,
+        "resolved_timeouts": {
+            "agent": 60.0,
+            "verifier": 300.0,
+            "agent_setup": 60.0,
+            "environment_build": 1200.0,
+            "trial_attempt": 1800.0,
+            "trial_cleanup_grace": 30.0,
+            "steps": []
+        },
+        "agent": {
+            "name": null,
+            "import_path": "control_agent:ArtifactControlAgent",
+            "model_name": null,
+            "model_alias": null,
+            "skills": [],
+            "mode": "container",
+            "override_timeout_sec": 60.0,
+            "override_setup_timeout_sec": 60.0,
+            "max_timeout_sec": null,
+            "kwargs": {
+                "artifact_path": "/app/assembly-1/workspace/controls/artifacts/wrong-thresholds.h5ad",
+                "destination": "/output/pbmc3k_qc.h5ad"
+            },
+            "env": {},
+            "mcp_servers": [],
+            "upload_agent_logs": true
+        },
+        "user_agent": null,
+        "environment": {
+            "type": null,
+            "import_path": "retained_daytona:RetainedDaytona",
+            "force_build": false,
+            "delete": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {
+                "network_policy": {
+                    "mode": "block_all"
+                },
+                "auto_stop_interval_mins": 10
+            }
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "cbe515bc-2ea7-4d26-a616-c4f9bad4988c"
+    },
+    "agent_info": {
+        "name": "artifact-control",
+        "version": "1",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": 0,
+        "n_cache_tokens": null,
+        "n_output_tokens": 0,
+        "cost_usd": 0.0,
+        "rollout_details": null,
+        "metadata": {
+            "stage": "control_submission",
+            "model_called": false,
+            "empty": false
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        },
+        "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"cells 2689 vs 2638 expected, genes 11139 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"dependency G1 failed\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    }\n  },\n  \"reward\": 0\n}\n",
+        "stderr": ""
+    },
+    "exception_info": null,
+    "secondary_exception_info": [],
+    "started_at": "2026-10-09T16:31:53.770661Z",
+    "finished_at": "2026-10-09T16:32:24.475619Z",
+    "environment_setup": {
+        "started_at": "2026-10-09T16:31:53.825629Z",
+        "finished_at": "2026-10-09T16:32:02.001088Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-09T16:32:02.001201Z",
+        "finished_at": "2026-10-09T16:32:02.001314Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-09T16:32:02.001387Z",
+        "finished_at": "2026-10-09T16:32:03.908221Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-09T16:32:07.218319Z",
+        "finished_at": "2026-10-09T16:32:24.475546Z"
+    },
+    "step_results": null
+}
