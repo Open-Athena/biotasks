@@ -77,7 +77,9 @@ def main():
         .url.rstrip("/")
     )
     os.environ["GLM_API_BASE"] = upstream if upstream.endswith("/v1") else upstream + "/v1"
-    secrets = [os.environ["GLM_BULK_TOKEN"], os.environ["DAYTONA_API_KEY"], upstream]
+    model_key = os.environ.pop("GLM_BULK_TOKEN")
+    daytona_key = os.environ.pop("DAYTONA_API_KEY")
+    secrets = [model_key, daytona_key, upstream]
     python = None
     outcome = {"stage": "harbor_pi_integration", "biological_task": False}
     started = time.monotonic()
@@ -190,6 +192,7 @@ def main():
             cwd=root,
             timeout=1900,
             log=records / "harbor-run.txt",
+            env=os.environ | {"GLM_BULK_TOKEN": model_key, "DAYTONA_API_KEY": daytona_key},
         )
         outcome["orchestration_finished"] = True
     except Exception as error:
@@ -241,6 +244,7 @@ def main():
                     cwd=root,
                     timeout=180,
                     log=records / "cleanup-log.txt",
+                    env=os.environ | {"DAYTONA_API_KEY": daytona_key},
                 )
             finally:
                 if (root / "cleanup.json").exists():

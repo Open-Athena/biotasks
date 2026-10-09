@@ -23,11 +23,14 @@ The simple offline intake viewer carries forward #17's Notebook → Task → Att
 
 `protocol.json` records selected constraints and inspected harness revisions, not a working launch configuration. `runtime_verified: false` is intentional. No network/resource enforcement is implemented by the intake tool. The authoring prompt describes the target contract; it cannot enforce it.
 
-## Next executable milestone
+## Current execution state
 
-1. Verify isolated, unattended ZCode authoring against the existing GLM-5.3 service, preserving event traces and pinning primary and auxiliary models. Choose finite generation/repair budgets before calling it.
-2. Establish Pi inference routing while task commands have no general network; prove denial with an executable probe. Inspect the pinned Harbor separate-verifier integration and resource accounting.
-3. Begin with the small bedtools seed, resolve input lineage/terms and methodological boundaries, and generate one candidate. Validate with native reference and scientific negative/partial controls before any baseline solve. Keep all ten seeds in the panel.
-4. Add task versions, stage records, timeout artifact recovery and real attempt data to the explorer. Extend to remaining seeds after the first complete path works.
+ZCode 0.16.9 from official release 3.14.5 successfully used the existing free GLM-5.3 service in a two-request infrastructure smoke; see `integration/zcode-smoke-001/`. The first bedtools conversion exhausted its 40-request authoring budget without producing a candidate. Its outcome and trace-retention limitation are recorded in `runs/author-bedtools-001/`. Scanpy authoring is the next original seed, using the staged observed PBMC3k counts and the exact context in `scanpy-intake-review.md`.
+
+`campaign-budget.json` bounds authoring, repairs, references, controls and solver attempts. `zcode_smoke.py` is the remote authoring worker despite its original smoke-oriented filename: it accepts a checkpointed `run-spec.json` and `inputs.zip`, routes all ZCode model calls to the selected model through a capped proxy, and preserves outputs and traces. Node-level service guidance supplies private access at launch; the worker receives no credential in its prompt.
+
+`harbor_worker.py` prepares pinned Harbor and Pi runtimes on remote CPU compute and runs the technical `integration/pi-offline-task/` fixture. `harbor_pi_remote.py` uses native Pi file/shell tools through `pi_remote.ts` and the tested Harbor transport in `biotasks.sandbox_tools`; inference stays outside the offline task. `retained_daytona.py` and `harbor_job.py` retain owned sandboxes until evidence has been exported and read-back verified, then delete only recorded owned IDs. The integration has not yet executed. It cannot count as a biological task or satisfy the required scientific success.
+
+Remaining milestones: prove offline Pi and separate-verifier execution, natively validate biological references and grading controls, obtain baseline attempts including at least one full biological success, give every original seed a documented disposition, extend the explorer to real task/attempt evidence, and preserve the final campaign artifacts and report. Ten prepared sources do not imply ten generated tasks.
 
 Model service use follows node-level guidance. Runtime endpoint addresses and credentials belong exclusively in private launcher state, never this experiment's public artifacts.
