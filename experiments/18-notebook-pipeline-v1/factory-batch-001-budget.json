@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "status": "bounded_first_factory_batch",
+  "rationale": "Apply factory-only development and full-panel versioned batch iteration; earlier supervised runs remain separately accounted.",
+  "maximum_batches": 1,
+  "seeds_per_batch": 10,
+  "maximum_new_sessions": 40,
+  "maximum_new_sessions_per_seed": 4,
+  "stages": [
+    "authoring",
+    "review",
+    "optional_repair",
+    "optional_review_after_repair"
+  ],
+  "maximum_model_requests_per_session": 40,
+  "maximum_output_tokens_per_request": 16384,
+  "session_wall_seconds": 1200,
+  "concurrency": 10,
+  "historical_sessions": 7,
+  "cumulative_session_ceiling": 47,
+  "cumulative_per_seed_ceiling": 6,
+  "automatic_retries": 0,
+  "automatic_restarts": 0,
+  "maximum_baselines": 10,
+  "solver_timeout_seconds": 300,
+  "resources": {
+    "cpus": 4,
+    "memory_mib": 8192,
+    "storage_mib": 10240,
+    "gpus": 0
+  },
+  "additional_factory_versions": "require a separately recorded finite execution plan; not automatically launched"
+}
