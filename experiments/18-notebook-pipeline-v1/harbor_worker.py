@@ -222,7 +222,12 @@ def main():
         )
     finally:
         outcome["seconds_before_export"] = round(time.monotonic() - started, 3)
-        for name in ["harbor-job.json", "harbor-result.json", "owned-sandboxes.jsonl"]:
+        for name in [
+            "harbor-job.json",
+            "harbor-result.json",
+            "owned-sandboxes.jsonl",
+            "sandbox-resources.jsonl",
+        ]:
             if (root / name).exists():
                 shutil.copyfile(root / name, records / name)
         if (root / "jobs").exists():

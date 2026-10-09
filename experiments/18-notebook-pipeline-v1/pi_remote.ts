@@ -6,12 +6,14 @@ import {
   createReadTool, createWriteTool, createEditTool, createBashTool,
   type ExtensionAPI,
 } from "@earendil-works/pi-coding-agent";
+import { mapRemotePath } from "./remote_paths.mjs";
 
 export default function (pi: ExtensionAPI) {
   const endpoint = process.env.BIOTASKS_TOOL_ENDPOINT;
   const token = process.env.BIOTASKS_TOOL_TOKEN;
   const cwd = process.env.BIOTASKS_REMOTE_CWD;
   if (!endpoint || !token || !cwd) throw new Error("Remote tool configuration required");
+  const remote = (path: string) => mapRemotePath(path, process.cwd(), cwd);
   const call = async (payload: object, signal?: AbortSignal) => {
     const response = await fetch(endpoint, {
       method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
@@ -22,19 +24,19 @@ export default function (pi: ExtensionAPI) {
     return result;
   };
   const read = {
-    readFile: async (path: string) => Buffer.from((await call({ operation: "read", path })).data, "base64"),
-    access: async (path: string) => { await call({ operation: "access", path }); },
+    readFile: async (path: string) => Buffer.from((await call({ operation: "read", path: remote(path) })).data, "base64"),
+    access: async (path: string) => { await call({ operation: "access", path: remote(path) }); },
     detectImageMimeType: async (_path: string) => null,
   };
   const write = {
     writeFile: async (path: string, content: string | Uint8Array) => {
-      await call({ operation: "write", path, data: Buffer.from(content).toString("base64") });
+      await call({ operation: "write", path: remote(path), data: Buffer.from(content).toString("base64") });
     },
-    mkdir: async (path: string) => { await call({ operation: "mkdir", path }); },
+    mkdir: async (path: string) => { await call({ operation: "mkdir", path: remote(path) }); },
   };
   const bash = {
     exec: async (command: string, workdir: string, options: any) => {
-      const result = await call({ operation: "bash", command, cwd: workdir,
+      const result = await call({ operation: "bash", command, cwd: remote(workdir),
         timeout: options.timeout ?? 120 }, options.signal);
       options.onData(Buffer.from(result.stdout + result.stderr));
       return { exitCode: result.exitCode };

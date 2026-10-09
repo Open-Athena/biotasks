@@ -47,9 +47,7 @@ def convert(path, session_id="notebook-pipeline-pi-glm53"):
             "message": text,
         }
         if msg.get("timestamp"):
-            step["timestamp"] = datetime.fromtimestamp(
-                msg["timestamp"] / 1000, UTC
-            ).isoformat()
+            step["timestamp"] = datetime.fromtimestamp(msg["timestamp"] / 1000, UTC).isoformat()
         if role == "assistant":
             step["reasoning_content"] = "\n\n".join(
                 p.get("thinking", "") for p in content if p.get("type") == "thinking"
@@ -74,7 +72,12 @@ def convert(path, session_id="notebook-pipeline-pi-glm53"):
                 "completion_tokens": usage.get("output", 0),
                 "cached_tokens": usage.get("cacheRead", 0),
             }
-            step["extra"] = {"pi_stop_reason": msg.get("stopReason")}
+            step["extra"] = {
+                "pi_stop_reason": msg.get("stopReason"),
+                "pi_error_message": msg.get("errorMessage"),
+            }
+            if msg.get("errorMessage"):
+                step["message"] = (text + "\n\n" if text else "") + msg["errorMessage"]
         steps.append(step)
     pending = [
         call_id

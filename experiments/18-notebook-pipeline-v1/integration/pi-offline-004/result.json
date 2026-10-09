@@ -1,0 +1,139 @@
+{
+    "id": "990a255d-f327-428a-98d0-6d4366118a99",
+    "task_name": "biotasks/pi-offline-integration",
+    "trial_name": "pi-offline-task__RsJSAzB",
+    "trial_uri": "file:///app/jobs/pi-offline-001/pi-offline-task__RsJSAzB/attempts/000",
+    "trial_relpath": "pi-offline-task__RsJSAzB/attempts/000",
+    "task_id": {
+        "path": "/app/pi-offline-task"
+    },
+    "source": null,
+    "task_checksum": "f829cd2a1813c7bb822d0798a770ed9a5d004506f602203b76b0ba4aeda7ae3f",
+    "config": {
+        "task": {
+            "path": "/app/pi-offline-task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "pi-offline-task__RsJSAzB",
+        "trials_dir": "/app/jobs/pi-offline-001",
+        "artifact_authority": null,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "trial_attempt_timeout_sec": 1800.0,
+        "trial_cleanup_grace_sec": 30.0,
+        "resolved_timeouts": {
+            "agent": 300.0,
+            "verifier": 60.0,
+            "agent_setup": 60.0,
+            "environment_build": 1200.0,
+            "trial_attempt": 1800.0,
+            "trial_cleanup_grace": 30.0,
+            "steps": []
+        },
+        "agent": {
+            "name": null,
+            "import_path": "harbor_pi_remote:PiRemoteAgent",
+            "model_name": "biotasks/glm-5.3",
+            "model_alias": null,
+            "skills": [],
+            "mode": "container",
+            "override_timeout_sec": null,
+            "override_setup_timeout_sec": 60.0,
+            "max_timeout_sec": 300.0,
+            "kwargs": {},
+            "env": {},
+            "mcp_servers": [],
+            "upload_agent_logs": true
+        },
+        "user_agent": null,
+        "environment": {
+            "type": null,
+            "import_path": "retained_daytona:RetainedDaytona",
+            "force_build": false,
+            "delete": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {
+                "network_policy": {
+                    "mode": "block_all"
+                },
+                "auto_stop_interval_mins": 10
+            }
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "836031e3-9cff-4489-bc6e-ef8f3cbed5bc"
+    },
+    "agent_info": {
+        "name": "pi-remote",
+        "version": "1.1.0",
+        "model_info": {
+            "name": "glm-5.3",
+            "provider": "biotasks"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 34323,
+        "n_cache_tokens": 30720,
+        "n_output_tokens": 3132,
+        "cost_usd": 0.0,
+        "rollout_details": null,
+        "metadata": {
+            "harness": "pi",
+            "version": "1.1.0",
+            "transport": "harbor-remote-tools",
+            "agent_seconds": 24.989888346288353,
+            "task_inference_credentials": false
+        }
+    },
+    "verifier_result": null,
+    "exception_info": {
+        "exception_type": "VerifierRuntimeError",
+        "exception_message": "Verifier test harness exited with code 127 and wrote no reward file; the grader crashed before scoring (e.g. the agent deleted the working directory or the test process was killed). Last verifier stdout: ...bash: line 1: /tests/test.sh: No such file or directory\n",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py\", line 280, in run\n    await self._run()\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/single_step.py\", line 43, in _run\n    await self._run_verifier()\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/single_step.py\", line 104, in _run_verifier\n    self.result.verifier_result = await self._run_separate_verifier(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<4 lines>...\n    )\n    ^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py\", line 807, in _run_separate_verifier\n    return await self._await_phase(\n           ^^^^^^^^^^^^^^^^^^^^^^^^\n    ...<5 lines>...\n    )\n    ^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py\", line 569, in _await_phase\n    return await task\n           ^^^^^^^^^^\n  File \"/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/verifier/verifier.py\", line 280, in verify\n    raise VerifierRuntimeError(\n    ...<4 lines>...\n    ) from None\nharbor.verifier.verifier.VerifierRuntimeError: Verifier test harness exited with code 127 and wrote no reward file; the grader crashed before scoring (e.g. the agent deleted the working directory or the test process was killed). Last verifier stdout: ...bash: line 1: /tests/test.sh: No such file or directory\n\n",
+        "occurred_at": "2026-10-09T15:48:45.067263"
+    },
+    "secondary_exception_info": [],
+    "started_at": "2026-10-09T15:47:40.033743Z",
+    "finished_at": "2026-10-09T15:48:45.067905Z",
+    "environment_setup": {
+        "started_at": "2026-10-09T15:47:40.047950Z",
+        "finished_at": "2026-10-09T15:47:41.788470Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-09T15:47:41.788543Z",
+        "finished_at": "2026-10-09T15:48:04.785283Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-09T15:48:04.785378Z",
+        "finished_at": "2026-10-09T15:48:29.779440Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-09T15:48:30.796693Z",
+        "finished_at": "2026-10-09T15:48:45.065264Z"
+    },
+    "step_results": null
+}

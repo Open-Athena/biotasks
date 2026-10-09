@@ -14,3 +14,5 @@ The full event export was recovered and checked against SHA-256 `441318b35359568
 6. Complete the validation plan and execute the deterministic grader against correct, partial, empty, wrong-threshold, corrupted-count/dependency, and same-shape-wrong-membership controls. Also test a correctly permuted artifact. Retain actual outputs and timings; no invented Harbor success. Native Harbor controls are still required afterward.
 
 Retain the biological objective, observed inputs and five-minute solver budget. This repair is driven by scientific/contract review before any baseline attempt, not by solver performance. The second authoring session is the last allowed for this seed under the initial campaign budget.
+
+7. Native Harbor integration established that separate verifier images must include an executable `/tests/test.sh`; Harbor does not supply it automatically in this mode. Ensure the tests Dockerfile installs that path, fixes grader/data paths consistently, and keeps these files out of the solver image. The v1 Dockerfile instead copied `/test.sh`, which would fail before scoring.
