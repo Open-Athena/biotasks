@@ -101,6 +101,17 @@ def build(manifest, intake, output, campaign=None):
             )
         return "".join(parts)
 
+    def validation(run):
+        return (
+            "<details><summary>Native validation · "
+            + html.escape(run["id"])
+            + "</summary><pre>"
+            + html.escape(evidence(run["summary"]))
+            + "</pre><details><summary>Harbor result</summary><pre>"
+            + html.escape(evidence(run["result"]))
+            + "</pre></details></details>"
+        )
+
     cards = []
     for seed in seeds:
         row = records[seed["id"]]
@@ -121,6 +132,7 @@ def build(manifest, intake, output, campaign=None):
                 "".join(authoring(run) for run in stage.get("authoring_runs", []))
                 or "<p>No generated task. Authoring and scientific validation remain pending.</p>"
             )
+            + "".join(validation(run) for run in stage.get("native_validations", []))
             + "</details><details><summary>Attempt</summary>"
             + (
                 "".join(attempt(run) for run in stage["solver_attempts"])

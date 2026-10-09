@@ -12,6 +12,11 @@ seed's native ecosystem for the reference; a second-language reference is option
 
 Produce `task/instruction.md`, `task/task.toml`, `task/environment/`,
 `task/solution/solve.sh`, and `task/tests/test.sh` in the pinned Harbor format.
+Use schema version `1.2` and a qualified `[task].name` such as
+`biotasks/my-task`. Use a separate verifier environment with its own
+`task/tests/Dockerfile`; that image must contain executable `/tests/test.sh`
+and every dependency, input and grading asset it needs. Merely placing the script
+in the task directory does not install it into the separate verifier image.
 Keep reference outputs, seed sources, authoring traces and tests out of the solver
 image. Build only from the environment directory; never copy the whole authoring
 workspace into the image. Stage all biological inputs, dependencies and necessary
