@@ -55,6 +55,9 @@ def build(manifest, intake, output, campaign=None):
             "outcome": result.get("outcome", "see review"),
             "exit_code": result.get("exit_code"),
             "seconds": result.get("elapsed_seconds"),
+            "peak_child_rss_kib": result.get("peak_child_rss_kib"),
+            "author_resources_before": result.get("author_resources_before"),
+            "author_resources_after": result.get("author_resources_after"),
             "model_requests": len(requests),
             "requests_with_usage": len(usage),
             "recorded_input_tokens": sum(u.get("prompt_tokens", 0) for u in usage)
@@ -94,7 +97,14 @@ def build(manifest, intake, output, campaign=None):
 
     def attempt(run):
         parts = ["<pre>" + html.escape(json.dumps(run, indent=2)) + "</pre>"]
-        for field, title in [("summary", "Attempt summary"), ("result", "Harbor result")]:
+        for field, title in [
+            ("summary", "Attempt summary"),
+            ("grade", "Scientific subgoal grades"),
+            ("resources", "Recorded sandbox resources"),
+            ("network", "Network and isolation evidence"),
+            ("packages", "Installed package manifest"),
+            ("result", "Harbor result"),
+        ]:
             if run.get(field):
                 parts.append(
                     "<details><summary>"

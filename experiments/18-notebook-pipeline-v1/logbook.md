@@ -117,3 +117,7 @@ Published a 15494110-byte archive and its manifest to the manifest-hash HF prefi
 ## 2026-10-09 — requirements audit and package measurements
 
 The completion audit confirms the full ten-seed scope remains open. It also found that the first accepted Scanpy baseline preserved its direct package pins and host runtime package list but not the complete solver/verifier installed-package inventories. Future retained Daytona environments now collect Python distributions, OS packages and R packages when R is present, plus explicitly non-peak filesystem usage at start/stop. A local script smoke passed; remote execution remains unverified. Earlier missing measurements cannot be filled by pretending a later environment is the same historical instance.
+
+The explorer now exposes the baseline's scientific subgoal grades, sandbox resource records and network evidence directly, alongside the aggregate result and trajectory. Author summaries include captured RSS and before/after resource probes, with unavailable values retained as null. The new HTML passed a structural presence check; the earlier browser receipt remains tied to its original HTML hash.
+
+Added a separately named, checksummed author-exit text checkpoint before object-storage export. It preserves diagnostics and small task source files without claiming that binary inputs/intermediates have been fully archived. A synthetic round-trip test verified chunk/hash integrity and redaction. The current COBRApy job predates this change and is still observed using its original handle; it has not been restarted.

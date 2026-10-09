@@ -44,6 +44,22 @@ def stop_on_budget_rejection(process, rejected, wall_seconds):
         pass
 
 
+def emit_text_archive(artifacts, token, upstream, prefix):
+    """Preserve a separately named, checksummed text checkpoint in job logs."""
+    encoded = json.dumps(artifacts).replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]")
+    packed = gzip.compress(encoded.encode())
+    export = base64.b64encode(packed).decode()
+    pieces = [export[i : i + 6000] for i in range(0, len(export), 6000)]
+    print(
+        prefix
+        + "_ARCHIVE "
+        + json.dumps({"chunks": len(pieces), "sha256": hashlib.sha256(packed).hexdigest()}),
+        flush=True,
+    )
+    for index, piece in enumerate(pieces):
+        print(f"{prefix}_CHUNK {index} {piece}", flush=True)
+
+
 def resource_snapshot():
     """Observe the author host; allocation requests alone do not prove limits."""
     values = {}
@@ -366,6 +382,29 @@ def main():
         "zcode-events.jsonl": (root / "zcode-events.jsonl").read_text(errors="replace"),
         "zcode-stderr.txt": (root / "zcode-stderr.txt").read_text(errors="replace"),
     }
+    # Preserve diagnostics independently of the subsequent object-storage export.
+    # This is explicitly incomplete: binary inputs and scientific intermediates
+    # still require the full export and its manifest below.
+    early = artifacts | {
+        "checkpoint-scope.json": json.dumps(
+            {"stage": "author_exit_text_checkpoint", "complete_artifact_export": False}
+        )
+    }
+    for path in (workspace / "task").rglob("*"):
+        if (
+            path.is_file()
+            and not path.is_symlink()
+            and path.resolve().is_relative_to(workspace.resolve())
+            and (
+                path.suffix in {".md", ".py", ".sh", ".toml", ".json", ".R"}
+                or path.name == "Dockerfile"
+            )
+            and path.stat().st_size < 256 * 1024
+        ):
+            early["workspace/" + str(path.relative_to(workspace))] = path.read_text(
+                errors="replace"
+            )
+    emit_text_archive(early, token, upstream, "BIOTASKS_AUTHOR_EARLY")
     if stage != "harness_smoke":
         # Preserve all generated task files in private object storage, including binary inputs.
         # Original inputs are separately archived. Preserve scientific intermediates too.
@@ -445,18 +484,8 @@ def main():
             with fsspec.open(prefix + "/records/" + name, "wt").open() as dst:
                 dst.write(clean)
     # Only explicitly selected artifacts; no provider config, environment or credentials.
-    encoded = json.dumps(artifacts).replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]")
     print("BIOTASKS_SMOKE_RESULT " + json.dumps(result), flush=True)
-    packed = gzip.compress(encoded.encode())
-    export = base64.b64encode(packed).decode()
-    pieces = [export[i : i + 6000] for i in range(0, len(export), 6000)]
-    print(
-        "BIOTASKS_SMOKE_ARCHIVE "
-        + json.dumps({"chunks": len(pieces), "sha256": hashlib.sha256(packed).hexdigest()}),
-        flush=True,
-    )
-    for index, piece in enumerate(pieces):
-        print(f"BIOTASKS_SMOKE_CHUNK {index} {piece}", flush=True)
+    emit_text_archive(artifacts, token, upstream, "BIOTASKS_SMOKE")
 
 
 if __name__ == "__main__":
