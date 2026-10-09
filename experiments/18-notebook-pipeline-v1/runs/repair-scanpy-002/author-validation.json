@@ -1,0 +1,267 @@
+[
+  {
+    "case": "reference",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 1.067,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": true,\n      \"detail\": \"max metric deviation 4.77e-07\"\n    },\n    \"G3\": {\n      \"counts_lineage\": true,\n      \"detail\": \"max counts deviation 0 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": true,\n      \"detail\": \"max X deviation 4.77e-07 (tolerance 0.0001)\"\n    }\n  },\n  \"reward\": 1.0\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 1.0,
+    "subgoals": {
+      "G1": true,
+      "G2": true,
+      "G3": true,
+      "G4": true
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "max metric deviation 4.77e-07",
+      "G3": "max counts deviation 0 over 2638x13714",
+      "G4": "max X deviation 4.77e-07 (tolerance 0.0001)"
+    },
+    "expected_reward": 1.0,
+    "pass": true
+  },
+  {
+    "case": "correct",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 1.042,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": true,\n      \"detail\": \"max metric deviation 4.77e-07\"\n    },\n    \"G3\": {\n      \"counts_lineage\": true,\n      \"detail\": \"max counts deviation 0 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": true,\n      \"detail\": \"max X deviation 4.77e-07 (tolerance 0.0001)\"\n    }\n  },\n  \"reward\": 1.0\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 1.0,
+    "subgoals": {
+      "G1": true,
+      "G2": true,
+      "G3": true,
+      "G4": true
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "max metric deviation 4.77e-07",
+      "G3": "max counts deviation 0 over 2638x13714",
+      "G4": "max X deviation 4.77e-07 (tolerance 0.0001)"
+    },
+    "expected_reward": 1.0,
+    "pass": true
+  },
+  {
+    "case": "permuted",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 1.083,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": true,\n      \"detail\": \"max metric deviation 4.77e-07\"\n    },\n    \"G3\": {\n      \"counts_lineage\": true,\n      \"detail\": \"max counts deviation 0 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": true,\n      \"detail\": \"max X deviation 4.77e-07 (tolerance 0.0001)\"\n    }\n  },\n  \"reward\": 1.0\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 1.0,
+    "subgoals": {
+      "G1": true,
+      "G2": true,
+      "G3": true,
+      "G4": true
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "max metric deviation 4.77e-07",
+      "G3": "max counts deviation 0 over 2638x13714",
+      "G4": "max X deviation 4.77e-07 (tolerance 0.0001)"
+    },
+    "expected_reward": 1.0,
+    "pass": true
+  },
+  {
+    "case": "partial-no-log1p",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 1.116,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": true,\n      \"detail\": \"max metric deviation 4.77e-07\"\n    },\n    \"G3\": {\n      \"counts_lineage\": true,\n      \"detail\": \"max counts deviation 0 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"max X deviation 1.75e+03 (tolerance 0.0001)\"\n    }\n  },\n  \"reward\": 0.7\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 0.7,
+    "subgoals": {
+      "G1": true,
+      "G2": true,
+      "G3": true,
+      "G4": false
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "max metric deviation 4.77e-07",
+      "G3": "max counts deviation 0 over 2638x13714",
+      "G4": "max X deviation 1.75e+03 (tolerance 0.0001)"
+    },
+    "expected_reward": 0.7,
+    "pass": true
+  },
+  {
+    "case": "wrong-thresholds",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.968,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"cells 2689 vs 2638 expected, genes 11139 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"dependency G1 failed\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    }\n  },\n  \"reward\": 0\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "cells 2689 vs 2638 expected, genes 11139 vs 13714 expected",
+      "G2": "dependency G1 or G3 failed",
+      "G3": "dependency G1 failed",
+      "G4": "dependency G1 or G3 failed"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "same-shape-wrong-membership",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.957,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"dependency G1 failed\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    }\n  },\n  \"reward\": 0\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "dependency G1 or G3 failed",
+      "G3": "dependency G1 failed",
+      "G4": "dependency G1 or G3 failed"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "dependency-violation",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 1.002,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"max counts deviation 7 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"dependency G1 or G3 failed\"\n    }\n  },\n  \"reward\": 0.2\n}\n",
+    "stderr": "to `False` in v1.20.\n             That means the default return type will be a sparse array.\n             Unless you use * instead of @, ** for matrix power, or you depend\n             on 2D shapes from e.g. `A.sum(axis=0)` it may not matter to you.\n             See the spmatrix to sparray migration guide for details.\n             https://docs.scipy.org/doc/scipy/reference/sparse.migration_to_sparray.html\n             \n  raw_gc = scipy.io.mmread(f\"{RAW_DIR}/matrix.mtx\").tocsr()  # genes x cells\n",
+    "reward": 0.2,
+    "subgoals": {
+      "G1": true,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "cells 2638 vs 2638 expected, genes 13714 vs 13714 expected",
+      "G2": "dependency G1 or G3 failed",
+      "G3": "max counts deviation 7 over 2638x13714",
+      "G4": "dependency G1 or G3 failed"
+    },
+    "expected_reward": 0.2,
+    "pass": true
+  },
+  {
+    "case": "missing-counts-layer",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.73,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"missing counts layer\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"missing counts layer\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"missing counts layer\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"missing counts layer\"\n    }\n  },\n  \"reward\": 0.0\n}\n",
+    "stderr": "",
+    "reward": 0.0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "missing counts layer",
+      "G2": "missing counts layer",
+      "G3": "missing counts layer",
+      "G4": "missing counts layer"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "nonfinite-counts",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.797,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"nonfinite value in counts layer\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"nonfinite value in counts layer\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"nonfinite value in counts layer\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"nonfinite value in counts layer\"\n    }\n  },\n  \"reward\": 0.0\n}\n",
+    "stderr": "",
+    "reward": 0.0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "nonfinite value in counts layer",
+      "G2": "nonfinite value in counts layer",
+      "G3": "nonfinite value in counts layer",
+      "G4": "nonfinite value in counts layer"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "malformed",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.611,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"artifact unreadable: Unable to synchronously open file (file signature not found)\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"artifact unreadable: Unable to synchronously open file (file signature not found)\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"artifact unreadable: Unable to synchronously open file (file signature not found)\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"artifact unreadable: Unable to synchronously open file (file signature not found)\"\n    }\n  },\n  \"reward\": 0.0\n}\n",
+    "stderr": "",
+    "reward": 0.0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "artifact unreadable: Unable to synchronously open file (file signature not found)",
+      "G2": "artifact unreadable: Unable to synchronously open file (file signature not found)",
+      "G3": "artifact unreadable: Unable to synchronously open file (file signature not found)",
+      "G4": "artifact unreadable: Unable to synchronously open file (file signature not found)"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "empty-missing-file",
+    "exit_code": 0,
+    "expected_exit_code": 0,
+    "seconds": 0.604,
+    "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G2\": {\n      \"qc_metrics\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G3\": {\n      \"counts_lineage\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    },\n    \"G4\": {\n      \"normalization\": false,\n      \"detail\": \"artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)\"\n    }\n  },\n  \"reward\": 0.0\n}\n",
+    "stderr": "",
+    "reward": 0.0,
+    "subgoals": {
+      "G1": false,
+      "G2": false,
+      "G3": false,
+      "G4": false
+    },
+    "details": {
+      "G1": "artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)",
+      "G2": "artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)",
+      "G3": "artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)",
+      "G4": "artifact unreadable: [Errno 2] Unable to synchronously open file (unable to open file: name = '/app/author-workspace/controls/artifacts/does-not-exist.h5ad', errno = 2, error message = 'No such file or directory', flags = 0, o_flags = 0)"
+    },
+    "expected_reward": 0.0,
+    "pass": true
+  },
+  {
+    "case": "verifier-raw-input-missing",
+    "exit_code": 3,
+    "expected_exit_code": 3,
+    "seconds": 0.613,
+    "stdout": "",
+    "stderr": "VERIFIER FAILURE: raw input missing: /app/author-workspace/controls/no-such-raw/matrix.mtx\n",
+    "reward": null,
+    "subgoals": null,
+    "expected_reward": null,
+    "pass": true
+  }
+]

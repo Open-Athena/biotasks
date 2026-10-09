@@ -83,6 +83,11 @@ def command(args, *, cwd, timeout, log, env=None):
 
 def main():
     root = Path.cwd()
+    spec = (
+        json.loads((root / "run-spec.json").read_text())
+        if (root / "run-spec.json").exists()
+        else {}
+    )
     records = root / "records"
     records.mkdir()
     owned = root / "owned-sandboxes.jsonl"
@@ -99,9 +104,12 @@ def main():
     os.environ["GLM_API_BASE"] = upstream if upstream.endswith("/v1") else upstream + "/v1"
     model_key = os.environ.pop("GLM_BULK_TOKEN")
     daytona_key = os.environ.pop("DAYTONA_API_KEY")
-    secrets = [model_key, daytona_key, upstream]
+    secrets = [model_key, daytona_key, upstream, prefix]
     python = None
-    outcome = {"stage": "harbor_pi_integration", "biological_task": False}
+    outcome = {
+        "stage": spec.get("stage", "harbor_pi_integration"),
+        "biological_task": bool(spec.get("authoring_sources")),
+    }
     started = time.monotonic()
     try:
         with zipfile.ZipFile(root / "harbor-input.zip") as archive:
@@ -109,6 +117,37 @@ def main():
                 if not (root / member.filename).resolve().is_relative_to(root):
                     raise ValueError("Unsafe input path")
             archive.extractall(root)
+        task_path = root / "pi-offline-task"
+        workspace = None
+        for index, source in enumerate(spec.get("authoring_sources", [])):
+            from restore_authoring import restore
+
+            source_prefix = os.environ.pop(f"BIOTASKS_SOURCE_{index}")
+            secrets.append(source_prefix)
+            workspace = restore(
+                lambda uri, mode: fsspec.open(uri, mode).open(),
+                source_prefix,
+                root / f"assembly-{index}",
+                source["input_sha256"],
+                source["generated_manifest"],
+                workspace,
+            )
+            shutil.copyfile(
+                workspace.parent / "assembly-manifest.json", records / f"assembly-{index}.json"
+            )
+            task_path = workspace / "task"
+        if spec.get("authoring_sources"):
+            actual = json.loads((workspace.parent / "assembly-manifest.json").read_text())[
+                "task_files"
+            ]
+            expected_files = spec["expected_task_files"]
+            if sorted(actual, key=lambda row: row["path"]) != sorted(
+                expected_files, key=lambda row: row["path"]
+            ):
+                raise ValueError("Assembled task differs from reviewed candidate manifest")
+            (records / "candidate-preflight.json").write_text(
+                json.dumps({"matches_reviewed_manifest": True, "files": len(actual)})
+            )
         archive_path = root / "harbor.tar.gz"
         urllib.request.urlretrieve(
             f"https://codeload.github.com/marin-community/harbor/tar.gz/{HARBOR_REVISION}",
@@ -172,7 +211,7 @@ def main():
         (root / "node_modules").symlink_to(pi / "node_modules", target_is_directory=True)
         os.environ["PYTHONPATH"] = str(root)
         config = {
-            "job_name": "pi-offline-001",
+            "job_name": spec.get("name", "pi-offline-001"),
             "jobs_dir": str(root / "jobs"),
             "n_attempts": 1,
             "n_concurrent_trials": 1,
@@ -192,8 +231,29 @@ def main():
                     "override_setup_timeout_sec": 60,
                 }
             ],
-            "tasks": [{"path": str(root / "pi-offline-task")}],
+            "tasks": [{"path": str(task_path)}],
         }
+        if spec.get("agent"):
+            config["agents"] = [spec["agent"]]
+        if spec.get("stage") == "native_control":
+            if workspace is None:
+                raise ValueError("Control requires a preserved candidate")
+            artifact = spec.get("control_artifact")
+            if artifact is not None:
+                from restore_authoring import safe_path
+
+                artifact = str(safe_path(workspace, artifact))
+            config["agents"] = [
+                {
+                    "import_path": "control_agent:ArtifactControlAgent",
+                    "override_timeout_sec": 60,
+                    "override_setup_timeout_sec": 60,
+                    "kwargs": {
+                        "artifact_path": artifact,
+                        "destination": spec["control_destination"],
+                    },
+                }
+            ]
         (root / "harbor-job.json").write_text(json.dumps(config, indent=2))
         (records / "pins.json").write_text(
             json.dumps(
@@ -227,6 +287,7 @@ def main():
             "harbor-result.json",
             "owned-sandboxes.jsonl",
             "sandbox-resources.jsonl",
+            "network-preflights.jsonl",
         ]:
             if (root / name).exists():
                 shutil.copyfile(root / name, records / name)

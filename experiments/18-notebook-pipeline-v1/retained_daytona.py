@@ -12,6 +12,22 @@ class RetainedDaytona(DaytonaEnvironment):
     async def start(self, force_build):
         try:
             await super().start(force_build)
+            probe = Path(__file__).with_name("network_probe.py").read_text()
+            result = await self.exec(command="python3 -c " + shlex.quote(probe), timeout_sec=30)
+            if result.return_code:
+                raise RuntimeError("Environment network/resource probe failed")
+            evidence = json.loads(result.stdout)
+            path = Path(os.environ["BIOTASKS_OWNED_SANDBOXES"]).with_name(
+                "network-preflights.jsonl"
+            )
+            with path.open("a") as out:
+                out.write(json.dumps({"id": self._sandbox.id, **evidence}) + "\n")
+            if (
+                not evidence["network_denied"]
+                or evidence["inference_credentials_present"]
+                or evidence["gpu_devices"]
+            ):
+                raise RuntimeError("Environment isolation preflight failed")
         finally:
             if self._sandbox is not None:
                 path = Path(os.environ["BIOTASKS_OWNED_SANDBOXES"])
