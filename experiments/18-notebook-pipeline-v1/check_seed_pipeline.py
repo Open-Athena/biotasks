@@ -4,6 +4,7 @@ import json
 import shutil
 import sys
 import tempfile
+import time
 import types
 import unittest
 from pathlib import Path
@@ -107,6 +108,33 @@ class SimulatedPipeline(SeedPipeline):
 
 
 class PipelineChecks(unittest.TestCase):
+    def test_native_worker_imports_helpers_from_its_stage_directory(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "inputs.zip").write_bytes(b"fixture")
+            (root / "harbor-input.zip").write_bytes(b"fixture")
+            (root / "harbor_worker.py").write_text(
+                "from pathlib import Path\n"
+                "Path('native_fixture_helper.py').write_text('value = 42\\n')\n"
+                "import native_fixture_helper\n"
+                "assert native_fixture_helper.value == 42\n"
+                "Path('records').mkdir()\n"
+                "Path('records/outcome.json').write_text('{\"orchestration_finished\": true}')\n"
+            )
+            parent = root / "construction"
+            write_json(parent / "run-spec.json", {"input_zip_sha256": "a" * 64})
+            for name in ("artifact-manifest.json", "deleted-inputs.json", "final-task-manifest.json"):
+                write_json(parent / "records" / name, [])
+            pipeline = SimulatedPipeline(root)
+            pipeline.started = time.monotonic()
+            pipeline.prefix = "s3://test/fixture"
+            pipeline.stages = []
+            pipeline.plan.update(factory_revision="a" * 40, seed_timeout_seconds=7200,
+                                 native_limits={"maximum_trials": 7})
+            records = SeedPipeline.harbor(pipeline, "native_after_construction", "construction")
+            self.assertTrue((records / "outcome.json").is_file())
+            self.assertEqual(pipeline.stages[-1]["status"], "finished")
+
     def run_case(self, reject=False, defect=False):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

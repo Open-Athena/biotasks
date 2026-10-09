@@ -32,7 +32,8 @@ specified proposal include:
   and `depends_on` (IDs of earlier subgoals). Weights sum to one. Describe checks
   of scientific results, not merely file existence. Explain dependencies without
   accidentally counting one error repeatedly.
-- `reference_ecosystem`: the source's native software and version evidence.
+- `reference_ecosystem`: a nonempty string describing the source's native
+  software and version evidence. This field must not be an object or array.
 - `validation_strategy`: how correct, empty, partial and scientifically wrong
   submissions and dependency violations will be checked deterministically.
 - `runtime_rationale`: why the solver computation can plausibly fit five minutes.
@@ -42,3 +43,17 @@ Do not invent numerical answers, data provenance, licensing permission or
 execution results. Reject an unsuitable source with evidence in the rationale.
 A specified proposal is not scientific acceptance or successful execution.
 Write this artifact and stop; construction and verification have separate stages.
+
+Before finishing, parse your written JSON and check this exact interface. All
+top-level fields below are required for a specified proposal. Use strings for
+`objective`, `rationale`, `reference_ecosystem`, `validation_strategy`, and
+`runtime_rationale`; lists of nonempty strings for `methodology` and
+`evidence_paths`; and a list of strings, possibly empty, for `unresolved`.
+Every evidence path must name an existing workspace file, including when rejecting
+a seed. Each input is an object with string `path`, `identity`, `origin`, and
+`preparation`. Each deliverable has string `path` (absolute) and `description`.
+Each subgoal has string `id` and `description`, numeric `weight`, and list
+`depends_on`. Do not substitute nested objects for these string fields. A rejected
+proposal still requires `schema_version`, `status`, `source_sha256`, `rationale`,
+and `evidence_paths`. Correct any interface errors within this stage's existing
+turn and time limits; do not claim completion merely because a JSON file exists.

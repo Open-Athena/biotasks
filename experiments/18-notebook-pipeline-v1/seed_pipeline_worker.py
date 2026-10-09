@@ -186,6 +186,9 @@ class SeedPipeline:
         }
         bundle = self.root / "harbor-input.zip"
         shutil.copyfile(bundle, directory / bundle.name)
+        # Python resolves sibling imports from the script's directory, not cwd.
+        # The Harbor bundle extracts its helpers into this stage directory.
+        shutil.copyfile(self.root / "harbor_worker.py", directory / "harbor_worker.py")
         spec = {
             "name": slot,
             "stage": "baseline" if slot == "baseline" else "native_suite",
@@ -209,7 +212,7 @@ class SeedPipeline:
             if slot == "baseline"
             else self.plan["native_limits"]["maximum_trials"] * 2100 + 1200
         )
-        self.command([sys.executable, str(self.root / "harbor_worker.py")], directory, seconds, env)
+        self.command([sys.executable, str(directory / "harbor_worker.py")], directory, seconds, env)
         outcome = json.loads((directory / "records/outcome.json").read_text())
         if not outcome.get("orchestration_finished"):
             raise RuntimeError("Harbor worker did not complete; preserve infrastructure outcome")
