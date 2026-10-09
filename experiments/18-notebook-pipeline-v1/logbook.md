@@ -107,3 +107,9 @@ Added a reproducible campaign summary that retains all ten original seeds, separ
 COBRApy's existing first session remains live after its fortieth model response. Its exact cause is not yet known from exported logs; do not restart or count it as terminal. Future author workers terminate their own process group after a rejected over-budget request, with a recorded rejection flag, instead of relying solely on the harness to exit. An isolated subprocess test exercised this termination and harmless handling of an already-completed process. This change does not modify the running session or extend its budget.
 
 Retrieved the ten pinned repositories' source license declarations and checked the public HF bucket's current visibility and size. Artifact-specific eligibility review remains in progress; no public upload has occurred. Repository declarations alone do not settle every external data asset's provenance or terms.
+
+## 2026-10-09 — first public Scanpy snapshot
+
+Reconstructed all 15 accepted task files from the pinned input archive and preserved candidate text plus the recorded packaging correction; all sizes and hashes match acceptance. Rechecked the 10x origin page's CC BY 4.0 statement. The explicit allowlist includes the task, attribution/notices, native validation summaries, deterministic grade, complete recovered Pi event stream and compact ATIF trace. Known runtime credentials and private service-location strings were absent from every staged file.
+
+Published a 15494110-byte archive and its manifest to the manifest-hash HF prefix in `scanpy-upload-receipt.json`, refusing an existing prefix. A fresh anonymous download matched both object hashes and all 30 archive members. Peak upload/read-back RSS was 89664 KiB. This is deliberately a partial snapshot: the submitted H5AD, authoring intermediates and remaining seeds still need final archival. No issue completion or task-release claim follows from this upload.

@@ -1,6 +1,6 @@
 # Public archive review in progress
 
-The destination is the existing public `open-athena/biotasks` bucket. `bucket-preflight.json` records a read-only visibility and size check using huggingface_hub 1.33.0. No files have been uploaded for this experiment. Follow [the repository storage convention](../../docs/storage.md) and the [official bucket API documentation](https://huggingface.co/docs/huggingface_hub/guides/buckets): use an explicit file allowlist, an append-only manifest-hash prefix, and fresh anonymous download verification.
+The destination is the existing public `open-athena/biotasks` bucket. `bucket-preflight.json` records a read-only visibility and size check using huggingface_hub 1.33.0. The first accepted Scanpy snapshot has now been uploaded and verified through a fresh anonymous download; see `scanpy-upload-receipt.json`. All 30 archive-member hashes, including its manifest, match. This is a partial campaign archive with explicit exclusions. Follow [the repository storage convention](../../docs/storage.md) and the [official bucket API documentation](https://huggingface.co/docs/huggingface_hub/guides/buckets): use an explicit file allowlist, an append-only manifest-hash prefix, and fresh anonymous download verification.
 
 `source-terms-evidence.json` pins repository declarations and their exact bytes under `source-terms/`. These declarations support source review; they do not automatically clear every external biological dataset or generated derivative.
 

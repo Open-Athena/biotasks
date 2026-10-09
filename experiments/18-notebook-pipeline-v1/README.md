@@ -36,3 +36,5 @@ Remaining milestones: complete the other original seeds and baseline attempts fo
 Model service use follows node-level guidance. Runtime endpoint addresses and credentials belong exclusively in private launcher state, never this experiment's public artifacts.
 
 Author workers now restrict inherited CPU affinity to at most four CPUs. Earlier resource probes established memory enforcement but revealed an unlimited CPU cgroup quota; their allocation requests do not prove compliance. Disk-quota enforcement remains unresolved. See `author-affinity-check.json` for a local inheritance check; remote probes remain authoritative.
+
+The first accepted Scanpy task and recovered Pi trace are publicly archived under `hf://buckets/open-athena/biotasks/research/18-notebook-pipeline-v1/2026-10-09/9eedb0542de5346b2f5e5cec7752604469980a94985193b39b745a322068038b/`. `scanpy-snapshot-manifest.json` freezes the allowlist; `scanpy-upload-receipt.json` records anonymous download and all-member hash verification. This snapshot excludes other seeds, authoring intermediates and the submitted H5AD; the final campaign archive remains pending.
