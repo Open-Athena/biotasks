@@ -125,3 +125,5 @@ Added a separately named, checksummed author-exit text checkpoint before object-
 ## 2026-10-09 — COBRApy first session execution timeout
 
 The original job reached terminal FAILED with an execution-timeout error and no final artifact export. Forty successful model HTTP responses are preserved, but usage, candidate files and author runtime remain unavailable. The controller terminated it before the planned manual budget stop was issued, so no cancel request or retry occurred. Record this as infrastructure failure, not a scientific grade. One authoring session remains for this seed. MDAnalysis is next in the original panel.
+
+MDAnalysis first authoring session was submitted from commit `fc2bdc7`, using the pinned initial bundle and the updated author worker. It has the same 40-request/1200-second author budget. No simultaneous author/solver job was started while COBRApy was live.

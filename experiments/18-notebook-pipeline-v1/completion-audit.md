@@ -5,7 +5,7 @@ This audit uses the filed issue snapshot and current evidence. A passing Scanpy 
 | Requirement | Current authoritative evidence | Status / remaining work |
 | --- | --- | --- |
 | Permanent research branch from recorded main; versioned prompts and configuration | `protocol.json`, `campaign-budget.json`, per-run specs and Git checkpoints | Established; retain the research branch without merging. |
-| Ten original seed dispositions, with documented substitutions if any | `seeds.json`, `campaign.json` | Incomplete: Scanpy accepted, bedtools conversion failed, methylKit unaccepted after two sessions, COBRApy live, six other seeds not authored. No replacements yet. |
+| Ten original seed dispositions, with documented substitutions if any | `seeds.json`, `campaign.json` | Incomplete: Scanpy accepted, bedtools conversion failed, methylKit unaccepted after two sessions, COBRApy infrastructure timeout, MDAnalysis submitted, five other seeds not authored. No replacements yet. |
 | Official ZCode author; fixed GLM worker; finite requests, repairs and time | `zcode_smoke.py`, author run records, `harness-inspection.md` | Exercised. Current COBRApy run uses the older stop behavior; future sessions explicitly terminate after an over-budget request. |
 | Native Harbor package and scientific contract, frozen before solver | `scanpy-acceptance.json`, matching reconstructed 15-file package | Verified for Scanpy only. Inspect every subsequent candidate before acceptance. |
 | Native reference and deterministic correct/partial/empty/wrong/dependency validation | Scanpy native trial and four control summaries; preserved author-side cases | Verified for Scanpy only; the initial schema failure remains in its six-trial budget. |
