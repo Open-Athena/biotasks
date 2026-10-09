@@ -358,6 +358,24 @@ def main():
                 artifacts["workspace/" + relative] = path.read_text(errors="replace")
         artifacts["artifact-manifest.json"] = json.dumps(manifest)
         artifacts["input-manifest.json"] = json.dumps(original_inputs)
+        # Future repairs must distinguish deliberate deletions from omitted exports.
+        # Preserve a complete final task-file inventory, including unchanged inputs.
+        task_manifest = []
+        for path in sorted((workspace / "task").rglob("*")):
+            if path.is_symlink():
+                raise ValueError("Task symlinks are not supported by the artifact contract")
+            if path.is_file():
+                task_manifest.append(
+                    {
+                        "path": str(path.relative_to(workspace / "task")),
+                        "size": path.stat().st_size,
+                        "sha256": file_sha256(path),
+                    }
+                )
+        artifacts["final-task-manifest.json"] = json.dumps(task_manifest)
+        artifacts["deleted-inputs.json"] = json.dumps(
+            sorted(name for name in original_inputs if not (workspace / name).exists())
+        )
         if (root / "inputs.zip").exists():
             with (
                 (root / "inputs.zip").open("rb") as src,

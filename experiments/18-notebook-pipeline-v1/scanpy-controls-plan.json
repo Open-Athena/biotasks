@@ -1,0 +1,41 @@
+{
+  "candidate_version": 2,
+  "packaging_revision": 1,
+  "prerequisite": "native-reference-002 must earn full credit with verified offline execution",
+  "base_spec": "scanpy-native-reference-002.json",
+  "model_called": false,
+  "plans": [
+    {
+      "id": "scanpy-control-partial",
+      "stage": "native_control",
+      "control_artifact": "controls/artifacts/partial-no-log1p.h5ad",
+      "control_destination": "/output/pbmc3k_qc.h5ad",
+      "expected_reward": 0.7,
+      "budget_trial": 3
+    },
+    {
+      "id": "scanpy-control-empty",
+      "stage": "native_control",
+      "control_artifact": null,
+      "control_destination": "/output/pbmc3k_qc.h5ad",
+      "expected_reward": 0.0,
+      "budget_trial": 4
+    },
+    {
+      "id": "scanpy-control-wrong-thresholds",
+      "stage": "native_control",
+      "control_artifact": "controls/artifacts/wrong-thresholds.h5ad",
+      "control_destination": "/output/pbmc3k_qc.h5ad",
+      "expected_reward": 0.0,
+      "budget_trial": 5
+    },
+    {
+      "id": "scanpy-control-dependency",
+      "stage": "native_control",
+      "control_artifact": "controls/artifacts/dependency-violation.h5ad",
+      "control_destination": "/output/pbmc3k_qc.h5ad",
+      "expected_reward": 0.2,
+      "budget_trial": 6
+    }
+  ]
+}

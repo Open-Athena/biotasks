@@ -1,0 +1,131 @@
+{
+    "id": "8dee728e-d1ea-436b-9a21-bd559ebd54cf",
+    "task_name": "biotasks/pbmc3k-qc-normalization",
+    "trial_name": "task__BssUpPk",
+    "trial_uri": "file:///app/jobs/scanpy-native-reference-002/task__BssUpPk/attempts/000",
+    "trial_relpath": "task__BssUpPk/attempts/000",
+    "task_id": {
+        "path": "/app/assembly-1/workspace/task"
+    },
+    "source": null,
+    "task_checksum": "4936d9fbc02e72f58b7f05f137b545d3bea8128f8b193ba157ce45099c8c317f",
+    "config": {
+        "task": {
+            "path": "/app/assembly-1/workspace/task",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "task__BssUpPk",
+        "trials_dir": "/app/jobs/scanpy-native-reference-002",
+        "artifact_authority": null,
+        "timeout_multiplier": 1.0,
+        "agent_timeout_multiplier": null,
+        "verifier_timeout_multiplier": null,
+        "agent_setup_timeout_multiplier": null,
+        "environment_build_timeout_multiplier": null,
+        "trial_attempt_timeout_sec": 1800.0,
+        "trial_cleanup_grace_sec": 30.0,
+        "resolved_timeouts": {
+            "agent": 600.0,
+            "verifier": 300.0,
+            "agent_setup": 360.0,
+            "environment_build": 1200.0,
+            "trial_attempt": 1800.0,
+            "trial_cleanup_grace": 30.0,
+            "steps": []
+        },
+        "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "model_alias": null,
+            "skills": [],
+            "mode": "container",
+            "override_timeout_sec": 600.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": 600.0,
+            "kwargs": {},
+            "env": {},
+            "mcp_servers": [],
+            "upload_agent_logs": true
+        },
+        "user_agent": null,
+        "environment": {
+            "type": null,
+            "import_path": "retained_daytona:RetainedDaytona",
+            "force_build": false,
+            "delete": false,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "override_gpus": null,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "env": {},
+            "kwargs": {
+                "network_policy": {
+                    "mode": "block_all"
+                },
+                "auto_stop_interval_mins": 10
+            }
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "env": {},
+            "disable": false
+        },
+        "artifacts": [],
+        "extra_instruction_paths": [],
+        "job_id": "2d105d1d-d406-4e29-8095-642240022b31"
+    },
+    "agent_info": {
+        "name": "oracle",
+        "version": "1.0.0",
+        "model_info": null
+    },
+    "agent_result": {
+        "n_input_tokens": null,
+        "n_cache_tokens": null,
+        "n_output_tokens": null,
+        "cost_usd": null,
+        "rollout_details": null,
+        "metadata": null
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        },
+        "stdout": "{\n  \"subgoals\": {\n    \"G1\": {\n      \"filtered_membership\": true,\n      \"detail\": \"cells 2638 vs 2638 expected, genes 13714 vs 13714 expected\"\n    },\n    \"G2\": {\n      \"qc_metrics\": true,\n      \"detail\": \"max metric deviation 4.77e-07\"\n    },\n    \"G3\": {\n      \"counts_lineage\": true,\n      \"detail\": \"max counts deviation 0 over 2638x13714\"\n    },\n    \"G4\": {\n      \"normalization\": true,\n      \"detail\": \"max X deviation 4.77e-07 (tolerance 0.0001)\"\n    }\n  },\n  \"reward\": 1.0\n}\n",
+        "stderr": ""
+    },
+    "exception_info": null,
+    "secondary_exception_info": [],
+    "started_at": "2026-10-09T16:19:16.070905Z",
+    "finished_at": "2026-10-09T16:21:08.401271Z",
+    "environment_setup": {
+        "started_at": "2026-10-09T16:19:16.126214Z",
+        "finished_at": "2026-10-09T16:20:14.888739Z"
+    },
+    "agent_setup": {
+        "started_at": "2026-10-09T16:20:14.888967Z",
+        "finished_at": "2026-10-09T16:20:14.889074Z"
+    },
+    "agent_execution": {
+        "started_at": "2026-10-09T16:20:14.889167Z",
+        "finished_at": "2026-10-09T16:20:22.188190Z"
+    },
+    "verifier": {
+        "started_at": "2026-10-09T16:20:26.657603Z",
+        "finished_at": "2026-10-09T16:21:08.401214Z"
+    },
+    "step_results": null
+}
