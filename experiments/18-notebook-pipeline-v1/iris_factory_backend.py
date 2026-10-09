@@ -64,7 +64,13 @@ class IrisFactoryBackend:
             raise ValueError("Session stage mismatch")
         revision = batch["factory_revision"]
         prompt_name = spec["prompt_name"]
-        if prompt_name not in {"notebook-task-v1", "notebook-review-v1", "notebook-repair-v1"}:
+        if prompt_name not in {
+            "notebook-task-v1",
+            "notebook-review-v1",
+            "notebook-repair-v1",
+            "notebook-specification-v1",
+            "notebook-construction-v1",
+        }:
             raise ValueError("Unknown checkpointed prompt")
         prompt = checkpoint_file(self.repo, revision, f"src/biotasks/prompts/{prompt_name}.md")
         if prompt.decode() != spec["prompt"]:
@@ -79,7 +85,7 @@ class IrisFactoryBackend:
             "run-spec.json": (json.dumps(spec, indent=2) + "\n").encode(),
         }
         command = ["python", "_biotasks_smoke.py"]
-        if slot == "authoring":
+        if slot in {"authoring", "specification"}:
             files["inputs.zip"] = archive.read_bytes()
         else:
             files["handoff.zip"] = archive.read_bytes()

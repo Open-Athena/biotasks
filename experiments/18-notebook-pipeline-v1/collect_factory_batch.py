@@ -9,7 +9,7 @@ from pathlib import Path
 
 from decode_log_archive import decode
 
-from biotasks.factory_dispatch import STAGE_SLOTS
+from biotasks.factory_stage import STAGE_ROLES
 
 
 def observation_directory(output: Path, seed: str, session: str) -> Path:
@@ -20,7 +20,7 @@ def observation_directory(output: Path, seed: str, session: str) -> Path:
         or not re.fullmatch(r"[0-9a-f]{64}", parts[0])
         or parts[1] != seed
         or not re.fullmatch(r"[a-z0-9-]+", seed)
-        or parts[2] not in STAGE_SLOTS
+        or parts[2] not in STAGE_ROLES
     ):
         raise ValueError("Invalid factory session identity")
     destination = output / parts[0] / seed / parts[2]

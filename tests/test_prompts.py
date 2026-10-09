@@ -16,8 +16,10 @@ def test_list_and_read_prompts_outside_checkout(
     assert capsys.readouterr().out.splitlines() == [
         "author-task",
         "find-units",
+        "notebook-construction-v1",
         "notebook-repair-v1",
         "notebook-review-v1",
+        "notebook-specification-v1",
         "notebook-task-v1",
     ]
 

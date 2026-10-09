@@ -4,6 +4,8 @@ import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
 
+from biotasks.factory_stage import STAGE_PROMPTS
+
 
 class SessionBudget:
     """Count every reservation, including failures and uncertain submissions.
@@ -34,7 +36,13 @@ class SessionBudget:
                 "(id TEXT PRIMARY KEY, factory_revision TEXT NOT NULL)"
             )
 
-    def bind_batch(self, batch_sha256: str, revision: str, *, initial: bool) -> None:
+            columns = {row[1] for row in db.execute("PRAGMA table_info(batches)")}
+            if "workflow_sha256" not in columns:
+                db.execute("ALTER TABLE batches ADD COLUMN workflow_sha256 TEXT")
+
+    def bind_batch(
+        self, batch_sha256: str, revision: str, *, initial: bool, workflow_sha256: str | None = None
+    ) -> None:
         """Keep all follow-up workers on the initially checkpointed factory.
 
         Older ledgers need an explicit binding from their verified original batch
@@ -46,14 +54,19 @@ class SessionBudget:
         with self.connect() as db:
             db.execute("BEGIN IMMEDIATE")
             row = db.execute(
-                "SELECT factory_revision FROM batches WHERE id=?", (batch_sha256,)
+                "SELECT factory_revision, workflow_sha256 FROM batches WHERE id=?", (batch_sha256,)
             ).fetchone()
             if row is None:
                 if not initial:
                     raise ValueError("Root batch is not registered; reconcile its original pin")
-                db.execute("INSERT INTO batches VALUES (?, ?)", (batch_sha256, revision))
+                db.execute(
+                    "INSERT INTO batches VALUES (?, ?, ?)",
+                    (batch_sha256, revision, workflow_sha256),
+                )
             elif row[0] != revision:
                 raise ValueError("Factory revision changed within the frozen batch")
+            elif row[1] != workflow_sha256:
+                raise ValueError("Worker templates changed within the frozen batch")
 
     @contextmanager
     def connect(self):
@@ -65,7 +78,7 @@ class SessionBudget:
             db.close()
 
     def reserve(self, session_id: str, seed: str, stage: str, spec_sha256: str) -> None:
-        if not session_id or not seed or stage not in {"authoring", "review", "repair"}:
+        if not session_id or not seed or stage not in STAGE_PROMPTS:
             raise ValueError("Invalid session identity")
         if len(spec_sha256) != 64 or any(c not in "0123456789abcdef" for c in spec_sha256):
             raise ValueError("Exact specification hash required")

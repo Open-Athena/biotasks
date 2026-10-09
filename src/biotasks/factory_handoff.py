@@ -11,8 +11,8 @@ import stat
 import zipfile
 from pathlib import Path, PurePosixPath
 
-from biotasks.factory_dispatch import STAGE_SLOTS, session_identity
-from biotasks.factory_stage import stage_spec
+from biotasks.factory_dispatch import session_identity
+from biotasks.factory_stage import STAGE_ROLES, predecessor_slot, stage_spec
 
 MAX_ENVELOPE_BYTES = 32 * 1024 * 1024
 
@@ -60,17 +60,19 @@ def freeze_followup(
     batch = json.loads(raw)
     if "root_batch_sha256" in batch:
         raise ValueError("Use the original batch, not another follow-up")
-    if slot not in STAGE_SLOTS or slot == "authoring":
+    version = batch.get("workflow_version", 1)
+    previous = predecessor_slot(slot, version)
+    if previous is None:
         raise ValueError("A follow-up workflow slot is required")
-    role, previous = STAGE_SLOTS[slot]
-    assert previous is not None
+    role = STAGE_ROLES[slot]
     expected = session_identity(root_sha256, seed, previous)
     if parent_session.get("session_id") != expected:
         raise ValueError("Wrong predecessor for follow-up slot")
     initial = batch["entries"][seed]
+    template = batch.get("stage_templates", {}).get(slot, initial)
     for proposed, ceiling in (
-        (request_cap, initial["request_cap"]),
-        (wall_seconds, initial["wall_seconds"]),
+        (request_cap, template["request_cap"]),
+        (wall_seconds, template["wall_seconds"]),
     ):
         if type(proposed) is not int or not 1 <= proposed <= ceiling:
             raise ValueError("Follow-up expands the frozen session limits")
@@ -93,8 +95,16 @@ def freeze_followup(
             info = zipfile.ZipInfo(name, (1980, 1, 1, 0, 0, 0))
             info.external_attr = (stat.S_IFREG | 0o644) << 16
             target.writestr(info, content)
-    spec = stage_spec(role, archive, request_cap, wall_seconds)
-    spec["output_cap"] = initial["output_cap"]
+    if "stage_templates" in batch:
+        spec = dict(template)
+        spec.update(
+            request_cap=request_cap,
+            wall_seconds=wall_seconds,
+            input_zip_sha256=hashlib.sha256(archive.read_bytes()).hexdigest(),
+        )
+    else:
+        spec = stage_spec(role, archive, request_cap, wall_seconds)
+        spec["output_cap"] = initial["output_cap"]
     spec["stage_slot"] = slot
     spec["predecessor"] = {
         **parent_session,
@@ -110,6 +120,8 @@ def freeze_followup(
         "entries": {seed: spec},
         "automatic_retries": 0,
     }
+    if "stage_templates" in batch:
+        followup.update(workflow_version=version, stage_templates=batch["stage_templates"])
     encoded = encode(followup)
     with output.open("xb") as destination:
         destination.write(encoded)

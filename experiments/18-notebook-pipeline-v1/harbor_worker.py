@@ -88,6 +88,14 @@ def main():
         if (root / "run-spec.json").exists()
         else {}
     )
+    if spec.get("development_mode") == "factory_only":
+        if spec.get("operator_patches"):
+            raise ValueError("Factory execution cannot apply operator patches")
+        if not spec.get("authoring_sources") or any(
+            "deleted_inputs" not in source or "task_manifest" not in source
+            for source in spec["authoring_sources"]
+        ):
+            raise ValueError("Factory execution requires exact candidate restoration records")
     records = root / "records"
     records.mkdir()
     owned = root / "owned-sandboxes.jsonl"

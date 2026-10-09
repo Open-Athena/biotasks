@@ -8,8 +8,9 @@ that it is valid or that a solver attempt may already start.
 from dataclasses import dataclass
 from pathlib import Path
 
-from biotasks.factory_dispatch import STAGE_SLOTS
+from biotasks.factory_proposal import proposal_action
 from biotasks.factory_review import next_stage
+from biotasks.factory_stage import STAGE_ROLES
 
 
 @dataclass(frozen=True)
@@ -48,7 +49,7 @@ def decide(
     worker-authored assertion is not a substitute for those observations.
     Dispatch still enforces the frozen budget and exact predecessor identity.
     """
-    if worker.slot not in STAGE_SLOTS:
+    if worker.slot not in STAGE_ROLES:
         raise ValueError("Unknown workflow slot")
     if worker.remote_state in {"reserved", "unknown"}:
         return Decision("reconcile", "Submission or observation remains uncertain")
@@ -62,6 +63,40 @@ def decide(
         char not in "0123456789abcdef" for char in worker.candidate_sha256
     ):
         raise ValueError("Exact candidate manifest hash required")
+    if worker.slot == "specification":
+        if worker.outcome != "worker_finished":
+            return Decision(
+                "specification_incomplete", "Unfinished specification preserves its evidence"
+            )
+        try:
+            action = proposal_action(workspace)
+        except (OSError, ValueError, KeyError, TypeError, AttributeError):
+            return Decision(
+                "specification_incomplete", "Proposal contract or source binding is invalid"
+            )
+        return Decision(action, "Apply the source-bound GLM specification disposition")
+    if (
+        worker.slot in {"authoring", "construction", "repair"}
+        and worker.outcome == "worker_finished"
+    ):
+        rejection = workspace / "rejection.md"
+        if (
+            rejection.is_file()
+            and rejection.resolve().is_relative_to(workspace.resolve())
+            and rejection.read_text().strip()
+        ):
+            return Decision(
+                "rejected", "GLM worker recorded a seed rejection with its supporting evidence"
+            )
+    if worker.slot in {"review", "review_after_repair"} and (
+        worker.outcome == "worker_finished"
+        and candidate_unchanged is True
+        and reviewed_candidate_sha256 == worker.candidate_sha256
+        and review_report is not None
+        and review_report.get("disposition") == "rejected"
+    ):
+        action = next_stage(review_report, workspace, int(worker.slot == "review"))
+        return Decision(action, "GLM audit rejected the seed; no further native run is required")
     if native is None:
         return Decision("native_validation", "Run checks before the GLM audit")
     if native.candidate_sha256 != worker.candidate_sha256:
@@ -70,9 +105,9 @@ def decide(
         raise ValueError("Unknown native validation outcome")
     if native.status in {"infra_error", "incomplete"}:
         return Decision("validation_incomplete", "Do not send infrastructure failures to repair")
-    if worker.slot in {"authoring", "repair"}:
+    if worker.slot in {"authoring", "construction", "repair"}:
         return Decision(
-            "review" if worker.slot == "authoring" else "review_after_repair",
+            "review_after_repair" if worker.slot == "repair" else "review",
             "Audit the candidate and its executable evidence, including failures",
         )
     if worker.outcome != "worker_finished":
