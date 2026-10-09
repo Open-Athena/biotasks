@@ -57,3 +57,13 @@ Each subgoal has string `id` and `description`, numeric `weight`, and list
 proposal still requires `schema_version`, `status`, `source_sha256`, `rationale`,
 and `evidence_paths`. Correct any interface errors within this stage's existing
 turn and time limits; do not claim completion merely because a JSON file exists.
+
+The factory exposes its read-only proposal checker. Before finishing, run:
+
+```sh
+PYTHONPATH="$BIOTASKS_FACTORY_RUNTIME" python -m biotasks.factory_check --stage specification --workspace .
+```
+
+If it reports an interface error, correct your proposal using the actual evidence
+and rerun it within your remaining turns. Do not alter the checker or fabricate
+evidence to satisfy it. A passing interface check does not validate the science.

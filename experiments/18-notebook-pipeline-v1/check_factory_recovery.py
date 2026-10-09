@@ -5,12 +5,31 @@ import json
 import sys
 import types
 import unittest
+from unittest.mock import patch
 
 sys.modules.setdefault("fsspec", types.ModuleType("fsspec"))
 from recover_factory_text import collect
 
 
 class RecoveryChecks(unittest.TestCase):
+    def test_verbose_first_trace_does_not_starve_later_seed_summary(self):
+        files = {}
+        for seed in ("first", "second"):
+            files[seed + "/pipeline-summary.json"] = json.dumps({"seed": seed,
+                "status": "rejected", "stages": [{"slot": "specification"}]}).encode()
+            files[seed + "/specification/records/zcode-events.jsonl"] = b"x" * 850
+
+        def read(uri, maximum):
+            if uri not in files:
+                raise FileNotFoundError(uri)
+            return files[uri][:maximum]
+
+        with patch("recover_factory_text.MAX_TOTAL", 1000):
+            result = collect([{"seed": seed, "prefix": seed} for seed in ("first", "second")], read)
+        self.assertIn("first/pipeline-summary.json", result)
+        self.assertIn("second/pipeline-summary.json", result)
+        self.assertNotIn("first/specification/records/zcode-events.jsonl", result)
+
     def fixture(self, corrupt=False, unsafe=False):
         value = b'{"status": "rejected", "rationale": "fixture"}'
         path = "../escape.json" if unsafe else "proposal.json"

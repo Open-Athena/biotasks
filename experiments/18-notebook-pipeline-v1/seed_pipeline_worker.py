@@ -140,11 +140,15 @@ class SeedPipeline:
             }
         )
         self.checkpoint("running")
+        author_env = {key: value for key, value in os.environ.items() if key != "DAYTONA_API_KEY"}
         self.command(
             [sys.executable, str(self.root / "zcode_smoke.py")],
             directory,
             spec["wall_seconds"] + 600,
-            os.environ | {"BIOTASKS_ARTIFACT_PREFIX": self.prefix + "/" + slot},
+            author_env | {
+                "BIOTASKS_ARTIFACT_PREFIX": self.prefix + "/" + slot,
+                "BIOTASKS_FACTORY_RUNTIME": str(self.root / "factory-runtime.zip"),
+            },
         )
         records = directory / "records"
         result = json.loads((records / "result.json").read_text())

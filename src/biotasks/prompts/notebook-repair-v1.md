@@ -25,3 +25,13 @@ exit status and evidence paths), checks_pending, and disposition
 (`ready_for_review` or `rejected`). If a valid repair is not possible within the
 budget, record why. This report is not task acceptance: subsequent factory
 verification and deterministic native validation are still required.
+
+Check the repaired package interface before finishing, within this stage's budget:
+
+```sh
+PYTHONPATH="$BIOTASKS_FACTORY_RUNTIME" python -m biotasks.factory_check --stage construction --workspace .
+```
+
+This checker is read-only and does not run biological analysis or establish task
+acceptance. Fix supported interface errors without modifying the checker or
+weakening scientific requirements; preserve any unresolved failure.

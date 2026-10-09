@@ -31,3 +31,14 @@ are ready, or record why the construction could not finish within this stage.
 If rejected, write `rejection.md` with the reason and references to preserved
 evidence. Rejection is a valid final outcome; do not force construction of an
 unsuitable scientific task.
+
+Before declaring a package ready, run the factory's read-only interface check:
+
+```sh
+PYTHONPATH="$BIOTASKS_FACTORY_RUNTIME" python -m biotasks.factory_check --stage construction --workspace .
+```
+
+Use its concrete errors to fix package interfaces and control-file hashes within
+this stage's remaining turns. Do not edit the checker. Passing it proves only
+package shape and declared contracts; native execution and scientific review
+still follow. An unresolved failure remains pending or rejected, not accepted.

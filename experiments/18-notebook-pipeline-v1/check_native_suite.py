@@ -9,9 +9,33 @@ from unittest.mock import patch
 from native_suite import run_suite
 
 from biotasks.factory_native import assess_saved_suite
+from biotasks.factory_controller import NativeEvidence, WorkerEvidence, decide
 
 
 class NativeSuiteChecks(unittest.TestCase):
+    def test_static_defect_retains_identity_and_routes_to_glm_review(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "task").mkdir()
+            (root / "task/instruction.md").write_text("Incomplete infrastructure fixture")
+
+            def forbidden(*args):
+                raise AssertionError("Static failure must not launch a trial or cleanup")
+
+            result = run_suite(
+                root, {"n_attempts": 1, "retry": {"max_retries": 0}}, root / "output",
+                {"maximum_trials": 7, "trial_timeout_seconds": 1800,
+                 "reference_timeout_seconds": 600}, forbidden, forbidden, forbidden,
+            )
+            self.assertEqual(result["status"], "not_runnable")
+            evidence = NativeEvidence.from_records(root, root / "output")
+            worker = WorkerEvidence("construction", "succeeded", "worker_finished", True,
+                                    result["candidate_sha256"])
+            self.assertEqual(decide(worker, evidence, workspace=root).action, "review")
+            (root / "task/instruction.md").write_text("Changed after the static check")
+            with self.assertRaisesRegex(ValueError, "different candidate"):
+                NativeEvidence.from_records(root, root / "output")
+
     def run_fixture(self, root, *, changed_grade=False, storage_error=False):
         events = []
         cases = [

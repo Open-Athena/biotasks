@@ -1,6 +1,7 @@
 """Offline fixed-stage orchestration check with simulated model/native outcomes."""
 
 import json
+import os
 import shutil
 import sys
 import tempfile
@@ -108,6 +109,33 @@ class SimulatedPipeline(SeedPipeline):
 
 
 class PipelineChecks(unittest.TestCase):
+    def test_author_environment_has_validator_without_daytona_access(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for name in ("inputs.zip", "zcode.cjs", "zcode-builtin.json"):
+                (root / name).write_bytes(b"fixture")
+            pipeline = SimulatedPipeline(root)
+            pipeline.prefix = "s3://test/fixture"
+            pipeline.stages = []
+            pipeline.plan["stage_templates"] = {"specification": {
+                "prompt_sha256": "a" * 64, "request_cap": 12, "wall_seconds": 300}}
+
+            def fake_command(command, directory, seconds, env):
+                self.assertNotIn("DAYTONA_API_KEY", env)
+                self.assertEqual(env["GLM_BULK_TOKEN"], "fixture-proxy-token")
+                self.assertEqual(env["BIOTASKS_FACTORY_RUNTIME"], str(root / "factory-runtime.zip"))
+                write_json(directory / "records/result.json", {
+                    "requests": [], "outcome": "worker_finished", "elapsed_seconds": 0})
+                write_json(directory / "records/artifact-manifest.json", [])
+
+            with (
+                patch.dict(os.environ, {"DAYTONA_API_KEY": "fixture-key",
+                                        "GLM_BULK_TOKEN": "fixture-proxy-token"}),
+                patch.object(pipeline, "command", side_effect=fake_command),
+            ):
+                SeedPipeline.model(pipeline, "specification")
+                self.assertEqual(os.environ["DAYTONA_API_KEY"], "fixture-key")
+
     def test_native_worker_imports_helpers_from_its_stage_directory(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

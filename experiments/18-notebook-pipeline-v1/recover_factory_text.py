@@ -19,6 +19,7 @@ MAX_TOTAL = 24 * 1024**2
 
 def collect(plan, read):
     artifacts, inventory, omissions = {}, [], []
+    deferred = []
     used = 0
 
     def add(name, uri, expected=None):
@@ -69,8 +70,10 @@ def collect(plan, read):
             origin = prefix + "/" + slot
             if slot in {"specification", "construction", "review", "repair", "review_after_repair"}:
                 for name in ("result.json", "artifact-manifest.json", "final-task-manifest.json",
-                             "deleted-inputs.json", "zcode-events.jsonl", "zcode-stderr.txt"):
+                             "deleted-inputs.json", "zcode-stderr.txt"):
                     add(destination + "records/" + name, origin + "/records/" + name)
+                deferred.append((destination + "records/zcode-events.jsonl",
+                                 origin + "/records/zcode-events.jsonl", None))
                 add(destination + "run-spec.json", origin + "/run-spec.json")
                 manifest = artifacts.get(destination + "records/artifact-manifest.json")
                 if manifest:
@@ -88,8 +91,16 @@ def collect(plan, read):
                 if manifest:
                     for entry in json.loads(manifest):
                         name = entry["path"]
-                        add(destination + "records/" + name, origin + "/records/" + name, entry)
-            add(destination + "launcher.log", origin + "/launcher.log")
+                        args = (destination + "records/" + name, origin + "/records/" + name, entry)
+                        if PurePosixPath(name).suffix in {".log", ".txt", ".jsonl"}:
+                            deferred.append(args)
+                        else:
+                            add(*args)
+            deferred.append((destination + "launcher.log", origin + "/launcher.log", None))
+    # Preserve every seed's small decision records before spending the bounded
+    # text allowance on verbose traces. Omitted traces remain in durable storage.
+    for args in deferred:
+        add(*args)
     artifacts["recovery.json"] = json.dumps({"files": inventory, "omissions": omissions,
         "source_mutated": False, "complete_binary_artifact_recovery": False}, indent=2)
     return artifacts

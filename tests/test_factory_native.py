@@ -1,9 +1,53 @@
 import hashlib
 import json
+import subprocess
+import sys
 
 import pytest
 
 from biotasks.factory_native import assess_case, native_plan, reward_for
+
+
+def test_worker_cli_is_read_only_and_does_not_claim_acceptance(candidate):
+    before = {str(p): p.read_bytes() for p in candidate.rglob("*") if p.is_file()}
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "biotasks.factory_check",
+            "--stage",
+            "construction",
+            "--workspace",
+            str(candidate),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    record = json.loads(result.stdout)
+    assert record["status"] == "package_shape_valid"
+    assert record["native_execution"] is False
+    assert record["scientific_acceptance"] is False
+    assert {str(p): p.read_bytes() for p in candidate.rglob("*") if p.is_file()} == before
+
+
+def test_worker_cli_returns_actionable_missing_proposal_error(tmp_path):
+    result = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "biotasks.factory_check",
+            "--stage",
+            "specification",
+            "--workspace",
+            str(tmp_path),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 1
+    assert json.loads(result.stdout)["status"] == "invalid"
+    assert "proposal.json" in json.loads(result.stdout)["reason"]
 
 
 @pytest.fixture

@@ -30,7 +30,14 @@ def run_suite(workspace, config, output, limits, run_trial, persist, cleanup):
     try:
         plan = native_plan(workspace)
     except (OSError, ValueError, TypeError, KeyError, AttributeError) as error:
-        summary = {"status": "not_runnable", "reason": str(error), "cases": [], "model_calls": 0}
+        summary = {
+            "schema_version": 1,
+            "status": "not_runnable",
+            "reason": str(error),
+            "cases": [],
+            "model_calls": 0,
+            "candidate_sha256": candidate,
+        }
         (output / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
         return summary
     if len(plan["cases"]) > limits["maximum_trials"]:
