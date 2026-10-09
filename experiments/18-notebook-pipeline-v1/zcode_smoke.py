@@ -13,6 +13,7 @@ import threading
 import time
 import urllib.error
 import urllib.request
+import zipfile
 from pathlib import Path
 
 from iris.client.client import iris_ctx
@@ -21,6 +22,13 @@ from iris.cluster.types import JobName
 
 def main():
     root = Path.cwd()
+    spec = json.loads((root/'run-spec.json').read_text()) if (root/'run-spec.json').exists() else {}
+    stage = spec.get('stage', 'harness_smoke')
+    request_cap = spec.get('request_cap', 4)
+    output_cap = spec.get('output_cap', 8192)
+    wall_seconds = spec.get('wall_seconds', 240)
+    assert stage in {'harness_smoke', 'authoring', 'repair'}
+    assert 1 <= request_cap <= 60 and 1 <= output_cap <= 16384 and 1 <= wall_seconds <= 1200
     token = os.environ.pop('GLM_BULK_TOKEN')
     relay = os.environ.pop('GLM_ENDPOINT_JOB')
     upstream = iris_ctx().client.resolver_for_job(JobName.from_string(relay)).resolve(
@@ -54,15 +62,18 @@ def main():
                 return
             data = json.loads(self.rfile.read(int(self.headers['Content-Length'])))
             with mutex:
-                if len(requests) >= 4 or data.get('model') != 'glm-5.3':
+                if len(requests) >= request_cap or data.get('model') != 'glm-5.3':
                     self.send_error(403, 'Model or smoke request budget rejected')
                     return
                 record = {'index': len(requests), 'model': data['model'],
                           'message_count': len(data.get('messages', [])),
-                          'tool_count': len(data.get('tools', []))}
+                          'tool_count': len(data.get('tools', [])),
+                          'tool_names': [t.get('function', {}).get('name') for t in data.get('tools', [])],
+                          'model_parameters': {k: v for k, v in data.items()
+                                               if k in {'temperature', 'top_p', 'reasoning_effort', 'thinking', 'chat_template_kwargs'}}}
                 requests.append(record)
             data.pop('max_completion_tokens', None)
-            data['max_tokens'] = min(data.get('max_tokens') or 8192, 8192)
+            data['max_tokens'] = min(data.get('max_tokens') or output_cap, output_cap)
             record['max_tokens'] = data['max_tokens']
             start = time.monotonic()
             try:
@@ -89,8 +100,15 @@ def main():
     server.daemon_threads = True
     thread = threading.Thread(target=server.serve_forever, daemon=True)
     thread.start()
-    workspace = root/'smoke-workspace'
+    workspace = root/'author-workspace'
     workspace.mkdir()
+    if (root/'inputs.zip').exists():
+        with zipfile.ZipFile(root/'inputs.zip') as archive:
+            for member in archive.infolist():
+                target = (workspace/member.filename).resolve()
+                if not target.is_relative_to(workspace.resolve()) or member.file_size > 32*1024*1024:
+                    raise ValueError('Unsafe authoring input archive')
+            archive.extractall(workspace)
     state = root/'zcode-state'
     state.mkdir()
     config = {'features': {'mcp': False}, 'plugins': {'enabled': False},
@@ -111,7 +129,7 @@ def main():
         'modelConfigRules': {'manualProviderModelRules': [], 'providerModelRules': [{
             'providerId': 'biotasks', 'modelId': 'glm-5.3', 'config': {
                 'enabled': True, 'properties': {'contextWindow': 131072},
-                'optionSpecs': {'maxOutputTokens': {'max': 8192}}}}]},
+                'optionSpecs': {'maxOutputTokens': {'max': output_cap}}}}]},
         'defaultModelSelection': {'providerId': 'biotasks', 'modelId': 'glm-5.3',
                                  'options': {'reasoningLevel': 'low'}}}}
     (state/'provider.json').write_text(json.dumps(personal))
@@ -122,7 +140,7 @@ def main():
         'ZCODE_PERSONAL_PROVIDER_CONFIG_FILE': str(state/'provider.json'),
         'ZCODE_MAX_TOOL_CONCURRENCY': '1',
         'PATH': str(node.parent) + ':' + os.environ.get('PATH', '')}
-    prompt = 'Write the exact text READY followed by a newline to readiness.txt in the current workspace. Then stop. Do not use other agents, web access or unrelated tools.'
+    prompt = spec.get('prompt', 'Write the exact text READY followed by a newline to readiness.txt in the current workspace. Then stop. Do not use other agents, web access or unrelated tools.')
     start = time.monotonic()
     with (root/'zcode-events.jsonl').open('wb') as out, (root/'zcode-stderr.txt').open('wb') as err:
         process = subprocess.Popen([str(node), str(root/'zcode.cjs'), '--cwd', str(workspace),
@@ -130,14 +148,14 @@ def main():
             env=env, stdout=out, stderr=err, start_new_session=True)
         timed_out = False
         try:
-            process.wait(timeout=240)
+            process.wait(timeout=wall_seconds)
         except subprocess.TimeoutExpired:
             timed_out = True
             os.killpg(process.pid, signal.SIGKILL)
             process.wait()
     server.shutdown()
     marker = workspace/'readiness.txt'
-    result = {'stage': 'harness_smoke', 'scientific_task': False,
+    result = {'stage': stage, 'scientific_task': stage != 'harness_smoke',
               'zcode_cli_version': '0.16.9', 'release': '3.14.5',
               'exit_code': process.returncode, 'timed_out': timed_out,
               'elapsed_seconds': round(time.monotonic()-start, 3), 'requests': requests,
@@ -145,6 +163,38 @@ def main():
     artifacts = {'result.json': json.dumps(result),
                  'zcode-events.jsonl': (root/'zcode-events.jsonl').read_text(errors='replace'),
                  'zcode-stderr.txt': (root/'zcode-stderr.txt').read_text(errors='replace')}
+    if stage != 'harness_smoke':
+        # Preserve all generated task files in private object storage, including binary inputs.
+        # Source input documents and harness credential/configuration state are excluded.
+        import fsspec
+        prefix = os.environ['BIOTASKS_ARTIFACT_PREFIX'].rstrip('/')
+        if not prefix.startswith('s3://'):
+            raise ValueError('Private durable artifact prefix required')
+        manifest = []
+        generated = [p for p in workspace.rglob('*') if p.is_file() and not p.is_symlink()
+                     and (p.relative_to(workspace).parts[0] == 'task'
+                          or p.name in {'provenance.json', 'grading-contract.json',
+                                        'validation-plan.md', 'rejection.md'})]
+        for path in generated:
+            relative = str(path.relative_to(workspace))
+            digest = hashlib.sha256()
+            with path.open('rb') as src, fsspec.open(prefix+'/workspace/'+relative, 'wb').open() as dst:
+                while chunk := src.read(1024*1024):
+                    if token.encode() in chunk:
+                        raise ValueError('Credential detected in generated artifact')
+                    digest.update(chunk)
+                    dst.write(chunk)
+            manifest.append({'path': relative, 'size': path.stat().st_size,
+                             'sha256': digest.hexdigest()})
+            if path.suffix in {'.md', '.py', '.sh', '.toml', '.json', '.txt'} and path.stat().st_size < 256*1024:
+                artifacts['workspace/'+relative] = path.read_text(errors='replace')
+        artifacts['artifact-manifest.json'] = json.dumps(manifest)
+        for name, value in artifacts.items():
+            clean = value.replace(token, '[REDACTED]').replace(upstream, '[ENDPOINT]')
+            with fsspec.open(prefix+'/records/'+name, 'wt').open() as dst:
+                dst.write(clean)
+        result['durable_artifact_count'] = len(manifest)
+        artifacts['result.json'] = json.dumps(result)
     # Only explicitly selected artifacts; no provider config, environment or credentials.
     encoded = json.dumps(artifacts).replace(token, '[REDACTED]').replace(upstream, '[ENDPOINT]')
     print('BIOTASKS_SMOKE_RESULT ' + json.dumps(result), flush=True)
