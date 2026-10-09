@@ -6,6 +6,7 @@ import hashlib
 import http.server
 import json
 import os
+import resource
 import signal
 import subprocess
 import tarfile
@@ -18,6 +19,14 @@ from pathlib import Path
 
 from iris.client.client import iris_ctx
 from iris.cluster.types import JobName
+
+
+def file_sha256(path):
+    digest = hashlib.sha256()
+    with path.open("rb") as source:
+        while chunk := source.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def main():
@@ -127,7 +136,18 @@ def main():
                     self.send_response(response.status)
                     self.send_header("Content-Type", response.headers.get("Content-Type"))
                     self.end_headers()
+                    pending = b""
                     while chunk := response.read1(16384):
+                        pending += chunk
+                        while b"\n" in pending:
+                            line, pending = pending.split(b"\n", 1)
+                            if line.startswith(b"data: ") and line != b"data: [DONE]":
+                                try:
+                                    event = json.loads(line[6:])
+                                    if event.get("usage"):
+                                        record["usage"] = event["usage"]
+                                except ValueError:
+                                    pass
                         self.wfile.write(chunk)
                         self.wfile.flush()
             except urllib.error.HTTPError as exc:
@@ -165,6 +185,9 @@ def main():
                 ):
                     raise ValueError("Unsafe authoring input archive")
             archive.extractall(workspace)
+    original_inputs = {
+        str(p.relative_to(workspace)): file_sha256(p) for p in workspace.rglob("*") if p.is_file()
+    }
     state = root / "zcode-state"
     state.mkdir()
     config = {
@@ -275,6 +298,14 @@ def main():
         "elapsed_seconds": round(time.monotonic() - start, 3),
         "requests": requests,
         "marker_matches": marker.exists() and marker.read_text() == "READY\n",
+        "peak_child_rss_kib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
+        "outcome": "request_budget_exhausted"
+        if process.returncode and len(requests) >= request_cap
+        else "timeout"
+        if timed_out
+        else "worker_finished"
+        if process.returncode == 0
+        else "worker_failed",
     }
     artifacts = {
         "result.json": json.dumps(result),
@@ -283,7 +314,7 @@ def main():
     }
     if stage != "harness_smoke":
         # Preserve all generated task files in private object storage, including binary inputs.
-        # Source input documents and harness credential/configuration state are excluded.
+        # Original inputs are separately archived. Preserve scientific intermediates too.
         import fsspec
 
         prefix = os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/")
@@ -295,16 +326,10 @@ def main():
             for p in workspace.rglob("*")
             if p.is_file()
             and not p.is_symlink()
-            and (
-                p.relative_to(workspace).parts[0] == "task"
-                or p.name
-                in {
-                    "provenance.json",
-                    "grading-contract.json",
-                    "validation-plan.md",
-                    "rejection.md",
-                }
-            )
+            and p.resolve().is_relative_to(workspace.resolve())
+            and not set(p.relative_to(workspace).parts)
+            & {".git", ".zcode", ".venv", "node_modules", "__pycache__", ".cache"}
+            and file_sha256(p) != original_inputs.get(str(p.relative_to(workspace)))
         ]
         for path in generated:
             relative = str(path.relative_to(workspace))
@@ -327,12 +352,20 @@ def main():
             ):
                 artifacts["workspace/" + relative] = path.read_text(errors="replace")
         artifacts["artifact-manifest.json"] = json.dumps(manifest)
+        artifacts["input-manifest.json"] = json.dumps(original_inputs)
+        if (root / "inputs.zip").exists():
+            with (
+                (root / "inputs.zip").open("rb") as src,
+                fsspec.open(prefix + "/inputs.zip", "wb").open() as dst,
+            ):
+                while chunk := src.read(1024 * 1024):
+                    dst.write(chunk)
+        result["durable_artifact_count"] = len(manifest)
+        artifacts["result.json"] = json.dumps(result)
         for name, value in artifacts.items():
             clean = value.replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]")
             with fsspec.open(prefix + "/records/" + name, "wt").open() as dst:
                 dst.write(clean)
-        result["durable_artifact_count"] = len(manifest)
-        artifacts["result.json"] = json.dumps(result)
     # Only explicitly selected artifacts; no provider config, environment or credentials.
     encoded = json.dumps(artifacts).replace(token, "[REDACTED]").replace(upstream, "[ENDPOINT]")
     print("BIOTASKS_SMOKE_RESULT " + json.dumps(result), flush=True)
