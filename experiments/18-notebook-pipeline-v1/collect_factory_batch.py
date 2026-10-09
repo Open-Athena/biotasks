@@ -3,10 +3,29 @@
 import argparse
 import datetime
 import json
+import re
 import sqlite3
 from pathlib import Path
 
 from decode_log_archive import decode
+
+from biotasks.factory_dispatch import STAGE_SLOTS
+
+
+def observation_directory(output: Path, seed: str, session: str) -> Path:
+    """Keep repeated stages for one seed separate and reject ambiguous identities."""
+    parts = session.split(":")
+    if (
+        len(parts) != 3
+        or not re.fullmatch(r"[0-9a-f]{64}", parts[0])
+        or parts[1] != seed
+        or not re.fullmatch(r"[a-z0-9-]+", seed)
+        or parts[2] not in STAGE_SLOTS
+    ):
+        raise ValueError("Invalid factory session identity")
+    destination = output / parts[0] / seed / parts[2]
+    destination.mkdir(parents=True, exist_ok=False)
+    return destination
 
 
 def main():
@@ -35,8 +54,9 @@ def main():
                 job = client.job(JobName.from_string(job_id))
                 state = job.status()
                 row["state"] = state.state.name
-                destination = args.output / seed
-                destination.mkdir()
+                destination = observation_directory(args.output, seed, session)
+                row["artifact_directory"] = str(destination.relative_to(args.output))
+                row["stage_slot"] = session.rsplit(":", 1)[-1]
                 logs = destination / "logs.json"
                 # Stream the JSON array so a large export never accumulates in memory.
                 with logs.open("x") as stream:
@@ -64,7 +84,11 @@ def main():
                 )
     (args.output / "observations.json").write_text(
         json.dumps(
-            {"observed_at": datetime.datetime.now(datetime.UTC).isoformat(), "jobs": records},
+            {
+                "schema_version": 2,
+                "observed_at": datetime.datetime.now(datetime.UTC).isoformat(),
+                "jobs": records,
+            },
             indent=2,
         )
         + "\n"
