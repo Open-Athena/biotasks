@@ -99,3 +99,11 @@ The second methylKit session preserved a partial candidate and an author-side na
 Author resource snapshots confirm 8 GiB memory but reveal unlimited cgroup CPU quota and 128-CPU affinity. Future workers restrict inherited affinity to four CPUs. Disk-quota evidence remains unresolved. Seven remaining seed bundles now pin each included byte and the current prompt/protocol; these are prepared inputs, not executed candidates.
 
 The offline explorer passed a real Chromium check: ten seed cards, clickable Notebook/Task/Attempt sections, and the sandboxed Pi trajectory rendered without JavaScript exceptions. Default viewer filtering shows 17 of 19 steps because setup messages are hidden; the underlying converted trajectory retains all 19. Browser peak child RSS was 249508 KiB, and its owned process was reaped. This does not validate public hosting or every viewer control.
+
+## 2026-10-09 — campaign accounting and author budget lifecycle
+
+Added a reproducible campaign summary that retains all ten original seeds, separates authoring/native validation/biological solver records, and records missing usage explicitly. At this checkpoint, five completed author sessions recorded 200 model requests but only 160 usage records; those token subtotals must not be represented as complete costs. One accepted Scanpy task and one full baseline solve remain the only accepted biological outcome.
+
+COBRApy's existing first session remains live after its fortieth model response. Its exact cause is not yet known from exported logs; do not restart or count it as terminal. Future author workers terminate their own process group after a rejected over-budget request, with a recorded rejection flag, instead of relying solely on the harness to exit. An isolated subprocess test exercised this termination and harmless handling of an already-completed process. This change does not modify the running session or extend its budget.
+
+Retrieved the ten pinned repositories' source license declarations and checked the public HF bucket's current visibility and size. Artifact-specific eligibility review remains in progress; no public upload has occurred. Repository declarations alone do not settle every external data asset's provenance or terms.

@@ -1,0 +1,84 @@
+Package: methylKit
+Type: Package
+Title: DNA methylation analysis from high-throughput
+    bisulfite sequencing results
+Version: 1.33.3
+Author: Altuna Akalin [aut, cre], Matthias Kormaksson [aut], 
+    Sheng Li [aut], Arsene Wabo [ctb], Adrian Bierling [aut], 
+    Alexander Blume [aut], Katarzyna Wreczycka [ctb]
+Maintainer: Altuna Akalin <aakalin@gmail.com>, Alexander Blume 
+    <alex.gos90@gmail.com>
+Description: methylKit is an R package for DNA methylation analysis and
+    annotation from high-throughput bisulfite sequencing. The package is
+    designed to deal with sequencing data from RRBS and its variants, but also
+    target-capture methods and whole genome bisulfite sequencing. It also has
+    functions to analyze base-pair resolution 5hmC data from experimental
+    protocols such as oxBS-Seq and TAB-Seq. Methylation calling can be 
+    performed directly from Bismark aligned BAM files.
+License: Artistic-2.0
+URL: https://github.com/al2na/methylKit
+BugReports: https://github.com/al2na/methylKit/issues
+LazyLoad: yes
+NeedsCompilation: yes
+LinkingTo: Rcpp, Rhtslib (>= 1.13.1)
+SystemRequirements: GNU make
+biocViews: DNAMethylation, Sequencing, MethylSeq
+Depends:
+    R (>= 3.5.0),
+    GenomicRanges (>= 1.18.1),
+    methods
+Imports:
+    IRanges,
+    data.table (>= 1.9.6),
+    parallel,
+    S4Vectors (>= 0.13.13),
+    GenomeInfoDb,
+    KernSmooth,
+    qvalue,
+    emdbook,
+    Rsamtools,
+    gtools,
+    fastseg,
+    rtracklayer,
+    mclust,
+    mgcv,
+    Rcpp,
+    R.utils,
+    limma, 
+    grDevices, 
+    graphics, 
+    stats, 
+    utils
+Suggests:
+    testthat (>= 2.1.0),
+    knitr,
+    rmarkdown,
+    genomation,
+    BiocManager
+VignetteBuilder: knitr
+Collate:
+    'methylKit.R'
+    'backbone.R'
+    'diffMeth.R'
+    'clusterSamples.R'
+    'regionalize.R'
+    'processBismarkAln.R'
+    'RcppExports.R'
+    'document_data.R'
+    'bedgraph.R'
+    'reorganize.R'
+    'percMethylation.R'
+    'normalizeCoverage.R'
+    'pool.R'
+    'adjustMethylC.R'
+    'updateMethObject.R'
+    'batchControl.R'
+    'dataSim.R'
+    'methylDBClasses.R'
+    'methylDBFunctions.R'
+    'tabix.functions.R'
+    'methSeg.R'
+    'diffMethDSS.R'
+    'deprecated_defunct.R'
+    'onUnload.R'
+RoxygenNote: 7.1.1

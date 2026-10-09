@@ -29,6 +29,21 @@ def file_sha256(path):
     return digest.hexdigest()
 
 
+def stop_on_budget_rejection(process, rejected, wall_seconds):
+    """Stop only this author process group after an over-budget API request."""
+    if not rejected.wait(wall_seconds) or process.poll() is not None:
+        return
+    try:
+        os.killpg(process.pid, signal.SIGTERM)
+        try:
+            process.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid, signal.SIGKILL)
+            process.wait()
+    except ProcessLookupError:
+        pass
+
+
 def resource_snapshot():
     """Observe the author host; allocation requests alone do not prove limits."""
     values = {}
@@ -95,6 +110,7 @@ def main():
     )
     requests = []
     mutex = threading.Lock()
+    budget_rejected = threading.Event()
 
     class Proxy(http.server.BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -106,7 +122,11 @@ def main():
                 return
             data = json.loads(self.rfile.read(int(self.headers["Content-Length"])))
             with mutex:
-                if len(requests) >= request_cap or data.get("model") != "glm-5.3":
+                if len(requests) >= request_cap:
+                    budget_rejected.set()
+                    self.send_error(403, "Author request budget exhausted")
+                    return
+                if data.get("model") != "glm-5.3":
                     self.send_error(403, "Model or smoke request budget rejected")
                     return
                 record = {
@@ -305,6 +325,11 @@ def main():
             stderr=err,
             start_new_session=True,
         )
+        threading.Thread(
+            target=stop_on_budget_rejection,
+            args=(process, budget_rejected, wall_seconds),
+            daemon=True,
+        ).start()
         timed_out = False
         try:
             process.wait(timeout=wall_seconds)
@@ -321,6 +346,7 @@ def main():
         "release": "3.14.5",
         "exit_code": process.returncode,
         "timed_out": timed_out,
+        "budget_rejection_observed": budget_rejected.is_set(),
         "elapsed_seconds": round(time.monotonic() - start, 3),
         "requests": requests,
         "marker_matches": marker.exists() and marker.read_text() == "READY\n",

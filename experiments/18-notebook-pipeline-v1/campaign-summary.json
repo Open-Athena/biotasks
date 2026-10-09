@@ -1,0 +1,327 @@
+{
+  "campaign_sha256": "12f5d7eea9c1d92731baa8a3a18ebb9ea03b466efb9444b6df3bd2b604d437da",
+  "campaign_complete": false,
+  "scope": "Initial purposive panel only; not a representative benchmark estimate",
+  "original_seed_count": 10,
+  "seeds_with_completed_authoring_records": 3,
+  "accepted_tasks": 1,
+  "accepted_fraction_of_original_panel": 0.1,
+  "completed_authoring_sessions": 5,
+  "authoring_seconds_recorded": 1642.299,
+  "authoring_sessions_missing_time": 0,
+  "authoring_requests_recorded": 200,
+  "authoring_requests_with_usage": 160,
+  "biological_solver_attempts_recorded": 1,
+  "full_biological_successes": 1,
+  "cost": {
+    "inference_service": "existing free GLM service",
+    "orchestration_usd": null,
+    "meaning": "Unmeasured orchestration cost is not zero total cost"
+  },
+  "limits": [
+    "Pending seeds remain in the original-panel denominator",
+    "Author exit status alone does not determine candidate acceptance",
+    "Recorded token subtotals are incomplete where usage is missing",
+    "Technical integration trials are excluded from biological solver counts"
+  ],
+  "seeds": [
+    {
+      "id": "scanpy",
+      "status": "baseline_completed",
+      "accepted": true,
+      "authoring": [
+        {
+          "id": "author-scanpy-001",
+          "outcome": "request_budget_exhausted",
+          "seconds": 268.382,
+          "requests": 40,
+          "requests_with_usage": 40,
+          "input_tokens_including_cache_recorded": 1679944,
+          "output_tokens_recorded": 28468,
+          "usage_complete": true,
+          "evidence": "runs/author-scanpy-001/result.json"
+        },
+        {
+          "id": "repair-scanpy-002",
+          "outcome": "request_budget_exhausted",
+          "seconds": 167.471,
+          "requests": 40,
+          "requests_with_usage": 40,
+          "input_tokens_including_cache_recorded": 1554328,
+          "output_tokens_recorded": 18883,
+          "usage_complete": true,
+          "evidence": "runs/repair-scanpy-002/result.json"
+        }
+      ],
+      "native_validations": [
+        {
+          "id": "native-reference-001",
+          "evidence": "runs/native-reference-001/summary.json",
+          "stage": "native_reference",
+          "candidate_version": 2,
+          "outcome": "task_schema_rejected",
+          "graded": false,
+          "model_called": false,
+          "sandboxes_created": 0,
+          "budget_trial": 1,
+          "export_sha256": "97414b838a1a86da9f46b9deae16d68cc7fb98b408e4c6414a8c40ec19313900",
+          "error": "Task name requires org/name format; rejected before environment setup."
+        },
+        {
+          "id": "native-reference-002",
+          "evidence": "runs/native-reference-002/summary.json",
+          "stage": "native_reference",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "outcome": "reference_passed_controls_pending",
+          "model_called": false,
+          "reward": 1.0,
+          "full_success": true,
+          "counts_as_glm_success": false,
+          "budget_trial": 2,
+          "setup_seconds": 58.762525,
+          "reference_seconds": 7.299023,
+          "verifier_seconds_including_environment": 41.743611,
+          "network_denied_both_environments": true,
+          "cpu_limit": 4,
+          "memory_limit_bytes": 8589934592,
+          "filesystem_total_bytes": 10737418240,
+          "filesystem_size_proves_write_quota": false,
+          "peak_task_memory_bytes": 363151360,
+          "peak_verifier_memory_bytes": 357445632,
+          "owned_sandboxes_deleted_and_verified": 2,
+          "artifacts_readback_verified_before_cleanup": true,
+          "export_sha256": "424bac6d38f5e9ca1ffb17de50b085c79f2371f7f1621c1928fa673fdc96345a"
+        },
+        {
+          "id": "control-partial",
+          "evidence": "runs/control-partial/summary.json",
+          "stage": "native_control",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "model_called": false,
+          "budget_trial": 3,
+          "reward": 0.7,
+          "expected_reward": 0.7,
+          "counts_as_glm_success": false,
+          "validation_passed": true,
+          "checks": {
+            "no_trial_exception": true,
+            "expected_reward": true,
+            "two_offline_environments": true,
+            "cpu_memory_limits": true,
+            "cleanup_verified": true
+          },
+          "export_sha256": "5127d611553ffdc7f8f586ba34f9dab95d90a59b0754501b55a83c40ecc8b3fc",
+          "owned_sandboxes_deleted_and_verified": 2,
+          "cleanup_follows_worker_artifact_readback": true
+        },
+        {
+          "id": "control-empty",
+          "evidence": "runs/control-empty/summary.json",
+          "stage": "native_control",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "model_called": false,
+          "budget_trial": 4,
+          "reward": 0.0,
+          "expected_reward": 0.0,
+          "counts_as_glm_success": false,
+          "validation_passed": true,
+          "checks": {
+            "no_trial_exception": true,
+            "expected_reward": true,
+            "two_offline_environments": true,
+            "cpu_memory_limits": true,
+            "cleanup_verified": true
+          },
+          "export_sha256": "8c26ff0adad08b95bbf68f61eef818f5fcfe6490fe3230869deb7f49d0b5c163",
+          "owned_sandboxes_deleted_and_verified": 2,
+          "cleanup_follows_worker_artifact_readback": true
+        },
+        {
+          "id": "control-wrong-thresholds",
+          "evidence": "runs/control-wrong-thresholds/summary.json",
+          "stage": "native_control",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "model_called": false,
+          "budget_trial": 5,
+          "reward": 0.0,
+          "expected_reward": 0.0,
+          "counts_as_glm_success": false,
+          "validation_passed": true,
+          "checks": {
+            "no_trial_exception": true,
+            "expected_reward": true,
+            "two_offline_environments": true,
+            "cpu_memory_limits": true,
+            "cleanup_verified": true
+          },
+          "export_sha256": "6b34993ced77bcaeb1669e2c3d42ea2659bd2ddf09b6c50152c81ac8031b8fe6",
+          "owned_sandboxes_deleted_and_verified": 2,
+          "cleanup_follows_worker_artifact_readback": true
+        },
+        {
+          "id": "control-dependency",
+          "evidence": "runs/control-dependency/summary.json",
+          "stage": "native_control",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "model_called": false,
+          "budget_trial": 6,
+          "reward": 0.2,
+          "expected_reward": 0.2,
+          "counts_as_glm_success": false,
+          "validation_passed": true,
+          "checks": {
+            "no_trial_exception": true,
+            "expected_reward": true,
+            "two_offline_environments": true,
+            "cpu_memory_limits": true,
+            "cleanup_verified": true
+          },
+          "export_sha256": "e4dcdb633301c90ab4f926912dc2fbab6720ec122cd80fba6d966678cb7d11b9",
+          "owned_sandboxes_deleted_and_verified": 2,
+          "cleanup_follows_worker_artifact_readback": true
+        }
+      ],
+      "solver_attempts": [
+        {
+          "id": "scanpy-baseline-001",
+          "evidence": "runs/scanpy-baseline-001/summary.json",
+          "stage": "biological_baseline",
+          "seed_id": "scanpy",
+          "candidate_version": 2,
+          "packaging_revision": 1,
+          "baseline_index": 1,
+          "model": "glm-5.3",
+          "harness": "Pi 1.1.0",
+          "reward": 1.0,
+          "full_success": true,
+          "solver_seconds": 60.709179856814444,
+          "solver_limit_seconds": 300,
+          "input_tokens_including_cache": 97782,
+          "cache_tokens": 88768,
+          "output_tokens": 5766,
+          "inference_cost_usd": 0.0,
+          "orchestration_cost": "not measured",
+          "trace_status": "full event stream recovered and hash-verified; compact ATIF view retained",
+          "source_export_sha256": "cb6a740c765c99c6eb182e924807a5cb2757f3133b8a5f373f945e924c8c8d27",
+          "owned_sandboxes_deleted_and_verified": 2,
+          "artifacts_readback_verified_before_cleanup": true,
+          "scientific_interpretation": "One full solve on a purposively selected development task; not a benchmark-wide performance estimate.",
+          "trajectory": "trajectory.atif.json",
+          "trace_recovery_export_sha256": "c2b070340b16ad0d6f0e186a64c9580b5827b177e9904aa21e873d435ffedce4"
+        }
+      ]
+    },
+    {
+      "id": "bedtools",
+      "status": "authoring_failed",
+      "accepted": false,
+      "authoring": [
+        {
+          "id": "author-bedtools-001",
+          "outcome": "see preserved review",
+          "seconds": 672.716,
+          "requests": 40,
+          "requests_with_usage": 0,
+          "input_tokens_including_cache_recorded": 0,
+          "output_tokens_recorded": 0,
+          "usage_complete": false,
+          "evidence": "runs/author-bedtools-001/result.json"
+        }
+      ],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "methylkit",
+      "status": "authoring_exhausted_unaccepted",
+      "accepted": false,
+      "authoring": [
+        {
+          "id": "author-methylkit-001",
+          "outcome": "request_budget_exhausted",
+          "seconds": 276.873,
+          "requests": 40,
+          "requests_with_usage": 40,
+          "input_tokens_including_cache_recorded": 1663101,
+          "output_tokens_recorded": 11506,
+          "usage_complete": true,
+          "evidence": "runs/author-methylkit-001/result.json"
+        },
+        {
+          "id": "author-methylkit-002",
+          "outcome": "request_budget_exhausted",
+          "seconds": 256.857,
+          "requests": 40,
+          "requests_with_usage": 40,
+          "input_tokens_including_cache_recorded": 1940220,
+          "output_tokens_recorded": 31956,
+          "usage_complete": true,
+          "evidence": "runs/author-methylkit-002/result.json"
+        }
+      ],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "qfeatures",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "mdanalysis",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "xcms",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "cobrapy",
+      "status": "authoring_in_progress",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "phyloseq",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "skbio",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    },
+    {
+      "id": "pyradiomics",
+      "status": "not_authored",
+      "accepted": false,
+      "authoring": [],
+      "native_validations": [],
+      "solver_attempts": []
+    }
+  ]
+}
