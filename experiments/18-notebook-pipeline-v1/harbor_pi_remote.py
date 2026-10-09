@@ -89,7 +89,7 @@ class PiRemoteAgent(BaseAgent):
                 provider = {
                     "baseUrl": os.environ["GLM_API_BASE"],
                     "api": "openai-completions",
-                    "apiKey": "BIOTASKS_MODEL_KEY",
+                    "apiKey": "${BIOTASKS_MODEL_KEY}",
                     "compat": {
                         "supportsDeveloperRole": False,
                         "supportsReasoningEffort": False,

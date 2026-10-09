@@ -19,7 +19,7 @@ uv run --locked python experiments/18-notebook-pipeline-v1/build_explorer.py \
   --output /tmp/biotasks-18-intake-001/index.html
 ```
 
-The simple offline intake viewer carries forward #17's Notebook → Task → Attempt organization, with pending states rather than invented tasks or traces. Reusing its full artifact and trajectory components remains pending until there are actual task/attempt records. The generated viewer includes author-only source text; keep it local until source terms are reviewed.
+The offline explorer shows Notebook → Task → Attempt states from `campaign.json`, including unsuccessful conversions and unaccepted candidate versions. Its prepared trajectory view reuses the earlier explorer's prebuilt atif-lens component and Pi converter at the exact revision in `explorer-assets/reuse-manifest.json`; the converter records the current Pi version and preserves pending-call/completion evidence. No solver trace is displayed until one actually exists. Bundled viewer assets are unmodified, with the upstream license retained. The generated viewer includes author-only source text; keep it local until source terms are reviewed.
 
 `protocol.json` records selected constraints and inspected harness revisions, not a working launch configuration. `runtime_verified: false` is intentional. No network/resource enforcement is implemented by the intake tool. The authoring prompt describes the target contract; it cannot enforce it.
 

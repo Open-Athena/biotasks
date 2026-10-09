@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py", line 280, in run
+    await self._run()
+  File "/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/single_step.py", line 36, in _run
+    await self._run_agent()
+  File "/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/single_step.py", line 67, in _run_agent
+    await self._run_agent_phase(
+    ...<4 lines>...
+    )
+  File "/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py", line 528, in _run_agent_phase
+    await self._await_phase(
+    ...<7 lines>...
+    )
+  File "/app/harbor-9f7b8b404711445b6022f72ff7e5715eb0d1a316/src/harbor/trial/trial.py", line 569, in _await_phase
+    return await task
+           ^^^^^^^^^^
+  File "/app/harbor_pi_remote.py", line 207, in run
+    raise RuntimeError(
+        "Pi did not finish a valid assistant response; see preserved trace"
+    )
+RuntimeError: Pi did not finish a valid assistant response; see preserved trace

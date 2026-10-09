@@ -5,6 +5,29 @@ import html
 import json
 from pathlib import Path
 
+from convert_pi import convert
+
+
+def trace_viewer(source, session_id):
+    """Reuse the archived offline viewer; retain source hash and missing-call state."""
+    assets = Path(__file__).with_name("explorer-assets")
+    trace = json.dumps(convert(source, session_id)).replace("<", "\\u003c")
+    script = (assets / "viewer.js").read_text().replace("</script", "<\\/script")
+    css = (assets / "viewer.css").read_text()
+    return (
+        '<!doctype html><html lang="en"><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width,initial-scale=1">'
+        '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; '
+        "script-src &#39;unsafe-inline&#39;; style-src &#39;unsafe-inline&#39;; "
+        'img-src data:; connect-src &#39;none&#39;">'
+        "<title>Recorded Pi attempt</title><style>" + css + '</style><div id="root"></div>'
+        '<script id="trajectory-data" type="application/json">'
+        + trace
+        + "</script><script>"
+        + script
+        + "</script></html>"
+    )
+
 
 def build(manifest, intake, output, campaign=None):
     seeds = json.loads(manifest.read_text())["seeds"]
@@ -63,6 +86,21 @@ def build(manifest, intake, output, campaign=None):
                 )
         return "".join(parts)
 
+    def attempt(run):
+        parts = ["<pre>" + html.escape(json.dumps(run, indent=2)) + "</pre>"]
+        if run.get("pi_trace"):
+            path = (base / run["pi_trace"]).resolve()
+            if not path.is_relative_to(base.resolve()):
+                raise ValueError("Trace path escapes campaign directory")
+            viewer = trace_viewer(path, run["id"])
+            parts.append(
+                '<iframe title="Recorded Pi trajectory" sandbox="allow-scripts" '
+                'style="width:100%;height:720px;border:1px solid #cddbd7" srcdoc="'
+                + html.escape(viewer, quote=True)
+                + '"></iframe>'
+            )
+        return "".join(parts)
+
     cards = []
     for seed in seeds:
         row = records[seed["id"]]
@@ -85,7 +123,7 @@ def build(manifest, intake, output, campaign=None):
             )
             + "</details><details><summary>Attempt</summary>"
             + (
-                "<pre>" + e(json.dumps(stage["solver_attempts"], indent=2)) + "</pre>"
+                "".join(attempt(run) for run in stage["solver_attempts"])
                 if stage.get("solver_attempts")
                 else "<p>No solver attempt or score.</p>"
             )
@@ -95,7 +133,8 @@ def build(manifest, intake, output, campaign=None):
         '<!doctype html><html lang="en"><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1">'
         '<meta http-equiv="Content-Security-Policy" content="default-src &#39;none&#39;; '
-        'style-src &#39;unsafe-inline&#39;">'
+        "style-src &#39;unsafe-inline&#39;; script-src &#39;unsafe-inline&#39;; "
+        'frame-src &#39;self&#39; about:; connect-src &#39;none&#39;">'
         "<title>Notebook pipeline v1 · intake</title><style>"
         "body{font:16px/1.5 system-ui;max-width:1100px;margin:32px auto;padding:0 20px;"
         "background:#f6f8f7;color:#183632}article{background:white;border:1px solid #cddbd7;"

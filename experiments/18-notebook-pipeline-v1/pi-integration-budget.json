@@ -1,7 +1,7 @@
 {
   "stage": "pi_offline_integration",
   "biological_task": false,
-  "max_launches": 3,
+  "max_launches": 4,
   "automatic_retries": 0,
   "concurrency": 1,
   "solver_seconds": 300,
@@ -11,5 +11,8 @@
   "disk_bytes": 10737418240,
   "gpu": 0,
   "input_zip_sha256": "3d997a4cfed82b6425d4c3d20255df74052546372c1ffc37c872d1679261021c",
-  "artifact_policy": "Read-back verify private durable artifacts before deleting only recorded owned sandboxes. On export failure retain sandboxes with ten-minute idle stop."
+  "artifact_policy": "Read-back verify private durable artifacts before deleting only recorded owned sandboxes. On export failure retain sandboxes with ten-minute idle stop.",
+  "budget_revision": 2,
+  "original_max_launches": 3,
+  "revision_reason": "One additional bounded infrastructure check after three recorded failures: two setup/API failures, then a credential-format mismatch before model inference. No biological baseline attempt occurred. Pi 1.1.0 documents ${NAME} environment interpolation; fix that exact mismatch. Keep all original results."
 }
