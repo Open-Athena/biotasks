@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "task": "biotasks/methylkit-cpg-group-methylation",
+  "artifact": "/output/group_methylation.tsv",
+  "subgoals": [
+    {
+      "id": "G1",
+      "name": "coverage-filtered complete-case CpG locus set",
+      "weight": 0.35,
+      "depends_on": [],
+      "definition": "The set of (chr, base, strand) keys in the artifact equals the set of CpG loci that, in every one of the four samples, pass coverage >= 10 (inclusive) and coverage < that sample's 99th coverage percentile (type-7 quantile over the sample's low-passing loci, upper bound exclusive), and that are present in all four filtered samples."
+    },
+    {
+      "id": "G2",
+      "name": "per-sample count-based percent methylation and group means",
+      "weight": 0.3,
+      "depends_on": ["G1"],
+      "definition": "For every expected locus, the four pct_* columns equal 100 * round(coverage * freqC / 100) / coverage (ties to even) within tolerance, and test_mean_pct / ctrl_mean_pct equal the unweighted means of the corresponding per-sample percentages within tolerance."
+    },
+    {
+      "id": "G3",
+      "name": "treatment-minus-control difference per locus",
+      "weight": 0.35,
+      "depends_on": ["G2"],
+      "definition": "For every expected locus, diff_pct equals test_mean_pct minus ctrl_mean_pct within tolerance, matching the reference direction (treatment minus control)."
+    }
+  ],
+  "tolerances": {
+    "percent_absolute": 0.05,
+    "justification": "All graded quantities are percentages in [0, 100]. Exact float or 2-decimal formatting noise is below 0.005 points. A single methylated-count discrepancy shifts a per-sample percentage by 100/coverage >= 1 point for every retained locus (coverage is capped near the 99.9th percentile and always >= 10), and using the file's rounded freqC directly instead of reconstructed integer counts deviates by up to 100/(2*coverage) points, which exceeds 0.05 for essentially all retained loci. 0.05 therefore accepts formatting noise and any ties-to-even/banker's-rounding float discrepancy while rejecting count-reconstruction and aggregation errors."
+  },
+  "reward_rule": "Reward is the weighted sum of passed subgoals; subgoals failing a dependency are scored as failed. Full success requires every subgoal.",
+  "grading": {
+    "deterministic": true,
+    "llm_judging": false,
+    "exact_command_checks": false,
+    "smooth_closeness": false,
+    "row_matching": "by (chr, base, strand) key; row order in the artifact is ignored"
+  }
+}

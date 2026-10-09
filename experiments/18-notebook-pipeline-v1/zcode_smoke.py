@@ -44,6 +44,12 @@ def resource_snapshot():
 
 
 def main():
+    # Iris reserves CPUs but the worker cgroup may have no CPU quota. Bound this
+    # process and all subsequently created threads/children to at most four CPUs.
+    allowed_cpus = sorted(os.sched_getaffinity(0))[:4]
+    os.sched_setaffinity(0, allowed_cpus)
+    if len(os.sched_getaffinity(0)) > 4:
+        raise RuntimeError("Author CPU affinity limit was not applied")
     root = Path.cwd()
     spec = (
         json.loads((root / "run-spec.json").read_text())

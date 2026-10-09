@@ -1,0 +1,47 @@
+schema_version = "1.2"
+
+artifacts = ["/output/group_methylation.tsv"]
+
+[task]
+name = "biotasks/methylkit-cpg-group-methylation"
+description = "Filter four CpG methylation call tables by coverage, join shared loci, and quantify treatment-versus-control methylation differences per locus."
+authors = []
+keywords = ["epigenomics", "cpg-methylation", "bisulfite-sequencing", "coverage-filtering"]
+
+[metadata]
+difficulty = "medium"
+category = "bioinformatics"
+tags = ["epigenomics", "methylation", "cpg"]
+
+[verifier]
+timeout_sec = 300.0
+environment_mode = "separate"
+
+[verifier.environment]
+build_timeout_sec = 600.0
+docker_image = ""
+cpus = 4
+memory_mb = 2048
+storage_mb = 10240
+gpus = 0
+allow_internet = false
+mcp_servers = []
+
+[agent]
+timeout_sec = 300.0
+
+[environment]
+build_timeout_sec = 600.0
+docker_image = ""
+cpus = 4
+memory_mb = 8192
+storage_mb = 10240
+gpus = 0
+allow_internet = false
+mcp_servers = []
+
+[verifier.env]
+
+[environment.env]
+
+[solution.env]

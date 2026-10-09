@@ -1,0 +1,128 @@
+#!/usr/bin/env python3
+"""Deterministic grader for biotasks/methylkit-cpg-group-methylation.
+
+Grades /logs/artifacts/group_methylation.tsv against /tests/expected/group_methylation.tsv.
+Subgoals (see grading-contract.json):
+  G1 weight 0.35: coverage-filtered complete-case locus set (exact key-set match)
+  G2 weight 0.30: per-sample percent methylation and group means (abs tol 0.05)
+  G3 weight 0.35: treatment-minus-control difference (abs tol 0.05)
+Dependencies: G2 requires G1; G3 requires G2. Reward is the weighted sum.
+Row order is ignored; rows are matched by (chr, base, strand) key.
+"""
+
+import csv
+import json
+import os
+import sys
+
+WEIGHTS = {"G1": 0.35, "G2": 0.30, "G3": 0.35}
+TOL = 0.05
+SAMPLE_COLS = ["pct_test1", "pct_test2", "pct_ctrl1", "pct_ctrl2"]
+MEAN_COLS = ["test_mean_pct", "ctrl_mean_pct"]
+DIFF_COL = "diff_pct"
+ALL_COLS = SAMPLE_COLS + MEAN_COLS + [DIFF_COL]
+
+
+def fail(msg, report):
+    report["error"] = msg
+    write_outputs(0.0, report, passed={"G1": False, "G2": False, "G3": False})
+    return 0
+
+
+def load_table(path, report):
+    try:
+        with open(path, newline="") as f:
+            rows = list(csv.DictReader(f, delimiter="\t"))
+    except OSError:
+        return None, "cannot read %s" % path
+    if not rows:
+        return None, "table %s has no data rows" % path
+    missing = [c for c in ALL_COLS if c not in rows[0]]
+    if missing:
+        return None, "missing columns: %s" % ",".join(missing)
+    table = {}
+    for i, row in enumerate(rows):
+        key = (row.get("chr"), row.get("base"), row.get("strand"))
+        if None in key or any(v is None for v in key):
+            return None, "row %d lacks key columns" % (i + 1)
+        if key in table:
+            return None, "duplicate locus key %s" % (key,)
+        try:
+            vals = {c: float(row[c]) for c in ALL_COLS}
+        except (TypeError, ValueError):
+            return None, "row %d has non-numeric values" % (i + 1)
+        table[key] = vals
+    return table, None
+
+
+def write_outputs(reward, report, passed):
+    report.update(
+        reward=reward,
+        subgoals={k: bool(v) for k, v in passed.items()},
+        weights=WEIGHTS,
+        tolerance=TOL,
+    )
+    out_dir = os.environ.get("GRADER_OUT_DIR", "/logs/verifier")
+    os.makedirs(out_dir, exist_ok=True)
+    with open(os.path.join(out_dir, "report.json"), "w") as f:
+        json.dump(report, f, indent=2)
+    with open(os.path.join(out_dir, "reward.txt"), "w") as f:
+        f.write("%.6f\n" % reward)
+
+
+def main():
+    report = {}
+    artifact_path = os.environ.get("GRADER_ARTIFACT", "/logs/artifacts/group_methylation.tsv")
+    expected_path = os.environ.get("GRADER_EXPECTED", "/tests/expected/group_methylation.tsv")
+
+    if not os.path.exists(artifact_path):
+        return fail("artifact missing: %s" % artifact_path, report)
+    expected, err = load_table(expected_path, report)
+    if err:
+        return fail("internal: %s" % err, report)
+    artifact, err = load_table(artifact_path, report)
+    if err:
+        return fail(err, report)
+    report["expected_loci"] = len(expected)
+    report["artifact_loci"] = len(artifact)
+
+    passed = {"G1": False, "G2": False, "G3": False}
+
+    # G1: exact locus-set match.
+    passed["G1"] = set(artifact.keys()) == set(expected.keys())
+    if not passed["G1"]:
+        report["g1_detail"] = {
+            "missing_loci": len(set(expected) - set(artifact)),
+            "extra_loci": len(set(artifact) - set(expected)),
+        }
+
+    # G2: per-sample percentages and group means within tolerance.
+    if passed["G1"]:
+        bad = []
+        for key, exp in expected.items():
+            got = artifact[key]
+            for col in SAMPLE_COLS + MEAN_COLS:
+                if abs(got[col] - exp[col]) > TOL:
+                    bad.append((key, col, got[col], exp[col]))
+        passed["G2"] = not bad
+        if bad:
+            report["g2_detail"] = {"violations": len(bad), "examples": [list(map(str, b)) for b in bad[:5]]}
+
+    # G3: difference column within tolerance (requires G2).
+    if passed["G2"]:
+        bad = []
+        for key, exp in expected.items():
+            got = artifact[key]
+            if abs(got[DIFF_COL] - exp[DIFF_COL]) > TOL:
+                bad.append((key, got[DIFF_COL], exp[DIFF_COL]))
+        passed["G3"] = not bad
+        if bad:
+            report["g3_detail"] = {"violations": len(bad), "examples": [list(map(str, b)) for b in bad[:5]]}
+
+    reward = sum(WEIGHTS[g] for g in ("G1", "G2", "G3") if passed[g])
+    write_outputs(reward, report, passed)
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
