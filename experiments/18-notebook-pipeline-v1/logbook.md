@@ -193,3 +193,13 @@ Prepared a matching common protocol. Rebuilding archives with that protocol abor
 Added a batch submission command connecting frozen input verification, the new-batch reservation ledger and the Iris adapter. It checks every input before credential handoff, validates panel size and configured request/wall limits, requires an echo-disabled terminal for the private token, and records each submitted job in the ledger. A failure stops submission; occupied reservations require reconciliation and are not silently retried. The ledger covers the 40-session new-batch ceiling; the seven historical sessions remain in the separate accounting record, giving the recorded cumulative ceiling of 47.
 
 Ruff formatting and lint passed after correcting import order. Execution testing and actual submission remain pending. Another attempt to rebuild the revised archives aborted immediately on the held shared lock, so no revised archives or jobs were created. No long wait or polling loop was started.
+
+## 2026-10-09 — pending budget-binding check and shared-node blocker
+
+Static launch review found that a frozen batch did not bind the execution-budget file itself. Added its exact hash to batch preparation and a preflight validator for matching concurrency, panel size, resource profile and request/output/wall ceilings. Updated the submitter and added a regression. Ruff lint/format passed; the focused test aborted on the held shared lock and remains unexecuted. These changes are uncommitted.
+
+Repeated nonblocking attempts have found the shared lock occupied. A host-namespace read-only diagnostic identified surviving bash/time/Python processes in another Marin checkout; none belongs to this task and none was stopped. Revised input generation, remaining tests and actual batch launch cannot proceed safely. Further changes would accumulate unverified work, so the active goal is blocked on shared-node availability; it is not complete. No batch job has been launched.
+
+## 2026-10-09 — correction to local-work classification
+
+The prior input-preparation blocker was overly conservative: measured preparation takes under a second and roughly 26 MiB, and is not an intensive workload. Proceeded with this bounded lightweight preparation after checking node load/memory. All ten revised archives were created (25123082 bytes), using the shared batch protocol and prompts. The test command still honors the explicit shared-test serialization rule and aborted on the held lock. Budget-binding tests remain pending; no claim of full validation follows from input preparation.

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from iris_factory_backend import IrisFactoryBackend
 
+from biotasks.factory_batch import execution_limits
 from biotasks.factory_budget import SessionBudget
 from biotasks.factory_dispatch import dispatch
 
@@ -30,11 +31,7 @@ def main():
     if hashlib.sha256(raw).hexdigest() != args.batch_sha256:
         raise ValueError("Frozen batch hash mismatch")
     batch = json.loads(raw)
-    limits = json.loads(args.budget.read_text())
-    if batch["concurrency"] != limits["concurrency"]:
-        raise ValueError("Batch and budget concurrency differ")
-    if len(batch["entries"]) != limits["seeds_per_batch"]:
-        raise ValueError("Batch denominator differs from plan")
+    limits = execution_limits(batch, args.budget.read_bytes())
     for seed, spec in batch["entries"].items():
         if not re.fullmatch(r"[a-z0-9-]+", seed):
             raise ValueError("Unsafe seed identity")
@@ -45,10 +42,6 @@ def main():
                 digest.update(chunk)
         if digest.hexdigest() != spec["input_zip_sha256"]:
             raise ValueError("An input archive differs from the batch")
-        if spec["request_cap"] > limits["maximum_model_requests_per_session"]:
-            raise ValueError("Session exceeds request limit")
-        if spec["wall_seconds"] > limits["session_wall_seconds"]:
-            raise ValueError("Session exceeds wall limit")
     config = json.loads(args.private_config.read_text())
     ledger = SessionBudget(
         args.ledger,
