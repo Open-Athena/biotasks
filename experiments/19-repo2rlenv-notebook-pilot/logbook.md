@@ -169,3 +169,27 @@ invocation distinction; do not claim the first full-suite command passed.
 The approved budget was added to the issue's dated decision log and read back
 exactly. Integration remains preparation-only: launcher, live preflight, scientific
 generation/validation and publication are outstanding.
+
+### 2026-10-09 — bounded scientific review and campaign assembly
+
+Added reusable notebook-grounding and scientific-fidelity review prompts. The
+upstream design patch appends optional guidance without changing the original
+schema or call settings. The draft campaign runner connects original SETA and
+quality-loop calls to the existing inference quotas and execution adapter. After
+the quality loop, GLM assesses observed inputs, methodology, the public contract,
+scientific grading and software alternatives within the same quality allowance.
+Exact quotations are checked against the supplied evidence; missing dimensions,
+unknown outcomes and blocking findings cannot produce a supported assessment.
+This remains advisory review, not a reward or independent scientific execution.
+The runner explicitly leaves execution-evidence auditing and release incomplete.
+
+Regenerated patch 0002 with explicit resource overrides and recorded patch 0003
+in the pin manifest. Sequential application to clean archived upstream sources
+reproduces the inspected modified files exactly. Eleven adapter/design tests
+passed in 0.58 seconds, peak RSS 54,920 KiB. Three fidelity tests passed in
+0.34 seconds, peak RSS 48,144 KiB. The first fidelity invocation failed collection
+because the experiment directory was absent from PYTHONPATH; the corrected
+invocation uses the same experiment/source paths as the other integration tests.
+All execution was local and mocked; no model or sandbox calls occurred. The
+launcher, live offline/resource/cleanup preflight, provider-cost accounting and
+release orchestration remain unfinished and must precede campaign execution.

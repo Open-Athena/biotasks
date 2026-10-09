@@ -58,11 +58,18 @@ def test_real_runner_forwards_host_credentials_and_preserves_offline_bundle(tmp_
         ledger=BudgetLedger(tmp_path / "budget.db", limit_usd="10"),
         environment="daytona",
         agent_timeout_sec=300,
+        resource_overrides={"cpus": 1, "memory_mb": 2048, "storage_mb": 10240},
     )
     args, kwargs = launch.call_args
     command = args[2]
     assert command[command.index("--env") + 1] == "daytona"
     assert command[command.index("--agent-timeout-multiplier") + 1] == "0.5"
+    for flag, value in (
+        ("--override-cpus", "1"),
+        ("--override-memory-mb", "2048"),
+        ("--override-storage-mb", "10240"),
+    ):
+        assert command[command.index(flag) + 1] == value
     assert "api_base=https://test.example/v1" in command
     assert kwargs["env"]["OPENAI_API_KEY"] == "FAKE_MODEL_SECRET"
     assert kwargs["env"]["DAYTONA_API_KEY"] == "FAKE_DAYTONA_SECRET"

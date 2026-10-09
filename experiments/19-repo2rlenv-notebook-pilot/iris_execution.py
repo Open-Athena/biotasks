@@ -121,7 +121,8 @@ class IrisDaytonaExecution:
         if worker.id != self.worker.id:
             raise ValueError("Execution worker identity mismatch")
         remaining = (self.deadline - datetime.now(UTC)).total_seconds()
-        timeout = kwargs.get("timeout_sec", 900)
+        timeout = min(kwargs.get("timeout_sec", 1500), 1500)
+        kwargs["timeout_sec"] = timeout
         if remaining < timeout + 120:
             raise TimeoutError("Insufficient allocation time for trial and cleanup")
         # Every attempted dispatch consumes a slot, including uncertain outcomes.
@@ -154,6 +155,7 @@ class IrisDaytonaExecution:
             agent=agent,
             environment="daytona",
             agent_timeout_sec=300 if solving else None,
+            resource_overrides={"cpus": 1, "memory_mb": 2048, "storage_mb": 10240},
             **kwargs,
         )
 

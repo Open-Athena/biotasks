@@ -1,15 +1,16 @@
 --- a/src/repo2rlenv/execution/harbor.py
 +++ b/src/repo2rlenv/execution/harbor.py
-@@ -214,6 +214,8 @@
+@@ -214,6 +214,9 @@
      resume: bool = False,
      python: str = "python",
      agent_mode: str = "solve",
 +    environment: str = "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
 +    agent_timeout_sec: int | None = None,
++    resource_overrides: dict[str, int] | None = None,
  ) -> TrialEvidence:
      if not re.fullmatch(r"[a-z][a-z0-9-]{0,60}", trial_id):
          raise ValueError("Trial ID must be a unique lowercase slug")
-@@ -242,8 +244,33 @@
+@@ -242,8 +245,40 @@
          raise ValueError("Task has changed since emission")
      from harbor.models.task.task import Task
  
@@ -38,22 +39,30 @@
 +            raise ValueError("Daytona execution requires a single-container task")
 +        if not os.environ.get("DAYTONA_API_KEY"):
 +            raise ValueError("Daytona execution requires host-side credentials")
++    if resource_overrides is not None:
++        if environment != "daytona" or set(resource_overrides) != {"cpus", "memory_mb", "storage_mb"}:
++            raise ValueError("Explicit Daytona CPU, memory and storage overrides are required")
++        if any(type(value) is not int or value <= 0 for value in resource_overrides.values()):
++            raise ValueError("Resource overrides must be positive integers")
++        if parsed_task.config.environment.gpus:
++            raise ValueError("This execution adapter supports CPU tasks only")
      env = {"REPO2RLENV_REMOTE_WORKER": "1"}
 +    if environment == "daytona":
 +        env["DAYTONA_API_KEY"] = os.environ["DAYTONA_API_KEY"]
      route_arguments, route_identity = [], None
      if model is not None:
          route_arguments, route_identity = trial_model_route(model, agent=agent)
-@@ -267,6 +294,8 @@
+@@ -267,6 +302,9 @@
          "max_tokens": max_tokens,
          "timeout_sec": timeout_sec,
          "runtime_python": python,
 +        "environment": environment,
 +        "agent_timeout_sec": agent_timeout_sec,
++        "resource_overrides": resource_overrides,
      }
      if output.exists():
          stored = json.loads(receipt.read_text())
-@@ -359,7 +388,7 @@
+@@ -359,7 +397,7 @@
                  else agent
              ),
              "--env",
@@ -62,12 +71,14 @@
              "--n-concurrent",
              "1",
              "--max-retries",
-@@ -402,6 +431,8 @@
+@@ -402,6 +440,10 @@
                      "llm_call_kwargs=" + json.dumps(completion_token_limit(model, max_tokens)),
                  ]
              )
 +        if agent_timeout_sec is not None:
 +            command.extend(["--agent-timeout-multiplier", str(agent_timeout_sec / base_timeout)])
++        for resource, value in (resource_overrides or {}).items():
++            command.extend(["--override-" + resource.replace("_", "-"), str(value)])
          command.extend(route_arguments)
          record.update(state="dispatched", trial_dispatched=True, command=command)
          save_record(receipt, record)

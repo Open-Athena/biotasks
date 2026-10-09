@@ -21,7 +21,7 @@ Python parses; ten route-helper tests pass. The upstream package has subsequentl
 regressions plus mocked integration tests pass. These do not establish endpoint
 reachability, scientific validity or live offline enforcement.
 
-Additional execution-boundary work is under discussion: keep the model client
+The agreed execution-boundary adaptation keeps the model client
 on its supported compute network and use Harbor's native Daytona environment for
 task tools. The endpoint patch by itself does not implement that arrangement.
 
@@ -29,9 +29,19 @@ task tools. The endpoint patch by itself does not implement that arrangement.
 SETA's existing runner. The default worker/Docker path remains intact. It also
 lets the upstream trial runner invoke Harbor's native Daytona backend, rejects
 network expansion in any execution phase, and accepts an agent-only time bound.
+Explicit CPU, RAM and storage overrides apply to Harbor's Daytona execution;
+GPU requests are rejected. The adapter caps the whole-trial timeout at 1,500 seconds.
 The experiment's `iris_execution.py` supplies that adapter and reuses the original
 quality-loop evidence importer. Apply patch 0002 after patch 0001.
 
 The pinned dependency and Harbor/Daytona extras have now been installed from the
 upstream lock in an isolated local checkout. Affected upstream regression tests
 and mocked control-plane integration tests pass; live execution remains pending.
+
+`0003-notebook-design-guidance.patch` adds optional system guidance to the existing
+SETA design call. The default call and response schema are preserved. The caller
+supplies the version-controlled notebook-grounding prompt to both design and
+construction, keeping the adaptation reusable across notebook sources. Apply this
+patch after 0002. A mocked call test verifies the unchanged schema, request
+settings and seed payload. All three patches were applied sequentially to source
+from the pinned archive and compared byte-for-byte with the inspected checkout.
