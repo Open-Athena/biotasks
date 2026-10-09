@@ -11,8 +11,10 @@ from functools import partial
 from importlib.resources import files
 from pathlib import Path
 
+from daytona import Daytona
 from fidelity import review as review_fidelity
 from iris_execution import IrisDaytonaExecution
+from preflight import run as run_preflight
 from pydantic import BaseModel, ConfigDict
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
@@ -103,8 +105,9 @@ def run(
         )
         if not checked.compatible:
             raise RuntimeError("Structured completion preflight failed")
-        # The caller must run and persist the provider/network preflight first.
-        preflight = json.loads((root / "infrastructure-preflight.json").read_text())
+        preflight = run_preflight(
+            Daytona(), root=root, campaign=config["campaign"], deadline=deadline
+        )
         if not preflight.get("passed") or not preflight.get("cleanup_verified"):
             raise RuntimeError("Infrastructure preflight is incomplete")
         campaign = root / "campaign"

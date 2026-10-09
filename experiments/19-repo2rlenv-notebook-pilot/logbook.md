@@ -193,3 +193,24 @@ invocation uses the same experiment/source paths as the other integration tests.
 All execution was local and mocked; no model or sandbox calls occurred. The
 launcher, live offline/resource/cleanup preflight, provider-cost accounting and
 release orchestration remain unfinished and must precede campaign execution.
+
+### 2026-10-09 — owned infrastructure preflight
+
+Implemented the one-sandbox preflight against the installed Daytona SDK. It
+requests the approved 1 CPU / 2 GiB / 10 GiB profile, a ten-minute provider TTL,
+private visibility and blocked network access. It checks provider-reported
+resources and network settings, then compares sandbox outbound TCP probes with
+reachable host controls. This is representative isolation evidence, not an
+exhaustive network attestation or a substitute for checking actual task trials.
+The fixture contains no biological task, reference or grader authored by the
+operator. A persisted claim prevents retrying the preflight automatically.
+
+Cleanup runs on success and failure. In particular, an uncertain create followed
+by an immediate not-found observation remains unresolved because provider-side
+creation may still finish later. The preflight cannot authorize a following
+sandbox without verified cleanup. Three mocked tests passed in 0.44 seconds,
+peak RSS 52,892 KiB, covering successful deletion, leaked outbound access and
+uncertain creation. The campaign runner now invokes this preflight after its
+structured model compatibility check. Nothing has been executed remotely;
+campaign cost/cleanup accounting and the Iris submission/export launcher still
+need completion before launch.
