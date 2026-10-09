@@ -12,6 +12,21 @@ from recover_factory_text import collect
 
 
 class RecoveryChecks(unittest.TestCase):
+    def test_trace_exclusion_does_not_read_verbose_artifacts(self):
+        def read(uri, maximum):
+            if uri.endswith("pipeline-summary.json"):
+                return json.dumps({"seed": "sample", "status": "failed",
+                                   "stages": [{"slot": "construction"}]}).encode()
+            if uri.endswith(("zcode-events.jsonl", "launcher.log")):
+                self.fail("Excluded trace was read")
+            raise FileNotFoundError(uri)
+
+        result = collect([{"seed": "sample", "prefix": "sample"}], read,
+                         include_traces=False)
+        self.assertIn("sample/pipeline-summary.json", result)
+        omitted = json.loads(result["recovery.json"])["omissions"]
+        self.assertEqual(sum(x["reason"] == "trace_excluded_by_plan" for x in omitted), 2)
+
     def test_verbose_first_trace_does_not_starve_later_seed_summary(self):
         files = {}
         for seed in ("first", "second"):

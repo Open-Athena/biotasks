@@ -5,6 +5,7 @@ output is a checksummed text archive for the existing local log decoder. Large
 and binary artifacts remain at their original locations and are listed as omitted.
 """
 
+import argparse
 import base64
 import gzip
 import hashlib
@@ -17,7 +18,7 @@ MAX_FILE = 4 * 1024**2
 MAX_TOTAL = 24 * 1024**2
 
 
-def collect(plan, read):
+def collect(plan, read, *, include_traces=True):
     artifacts, inventory, omissions = {}, [], []
     deferred = []
     used = 0
@@ -100,18 +101,25 @@ def collect(plan, read):
     # Preserve every seed's small decision records before spending the bounded
     # text allowance on verbose traces. Omitted traces remain in durable storage.
     for args in deferred:
-        add(*args)
+        if include_traces:
+            add(*args)
+        else:
+            omissions.append({"path": args[0], "reason": "trace_excluded_by_plan"})
     artifacts["recovery.json"] = json.dumps({"files": inventory, "omissions": omissions,
         "source_mutated": False, "complete_binary_artifact_recovery": False}, indent=2)
     return artifacts
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--without-traces", action="store_true")
+    args = parser.parse_args()
     def read(uri, size):
         with fsspec.open(uri, "rb").open() as source:
             return source.read(size)
 
-    result = collect(json.loads(Path("recovery-plan.json").read_text()), read)
+    result = collect(json.loads(Path("recovery-plan.json").read_text()), read,
+                     include_traces=not args.without_traces)
     raw = json.dumps(result).encode()
     if len(raw) > 32 * 1024**2:
         raise ValueError("Recovery exceeds local decoder bound")
