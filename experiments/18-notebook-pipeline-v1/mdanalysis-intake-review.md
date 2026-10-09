@@ -1,0 +1,7 @@
+# MDAnalysis input preparation
+
+The pinned UserGuide seed imports PSF, DCD and CRD aliases. `MDAnalysisTests/datafiles.py` at release 2.10.0, revision `a0595bdf4bba21ccb35f3ac2714592d88a735b02`, maps these to `adk.psf`, `adk_dims.dcd` and `adk_open.crd`. All three files are staged with URLs, sizes and SHA-256 values in `mdanalysis-inputs.json`; they total approximately 5.1 MB. No trajectory analysis or new simulation has run.
+
+The seed describes an AdK closed-to-open transition trajectory, closed structural lineage 1AKE and open structural reference 4AKE, and cites Beckstein et al. (2009), https://doi.org/10.1016/j.jmb.2009.09.009 . Treat the trajectory as supplied simulated coordinates, not observed molecular motion. Preserve the seed and data-package citations and resolve source terms before public redistribution.
+
+Use the compact backbone-aligned CORE/LID/NMP RMSD question. The relevant example aligns each trajectory frame to frame 0 of the same trajectory on backbone atoms, then calculates domain RMSDs without an additional domain-specific alignment. The separate open CRD is used elsewhere in the notebook and must not silently replace frame 0 as this example's reference. Specify residue ranges, atom selection, mass weighting or lack thereof, frame indices, coordinate units, reference and summary aggregation explicitly. Any frame subset must retain original frame identities and lineage. Grade scientific values with tolerances rather than exact package calls. Native MDAnalysis reference execution is still required.
