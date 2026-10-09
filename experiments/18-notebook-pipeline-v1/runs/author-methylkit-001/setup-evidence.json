@@ -1,0 +1,134 @@
+[
+  {
+    "input": {
+      "command": "grep -E '^(ID|VERSION_CODENAME)=' /etc/os-release; whoami; timeout 25 apt-get update 2>&1 | tail -3",
+      "description": "Check distro and apt update"
+    },
+    "result": {
+      "success": true,
+      "content": "VERSION_CODENAME=trixie\nID=debian\nroot\nGet:8 http://deb.debian.org/debian-security trixie-security/main amd64 Packages [265 kB]\nFetched 10.2 MB in 3s (3221 kB/s)\nReading package lists...",
+      "perf": {
+        "totalMs": 3643,
+        "detail": {
+          "kind": "command",
+          "command": {
+            "runMs": 3639,
+            "firstOutputMs": 3026,
+            "noOutputMs": 3026,
+            "exitCode": 0,
+            "timedOut": false,
+            "outputBytes": 187,
+            "category": "search",
+            "count": 4,
+            "name": "compound",
+            "status": "completed",
+            "hash": "513142a8d22fd8c3"
+          }
+        }
+      },
+      "truncated": false,
+      "originalBytes": 186,
+      "returnedBytes": 186,
+      "budgetStrategy": "artifact"
+    }
+  },
+  {
+    "input": {
+      "command": "apt-cache policy r-base-core 2>&1 | head -6; nproc; free -m | head -2; df -h / | tail -1",
+      "description": "Check R availability after apt update"
+    },
+    "result": {
+      "success": true,
+      "content": "r-base-core:\n  Installed: (none)\n  Candidate: 4.5.0-3\n  Version table:\n     4.5.0-3 500\n        500 http://deb.debian.org/debian trixie/main amd64 Packages\n1\n/usr/bin/bash: line 3: free: command not found\noverlay          28T  4.3T   24T  16% /",
+      "perf": {
+        "totalMs": 436,
+        "detail": {
+          "kind": "command",
+          "command": {
+            "runMs": 433,
+            "noOutputMs": 433,
+            "exitCode": 0,
+            "timedOut": false,
+            "outputBytes": 245,
+            "category": "other",
+            "count": 7,
+            "name": "compound",
+            "status": "completed",
+            "hash": "cd393b9b93e40f2e"
+          }
+        }
+      },
+      "truncated": false,
+      "originalBytes": 244,
+      "returnedBytes": 244,
+      "budgetStrategy": "artifact"
+    }
+  },
+  {
+    "input": {
+      "command": "cd /tmp && Rscript -e 'install.packages(c(\"emdbook\",\"fastseg\"), repos=\"https://bioconductor.org/packages/release/bioc\", quiet=TRUE)' 2>&1 | tail -5; Rscript -e 'cat(requireNamespace(\"emdbook\",quietly=TRUE), requireNamespace(\"fastseg\",quietly=TRUE), \"\\n\")'",
+      "description": "Install emdbook and fastseg from Bioconductor",
+      "timeout": 300000
+    },
+    "result": {
+      "success": true,
+      "content": "package \u2018emdbook\u2019 is not available for this version of R\n\nA version of this package for your version of R might be available elsewhere,\nsee the ideas at\nhttps://cran.r-project.org/doc/manuals/r-patched/R-admin.html#Installing-packages \nFALSE TRUE\nShell cwd was reset to /app/author-workspace",
+      "perf": {
+        "totalMs": 9059,
+        "detail": {
+          "kind": "command",
+          "command": {
+            "runMs": 9056,
+            "firstOutputMs": 8023,
+            "noOutputMs": 8023,
+            "exitCode": 0,
+            "timedOut": false,
+            "outputBytes": 252,
+            "category": "other",
+            "count": 4,
+            "name": "compound",
+            "status": "completed",
+            "hash": "6d50ac556ed90d57"
+          }
+        }
+      },
+      "truncated": false,
+      "originalBytes": 295,
+      "returnedBytes": 295,
+      "budgetStrategy": "artifact"
+    }
+  },
+  {
+    "input": {
+      "command": "DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends libcurl4-openssl-dev > /tmp/apt2.log 2>&1; cd /tmp && R CMD INSTALL methylKit-32212a6cc2046e97371eb528533964c1e1a54afa > /tmp/mkinstall.log 2>&1; tail -2 /tmp/mkinstall.log",
+      "description": "Install libcurl dev and compile methylKit",
+      "timeout": 600000
+    },
+    "result": {
+      "success": true,
+      "content": "** testing if installed package keeps a record of temporary installation path\n* DONE (methylKit)\nShell cwd was reset to /app/author-workspace",
+      "perf": {
+        "totalMs": 34718,
+        "detail": {
+          "kind": "command",
+          "command": {
+            "runMs": 34716,
+            "noOutputMs": 34716,
+            "exitCode": 0,
+            "timedOut": false,
+            "outputBytes": 97,
+            "category": "other",
+            "count": 4,
+            "name": "compound",
+            "status": "completed",
+            "hash": "421a509b44c91298"
+          }
+        }
+      },
+      "truncated": false,
+      "originalBytes": 141,
+      "returnedBytes": 141,
+      "budgetStrategy": "artifact"
+    }
+  }
+]

@@ -29,6 +29,20 @@ def file_sha256(path):
     return digest.hexdigest()
 
 
+def resource_snapshot():
+    """Observe the author host; allocation requests alone do not prove limits."""
+    values = {}
+    for name in ["cpu.max", "memory.max", "memory.peak", "memory.events"]:
+        path = Path("/sys/fs/cgroup") / name
+        values[name] = path.read_text().strip() if path.exists() else None
+    values["cpu_affinity_count"] = len(os.sched_getaffinity(0))
+    filesystem = os.statvfs("/")
+    values["filesystem_total_bytes"] = filesystem.f_blocks * filesystem.f_frsize
+    values["filesystem_available_bytes"] = filesystem.f_bavail * filesystem.f_frsize
+    values["filesystem_size_proves_per_job_quota"] = False
+    return values
+
+
 def main():
     root = Path.cwd()
     spec = (
@@ -261,6 +275,7 @@ def main():
         "prompt",
         "Write the exact text READY followed by a newline to readiness.txt in the current workspace. Then stop. Do not use other agents, web access or unrelated tools.",
     )
+    author_resources_before = resource_snapshot()
     start = time.monotonic()
     with (
         (root / "zcode-events.jsonl").open("wb") as out,
@@ -304,6 +319,8 @@ def main():
         "requests": requests,
         "marker_matches": marker.exists() and marker.read_text() == "READY\n",
         "peak_child_rss_kib": resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
+        "author_resources_before": author_resources_before,
+        "author_resources_after": resource_snapshot(),
         "outcome": "request_budget_exhausted"
         if process.returncode and len(requests) >= request_cap
         else "timeout"

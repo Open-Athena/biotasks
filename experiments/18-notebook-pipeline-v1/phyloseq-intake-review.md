@@ -1,0 +1,5 @@
+# phyloseq input preparation
+
+The pinned GlobalPatterns.RData, its data help page and package DESCRIPTION are staged with hashes in phyloseq-inputs.json. The help page describes the packaged object as 19216 taxa and 26 samples. It cites Caporaso et al. (2011), Global patterns of 16S rRNA diversity at a depth of millions of sequences per sample, PMCID PMC3063599. The broader study description mentions 25 environmental and three mock communities; do not confuse that study-level description with the packaged object's sample count.
+
+Extract counts and sample metadata with native phyloseq, preserving sample IDs, taxonomy orientation and mock-community labels. The compact question is per-sample observed richness and Shannon diversity, joined to metadata. State log base, whether raw counts or a normalized/rarefied table is used, zero handling and exact sample membership. Do not silently remove mock communities or infer their identity from sample position. Native reference execution and input redistribution review remain pending. No object extraction or diversity computation has run.
