@@ -190,6 +190,23 @@ class PiRemoteAgent(BaseAgent):
                     raise RuntimeError(
                         f"Pi exited with code {process.returncode}; see preserved stderr"
                     )
+                # Pi can exit zero after a provider error; Harbor's installed adapter
+                # also checks the final assistant stop reason rather than trusting exit.
+                last_assistant = None
+                for line in (self.logs_dir / "pi.txt").read_text().splitlines():
+                    try:
+                        event = json.loads(line)
+                    except ValueError:
+                        continue
+                    if (
+                        event.get("type") == "message_end"
+                        and event.get("message", {}).get("role") == "assistant"
+                    ):
+                        last_assistant = event["message"]
+                if last_assistant is None or last_assistant.get("stopReason") == "error":
+                    raise RuntimeError(
+                        "Pi did not finish a valid assistant response; see preserved trace"
+                    )
         finally:
             await runner.cleanup()
             self.logs_dir.mkdir(parents=True, exist_ok=True)
@@ -218,7 +235,9 @@ class PiRemoteAgent(BaseAgent):
                 and record.get("message", {}).get("role") == "assistant"
             ):
                 usages.append(record["message"].get("usage", {}))
-        context.n_input_tokens = sum(u.get("input", 0) + u.get("cacheRead", 0) for u in usages)
+        context.n_input_tokens = sum(
+            u.get("input", 0) + u.get("cacheRead", 0) + u.get("cacheWrite", 0) for u in usages
+        )
         context.n_output_tokens = sum(u.get("output", 0) for u in usages)
         context.n_cache_tokens = sum(u.get("cacheRead", 0) for u in usages)
         context.cost_usd = 0.0  # Existing free service; excludes orchestration/sandbox charges.

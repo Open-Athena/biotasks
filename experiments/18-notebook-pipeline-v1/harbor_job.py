@@ -12,7 +12,8 @@ async def run():
     from harbor.models.job.config import JobConfig
 
     config = JobConfig.model_validate_json(Path("harbor-job.json").read_text())
-    result = await Job(config).run()
+    job = await Job.create(config)
+    result = await job.run()
     Path("harbor-result.json").write_text(result.model_dump_json(indent=2))
 
 
