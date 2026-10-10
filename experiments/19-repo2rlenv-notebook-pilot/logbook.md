@@ -586,3 +586,19 @@ to derive the source list from all patch headers. Lint/format checks passed.
 Campaign 009 submitted once from `7f93dea27d9c110a38686c7e69e65b7918561144`,
 replacement slot 8, leaving two slots. Launcher peak RSS 344,808 KiB, 10.16
 seconds, exit 0, shared lock/thread/priority restrictions applied.
+
+## 2026-10-10 UTC: repository validation
+
+Updated the CLI prompt-list regression for the three packaged notebook prompts;
+legacy repository placeholders remain required for the two original templates.
+All 14 repository tests pass, including installed distribution checks, using the
+pinned uv through `uv run --locked`. The first invocation selected global uv and
+lacked the build backend in its offline cache; it also found the stale two-prompt
+expectation. Corrected run: peak RSS 46,136 KiB, 5.68 seconds, exit 0.
+
+The experiment suite passed 31 checks; its two loopback-server tests were blocked
+by the local socket sandbox and passed when rerun with that restriction removed.
+No model/cloud calls occurred. Full experiment peak RSS 275,612 KiB; focused
+rerun peak 118,376 KiB, 3.44 seconds, exit 0. All commands were serialized with
+the shared lock, one-thread/priority limits and sufficient headroom. Required
+pre-commit Ruff lint/format and ty checks passed (64,892 KiB, 0.37 seconds).

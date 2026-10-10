@@ -13,12 +13,20 @@ def test_list_and_read_prompts_outside_checkout(
     with pytest.raises(SystemExit) as result:
         main(["prompts", "list"])
     assert result.value.code == 0
-    assert capsys.readouterr().out.splitlines() == ["author-task", "find-units"]
+    assert capsys.readouterr().out.splitlines() == [
+        "author-task",
+        "find-units",
+        "notebook-fidelity",
+        "notebook-grounding",
+        "notebook-quality",
+    ]
 
     for name in list_prompts():
         template = load_prompt(name)
-        assert "{{REPO}}" in template
-        assert "{{REPO_URL}}" in template
+        assert template.strip()
+        if name in {"author-task", "find-units"}:
+            assert "{{REPO}}" in template
+            assert "{{REPO_URL}}" in template
         with pytest.raises(SystemExit) as result:
             main(["prompts", "show", name])
         assert result.value.code == 0
