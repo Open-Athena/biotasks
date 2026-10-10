@@ -465,3 +465,26 @@ Five replacement slots remain. Submission peak RSS 345,820 KiB, exit 0,
 11.25 seconds, under the shared lock and one-thread/priority limits; estimated
 <400 MiB with adequate headroom. No local worker remains. The updated issue body
 and label were fetched and verified. No scientific result is available yet.
+
+
+## 2026-10-10 UTC: native execution observed and old-evidence recovery prepared
+
+At 01:01:34 UTC the read-only provider inventory contained a started sandbox for
+the pilot task identity with a `repo2rlenv.job` ownership label. By 01:02:01 UTC,
+read-back of that specific ID returned NotFound. This establishes native sandbox
+activity and subsequent absence, not a scientific score or complete cleanup
+proof. The host was confirmed RUNNING at 01:04:35 UTC; do not resubmit it.
+The inventory/read-back used bounded local processes (peak RSS 109,888/104,732 KiB);
+read-back exited 1 on NotFound, with no mutation attempted.
+
+Added an experiment-only, plan-driven reader for existing native stage manifests
+needed to close out #18. It reads selected diagnostics, checks original size/hash,
+limits individual files and aggregate bytes, rejects unsafe paths, and returns
+hash-bound chunks through job logs. It cannot generate tasks, call models or
+mutate sandboxes. The private plan names ten existing seeds and twelve native
+stage slots. No recovery job has been submitted for this helper.
+
+Two recovery fixtures passed: unchanged original bytes recover and equal-length
+tampering fails its original hash. Tests made no cloud calls; peak RSS 36,232 KiB,
+0.48 seconds, exit 0, under shared-node lock/thread/priority limits with estimated
+working set <100 MiB. Ruff lint/format and diff whitespace checks passed.
