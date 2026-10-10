@@ -582,3 +582,7 @@ lock and thread/priority limits, estimated working set <200 MiB. All five pinned
 patches apply sequentially to original source and match the tested checkout;
 the first minimal patch-check fixture omitted an affected file and was corrected
 to derive the source list from all patch headers. Lint/format checks passed.
+
+Campaign 009 submitted once from `7f93dea27d9c110a38686c7e69e65b7918561144`,
+replacement slot 8, leaving two slots. Launcher peak RSS 344,808 KiB, 10.16
+seconds, exit 0, shared lock/thread/priority restrictions applied.
