@@ -455,3 +455,13 @@ checks all emitted phase limits; peak RSS 118,520 KiB, 3.33 seconds, exit 0.
 Changed-file Ruff lint/format checks passed. No task-specific artifact was edited.
 Five raw requests were used (two compatibility, three generation), and the real
 preflight sandbox was deleted with verification. No native trial claim exists.
+
+
+### Replacement slot 5 submitted
+
+Campaign `notebook-pilot-006` was submitted once from
+`5eb1e505d4d189cf0e4ef246e2f303eb103fe2aa`; all prior handles were verified terminal.
+Five replacement slots remain. Submission peak RSS 345,820 KiB, exit 0,
+11.25 seconds, under the shared lock and one-thread/priority limits; estimated
+<400 MiB with adequate headroom. No local worker remains. The updated issue body
+and label were fetched and verified. No scientific result is available yet.
