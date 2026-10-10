@@ -436,3 +436,22 @@ future release evidence; no generated task file was modified and nothing has
 been published to Hugging Face. A separate bounded read-only script and plan for
 #18's old native manifests are prepared privately, not launched. Campaign 005
 was confirmed RUNNING at 00:49:37 UTC on its existing handle.
+
+
+## 2026-10-10 UTC: structured compatibility passed; verifier wrapper budget fixed
+
+Campaign 005 is terminal FAILED due to factory configuration. Both compatibility
+checks passed, including exact preservation of code-significant characters.
+The second construction response materialized into an upstream task package;
+no scientific trial was dispatched. `emit_draft` adds 30 seconds of wrapper time
+to `test_timeout_sec`. Passing 120 therefore emitted a 150-second verifier,
+correctly rejected by the adapter's 120-second ceiling. This was our configuration
+error, not a biological defect and not a reason to alter a GLM-authored grader.
+
+Set inner tests to 90 seconds so upstream emits the approved 120-second total.
+Keep the guard, all resource limits and the 300-second solver limit unchanged.
+Two wiring tests passed, including an actual upstream `emit_draft` fixture that
+checks all emitted phase limits; peak RSS 118,520 KiB, 3.33 seconds, exit 0.
+Changed-file Ruff lint/format checks passed. No task-specific artifact was edited.
+Five raw requests were used (two compatibility, three generation), and the real
+preflight sandbox was deleted with verification. No native trial claim exists.

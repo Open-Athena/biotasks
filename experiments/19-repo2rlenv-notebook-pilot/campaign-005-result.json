@@ -1,0 +1,24 @@
+{
+  "campaign": "notebook-pilot-005",
+  "factory_revision": "76b280fb053446763ff23a72b1d818c0a89a400a",
+  "job_state": "FAILED",
+  "pipeline_status": "infrastructure_configuration_failure",
+  "requests": [
+    {
+      "scope": "compatibility",
+      "state": "http_200",
+      "count": 2
+    },
+    {
+      "scope": "generation",
+      "state": "http_200",
+      "count": 3
+    }
+  ],
+  "escaping_compatibility_passed": true,
+  "preflight_passed": true,
+  "cleanup_verified": true,
+  "scientific_trials": 0,
+  "diagnosis": "Upstream emit_draft adds 30 seconds to the inner test timeout. The factory passed 120 seconds, yielding verifier timeout 150, rejected by the 120-second execution guard before dispatch.",
+  "factory_fix": "Use 90 seconds for inner tests; retain 120-second outer verifier ceiling. No generated scientific file edited."
+}

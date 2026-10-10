@@ -185,7 +185,8 @@ def run(
                 max_candidates=1,
                 max_repairs=config["max_generation_repairs"],
                 max_tokens=16000,
-                test_timeout_sec=120,
+                # Upstream adds 30 seconds of grader overhead to this test limit.
+                test_timeout_sec=90,
             ),
             root / "tasks",
             emit,

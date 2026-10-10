@@ -2,6 +2,7 @@
 
 import json
 import time
+import tomllib
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -54,6 +55,31 @@ def test_failed_generation_is_preserved_without_quality_or_release(tmp_path, mon
     observed = []
 
     def synthesis(spec, options, output, emit, **kwargs):
+        from repo2rlenv.pipelines.recipes.catalog import get_recipe
+        from repo2rlenv.pipelines.recipes.terminal.draft import TerminalDraft, emit_draft
+
+        draft = TerminalDraft(
+            environment_setup="",
+            environment_files=[],
+            instruction="Infrastructure fixture only; this is not a scientific task.",
+            tests_python="\n".join(f"def test_{i}():\n    assert True\n" for i in range(5)),
+            solution_shell="#!/bin/bash\n# infrastructure fixture only\ntrue\n",
+            weights=[{"name": f"test_{i}", "weight": 0.2} for i in range(5)],
+            self_review="Infrastructure fixture for timeout propagation only.",
+        )
+        task = emit_draft(
+            draft,
+            tmp_path / "emitter-check",
+            name="timeout-fixture",
+            org="tests",
+            recipe=get_recipe("seta_seed2synth"),
+            lineage={},
+            timeout_sec=options.test_timeout_sec,
+        )
+        contract = tomllib.loads((task / "task.toml").read_text())
+        assert contract["verifier"]["timeout_sec"] == 120
+        assert contract["environment"]["build_timeout_sec"] <= 600
+        assert contract["agent"]["timeout_sec"] <= 600
         observed.append((spec, options, kwargs))
         return SimpleNamespace(emitted=0, skipped=1, skip_reasons={"fixture": 1})
 
