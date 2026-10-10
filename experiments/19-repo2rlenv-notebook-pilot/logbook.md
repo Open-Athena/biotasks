@@ -681,3 +681,8 @@ The zero-compatibility continuation branch also passed with the three existing
 wiring cases: four passed, peak RSS 121,340 KiB, 4.61 seconds, exit 0. Ruff lint/
 format, ty and diff checks passed. Final input/probe receipts were checked with
 actual pinned upstream import logic without executing scientific code locally.
+
+Final continuation 011 submitted once from
+`c0fdb34c159ababa9068a7c46bf810da17660a45`, replacement slot 10. No replacement
+slots remain. Launcher peak RSS 346,644 KiB, 12.01 seconds, exit 0, shared lock
+and thread/priority limits. No further campaign or retry is authorized.
