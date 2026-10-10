@@ -27,7 +27,8 @@ class StrictModel(BaseModel):
 
 class Citation(StrictModel):
     document: str
-    quote: str = Field(min_length=1)
+    start_line: int = Field(ge=1)
+    end_line: int = Field(ge=1)
 
 
 class Finding(StrictModel):
@@ -53,10 +54,13 @@ def validate_assessment(assessment: Assessment, documents: dict[str, str]) -> bo
         raise ValueError("Assessment must cover each scientific dimension exactly once")
     for finding in assessment.findings:
         for citation in finding.citations:
-            if not citation.quote.strip() or citation.quote not in documents.get(
-                citation.document, ""
-            ):
+            lines = documents.get(citation.document, "").splitlines()
+            if not 1 <= citation.start_line <= citation.end_line <= len(lines):
                 raise ValueError("Scientific review contains an unsupported citation")
+            if citation.end_line - citation.start_line > 8 or not any(
+                line.strip() for line in lines[citation.start_line - 1 : citation.end_line]
+            ):
+                raise ValueError("Scientific review citation must be short and nonempty")
     return not assessment.blocking_findings and all(
         f.verdict == "pass" for f in assessment.findings
     )
@@ -65,8 +69,8 @@ def validate_assessment(assessment: Assessment, documents: dict[str, str]) -> bo
 def review(*, task: Path, seed: dict, quality: dict, model, directory: Path) -> dict:
     documents = {
         "source/notebook": seed["question_text"],
-        "source/manifest": json.dumps(seed["input_manifest"], sort_keys=True),
-        "execution/quality": json.dumps(quality, sort_keys=True),
+        "source/manifest": json.dumps(seed["input_manifest"], sort_keys=True, indent=2),
+        "execution/quality": json.dumps(quality, sort_keys=True, indent=2),
     }
     # The audit must inspect all candidate text, not silently omit a long grader.
     # Biological binaries are represented by the manifest, not decoded as text.
@@ -100,11 +104,16 @@ def review(*, task: Path, seed: dict, quality: dict, model, directory: Path) -> 
         documents[f"task/{relative.as_posix()}"] = text
     prompt = files("biotasks.prompts").joinpath("notebook-fidelity.md").read_text()
     directory.mkdir(parents=True, exist_ok=False)
-    save_record(directory / "input.json", {"system": prompt, "documents": documents})
+    numbered = {
+        name: "\n".join(f"{index}: {line}" for index, line in enumerate(text.splitlines(), 1))
+        for name, text in documents.items()
+    }
+    save_record(directory / "documents.json", documents)
+    save_record(directory / "input.json", {"system": prompt, "documents": numbered})
     reply = complete(
         model,
         system=prompt,
-        user=json.dumps(documents),
+        user=json.dumps(numbered),
         max_tokens=8000,
         temperature=0,
         response_schema=Assessment.model_json_schema(),
@@ -118,7 +127,24 @@ def review(*, task: Path, seed: dict, quality: dict, model, directory: Path) -> 
     except ValueError as error:
         supported = False
         validation_error = str(error)
+    resolved = []
+    if validation_error is None and assessment is not None:
+        for finding in assessment.findings:
+            for citation in finding.citations:
+                resolved.append(
+                    {
+                        "dimension": finding.dimension,
+                        **citation.model_dump(),
+                        "quote": "\n".join(
+                            documents[citation.document].splitlines()[
+                                citation.start_line - 1 : citation.end_line
+                            ]
+                        ),
+                    }
+                )
     result = {
+        "citation_format": "document-lines-v1",
+        "resolved_citations": resolved,
         "assessment": assessment.model_dump() if assessment is not None else None,
         "supported": supported,
         "validation_error": validation_error,

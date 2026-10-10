@@ -30,9 +30,9 @@ class RequestLedger:
     def __init__(self, path: Path, allowances: dict[str, Allowance]):
         self.path, self.allowances = path, allowances
         if not allowances or any(
-            v.requests < 1 or v.output_tokens < 1 for v in allowances.values()
+            v.requests < 0 or v.output_tokens < 1 for v in allowances.values()
         ):
-            raise ValueError("Explicit positive request and output-token bounds are required")
+            raise ValueError("Nonnegative request and positive output-token bounds are required")
         with sqlite3.connect(path) as db:
             db.execute("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT)")
             config = json.dumps(

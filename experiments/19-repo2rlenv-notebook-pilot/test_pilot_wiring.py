@@ -115,12 +115,17 @@ def test_failed_generation_is_preserved_without_quality_or_release(tmp_path, mon
         )
 
 
-def test_continuation_uses_upstream_imports_without_regeneration(tmp_path, monkeypatch):
+@pytest.mark.parametrize("prior_compatibility", [2, 4])
+def test_continuation_uses_upstream_imports_without_regeneration(
+    tmp_path, monkeypatch, prior_compatibility
+):
     from test_quality_continuation import continuation
 
     original = tmp_path / "original"
     original.mkdir()
-    task, _ = continuation(original)
+    task, plan = continuation(original)
+    plan["prior_requests"]["compatibility"] = prior_compatibility
+    (original / "continuation.json").write_text(json.dumps(plan))
     monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
     monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
     monkeypatch.setattr(

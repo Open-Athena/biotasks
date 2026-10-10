@@ -16,7 +16,7 @@ def assessment():
                     "dimension": dimension,
                     "verdict": "pass",
                     "explanation": "Supported",
-                    "citations": [{"document": "source", "quote": "observed counts"}],
+                    "citations": [{"document": "source", "start_line": 1, "end_line": 1}],
                 }
                 for dimension in sorted(DIMENSIONS)
             ],
@@ -28,7 +28,7 @@ def assessment():
 def test_requires_complete_supported_findings():
     review = assessment()
     assert validate_assessment(review, {"source": "Use observed counts here."})
-    review.findings[0].citations[0].quote = "invented evidence"
+    review.findings[0].citations[0].end_line = 2
     with pytest.raises(ValueError, match="unsupported citation"):
         validate_assessment(review, {"source": "Use observed counts here."})
 
@@ -69,3 +69,31 @@ def test_invalid_review_is_preserved_but_never_supported(tmp_path, monkeypatch, 
     assert json.loads((tmp_path / "review/response.json").read_text())["content"] == content
     assert json.loads((tmp_path / "review/result.json").read_text()) == result
     assert (task / "instruction.md").read_text() == "Unchanged fixture instructions."
+
+
+def test_line_citations_resolve_original_text_without_model_quotations(tmp_path, monkeypatch):
+    task = tmp_path / "task"
+    task.mkdir()
+    (task / "instruction.md").write_text("Fixture task only.")
+    review = assessment()
+    for finding in review.findings:
+        finding.citations[0].document = "source/notebook"
+        finding.citations[0].start_line = 2
+        finding.citations[0].end_line = 2
+    requests = []
+
+    def complete(*args, **kwargs):
+        requests.append(kwargs)
+        return SimpleNamespace(content=review.model_dump_json(), usage={})
+
+    monkeypatch.setattr(fidelity, "complete", complete)
+    result = fidelity.review(
+        task=task,
+        seed={"question_text": "first\nobserved counts\nlast", "input_manifest": {}},
+        quality={},
+        model=object(),
+        directory=tmp_path / "review",
+    )
+    assert result["supported"]
+    assert all(c["quote"] == "observed counts" for c in result["resolved_citations"])
+    assert "2: observed counts" in requests[0]["user"]

@@ -15,16 +15,21 @@ implementations without requiring a particular software package. A successful
 reference alone does not establish these properties. Probe outcomes must be
 interpreted together with the actual scientific change made by the probe.
 
-For every finding, supply an explanation and exact, nonempty quotations from
-the named evidence documents. Cite both source and task evidence when comparing
-them. Do not infer that files, trials, or data exist from a proposed plan. List
-blocking findings explicitly. This assessment is advisory evidence, never a
-numeric reward or a substitute for execution and release integrity checks.
+Every supplied document has explicit 1-based line numbers. For each citation,
+return the document name and inclusive start_line/end_line integers from that
+view, covering at most nine lines. Do not return a quote field: the controller
+resolves the exact passage from those lines. Use separate citations for separate
+passages. Explain support in your explanation rather than inventing document
+content. Cite source and task evidence when comparing them. Do not infer that
+files, trials or data exist from a plan. List blocking findings explicitly.
+This assessment is advisory evidence, never a reward or substitute for execution.
 
-Copy short contiguous quotations verbatim. Never insert ellipses, join separate
-passages, paraphrase quoted text, or reconstruct JSON with a different key order.
-Use separate citations for separate passages. Put explanations outside quotes.
-If no exact supporting passage exists, report unknown rather than invent a quote.
+Check that undocumented representation constraints do not reject scientifically
+equivalent artifacts. One passing alternative does not justify a hidden ordering
+or software restriction. Check reference-input integrity under the actual solver
+privileges: chmod permissions alone do not protect data from a root solver. Do
+not call source data protected when the grader trusts mutable learner inputs
+without independent identity validation or an isolated reference copy.
 
 A counterexample that leaves the observed artifacts unchanged does not establish
 rejection of wrong scientific results. If no materially wrong result has been

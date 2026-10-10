@@ -121,3 +121,9 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, setti
         upstream.shutdown()
         upstream.server_close()
         worker.join(timeout=2)
+
+
+def test_exhausted_scope_stays_disabled_on_continuation(tmp_path):
+    ledger = RequestLedger(tmp_path / "disabled.db", {"compatibility": Allowance(0, 512)})
+    with pytest.raises(RuntimeError, match="allowance exhausted"):
+        ledger.claim("compatibility", b"unused")

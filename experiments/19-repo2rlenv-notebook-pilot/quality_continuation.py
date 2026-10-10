@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
+import shutil
 from pathlib import Path
 
 from repo2rlenv.emitter.bundle import inspect_bundle
@@ -55,7 +57,7 @@ def remaining_config(config: dict, plan: dict) -> dict:
         if consumed < 0:
             raise ValueError("Invalid prior request count")
         updated["request_allowances"][scope]["requests"] -= consumed
-    if any(v["requests"] < 1 for v in updated["request_allowances"].values()):
+    if any(v["requests"] < 0 for v in updated["request_allowances"].values()):
         raise ValueError("Required continuation request allowance is exhausted")
     for name, consumed in (
         ("max_trials", plan["prior_trials"]),
@@ -70,3 +72,23 @@ def remaining_config(config: dict, plan: dict) -> dict:
     if updated["max_quality_repairs"] < 0:
         raise ValueError("Quality repair allowance exhausted")
     return updated
+
+
+def restore_probe_cache(directory: Path, target: Path, plan: dict):
+    """Reuse unchanged upstream receipts; the adapter revalidates each task hash."""
+    for key, relative in plan.get("probe_cache", {}).items():
+        if not re.fullmatch(r"r0-probe[0-9]+", key):
+            raise ValueError("Only original probe slots may be imported")
+        source = directory / relative
+        if Path(relative).is_absolute() or ".." in Path(relative).parts:
+            raise ValueError("Unsafe probe cache path")
+        for path in source.rglob("*"):
+            if path.is_file() and path.relative_to(directory).as_posix() not in plan["files"]:
+                raise ValueError("Unbound cached probe evidence")
+        receipt = json.loads((source / "trial.json").read_text())
+        remote = json.loads((source / "remote-job.json").read_text())
+        if receipt["state"] != "completed" or not remote["cleanup"]["passed"]:
+            raise ValueError("Probe import requires completed execution and cleanup")
+        destination = target / "trials" / key
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copytree(source, destination)

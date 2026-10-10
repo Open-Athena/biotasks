@@ -641,3 +641,43 @@ replacement slot 9. One remains. Iris observed PENDING at 01:49:18 UTC; no
 resubmission. Launcher peak RSS 345,644 KiB, 11.89 seconds, exit 0, shared lock
 and thread/priority limits. The task/evidence archive is included by SHA256 in
 the frozen input manifest.
+
+
+## 2026-10-10 UTC: quality usable; final bounded review/repair preparation
+
+Continuation 010 finished with upstream `usable`, no quality repair, and five
+requests (compatibility 2, quality 3). Both repeated probes passed their intended
+controls (wrong 0, alternative 1), with verified cleanup. All five final native
+result hashes match the report. The imported blind solver remains reward 1.
+Fidelity was not supported: GLM again supplied a reconstructed JSON quote with
+ellipses. Original failures remain failures.
+
+The upstream review also noticed an undocumented ordering restriction but
+waived it because one alternative passed. Operator inspection additionally
+found root solver execution with a shared verifier and reference inputs protected
+only by mode bits; this is not a demonstrated immutable reference boundary.
+Generic versioned review guidance now treats these contract/integrity defects
+explicitly, leaving actual fixes to the GLM quality worker. No task was edited.
+
+Fidelity now requests numbered document ranges; the controller validates bounds
+and resolves quotations itself from original lines. This eliminates paraphrased
+quotations without turning model judgment into an executable reward. Invalid
+ranges, missing documents and unsupported findings still fail.
+
+The final continuation carries total prior use of 16 requests, 11 native trials,
+one solver and zero quality repairs. Compatibility quota is exhausted and stays
+disabled; no extra compatibility calls are authorized. Five native trials and
+one solve remain. Existing completed probe receipts are restored unchanged and
+checked through upstream `_read`, avoiding redundant controls before the one
+remaining GLM repair. A dry import of the actual variants confirmed wrong 0 and
+alternative 1 with installed probes and matching identities (41,108 KiB peak,
+0.36 seconds). The 83-file continuation archive is 69,545 bytes.
+
+Nineteen focused fidelity, budget, import and wiring tests passed, peak RSS
+124,576 KiB, 8.29 seconds, exit 0, under the shared lock/thread/priority limits
+and estimated <300 MiB. No cloud/model calls in tests.
+
+The zero-compatibility continuation branch also passed with the three existing
+wiring cases: four passed, peak RSS 121,340 KiB, 4.61 seconds, exit 0. Ruff lint/
+format, ty and diff checks passed. Final input/probe receipts were checked with
+actual pinned upstream import logic without executing scientific code locally.

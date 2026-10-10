@@ -106,36 +106,39 @@ def run(
                 },
             )
 
-        reply = complete(
-            model("compatibility"),
-            system="Return only the requested JSON object.",
-            user='Return {"compatible": true}.',
-            max_tokens=512,
-            temperature=0,
-            response_schema=Compatibility.model_json_schema(),
-        )
-        checked = Compatibility.model_validate_json(reply.content)
-        save_record(
-            root / "compatibility.json",
-            {"passed": checked.compatible, "usage": reply.usage, "content": reply.content},
-        )
-        if not checked.compatible:
-            raise RuntimeError("Structured completion preflight failed")
-        expected = 'first line\n    second line\t"quoted"\\path\nλ'
-        escaped = complete(
-            model("compatibility"),
-            system="Return only the requested JSON object, preserving every string character.",
-            user="Return this exact object: " + json.dumps({"payload": expected}),
-            max_tokens=512,
-            temperature=0,
-            response_schema=EscapedText.model_json_schema(),
-        )
-        save_record(
-            root / "escaping-compatibility.json",
-            {"expected": expected, "content": escaped.content, "usage": escaped.usage},
-        )
-        if EscapedText.model_validate_json(escaped.content).payload != expected:
-            raise RuntimeError("Structured completion altered code-significant string characters")
+        if config["request_allowances"]["compatibility"]["requests"]:
+            reply = complete(
+                model("compatibility"),
+                system="Return only the requested JSON object.",
+                user='Return {"compatible": true}.',
+                max_tokens=512,
+                temperature=0,
+                response_schema=Compatibility.model_json_schema(),
+            )
+            checked = Compatibility.model_validate_json(reply.content)
+            save_record(
+                root / "compatibility.json",
+                {"passed": checked.compatible, "usage": reply.usage, "content": reply.content},
+            )
+            if not checked.compatible:
+                raise RuntimeError("Structured completion preflight failed")
+            expected = 'first line\n    second line\t"quoted"\\path\nλ'
+            escaped = complete(
+                model("compatibility"),
+                system="Return only the requested JSON object, preserving every string character.",
+                user="Return this exact object: " + json.dumps({"payload": expected}),
+                max_tokens=512,
+                temperature=0,
+                response_schema=EscapedText.model_json_schema(),
+            )
+            save_record(
+                root / "escaping-compatibility.json",
+                {"expected": expected, "content": escaped.content, "usage": escaped.usage},
+            )
+            if EscapedText.model_validate_json(escaped.content).payload != expected:
+                raise RuntimeError(
+                    "Structured completion altered code-significant string characters"
+                )
         daytona_usage = BudgetLedger(
             root / "daytona-budget.sqlite3", limit_usd=config["daytona_budget_usd"]
         )
@@ -254,6 +257,10 @@ def run(
         loop.remote = execution.quality_trials(
             directory=root / "quality", budget=loop.budget, options=options
         )
+        if continuation is not None:
+            from quality_continuation import restore_probe_cache
+
+            restore_probe_cache(continuation, root / "quality", plan)
         quality = loop.run(selected_task, **imported)
         save_record(root / "quality-result.json", quality.model_dump(mode="json"))
         fidelity = review_fidelity(
