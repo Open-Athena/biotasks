@@ -686,3 +686,11 @@ Final continuation 011 submitted once from
 `c0fdb34c159ababa9068a7c46bf810da17660a45`, replacement slot 10. No replacement
 slots remain. Launcher peak RSS 346,644 KiB, 12.01 seconds, exit 0, shared lock
 and thread/priority limits. No further campaign or retry is authorized.
+
+Final repository validation after the citation and quota changes: all 15 tests
+passed using pinned `uv run --locked` (peak RSS 47,392 KiB, 5.70 seconds, exit 0).
+Required pre-commit Ruff lint/format and ty hooks passed (65,324 KiB, 0.40 seconds).
+Shared lock, one-thread and priority limits applied; no owned local worker
+remained. GitHub returned no CI runs for this research branch, so these are local
+checks only. The issue text and agent-generated label were fetched and verified.
+At 02:05:38 UTC continuation 011 was still RUNNING; no further submission.
