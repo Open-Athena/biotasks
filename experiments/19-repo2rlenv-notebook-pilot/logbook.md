@@ -544,3 +544,17 @@ Campaign 008 submitted once from `1873ddde0a7099623ebf4cbdf8d88d9d9ded148b`,
 using replacement slot 7. Three slots remain. The launcher checked all prior job
 handles terminal. Local launch peak RSS 345,992 KiB, 10.87 seconds, exit 0;
 shared lock, thread/priority limits and <400 MiB estimate applied.
+
+## 2026-10-10 UTC: public-download verification prepared
+
+Added a bounded download verifier around upstream `verify_release` and
+`inspect_bundle`. It requires a publication commit, downloads release metadata
+and the mode-preserving archive into a fresh directory, checks original hashes,
+restores executable modes, and verifies each task's original bundle identity.
+No upload or model execution is performed by this helper. Local transport
+fixtures confirm that Hub-style loss of executable bits is repaired by the
+archive and that corrupted archive bytes fail before extraction. Two tests
+passed, peak RSS 57,620 KiB, 0.52 seconds, exit 0, shared lock and one-thread/
+priority limits; estimated working set <100 MiB. The first invocation lacked
+the experiment import path and failed test collection; rerun used explicit
+PYTHONPATH. Lint and format checks passed after import sorting.
