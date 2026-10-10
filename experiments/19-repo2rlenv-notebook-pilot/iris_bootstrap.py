@@ -178,6 +178,9 @@ def main():
             "BIOTASKS_SEED": str(inputs / "seeds.json"),
             "BIOTASKS_CONFIG": str(inputs / "campaign-config.json"),
         }
+        if (inputs / "continuation.tar.gz").exists():
+            unpack(inputs / "continuation.tar.gz", evidence / "continuation")
+            env["BIOTASKS_CONTINUATION"] = str(evidence / "continuation")
         shutil.copyfile(inputs / "inputs.json", evidence / "inputs.json")
         command(
             [str(upstream / ".venv/bin/python"), str(experiment / "run_pilot.py")],

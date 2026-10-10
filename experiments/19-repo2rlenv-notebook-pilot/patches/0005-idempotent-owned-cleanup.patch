@@ -14,3 +14,25 @@
          try:
              remaining = client.get(sandbox.id, request_timeout=15)
          except DaytonaNotFoundError:
+@@ -23,6 +28,19 @@
+         else:
+             row["deleted"] = getattr(remaining.state, "value", remaining.state) == "destroyed"
+         records.append(row)
+-    remaining = list(client.list(ListSandboxesQuery(labels=labels), request_timeout=15))
++    remaining = []
++    stale = []
++    for sandbox in client.list(ListSandboxesQuery(labels=labels), request_timeout=15):
++        if any(sandbox.labels.get(key) != value for key, value in labels.items()):
++            raise ValueError("Provider returned a sandbox with different ownership")
++        try:
++            observed = client.get(sandbox.id, request_timeout=15)
++        except DaytonaNotFoundError:
++            stale.append(sandbox.id)
++        else:
++            if getattr(observed.state, "value", observed.state) == "destroyed":
++                stale.append(sandbox.id)
++            else:
++                remaining.append(sandbox.id)
+     return {"passed": not remaining and all(row["deleted"] for row in records),
+-            "sandboxes": records, "remaining": [s.id for s in remaining]}
++            "sandboxes": records, "remaining": remaining, "stale_listing_absent_ids": stale}

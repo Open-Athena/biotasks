@@ -53,7 +53,15 @@ def run(
     wheel: Path,
     notebook_seed: Path,
     config: dict,
+    continuation: Path | None = None,
 ):
+    imported = {}
+    continuation_task = None
+    if continuation is not None:
+        from quality_continuation import load, remaining_config
+
+        continuation_task, imported, plan = load(continuation)
+        config = remaining_config(config, plan)
     root.mkdir(parents=True, exist_ok=True)
     if (root / "started.json").exists():
         raise FileExistsError(
@@ -149,7 +157,10 @@ def run(
             records=root / "trial-claims",
             max_trials=config["max_trials"],
             max_solver_attempts=config["max_solver_attempts"],
-            solver_endpoints=(gate.endpoint("solver-1"), gate.endpoint("solver-2")),
+            solver_endpoints=(
+                gate.endpoint("solver-2" if continuation else "solver-1"),
+                gate.endpoint("solver-2"),
+            ),
             usage_ledger=daytona_usage,
         )
         seed = json.loads(notebook_seed.read_text())[0]
@@ -159,55 +170,59 @@ def run(
         )
         guidance += "\n\nTask budget: 1 CPU, 2 GiB RAM, 10 GiB disk, no GPU; solver 300 seconds."
         save_record(root / "authoring-guidance.json", {"system_guidance": guidance})
-        input_spec = GenerationInput.model_validate(
-            {
-                "source": {"kind": "seeds", "path": str(notebook_seed)},
-                "pipeline": {"name": "terminal_synth", "recipe": "seta_seed2synth"},
-                "llm": model("generation").model_dump(),
-                "output": {
-                    "destination": str(root / "tasks"),
-                    "org": "biotasks",
-                    "dataset_name": "notebook-pilot-issue-19",
+        if continuation_task is None:
+            input_spec = GenerationInput.model_validate(
+                {
+                    "source": {"kind": "seeds", "path": str(notebook_seed)},
+                    "pipeline": {"name": "terminal_synth", "recipe": "seta_seed2synth"},
+                    "llm": model("generation").model_dump(),
+                    "output": {
+                        "destination": str(root / "tasks"),
+                        "org": "biotasks",
+                        "dataset_name": "notebook-pilot-issue-19",
+                    },
+                    "execution": {
+                        "worker_receipt": str(root / "worker.json"),
+                        "runtime_wheel": str(wheel),
+                        "campaign_dir": str(campaign),
+                        "run_id": config["campaign"],
+                        "timeout_sec": max(60, int(deadline - time.time())),
+                    },
+                }
+            )
+            save_record(root / "generation-input.json", input_spec.model_dump(mode="json"))
+            result = run_synthesis(
+                input_spec,
+                TerminalSynthesisOptions(
+                    target=1,
+                    max_candidates=1,
+                    max_repairs=config["max_generation_repairs"],
+                    max_tokens=16000,
+                    # Upstream adds 30 seconds of grader overhead to this test limit.
+                    test_timeout_sec=90,
+                ),
+                root / "tasks",
+                emit,
+                designer=partial(recipe.design, system_guidance=guidance),
+                builder_prompt=recipe.builder_prompt() + "\n\n" + guidance,
+                execution_adapter=execution,
+            )
+            save_record(
+                root / "generation-summary.json",
+                {
+                    "emitted": result.emitted,
+                    "skipped": result.skipped,
+                    "skip_reasons": result.skip_reasons,
                 },
-                "execution": {
-                    "worker_receipt": str(root / "worker.json"),
-                    "runtime_wheel": str(wheel),
-                    "campaign_dir": str(campaign),
-                    "run_id": config["campaign"],
-                    "timeout_sec": max(60, int(deadline - time.time())),
-                },
-            }
-        )
-        save_record(root / "generation-input.json", input_spec.model_dump(mode="json"))
-        result = run_synthesis(
-            input_spec,
-            TerminalSynthesisOptions(
-                target=1,
-                max_candidates=1,
-                max_repairs=config["max_generation_repairs"],
-                max_tokens=16000,
-                # Upstream adds 30 seconds of grader overhead to this test limit.
-                test_timeout_sec=90,
-            ),
-            root / "tasks",
-            emit,
-            designer=partial(recipe.design, system_guidance=guidance),
-            builder_prompt=recipe.builder_prompt() + "\n\n" + guidance,
-            execution_adapter=execution,
-        )
-        save_record(
-            root / "generation-summary.json",
-            {
-                "emitted": result.emitted,
-                "skipped": result.skipped,
-                "skip_reasons": result.skip_reasons,
-            },
-        )
-        if result.emitted != 1:
-            return {"status": "generation_failed", "completion_requirements_met": False}
-        tasks = list((root / "tasks").glob("*/task.toml"))
-        if len(tasks) != 1:
-            raise RuntimeError("Expected exactly one emitted task")
+            )
+            if result.emitted != 1:
+                return {"status": "generation_failed", "completion_requirements_met": False}
+            tasks = list((root / "tasks").glob("*/task.toml"))
+            if len(tasks) != 1:
+                raise RuntimeError("Expected exactly one emitted task")
+            selected_task = tasks[0].parent
+        else:
+            selected_task = continuation_task
         options = LoopOptions(
             review_model=model("quality"),
             repair_model=model("quality"),
@@ -239,7 +254,7 @@ def run(
         loop.remote = execution.quality_trials(
             directory=root / "quality", budget=loop.budget, options=options
         )
-        quality = loop.run(tasks[0].parent)
+        quality = loop.run(selected_task, **imported)
         save_record(root / "quality-result.json", quality.model_dump(mode="json"))
         fidelity = review_fidelity(
             task=Path(quality.task_path),
@@ -268,6 +283,9 @@ if __name__ == "__main__":
         wheel=Path(os.environ["BIOTASKS_RUNTIME_WHEEL"]),
         notebook_seed=Path(os.environ["BIOTASKS_SEED"]),
         config=configuration,
+        continuation=Path(os.environ["BIOTASKS_CONTINUATION"])
+        if os.environ.get("BIOTASKS_CONTINUATION")
+        else None,
     )
     save_record(Path("/evidence/pilot/outcome.json"), outcome)
     print(json.dumps(outcome), flush=True)

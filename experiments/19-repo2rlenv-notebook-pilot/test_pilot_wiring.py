@@ -113,3 +113,65 @@ def test_failed_generation_is_preserved_without_quality_or_release(tmp_path, mon
             notebook_seed=seed,
             config=config,
         )
+
+
+def test_continuation_uses_upstream_imports_without_regeneration(tmp_path, monkeypatch):
+    from test_quality_continuation import continuation
+
+    original = tmp_path / "original"
+    original.mkdir()
+    task, _ = continuation(original)
+    monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
+    monkeypatch.setattr(
+        run_pilot,
+        "complete",
+        lambda *a, **kw: SimpleNamespace(
+            content=kw["user"].removeprefix("Return this exact object: ")
+            if "payload" in kw["response_schema"]["properties"]
+            else '{"compatible":true}',
+            usage={},
+        ),
+    )
+    monkeypatch.setattr(run_pilot, "Daytona", lambda: object())
+    monkeypatch.setattr(
+        run_pilot, "run_preflight", lambda *a, **kw: {"passed": True, "cleanup_verified": True}
+    )
+    monkeypatch.setattr(run_pilot, "run_synthesis", lambda *a, **kw: pytest.fail("No regeneration"))
+    observed = {}
+
+    class Loop:
+        model = None
+        budget = None
+
+        def __init__(self, options, *args, **kwargs):
+            self.options = options
+
+        def run(self, selected, **evidence):
+            observed.update(task=selected, evidence=evidence, options=self.options)
+            return SimpleNamespace(
+                task_path=str(selected), status="needs_evidence", model_dump=lambda **kw: {}
+            )
+
+    monkeypatch.setattr(run_pilot, "QualityLoop", Loop)
+    monkeypatch.setattr(run_pilot, "review_fidelity", lambda **kw: {"supported": False})
+    seed = tmp_path / "seed.json"
+    seed.write_text(json.dumps([{"question_text": "Test source", "input_manifest": {}}]))
+    config = json.loads(Path(run_pilot.__file__).with_name("pilot-config.json").read_text())
+    result = run_pilot.run(
+        root=tmp_path / "run",
+        endpoint="http://127.0.0.1:1/v1",
+        worker_id="test-worker",
+        deadline=time.time() + 7200,
+        wheel=tmp_path / "fixture.whl",
+        notebook_seed=seed,
+        config=config,
+        continuation=original,
+    )
+    assert observed["task"] == task
+    assert set(observed["evidence"]) == {"baseline", "oracle", "rollout", "probes"}
+    saved = json.loads((tmp_path / "run/started.json").read_text())["config"]
+    assert saved["max_trials"] == 7
+    assert saved["max_solver_attempts"] == 1
+    assert saved["request_allowances"]["quality"]["requests"] == 22
+    assert not result["completion_requirements_met"]

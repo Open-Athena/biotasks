@@ -15,7 +15,13 @@ def frozen_file(repo: Path, revision: str, path: str) -> bytes:
 
 
 def payload(
-    repo: Path, *, revision: str, seed: Path, upstream_archive: Path, campaign_number: int
+    repo: Path,
+    *,
+    revision: str,
+    seed: Path,
+    upstream_archive: Path,
+    campaign_number: int,
+    continuation: Path | None = None,
 ) -> dict[str, bytes]:
     if type(campaign_number) is not int or not 2 <= campaign_number <= 11:
         raise ValueError("Only ten approved replacement campaign identifiers are available")
@@ -35,6 +41,8 @@ def payload(
         "diagnostics.py": frozen_file(repo, revision, EXPERIMENT + "/recover_evidence.py"),
         "campaign-config.json": json.dumps(config, indent=2).encode(),
     }
+    if continuation is not None:
+        files["continuation.tar.gz"] = continuation.read_bytes()
     files["inputs.json"] = json.dumps(
         {
             "factory_revision": revision,
@@ -59,6 +67,7 @@ def submit(
     endpoint_job: str,
     cluster: str,
     campaign_number: int,
+    continuation: Path | None = None,
 ):
     from iris.cluster.constraints import Constraint, ConstraintOp
     from iris.cluster.setup_scripts import default_setup_script
@@ -76,6 +85,7 @@ def submit(
         seed=seed,
         upstream_archive=upstream_archive,
         campaign_number=campaign_number,
+        continuation=continuation,
     )
     config = json.loads(files["campaign-config.json"])
     job_name = "biotasks19-" + config["campaign"]

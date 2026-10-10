@@ -62,6 +62,7 @@ def main():
             or (relative.startswith("pilot/quality/") and relative.endswith(".json"))
             or relative.startswith("pilot/quality/trials/")
             or relative.startswith("trials/")
+            or relative.startswith("continuation/")
         )
         if not selected:
             continue

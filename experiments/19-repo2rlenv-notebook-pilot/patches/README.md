@@ -65,3 +65,8 @@ supervisor's earlier listing reports NotFound. Record that response, then
 independently read the exact ID and re-list the ownership label. A delete 404
 alone is never sufficient evidence of successful cleanup. Other errors still
 fail closed; ownership guards and interrupted-creation handling are unchanged.
+
+Campaign 009 also exposed a stale final listing: a deleted ID reappeared in the
+list after direct read-back returned NotFound. Patch 0005 now independently
+reads every final listed ID, recording absent/destroyed entries separately.
+A live ID, wrong ownership or non-NotFound provider error still fails cleanup.

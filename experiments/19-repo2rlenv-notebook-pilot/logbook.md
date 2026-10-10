@@ -602,3 +602,36 @@ No model/cloud calls occurred. Full experiment peak RSS 275,612 KiB; focused
 rerun peak 118,376 KiB, 3.44 seconds, exit 0. All commands were serialized with
 the shared lock, one-thread/priority limits and sufficient headroom. Required
 pre-commit Ruff lint/format and ty checks passed (64,892 KiB, 0.37 seconds).
+
+
+## 2026-10-10 UTC: valid solver evidence; bounded quality continuation
+
+Campaign 009 used 11 requests and nine native trials. Quality controls were
+no-op 0, oracle 1, wrong-solution 0 (skipped gene filtering), and independent
+alternative 1. A blind GLM Terminus-2 attempt then earned reward 1 with no
+exception, four API requests and the configured 300-second bound. The supervisor
+subsequently failed cleanup because its final listing contained an ID whose
+read-back was absent. A later exact-ID query and ownership listing both confirm
+absence. Original failure and reconciliation are separately preserved.
+
+Cleanup now independently re-reads IDs from the final listing, retaining stale
+entries as evidence and rejecting any actually remaining resource. Tests cover
+stale and live listings and unchanged ownership guards. Rather than discard
+a working task, use upstream QualityLoop's existing baseline/oracle/rollout
+imports and known-probe manifest. Local upstream import verifies all three
+original Harbor checksums against the unchanged task. No scientific artifact
+has been edited; old GLM probe definitions are preserved.
+
+A hash-bound continuation archive contains 43 original/evidence files (31,292
+compressed bytes). Prior requests, trials and solver/quality repair use reduce
+the next allocation: seven native trials, one remaining solve, 22 quality
+requests. Existing wrong probes remain immutable. The quality loop may rerun
+probes and use its still-unused repair; it never regenerates the initial task.
+This uses replacement slot 9 when launched, leaving one.
+
+Thirteen focused continuation/cleanup/wiring tests passed (121,664 KiB peak,
+3.55 seconds); the additional full continuation-branch fixture also passed with
+the other two wiring tests (121,364 KiB, 4.25 seconds). Shared lock, single-thread
+and priority limits applied, estimated working set <300 MiB. No live model or
+cloud call occurred in tests. Pinned upstream Task.checksum emits a deprecation
+warning; native imports still use that supported pinned interface.

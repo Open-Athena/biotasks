@@ -30,7 +30,10 @@ def test_rejects_wrong_ownership_even_if_provider_filter_failed():
 
 def test_remaining_resource_is_unresolved():
     client = MagicMock()
-    client.list.side_effect = [[], [MagicMock(id="late-create")]]
+    client.list.side_effect = [
+        [],
+        [MagicMock(id="late-create", labels={"repo2rlenv.job": "job-1"})],
+    ]
     assert not cleanup("job-1", client)["passed"]
 
 
@@ -72,4 +75,17 @@ def test_delete_not_found_still_requires_independent_absence(still_present):
     result = cleanup("job-1", client)
     assert result["passed"] is (not still_present)
     assert result["sandboxes"][0]["delete_reported_absent"]
-    client.get.assert_called_once_with("owned", request_timeout=15)
+    assert client.get.call_count == (2 if still_present else 1)
+    client.get.assert_called_with("owned", request_timeout=15)
+
+
+def test_stale_final_listing_requires_id_readback():
+    client = MagicMock()
+    stale = MagicMock(id="gone", labels={"repo2rlenv.job": "job-1"})
+    client.list.side_effect = [[], [stale]]
+    client.get.side_effect = DaytonaNotFoundError("gone")
+    result = cleanup("job-1", client)
+    assert result["passed"]
+    assert result["stale_listing_absent_ids"] == ["gone"]
+    client.get.assert_called_once_with("gone", request_timeout=15)
+    client.delete.assert_not_called()
