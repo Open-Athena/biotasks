@@ -110,11 +110,18 @@ def review(*, task: Path, seed: dict, quality: dict, model, directory: Path) -> 
         response_schema=Assessment.model_json_schema(),
     )
     save_record(directory / "response.json", {"content": reply.content, "usage": reply.usage})
-    assessment = Assessment.model_validate_json(reply.content)
-    supported = validate_assessment(assessment, documents)
+    assessment = None
+    validation_error = None
+    try:
+        assessment = Assessment.model_validate_json(reply.content)
+        supported = validate_assessment(assessment, documents)
+    except ValueError as error:
+        supported = False
+        validation_error = str(error)
     result = {
-        "assessment": assessment.model_dump(),
+        "assessment": assessment.model_dump() if assessment is not None else None,
         "supported": supported,
+        "validation_error": validation_error,
         "limitations": "GLM evidence review, not independent execution or a reward",
     }
     save_record(directory / "result.json", result)

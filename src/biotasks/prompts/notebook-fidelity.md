@@ -20,3 +20,13 @@ the named evidence documents. Cite both source and task evidence when comparing
 them. Do not infer that files, trials, or data exist from a proposed plan. List
 blocking findings explicitly. This assessment is advisory evidence, never a
 numeric reward or a substitute for execution and release integrity checks.
+
+Copy short contiguous quotations verbatim. Never insert ellipses, join separate
+passages, paraphrase quoted text, or reconstruct JSON with a different key order.
+Use separate citations for separate passages. Put explanations outside quotes.
+If no exact supporting passage exists, report unknown rather than invent a quote.
+
+A counterexample that leaves the observed artifacts unchanged does not establish
+rejection of wrong scientific results. If no materially wrong result has been
+rejected, report scientific_grading as unknown even when the reference and a valid
+alternative pass. Keep task defects separate from invalid or ineffective probes.

@@ -16,6 +16,7 @@ from fidelity import review as review_fidelity
 from iris_execution import IrisDaytonaExecution
 from preflight import run as run_preflight
 from pydantic import BaseModel, ConfigDict
+from quality_guidance import GuidedModel
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.llm import complete
@@ -231,6 +232,9 @@ def run(
                 "campaign_design_guidance": guidance,
                 "notebook_source": seed["question_text"],
             },
+        )
+        loop.model = GuidedModel(
+            loop.model, files("biotasks.prompts").joinpath("notebook-quality.md").read_text()
         )
         loop.remote = execution.quality_trials(
             directory=root / "quality", budget=loop.budget, options=options

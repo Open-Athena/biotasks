@@ -29,6 +29,17 @@ SELECTED = {
 }
 
 
+def priority(entry):
+    name = entry["path"]
+    if name in SELECTED or name.startswith("pilot/trial-claims/"):
+        return (0, name)
+    if name.endswith(("/remote-job.json", "/trial.json", "/result.json")):
+        return (1, name)
+    if name.startswith(("pilot/fidelity/", "pilot/quality/revisions/", "pilot/tasks/")):
+        return (2, name)
+    return (3, name)
+
+
 def main():
     prefix = os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/")
     with fsspec.open(prefix + "/export-manifest.json", "rb").open() as stream:
@@ -39,7 +50,7 @@ def main():
     total = 0
     skipped = []
     print("RECOVERY_MANIFEST " + base64.b64encode(manifest_bytes).decode(), flush=True)
-    for entry in manifest["files"]:
+    for entry in sorted(manifest["files"], key=priority):
         relative = entry["path"]
         selected = (
             relative in SELECTED
@@ -49,10 +60,11 @@ def main():
             or relative.startswith("pilot/quality/revisions/")
             or (relative.startswith("pilot/quality/") and relative.endswith("/task.tar.gz"))
             or (relative.startswith("pilot/quality/") and relative.endswith(".json"))
+            or relative.startswith("pilot/quality/trials/")
         )
         if not selected:
             continue
-        if entry["bytes"] > 256_000 or total + entry["bytes"] > 1_000_000:
+        if entry["bytes"] > 256_000 or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
             continue

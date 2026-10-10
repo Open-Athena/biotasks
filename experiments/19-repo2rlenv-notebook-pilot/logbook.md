@@ -488,3 +488,37 @@ Two recovery fixtures passed: unchanged original bytes recover and equal-length
 tampering fails its original hash. Tests made no cloud calls; peak RSS 36,232 KiB,
 0.48 seconds, exit 0, under shared-node lock/thread/priority limits with estimated
 working set <100 MiB. Ruff lint/format and diff whitespace checks passed.
+
+
+## 2026-10-10 UTC: quality rejection with working native execution
+
+Campaign 006 reached generation controls and the shared quality loop. Its final
+quality record is `needs_repair` after one repair, with baseline 0, oracle 1,
+valid-alternative 1 and wrong-solution 1 reported. No solver attempt ran. The
+wrong probe changed strict to non-strict bounds without changing observed outputs;
+the installed wrong probe remains immutable under upstream policy. The quality
+worker diagnosed equivalence; it did not authorize relaxing the verifier. The
+valid NumPy alternative required a worker-authored parsing correction and then
+passed. This is promising native evidence, not completion.
+
+The separate fidelity response supplied abbreviated quotes, correctly rejected
+by exact citation validation. The factory now records an unsupported review as
+`supported=false` with validation error and preserved raw response rather than
+losing the campaign outcome to an exception. Versioned generic quality guidance
+asks GLM to select scientifically discriminating controls on actual fixed data;
+it is appended to the original upstream system prompt through a small delegate
+that retains upstream calls, schemas, budgets and receipts. Fidelity guidance
+explicitly forbids ellipses/reconstructed JSON and requires meaningful wrong-answer
+rejection evidence. No task, solution, grader or probe was manually edited.
+
+Seven fidelity/wiring tests passed, including malformed JSON and unsupported
+citations remaining unaccepted and saved without task changes; peak RSS
+118,544 KiB, 3.39 seconds, exit 0. Shared lock and thread/priority limits applied,
+estimated working set <200 MiB. Upstream installed-probe immutability is unchanged.
+
+The old 1 MB diagnostic transport filled with generation records before final
+results/ledgers. Prioritize final outcomes and cleanup/request receipts, and allow
+4 MB of selected diagnostics. The original quality-result bytes were recovered
+from the embedded JSON with their exact original SHA256 verified. Plan one
+read-only combined recovery as replacement slot 6 (campaign 007), 1 CPU/1 GiB,
+at most five minutes, no model calls/Daytona creation, leaving four slots.
