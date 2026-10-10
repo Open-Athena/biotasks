@@ -285,3 +285,34 @@ prior-issue18-panel5.json. The native artifacts and cleanup records are still
 uninspected, so this closes the scheduler/outcome-summary question only, not the
 resource audit or scientific validation. No new issue-18 jobs, model calls or
 sandboxes were launched. The issue-19 recovery approval remains pending.
+
+### 2026-10-09 America/New_York — recovery and overnight authorization
+
+The user approved the read-only recovery job, then up to ten sequential replacement
+campaigns with the existing per-campaign model, time, resource and repair limits.
+They separately approved USD 5 Daytona usage per replacement and USD 50 aggregate,
+before credits. This allows at most 800 additional inference requests and 20
+campaign hours plus cleanup. Stop earlier on success. Recorded these decisions
+in the issue body and verified the published text. No additional approval is
+needed within these bounds; the original failed campaign remains separate.
+
+The recovery job succeeded. Reassembled diagnostic files from its existing Iris
+logs and verified each against the original S3 export hash. Campaign 001 made
+exactly one compatibility request, HTTP 200, and parsed its response successfully.
+It then failed saving compatibility.json because a nested LiteLLM token-details
+object was not JSON serializable. Execution never reached the Daytona preflight,
+task authoring or scientific trials. This is an infrastructure serialization
+failure, not a GLM or scientific-task failure. Sanitized evidence is recorded in
+campaign-001-result.json; original logs and the request ledger remain private.
+
+Patch 0004 uses JSON-mode serialization for LiteLLM usage models. A regression
+with the actual installed Usage class and nested reasoning-token details passed
+(5.02 seconds, peak RSS 234,644 KiB). New launches render a separately hashed
+campaign configuration with one of ten distinct replacement IDs. The bootstrap
+will return bounded, hash-bound diagnostics through its own job log after export,
+avoiding another recovery job solely because local S3 access is unavailable.
+Oversized diagnostic files remain in S3 and are explicitly listed as skipped.
+
+Verified the existing Hugging Face login identifies gonzalobenegas with a write
+role. No dataset has been created or published. Credentials were not printed or
+copied into source. Scientific validation and release integrity remain required.

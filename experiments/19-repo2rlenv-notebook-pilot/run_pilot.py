@@ -105,7 +105,9 @@ def run(
         )
         if not checked.compatible:
             raise RuntimeError("Structured completion preflight failed")
-        daytona_usage = BudgetLedger(root / "daytona-budget.sqlite3", limit_usd="1.00")
+        daytona_usage = BudgetLedger(
+            root / "daytona-budget.sqlite3", limit_usd=config["daytona_budget_usd"]
+        )
         daytona_usage.reserve("storage", "0.058", "Campaign image/storage allowance")
         daytona_usage.reserve("preflight", "0.030", "Single infrastructure preflight")
         preflight = run_preflight(
@@ -230,7 +232,7 @@ def run(
 
 
 if __name__ == "__main__":
-    configuration = json.loads(Path(__file__).with_name("pilot-config.json").read_text())
+    configuration = json.loads(Path(os.environ["BIOTASKS_CONFIG"]).read_text())
     outcome = run(
         root=Path("/evidence/pilot"),
         endpoint=os.environ["BIOTASKS_MODEL_ENDPOINT"],

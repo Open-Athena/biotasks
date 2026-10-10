@@ -36,16 +36,22 @@ def main():
         raise ValueError("Manifest exceeds the recovery transport limit")
     manifest = json.loads(manifest_bytes)
     total = 0
+    skipped = []
     print("RECOVERY_MANIFEST " + base64.b64encode(manifest_bytes).decode(), flush=True)
     for entry in manifest["files"]:
         relative = entry["path"]
-        selected = relative in SELECTED or (
-            relative.startswith("pilot/trial-claims/") and relative.endswith(".json")
+        selected = (
+            relative in SELECTED
+            or (relative.startswith("pilot/trial-claims/") and relative.endswith(".json"))
+            or (relative.startswith(("pilot/tasks/", "pilot/fidelity/")))
+            or (relative.startswith("pilot/quality/") and relative.endswith(".json"))
         )
         if not selected:
             continue
         if entry["bytes"] > 256_000 or total + entry["bytes"] > 1_000_000:
-            raise ValueError("Diagnostic exceeds the explicit recovery transport limit")
+            skipped.append(relative)
+            print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
+            continue
         with fsspec.open(prefix + "/" + relative, "rb").open() as stream:
             data = stream.read(entry["bytes"] + 1)
         if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
@@ -66,7 +72,7 @@ def main():
                 ),
                 flush=True,
             )
-    print("RECOVERY_COMPLETE " + json.dumps({"bytes": total}), flush=True)
+    print("RECOVERY_COMPLETE " + json.dumps({"bytes": total, "skipped": skipped}), flush=True)
 
 
 if __name__ == "__main__":

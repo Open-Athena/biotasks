@@ -1,0 +1,12 @@
+--- a/src/repo2rlenv/llm.py
++++ b/src/repo2rlenv/llm.py
+@@ -200,7 +200,8 @@
+ 
+     return LLMResponse(
+         content=content,
+-        usage=dict(usage_obj) if usage_obj else None,
++        usage=(usage_obj.model_dump(mode="json") if hasattr(usage_obj, "model_dump")
++               else dict(usage_obj)) if usage_obj else None,
+         cost_usd=cost_usd,
+         prompt_tokens=prompt_tokens,
+         completion_tokens=completion_tokens,

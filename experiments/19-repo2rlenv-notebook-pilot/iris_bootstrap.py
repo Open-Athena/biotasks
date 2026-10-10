@@ -9,6 +9,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import runpy
 import shutil
 import signal
 import subprocess
@@ -168,6 +169,7 @@ def main():
             "BIOTASKS_CAMPAIGN_DEADLINE": str(deadline),
             "BIOTASKS_RUNTIME_WHEEL": str(wheel),
             "BIOTASKS_SEED": str(inputs / "seeds.json"),
+            "BIOTASKS_CONFIG": str(inputs / "campaign-config.json"),
         }
         shutil.copyfile(inputs / "inputs.json", evidence / "inputs.json")
         command(
@@ -185,6 +187,9 @@ def main():
         status["finished"] = time.time()
         (evidence / "bootstrap-status.json").write_text(json.dumps(status, indent=2))
         export(evidence, os.environ["BIOTASKS_ARTIFACT_PREFIX"])
+        # Return bounded, hash-bound diagnostics through this job's existing log,
+        # avoiding a separate recovery job when the operator cannot read S3.
+        runpy.run_path(str(inputs / "diagnostics.py"), run_name="__main__")
 
 
 if __name__ == "__main__":

@@ -52,3 +52,9 @@ construction, keeping the adaptation reusable across notebook sources. Apply thi
 patch after 0002. A mocked call test verifies the unchanged schema, request
 settings and seed payload. All three patches were applied sequentially to source
 from the pinned archive and compared byte-for-byte with the inspected checkout.
+
+`0004-json-safe-usage.patch` fixes the observed campaign-001 failure: LiteLLM's
+nested token-detail objects survive a shallow `dict(usage)` conversion and then
+break JSON evidence writing. Use the response model's JSON-mode dump to preserve
+those fields as plain data. The regression test uses the installed LiteLLM Usage
+class, including nested reasoning-token details, and verifies their preservation.

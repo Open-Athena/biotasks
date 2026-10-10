@@ -14,8 +14,13 @@ def frozen_file(repo: Path, revision: str, path: str) -> bytes:
     return subprocess.check_output(["git", "show", revision + ":" + path], cwd=repo)
 
 
-def payload(repo: Path, *, revision: str, seed: Path, upstream_archive: Path) -> dict[str, bytes]:
+def payload(
+    repo: Path, *, revision: str, seed: Path, upstream_archive: Path, campaign_number: int
+) -> dict[str, bytes]:
+    if type(campaign_number) is not int or not 2 <= campaign_number <= 11:
+        raise ValueError("Only ten approved replacement campaign identifiers are available")
     config = json.loads(frozen_file(repo, revision, EXPERIMENT + "/pilot-config.json"))
+    config["campaign"] = f"notebook-pilot-{campaign_number:03d}"
     if config["campaign_seconds"] != 7200 or config["cleanup_seconds"] != 300:
         raise ValueError("Execution duration differs from approved pilot")
     source = json.loads(frozen_file(repo, revision, EXPERIMENT + "/source-manifest.json"))
@@ -27,6 +32,8 @@ def payload(repo: Path, *, revision: str, seed: Path, upstream_archive: Path) ->
         "upstream.tar.gz": upstream_archive.read_bytes(),
         "seeds.json": seed.read_bytes(),
         "bootstrap.py": frozen_file(repo, revision, EXPERIMENT + "/iris_bootstrap.py"),
+        "diagnostics.py": frozen_file(repo, revision, EXPERIMENT + "/recover_evidence.py"),
+        "campaign-config.json": json.dumps(config, indent=2).encode(),
     }
     files["inputs.json"] = json.dumps(
         {
@@ -51,6 +58,7 @@ def submit(
     artifact_prefix: str,
     endpoint_job: str,
     cluster: str,
+    campaign_number: int,
 ):
     from iris.cluster.constraints import Constraint, ConstraintOp
     from iris.cluster.setup_scripts import default_setup_script
@@ -62,8 +70,14 @@ def submit(
         raise ValueError(
             "Explicit approved runtime credentials and private artifact destination required"
         )
-    files = payload(repo, revision=revision, seed=seed, upstream_archive=upstream_archive)
-    config = json.loads(frozen_file(repo, revision, EXPERIMENT + "/pilot-config.json"))
+    files = payload(
+        repo,
+        revision=revision,
+        seed=seed,
+        upstream_archive=upstream_archive,
+        campaign_number=campaign_number,
+    )
+    config = json.loads(files["campaign-config.json"])
     job_name = "biotasks19-" + config["campaign"]
     record = {
         "state": "submission_uncertain",
