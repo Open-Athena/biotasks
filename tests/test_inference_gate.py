@@ -32,7 +32,8 @@ def test_uncertain_requests_count_and_limits_cannot_change(tmp_path):
 
 
 @pytest.mark.parametrize("settings", [None, {"reasoning_effort": "low"}])
-def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, settings):
+@pytest.mark.parametrize("output_mode", ["json_schema", "json_object"])
+def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, settings, output_mode):
     observed = []
 
     class Upstream(BaseHTTPRequestHandler):
@@ -63,6 +64,7 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, setti
         ledger=ledger,
         deadline=time.time() + 10,
         chat_template_kwargs=settings,
+        structured_output_mode=output_mode,
     ).start()
     route = urlsplit(gate.endpoint("solve"))
 
@@ -90,11 +92,13 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, setti
             client.close()
 
     try:
+        schema = {"type": "object", "properties": {"code": {"type": "string"}}}
+        output_format = {"type": "json_schema", "json_schema": {"schema": schema}}
         assert request(key="wrong") == 401
         assert request(tokens=129) == 400
         if settings:
             assert request(chat_template_kwargs={"reasoning_effort": "high"}) == 400
-        assert request() == 503
+        assert request(response_format=output_format) == 503
         assert request() == 429
         assert len(observed) == 1
         assert observed[0][0:2] == ("/v1/chat/completions", "Bearer TEST_SECRET")
@@ -102,6 +106,12 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, setti
         assert payload.get("chat_template_kwargs") == settings
         assert payload["max_tokens"] == 64
         assert payload["messages"][0]["content"] == "PRIVATE_PROMPT"
+        if output_mode == "json_object":
+            assert payload["response_format"] == {"type": "json_object"}
+            assert json.dumps(schema) in payload["messages"][-1]["content"]
+        else:
+            assert payload["response_format"] == output_format
+            assert len(payload["messages"]) == 1
         with sqlite3.connect(ledger.path) as db:
             dump = str(list(db.iterdump()))
         assert "TEST_SECRET" not in dump

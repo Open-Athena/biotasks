@@ -1,0 +1,30 @@
+{
+  "campaign": "notebook-pilot-004",
+  "factory_revision": "d485dba13fac34f53775d21d7e0ae7055c87b915",
+  "job_state": "SUCCEEDED",
+  "pipeline_status": "generation_failed",
+  "generation": {
+    "emitted": 0,
+    "skip_reasons": {
+      "execution_or_materialization": 1
+    },
+    "skipped": 1
+  },
+  "requests": [
+    {
+      "scope": "compatibility",
+      "state": "http_200",
+      "count": 1
+    },
+    {
+      "scope": "generation",
+      "state": "http_200",
+      "count": 4
+    }
+  ],
+  "preflight_passed": true,
+  "cleanup_verified": true,
+  "scientific_trials": 0,
+  "diagnosis": "Design schema passed. First two builder outputs contain placeholder Python; final response loses code newlines and contains an unescaped control character. Bounded repairs exhausted before native execution.",
+  "hypothesis": "Provider JSON-schema constrained output may mishandle escapes; test JSON-object mode plus explicit schema prompt without rewriting returned artifacts."
+}

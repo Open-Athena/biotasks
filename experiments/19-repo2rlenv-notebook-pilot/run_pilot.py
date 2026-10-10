@@ -34,6 +34,11 @@ class Compatibility(BaseModel):
     compatible: bool
 
 
+class EscapedText(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    payload: str
+
+
 def emit(event):
     print("BIOTASKS19_EVENT " + event.model_dump_json(), flush=True)
 
@@ -72,6 +77,7 @@ def run(
         ledger=requests,
         deadline=deadline,
         chat_template_kwargs=config.get("chat_template_kwargs"),
+        structured_output_mode=config.get("structured_output_mode", "json_schema"),
     ).start()
     try:
 
@@ -106,6 +112,21 @@ def run(
         )
         if not checked.compatible:
             raise RuntimeError("Structured completion preflight failed")
+        expected = 'first line\n    second line\t"quoted"\\path\nλ'
+        escaped = complete(
+            model("compatibility"),
+            system="Return only the requested JSON object, preserving every string character.",
+            user="Return this exact object: " + json.dumps({"payload": expected}),
+            max_tokens=512,
+            temperature=0,
+            response_schema=EscapedText.model_json_schema(),
+        )
+        save_record(
+            root / "escaping-compatibility.json",
+            {"expected": expected, "content": escaped.content, "usage": escaped.usage},
+        )
+        if EscapedText.model_validate_json(escaped.content).payload != expected:
+            raise RuntimeError("Structured completion altered code-significant string characters")
         daytona_usage = BudgetLedger(
             root / "daytona-budget.sqlite3", limit_usd=config["daytona_budget_usd"]
         )

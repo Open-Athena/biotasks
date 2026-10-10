@@ -381,3 +381,34 @@ all previous handles terminal. Peak local submitter RSS 345,284 KiB, exit 0,
 10.46 seconds; estimated <400 MiB, adequate headroom and shared lock held.
 No local worker remains. Issue body and agent-generated label verified after
 publishing the diagnosis and launch decision.
+
+
+## 2026-10-10 UTC: multiline structured-output compatibility
+
+Campaign 004 is terminal with `generation_failed`: the design passed, but the
+initial builder and two repairs failed materialization. Five model requests were
+used (one compatibility, four generation); no scientific trial was dispatched.
+The first two builder replies contain placeholder Python. The final reply has no
+linefeeds or escaped newlines, flattens Python and shell source into one line,
+and contains a raw tab inside a JSON string. The design text also has `n` in
+place of paragraph boundaries. Preserve those raw replies; do not infer or repair
+missing source characters. The preflight passed and deletion was verified.
+
+Hypothesis: JSON-schema constrained decoding is not reliable for code strings on
+this service. Test JSON-object mode with the original schema retained verbatim in
+an additional system message, followed by the same upstream Pydantic validation.
+The optional inference adapter setting defaults to unchanged JSON-schema mode.
+No output is rewritten, no scientific task patched, and no provider/model changed.
+A second small compatibility request checks exact newline/tab/quote/backslash/
+Unicode preservation before any Daytona call; both checks use the existing
+four-request compatibility allowance. All other ceilings are unchanged.
+
+Six adapter/pipeline cases passed, peak RSS 121,768 KiB, exit 0, 6.97 seconds.
+The additional lost-newline case checks that evidence is saved and execution
+stops before constructing the Daytona client. No cloud/model calls in tests.
+
+A read-only full Daytona inventory at 00:42:17 UTC had no labels matching the
+BioTasks/notebook name patterns. This is not proof of #18 cleanup: original
+sandbox IDs are still required. Nothing was deleted or changed. The bounded local
+reader peaked at 109,980 KiB, exit 0. Prepared a private recovery plan identifying
+ten old seeds and twelve recorded native stage slots; no #18 job was launched.

@@ -18,6 +18,7 @@ SELECTED = {
     "inputs.json",
     "pilot/started.json",
     "pilot/compatibility.json",
+    "pilot/escaping-compatibility.json",
     "pilot/requests.sqlite",
     "pilot/daytona-budget.sqlite3",
     "pilot/infrastructure-preflight.json",

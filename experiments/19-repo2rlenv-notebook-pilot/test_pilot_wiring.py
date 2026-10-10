@@ -9,13 +9,43 @@ import pytest
 import run_pilot
 
 
+def test_lost_newlines_stop_before_sandbox_creation(tmp_path, monkeypatch):
+    monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
+    responses = iter(['{"compatible":true}', '{"payload":"first linensecond line"}'])
+    monkeypatch.setattr(
+        run_pilot,
+        "complete",
+        lambda *a, **kw: SimpleNamespace(content=next(responses), usage={}),
+    )
+    monkeypatch.setattr(run_pilot, "Daytona", lambda: pytest.fail("Must not create a sandbox"))
+    config = json.loads(Path(run_pilot.__file__).with_name("pilot-config.json").read_text())
+    seed = tmp_path / "seed.json"
+    seed.write_text("[]")
+    with pytest.raises(RuntimeError, match="altered code-significant"):
+        run_pilot.run(
+            root=tmp_path / "run",
+            endpoint="http://127.0.0.1:1/v1",
+            worker_id="test-worker",
+            deadline=time.time() + 7200,
+            wheel=tmp_path / "fixture.whl",
+            notebook_seed=seed,
+            config=config,
+        )
+    assert (tmp_path / "run/escaping-compatibility.json").exists()
+
+
 def test_failed_generation_is_preserved_without_quality_or_release(tmp_path, monkeypatch):
     monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
     monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
     monkeypatch.setattr(
         run_pilot,
         "complete",
-        lambda *a, **kw: SimpleNamespace(content='{"compatible":true}', usage={}),
+        lambda *a, **kw: SimpleNamespace(
+            content=kw["user"].removeprefix("Return this exact object: ")
+            if "payload" in kw["response_schema"]["properties"]
+            else '{"compatible":true}',
+            usage={},
+        ),
     )
     monkeypatch.setattr(run_pilot, "Daytona", lambda: object())
     monkeypatch.setattr(

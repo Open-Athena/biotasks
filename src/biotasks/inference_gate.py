@@ -78,6 +78,7 @@ class InferenceGate:
         deadline: float,
         request_timeout: float = 180,
         chat_template_kwargs: dict[str, str] | None = None,
+        structured_output_mode: str = "json_schema",
     ):
         route = urlsplit(upstream)
         if (
@@ -91,9 +92,12 @@ class InferenceGate:
             raise ValueError("An HTTP(S) base URL without embedded credentials is required")
         if not credential or deadline <= time.time() or request_timeout <= 0:
             raise ValueError("Credential, future deadline and finite timeout are required")
+        if structured_output_mode not in {"json_schema", "json_object"}:
+            raise ValueError("Unsupported structured-output mode")
         self.route, self.credential, self.model = route, credential, model
         self.ledger, self.deadline, self.request_timeout = ledger, deadline, request_timeout
         self.chat_template_kwargs = dict(chat_template_kwargs or {})
+        self.structured_output_mode = structured_output_mode
         gate = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -147,7 +151,26 @@ class InferenceGate:
                             raise ValueError
                         payload["chat_template_kwargs"] = supplied | gate.chat_template_kwargs
                         body = json.dumps(payload).encode()
-                except (ValueError, TypeError, AttributeError, TimeoutError):
+                    response_format = payload.get("response_format")
+                    if (
+                        gate.structured_output_mode == "json_object"
+                        and isinstance(response_format, dict)
+                        and response_format.get("type") == "json_schema"
+                    ):
+                        schema = response_format["json_schema"]["schema"]
+                        payload["messages"] = [
+                            *payload["messages"],
+                            {
+                                "role": "system",
+                                "content": "Return one JSON object without Markdown fences, "
+                                "satisfying this JSON Schema. Encode string newlines, tabs, "
+                                "quotes and backslashes using valid JSON escapes.\n"
+                                + json.dumps(schema),
+                            },
+                        ]
+                        payload["response_format"] = {"type": "json_object"}
+                        body = json.dumps(payload).encode()
+                except (ValueError, TypeError, AttributeError, KeyError, TimeoutError):
                     return self.reject(400, "Invalid model request or output-token bound")
                 try:
                     call_id = gate.ledger.claim(parts[1], body)
