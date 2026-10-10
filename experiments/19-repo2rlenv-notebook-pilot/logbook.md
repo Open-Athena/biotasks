@@ -635,3 +635,9 @@ the other two wiring tests (121,364 KiB, 4.25 seconds). Shared lock, single-thre
 and priority limits applied, estimated working set <300 MiB. No live model or
 cloud call occurred in tests. Pinned upstream Task.checksum emits a deprecation
 warning; native imports still use that supported pinned interface.
+
+Continuation 010 submitted once from `22b714178b392937b05157a2d42f5a5d156070c7`,
+replacement slot 9. One remains. Iris observed PENDING at 01:49:18 UTC; no
+resubmission. Launcher peak RSS 345,644 KiB, 11.89 seconds, exit 0, shared lock
+and thread/priority limits. The task/evidence archive is included by SHA256 in
+the frozen input manifest.
