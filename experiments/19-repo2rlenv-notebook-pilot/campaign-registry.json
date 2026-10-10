@@ -1,0 +1,35 @@
+{
+  "approval_date": "2026-10-09",
+  "approval_timezone": "America/New_York",
+  "replacement_limit": 10,
+  "per_replacement": {
+    "model": "glm-5.3",
+    "max_inference_requests": 80,
+    "max_daytona_usd": "5.00",
+    "campaign_seconds": 7200,
+    "cleanup_seconds": 300,
+    "max_solver_attempts": 2,
+    "solver_seconds": 300
+  },
+  "aggregate_replacement_limits": {
+    "inference_requests": 800,
+    "daytona_usd": "50.00",
+    "campaign_hours": 20
+  },
+  "replacements_claimed": [
+    {
+      "campaign": "notebook-pilot-002",
+      "factory_revision": "5ff327c359d0f2d52590540531badbca3a826d2f",
+      "state_at_observation": "RUNNING",
+      "requests_used": null,
+      "scientifically_validated": false
+    }
+  ],
+  "remaining_replacement_slots": 9,
+  "rules": [
+    "Run sequentially; stop earlier on success.",
+    "An uncertain observation is not permission to resubmit.",
+    "Factory-only changes; no manual scientific task fixes.",
+    "A later observation supersedes the recorded state; do not infer liveness from this file."
+  ]
+}

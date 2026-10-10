@@ -316,3 +316,13 @@ Oversized diagnostic files remain in S3 and are explicitly listed as skipped.
 Verified the existing Hugging Face login identifies gonzalobenegas with a write
 role. No dataset has been created or published. Credentials were not printed or
 copied into source. Scientific validation and release integrity remain required.
+
+Replacement 1 of 10 (campaign 002) was submitted once from commit 5ff327c, after
+confirming that campaign 001 and the read-only recovery were terminal. Its rendered
+configuration and all shipped inputs are hash-bound. The private submitter checks
+prior job states before allowing each next campaign and rejects campaign numbers
+outside 002–011. The local submitter peaked at 345,284 KiB while holding the shared
+lock; it exited normally. A subsequent live observation reports campaign 002
+RUNNING. No scientific validation or publication is claimed from that state.
+The current authorization and consumed replacement slot are recorded in
+campaign-registry.json; live job observations remain authoritative.
