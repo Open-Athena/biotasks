@@ -539,3 +539,8 @@ the old ownership journals; one successful creation had an explicit deletion
 receipt. Provider read-back at 01:19:19 UTC confirmed all five IDs absent. No
 cleanup mutation or new #18 generation was needed. These failures are preserved
 as infrastructure/unrunnable outcomes, not failed biological answers.
+
+Campaign 008 submitted once from `1873ddde0a7099623ebf4cbdf8d88d9d9ded148b`,
+using replacement slot 7. Three slots remain. The launcher checked all prior job
+handles terminal. Local launch peak RSS 345,992 KiB, 10.87 seconds, exit 0;
+shared lock, thread/priority limits and <400 MiB estimate applied.
