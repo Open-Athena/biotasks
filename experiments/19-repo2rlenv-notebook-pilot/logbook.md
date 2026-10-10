@@ -424,3 +424,15 @@ exit 0, 10.79 seconds, shared lock/thread/priority limits applied; estimated
 were fetched and verified after recording the evidence and new hypothesis.
 The lost-newline stop-before-sandbox regression passed independently (peak RSS
 117,980 KiB, 3.35 seconds, exit 0); changed-file Ruff checks passed.
+
+
+## 2026-10-10 UTC: release provenance preparation
+
+Saved the Scanpy LICENSE from the exact selected source revision, SHA256
+`fb02749e4f251401f2c4023b7a30e71f40a21e138b87025036f74c980cfa63b2`.
+The primary 10x PBMC3k dataset page still explicitly states CC BY 4.0.
+`source-license-evidence.json` preserves the notice and attribution source for
+future release evidence; no generated task file was modified and nothing has
+been published to Hugging Face. A separate bounded read-only script and plan for
+#18's old native manifests are prepared privately, not launched. Campaign 005
+was confirmed RUNNING at 00:49:37 UTC on its existing handle.
