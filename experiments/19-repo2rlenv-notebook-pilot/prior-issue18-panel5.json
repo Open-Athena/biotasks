@@ -10,9 +10,9 @@
   },
   "limitations": [
     "Scheduler success is not task acceptance.",
-    "Native stage finished does not prove passing controls or a valid solver attempt.",
-    "Detailed native artifacts and resource cleanup records were not recovered.",
-    "No new issue-18 job was launched."
+    "Four native stages failed infrastructure isolation/build checks; eight were not runnable because validation assets were missing or unsafe.",
+    "No completed scientific validation or solver attempt is inferred.",
+    "All five sandbox IDs identified in original native records were absent on provider read-back. No new issue-18 generation was launched."
   ],
   "seeds": [
     {
@@ -51,8 +51,28 @@
         "reason": "Do not send infrastructure failures to repair"
       },
       "source_log_sha256": "98f111afe2450cb2e86d87d1da16cbbfa7bbf5a96669daac510ed6c08f4e715f",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "infra_error",
+          "reason": null,
+          "cases": [
+            {
+              "status": "infra_error",
+              "reason": "Native isolation evidence is incomplete",
+              "reward": null,
+              "checks": {
+                "isolation_recorded": false
+              },
+              "id": "reference",
+              "cleanup_error": "ValueError"
+            }
+          ],
+          "outcome_sha256": "00fc55ee595355db4c11047566b763974821d038a93419305e990fc5d7b7f1d1"
+        }
+      ]
     },
     {
       "seed": "cobrapy",
@@ -90,8 +110,30 @@
         "reason": "Do not send infrastructure failures to repair"
       },
       "source_log_sha256": "b05b11f77858dc953b491ca0a1a23331892615509b9eaf09a1e27788fab3a45c",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "infra_error",
+          "reason": null,
+          "cases": [
+            {
+              "status": "infra_error",
+              "reason": "Native isolation evidence is incomplete",
+              "reward": null,
+              "checks": {
+                "two_isolated_environments": false,
+                "offline_cpu_only": true,
+                "bounded_cpu_memory": true,
+                "requested_disk_within_profile": true
+              },
+              "id": "reference"
+            }
+          ],
+          "outcome_sha256": "e969311bd95461bda5c172a7e9195872c96b8217917a1f8562da2c69dffbc5cc"
+        }
+      ]
     },
     {
       "seed": "mdanalysis",
@@ -129,8 +171,28 @@
         "reason": "Do not send infrastructure failures to repair"
       },
       "source_log_sha256": "d192e0c030107273735ffa0c6b6460f25855ce3f01ebc605e018d77de4ddb4b9",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "infra_error",
+          "reason": null,
+          "cases": [
+            {
+              "status": "infra_error",
+              "reason": "Native isolation evidence is incomplete",
+              "reward": null,
+              "checks": {
+                "isolation_recorded": false
+              },
+              "id": "reference",
+              "cleanup_error": "ValueError"
+            }
+          ],
+          "outcome_sha256": "db15a0c425c74377525cb49195386c1681219f35e0a69c3fae9610226429eb14"
+        }
+      ]
     },
     {
       "seed": "methylkit",
@@ -177,8 +239,17 @@
         "reason": "An unfinished audit cannot approve the candidate"
       },
       "source_log_sha256": "6216f10f85b99ea45e099878936b637d94eae295d21942a5f87ce5827dafd1b5",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "e704d526ced1f57f9a301d0c8ff870b8bc203cf8997e12d5ea6ccd9dc2e014ad"
+        }
+      ]
     },
     {
       "seed": "phyloseq",
@@ -247,8 +318,24 @@
         "reason": "Apply the versioned GLM review report"
       },
       "source_log_sha256": "76290442ce5856f020404aad56b0577f8165e5766ed7f7416702335f43176b32",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "80f86f9afbbd295daf38cf6bae80f60e42776d5a3feeabf65f8d73fc26d9ac45"
+        },
+        {
+          "stage": "native_after_repair",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "75c9d980d2276cd89ee142b0dc94f39903c058fd731a6da43be11ab7a33db981"
+        }
+      ]
     },
     {
       "seed": "pyradiomics",
@@ -293,8 +380,17 @@
         "error_type": "RuntimeError"
       },
       "source_log_sha256": "543a15d8706f07e8b2628274c6d04f92d8c3f74357d52882b9b5d7abfcfa7720",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "d27c7ed2b7a012080d15363855c00221e86da3bccf19b737111fc415d2b90279"
+        }
+      ]
     },
     {
       "seed": "qfeatures",
@@ -341,8 +437,17 @@
         "error_type": "ValueError"
       },
       "source_log_sha256": "f1994561abf4a16643449ebcc8507845bee67b62d600263d382a2bed1f97f0e8",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "2e22ffcda5eef7a71ab18f8ff77c56a41a36f142d7f44edee1c5bed4309034df"
+        }
+      ]
     },
     {
       "seed": "scanpy",
@@ -380,8 +485,28 @@
         "reason": "Do not send infrastructure failures to repair"
       },
       "source_log_sha256": "55022bf31d08c07f63710765a2ac70f210ac1d0e21bc6a5cc08a7c671a88a645",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "infra_error",
+          "reason": null,
+          "cases": [
+            {
+              "status": "infra_error",
+              "reason": "Native isolation evidence is incomplete",
+              "reward": null,
+              "checks": {
+                "isolation_recorded": false
+              },
+              "id": "reference",
+              "cleanup_error": "ValueError"
+            }
+          ],
+          "outcome_sha256": "3d5f5544c8fbd019a8d8465418977ea9cdc864df83c461f55781b76c22c4f13b"
+        }
+      ]
     },
     {
       "seed": "skbio",
@@ -428,8 +553,17 @@
         "reason": "An unfinished audit cannot approve the candidate"
       },
       "source_log_sha256": "37b3e88ac07088a29f884ce6416caecf2fec5e569942858397f669e43e966f1e",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "c3f562a25d88afe1870350f235aa29ca6aa2be99538996cae0c4cbc3b056c6ad"
+        }
+      ]
     },
     {
       "seed": "xcms",
@@ -498,8 +632,31 @@
         "reason": "Apply the versioned GLM review report"
       },
       "source_log_sha256": "1e6a833a625ecd259858353c5087c9a1ed43105fde9fe8cdf48839d044363acb",
-      "native_artifacts_inspected": false,
-      "sandbox_cleanup_verified": false
+      "native_artifacts_inspected": true,
+      "sandbox_cleanup_verified": true,
+      "native_stages": [
+        {
+          "stage": "native_after_construction",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "3b0cebf4c05883ee826f587619f014c6dcf4487eab41bb297f315b717205218f"
+        },
+        {
+          "stage": "native_after_repair",
+          "status": "not_runnable",
+          "reason": "Missing or unsafe validation asset",
+          "cases": [],
+          "outcome_sha256": "86c355251ea9bd98530b69d549341deae2dbd124e6dc8e8213cbe5e00241e59f"
+        }
+      ]
     }
-  ]
+  ],
+  "native_recovery_observed_at": "2026-10-10T01:19:19.230613+00:00",
+  "resource_audit": {
+    "identified_ids": 5,
+    "provider_readback_absent": 5,
+    "observation_utc": "2026-10-10T01:19:19.230613+00:00",
+    "mutations": 0
+  }
 }

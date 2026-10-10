@@ -522,3 +522,20 @@ results/ledgers. Prioritize final outcomes and cleanup/request receipts, and all
 from the embedded JSON with their exact original SHA256 verified. Plan one
 read-only combined recovery as replacement slot 6 (campaign 007), 1 CPU/1 GiB,
 at most five minutes, no model calls/Daytona creation, leaving four slots.
+
+
+## 2026-10-10 UTC: recovery and prior-resource audit complete
+
+Read-only recovery 007 succeeded without model calls or sandbox creation. It
+recovered the request ledger for campaign 006 (13 requests: compatibility 2,
+generation 3, quality 8), all ten native cleanup-verified claims, and final native
+result files whose hashes match the four quality TrialRecords. The quality
+rejection is unchanged. Four replacement slots remain.
+
+The prior #18 panel recovery verified all twelve native stage manifests: four
+infrastructure failures and eight stages not runnable due to missing/unsafe
+validation assets. Failed-build traces exposed four sandbox IDs not present in
+the old ownership journals; one successful creation had an explicit deletion
+receipt. Provider read-back at 01:19:19 UTC confirmed all five IDs absent. No
+cleanup mutation or new #18 generation was needed. These failures are preserved
+as infrastructure/unrunnable outcomes, not failed biological answers.
