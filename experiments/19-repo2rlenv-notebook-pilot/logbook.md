@@ -369,3 +369,15 @@ and provider errors consuming their allowance); peak RSS 41,560 KiB, 2.35 s,
 exit 0. Estimated working set <100 MiB; shared lock, one-worker and thread limits
 used. Changed-file Ruff lint/format and diff whitespace checks passed. The
 recovery submitter exited 0 with peak RSS 304,712 KiB and left no local worker.
+
+
+### Replacement slot 3 submitted
+
+Campaign `notebook-pilot-004` was submitted once from
+`d485dba13fac34f53775d21d7e0ae7055c87b915`. Live status at 00:40:27 UTC is RUNNING;
+no scientific outcome or request usage is available yet. Seven replacement slots
+remain, after counting the read-only recovery as slot 2. The launcher verified
+all previous handles terminal. Peak local submitter RSS 345,284 KiB, exit 0,
+10.46 seconds; estimated <400 MiB, adequate headroom and shared lock held.
+No local worker remains. Issue body and agent-generated label verified after
+publishing the diagnosis and launch decision.
