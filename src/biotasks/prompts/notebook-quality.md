@@ -32,3 +32,13 @@ or an isolated trusted reference copy before computing those expectations. Do no
 infer protection from a comment, path name, or chmod command. Any repair must be
 your own proposal through the existing repair mechanism; preserve the biological
 methodology and installed semantic controls.
+
+Classify a demonstrated reference-integrity defect as blocking, not an optional
+hardening improvement, even when every recorded solver behaved honestly. Copying
+data to a second path in the same root-accessible environment does not establish
+an independent trust boundary. Comparing two mutable copies only proves that
+they agree. For any proposed repair, trace the expected identity or reference
+back to evidence the solver cannot modify, and explain how the verifier obtains
+it. Build-time validation alone does not detect later changes. If the available
+environment cannot enforce this requirement, report the limitation and reject
+the candidate rather than labeling it usable.

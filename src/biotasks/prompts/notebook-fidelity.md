@@ -24,6 +24,12 @@ content. Cite source and task evidence when comparing them. Do not infer that
 files, trials or data exist from a plan. List blocking findings explicitly.
 This assessment is advisory evidence, never a reward or substitute for execution.
 
+Before returning, check every citation: end_line - start_line must be at most 8.
+Select the few lines that establish the claim; do not cite an entire function or
+review object. Put each demonstrated defect behind a fail verdict in
+blocking_findings too. A malformed citation does not excuse a scientific defect,
+and a successful solver attempt does not override one.
+
 Check that undocumented representation constraints do not reject scientifically
 equivalent artifacts. One passing alternative does not justify a hidden ordering
 or software restriction. Check reference-input integrity under the actual solver
