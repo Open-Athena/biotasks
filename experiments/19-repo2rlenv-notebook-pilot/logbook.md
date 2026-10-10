@@ -412,3 +412,15 @@ BioTasks/notebook name patterns. This is not proof of #18 cleanup: original
 sandbox IDs are still required. Nothing was deleted or changed. The bounded local
 reader peaked at 109,980 KiB, exit 0. Prepared a private recovery plan identifying
 ten old seeds and twelve recorded native stage slots; no #18 job was launched.
+
+
+### Replacement slot 4 submitted
+
+Campaign `notebook-pilot-005` was submitted once from
+`76b280fb053446763ff23a72b1d818c0a89a400a` after verifying all earlier handles
+terminal. Six replacement slots remain. Local submission peak RSS 344,500 KiB,
+exit 0, 10.79 seconds, shared lock/thread/priority limits applied; estimated
+<400 MiB with adequate headroom. No local worker remains. Issue body and label
+were fetched and verified after recording the evidence and new hypothesis.
+The lost-newline stop-before-sandbox regression passed independently (peak RSS
+117,980 KiB, 3.35 seconds, exit 0); changed-file Ruff checks passed.
