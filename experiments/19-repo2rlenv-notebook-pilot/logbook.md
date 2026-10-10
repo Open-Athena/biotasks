@@ -558,3 +558,27 @@ passed, peak RSS 57,620 KiB, 0.52 seconds, exit 0, shared lock and one-thread/
 priority limits; estimated working set <100 MiB. The first invocation lacked
 the experiment import path and failed test collection; rerun used explicit
 PYTHONPATH. Lint and format checks passed after import sorting.
+
+
+## 2026-10-10 UTC: campaign 008 cleanup race
+
+Campaign 008 generated a task on its first build, using four requests total
+(compatibility 2, generation 2). Generation nop/oracle controls completed with
+cleanup verified. The first quality baseline then exited Harbor with code zero
+but cleanup raised DaytonaNotFoundError, so the supervisor correctly left it
+unaccepted and the pipeline stopped. At 01:27:05 UTC a fresh provider query of
+that exact ownership label returned no resources. No deletion was needed.
+
+A narrow reusable patch catches NotFound specifically during owned deletion,
+then still checks the exact ID and the complete ownership listing. It does not
+accept other errors, wrong ownership, remaining resources or uncertain creation.
+The original failed receipt is preserved separately from later reconciliation.
+Recovery now also selects root-level native trial files, so interrupted imports
+do not hide their raw diagnostics. No task artifact has been manually changed.
+
+Seven cleanup tests passed (peak RSS 111,952 KiB, 2.42 seconds, exit 0), including
+NotFound followed by absent and still-present observations. Tests used the shared
+lock and thread/priority limits, estimated working set <200 MiB. All five pinned
+patches apply sequentially to original source and match the tested checkout;
+the first minimal patch-check fixture omitted an affected file and was corrected
+to derive the source list from all patch headers. Lint/format checks passed.

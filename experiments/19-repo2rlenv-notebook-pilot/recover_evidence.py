@@ -61,6 +61,7 @@ def main():
             or (relative.startswith("pilot/quality/") and relative.endswith("/task.tar.gz"))
             or (relative.startswith("pilot/quality/") and relative.endswith(".json"))
             or relative.startswith("pilot/quality/trials/")
+            or relative.startswith("trials/")
         )
         if not selected:
             continue

@@ -58,3 +58,10 @@ nested token-detail objects survive a shallow `dict(usage)` conversion and then
 break JSON evidence writing. Use the response model's JSON-mode dump to preserve
 those fields as plain data. The regression test uses the installed LiteLLM Usage
 class, including nested reasoning-token details, and verifies their preservation.
+
+`0005-idempotent-owned-cleanup.patch` handles a deletion race observed in
+campaign 008: Harbor exits successfully, but deleting a resource from the
+supervisor's earlier listing reports NotFound. Record that response, then
+independently read the exact ID and re-list the ownership label. A delete 404
+alone is never sufficient evidence of successful cleanup. Other errors still
+fail closed; ownership guards and interrupted-creation handling are unchanged.

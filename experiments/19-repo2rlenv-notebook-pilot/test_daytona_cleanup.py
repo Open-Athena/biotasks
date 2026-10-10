@@ -57,3 +57,19 @@ def test_supervisor_selects_daytona_and_preserves_failed_creation_uncertainty(
     assert "labels=" + json.dumps({"repo2rlenv.job": record["job_id"]}) in start.call_args.args[0]
     assert record["cleanup"]["passed"] is (returncode == 0)
     docker.assert_not_called()
+
+
+@pytest.mark.parametrize("still_present", [False, True])
+def test_delete_not_found_still_requires_independent_absence(still_present):
+    client = MagicMock()
+    sandbox = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=1, memory=2, disk=10)
+    client.list.side_effect = [[sandbox], [sandbox] if still_present else []]
+    client.delete.side_effect = DaytonaNotFoundError("already deleted")
+    if still_present:
+        client.get.return_value = MagicMock(state="started")
+    else:
+        client.get.side_effect = DaytonaNotFoundError("gone")
+    result = cleanup("job-1", client)
+    assert result["passed"] is (not still_present)
+    assert result["sandboxes"][0]["delete_reported_absent"]
+    client.get.assert_called_once_with("owned", request_timeout=15)

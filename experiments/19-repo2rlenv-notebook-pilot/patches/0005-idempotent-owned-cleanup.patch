@@ -1,0 +1,16 @@
+--- a/src/repo2rlenv/execution/daytona_cleanup.py
++++ b/src/repo2rlenv/execution/daytona_cleanup.py
+@@ -15,7 +15,12 @@
+             raise ValueError("Provider returned a sandbox with different ownership")
+         row = {"id": sandbox.id, "cpu": sandbox.cpu,
+                "memory": sandbox.memory, "disk": sandbox.disk}
+-        client.delete(sandbox, timeout=60, wait=True)
++        try:
++            client.delete(sandbox, timeout=60, wait=True)
++        except DaytonaNotFoundError:
++            # Harbor may already have deleted a sandbox from this list snapshot.
++            # Still verify its ID and the complete ownership listing below.
++            row["delete_reported_absent"] = True
+         try:
+             remaining = client.get(sandbox.id, request_timeout=15)
+         except DaytonaNotFoundError:
