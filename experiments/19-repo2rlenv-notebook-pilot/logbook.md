@@ -326,3 +326,21 @@ lock; it exited normally. A subsequent live observation reports campaign 002
 RUNNING. No scientific validation or publication is claimed from that state.
 The current authorization and consumed replacement slot are recorded in
 campaign-registry.json; live job observations remain authoritative.
+
+
+## 2026-10-10 UTC: first replacement rejected at design schema
+
+Campaign `notebook-pilot-002` is terminal SUCCEEDED at the host level but
+`generation_failed` scientifically: no task emitted, one `design_schema` skip.
+The ledger records two HTTP-200 calls (compatibility and generation), not 80 used.
+The real Daytona preflight passed both outbound-TCP negative controls against
+positive host controls, confirmed the configured resources, and verified deletion.
+There were no reference, verifier, probe or solver trials.
+
+The export retained the model/error/request receipts, but bounded diagnostics
+omitted candidate receipts. Expand the reusable diagnostic selector to include
+those receipts, final quality revisions and task archives. Preserve file modes
+in future export manifests so release integrity does not require guessing modes.
+A short read-only recovery is charged as replacement slot 2 of 10 (campaign 003):
+1 CPU, 1 GiB, at most five minutes, no models or Daytona creation. This uses less
+than the approved per-campaign bounds and leaves eight replacement slots.

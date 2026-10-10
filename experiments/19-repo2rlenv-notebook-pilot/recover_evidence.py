@@ -44,6 +44,9 @@ def main():
             relative in SELECTED
             or (relative.startswith("pilot/trial-claims/") and relative.endswith(".json"))
             or (relative.startswith(("pilot/tasks/", "pilot/fidelity/")))
+            or (relative.startswith("pilot/campaign/") and relative.endswith(".json"))
+            or relative.startswith("pilot/quality/revisions/")
+            or (relative.startswith("pilot/quality/") and relative.endswith("/task.tar.gz"))
             or (relative.startswith("pilot/quality/") and relative.endswith(".json"))
         )
         if not selected:

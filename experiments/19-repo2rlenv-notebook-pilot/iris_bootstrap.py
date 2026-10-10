@@ -83,7 +83,14 @@ def export(root, prefix):
         expected = digest(path)
         if value.hexdigest() != expected:
             raise ValueError("Artifact download hash mismatch")
-        receipts.append({"path": relative, "sha256": expected, "bytes": path.stat().st_size})
+        receipts.append(
+            {
+                "path": relative,
+                "sha256": expected,
+                "bytes": path.stat().st_size,
+                "mode": path.stat().st_mode & 0o777,
+            }
+        )
     with fsspec.open(prefix.rstrip("/") + "/export-manifest.json", "w").open() as stream:
         json.dump({"files": receipts, "download_checked": True}, stream)
 
