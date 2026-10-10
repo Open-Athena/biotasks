@@ -694,3 +694,24 @@ Shared lock, one-thread and priority limits applied; no owned local worker
 remained. GitHub returned no CI runs for this research branch, so these are local
 checks only. The issue text and agent-generated label were fetched and verified.
 At 02:05:38 UTC continuation 011 was still RUNNING; no further submission.
+
+### 2026-10-10 — Final approved continuation completed; release withheld
+
+Campaign 011 finished SUCCEEDED. Its GLM-authored repair ran five fresh native
+trials: no-op 0, oracle 1, wrong probe 0, valid alternative 1 and blind solver 1.
+All five raw result hashes match their receipts; all trial and preflight cleanup
+checks passed. Solver execution took 156.552134 seconds with eight API requests.
+Sixteen new requests (quality 8, solver 8) bring the continuation chain to 32
+requests and 16 native trials, including two solver attempts.
+
+Upstream quality labels the task usable, but release remains withheld. The
+repair compares two data copies that are both writable by the root solver;
+there is no independent runtime input identity check. This is a static defect,
+not a demonstrated exploit. Fidelity review identifies that failure, and its
+line citations also exceed the validator's allowed spans. Its assessment is
+therefore unsupported. Package/base-image pinning remains a reproducibility
+limitation. No task was manually repaired and nothing was uploaded to the Hub.
+
+All ten replacement slots are exhausted. No further remote/model execution is
+authorized; issue 19 remains incomplete pending a decision on additional work.
+See campaign-011-result.json for the final bundle identity and accounting.
