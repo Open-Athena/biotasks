@@ -344,3 +344,28 @@ in future export manifests so release integrity does not require guessing modes.
 A short read-only recovery is charged as replacement slot 2 of 10 (campaign 003):
 1 CPU, 1 GiB, at most five minutes, no models or Daytona creation. This uses less
 than the approved per-campaign bounds and leaves eight replacement slots.
+
+
+### Recovered diagnosis and bounded reasoning setting
+
+The read-only replacement slot completed successfully; all selected bytes match
+original export hashes. The model response has empty content, 9,000 completion
+tokens, all 9,000 attributed to reasoning, and 8,937 prompt tokens. The saved
+Pydantic error is EOF parsing empty JSON. This is output exhaustion, not evidence
+against the seed's scientific suitability. No task has been manually repaired.
+
+Set the approved service's documented `chat_template_kwargs.reasoning_effort`
+to `low` at the inference adapter, recorded in frozen campaign configuration.
+Apply consistently across the campaign's direct and solver calls. Keep output,
+request, turn, runtime and resource ceilings unchanged. The generic adapter
+rejects conflicting caller settings, records the digest of the actual forwarded
+body, preserves messages, and defaults to unchanged forwarding when no template
+settings are configured. This is an empirically motivated model configuration
+change, not evidence that the service will guarantee nonempty output.
+
+Three adapter regression cases passed (including unchanged behavior, provider
+setting propagation, conflicting settings rejected without consuming requests,
+and provider errors consuming their allowance); peak RSS 41,560 KiB, 2.35 s,
+exit 0. Estimated working set <100 MiB; shared lock, one-worker and thread limits
+used. Changed-file Ruff lint/format and diff whitespace checks passed. The
+recovery submitter exited 0 with peak RSS 304,712 KiB and left no local worker.

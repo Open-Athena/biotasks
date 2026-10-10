@@ -77,6 +77,7 @@ class InferenceGate:
         ledger: RequestLedger,
         deadline: float,
         request_timeout: float = 180,
+        chat_template_kwargs: dict[str, str] | None = None,
     ):
         route = urlsplit(upstream)
         if (
@@ -92,6 +93,7 @@ class InferenceGate:
             raise ValueError("Credential, future deadline and finite timeout are required")
         self.route, self.credential, self.model = route, credential, model
         self.ledger, self.deadline, self.request_timeout = ledger, deadline, request_timeout
+        self.chat_template_kwargs = dict(chat_template_kwargs or {})
         gate = self
 
         class Handler(BaseHTTPRequestHandler):
@@ -136,6 +138,15 @@ class InferenceGate:
                         or not 1 <= tokens <= allowance.output_tokens
                     ):
                         raise ValueError
+                    if gate.chat_template_kwargs:
+                        supplied = payload.get("chat_template_kwargs", {})
+                        if not isinstance(supplied, dict) or any(
+                            key in supplied and supplied[key] != value
+                            for key, value in gate.chat_template_kwargs.items()
+                        ):
+                            raise ValueError
+                        payload["chat_template_kwargs"] = supplied | gate.chat_template_kwargs
+                        body = json.dumps(payload).encode()
                 except (ValueError, TypeError, AttributeError, TimeoutError):
                     return self.reject(400, "Invalid model request or output-token bound")
                 try:

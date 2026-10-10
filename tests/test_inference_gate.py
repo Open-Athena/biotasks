@@ -31,7 +31,8 @@ def test_uncertain_requests_count_and_limits_cannot_change(tmp_path):
         assert "private prompt" not in str(list(db.iterdump()))
 
 
-def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path):
+@pytest.mark.parametrize("settings", [None, {"reasoning_effort": "low"}])
+def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, settings):
     observed = []
 
     class Upstream(BaseHTTPRequestHandler):
@@ -61,10 +62,11 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path):
         model="fixture",
         ledger=ledger,
         deadline=time.time() + 10,
+        chat_template_kwargs=settings,
     ).start()
     route = urlsplit(gate.endpoint("solve"))
 
-    def request(tokens=64, key="TEST_SECRET"):
+    def request(tokens=64, key="TEST_SECRET", **extra):
         assert route.hostname is not None
         client = http.client.HTTPConnection(route.hostname, route.port, timeout=2)
         try:
@@ -76,6 +78,7 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path):
                         "model": "fixture",
                         "max_tokens": tokens,
                         "messages": [{"role": "user", "content": "PRIVATE_PROMPT"}],
+                        **extra,
                     }
                 ),
                 headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"},
@@ -89,10 +92,16 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path):
     try:
         assert request(key="wrong") == 401
         assert request(tokens=129) == 400
+        if settings:
+            assert request(chat_template_kwargs={"reasoning_effort": "high"}) == 400
         assert request() == 503
         assert request() == 429
         assert len(observed) == 1
         assert observed[0][0:2] == ("/v1/chat/completions", "Bearer TEST_SECRET")
+        payload = json.loads(observed[0][2])
+        assert payload.get("chat_template_kwargs") == settings
+        assert payload["max_tokens"] == 64
+        assert payload["messages"][0]["content"] == "PRIVATE_PROMPT"
         with sqlite3.connect(ledger.path) as db:
             dump = str(list(db.iterdump()))
         assert "TEST_SECRET" not in dump

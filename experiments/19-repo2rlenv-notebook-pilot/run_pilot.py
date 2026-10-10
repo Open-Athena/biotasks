@@ -71,6 +71,7 @@ def run(
         model=config["model"],
         ledger=requests,
         deadline=deadline,
+        chat_template_kwargs=config.get("chat_template_kwargs"),
     ).start()
     try:
 
