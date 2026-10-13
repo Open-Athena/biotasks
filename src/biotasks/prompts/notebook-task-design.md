@@ -55,7 +55,11 @@ The eventual solver instructions must state:
 
 Specify what analysis must be performed without prescribing a particular package
 or implementation. Available packages may be listed neutrally. Permit any software
-that implements the stated methodology.
+that implements the stated methodology. Software freedom is not freedom to change
+the scientific method: select one method and resolve consequential defaults from
+the supplied source. Do not offer a menu of statistically different methods or
+refer to package defaults without specifying what they mean. If the source does
+not resolve a necessary choice, label your chosen adaptation and justify it.
 
 Keep reference code, expected answers and private grading assets out of the
 solver instructions. Scientific parameters and output requirements are public
@@ -114,6 +118,32 @@ construction-time investigation instead of inventing thresholds, ranges or
 reference-overlap percentages. Respect scientifically valid alternatives without
 weakening grading to superficial plausibility.
 
+Verification must establish the relationship between the trusted inputs and the
+submitted result, not merely agreement between submitted files. Recompute or
+independently derive required scientific outputs from trusted inputs, using the
+submitted upstream result only after validating it. If outputs have arbitrary
+names or ordering, compare their scientific content under that symmetry;
+matching aggregate summaries does not establish equivalence of the underlying
+result. Require correctness across all required groups or outputs; sampled checks
+must explain their coverage and limitations rather than stand in for the whole
+scientific contract.
+
+For each test, mentally construct a submission that has the right shape and
+plausible values but was produced by a wrong or omitted analysis. Explain what
+independent check rejects it. If no defensible check is available, revise the
+design or explicitly mark the requirement as blocked; do not replace correctness
+with recognizable names or an arbitrary similarity score. Do not claim an
+invariant for one quantity merely because a different quantity is used for
+sorting or ranking.
+
+Separate design decisions from evidence still needed. The builder may measure
+runtime, validate determinism and calibrate numerical error against equivalent
+implementations. It must not choose a different scientific method or relax
+correctness tests silently. For unmeasured numerical variability, state the
+calibration procedure and mark the tolerance unresolved; do not supply a guessed
+acceptance value. Distinguish such construction-time validation gates from
+ambiguities in the task's scientific definition, which must be resolved here.
+
 ### Step 4: Reconcile and return the structured design
 
 Before returning, cross-check the public methodology, output contract,
@@ -122,10 +152,14 @@ abandoned alternatives, mid-sentence self-corrections and leaked reference
 answers. Do not put expected result labels, rankings or numerical answers in the
 public brief. Each requirement must have one unambiguous interpretation. Place
 unresolved questions in their designated section rather than silently choosing
-or switching among incompatible definitions.
+or switching among incompatible definitions. Write a finished proposal, not a
+transcript of your deliberation. Check every claim of a preserved source method
+against the supplied notebook. All scientific requirements, including acceptance
+criteria for alternative implementations, must appear in the public contract;
+private tests may contain reference answers but not new scientific requirements.
 
 
-Return exactly one JSON object matching the requested response schema, without
+Return exactly one JSON object with only the two keys below (no additional keys), without
 Markdown fences or text outside the JSON:
 
 - `core_capabilities`: a list of 1–15 concise descriptions of the skills exercised.
