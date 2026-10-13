@@ -19,7 +19,7 @@ with sync_playwright() as p:
         else Path(__file__).with_name("index.html").resolve().as_uri()
     )
     page.get_by_role("button", name="Approaches", exact=True).click()
-    for index in range(4):
+    for index in range(5):
         page.locator(".approach-flow button").nth(index).click()
         for select in page.locator(".approach-step-panel select").all():
             for option in range(select.locator("option").count()):

@@ -29,7 +29,12 @@ escaped by Pygments. All other archived strings use textContent. The source
 notebook is rendered cell by cell; source outputs remain available at the pinned
 original link. License notices are included.
 
-Browser checks exercise both top-level views, all four pipeline stages, every
+Browser checks exercise both top-level views, all five pipeline stages, every
 prompt/attempt selector and a 390-pixel viewport. Credential/private-marker scans
 run before publication. The review explicitly distinguishes static assessment
 of the two repaired coercion defects from the fresh native control trials.
+
+Task design and construction are separate steps. The upstream design call returns
+`draft_spec` in structured JSON; the builder receives it as `design.draft_spec`.
+The inherited prompt mentions `draft_spec.md`, but this direct-call pathway does
+not require that intermediate file. Recorded prompts remain unchanged.
