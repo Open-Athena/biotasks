@@ -17,6 +17,12 @@ class ScientificFeedbackLoop(QualityLoop):
 
     def _review(self, task, trials, key, **kwargs):
         review, context = super()._review(task, trials, key, **kwargs)
+        if getattr(self, "audit_schema", False):
+            from schema_audit import audit
+
+            review = review.model_copy(
+                update={"issues": [*review.issues, *audit(self, task, context, key)]}
+            )
         feedback = getattr(self, "scientific_feedback", None)
         if feedback is None or task_identity(task) != feedback["bundle_hash"]:
             return review, context

@@ -849,3 +849,23 @@ and the same five trials/one repair/one solve under the original deadline.
 
 Continuation 016 submitted once from `1cc596a`; launcher exit 0, 14.19 seconds,
 344,988 KiB peak RSS. Corrected regression passed; local hooks passed.
+
+Continuation 016 completed with all five native rewards as expected, a fresh
+successful solve, one GLM repair and nine calls (quality 6, solver 3). Scientific
+review validated and passed. Operator release audit nevertheless found the
+remaining optional-example versus required-key mismatch; the broad review missed
+it. Upstream labeled export also failed to locate probe provenance at its
+temporary execution path, despite intact native evidence. Do not conflate
+quality status or review acceptance with full release readiness.
+
+Added a focused GLM schema audit over a mechanically extracted inventory of
+literal keyed accesses. The model must classify every expression, distinguish
+private bookkeeping from submission fields, cite evidence, and propose repairs
+for mandatory keys absent or optional publicly. Controller enforces coverage
+and exact citations; GLM supplies the scientific judgments and all repairs.
+This addresses a general pattern, with no notebook-specific task edits.
+
+Campaign 017 reserves $5 (aggregate conservative reservations $66 of $100),
+with 48 new calls (quality 24 including the extra audit stage, solver 24), one
+repair, five native trials, one five-minute solve and two hours plus cleanup.
+Two focused schema/feedback tests passed, 49,892 KiB peak, 0.51 seconds, exit 0.

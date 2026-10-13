@@ -251,7 +251,9 @@ def run(
             max_spend_usd="40",
         )
         loop_class = QualityLoop
-        if continuation is not None and "scientific_feedback" in plan:
+        if config.get("schema_audit") or (
+            continuation is not None and "scientific_feedback" in plan
+        ):
             from scientific_feedback import ScientificFeedbackLoop
 
             loop_class = ScientificFeedbackLoop
@@ -269,6 +271,7 @@ def run(
             loop.set_scientific_feedback(
                 json.loads((continuation / plan["scientific_feedback"]).read_text())
             )
+        loop.audit_schema = config.get("schema_audit", False)
         loop.model = GuidedModel(
             loop.model, files("biotasks.prompts").joinpath("notebook-quality.md").read_text()
         )
