@@ -89,3 +89,21 @@ def test_stale_final_listing_requires_id_readback():
     assert result["stale_listing_absent_ids"] == ["gone"]
     client.get.assert_called_once_with("gone", request_timeout=15)
     client.delete.assert_not_called()
+
+
+@pytest.mark.parametrize("still_present", [False, True])
+def test_delete_conflict_requires_independent_absence(still_present):
+    from daytona.common.errors import DaytonaConflictError
+
+    client = MagicMock()
+    sandbox = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=1, memory=2, disk=10)
+    client.list.side_effect = [[sandbox], [sandbox] if still_present else []]
+    client.delete.side_effect = DaytonaConflictError("transition in progress")
+    if still_present:
+        client.get.return_value = MagicMock(state="started")
+    else:
+        client.get.side_effect = DaytonaNotFoundError("gone")
+    result = cleanup("job-1", client)
+    assert result["passed"] is (not still_present)
+    assert result["sandboxes"][0]["delete_reported_conflict"]
+    assert client.get.call_count == (2 if still_present else 1)

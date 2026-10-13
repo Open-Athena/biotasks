@@ -740,3 +740,23 @@ previous owned jobs terminal and discovered the approved model relay at launch.
 Launcher exit 0, 23.74 seconds, peak RSS 345,720 KiB; shared lock and thread/
 priority limits applied. Local Ruff/format/ty hooks passed before checkpoint.
 No further campaign is authorized. Submission is not validation or publication.
+
+Campaign 012 ended FAILED after seven quality calls and three native trials.
+GLM retained the checksum-pinned archive and added a private verifier identity
+check before reference computation. Fresh no-op 0, oracle 1 and wrong-analysis
+probe 0 have native results without exceptions. Cleanup of the third trial raised
+DaytonaConflictError after Harbor returned 0, preventing further steps. The
+original failed receipt is preserved. A fresh exact ownership-label listing
+at 2026-10-13 14:48:24 UTC was empty; an exact sandbox ID was not recorded by
+the failed cleanup, so no exact-ID reconciliation is claimed.
+
+A sixth narrow adapter patch catches deletion conflict and requires independent
+ID and label absence checks; live or unknown resources still fail cleanup.
+No new remote worker or model call has been launched. Remaining allowance is
+33 calls (quality 9, solver 24), two native trials, one solve and zero repairs.
+A recovery worker would require approval under the single-submission policy.
+
+All ten cleanup tests passed, including conflict with both absent and live
+resources (112,244 KiB peak RSS, 2.14 seconds, exit 0). All six hash-pinned
+patches apply in sequence to the original source; patched cleanup matches the
+tested implementation. No generated task changed during this diagnosis.

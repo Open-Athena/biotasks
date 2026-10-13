@@ -1,0 +1,22 @@
+--- a/src/repo2rlenv/execution/daytona_cleanup.py
++++ b/src/repo2rlenv/execution/daytona_cleanup.py
+@@ -2,7 +2,7 @@
+ from __future__ import annotations
+ 
+ from daytona import Daytona, ListSandboxesQuery
+-from daytona.common.errors import DaytonaNotFoundError
++from daytona.common.errors import DaytonaConflictError, DaytonaNotFoundError
+ 
+ 
+ def cleanup(job_id: str, client=None) -> dict:
+@@ -21,6 +21,10 @@
+             # Harbor may already have deleted a sandbox from this list snapshot.
+             # Still verify its ID and the complete ownership listing below.
+             row["delete_reported_absent"] = True
++        except DaytonaConflictError:
++            # A concurrent provider transition may conflict with delete.
++            # Only the independent absence checks below can establish cleanup.
++            row["delete_reported_conflict"] = True
+         try:
+             remaining = client.get(sandbox.id, request_timeout=15)
+         except DaytonaNotFoundError:

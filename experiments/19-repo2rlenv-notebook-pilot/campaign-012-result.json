@@ -1,0 +1,56 @@
+{
+  "campaign": "notebook-pilot-012",
+  "factory_revision": "11cb1f0",
+  "job_state": "FAILED",
+  "requests_used": 7,
+  "request_counts": {
+    "quality": 7
+  },
+  "new_native_trials": 3,
+  "new_solver_attempts": 0,
+  "quality_repairs": 1,
+  "bundle_hash": "sha256:f61732f94205edd57276c27d9997546cf1b567df94ee70426a6201f024124928",
+  "trials": [
+    {
+      "role": "baseline",
+      "reward": 0.0,
+      "exception_info": null,
+      "result_sha256": "efa7f30b4cf255bc464de59c4a9cc9a698405e4ad36d65b634770f6d1cf6dc0b"
+    },
+    {
+      "role": "oracle",
+      "reward": 1.0,
+      "exception_info": null,
+      "result_sha256": "46ba2b3d10db42eb73784dda4e0f9db44a445cd3131fa15ddd669542142757ec"
+    },
+    {
+      "role": "wrong_solution",
+      "reward": 0.0,
+      "exception_info": null,
+      "result_sha256": "8f924d2c5f64a18d59f49a14f622da7dba5e9cbd8db5f646c2cb042d8e18a449"
+    }
+  ],
+  "failure": "DaytonaConflictError during cleanup after completed wrong-solution probe; Harbor return code 0.",
+  "cleanup_reconciliation": {
+    "observed_at": "2026-10-13T14:48:24.712848+00:00",
+    "ownership_label_listing_empty": true,
+    "exact_id_check": "Unavailable: failing cleanup receipt did not retain sandbox ID",
+    "original_receipt_preserved": true
+  },
+  "preflight_cleanup_verified": true,
+  "scientific_review_complete": false,
+  "published": false,
+  "remaining_additional_allowance": {
+    "requests": 33,
+    "quality_requests": 9,
+    "solver_requests": 24,
+    "native_trials": 2,
+    "solver_attempts": 1,
+    "quality_repairs": 0
+  },
+  "limitations": [
+    "Static inspection supports that GLM added archive identity validation; final scientific review and remaining native controls are incomplete.",
+    "Cleanup reconciliation uses the exact ownership label, not an exact sandbox-ID readback."
+  ],
+  "next_step": "Request permission for a recovery worker to complete only the remaining campaign steps without additional requests/trials/repairs beyond the approved ceilings."
+}
