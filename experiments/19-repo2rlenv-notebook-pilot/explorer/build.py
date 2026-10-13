@@ -82,7 +82,7 @@ for campaign in (9, 11, 13, 16, 18):
             }
         )
 data["licenses"] = read(EXPERIMENT / "source-license-evidence.json")
-encoded = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c")
+encoded = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 page = (HERE / "template.html").read_text().replace("__DATA__", encoded)
 (HERE / "index.html").write_text(page)
 print(
