@@ -1011,3 +1011,29 @@ chooses and justifies its objective and scope within the general budget.
 Figshare version 1 metadata identifies two real input files and CC BY 4.0;
 provider MD5s are recorded, not claimed as verified downloads. Old pilot
 provenance is preserved under seeds/legacy-pbmc3k. No model run or viewer edit.
+
+### 2026-10-13: design-only iterations and upstream intake assessment
+
+Reviews 004–013 contain six design and four critique calls using the unchanged
+newer notebook. General prompts, reasoning settings and output budgets were
+varied; this adaptive series is not a controlled performance comparison. Higher
+budgets resolved some incomplete responses, but scientific-contract errors
+persisted. Draft 013 passes JSON validation and fails static design review;
+label-permutation controls contradict the public equivalence rule, and a graph
+degree bound is unsupported. Original outputs are preserved; no generated task
+was manually repaired. No construction, native validation, solver or viewer edit.
+
+At the user's suggestion, inspected Tasksmith and original SETA. The original
+SETA notebook adapter consumes prepared data manifests and uses a tool-enabled
+idea agent, whereas the selected Repo2RLEnv adaptation makes one tool-free call.
+Tasksmith's schema-parametric artifact stage is a promising reuse point already
+present in our pinned upstream revision. Its existing runtime paths do not
+support the approved GLM endpoint without an adapter; its PR-specific bootstrap
+and oracle cannot simply be applied to notebooks.
+
+Further text-only iterations stop pending the design discussion. The proposed
+minimal change is factual intake plus bounded inspection within one GLM design
+stage, keeping the existing design output and later SETA/quality/release path.
+Measured facts must not prescribe the task. [Reuse assessment and alternatives](design-intake-reuse.md)
+record exact sources, integration gaps and proposed evaluation criteria. This is
+static research, not an implemented architecture or new model/sandbox run.
