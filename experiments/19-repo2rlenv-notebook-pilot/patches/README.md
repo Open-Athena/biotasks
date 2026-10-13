@@ -70,3 +70,9 @@ Campaign 009 also exposed a stale final listing: a deleted ID reappeared in the
 list after direct read-back returned NotFound. Patch 0005 now independently
 reads every final listed ID, recording absent/destroyed entries separately.
 A live ID, wrong ownership or non-NotFound provider error still fails cleanup.
+
+`0007-budget-based-compute-policy.patch` removes SETA's categorical training ban
+from design and builder prompts, and replaces their fixed CPU/RAM/disk wording
+with the controller-supplied run budget. CPU-only and bounded-compute rules stay.
+Historical prompts and the completed pilot's 1-CPU/2-GiB allocation are preserved;
+this policy change does not constitute another execution or validation run.

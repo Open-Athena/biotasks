@@ -988,3 +988,14 @@ replacing its generation approaches with this pipeline. Show clickable stages,
 recorded prompts, cell-rendered notebook, current task, historical/current attempts
 and explicit review/release status. The old immutable HTML remains historical;
 a new commit permalink identifies the corrected explorer.
+
+### 2026-10-13: resource-based compute policy
+
+User removed the categorical model-training exclusion: scientific workflows are
+allowed when they fit CPU-only execution and the configured resource/time budget.
+Patch 0007 removes the inherited SETA prohibition and fixed resource wording from
+both authoring prompts. The controller now renders allocations from configuration.
+The completed pilot used the deliberately smaller upstream-default allocation
+(1 CPU, 2 GiB, 10 GiB), not a measured Daytona provider maximum. No new execution
+or changed scientific validation is claimed. Historical calls remain verbatim;
+the explorer labels their superseded compute wording.

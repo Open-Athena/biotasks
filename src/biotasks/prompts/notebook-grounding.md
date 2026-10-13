@@ -21,6 +21,11 @@ software that implements the stated methodology; do not grade package imports,
 implementation strings or exact serialization unless explicitly required.
 Available packages may be documented neutrally without prescribing a solution.
 
+Use CPU-only execution; do not require GPU or CUDA. Keep all computation within
+the controller-supplied CPU, memory, disk and solver-time limits. Judge workflow
+feasibility by these resource bounds, not by the type of analysis. Avoid heavy
+compute that cannot finish within the budget.
+
 Keep the selected scientific workflow compact enough for the solver time budget.
 Do not manufacture complexity merely to satisfy generic terminal-task examples.
 Keep real data access, task clarity and executable grading ahead of difficulty.

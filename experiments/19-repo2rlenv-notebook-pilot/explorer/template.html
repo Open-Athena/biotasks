@@ -15,7 +15,7 @@ function structured(value,root){if(typeof value==='string'){markdown(readable(va
 function showCall(x,root){
  root.replaceChildren();
  const design=x.path.endsWith('/design-model.request.json'),builder=/builder-\d+\.request\.json$/.test(x.path);
- const input=el('section',undefined,root);el('h3','Input · what the model receives',input);
+ const input=el('section',undefined,root);el('h3','Input · what the model receives',input);if((x.content.system??'').includes('No model training'))el('p','Historical prompt: the current compute policy is CPU-only execution within the configured CPU, memory, disk and time budget. The categorical exclusion and fixed resource wording below are retained only as an exact record of this completed run.',input,'status');
  el('p',design?'The notebook seed and the instructions below ask GLM to design a task.':builder?'GLM receives the preceding draft specification and these construction instructions. The prompt calls it draft_spec.md; this implementation supplies its contents as design.draft_spec.':'The instructions below are combined with task-specific context for this model call.',input);
  card('Prompt to GLM',readable(x.content.system??''),'Model instructions · formatted for reading. The exact request is available in Technical details.',input);
  const context=el('details',undefined,input);el('summary',design?'Notebook seed supplied with the prompt':builder?'Draft specification and feedback supplied with the prompt':'Additional input supplied with the prompt',context);structured(x.input,context);

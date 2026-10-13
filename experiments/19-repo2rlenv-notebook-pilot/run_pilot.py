@@ -180,7 +180,13 @@ def run(
         guidance += "\n\nController-selected scope and input provenance:\n" + json.dumps(
             seed["input_manifest"]
         )
-        guidance += "\n\nTask budget: 1 CPU, 2 GiB RAM, 10 GiB disk, no GPU; solver 300 seconds."
+        task_resources = config["task"]
+        guidance += (
+            f"\n\nTask budget: {task_resources['cpus']} CPU, "
+            f"{task_resources['memory_mb']} MiB RAM, "
+            f"{task_resources['storage_mb']} MiB disk, no GPU; "
+            f"solver {config['solver_seconds']} seconds."
+        )
         save_record(root / "authoring-guidance.json", {"system_guidance": guidance})
         if continuation_task is None:
             input_spec = GenerationInput.model_validate(
