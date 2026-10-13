@@ -809,3 +809,10 @@ Campaign 014 reserves $5 within the aggregate $100 (conservative total reserved
 $61). It has 40 new calls, one GLM repair, five native trials, one five-minute
 solve and two hours plus cleanup. Historical usage stays recorded; completed
 controls import without rerun until GLM changes the task.
+
+Campaign 014 submitted once from `2e0bd6e`; prior jobs verified terminal.
+Launcher exit 0, 22.09 seconds, 346,720 KiB peak RSS, with lock/thread/priority
+controls. Issue decision log fetched and verified after update.
+
+Final ordinary repository suite: 15 passed (5.73 seconds, 46,860 KiB peak RSS,
+exit 0). Local validation only; no CI claim or model/cloud calls in tests.
