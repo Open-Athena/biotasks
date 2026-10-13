@@ -1,0 +1,84 @@
+## Task
+Reproduce the preprocessing, clustering and marker-gene analysis of two healthy human bone-marrow 10X scRNA-seq samples (NeurIPS 2021 multiome dataset, s1d1 and s1d3): QC annotation, cell/gene filtering, median count-depth log1p normalization, batch-aware HVG selection, PCA, kNN graph, Leiden clustering at resolution 0.50, and per-cluster Wilcoxon differential expression, delivered as a processed AnnData object and a DE results table.
+
+## Agent-Visible Task Brief
+
+### Goal and inputs
+Process two 10X filtered feature-barcode matrices into a clustered, annotated AnnData object plus a cluster-vs-rest differential-expression table. Inputs are staged locally (do not fetch at solve time):
+- `data/s1d1_filtered_feature_bc_matrix.h5` (provider md5 a99285913ea3f3d22600d3d2f8a88e34)
+- `data/s1d3_filtered_feature_bc_matrix.h5` (provider md5 825f7f7578e3dc0b8955f5a97a402338)
+- `hvg_flavor.md`-free: no other inputs.
+
+Solutions may be written in any language but must produce the specified artifacts; any software implementing the stated methods is acceptable. CPU-only container, 4 vCPUs, 8 GiB RAM; solver budget 600 s wall time. All seeds must be set so that stochastic steps (PCA initialization/ARPACK v0, approximate NN, Leiden) are run in their deterministic modes; the reference values of seeds are `random_state=0` wherever a seeded method is used, unless the step is mathematically deterministic.
+
+### Requirements
+
+**R1 — Ingestion and concatenation.** Read each `.h5` as a 10X matrix (genes as features, cells as observations), make gene names unique per sample, and concatenate the samples with `label="sample"` so that `adata.obs["sample"]` is exactly `s1d1` or `s1d3` per cell, and cell (obs) names are made unique after concatenation. Cell barcodes not present in either file must not be invented; cell identity is (sample, original barcode).
+
+**R2 — QC gene sets and metrics.** Define, on the concatenated var frame, boolean gene masks with exactly these semantics (human gene symbols, applied to the made-unique gene names):
+- `mt`: names start with `MT-`
+- `ribo`: names start with `RPS` or `RPL`
+- `hb`: names match the regex `^HB[^(P)]` (contains-match, i.e. a gene is `hb` iff some substring starting at a match boundary equals `HB` followed by a character that is not `P`) — equivalently `str.contains("^HB[^(P)]")`.
+Compute standard qc metrics with these three qc_vars and `log1p=True`: per cell, `n_genes_by_counts`, `total_counts`, and `pct_counts_{mt,ribo,hb}` and their `log1p_` variants; per gene, `n_cells_by_counts`, `mean_counts`, `total_counts` (with `log1p_` variants) and `pct_dropout_by_counts`. Missing-gene groups (if any) must not silently broaden a mask.
+
+**R3 — Filtering.** Remove cells with `n_genes_by_counts < 100` first, then remove genes detected in fewer than 3 cells (on the cell-filtered matrix). Order is consequential: genes must be filtered on the post-cell-filter matrix. QC metric columns computed in R2 are carried along unchanged (i.e., the numbers correspond to the pre-filter concatenated matrix, then subset).
+
+**R4 — Normalization.** Before normalization, store the filtered raw counts in layer `counts` (`adata.layers["counts"]`). Then apply count-depth scaling to the median total counts (equivalent to `normalize_total` with default `target_sum`, i.e. each cell scaled by `median(total_counts)`), followed by `log1p`. `adata.X` after R4 is the log-normalized matrix; the `counts` layer must remain raw integers.
+
+**R5 — Feature selection.** Select highly variable genes on the log-normalized data, having exactly 2000 genes selected, using the Seurat flavor (mean/dispersion binning, dispersion normalization), computed per batch (`sample`) and reconciled across batches by median dispersion rank as in scanpy's `n_top_genes` + `batch_key` semantics. Record a boolean `highly_variable` var column.
+
+**R6 — PCA.** Compute 50 principal components of the zero-centered log-normalized matrix restricted to the 2000 HVGs (no per-gene scaling/z-scoring — the notebook does not scale). Store the cell embedding in `obsm["X_pca"]` (n_cells x 50) and the per-component variance ratio in `uns["pca"]["variance_ratio"]` (length 50) plus `uns["pca"]["variance"]` (raw variances).
+
+**R7 — Neighborhood graph and clustering.** Build the kNN graph on the PCA embedding using exactly 50 PCs, 15 neighbors, Euclidean metric, and a fixed random_state=0. Run Leiden community detection on that graph at exactly resolution 0.50, igraph flavor, 2 iterations, random_state=0, and store the resulting cluster labels as strings in `adata.obs["leiden_res_0.50"]`. Every cell must receive exactly one label and no cell may be dropped.
+
+**R8 — Marker genes.** For each `leiden_res_0.50` cluster vs. all other cells (one-vs-rest, using the log-normalized data), compute a two-sided Wilcoxon rank-sum test **without** tie correction, with Benjamini-Hochberg adjusted p-values, and log2 fold changes of the mean in-group vs. mean out-of-group (natural-log data, log2 fold change). Export every (cluster, gene) pair for all genes in the filtered object to a TSV.
+
+### Required artifacts
+
+- **A1 — `output/adata_processed.h5ad`** (AnnData H5AD). Must contain: `obs` columns `sample`, R2 QC columns, `leiden_res_0.50`; `var` columns `mt`, `ribo`, `hb`, `n_cells_by_counts`, `highly_variable`, and HVG dispersion/rank columns; `layers["counts"]` sparse; `X` log-normalized; `obsm["X_pca"]`; `uns["pca"]` with `variance_ratio`; `uns["hvg"]` and `uns["neighbors"]` metadata. Observation identity is (sample, barcode) with sample indicated either via `obs["sample"]` plus unique barcodes or names prefixed by sample — equivalence rule: two submitted A1s agree if the sets of (sample, original barcode) cells are identical and all per-cell quantities match under that key (so barcode prefixes of the form `sample1:AAA...` vs `AAA...-sample1` are acceptable if `obs["sample"]` disambiguates).
+- **A2 — `output/de_results.tsv`** (tab-separated, header). Columns exactly: `group`, `names`, `scores`, `pvals`, `pvals_adj`, `logfoldchanges`, with one row per (cluster, gene) for all clusters and all genes of the filtered var frame; `group` values are the cluster labels of R7.
+
+### Equivalence rules (public)
+- Cluster labels are arbitrary strings; grading compares **partitions**: label sets `{'0','1',...}` vs `{'A','B',...}` are equivalent if induced cell-to-cluster assignments are identical up to a bijective relabeling.
+- PCA is compared per component up to sign (component scores with the sign of an odd-numbered component flipped are equivalent).
+- Gene and cell identity is by symbol / (sample, barcode), never by row position. H5AD files with different internal orderings are equivalent if joinable by these keys with identical values.
+- Numerical tolerance policy: exact for discrete/countable quantities; floating-point quantities are compared with tolerances that the builder must calibrate and publish here before release (see gates); currently: **tolerance unresolved: construction gate** for `scores`/variance-ratio-style floats, exact matching specified for gene sets, cell sets, cluster partitions (up to relabeling), and top-ranked gene orderings.
+
+### Numerical tolerances subject to gates
+Floating-point checks (PCA scores/variance ratios, Wilcoxon scores/p-values/logFCs) need calibrated tolerances from repeated reference runs and cross-implementation runs; the builder must publish these absolute/relative tolerances in this brief before task release. A design altitude: per-cluster top-20 DE genes by score must match the reference ranking exactly (order included), which does not depend on float tolerance unless score ranks are nearly tied — tie stability is part of the gate.
+
+## Source Context
+The notebook is scanpy's "Preprocessing and clustering" tutorial (commit 8c1463d, BSD-3-Clause) using two bone-marrow samples from the NeurIPS 2021 Open Problems dataset (figshare DOI 10.6084/m9.figshare.22716739.v1, CC BY 4.0, files ~22.8 MB and ~20.4 MB with provider md5s listed above; download not yet verified per provenance record).
+
+Consequential source choices preserved: two-sample concat with `label="sample"`; `var_names_make_unique` per sample then `obs_names_make_unique`; gene sets `MT-`, `RPS|RPL`, regex `^HB[^(P)]`; `calculate_qc_metrics(..., log1p=True)`; `filter_cells(min_genes=100)` then `filter_genes(min_cells=3)`; counts layer saved pre-normalization; median-depth `normalize_total` + `log1p`; `highly_variable_genes(n_top_genes=2000, batch_key="sample")`; `pca` defaults; `neighbors` defaults (15 nn); `leiden(flavor="igraph", n_iterations=2)` at resolutions {0.02, 0.5, 2.0} (only 0.5 required here); `rank_genes_groups(method="wilcoxon")` on `leiden_res_0.50`.
+
+Notebook-implicit parameters made explicit here because the tutorial relies on library defaults: PCA `n_comps=50`, `zero_center=True`, `random_state=0`; neighbors `n_neighbors=15`, `n_pcs=50`, `metric="euclidean"`, `random_state=0`; Leiden `resolution=0.50`, `random_state=0`; Wilcoxon default `tie_correct=False`, BH `pval_adj` default. HVG flavor default is Seurat (the tutorial cites Seurat reproducibility), pinned in R5. Effects of these choices are the intended scientific semantics, not incidental — e.g. no tie correction keeps scores comparable across implementations at the cost of ultra-low p-values, exactly as the notebook's closing cell notes.
+
+Omissions and their consequences:
+- **Scrublet doublet detection** (cell 18): the notebook only annotates `doublet_score`/`predicted_doublet` and never removes cells on that basis, so omitting it leaves every graded result (cell/gene sets, normalization, HVG, PCA, graph, clusters, DE) unchanged; it is omitted because its stochastic simulation has no downstream effect on the required contract and would only add unverifiable columns.
+- **UMAP embedding and all plots**: visualization only; nothing downstream consumes it (leiden runs on the kNN graph). Omitting it removes a stochastic, ungreearable artifact without scientific effect.
+- **Leiden at res 0.02 and 2.0, manual `cell_type_lvl1` mapping, dotplots**: these feed a manual annotation exercise whose correctness is an expert-biology judgment and whose mapping refers to reference-specific cluster identities; they are out of scope.
+- **Pseudobulk DE** (cell 74): mentioned only as a suggestion, not executed.
+- **Batch integration**: the notebook observes only minor batch effect and performs none; we match that.
+
+Reductions: none. Both samples and all cells are used.
+
+## Environment Setup
+- Data: download both files from `https://ndownloader.figshare.com/files/40347877` and `.../files/40347880` at build time, verify provider md5s (a99285913ea3f3d22600d3d2f8a88e34, 825f7f7578e3dc0b8955f5a97a402338), stage to `data/`. Provenance has **not yet verified** download checksums — builder must confirm; failure = broken-seed gate.
+- Software: pin exact versions at build time for reproducibility (scanpy, anndata, numpy, scipy, igraph, leidenalg, pandas, h5py); the environment must be staged and verified offline. Scanpy is a suggested implementation only: the contract above is method-level, not API-level.
+- Estimated resources (hypotheses, to be measured): ~16k cells x ~36k genes; h5 load <30 s; PCA/neighbors/leiden on the HVG-subset well under 600 s; RAM well under 8 GiB. Any gate failure must be reported, not absorbed by dropping data.
+
+## Testing
+
+| Req | Artifact (stage) | Trusted check | Rule | Wrong result rejected |
+|---|---|---|---|---|
+| R1 | A1 obs (`sample`, cell set) | Independent derivation from the raw h5 file barcodes; recompute cell set with h5py directly, no scanpy | Exact set equality of (sample, barcode) pairs | A solution that loads only s1d1, or that deduplicates/renames barcodes incorrectly, fails the exact set check |
+| R2 | A1 var masks + obs QC numeric columns for a sampled cell subset; independent recompute of n_genes/total/pct for that subset from `layers['counts']` | Recompute masks from reference var_names and metrics from raw counts via numpy | Boolean equality; numeric metrics equal within calibrated tolerance | A `hb` mask computed as `startswith('HB')` (includes HBP1 etc.) yields wrong mask sets; permissive metrics recomputation rejects it |
+| R3 | A1 cell/gene sets post-filter (list obs_names, var_names) | Reference partition (recompute thresholds from raw counts independently) | Exact set equality; order irrelevant | Filters applied in reverse order (genes at 3 cells on unfiltered matrix, then cells) can produce a different gene set; wrong thresholds (`min_genes=50`) rejected exactly |
+| R4 | A1 `layers['counts']` integer counts, `X` = `log1p(counts / median(total_counts))` per cell | Recompute from `counts` layer directly for a cell sample plus median check on full data; `total_counts` from `.obs` recompute | Formula equality per-cell within calibrated numerical tolerance (deterministically derivable, so round-off level expected); counts bit-exact | CP10k normalization with `target_sum=1e4` instead of the median, or `X` without log1p, fails the recomputed formula check |
+| R5 | A1 `var['highly_variable']` gene set; optional dispersion cols | Reference HVG set computed by reference pipeline | Exact gene-set equality | Wrong `n_top_genes`, unsupervised flavor (`cell_ranger`), inputs without sample or without `batch_key`); selection pre-normalization — an incorrect gene set fails the exact intersection check |
+| R6 | A1 `obsm['X_pca']`, `uns['pca']` | Reference PCA run independently from the same log-normalized HVG matrix (sourced *privately*, not from the submitted A1 after validation) | Per-component up-to-sign comparison and variance-ratio within calibrated tolerance | PCA on all genes (not the 2000 HVGs), non-zero-centered, or from scale=True z-scored data does not match (this last one is specifically why no scaling); wrong rank rejected |
+| R7 | A1 `obs['leiden_res_0.50']` partition | Reference partition (private) | Partition equality up to bijective label relabeling | Clustering at resolution 0.02 or 2.0, or on the pre-PCA graph, or dropping a cluster produces a strictly different partition; singletons/merged clusters rejected |
+| R8 | A2 full table | Reference wilcoxon (private reference pipeline; cross-check with independent implementation e.g. scipy mannwhitneyu tied-rank = scanpy's no-tie-correct score confirms equivalence for a few (cluster, gene) pairs), plus DE-table-vs-A1 internal cross-check: A2 `group` values = R7 labels, gene set = A1 var_names | For each cluster, the top-20 up-regulated genes by score must match the reference ranking in order; full score/pval/logfc columns compared within a calibrated tolerance (gate) | DE computed on raw counts instead of log-normalized, t-test instead of Wilcoxon, or clustering at a different resolution (labels do not map bijectively to reference clusters) — rejected because top-ranked gene lists and score columns disagree; DE without BH adjustment (column check vs recalculated BH from A2's own pvals) rejected |
+
+Rounding/
