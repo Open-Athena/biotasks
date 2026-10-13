@@ -784,3 +784,8 @@ Nineteen focused continuation/wiring/cleanup checks passed (121,696 KiB peak,
 continuation suite (54,000 KiB peak). Actual saved-evidence import verified the
 wrong probe without execution and rejected changed task content. Imports used
 42 checksum/mode-bound files, with no generated task edits.
+
+Recovery worker 013 submitted once from `80c6350`, after verifying prior jobs
+terminal. Launcher peak RSS 345,952 KiB, 14.21 seconds, exit 0, with shared lock
+and one-thread/priority controls. It continues campaign 012, not a fresh repair
+or generation campaign. The original two-hour deadline remains enforced.
