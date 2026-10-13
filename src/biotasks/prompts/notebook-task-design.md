@@ -23,6 +23,15 @@ not a goal: choose a scientifically useful task whose requirements you can defin
 and whose outputs can be meaningfully checked. Do not manufacture terminal work
 or add speculative analyses just to make the task harder.
 
+Let a coherent scientific question determine the deliverables; do not
+automatically turn the whole notebook into a reproduction checklist. Require
+intermediate artifacts only when they are needed to answer that question or
+verify its result. The notebook may support several different tasks: choose one.
+If starting from a source-derived intermediate is appropriate, specify its
+construction, lineage and scientific consequences as staged input; do not hide
+a change of task scope. This is a choice for you to justify, not a prescribed
+analysis stage.
+
 Preserve the source's scientific semantics, including input populations,
 representations, operation order, and the roles of annotations. Distinguish
 source-derived choices from your adaptations. For every consequential adaptation,
@@ -118,7 +127,7 @@ It must not silently drop data, steps or tests. A seed may be unsuitable.
 ## Final self-check
 
 Before returning, audit your proposed design against the supplied source and this
-prompt. Resolve contradictions and unsupported claims. Check that every test
+prompt. Resolve contradictions and unsupported claims. Remove inline self-corrections. Check that every test
 reads only required artifacts or trusted reference inputs, covers the declared
 scientific requirement, and introduces no private scientific requirements.
 Remove guesses disguised as facts and abandoned alternatives. Do not narrate
@@ -127,6 +136,7 @@ your internal deliberation: return the finished proposal with explicit gates.
 Return one JSON object with exactly two keys, no other keys or surrounding text:
 - "core_capabilities": 1–15 concise strings describing the skills exercised.
 - "draft_spec": a Markdown string, at least 100 and fewer than 18,000 characters.
+  Aim for fewer than 12,000 characters by avoiding repeated descriptions.
 
 Use normal JSON escaping for newlines. Do not create files. Structure draft_spec
 with these sections:
