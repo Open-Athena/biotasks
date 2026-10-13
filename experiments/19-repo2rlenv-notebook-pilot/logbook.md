@@ -846,3 +846,6 @@ the terminal job log; original evidence remains intact. Corrected tuple handling
 and the mocked regression to match the upstream interface. Continuation 016
 carries the consumed call and cumulative cost reservations, leaving 34 calls
 and the same five trials/one repair/one solve under the original deadline.
+
+Continuation 016 submitted once from `1cc596a`; launcher exit 0, 14.19 seconds,
+344,988 KiB peak RSS. Corrected regression passed; local hooks passed.
