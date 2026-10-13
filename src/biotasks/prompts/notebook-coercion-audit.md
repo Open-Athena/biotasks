@@ -18,3 +18,11 @@ false_acceptance, explain a concrete wrong-value construction and why every
 other relevant assertion would still accept it. Propose your own repair that
 preserves the biological methodology and valid alternatives. If evidence is
 insufficient use unknown and explain the missing evidence. Do not edit files.
+
+A later comparison of already-cast values does not validate original submitted
+values or a promised Boolean representation. For truthiness casts, consider
+non-binary nonzero numbers as well as strings: they can match the entire expected
+Boolean pattern while the original values violate a Boolean-field contract.
+Check the original values or dtype where the contract requires that; distinguish
+an explicitly permitted 0/1 encoding from arbitrary truthy values. Do not infer
+permission for a representation solely because the current grader accepts it.

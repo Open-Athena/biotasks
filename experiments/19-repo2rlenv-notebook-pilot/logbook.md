@@ -935,3 +935,22 @@ Recovery 020 retains campaign 019's absolute deadline and $5 reservation, carryi
 $0.088 conservative holds and four used requests. Remaining: 20 quality calls,
 24 solver calls, one repair, five trials, one solver attempt. No task-specific
 manual repair was introduced; the operation inventory and prompts are generic.
+
+### 2026-10-13: fractional metadata repaired; audit classification corrected
+
+Recovery 020 used 16 quality calls and one GLM repair. The new verifier checks
+integrality before converting detected-gene counts. Reference, empty baseline,
+wrong-output and valid-alternative controls passed (1/0/0/1); no new solver ran.
+The factory incorrectly turned two explicitly not_applicable private-verifier
+settings into public-schema blockers. Corrected the generic predicate to flag
+only optional/absent public fields, with a regression check. Two focused tests
+pass (0.44 seconds, 49,332 KiB peak).
+
+Boolean truthiness still does not enforce original Boolean metadata, despite a
+positive GLM coercion assessment. Expanded generic audit guidance to distinguish
+original-value validation from validation after casting; no task was manually
+changed. Campaign 021 reserves a fresh $5 ($76 aggregate conservative reservations
+of $100), with one repair, five native trials, one five-minute solver, 24 quality
+and 24 solver requests, two hours plus cleanup. The prior corrected counts task
+and four native controls are preserved as continuation evidence; no solver result
+from an older bundle is imported for the new task.

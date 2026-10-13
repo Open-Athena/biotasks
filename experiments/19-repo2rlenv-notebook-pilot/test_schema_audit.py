@@ -33,6 +33,8 @@ def test_optional_name_is_blocking_and_inventory_cannot_be_omitted(tmp_path):
     issues = audit(loop, task, context, "review")
     assert issues[0].severity == "blocking"
     assert issues[0].problem == "Worker found schema mismatch"
+    result.obligations[0].public_status = "not_applicable"
+    assert audit(loop, task, context, "private-setting") == []
     result.obligations.clear()
     with pytest.raises(ValueError, match="every keyed access"):
         audit(loop, task, context, "missing")

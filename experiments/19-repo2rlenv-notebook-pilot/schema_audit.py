@@ -81,7 +81,7 @@ def audit(loop, task, context, key):
             document = context.documents.get(citation.path, "")
             if not document or " ".join(citation.quote.split()) not in " ".join(document.split()):
                 raise ValueError("Schema audit citation is unsupported")
-        if item.required_by_grader and item.public_status != "required":
+        if item.required_by_grader and item.public_status in {"optional", "absent"}:
             issues.append(
                 Issue(
                     category="instruction",
