@@ -250,7 +250,12 @@ def run(
             trial_timeout_sec=config["trial_seconds"],
             max_spend_usd="40",
         )
-        loop = QualityLoop(
+        loop_class = QualityLoop
+        if continuation is not None and "scientific_feedback" in plan:
+            from scientific_feedback import ScientificFeedbackLoop
+
+            loop_class = ScientificFeedbackLoop
+        loop = loop_class(
             options,
             root / "quality",
             ledger,
@@ -260,6 +265,10 @@ def run(
                 "notebook_source": seed["question_text"],
             },
         )
+        if continuation is not None and "scientific_feedback" in plan:
+            loop.set_scientific_feedback(
+                json.loads((continuation / plan["scientific_feedback"]).read_text())
+            )
         loop.model = GuidedModel(
             loop.model, files("biotasks.prompts").joinpath("notebook-quality.md").read_text()
         )

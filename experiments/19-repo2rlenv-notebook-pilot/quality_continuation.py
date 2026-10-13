@@ -60,6 +60,8 @@ def load(directory: Path) -> tuple[Path, dict[str, Path], dict]:
     for key, name in plan.get("probe_results", {}).items():
         if not re.fullmatch(r"r0-probe[0-9]+", key) or name not in plan["files"]:
             raise ValueError("Unbound imported probe result")
+    if "scientific_feedback" in plan and plan["scientific_feedback"] not in plan["files"]:
+        raise ValueError("Unbound scientific feedback")
     return task, evidence, plan
 
 

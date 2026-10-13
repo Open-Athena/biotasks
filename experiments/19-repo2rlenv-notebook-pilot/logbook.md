@@ -816,3 +816,21 @@ controls. Issue decision log fetched and verified after update.
 
 Final ordinary repository suite: 15 passed (5.73 seconds, 46,860 KiB peak RSS,
 exit 0). Local validation only; no CI claim or model/cloud calls in tests.
+
+Campaign 014 completed its quality/review path with five quality calls and no
+new native trials or repairs. Single-line citations validated successfully.
+Scientific review correctly failed public_contract for unstated identifier
+ordering, but upstream quality had classified it as optional and skipped repair.
+This exposed a workflow gap: scientific rejection was only a release gate.
+
+A small adapter now carries a validated GLM fail finding into upstream repair
+as blocking only for that exact bundle, retaining original assessments and
+recording the combined review separately. Quotes are resolved from original
+GLM-selected lines and checked against current files. No task text or scientific
+judgment is authored by the adapter. On a changed task the old finding does not
+apply; a fresh scientific review still decides release eligibility.
+
+Continuation 015 uses campaign 014's remaining 35 requests, five native trials,
+one repair and one solve, retaining its deadline and prior cost holds. No extra
+$5 reservation. Seven focused feedback/fidelity tests passed (50,620 KiB peak,
+0.53 seconds, exit 0).
