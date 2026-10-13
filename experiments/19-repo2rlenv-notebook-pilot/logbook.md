@@ -887,3 +887,25 @@ Recovery 018 completed successfully from 8a871a9: 13 model calls (11 quality, 2 
 Used upstream release staging, verification and publication. Public destination: https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19 . Immutable upload commit 5231e1ac828101c04707a905a47be7a553f23928; later registry commit 3e9aca9c69260afbc4442ad3b3ecad8eb91e2610. Anonymous metadata confirms public visibility. Fresh forced download verified every released file hash and executable mode plus the final task identity. Receipts are in release-evidence/. Staged 25 files passed exact GLM/HF credential and private-marker checks, including archive contents.
 
 Limitations remain explicit in the release: one notebook is not benchmark/generalization evidence; GLM fidelity review is not independent biological execution; no broad adversarial security audit; dependencies/base image are unpinned; PBMC3k shares a donor with PBMC6k. Upstream recipe metadata names e4715b0 while actual dependency execution used pinned 5555443 plus recorded patches; disclosed rather than changing historical task metadata. Aggregate conservative reservation remains $66 of $100, not an actual invoice. No further campaign is needed.
+
+### 2026-10-13: independent post-release review
+
+An independently requested reviewer confirmed all 24 release-file hashes/modes and five native result hashes, but found a scientific false acceptance: coercing submitted detected-gene counts to integers before comparing can admit fractional metadata. This is a static finding, not a newly executed biological trial. The published native results remain unchanged; acceptance of those controls does not cover this metadata mutation. Additional generic GLM review guidance now requires validation before lossy coercion; any task repair must still come from GLM.
+
+The review also found traversal risk in local label reconstruction and unbounded archive metadata expansion. Local helpers now reject traversal/symlink escapes, use explicit integrity exceptions, bound tar headers/metadata/expansion, validate expected archive directories and stream extraction only after validation. Eight focused tests pass (0.67 seconds, 61,140 KiB peak). These are research-branch fixes, not a promoted PR.
+
+A static explorer now exposes captured notebook text, task files, exact authoring
+and quality call prompts/responses, eight selected control/solver records, and
+current review caveats. It follows the previous issue's standalone HTML approach
+and links Harbor Visualiser. Five tabs and all selectors passed browser checks at
+desktop/mobile widths (1.22 seconds, peak process RSS 101,624 KiB). An initial
+single-process browser launch failed; a one-renderer launch exposed mobile text
+overflow, fixed before the passing check. Private-marker and exact credential
+scans passed. Original source licenses are included in the page.
+
+Campaign 019 is a fresh bounded post-review repair: one GLM repair, five native
+trials, one five-minute solver attempt, at most 24 quality and 24 solver requests,
+two hours plus cleanup. Reserve another $5, bringing conservative aggregate
+reservations to $71 of $100. Preserve the original public release and recorded
+trials; supersede only after GLM repair and fresh validation. Generic review
+prompts now explicitly inspect value-changing coercion in scientific metadata.

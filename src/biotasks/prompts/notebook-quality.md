@@ -52,3 +52,13 @@ columns aligned by identifiers. Require explicit public ordering requirements
 or identifier-aligned comparisons. One passing alternative using the same order
 and field names does not resolve either defect. Treat these mismatches as
 blocking even when the reference and solver both pass.
+
+Audit validation before coercion: integer conversion, rounding, Boolean casting,
+clipping and missing-value replacement can hide incorrect submitted quantities.
+For each graded scientific metadata field, distinguish an accepted storage type
+from a change to its value. A numerical count stored as a float may be legitimate;
+a fractional count silently truncated to the expected integer is not. Likewise,
+truthiness does not establish a required Boolean annotation. Treat a demonstrated
+false acceptance from a lossy conversion as blocking. Repairs and semantic probes
+must be your own proposals, based on the public contract and actual grader, and
+must preserve valid alternative implementations and the biological methodology.

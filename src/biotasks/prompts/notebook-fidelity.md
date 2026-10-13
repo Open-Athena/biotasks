@@ -44,3 +44,10 @@ columns aligned by identifiers. Require explicit public ordering requirements
 or identifier-aligned comparisons. One passing alternative using the same order
 and field names does not resolve either defect. Treat these mismatches as
 blocking even when the reference and solver both pass.
+
+For scientific_grading, trace submitted metadata through conversions before
+comparison. Distinguish permitted numeric storage from lossy coercion that hides
+an incorrect value. Check integer truncation, rounding and Boolean truthiness;
+a correct main matrix does not justify accepting incorrect derived annotations.
+A demonstrated wrong-value acceptance is a failed scientific-grading finding,
+not a pass merely because the existing controls did not probe that field.

@@ -1,0 +1,60 @@
+"""Reject malformed evidence and oversized archive metadata before extraction."""
+
+import gzip
+import json
+import tarfile
+
+import pytest
+from reconstruct_release_label import local, reconstruct
+from verify_hub_download import bounded_archive
+
+
+@pytest.mark.parametrize(
+    "value", ["/evidence/../../outside", "/evidence//outside", "/evidence/a/../outside"]
+)
+def test_traversal_leaves_external_file_untouched(tmp_path, value):
+    source = tmp_path / "source"
+    folder = source / "pilot/quality"
+    folder.mkdir(parents=True)
+    (folder / "result.json").write_text(json.dumps({"task_path": value, "trials": []}))
+    outside = tmp_path / "outside"
+    outside.write_text("preserve")
+    with pytest.raises(ValueError):
+        reconstruct(source, tmp_path / "copy")
+    assert outside.read_text() == "preserve"
+    assert not (tmp_path / "copy").exists()
+
+
+def test_symlink_escape_rejected(tmp_path):
+    root = tmp_path / "root"
+    root.mkdir()
+    (root / "escape").symlink_to(tmp_path, target_is_directory=True)
+    with pytest.raises(ValueError):
+        local(root, "/evidence/escape/file")
+
+
+def test_unlisted_directory_rejected_before_extraction(tmp_path):
+    archive = tmp_path / "bad.tar.gz"
+    with tarfile.open(archive, "w:gz") as out:
+        member = tarfile.TarInfo("tasks/unlisted")
+        member.type = tarfile.DIRTYPE
+        out.addfile(member)
+    destination = tmp_path / "download"
+    destination.mkdir()
+    with pytest.raises(ValueError, match="Unexpected archive directory"):
+        bounded_archive(archive, destination, {})
+    assert not list(destination.iterdir())
+
+
+def test_metadata_expansion_rejected_before_parsing(tmp_path):
+    archive = tmp_path / "bad.tar.gz"
+    header = tarfile.TarInfo("pax")
+    header.type = tarfile.XHDTYPE
+    header.size = 1024 * 1024
+    with gzip.open(archive, "wb") as out:
+        out.write(header.tobuf())
+    destination = tmp_path / "download"
+    destination.mkdir()
+    with pytest.raises(ValueError, match="metadata exceeds"):
+        bounded_archive(archive, destination, {})
+    assert not list(destination.iterdir())

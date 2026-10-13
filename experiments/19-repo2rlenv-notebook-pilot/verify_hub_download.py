@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import argparse
+import gzip
 import hashlib
 import json
 import re
 import shutil
 import tarfile
+import tempfile
 from pathlib import Path, PurePosixPath
 
 from repo2rlenv.campaigns.release import verify_release
@@ -15,10 +17,13 @@ from repo2rlenv.emitter.bundle import inspect_bundle
 
 MAX_FILE_BYTES = 64 * 1024 * 1024
 MAX_TOTAL_BYTES = 256 * 1024 * 1024
+MAX_ARCHIVE_MEMBERS = 4096
+MAX_METADATA_BYTES = 16384
+MAX_PATH_BYTES = 1024
 
 
 def safe_path(name: str) -> Path:
-    if not name or "\\" in name or "\x00" in name:
+    if not name or len(name.encode()) > MAX_PATH_BYTES or "\\" in name or "\x00" in name:
         raise ValueError("Unsafe release path")
     value = PurePosixPath(name)
     if value.is_absolute() or ".." in value.parts or value.as_posix() != name:
@@ -32,6 +37,84 @@ def digest(path: Path) -> str:
         while chunk := stream.read(1024 * 1024):
             result.update(chunk)
     return result.hexdigest()
+
+
+def bounded_archive(source, destination, entries):
+    """Bound raw headers before tarfile parses extended metadata; validate before extracting."""
+    expected_files = {name for name in entries if name.startswith("tasks/")}
+    expected_dirs = {
+        parent.as_posix()
+        for name in expected_files
+        for parent in Path(name).parents
+        if parent != Path(".")
+    }
+    with tempfile.TemporaryFile() as raw:
+        with gzip.open(source, "rb") as compressed:
+            total = 0
+            for index in range(MAX_ARCHIVE_MEMBERS + 1):
+                header = compressed.read(512)
+                if header == b"\0" * 512:
+                    raw.write(header)
+                    break
+                if len(header) != 512 or index == MAX_ARCHIVE_MEMBERS:
+                    raise ValueError("Invalid or excessive archive headers")
+                member = tarfile.TarInfo.frombuf(header, "utf-8", "surrogateescape")
+                if member.size < 0 or member.size > MAX_FILE_BYTES:
+                    raise ValueError("Archive member exceeds size bound")
+                if (
+                    member.type
+                    in {
+                        tarfile.XHDTYPE,
+                        tarfile.XGLTYPE,
+                        tarfile.GNUTYPE_LONGNAME,
+                        tarfile.GNUTYPE_LONGLINK,
+                    }
+                    and member.size > MAX_METADATA_BYTES
+                ):
+                    raise ValueError("Archive metadata exceeds bound")
+                size = (member.size + 511) // 512 * 512
+                total += 512 + size
+                if total > MAX_TOTAL_BYTES + 8 * 1024 * 1024:
+                    raise ValueError("Archive expansion exceeds bound")
+                raw.write(header)
+                while size:
+                    block = compressed.read(min(size, 65536))
+                    if not block:
+                        raise ValueError("Truncated archive")
+                    raw.write(block)
+                    size -= len(block)
+        seen = set()
+        raw.seek(0)
+        with tarfile.open(fileobj=raw, mode="r|") as archive:
+            for member in archive:
+                if member.name in seen or len(seen) >= MAX_ARCHIVE_MEMBERS:
+                    raise ValueError("Duplicate or excessive archive entries")
+                seen.add(member.name)
+                safe_path(member.name)
+                if member.isdir():
+                    if member.name not in expected_dirs:
+                        raise ValueError("Unexpected archive directory")
+                elif member.isfile() and not member.sparse:
+                    entry = entries.get(member.name)
+                    if (
+                        member.name not in expected_files
+                        or member.size != entry["bytes"]
+                        or member.mode != entry["mode"]
+                    ):
+                        raise ValueError("Archive differs from release manifest")
+                else:
+                    raise ValueError("Archive must contain regular files and directories")
+        if not expected_files.issubset(seen):
+            raise ValueError("Missing archive files")
+        raw.seek(0)
+        with tarfile.open(fileobj=raw, mode="r|") as archive:
+            for member in archive:
+                if member.isfile():
+                    target = destination / safe_path(member.name)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    with archive.extractfile(member) as src, target.open("xb") as dst:
+                        shutil.copyfileobj(src, dst, length=65536)
+                    target.chmod(member.mode)
 
 
 def check_download(repo_id: str, revision: str, destination: Path, download) -> dict:
@@ -67,22 +150,7 @@ def check_download(repo_id: str, revision: str, destination: Path, download) -> 
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, target)
         target.chmod(entry["mode"])
-    with tarfile.open(destination / "tasks.tar.gz", "r:gz") as archive:
-        seen = set()
-        for member in archive.getmembers():
-            if member.name in seen:
-                raise ValueError("Duplicate archive entry")
-            seen.add(member.name)
-            path = safe_path(member.name)
-            if not path.parts or path.parts[0] != "tasks":
-                raise ValueError("Unexpected archive path")
-            if not member.isdir() and not member.isfile():
-                raise ValueError("Archive must contain only regular files and directories")
-            if member.isfile():
-                entry = entries.get(member.name)
-                if entry is None or member.size != entry["bytes"] or member.mode != entry["mode"]:
-                    raise ValueError("Archive differs from release manifest")
-        archive.extractall(destination, filter="data")
+    bounded_archive(destination / "tasks.tar.gz", destination, entries)
     verify_release(destination)
     release = json.loads((destination / "manifest.json").read_text())
     bundles = []
