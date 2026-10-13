@@ -23,6 +23,12 @@ class ScientificFeedbackLoop(QualityLoop):
             review = review.model_copy(
                 update={"issues": [*review.issues, *audit(self, task, context, key)]}
             )
+        if getattr(self, "audit_coercion", False):
+            from coercion_audit import audit as audit_coercion
+
+            review = review.model_copy(
+                update={"issues": [*review.issues, *audit_coercion(self, task, context, key)]}
+            )
         feedback = getattr(self, "scientific_feedback", None)
         if feedback is None or task_identity(task) != feedback["bundle_hash"]:
             return review, context

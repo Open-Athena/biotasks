@@ -47,16 +47,31 @@ def audit(loop, task, context, key):
     }
     if sum(len(text.encode()) for text in documents.values()) > 150_000:
         raise ValueError("Schema audit source exceeds bounded context; no truncation")
-    result = loop.model.ask(
-        SchemaAudit,
-        loop.options.review_model,
-        files("biotasks.prompts").joinpath("notebook-schema-audit.md").read_text(),
-        context.payload(literal_keyed_accesses=accesses, schema_documents=documents),
-        key + "-schema",
-    )
-    if len(result.obligations) != len(accesses) or {
-        item.expression for item in result.obligations
-    } != set(accesses):
+    retry_hint = None
+    for attempt in range(2):
+        result = loop.model.ask(
+            SchemaAudit,
+            loop.options.review_model,
+            files("biotasks.prompts").joinpath("notebook-schema-audit.md").read_text(),
+            context.payload(
+                literal_keyed_accesses=accesses,
+                schema_documents=documents,
+                structural_retry=retry_hint,
+            ),
+            key + ("-schema" if attempt == 0 else "-schema-retry"),
+        )
+        save_record(
+            loop.directory / "schema-audits" / f"{key}-attempt{attempt}.json", result.model_dump()
+        )
+        found = {item.expression for item in result.obligations}
+        if len(result.obligations) == len(accesses) and found == set(accesses):
+            break
+        retry_hint = {
+            "error": "Return exactly one obligation per listed expression",
+            "missing": sorted(set(accesses) - found),
+            "unexpected": sorted(found - set(accesses)),
+        }
+    else:
         raise ValueError("Schema audit did not cover every keyed access exactly once")
     issues = []
     for item in result.obligations:

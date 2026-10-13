@@ -909,3 +909,29 @@ two hours plus cleanup. Reserve another $5, bringing conservative aggregate
 reservations to $71 of $100. Preserve the original public release and recorded
 trials; supersede only after GLM repair and fresh validation. Generic review
 prompts now explicitly inspect value-changing coercion in scientific metadata.
+
+The same independent reviewer rechecked infrastructure fixes at 0868488 and found
+no actionable residual issue; their independent run also passed all eight focused
+tests. Original campaign-018 evidence successfully reconstructed with the hardened
+helper, and the saved release passed the hardened downloader in a fresh local
+directory (not a second network download). Campaign 019 submitted from 0868488.
+
+Public HTMLPreview testing initially exposed its attempt to execute JSON script
+blocks. Store the data in an inert hidden element with escaped HTML-sensitive
+characters instead (6efd741). Public desktop/mobile navigation then passed with
+no JavaScript errors: 1.81 seconds, peak process RSS 106,336 KiB. The committed
+browser check can exercise the local page or an explicit public URL.
+
+Campaign 019 completed operationally but quality remained needs_evidence: GLM
+omitted one literal key from the schema inventory, so the review was rejected.
+Four quality calls, no task repair, no native trials; preflight cleanup verified.
+The broad review also failed to identify the independently reported coercion.
+Added a focused GLM audit of generic AST conversion operations, with exact source
+lines attached to model findings. Unknown/false-acceptance findings block release.
+Schema review gets one bounded retry for structural inventory incompleteness.
+Three focused audit/feedback tests pass (0.46 seconds, peak 50,220 KiB).
+
+Recovery 020 retains campaign 019's absolute deadline and $5 reservation, carrying
+$0.088 conservative holds and four used requests. Remaining: 20 quality calls,
+24 solver calls, one repair, five trials, one solver attempt. No task-specific
+manual repair was introduced; the operation inventory and prompts are generic.
