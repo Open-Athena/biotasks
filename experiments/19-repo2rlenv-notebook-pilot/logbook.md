@@ -834,3 +834,15 @@ Continuation 015 uses campaign 014's remaining 35 requests, five native trials,
 one repair and one solve, retaining its deadline and prior cost holds. No extra
 $5 reservation. Seven focused feedback/fidelity tests passed (50,620 KiB peak,
 0.53 seconds, exit 0).
+
+Continuation 015 submitted once from `9ac75d6`. Launcher peak RSS 346,456 KiB,
+16.69 seconds, exit 0; shared lock and thread/priority controls. Issue update
+read back and verified. No new monetary reservation for this continuation.
+
+Continuation 015 failed after one quality call and no scientific trials because
+the new adapter incorrectly treated upstream _review's (review, context) return
+as a review object. Preflight cleanup passed. Raw exports were recovered from
+the terminal job log; original evidence remains intact. Corrected tuple handling
+and the mocked regression to match the upstream interface. Continuation 016
+carries the consumed call and cumulative cost reservations, leaving 34 calls
+and the same five trials/one repair/one solve under the original deadline.

@@ -16,7 +16,7 @@ def test_feedback_is_blocking_only_for_its_exact_task(tmp_path, monkeypatch):
     review.model_copy = lambda *, update: SimpleNamespace(
         **update, model_dump=lambda **kw: {"issues": [i.model_dump() for i in update["issues"]]}
     )
-    monkeypatch.setattr(QualityLoop, "_review", lambda *a, **kw: review)
+    monkeypatch.setattr(QualityLoop, "_review", lambda *a, **kw: (review, "original-context"))
     loop = object.__new__(ScientificFeedbackLoop)
     loop.directory = tmp_path / "quality"
     scientific = assessment()
@@ -30,12 +30,13 @@ def test_feedback_is_blocking_only_for_its_exact_task(tmp_path, monkeypatch):
         "documents": {"task/instruction.md": (task / "instruction.md").read_text()},
     }
     loop.set_scientific_feedback(feedback)
-    result = loop._review(task, [], "before")
+    result, context = loop._review(task, [], "before")
+    assert context == "original-context"
     assert len(result.issues) == 1
     assert result.issues[0].severity == "blocking"
     assert result.issues[0].problem == "GLM-authored fixture finding"
     feedback["bundle_hash"] = "sha256:" + "0" * 64
-    assert loop._review(task, [], "changed") is review
+    assert loop._review(task, [], "changed") == (review, "original-context")
     feedback["assessment"]["findings"][0]["citations"][0]["line"] = 999999
     with pytest.raises(ValueError, match="unsupported citation"):
         loop.set_scientific_feedback(feedback)

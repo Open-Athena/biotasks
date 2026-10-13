@@ -16,10 +16,10 @@ class ScientificFeedbackLoop(QualityLoop):
         self.scientific_feedback = feedback
 
     def _review(self, task, trials, key, **kwargs):
-        review = super()._review(task, trials, key, **kwargs)
+        review, context = super()._review(task, trials, key, **kwargs)
         feedback = getattr(self, "scientific_feedback", None)
         if feedback is None or task_identity(task) != feedback["bundle_hash"]:
-            return review
+            return review, context
         issues = []
         for finding in Assessment.model_validate(feedback["assessment"]).findings:
             if finding.verdict != "fail":
@@ -54,4 +54,4 @@ class ScientificFeedbackLoop(QualityLoop):
             self.directory / "scientific-feedback" / f"{key}.json",
             {"bundle_hash": task_identity(task), "review": result.model_dump(mode="json")},
         )
-        return result
+        return result, context
