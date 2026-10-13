@@ -1,0 +1,20 @@
+--- a/src/repo2rlenv/pipelines/recipes/seta_seed2synth/recipe.py
++++ b/src/repo2rlenv/pipelines/recipes/seta_seed2synth/recipe.py
+@@ -16,7 +16,7 @@
+     draft_spec: str = Field(min_length=100, max_length=24000)
+ 
+ 
+-def design(seed: dict, *, model, ledger, receipt, operation_id: str, resume: bool, system_guidance: str = "") -> TaskDesign:
++def design(seed: dict, *, model, ledger, receipt, operation_id: str, resume: bool, system_guidance: str = "", prompt_template: str | None = None) -> TaskDesign:
+     return TaskDesign.model_validate_json(
+         metered_complete(
+             model,
+@@ -26,7 +26,7 @@
+             reservation_usd="0.75",
+             max_tokens=9000,
+             resume=resume,
+-            system=files(__package__).joinpath("idea_prompt.md").read_text()
++            system=(prompt_template if prompt_template is not None else files(__package__).joinpath("idea_prompt.md").read_text())
+             + (
+                 "\n\nOWNED RUNTIME ADAPTATION: the seed is supplied as JSON rather than a folder. "
+                 "Return core_capabilities and draft_spec in the requested JSON schema; do not "

@@ -44,3 +44,8 @@ specifications are rendered as Markdown; additional seed/context and exact API
 records are collapsed. Reading views normalize literal escaped newlines when a
 model returned a single escaped line. Original records remain unchanged in
 Technical details, preserving the exact request hash and response receipt.
+
+During prompt review, Task design and Task construction show the canonical
+packaged prompt files used by the launcher, rather than old recorded calls.
+Outputs for the revised prompts are explicitly pending a new run. These prompt
+edits do not retroactively change the completed task or its validation evidence.

@@ -132,6 +132,8 @@ def render_strings(value):
             render_strings(item)
 
 
+render_strings(data["templates"])
+
 for call in data["calls"]:
     payload = call.get("response")
     if isinstance(payload, dict) and isinstance(payload.get("response"), dict):

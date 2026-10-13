@@ -76,3 +76,10 @@ from design and builder prompts, and replaces their fixed CPU/RAM/disk wording
 with the controller-supplied run budget. CPU-only and bounded-compute rules stay.
 Historical prompts and the completed pilot's 1-CPU/2-GiB allocation are preserved;
 this policy change does not constitute another execution or validation run.
+
+`0008-configurable-design-template.patch` lets the existing design call accept
+an optional prompt template, preserving the default, runtime adaptation, schema
+and shared guidance. The pilot supplies packaged `notebook-task-design.md` and
+`notebook-task-construction.md` as its canonical authoring sources. The explorer
+reads those same files. They are modified Apache-2.0 upstream prompts with source
+attribution, pending user review; no new run is implied by their display.

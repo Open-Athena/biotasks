@@ -221,8 +221,18 @@ def run(
                 ),
                 root / "tasks",
                 emit,
-                designer=partial(recipe.design, system_guidance=guidance),
-                builder_prompt=recipe.builder_prompt() + "\n\n" + guidance,
+                designer=partial(
+                    recipe.design,
+                    system_guidance=guidance,
+                    prompt_template=files("biotasks.prompts")
+                    .joinpath("notebook-task-design.md")
+                    .read_text(),
+                ),
+                builder_prompt=files("biotasks.prompts")
+                .joinpath("notebook-task-construction.md")
+                .read_text()
+                + "\n\n"
+                + guidance,
                 execution_adapter=execution,
             )
             save_record(
