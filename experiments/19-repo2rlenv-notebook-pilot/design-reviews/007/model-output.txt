@@ -1,0 +1,42 @@
+{
+  "decision": "revise",
+  "findings": [
+    {
+      "id": "F1",
+      "location": "proposed_design top-level JSON; draft_spec Testing section end",
+      "problem": "The draft_spec is incomplete and structurally non-conforming. The Testing section terminates mid-word ('Rounding/') in the middle of the verification matrix, the required Builder-Only Notes section is entirely absent (so reference-solution, empty-output and meaningful-wrong-output controls and construction gates are not stated), and the returned JSON object has a third top-level key 'difficulty' instead of embedding Difficulty as a draft_spec section. The brief also contains a nonsensical input line ('`hvg_flavor.md`-free: no other inputs') that will confuse solvers about what inputs exist.",
+      "evidence": "draft_spec string ends with '...rejected because top-ranked gene lists and score columns disagree; DE without BH adjustment (column check vs recalculated BH from A2's own pvals) rejected |\\n\\nRounding/'; no '## Builder-Only Notes' or '## Difficulty' heading appears in draft_spec; a 'difficulty' key appears at the top level alongside core_capabilities and draft_spec; the inputs bullet list contains '`hvg_flavor.md`-free: no other inputs.'.",
+      "required_change": "Return exactly two top-level keys (core_capabilities, draft_spec). Complete the Testing matrix, add the Builder-Only Notes section (private reference assets, reference/empty/wrong-output controls, and the declared construction gates) and a Difficulty section inside draft_spec, and remove or clarify the malformed input-list bullet so the input contract reads unambiguously."
+    },
+    {
+      "id": "F2",
+      "location": "draft_spec, 'Equivalence rules (public)' — PCA rule",
+      "problem": "The PCA sign-symmetry equivalence rule is garbled: 'component scores with the sign of an odd-numbered component flipped are equivalent' does not define a coherent symmetry. PCA is sign-ambiguous per component independently; the correct rule permits flipping the sign of each component (embedding and loadings together) independently, for any subset of components.",
+      "evidence": "'PCA is compared per component up to sign (component scores with the sign of an odd-numbered component flipped are equivalent).'",
+      "required_change": "State the rule as: two PCA results are equivalent if, for each component i, the submitted embedding column equals +/- the reference column (with the corresponding loading sign flipped as applicable), where each component's sign is chosen independently. Also verify that the variance/variance-ratio comparison is sign-invariant, which it is."
+    },
+    {
+      "id": "F3",
+      "location": "draft_spec, R8 and A2 — logfoldchanges definition",
+      "problem": "The log2 fold-change formula is ambiguous and, as written ('log2 fold changes of the mean in-group vs. mean out-of-group (natural-log data, log2 fold change)'), most naturally reads as log2 of the ratio of means of the log-values. The public method being reproduced (scanpy rank_genes_groups) computes fold changes by exponentiating group means back to count scale (mean of expm1 of the log data, plus a small epsilon) before taking the ratio and log2. A solver following the design's literal prose would produce a systematically different column that still passes shape/type checks.",
+      "evidence": "R8: 'log2 fold changes of the mean in-group vs. mean out-of-group (natural-log data, log2 fold change)'; Testing R8 only says logfc columns compared 'within a calibrated tolerance'. The seed notebook calls sc.tl.rank_genes_groups(method='wilcoxon') whose documented implementation computes fold changes from expm1-transformed means, not means of log values.",
+      "required_change": "Specify the exact fold-change computation traced to the public method (group means computed on the log-normalized data, transformed back to count scale via expm1, ratio with the library's epsilon, then log2), or explicitly define the chosen formula and mark any deviation from the reference implementation as an adaptation with its numerical consequence. Keep the tolerance gate for round-off only."
+    },
+    {
+      "id": "F4",
+      "location": "draft_spec, R7 and Source Context — Leiden n_iterations",
+      "problem": "The design pins n_iterations=2 for the graded resolution-0.50 clustering and presents it as a 'notebook-implicit parameter made explicit', but the notebook's resolution-0.5 call (cell 52) sets only flavor='igraph' and relies on the library default, which for scanpy's Leiden is to iterate until convergence, not 2. The value 2 comes from a different notebook call (cell 41, default resolution). This is a consequential parameter affecting the partition, and the attribution conflates two distinct source calls; the design prompt forbids claiming a default value is given in the source when it is not.",
+      "evidence": "Source notebook cell 52: 'sc.tl.leiden(adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\")' with no n_iterations; cell 41: 'sc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)'. The design's Source Context says 'Notebook-implicit parameters made explicit here' and lists 'Leiden resolution... random_state' alongside R7's 'igraph flavor, 2 iterations'.",
+      "required_change": "State n_iterations as an explicit adaptation with its scientific consequence (fewer refinement iterations than convergence can merge or shift communities and change the graded partition relative to a converged run), or match the source call by using the pinned library default with the value verified at construction. Do not present it as notebook-implicit for the res-0.5 call. Add a construction gate verifying the pinned scanpy version's actual default."
+    }
+  ],
+  "construction_gates": [
+    "Download both figshare files, verify md5s against the provider values (a99285913ea3f3d22600d3d2f8a88e34, 825f7f7578e3dc0c8955f5a97a402338); provenance records these as unverified. Failure is a broken-seed gate.",
+    "Pin exact versions of scanpy/annumpy/scipy/igraph/leidenalg/pandas/h5py, stage an offline-installable environment, and record the pinned scanpy defaults actually used (leiden n_iterations, pca n_comps/svd_solver/zero_center, neighbors n_neighbors/n_pcs/metric/random_state, rank_genes_groups tie_correct/corr_method) to confirm the documented parameters and the n_iterations adaptation noted in F4.",
+    "Measure reference-pipeline wall time and peak memory on the 4 vCPU / 8 GiB / 10 GiB-disk container against the 600 s solver budget (data load, HVG, PCA, neighbors, Leiden, full Wilcoxon DE over all clusters and genes); report failure rather than reducing data or steps.",
+    "Calibrate numerical tolerances for PCA scores and variance ratios and for Wilcoxon scores/pvals/pvals_adj/logfoldchanges by comparing the pinned reference implementation against an independent implementation (e.g. scipy mannwhitneyu for z-scores) and repeated runs; publish absolute/relative tolerances in the public brief before release.",
+    "Verify deterministic reproducibility of the stochastic steps under the seeds specified in R7 (pynndescent neighbors with random_state=0, igraph Leiden with random_state=0) across repeated runs and, if possible, across environments; if the exact partition is not reproducible, report back for a revised equivalence rule rather than weakening the test.",
+    "Check top-20 per-cluster DE ranking tie stability (minimum score gap at rank 20 across clusters); if near-ties exist, publish a tie-aware ranking rule before release.",
+    "Run reference-solution, empty-output, and meaningful-wrong-output controls (e.g. target_sum=1e4 normalization, cell_ranger HVG flavor, resolution 0.02/2.0 clustering, raw-counts DE, hb mask via startswith('HB')) and confirm each is rejected by the corresponding independent check as designed."
+  ]
+}
