@@ -26,6 +26,17 @@ Check:
 - JSON has exactly core_capabilities and draft_spec; the spec has the required
   sections and is complete.
 
+Audit each scientific requirement separately before making the overall decision.
+For each one, trace its source support, input population/representation, required
+submitted artifact and verification derivation. In particular, derive the check
+from the public transformation and compare the formulas and identities literally;
+do not assume a test is correct because its title names the right operation.
+Distinguish an algorithm named by the source from internal details the draft adds
+without source evidence. Where an output represents a later stage, establish how
+earlier-stage requirements are checked without requiring incompatible populations.
+Use "uncertain" for unsupported scientific claims; do not endorse them from memory.
+Do not copy provenance hashes into recommendations; refer to the original seed.
+
 Prioritize concrete defects over preferences. Do not insist on a different
 analysis just because you prefer it. Do not label ordinary empirical construction
 gates as blockers unless they conceal an undefined scientific contract. If a claim
@@ -35,6 +46,9 @@ scientific meaning and must not smuggle in expected answers.
 
 Return JSON with exactly:
 - "decision": "revise" or "ready_for_construction_validation".
+- "requirement_audit": a list of objects with "requirement", "source_support",
+  "stage_and_artifact", "verification_derivation", and "status" (supported,
+  defective, or uncertain), covering every scientific requirement.
 - "findings": a list of objects with "id", "location", "problem", "evidence",
   and "required_change"; empty only when no concrete design blockers remain.
 - "construction_gates": a list of empirical checks still needed.

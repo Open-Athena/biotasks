@@ -35,7 +35,12 @@ freedom to implement that method, not to substitute a different analysis. Resolv
 consequential parameters explicitly. If a notebook relies on an undocumented
 default, do not invent its value or claim it is given in the source: either make
 and justify an explicit design choice, or identify a blocking source question.
-Do not use "standard defaults" as the scientific definition.
+Do not use "standard defaults" as the scientific definition. A precisely identified
+source method or reference operation can define semantics without requiring that
+software in the solution. Do not expand an algorithm into unsupported internal
+details from memory: distinguish what the source defines from what the builder
+must verify against its versioned reference. A source-check gate verifies the
+chosen method; it is not permission to choose a different method.
 
 ## Write the scientific contract once
 
