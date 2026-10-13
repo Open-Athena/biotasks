@@ -113,6 +113,42 @@ for name, source in docs.items():
     if name.startswith("task/"):
         language = "python" if name.endswith(".py") else "bash" if name.endswith(".sh") else "text"
         data["rendered_code"][source] = highlight(source, get_lexer_by_name(language), formatter)
+
+
+# Build readable views of model text; original request/response records stay intact.
+def readable(value):
+    return value.replace("\\n", "\n") if "\n" not in value and "\\n" in value else value
+
+
+def render_strings(value):
+    if isinstance(value, str):
+        text = readable(value)
+        data["rendered_markdown"][text] = md.render(text)
+    elif isinstance(value, dict):
+        for item in value.values():
+            render_strings(item)
+    elif isinstance(value, list):
+        for item in value:
+            render_strings(item)
+
+
+for call in data["calls"]:
+    payload = call.get("response")
+    if isinstance(payload, dict) and isinstance(payload.get("response"), dict):
+        payload = payload["response"].get("content", payload)
+    if isinstance(payload, str):
+        try:
+            payload = json.loads(payload)
+        except json.JSONDecodeError:
+            pass
+    call["output"] = payload
+    try:
+        call["input"] = json.loads(call["content"].get("user", "{}"))
+    except (json.JSONDecodeError, TypeError):
+        call["input"] = call["content"].get("user")
+    render_strings(call["content"].get("system", ""))
+    render_strings(call["input"])
+    render_strings(payload)
 encoded = json.dumps(data, ensure_ascii=False).replace("<", "\\u003c").replace("&", "\\u0026")
 page = (HERE / "template.html").read_text().replace("__DATA__", encoded)
 (HERE / "index.html").write_text(page)

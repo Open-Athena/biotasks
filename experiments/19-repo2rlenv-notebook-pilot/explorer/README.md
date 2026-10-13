@@ -38,3 +38,9 @@ Task design and construction are separate steps. The upstream design call return
 `draft_spec` in structured JSON; the builder receives it as `design.draft_spec`.
 The inherited prompt mentions `draft_spec.md`, but this direct-call pathway does
 not require that intermediate file. Recorded prompts remain unchanged.
+
+Model calls show separate Input and Output sections. Prompts and generated draft
+specifications are rendered as Markdown; additional seed/context and exact API
+records are collapsed. Reading views normalize literal escaped newlines when a
+model returned a single escaped line. Original records remain unchanged in
+Technical details, preserving the exact request hash and response receipt.
