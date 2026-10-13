@@ -1,0 +1,66 @@
+{
+  "campaign": "notebook-pilot-022",
+  "model": "glm-5.3",
+  "host": {
+    "cpus": 2,
+    "memory_mb": 4096,
+    "storage_mb": 20480
+  },
+  "task": {
+    "cpus": 1,
+    "memory_mb": 2048,
+    "storage_mb": 10240
+  },
+  "campaign_seconds": 7200,
+  "cleanup_seconds": 300,
+  "max_trials": 40,
+  "max_solver_attempts": 6,
+  "solver_seconds": 300,
+  "solver_turns": 12,
+  "trial_seconds": 1500,
+  "max_generation_repairs": 0,
+  "max_quality_repairs": 6,
+  "daytona_budget_usd": "5.00",
+  "request_allowances": {
+    "compatibility": {
+      "requests": 4,
+      "output_tokens": 512
+    },
+    "generation": {
+      "requests": 3,
+      "output_tokens": 16000
+    },
+    "quality": {
+      "requests": 91,
+      "output_tokens": 8000
+    },
+    "solver-1": {
+      "requests": 4,
+      "output_tokens": 8192
+    },
+    "solver-2": {
+      "requests": 40,
+      "output_tokens": 8192
+    }
+  },
+  "chat_template_kwargs": {
+    "reasoning_effort": "low"
+  },
+  "structured_output_mode": "json_object",
+  "required_prior_usage": {
+    "prior_requests": {
+      "compatibility": 4,
+      "generation": 3,
+      "quality": 74,
+      "solver-1": 4,
+      "solver-2": 16
+    },
+    "prior_trials": 35,
+    "prior_solver_attempts": 5,
+    "prior_quality_repairs": 5
+  },
+  "schema_audit": true,
+  "coercion_audit": true,
+  "absolute_deadline": 1791921397.3948324,
+  "prior_daytona_reserved_usd": "0.088000"
+}

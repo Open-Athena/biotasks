@@ -64,15 +64,42 @@ def audit(loop, task, context, key):
             loop.directory / "schema-audits" / f"{key}-attempt{attempt}.json", result.model_dump()
         )
         found = {item.expression for item in result.obligations}
-        if len(result.obligations) == len(accesses) and found == set(accesses):
+        failures = []
+        if len(result.obligations) != len(accesses) or found != set(accesses):
+            failures.append(
+                {
+                    "error": "Return exactly one obligation per listed expression",
+                    "missing": sorted(set(accesses) - found),
+                    "unexpected": sorted(found - set(accesses)),
+                }
+            )
+        for item in result.obligations:
+            if not item.evidence:
+                failures.append(
+                    {"expression": item.expression, "error": "Source evidence is required"}
+                )
+            for citation in item.evidence:
+                document = context.documents.get(citation.path, "")
+                if (
+                    not citation.quote.strip()
+                    or not document
+                    or " ".join(citation.quote.split()) not in " ".join(document.split())
+                ):
+                    failures.append(
+                        {
+                            "expression": item.expression,
+                            "unsupported_citation": citation.model_dump(),
+                            "error": "Copy an exact contiguous source excerpt, including Markdown formatting. Do not reconstruct or paraphrase a quote.",
+                        }
+                    )
+        if not failures:
             break
-        retry_hint = {
-            "error": "Return exactly one obligation per listed expression",
-            "missing": sorted(set(accesses) - found),
-            "unexpected": sorted(found - set(accesses)),
-        }
+        retry_hint = failures
     else:
-        raise ValueError("Schema audit did not cover every keyed access exactly once")
+        raise ValueError(
+            "Schema audit did not cover every keyed access with supported evidence: "
+            + str(failures)
+        )
     issues = []
     for item in result.obligations:
         if not item.evidence:

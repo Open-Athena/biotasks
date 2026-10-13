@@ -954,3 +954,14 @@ of $100), with one repair, five native trials, one five-minute solver, 24 qualit
 and 24 solver requests, two hours plus cleanup. The prior corrected counts task
 and four native controls are preserved as continuation evidence; no solver result
 from an older bundle is imported for the new task.
+
+### 2026-10-13: bounded citation recovery
+
+Campaign 021 identified the Boolean false acceptance through the focused GLM
+audit, but a subsequent schema audit quote omitted Markdown formatting and
+failed exact citation validation. Seven quality calls, no repairs or new native
+trials. Extend the existing single bounded schema retry to citation failures,
+without accepting unsupported evidence. Two focused tests pass, including failure
+on two invalid citations. Recovery 022 carries the original deadline, $0.088 holds
+and seven used calls: 17 quality and 24 solver requests remain; one repair, five
+native trials, one five-minute solver. No additional $5 reservation; aggregate $76.
