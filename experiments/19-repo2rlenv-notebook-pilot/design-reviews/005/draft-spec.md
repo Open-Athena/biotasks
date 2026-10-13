@@ -1,0 +1,89 @@
+## Task
+Reproduce the preprocessing, clustering and marker-gene analysis of the two bone-marrow mononuclear cell samples (10X Multiome gene-expression matrices s1d1 and s1d3) from the scanpy clustering tutorial, and emit per-cell QC metrics, a filtered/normalized AnnData object with PCA and Leiden clustering, principal-component variance ratios, per-cluster marker genes and cluster-level marker-gene-set expression.
+
+## Agent-Visible Task Brief
+**Goal**: Starting from the two raw 10X filtered feature-barcode matrices, run the tutorial's analysis pipeline (QC annotation, permissive filtering, median-count log1p normalization, batch-aware HVG selection, PCA, neighborhood graph, Leiden clustering at resolution 0.5, Wilcoxon marker genes restricted to HVGs, and cluster-level marker-set mean expression) and write the specified artifacts.
+
+**Inputs**: `/input/s1d1_filtered_feature_bc_matrix.h5` and `/input/s1d3_filtered_feature_bc_matrix.h5` (10X HDF5 count matrices, ~8,000 cells each, 36,601 gene features; provider MD5s `a99285913ea3f3d22600d3d2f8a88e34` and `825f7f7578e3dc0b8955f5a97a402338`). Read each with a 10X reader, make gene names unique, concatenate with a `sample` observation taking values `s1d1` / `s1d3`, and make barcode names unique. Counts are raw integers; gene identifiers are Gene Symbols.
+
+**Methodology** (order matters):
+1. Annotate gene flags: `mt` = name starts with `MT-`; `ribo` = name starts with `RPS` or `RPL`; `hb` = name matches regex `^HB[^(P)]`.
+2. Compute per-cell QC metrics for these three gene sets on the unfiltered, concatenated data, including `n_genes_by_counts`, `total_counts`, `pct_counts_mt`, `pct_counts_ribo`, `pct_counts_hb` (and log1p counterparts as scanpy produces them).
+3. Filter permissively as in the tutorial: remove cells with fewer than 100 genes detected, then remove genes detected in fewer than 3 cells.
+4. Store the raw filtered counts in `layers["counts"]` and keep them for the rest of the pipeline.
+5. Normalize each cell to the median total count of the filtered dataset (count-depth scaling with `target_sum` unset, i.e. median scaling), then apply log1p.
+6. Select the top 2,000 highly variable genes using the Seurat-flavor dispersion approach with `batch_key="sample"`.
+7. Run PCA on the normalized, HVG-restricted matrix with `n_comps=50`, seeded with `random_state=0`.
+8. Build the k-nearest-neighbor graph on the PCA representation (scanpy defaults: 15 neighbors, 50 PCs) with `random_state=0`.
+9. Run Leiden clustering on that graph at `resolution=0.5` using the igraph implementation with `n_iterations=2` and `random_state=0`; store labels in `obs["leiden_res_0.50"]` as strings.
+10. Run per-cluster Wilcoxon rank-sum tests (cluster vs. rest) **restricted to the 2,000 selected highly variable genes** (adaptation for runtime; see Source Context) and extract the top 5 genes per cluster ranked by z-score.
+11. For each marker gene set listed below, compute the mean log1p-normalized expression (mean over genes present in the data and over cells) per Leiden cluster.
+
+Marker gene sets (from the tutorial): CD14+ Mono: FCN1, CD14; CD16+ Mono: TCF7L2, FCGR3A, LYN; cDC2: CST3, COTL1, LYZ, DMXL2, CLEC10A, FCER1A; Erythroblast: MKI67, HBA1, HBB; Proerythroblast: CDK6, SYNGR1, HBM, GYPA; NK: GNLY, NKG7, CD247, FCER1G, TYROBP, KLRG1, FCGR3A; ILC: ID2, PLCG2, GNLY, SYNE1; Naive CD20+ B: MS4A1, IL4R, IGHD, FCRL1, IGHM; B cells: MS4A1, ITGB1, COL4A4, PRDM1, IRF4, PAX5, BCL11A, BLK, IGHD, IGHM; Plasma cells: MZB1, HSP90B1, FNDC3B, PRDM1, IGKC, JCHAIN; Plasmablast: XBP1, PRDM1, PAX5; CD4+ T: CD4, IL7R, TRBC2; CD8+ T: CD8A, CD8B, GZMK, GZMA, CCL5, GZMB, GZMH; T naive: LEF1, CCR7, TCF7; pDC: GZMB, IL3RA, COBLL1, TCF4.
+
+**Acceptance Criteria** — all artifacts must be written to `/output/`:
+- `qc_metrics.csv`: one row per cell of the unfiltered concatenated data; columns `sample`, `n_genes_by_counts` (int), `total_counts` (int), `pct_counts_mt`, `pct_counts_ribo`, `pct_counts_hb` (floats, percentages 0–100); index = unique barcode.
+- `filtering_summary.json`: keys `n_obs_before`, `n_vars_before`, `n_obs_after`, `n_vars_after` (ints).
+- `analysis.h5ad`: AnnData of the filtered cells/genes with `X` = log1p median-normalized values, `layers["counts"]` = raw filtered counts, `var["highly_variable"]` (bool), `obsm["X_pca"]` (n_obs x 50), `obs["leiden_res_0.50"]` (string labels), `obs["sample"]`.
+- `pca_variance_ratio.csv`: columns `pc` (1..50), `variance_ratio`.
+- `cluster_markers.csv`: columns `cluster`, `rank` (1–5), `gene`, `score` (Wilcoxon z-score); top 5 genes per cluster.
+- `marker_expression.csv`: columns `cluster`, `marker_set`, `mean_log1p`.
+No NaNs in required numeric columns. Any software implementing the stated methodology is allowed; scientific parameters (thresholds, target, gene counts, resolution, seed) are fixed.
+
+**Environment Constraints**: offline during solving; CPU only (4 vCPU, 8 GiB RAM, 10 GiB disk); whole run must complete within 600 seconds. scanpy, anndata, python-igraph, leidenalg, numpy, scipy, pandas, h5py are preinstalled (pinned versions).
+
+**Visible Paths**: inputs under `/input/`; write all outputs to `/output/`.
+
+## Builder-Only Notes
+**Dependency Chain**: QC metrics are computed pre-filtering; filtering counts depend on step 2/3 boundaries; normalization uses the counts layer of filtered data; HVG depends on normalized X; PCA depends on HVG + X; neighbors/Leiden depend on PCA; markers and marker-set means depend on Leiden labels + normalized X. Tests recompute each stage from the trusted raw h5 inputs, never from other submitted files, except where a submitted upstream result (clustering labels) is used only after validating it (ARI >= 0.95 against the reference partition).
+**Unresolved Questions**: (a) exact runtime of the full pipeline on 4 vCPUs — builder must measure; if > ~7 min, restrict DE further or subsample, but any reduction requires a revised spec. (b) Whether HVG exact set match is stable across solver time (it should be with pinned scanpy; calibrate a Jaccard >= 0.98 fallback only if a measured equivalent implementation differs, do not guess). (c) Whether igraph-Leiden in the pinned version is bit-reproducible with `random_state=0`; the ARI >= 0.95 tolerance covers minor backend variation.
+
+## Instructions
+Build the environment (below), stage the two h5 files with MD5 verification, pin all scientific packages, implement the reference solution exactly per the public methodology (note: reference computes QC on the data **before** filtering, as in the tutorial), generate reference artifacts, and author the pytest suite described in Testing. Measure reference runtime and confirm < 400 s. Keep reference solution and grading files outside `/input` and `/output`.
+
+## Source Context
+Source: scanpy tutorial `docs/tutorials/basics/clustering.ipynb` at revision 8c1463d5d97272d5811ad3f4efb57483e23b4c7e (BSD-3-Clause). Data: NeurIPS 2021 Open Problems bone-marrow samples, figshare DOI 10.6084/m9.figshare.22716739.v1, CC BY 4.0; files fetched from `https://ndownloader.figshare.com/files/40347877` and `.../40347880`.
+Preserved source methodology: 10X h5 reading with unique names, concat with `sample` label, MT-/RPS-RPL/hemoglobin flag regexps, `calculate_qc_metrics`, `filter_cells(min_genes=100)` / `filter_genes(min_cells=3)`, counts layer, median `normalize_total` + `log1p`, `highly_variable_genes(n_top_genes=2000, batch_key="sample")`, `pca`, `neighbors`, `leiden(flavor="igraph", n_iterations=2)`, `rank_genes_groups(method="wilcoxon")`, marker gene sets, and the reported cluster-to-lineage interpretation.
+Omitted stages, with justification: (1) `sc.pp.scrublet` — stochastic simulation-based doublet scores that the tutorial itself declines to filter on; grading them would test randomness, not science. (2) UMAP embedding and all plotting — visualization is not gradeable as scientific output and UMAP is nondeterministic; the neighborhood graph it depends on is still computed and drives the graded Leiden clustering. (3) Multi-resolution Leiden (0.02, 2.0) and the manual `cell_type_lvl1` string mapping — the mapping keys off arbitrary cluster labels from the coarsest resolution; the marker-set mean-expression artifact preserves the scientifically meaningful part (marker evidence per cluster) in a label-invariant form. Adaptation: Wilcoxon DE restricted to the 2,000 HVGs instead of all genes, to guarantee the run fits CPU/RAM limits; consequence: only HVG markers are reported, which is standard practice and does not change the method. Resolution 0.5 is kept because the tutorial identifies it as the annotation-suitable resolution.
+Input reduction: none — both full samples are used.
+
+## Environment Setup
+Debian base, Python 3.12, plus: `scanpy` (pin, e.g. 1.10.x), `anndata`, `numpy`, `scipy`, `pandas`, `h5py`, `python-igraph`, `leidenalg`, `scikit-learn` (grading), `pytest`, `pooch` not needed at solve time. Build-time: download both h5 files, verify MD5 against the provider checksums above, store under `/input/` read-only. No network at solve/grade time.
+
+## Reasoning Steps Required
+1. Read both 10X h5 files, make var names unique, concatenate with `sample` labels, unique barcodes. → combined AnnData
+2. Annotate mt/ribo/hb flags; compute QC metrics on unfiltered data. → `qc_metrics.csv`
+3. Filter cells (min_genes=100) then genes (min_cells=3); record counts. → `filtering_summary.json`
+4. Copy counts layer; median-normalize and log1p. → normalized X
+5. HVG selection (n_top_genes=2000, batch_key="sample"). → `var["highly_variable"]`
+6. PCA (50 comps, seed 0) → `obsm["X_pca"]`, `pca_variance_ratio.csv`
+7. Neighbors (defaults, seed 0) → graph (internal)
+8. Leiden res 0.5, igraph, 2 iterations, seed 0 → `obs["leiden_res_0.50"]`
+9. Wilcoxon cluster-vs-rest on HVGs → `cluster_markers.csv`
+10. Per-cluster mean log1p of each marker set → `marker_expression.csv`
+11. Write `analysis.h5ad` with all required slots.
+
+## Testing
+All tests recompute from trusted raw h5s in `/input` (and a builder-generated reference partition for clustering), never trusting other submitted files. Label permutation is resolved with a Hungarian match on the cluster contingency matrix before per-cluster comparisons.
+1. **QC metrics exactness**: recompute `n_genes_by_counts`/`total_counts` (exact integer match) and `pct_counts_mt/ribo/hb` (rel tol 1e-6) for every cell from the raw matrices; row count must equal total unfiltered cells (~16k). Rejects QC computed after filtering (row count/overlap mismatch) or wrong regexes (hemoglobin set differs).
+2. **Filtering summary exactness**: independently recompute min_genes/min_cells filtering counts (also per sample); exact integer match. Rejects wrong thresholds or reordered filtering.
+3. **Counts layer integrity**: `layers["counts"]` of `analysis.h5ad` must equal the raw filtered counts (sparse comparison, exact); rejects lost/modified counts.
+4. **Normalization correctness**: recompute the median total count and the log1p median-scaled values from the counts layer for a random 500-cell x 500-gene sample seeded 0; compare to `X` (rel tol 1e-8, with the recomputation done in float64). Rejects CPM/CP10k scaling, missing log, or double log.
+5. **HVG selection**: exactly 2,000 genes flagged; Jaccard vs. reference HVG set >= 0.98 (exact match expected in the pinned env; threshold calibrated at build time against the reference). Rejects no-batch-key HVG or wrong n_top_genes.
+6. **PCA**: first 15 variance ratios within rel tol 1e-3 of reference; for the first 10 PCs, absolute cosine between submitted and reference loading vectors >= 0.999 (sign-flip tolerant). Rejects PCA on non-HVG genes or non-normalized data.
+7. **Leiden partition**: label-permutation-invariant ARI >= 0.95 against the reference partition, and cluster count equal to the reference count. Rejects random labels (ARI ~0), resolution 0.02 (too few clusters), or 2.0 (too many).
+8. **Cluster markers**: after Hungarian label matching, each cluster's top-5 gene set shares >= 4 genes with the reference top-5; spot-recompute Wilcoxon z-scores for two clusters from counts within tol 2e-2 (ranking ties justify the partial overlap). Rejects switched rankings or wrong test.
+9. **Marker-set expression**: recompute per-cluster mean log1p for every marker set from the trusted raw counts and the submitted cluster labels (used only after test 7 passes); compare all rows, abs tol 1e-6. Rejects mean-of-raw-counts or wrong cluster assignment.
+10. **Format/contract**: all files present, schemas valid, h5ad opens with required slots, no NaNs, cluster labels categorical strings, `obs["sample"]` consistent with barcode prefix. Structural only; cannot pass alone because tests 1–9 carry the scientific contract.
+
+## Difficulty
+medium — the pipeline is standard and well documented, but requires exact parameter fidelity (batch-aware HVG, median normalization, per-stage ordering, label-invariant outputs) and correct handling of label permutation in outputs.
+
+## Core Skills Tested
+scRNA-seq preprocessing, QC and filtering; normalization and feature selection; dimensionality reduction; graph clustering; differential expression; marker-gene interpretation; reproducible tool use; structured scientific output writing.
+
+## Key Technologies
+scanpy/anndata (installed, pinned), python-igraph + leidenalg, numpy/scipy/pandas, h5py; grading with pytest/scikit-learn. These are implementation options; the methodology above is the requirement.
+
+## External Resources
+Notebook: https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb (BSD-3-Clause, hashed by supplier). Data: figshare DOI 10.6084/m9.figshare.22716739.v1 (CC BY 4.0), files `s1d1_filtered_feature_bc_matrix.h5` (MD5 a99285913ea3f3d22600d3d2f8a88e34) and `s1d3_filtered_feature_bc_matrix.h5` (MD5 825f7f7578e3dc0b8955f5a97a402338) — the supplier has not downloaded/verified these checksums against the files; the builder must verify at build time. No other external resources are needed.
