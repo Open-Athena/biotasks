@@ -16,7 +16,7 @@ def assessment():
                     "dimension": dimension,
                     "verdict": "pass",
                     "explanation": "Supported",
-                    "citations": [{"document": "source", "start_line": 1, "end_line": 1}],
+                    "citations": [{"document": "source", "line": 1}],
                 }
                 for dimension in sorted(DIMENSIONS)
             ],
@@ -28,7 +28,7 @@ def assessment():
 def test_requires_complete_supported_findings():
     review = assessment()
     assert validate_assessment(review, {"source": "Use observed counts here."})
-    review.findings[0].citations[0].end_line = 2
+    review.findings[0].citations[0].line = 2
     with pytest.raises(ValueError, match="unsupported citation"):
         validate_assessment(review, {"source": "Use observed counts here."})
 
@@ -78,8 +78,7 @@ def test_line_citations_resolve_original_text_without_model_quotations(tmp_path,
     review = assessment()
     for finding in review.findings:
         finding.citations[0].document = "source/notebook"
-        finding.citations[0].start_line = 2
-        finding.citations[0].end_line = 2
+        finding.citations[0].line = 2
     requests = []
 
     def complete(*args, **kwargs):

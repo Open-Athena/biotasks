@@ -42,3 +42,13 @@ back to evidence the solver cannot modify, and explain how the verifier obtains
 it. Build-time validation alone does not detect later changes. If the available
 environment cannot enforce this requirement, report the limitation and reject
 the candidate rather than labeling it usable.
+
+Audit the public output contract against every grader assertion. An example
+field name is not a required field name: if the grader unconditionally reads
+that field, its exact schema must be required publicly or grading must accept
+the alternatives permitted by the instruction. A deterministic reference
+ordering is not by itself a scientific reason to reject equivalent rows or
+columns aligned by identifiers. Require explicit public ordering requirements
+or identifier-aligned comparisons. One passing alternative using the same order
+and field names does not resolve either defect. Treat these mismatches as
+blocking even when the reference and solver both pass.

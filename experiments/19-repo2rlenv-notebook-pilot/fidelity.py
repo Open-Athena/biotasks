@@ -27,8 +27,7 @@ class StrictModel(BaseModel):
 
 class Citation(StrictModel):
     document: str
-    start_line: int = Field(ge=1)
-    end_line: int = Field(ge=1)
+    line: int = Field(ge=1)
 
 
 class Finding(StrictModel):
@@ -55,12 +54,10 @@ def validate_assessment(assessment: Assessment, documents: dict[str, str]) -> bo
     for finding in assessment.findings:
         for citation in finding.citations:
             lines = documents.get(citation.document, "").splitlines()
-            if not 1 <= citation.start_line <= citation.end_line <= len(lines):
+            if not 1 <= citation.line <= len(lines):
                 raise ValueError("Scientific review contains an unsupported citation")
-            if citation.end_line - citation.start_line > 8 or not any(
-                line.strip() for line in lines[citation.start_line - 1 : citation.end_line]
-            ):
-                raise ValueError("Scientific review citation must be short and nonempty")
+            if not lines[citation.line - 1].strip():
+                raise ValueError("Scientific review citation must be nonempty")
     return not assessment.blocking_findings and all(
         f.verdict == "pass" for f in assessment.findings
     )
@@ -135,15 +132,11 @@ def review(*, task: Path, seed: dict, quality: dict, model, directory: Path) -> 
                     {
                         "dimension": finding.dimension,
                         **citation.model_dump(),
-                        "quote": "\n".join(
-                            documents[citation.document].splitlines()[
-                                citation.start_line - 1 : citation.end_line
-                            ]
-                        ),
+                        "quote": documents[citation.document].splitlines()[citation.line - 1],
                     }
                 )
     result = {
-        "citation_format": "document-lines-v1",
+        "citation_format": "document-single-line-v2",
         "resolved_citations": resolved,
         "assessment": assessment.model_dump() if assessment is not None else None,
         "supported": supported,

@@ -789,3 +789,23 @@ Recovery worker 013 submitted once from `80c6350`, after verifying prior jobs
 terminal. Launcher peak RSS 345,952 KiB, 14.21 seconds, exit 0, with shared lock
 and one-thread/priority controls. It continues campaign 012, not a fresh repair
 or generation campaign. The original two-hour deadline remains enforced.
+
+Recovery 013 completed SUCCEEDED: new alternative and solver both reward 1,
+with all completed controls (no-op 0/reference 1/wrong 0/alternative 1/solver 1)
+hash verified. It used seven calls: quality 4 and solver 3. Cleanup passed.
+Fidelity again exceeded the nine-line citation limit; original response remains
+unsupported. Operator audit also found an example annotation field treated as
+mandatory and unspecified ordering asserted by the grader. These are remaining
+public-contract defects despite upstream review passing.
+
+The citation schema now selects individual numbered lines, making overlong
+ranges unrepresentable; it still rejects unknown documents/lines and retains
+raw responses. General quality/fidelity guidance explicitly distinguishes
+example fields from mandatory schemas and reference order from public contract.
+No task was manually edited. Twelve fidelity/import tests passed (54,096 KiB
+peak, 0.66 seconds, exit 0).
+
+Campaign 014 reserves $5 within the aggregate $100 (conservative total reserved
+$61). It has 40 new calls, one GLM repair, five native trials, one five-minute
+solve and two hours plus cleanup. Historical usage stays recorded; completed
+controls import without rerun until GLM changes the task.

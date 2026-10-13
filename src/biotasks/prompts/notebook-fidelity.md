@@ -15,20 +15,13 @@ implementations without requiring a particular software package. A successful
 reference alone does not establish these properties. Probe outcomes must be
 interpreted together with the actual scientific change made by the probe.
 
-Every supplied document has explicit 1-based line numbers. For each citation,
-return the document name and inclusive start_line/end_line integers from that
-view, covering at most nine lines. Do not return a quote field: the controller
-resolves the exact passage from those lines. Use separate citations for separate
-passages. Explain support in your explanation rather than inventing document
-content. Cite source and task evidence when comparing them. Do not infer that
-files, trials or data exist from a plan. List blocking findings explicitly.
+Every supplied document has explicit 1-based line numbers. Each citation must
+contain only a document name and one line integer. Select the specific line
+that supports the claim; provide multiple citations when necessary. Do not
+return ranges or quote fields. The controller resolves original text. Explain
+comparisons outside citations; do not invent evidence. List every demonstrated
+defect in blocking_findings and give the relevant dimension a fail verdict.
 This assessment is advisory evidence, never a reward or substitute for execution.
-
-Before returning, check every citation: end_line - start_line must be at most 8.
-Select the few lines that establish the claim; do not cite an entire function or
-review object. Put each demonstrated defect behind a fail verdict in
-blocking_findings too. A malformed citation does not excuse a scientific defect,
-and a successful solver attempt does not override one.
 
 Check that undocumented representation constraints do not reject scientifically
 equivalent artifacts. One passing alternative does not justify a hidden ordering
@@ -41,3 +34,13 @@ A counterexample that leaves the observed artifacts unchanged does not establish
 rejection of wrong scientific results. If no materially wrong result has been
 rejected, report scientific_grading as unknown even when the reference and a valid
 alternative pass. Keep task defects separate from invalid or ineffective probes.
+
+Audit the public output contract against every grader assertion. An example
+field name is not a required field name: if the grader unconditionally reads
+that field, its exact schema must be required publicly or grading must accept
+the alternatives permitted by the instruction. A deterministic reference
+ordering is not by itself a scientific reason to reject equivalent rows or
+columns aligned by identifiers. Require explicit public ordering requirements
+or identifier-aligned comparisons. One passing alternative using the same order
+and field names does not resolve either defect. Treat these mismatches as
+blocking even when the reference and solver both pass.
