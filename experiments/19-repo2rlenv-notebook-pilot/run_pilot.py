@@ -177,8 +177,8 @@ def run(
         )
         seed = json.loads(notebook_seed.read_text())[0]
         guidance = files("biotasks.prompts").joinpath("notebook-grounding.md").read_text()
-        guidance += "\n\nController-selected scope and input provenance:\n" + json.dumps(
-            seed["input_manifest"]
+        guidance += "\n\nSource provenance (not a task specification):\n" + json.dumps(
+            seed.get("provenance", seed.get("input_manifest", {}))
         )
         task_resources = config["task"]
         guidance += (

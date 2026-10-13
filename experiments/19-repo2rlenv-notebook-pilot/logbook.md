@@ -999,3 +999,15 @@ The completed pilot used the deliberately smaller upstream-default allocation
 (1 CPU, 2 GiB, 10 GiB), not a measured Daytona provider maximum. No new execution
 or changed scientific validation is claimed. Historical calls remain verbatim;
 the explorer labels their superseded compute wording.
+
+### 2026-10-13: newer notebook; worker-owned task selection
+
+User selected Scanpy's newer clustering.ipynb and rejected manually specified
+task scope. Pin source revision 8c1463d5d97272d5811ad3f4efb57483e23b4c7e,
+SHA256 9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6.
+The full source-only seed includes marker analysis. Keep notebook/data provenance
+separate from task design; no analysis_scope is supplied. The design worker
+chooses and justifies its objective and scope within the general budget.
+Figshare version 1 metadata identifies two real input files and CC BY 4.0;
+provider MD5s are recorded, not claimed as verified downloads. Old pilot
+provenance is preserved under seeds/legacy-pbmc3k. No model run or viewer edit.

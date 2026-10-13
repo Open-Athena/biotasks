@@ -54,7 +54,7 @@ def payload(
         raise ValueError("Execution duration differs from approved pilot")
     source = json.loads(frozen_file(repo, revision, EXPERIMENT + "/source-manifest.json"))
     seeds = json.loads(seed.read_text())
-    if len(seeds) != 1 or seeds[0]["input_manifest"] != source:
+    if len(seeds) != 1 or seeds[0].get("provenance", seeds[0].get("input_manifest")) != source:
         raise ValueError("Seed source manifest differs from checkpoint")
     files = {
         "biotasks.tar": subprocess.check_output(["git", "archive", revision], cwd=repo),
