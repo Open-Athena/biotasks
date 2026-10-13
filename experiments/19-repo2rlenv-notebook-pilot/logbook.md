@@ -965,3 +965,26 @@ without accepting unsupported evidence. Two focused tests pass, including failur
 on two invalid citations. Recovery 022 carries the original deadline, $0.088 holds
 and seven used calls: 17 quality and 24 solver requests remain; one repair, five
 native trials, one five-minute solver. No additional $5 reservation; aggregate $76.
+
+### 2026-10-13: reviewed repairs published; explorer follows issue 17
+
+Recovery 022 completed with 17 quality calls, seven solver calls, one GLM repair
+and five fresh native trials. Rewards: baseline 0, reference 1, wrong 0, alternate
+1, blind solver 1 (70.24 seconds). Fidelity review is supported with valid
+citations. All five sandbox cleanups were verified. Independent static re-review
+found the count-integrality and nonbinary-flag defects addressed, with no new
+blocking regression. Numeric 0/1 flags remain accepted; this is not strict dtype
+enforcement. Dedicated mutation trials for these two defects were not run.
+
+The replacement release is public at immutable HF commit
+353e8a296c4101d3c0647e4c50e2b0ed7214d5de; registry head is
+474c8fe7aedd35ca3731b7a469de1d5bbd2fa238. A forced fresh download passed file
+hashes, executable modes, release validation and bundle identity. The original
+release is preserved. Aggregate conservative reservations remain $76 of $100,
+not an invoice. No further campaign is needed for this pilot.
+
+At the user's request, reuse issue 17's explorer layout and artifact-card styles,
+replacing its generation approaches with this pipeline. Show clickable stages,
+recorded prompts, cell-rendered notebook, current task, historical/current attempts
+and explicit review/release status. The old immutable HTML remains historical;
+a new commit permalink identifies the corrected explorer.

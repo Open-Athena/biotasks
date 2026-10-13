@@ -1,0 +1,268 @@
+{
+  "assessment": {
+    "blocking_findings": [],
+    "findings": [
+      {
+        "citations": [
+          {
+            "document": "source/manifest",
+            "line": 11
+          },
+          {
+            "document": "task/environment/Dockerfile",
+            "line": 10
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 61
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 71
+          }
+        ],
+        "dimension": "observed_data",
+        "explanation": "Real 10x PBMC3k data is used, with lineage preserved: the manifest records the source URL, SHA-256, license and attribution, and the Docker build pins the archive by checksum. The verifier recomputes its reference from a verifier-held anchor archive and additionally checks the solver-visible staged files against the pinned archive contents, so expected values do not depend on solver-writable data despite the root verifier user.",
+        "verdict": "pass"
+      },
+      {
+        "citations": [
+          {
+            "document": "source/notebook",
+            "line": 82
+          },
+          {
+            "document": "source/notebook",
+            "line": 130
+          },
+          {
+            "document": "source/notebook",
+            "line": 145
+          },
+          {
+            "document": "source/manifest",
+            "line": 2
+          },
+          {
+            "document": "task/instruction.md",
+            "line": 21
+          }
+        ],
+        "dimension": "methodology",
+        "explanation": "The task reproduces exactly the notebook's QC/filtering/normalization stage (gene-symbol loading with unique names, min_genes=200 cell filter, min_cells=3 gene filter, mt annotation, calculate_qc_metrics, strict 200<n_genes<2500 and pct_mt<5 cell filter, counts layer, normalize_total to 1e4, log1p) and stops before HVG selection, matching the controller scope that excludes downstream feature selection, clustering and plots. All consequential parameters are stated publicly in the instruction.",
+        "verdict": "pass"
+      },
+      {
+        "citations": [
+          {
+            "document": "task/instruction.md",
+            "line": 17
+          },
+          {
+            "document": "task/instruction.md",
+            "line": 22
+          },
+          {
+            "document": "task/instruction.md",
+            "line": 32
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 138
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 39
+          }
+        ],
+        "dimension": "public_contract",
+        "explanation": "Every grader assertion maps to a publicly stated requirement: output path, shape, obs QC column names, layer name 'counts', var column 'mt' as boolean, strict filtering bounds, and the log1p normalization formula with tolerances. The grader compares cells and genes identifier-aligned rather than requiring the reference ordering, so no hidden ordering constraint exists. The mt boolean requirement is public ('a boolean per-gene flag'), matching the grader's dtype check.",
+        "verdict": "pass"
+      },
+      {
+        "citations": [
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 122
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 156
+          },
+          {
+            "document": "task/tests/test_outputs.py",
+            "line": 143
+          },
+          {
+            "document": "execution/quality",
+            "line": 56
+          },
+          {
+            "document": "execution/quality",
+            "line": 128
+          }
+        ],
+        "dimension": "scientific_grading",
+        "explanation": "The tests assess scientific outputs with justified tolerances (1e-4 relative for pct_mt, 1e-6/1e-3 for row sums, 1e-5 for log1p self-consistency and spot checks), recompute QC metrics from the counts layer, verify integer-valued counts, and validate the mt mask dtype before truthiness casts. A materially wrong solution omitting the min_cells=3 gene filter was executed and rejected (reward 0, shape 2638x32738 vs expected 2638x13714), demonstrating rejection of wrong scientific results rather than mere reference success.",
+        "verdict": "pass"
+      },
+      {
+        "citations": [
+          {
+            "document": "task/instruction.md",
+            "line": 40
+          },
+          {
+            "document": "execution/quality",
+            "line": 153
+          },
+          {
+            "document": "execution/quality",
+            "line": 158
+          }
+        ],
+        "dimension": "software_alternatives",
+        "explanation": "The instruction explicitly permits any tool implementing the stated methodology, and a valid non-scanpy implementation (pure scipy/pandas/anndata reading the mtx/genes/barcodes files directly) was executed and passed with reward 1.0, demonstrating that grading depends on the output artifact's scientific content rather than a particular software package or internal representation.",
+        "verdict": "pass"
+      }
+    ]
+  },
+  "citation_format": "document-single-line-v2",
+  "limitations": "GLM evidence review, not independent execution or a reward",
+  "resolved_citations": [
+    {
+      "dimension": "observed_data",
+      "document": "source/manifest",
+      "line": 11,
+      "quote": "      \"sha256\": \"847d6ebd9a1ec9a768f2be7e40ca42cbfe75ebeb6d76a4c24167041699dc28b5\","
+    },
+    {
+      "dimension": "observed_data",
+      "document": "task/environment/Dockerfile",
+      "line": 10,
+      "quote": " && echo \"847d6ebd9a1ec9a768f2be7e40ca42cbfe75ebeb6d76a4c24167041699dc28b5  /tmp/pbmc3k.tar.gz\" | sha256sum -c - \\"
+    },
+    {
+      "dimension": "observed_data",
+      "document": "task/tests/test_outputs.py",
+      "line": 61,
+      "quote": "    assert _sha256(archive) == ARCHIVE_SHA256, ("
+    },
+    {
+      "dimension": "observed_data",
+      "document": "task/tests/test_outputs.py",
+      "line": 71,
+      "quote": "            assert staged == trusted, ("
+    },
+    {
+      "dimension": "methodology",
+      "document": "source/notebook",
+      "line": 82,
+      "quote": "sc.pp.filter_cells(adata, min_genes=200)  # this does nothing, in this specific case"
+    },
+    {
+      "dimension": "methodology",
+      "document": "source/notebook",
+      "line": 130,
+      "quote": "adata = adata["
+    },
+    {
+      "dimension": "methodology",
+      "document": "source/notebook",
+      "line": 145,
+      "quote": "sc.pp.normalize_total(adata, target_sum=1e4)"
+    },
+    {
+      "dimension": "methodology",
+      "document": "source/manifest",
+      "line": 2,
+      "quote": "  \"analysis_scope\": \"Quality control, cell/gene filtering and normalization; exclude downstream feature selection, clustering, marker discovery and plots.\","
+    },
+    {
+      "dimension": "methodology",
+      "document": "task/instruction.md",
+      "line": 21,
+      "quote": "5. Filter cells: keep cells with `200 < n_genes_by_counts < 2500` **and** `pct_counts_mt < 5` (both bounds strict)."
+    },
+    {
+      "dimension": "public_contract",
+      "document": "task/instruction.md",
+      "line": 17,
+      "quote": "4. Annotate mitochondrial genes: a boolean per-gene flag stored in a var column named exactly `mt` (i.e. `var['mt']`), True for gene symbols starting with `MT-`. Compute per-cell QC metrics on the filtered, untransformed counts:"
+    },
+    {
+      "dimension": "public_contract",
+      "document": "task/instruction.md",
+      "line": 22,
+      "quote": "6. Store the filtered, untransformed integer counts in a layer named **`counts`** (the layer must hold raw counts, not transformed values)."
+    },
+    {
+      "dimension": "public_contract",
+      "document": "task/instruction.md",
+      "line": 32,
+      "quote": "- For every cell, `sum(expm1(X[i, :])) == 10000` (relative tolerance 1e-6) and `expm1(X[i, :]) * total_counts[i] / 10000` recovers the raw counts within single-precision tolerance (1e-5 relative on nonzero entries)."
+    },
+    {
+      "dimension": "public_contract",
+      "document": "task/tests/test_outputs.py",
+      "line": 138,
+      "quote": "    ri = ref.obs_names.get_indexer(stu.obs_names)"
+    },
+    {
+      "dimension": "public_contract",
+      "document": "task/tests/test_outputs.py",
+      "line": 39,
+      "quote": "    if col.dtype == bool:"
+    },
+    {
+      "dimension": "scientific_grading",
+      "document": "task/tests/test_outputs.py",
+      "line": 122,
+      "quote": "    assert np.allclose(stu.obs[\"total_counts\"].values, total, rtol=1e-6, atol=1e-3)"
+    },
+    {
+      "dimension": "scientific_grading",
+      "document": "task/tests/test_outputs.py",
+      "line": 156,
+      "quote": "    assert np.allclose(row_sums, 1e4, rtol=1e-6, atol=1e-3), ("
+    },
+    {
+      "dimension": "scientific_grading",
+      "document": "task/tests/test_outputs.py",
+      "line": 143,
+      "quote": "    assert np.all(C.data == np.round(C.data)), \"counts layer is not integer-valued\""
+    },
+    {
+      "dimension": "scientific_grading",
+      "document": "execution/quality",
+      "line": 56,
+      "quote": "          \"quote\": \"expected shape (2638, 13714), got (2638, 32738)\""
+    },
+    {
+      "dimension": "scientific_grading",
+      "document": "execution/quality",
+      "line": 128,
+      "quote": "      \"reward\": 0.0,"
+    },
+    {
+      "dimension": "software_alternatives",
+      "document": "task/instruction.md",
+      "line": 40,
+      "quote": "- Python 3.12 with `scanpy`, `anndata`, `numpy`, `pandas`, `scipy`, `h5py` is installed. Any tool implementing the stated methodology is acceptable; grading is based on the contents of the output file only."
+    },
+    {
+      "dimension": "software_alternatives",
+      "document": "execution/quality",
+      "line": 153,
+      "quote": "        \"script\": \"#!/bin/bash\\nset -euo pipefail\\nmkdir -p /workspace/output\\npython - <<'PY'\\nimport numpy as np, pandas as pd, anndata as ad\\nfrom scipy import io as sio, sparse\\nD = \\\"/opt/data/filtered_gene_bc_matrices/hg19\\\"\\nM = sio.mmread(D + \\\"/matrix.mtx\\\").T.tocsr()  # cells x genes\\ngenes = pd.read_csv(D + \\\"/genes.tsv\\\", sep=\\\"\\\\t\\\", header=None)\\nbarcodes = pd.read_csv(D + \\\"/barcodes.tsv\\\", sep=\\\"\\\\t\\\", header=None)\\n# make unique gene symbols (same convention as scanpy: dup -> sym-1, sym-2, ...)\\nsym = genes[1].astype(str).tolist()\\nseen = {}\\nuniq = []\\nfor s in sym:\\n    if s in seen:\\n        seen[s] += 1\\n        uniq.append(f\\\"{s}-{seen[s]}\\\")\\n    else:\\n        seen[s] = 0\\n        uniq.append(s)\\nvar = pd.DataFrame(index=pd.Index(uniq, name=\\\"genes\\\"))\\nvar[\\\"gene_ids\\\"] = genes[0].astype(str).values\\nobs = pd.DataFrame(index=pd.Index(barcodes[0].astype(str).tolist(), name=\\\"barcodes\\\"))\\nadata = ad.AnnData(X=M.astype(np.float32), obs=obs, var=var)\\n# filter cells < 200 genes\\ncell_ng = np.asarray((M > 0).sum(axis=1)).ravel()\\nadata = adata[cell_ng >= 200].copy()\\n# filter genes < 3 cells\\ngene_nc = np.asarray((M > 0).sum(axis=0)).ravel()\\nadata = adata[:, gene_nc >= 3].copy()\\nC = sparse.csr_matrix(adata.X)\\nmt = np.asarray(adata.var_names.str.startswith(\\\"MT-\\\"))\\ntotal = np.asarray(C.sum(axis=1)).ravel()\\nadata.obs[\\\"n_genes_by_counts\\\"] = np.asarray((C > 0).sum(axis=1)).ravel()\\nadata.obs[\\\"total_counts\\\"] = total\\nadata.obs[\\\"pct_counts_mt\\\"] = 100.0 * np.asarray(C[:, mt].sum(axis=1)).ravel() / total\\nkeep = (adata.obs.n_genes_by_counts > 200) & (adata.obs.n_genes_by_counts < 2500) & (adata.obs.pct_counts_mt < 5)\\nadata = adata[np.asarray(keep)].copy()\\nC = sparse.csr_matrix(adata.X)\\nadata.var[\\\"mt\\\"] = adata.var_names.str.startswith(\\\"MT-\\\")\\nadata.layers[\\\"counts\\\"] = C.astype(np.float32).copy()\\ntotal = np.asarray(C.sum(axis=1)).ravel()\\nX = C.astype(np.float64)\\nX.data = np.log1p(X.data * (1e4 / np.repeat(total, np.diff(X.indptr))))\\nadata.X = X.astype(np.float32)\\nadata.write_h5ad(\\\"/workspace/output/pbmc3k_processed.h5ad\\\")\\nprint(\\\"done\\\", adata.shape)\\nPY\\nexit 0\""
+    },
+    {
+      "dimension": "software_alternatives",
+      "document": "execution/quality",
+      "line": 158,
+      "quote": "      \"reward\": 1.0,"
+    }
+  ],
+  "supported": true,
+  "validation_error": null
+}

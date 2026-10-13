@@ -1,0 +1,176 @@
+{
+  "accounted_usd": "0",
+  "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be",
+  "profile": "practical-generation-v1",
+  "reasons": [],
+  "repairs": 1,
+  "reserved_usd": "20",
+  "review": {
+    "issues": [],
+    "leakage": {
+      "evidence": [
+        {
+          "path": "instruction.md",
+          "quote": "X[i, j] = log(1 + counts[i, j] * 10000 / total_counts[i])"
+        }
+      ],
+      "explanation": "The instruction prescribes the requested scientific methodology (parameters, order, output schema), which is the task itself, not an implementation remedy. No reference code, expected output values or private test details are exposed. Solution and tests are private.",
+      "score": 4,
+      "status": "pass"
+    },
+    "probes": [],
+    "read_requests": [],
+    "rollout": "legitimate_success",
+    "summary": "The PBMC3k QC/filtering/normalization task is coherent and fully specified. The verifier anchors expectations to a checksum-pinned archive outside solver control, checks each acceptance criterion with concrete assertions, accepts identifier-aligned valid alternatives, and rejects a wrong solution omitting the gene filter. The oracle passes 8/8, the baseline fails on missing output, a valid non-scanpy alternative passes, and the recorded solver rollout legitimately earns reward 1.0 with a genuine independent implementation. No defects found.",
+    "task": {
+      "evidence": [
+        {
+          "path": "instruction.md",
+          "quote": "Store the filtered, untransformed integer counts in a layer named **`counts`** (the layer must hold raw counts, not transformed values)."
+        },
+        {
+          "path": "instruction.md",
+          "quote": "Any tool implementing the stated methodology is acceptable; grading is based on the contents of the output file only."
+        }
+      ],
+      "explanation": "Coherent, useful scientific request: reproduce the scanpy PBMC3k QC/filtering/normalization stage on real staged 10x data and write a specific h5ad artifact. All thresholds, order of operations, layer/column names, formulas and tolerances are public requirements of the requested behavior, not a hidden fix; the instruction explicitly permits any implementing tool.",
+      "score": 4,
+      "status": "pass"
+    },
+    "verifier": {
+      "evidence": [
+        {
+          "path": "tests/test_outputs.py",
+          "quote": "archive = \"/opt/verifier_anchor/pbmc3k.tar.gz\""
+        },
+        {
+          "path": "tests/test_outputs.py",
+          "quote": "assert np.allclose(row_sums, 1e4, rtol=1e-6, atol=1e-3), ("
+        },
+        {
+          "path": "tests/test_outputs.py",
+          "quote": "if col.dtype == bool:"
+        },
+        {
+          "path": "evidence/2-probe/verifier/stdout.txt",
+          "quote": "expected shape (2638, 13714), got (2638, 32738)"
+        },
+        {
+          "path": "evidence/3-probe/verifier/stdout.txt",
+          "quote": "8 passed in 6.67s"
+        }
+      ],
+      "explanation": "Every acceptance criterion maps to a concrete assertion: shape vs reference, QC columns recomputed from the counts layer, identifier-aligned (order-independent) counts comparison, expm1 row-sum = 1e4 plus full log1p self-consistency, strict filtering bounds, boolean-typed mt mask validated before truthiness cast, and spot-checks. The reference is recomputed from a verifier-held archive pinned by SHA-256, and the staged solver-visible inputs are checked against that archive, so expected values do not depend on solver-writable data. The verifier accepts valid alternatives (non-scanpy implementation passed) and rejects a wrong solution omitting the min_cells=3 gene filter (2 tests failed, reward 0).",
+      "score": 4,
+      "status": "pass"
+    }
+  },
+  "schema_version": "1",
+  "source_hash": "sha256:36b278fcdf8659192b33a1fe549f01c5dab8cd335a0ff74baf7471062af1e8ab",
+  "status": "usable",
+  "task_path": "/evidence/pilot/quality/revisions/r1/seta-seed2synth-edda9ab1b6342001",
+  "trials": [
+    {
+      "agent": "nop",
+      "agent_exit_code": null,
+      "binding": "receipt",
+      "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be",
+      "exception_type": null,
+      "model": null,
+      "probe": null,
+      "probe_installed": null,
+      "result": "/evidence/pilot/quality/trials/r1-baseline/quality-f7f627e0392a26b3-r1-baseline/seta-seed2synth-edda9ab1b6342001__HEbjrRK/result.json",
+      "result_sha256": "8c539eb4c0ad531bbb568727cb9fc55b50e37c095ce03857f4ef30134cf2c7be",
+      "reward": 0.0,
+      "role": "baseline"
+    },
+    {
+      "agent": "oracle",
+      "agent_exit_code": null,
+      "binding": "receipt",
+      "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be",
+      "exception_type": null,
+      "model": null,
+      "probe": null,
+      "probe_installed": null,
+      "result": "/evidence/pilot/quality/trials/r1-oracle/quality-f7f627e0392a26b3-r1-oracle/seta-seed2synth-edda9ab1b6342001__SRmxQUo/result.json",
+      "result_sha256": "c842c3b836bbe77fc6c8387c7f19635c0478ea3f2f2f4b90f4251aa163d7f64c",
+      "reward": 1.0,
+      "role": "oracle"
+    },
+    {
+      "agent": "oracle",
+      "agent_exit_code": null,
+      "binding": "receipt",
+      "bundle_hash": "sha256:26670d88b7385af4ba0e157dc3576621e4fbda33c1e46fed328bed7a681ab255",
+      "exception_type": null,
+      "model": null,
+      "probe": {
+        "evidence": [
+          {
+            "path": "instruction.md",
+            "quote": "3. Filter **genes** detected in fewer than **3** cells."
+          },
+          {
+            "path": "tests/test_outputs.py",
+            "quote": "assert list(stu.var_names) == list(ref.var_names), \"gene set/order differs\""
+          }
+        ],
+        "focus": "general",
+        "kind": "wrong_solution",
+        "name": "skip-gene-filter",
+        "rationale": "A pipeline that omits the min_cells=3 gene filter is a plausible scientific error that changes the graded shape (13714 vs more genes) and the counts layer, so the verifier must reject it on this dataset.",
+        "script": "#!/bin/bash\nset -euo pipefail\nmkdir -p /workspace/output\npython - <<'PY'\nimport scanpy as sc\nDATA = \"/opt/data/filtered_gene_bc_matrices/hg19\"\nadata = sc.read_10x_mtx(DATA, var_names=\"gene_symbols\", cache=False)\nadata.var_names_make_unique()\nsc.pp.filter_cells(adata, min_genes=200)\n# WRONG: gene filter omitted (should be min_cells=3)\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\nsc.pp.calculate_qc_metrics(adata, qc_vars=[\"mt\"], percent_top=None, log1p=False, inplace=True)\nadata = adata[(adata.obs.n_genes_by_counts > 200) & (adata.obs.n_genes_by_counts < 2500) & (adata.obs.pct_counts_mt < 5)].copy()\nadata.layers[\"counts\"] = adata.X.copy()\nsc.pp.normalize_total(adata, target_sum=1e4)\nsc.pp.log1p(adata)\nadata.write_h5ad(\"/workspace/output/pbmc3k_processed.h5ad\")\nprint(\"done\")\nPY\nexit 0"
+      },
+      "probe_installed": true,
+      "result": "/evidence/pilot/quality/trials/r1-probe0/quality-f7f627e0392a26b3-r1-probe0/seta-seed2synth-edda9ab1b6342001__htBXksL/result.json",
+      "result_sha256": "15b097e5ab6e3d8b77a15451d64b18ad32756d12529511e26131c5e887ec403b",
+      "reward": 0.0,
+      "role": "probe"
+    },
+    {
+      "agent": "oracle",
+      "agent_exit_code": null,
+      "binding": "receipt",
+      "bundle_hash": "sha256:f2ec80555acb1dfaa1dd88287481aacea1810b564dbb95e9d8171d5957763c13",
+      "exception_type": null,
+      "model": null,
+      "probe": {
+        "evidence": [
+          {
+            "path": "instruction.md",
+            "quote": "Any tool implementing the stated methodology is acceptable; grading is based on the contents of the output file only."
+          },
+          {
+            "path": "instruction.md",
+            "quote": "X[i, j] = log(1 + counts[i, j] * 10000 / total_counts[i])"
+          }
+        ],
+        "focus": "general",
+        "kind": "valid_alternative",
+        "name": "no-scanpy-implementation",
+        "rationale": "The instruction permits any tool implementing the stated methodology. A pure scipy/pandas/anndata implementation that reads the mtx/genes.tsv/barcodes.tsv directly and performs the same filtering, QC and normalization must pass, exercising that grading does not depend on scanpy-specific code or internal representations.",
+        "script": "#!/bin/bash\nset -euo pipefail\nmkdir -p /workspace/output\npython - <<'PY'\nimport numpy as np, pandas as pd, anndata as ad\nfrom scipy import io as sio, sparse\nD = \"/opt/data/filtered_gene_bc_matrices/hg19\"\nM = sio.mmread(D + \"/matrix.mtx\").T.tocsr()  # cells x genes\ngenes = pd.read_csv(D + \"/genes.tsv\", sep=\"\\t\", header=None)\nbarcodes = pd.read_csv(D + \"/barcodes.tsv\", sep=\"\\t\", header=None)\n# make unique gene symbols (same convention as scanpy: dup -> sym-1, sym-2, ...)\nsym = genes[1].astype(str).tolist()\nseen = {}\nuniq = []\nfor s in sym:\n    if s in seen:\n        seen[s] += 1\n        uniq.append(f\"{s}-{seen[s]}\")\n    else:\n        seen[s] = 0\n        uniq.append(s)\nvar = pd.DataFrame(index=pd.Index(uniq, name=\"genes\"))\nvar[\"gene_ids\"] = genes[0].astype(str).values\nobs = pd.DataFrame(index=pd.Index(barcodes[0].astype(str).tolist(), name=\"barcodes\"))\nadata = ad.AnnData(X=M.astype(np.float32), obs=obs, var=var)\n# filter cells < 200 genes\ncell_ng = np.asarray((M > 0).sum(axis=1)).ravel()\nadata = adata[cell_ng >= 200].copy()\n# filter genes < 3 cells\ngene_nc = np.asarray((M > 0).sum(axis=0)).ravel()\nadata = adata[:, gene_nc >= 3].copy()\nC = sparse.csr_matrix(adata.X)\nmt = np.asarray(adata.var_names.str.startswith(\"MT-\"))\ntotal = np.asarray(C.sum(axis=1)).ravel()\nadata.obs[\"n_genes_by_counts\"] = np.asarray((C > 0).sum(axis=1)).ravel()\nadata.obs[\"total_counts\"] = total\nadata.obs[\"pct_counts_mt\"] = 100.0 * np.asarray(C[:, mt].sum(axis=1)).ravel() / total\nkeep = (adata.obs.n_genes_by_counts > 200) & (adata.obs.n_genes_by_counts < 2500) & (adata.obs.pct_counts_mt < 5)\nadata = adata[np.asarray(keep)].copy()\nC = sparse.csr_matrix(adata.X)\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\nadata.layers[\"counts\"] = C.astype(np.float32).copy()\ntotal = np.asarray(C.sum(axis=1)).ravel()\nX = C.astype(np.float64)\nX.data = np.log1p(X.data * (1e4 / np.repeat(total, np.diff(X.indptr))))\nadata.X = X.astype(np.float32)\nadata.write_h5ad(\"/workspace/output/pbmc3k_processed.h5ad\")\nprint(\"done\", adata.shape)\nPY\nexit 0"
+      },
+      "probe_installed": true,
+      "result": "/evidence/pilot/quality/trials/r1-probe1/quality-f7f627e0392a26b3-r1-probe1/seta-seed2synth-edda9ab1b6342001__bdtdegF/result.json",
+      "result_sha256": "99af2c5c00ff8e031d365807c6ae37d5335b28e187433ea5bf20dbba0b7ce6d9",
+      "reward": 1.0,
+      "role": "probe"
+    },
+    {
+      "agent": "terminus-2",
+      "agent_exit_code": null,
+      "binding": "receipt",
+      "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be",
+      "exception_type": null,
+      "model": "openai/glm-5.3",
+      "probe": null,
+      "probe_installed": null,
+      "result": "/evidence/pilot/quality/trials/r1-rollout/quality-f7f627e0392a26b3-r1-rollout/seta-seed2synth-edda9ab1b6342001__tLCntWR/result.json",
+      "result_sha256": "96785e7a75cad71595e53fcb8034879822a15b78d0f95d3ee5956d4e1e788e78",
+      "reward": 1.0,
+      "role": "rollout"
+    }
+  ]
+}

@@ -1,23 +1,35 @@
 # Notebook pilot evidence explorer
 
-Open `index.html` locally, or use HTMLPreview on its GitHub URL. The standalone
-page has no runtime dependencies or remote scripts. It follows issue 17's static
-HTML explorer approach and visual conventions, with links to the existing Harbor
-Visualiser. It does not execute notebooks, models or task tools.
+Open `index.html` locally or through HTMLPreview. The standalone page uses the
+layout, artifact cards, Markdown rendering and code styling of the issue 17
+explorer at commit `9819917efaf925d51e10f06e19ef056cd964c91c`. Its Approaches view
+now shows this pilot's actual notebook intake, SETA authoring, quality/repair,
+solver and release stages. The notebook workspace separates Notebook, Task,
+Attempt and Review, with exact recorded prompts available by pipeline stage.
 
-The view contains the captured notebook source text, task files, exact captured
-model inputs/outputs, final controls and selected historical solver trajectories.
-Design/build prompts come from campaign 009; final review/repair prompts come from
-018. This is selected evidence, not a reconstruction of all historical campaigns.
-Current prompt templates are labeled separately from the prompts actually used.
-The post-release grading defect remains prominent until a repaired release exists.
+`release-status.json` identifies the published revision and validation limits.
+Design/build calls come from campaign 009; selected quality and repair calls
+come from 018, 020 and 022. Historical solver attempts retain their original
+bundle identities. The displayed task and final controls come from campaign 022.
+Current guidance templates are separate from the recorded historical inputs.
 
-`build.py` reads the recovered campaign archives at its explicit local paths.
-Those archives are operator inputs, not expected to exist in a fresh checkout.
-The generated page is self-contained; no private model route or credential is
-required to view it. Archived input/output strings are rendered with textContent,
-not interpreted as HTML. Source license notices are included.
+`build.py` reads recovered campaign archives at explicit local paths. These are
+operator inputs, not expected to exist in a fresh checkout. Build with the
+recorded upstream environment (markdown-it-py 4.0.0 and Pygments):
 
-Browser checks exercised all five tabs, every prompt/attempt selector and a
-390-pixel mobile viewport: no JavaScript errors or horizontal overflow. Exact
-credential and private-marker scans passed before publication.
+```bash
+python experiments/19-repo2rlenv-notebook-pilot/explorer/build.py \
+  --campaign 22 \
+  --status experiments/19-repo2rlenv-notebook-pilot/explorer/release-status.json
+```
+
+The generated page needs no private route, credentials, runtime dependency or
+remote script. Raw notebook HTML is disabled during Markdown rendering; code is
+escaped by Pygments. All other archived strings use textContent. The source
+notebook is rendered cell by cell; source outputs remain available at the pinned
+original link. License notices are included.
+
+Browser checks exercise both top-level views, all four pipeline stages, every
+prompt/attempt selector and a 390-pixel viewport. Credential/private-marker scans
+run before publication. The review explicitly distinguishes static assessment
+of the two repaired coercion defects from the fresh native control trials.
