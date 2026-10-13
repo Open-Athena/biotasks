@@ -1,0 +1,93 @@
+{
+  "decision": "revise",
+  "requirement_audit": [
+    {
+      "requirement": "R1 — ingestion and two-sample concatenation with sample labels and unique cell/gene names",
+      "source_support": "Notebook cells 4–5: figshare download, sc.read_10x_h5 per sample, var_names_make_unique per sample, ad.concat(label='sample'), obs_names_make_unique. Cell identity as (sample, original barcode) is consistent with the notebook's post-concat uniquification.",
+      "stage_and_artifact": "A1 obs['sample'] and obs_names; input stage raw h5 files.",
+      "verification_derivation": "Independent recompute of the (sample, barcode) set from the raw h5 files with h5py, no scanpy; exact set equality. This is derived from immutable input, not submitted-file agreement.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R2 — mt/ribo/hb gene masks on made-unique symbols and calculate_qc_metrics with log1p, computed once on the pre-filter matrix and carried unchanged",
+      "source_support": "Cells 9–10: exact prefix rules and regex '^HB[^(P)]', calculate_qc_metrics(qc_vars=['mt','ribo','hb'], log1p=True). Design correctly specifies that QC values describe the pre-filter matrix, matching scanpy behavior of retaining computed obs/var columns through filtering. Minor paraphrase imprecision ('character that is not P' vs the character class also excluding '(' and ')') does not matter because the exact regex string is published as the contract.",
+      "stage_and_artifact": "A1 var masks and obs/var QC columns; stage: pre-filter concatenated matrix.",
+      "verification_derivation": "Mask recompute from reference var_names; QC column recompute for sampled cells from raw counts at the pre-filter state; explicitly rejects QC recomputed on the filtered matrix. State-correct.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R3 — filter cells (min_genes=100) then genes (min_cells=3 recomputed post cell-filter)",
+      "source_support": "Cell 16 with the filter order stated as consequential in the surrounding markdown (cell 15). The design correctly distinguishes the recomputed decision value from the retained pre-filter QC column.",
+      "stage_and_artifact": "A1 post-filter cell and gene sets.",
+      "verification_derivation": "Reference partition recomputed independently from raw counts; exact set equality; explicitly rejects order reversal and wrong thresholds.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R4 — raw counts layer preserved before normalization; median count-depth normalize_total then log1p",
+      "source_support": "Cells 22–23: counts layer copy, sc.pp.normalize_total (target_sum None = median), sc.pp.log1p.",
+      "stage_and_artifact": "A1 layers['counts'] (bit-exact raw counts) and X (log-normalized).",
+      "verification_derivation": "Formula recompute log1p(counts * median/total) from raw counts for sampled cells plus a full-matrix median check; counts bit-exactness vs raw input. Derived from trusted input; rejects CP10k and missing log1p.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R5 — 2000 HVGs, Seurat flavor, batch_key='sample', median normalized-dispersion rank across batches",
+      "source_support": "Cell 25: highly_variable_genes(n_top_genes=2000, batch_key='sample'); flavor is a scanpy default the design pins honestly as a design choice with a gate. The cross-batch median-rank reconciliation is asserted from scanpy internals, not from the notebook, and exact 2000-gene set equality across independent implementations has unmeasured boundary stability (genes near the rank-2000 cutoff can flip on roundoff).",
+      "stage_and_artifact": "A1 var['highly_variable'] set and dispersion columns; stage: post log1p.",
+      "verification_derivation": "Exact gene-set equality vs private reference; tolerance gate exists for dispersions but not for gene-set boundary stability across implementations.",
+      "status": "uncertain"
+    },
+    {
+      "requirement": "R6 — PCA, 50 components, zero-centered, HVG-restricted, unscaled, random_state=0",
+      "source_support": "Cell 28: sc.tl.pca defaults (uses HVGs when present, n_comps=50, zero_center=True, no scaling as pca does not scale). Pinning random_state=0 and other defaults is honestly flagged; sign-invariant component equivalence is a mathematically justified symmetry.",
+      "stage_and_artifact": "A1 obsm['X_pca'], uns['pca'] variance_ratio/variance.",
+      "verification_derivation": "Private reference PCA computed from an independently validated log-normalized HVG matrix, per-component sign-free comparison; rejects all-gene, non-centered, or z-scored PCA.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R7 — kNN graph (50 PCs, 15 neighbors, Euclidean) and Leiden at resolution 0.50",
+      "source_support": "Cells 34, 52: sc.pp.neighbors default and sc.tl.leiden(flavor='igraph', resolution=0.5) with key leiden_res_0.50. However, the contract does not resolve exact vs approximate nearest-neighbor search (scanpy's default at this scale is stochastic approximate NN whose output can depend on thread count), yet grading demands exact partition equality against the private reference up to relabeling; a faithful exact-kNN implementation can produce a legitimately different graph and partition. 'flavor igraph' is a scanpy API label, not a method-level definition, and graph directedness and the igraph-flavor resolution semantics are unspecified.",
+      "stage_and_artifact": "A1 obs['leiden_res_0.50'] partition.",
+      "verification_derivation": "Partition equality up to bijective relabeling vs private reference — currently not reliably satisfiable by equivalent implementations given the unresolved graph definition.",
+      "status": "defective"
+    },
+    {
+      "requirement": "R8 — per-cluster one-vs-rest Wilcoxon with BH adjustment and expm1-based log2 fold change, full (cluster, gene) table",
+      "source_support": "Cell 67: rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon') — the method is precisely identified by the source. But the draft adds unsupported internal details: the claim that scanpy's wilcoxon z-scores are 'equivalent to scipy.stats.mannwhitneyu z-scores without continuity correction' is not in the source and is plausibly false under this data — log-normalized scRNA values contain pervasive rank ties (dominant zeros), scipy's asymptotic variance includes a tie-correction term, and scanpy's default tie_correct=False does not, so scores and p-values differ; the testing plan makes mannwhitneyu spot-checks an acceptance criterion, which would reject a correct reference. The exact logFC formula (expm1, 1e-9 epsilon) and the two-sided p construction are scanpy-internal details published as contract without a gate item verifying them against the pinned version.",
+      "stage_and_artifact": "A2 de_results.tsv full table; stage: log-normalized data on filtered var frame, R7 labels.",
+      "verification_derivation": "Private reference table plus BH re-derivation from submitted pvals, top-20 rank comparison with tie-aware gate; the cross-implementation mannwhitneyu check as specified is itself the defect, not a valid derivation.",
+      "status": "defective"
+    },
+    {
+      "requirement": "A1/A2 artifact contract completeness and public equivalence rules",
+      "source_support": "Design-authored. Core content (obs/var columns, layers, X, X_pca, partition, DE table) is enumerated with identity rules keyed to symbols and (sample, barcode). But A1 also requires uns['hvg'], uns['neighbors'] and 'HVG dispersion/rank columns' without schemas; these are scanpy-specific structures undefined for other implementations, and grading cannot demand or test unspecified content.",
+      "stage_and_artifact": "A1, A2.",
+      "verification_derivation": "Checks read only required artifacts plus trusted inputs; the under-specified uns/rank-column requirements are not derivable as stated.",
+      "status": "uncertain"
+    },
+    {
+      "requirement": "Omitted stages (scrublet, UMAP, res 0.02/2.0, manual annotation, pseudobulk, integration)",
+      "source_support": "Cell 18 annotates doublet scores but the executed pipeline never filters on them (cells 42–45 only visualize); UMAP and plots are visualization (Leiden uses the kNN graph, not the embedding); res-0.02/2.0 and cell_type_lvl1 are manual annotation steps; pseudobulk is a suggestion (cell 74); the notebook performs no batch integration (cell 39).",
+      "stage_and_artifact": "No artifacts affected.",
+      "verification_derivation": "No graded quantity depends on the omitted stages.",
+      "status": "supported"
+    },
+    {
+      "requirement": "Overall verification plan: trusted-input derivation, wrong-output controls, stage-correct mathematics",
+      "source_support": "Testing matrix derives each check from raw h5 inputs or private reference artifacts built from them, not from submitted-file agreement; controls include CP10k, cell_ranger flavor, wrong resolutions, raw-count DE, wrong hb mask, log-mean logFC. Structure is sound once the R7/R8 defects above are fixed.",
+      "stage_and_artifact": "All tests.",
+      "verification_derivation": "Per-requirement derivations above; R7 and R8 checks as specified can reject scientifically correct results.",
+      "status": "defective"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "location": "Agent-Visible Task Brief R8; Testing row R8; Builder-Only Notes gate 4",
+      "problem": "The public contract asserts that scanpy's rank_genes_groups wilcoxon z-scores are 'equivalent to scipy.stats.mannwhitneyu z-scores without continuity correction', and the testing plan uses scipy mannwhitneyu spot-checks as an acceptance criterion. This equivalence is unsupported by the notebook and is plausibly false on this data: log-normalized scRNA values contain massive rank ties (zeros dominate), scipy's asymptotic variance includes a tie-correction term, and scanpy's default tie_correct=False variance does not, so z-scores and p-values differ. A correct reference solution could fail the check, and a wrong one judged by a wrongly calibrated tolerance could pass.",
+      "evidence": "Notebook cell 67 shows only sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon'); no tie handling or implementation equivalences are narrated. All equivalence detail is draft-added from memory of scanpy/scipy internals.",
+      "required_change": "Remove the scipy equivalence claim from the public contract and from the acceptance checks. Define the statistic by reference to the pinned scanpy wilcoxon semantics (average ranks, no tie correction, normal-approximation two-sided p-values), and add a construction gate that validates that formula directly against the pinned implementation's source/behavior. Cross-implementation spot checks must be against an implementation independently verified to reproduce those exact semantics (including tie handling), not against scipy's default asymptotic statistic."
+    },
+    {
+      "id": "F2",
+      "location": "Agent-Visible Task Brief R7 and the cluster equivalence rule; Testing row R7",
+      "problem": "The kNN graph contract ('exactly 50 PCs, 15 neighbors, Euclidean, random_state=0') does not resolve exact vs approximate nearest-neighbor search, yet grading requires exact partition equality (up to relabeling) against a private reference. Scanpy's default neighbors at this scale uses stochastic approximate NN whose output can vary with thread count; a scientifically faithful exact-kNN implementation can yield a different graph and therefore a legitimately different Leiden partition, failing the test. Additionally, 'flavor igraph' is a scanpy API label rather than a method
