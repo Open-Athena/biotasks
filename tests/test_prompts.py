@@ -16,9 +16,14 @@ def test_list_and_read_prompts_outside_checkout(
     assert capsys.readouterr().out.splitlines() == [
         "author-task",
         "find-units",
+        "notebook-coercion-audit",
         "notebook-fidelity",
         "notebook-grounding",
         "notebook-quality",
+        "notebook-schema-audit",
+        "notebook-task-construction",
+        "notebook-task-design",
+        "notebook-task-design-review",
     ]
 
     for name in list_prompts():

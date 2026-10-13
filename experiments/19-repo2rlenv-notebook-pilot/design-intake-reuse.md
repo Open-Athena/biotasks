@@ -1,13 +1,14 @@
 # Evidence available to the notebook task designer
 
-2026-10-13. Static source inspection and proposed next experiment. No new
-authoring runtime, profiling job, construction, solver or viewer change has
-been implemented or run for this proposal.
+2026-10-13. Source assessment followed by a prepared design-stage integration.
+The adapter, profiler and canonical prompt now have local fixture and upstream
+controller checks. Live GLM compatibility and real-data profiling have not run;
+this is not an accepted design or a completed pipeline campaign.
 
 ## Finding
 
-The current designer receives notebook source and provenance, but no measured
-data profile, inspected package behavior or tools. General prompt revisions,
+The designer in reviews 004–013 received notebook source and provenance, but no
+measured data profile, inspected package behavior or tools. General prompt revisions,
 additional reasoning and model critiques have not reliably produced a coherent
 scientific contract. Reviews 004–013 preserve six design responses and four
 critique responses, including incomplete outputs; none establishes an accepted,
@@ -80,29 +81,89 @@ failure isolation justifies it. Tasksmith's pre-design readiness checks have a
 known merged implementation to test; here, pre-design readiness can establish
 input access and inspectability, not yet certify an unchosen task's solution.
 
-## Integration work still needed
+## Prepared integration
 
-- Add GLM Chat Completions support under the artifact-stage runtime boundary,
-  or parameterize that boundary to use an existing compatible tool runtime.
-  Compare those concrete patches before choosing a harness; the current source
-  does not establish which has lower maintenance cost. Retain tool-result
-  linkage, reasoning fields where needed, explicit raw-request limits, durable
-  responses and no model fallback.
-- Reuse the existing Iris-hosted model client / remote task execution separation.
-  The authoring tool workspace is separate from the future offline solver.
-  Profile and probe time is authoring work, not part of the 600-second solver
-  allowance. Specify finite authoring request, wall-clock and tool budgets
-  before executing the proposed stage.
-- Use upstream artifact submission and schema feedback without treating them
-  as scientific approval. Task-specific analysis and corrections still come
-  from GLM; deterministic code supplies facts and enforces generic boundaries.
-- Review the changed canonical design prompt before running it. Replace its
-  no-tools assumption and reduce the demand for speculative implementation
-  detail; do not append a list of methods or mistakes from this seed.
+[Patch 0009](patches/0009-injectable-artifact-runtime.patch) adds an injectable
+runtime to the pinned upstream artifact controller. Its default behavior is
+unchanged, and the supplied runtime identity becomes part of retained-artifact
+matching. The existing Anthropic bridge and OpenAI Responses implementations
+cannot directly call the approved GLM Chat Completions service. This small
+injection avoids modifying either transport or replacing the controller.
 
-These are proposed modifications, not completed compatibility checks or a
-newly authorized full pipeline campaign. GLM-only authoring and the factory-only
-rule remain in force.
+[design_stage.py](design_stage.py) calls that controller with SETA's existing
+`TaskDesign(core_capabilities, draft_spec)` schema and the
+[canonical design prompt](../../src/biotasks/prompts/notebook-task-design.md).
+The controller handles submissions, revisions, input identity, durable drafts
+and completed-artifact reuse. The GLM adapter supplies one bounded Chat
+Completions request per turn, preserves reasoning/tool linkage and dispatches
+only registered controller tools. It does not validate the science.
+
+The adapter disables SDK retries and records each request before dispatch.
+Incomplete or uncertain responses stop the stage; they cannot execute partial
+tool calls or automatically restart the retained operation. Schema-invalid
+submissions may be revised within the same allowance. The final two model calls
+expose only submission/revision tools. Exact requests, responses and the bounded
+tool transcript are retained alongside the upstream operation and budget records.
+The free endpoint settles model cost to zero; the upstream monetary ledger needs
+a one-micro-dollar bookkeeping hold before each request. Unknown outcomes retain
+that hold and their request slot. This does not account for remote workspace cost;
+the owning launcher must do so.
+
+[The profiler](../../src/biotasks/data_profile.py) hashes explicitly staged files
+and verifies supplied source checksums. It inspects bounded CSV/TSV prefixes or
+HDF5 metadata using optional, [pinned readers](profile-reader-requirements.txt).
+It never runs notebook code or chooses an analysis. Recorded dimensions, types
+and tiny stored integer vectors do not establish biological axis semantics.
+Unknown formats, missing readers, sampled row counts and truncated inspections
+remain explicit. It is not a general data downloader or biological interpreter.
+
+The old direct-call campaign entry point now refuses this tool-enabled prompt
+before any model call or sandbox creation. The standalone integration ends with
+`submitted_for_review`; it cannot invoke construction, quality checks or a solver.
+Historical continuation support remains available for the previously built task.
+
+### Before the first live design run
+
+Review the actual canonical prompt first. Then prepare a credential-free remote
+tool workspace using the existing execution boundary: model client on Iris,
+commands through the upstream remote-worker interface. The launcher must enforce
+resource ceilings, immutable original inputs, a writable scratch directory,
+cost/time accounting, evidence download and owned-resource cleanup. These
+provisioning steps are not implemented by `design_notebook`; it accepts an
+already prepared worker. A shell command is not restricted to scratch by changing
+its working directory; filesystem isolation must be established by the launcher.
+
+Stage the newer notebook's real inputs and produce the factual profile remotely.
+The generic profiler accepts a JSON list of file paths and optional source
+checksums, for example via `python -m biotasks.data_profile --root INPUTS
+--manifest FILES.json --output PROFILE.json`. Preserve the command, environment
+and output. Data-source selection here supplies source files, not a manual task
+objective, selected methods or expected answers.
+
+For the first design trial, propose an eight-request ceiling, 16,000 output tokens
+per request, high reasoning, 600 seconds per request and a 1,800-second stage
+deadline. Inspection commands have at most 120 seconds each and 300 cumulative
+command seconds, with a bounded termination grace period. These are upper bounds,
+not guaranteed usable turns. Tool execution, download/setup and cleanup need
+their own launch records within the existing overall authorization. The future
+task envelope remains 4 vCPU, 8 GiB RAM, 10 GiB disk, CPU only and 600 seconds for
+the solver; authoring time is separate. No new run or spending is claimed here.
+
+### Local validation
+
+The real upstream artifact controller accepted a scripted revision after rejecting
+an invalid submission, reused the committed artifact without another call, and
+refused to replay an incomplete operation. A mock HTTP transport exercised the
+installed OpenAI SDK's GLM extension and reasoning fields. This establishes local
+wiring, not live endpoint support. Root tests cover request accounting and factual
+profile behavior; tiny synthetic HDF5 fixtures exercise the native reader without
+downloading biological data. Affected upstream artifact-stage regressions pass.
+
+Run the experiment checks with the pinned upstream environment, BioTasks `src`
+and this experiment on `PYTHONPATH`. Run `test_hdf5_profile.py` with the pinned
+optional readers installed separately. These checks use no model, remote worker
+or biological download. Local checks must follow the repository's shared-node
+resource guard. No generalization or runtime-feasibility claim follows from them.
 
 ## Alternatives and assessment
 

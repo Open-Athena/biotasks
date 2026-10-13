@@ -1037,3 +1037,43 @@ stage, keeping the existing design output and later SETA/quality/release path.
 Measured facts must not prescribe the task. [Reuse assessment and alternatives](design-intake-reuse.md)
 record exact sources, integration gaps and proposed evaluation criteria. This is
 static research, not an implemented architecture or new model/sandbox run.
+
+### 2026-10-13: prepared factual intake and tool-enabled design stage
+
+After the user's agreement, prepared the adapter, intake and actual canonical
+prompt for review. Reuse Tasksmith's artifact controller through patch 0009,
+injecting a GLM Chat Completions runtime while retaining SETA's TaskDesign schema.
+GLM owns task selection, inspection commands and revisions. Deterministic intake
+records source hashes and bounded structural facts, not task-specific methods.
+Unknown formats and unmeasured biological semantics remain unknown. No new
+biological data were downloaded and no live model or remote workspace ran.
+
+The old direct-call campaign refuses the new tool-enabled prompt before model
+or sandbox activity. The standalone integration only saves a design for review.
+It preserves complete requests/responses and incomplete-operation evidence,
+counts uncertain requests, disables transport retries, and reserves the final
+two calls for submission/revision. Tool commands execute through a prepared
+remote worker with cumulative and per-command time bounds. Workspace isolation,
+real-data staging, remote accounting/cleanup and live tool-call compatibility
+remain launch prerequisites; this preparation does not claim to implement them.
+
+Validation used the locked root and pinned upstream environments, serialized
+under the shared-node resource guard. The first integration check exposed the
+upstream monetary ledger's rejection of a zero reservation; the adapter now
+reserves its smallest unit and settles to zero on a completed free-service
+response. Sixteen upstream artifact-stage regressions passed. The five final
+design-stage integration tests passed (1.02 seconds, 86,956 KiB peak RSS),
+including invalid-submit/revision, committed-artifact reuse, SDK mock transport,
+remote-only commands, uncertain-tool accounting and incomplete-response retention.
+Five campaign-wiring checks passed in the affected nine-test run (4.79 seconds,
+140,920 KiB peak). Two native HDF5 checks passed on tiny synthetic fixtures
+(0.27 seconds, 67,400 KiB peak); no full matrix was loaded. Root tests had 25
+passes plus an offline build-backend cache failure; after populating that pinned
+cache, the remaining distribution test passed (2.15 seconds, 32,024 KiB peak).
+Ruff lint/format and ty passed. These are software checks, not scientific evidence
+or live endpoint validation.
+
+The [updated assessment](design-intake-reuse.md) records the concrete reuse,
+prepared boundaries, proposed finite design budget and remaining launch work.
+Stop before execution for prompt review. Construction, solver, release and viewer
+remain untouched; the prior published task and original model outputs are preserved.

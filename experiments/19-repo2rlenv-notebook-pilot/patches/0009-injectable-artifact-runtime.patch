@@ -1,0 +1,32 @@
+--- a/src/repo2rlenv/tasksmith/author/artifact.py
++++ b/src/repo2rlenv/tasksmith/author/artifact.py
+@@ -96,4 +96,6 @@
+     validate: Callable[[Artifact], Awaitable[None]] | None = None,
+     initial_draft_key: str | None = None,
++    agent_runner: Callable[..., Awaitable[dict]] | None = None,
++    agent_runner_identity: str | None = None,
+ ) -> Artifact:
+     """Commit typed output before graph advancement; never reroll unchanged completed stages.
+@@ -104,4 +106,8 @@
+     can commit it after all normal validation. The original seed remains preserved.
+     """
++    if (agent_runner is None) != (agent_runner_identity is None):
++        raise ValueError("Custom author runners require an explicit identity")
++    if agent_runner_identity is not None and not agent_runner_identity.strip():
++        raise ValueError("Custom author runner identity must be nonempty")
+     initial_draft = None
+     if initial_draft_key is not None:
+@@ -172,4 +178,6 @@
+     if initial_draft_key is not None:
+         legacy_inputs["initial_draft_key"] = initial_draft_key
++    if agent_runner_identity is not None:
++        legacy_inputs["agent_runner_identity"] = agent_runner_identity
+     identity = canonical_digest(
+         {
+@@ -309,5 +317,5 @@
+                     raise BudgetExceeded("Author recovery exhausted the original stage allowance")
+                 try:
+-                    await run_agent(
++                    await (agent_runner or run_agent)(
+                         model=model,
+                         system=system,

@@ -44,6 +44,17 @@ def emit(event):
     print("BIOTASKS19_EVENT " + event.model_dump_json(), flush=True)
 
 
+def direct_design_template():
+    template = files("biotasks.prompts").joinpath("notebook-task-design.md").read_text()
+    if "<!-- biotasks-design-runtime: artifact-stage-v1 -->" in template:
+        raise RuntimeError(
+            "The current design prompt requires the standalone tool-enabled design stage. "
+            "Review its output before connecting it to construction; this direct-call "
+            "campaign runner cannot execute that prompt."
+        )
+    return template
+
+
 def run(
     *,
     root: Path,
@@ -55,6 +66,7 @@ def run(
     config: dict,
     continuation: Path | None = None,
 ):
+    design_template = direct_design_template() if continuation is None else None
     imported = {}
     continuation_task = None
     if continuation is not None:
@@ -224,9 +236,7 @@ def run(
                 designer=partial(
                     recipe.design,
                     system_guidance=guidance,
-                    prompt_template=files("biotasks.prompts")
-                    .joinpath("notebook-task-design.md")
-                    .read_text(),
+                    prompt_template=design_template,
                 ),
                 builder_prompt=files("biotasks.prompts")
                 .joinpath("notebook-task-construction.md")

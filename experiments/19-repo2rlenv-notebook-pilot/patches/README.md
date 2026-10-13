@@ -83,3 +83,18 @@ and shared guidance. The pilot supplies packaged `notebook-task-design.md` and
 `notebook-task-construction.md` as its canonical authoring sources. The explorer
 reads those same files. They are modified Apache-2.0 upstream prompts with source
 attribution, pending user review; no new run is implied by their display.
+
+`0009-injectable-artifact-runtime.patch` adds an optional runtime callable and
+explicit identity to Tasksmith's existing schema-parametric artifact stage.
+Both must be supplied together; default callers retain the original behavior.
+The identity enters artifact reuse checks. The notebook design integration
+supplies a bounded GLM Chat Completions adapter, while upstream still owns
+submission, revision, draft retention and stage completion. Apply after 0008;
+the target source and patch digest are recorded in `upstream-pin.json`.
+
+The prepared integration passes mocked controller/SDK checks and affected
+upstream artifact-stage regressions. It has not run against the live GLM endpoint
+or a real authoring workspace. The updated canonical design prompt requires
+this standalone stage; the legacy direct-call campaign now refuses it. See
+[the integration assessment](../design-intake-reuse.md) for the remaining launch
+requirements and validation limits.

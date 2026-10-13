@@ -10,7 +10,24 @@ import pytest
 import run_pilot
 
 
+def test_tool_prompt_stops_legacy_campaign_before_any_model_or_sandbox(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_pilot, "complete", lambda *a, **k: pytest.fail("No model calls"))
+    monkeypatch.setattr(run_pilot, "Daytona", lambda: pytest.fail("No sandbox creation"))
+    with pytest.raises(RuntimeError, match="standalone tool-enabled design stage"):
+        run_pilot.run(
+            root=tmp_path / "run",
+            endpoint="unused",
+            worker_id="unused",
+            deadline=time.time() + 60,
+            wheel=tmp_path / "unused.whl",
+            notebook_seed=tmp_path / "unused.json",
+            config={},
+        )
+    assert not (tmp_path / "run").exists()
+
+
 def test_lost_newlines_stop_before_sandbox_creation(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_pilot, "direct_design_template", lambda: "Legacy direct-call fixture")
     monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
     responses = iter(['{"compatible":true}', '{"payload":"first linensecond line"}'])
     monkeypatch.setattr(
@@ -36,6 +53,7 @@ def test_lost_newlines_stop_before_sandbox_creation(tmp_path, monkeypatch):
 
 
 def test_failed_generation_is_preserved_without_quality_or_release(tmp_path, monkeypatch):
+    monkeypatch.setattr(run_pilot, "direct_design_template", lambda: "Legacy direct-call fixture")
     monkeypatch.setenv("GLM_BULK_TOKEN", "test-credential")
     monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
     monkeypatch.setattr(
