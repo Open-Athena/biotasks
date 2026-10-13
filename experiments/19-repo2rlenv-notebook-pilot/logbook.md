@@ -734,3 +734,9 @@ limits and <150 MiB peak working sets (41,684/40,420 KiB measured peaks).
 All four wiring tests passed with loopback access (121,576 KiB peak RSS,
 4.93 seconds, exit 0); no real model or sandbox calls. GitHub approval text and
 agent-generated label were fetched and verified.
+
+Campaign 012 submitted exactly once from `11cb1f0`. The launcher verified all
+previous owned jobs terminal and discovered the approved model relay at launch.
+Launcher exit 0, 23.74 seconds, peak RSS 345,720 KiB; shared lock and thread/
+priority limits applied. Local Ruff/format/ty hooks passed before checkpoint.
+No further campaign is authorized. Submission is not validation or publication.
