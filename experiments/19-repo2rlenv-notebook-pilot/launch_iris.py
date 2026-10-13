@@ -23,7 +23,7 @@ def payload(
     campaign_number: int,
     continuation: Path | None = None,
 ) -> dict[str, bytes]:
-    if type(campaign_number) is not int or not 2 <= campaign_number <= 17:
+    if type(campaign_number) is not int or not 2 <= campaign_number <= 18:
         raise ValueError("No approved campaign identifier available")
     if campaign_number >= 12 and continuation is None:
         raise ValueError("Additional repair campaign requires prior evidence")
@@ -38,6 +38,8 @@ def payload(
         config_name = "feedback-recovery-config-v2.json"
     if campaign_number == 17:
         config_name = "schema-config.json"
+    if campaign_number == 18:
+        config_name = "schema-recovery-config.json"
     config = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + config_name))
     config["campaign"] = f"notebook-pilot-{campaign_number:03d}"
     if config["campaign_seconds"] != 7200 or config["cleanup_seconds"] != 300:

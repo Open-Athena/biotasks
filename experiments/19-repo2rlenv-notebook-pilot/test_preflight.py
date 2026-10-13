@@ -54,3 +54,14 @@ def test_uncertain_creation_not_found_is_not_cleanup_proof(tmp_path, monkeypatch
     result = json.loads((tmp_path / "infrastructure-preflight.json").read_text())
     assert not result["passed"] and not result["cleanup_verified"]
     assert result["error_type"] == "TimeoutError"
+
+
+def test_probe_timeout_fails_closed_and_cleans_up(tmp_path, monkeypatch):
+    client = client_fixture(monkeypatch)
+    client.create.return_value.process.exec.side_effect = TimeoutError("probe incomplete")
+    with pytest.raises(TimeoutError, match="probe incomplete"):
+        preflight.run(client, root=tmp_path, campaign="test", deadline=time.time() + 700)
+    result = json.loads((tmp_path / "infrastructure-preflight.json").read_text())
+    assert not result["passed"] and result["cleanup_verified"]
+    assert client.create.return_value.process.exec.call_count == 1
+    client.delete.assert_called_once()

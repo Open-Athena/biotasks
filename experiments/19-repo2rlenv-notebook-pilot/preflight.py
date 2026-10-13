@@ -85,7 +85,9 @@ def run(client, *, root: Path, campaign: str, deadline: float) -> dict:
                 "Provider resource/network configuration differs from approved profile"
             )
         command = "python -c " + shlex.quote("TARGETS = " + repr(TARGETS) + "\n" + PROBE)
-        probe = sandbox.process.exec(command, timeout=15)
+        # Allow daemon startup and DNS resolution in addition to socket timeouts.
+        # A timeout still fails closed; no retry can conceal an incomplete probe.
+        probe = sandbox.process.exec(command, timeout=60)
         if probe.exit_code != 0:
             raise RuntimeError("Network probe did not execute successfully")
         outcomes = json.loads(probe.result)

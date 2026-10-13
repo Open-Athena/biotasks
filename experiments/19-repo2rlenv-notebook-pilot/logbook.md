@@ -869,3 +869,9 @@ Campaign 017 reserves $5 (aggregate conservative reservations $66 of $100),
 with 48 new calls (quality 24 including the extra audit stage, solver 24), one
 repair, five native trials, one five-minute solve and two hours plus cleanup.
 Two focused schema/feedback tests passed, 49,892 KiB peak, 0.51 seconds, exit 0.
+
+### 2026-10-13: preflight timeout and bounded recovery
+
+Campaign 017 failed in the Daytona network probe before any model call or native task trial. Original evidence confirms deletion of its sandbox. Its ledger holds $0.088 conservatively. The 15-second command deadline included daemon startup, DNS resolution and two three-second socket probes. Increase only the command deadline to 60 seconds; timeouts still fail closed with no automatic retry. Four focused preflight tests passed (0.40 seconds, peak 52,520 KiB), including timeout cleanup. An initial test invocation lacked the experiment import path and failed collection; corrected PYTHONPATH passed.
+
+Recovery 018 retains the original absolute deadline, carries the $0.088 hold, and shares the existing $5 reservation. No extra calls, repairs, solves or aggregate spending allowance: still $66 conservatively reserved of $100.
