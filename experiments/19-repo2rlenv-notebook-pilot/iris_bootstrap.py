@@ -101,7 +101,8 @@ def main():
 
     inputs = Path.cwd()
     manifest = json.loads((inputs / "inputs.json").read_text())
-    deadline = time.time() + 7200
+    configuration = json.loads((inputs / "campaign-config.json").read_text())
+    deadline = min(time.time() + 7200, configuration.get("absolute_deadline", float("inf")))
     evidence = Path("/evidence")
     evidence.mkdir(exist_ok=True)
     status = {"started": time.time(), "completed": False}

@@ -760,3 +760,27 @@ All ten cleanup tests passed, including conflict with both absent and live
 resources (112,244 KiB peak RSS, 2.14 seconds, exit 0). All six hash-pinned
 patches apply in sequence to the original source; patched cleanup matches the
 tested implementation. No generated task changed during this diagnosis.
+
+### 2026-10-13 — Recovery and aggregate budget approved
+
+The user approved one recovery worker within the remaining campaign limits,
+then set an aggregate $100 budget for issue completion and authorized routine
+recovery/retries without repeated approval. Preserve per-run request/time, CPU,
+GLM-only and factory-only constraints. Historical campaign ceilings conservatively
+bound original plus replacements plus campaign 012 at $56 before credits; this
+is an upper bound, not an invoice. Recovery is charged within campaign 012's
+existing $5 ceiling, carrying all prior reservations. Future runs must keep the
+aggregate ceiling and record distinct reservations before launch.
+
+Recovery inputs preserve the original generated task and raw native results.
+Upstream imports the completed wrong probe with checksum and installed-marker
+checks, using separate cleanup reconciliation; no failed receipt is rewritten.
+Baseline/oracle are imported, rollout is absent and must run fresh. The recovery
+configuration leaves 33 calls, two native trials and zero repairs, and retains
+the original campaign absolute deadline. Original results stay archived.
+
+Nineteen focused continuation/wiring/cleanup checks passed (121,696 KiB peak,
+4.72 seconds); the added raw-probe regression also passed in the six-case
+continuation suite (54,000 KiB peak). Actual saved-evidence import verified the
+wrong probe without execution and rejected changed task content. Imports used
+42 checksum/mode-bound files, with no generated task edits.

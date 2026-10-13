@@ -142,6 +142,10 @@ def run(
         daytona_usage = BudgetLedger(
             root / "daytona-budget.sqlite3", limit_usd=config["daytona_budget_usd"]
         )
+        if config.get("prior_daytona_reserved_usd"):
+            daytona_usage.reserve(
+                "prior-execution", config["prior_daytona_reserved_usd"], "Prior campaign holds"
+            )
         daytona_usage.reserve("storage", "0.058", "Campaign image/storage allowance")
         daytona_usage.reserve("preflight", "0.030", "Single infrastructure preflight")
         preflight = run_preflight(
@@ -165,6 +169,11 @@ def run(
                 gate.endpoint("solver-2"),
             ),
             usage_ledger=daytona_usage,
+            probe_results={
+                key: continuation / name for key, name in plan.get("probe_results", {}).items()
+            }
+            if continuation is not None
+            else None,
         )
         seed = json.loads(notebook_seed.read_text())[0]
         guidance = files("biotasks.prompts").joinpath("notebook-grounding.md").read_text()

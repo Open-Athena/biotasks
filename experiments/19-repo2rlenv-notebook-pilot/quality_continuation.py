@@ -28,8 +28,12 @@ def load(directory: Path) -> tuple[Path, dict[str, Path], dict]:
     if not identity["integrity_passed"] or identity["bundle_hash"] != plan["bundle_hash"]:
         raise ValueError("Continuation task identity changed")
     evidence = {
-        role: directory / plan["evidence"][role] for role in ("baseline", "oracle", "rollout")
+        role: directory / plan["evidence"][role]
+        for role in ("baseline", "oracle", "rollout")
+        if role in plan["evidence"]
     }
+    if not {"baseline", "oracle"} <= evidence.keys():
+        raise ValueError("Continuation requires baseline and oracle evidence")
     for role, path in evidence.items():
         if path.relative_to(directory).as_posix() not in plan["files"]:
             raise ValueError("Unbound native evidence")
@@ -45,8 +49,17 @@ def load(directory: Path) -> tuple[Path, dict[str, Path], dict]:
         raise ValueError("Known probes belong to a different task")
     evidence["probes"] = probes
     cleanup = json.loads((directory / plan["cleanup_reconciliation"]).read_text())
-    if not cleanup["complete"] or cleanup["sandboxes"] or cleanup["exact_id_state"] != "absent":
+    reconciled = cleanup.get("exact_id_state") == "absent" or (
+        cleanup.get("exact_id_state") == "not_recorded"
+        and cleanup.get("ownership_label")
+        and cleanup.get("native_returncode") == 0
+        and cleanup.get("original_cleanup_error") == "DaytonaConflictError"
+    )
+    if not cleanup["complete"] or cleanup["sandboxes"] or not reconciled:
         raise ValueError("Original execution cleanup remains unresolved")
+    for key, name in plan.get("probe_results", {}).items():
+        if not re.fullmatch(r"r0-probe[0-9]+", key) or name not in plan["files"]:
+            raise ValueError("Unbound imported probe result")
     return task, evidence, plan
 
 

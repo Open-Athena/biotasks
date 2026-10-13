@@ -82,6 +82,7 @@ class IrisDaytonaExecution:
         max_solver_attempts: int,
         solver_endpoints: tuple[str, str] | None = None,
         usage_ledger=None,
+        probe_results: dict[str, Path] | None = None,
     ):
         self.worker = AttachedHost(worker_id)
         if deadline.tzinfo is None or deadline <= datetime.now(UTC):
@@ -94,6 +95,7 @@ class IrisDaytonaExecution:
         self.max_solver_attempts = max_solver_attempts
         self.solver_endpoints = solver_endpoints
         self.usage_ledger = usage_ledger
+        self.probe_results = probe_results or {}
 
     def identity(self):
         return dict(
@@ -201,6 +203,16 @@ class IrisDaytonaExecution:
                 return adapter.identity()
 
             def run(self, task, role, key):
+                if role == "probe" and key in adapter.probe_results:
+                    from repo2rlenv.quality.loop.artifacts import import_trial
+
+                    result = import_trial(adapter.probe_results[key], task, "oracle")
+                    log = Path(result.result).parent / "agent/oracle.txt"
+                    if result.exception_type or result.reward is None or not log.is_file():
+                        raise ValueError("Imported probe is incomplete")
+                    if "__QUALITY_PROBE_COMPLETED__" not in log.read_text():
+                        raise ValueError("Imported probe was not installed")
+                    return result.model_copy(update={"role": "probe", "probe_installed": True})
                 output = directory / "trials" / key
                 if (output / "trial.json").exists():
                     return RemoteTrials._read(output, task, role)

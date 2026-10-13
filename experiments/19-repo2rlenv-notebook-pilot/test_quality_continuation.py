@@ -153,3 +153,34 @@ def test_additional_allowance_requires_exact_historical_usage():
     plan["prior_requests"]["solver-2"] = 0
     with pytest.raises(ValueError, match="Prior usage differs"):
         remaining_config(config, plan)
+
+
+def test_raw_probe_recovery_checks_task_identity_and_installed_marker(tmp_path, monkeypatch):
+    from datetime import UTC, datetime, timedelta
+
+    from iris_execution import IrisDaytonaExecution
+
+    task, _ = continuation(tmp_path)
+    native = tmp_path / "oracle.json"
+    log = tmp_path / "agent/oracle.txt"
+    log.parent.mkdir()
+    log.write_text("__QUALITY_PROBE_COMPLETED__\n")
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "fixture")
+    adapter = IrisDaytonaExecution(
+        worker_id="fixture",
+        deadline=datetime.now(UTC) + timedelta(hours=1),
+        records=tmp_path / "claims",
+        max_trials=2,
+        max_solver_attempts=1,
+        probe_results={"r0-probe0": native},
+    )
+    trials = adapter.quality_trials(directory=tmp_path, budget=None, options=None)
+    assert trials.run(task, "probe", "r0-probe0").probe_installed
+    log.write_text("not installed")
+    with pytest.raises(ValueError, match="not installed"):
+        trials.run(task, "probe", "r0-probe0")
+    log.write_text("__QUALITY_PROBE_COMPLETED__\n")
+    (task / "instruction.md").write_text("Changed")
+    with pytest.raises(ValueError):
+        trials.run(task, "probe", "r0-probe0")
+    assert not (tmp_path / "claims").exists()
