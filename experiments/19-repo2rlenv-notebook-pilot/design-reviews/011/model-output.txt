@@ -1,0 +1,123 @@
+{
+  "decision": "revise",
+  "requirement_audit": [
+    {
+      "requirement": "R1 — Ingestion and concatenation of two 10X h5 files with sample labels and unique gene/cell names",
+      "source_support": "Seed cells 4–5 (pooch fetch, sc.read_10x_h5, var_names_make_unique per sample, ad.concat(label='sample'), obs_names_make_unique). The notebook's markdown (cells 3, 6) states the data come from the 10X Multiome kit and that read_10x_h5 yields 36,601 genes.",
+      "stage_and_artifact": "A1 obs['sample'] and obs cell set; var gene set downstream in R3.",
+      "verification_derivation": "Independent recompute of (sample, barcode) sets from raw h5 via h5py; exact set equality. Sound in principle, but two gaps: the brief never specifies selection of Gene Expression features only (the notebook silently relied on sc.read_10x_h5's default gex_only behavior on a Multiome file), and the cell-identity equivalence rule ('prefixed/annotated in any style as long as recoverable') gives the grader no deterministic parsing rule.",
+      "status": "defective"
+    },
+    {
+      "requirement": "R2 — QC gene masks (mt/ribo/hb) and QC metrics computed on the pre-filter concatenated matrix",
+      "source_support": "Seed cells 9–10 (startswith MT-, startswith RPS/RPL, contains ^HB[^(P)], calculate_qc_metrics(..., log1p=True)); compute-before-filter order matches the notebook.",
+      "stage_and_artifact": "A1 var masks and obs/var QC columns.",
+      "verification_derivation": "Mask recompute from var_names; per-cell metric recompute from raw counts on a cell subset. Correctly respects the pre-filter state (recomputing on the filtered matrix fails). 'Random cell subset' should be fixed/seeded for deterministic, order-independent grading.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R3 — Order-sensitive filtering: min_genes=100 on cells, then min_cells=3 on genes of the cell-filtered matrix",
+      "source_support": "Seed cells 15–16 exactly; order is flagged as consequential by both source and design; the design correctly notes the gene decision uses counts recomputed after cell filtering while stored per-gene QC columns describe the pre-filter matrix, mirroring scanpy behavior.",
+      "stage_and_artifact": "A1 post-filter cell/gene sets.",
+      "verification_derivation": "Independent reference recomputation from raw counts, exact set equality; wrong order or wrong thresholds rejected. Sound.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R4 — Raw counts layer, median count-depth normalize_total, log1p",
+      "source_support": "Seed cells 22–23; counts-layer-before-normalization and default (median) target_sum match the source.",
+      "stage_and_artifact": "A1 layers['counts'] (bit-exact raw counts) and X (log-normalized).",
+      "verification_derivation": "Formula recompute log1p(counts*median/total) from validated raw counts plus full-matrix median check; counts checked exactly. Correctly stage-correct.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R5 — Batch-aware HVG selection: 2000 genes, Seurat flavor, batch_key='sample'",
+      "source_support": "Seed cell 25 gives n_top_genes=2000, batch_key='sample'; flavor is a library default in the source. The design honestly labels flavor as a design choice with a defaults gate.",
+      "stage_and_artifact": "A1 var['highly_variable'] plus 'dispersion/rank columns' (names unspecified).",
+      "verification_derivation": "Private reference HVG set, exact gene-set equality, with meaningful wrong-output controls. Sound, but the brief states the cross-batch reconciliation ('median normalized-dispersion rank') as an asserted fact with no source support and no gate verifying it against the pinned scanpy implementation; the auxiliary var column schema is vague. If the stated reconciliation differs from the pinned implementation, the public contract contradicts the reference.",
+      "status": "uncertain"
+    },
+    {
+      "requirement": "R6 — PCA: 50 comps, zero-centered, HVG-restricted, no scaling, random_state=0",
+      "source_support": "Seed cell 28 (sc.tl.pca default run after HVG, so implicitly on HVGs); design pins defaults explicitly and flags them as design choices, matching the source run; use of 50 components also matches the neighbors usage in cell 29/34.",
+      "stage_and_artifact": "A1 obsm['X_pca'], uns['pca'] variance/variance_ratio.",
+      "verification_derivation": "Reference PCA from independently validated log-normalized HVG matrix (not from A1); per-component sign-free equivalence is mathematically justified. Sound.",
+      "status": "supported"
+    },
+    {
+      "requirement": "R7 — kNN graph (15 neighbors, 50 PCs, Euclidean, random_state=0) and Leiden (igraph, res 0.50, n_iterations=2, seeded)",
+      "source_support": "Seed cells 34 and 52; n_iterations=2 is an adaptation from cell 41, honestly documented with a deviation gate. Neighbor parameters are pinned library defaults, flagged as design choices.",
+      "stage_and_artifact": "A1 obs['leiden_res_0.50'] partition and uns['neighbors'], but the graph itself (obsp connectivities/distances) is not a required artifact even though uns['neighbors'] metadata is.",
+      "verification_derivation": "Private reference partition compared up to bijective relabeling — a strong check for the clustering result. However, the kNN graph, defined as part of R7's requirement and mirrored by the uns['neighbors'] artifact, is never an artifact and never verified; wrong graphs are rejected only insofar as they change the partition.",
+      "status": "defective"
+    },
+    {
+      "requirement": "R8 — Per-cluster one-vs-rest Wilcoxon (tie_correct=False, BH) with expm1-based log2FC, all (cluster, gene) pairs",
+      "source_support": "Seed cell 67 (rank_genes_groups, method='wilcoxon', on log-normalized X — the source never sets .raw, so X is used); logFC formula matches scanpy's implementation and the design correctly exposes it as a pinned formula rather than source narration.",
+      "stage_and_artifact": "A2 TSV, full (cluster, gene) table.",
+      "verification_derivation": "Private reference table plus scipy cross-check and BH re-derivation from A2's own pvals. Coverage is substantive, but the brief asserts the z-score is 'equivalent to scipy.stats.mannwhitneyu z-scores without continuity correction' — an unsupported memory-based claim that is false under ties (the experiment is dominated by ties via zero counts), and the stated cross-implementation calibration could then spuriously fail or mask errors. The z-score definition should reference the pinned, versioned scanpy formula (or a fully spelled-out tie-uncorrected normal approximation) rather than the scipy equivalence.",
+      "status": "defective"
+    },
+    {
+      "requirement": "Artifact contract completeness and equivalence rules (A1/A2, PCA signs, label bijection, tolerance gates)",
+      "source_support": "Design-defined, consistent with the source pipeline and the prompt's requirement that unresolved numeric tolerances be declared as construction gates rather than invented.",
+      "stage_and_artifact": "A1 and A2.",
+      "verification_derivation": "Cell identity rule is not operational (see F2); HVG auxiliary columns unspecified; cluster bijection between A2 groups and reference clusters is derivable from A1's partition and is stated, which is adequate. Tolerance gate policy is legitimate.",
+      "status": "defective"
+    }
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "location": "Agent-Visible Task Brief, R1 ('Read each .h5 as a 10X matrix (genes as features...)')",
+      "problem": "The brief never specifies restricting features to the Gene Expression modality. The notebook's own text says the samples were measured with the 10X Multiome (GEX + ATAC) kit, and Multiome filtered_feature_bc_matrix.h5 files typically contain Peaks features; the source silently relied on sc.read_10x_h5's default of keeping only Gene Expression features to obtain 36,601 genes. A solver using a generic h5 reader or a different library's default could include ATAC peaks, producing a different var frame and failing downstream checks with no guidance in the public contract.",
+      "evidence": "Seed markdown cell 3 ('10X Multiome Gene Expression and Chromatin Accessability kit'); cell 6 ('36,601 measured genes'); design R1 only says 'genes as features'.",
+      "required_change": "Add an explicit requirement: load only features whose feature type (or equivalent 10X metadata) indicates Gene Expression, discarding other modalities, and state the expected ~36,601-feature magnitude as a sanity anchor to be confirmed at construction. Add a construction gate enumerating feature types present in each h5 to confirm this choice."
+    },
+    {
+      "id": "F2",
+      "location": "Artifact A1 cell identity equivalence rule ('obs_names may be prefixed/annotated in any style as long as (sample, original barcode) is uniquely recoverable')",
+      "problem": "'Uniquely recoverable in any style' gives the grader no deterministic rule to extract the original barcode from submitted obs_names, so the R1 exact-set check is not operational as written; a submission with arbitrary opaque cell names would satisfy the rule's letter while being unparseable.",
+      "evidence": "A1 identity rule text; R1 test requires exact set equality of (sample, barcode).",
+      "required_change": "Make the identity rule deterministic: either require obs_names of the form <sample><single-declared-separator><original barcode> (separator declared by the solver is not acceptable for grading; pick one, e.g. '_'), or require an additional obs column containing the original barcode verbatim, graded by that column together with obs['sample']."
+    },
+    {
+      "id": "F3",
+      "location": "R5 batch-aware HVG semantics and var column schema",
+      "problem": "The brief asserts the cross-batch reconciliation is 'median normalized-dispersion rank across batches (scanpy n_top_genes + batch_key semantics)' as a fact, but this internal behavior is not narrated in the source and is stated from memory; if the pinned scanpy version reconciles differently, the public contract contradicts the private reference. The 'dispersion/rank columns' artifact requirement is also unnamed and unverified.",
+      "evidence": "Seed cell 25 gives only n_top_genes=2000, batch_key='sample'; gate 2 checks the default flavor but not the batch reconciliation or the exact output column set.",
+      "required_change": "Move the reconciliation rule from assertion to gate: require construction to verify it against the pinned scanpy implementation and publish the verified rule (or the exact scanned column set) in the brief; either name the exact required var columns (e.g. means, dispersions, dispersions_norm as produced by the pinned version) or drop the ambiguous auxiliary-column requirement and grade only var['highly_variable']."
+    },
+    {
+      "id": "F4",
+      "location": "R8 z-score definition and Testing row R8 cross-implementation check",
+      "problem": "The claim that scanpy's Wilcoxon score is 'equivalent to scipy.stats.mannwhitneyu z-scores without continuity correction' is unsupported by the source and is wrong under ties: scanpy with tie_correct=False uses the uncorrected variance, while scipy's asymptotic Mann-Whitneyu applies tie correction, and single-cell counts are heavily tied (pervasive zeros). The calibration check and the contract could therefore diverge on a correct solution.",
+      "evidence": "Design R8 sentence; testing row R8 cross-check 'vs scipy.stats.mannwhitneyu z-scores'; no source passage defines this equivalence.",
+      "required_change": "Define the score operationally (normal-approximation z from mean ranks with variance n1*n2*(n+1)/12, i.e. the pinned scanpy tie_correct=False behavior), remove or clearly qualify the scipy equivalence claim, and make the cross-implementation calibration compare against an implementation that matches the stated tie handling (or document any divergence as a tolerance to be calibrated, not an identity)."
+    },
+    {
+      "id": "F5",
+      "location": "R7 / artifact A1 — graph outputs",
+      "problem": "R7 requires building the kNN graph and A1 requires uns['neighbors'] metadata, but obsp['connectivities'] and obsp['distances'] are not required artifacts and the graph is never verified, creating an inconsistent artifact contract: the graph construction of R7 is checked only indirectly through the Leiden partition.",
+      "evidence": "A1 lists obsm['X_pca'], uns['pca'], uns['hvg'], uns['neighbors'] but no obsp; testing row R7 verifies only the partition.",
+      "required_change": "Require obsp['connectivities'] and obsp['distances'] in A1 (consistent with requiring uns['neighbors']), and either compare them to the pinned reference under a calibrated tolerance gate (noting cross-implementation neighbor-search variability must be measured before publishing), or explicitly scope R7's verification to the partition with the graph stored as a required artifact. Do not leave the graph required-but-unrecorded."
+    },
+    {
+      "id": "F6",
+      "location": "Builder-Only Notes, gate 2 ('specifically resolve the F4 question')",
+      "problem": "The text references a finding number 'F4' from a review that is not part of this submission, leaving a dangling, confusing instruction.",
+      "evidence": "Gate 2 text; no prior review was supplied in the inputs.",
+      "required_change": "Replace the reference with plain language: verify the pinned scanpy igraph-flavor Leiden default n_iterations and record whether 2 deviates from it."
+    }
+  ],
+  "construction_gates": [
+    "Input integrity: download both h5 files, verify provider md5s; failure = broken seed. Enumerate feature types/genomes present in each h5 to confirm the F1 Gene-Expression-only specification and the ~36,601 feature magnitude.",
+    "Pinning and defaults: stage the offline pinned environment and record the in-force defaults actually used (leiden igraph n_iterations, pca n_comps/zero_center/svd_solver/random_state, neighbors n_neighbors/n_pcs/method/random_state, rank_genes_groups tie_correct/corr_method, hvg flavor); verify the batch-key HVG reconciliation rule of R5 (median-rank or otherwise) against the pinned implementation before publishing it in the brief.",
+    "Resources: measure reference wall time and peak memory on the 4 vCPU / 8 GiB / 10 GiB container against the 600 s solver budget; report failures rather than reducing data or steps.",
+    "Tolerance calibration: publish absolute/relative tolerances for X, X_pca, variance ratios, dispersions, and all A2 numeric columns, calibrated against an independent implementation that matches the pinned tie handling of R8 (resolve the scipy mannwhitneyu tie-correction divergence explicitly rather than assuming equivalence).",
+    "Determinism: verify repeated-run reproducibility of PCA, neighbors (random_state=0), and igraph Leiden (random_state=0); if the exact partition is not reproducible, report back for a revised equivalence rule.",
+    "Ranking tie stability: measure the minimum score gap at rank 20 per cluster and publish a tie-aware top-20 rule if near-ties exist.",
+    "Graph tolerance (if F5 resolved via comparison): measure cross-implementation variability of connectivities/distances and publish a tolerance, or document the partition-scoped verification decision.",
+    "Controls: run reference-solution, empty-output, and meaningful-wrong-output controls — GEX+ATAC mixed ingestion, hb via startswith('HB'), QC recomputed post-filter, reversed filter order/changed thresholds, CP10k normalization, cell_ranger or pre-normalization HVG, PCA on all genes / non-zero-centered / z-scored, resolutions 0.02/2.0, raw-counts or t-test DE, missing BH, logFC from log-means — and confirm each is rejected by the corresponding independent check.",
+    "Publish any parameter settled by these gates (defaults, tolerances, tie rules, reconciliation rule) in the public brief before release; no silent contract changes."
+  ]
+}
