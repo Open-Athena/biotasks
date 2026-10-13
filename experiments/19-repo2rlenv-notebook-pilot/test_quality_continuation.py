@@ -139,3 +139,17 @@ def test_cached_probe_is_reused_only_with_original_task_binding(tmp_path):
     (task / "instruction.md").write_text("Changed task")
     with pytest.raises(ValueError):
         RemoteTrials._read(target / "trials/r0-probe0", task, "probe")
+
+
+def test_additional_allowance_requires_exact_historical_usage():
+    config = json.loads(Path(__file__).with_name("follow-up-config.json").read_text())
+    plan = json.loads(json.dumps(config["required_prior_usage"]))
+    remaining = remaining_config(config, plan)
+    assert sum(v["requests"] for v in remaining["request_allowances"].values()) == 40
+    assert remaining["request_allowances"]["quality"]["requests"] == 16
+    assert remaining["request_allowances"]["solver-2"]["requests"] == 24
+    assert remaining["max_trials"] == 5
+    assert remaining["max_solver_attempts"] == remaining["max_quality_repairs"] == 1
+    plan["prior_requests"]["solver-2"] = 0
+    with pytest.raises(ValueError, match="Prior usage differs"):
+        remaining_config(config, plan)

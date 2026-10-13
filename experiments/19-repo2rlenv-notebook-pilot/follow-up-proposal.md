@@ -32,3 +32,8 @@ candidate's controls without repeating generation or resetting historical usage.
 Preserve separate historical and additional-budget ledgers. No manual task,
 solution or grader repairs. Publish through the already approved release path
 only if every existing release gate passes, followed by a fresh download check.
+
+Approved by the user on 2026-10-13. Campaign 012 receives the stated additional
+allowance. The frozen cumulative configuration carries 32 historical requests,
+16 trials, two solves and one repair: subtracting those leaves exactly 40 new
+requests (quality 16, solver 24), five trials, one solve and one repair.

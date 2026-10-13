@@ -52,6 +52,9 @@ def load(directory: Path) -> tuple[Path, dict[str, Path], dict]:
 
 def remaining_config(config: dict, plan: dict) -> dict:
     """Carry prior consumption forward; a replacement never resets attempt budgets."""
+    for name, expected in config.get("required_prior_usage", {}).items():
+        if plan.get(name) != expected:
+            raise ValueError("Prior usage differs from the approved additional allowance")
     updated = json.loads(json.dumps(config))
     for scope, consumed in plan["prior_requests"].items():
         if consumed < 0:

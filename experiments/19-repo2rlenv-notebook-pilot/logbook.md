@@ -715,3 +715,22 @@ limitation. No task was manually repaired and nothing was uploaded to the Hub.
 All ten replacement slots are exhausted. No further remote/model execution is
 authorized; issue 19 remains incomplete pending a decision on additional work.
 See campaign-011-result.json for the final bundle identity and accounting.
+
+### 2026-10-13 — Additional campaign authorized
+
+The user approved the proposed single additional repair campaign. Campaign 012
+has 40 new requests, five native trials plus one infrastructure preflight, one
+five-minute/12-turn solve, one quality repair, two hours plus cleanup and a $5
+Daytona ceiling. No further replacement is authorized. Cumulative ceilings minus
+verified historical usage enforce those additional bounds; mismatched history
+is rejected. The original task archive and five native results were imported
+without task edits; both cached semantic controls pass upstream identity checks.
+
+Five continuation tests passed. Four wiring tests initially hit sandbox loopback
+socket restrictions; rerun with local socket access is recorded separately.
+Preparation and cache verification used the shared lock, one-thread/priority
+limits and <150 MiB peak working sets (41,684/40,420 KiB measured peaks).
+
+All four wiring tests passed with loopback access (121,576 KiB peak RSS,
+4.93 seconds, exit 0); no real model or sandbox calls. GitHub approval text and
+agent-generated label were fetched and verified.
