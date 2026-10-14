@@ -84,8 +84,8 @@ STAGES = [
             BASELINE,
             row("Conversion record", "Source/script identities and conversion metadata."),
             row(
-                "Staged original inputs",
-                "Recorded identities and locations of the downloaded original input files.",
+                "Staged original inputs, if supplied",
+                "Receipts only, not file contents. Omitted from the isolated preparation run: no data is staged in this step.",
             ),
             row(
                 "Execution limits",
@@ -114,7 +114,7 @@ STAGES = [
             "unresolved_assumptions",
         ],
         note="This worker already proposes which scientific results to export. It is not only installing packages. The export plan is checked again against actual files later.",
-        files=["run_reference.py", "reference_protocol.py"],
+        files=["run_preparation.py", "reference_protocol.py"],
     ),
     dict(
         id="reference-review",
@@ -368,6 +368,24 @@ original = (ROOT / EXP / "reference-inputs/scanpy/clustering.ipynb").read_bytes(
 receipt = json.loads(DOCUMENTS["conversion"]["text"])
 if hashlib.sha256(original).hexdigest() != receipt["source_sha256"]:
     raise ValueError("Displayed notebook does not match the conversion input")
+preparation = "preparation-runs/001/"
+prepared = (ROOT / EXP / preparation / "plan.json").exists()
+if prepared:
+    context = json.loads((ROOT / EXP / preparation / "prepare/input.json").read_text())
+    if context["baseline_script"] != DOCUMENTS["baseline"]["text"]:
+        raise ValueError("Preparation evidence belongs to a different converted script")
+    prompt = ROOT / "src/biotasks/prompts/notebook-reference-prepare.md"
+    if (ROOT / EXP / preparation / "prepare/system-prompt.md").read_text() != prompt.read_text():
+        raise ValueError("Preparation evidence belongs to a different prompt")
+    for key, label, path in [
+        ("prepare-input", "Exact model input · JSON", "prepare/input.json"),
+        ("prepare-plan", "GLM output · reference plan", "plan.json"),
+        ("prepare-setup", "Generated setup script · not executed", "setup.sh"),
+        ("prepare-script", "Proposed reference script · not executed", "reference.py"),
+        ("prepare-diff", "Proposed source changes", "source.diff"),
+    ]:
+        if (ROOT / EXP / preparation / path).exists():
+            document(key, label, preparation + path)
 for stage in STAGES:
     if stage["id"] == "convert":
         stage["record"] = dict(
@@ -378,10 +396,10 @@ for stage in STAGES:
         )
     elif stage["id"] == "prepare":
         stage["record"] = dict(
-            inputs=["baseline", "provenance", "conversion"],
-            outputs=[],
-            label="Ready for reference preparation",
-            explanation="These are the current converted script and source metadata. Staged-data receipts and execution settings are added at launch. No preparation output exists for this updated version yet.",
+            inputs=["prepare-input"] if prepared else ["baseline", "provenance", "conversion"],
+            outputs=[key for key in ("prepare-plan", "prepare-setup", "prepare-script", "prepare-diff") if key in DOCUMENTS],
+            label="Preparation output for inspection" if prepared else "Ready for reference preparation",
+            explanation="GLM's proposed plan and generated source files. Structural checks passed; dependencies, data access, scientific fidelity and execution remain unverified. No setup, analysis or separate model review was run." if prepared else "Current converted script and metadata. No preparation output exists yet.",
         )
     else:
         stage["record"] = dict(
@@ -486,6 +504,12 @@ for stage in STAGES:
         stage["prompt_html"] = colored(stage["prompt_text"], "markdown")
 
 template = (HERE / "template.html").read_text()
+if prepared:
+    template = template.replace("Current version · conversion complete", "Current version · preparation available")
+    template = template.replace(
+        "The converted script contains the original code and narrative comments. Reference preparation is next.",
+        "Inspect the preparation worker's proposed setup and source edits in step 02. Setup, analysis and independent review have not run.",
+    )
 data = json.dumps(STAGES, ensure_ascii=False).replace("<", "\\u003c")
 documents = json.dumps(DOCUMENTS, ensure_ascii=False).replace("<", "\\u003c")
 (HERE / "index.html").write_text(

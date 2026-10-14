@@ -1352,3 +1352,34 @@ receipt and provenance. Later actual outputs are empty until the updated version
 is run. Converter regressions passed, including narrative containing executable-looking
 text, source ordering, future imports, exclusion of stored outputs/raw cells and
 determinism. Reference/coverage checks and type/lint checks also passed.
+
+### 2026-10-14: isolated preparation output for user inspection
+
+The user approved running only reference preparation after reviewing its clarified
+input contract. Added an isolated entry point with no shell tool, Daytona
+credentials, staging, reference execution or model review. It uses the current
+documented script plus provenance, conversion receipt and future execution limits.
+The approved policy is one creation call and at most one repair following a
+structural rejection; output-limit and uncertain-transport retries are disabled.
+Client output-token, input/response-byte and tool-feedback truncation caps are
+omitted for this entry point. Provider limits still apply; medium reasoning and
+the existing 600-second request timeout remain explicit.
+
+Run `artifact-preparation-001` used checkpoint
+`0313972bc56078355738fcb75961602621c7ce39`. GLM returned an accepted plan in one call,
+without repair, in roughly 498 seconds. Reported usage: 7,973 prompt tokens and
+100,751 completion tokens (including 86,359 reasoning tokens). These are provider
+usage reports, not an independently verified reasoning-budget guarantee. The plan
+proposes 21 artifacts mapped to 17 branch records. Schema, mapping, exact-anchor
+and Python-syntax checks passed; science and execution have not been reviewed.
+No generated commands ran and no Daytona sandbox was created. The reserved host
+terminated successfully. A separate read-only reserved host retrieved the raw
+response omitted by the older diagnostic transport's 256-KB per-file limit; it
+made no model calls. All original preparation files match the archive hashes.
+
+The plan, setup script, proposed reference, diff, exact prompt/input, raw response
+and receipts are in `preparation-runs/001/`. `plan.md` is a mechanical rendering of
+the unchanged structured model output. The current HTML exposes these inputs and
+outputs in step 02; later steps remain unrun. Ten chat-adapter tests, six inference
+gate tests, four isolated-preparation/controller tests and type/lint checks passed.
+Loopback tests required socket access; the first sandboxed run could not bind.
