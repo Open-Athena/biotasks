@@ -1077,3 +1077,28 @@ The [updated assessment](design-intake-reuse.md) records the concrete reuse,
 prepared boundaries, proposed finite design budget and remaining launch work.
 Stop before execution for prompt review. Construction, solver, release and viewer
 remain untouched; the prior published task and original model outputs are preserved.
+
+### 2026-10-14: artifact-reproduction proposal and issue reconciliation
+
+The user agreed to a source-execution approach: one notebook becomes one task
+covering every scientific branch, using its original inputs and deterministically
+converted plain scripts. The complete reference may take ten minutes; total
+solver time remains a separate decision. Added input reductions and new starting
+checkpoints are deferred. Plot endpoints use their underlying scientific data;
+variable results need executable checks that accept valid variation and reject
+meaningful errors. Unusable sources may be rejected with the reason preserved.
+
+The [full proposal](artifact-reproduction-draft.md) records programmatic versus
+GLM responsibilities, setup/repair boundaries, grading controls and proposed
+finite budgets. An [independent review and author response](artifact-reproduction-review-001.md)
+records design findings and subsequent decisions; this is not implementation or
+execution validation.
+
+The user clarified that issue #19 had been closed prematurely and authorized
+integrating the agreed draft into that same issue. It has been reopened. The
+[previous issue body and decision log](issue-19-history-2026-10-14.md) are preserved
+verbatim before replacing the published plan. Snapshot SHA-256:
+`d27bf3e9dc1646fef89363c2817d62e63c6f9cad0fe84b239b0c75808107c812`.
+Completion and pending statements in that snapshot describe earlier checkpoints.
+The current update preserves the previous release as evidence and keeps the
+revised workflow open. No new model, sandbox, solver or viewer work ran.
