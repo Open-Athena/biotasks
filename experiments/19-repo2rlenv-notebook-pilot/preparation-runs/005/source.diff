@@ -1,0 +1,74 @@
+--- baseline.py
++++ reference.py
+@@ -32,11 +32,19 @@
+ # We are reading in the count matrix into an {class}`~anndata.AnnData` object, which holds many slots for annotations and different representations of the data.
+ # See {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. 
+ 
++# Reference-script change: the original cell resolved the download registry from
++# the figshare DOI at run time (network access). For the offline reference run
++# the two .h5 files are staged by the setup step in /inputs, so the unchanged
++# EXAMPLE_DATA.fetch() call below MD5-verifies each staged file locally and
++# returns its path without any network retrieval.
+ EXAMPLE_DATA = pooch.create(
+-    path=pooch.os_cache("scverse_tutorials"),
++    path="/inputs",
+     base_url="doi:10.6084/m9.figshare.22716739.v1/",
+-)
+-EXAMPLE_DATA.load_registry_from_doi()
++    registry={
++        "s1d1_filtered_feature_bc_matrix.h5": "md5:a99285913ea3f3d22600d3d2f8a88e34",
++        "s1d3_filtered_feature_bc_matrix.h5": "md5:825f7f7578e3dc0b8955f5a97a402338",
++    },
++)
+ 
+ samples = {
+     "s1d1": "s1d1_filtered_feature_bc_matrix.h5",
+@@ -214,7 +222,7 @@
+ 
+ # Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.
+ 
+-# We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.
++# We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see what cell types a gene has been expressed in across many existing datasets.
+ 
+ # Commonly and classically, cell type annotation uses those marker genes subsequent to the grouping of the cells into clusters. So, let's generate a set of clustering solutions which we can then use to annotate our cell types. Here, we will use the Leiden clustering algorithm which will extract cell communities from our nearest neighbours graph.
+ 
+@@ -305,11 +313,11 @@
+     adata, groupby="leiden_res_0.50", standard_scale="var", n_genes=5
+ )
+ 
+-# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).
++# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=gnly), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).
+ 
+ # To create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`
+ 
+-sc.get.rank_genes_groups_df(adata, group="7").head(5)
++rank_genes_groups_7_head = sc.get.rank_genes_groups_df(adata, group="7").head(5)
+ 
+ dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group="7").head(5)["names"]
+ sc.pl.umap(
+@@ -321,3 +329,25 @@
+ )
+ 
+ # You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider "pseudo-bulking" your data by sample (*e.g.* `sc.get.aggregate(adata, by=["sample", "cell_type"], func="sum", layer="counts")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.
++
++# --- Reference-only export of scientific endpoints ---------------------------
++# Added for the offline reference run; it does not add, change or remove any
++# computed result. `adata_annotated.h5ad` stores the full final analysis object
++# (QC metrics and filtering outcome, Scrublet doublet scores/calls, the counts
++# layer, log1PF-normalized data, HVG annotations, PCA coordinates/loadings/
++# variance ratios, neighborhood graph, UMAP coordinates, Leiden clusterings at
++# every run resolution, level-1 cell-type labels and the complete Wilcoxon
++# rank_genes_groups results). `rank_genes_groups_cluster7_head5.csv` stores the
++# notebook's own top-5 DE-gene table for cluster 7, whose "names" column is
++# exactly `dc_cluster_genes`.
++
++from pathlib import Path
++
++OUTPUT_DIR = Path("/work/outputs")
++OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
++
++adata.write_h5ad(OUTPUT_DIR / "adata_annotated.h5ad", compression="lzf")
++
++rank_genes_groups_7_head.to_csv(
++    OUTPUT_DIR / "rank_genes_groups_cluster7_head5.csv", index=False
++)
