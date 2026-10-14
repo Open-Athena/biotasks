@@ -1456,3 +1456,17 @@ notebook and revised canonical prompt: GLM-5.3, medium, one creation plus at mos
 one structural repair, no client token/byte caps. This authorization is for
 preparation only. Generated environment setup, data staging, reference execution,
 model review and downstream task stages remain unrun.
+
+Preparation run 003 from checkpoint `8ed5220519ab864421e263157d32bba4f05f83cc`
+returned two model responses but exhausted its allowance without an accepted
+plan. Creation omitted changes/artifacts/branches; repair still omitted changes
+and added an unexpected branch field. Both completions ended with tool_calls,
+not length. The last draft additionally contains mismatched branch/artifact
+inventories. The required fields were in the supplied tool schema; this is a
+structured-output compliance failure, not evidence of a notebook or uv failure.
+The 436-second stage used 20,971 prompt and 78,322 completion tokens (72,527
+reported reasoning tokens). All 15 evidence files were recovered and hash-verified.
+`preparation-runs/003/` preserves the rejected draft and readable rendering,
+validation feedback, exact input/prompt and responses. No task-specific repair
+was made by us, no replacement run launched, and no generated code executed.
+Both the remote host and local monitoring/collection clients are terminal.
