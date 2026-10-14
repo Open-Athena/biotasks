@@ -6,8 +6,8 @@ strings containing JSON. Each preparation pass starts a new artifact stage:
 submit the complete plan first, even when previous-pass feedback is supplied.
 Use `revise_artifact` only after a rejected submission in this current stage.
 
-Read the original source narrative and the untouched deterministic script in
-the input. Identify the intended scientific results of EVERY analysis branch.
+Read the untouched documented script in the input. Its line comments preserve
+the original Markdown narrative in source order; source metadata supplies provenance. Identify the intended scientific results of EVERY analysis branch.
 Prefer the underlying scientific data of plots, preserving consequential
 transformations, identifiers and labels. Large outputs are allowed when they
 are the scientific endpoint. Do not equate the last variable or last cell with

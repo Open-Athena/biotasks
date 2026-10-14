@@ -1335,3 +1335,20 @@ Jupytext 1.19.6 (`py:nomarker`), explains the ordered code-cell/syntax-tree chec
 and presents `notebook_seed()` as a separate derived-text operation. The original
 file is preserved with the existing upstream license. Browser checks verified
 verbatim original input, separate derived text, converted output and mobile layout.
+
+### 2026-10-14: one documented script and a current-version viewer
+
+The user approved retaining Markdown in the Python export and requested that
+the HTML show only the updated version. The converter now preserves Markdown
+cells in source order as line comments. The Scanpy conversion contains 35 code
+cells and 40 Markdown cells; its executable syntax tree is unchanged. Original
+notebook bytes remain the input. Model contexts use the documented baseline and
+source metadata without the duplicate `question_text` rendering; prompts name
+that representation explicitly. Coverage refuses a reference produced from a
+different script revision. No model calls or scientific execution were launched.
+
+The HTML now contains only the current input, documented script, conversion
+receipt and provenance. Later actual outputs are empty until the updated version
+is run. Converter regressions passed, including narrative containing executable-looking
+text, source ordering, future imports, exclusion of stored outputs/raw cells and
+determinism. Reference/coverage checks and type/lint checks also passed.

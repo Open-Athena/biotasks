@@ -15,7 +15,7 @@ from pathlib import Path
 import jupytext
 
 MAX_SOURCE_BYTES = 16 * 1024 * 1024
-PROFILE = "python-plain-v1"
+PROFILE = "python-narrative-v2"
 
 
 class UnsupportedNotebook(ValueError):
@@ -85,20 +85,39 @@ def export_python(path: Path) -> tuple[str, dict]:
     }:
         raise UnsupportedNotebook("Unsupported documentation execution directives")
     code: list[str] = []
+    cells: list[dict] = []
+    markdown_count = 0
     for cell in notebook.get("cells", []):
         if cell.get("cell_type") not in {"code", "markdown", "raw"}:
             raise UnsupportedNotebook("Unknown cell type")
-        if cell["cell_type"] != "code":
+        if cell["cell_type"] == "raw":
+            continue
+        text = _text(cell["source"])
+        if cell["cell_type"] == "markdown":
+            cells.append(
+                dict(cell_type="markdown", source=text, metadata={}, id=f"source-{len(cells)}")
+            )
+            markdown_count += 1
             continue
         cell_metadata = cell.get("metadata", {})
         if set(cell_metadata) - {"collapsed", "scrolled", "trusted", "execution"}:
             raise UnsupportedNotebook("Code-cell execution directives are unsupported")
-        code.append(_text(cell["source"]))
+        code.append(text)
+        cells.append(
+            dict(
+                cell_type="code",
+                source=text,
+                metadata={},
+                execution_count=None,
+                outputs=[],
+                id=f"source-{len(cells)}",
+            )
+        )
     if not code:
         raise UnsupportedNotebook("No executable cells")
     baseline_tree = _python_tree("\n\n".join(code) + "\n")
-    # Construct a code-only notebook. Narrative stays in the original document;
-    # do not turn raw cells, saved outputs or format directives into source code.
+    # Retain narrative in place as line comments. Raw cells, stored outputs and
+    # formatting directives must not become executable statements.
     converted = jupytext.writes(
         jupytext.reads(
             json.dumps(
@@ -109,17 +128,7 @@ def export_python(path: Path) -> tuple[str, dict]:
                         "kernelspec": metadata.get("kernelspec", {}),
                         "language_info": metadata.get("language_info", {}),
                     },
-                    "cells": [
-                        {
-                            "cell_type": "code",
-                            "source": source,
-                            "metadata": {},
-                            "execution_count": None,
-                            "outputs": [],
-                            "id": f"source-{index}",
-                        }
-                        for index, source in enumerate(code)
-                    ],
+                    "cells": cells,
                 }
             ),
             fmt="ipynb",
@@ -141,6 +150,8 @@ def export_python(path: Path) -> tuple[str, dict]:
         "script_sha256": hashlib.sha256(converted.encode()).hexdigest(),
         "executable_ast_sha256": hashlib.sha256(syntax.encode()).hexdigest(),
         "code_cells": len(code),
+        "markdown_cells": markdown_count,
+        "markdown_representation": "line_comments",
         "ordered_code_equivalence": True,
         "documentation_execution_policy": myst,
         "stored_outputs_used_as_evidence": False,

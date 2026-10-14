@@ -1,4 +1,4 @@
-Independently review the proposed endpoint inventory against the original notebook narrative, unchanged script, executed reference diff and observed artifact profiles. Use the structured artifact tool; begin with submit_artifact and include all required fields.
+Independently review the proposed endpoint inventory against the unchanged documented script and its original narrative comments, executed reference diff and observed artifact profiles. Use the structured artifact tool; begin with submit_artifact and include all required fields.
 
 Do not limit review to the proposed map. Look for scientific endpoints or branches the proposal missed, especially results presented as plots or interpreted in the source narrative. The single task must preserve all scientific branches, methods and original inputs, while avoiding a needless requirement to reproduce every preprocessing intermediate or use the reference package's storage format. Rendered images and visual styling are excluded; scientific plot content is not.
 

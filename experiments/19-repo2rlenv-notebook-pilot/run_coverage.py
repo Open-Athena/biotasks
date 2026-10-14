@@ -54,6 +54,11 @@ async def run(config, *, root, seed, endpoint, credential, deadline):
     )
     source = experiment / relative_path(config["source_directory"])
     conversion = json.loads((source / "conversion.json").read_text())
+    recorded_conversion = json.loads((prior / "conversion.json").read_text())
+    if recorded_conversion["script_sha256"] != conversion["script_sha256"]:
+        raise ValueError(
+            "Saved reference uses a different script; execute the current reference first"
+        )
     if (
         digest(source / "baseline.py") != conversion["script_sha256"]
         or seed["source_sha256"] != conversion["source_sha256"]
@@ -68,7 +73,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline):
         raise ValueError("Profiles do not match the pinned reference inventory")
     save_record(root / "configuration.json", config)
     context = dict(
-        source=seed,
+        source={key: value for key, value in seed.items() if key != "question_text"},
         baseline_script=(source / "baseline.py").read_text(),
         executed_script=(attempt / "reference.py").read_text(),
         source_diff=(attempt / "source.diff").read_text(),

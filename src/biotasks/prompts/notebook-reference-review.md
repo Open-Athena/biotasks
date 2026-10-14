@@ -1,5 +1,5 @@
 Independently review a generated reference preparation against the ORIGINAL
-notebook narrative and untouched converted script. Return ReferenceReview via
+documented source script, whose comments retain the original notebook narrative. Return ReferenceReview via
 the artifact submission tool. Do not merely check the proposed inventory for
 internal consistency. This review does not establish execution success or
 scientific correctness.

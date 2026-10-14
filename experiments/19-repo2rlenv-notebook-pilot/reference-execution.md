@@ -13,7 +13,9 @@ and verifies the exported Python syntax tree against all source code in order.
 It never executes the notebook. The initial admission profile supports ordinary
 Python nbformat-4 sources. Kernel-dependent syntax/state and unsupported
 execution directives are rejected; R and other formats need separate profiles.
-The source document remains the provenance and narrative input. Its stored
+Markdown cells are retained in their original positions as Python line comments.
+The documented script supplies code and narrative to the model; source metadata
+supplies provenance without a second rendering of the notebook text. Stored
 outputs do not count as fresh evidence. Documentation build-time execution
 policy is recorded without adopting it as a rule to skip analysis.
 

@@ -73,6 +73,39 @@ def test_exporter_omission_is_rejected(tmp_path, monkeypatch):
         export_python(source(tmp_path, ["x=1", "endpoint=x+1"]))
 
 
+def test_markdown_stays_in_order_as_comments_without_changing_execution(tmp_path):
+    path = source(tmp_path, ["from __future__ import annotations\nx = 1", "result = x + 1"])
+    notebook = json.loads(path.read_text())
+    notebook["cells"].insert(
+        0, dict(cell_type="markdown", source="# Analysis\nExplain inputs.", metadata={})
+    )
+    notebook["cells"].insert(
+        2,
+        dict(
+            cell_type="markdown",
+            source='```python\nraise RuntimeError("narrative only")\n```\n%not_a_magic',
+            metadata={},
+        ),
+    )
+    notebook["cells"].append(
+        dict(cell_type="raw", source="raise RuntimeError('raw only')", metadata={})
+    )
+    notebook["cells"][1]["outputs"] = [
+        {"output_type": "stream", "name": "stdout", "text": "saved-output-only"}
+    ]
+    path.write_text(json.dumps(notebook))
+    script, receipt = export_python(path)
+    assert script.index("# Analysis") < script.index("from __future__")
+    assert script.index("x = 1") < script.index("narrative only") < script.index("result =")
+    assert "raw only" not in script and "saved-output-only" not in script
+    assert ast.dump(ast.parse(script)) == ast.dump(
+        ast.parse("from __future__ import annotations\nx = 1\nresult = x + 1")
+    )
+    assert receipt["markdown_cells"] == 2
+    assert receipt["markdown_representation"] == "line_comments"
+    assert export_python(path) == (script, receipt)
+
+
 def test_unsupported_language_is_not_misclassified_as_broken_source(tmp_path):
     with pytest.raises(UnsupportedNotebook, match="Python language"):
         export_python(source(tmp_path, ["x <- 1"], language_info={"name": "R"}))

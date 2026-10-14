@@ -16,7 +16,11 @@ from pathlib import Path
 
 import httpx
 from daytona import CreateSandboxFromImageParams, Daytona, Resources
+from design_stage import completion_transport
 from openai import AsyncOpenAI
+from preflight import PROBE, TARGETS
+from reference_protocol import ReferencePlan, ReferenceReview, materialize
+from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.daytona import DaytonaWorker
 from repo2rlenv.execution.daytona_cleanup import cleanup
@@ -26,10 +30,6 @@ from repo2rlenv.tasksmith.author.budget import AuthorBudget
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
-from design_stage import completion_transport
-from preflight import PROBE, TARGETS
-from reference_protocol import ReferencePlan, ReferenceReview, materialize
-from reference_stage import stage
 
 
 def check_config(config):
@@ -237,7 +237,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
                 result["status"] = "setup_budget_exhausted"
                 break
             context = {
-                "source": seed,
+                "source": {key: value for key, value in seed.items() if key != "question_text"},
                 "baseline_script": baseline,
                 "conversion": conversion,
                 "staged_original_inputs": inputs,
