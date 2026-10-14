@@ -1487,3 +1487,22 @@ reasoning, without client token/byte caps. Retain the 600-second per-request
 transport timeout and disable automatic retries. No scientific analysis,
 notebook generation or sandbox work is part of this probe. Both local fixture
 checks passed; server support remains to be measured.
+
+The two-call probe at checkpoint `93e3a8722379c63bac9c571a57698e280c357d47`
+completed: strict tool arguments returned both deliberately requested schema
+violations (missing changes and an extra nested field), while JSON-schema
+response format passed the actual ReferencePlan schema. Calls took 2.48 and
+2.13 seconds, using 1,393 prompt / 1,103 completion tokens (754 reasoning).
+Evidence is in `schema-probes/001/`; all eight original files were hash-verified.
+The remote host and local clients are terminal. This is a narrow compatibility
+result, not a proof of all schema behavior or scientific correctness.
+
+Preparation now uses JSON-schema response format for both creation and repair.
+The same complete schema is sent each time; responses pass through the existing
+upstream submission validator, never its merge-patch handler. Missing fields
+are not filled in by the factory. Retain one creation and one repair, medium
+reasoning and the existing no-client-token/byte-cap policy. The canonical prompt
+now requests complete JSON objects. Fifty-one focused tests passed, including
+complete-object replacement, schema feedback, refusal/truncation rejection and
+the preparation-only boundary; type and targeted lint checks passed. No notebook
+preparation rerun was launched after this change.

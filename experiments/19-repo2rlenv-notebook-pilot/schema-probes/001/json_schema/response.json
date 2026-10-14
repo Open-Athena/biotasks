@@ -1,0 +1,51 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "{\"disposition\": \"prepare\", \"explanation\": \"Synthetic serialization fixture\", \"environment_rationale\": \"Standard library only\", \"pyproject_toml\": \"[project]\\nname=\\\"fixture\\\"\\nversion=\\\"0.1.0\\\"\\nrequires-python=\\\">=3.13\\\"\\ndependencies=[]\\n\", \"system_packages\": [], \"stage_inputs_sh\": \"\", \"changes\": [], \"artifacts\": [{\"path\": \"value.txt\", \"description\": \"Synthetic value\", \"source_evidence\": \"result = 1\"}], \"branches\": [{\"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"artifacts\": [\"value.txt\"]}], \"excluded_outputs\": [], \"unresolved_assumptions\": []}",
+        "function_call": null,
+        "reasoning": "The user wants me to return the fixture with two modifications:\n1. OMIT the `changes` field (which is declared required in the schema)\n2. Add `unexpected_field: true` to the first branch\n\nEverything else stays the same. Let me copy it faithfully.\n\nOriginal:\n```json\n{\"disposition\": \"prepare\", \"explanation\": \"Synthetic serialization fixture\", \"environment_rationale\": \"Standard library only\", \"pyproject_toml\": \"[project]\\nname=\\\"fixture\\\"\\nversion=\\\"0.1.0\\\"\\nrequires-python=\\\">=3.13\\\"\\ndependencies=[]\\n\", \"system_packages\": [], \"stage_inputs_sh\": \"\", \"changes\": [], \"artifacts\": [{\"path\": \"value.txt\", \"description\": \"Synthetic value\", \"source_evidence\": \"result = 1\"}], \"branches\": [{\"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"artifacts\": [\"value.txt\"]}], \"excluded_outputs\": [], \"unresolved_assumptions\": []}\n```\n\nModifications:\n- Remove `\"changes\": []`\n- In branches[0], add `\"unexpected_field\": true`\n\nResult:\n```json\n{\"disposition\": \"prepare\", \"explanation\": \"Synthetic serialization fixture\", \"environment_rationale\": \"Standard library only\", \"pyproject_toml\": \"[project]\\nname=\\\"fixture\\\"\\nversion=\\\"0.1.0\\\"\\nrequires-python=\\\">=3.13\\\"\\ndependencies=[]\\n\", \"system_packages\": [], \"stage_inputs_sh\": \"\", \"artifacts\": [{\"path\": \"value.txt\", \"description\": \"Synthetic value\", \"source_evidence\": \"result = 1\"}], \"branches\": [{\"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"artifacts\": [\"value.txt\"], \"unexpected_field\": true}], \"excluded_outputs\": [], \"unresolved_assumptions\": []}\n```\n\nI should just return this. The instructions say not to analyze the fixture; just copy with alterations. Keep it in the same single-line JSON format as given.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": null
+      },
+      "routed_experts": null,
+      "stop_reason": 154827,
+      "token_ids": null
+    }
+  ],
+  "created": 1792011676,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-a0ebc063bbb4accd",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 628,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 459,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 246,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 192,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 874
+  }
+}

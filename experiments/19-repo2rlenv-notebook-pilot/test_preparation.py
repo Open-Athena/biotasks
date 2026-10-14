@@ -11,13 +11,9 @@ from run_preparation import run
 HERE = Path(__file__).parent
 
 
-def response(plan, finish="tool_calls", call_id="call"):
+def response(plan, finish="stop", call_id="call"):
     return {"choices": [{"finish_reason": finish, "message": {
-        "role": "assistant", "content": None, "tool_calls": [{
-            "id": call_id, "type": "function", "function": {
-                "name": "submit_artifact", "arguments": json.dumps(plan),
-            },
-        }],
+        "role": "assistant", "content": json.dumps(plan),
     }}]}
 
 
@@ -30,9 +26,9 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
 
     async def complete(payload):
         calls.append(payload)
-        assert {tool["function"]["name"] for tool in payload["tools"]} == {
-            "submit_artifact", "revise_artifact",
-        }
+        assert "tools" not in payload
+        assert payload["response_format"]["json_schema"]["strict"] is True
+        assert "changes" in payload["response_format"]["json_schema"]["schema"]["required"]
         context = json.loads(payload["messages"][1]["content"])
         assert set(context) == {"source", "baseline_script", "conversion", "limits"}
         assert "question_text" not in context["source"]
@@ -40,7 +36,7 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
         candidate = dict(plan)
         if mode == "twice_invalid" or (mode == "structural_repair" and len(calls) == 1):
             candidate.pop("disposition")
-        return response(candidate, "length" if mode == "truncated" else "tool_calls", str(len(calls)))
+        return response(candidate, "length" if mode == "truncated" else "stop", str(len(calls)))
 
     coroutine = run(
         json.loads((HERE / "preparation-inputs.json").read_text()),

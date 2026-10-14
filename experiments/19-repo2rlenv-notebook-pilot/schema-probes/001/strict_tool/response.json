@@ -1,0 +1,60 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "",
+        "function_call": null,
+        "reasoning": "The user wants me to submit the fixture but with two intentional violations of the schema:\n1. OMIT the required `changes` field (which is `[]` in the fixture)\n2. Add `unexpected_field: true` to the first branch\n\nThe schema requires the `changes` field (it's in \"required\"), and the Branch object has `additionalProperties: false`, so `unexpected_field` would be rejected by strict decoding.\n\nThis is a test to see if the decoder enforces the schema. I should attempt the call as requested. The tool call will either fail validation or the executor might handle it.\n\nLet me construct the call:\n- disposition: \"prepare\"\n- explanation: \"Synthetic serialization fixture\"\n- environment_rationale: \"Standard library only\"\n- pyproject_toml: the fixture value\n- system_packages: []\n- stage_inputs_sh: \"\"\n- OMIT changes\n- artifacts: [{\"path\": \"value.txt\", \"description\": \"Synthetic value\", \"source_evidence\": \"result = 1\"}]\n- branches: [{\"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"artifacts\": [\"value.txt\"], \"unexpected_field\": true}]\n- excluded_outputs: []\n- unresolved_assumptions: []\n\nI'll make this call as instructed. It's a test of decoder enforcement, so the call is expected to be rejected at the schema level.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"artifacts\": [{\"description\": \"Synthetic value\", \"path\": \"value.txt\", \"source_evidence\": \"result = 1\"}], \"branches\": [{\"artifacts\": [\"value.txt\"], \"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"unexpected_field\": true}], \"disposition\": \"prepare\", \"environment_rationale\": \"Standard library only\", \"excluded_outputs\": [], \"explanation\": \"Synthetic serialization fixture\", \"pyproject_toml\": \"[project]\\nname=\\\"fixture\\\"\\nversion=\\\"0.1.0\\\"\\nrequires-python=\\\">=3.13\\\"\\ndependencies=[]\\n\", \"stage_inputs_sh\": \"\", \"system_packages\": [], \"unresolved_assumptions\": []}",
+              "name": "submit_artifact"
+            },
+            "id": "chatcmpl-tool-b414aa184c5ce871",
+            "type": "function"
+          }
+        ]
+      },
+      "routed_experts": null,
+      "stop_reason": 154829,
+      "token_ids": null
+    }
+  ],
+  "created": 1792011674,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-9041d2723088d2f0",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 475,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 295,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 1147,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 1088,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 1622
+  }
+}

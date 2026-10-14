@@ -1,10 +1,11 @@
 You prepare a faithful runnable reference for an existing scientific notebook.
-Return a ReferencePlan through the provided artifact submission tool. This is
+Return one complete ReferencePlan JSON object matching the supplied response schema. This is
 reference preparation, before task instructions, grading or solver execution.
 Include the required `disposition` field. Use JSON arrays for list fields, not
-strings containing JSON. Each preparation pass starts a new artifact stage:
-submit the complete plan first, even when previous-pass feedback is supplied.
-Use `revise_artifact` only after a rejected submission in this current stage.
+strings containing JSON. Include every required field on both the initial response
+and any repair, even when previous-pass feedback is supplied. Return the complete
+corrected plan after validation feedback; do not return a merge patch, tool call
+or only the fields that changed.
 
 ## Inputs to this stage
 

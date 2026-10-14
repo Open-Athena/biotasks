@@ -102,6 +102,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
             max_requests=2,
             validate=validate,
             recover_output_limit=False,
+            output_format="json_schema",
         )
         save_record(root / "plan.json", plan.model_dump())
         if plan.disposition == "prepare":

@@ -49,7 +49,9 @@ class Budget:
         self.settlements.append(operation)
 
 
-def make_author(tmp_path, complete, *, requests=4, token_allowance=16000, **limits):
+def make_author(
+    tmp_path, complete, *, requests=4, token_allowance=16000, output_format="tools", **limits
+):
     def save(path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value))
@@ -64,6 +66,7 @@ def make_author(tmp_path, complete, *, requests=4, token_allowance=16000, **limi
         scope="design",
         deadline=time.time() + 60,
         limits=ChatLimits(**limits),
+        output_format=output_format,
     )
     return author, ledger
 
@@ -281,3 +284,67 @@ def test_oversized_context_refuses_dispatch_and_retains_quota(tmp_path):
         )
     with sqlite3.connect(ledger.path) as db:
         assert db.execute("SELECT COUNT(*) FROM calls").fetchone() == (0,)
+
+
+def test_json_schema_repair_resubmits_entire_object_without_merge(tmp_path):
+    payloads, submissions = [], []
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        artifact = {"old": 1} if len(payloads) == 1 else {"new": 2}
+        return {
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {
+                        "role": "assistant",
+                        "content": json.dumps(artifact),
+                        "reasoning": "kept",
+                    },
+                }
+            ]
+        }
+
+    async def submit(**artifact):
+        submissions.append(artifact)
+        if len(submissions) == 1:
+            return "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: new required"
+        return "Artifact committed."
+
+    async def forbidden(**kwargs):
+        pytest.fail("Merge-patch handler must not be called")
+
+    author, _ = make_author(tmp_path, complete, requests=2, output_format="json_schema")
+    result = asyncio.run(
+        author(
+            **options(tmp_path, {"submit_artifact": submit, "revise_artifact": forbidden}, turns=2)
+        )
+    )
+    assert result["turns"] == 2
+    assert submissions == [{"old": 1}, {"new": 2}]
+    assert all("tools" not in p and "tool_choice" not in p for p in payloads)
+    assert payloads[0]["response_format"] == payloads[1]["response_format"]
+    assert payloads[0]["response_format"]["json_schema"]["strict"] is True
+    assert payloads[1]["messages"][2]["reasoning"] == "kept"
+    assert "new required" in payloads[1]["messages"][-1]["content"]
+    assert "revise_artifact" not in payloads[1]["messages"][-1]["content"]
+
+
+@pytest.mark.parametrize("kind", ["tool", "length", "refusal"])
+def test_json_schema_incomplete_or_wrong_response_never_submits(tmp_path, kind):
+    async def complete(payload):
+        r = reply(finish="length" if kind == "length" else "stop")
+        if kind == "refusal":
+            r["choices"][0]["message"].update(refusal="refused", tool_calls=None)
+        return r
+
+    async def forbidden(**kwargs):
+        pytest.fail("Must not submit invalid response")
+
+    author, _ = make_author(tmp_path, complete, output_format="json_schema")
+    with pytest.raises(IncompleteCompletion):
+        asyncio.run(
+            author(
+                **options(tmp_path, {"submit_artifact": forbidden, "revise_artifact": forbidden})
+            )
+        )

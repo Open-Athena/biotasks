@@ -178,6 +178,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
             limits=limits,
             max_requests=allowances[name].requests,
             validate=validator,
+            output_format="json_schema" if kind == "prepare" else "tools",
         )
 
     try:

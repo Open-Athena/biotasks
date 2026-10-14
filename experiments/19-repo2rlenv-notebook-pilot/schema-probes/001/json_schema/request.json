@@ -1,0 +1,216 @@
+{
+  "chat_template_kwargs": {
+    "reasoning_effort": "medium"
+  },
+  "messages": [
+    {
+      "content": "This is a tiny serialization test, not a science task. Do not analyze the fixture. Copy it with the alterations requested by the user.",
+      "role": "system"
+    },
+    {
+      "content": "Return this fixture but OMIT the required changes field and add unexpected_field: true to its first branch. This intentionally conflicts with the declared schema to test decoder enforcement. Keep all other values unchanged.\n{\"disposition\": \"prepare\", \"explanation\": \"Synthetic serialization fixture\", \"environment_rationale\": \"Standard library only\", \"pyproject_toml\": \"[project]\\nname=\\\"fixture\\\"\\nversion=\\\"0.1.0\\\"\\nrequires-python=\\\">=3.13\\\"\\ndependencies=[]\\n\", \"system_packages\": [], \"stage_inputs_sh\": \"\", \"changes\": [], \"artifacts\": [{\"path\": \"value.txt\", \"description\": \"Synthetic value\", \"source_evidence\": \"result = 1\"}], \"branches\": [{\"name\": \"value\", \"scientific_result\": \"Synthetic value\", \"source_evidence\": \"result = 1\", \"artifacts\": [\"value.txt\"]}], \"excluded_outputs\": [], \"unresolved_assumptions\": []}",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3",
+  "response_format": {
+    "json_schema": {
+      "name": "reference_plan",
+      "schema": {
+        "$defs": {
+          "Artifact": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "minLength": 1,
+                "title": "Description",
+                "type": "string"
+              },
+              "path": {
+                "title": "Path",
+                "type": "string"
+              },
+              "source_evidence": {
+                "minLength": 1,
+                "title": "Source Evidence",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "description",
+              "source_evidence"
+            ],
+            "title": "Artifact",
+            "type": "object"
+          },
+          "Branch": {
+            "additionalProperties": false,
+            "properties": {
+              "artifacts": {
+                "items": {
+                  "type": "string"
+                },
+                "minItems": 1,
+                "title": "Artifacts",
+                "type": "array"
+              },
+              "name": {
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "scientific_result": {
+                "minLength": 1,
+                "title": "Scientific Result",
+                "type": "string"
+              },
+              "source_evidence": {
+                "minLength": 1,
+                "title": "Source Evidence",
+                "type": "string"
+              }
+            },
+            "required": [
+              "name",
+              "scientific_result",
+              "source_evidence",
+              "artifacts"
+            ],
+            "title": "Branch",
+            "type": "object"
+          },
+          "Change": {
+            "additionalProperties": false,
+            "properties": {
+              "after": {
+                "minLength": 1,
+                "title": "After",
+                "type": "string"
+              },
+              "before": {
+                "minLength": 1,
+                "title": "Before",
+                "type": "string"
+              },
+              "justification": {
+                "minLength": 1,
+                "title": "Justification",
+                "type": "string"
+              },
+              "purpose": {
+                "enum": [
+                  "input_staging",
+                  "export",
+                  "capture"
+                ],
+                "title": "Purpose",
+                "type": "string"
+              }
+            },
+            "required": [
+              "purpose",
+              "before",
+              "after",
+              "justification"
+            ],
+            "title": "Change",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "artifacts": {
+            "items": {
+              "$ref": "#/$defs/Artifact"
+            },
+            "title": "Artifacts",
+            "type": "array"
+          },
+          "branches": {
+            "description": "JSON array of scientific branch records, not a string.",
+            "items": {
+              "$ref": "#/$defs/Branch"
+            },
+            "title": "Branches",
+            "type": "array"
+          },
+          "changes": {
+            "items": {
+              "$ref": "#/$defs/Change"
+            },
+            "title": "Changes",
+            "type": "array"
+          },
+          "disposition": {
+            "description": "Required admission decision: prepare a faithful reference, or reject with a reason.",
+            "enum": [
+              "prepare",
+              "reject"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "environment_rationale": {
+            "title": "Environment Rationale",
+            "type": "string"
+          },
+          "excluded_outputs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Excluded Outputs",
+            "type": "array"
+          },
+          "explanation": {
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "pyproject_toml": {
+            "title": "Pyproject Toml",
+            "type": "string"
+          },
+          "stage_inputs_sh": {
+            "title": "Stage Inputs Sh",
+            "type": "string"
+          },
+          "system_packages": {
+            "items": {
+              "type": "string"
+            },
+            "title": "System Packages",
+            "type": "array"
+          },
+          "unresolved_assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unresolved Assumptions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "disposition",
+          "explanation",
+          "environment_rationale",
+          "pyproject_toml",
+          "system_packages",
+          "stage_inputs_sh",
+          "changes",
+          "artifacts",
+          "branches",
+          "excluded_outputs",
+          "unresolved_assumptions"
+        ],
+        "title": "ReferencePlan",
+        "type": "object"
+      },
+      "strict": true
+    },
+    "type": "json_schema"
+  },
+  "stream": false,
+  "temperature": 1.0,
+  "top_p": 1.0
+}

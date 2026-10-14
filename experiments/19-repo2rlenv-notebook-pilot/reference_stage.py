@@ -30,6 +30,7 @@ async def stage(
     max_requests,
     validate=None,
     recover_output_limit=True,
+    output_format="tools",
 ):
     """Use upstream's one output recovery, never retry an uncertain transport."""
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
@@ -37,6 +38,7 @@ async def stage(
     identity = {
         "limits": asdict(limits),
         "max_requests": max_requests,
+        "output_format": output_format,
         "stage_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "adapter_sha256": hashlib.sha256(
             files("biotasks").joinpath("chat_author.py").read_bytes()
@@ -51,6 +53,7 @@ async def stage(
         scope=name,
         deadline=deadline,
         limits=limits,
+        output_format=output_format,
     )
 
     async def run_author(**kwargs):

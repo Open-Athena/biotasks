@@ -1,0 +1,190 @@
+{
+  "$defs": {
+    "Artifact": {
+      "additionalProperties": false,
+      "properties": {
+        "description": {
+          "minLength": 1,
+          "title": "Description",
+          "type": "string"
+        },
+        "path": {
+          "title": "Path",
+          "type": "string"
+        },
+        "source_evidence": {
+          "minLength": 1,
+          "title": "Source Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "description",
+        "source_evidence"
+      ],
+      "title": "Artifact",
+      "type": "object"
+    },
+    "Branch": {
+      "additionalProperties": false,
+      "properties": {
+        "artifacts": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Artifacts",
+          "type": "array"
+        },
+        "name": {
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "scientific_result": {
+          "minLength": 1,
+          "title": "Scientific Result",
+          "type": "string"
+        },
+        "source_evidence": {
+          "minLength": 1,
+          "title": "Source Evidence",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "scientific_result",
+        "source_evidence",
+        "artifacts"
+      ],
+      "title": "Branch",
+      "type": "object"
+    },
+    "Change": {
+      "additionalProperties": false,
+      "properties": {
+        "after": {
+          "minLength": 1,
+          "title": "After",
+          "type": "string"
+        },
+        "before": {
+          "minLength": 1,
+          "title": "Before",
+          "type": "string"
+        },
+        "justification": {
+          "minLength": 1,
+          "title": "Justification",
+          "type": "string"
+        },
+        "purpose": {
+          "enum": [
+            "input_staging",
+            "export",
+            "capture"
+          ],
+          "title": "Purpose",
+          "type": "string"
+        }
+      },
+      "required": [
+        "purpose",
+        "before",
+        "after",
+        "justification"
+      ],
+      "title": "Change",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "items": {
+        "$ref": "#/$defs/Artifact"
+      },
+      "title": "Artifacts",
+      "type": "array"
+    },
+    "branches": {
+      "description": "JSON array of scientific branch records, not a string.",
+      "items": {
+        "$ref": "#/$defs/Branch"
+      },
+      "title": "Branches",
+      "type": "array"
+    },
+    "changes": {
+      "items": {
+        "$ref": "#/$defs/Change"
+      },
+      "title": "Changes",
+      "type": "array"
+    },
+    "disposition": {
+      "description": "Required admission decision: prepare a faithful reference, or reject with a reason.",
+      "enum": [
+        "prepare",
+        "reject"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "environment_rationale": {
+      "title": "Environment Rationale",
+      "type": "string"
+    },
+    "excluded_outputs": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Excluded Outputs",
+      "type": "array"
+    },
+    "explanation": {
+      "minLength": 1,
+      "title": "Explanation",
+      "type": "string"
+    },
+    "pyproject_toml": {
+      "title": "Pyproject Toml",
+      "type": "string"
+    },
+    "stage_inputs_sh": {
+      "title": "Stage Inputs Sh",
+      "type": "string"
+    },
+    "system_packages": {
+      "items": {
+        "type": "string"
+      },
+      "title": "System Packages",
+      "type": "array"
+    },
+    "unresolved_assumptions": {
+      "items": {
+        "type": "string"
+      },
+      "title": "Unresolved Assumptions",
+      "type": "array"
+    }
+  },
+  "required": [
+    "disposition",
+    "explanation",
+    "environment_rationale",
+    "pyproject_toml",
+    "system_packages",
+    "stage_inputs_sh",
+    "changes",
+    "artifacts",
+    "branches",
+    "excluded_outputs",
+    "unresolved_assumptions"
+  ],
+  "title": "ReferencePlan",
+  "type": "object"
+}

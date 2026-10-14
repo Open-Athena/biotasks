@@ -64,6 +64,7 @@ class GLMChatAuthor:
         scope: str,
         deadline: float,
         limits: ChatLimits,
+        output_format: str = "tools",
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -72,6 +73,9 @@ class GLMChatAuthor:
             limits.max_output_tokens is None or limits.max_output_tokens > token_bound
         ):
             raise ValueError("Output tokens exceed the request ledger allowance")
+        if output_format not in {"tools", "json_schema"}:
+            raise ValueError("Unsupported artifact output format")
+        self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
 
@@ -107,11 +111,21 @@ class GLMChatAuthor:
         if not {"submit_artifact", "revise_artifact"} <= names or not names <= handlers.keys():
             raise ValueError("Artifact tools and their controller handlers are required")
 
+        submission = next(
+            tool["function"] for tool in tools if tool["function"]["name"] == "submit_artifact"
+        )
+
         def event(kind, **data):
             with trace.open("a") as stream:
                 stream.write(json.dumps({"kind": kind, **data}, allow_nan=False) + "\n")
 
-        event("input", model=model, runtime=runtime, settings=asdict(self.limits))
+        event(
+            "input",
+            model=model,
+            runtime=runtime,
+            settings=asdict(self.limits),
+            output_format=self.output_format,
+        )
         seen_call_ids = set()
         for turn in range(1, max_turns + 1):
             remaining = self.deadline - time.time()
@@ -135,6 +149,17 @@ class GLMChatAuthor:
                 "top_p": 1.0,
                 "chat_template_kwargs": {"reasoning_effort": self.limits.reasoning_effort},
             }
+            if self.output_format == "json_schema":
+                for key in ("tools", "tool_choice", "parallel_tool_calls"):
+                    del payload[key]
+                payload["response_format"] = {
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "artifact",
+                        "schema": submission["parameters"],
+                        "strict": True,
+                    },
+                }
             # None delegates generation length to the provider/context window;
             # it does not assert that the provider has no limit of its own.
             if self.limits.max_output_tokens is not None:
@@ -194,6 +219,46 @@ class GLMChatAuthor:
             message = choice.get("message", {})
             if not isinstance(message, dict) or message.get("role") != "assistant":
                 raise IncompleteCompletion("Expected an assistant message")
+            if self.output_format == "json_schema":
+                if (
+                    message.get("refusal")
+                    or message.get("tool_calls")
+                    or choice["finish_reason"] != "stop"
+                ):
+                    raise IncompleteCompletion(
+                        "Expected a complete JSON artifact, not a tool action"
+                    )
+                assistant = {"role": "assistant", "content": message.get("content")}
+                for field in ("reasoning", "reasoning_content"):
+                    if field in message:
+                        assistant[field] = message[field]
+                messages.append(assistant)
+                try:
+                    artifact = json.loads(message.get("content"))
+                    if not isinstance(artifact, dict):
+                        raise ValueError("Artifact must be an object")
+                except (ValueError, TypeError):
+                    result = "Artifact rejected: response must be one complete JSON object."
+                else:
+                    event("artifact_submission", artifact=artifact)
+                    result = str(await handlers["submit_artifact"](**artifact))
+                event("artifact_validation", output=result)
+                if result.startswith("Artifact committed."):
+                    return {"messages": messages, "turns": turn, "cost": 0.0}
+                # The upstream validator still supplies its original feedback,
+                # but merge-patch instructions do not apply to this interface.
+                feedback = result.replace(
+                    "call revise_artifact with only changed fields, or submit_artifact for a complete replacement: ",
+                    "",
+                )
+                messages.append(
+                    {
+                        "role": "user",
+                        "content": "Return a complete corrected artifact using the same JSON schema, including unchanged fields. Do not return a patch or tool call.\n"
+                        + feedback,
+                    }
+                )
+                continue
             calls = message.get("tool_calls")
             if message.get("refusal") or not isinstance(calls, list) or len(calls) != 1:
                 raise IncompleteCompletion("Expected one tool action; no tool executed")
