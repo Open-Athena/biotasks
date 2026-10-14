@@ -1,0 +1,43 @@
+{
+  "review_kind": "Local JSON Schema and source-anchor checks plus recorded controller validation; no model review or execution",
+  "ready_for_execution": false,
+  "calls": [
+    {
+      "call": 1,
+      "kind": "creation",
+      "response_format": "json_schema",
+      "strict": true,
+      "finish_reason": "stop",
+      "json_schema_errors": [],
+      "admission_error": "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: Each change needs one exact, unambiguous source anchor",
+      "source_anchor_counts": [
+        1,
+        1,
+        0,
+        0,
+        0,
+        0
+      ],
+      "declared_artifacts": 3,
+      "declared_branches": 2
+    },
+    {
+      "call": 2,
+      "kind": "repair",
+      "response_format": "json_schema",
+      "strict": true,
+      "finish_reason": "stop",
+      "json_schema_errors": [],
+      "admission_error": "Artifact rejected; call revise_artifact with only changed fields, or submit_artifact for a complete replacement: 1 validation error for ReferencePlan\n  Value error, Declare unique branches and artifacts with a complete coverage map [type=value_error, input_value={'disposition': 'prepare'...solved_assumptions': []}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+      "source_anchor_counts": [
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "declared_artifacts": 0,
+      "declared_branches": 0
+    }
+  ]
+}

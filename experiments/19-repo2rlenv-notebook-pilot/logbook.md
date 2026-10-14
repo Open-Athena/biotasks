@@ -1515,3 +1515,9 @@ preparation prompt, JSON-schema responses, GLM-5.3 at medium reasoning, one
 creation and at most one complete-object repair. No extra client token/byte
 caps; retain the 600-second per-request timeout. Do not execute generated
 setup, analysis, independent model review or downstream task stages.
+
+### 2026-10-14 — Preparation-only run 004: schema-valid, inadmissible drafts
+
+Ran only the preparation worker from checkpoint `8355040f54a39f4bd6acb8dbde6eb89336c21de0`, as requested, using strict JSON-schema responses. Both creation and the single complete-object repair passed the exact supplied JSON Schema. Creation failed exact source-anchor validation (four of six anchors absent); repair returned empty artifact/branch inventories and five nonmatching anchors. The controller rejected both. Preserved all 15 original evidence files after hash verification and rendered both rejected drafts separately under `preparation-runs/004/`. Two calls, 711 seconds; remote job terminal. No setup, reference execution, later stage or new run. Schema conformance improved relative to run 003; faithful usable preparation did not. Cause of corrupted source quotations remains undetermined.
+
+The user proposed returning an edited script instead of exact anchored edits. This would let the controller compute the diff and remove the fragile source-quotation protocol. It remains a proposal for discussion; no prompt/protocol change or further model call has been made.
