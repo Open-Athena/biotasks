@@ -1,0 +1,149 @@
+"""Conservative, deterministic notebook export; never execute source code.
+
+The first admission profile covers ordinary Python in nbformat 4. Other
+languages and execution features require their own verified export profiles.
+"""
+
+from __future__ import annotations
+
+import ast
+import hashlib
+import json
+from importlib.metadata import version
+from pathlib import Path
+
+import jupytext
+
+MAX_SOURCE_BYTES = 16 * 1024 * 1024
+PROFILE = "python-plain-v1"
+
+
+class UnsupportedNotebook(ValueError):
+    """Conversion is unsupported; this does not diagnose broken science."""
+
+
+def _text(value: str | list[str]) -> str:
+    if isinstance(value, str):
+        return value
+    if isinstance(value, list) and all(isinstance(line, str) for line in value):
+        return "".join(value)
+    raise UnsupportedNotebook("Cell source must be text")
+
+
+def _python_tree(source: str) -> ast.Module:
+    try:
+        tree = ast.parse(source)
+        # ast.parse alone accepts top-level await and misplaced future imports.
+        compile(tree, "analysis.py", "exec")
+    except (SyntaxError, ValueError) as error:
+        raise UnsupportedNotebook(
+            "Source requires unsupported Python execution semantics"
+        ) from error
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name) and node.id in {"get_ipython", "In", "Out"}:
+            raise UnsupportedNotebook("Interactive kernel state is outside this conversion profile")
+    return tree
+
+
+def export_python(path: Path) -> tuple[str, dict]:
+    """Export with Jupytext, then compare the ordered executable syntax trees.
+
+    Presentation metadata and stored outputs never control this fresh script
+    run. Execution directives and unknown code-cell metadata fail closed.
+    The original notebook remains the provenance artifact.
+    """
+    if path.stat().st_size > MAX_SOURCE_BYTES:
+        raise UnsupportedNotebook("Source exceeds the bounded intake size")
+    raw = path.read_bytes()
+    notebook = json.loads(raw)
+    if notebook.get("nbformat") != 4:
+        raise UnsupportedNotebook("Only nbformat 4 is supported")
+    metadata = notebook.get("metadata", {})
+    languages = {
+        str(value).lower()
+        for value in (
+            metadata.get("kernelspec", {}).get("language"),
+            metadata.get("language_info", {}).get("name"),
+        )
+        if value
+    }
+    if languages != {"python"}:
+        raise UnsupportedNotebook("This profile requires an unambiguous Python language")
+    allowed_metadata = {"kernelspec", "language_info", "widgets", "mystnb", "toc"}
+    if set(metadata) - allowed_metadata:
+        raise UnsupportedNotebook("Notebook metadata needs a supported conversion profile")
+    # MyST's build-time execution switch does not change the notebook program.
+    # Preserve and explicitly record it, rather than adopting it as a skip rule.
+    myst = metadata.get("mystnb", {})
+    if set(myst) - {"execution_mode"} or myst.get("execution_mode") not in {
+        None,
+        "off",
+        "auto",
+        "force",
+        "cache",
+        "inline",
+    }:
+        raise UnsupportedNotebook("Unsupported documentation execution directives")
+    code: list[str] = []
+    for cell in notebook.get("cells", []):
+        if cell.get("cell_type") not in {"code", "markdown", "raw"}:
+            raise UnsupportedNotebook("Unknown cell type")
+        if cell["cell_type"] != "code":
+            continue
+        cell_metadata = cell.get("metadata", {})
+        if set(cell_metadata) - {"collapsed", "scrolled", "trusted", "execution"}:
+            raise UnsupportedNotebook("Code-cell execution directives are unsupported")
+        code.append(_text(cell["source"]))
+    if not code:
+        raise UnsupportedNotebook("No executable cells")
+    baseline_tree = _python_tree("\n\n".join(code) + "\n")
+    # Construct a code-only notebook. Narrative stays in the original document;
+    # do not turn raw cells, saved outputs or format directives into source code.
+    converted = jupytext.writes(
+        jupytext.reads(
+            json.dumps(
+                {
+                    "nbformat": 4,
+                    "nbformat_minor": 5,
+                    "metadata": {
+                        "kernelspec": metadata.get("kernelspec", {}),
+                        "language_info": metadata.get("language_info", {}),
+                    },
+                    "cells": [
+                        {
+                            "cell_type": "code",
+                            "source": source,
+                            "metadata": {},
+                            "execution_count": None,
+                            "outputs": [],
+                            "id": f"source-{index}",
+                        }
+                        for index, source in enumerate(code)
+                    ],
+                }
+            ),
+            fmt="ipynb",
+        ),
+        fmt="py:nomarker",
+        notebook_metadata_filter="-all",
+        cell_metadata_filter="-all",
+    )
+    converted_tree = _python_tree(converted)
+    syntax = ast.dump(baseline_tree, include_attributes=False)
+    if syntax != ast.dump(converted_tree, include_attributes=False):
+        raise UnsupportedNotebook("Exporter changed or omitted executable statements")
+    receipt = {
+        "profile": PROFILE,
+        "converter": "jupytext",
+        "converter_version": version("jupytext"),
+        "format": "py:nomarker",
+        "source_sha256": hashlib.sha256(raw).hexdigest(),
+        "script_sha256": hashlib.sha256(converted.encode()).hexdigest(),
+        "executable_ast_sha256": hashlib.sha256(syntax.encode()).hexdigest(),
+        "code_cells": len(code),
+        "ordered_code_equivalence": True,
+        "documentation_execution_policy": myst,
+        "stored_outputs_used_as_evidence": False,
+        "executed": False,
+    }
+    return converted, receipt

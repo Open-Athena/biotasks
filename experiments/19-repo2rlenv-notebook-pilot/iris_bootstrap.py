@@ -102,6 +102,9 @@ def main():
     inputs = Path.cwd()
     manifest = json.loads((inputs / "inputs.json").read_text())
     configuration = json.loads((inputs / "campaign-config.json").read_text())
+    entrypoint = configuration.get("entrypoint", "run_pilot.py")
+    if entrypoint not in {"run_pilot.py", "run_reference.py"}:
+        raise ValueError("Unsupported checkpointed experiment entrypoint")
     deadline = min(time.time() + 7200, configuration.get("absolute_deadline", float("inf")))
     evidence = Path("/evidence")
     evidence.mkdir(exist_ok=True)
@@ -184,7 +187,7 @@ def main():
             env["BIOTASKS_CONTINUATION"] = str(evidence / "continuation")
         shutil.copyfile(inputs / "inputs.json", evidence / "inputs.json")
         command(
-            [str(upstream / ".venv/bin/python"), str(experiment / "run_pilot.py")],
+            [str(upstream / ".venv/bin/python"), str(experiment / entrypoint)],
             cwd=experiment,
             deadline=deadline,
             env=env,

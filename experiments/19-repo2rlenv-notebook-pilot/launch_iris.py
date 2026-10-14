@@ -92,12 +92,6 @@ def submit(
     campaign_number: int,
     continuation: Path | None = None,
 ):
-    from iris.cluster.constraints import Constraint, ConstraintOp
-    from iris.cluster.setup_scripts import default_setup_script
-    from iris.cluster.types import Entrypoint, EnvironmentSpec, ResourceSpec
-    from iris.rpc import job_pb2
-    from rigging.timing import Duration
-
     if not token or not daytona_key or not artifact_prefix.startswith("s3://"):
         raise ValueError(
             "Explicit approved runtime credentials and private artifact destination required"
@@ -110,6 +104,24 @@ def submit(
         campaign_number=campaign_number,
         continuation=continuation,
     )
+    return submit_prepared(
+        client, files=files, revision=revision, receipt=receipt, token=token,
+        daytona_key=daytona_key, artifact_prefix=artifact_prefix,
+        endpoint_job=endpoint_job, cluster=cluster,
+    )
+
+
+def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
+                    artifact_prefix, endpoint_job, cluster):
+    """Shared one-job launcher for a frozen, separately validated experiment payload."""
+    from iris.cluster.constraints import Constraint, ConstraintOp
+    from iris.cluster.setup_scripts import default_setup_script
+    from iris.cluster.types import Entrypoint, EnvironmentSpec, ResourceSpec
+    from iris.rpc import job_pb2
+    from rigging.timing import Duration
+
+    if not token or not daytona_key or not artifact_prefix.startswith("s3://"):
+        raise ValueError("Approved credentials and a private artifact destination are required")
     config = json.loads(files["campaign-config.json"])
     job_name = "biotasks19-" + config["campaign"]
     record = {

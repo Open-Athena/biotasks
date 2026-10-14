@@ -1102,3 +1102,38 @@ verbatim before replacing the published plan. Snapshot SHA-256:
 Completion and pending statements in that snapshot describe earlier checkpoints.
 The current update preserves the previous release as evidence and keeps the
 revised workflow open. No new model, sandbox, solver or viewer work ran.
+
+### 2026-10-14: first artifact-reference implementation checkpoint
+
+Implemented the initial reference gate described in
+[reference-execution.md](reference-execution.md). The reusable converter uses
+Jupytext 1.19.6, rejects unsupported execution features, and verifies the ordered
+Python syntax tree. The selected newer Scanpy source exported all 35 code cells
+without changing their statements. The source's MyST documentation execution
+setting is preserved in the receipt; no notebook kernel or cell markers are
+required. Other source languages remain explicitly unsupported by this first
+conversion profile.
+
+Preparation and independent review use version-controlled GLM prompts and the
+existing upstream Tasksmith artifact controller, request accounting and protected
+Iris model client. Task-specific setup, offline input substitutions and exports
+must come from GLM. The controller stages/checksums the original data, preserves
+the untouched conversion and generated diff, enforces offline reference execution,
+records artifacts and resource evidence, and uses existing durable export and
+owned-resource cleanup. It does not invoke construction, graders, solvers,
+publication or the viewer.
+
+The first run configuration has 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 seconds for
+the complete computation, 1,800 cumulative setup seconds, two repair passes,
+45 maximum GLM requests, and two hours plus cleanup. Reserved $5 within the
+standing $100 authorization; aggregate conservative reservations are now $81,
+leaving $19 unallocated. This is not a provider invoice. No new paid run had
+started at this checkpoint.
+
+Validation: nine conversion regressions and six reference-protocol/upstream
+stage tests passed. The full root suite passed 31 cases; four loopback tests
+were blocked by the local filesystem/network sandbox and passed when rerun with
+loopback access (six cases in that file). Ruff, formatting, ty and pre-commit
+passed. Tests used synthetic fixtures and scripted model responses; the source
+conversion is static evidence, not scientific execution. The largest measured
+local test peak was 130,800 KiB under the shared-node guard.
