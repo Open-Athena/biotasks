@@ -12,6 +12,8 @@ from test_reference import plan
 
 @pytest.mark.parametrize("manifest,packages", [
     ('[project', []),
+    ('project="wrong type"', []),
+    ('project=[]', []),
     ('[project]\nname="x"', []),
     ('[project]\nname="x"\nversion="1"\nrequires-python=">=3.13"\ndependencies="numpy"', []),
     (None, ["--allow-unauthenticated"]),
@@ -57,3 +59,21 @@ def test_uv_creates_environment_and_lock_without_pip_in_venv(tmp_path):
     assert (project / "uv.lock").is_file()
     subprocess.run([str(environment / "bin/python"), "-c", "import sys; assert sys.prefix != sys.base_prefix"], check=True)
     assert not (environment / "bin/pip").exists()
+
+
+def test_staging_receipt_verifies_files_and_rejects_changed_data(tmp_path):
+    import hashlib
+    import json
+    from reference_remote import verify_staging
+    data = tmp_path / "input.tsv"
+    data.write_text("real input fixture")
+    receipt = tmp_path / "receipt.json"
+    record = {"local_path": str(data), "source": "synthetic test fixture", "sha256": hashlib.sha256(data.read_bytes()).hexdigest()}
+    receipt.write_text(json.dumps({"files": [record]}))
+    assert verify_staging(receipt, roots=(tmp_path,))["files"] == 1
+    data.write_text("changed")
+    with pytest.raises(ValueError, match="checksum"):
+        verify_staging(receipt, roots=(tmp_path,))
+    receipt.write_text('{"files": [{}]}')
+    with pytest.raises(ValueError, match="require"):
+        verify_staging(receipt, roots=(tmp_path,))

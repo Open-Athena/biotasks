@@ -281,6 +281,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
             upload(directory / "pyproject.toml", "environment/pyproject.toml")
             upload(directory / "stage-inputs.sh", "stage-inputs.sh")
             upload(directory / "setup.sh", "setup.sh")
+            upload(experiment / "reference_remote.py", "remote.py")
             allowed = min(setup_remaining, int(deadline - time.time()) - 900)
             if allowed <= 0:
                 raise TimeoutError("Setup allowance exhausted")
@@ -310,6 +311,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
                 )
                 result["status"] = "setup_repair_budget_exhausted"
                 continue
+            worker.download("/work/setup-inputs.json", directory / "setup-inputs.json")
             for filename in ("uv.lock", "environment.txt"):
                 worker.download("/work/environment/" + filename, directory / filename)
             # Fresh computation workspace and exact reviewed script; setup cannot

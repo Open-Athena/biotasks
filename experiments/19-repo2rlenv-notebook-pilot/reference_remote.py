@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import resource
+import re
 import signal
 import subprocess
 import sys
@@ -56,6 +57,34 @@ def verify_inputs():
         if actual != item["sha256"]:
             raise ValueError("Original staged input changed")
     print(json.dumps({"original_inputs_unchanged": True, "files": len(records)}), flush=True)
+
+
+def verify_staging(receipt_path, roots=(Path("/inputs"), Path("/work/cache"))):
+    """Validate and rehash declared staged files before admitting execution."""
+    receipt = json.loads(Path(receipt_path).read_text())
+    if not isinstance(receipt, dict) or not isinstance(receipt.get("files"), list):
+        raise ValueError("Staging receipt must contain a files array")
+    seen = set()
+    for item in receipt["files"]:
+        if not isinstance(item, dict) or any(
+            not isinstance(item.get(key), str) or not item[key]
+            for key in ("local_path", "source", "sha256")
+        ):
+            raise ValueError("Staged files require local_path, source and sha256")
+        path = Path(item["local_path"])
+        if (
+            not path.is_absolute()
+            or str(path) in seen
+            or not any(path.resolve().is_relative_to(root.resolve()) for root in roots)
+            or not re.fullmatch("[0-9a-f]{64}", item["sha256"])
+        ):
+            raise ValueError("Invalid staged file path or SHA-256")
+        seen.add(str(path))
+        with path.open("rb") as stream:
+            actual = hashlib.file_digest(stream, "sha256").hexdigest()
+        if actual != item["sha256"]:
+            raise ValueError("Staged file checksum mismatch")
+    return {"staged_inputs_verified": True, "files": len(seen)}
 
 
 def execute(argv, timeout, directory, label):
@@ -132,6 +161,8 @@ if __name__ == "__main__":
         stage_inputs(sys.argv[2])
     elif sys.argv[1] == "verify-inputs":
         verify_inputs()
+    elif sys.argv[1] == "verify-staging":
+        print(json.dumps(verify_staging(sys.argv[2])), flush=True)
     elif sys.argv[1] == "inventory":
         inventory(sys.argv[2])
     else:

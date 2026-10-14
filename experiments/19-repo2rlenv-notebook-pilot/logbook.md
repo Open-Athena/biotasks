@@ -1444,3 +1444,15 @@ checks environment creation without installing biological dependencies. No
 model, sandbox, source analysis or subsequent pipeline stage ran. The revised
 canonical prompt is ready for user review; the HTML still represents run 002,
 not a new output from this dependency-manifest contract.
+
+### 2026-10-14: independent review before preparation run 003
+
+The user requested independent review, fixes and an actual model run. A separate
+reviewer found two implementation gaps: non-table project metadata bypassed
+repair handling, and the later runner discarded worker-staged input receipts.
+Both were addressed generically; details are in `reviews/uv-preparation.md`.
+Thirty-five focused checks passed. Prepare run 003 with the unchanged newer
+notebook and revised canonical prompt: GLM-5.3, medium, one creation plus at most
+one structural repair, no client token/byte caps. This authorization is for
+preparation only. Generated environment setup, data staging, reference execution,
+model review and downstream task stages remain unrun.

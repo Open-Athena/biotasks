@@ -80,8 +80,14 @@ Prepare only these generated artifacts:
   be empty if no additional staging is needed. Network is available ONLY during
   setup. Stage all downloads, metadata and caches needed for a later offline
   run. Check available upstream checksums and write input identities and SHA-256
-  checksums to `/work/setup-inputs.json`. Do not save precomputed answers or
-  modify source files.
+  checksums to `/work/setup-inputs.json` as `{"files": [...]}`. Each file record
+  must contain `local_path` (absolute path under `/inputs` or `/work/cache`),
+  `source` (original URL or provenance description), and `sha256` (lowercase hex).
+  Include extracted files used by the analysis, not only their downloaded archive.
+  If the script stages nothing, write an empty files array; if the script itself
+  is empty, the controller supplies that empty receipt. The controller checks
+  declared files against these hashes and preserves the receipt before execution.
+  Do not save precomputed answers or modify source files.
 - `changes`: minimal, exact, uniquely anchored edits to the converted script.
   `input_staging` changes may replace network retrieval with a faithful local
   load or configure paths/caches. They must not change inputs or scientific
