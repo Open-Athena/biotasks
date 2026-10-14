@@ -35,6 +35,10 @@ in a later stage.
 
 Read `baseline_script`, including its narrative comments. Identify the intended
 scientific results of EVERY analysis branch.
+Identify branches by distinct scientific end goals, not by successive processing
+stages. Loading, normalization, filtering and similar prerequisites are not
+separate branches merely because the source gives them their own sections.
+They still execute unchanged as dependencies of the endpoints they support.
 Prefer the underlying scientific data of plots, preserving consequential
 transformations, identifiers and labels. Large outputs are allowed when they
 are the scientific endpoint. Do not equate the last variable or last cell with
@@ -43,6 +47,11 @@ Distinguish scientific endpoints from intermediate objects, diagnostics and
 repeated displays; preserving every analysis statement does not require a
 separate artifact for each statement or plot. Several endpoints may share one
 artifact when their scientific values and identities remain explicit.
+Choose the smallest sufficient collection of endpoint artifacts that covers
+those scientific goals. Justify each intermediate diagnostic or full-state
+snapshot that is necessary in addition; neither is an endpoint by default.
+Do not add catch-all or bonus exports to avoid deciding what results matter.
+This is a sufficiency criterion, not a fixed limit on artifact count or size.
 
 Preserve the source's original inputs, methods, parameters, filtering, labels,
 randomness settings and execution order. Preserve any reductions already in
@@ -69,6 +78,12 @@ Prepare only these generated artifacts:
   export the existing result at the point where it exists without changing it.
   Do not alter algorithms, parameters, annotations, error handling or branch
   execution. Do not suppress analysis errors. Each edit needs a justification.
+  `capture` changes may bind the return value of one existing standalone call
+  to a fresh variable: replace `call(...)` with `fresh_name = call(...)`, keeping
+  the call and every argument unchanged. They must not repeat the call, reuse
+  an existing name, or add other statements. Use a separate `export` edit to
+  serialize the captured result. A capture is useful only when that unchanged
+  call actually returns the required result; do not assume it does.
 - `artifacts` and `branches`: all required endpoint paths, scientific meanings,
   source evidence, and a complete branch-to-artifact mapping. Write artifacts
   under `/work/outputs`; list paths relative to that directory. Export values
@@ -79,6 +94,13 @@ For plots produced by the future reference run, plan exports of their underlying
 scientific values and identifiers rather than rendered figures. This is an output
 requirement, not a request to inspect images. Leave the source's own plotting
 calls intact, but do not add figure-capture helpers.
+Prefer already-computed result objects and native accessors. Do not silently
+omit identifiers or substitute independently reconstructed results. If an
+export requires additional computation, explain why it reproduces the original
+result and specify an executable equivalence check for the later validation
+stage. Do not claim equivalence before that check. If faithful extraction is
+unresolved, record the gap rather than inventing a substitute or dropping the
+scientific branch. Any change to call arguments falls outside `capture`.
 
 ## Execution contract for the later run
 
@@ -101,3 +123,9 @@ is unavailable, return disposition=reject with a precise reason and distinguish
 unsupported conversion, unavailable inputs/environment, infrastructure failure,
 resource limits and a demonstrated source-code defect. Uncertainty is not proof
 that the source is broken. Preserve unresolved assumptions explicitly.
+
+In your rationale and assumptions, distinguish supplied facts, requirements
+derived from source code, and unresolved assumptions. Runtime, peak memory,
+output size and dependency-installation feasibility remain unmeasured until
+execution. Do not supply numerical estimates or assurances of feasibility
+without evidence supplied in the input; identify what execution must establish.

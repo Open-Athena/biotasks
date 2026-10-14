@@ -70,6 +70,42 @@ def test_output_paths_and_coverage_fail_closed():
         plan(artifacts=[{"path": "missing-branch.csv", "description": "x", "source_evidence": "x"}])
 
 
+def test_capture_retains_call_and_supports_a_separate_export():
+    baseline = "compute(data, method='original')\n"
+    captured = "captured = compute(data, method='original')\n"
+    prepared = plan(changes=[
+        dict(purpose="capture", before=baseline, after=captured,
+             justification="Retain the original return value"),
+        dict(purpose="export", before=captured, after=captured + "save(captured)\n",
+             justification="Serialize that value"),
+    ])
+    script, _ = materialize(baseline, prepared)
+    assert script == captured + "save(captured)\n"
+
+
+@pytest.mark.parametrize("replacement", [
+    "captured = compute(data, method='different')\n",
+    "captured = compute(data, method='original', return_value=True)\n",
+    "captured = compute(data, method='original')\nsave(captured)\n",
+    "data = compute(data, method='original')\n",
+    "len = compute(data, method='original')\n",
+    "obj.captured = compute(data, method='original')\n",
+])
+def test_capture_rejects_changed_calls_extra_statements_and_name_reuse(replacement):
+    baseline = "compute(data, method='original')\n"
+    prepared = plan(changes=[dict(purpose="capture", before=baseline, after=replacement,
+                                 justification="Fixture")])
+    with pytest.raises(ValueError, match="Capture"):
+        materialize(baseline, prepared)
+
+
+def test_capture_cannot_match_a_call_embedded_in_another_statement():
+    prepared = plan(changes=[dict(purpose="capture", before="compute(data)",
+                                 after="captured = compute(data)", justification="Fixture")])
+    with pytest.raises(ValueError, match="complete standalone"):
+        materialize("existing = compute(data)\n", prepared)
+
+
 @pytest.mark.parametrize("finding", ["Changed a threshold", "None detected; source unchanged"])
 def test_approval_cannot_keep_a_known_scientific_change(finding):
     with pytest.raises(ValidationError, match="known blockers: prohibited_scientific_changes"):

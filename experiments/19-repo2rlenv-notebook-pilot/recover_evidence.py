@@ -70,7 +70,9 @@ def main():
         )
         if not selected:
             continue
-        if entry["bytes"] > 256_000 or total + entry["bytes"] > 4_000_000:
+        # Preparation responses can exceed the old per-file diagnostic bound.
+        # Keep the total log-transfer bound; full evidence remains in storage.
+        if (entry["bytes"] > 256_000 and not relative.startswith("preparation/")) or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
             continue

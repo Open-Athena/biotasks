@@ -7,7 +7,10 @@ separate GLM review examines scientific fidelity against the original source.
 from __future__ import annotations
 
 import ast
+import builtins
 import difflib
+import io
+import tokenize
 from pathlib import PurePosixPath
 from typing import Literal
 
@@ -19,7 +22,7 @@ class StrictModel(BaseModel):
 
 
 class Change(StrictModel):
-    purpose: Literal["input_staging", "export"]
+    purpose: Literal["input_staging", "export", "capture"]
     before: str = Field(min_length=1)
     after: str = Field(min_length=1)
     justification: str = Field(min_length=1)
@@ -125,6 +128,40 @@ class ReferenceReview(StrictModel):
         return self
 
 
+def validate_capture(script: str, change: Change) -> None:
+    """Permit only a fresh binding of an otherwise identical standalone call."""
+    try:
+        before = ast.parse(change.before).body
+        after = ast.parse(change.after).body
+    except SyntaxError as error:
+        raise ValueError("Capture must contain valid standalone Python") from error
+    if (
+        len(before) != 1
+        or len(after) != 1
+        or not isinstance(before[0], ast.Expr)
+        or not isinstance(before[0].value, ast.Call)
+        or not isinstance(after[0], ast.Assign)
+        or len(after[0].targets) != 1
+        or not isinstance(after[0].targets[0], ast.Name)
+        or ast.dump(before[0].value) != ast.dump(after[0].value)
+    ):
+        raise ValueError("Capture may only bind an unchanged standalone call to a fresh name")
+    if not any(
+        isinstance(node, ast.Expr)
+        and isinstance(node.value, ast.Call)
+        and ast.get_source_segment(script, node) == change.before.strip()
+        for node in ast.walk(ast.parse(script))
+    ):
+        raise ValueError("Capture anchor must identify a complete standalone call in the source")
+    names = {
+        token.string
+        for token in tokenize.generate_tokens(io.StringIO(script).readline)
+        if token.type == tokenize.NAME
+    }
+    if after[0].targets[0].id in names | set(dir(builtins)):
+        raise ValueError("Capture target must be a fresh name, not an existing name or builtin")
+
+
 def materialize(baseline: str, plan: ReferencePlan) -> tuple[str, str]:
     """Apply explicit, uniquely anchored edits; never overwrite the baseline."""
     if plan.disposition != "prepare":
@@ -137,6 +174,8 @@ def materialize(baseline: str, plan: ReferencePlan) -> tuple[str, str]:
             raise ValueError(
                 "Exports may append code after an anchor, not replace source statements"
             )
+        if change.purpose == "capture":
+            validate_capture(script, change)
         script = script.replace(change.before, change.after, 1)
     try:
         compile(ast.parse(script), "reference.py", "exec")

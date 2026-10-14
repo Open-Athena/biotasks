@@ -368,7 +368,7 @@ original = (ROOT / EXP / "reference-inputs/scanpy/clustering.ipynb").read_bytes(
 receipt = json.loads(DOCUMENTS["conversion"]["text"])
 if hashlib.sha256(original).hexdigest() != receipt["source_sha256"]:
     raise ValueError("Displayed notebook does not match the conversion input")
-preparation = "preparation-runs/001/"
+preparation = "preparation-runs/002/"
 prepared = (ROOT / EXP / preparation / "plan.json").exists()
 if prepared:
     context = json.loads((ROOT / EXP / preparation / "prepare/input.json").read_text())
