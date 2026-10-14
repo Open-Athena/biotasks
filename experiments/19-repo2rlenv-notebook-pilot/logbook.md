@@ -1298,3 +1298,16 @@ slots forward and permits only four proposal plus three review requests, keeping
 the combined coverage maximum at nine and reference-plus-coverage maximum at
 sixteen. No truncated action is accepted, no scientific output is manually repaired,
 and no source rerun, construction, solver or Daytona work is added.
+
+### 2026-10-14: reviewable map of the early pipeline
+
+Added `pipeline-map/index.html`, a standalone diagram with one selected stage
+at a time, explicit inputs/outputs, and verbatim expandable prompt templates.
+It covers reference conversion, preparation, review and execution, then structural
+inspection, endpoint creation, checks, optional repair and independent review.
+The map distinguishes current input wiring from the agreed but unapplied simplified
+call sequence. The user agreed to medium reasoning, no extra per-response token
+cap beyond context capacity, and removal of the extra request/response byte caps.
+Word-count guidance is still awaiting review. No pipeline execution was launched
+and the earlier explorer was not changed. Browser checks exercised all nine steps,
+verbatim prompt display, hash navigation and mobile width without JavaScript errors.

@@ -1,0 +1,321 @@
+"""Build a standalone explanatory map, embedding canonical prompt files verbatim."""
+
+import hashlib
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[3]
+HERE = Path(__file__).resolve().parent
+REVISION = "79dd9c3584a4fc7ae82161761f14b0a26c796b94"
+BASE = f"https://github.com/Open-Athena/biotasks/blob/{REVISION}/"
+EXP = "experiments/19-repo2rlenv-notebook-pilot/"
+
+
+def row(name, value):
+    return {"name": name, "value": value}
+
+
+SOURCE = row(
+    "Original notebook",
+    "Notebook Markdown and code cells rendered as text, plus title, URL, revision, hash, license and input-data provenance. The rendered seed does not include saved cell outputs.",
+)
+BASELINE = row(
+    "Untouched script",
+    "The deterministically converted Python script, before input-path or export changes.",
+)
+PROFILES = row(
+    "Observed file profiles",
+    "Each file’s path, size and SHA-256. CSV/TSV: headers, row counts, missing/nonfinite counts, numeric ranges, bounded distinct counts, column hashes and examples. HDF5: paths, encodings, shapes, types and bounded previews. These are summaries, not the full biological matrices.",
+)
+CONTEXT = [
+    SOURCE,
+    BASELINE,
+    row(
+        "Executed script + diff",
+        "The complete reference script that ran successfully, and its exact changes relative to the untouched script.",
+    ),
+    PROFILES,
+    row(
+        "Earlier preparation plan",
+        "GLM’s proposed exports and branch mapping, exclusions, source edits, dependency/setup shell script, environment rationale and unresolved assumptions. These are prior model claims, not measurements.",
+    ),
+    row(
+        "Earlier preparation review",
+        "The earlier GLM review’s decision, rationale, defect lists and checks recommended for execution.",
+    ),
+    row(
+        "Execution record + run summary",
+        "Command, exit status, elapsed time and memory measurement. Also the full reference summary: repair history, input preservation, archive/cleanup checks and model-request usage. Some of this operational detail may be unnecessary for endpoint selection; it is currently included.",
+    ),
+]
+
+STAGES = [
+    dict(
+        id="convert",
+        number="01",
+        title="Convert source",
+        kind="code",
+        group="Reference",
+        purpose="Make the notebook’s code available as a plain script while retaining its narrative separately.",
+        inputs=[row("Pinned notebook", "The selected source notebook and its recorded identity.")],
+        outputs=[
+            "Untouched baseline.py and conversion.json with source/script hashes.",
+            "A seed containing the notebook’s Markdown and code as text plus provenance.",
+        ],
+        note="The implemented pilot is Python. This diagram does not claim support for every notebook language.",
+        files=["reference-inputs/scanpy/conversion.json"],
+    ),
+    dict(
+        id="prepare",
+        number="02",
+        title="Prepare reference",
+        kind="llm",
+        group="Reference",
+        purpose="Propose dependencies, faithful input staging and exports of the notebook’s scientific results.",
+        inputs=[
+            SOURCE,
+            BASELINE,
+            row("Conversion record", "Source/script identities and conversion metadata."),
+            row(
+                "Staged original inputs",
+                "Recorded identities and locations of the downloaded original input files.",
+            ),
+            row(
+                "Execution limits",
+                "The reference configuration, including resources and remaining setup time.",
+            ),
+            row(
+                "Previous feedback, if any",
+                "Earlier plans plus review defects or setup/execution failures. Empty on the first pass.",
+            ),
+        ],
+        outputs=[
+            "ReferencePlan: setup shell script, anchored source edits, artifact inventory and scientific-branch mapping.",
+            "Exclusions, uncertainties, and a prepare/reject decision.",
+        ],
+        prompt="notebook-reference-prepare",
+        schema="reference_protocol.py",
+        fields=[
+            "disposition",
+            "explanation",
+            "environment_rationale",
+            "setup_sh",
+            "changes",
+            "artifacts",
+            "branches",
+            "excluded_outputs",
+            "unresolved_assumptions",
+        ],
+        note="This worker already proposes which scientific results to export. It is not only installing packages. The export plan is checked again against actual files later.",
+        files=["run_reference.py", "reference_protocol.py"],
+    ),
+    dict(
+        id="reference-review",
+        number="03",
+        title="Review preparation",
+        kind="llm",
+        group="Reference",
+        purpose="Check the proposed setup and exports against the original notebook before running them.",
+        inputs=[
+            row(
+                "All preparation inputs",
+                "The same original notebook, untouched script, conversion, staged input records, limits and previous feedback supplied to step 02.",
+            ),
+            row(
+                "Proposed ReferencePlan",
+                "The complete output of step 02, including setup commands and export changes.",
+            ),
+            row(
+                "Materialized source diff",
+                "The controller applies the proposed anchored edits and supplies their exact diff. It also checks the resulting script’s syntax before this review.",
+            ),
+        ],
+        outputs=[
+            "ReferenceReview: approve, revise or reject.",
+            "Defect lists for omissions, scientific changes, setup/export problems; unresolved execution checks.",
+        ],
+        prompt="notebook-reference-review",
+        schema="reference_protocol.py",
+        fields=[
+            "decision",
+            "rationale",
+            "omitted_scientific_results",
+            "prohibited_scientific_changes",
+            "setup_or_export_problems",
+            "checks_for_execution",
+        ],
+        note="A static model review cannot establish that the script runs or that its results are scientifically correct. The existing reference controller can send defects back to step 02; the newly agreed one-repair sequence applies to endpoint creation below.",
+        files=["run_reference.py", "reference_protocol.py"],
+    ),
+    dict(
+        id="execute",
+        number="04",
+        title="Execute reference",
+        kind="code",
+        group="Reference",
+        purpose="Run the reviewed script on the original inputs and preserve its real outputs.",
+        inputs=[
+            row("Reviewed setup script", "Commands generated in step 02 and approved in step 03."),
+            row(
+                "Reviewed reference script",
+                "The baseline plus the permitted input-staging and export edits.",
+            ),
+            row("Original input files", "The biological data itself, staged into the sandbox."),
+            row(
+                "Resource and execution settings",
+                "CPU-only Daytona sandbox, setup allowance, offline analysis and reference runtime limit.",
+            ),
+        ],
+        outputs=[
+            "Exported scientific files, dependency/input records and file hashes.",
+            "Exit status, stdout/stderr, timing and memory observations; source script and diff.",
+        ],
+        note="Execution itself makes no LLM calls. Setup has internet; analysis runs offline. Failures can become feedback for reference preparation. A successful exit is not scientific validation.",
+        files=["run_reference.py", "reference_remote.py"],
+    ),
+    dict(
+        id="inspect",
+        number="05",
+        title="Inspect saved files",
+        kind="code",
+        group="Endpoints",
+        purpose="Measure the structure of reference outputs without rerunning the analysis.",
+        inputs=[
+            row(
+                "Archived reference outputs",
+                "The actual files from step 04, retrieved into the inspection worker.",
+            ),
+            row(
+                "Pinned inventories",
+                "The original size/hash inventory and archive manifest, checked before reading.",
+            ),
+        ],
+        outputs=[
+            "Structural profiles for every supported CSV/TSV or HDF5 file.",
+            "Retrieval receipts and before/after identity checks.",
+        ],
+        note="Streams tables; inspects HDF5 structure and small previews without loading full matrices. Unsupported formats and inspection limits are explicit. The next model receives these profiles, not direct file access.",
+        files=["coverage_inputs.py", "inspect_artifacts.py"],
+    ),
+    dict(
+        id="create",
+        number="06",
+        title="Create endpoint proposal",
+        kind="llm",
+        group="Endpoints",
+        purpose="Decide which scientific results the single task should require, using the executed source and observed evidence.",
+        inputs=CONTEXT,
+        outputs=[
+            "CoveragePlan: proposed scientific endpoints and compact solver-facing representations.",
+            "Evidence citations, exclusions, corrected prior claims, missing reference evidence and validation needs.",
+            "A propose-contract, reference-work-required or reject decision.",
+        ],
+        prompt="notebook-endpoint-coverage",
+        schema="coverage_protocol.py",
+        fields=[
+            "disposition",
+            "rationale",
+            "endpoints",
+            "supporting_artifacts",
+            "excluded_results_with_reasons",
+            "corrections_to_prior_claims",
+            "missing_reference_evidence",
+            "next_validation",
+        ],
+        note="This is an endpoint proposal, not task construction or a grading contract. The worker has submission/revision tools only: it cannot open files, browse or run analysis. The notebook and scripts overlap, and previous model opinions are currently included; these inputs are open for review.",
+        files=["run_coverage.py", "coverage_protocol.py"],
+    ),
+    dict(
+        id="check",
+        number="07",
+        title="Check submission",
+        kind="code",
+        group="Endpoints",
+        purpose="Check the proposal’s structure and whether cited evidence locations exist.",
+        inputs=[
+            row("Submitted proposal", "The structured output from step 06 or its optional repair."),
+            row(
+                "Schema + observed profiles",
+                "Required fields and types, consistency rules, known artifact paths, exact CSV headers and HDF5 paths.",
+            ),
+        ],
+        outputs=["An accepted structured proposal, or concrete validation errors."],
+        note="These checks can reject a nonexistent column or an inconsistent decision. They cannot detect every omitted scientific branch or prove that an evidence claim is true.",
+        files=["coverage_protocol.py", "reference_stage.py"],
+    ),
+    dict(
+        id="repair",
+        number="08",
+        title="Repair if rejected",
+        kind="llm",
+        group="Endpoints",
+        purpose="Correct a creation submission that failed the programmatic checks, once.",
+        inputs=[
+            row(
+                "Original creation context",
+                "The same instructions, notebook, scripts, observed profiles and prior reference records used in step 06.",
+            ),
+            row(
+                "Rejected submission",
+                "The previous assistant submission, preserved in the conversation; the adapter also retains provider reasoning when present.",
+            ),
+            row(
+                "Validation feedback",
+                "The tool response describing schema or evidence-location errors. The original response schema and submission/revision tools remain available.",
+            ),
+        ],
+        outputs=["A corrected complete proposal or a patch, checked again by step 07."],
+        prompt="notebook-endpoint-coverage",
+        schema="coverage_protocol.py",
+        note="Agreed sequence, not yet implemented: at most one repair after a rejected creation. A second failure stops and is preserved. There is no separate repair prompt file: the creation prompt plus validation feedback drives the repair. Current code still has broader turn allowances and separate output-limit recovery.",
+        files=["reference_stage.py", "run_coverage.py"],
+    ),
+    dict(
+        id="coverage-review",
+        number="09",
+        title="Review endpoint coverage",
+        kind="llm",
+        group="Endpoints",
+        purpose="Independently check whether the proposal covers the notebook’s science and is grounded in observed evidence.",
+        inputs=[
+            row(
+                "All creation evidence",
+                "The same source, scripts, profiles, earlier preparation plan/review and execution records listed in step 06.",
+            ),
+            row(
+                "Accepted endpoint proposal",
+                "The complete proposal that passed step 07, after repair if needed.",
+            ),
+        ],
+        outputs=[
+            "CoverageReview: approve, revise or reject.",
+            "Omitted endpoints, unsupported claims, scientific-scope changes and remaining executable validation.",
+        ],
+        prompt="notebook-endpoint-review",
+        schema="coverage_protocol.py",
+        fields=[
+            "decision",
+            "rationale",
+            "omitted_scientific_endpoints",
+            "unsupported_evidence_claims",
+            "scientific_scope_changes",
+            "remaining_validation",
+        ],
+        note="A fresh model conversation, using GLM again. It receives the accepted proposal, not the creator’s reasoning trace. Agreed sequence: one review call, with findings reported rather than another automatic repair loop. Approval allows contract drafting; it does not validate a grader.",
+        files=["run_coverage.py", "coverage_protocol.py"],
+    ),
+]
+
+for stage in STAGES:
+    stage["links"] = [{"label": name, "url": BASE + EXP + name} for name in stage["files"]]
+    if "prompt" in stage:
+        path = "src/biotasks/prompts/" + stage["prompt"] + ".md"
+        content = (ROOT / path).read_text()
+        stage["prompt_text"] = content
+        stage["prompt_url"] = BASE + path
+        stage["prompt_sha256"] = hashlib.sha256(content.encode()).hexdigest()
+
+template = (HERE / "template.html").read_text()
+data = json.dumps(STAGES, ensure_ascii=False).replace("<", "\\u003c")
+(HERE / "index.html").write_text(template.replace("__STAGE_DATA__", data))
+print("Built", HERE / "index.html")
