@@ -209,8 +209,11 @@ class GLMChatAuthor:
                 "content": message.get("content"),
                 "tool_calls": calls,
             }
-            if "reasoning_content" in message:
-                assistant["reasoning_content"] = message["reasoning_content"]
+            # Current vLLM uses `reasoning`; retain the provider's field name,
+            # while also supporting recorded responses from older endpoints.
+            for field in ("reasoning", "reasoning_content"):
+                if field in message:
+                    assistant[field] = message[field]
             messages.append(assistant)
             name = function["name"]
             arguments: dict[str, Any] = {}

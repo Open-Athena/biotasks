@@ -77,6 +77,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "reference", "1")
     limits = ChatLimits(
         max_output_tokens=config["max_output_tokens"],
+        max_input_bytes=config["max_input_bytes"],
         request_timeout_sec=config["request_timeout_seconds"],
         reasoning_effort=config["reasoning_effort"],
     )

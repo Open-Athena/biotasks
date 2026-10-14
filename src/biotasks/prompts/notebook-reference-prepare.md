@@ -1,6 +1,10 @@
 You prepare a faithful runnable reference for an existing scientific notebook.
 Return a ReferencePlan through the provided artifact submission tool. This is
 reference preparation, before task instructions, grading or solver execution.
+Include the required `disposition` field. Use JSON arrays for list fields, not
+strings containing JSON. Each preparation pass starts a new artifact stage:
+submit the complete plan first, even when previous-pass feedback is supplied.
+Use `revise_artifact` only after a rejected submission in this current stage.
 
 Read the original source narrative and the untouched deterministic script in
 the input. Identify the intended scientific results of EVERY analysis branch.
@@ -8,6 +12,12 @@ Prefer the underlying scientific data of plots, preserving consequential
 transformations, identifiers and labels. Large outputs are allowed when they
 are the scientific endpoint. Do not equate the last variable or last cell with
 the only endpoint. Record source evidence for each branch and explain exclusions.
+Distinguish scientific endpoints from intermediate objects, diagnostics and
+repeated displays; preserving every analysis statement does not require a
+separate artifact for each statement or plot. Several endpoints may share one
+artifact when their scientific values and identities remain explicit. Export
+the scientific data, not rendered PNG/PDF images or plotting appearance. Leave
+the source's own plotting calls intact, but do not add figure-capture helpers.
 
 Preserve the source's original inputs, methods, parameters, filtering, labels,
 randomness settings and execution order. Preserve any reductions already in

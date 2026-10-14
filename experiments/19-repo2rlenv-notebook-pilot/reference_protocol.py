@@ -52,13 +52,17 @@ class Branch(StrictModel):
 
 
 class ReferencePlan(StrictModel):
-    disposition: Literal["prepare", "reject"]
+    disposition: Literal["prepare", "reject"] = Field(
+        description="Required admission decision: prepare a faithful reference, or reject with a reason."
+    )
     explanation: str = Field(min_length=1)
     environment_rationale: str
     setup_sh: str
     changes: list[Change]
     artifacts: list[Artifact]
-    branches: list[Branch]
+    branches: list[Branch] = Field(
+        description="JSON array of scientific branch records, not a string."
+    )
     excluded_outputs: list[str]
     unresolved_assumptions: list[str]
 
@@ -84,19 +88,40 @@ class ReferencePlan(StrictModel):
 class ReferenceReview(StrictModel):
     decision: Literal["approve", "revise", "reject"]
     rationale: str = Field(min_length=1)
-    omitted_scientific_results: list[str]
-    scientific_changes: list[str]
-    setup_or_export_problems: list[str]
-    checks_for_execution: list[str]
+    omitted_scientific_results: list[str] = Field(
+        description="Defects only: required scientific results missing from the plan. Empty [] if none."
+    )
+    prohibited_scientific_changes: list[str] = Field(
+        description="Defects only: prohibited changes to the scientific analysis. Empty [] if none. "
+        "Put evidence that science was preserved in rationale, never in this list."
+    )
+    setup_or_export_problems: list[str] = Field(
+        description="Defects only: known setup or export problems. Empty [] if none."
+    )
+    checks_for_execution: list[str] = Field(
+        description="Uncertainties to check against execution evidence, not known defects or "
+        "permission to add profiling or alter the source."
+    )
 
     @model_validator(mode="after")
     def no_known_blockers(self):
-        if self.decision == "approve" and (
-            self.omitted_scientific_results
-            or self.scientific_changes
-            or self.setup_or_export_problems
-        ):
-            raise ValueError("Approval cannot retain known blockers")
+        populated = [
+            field
+            for field in (
+                "omitted_scientific_results",
+                "prohibited_scientific_changes",
+                "setup_or_export_problems",
+            )
+            if getattr(self, field)
+        ]
+        if self.decision == "approve" and populated:
+            raise ValueError(
+                "Approval cannot retain known blockers: "
+                + ", ".join(populated)
+                + ". These lists contain defects only and must be [] to approve. "
+                "Put positive findings and 'none detected' explanations in rationale. "
+                "If a defect exists, choose revise or reject; do not clear a real defect."
+            )
         return self
 
 

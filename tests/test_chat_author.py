@@ -97,14 +97,19 @@ async def committed(**_kwargs):
     return "Artifact committed."
 
 
-def test_preserves_reasoning_and_links_tools_until_submission(tmp_path):
+@pytest.mark.parametrize("reasoning_field", ["reasoning_content", "reasoning"])
+def test_preserves_reasoning_and_links_tools_until_submission(tmp_path, reasoning_field):
     payloads = []
 
     async def complete(payload):
         payloads.append(deepcopy(payload))
-        return (
+        answer = (
             reply("shell", {"command": "inspect"}) if len(payloads) == 1 else reply(call_id="done")
         )
+        if reasoning_field == "reasoning":
+            message = answer["choices"][0]["message"]
+            message["reasoning"] = message.pop("reasoning_content")
+        return answer
 
     observed = []
 
@@ -126,15 +131,14 @@ def test_preserves_reasoning_and_links_tools_until_submission(tmp_path):
         )
     )
     assert result["turns"] == 2 and observed == ["inspect"]
-    assert payloads[1]["messages"][2]["reasoning_content"] == "retained reasoning"
+    assert payloads[1]["messages"][2][reasoning_field] == "retained reasoning"
     assert payloads[1]["messages"][3] == {
         "role": "tool",
         "tool_call_id": "call-1",
         "content": "shape measured",
     }
-    assert json.loads((tmp_path / "trace/1/response.json").read_text()) == reply(
-        "shell", {"command": "inspect"}
-    )
+    recorded = json.loads((tmp_path / "trace/1/response.json").read_text())
+    assert recorded["choices"][0]["message"][reasoning_field] == "retained reasoning"
 
 
 @pytest.mark.parametrize("finish", ["length", "content_filter", None])

@@ -61,8 +61,8 @@ A completely received, accounted response ending at its output-token limit may
 use upstream's one concise recovery within the original stage request allowance.
 Partial tools are never executed; uncertain transport outcomes are not retried.
 
-The second campaign reserves $5 from the standing $100 Daytona authorization.
-The aggregate reservation becomes $86, leaving $14 unallocated. These conservative
+The third campaign reserves $5 from the standing $100 Daytona authorization.
+The aggregate reservation becomes $91, leaving $9 unallocated. These conservative
 reservations are not measured charges and do not account for any free credits.
 One Iris controller uses already approved reserved CPU capacity; GLM uses the
 approved free endpoint. No GPU is provisioned.
@@ -79,6 +79,18 @@ response-length failure. Data staging and checksums succeeded; no generated setu
 or scientific computation ran, and sandbox deletion was verified. The replacement
 also fixes the storage-client environment and includes the diagnostic helper in
 the frozen payload.
+
+The [second run](reference-runs/002/summary.json) made twelve requests, including
+a GLM repair of an offline registry dependency caught by the separate reviewer.
+Its next review could not validate: positive findings were placed in a field
+reserved for defects. Setup and computation remained blocked; cleanup and
+durable export succeeded. The current schema explicitly calls that field
+`prohibited_scientific_changes` and requires empty defect lists to approve.
+Prompts ask for scientific endpoint data and omit added image capture. The
+adapter preserves both current `reasoning` and older `reasoning_content` fields
+through tool continuations. The input-byte bound is 512,000 to accommodate those
+retained messages; it is not a model context-size claim. Original outputs and
+failed reviews remain unchanged in the run records.
 
 ## Remaining validation
 

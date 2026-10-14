@@ -70,13 +70,14 @@ def test_output_paths_and_coverage_fail_closed():
         plan(artifacts=[{"path": "missing-branch.csv", "description": "x", "source_evidence": "x"}])
 
 
-def test_approval_cannot_keep_a_known_scientific_change():
-    with pytest.raises(ValidationError, match="known blockers"):
+@pytest.mark.parametrize("finding", ["Changed a threshold", "None detected; source unchanged"])
+def test_approval_cannot_keep_a_known_scientific_change(finding):
+    with pytest.raises(ValidationError, match="known blockers: prohibited_scientific_changes"):
         ReferenceReview(
             decision="approve",
             rationale="fixture",
             omitted_scientific_results=[],
-            scientific_changes=["Changed a threshold"],
+            prohibited_scientific_changes=[finding],
             setup_or_export_problems=[],
             checks_for_execution=[],
         )
@@ -302,7 +303,7 @@ def test_independent_rejection_prevents_generated_code_execution(tmp_path, monke
             decision="reject",
             rationale="Fixture scientific defect",
             omitted_scientific_results=[],
-            scientific_changes=["changed method"],
+            prohibited_scientific_changes=["changed method"],
             setup_or_export_problems=[],
             checks_for_execution=[],
         )

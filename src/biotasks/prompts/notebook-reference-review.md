@@ -4,11 +4,24 @@ the artifact submission tool. Do not merely check the proposed inventory for
 internal consistency. This review does not establish execution success or
 scientific correctness.
 
+The fields `omitted_scientific_results`, `prohibited_scientific_changes` and
+`setup_or_export_problems` are DEFECT LISTS. Use an empty JSON array `[]` when
+none were found. Do not put positive findings, permitted changes, or sentences
+such as "none detected" in those lists; put that evidence in `rationale`.
+Approval requires all three lists to be empty. Never erase a real defect to
+obtain approval: choose `revise` or `reject` instead. `checks_for_execution`
+records unresolved observations to examine after execution, not new scientific
+requirements or permission to change the source.
+
 Look for every intended scientific analysis branch and endpoint, including
 results expressed through plots. Underlying plot data is acceptable only when
 it preserves consequential transformations, identities and labels. Identify
 omissions even when the proposed branch map does not mention them. Explain
 reasonable exclusions of incidental displays or styling.
+Image files alone do not establish the scientific values behind a plot. Do not
+require rendered image exports, a separate artifact for every intermediate, or
+detailed profiling. Review the source's endpoint data and complete branch
+coverage; several endpoints may share an artifact with an explicit mapping.
 
 Inspect the exact source diff and setup script. Permit environment reconstruction,
 faithful input staging/path changes and exports of existing results. Reject

@@ -1164,3 +1164,40 @@ prompts are unchanged. Seventeen focused adapter/reference regressions passed
 with a 132,472 KiB peak. Campaign `artifact-reference-002` reserves another $5;
 conservative reservations total $86, with $14 unallocated and actual charges
 unknown. This stays within the standing $100 authorization without a new request.
+
+### 2026-10-14: review protocol clarification and current reasoning field
+
+Campaign `artifact-reference-002` at `2b08f2742b6f4631c6720b151598e30bbe160206`
+made twelve GLM requests. The first preparation exhausted its output limit;
+upstream's bounded recovery then produced a plan after structural revisions.
+Independent review identified an online registry lookup left in the offline
+script. GLM repaired input staging in a second preparation pass. The next review
+repeatedly submitted approval with positive statements in `scientific_changes`,
+which the schema treats as a defect list, and exhausted its three-call allowance.
+No setup or scientific computation ran. The corrected durable export and owned
+sandbox cleanup both succeeded. [Plans, diffs, reviews and request counts](reference-runs/002/summary.json)
+are retained as unedited, unexecuted worker outputs.
+
+The next factory revision names the field `prohibited_scientific_changes`,
+describes all defect lists explicitly, and returns an actionable validation
+error. It does not clear entries or accept a failed review programmatically.
+Preparation instructions clarify fresh-stage submission and JSON arrays. Both
+prompts distinguish scientific endpoint data from rendered images, repeated
+displays and intermediate objects. Source plots and all analysis calls remain
+preserved; only added figure-capture infrastructure is excluded.
+
+The saved provider responses use `reasoning`, which the adapter did not carry
+forward. [Current vLLM documentation](https://docs.vllm.ai/en/stable/features/reasoning_outputs/)
+documents the field rename. The adapter now retains either provider field name
+with regression coverage. Replaying request assembly on the saved records shows
+one three-turn review would grow to 280,254 bytes when reasoning is preserved,
+so the explicit input-byte bound increases from 256,000 to 512,000 without silent
+truncation. This does not claim a model context size or increase request counts.
+
+Campaign `artifact-reference-003` retains the resource, time, repair and
+45-request ceilings and reserves $5. Conservative aggregate reservations are
+$91, with $9 unallocated and actual provider charges unverified. No generated
+plan, source method or review result was manually repaired.
+
+Validation of this replacement: nineteen focused adapter/reference regressions
+passed, with a 133,028 KiB peak. Ruff, formatting and type checks passed.
