@@ -1327,3 +1327,11 @@ Added offline syntax highlighting for Python, shell, JSON, diffs, notebook cells
 and prompt Markdown using the already locked Pygments dependency at HTML build
 time. Nested code fields retain their language highlighting. Browser checks
 confirmed converted source, notebook text and prompts remain text-identical.
+
+Corrected step 01 to display the exact original `clustering.ipynb` JSON as
+the converter input. Its bytes match the original conversion receipt's SHA-256.
+The HTML now names and links `biotasks.notebook_script.export_python(path)` and
+Jupytext 1.19.6 (`py:nomarker`), explains the ordered code-cell/syntax-tree checks,
+and presents `notebook_seed()` as a separate derived-text operation. The original
+file is preserved with the existing upstream license. Browser checks verified
+verbatim original input, separate derived text, converted output and mobile layout.

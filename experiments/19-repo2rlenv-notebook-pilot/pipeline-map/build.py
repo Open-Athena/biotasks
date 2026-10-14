@@ -67,7 +67,7 @@ STAGES = [
         inputs=[row("Pinned notebook", "The selected source notebook and its recorded identity.")],
         outputs=[
             "Untouched baseline.py and conversion.json with source/script hashes.",
-            "A seed containing the notebook’s Markdown and code as text plus provenance.",
+            "Separately, notebook_seed() produces the narrative/code rendering used by later model calls. That rendering is not the converter’s input.",
         ],
         note="The implemented pilot is Python. This diagram does not claim support for every notebook language.",
         files=["reference-inputs/scanpy/conversion.json"],
@@ -322,6 +322,22 @@ for stage in STAGES:
         stage["prompt_url"] = BASE + path
         stage["prompt_sha256"] = hashlib.sha256(content.encode()).hexdigest()
 
+STAGES[0]["links"].extend(
+    [
+        {"label": "export_python() · converter", "url": BASE + "src/biotasks/notebook_script.py"},
+        {
+            "label": "notebook_seed() · separate text rendering",
+            "url": BASE + "src/biotasks/notebook_seed.py",
+        },
+    ]
+)
+STAGES[0]["program"] = dict(
+    function="biotasks.notebook_script.export_python(path)",
+    engine="Jupytext 1.19.6 · py:nomarker",
+    description="Reads the original .ipynb JSON, extracts its 35 code cells in order, exports a plain Python script, and checks that its executable syntax tree matches the original code. Markdown and saved outputs are excluded from the script. No notebook execution or LLM call occurs here.",
+    url=BASE + "src/biotasks/notebook_script.py",
+)
+
 DOCUMENTS = {}
 
 
@@ -341,10 +357,19 @@ cov = "coverage-runs/001/"
 ev = "pipeline-map/evidence/"
 document(
     "notebook",
-    "Original notebook cells · rendered text",
+    "Derived notebook text · for later model calls",
     "seeds/current.json",
     text=seed["question_text"],
 )
+document(
+    "original-ipynb",
+    "Original clustering.ipynb · exact JSON file",
+    "reference-inputs/scanpy/clustering.ipynb",
+)
+original = (ROOT / EXP / "reference-inputs/scanpy/clustering.ipynb").read_bytes()
+receipt = json.loads((ROOT / EXP / "reference-inputs/scanpy/conversion.json").read_text())
+if hashlib.sha256(original).hexdigest() != receipt["source_sha256"]:
+    raise ValueError("Displayed notebook does not match the original conversion input")
 document("seed", "Seed + provenance", "seeds/current.json", text=json.dumps(seed, indent=2))
 document("baseline", "Converted source · baseline.py", "reference-inputs/scanpy/baseline.py")
 document("conversion", "Conversion record", "reference-inputs/scanpy/conversion.json")
@@ -395,10 +420,10 @@ for i, profile in enumerate(profiles):
 
 RECORDS = {
     "convert": (
-        ["notebook", "seed"],
+        ["original-ipynb"],
         ["baseline", "conversion"],
         "Actual source conversion",
-        "The input pane shows notebook cells rendered as text; the output pane is the actual complete plain Python script. Conversion did not execute it.",
+        "Left: the exact original .ipynb JSON, verified against the source hash in the conversion receipt. Right: the complete converted Python script or its receipt. The separate model-input rendering is shown below, not substituted for the original file.",
     ),
     "prepare": (
         ["prepare-input", "notebook", "baseline", "staged"],
@@ -533,6 +558,9 @@ def structured(value, key="", depth=0):
 
 
 for key, doc in DOCUMENTS.items():
+    if key == "original-ipynb":
+        doc["html"] = code(doc["text"], "json")
+        continue
     try:
         doc["html"] = structured(json.loads(doc["text"]))
     except json.JSONDecodeError:
