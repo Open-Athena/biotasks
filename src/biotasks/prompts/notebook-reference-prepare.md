@@ -6,8 +6,35 @@ strings containing JSON. Each preparation pass starts a new artifact stage:
 submit the complete plan first, even when previous-pass feedback is supplied.
 Use `revise_artifact` only after a rejected submission in this current stage.
 
-Read the untouched documented script in the input. Its line comments preserve
-the original Markdown narrative in source order; source metadata supplies provenance. Identify the intended scientific results of EVERY analysis branch.
+## Inputs to this stage
+
+The user message supplies a JSON object containing:
+
+- `baseline_script`: the complete, unmodified Python script produced by
+  deterministic notebook conversion. Original Markdown cells appear as line
+  comments in source order, alongside the original code.
+- `source`: metadata identifying the source notebook and its provenance.
+- `conversion`: the conversion receipt, including source and script identities.
+- `limits`: the target environment and configured resource/time limits.
+- `staged_original_inputs`, when supplied: receipts describing original data
+  staged by the controller, not the data contents themselves.
+- `setup_seconds_remaining`, when supplied: the remaining setup time allowance.
+- `previous_feedback`, when supplied: feedback from an earlier preparation pass.
+
+You do not receive the original notebook JSON, saved cell outputs, embedded
+images, or the contents of scientific data files. Paths and URLs in the supplied
+text identify resources; they do not mean you have inspected those resources.
+Do not infer observed data properties or successful execution from source code
+alone. Record anything that requires later execution or inspection as unresolved.
+
+Your output is a plan containing setup commands and source edits. This stage
+does not run those commands or execute the analysis; the controller does that
+in a later stage.
+
+## Scientific coverage
+
+Read `baseline_script`, including its narrative comments. Identify the intended
+scientific results of EVERY analysis branch.
 Prefer the underlying scientific data of plots, preserving consequential
 transformations, identifiers and labels. Large outputs are allowed when they
 are the scientific endpoint. Do not equate the last variable or last cell with
@@ -15,15 +42,14 @@ the only endpoint. Record source evidence for each branch and explain exclusions
 Distinguish scientific endpoints from intermediate objects, diagnostics and
 repeated displays; preserving every analysis statement does not require a
 separate artifact for each statement or plot. Several endpoints may share one
-artifact when their scientific values and identities remain explicit. Export
-the scientific data, not rendered PNG/PDF images or plotting appearance. Leave
-the source's own plotting calls intact, but do not add figure-capture helpers.
+artifact when their scientific values and identities remain explicit.
 
 Preserve the source's original inputs, methods, parameters, filtering, labels,
 randomness settings and execution order. Preserve any reductions already in
 the source; add none. Do not split the task, omit a failing branch, change the
 analysis to make it run, or invent expected values, dimensions or timing.
-The source's stored outputs are historical context, not fresh execution evidence.
+
+## Required plan
 
 Prepare only these generated artifacts:
 
@@ -48,6 +74,13 @@ Prepare only these generated artifacts:
   under `/work/outputs`; list paths relative to that directory. Export values
   and identifiers in interoperable formats where possible. Export existing
   results faithfully; do not run alternative analyses to fill gaps.
+
+For plots produced by the future reference run, plan exports of their underlying
+scientific values and identifiers rather than rendered figures. This is an output
+requirement, not a request to inspect images. Leave the source's own plotting
+calls intact, but do not add figure-capture helpers.
+
+## Execution contract for the later run
 
 Use absolute paths under `/inputs` for staged original data and `/work/cache`
 for caches. Setup and analysis run as separate fresh processes. The controller
