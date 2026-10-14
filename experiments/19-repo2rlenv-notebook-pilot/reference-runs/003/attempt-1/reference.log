@@ -1,0 +1,21 @@
+/work/reference.py:27: FutureWarning: The method set_figure_params is deprecated and will be removed in the future. Use :func:`scanpy.set_figure_params` instead
+  sc.settings.set_figure_params(dpi=50, facecolor="white")
+/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.
+  adata = adata.copy()
+/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.
+  adata = adata.copy()
+/work/reference.py:46: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.
+  adata = ad.concat(adatas, label="sample")
+sample
+s1d1    8785
+s1d3    8340
+Name: count, dtype: int64
+Traceback (most recent call last):
+  File "/work/reference.py", line 80, in <module>
+    sc.pp.scrublet(adata, batch_key="sample")
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/venv/lib/python3.13/site-packages/legacy_api_wrap/__init__.py", line 88, in fn_compatible
+    return fn(*args_all, **kw)
+  File "/work/venv/lib/python3.13/site-packages/scanpy/preprocessing/_scrublet/__init__.py", line 188, in scrublet
+    raise ValueError(msg)
+ValueError: `threshold` is None and thus scrublet requires `scikit-image`. Please install `scanpy[scrublet]` (or `scikit-image` directly) and try again.

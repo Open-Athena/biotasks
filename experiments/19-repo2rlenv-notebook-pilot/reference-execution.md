@@ -92,6 +92,22 @@ through tool continuations. The input-byte bound is 512,000 to accommodate those
 retained messages; it is not a model context-size claim. Original outputs and
 failed reviews remain unchanged in the run records.
 
+The [third run](reference-runs/003/summary.json) completed the entire reviewed
+source-derived script offline in **136.55 seconds**, using the original inputs
+on the configured 4-CPU, 8-GiB sandbox. It used seven GLM requests across initial
+preparation, two repairs and three separate reviews. The repairs fixed a shell
+dialect mismatch and a missing optional dependency; GLM made both changes. No
+model calls occurred during the actual scientific execution.
+
+All eight declared artifacts were nonempty, totaling 526,734,122 bytes. They
+include a 476,434,974-byte AnnData state; this is a reference inventory, not the
+final solver output contract. Original input hashes were unchanged. Output
+downloads and the durable archive were hash-verified before owned sandbox
+deletion, which was also verified. The peak child RSS was 5,022,300 KiB; this
+does not measure aggregate sandbox memory. Each execution started in a fresh
+process and empty computation/output directories, but later attempts reused the
+installed environment and caches. The timing is not a cold-environment result.
+
 ## Remaining validation
 
 Passing this reference gate does not establish endpoint semantic fidelity,

@@ -1201,3 +1201,43 @@ plan, source method or review result was manually repaired.
 
 Validation of this replacement: nineteen focused adapter/reference regressions
 passed, with a 133,028 KiB peak. Ruff, formatting and type checks passed.
+
+### 2026-10-14: complete offline source execution
+
+Campaign `artifact-reference-003` ran checkpoint
+`f7b3c3aa2410f189b19929947967c5045037fae7`. Its final reviewed script completed
+in 136.55 seconds on 4 CPUs and 8 GiB RAM, from the two original count matrices.
+All source analysis calls, including clustering, annotation and marker-gene
+analysis, remained in the executed script. The initial setup used Bash
+`pipefail` under the configured POSIX shell; GLM repaired that mismatch. The
+first scientific execution then stopped after 17.50 seconds because an optional
+Scrublet dependency was missing. GLM added it in the second permitted repair.
+These were setup failures, not evidence of a broken source analysis. Each plan
+received a separate GLM review before execution. Seven raw requests were used,
+including one bounded recovery from an output-token limit. The running
+scientific process made no model calls.
+
+[Unedited plans, scripts, diffs, reviews and execution records](reference-runs/003/summary.json)
+preserve all three passes. The final eight artifacts were nonempty and totaled
+526,734,122 bytes, including a 476,434,974-byte full AnnData state. All outputs
+were downloaded, hashed, durably archived and downloaded again for verification
+before sandbox deletion. Original input hashes remained unchanged. The final
+cleanup check found no owned sandboxes. No further campaign was launched.
+
+The 5,022,300 KiB maximum child RSS is not aggregate sandbox memory. Successful
+computation started in a new process and empty working/output directories, but
+reused the environment and caches from the failed attempts. The 136.55-second
+measurement therefore does not establish cold-environment reproducibility.
+Semantic artifact fidelity, observed schemas, plot-statistic coverage and
+portable comparisons remain unvalidated. The full AnnData export is evidence;
+it does not freeze a solver-facing format or require reproducing every
+intermediate matrix. Task construction, grading, blind solving, release and
+viewer changes remain outside this milestone. Issue #19 stays open.
+
+The user asked which stages require a model. Conversion, declared-input staging,
+dependency installation, bounded execution and evidence collection are
+programmatic. GLM prepares setup and exports, reviews them separately and makes
+permitted repairs when necessary. Later task construction and blind solving
+will use GLM; deterministic code will still supply the reward. Standing
+reservations remain $91 of the authorized $100, not measured charges. Remaining
+Daytona credits and actual billing have not been verified.

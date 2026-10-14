@@ -1,0 +1,113 @@
+--- baseline.py
++++ reference.py
+@@ -22,13 +22,14 @@
+ 
+ import scanpy as sc
+ 
++import os
++
+ sc.settings.set_figure_params(dpi=50, facecolor="white")
+ 
+-EXAMPLE_DATA = pooch.create(
+-    path=pooch.os_cache("scverse_tutorials"),
+-    base_url="doi:10.6084/m9.figshare.22716739.v1/",
+-)
+-EXAMPLE_DATA.load_registry_from_doi()
++# Original retrieved the count matrices via the pooch registry
++# doi:10.6084/m9.figshare.22716739.v1/; those exact files (verified against the
++# provider MD5s) are staged locally under /inputs by setup (see
++# /work/setup-inputs.json), so the registry object is not needed offline.
+ 
+ samples = {
+     "s1d1": "s1d1_filtered_feature_bc_matrix.h5",
+@@ -37,7 +38,7 @@
+ adatas = {}
+ 
+ for sample_id, filename in samples.items():
+-    path = EXAMPLE_DATA.fetch(filename)
++    path = os.path.join("/inputs", filename)
+     sample_adata = sc.read_10x_h5(path)
+     sample_adata.var_names_make_unique()
+     adatas[sample_id] = sample_adata
+@@ -58,6 +59,12 @@
+     adata, qc_vars=["mt", "ribo", "hb"], inplace=True, log1p=True
+ )
+ 
++# Export the per-cell QC metrics (underlying data of the QC violin/scatter plots)
++import numpy as np
++import pandas as pd
++
++adata.obs.to_csv("/work/outputs/qc_metrics_prefilter_obs.csv")
++
+ sc.pl.violin(
+     adata,
+     ["n_genes_by_counts", "total_counts", "pct_counts_mt"],
+@@ -82,9 +89,28 @@
+ 
+ sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key="sample")
+ 
++# Export gene-level annotations and the highly-variable-gene selection results
++adata.var.to_csv("/work/outputs/var_annotations_hvg.csv")
++
+ sc.pl.highly_variable_genes(adata)
+ 
+ sc.tl.pca(adata)
++
++# Export PCA results: per-cell coordinates and per-PC variance ratios
++# (underlying data of sc.pl.pca and sc.pl.pca_variance_ratio)
++_var_ratio = np.asarray(adata.uns["pca"]["variance_ratio"])
++pd.DataFrame(
++    {
++        "pc": np.arange(1, len(_var_ratio) + 1),
++        "variance_ratio": _var_ratio,
++        "cumulative_variance_ratio": np.cumsum(_var_ratio),
++    }
++).to_csv("/work/outputs/pca_variance_ratio.csv", index=False)
++pd.DataFrame(
++    adata.obsm["X_pca"],
++    index=adata.obs_names,
++    columns=[f"PC{i + 1}" for i in range(adata.obsm["X_pca"].shape[1])],
++).to_csv("/work/outputs/pca_coords.csv")
+ 
+ sc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)
+ 
+@@ -99,6 +125,11 @@
+ sc.pp.neighbors(adata)
+ 
+ sc.tl.umap(adata)
++
++# Export the per-cell UMAP coordinates
++pd.DataFrame(
++    adata.obsm["X_umap"], index=adata.obs_names, columns=["UMAP1", "UMAP2"]
++).to_csv("/work/outputs/umap_coords.csv")
+ 
+ sc.pl.umap(
+     adata,
+@@ -193,6 +224,19 @@
+ # Obtain cluster-specific differentially expressed genes
+ sc.tl.rank_genes_groups(adata, groupby="leiden_res_0.50", method="wilcoxon")
+ 
++# Export the full per-cluster differential-expression table (Wilcoxon)
++_leiden = adata.obs["leiden_res_0.50"]
++_groups = (
++    list(_leiden.cat.categories)
++    if isinstance(_leiden.dtype, pd.CategoricalDtype)
++    else sorted(_leiden.astype(str).unique())
++)
++_deg_table = pd.concat(
++    [sc.get.rank_genes_groups_df(adata, group=g).assign(group=g) for g in _groups],
++    ignore_index=True,
++)
++_deg_table.to_csv("/work/outputs/rank_genes_groups_wilcoxon.csv", index=False)
++
+ sc.pl.rank_genes_groups_dotplot(
+     adata, groupby="leiden_res_0.50", standard_scale="var", n_genes=5
+ )
+@@ -207,3 +251,7 @@
+     frameon=False,
+     ncols=3,
+ )
++
++# Export the final annotated AnnData object and its per-cell metadata
++adata.obs.to_csv("/work/outputs/cell_metadata_final.csv")
++adata.write_h5ad("/work/outputs/adata_final.h5ad")
