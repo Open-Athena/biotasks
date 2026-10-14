@@ -1273,3 +1273,11 @@ Their final targeted check was prevented by another task holding the shared
 heavy-work lock. The command aborted without starting tests; no remote coverage
 job has been submitted. The prepared checkpoint remains unexecuted until that
 check and resource gates can pass. Other tasks were not interrupted.
+
+The user then explicitly authorized proceeding without the shared lock for this
+light work. The final twelve coverage tests and targeted Ruff lint/format checks
+passed in 1.02 seconds, peaking at 103,588 KiB. Load and memory gates, single-worker
+execution, thread limits and low priority remain in force; the exception is
+limited to these light checks and the remote submission/status client. Biological
+artifact inspection stays on the reserved Iris worker. No source or generated
+artifact was changed, and the nine-request coverage allowance is unchanged.

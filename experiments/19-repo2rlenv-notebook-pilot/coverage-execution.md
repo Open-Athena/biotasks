@@ -1,7 +1,7 @@
 # Reviewing observed endpoint coverage
 
-Status: implemented locally and checkpointed for review; the first coverage pass
-has not been submitted. Final checks and launch are pending shared-node capacity.
+Status: the implementation and final targeted checks passed; the first coverage
+pass is ready for submission. This is preparation, not an executed coverage result.
 
 This stage consumes an immutable successful reference run. It does not rerun
 the analysis, execute generated code, create a Daytona sandbox or invoke a
