@@ -23,12 +23,12 @@ def row(name, value):
 
 
 SOURCE = row(
-    "Original notebook",
-    "Notebook Markdown and code cells rendered as text, plus title, URL, revision, hash, license and input-data provenance. The rendered seed does not include saved cell outputs.",
+    "Source metadata",
+    "Source title, URL, revision, hash, license and input-data provenance. The separate notebook-text rendering is not sent to the worker.",
 )
 BASELINE = row(
-    "Untouched script",
-    "The deterministically converted Python script, before input-path or export changes.",
+    "Documented source script",
+    "One runnable Python script: original code plus Markdown as line comments in source order. Before input-path or export changes.",
 )
 PROFILES = row(
     "Observed file profiles",
@@ -63,11 +63,11 @@ STAGES = [
         title="Convert source",
         kind="code",
         group="Reference",
-        purpose="Make the notebook’s code available as a plain script while retaining its narrative separately.",
+        purpose="Convert the notebook into one runnable Python script containing both code and narrative comments.",
         inputs=[row("Pinned notebook", "The selected source notebook and its recorded identity.")],
         outputs=[
             "Untouched baseline.py and conversion.json with source/script hashes.",
-            "Separately, notebook_seed() produces the narrative/code rendering used by later model calls. That rendering is not the converter’s input.",
+            "Markdown narrative stays beside the code as comments; no separate notebook-text rendering is needed by later model calls.",
         ],
         note="The implemented pilot is Python. This diagram does not claim support for every notebook language.",
         files=["reference-inputs/scanpy/conversion.json"],
@@ -229,7 +229,7 @@ STAGES = [
             "missing_reference_evidence",
             "next_validation",
         ],
-        note="This is an endpoint proposal, not task construction or a grading contract. The worker has submission/revision tools only: it cannot open files, browse or run analysis. The notebook and scripts overlap, and previous model opinions are currently included; these inputs are open for review.",
+        note="This is an endpoint proposal, not task construction or a grading contract. The worker has submission/revision tools only: it cannot open files, browse or run analysis. The documented script supplies narrative and code together; preparation outputs remain evidence to assess.",
         files=["run_coverage.py", "coverage_protocol.py"],
     ),
     dict(
@@ -326,157 +326,70 @@ STAGES[0]["links"].extend(
     [
         {"label": "export_python() · converter", "url": BASE + "src/biotasks/notebook_script.py"},
         {
-            "label": "notebook_seed() · separate text rendering",
-            "url": BASE + "src/biotasks/notebook_seed.py",
+            "label": "Source metadata",
+            "url": BASE + EXP + "seeds/current.json",
         },
     ]
 )
 STAGES[0]["program"] = dict(
     function="biotasks.notebook_script.export_python(path)",
     engine="Jupytext 1.19.6 · py:nomarker",
-    description="Reads the original .ipynb JSON, extracts its 35 code cells in order, exports a plain Python script, and checks that its executable syntax tree matches the original code. Markdown and saved outputs are excluded from the script. No notebook execution or LLM call occurs here.",
+    description="Reads the original .ipynb JSON, preserves its code and Markdown cells in order, exports a plain Python script, and checks that its executable syntax tree matches the original code. Markdown is preserved as line comments; saved outputs and raw cells are excluded from the script. No notebook execution or LLM call occurs here.",
     url=BASE + "src/biotasks/notebook_script.py",
 )
 
 DOCUMENTS = {}
 
 
-def document(key, label, path, *, text=None, field=None):
+def document(key, label, path, *, text=None):
     value = (ROOT / EXP / path).read_text() if text is None else text
-    if field:
-        value = json.loads(value)[field]
-        value = value if isinstance(value, str) else json.dumps(value, indent=2)
     DOCUMENTS[key] = dict(label=label, path=path, text=value)
     return key
 
 
 seed = json.loads((ROOT / EXP / "seeds/current.json").read_text())[0]
-ref = "reference-runs/003/"
-attempt = ref + "attempt-2/"
-cov = "coverage-runs/001/"
-ev = "pipeline-map/evidence/"
-document(
-    "notebook",
-    "Derived notebook text · for later model calls",
-    "seeds/current.json",
-    text=seed["question_text"],
-)
+metadata = {key: value for key, value in seed.items() if key != "question_text"}
 document(
     "original-ipynb",
     "Original clustering.ipynb · exact JSON file",
     "reference-inputs/scanpy/clustering.ipynb",
 )
+document(
+    "baseline", "Current script · code + Markdown comments", "reference-inputs/scanpy/baseline.py"
+)
+document("conversion", "Current conversion receipt", "reference-inputs/scanpy/conversion.json")
+document(
+    "provenance",
+    "Source metadata · no duplicate notebook text",
+    "seeds/current.json",
+    text=json.dumps(metadata, indent=2),
+)
 original = (ROOT / EXP / "reference-inputs/scanpy/clustering.ipynb").read_bytes()
-receipt = json.loads((ROOT / EXP / "reference-inputs/scanpy/conversion.json").read_text())
+receipt = json.loads(DOCUMENTS["conversion"]["text"])
 if hashlib.sha256(original).hexdigest() != receipt["source_sha256"]:
-    raise ValueError("Displayed notebook does not match the original conversion input")
-document("seed", "Seed + provenance", "seeds/current.json", text=json.dumps(seed, indent=2))
-document("baseline", "Converted source · baseline.py", "reference-inputs/scanpy/baseline.py")
-document("conversion", "Conversion record", "reference-inputs/scanpy/conversion.json")
-document("staged", "Original data files · staging receipt", ref + "staged-inputs.json")
-document(
-    "prepare-input", "Exact preparation input · all fields", ev + "reference-preparation-input.json"
-)
-document(
-    "review-input",
-    "Exact preparation-review input · all fields",
-    ev + "reference-review-input.json",
-)
-document(
-    "coverage-input",
-    "Exact endpoint-creation input · all fields",
-    ev + "endpoint-creation-input.json",
-)
-document(
-    "used-prompt", "Endpoint prompt used in this recorded run", ev + "endpoint-creation-prompt.md"
-)
-for key, label, filename in [
-    ("plan", "GLM preparation plan", "plan.json"),
-    ("review", "GLM preparation review", "review.json"),
-    ("script", "Executed source · reference.py", "reference.py"),
-    ("diff", "Changes to the converted source", "source.diff"),
-    ("setup", "Generated dependency/setup script", "setup.sh"),
-    ("execution", "Reference execution result", "execution.json"),
-    ("stdout", "Reference stdout/stderr", "reference.log"),
-    ("inventory", "Exported files · sizes and hashes", "artifacts.json"),
-    ("environment", "Resolved dependencies", "environment.txt"),
-]:
-    document(key, label, attempt + filename)
-document("profiles", "All observed file profiles", cov + "profiles/all.json")
-document("inspection", "Inspection outcome", cov + "inspection.json")
-document("retrieval", "Retrieved file identities", cov + "retrieval.json")
-document("coverage-result", "Endpoint-creation outcome · incomplete", cov + "result.json")
-document("coverage-summary", "Request outcomes and token usage", cov + "summary.json")
-profiles = json.loads(DOCUMENTS["profiles"]["text"])
-profile_keys = []
-for i, profile in enumerate(profiles):
-    profile_keys.append(
-        document(
-            f"profile-{i}",
-            profile["path"] + " · observed profile",
-            cov + "profiles/" + profile["path"] + ".profile.json",
-        )
-    )
-
-RECORDS = {
-    "convert": (
-        ["original-ipynb"],
-        ["baseline", "conversion"],
-        "Actual source conversion",
-        "Left: the exact original .ipynb JSON, verified against the source hash in the conversion receipt. Right: the complete converted Python script or its receipt. The separate model-input rendering is shown below, not substituted for the original file.",
-    ),
-    "prepare": (
-        ["prepare-input", "notebook", "baseline", "staged"],
-        ["plan", "setup", "script", "diff"],
-        "Reference campaign 003 · preparation pass 2",
-        "This is the final successful preparation pass, after earlier setup/dependency failures. Its exact input includes the earlier feedback. The plan is GLM output; the script and diff are materialized programmatically from that plan.",
-    ),
-    "reference-review": (
-        ["review-input", "plan", "diff"],
-        ["review"],
-        "Reference campaign 003 · review pass 2",
-        "The review was made before execution. Its approval is a static assessment; future-tense checks in it are not measured results.",
-    ),
-    "execute": (
-        ["script", "setup", "staged"],
-        ["execution", "stdout", "inventory", "environment"],
-        "Reference campaign 003 · successful attempt 2",
-        "The full analysis completed in 136.55 seconds and exported eight files. The large biological files are retained remotely, not embedded here. Their actual profiles are available in step 05; this viewer does not reconstruct CSV rows from per-column examples.",
-    ),
-    "inspect": (
-        ["inventory", "retrieval"],
-        ["inspection", *profile_keys, "profiles"],
-        "Coverage campaign 001 · observed profiles",
-        "These are measured profiles of the eight saved reference files. CSV examples are independent samples per column, not aligned row previews. HDF5 previews are partial; full matrices are not displayed.",
-    ),
-    "create": (
-        ["coverage-input", "used-prompt", "notebook", "script", "profiles"],
-        ["coverage-result", "coverage-summary"],
-        "Coverage campaign 001 · no accepted proposal",
-        "Both responses hit the 32,000-token limit. No endpoint proposal was accepted. These are controller outcome records, not a successful model output. The exact prompt used in that run differs from the current template shown below.",
-    ),
-    "check": (
-        [],
-        [],
-        "Not reached for a complete endpoint proposal",
-        "The adapter rejected the truncated responses before an endpoint proposal reached schema/evidence validation. There is no validation result to display for this step.",
-    ),
-    "repair": (
-        [],
-        [],
-        "New one-repair sequence has not run",
-        "The earlier run made an output-limit recovery request, not the newly agreed repair of a proposal rejected by programmatic checks. No input/output pair exists for this new step yet.",
-    ),
-    "coverage-review": (
-        [],
-        [],
-        "Not run",
-        "Endpoint creation did not produce an accepted proposal, so the independent coverage review was never called. There is no review response to display.",
-    ),
-}
+    raise ValueError("Displayed notebook does not match the conversion input")
 for stage in STAGES:
-    inputs, outputs, label, explanation = RECORDS[stage["id"]]
-    stage["record"] = dict(inputs=inputs, outputs=outputs, label=label, explanation=explanation)
+    if stage["id"] == "convert":
+        stage["record"] = dict(
+            inputs=["original-ipynb"],
+            outputs=["baseline", "conversion"],
+            label="Current conversion",
+            explanation="Original notebook JSON → runnable Python with Markdown retained as comments. No model call or notebook execution is involved.",
+        )
+    elif stage["id"] == "prepare":
+        stage["record"] = dict(
+            inputs=["baseline", "provenance", "conversion"],
+            outputs=[],
+            label="Ready for reference preparation",
+            explanation="These are the current converted script and source metadata. Staged-data receipts and execution settings are added at launch. No preparation output exists for this updated version yet.",
+        )
+    else:
+        stage["record"] = dict(
+            inputs=[],
+            outputs=[],
+            label="Not run for this version",
+            explanation="The step’s input/output contract and prompt are shown below. Its actual artifacts will be populated when this version reaches the step.",
+        )
 
 FORMATTER = HtmlFormatter(nowrap=True, style="friendly")
 LEXERS = {
