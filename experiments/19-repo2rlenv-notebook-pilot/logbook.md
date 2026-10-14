@@ -1470,3 +1470,20 @@ reported reasoning tokens). All 15 evidence files were recovered and hash-verifi
 validation feedback, exact input/prompt and responses. No task-specific repair
 was made by us, no replacement run launched, and no generated code executed.
 Both the remote host and local monitoring/collection clients are terminal.
+
+### 2026-10-14: schema-enforcement compatibility investigation
+
+The user approved a tiny compatibility test before any further notebook run.
+Run 003 supplied a required-field schema but neither strict tools nor a JSON-schema
+response format. The repair used an unrestricted merge patch. Its complete
+feedback and prior response were retained; both returned arguments were valid
+JSON and ended with tool_calls. These facts establish failed schema compliance,
+not whether generation or the server parser lost fields.
+
+Checkpoint a two-request probe using the actual ReferencePlan schema with a tiny
+synthetic fixture, deliberately asking to omit changes and add an extra nested
+field. Compare strict tool calling and JSON-schema response format at medium
+reasoning, without client token/byte caps. Retain the 600-second per-request
+transport timeout and disable automatic retries. No scientific analysis,
+notebook generation or sandbox work is part of this probe. Both local fixture
+checks passed; server support remains to be measured.

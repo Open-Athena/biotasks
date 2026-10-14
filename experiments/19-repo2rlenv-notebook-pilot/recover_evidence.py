@@ -66,13 +66,13 @@ def main():
             or relative.startswith("continuation/")
             or (relative.startswith("reference/") and "/outputs/" not in relative)
             or relative.startswith("coverage/")
-            or relative.startswith("preparation/")
+            or relative.startswith(("preparation/", "schema-probe/"))
         )
         if not selected:
             continue
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.
-        if (entry["bytes"] > 256_000 and not relative.startswith("preparation/")) or total + entry["bytes"] > 4_000_000:
+        if (entry["bytes"] > 256_000 and not relative.startswith(("preparation/", "schema-probe/"))) or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
             continue
