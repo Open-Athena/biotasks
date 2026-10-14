@@ -11,6 +11,8 @@
 @media print{.flow,.flow.endpoints{display:grid}.navigation{display:none}.panel{break-inside:avoid}.prompt-section pre{max-height:none}}
 
 .case{margin-top:22px;border-top:1px solid var(--line);padding-top:20px}.case-head{font-size:17px;font-weight:750;margin-bottom:6px}.actual-io{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;margin:18px 0}.file-pane{min-width:0;border:1px solid var(--line);border-radius:8px;background:#fafbfc;padding:15px}.file-pane label{display:block;font-size:14px;font-weight:750;margin-bottom:8px}.file-pane select{width:100%;padding:9px;font:13px system-ui;border:1px solid #bdcbd4;border-radius:5px;background:white;color:var(--ink)}.file-pane .document{margin-top:12px;max-height:620px;overflow:auto;font-size:13px}.document pre{font:12px/1.65 ui-monospace,SFMono-Regular,Consolas,monospace;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;padding:8px 0}.document details{margin:4px 0;padding:3px 7px;border-left:2px solid #dbe2e7}.document summary{cursor:pointer;padding:4px;font-weight:650;overflow-wrap:anywhere}.document .scalar{padding:5px 4px;overflow-wrap:anywhere}.scalar b{font-weight:650}.path{font:11px/1.4 ui-monospace,monospace;overflow-wrap:anywhere;margin-top:9px;color:var(--muted)}.schema-description{margin-top:22px}.schema-description>summary{cursor:pointer;font-size:14px;font-weight:700}.case .missing{padding:15px;background:#f1f4f6;border-radius:7px;font-size:14px}@media(max-width:760px){.actual-io{grid-template-columns:1fr}.file-pane .document{max-height:440px}}
+__SYNTAX_CSS__
+.syntax{background:transparent}.syntax .c,.syntax .c1,.syntax .cm,.syntax .ch,.syntax .cs{color:#526878}
 </style>
 </head>
 <body>
@@ -36,20 +38,9 @@
 const stages=JSON.parse(document.getElementById('stage-data').textContent);
 const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const documents=JSON.parse(document.getElementById('document-data').textContent);
-function structured(value,depth=0){
- if(value===null||typeof value!=='object')return `<pre>${escapeHtml(typeof value==='string'?value:JSON.stringify(value))}</pre>`;
- if(depth>=5)return `<pre>${escapeHtml(JSON.stringify(value,null,2))}</pre>`;
- if(Array.isArray(value)&&value.every(v=>v===null||typeof v!=='object'))return `<pre>${escapeHtml(JSON.stringify(value,null,2))}</pre>`;
- return Object.entries(value).map(([key,v])=>{
- const complex=v!==null&&(typeof v==='object'||typeof v==='string'&&v.length>180);
- const shape=Array.isArray(v)?` · ${v.length} items`:v!==null&&typeof v==='object'?` · ${Object.keys(v).length} fields`:typeof v==='string'?` · ${v.length.toLocaleString()} characters`:'';
- return complex?`<details><summary>${escapeHtml(key)}${escapeHtml(shape)}</summary>${structured(v,depth+1)}</details>`:`<div class="scalar"><b>${escapeHtml(key)}:</b> ${escapeHtml(typeof v==='string'?v:JSON.stringify(v))}</div>`;
- }).join('');
-}
 function showDocument(side,key){
- const d=documents[key];let content;
- try{content=structured(JSON.parse(d.text));}catch{content=`<pre>${escapeHtml(d.text)}</pre>`;}
- document.getElementById(side+'-document').innerHTML=content;
+ const d=documents[key];
+ document.getElementById(side+'-document').innerHTML=d.html;
  document.getElementById(side+'-path').textContent=d.path;
 }
 function pane(side,keys){
@@ -68,7 +59,7 @@ for(const s of stages){
 function select(id,writeHash=false){
  selected=stages.findIndex(s=>s.id===id);if(selected<0)selected=0;
  const s=stages[selected];for(const b of document.querySelectorAll('.node'))b.setAttribute('aria-pressed',String(b.dataset.id===s.id));
- const prompt=s.prompt_text?`<div class="prompt-section"><h3>Current prompt template</h3><p class="small">The current template, embedded verbatim; it is not a model output. For endpoint creation, select the recorded prompt in the Actual input pane to see the earlier version used in that run. Reference preparation/review prompts match the recorded run.</p><a class="small" href="${s.prompt_url}" target="_blank" rel="noopener">Open ${escapeHtml(s.prompt)}.md ↗</a><details><summary>Read the exact prompt</summary><pre>${escapeHtml(s.prompt_text)}</pre></details>${s.fields?`<details><summary>Required output fields</summary><div class="fields">${s.fields.map(x=>`<code>${escapeHtml(x)}</code>`).join('')}</div><p class="small" style="padding:0 16px">These are schema fields, not a recorded model response. See the linked protocol file for nested fields and validation rules.</p></details>`:''}<p class="small hash">Prompt SHA-256: ${s.prompt_sha256}</p></div>`:'<div class="prompt-section"><h3>No LLM prompt</h3><p class="small">This step runs code. Its behavior is defined by the linked implementation, not by a model instruction.</p></div>';
+ const prompt=s.prompt_text?`<div class="prompt-section"><h3>Current prompt template</h3><p class="small">The current template, embedded verbatim; it is not a model output. For endpoint creation, select the recorded prompt in the Actual input pane to see the earlier version used in that run. Reference preparation/review prompts match the recorded run.</p><a class="small" href="${s.prompt_url}" target="_blank" rel="noopener">Open ${escapeHtml(s.prompt)}.md ↗</a><details><summary>Read the exact prompt</summary><pre class="syntax">${s.prompt_html}</pre></details>${s.fields?`<details><summary>Required output fields</summary><div class="fields">${s.fields.map(x=>`<code>${escapeHtml(x)}</code>`).join('')}</div><p class="small" style="padding:0 16px">These are schema fields, not a recorded model response. See the linked protocol file for nested fields and validation rules.</p></details>`:''}<p class="small hash">Prompt SHA-256: ${s.prompt_sha256}</p></div>`:'<div class="prompt-section"><h3>No LLM prompt</h3><p class="small">This step runs code. Its behavior is defined by the linked implementation, not by a model instruction.</p></div>';
  document.getElementById('detail').innerHTML=`<span class="badge ${s.kind}">${s.kind==='llm'?'GLM · model-driven':'Programmatic · no LLM'}</span><h2 id="stage-title">${s.number} · ${escapeHtml(s.title)}</h2><p class="purpose">${escapeHtml(s.purpose)}</p>${actual(s)}<details class="schema-description"><summary>How this step is wired: input and output descriptions</summary><div class="io"><section><h3>What goes in</h3><dl>${s.inputs.map(x=>`<div class="input"><dt>${escapeHtml(x.name)}</dt><dd>${escapeHtml(x.value)}</dd></div>`).join('')}</dl></section><section class="output"><h3>What comes out</h3><ul>${s.outputs.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></section></div></details><p class="note">${escapeHtml(s.note)}</p>${prompt}<div class="links"><span>Implementation:</span>${s.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener">${escapeHtml(l.label)}</a>`).join('')}</div>`;
  for(const side of ['input','output']){const control=document.getElementById(side+'-file');if(control){control.onchange=()=>showDocument(side,control.value);showDocument(side,control.value);}}
  document.getElementById('previous').disabled=selected===0;document.getElementById('next').disabled=selected===stages.length-1;

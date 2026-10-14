@@ -1,9 +1,15 @@
 """Build a standalone explanatory map, embedding canonical prompt files verbatim."""
 
 import hashlib
+import html
 import json
+import re
 import subprocess
 from pathlib import Path
+
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import BashLexer, DiffLexer, JsonLexer, MarkdownLexer, PythonLexer, TextLexer
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
@@ -447,10 +453,103 @@ for stage in STAGES:
     inputs, outputs, label, explanation = RECORDS[stage["id"]]
     stage["record"] = dict(inputs=inputs, outputs=outputs, label=label, explanation=explanation)
 
+FORMATTER = HtmlFormatter(nowrap=True, style="friendly")
+LEXERS = {
+    "python": PythonLexer,
+    "shell": BashLexer,
+    "diff": DiffLexer,
+    "json": JsonLexer,
+    "markdown": MarkdownLexer,
+    "text": TextLexer,
+}
+FIELD_LANGUAGES = {
+    "baseline_script": "python",
+    "executed_script": "python",
+    "source_diff": "diff",
+    "setup_sh": "shell",
+    "before": "python",
+    "after": "python",
+}
+
+
+def colored(text, language):
+    """Escape and highlight during the build; the viewer needs no CDN or lexer."""
+    if language == "notebook":
+        parts = re.split(r"(--- (?:code|markdown) cell \d+ ---\n)", text)
+        output = [html.escape(parts[0])]
+        for index in range(1, len(parts), 2):
+            marker, body = parts[index : index + 2]
+            output.append('<span class="c">' + html.escape(marker) + "</span>")
+            output.append(colored(body, "python" if "code cell" in marker else "markdown"))
+        return "".join(output)
+    lexer = LEXERS[language](stripnl=False, ensurenl=False)
+    result = highlight(text, lexer, FORMATTER)
+    # HtmlFormatter terminates its last output line; preserve source text exactly.
+    if not text.endswith("\n") and result.endswith("\n"):
+        result = result[:-1]
+    return result
+
+
+def code(text, language="text"):
+    return '<pre class="syntax">' + colored(text, language) + "</pre>"
+
+
+def structured(value, key="", depth=0):
+    if not isinstance(value, (dict, list)):
+        if isinstance(value, str):
+            language = "notebook" if key == "question_text" else FIELD_LANGUAGES.get(key, "text")
+            return code(value, language)
+        return code(json.dumps(value), "json")
+    if (
+        depth >= 5
+        or isinstance(value, list)
+        and all(not isinstance(item, (dict, list)) for item in value)
+    ):
+        return code(json.dumps(value, indent=2), "json")
+    entries = value.items() if isinstance(value, dict) else enumerate(value)
+    output = []
+    for name, item in entries:
+        label = html.escape(str(name))
+        complex_value = isinstance(item, (dict, list)) or isinstance(item, str) and len(item) > 180
+        if complex_value:
+            unit = (
+                "fields"
+                if isinstance(item, dict)
+                else "items"
+                if isinstance(item, list)
+                else "characters"
+            )
+            output.append(
+                f"<details><summary>{label} · {len(item):,} {unit}</summary>"
+                + structured(item, str(name), depth + 1)
+                + "</details>"
+            )
+        else:
+            rendered = (
+                html.escape(item) if isinstance(item, str) else colored(json.dumps(item), "json")
+            )
+            output.append(f'<div class="scalar syntax"><b class="nt">{label}:</b> {rendered}</div>')
+    return "".join(output)
+
+
+for key, doc in DOCUMENTS.items():
+    try:
+        doc["html"] = structured(json.loads(doc["text"]))
+    except json.JSONDecodeError:
+        language = {".py": "python", ".sh": "shell", ".diff": "diff", ".md": "markdown"}.get(
+            Path(doc["path"]).suffix, "text"
+        )
+        doc["html"] = code(doc["text"], "notebook" if key == "notebook" else language)
+for stage in STAGES:
+    if "prompt_text" in stage:
+        stage["prompt_html"] = colored(stage["prompt_text"], "markdown")
+
 template = (HERE / "template.html").read_text()
 data = json.dumps(STAGES, ensure_ascii=False).replace("<", "\\u003c")
 documents = json.dumps(DOCUMENTS, ensure_ascii=False).replace("<", "\\u003c")
 (HERE / "index.html").write_text(
-    template.replace("__STAGE_DATA__", data).replace("__DOCUMENT_DATA__", documents)
+    template.replace("__STAGE_DATA__", data)
+    .replace("__DOCUMENT_DATA__", documents)
+    .replace("__SYNTAX_CSS__", FORMATTER.get_style_defs(".syntax"))
 )
 print("Built", HERE / "index.html")

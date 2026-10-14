@@ -1322,3 +1322,8 @@ template. No accepted endpoint proposal, validation, new repair or coverage-revi
 output is invented. Full biological files remain remote; per-column examples are
 not represented as aligned table rows. Browser checks exercised every file selector,
 all nine stages, exact converted script/prompt display and mobile layout.
+
+Added offline syntax highlighting for Python, shell, JSON, diffs, notebook cells
+and prompt Markdown using the already locked Pygments dependency at HTML build
+time. Nested code fields retain their language highlighting. Browser checks
+confirmed converted source, notebook text and prompts remain text-identical.
