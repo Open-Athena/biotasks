@@ -1,42 +1,43 @@
-Independently review a generated reference preparation against the ORIGINAL
-documented source script, whose comments retain the original notebook narrative. Return ReferenceReview via
-the artifact submission tool. Do not merely check the proposed inventory for
-internal consistency. This review does not establish execution success or
-scientific correctness.
+Independently review endpoint preparation against the ORIGINAL documented source
+script. Return ReferenceReview through the supplied response interface. This
+review does not establish execution success or scientific correctness.
+
+Preparation selects terminal scientific results already stored in named source
+variables or their fields, and adds code to save them. Check every branch for
+eligible endpoints, including branches omitted from the inventory. An endpoint
+is a scientific deliverable, not merely an object that survives to the last line.
+Reject intermediate/diagnostic exports or whole-state fallback snapshots; a whole
+object qualifies only if that object itself is the intended deliverable.
+
+Only existing named values or stored fields qualify. File-format conversion may
+preserve those values and identifiers, but must not introduce new scientific
+computation. Reject new aggregation, scaling, filtering, ranking or statistical
+tests, reconstruction of plotting-function internals, repeated analysis calls,
+and new assignments capturing previously unnamed source expressions. Plot-only
+results and branches without eligible endpoints must be explicitly excluded;
+those exclusions do not permit skipping their original computation. Do not
+require rendered figures or intermediate exports to compensate for exclusions.
+
+Inspect the complete script and controller-computed diff. Preparation may add
+imports and code for saving endpoint values, with correct placement and preserved
+values, identities and order. Reject changes to original inputs, analysis,
+parameters, randomness, labels, error handling, original comments or branch
+execution. A later filtered/overwritten object must not be claimed to preserve
+earlier values unless the source explicitly stores them.
+
+Dependencies, installations, downloads, caches and offline path adaptation belong
+to the later execution stage. Do not demand their manifests or tool evidence from
+this text-only preparation worker. Do not treat their absence as a preparation
+defect. Flag preparation edits that attempt these operations. Runtime, output
+properties and environment compatibility remain unverified until execution.
 
 The fields `omitted_scientific_results`, `prohibited_scientific_changes` and
-`setup_or_export_problems` are DEFECT LISTS. Use an empty JSON array `[]` when
-none were found. Do not put positive findings, permitted changes, or sentences
-such as "none detected" in those lists; put that evidence in `rationale`.
-Approval requires all three lists to be empty. Never erase a real defect to
-obtain approval: choose `revise` or `reject` instead. `checks_for_execution`
-records unresolved observations to examine after execution, not new scientific
-requirements or permission to change the source.
-
-Look for every intended scientific analysis branch and endpoint, including
-results expressed through plots. Underlying plot data is acceptable only when
-it preserves consequential transformations, identities and labels. Identify
-omissions even when the proposed branch map does not mention them. Explain
-reasonable exclusions of incidental displays or styling.
-Image files alone do not establish the scientific values behind a plot. Do not
-require rendered image exports, a separate artifact for every intermediate, or
-detailed profiling. Review the source's endpoint data and complete branch
-coverage; several endpoints may share an artifact with an explicit mapping.
-
-Inspect the exact source diff, dependency manifest, declared system packages and
-input-staging script. Environment creation and package installation are controller
-operations; input staging must not implement them. Permit environment reconstruction,
-faithful input staging/path changes and exports of existing results. Reject
-changed scientific parameters, formulas, algorithms, labels, random seeds,
-added reductions/checkpoints, skipped branches, suppressed errors, precomputed
-answers or exports that change analysis state. Setup must not execute analysis.
-Inputs must be the original inputs used by the source. Preserve source-level
-subsampling if present. A worker calling a change 'setup' does not make it so.
-
-Check that dependencies, offline inputs/metadata/caches, fresh-process execution,
-artifact paths, identifiers and export timing are coherent. Static inspection
-can flag problems; it cannot invent measured resource use, schemas or results.
-Record uncertainties as execution checks when they can only be resolved by a
-run. A known setup/export defect requires revision. An inherent source defect
-or policy conflict requires rejection. Approve only if the proposed reference
-faithfully covers all source scientific endpoints with no known blockers.
+`setup_or_export_problems` contain defects only. Use [] if none were found;
+positive findings belong in `rationale`. In this stage, `setup_or_export_problems`
+records endpoint-saving defects or violations of the preparation/execution
+boundary. `checks_for_execution` records unresolved questions, not new scientific
+requirements. Approval requires empty defect lists; never erase a real defect to
+approve. Use revise for repairable preparation defects and reject when no honest
+preparation is available. Explicitly excluded ineligible plot-only results are
+not missing eligible endpoints. Scientific branch coverage and faithful saving
+must be assessed from source, not assumed from schema or syntax validity.

@@ -12,7 +12,6 @@ from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
-from run_reference import check_config
 from test_design_stage import response
 
 from biotasks.chat_author import ChatLimits
@@ -24,10 +23,6 @@ def plan(**changes):
         {
             "disposition": "prepare",
             "explanation": "Complete synthetic source fixture",
-            "environment_rationale": "No external packages",
-            "pyproject_toml": '[project]\nname="reference"\nversion="0.1.0"\nrequires-python=">=3.13,<3.14"\ndependencies=[]\n',
-            "system_packages": [],
-            "stage_inputs_sh": "",
             "reference_script": "result = 1\nprint(result)\n",
             "artifacts": [
                 {"path": "value.txt", "description": "value", "source_evidence": "result"}
@@ -125,15 +120,13 @@ def test_upstream_revisions_share_the_request_ceiling_and_preserve_prompt(tmp_pa
     assert (root / "artifact-stage/draft.json").exists()
 
 
-def test_request_allocations_cannot_expand_approved_caps():
-    from pathlib import Path
-
-    config = json.loads(Path(__file__).with_name("reference-execution.json").read_text())
-    check_config(config)
-    with pytest.raises(ValueError, match="sum"):
-        check_config({**config, "prepare_requests_per_pass": 13})
-    with pytest.raises(ValueError, match="envelope"):
-        check_config({**config, "reference_seconds": 601})
+@pytest.mark.parametrize("field,value", [
+    ("environment_rationale", "fixture"), ("pyproject_toml", ""),
+    ("system_packages", []), ("stage_inputs_sh", ""),
+])
+def test_preparation_rejects_environment_and_staging_fields(field, value):
+    with pytest.raises(ValidationError, match="Extra inputs"):
+        plan(**{field: value})
 
 
 @pytest.mark.parametrize("always_truncated", [False, True])
@@ -215,7 +208,10 @@ def test_reference_payload_includes_bootstrap_diagnostic_dependency(tmp_path, mo
     monkeypatch.setattr(
         launch_reference.subprocess, "check_output", lambda *a, **kw: b"git archive"
     )
-    files = launch_reference.payload(tmp_path, revision="fixture", upstream_archive=archive)
+    files = launch_reference.frozen_payload(
+        tmp_path, revision="fixture", upstream_archive=archive,
+        config={"entrypoint": "run_preparation.py"},
+    )
     assert files["diagnostics.py"].endswith(b"/recover_evidence.py")
     manifest = json.loads(files["inputs.json"])
     assert (
@@ -223,101 +219,23 @@ def test_reference_payload_includes_bootstrap_diagnostic_dependency(tmp_path, mo
     )
 
 
-def test_independent_rejection_prevents_generated_code_execution(tmp_path, monkeypatch):
-    import hashlib
-    from pathlib import Path
-    from types import SimpleNamespace
-
-    import iris_bootstrap
+def test_retired_execution_refuses_before_packaging_or_running(tmp_path, monkeypatch):
+    import launch_reference
     import run_reference
-    from repo2rlenv.execution.base import CommandResult
 
-    config = json.loads(Path(__file__).with_name("reference-execution.json").read_text())
-    source = tmp_path / config["source_directory"]
-    source.mkdir(parents=True)
-    baseline = "result = 1\n"
-    (source / "baseline.py").write_text(baseline)
-    (source / "conversion.json").write_text(
-        json.dumps(
-            {
-                "source_sha256": "fixture",
-                "script_sha256": hashlib.sha256(baseline.encode()).hexdigest(),
-            }
+    def forbidden(*args, **kwargs):
+        pytest.fail("Retired execution must not package a job")
+
+    monkeypatch.setattr(launch_reference.subprocess, "check_output", forbidden)
+    with pytest.raises(NotImplementedError, match="Tool-enabled"):
+        launch_reference.frozen_payload(
+            tmp_path, revision="fixture", upstream_archive=tmp_path / "missing.tar.gz",
+            config={"entrypoint": "run_reference.py"},
         )
-    )
-    monkeypatch.setattr(run_reference, "__file__", str(tmp_path / "run_reference.py"))
-    monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "s3://fixture")
-    commands, events = [], []
-
-    class Sandbox:
-        cpu, memory, disk, id, network_block_all = 4, 8, 10, "fixture", False
-
-        def refresh_data(self, **kwargs):
-            pass
-
-        def update_network_settings(self, *, network_block_all, **kwargs):
-            self.network_block_all = network_block_all
-
-    class Worker:
-        def __init__(self, *args):
-            pass
-
-        def upload(self, *args):
-            pass
-
-        def exec(self, argv, **kwargs):
-            commands.append(argv)
-            if "-c" in argv:
-                return CommandResult(
-                    0,
-                    json.dumps(
-                        [
-                            {"host": host, "port": port, "reachable": True}
-                            for host, port in run_reference.TARGETS
-                        ]
-                    ),
-                )
-            if "stage-inputs" in argv:
-                return CommandResult(0, '{"files": []}')
-            return CommandResult(0, "")
-
-    monkeypatch.setattr(
-        run_reference, "Daytona", lambda: SimpleNamespace(create=lambda *a, **kw: Sandbox())
-    )
-    monkeypatch.setattr(run_reference, "DaytonaWorker", Worker)
-    monkeypatch.setattr(
-        iris_bootstrap, "export_on_host", lambda *a, **kw: events.append("durable-export")
-    )
-
-    def cleanup(*args):
-        events.append("cleanup")
-        return {"passed": True}
-
-    monkeypatch.setattr(run_reference, "cleanup", cleanup)
-
-    async def reviewed(**kwargs):
-        if kwargs["schema"] is ReferencePlan:
-            return plan()
-        return ReferenceReview(
-            decision="reject",
-            rationale="Fixture scientific defect",
-            omitted_scientific_results=[],
-            prohibited_scientific_changes=["changed method"],
-            setup_or_export_problems=[],
-            checks_for_execution=[],
-        )
-
-    monkeypatch.setattr(run_reference, "stage", reviewed)
-    result = asyncio.run(
-        run_reference.run(
-            config,
-            seed={"source_sha256": "fixture"},
-            root=tmp_path / "evidence",
-            deadline=time.time() + 7200,
-            endpoint="https://model.invalid/v1",
-            credential="fake",
-        )
-    )
-    assert result["status"] == "review_rejected" and result["cleanup_verified"]
-    assert not any("execute" in argv for argv in commands)
-    assert events == ["durable-export", "cleanup"]
+    root = tmp_path / "evidence"
+    with pytest.raises(NotImplementedError, match="Tool-enabled"):
+        asyncio.run(run_reference.run(
+            {}, seed={}, root=root, deadline=time.time() + 60,
+            endpoint="unused", credential="unused",
+        ))
+    assert not root.exists()

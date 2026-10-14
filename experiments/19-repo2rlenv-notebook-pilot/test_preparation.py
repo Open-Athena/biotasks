@@ -6,6 +6,7 @@ import time
 from pathlib import Path
 
 import pytest
+from render_preparation import render
 from run_preparation import run
 
 HERE = Path(__file__).parent
@@ -20,15 +21,17 @@ def response(plan, finish="stop", call_id="call"):
 @pytest.mark.parametrize("mode", ["accepted", "truncated", "structural_repair", "twice_invalid"])
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
-    plan = dict(disposition="reject", explanation="Unknown dependency", environment_rationale="",
-                pyproject_toml="", system_packages=[], stage_inputs_sh="", reference_script="", artifacts=[], excluded_outputs=[],
-                unresolved_assumptions=["Dependency availability"])
+    plan = dict(disposition="reject", explanation="No eligible terminal result",
+                reference_script="", artifacts=[], excluded_outputs=["Plot-only result"],
+                unresolved_assumptions=[])
 
     async def complete(payload):
         calls.append(payload)
         assert "tools" not in payload
         assert payload["response_format"]["json_schema"]["strict"] is True
         assert "reference_script" in payload["response_format"]["json_schema"]["schema"]["required"]
+        properties = payload["response_format"]["json_schema"]["schema"]["properties"]
+        assert not {"environment_rationale", "pyproject_toml", "system_packages", "stage_inputs_sh"} & properties.keys()
         context = json.loads(payload["messages"][1]["content"])
         assert set(context) == {"source", "baseline_script", "conversion", "limits"}
         assert "question_text" not in context["source"]
@@ -70,9 +73,6 @@ def test_full_script_is_saved_inert_and_syntax_failure_gets_one_repair(tmp_path,
         generated = context["baseline_script"] + "\nraise RuntimeError('must not execute')\n"
         candidate = dict(
             disposition="prepare", explanation="Synthetic inert preparation fixture",
-            environment_rationale="No packages installed by this test",
-            pyproject_toml='[project]\nname="fixture"\nversion="0.1.0"\nrequires-python=">=3.13"\ndependencies=[]\n',
-            system_packages=[], stage_inputs_sh="exit 91\n",
             reference_script="result = (" if repair_syntax and len(calls) == 1 else generated,
             artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
             excluded_outputs=[], unresolved_assumptions=[],
@@ -91,7 +91,12 @@ def test_full_script_is_saved_inert_and_syntax_failure_gets_one_repair(tmp_path,
     assert len(calls) == (2 if repair_syntax else 1)
     assert (root / "reference.py").read_text() == generated
     assert "+raise RuntimeError" in (root / "source.diff").read_text()
-    assert (root / "stage-inputs.sh").read_text() == "exit 91\n"
+    render(root)
+    rendered = (root / "plan.md").read_text()
+    assert "Complete edited script" in rendered
+    assert "Python dependencies" not in rendered and "Setup script" not in rendered
+    for filename in ("pyproject.toml", "stage-inputs.sh", "setup.sh"):
+        assert not (root / filename).exists()
     result = json.loads((root / "result.json").read_text())
     assert result["status"] == "ready_for_user_inspection"
     assert result["setup_executed"] is False

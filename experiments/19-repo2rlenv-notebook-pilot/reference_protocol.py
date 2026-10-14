@@ -12,7 +12,6 @@ from pathlib import PurePosixPath
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from reference_environment import validate_environment
 
 
 class StrictModel(BaseModel):
@@ -43,12 +42,8 @@ class ReferencePlan(StrictModel):
         description="Required admission decision: prepare a faithful reference, or reject with a reason."
     )
     explanation: str = Field(min_length=1)
-    environment_rationale: str
-    pyproject_toml: str
-    system_packages: list[str]
-    stage_inputs_sh: str
     reference_script: str = Field(
-        description="Complete edited Python script, not a patch; empty only when rejecting."
+        description="Complete source script with terminal-result exports only; empty only when rejecting."
     )
     artifacts: list[Artifact]
     excluded_outputs: list[str]
@@ -58,7 +53,6 @@ class ReferencePlan(StrictModel):
     def inventory(self):
         if self.disposition == "reject":
             return self
-        validate_environment(self.pyproject_toml, self.system_packages)
         paths = [artifact.path for artifact in self.artifacts]
         if not paths or len(set(paths)) != len(paths):
             raise ValueError("Declare nonempty, unique endpoint artifacts")
@@ -69,14 +63,14 @@ class ReferenceReview(StrictModel):
     decision: Literal["approve", "revise", "reject"]
     rationale: str = Field(min_length=1)
     omitted_scientific_results: list[str] = Field(
-        description="Defects only: required scientific results missing from the plan. Empty [] if none."
+        description="Defects only: eligible existing terminal scientific results missing from the plan. Empty [] if none."
     )
     prohibited_scientific_changes: list[str] = Field(
         description="Defects only: prohibited changes to the scientific analysis. Empty [] if none. "
         "Put evidence that science was preserved in rationale, never in this list."
     )
     setup_or_export_problems: list[str] = Field(
-        description="Defects only: known setup or export problems. Empty [] if none."
+        description="Defects only: export problems or preparation crossing into environment/input setup. Empty [] if none."
     )
     checks_for_execution: list[str] = Field(
         description="Uncertainties to check against execution evidence, not known defects or "

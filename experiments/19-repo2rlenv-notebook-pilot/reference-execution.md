@@ -1,138 +1,78 @@
-# Plain-script reference execution
+# Notebook reference workflow
 
-This checkpoint implements the first part of the artifact-reproduction proposal:
-convert a source, prepare and review a faithful runnable reference, then execute
-all its scientific branches offline. It stops before task construction, grading,
-blind solving or release. A successful run is reference-execution evidence, not
-a validated benchmark task.
+Current agreement, 2026-10-14. Preparation selects existing terminal results and
+adds code to save them. Execution owns environment and input setup. This update
+implements the preparation interface; the replacement execution worker is not
+integrated yet. No model or scientific run has used this revised contract.
 
-## Current preparation-only interface
+## Stages and exact responsibilities
 
-The preparation worker returns the complete `reference_script`, dependency-only
-`pyproject.toml`, system-package list, input-staging script and one endpoint
-artifact inventory. It does not return anchored edits or a separate branch map.
-Explanations focus on consequential changes and unresolved assumptions. The
-controller preserves the returned files, checks Python syntax without executing
-it, computes the source diff, and records file identities programmatically.
-Syntax and inventory checks do not establish scientific fidelity; the later
-review must compare the script and its diff with the original analysis.
+| Stage | Input | Work | Output and status |
+| --- | --- | --- | --- |
+| Conversion (programmatic) | Pinned original notebook JSON. | Pinned Jupytext `py:nomarker` conversion; preserve Markdown as comments; check source code order and syntax. No notebook execution. | `baseline.py` and conversion receipt. Implemented for the admitted Python profile. |
+| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | Complete `reference_script`, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Updated; not rerun. |
+| Preparation checks (programmatic) | Complete worker response and untouched baseline. | Validate JSON Schema, Python syntax and unique relative artifact paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
+| Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. Prompt updated; not run on the new contract. |
+| Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Runnable reference environment and staged inputs. Replacement worker not integrated. |
+| Scientific execution (programmatic) | Prepared environment, staged original inputs and reviewed script. | Run the ordinary script offline, CPU-only, with the agreed resource/time limits; record outputs, logs, timing and failures. | Measured reference evidence. Not launched by preparation. |
 
-`run_preparation.py` requests strict JSON-schema responses at medium reasoning,
-with one creation and at most one complete-object repair, no extra client token
-or byte caps, and a 600-second per-request timeout. It creates no task sandbox
-and executes neither setup nor the generated analysis. The execution campaign
-records below describe earlier runs, not authorization to advance beyond this
-preparation-only step.
+The current converter admits ordinary Python nbformat-4 sources. Unsupported
+kernel-dependent syntax/state is rejected; other languages need separate
+profiles. The user-selected newer Scanpy source and untouched conversion are in
+`reference-inputs/scanpy/`; source identity and terms are in `source-manifest.json`
+and `seeds/current.json`. No seed-specific endpoint rules are in the factory.
 
-## Conversion
+## What preparation may save
 
-`biotasks.notebook_script.export_python(path)` uses pinned Jupytext `py:nomarker`
-and verifies the exported Python syntax tree against all source code in order.
-It never executes the notebook. The initial admission profile supports ordinary
-Python nbformat-4 sources. Kernel-dependent syntax/state and unsupported
-execution directives are rejected; R and other formats need separate profiles.
-Markdown cells are retained in their original positions as Python line comments.
-The documented script supplies code and narrative to the model; source metadata
-supplies provenance without a second rendering of the notebook text. Stored
-outputs do not count as fresh evidence. Documentation build-time execution
-policy is recorded without adopting it as a rule to skip analysis.
+Select scientific end products, not every object that remains in memory.
+Eligible results must already be stored in named variables or fields in the
+original script. Save their values and identifiers through native writers or
+straightforward format conversion. A whole object qualifies only if it is itself
+the scientific deliverable; it is not a fallback for selecting endpoints.
 
-The first input is the user-selected newer Scanpy clustering notebook. Its
-untouched conversion and receipt are in `reference-inputs/scanpy/`, with the
-upstream license. The original source URL, revision, hash and data terms are in
-`source-manifest.json`; the original source text is in `seeds/current.json`.
-There are no Scanpy-specific rules in the converter, prompts or controller.
+Intermediate matrices, diagnostic counts, checkpoints and full-state snapshots
+are outside the exported targets. Do not add computation for exporting results:
+no new filtering, ranking, aggregation, scaling or reconstruction of plotting
+internals. Do not turn a previously unnamed expression into a new variable.
 
-## Fixed stages and boundaries
+Consider all analysis branches in one endpoint inventory for one task. Explain
+branches or plot-only results without eligible stored outputs in
+`excluded_outputs`. Their original computation remains intact. Reject if there
+are no eligible terminal results. The preparation worker leaves input-loading
+code unchanged and does not generate dependency manifests or staging scripts.
 
-1. Create one CPU-only Daytona sandbox and verify its resource configuration.
-   Stage the source inventory's original inputs, checking recorded byte sizes
-   and upstream checksums and computing SHA-256 hashes.
-2. GLM prepares environment setup, minimal source edits for offline input loading
-   and exports, and the complete branch-to-artifact inventory.
-3. A separate GLM review compares that plan and exact diff with the original
-   narrative and unchanged script. Known scientific changes or omitted branches
-   block execution. Structural checks do not replace this review.
-4. Run setup online under its cumulative allowance. Run the reviewed script in
-   a fresh process and empty computation/output directories with network blocked.
-   Check provider policy and representative outbound probes. Preserve exit
-   status, logs, elapsed time, child RSS, dependency versions and artifact hashes.
-   Check that original input files remain unchanged.
-5. If setup/exports fail, return the evidence to GLM for a bounded repair and
-   review. Analysis defects, resource mismatch or uncertainty may reject the
-   source; the factory must not repair science or silently drop branches.
+The canonical [preparation prompt](../../src/biotasks/prompts/notebook-reference-prepare.md)
+and [review prompt](../../src/biotasks/prompts/notebook-reference-review.md) state
+these rules. Scientific eligibility and preservation need review; the schema
+and syntax validator alone cannot enforce them.
 
-The protocol uses Repo2RLEnv's pinned Tasksmith artifact controller and existing
-GLM adapter/request ledger. Calls can submit and revise structured artifacts;
-this first reference-preparation configuration does not expose arbitrary shell
-tools to the model. Generated setup code executes only in the credential-free
-task sandbox. No generated code executes on the credentialed Iris host.
+## Preparation interface and run boundary
 
-`reference-execution.json` freezes 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 seconds
-for complete computation and 1,800 cumulative seconds for data/environment setup.
-There are at most three preparation passes (initial plus two repairs), each with
-12 preparation requests and three review requests: **45 raw requests total**,
-including malformed-response recovery. The whole job has two hours plus five
-minutes for cleanup. These are ceilings, not expected usage. The solver time
-allowance remains a separate unresolved decision and is not exercised here.
+`run_preparation.py` uses GLM-5.3, medium reasoning and strict JSON-schema
+responses. It permits one creation and at most one complete-object structural
+repair, with no extra client token/byte limits and the existing 600-second
+per-request timeout. It creates no task sandbox and executes no generated code.
+No separate branch map or duplicated environment inventory is requested.
 
-The current model settings allow 32,000 output tokens with medium reasoning.
-A completely received, accounted response ending at its output-token limit may
-use upstream's one concise recovery within the original stage request allowance.
-Partial tools are never executed; uncertain transport outcomes are not retried.
+The former combined runner is retired. `run_reference.py` and its packaging path
+refuse execution before submitting a job. This prevents the old text-only
+setup workflow from running against the new preparation schema. Its historical
+implementation is preserved at
+[2e1fb63](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/run_reference.py).
+Reusable environment, execution and evidence helpers remain available for the
+replacement worker. This document does not assign new execution budgets or
+claim that the replacement worker is ready.
 
-The third campaign reserves $5 from the standing $100 Daytona authorization.
-The aggregate reservation becomes $91, leaving $9 unallocated. These conservative
-reservations are not measured charges and do not account for any free credits.
-One Iris controller uses already approved reserved CPU capacity; GLM uses the
-approved free endpoint. No GPU is provisioned.
+## Existing evidence and next step
 
-`launch_reference.payload` freezes inputs from a committed Git revision and
-reuses the existing Iris submission/bootstrap mechanism. Submission receipts
-are exclusive: an uncertain response requires reconciliation, not redispatch.
-Evidence is downloaded, hashed and copied to private durable storage before
-sandbox teardown; the existing ownership-label cleanup verifies absence.
-The bootstrap exports the final cleanup record as well.
+[Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
+its full-object export and newly captured expression are not evidence of
+compliance with the revised selection rule. Its recorded output stays unchanged.
+The [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
+explains earlier reference runs under the superseded workflow.
 
-The first run's [record](reference-runs/001/summary.json) preserves a preparation
-response-length failure. Data staging and checksums succeeded; no generated setup
-or scientific computation ran, and sandbox deletion was verified. The replacement
-also fixes the storage-client environment and includes the diagnostic helper in
-the frozen payload.
-
-The [second run](reference-runs/002/summary.json) made twelve requests, including
-a GLM repair of an offline registry dependency caught by the separate reviewer.
-Its next review could not validate: positive findings were placed in a field
-reserved for defects. Setup and computation remained blocked; cleanup and
-durable export succeeded. The current schema explicitly calls that field
-`prohibited_scientific_changes` and requires empty defect lists to approve.
-Prompts ask for scientific endpoint data and omit added image capture. The
-adapter preserves both current `reasoning` and older `reasoning_content` fields
-through tool continuations. The input-byte bound is 512,000 to accommodate those
-retained messages; it is not a model context-size claim. Original outputs and
-failed reviews remain unchanged in the run records.
-
-The [third run](reference-runs/003/summary.json) completed the entire reviewed
-source-derived script offline in **136.55 seconds**, using the original inputs
-on the configured 4-CPU, 8-GiB sandbox. It used seven GLM requests across initial
-preparation, two repairs and three separate reviews. The repairs fixed a shell
-dialect mismatch and a missing optional dependency; GLM made both changes. No
-model calls occurred during the actual scientific execution.
-
-All eight declared artifacts were nonempty, totaling 526,734,122 bytes. They
-include a 476,434,974-byte AnnData state; this is a reference inventory, not the
-final solver output contract. Original input hashes were unchanged. Output
-downloads and the durable archive were hash-verified before owned sandbox
-deletion, which was also verified. The peak child RSS was 5,022,300 KiB; this
-does not measure aggregate sandbox memory. Each execution started in a fresh
-process and empty computation/output directories, but later attempts reused the
-installed environment and caches. The timing is not a cold-environment result.
-
-## Remaining validation
-
-Passing this reference gate does not establish endpoint semantic fidelity,
-portable grading, reproducibility, scientific validity or solver performance.
-The next stages must review observed artifacts, validate complete coverage,
-freeze the task contract, construct Harbor assets, and run the agreed controls.
-Original references, worker proposals and failed attempts remain preserved.
-Do not modify generated task-specific science manually.
+The next preparation run needs inspection before advancing. Tool-enabled setup
+is the next implementation boundary; it must preserve the science while resolving
+dependencies and staging inputs. Task construction, artifact comparisons, Harbor
+validation, blind solving and publication remain downstream work. No model run,
+execution or viewer update accompanies this interface change.

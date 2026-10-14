@@ -18,9 +18,7 @@ from biotasks.inference_gate import Allowance, RequestLedger
 def probe_fixture():
     return {
         "disposition": "prepare", "explanation": "Synthetic serialization fixture",
-        "environment_rationale": "Standard library only",
-        "pyproject_toml": '[project]\nname="fixture"\nversion="0.1.0"\nrequires-python=">=3.13"\ndependencies=[]\n',
-        "system_packages": [], "stage_inputs_sh": "", "reference_script": "result = 1\n",
+        "reference_script": "result = 1\n",
         "artifacts": [{"path": "value.txt", "description": "Synthetic value", "source_evidence": "result = 1"}],
         "excluded_outputs": [], "unresolved_assumptions": [],
     }

@@ -4,10 +4,18 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from reference_environment import validate_environment, write_environment
-from test_reference import plan
+
+
+def environment(**changes):
+    """Environment helper fixture, independent of the preparation response."""
+    return SimpleNamespace(**{
+        "pyproject_toml": '[project]\nname="reference"\nversion="0.1.0"\nrequires-python=">=3.13,<3.14"\ndependencies=[]\n',
+        "system_packages": [], "stage_inputs_sh": "", **changes,
+    })
 
 
 @pytest.mark.parametrize("manifest,packages", [
@@ -21,17 +29,17 @@ from test_reference import plan
 ])
 def test_invalid_declarations_rejected(manifest, packages):
     with pytest.raises(ValueError):
-        validate_environment(manifest if manifest is not None else plan().pyproject_toml, packages)
+        validate_environment(manifest if manifest is not None else environment().pyproject_toml, packages)
 
 
 def test_dependency_project_cannot_declare_a_build_backend():
     with pytest.raises(ValueError, match="dependency-only"):
-        plan(pyproject_toml=plan().pyproject_toml + '\n[build-system]\nrequires=[]\n')
+        validate_environment(environment().pyproject_toml + '\n[build-system]\nrequires=[]\n', [])
 
 
 def test_materialization_is_inert_and_separates_controller_from_worker(tmp_path):
     marker = tmp_path / "must-not-exist"
-    prepared = plan(stage_inputs_sh=f"touch {marker}\n", system_packages=["libgomp1"])
+    prepared = environment(stage_inputs_sh=f"touch {marker}\n", system_packages=["libgomp1"])
     write_environment(tmp_path, prepared)
     assert not marker.exists()
     assert (tmp_path / "pyproject.toml").read_text() == prepared.pyproject_toml
@@ -64,6 +72,7 @@ def test_uv_creates_environment_and_lock_without_pip_in_venv(tmp_path):
 def test_staging_receipt_verifies_files_and_rejects_changed_data(tmp_path):
     import hashlib
     import json
+
     from reference_remote import verify_staging
     data = tmp_path / "input.tsv"
     data.write_text("real input fixture")

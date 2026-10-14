@@ -8,6 +8,7 @@ import subprocess
 from pathlib import Path
 
 from launch_iris import EXPERIMENT, frozen_file
+from run_reference import EXECUTION_PENDING
 
 
 def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, bytes]:
@@ -19,6 +20,8 @@ def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, b
 
 def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config) -> dict[str, bytes]:
     """Common frozen inputs; each stage wrapper validates its own configuration."""
+    if config["entrypoint"] == "run_reference.py":
+        raise NotImplementedError(EXECUTION_PENDING)
     files = {
         "biotasks.tar": subprocess.check_output(["git", "archive", revision], cwd=repo),
         "upstream.tar.gz": upstream_archive.read_bytes(),

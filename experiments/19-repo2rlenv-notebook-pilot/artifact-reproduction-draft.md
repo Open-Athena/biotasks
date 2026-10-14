@@ -1,7 +1,9 @@
 # Notebook2task through artifact reproduction
 
 Local discussion draft — 2026-10-14. Scope clarified with the user: one task per
-notebook, covering the scientific endpoints of all its analysis branches.
+notebook, considering all branches and exporting eligible existing terminal
+scientific results. Branches without eligible outputs are explicitly excluded
+from the target inventory, while their original computation remains intact.
 The intended source collection includes non-Python notebooks and documents.
 Working representation agreed with the user: convert sources to plain scripts
 in their original language. Factory workers inspect those scripts and execute
@@ -15,7 +17,7 @@ not implement or launch the proposed pipeline.
 ## 1. What we want to make simpler
 
 Start from an existing notebook analysis and ask the solver to reproduce its
-intended scientific results across all branches, given real inputs and complete
+eligible terminal scientific results, considering all branches, given real inputs and complete
 methodological instructions. Prefer the end products that people consume.
 Use execution to establish reference outputs and test resource fit. The
 factory's main reasoning problem becomes identifying those endpoints and
@@ -23,8 +25,8 @@ explaining the workflow needed to produce them.
 
 The proposed unit of a task is:
 
-**One notebook → one task: starting inputs + all analysis branches + their
-scientific endpoint artifacts + acceptance rules.**
+**One notebook → one task: original inputs + unchanged source analysis + eligible
+existing terminal-result artifacts + acceptance rules.**
 
 GLM identifies the endpoints and specifies that task. Programmatic execution
 supplies measured facts and reference artifacts; executable checks determine
@@ -62,12 +64,21 @@ leaf without being an analysis objective. Source interpretation identifies the
 intended result; execution establishes its provenance and reproducibility.
 Several files can constitute one result, such as a matrix and its identifiers.
 
-For an endpoint presented as a plot, the agreed v1 default is to grade the
-underlying scientific data when it captures the result. Preserve the relevant
-values, identifiers, labels and scientifically consequential transformations
-or summaries used in the plot. Visual styling and image reproduction are outside
-v1. A plot still represents a branch that must be covered; if its scientific
-result cannot be represented and graded faithfully, defer the candidate.
+For this version, targets must already be stored in named variables or fields
+of those objects in the original source. Preparation adds code to save those
+values and their identifiers. It must not capture a previously unnamed expression
+into a variable or reconstruct values computed only inside plotting functions.
+For plots, export eligible existing terminal data only; do not introduce new
+aggregation, filtering, ranking, scaling or other scientific computation to
+recreate a figure. Explain plot-only results that have no eligible stored output.
+Visual styling and image reproduction remain outside this version.
+
+Intermediate results, diagnostic counts, preprocessing states and checkpoints
+are not exported targets. A whole object qualifies only if it is itself the
+scientific deliverable; full-state export cannot defer endpoint selection.
+Consider every branch and explain any without an eligible terminal result in the
+single inventory's exclusions. Keep all original computation, including excluded
+branches. Reject a source with no eligible terminal results.
 
 For a notebook with two analysis branches, a single task would cover:
 
@@ -93,21 +104,23 @@ Those adaptations are deferred beyond v1. Every branch's required endpoint
 must be produced by the solver, rather than supplied as an input answer.
 The remaining task-design choices concern **how each endpoint is represented**.
 
-Intermediate results can support diagnosis or a justified methodological check;
-they do not replace required endpoints. If a branch cannot be reproduced, graded
-or completed within the overall budget, reject the candidate or discuss a scope
-change. The factory does not silently drop branches or split the notebook into
+Existing execution logs can support diagnosis. Adding intermediate exports is
+outside this version. Reject a candidate if any original analysis branch fails
+to execute, or any required eligible endpoint cannot be reproduced and graded
+within the overall budget. Ineligible outputs are excluded by the selection rule,
+not as a way to hide an execution or grading failure. The factory does not silently drop branches or split the notebook into
 separate tasks. Related notebooks or task variants using the same data belong
 in the same train/evaluation split.
 
 Use scientific relevance to distinguish genuine endpoints from incidental
-outputs. Maintain a coverage map from every scientific branch to its required
-artifacts. Prefer compact, portable representations for those results. Small
+outputs. Use one endpoint inventory with source evidence and explicit exclusions
+for branches without an eligible result. Prefer compact, portable representations
+for those results. Small
 output size is not a proxy for cheap computation or a reason to omit a branch.
 
 Before freezing the task, a separate GLM review pass compares the proposed
 inventory with the original document and converted scripts. It must look for
-omitted branches, not just check that the declared map is internally consistent.
+omitted eligible results, not just check that the inventory is internally consistent.
 Record source references for included endpoints and reasons for excluding other
 apparent scientific results. Freeze this reviewed inventory before the final
 contract; changes to coverage require another review. Reuse the pipeline's
@@ -124,19 +137,21 @@ not become measured facts merely because it is executable code.
 | Responsibility | Programmatic work | GLM work |
 | --- | --- | --- |
 | Source intake | Pin notebook/data identities; inventory cells and files; record provenance and source terms. | Identify relevant data references, environment requirements and unresolved source assumptions. |
-| Endpoint inventory | Collect saved outputs, observed file/package use, structural metadata and bounded execution evidence. | Identify all intended scientific endpoints and likely dependencies; distinguish analysis objectives from literal graph leaves, caches and diagnostics. |
+| Endpoint preparation | Validate response structure and syntax; preserve the full script and compute its diff. | With no tools, select terminal results already held in original named variables or fields and add faithful saving code. Explain exclusions and uncertainties in one inventory. |
 | Script conversion | Check the source against a supported-feature profile before export; use a pinned deterministic exporter and verify code coverage/order after allowed transformations. | Reason over the scripts and source narrative to interpret unresolved assumptions and branch coverage. |
-| Environment and exports | Build an explicit recipe, execute it within limits, preserve logs and original source. | Resolve setup failures and propose minimal exports for selected in-memory results, with recorded changes. |
+| Environment and input setup | Execute setup commands, preserve recipes/locks and input hashes, enforce the execution boundary. | With tools, inspect dependencies, diagnose installation failures, stage original inputs and adapt offline paths/caches. Preparation does none of this. |
 | Reference execution | Run from a clean state under the intended limits; capture artifacts, hashes, elapsed time, errors and available resource diagnostics. | Distinguish setup failures from broken analysis code; propose bounded setup fixes and record reasons to reject a seed. |
 | Task coverage and feasibility | Check the reviewed branch-to-artifact mapping, input availability and combined resource measurements. | Independently review endpoint completeness against the original source; explain endpoint representations, exclusions and feasibility blockers. |
 | Instructions | Validate structure and link requirements to source/evidence. | Translate the executed analysis into a complete public specification, including consequential defaults and parameters. |
 | Grading | Apply reusable comparators; run references, valid alternatives and wrong-output controls; calculate reward. | Propose scientifically meaningful equivalences, failure cases and any custom checks that templates cannot express. |
 | Packaging and evaluation | Assemble Harbor files, enforce visibility boundaries, run blind attempts and preserve results. | Produce remaining task-specific text/code and repair permitted defects within the boundary and budgets below. |
 
-The controller owns scheduling, time/resource/request limits, artifact identity
-and retry accounting. GLM can use bounded inspection tools when needed. A stage
-may contain several model/tool turns; the number of raw calls is bounded rather
-than assumed to be exactly one.
+The controller owns scheduling, limits, artifact identity and retry accounting.
+The preparation worker has no tools: one creation and at most one complete-object
+repair, medium reasoning, strict JSON-schema responses and no extra client
+token/byte caps. Execution setup can use tools to inspect and diagnose actual
+failures; running the scientific script itself is programmatic. See the
+[current workflow](reference-execution.md) for implemented boundaries and status.
 
 Neither GLM nor the human operating the factory fills in unobserved shapes,
 expected values or measured runtimes. Unsupported cases can be rejected. Human
@@ -147,25 +162,26 @@ through the recorded pipeline.
 
 These are logical stages, not necessarily separate agents or one LLM call each.
 
-1. **Convert and inventory all scientific endpoints.** Check source execution
-   features, then extract plain scripts in the source language with a
-   deterministic converter. GLM reads the scripts,
-   source narrative and available data inventory to identify the intended
-   endpoints and propose one execution/export plan covering every branch.
-   Preserve the original document and its recorded outputs as provenance;
-   pre-existing outputs are not treated as fresh execution evidence.
-2. **Establish a runnable script reference.** Reconstruct the intended environment
-   and inputs within a bounded setup budget, then execute the scripts for all
-   required endpoints in a fresh process/workspace. Reject unsupported conversions
-   or broken analysis code, recording the reason separately. Export artifacts and
-   record runtime and resource-fit evidence. Preserve the original source,
-   converted scripts, conversion settings, environment recipe and failures.
+1. **Convert, then prepare terminal-result exports.** Deterministically convert
+   supported sources to plain scripts retaining narrative comments. GLM reads
+   the script, provenance, conversion receipt and execution limits, without data
+   contents or tools. It returns the complete script with saving code, one
+   endpoint inventory and brief exclusions/uncertainties. Programmatic checks
+   preserve the response, check structure/syntax and compute the diff. A separate
+   review checks eligibility and unchanged science against the original source.
+2. **Establish a runnable script reference.** A tool-enabled execution worker
+   owns dependency inspection/installation, original input downloads and offline
+   path/cache setup. It records recipes, locks, hashes and adaptations, without
+   changing scientific methods or inputs. Then run the reviewed script
+   programmatically in a fresh process/workspace, offline and CPU-only, preserving
+   the full original computation. Collect the declared terminal artifacts,
+   runtime, failures and resource-fit evidence.
 3. **Review coverage and specify the single task.** A separate GLM pass reviews
    completeness against the original source and scripts, then freezes the
    endpoint inventory. Specify the source's original inputs and representations
    of all required endpoints, then write instructions grounded in the execution.
-   Retain full branch coverage and the source's computation. Measurements from
-   reduced inputs or a different execution plan do not establish eligibility.
+   Retain all eligible endpoints, explicit exclusions and the source's computation.
+   Measurements from reduced inputs or a different execution plan do not establish eligibility.
 4. **Construct and validate.** Wrap the runnable reference and exports as the
    private solution. Generate the public brief and grading contract. Execute
    controls and calibrate any numerical comparisons before freezing the task.
@@ -212,12 +228,12 @@ Inspect the source before executing an expensive or partially runnable notebook
 within its authoring budget. The requirement is execution evidence for every
 required endpoint **before finalizing the task contract**. Presentation-only
 or diagnostic cells need not become task requirements. Failure to produce a
-scientific endpoint is a blocker for the whole candidate, not permission to
+required eligible endpoint is a blocker for the whole candidate, not permission to
 release only the successful branches.
 
 For a first version, avoid building a general notebook dependency-graph engine.
 Start with a source-backed execution plan and existing file outputs or explicit
-exports for all endpoints. Preserve source execution order where possible rather
+exports for all eligible existing terminal results. Preserve source execution order where possible rather
 than searching for minimal branch slices. The complete required workflow must
 replay from declared inputs without hidden interactive state. Proposed branch
 dependencies are supported only to the extent established by that execution.
@@ -232,7 +248,7 @@ they do not by themselves establish semantic fidelity.
 Proposed first-version gate: run the complete reference analysis in a clean
 Daytona sandbox under the intended task CPU, memory and disk limits, with an
 explicit whole-run deadline. Require successful execution and validated fresh
-artifacts from every scientific branch. This can establish observed resource
+artifacts for every required eligible endpoint. This can establish observed resource
 fit without building a detailed profiler first.
 
 Retain a small execution record:
@@ -294,8 +310,8 @@ Proposed finite budgets for the first experiment:
 | Reference or independently computed valid alternative | 600 seconds per complete execution, including imports, all branches and artifact exports. Environment construction and input downloads are separate. |
 | Verifier | 120 seconds per invocation, separate from the solver clock. |
 | Blind solver | Provisionally 600 seconds per attempt, with the total agent allowance to be revisited separately; at most two attempts, with a fresh attempt allowed after a permitted repair. The clock starts when the prepared sandbox and task are handed to the solver, before its first model request. It includes model latency and tool use; it excludes environment setup and final verification. |
-| Repairs | At most two generation/setup/construction repair passes, followed by at most one quality-loop repair. Scientific source repairs remain forbidden regardless of remaining budget. |
-| Model requests | 80 total GLM-5.3 API requests across generation, review, repair and solving, including retries; record stage allocations and tool-turn caps before launch. No automatic model escalation or new campaign. |
+| Preparation repairs | One creation and at most one complete-object repair. Scientific source repairs remain forbidden. Execution/construction budgets need reconciliation with the new stage separation before launch. |
+| Model requests | Preparation permits at most two GLM-5.3 calls, medium reasoning, no extra client token/byte caps and the existing 600-second per-request timeout. Record execution-worker and downstream budgets before those stages launch. No automatic model escalation. |
 | Whole experiment | Two hours of wall-clock work, including every stage and retry, followed by up to five minutes of active cleanup. Stop starting work when any applicable limit is exhausted; report and track unresolved cleanup rather than declaring it complete. |
 
 All limits apply together. Exhausting a budget leaves a rejected, unresolved or
@@ -327,7 +343,7 @@ belong in the instructions even when the submitted result is a small table.
 | Membership or rankings derived from numerical results | Explicit cutoff and tie rules consistent with the permitted numerical variability; exact membership only when the contract justifies it. |
 | Arbitrary labels or coordinate symmetries | Comparison invariant to the specific equivalence the contract permits. |
 | Stochastic results | A validated comparison that accepts documented variation or equivalent representations while preserving the required scientific result and rejecting meaningful mistakes. |
-| Plots | Grade the underlying scientific data when it captures the result, including relevant values, labels and transformations. Visual styling and image reproduction are outside v1. |
+| Plots | Grade eligible terminal data already held in original variables/fields. Exclude plot-only results that require reconstructing plotting internals or new scientific computation; explain exclusions. No image reproduction. |
 
 The public contract states identifier alignment, duplicate and missing-value
 handling, units, numerical precision/tolerances, threshold inclusion and tie
@@ -350,17 +366,18 @@ the definition of correctness merely to retain the candidate. Permitted
 equivalences must preserve the required scientific result.
 
 Matching the final output does not prove every instructed method was followed.
-If a scientifically consequential step matters to grading, require evidence that
-can distinguish its omission or substitution, such as an appropriate intermediate
-artifact and an independent check. Even these checks have limits; do not claim
-verification of an arbitrary hidden procedure from outputs alone.
+Use meaningful wrong-method controls to test which distinctions the terminal
+outputs support. Do not add intermediate exports in this version to claim that
+every internal procedure was checked. If the required distinction cannot be
+validated from the selected outputs, narrow the claim or reject the candidate;
+do not claim verification of hidden procedures from outputs alone.
 
 Before freezing the grader, execute these controls:
 
 - The reference passes; an empty/no-op submission fails, and omitting any
-  required branch fails.
+  required endpoint fails.
 - At least one consequential wrong-method or wrong-result control for each
-  branch fails. Choose it to test the claimed scientific distinction, not just
+  branch with a required endpoint fails. Choose it to test the claimed scientific distinction, not just
   file presence or formatting.
 - Valid representation alternatives permitted by the contract pass. Wherever
   numerical or software portability is claimed, test an independently computed
@@ -455,8 +472,9 @@ analysis is broken.
 
 Run the converted reference directly and check branch coverage and produced
 artifacts. A native notebook run is not a prerequisite. Record the result as
-converted-script execution. GLM identifies endpoints, configures setup and
-generates faithful artifact exports through version-controlled prompts.
+converted-script execution. The text-only preparation worker selects and saves eligible terminal results.
+A separate tool-enabled execution worker owns dependencies and input setup; both
+use version-controlled prompts.
 
 For dependency setup, reuse the source's declared image, lockfile or environment
 recipe when available. Keep converter tooling in the factory environment where
@@ -490,22 +508,23 @@ script conversion to simplify execution and avoid mandatory notebook kernels
 and report rendering. The size of any installation/runtime saving remains
 unmeasured; conversion retains the scientific dependencies and computations.
 
-Our [current factual profiler](../../src/biotasks/data_profile.py) covers bounded
+The [factual profiler](../../src/biotasks/data_profile.py) covers bounded
 file structure and identity. The prepared [Tasksmith integration](design_stage.py)
-could retain structured GLM proposals and bounded revisions; its live
-compatibility remains untested. Its design prompt should be reconsidered if we
-adopt this extraction objective. Harbor and the existing quality/release
+provides structured proposal machinery. The current preparation worker uses
+strict JSON-schema responses, a complete script and one complete-object repair.
+The tool-enabled execution worker is not integrated yet. Harbor and the existing quality/release
 components remain candidates downstream.
 
 ## 8. A small experiment that would test the idea
 
-Use one notebook with its original inputs and produce one task covering all of
-its scientific branches. Reject it if the complete reference cannot fit the
+Use one notebook with its original inputs and produce one task covering its
+eligible terminal results. Execute all original scientific branches and explain
+any branches without eligible outputs. Reject it if the complete reference cannot fit the
 resource and ten-minute computation limits; do not reduce inputs or introduce
 a starting checkpoint to rescue it.
 Convert it to plain scripts, then have GLM inventory and explain its endpoints
-using the scripts and source narrative, with an explicit branch-to-artifact
-coverage map and a separate completeness review. Do not hardcode an analysis
+using the scripts and source narrative, with one source-backed endpoint inventory, explicit exclusions and a separate
+completeness review. Do not hardcode an analysis
 stage, genes, files or expected values into the factory.
 Reuse the source computation as the reference instead of asking a builder to
 invent an independent implementation of the whole analysis.
@@ -523,8 +542,8 @@ later testing should freeze the rules before trying other notebook domains.
 | --- | --- | --- |
 | How close must reproduction be? | Match the specified computation, allowing documented equivalences and software alternatives. | Easier to define than “same biological conclusion,” but may reject scientifically reasonable alternative analyses. |
 | Where may a task start? | Use the original inputs used by the source notebook. Defer added reductions and new starting checkpoints beyond v1. | Keeps extraction simple and preserves the source workflow, but excludes analyses that need adaptation to fit. |
-| How should every branch's endpoint be represented? | Include all scientific endpoints in one task; prefer compact, portable representations for each. | Simpler task generation and shared setup, but every branch must fit the combined execution and grading requirements. |
-| What about endpoints presented as plots? | Grade the underlying scientific data when it captures the result. Defer visual styling and image reproduction beyond v1. | Avoids rendering-dependent comparisons; a candidate still needs faithful, gradable coverage of every scientific branch. |
+| Which endpoints are included? | Include eligible terminal results already held in original named variables or object fields; explain branches without eligible results. Keep all original computation. | Simpler exports, with explicit omissions where the source does not store a terminal result. No intermediate or full-state fallback. |
+| What about endpoints presented as plots? | Save eligible existing results only; exclude plot-only results rather than reconstructing plotting internals. | Less custom code, but some displayed scientific results will not become graded targets. |
 | What about results that vary between valid runs? | Accept documented tolerances or equivalent representations only after executable controls distinguish conforming results from meaningful mistakes. Reject the notebook for v1 if any required endpoint lacks a validated comparison. | Allows justified variation while excluding candidates whose grading remains unreliable or unvalidated within budget. |
 | How much source adaptation is acceptable? | Preserve an untouched converted baseline; permit bounded environment/input setup, path configuration and faithful exports. Reject candidates requiring scientific changes, added reductions or new checkpoints. | Keeps the first version focused on runnable sources; unresolved setup failures remain distinct from code defects. |
 | How automatic should grading be? | Reusable comparators first; GLM proposes semantic configuration and controls. Validate conforming alternatives and consequential mistakes before freezing the contract. | Unusual outputs may require custom generated checks or rejection. |
