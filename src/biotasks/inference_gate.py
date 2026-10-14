@@ -23,14 +23,15 @@ from urllib.parse import urlsplit
 @dataclass(frozen=True)
 class Allowance:
     requests: int
-    output_tokens: int
+    output_tokens: int | None
 
 
 class RequestLedger:
     def __init__(self, path: Path, allowances: dict[str, Allowance]):
         self.path, self.allowances = path, allowances
         if not allowances or any(
-            v.requests < 0 or v.output_tokens < 1 for v in allowances.values()
+            v.requests < 0 or (v.output_tokens is not None and v.output_tokens < 1)
+            for v in allowances.values()
         ):
             raise ValueError("Nonnegative request and positive output-token bounds are required")
         with sqlite3.connect(path) as db:
@@ -139,7 +140,10 @@ class InferenceGate:
                     if (
                         payload.get("model") != gate.model
                         or type(tokens) is not int
-                        or not 1 <= tokens <= allowance.output_tokens
+                        or tokens < 1
+                        or (
+                            allowance.output_tokens is not None and tokens > allowance.output_tokens
+                        )
                     ):
                         raise ValueError
                     if gate.chat_template_kwargs:

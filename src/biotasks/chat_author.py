@@ -37,15 +37,17 @@ class OutputTokenLimit(IncompleteCompletion):
 
 @dataclass(frozen=True)
 class ChatLimits:
-    max_output_tokens: int = 16000
+    max_output_tokens: int | None = 16000
     request_timeout_sec: int = 600
-    max_input_bytes: int = 256000
-    max_response_bytes: int = 2000000
-    tool_output_chars: int = 24000
+    max_input_bytes: int | None = 256000
+    max_response_bytes: int | None = 2000000
+    tool_output_chars: int | None = 24000
     reasoning_effort: str = "high"
 
     def __post_init__(self):
         for key, value in asdict(self).items():
+            if key != "request_timeout_sec" and value is None:
+                continue
             if key != "reasoning_effort" and (type(value) is not int or value < 1):
                 raise ValueError(f"{key} must be a positive integer")
         if self.reasoning_effort not in {"low", "medium", "high"}:
@@ -65,7 +67,10 @@ class GLMChatAuthor:
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
-        if limits.max_output_tokens > ledger.allowances[scope].output_tokens:
+        token_bound = ledger.allowances[scope].output_tokens
+        if token_bound is not None and (
+            limits.max_output_tokens is None or limits.max_output_tokens > token_bound
+        ):
             raise ValueError("Output tokens exceed the request ledger allowance")
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -126,13 +131,16 @@ class GLMChatAuthor:
                 "tool_choice": "required",
                 "parallel_tool_calls": False,
                 "stream": False,
-                "max_tokens": self.limits.max_output_tokens,
                 "temperature": 1.0,
                 "top_p": 1.0,
                 "chat_template_kwargs": {"reasoning_effort": self.limits.reasoning_effort},
             }
+            # None delegates generation length to the provider/context window;
+            # it does not assert that the provider has no limit of its own.
+            if self.limits.max_output_tokens is not None:
+                payload["max_tokens"] = self.limits.max_output_tokens
             body = json.dumps(payload, ensure_ascii=False, allow_nan=False).encode()
-            if len(body) > self.limits.max_input_bytes:
+            if self.limits.max_input_bytes is not None and len(body) > self.limits.max_input_bytes:
                 raise ValueError("Design context exceeds its input bound; no silent truncation")
             # The durable claim occurs before dispatch and is never refunded.
             call_id = self.ledger.claim(self.scope, body)
@@ -157,7 +165,7 @@ class GLMChatAuthor:
                 if isinstance(exc, asyncio.CancelledError):
                     raise
                 raise RuntimeError("Model transport failed; inspect the retained receipt") from None
-            if (
+            if self.limits.max_response_bytes is not None and (
                 len(json.dumps(response, ensure_ascii=False).encode())
                 > self.limits.max_response_bytes
             ):
@@ -233,7 +241,10 @@ class GLMChatAuthor:
                 event("tool_request", call_id=call["id"], name=name, arguments=arguments)
                 result = await handlers[name](**arguments)
             result = str(result)
-            if len(result) > self.limits.tool_output_chars:
+            if (
+                self.limits.tool_output_chars is not None
+                and len(result) > self.limits.tool_output_chars
+            ):
                 result = result[: self.limits.tool_output_chars] + "\n[tool output truncated]"
             event("tool_result", call_id=call["id"], name=name, output=result)
             messages.append({"role": "tool", "tool_call_id": call["id"], "content": result})

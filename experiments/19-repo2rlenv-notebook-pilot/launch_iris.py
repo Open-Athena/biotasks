@@ -114,9 +114,12 @@ def submit(
 def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                     artifact_prefix, endpoint_job, cluster, reference_archive=None):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
-    if not token or not daytona_key or not artifact_prefix.startswith("s3://"):
-        raise ValueError("Approved credentials and a private artifact destination are required")
     config = json.loads(files["campaign-config.json"])
+    preparation_only = config.get("entrypoint") == "run_preparation.py"
+    if not token or (not preparation_only and not daytona_key) or not artifact_prefix.startswith("s3://"):
+        raise ValueError("Approved credentials and a private artifact destination are required")
+    if preparation_only and daytona_key:
+        raise ValueError("Preparation-only jobs must not receive Daytona credentials")
     if config.get("entrypoint") == "run_coverage.py" and (
         not reference_archive or not reference_archive.startswith("s3://")
     ):
@@ -151,7 +154,7 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
             ],
             env_vars={
                 "GLM_BULK_TOKEN": token,
-                "DAYTONA_API_KEY": daytona_key,
+                **({"DAYTONA_API_KEY": daytona_key} if daytona_key else {}),
                 "GLM_ENDPOINT_JOB": endpoint_job,
                 "BIOTASKS_ARTIFACT_PREFIX": artifact_prefix.rstrip("/") + "/" + job_name,
                 "BIOTASKS_IRIS_WORKER_ID": job_name,

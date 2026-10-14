@@ -29,6 +29,7 @@ async def stage(
     limits,
     max_requests,
     validate=None,
+    recover_output_limit=True,
 ):
     """Use upstream's one output recovery, never retry an uncertain transport."""
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
@@ -56,6 +57,8 @@ async def stage(
         try:
             return await author(**kwargs)
         except OutputTokenLimit as error:
+            if not recover_output_limit:
+                raise
             # The response is recorded and its request slot consumed. Upstream
             # permits one concise resubmission within the same stage allowance.
             # Transport errors and other incomplete responses remain terminal.

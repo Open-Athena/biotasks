@@ -66,6 +66,7 @@ def main():
             or relative.startswith("continuation/")
             or (relative.startswith("reference/") and "/outputs/" not in relative)
             or relative.startswith("coverage/")
+            or relative.startswith("preparation/")
         )
         if not selected:
             continue

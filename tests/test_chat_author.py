@@ -49,12 +49,14 @@ class Budget:
         self.settlements.append(operation)
 
 
-def make_author(tmp_path, complete, *, requests=4, **limits):
+def make_author(tmp_path, complete, *, requests=4, token_allowance=16000, **limits):
     def save(path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value))
 
-    ledger = RequestLedger(tmp_path / "requests.sqlite", {"design": Allowance(requests, 16000)})
+    ledger = RequestLedger(
+        tmp_path / "requests.sqlite", {"design": Allowance(requests, token_allowance)}
+    )
     author = GLMChatAuthor(
         complete=complete,
         save_record=save,
@@ -95,6 +97,48 @@ def options(tmp_path, handlers, *, turns=4):
 
 async def committed(**_kwargs):
     return "Artifact committed."
+
+
+def test_optional_size_limits_preserve_evidence_and_one_repair(tmp_path):
+    payloads = []
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        answer = reply(call_id=str(len(payloads)))
+        answer["choices"][0]["message"]["reasoning_content"] = "r" * 2_000_001
+        return answer
+
+    async def submit(**_kwargs):
+        return "Rejected: " + "feedback" * 4000 if len(payloads) == 1 else "Artifact committed."
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        requests=2,
+        token_allowance=None,
+        max_output_tokens=None,
+        max_input_bytes=None,
+        max_response_bytes=None,
+        tool_output_chars=None,
+        reasoning_effort="medium",
+    )
+    args = options(tmp_path, {"submit_artifact": submit, "revise_artifact": committed}, turns=2)
+    args["prompt"] = "s" * 256001
+    result = asyncio.run(author(**args))
+    assert result["turns"] == 2
+    assert all("max_tokens" not in payload for payload in payloads)
+    assert payloads[0]["chat_template_kwargs"] == {"reasoning_effort": "medium"}
+    assert payloads[1]["messages"][-1]["content"] == "Rejected: " + "feedback" * 4000
+    recorded = json.loads((tmp_path / "trace/1/response.json").read_text())
+    assert len(recorded["choices"][0]["message"]["reasoning_content"]) == 2_000_001
+
+
+def test_omitting_generation_cap_cannot_bypass_bounded_ledger(tmp_path):
+    async def complete(_payload):
+        pytest.fail("Must fail before dispatch")
+
+    with pytest.raises(ValueError, match="ledger allowance"):
+        make_author(tmp_path, complete, max_output_tokens=None)
 
 
 @pytest.mark.parametrize("reasoning_field", ["reasoning_content", "reasoning"])
