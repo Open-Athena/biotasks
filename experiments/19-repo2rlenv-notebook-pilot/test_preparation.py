@@ -21,14 +21,14 @@ def response(plan, finish="stop", call_id="call"):
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
     plan = dict(disposition="reject", explanation="Unknown dependency", environment_rationale="",
-                pyproject_toml="", system_packages=[], stage_inputs_sh="", changes=[], artifacts=[], branches=[], excluded_outputs=[],
+                pyproject_toml="", system_packages=[], stage_inputs_sh="", reference_script="", artifacts=[], excluded_outputs=[],
                 unresolved_assumptions=["Dependency availability"])
 
     async def complete(payload):
         calls.append(payload)
         assert "tools" not in payload
         assert payload["response_format"]["json_schema"]["strict"] is True
-        assert "changes" in payload["response_format"]["json_schema"]["schema"]["required"]
+        assert "reference_script" in payload["response_format"]["json_schema"]["schema"]["required"]
         context = json.loads(payload["messages"][1]["content"])
         assert set(context) == {"source", "baseline_script", "conversion", "limits"}
         assert "question_text" not in context["source"]
@@ -56,3 +56,45 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
     assert result["scientific_analysis_executed"] is False
     assert result["setup_executed"] is False
     assert result["independent_review_run"] is False
+
+
+@pytest.mark.parametrize("repair_syntax", [False, True])
+def test_full_script_is_saved_inert_and_syntax_failure_gets_one_repair(tmp_path, repair_syntax):
+    calls = []
+    generated = None
+
+    async def complete(payload):
+        nonlocal generated
+        calls.append(payload)
+        context = json.loads(payload["messages"][1]["content"])
+        generated = context["baseline_script"] + "\nraise RuntimeError('must not execute')\n"
+        candidate = dict(
+            disposition="prepare", explanation="Synthetic inert preparation fixture",
+            environment_rationale="No packages installed by this test",
+            pyproject_toml='[project]\nname="fixture"\nversion="0.1.0"\nrequires-python=">=3.13"\ndependencies=[]\n',
+            system_packages=[], stage_inputs_sh="exit 91\n",
+            reference_script="result = (" if repair_syntax and len(calls) == 1 else generated,
+            artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
+            excluded_outputs=[], unresolved_assumptions=[],
+        )
+        if len(calls) == 2:
+            assert "valid Python" in payload["messages"][-1]["content"]
+            assert "complete corrected artifact" in payload["messages"][-1]["content"]
+        return response(candidate)
+
+    root = tmp_path / "preparation"
+    asyncio.run(run(
+        json.loads((HERE / "preparation-inputs.json").read_text()),
+        root=root, seed=json.loads((HERE / "seeds/current.json").read_text())[0],
+        endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
+    ))
+    assert len(calls) == (2 if repair_syntax else 1)
+    assert (root / "reference.py").read_text() == generated
+    assert "+raise RuntimeError" in (root / "source.diff").read_text()
+    assert (root / "stage-inputs.sh").read_text() == "exit 91\n"
+    result = json.loads((root / "result.json").read_text())
+    assert result["status"] == "ready_for_user_inspection"
+    assert result["setup_executed"] is False
+    assert result["scientific_analysis_executed"] is False
+    assert result["independent_review_run"] is False
+    assert result["daytona_sandboxes_created"] == 0

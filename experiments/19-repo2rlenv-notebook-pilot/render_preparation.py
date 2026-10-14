@@ -33,20 +33,25 @@ def render(directory):
         field("Python dependencies", code(plan["pyproject_toml"], "toml"))
         field("System packages", code(json.dumps(plan["system_packages"], indent=2), "json"))
         field("Input staging script", code(plan["stage_inputs_sh"], "sh"))
-        field("Controller setup script", code((directory / "setup.sh").read_text(), "sh"))
+        field("Controller setup script", code((directory / "setup.sh").read_text(), "sh") if (directory / "setup.sh").exists() else "Not materialized.")
     else:
         field("Setup script", code(plan["setup_sh"], "sh"))
-    for index, branch in enumerate(plan["branches"], 1):
+    for index, branch in enumerate(plan.get("branches", []), 1):
         field(f"Scientific branch {index}: {branch['name']}", branch["scientific_result"])
         parts.extend(["Source evidence: " + branch["source_evidence"],
                       "Artifacts: " + ", ".join(f"`{path}`" for path in branch["artifacts"])])
     for artifact in plan["artifacts"]:
         field("Artifact: " + artifact["path"], artifact["description"])
         parts.append("Source evidence: " + artifact["source_evidence"])
-    for index, change in enumerate(plan["changes"], 1):
-        field(f"Source edit {index}: {change['purpose']}", change["justification"])
-        parts.extend(["**Before**", code(change["before"], "python"),
-                      "**After**", code(change["after"], "python")])
+    if "reference_script" in plan:
+        field("Complete edited script", code(plan["reference_script"], "python"))
+        if (directory / "source.diff").exists():
+            field("Controller-computed diff", code((directory / "source.diff").read_text(), "diff"))
+    else:
+        for index, change in enumerate(plan["changes"], 1):
+            field(f"Source edit {index}: {change['purpose']}", change["justification"])
+            parts.extend(["**Before**", code(change["before"], "python"),
+                          "**After**", code(change["after"], "python")])
     for title, key in [("Excluded outputs", "excluded_outputs"),
                        ("Unresolved assumptions", "unresolved_assumptions")]:
         field(title, "\n\n".join("- " + item for item in plan[key]) or "None listed.")

@@ -7,16 +7,16 @@ import time
 
 import pytest
 from pydantic import ValidationError
+from reference_protocol import ReferencePlan, ReferenceReview, materialize
+from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
+from run_reference import check_config
+from test_design_stage import response
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
-from reference_protocol import ReferencePlan, ReferenceReview, materialize
-from reference_stage import stage
-from run_reference import check_config
-from test_design_stage import response
 
 
 def plan(**changes):
@@ -28,24 +28,9 @@ def plan(**changes):
             "pyproject_toml": '[project]\nname="reference"\nversion="0.1.0"\nrequires-python=">=3.13,<3.14"\ndependencies=[]\n',
             "system_packages": [],
             "stage_inputs_sh": "",
-            "changes": [
-                {
-                    "purpose": "export",
-                    "before": "result = 1\n",
-                    "after": "result = 1\nprint(result)\n",
-                    "justification": "Expose existing value",
-                }
-            ],
+            "reference_script": "result = 1\nprint(result)\n",
             "artifacts": [
                 {"path": "value.txt", "description": "value", "source_evidence": "result"}
-            ],
-            "branches": [
-                {
-                    "name": "value",
-                    "scientific_result": "value",
-                    "source_evidence": "result",
-                    "artifacts": ["value.txt"],
-                }
             ],
             "excluded_outputs": [],
             "unresolved_assumptions": [],
@@ -54,69 +39,33 @@ def plan(**changes):
     )
 
 
-def test_export_cannot_replace_source_or_use_ambiguous_anchor():
-    prepared = plan()
-    script, diff = materialize("result = 1\n", prepared)
-    assert script == "result = 1\nprint(result)\n" and "+print(result)" in diff
-    with pytest.raises(ValueError, match="unambiguous"):
-        materialize("result = 1\nresult = 1\n", prepared)
-    prepared.changes[0].after = "result = 2\n"
-    with pytest.raises(ValueError, match="not replace"):
-        materialize("result = 1\n", prepared)
+def test_complete_script_is_preserved_and_diff_is_computed_without_execution():
+    baseline = "result = 1\nresult = 1\n# Narrative stays here.\n"
+    generated = baseline + "raise RuntimeError('must not execute')\n"
+    script, diff = materialize(baseline, plan(reference_script=generated))
+    assert script == generated
+    assert "+raise RuntimeError" in diff
+    assert "--- baseline.py" in diff and "+++ reference.py" in diff
 
 
-def test_output_paths_and_coverage_fail_closed():
+@pytest.mark.parametrize("script", ["", "  \n", "result = (", "x = 1\nfrom __future__ import annotations\n"])
+def test_missing_or_invalid_script_is_rejected_before_execution(script):
+    with pytest.raises(ValueError, match="complete reference script|valid Python"):
+        materialize("result = 1\n", plan(reference_script=script))
+
+
+def test_patch_protocol_is_not_accepted_as_a_script():
+    with pytest.raises(ValidationError, match="Extra inputs"):
+        plan(changes=[])
+
+
+def test_output_paths_and_inventory_fail_closed():
     with pytest.raises(ValidationError, match="relative"):
         plan(artifacts=[{"path": "../answer", "description": "x", "source_evidence": "x"}])
-    with pytest.raises(ValidationError, match="coverage"):
-        plan(artifacts=[{"path": "missing-branch.csv", "description": "x", "source_evidence": "x"}])
-
-
-def test_capture_retains_call_and_supports_a_separate_export():
-    baseline = "compute(data, method='original')\n"
-    captured = "captured = compute(data, method='original')\n"
-    prepared = plan(changes=[
-        dict(purpose="capture", before=baseline, after=captured,
-             justification="Retain the original return value"),
-        dict(purpose="export", before=captured, after=captured + "save(captured)\n",
-             justification="Serialize that value"),
-    ])
-    script, _ = materialize(baseline, prepared)
-    assert script == captured + "save(captured)\n"
-
-
-@pytest.mark.parametrize("replacement", [
-    "captured = compute(data, method='different')\n",
-    "captured = compute(data, method='original', return_value=True)\n",
-    "captured = compute(data, method='original')\nsave(captured)\n",
-    "data = compute(data, method='original')\n",
-    "len = compute(data, method='original')\n",
-    "obj.captured = compute(data, method='original')\n",
-])
-def test_capture_rejects_changed_calls_extra_statements_and_name_reuse(replacement):
-    baseline = "compute(data, method='original')\n"
-    prepared = plan(changes=[dict(purpose="capture", before=baseline, after=replacement,
-                                 justification="Fixture")])
-    with pytest.raises(ValueError, match="Capture"):
-        materialize(baseline, prepared)
-
-
-def test_capture_cannot_match_a_call_embedded_in_another_statement():
-    prepared = plan(changes=[dict(purpose="capture", before="compute(data)",
-                                 after="captured = compute(data)", justification="Fixture")])
-    with pytest.raises(ValueError, match="complete standalone"):
-        materialize("existing = compute(data)\n", prepared)
-
-
-def test_invalid_earlier_export_remains_a_repairable_validation_error():
-    baseline = "compute(data)\n"
-    prepared = plan(changes=[
-        dict(purpose="export", before=baseline, after=baseline + "(\n", justification="Fixture"),
-        dict(purpose="capture", before=baseline, after="captured = compute(data)\n",
-             justification="Fixture"),
-    ])
-    with pytest.raises(ValueError, match="valid standalone Python"):
-        materialize(baseline, prepared)
+    with pytest.raises(ValidationError, match="unique endpoint artifacts"):
+        plan(artifacts=[])
+    with pytest.raises(ValidationError, match="unique endpoint artifacts"):
+        plan(artifacts=[plan().artifacts[0].model_dump()] * 2)
 
 
 @pytest.mark.parametrize("finding", ["Changed a threshold", "None detected; source unchanged"])
@@ -135,10 +84,10 @@ def test_approval_cannot_keep_a_known_scientific_change(finding):
 def test_upstream_revisions_share_the_request_ceiling_and_preserve_prompt(tmp_path):
     requests = []
     invalid = plan().model_dump()
-    invalid["branches"][0]["artifacts"] = ["nonexistent.txt"]
+    invalid["artifacts"] = []
     answers = [
         response("submit_artifact", invalid, 1),
-        response("revise_artifact", {"patch": {"branches": plan().model_dump()["branches"]}}, 2),
+        response("revise_artifact", {"patch": {"artifacts": plan().model_dump()["artifacts"]}}, 2),
     ]
 
     async def complete(payload):
@@ -168,7 +117,7 @@ def test_upstream_revisions_share_the_request_ceiling_and_preserve_prompt(tmp_pa
             max_requests=3,
         )
     )
-    assert result.branches[0].artifacts == ["value.txt"]
+    assert result.artifacts[0].path == "value.txt"
     assert len(requests) == 2
     assert requests[0]["messages"][0]["content"] == (root / "system-prompt.md").read_text()
     with sqlite3.connect(ledger.path) as db:
@@ -224,7 +173,7 @@ def test_completed_token_limit_uses_only_one_upstream_recovery(tmp_path, always_
             asyncio.run(coroutine)
         assert not (root / "artifact-stage/draft.json").exists()
     else:
-        assert asyncio.run(coroutine).branches[0].artifacts == ["value.txt"]
+        assert asyncio.run(coroutine).artifacts[0].path == "value.txt"
     assert len(requests) == 2
     assert "Partial tool arguments were not executed" in requests[1]["messages"][1]["content"]
     with sqlite3.connect(ledger.path) as db:
@@ -251,6 +200,7 @@ def test_durable_export_uses_provisioned_host_python(tmp_path, monkeypatch):
 
 def test_reference_payload_includes_bootstrap_diagnostic_dependency(tmp_path, monkeypatch):
     import hashlib
+
     import launch_reference
 
     archive = tmp_path / "upstream.tar.gz"

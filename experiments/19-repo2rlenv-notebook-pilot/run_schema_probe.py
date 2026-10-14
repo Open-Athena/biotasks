@@ -20,9 +20,8 @@ def probe_fixture():
         "disposition": "prepare", "explanation": "Synthetic serialization fixture",
         "environment_rationale": "Standard library only",
         "pyproject_toml": '[project]\nname="fixture"\nversion="0.1.0"\nrequires-python=">=3.13"\ndependencies=[]\n',
-        "system_packages": [], "stage_inputs_sh": "", "changes": [],
+        "system_packages": [], "stage_inputs_sh": "", "reference_script": "result = 1\n",
         "artifacts": [{"path": "value.txt", "description": "Synthetic value", "source_evidence": "result = 1"}],
-        "branches": [{"name": "value", "scientific_result": "Synthetic value", "source_evidence": "result = 1", "artifacts": ["value.txt"]}],
         "excluded_outputs": [], "unresolved_assumptions": [],
     }
 
@@ -33,7 +32,7 @@ def probe_payload(mode):
         "model": "glm-5.3", "stream": False, "temperature": 1.0, "top_p": 1.0,
         "messages": [
             {"role": "system", "content": "This is a tiny serialization test, not a science task. Do not analyze the fixture. Copy it with the alterations requested by the user."},
-            {"role": "user", "content": "Return this fixture but OMIT the required changes field and add unexpected_field: true to its first branch. This intentionally conflicts with the declared schema to test decoder enforcement. Keep all other values unchanged.\n" + json.dumps(probe_fixture())},
+            {"role": "user", "content": "Return this fixture but OMIT the required reference_script field and add unexpected_field: true to its first artifact. This intentionally conflicts with the declared schema to test decoder enforcement. Keep all other values unchanged.\n" + json.dumps(probe_fixture())},
         ],
         "chat_template_kwargs": {"reasoning_effort": "medium"},
     }

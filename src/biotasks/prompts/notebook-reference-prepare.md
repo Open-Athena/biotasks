@@ -5,7 +5,9 @@ Include the required `disposition` field. Use JSON arrays for list fields, not
 strings containing JSON. Include every required field on both the initial response
 and any repair, even when previous-pass feedback is supplied. Return the complete
 corrected plan after validation feedback; do not return a merge patch, tool call
-or only the fields that changed.
+or only the fields that changed. Keep explanations brief: consequential changes,
+dependency choices and unresolved assumptions only. Do not repeat the analysis
+or artifact inventory in prose.
 
 ## Inputs to this stage
 
@@ -29,8 +31,8 @@ Do not infer observed data properties or successful execution from source code
 alone. Record anything that requires later execution or inspection as unresolved.
 
 Your output is a plan containing dependency declarations, input-staging commands
-and source edits. This stage
-does not run those commands or execute the analysis; the controller does that
+and a complete edited Python script. This stage does not run those commands
+or execute the analysis; the controller does that
 in a later stage.
 
 ## Scientific coverage
@@ -62,7 +64,14 @@ analysis to make it run, or invent expected values, dimensions or timing.
 
 ## Required plan
 
-Prepare only these generated artifacts:
+- `disposition` and `explanation`: prepare or reject, with a brief reason and a
+  concise account of consequential script changes. No step-by-step analysis recap.
+- `environment_rationale`: briefly explain reconstructed dependency requirements
+  and compatibility questions; do not repeat the dependency list.
+- `excluded_outputs`: explain only meaningful source outputs intentionally not
+  exported. `unresolved_assumptions`: list specific questions for later checks.
+
+Return these file contents and the single endpoint inventory:
 
 - `pyproject_toml`: the full text of a dependency-only Python `pyproject.toml`.
   Include `[project]` with `name`, `version`, `requires-python` and `dependencies`
@@ -89,24 +98,31 @@ Prepare only these generated artifacts:
   is empty, the controller supplies that empty receipt. The controller checks
   declared files against these hashes and preserves the receipt before execution.
   Do not save precomputed answers or modify source files.
-- `changes`: minimal, exact, uniquely anchored edits to the converted script.
-  `input_staging` changes may replace network retrieval with a faithful local
-  load or configure paths/caches. They must not change inputs or scientific
-  computation. `export` changes append code after the exact unchanged anchor;
-  export the existing result at the point where it exists without changing it.
-  Do not alter algorithms, parameters, annotations, error handling or branch
-  execution. Do not suppress analysis errors. Each edit needs a justification.
-  `capture` changes may bind the return value of one existing standalone call
-  to a fresh variable: replace `call(...)` with `fresh_name = call(...)`, keeping
-  the call and every argument unchanged. They must not repeat the call, reuse
-  an existing name, or add other statements. Use a separate `export` edit to
-  serialize the captured result. A capture is useful only when that unchanged
-  call actually returns the required result; do not assume it does.
-- `artifacts` and `branches`: all required endpoint paths, scientific meanings,
-  source evidence, and a complete branch-to-artifact mapping. Write artifacts
-  under `/work/outputs`; list paths relative to that directory. Export values
-  and identifiers in interoperable formats where possible. Export existing
-  results faithfully; do not run alternative analyses to fill gaps.
+- `reference_script`: the complete edited Python source, including unchanged
+  code and narrative comments. Return the file contents, not a patch, edit list,
+  quoted anchors, or placeholders for omitted sections. Make only the minimal
+  changes needed for offline input loading and faithful endpoint exports.
+  Replace network retrieval with a faithful local load or configure paths/caches;
+  preserve the original inputs and scientific computation. Add exports where
+  their existing results are available, without changing those results.
+  To retain a result from an existing standalone call, you may assign its return
+  value to a fresh variable while keeping the call and every argument unchanged.
+  Do not repeat the call or assume it returns data without evidence. Preserve
+  all analysis statements, methods, parameters and execution order. Do not
+  suppress analysis errors. Explain consequential changes in `explanation`.
+  For disposition=reject, this field may be empty.
+- `artifacts`: one inventory of the required scientific endpoint files. Each
+  entry supplies its relative `path`, a brief `description` identifying the
+  scientific result or goals it covers, and concise `source_evidence` pointing
+  to the relevant analysis or result in the supplied script. Cover every
+  scientific branch in this inventory; do not supply a second branch list or
+  repeat endpoint descriptions elsewhere. Write files under `/work/outputs`.
+  Export values and identifiers in interoperable formats where possible. Export
+  existing results faithfully; do not run alternative analyses to fill gaps.
+
+The controller derives the source diff, syntax-check result, file sizes and
+hashes from the actual files. Do not generate those records or invent measured
+artifact properties. This preparation stage has not executed the analysis.
 
 For plots produced by the future reference run, plan exports of their underlying
 scientific values and identifiers rather than rendered figures. This is an output
@@ -118,7 +134,7 @@ export requires additional computation, explain why it reproduces the original
 result and specify an executable equivalence check for the later validation
 stage. Do not claim equivalence before that check. If faithful extraction is
 unresolved, record the gap rather than inventing a substitute or dropping the
-scientific branch. Any change to call arguments falls outside `capture`.
+scientific branch. Capturing a return value does not permit changing call arguments.
 
 ## Execution contract for the later run
 
@@ -136,7 +152,9 @@ creates a new empty `/work/run` working directory and `/work/outputs` for each
 reference attempt, then invokes `/work/venv/bin/python /work/reference.py`.
 It sets MPLBACKEND=Agg and the declared CPU thread limits. Plan for noninteractive
 plotting. Exports may add imports but must preserve source semantics (including
-Python future-import placement). The controller preserves the baseline and diff.
+Python future-import placement). The controller preserves the baseline and your returned script unchanged,
+checks Python syntax without executing it, and computes the diff programmatically.
+A later review must assess scientific fidelity; syntax validity alone is insufficient.
 
 The provided resource and time limits apply to the complete analysis including
 imports and exports. Setup has its own cumulative limit. No GPU. CPU model

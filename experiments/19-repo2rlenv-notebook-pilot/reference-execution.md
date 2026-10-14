@@ -6,6 +6,24 @@ all its scientific branches offline. It stops before task construction, grading,
 blind solving or release. A successful run is reference-execution evidence, not
 a validated benchmark task.
 
+## Current preparation-only interface
+
+The preparation worker returns the complete `reference_script`, dependency-only
+`pyproject.toml`, system-package list, input-staging script and one endpoint
+artifact inventory. It does not return anchored edits or a separate branch map.
+Explanations focus on consequential changes and unresolved assumptions. The
+controller preserves the returned files, checks Python syntax without executing
+it, computes the source diff, and records file identities programmatically.
+Syntax and inventory checks do not establish scientific fidelity; the later
+review must compare the script and its diff with the original analysis.
+
+`run_preparation.py` requests strict JSON-schema responses at medium reasoning,
+with one creation and at most one complete-object repair, no extra client token
+or byte caps, and a 600-second per-request timeout. It creates no task sandbox
+and executes neither setup nor the generated analysis. The execution campaign
+records below describe earlier runs, not authorization to advance beyond this
+preparation-only step.
+
 ## Conversion
 
 `biotasks.notebook_script.export_python(path)` uses pinned Jupytext `py:nomarker`
