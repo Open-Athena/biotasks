@@ -1506,3 +1506,12 @@ now requests complete JSON objects. Fifty-one focused tests passed, including
 complete-object replacement, schema feedback, refusal/truncation rejection and
 the preparation-only boundary; type and targeted lint checks passed. No notebook
 preparation rerun was launched after this change.
+
+### 2026-10-14: preparation run 004 with JSON-schema responses
+
+The user authorized another preparation-only run to inspect its output before
+moving on. Use the unchanged newer Scanpy source and the current canonical
+preparation prompt, JSON-schema responses, GLM-5.3 at medium reasoning, one
+creation and at most one complete-object repair. No extra client token/byte
+caps; retain the 600-second per-request timeout. Do not execute generated
+setup, analysis, independent model review or downstream task stages.
