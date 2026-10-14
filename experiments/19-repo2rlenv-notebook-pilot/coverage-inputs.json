@@ -1,5 +1,5 @@
 {
-  "campaign": "artifact-coverage-001",
+  "campaign": "artifact-coverage-002",
   "entrypoint": "run_coverage.py",
   "campaign_seconds": 7200,
   "cleanup_seconds": 300,
@@ -7,13 +7,16 @@
   "source_directory": "reference-inputs/scanpy",
   "inspection_seconds": 600,
   "download_ceiling_bytes": 1073741824,
-  "coverage_requests": 6,
+  "coverage_requests": 4,
   "review_requests": 3,
-  "max_requests": 9,
+  "max_requests": 7,
   "pipeline_request_ceiling": 80,
   "max_output_tokens": 32000,
   "max_input_bytes": 512000,
   "request_timeout_seconds": 600,
-  "reasoning_effort": "medium",
-  "scope": "Inspect saved reference artifacts and separately propose/review complete endpoint coverage. No source rerun, task construction, generated code execution, solver or Daytona sandbox."
+  "reasoning_effort": "low",
+  "scope": "Inspect saved reference artifacts and separately propose/review complete endpoint coverage. No source rerun, task construction, generated code execution, solver or Daytona sandbox.",
+  "previous_coverage_results": [
+    "coverage-runs/001/result.json"
+  ]
 }

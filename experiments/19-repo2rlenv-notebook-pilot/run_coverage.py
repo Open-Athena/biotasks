@@ -22,13 +22,17 @@ from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
 
 
-def check_config(config, prior):
+def check_config(config, prior, previous=()):
+    consumed = sum(item["model_request_slots_used"] for item in previous)
     if (
         config["entrypoint"] != "run_coverage.py"
-        or config["max_requests"] != 9
-        or config["coverage_requests"] != 6
-        or config["review_requests"] != 3
-        or config["max_requests"] + prior["raw_model_requests"] > config["pipeline_request_ceiling"]
+        or not 1 <= config["coverage_requests"] <= 6
+        or not 1 <= config["review_requests"] <= 3
+        or config["max_requests"] != config["coverage_requests"] + config["review_requests"]
+        or consumed < 0
+        or config["max_requests"] + consumed > 9
+        or config["max_requests"] + consumed + prior["raw_model_requests"]
+        > config["pipeline_request_ceiling"]
         or config["pipeline_request_ceiling"] > 80
     ):
         raise ValueError("Coverage stage exceeds its recorded request allowance")
@@ -38,7 +42,16 @@ async def run(config, *, root, seed, endpoint, credential, deadline):
     experiment = Path(__file__).parent
     prior = experiment / relative_path(config["reference_run"])
     summary = json.loads((prior / "summary.json").read_text())
-    check_config(config, summary)
+    previous_paths = config.get("previous_coverage_results", [])
+    if len(set(previous_paths)) != len(previous_paths):
+        raise ValueError("Duplicate prior coverage result")
+    previous = [
+        json.loads((experiment / relative_path(path)).read_text()) for path in previous_paths
+    ]
+    check_config(config, summary, previous)
+    prior_requests = summary["raw_model_requests"] + sum(
+        item["model_request_slots_used"] for item in previous
+    )
     source = experiment / relative_path(config["source_directory"])
     conversion = json.loads((source / "conversion.json").read_text())
     if (
@@ -88,7 +101,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline):
         solver_run=False,
         semantic_fidelity_validated=False,
         daytona_sandboxes_created=0,
-        prior_pipeline_requests=summary["raw_model_requests"],
+        prior_pipeline_requests=prior_requests,
     )
     client = AsyncOpenAI(
         base_url=endpoint,
@@ -143,7 +156,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline):
             states = dict(db.execute("SELECT state, COUNT(*) FROM calls GROUP BY state").fetchall())
         result["request_states"] = states
         result["model_request_slots_used"] = sum(states.values())
-        result["pipeline_request_slots_used"] = summary["raw_model_requests"] + sum(states.values())
+        result["pipeline_request_slots_used"] = prior_requests + sum(states.values())
         result["finished"] = time.time()
         save_record(root / "result.json", result)
 

@@ -166,9 +166,14 @@ def test_coverage_cannot_use_unobserved_artifacts_or_approve_missing_evidence():
 
 def test_new_requests_account_for_prior_pipeline_work():
     config = json.loads(Path(__file__).with_name("coverage-inputs.json").read_text())
-    check_config(config, dict(raw_model_requests=7))
+    previous = [dict(model_request_slots_used=2)]
+    check_config(config, dict(raw_model_requests=7), previous)
     with pytest.raises(ValueError, match="allowance"):
-        check_config(config, dict(raw_model_requests=72))
+        check_config(config, dict(raw_model_requests=72), previous)
+    with pytest.raises(ValueError, match="allowance"):
+        check_config(config, dict(raw_model_requests=7), [dict(model_request_slots_used=3)])
+    with pytest.raises(ValueError, match="allowance"):
+        check_config({**config, "max_requests": 6}, dict(raw_model_requests=7), previous)
 
 
 def test_coverage_launch_requires_private_archive_before_submission(tmp_path):

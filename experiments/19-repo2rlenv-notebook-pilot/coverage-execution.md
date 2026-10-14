@@ -1,7 +1,14 @@
 # Reviewing observed endpoint coverage
 
-Status: the implementation and final targeted checks passed; the first coverage
-pass is ready for submission. This is preparation, not an executed coverage result.
+Status: the first pass inspected all eight reference artifacts in 11.10 seconds,
+with original hashes unchanged. Both model calls hit the 32,000-token output
+limit; no proposal was accepted and no separate review ran. Unedited structural
+evidence and request accounting are in [run 001](coverage-runs/001/summary.json).
+
+The continuation keeps the same evidence and scientific scope. It requests concise
+structured output and uses low reasoning effort rather than medium. Four proposal
+and three review requests remain; the first pass's two requests are retained in
+the nine-request coverage allowance. No truncated tool call is accepted.
 
 This stage consumes an immutable successful reference run. It does not rerun
 the analysis, execute generated code, create a Daytona sandbox or invoke a

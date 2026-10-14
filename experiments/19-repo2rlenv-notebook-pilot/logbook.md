@@ -1281,3 +1281,20 @@ execution, thread limits and low priority remain in force; the exception is
 limited to these light checks and the remote submission/status client. Biological
 artifact inspection stays on the reserved Iris worker. No source or generated
 artifact was changed, and the nine-request coverage allowance is unchanged.
+
+### 2026-10-14: structural inspection succeeded; bounded coverage continuation
+
+Coverage pass 001 at `8ab7966` inspected all eight saved artifacts in 11.10 seconds
+and verified their original hashes before and after inspection. Both GLM responses
+reached the 32,000-token limit. The controller correctly rejected them; no endpoint
+proposal was accepted and the independent review did not run. Original profiles
+and outcomes are preserved in `coverage-runs/001/`; full requests and responses
+remain in the private campaign archive. This is a model-output failure, not a
+failed reference computation or an endpoint-quality conclusion.
+
+The continuation retains the same evidence and requirements, asks for concise
+structured output, and uses low reasoning effort. It carries both consumed request
+slots forward and permits only four proposal plus three review requests, keeping
+the combined coverage maximum at nine and reference-plus-coverage maximum at
+sixteen. No truncated action is accepted, no scientific output is manually repaired,
+and no source rerun, construction, solver or Daytona work is added.
