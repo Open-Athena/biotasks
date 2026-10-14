@@ -25,7 +25,7 @@ def response(plan, finish="tool_calls", call_id="call"):
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
     plan = dict(disposition="reject", explanation="Unknown dependency", environment_rationale="",
-                setup_sh="", changes=[], artifacts=[], branches=[], excluded_outputs=[],
+                pyproject_toml="", system_packages=[], stage_inputs_sh="", changes=[], artifacts=[], branches=[], excluded_outputs=[],
                 unresolved_assumptions=["Dependency availability"])
 
     async def complete(payload):

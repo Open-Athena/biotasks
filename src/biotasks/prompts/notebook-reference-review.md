@@ -23,7 +23,9 @@ require rendered image exports, a separate artifact for every intermediate, or
 detailed profiling. Review the source's endpoint data and complete branch
 coverage; several endpoints may share an artifact with an explicit mapping.
 
-Inspect the exact source diff and setup script. Permit environment reconstruction,
+Inspect the exact source diff, dependency manifest, declared system packages and
+input-staging script. Environment creation and package installation are controller
+operations; input staging must not implement them. Permit environment reconstruction,
 faithful input staging/path changes and exports of existing results. Reject
 changed scientific parameters, formulas, algorithms, labels, random seeds,
 added reductions/checkpoints, skipped branches, suppressed errors, precomputed

@@ -15,6 +15,7 @@ from pathlib import PurePosixPath
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
+from reference_environment import validate_environment
 
 
 class StrictModel(BaseModel):
@@ -60,7 +61,9 @@ class ReferencePlan(StrictModel):
     )
     explanation: str = Field(min_length=1)
     environment_rationale: str
-    setup_sh: str
+    pyproject_toml: str
+    system_packages: list[str]
+    stage_inputs_sh: str
     changes: list[Change]
     artifacts: list[Artifact]
     branches: list[Branch] = Field(
@@ -73,13 +76,13 @@ class ReferencePlan(StrictModel):
     def coverage(self):
         if self.disposition == "reject":
             return self
+        validate_environment(self.pyproject_toml, self.system_packages)
         paths = [artifact.path for artifact in self.artifacts]
         names = [branch.name for branch in self.branches]
         covered = {path for branch in self.branches for path in branch.artifacts}
         if (
             not paths
             or not names
-            or not self.setup_sh.strip()
             or len(set(paths)) != len(paths)
             or len(set(names)) != len(names)
             or covered != set(paths)

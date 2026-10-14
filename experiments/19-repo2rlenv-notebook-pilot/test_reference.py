@@ -25,7 +25,9 @@ def plan(**changes):
             "disposition": "prepare",
             "explanation": "Complete synthetic source fixture",
             "environment_rationale": "No external packages",
-            "setup_sh": "python -m venv /work/venv",
+            "pyproject_toml": '[project]\nname="reference"\nversion="0.1.0"\nrequires-python=">=3.13,<3.14"\ndependencies=[]\n',
+            "system_packages": [],
+            "stage_inputs_sh": "",
             "changes": [
                 {
                     "purpose": "export",

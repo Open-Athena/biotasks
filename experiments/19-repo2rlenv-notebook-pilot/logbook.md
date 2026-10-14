@@ -1422,3 +1422,25 @@ The user asked whether uv is used. The factory environment uses uv sync --locked
 the current preparation prompt assumes Python/pip in the reference base image,
 and the generated setup uses pip. No packaging-tool policy was changed in
 response to that question.
+
+### 2026-10-14: declarative dependencies and controller-owned uv setup
+
+The user approved replacing worker-generated environment setup with a Python
+project manifest and programmatic creation. Preparation now returns
+`pyproject_toml`, declarative Debian `system_packages`, and `stage_inputs_sh`
+restricted to original-input/cache staging. The controller writes setup commands,
+bootstraps pinned uv 0.12.21, locks dependencies, syncs `/work/venv` using the base
+image Python, and records the lockfile and installed package inventory before
+offline computation. Pip only bootstraps uv in the minimal base image; it does
+not install the scientific environment. Dependency declarations remain worker
+outputs; installation/compatibility are not established by schema validation.
+
+The preparation schema, materializer, execution adapter, Markdown renderer and
+review prompt reflect this split. Existing generated run evidence is unchanged.
+Thirty-two focused tests passed (2.70 seconds; peak RSS 131,716 KiB), including
+invalid declaration rejection, inert preparation, no execution after review
+rejection, and a real offline uv lock/sync of an empty synthetic project. This
+checks environment creation without installing biological dependencies. No
+model, sandbox, source analysis or subsequent pipeline stage ran. The revised
+canonical prompt is ready for user review; the HTML still represents run 002,
+not a new output from this dependency-manifest contract.

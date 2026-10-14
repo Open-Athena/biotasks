@@ -19,6 +19,7 @@ from daytona import CreateSandboxFromImageParams, Daytona, Resources
 from design_stage import completion_transport
 from openai import AsyncOpenAI
 from preflight import PROBE, TARGETS
+from reference_environment import write_environment
 from reference_protocol import ReferencePlan, ReferenceReview, materialize
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
@@ -260,7 +261,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
             script, diff = materialize(baseline, plan)
             (directory / "reference.py").write_text(script)
             (directory / "source.diff").write_text(diff)
-            (directory / "setup.sh").write_text(plan.setup_sh)
+            write_environment(directory, plan)
             review = await call(
                 ReferenceReview,
                 "review",
@@ -276,6 +277,9 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
                 result["status"] = "review_revision_budget_exhausted"
                 continue
             network(False, directory / "network-online.json")
+            dispatch(["mkdir", "-p", "/work/environment"], 30)
+            upload(directory / "pyproject.toml", "environment/pyproject.toml")
+            upload(directory / "stage-inputs.sh", "stage-inputs.sh")
             upload(directory / "setup.sh", "setup.sh")
             allowed = min(setup_remaining, int(deadline - time.time()) - 900)
             if allowed <= 0:
@@ -306,6 +310,8 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
                 )
                 result["status"] = "setup_repair_budget_exhausted"
                 continue
+            for filename in ("uv.lock", "environment.txt"):
+                worker.download("/work/environment/" + filename, directory / filename)
             # Fresh computation workspace and exact reviewed script; setup cannot
             # supply endpoint outputs or replace the controller's source artifact.
             dispatch(
@@ -351,8 +357,6 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
             save_record(directory / "execution.json", execution)
             after = dispatch(["python", "/work/remote.py", "verify-inputs"], 120)
             save_record(directory / "inputs-after.json", json.loads(after.stdout))
-            pip = dispatch(["/work/venv/bin/python", "-m", "pip", "freeze", "--all"], 60)
-            (directory / "environment.txt").write_text(pip.stdout)
             inventory = json.loads(
                 dispatch(["python", "/work/remote.py", "inventory", "/work/plan.json"], 120).stdout
             )

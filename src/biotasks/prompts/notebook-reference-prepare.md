@@ -27,7 +27,8 @@ text identify resources; they do not mean you have inspected those resources.
 Do not infer observed data properties or successful execution from source code
 alone. Record anything that requires later execution or inspection as unresolved.
 
-Your output is a plan containing setup commands and source edits. This stage
+Your output is a plan containing dependency declarations, input-staging commands
+and source edits. This stage
 does not run those commands or execute the analysis; the controller does that
 in a later stage.
 
@@ -62,15 +63,25 @@ analysis to make it run, or invent expected values, dimensions or timing.
 
 Prepare only these generated artifacts:
 
-- `setup_sh`: a POSIX shell script to establish dependencies and stage original
-  inputs. The base image supplies Python 3.13, pip and ordinary Debian shell
-  utilities. Use the source's declared versions when available; explain any
-  environment reconstruction and record the actual resolved dependencies.
-  Create `/work/venv` and use `/work/venv/bin/python` for analysis. Network is
-  available ONLY during setup. Stage all downloads, metadata and caches needed
-  for a later offline run. Check available upstream checksums and write input
-  identities and SHA-256 checksums to `/work/setup-inputs.json`. Do not execute
-  scientific analysis, save precomputed answers or modify source files here.
+- `pyproject_toml`: the full text of a dependency-only Python `pyproject.toml`.
+  Include `[project]` with `name`, `version`, `requires-python` and `dependencies`
+  (an array of requirement strings, empty if none). Include dependencies needed
+  by both the original analysis and your exports. Use source-declared versions
+  when available; explain reconstructed requirements and unresolved compatibility.
+  Do not include a build system or dynamic dependencies: this project describes
+  an analysis environment, not a package to build. Do not invent a lockfile.
+- `system_packages`: a JSON array of required Debian package names, optionally
+  versioned as `name=version`; use an empty array when none are needed. Explain
+  their purpose in `environment_rationale`. Do not put installation commands here.
+- `stage_inputs_sh`: a POSIX shell script ONLY for staging original inputs and
+  caches. It runs after the controller installs dependencies, with the virtual
+  environment's Python on PATH. Do not create environments, install packages,
+  change dependency declarations, or execute scientific analysis here. It may
+  be empty if no additional staging is needed. Network is available ONLY during
+  setup. Stage all downloads, metadata and caches needed for a later offline
+  run. Check available upstream checksums and write input identities and SHA-256
+  checksums to `/work/setup-inputs.json`. Do not save precomputed answers or
+  modify source files.
 - `changes`: minimal, exact, uniquely anchored edits to the converted script.
   `input_staging` changes may replace network retrieval with a faithful local
   load or configure paths/caches. They must not change inputs or scientific
@@ -103,6 +114,14 @@ unresolved, record the gap rather than inventing a substitute or dropping the
 scientific branch. Any change to call arguments falls outside `capture`.
 
 ## Execution contract for the later run
+
+The controller installs declared system packages and supplies pinned uv. It
+writes your `pyproject.toml`, runs `uv lock`, then `uv sync --locked` to create
+`/work/venv` with the base image's Python, and preserves the resolved `uv.lock`
+and installed-package inventory. The base image and Python version are specified
+in `limits`; incompatible requirements must be reported, not silently relaxed.
+The controller then runs `stage_inputs_sh` using `sh -eu`. Do not generate
+virtual-environment creation or package-installation shell commands.
 
 Use absolute paths under `/inputs` for staged original data and `/work/cache`
 for caches. Setup and analysis run as separate fresh processes. The controller

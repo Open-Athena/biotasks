@@ -29,7 +29,13 @@ def render(directory):
 
     field("Decision", plan["disposition"] + "\n\n" + plan["explanation"])
     field("Environment rationale", plan["environment_rationale"])
-    field("Setup script", code(plan["setup_sh"], "sh"))
+    if "pyproject_toml" in plan:
+        field("Python dependencies", code(plan["pyproject_toml"], "toml"))
+        field("System packages", code(json.dumps(plan["system_packages"], indent=2), "json"))
+        field("Input staging script", code(plan["stage_inputs_sh"], "sh"))
+        field("Controller setup script", code((directory / "setup.sh").read_text(), "sh"))
+    else:
+        field("Setup script", code(plan["setup_sh"], "sh"))
     for index, branch in enumerate(plan["branches"], 1):
         field(f"Scientific branch {index}: {branch['name']}", branch["scientific_result"])
         parts.extend(["Source evidence: " + branch["source_evidence"],

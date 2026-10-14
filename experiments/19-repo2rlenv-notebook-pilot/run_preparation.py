@@ -15,6 +15,7 @@ from pathlib import Path
 import httpx
 from design_stage import completion_transport
 from openai import AsyncOpenAI
+from reference_environment import write_environment
 from reference_protocol import ReferencePlan, materialize
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
@@ -107,7 +108,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
             script, diff = materialize(context["baseline_script"], plan)
             (root / "reference.py").write_text(script)
             (root / "source.diff").write_text(diff)
-            (root / "setup.sh").write_text(plan.setup_sh)
+            write_environment(root, plan)
         result.update(status="ready_for_user_inspection", disposition=plan.disposition)
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)
