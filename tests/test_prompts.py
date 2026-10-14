@@ -17,6 +17,8 @@ def test_list_and_read_prompts_outside_checkout(
         "author-task",
         "find-units",
         "notebook-coercion-audit",
+        "notebook-endpoint-coverage",
+        "notebook-endpoint-review",
         "notebook-fidelity",
         "notebook-grounding",
         "notebook-quality",

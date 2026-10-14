@@ -1241,3 +1241,35 @@ permitted repairs when necessary. Later task construction and blind solving
 will use GLM; deterministic code will still supply the reward. Standing
 reservations remain $91 of the authorized $100, not measured charges. Remaining
 Daytona credits and actual billing have not been verified.
+
+### 2026-10-14: saved-artifact inspection and endpoint coverage checkpoint
+
+The user authorized proceeding to the next step. Added a bounded structural
+inspection stage over the successful reference archive, followed by a GLM
+endpoint proposal and separate GLM completeness/evidence review. The factory
+does not manually choose task-specific endpoints, write comparisons, alter
+reference files or rerun the analysis. The two prompts are version-controlled
+and distinguish observed facts from prior claims and unverified derivations.
+
+The inspection preserves source hashes and streams tables instead of loading
+the full scientific dataset. HDF5 inspection records shapes and encodings with
+bounded previews; it does not follow external links or load analysis matrices.
+Reference storage and eventual solver-facing representations are separate
+decisions. A large retained state need not become a mandatory submission format.
+Scientific endpoint omissions still block approval.
+
+[Execution scope and limits](coverage-execution.md) allocate nine additional
+GLM requests, keeping the successful reference's seven in the eighty-request
+pipeline total. One reserved Iris CPU worker performs retrieval, inspection and
+model calls. No Daytona sandbox or additional Daytona budget is used. The stage
+ends at an endpoint proposal/review or a documented request for further work;
+it cannot claim grader readiness. Thirty-one focused inspection, provenance,
+coverage, reference and adapter tests passed with a 159,236 KiB peak RSS.
+
+The five prompt/installed-distribution checks also passed, as did repository
+quality hooks. Subsequent changes require exact observed evidence locations in
+worker citations and preserve cumulative request-slot accounting in the result.
+Their final targeted check was prevented by another task holding the shared
+heavy-work lock. The command aborted without starting tests; no remote coverage
+job has been submitted. The prepared checkpoint remains unexecuted until that
+check and resource gates can pass. Other tasks were not interrupted.

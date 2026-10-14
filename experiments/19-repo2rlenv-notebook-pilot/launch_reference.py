@@ -14,6 +14,11 @@ def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, b
     config = json.loads(frozen_file(repo, revision, EXPERIMENT + "/reference-execution.json"))
     if config["entrypoint"] != "run_reference.py":
         raise ValueError("A reference payload cannot launch another pipeline stage")
+    return frozen_payload(repo, revision=revision, upstream_archive=upstream_archive, config=config)
+
+
+def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config) -> dict[str, bytes]:
+    """Common frozen inputs; each stage wrapper validates its own configuration."""
     files = {
         "biotasks.tar": subprocess.check_output(["git", "archive", revision], cwd=repo),
         "upstream.tar.gz": upstream_archive.read_bytes(),

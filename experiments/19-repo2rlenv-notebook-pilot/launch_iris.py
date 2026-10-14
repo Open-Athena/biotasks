@@ -112,17 +112,21 @@ def submit(
 
 
 def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
-                    artifact_prefix, endpoint_job, cluster):
+                    artifact_prefix, endpoint_job, cluster, reference_archive=None):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
+    if not token or not daytona_key or not artifact_prefix.startswith("s3://"):
+        raise ValueError("Approved credentials and a private artifact destination are required")
+    config = json.loads(files["campaign-config.json"])
+    if config.get("entrypoint") == "run_coverage.py" and (
+        not reference_archive or not reference_archive.startswith("s3://")
+    ):
+        raise ValueError("Coverage requires the recorded private reference archive")
     from iris.cluster.constraints import Constraint, ConstraintOp
     from iris.cluster.setup_scripts import default_setup_script
     from iris.cluster.types import Entrypoint, EnvironmentSpec, ResourceSpec
     from iris.rpc import job_pb2
     from rigging.timing import Duration
 
-    if not token or not daytona_key or not artifact_prefix.startswith("s3://"):
-        raise ValueError("Approved credentials and a private artifact destination are required")
-    config = json.loads(files["campaign-config.json"])
     job_name = "biotasks19-" + config["campaign"]
     record = {
         "state": "submission_uncertain",
@@ -151,6 +155,7 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                 "GLM_ENDPOINT_JOB": endpoint_job,
                 "BIOTASKS_ARTIFACT_PREFIX": artifact_prefix.rstrip("/") + "/" + job_name,
                 "BIOTASKS_IRIS_WORKER_ID": job_name,
+                **({"BIOTASKS_REFERENCE_ARCHIVE": reference_archive} if reference_archive else {}),
                 **{
                     key: "1"
                     for key in (
