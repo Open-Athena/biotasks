@@ -3,14 +3,15 @@
 Current agreement, 2026-10-14. Preparation selects existing terminal results and
 adds code to save them. Execution owns environment and input setup. This update
 implements the preparation interface; the replacement execution worker is not
-integrated yet. No model or scientific run has used this revised contract.
+integrated yet. [Preparation run 006](preparation-runs/006/README.md) returned
+a proposal under this contract; no generated script or later stage has run.
 
 ## Stages and exact responsibilities
 
 | Stage | Input | Work | Output and status |
 | --- | --- | --- | --- |
 | Conversion (programmatic) | Pinned original notebook JSON. | Pinned Jupytext `py:nomarker` conversion; preserve Markdown as comments; check source code order and syntax. No notebook execution. | `baseline.py` and conversion receipt. Implemented for the admitted Python profile. |
-| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | Complete `reference_script`, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Updated; not rerun. |
+| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | Complete `reference_script`, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Run 006 returned a proposal for inspection. |
 | Preparation checks (programmatic) | Complete worker response and untouched baseline. | Validate JSON Schema, Python syntax and unique relative artifact paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
 | Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. Prompt updated; not run on the new contract. |
 | Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Runnable reference environment and staged inputs. Replacement worker not integrated. |
@@ -65,14 +66,17 @@ claim that the replacement worker is ready.
 
 ## Existing evidence and next step
 
+[Preparation run 006](preparation-runs/006/README.md) passed structural checks
+on its first call. Its CSV endpoint selection, comment edits and path convention
+remain for inspection before advancing. No scientific approval is implied.
+
 [Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
 its full-object export and newly captured expression are not evidence of
 compliance with the revised selection rule. Its recorded output stays unchanged.
 The [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
 explains earlier reference runs under the superseded workflow.
 
-The next preparation run needs inspection before advancing. Tool-enabled setup
+The returned preparation output needs inspection before advancing. Tool-enabled setup
 is the next implementation boundary; it must preserve the science while resolving
 dependencies and staging inputs. Task construction, artifact comparisons, Harbor
-validation, blind solving and publication remain downstream work. No model run,
-execution or viewer update accompanies this interface change.
+validation, blind solving and publication remain downstream work. The preparation run is complete; execution and viewer updates remain deferred.

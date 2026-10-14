@@ -1,0 +1,102 @@
+--- baseline.py
++++ reference.py
+@@ -24,6 +24,11 @@
+ 
+ import scanpy as sc
+ 
++# Endpoint export support
++from pathlib import Path
++
++import pandas as pd
++
+ sc.settings.set_figure_params(dpi=50, facecolor="white")
+ 
+ # The data used in this basic preprocessing and clustering tutorial was collected from bone marrow mononuclear cells of healthy human donors and was part of [openproblem's NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) {cite}`Luecken2021`. The samples used in this tutorial were measured using the 10X Multiome Gene Expression and Chromatin Accessability kit. 
+@@ -184,7 +189,7 @@
+ # You can save a plot by directly accessing the returned Matplotlib figure:
+ # ````python
+ # sc.pl.umap(adata, color=["leiden"], show).figure.savefig("output_path.ext")
+-# ````
++# ```
+ # ```
+ 
+ # ## Re-assess quality control and cell filtering 
+@@ -212,7 +217,7 @@
+ # This section of the tutorial is expanded upon using prior knowledge resources like automated assignment and gene enrichment in the scverse tutorial [here](https://scverse-tutorials.readthedocs.io/page/notebooks/basic-scrna-tutorial.html#cell-type-annotation)
+ # :::
+ 
+-# Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.
++# Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in a tutorial, but we aim to show how the tools scanpy provides assist in this process.
+ 
+ # We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.
+ 
+@@ -305,7 +310,7 @@
+     adata, groupby="leiden_res_0.50", standard_scale="var", n_genes=5
+ )
+ 
+-# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).
++# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=gnly), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).
+ 
+ # To create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`
+ 
+@@ -321,3 +326,60 @@
+ )
+ 
+ # You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider "pseudo-bulking" your data by sample (*e.g.* `sc.get.aggregate(adata, by=["sample", "cell_type"], func="sum", layer="counts")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.
++
++# ---------------------------------------------------------------------------
++# Endpoint export (added): save the terminal scientific results that already
++# exist in named AnnData fields / variables to /work/outputs. Only existing
++# values are serialized; no analysis, filtering, ranking or recomputation is
++# added, and all original steps and comments above are left unchanged.
++# ---------------------------------------------------------------------------
++
++OUTPUT_DIR = Path("/work/outputs")
++OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
++
++# Terminal per-cell results of the clustering and annotation branches: the
++# four Leiden clustering solutions and the level-1 cell-type annotation
++# (existing adata.obs columns), with cell barcodes kept as the CSV index.
++cell_metadata = adata.obs[
++    [
++        "leiden",
++        "leiden_res_0.02",
++        "leiden_res_0.50",
++        "leiden_res_2.00",
++        "cell_type_lvl1",
++    ]
++]
++cell_metadata.to_csv(
++    OUTPUT_DIR / "leiden_clusters_and_cell_type_annotations.csv",
++    index_label="cell_barcode",
++)
++
++# Terminal result of the differential-expression branch: the per-cluster
++# Wilcoxon results already stored by sc.tl.rank_genes_groups in
++# adata.uns["rank_genes_groups"]. The existing structured arrays are
++# reshaped into one tidy row per cluster and ranked gene; values, labels
++# and within-cluster rank ordering are unchanged.
++rank_genes_groups = adata.uns["rank_genes_groups"]
++de_groups = list(rank_genes_groups["names"].dtype.names)
++de_table = pd.concat(
++    [
++        pd.DataFrame(
++            {
++                "group": de_group,
++                "names": rank_genes_groups["names"][de_group],
++                "scores": rank_genes_groups["scores"][de_group],
++                "pvals": rank_genes_groups["pvals"][de_group],
++                "pvals_adj": rank_genes_groups["pvals_adj"][de_group],
++            }
++        )
++        for de_group in de_groups
++    ],
++    ignore_index=True,
++)
++de_table.to_csv(OUTPUT_DIR / "rank_genes_groups_leiden_res_0.50.csv", index=False)
++
++# Existing named result of the same branch: the top-5 differentially
++# expressed genes of cluster 7 extracted above into dc_cluster_genes.
++dc_cluster_genes.to_frame().to_csv(
++    OUTPUT_DIR / "cluster_7_top5_de_genes.csv", index_label="rank"
++)
