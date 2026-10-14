@@ -12,6 +12,13 @@ def render(directory):
         "Rendered from [plan.json](plan.json). Generated commands and source edits have not "
         "been executed. Only structural checks have run; scientific fidelity is unreviewed.",
     ]
+    inspection = directory / "inspection.json"
+    if inspection.exists():
+        record = json.loads(inspection.read_text())
+        if record.get("ready_for_execution") is False:
+            parts.append("**Not ready for execution.** " + record["review_kind"] + ".")
+            parts.append("\n".join("- " + finding for finding in record["findings"]))
+            parts.append("The worker's output below is preserved unchanged; these findings are separate annotations.")
 
     def field(title, value):
         parts.extend(["## " + title, value])

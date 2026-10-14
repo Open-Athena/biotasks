@@ -1,0 +1,11 @@
+{
+  "ready_for_execution": false,
+  "review_kind": "Author static source inspection; not an independent model review or execution",
+  "findings": [
+    "Setup creates /work/venv as an empty directory, then invokes /work/venv/bin/python without creating a virtual environment.",
+    "Setup includes a placeholder import and a syntactically invalid Python check; one failing check is explicitly suppressed.",
+    "Setup requires Bash despite the POSIX-shell contract.",
+    "The plan still relies on a full-state snapshot and asserts dependency wheel availability without supplied execution evidence."
+  ],
+  "status_label": "Preparation output has known setup defects"
+}

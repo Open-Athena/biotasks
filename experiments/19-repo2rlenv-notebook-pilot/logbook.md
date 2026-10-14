@@ -1383,3 +1383,42 @@ the unchanged structured model output. The current HTML exposes these inputs and
 outputs in step 02; later steps remain unrun. Ten chat-adapter tests, six inference
 gate tests, four isolated-preparation/controller tests and type/lint checks passed.
 Loopback tests required socket access; the first sandboxed run could not bind.
+
+### 2026-10-14: endpoint-focused preparation, with retained setup defects
+
+The user approved general clarifications of branch identity, sufficient endpoint
+exports, native result extraction and evidence-backed feasibility claims. Added
+`capture` edits restricted to binding an unchanged standalone call to a fresh
+name, with AST checks for arguments, statements, target freshness and actual
+source anchoring. No seed-specific methods, desired artifacts or prior outputs
+were added to the worker's input. Twenty-three focused checks passed before the
+run; a subsequent check/fix keeps malformed earlier edits repairable when capture
+validation encounters them (24 checks passed). This does not change the run's
+checkpoint or its generated plan, which uses no capture edits.
+
+Preparation run 002 used checkpoint `b71991b45245ec6cfb3427cf2ebb13c24527521a`.
+One creation and one structural repair used the entire two-request allowance.
+The first submission omitted required fields and supplied changes as a string;
+the final submission passed schema, mapping, source-anchor and reference-Python
+syntax checks. The worker completed in roughly 449 seconds, reporting 25,168
+prompt and 86,467 completion tokens across both requests (72,448 reasoning
+tokens). The new plan has six artifacts across seven branch records and removes
+the custom dotplot aggregation helper. It still relies on a full-state snapshot
+and makes unsupported environment assertions.
+
+Static inspection found execution blockers in the generated setup: it makes an
+empty /work/venv directory but never creates the virtual environment before
+using its Python; it contains a placeholder import and an invalid Python check;
+and it uses Bash despite the POSIX-shell contract. These were outside the
+implemented schema/source checks. The files remain unchanged in
+`preparation-runs/002/`, with separate inspection annotations. This is a completed
+preparation attempt, not a runnable or scientifically validated reference.
+No setup, scientific execution, independent model review or downstream stage ran.
+The host terminated successfully; every archived preparation file was downloaded
+and hash-verified. The diagnostic transfer now includes preparation responses
+above the old per-file limit, within its existing total transport allowance.
+
+The user asked whether uv is used. The factory environment uses uv sync --locked;
+the current preparation prompt assumes Python/pip in the reference base image,
+and the generated setup uses pip. No packaging-tool policy was changed in
+response to that question.

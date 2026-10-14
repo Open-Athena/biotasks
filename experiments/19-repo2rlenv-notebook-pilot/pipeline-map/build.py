@@ -370,6 +370,8 @@ if hashlib.sha256(original).hexdigest() != receipt["source_sha256"]:
     raise ValueError("Displayed notebook does not match the conversion input")
 preparation = "preparation-runs/002/"
 prepared = (ROOT / EXP / preparation / "plan.json").exists()
+inspection_path = ROOT / EXP / preparation / "inspection.json"
+inspection = json.loads(inspection_path.read_text()) if inspection_path.exists() else {}
 if prepared:
     context = json.loads((ROOT / EXP / preparation / "prepare/input.json").read_text())
     if context["baseline_script"] != DOCUMENTS["baseline"]["text"]:
@@ -407,6 +409,12 @@ for stage in STAGES:
             outputs=[],
             label="Not run for this version",
             explanation="The step’s input/output contract and prompt are shown below. Its actual artifacts will be populated when this version reaches the step.",
+        )
+    if stage["id"] == "prepare" and prepared and inspection.get("ready_for_execution") is False:
+        stage["record"]["label"] = inspection["status_label"]
+        stage["record"]["explanation"] = (
+            "Not ready for execution. Static inspection: " + " ".join(inspection["findings"])
+            + " The generated files are unchanged. No setup, analysis or separate model review was run."
         )
 
 FORMATTER = HtmlFormatter(nowrap=True, style="friendly")
@@ -510,6 +518,8 @@ if prepared:
         "The converted script contains the original code and narrative comments. Reference preparation is next.",
         "Inspect the preparation worker's proposed setup and source edits in step 02. Setup, analysis and independent review have not run.",
     )
+    if inspection.get("ready_for_execution") is False:
+        template = template.replace("Current version · preparation available", "Current version · preparation has setup defects")
 data = json.dumps(STAGES, ensure_ascii=False).replace("<", "\\u003c")
 documents = json.dumps(DOCUMENTS, ensure_ascii=False).replace("<", "\\u003c")
 (HERE / "index.html").write_text(

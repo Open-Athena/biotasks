@@ -133,6 +133,7 @@ def validate_capture(script: str, change: Change) -> None:
     try:
         before = ast.parse(change.before).body
         after = ast.parse(change.after).body
+        source = ast.parse(script)
     except SyntaxError as error:
         raise ValueError("Capture must contain valid standalone Python") from error
     if (
@@ -150,7 +151,7 @@ def validate_capture(script: str, change: Change) -> None:
         isinstance(node, ast.Expr)
         and isinstance(node.value, ast.Call)
         and ast.get_source_segment(script, node) == change.before.strip()
-        for node in ast.walk(ast.parse(script))
+        for node in ast.walk(source)
     ):
         raise ValueError("Capture anchor must identify a complete standalone call in the source")
     names = {

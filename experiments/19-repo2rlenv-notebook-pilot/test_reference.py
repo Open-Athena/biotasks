@@ -106,6 +106,17 @@ def test_capture_cannot_match_a_call_embedded_in_another_statement():
         materialize("existing = compute(data)\n", prepared)
 
 
+def test_invalid_earlier_export_remains_a_repairable_validation_error():
+    baseline = "compute(data)\n"
+    prepared = plan(changes=[
+        dict(purpose="export", before=baseline, after=baseline + "(\n", justification="Fixture"),
+        dict(purpose="capture", before=baseline, after="captured = compute(data)\n",
+             justification="Fixture"),
+    ])
+    with pytest.raises(ValueError, match="valid standalone Python"):
+        materialize(baseline, prepared)
+
+
 @pytest.mark.parametrize("finding", ["Changed a threshold", "None detected; source unchanged"])
 def test_approval_cannot_keep_a_known_scientific_change(finding):
     with pytest.raises(ValidationError, match="known blockers: prohibited_scientific_changes"):

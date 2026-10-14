@@ -1,0 +1,96 @@
+--- baseline.py
++++ reference.py
+@@ -33,10 +33,10 @@
+ # See {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. 
+ 
+ EXAMPLE_DATA = pooch.create(
+-    path=pooch.os_cache("scverse_tutorials"),
++    path="/inputs",
+     base_url="doi:10.6084/m9.figshare.22716739.v1/",
+ )
+-EXAMPLE_DATA.load_registry_from_doi()
++EXAMPLE_DATA.load_registry("/inputs/pooch_registry.txt")
+ 
+ samples = {
+     "s1d1": "s1d1_filtered_feature_bc_matrix.h5",
+@@ -54,6 +54,26 @@
+ adata.obs_names_make_unique()
+ print(adata.obs["sample"].value_counts())
+ adata
++
++# --- Reference export (appended, read-only): dataset-loading diagnostic --------
++import json as _json
++from pathlib import Path as _Path
++
++_Path("/work/outputs").mkdir(parents=True, exist_ok=True)
++_sample_counts = {
++    str(_key): int(_value)
++    for _key, _value in adata.obs["sample"].value_counts().items()
++}
++with open("/work/outputs/raw_loading_summary.json", "w") as _fh:
++    _json.dump(
++        {
++            "n_obs": int(adata.n_obs),
++            "n_vars": int(adata.n_vars),
++            "sample_value_counts": _sample_counts,
++        },
++        _fh,
++        indent=2,
++    )
+ 
+ # The data contains ~8,000 cells per sample and 36,601 measured genes. We'll now investigate these with a basic preprocessing and clustering workflow.
+ 
+@@ -320,4 +340,53 @@
+     ncols=3,
+ )
+ 
++# --- Reference exports (appended, read-only): endpoint results -----------------
++import numpy as _np
++import pandas as _pd
++from pathlib import Path as _Path
++
++_out_dir = _Path("/work/outputs")
++_out_dir.mkdir(parents=True, exist_ok=True)
++
++# 1) Complete end state of the analysis (all branches):
++#    obs, var, obsm (X_pca, X_umap), varm (PCs), obsp (neighbor graph),
++#    layers (counts), X (log1PF) and uns (hvg, pca, umap, neighbors, leiden
++#    colors, rank_genes_groups).
++adata.write_h5ad(_out_dir / "final_adata.h5ad")
++
++# 2) Per-cell results with cell identifiers, UMAP coordinates and the first
++#    four principal components (underlying values of the violin/scatter/QC/PCA/
++#    UMAP plots).
++_cell_df = adata.obs.copy()
++_cell_df[["X_pc_1", "X_pc_2", "X_pc_3", "X_pc_4"]] = adata.obsm["X_pca"][:, :4]
++_cell_df[["X_umap_1", "X_umap_2"]] = adata.obsm["X_umap"]
++_cell_df.to_csv(_out_dir / "cell_metadata.csv", index_label="cell_id")
++
++# 3) Per-gene QC, filtering and highly-variable-gene results with gene names.
++adata.var.to_csv(_out_dir / "gene_metadata.csv", index_label="gene_id")
++
++# 4) Variance contribution per principal component (plotted values of
++#    sc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)).
++_variance_ratio = _np.asarray(adata.uns["pca"]["variance_ratio"], dtype=float)
++_pca_df = _pd.DataFrame(
++    {
++        "pc": _np.arange(1, _variance_ratio.shape[0] + 1),
++        "variance_ratio": _variance_ratio,
++    }
++)
++_pca_df.to_csv(_out_dir / "pca_variance_ratio.csv", index=False)
++
++# 5) Wilcoxon rank_genes_groups results for all clusters of leiden_res_0.50,
++#    via the native accessor also used by the source for cluster "7".
++_rg_group_names = list(adata.uns["rank_genes_groups"]["names"].dtype.names)
++_rg_frames = []
++for _rg_group in _rg_group_names:
++    _rg_frame = sc.get.rank_genes_groups_df(adata, group=_rg_group)
++    _rg_frame.insert(0, "group", _rg_group)
++    _rg_frames.append(_rg_frame)
++_rg_table = _pd.concat(_rg_frames, ignore_index=True)
++_rg_table.to_csv(
++    _out_dir / "rank_genes_groups_leiden_res_0.50.csv", index=False
++)
++
+ # You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider "pseudo-bulking" your data by sample (*e.g.* `sc.get.aggregate(adata, by=["sample", "cell_type"], func="sum", layer="counts")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.
