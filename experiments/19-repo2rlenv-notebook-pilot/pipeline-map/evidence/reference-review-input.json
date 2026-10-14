@@ -1,0 +1,804 @@
+{
+  "baseline_script": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: notebook\n#     language: python\n#     name: python3\n# ---\n\n# Core scverse libraries\nfrom __future__ import annotations\n\nimport anndata as ad\n\n# Data retrieval\nimport pooch\n\nimport scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n\nEXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()\n\nsamples = {\n    \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n    \"s1d3\": \"s1d3_filtered_feature_bc_matrix.h5\",\n}\nadatas = {}\n\nfor sample_id, filename in samples.items():\n    path = EXAMPLE_DATA.fetch(filename)\n    sample_adata = sc.read_10x_h5(path)\n    sample_adata.var_names_make_unique()\n    adatas[sample_id] = sample_adata\n\nadata = ad.concat(adatas, label=\"sample\")\nadata.obs_names_make_unique()\nprint(adata.obs[\"sample\"].value_counts())\nadata\n\n# mitochondrial genes, \"MT-\" for human, \"mt-\" for mouse\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\n# ribosomal genes\nadata.var[\"ribo\"] = adata.var_names.str.startswith((\"RPS\", \"RPL\"))\n# hemoglobin genes\nadata.var[\"hb\"] = adata.var_names.str.contains(\"^HB[^(P)]\")\n\nsc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\nsc.pl.violin(\n    adata,\n    [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n    jitter=0.4,\n    multi_panel=True,\n)\n\nsc.pl.scatter(adata, \"total_counts\", \"n_genes_by_counts\", color=\"pct_counts_mt\")\n\nsc.pp.filter_cells(adata, min_genes=100)\nsc.pp.filter_genes(adata, min_cells=3)\n\nsc.pp.scrublet(adata, batch_key=\"sample\")\n\n# Saving count data\nadata.layers[\"counts\"] = adata.X.copy()\n\n# Normalizing to median total counts\nsc.pp.normalize_total(adata)\n# Logarithmize the data\nsc.pp.log1p(adata)\n\nsc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\nsc.pl.highly_variable_genes(adata)\n\nsc.tl.pca(adata)\n\nsc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n\nsc.pl.pca(\n    adata,\n    color=[\"sample\", \"sample\", \"pct_counts_mt\", \"pct_counts_mt\"],\n    dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)],\n    ncols=2,\n    size=2,\n)\n\nsc.pp.neighbors(adata)\n\nsc.tl.umap(adata)\n\nsc.pl.umap(\n    adata,\n    color=\"sample\",\n    # Setting a smaller point size to get prevent overlap\n    size=2,\n)\n\n# Using the igraph implementation and a fixed number of iterations can be significantly faster,\n# especially for larger datasets\nsc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)\n\nsc.pl.umap(adata, color=[\"leiden\"])\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"predicted_doublet\", \"doublet_score\"],\n    # increase horizontal space between panels\n    wspace=0.5,\n    size=3,\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"log1p_total_counts\", \"pct_counts_mt\", \"log1p_n_genes_by_counts\"],\n    wspace=0.5,\n    ncols=2,\n)\n\nfor res in [0.02, 0.5, 2.0]:\n    sc.tl.leiden(\n        adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\"\n    )\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\nmarker_genes = {\n    \"CD14+ Mono\": [\"FCN1\", \"CD14\"],\n    \"CD16+ Mono\": [\"TCF7L2\", \"FCGR3A\", \"LYN\"],\n    # Note: DMXL2 should be negative\n    \"cDC2\": [\"CST3\", \"COTL1\", \"LYZ\", \"DMXL2\", \"CLEC10A\", \"FCER1A\"],\n    \"Erythroblast\": [\"MKI67\", \"HBA1\", \"HBB\"],\n    # Note HBM and GYPA are negative markers\n    \"Proerythroblast\": [\"CDK6\", \"SYNGR1\", \"HBM\", \"GYPA\"],\n    \"NK\": [\"GNLY\", \"NKG7\", \"CD247\", \"FCER1G\", \"TYROBP\", \"KLRG1\", \"FCGR3A\"],\n    \"ILC\": [\"ID2\", \"PLCG2\", \"GNLY\", \"SYNE1\"],\n    \"Naive CD20+ B\": [\"MS4A1\", \"IL4R\", \"IGHD\", \"FCRL1\", \"IGHM\"],\n    # Note IGHD and IGHM are negative markers\n    \"B cells\": [\n        \"MS4A1\",\n        \"ITGB1\",\n        \"COL4A4\",\n        \"PRDM1\",\n        \"IRF4\",\n        \"PAX5\",\n        \"BCL11A\",\n        \"BLK\",\n        \"IGHD\",\n        \"IGHM\",\n    ],\n    \"Plasma cells\": [\"MZB1\", \"HSP90B1\", \"FNDC3B\", \"PRDM1\", \"IGKC\", \"JCHAIN\"],\n    # Note PAX5 is a negative marker\n    \"Plasmablast\": [\"XBP1\", \"PRDM1\", \"PAX5\"],\n    \"CD4+ T\": [\"CD4\", \"IL7R\", \"TRBC2\"],\n    \"CD8+ T\": [\"CD8A\", \"CD8B\", \"GZMK\", \"GZMA\", \"CCL5\", \"GZMB\", \"GZMH\", \"GZMA\"],\n    \"T naive\": [\"LEF1\", \"CCR7\", \"TCF7\"],\n    \"pDC\": [\"GZMB\", \"IL3RA\", \"COBLL1\", \"TCF4\"],\n}\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.02\", standard_scale=\"var\")\n\nadata.obs[\"cell_type_lvl1\"] = adata.obs[\"leiden_res_0.02\"].map({\n    \"0\": \"Lymphocytes\",\n    \"1\": \"Monocytes\",\n    \"2\": \"B Cells\",\n    \"3\": \"Erythroid\",\n    \"4\": \"Erythroid\",\n})\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.50\", standard_scale=\"var\")\n\n# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\nsc.pl.rank_genes_groups_dotplot(\n    adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n)\n\nsc.get.rank_genes_groups_df(adata, group=\"7\").head(5)\n\ndc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n",
+  "conversion": {
+    "code_cells": 35,
+    "converter": "jupytext",
+    "converter_version": "1.19.6",
+    "documentation_execution_policy": {
+      "execution_mode": "off"
+    },
+    "executable_ast_sha256": "64cb316cdb477c828d922907d8145f38c148ea449f06c113faac107e65a01323",
+    "executed": false,
+    "format": "py:nomarker",
+    "ordered_code_equivalence": true,
+    "profile": "python-plain-v1",
+    "script_sha256": "1c7fd2f3f3877f294439a9dd079bce7b5fae58a38680598c2aef79885db0013b",
+    "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+    "stored_outputs_used_as_evidence": false
+  },
+  "limits": {
+    "artifact_download_ceiling_bytes": 2147483648,
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign": "artifact-reference-003",
+    "campaign_seconds": 7200,
+    "cleanup_seconds": 300,
+    "daytona_budget_usd": "5.00",
+    "entrypoint": "run_reference.py",
+    "max_input_bytes": 512000,
+    "max_output_tokens": 32000,
+    "max_repairs": 2,
+    "max_requests": 45,
+    "prepare_requests_per_pass": 12,
+    "reasoning_effort": "medium",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "review_requests_per_pass": 3,
+    "scope": "Convert, prepare, independently review and execute the full source reference; stop before task construction, quality-loop grading or a blind solver.",
+    "setup_seconds": 1800,
+    "source_directory": "reference-inputs/scanpy",
+    "task": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "memory_gib": 8
+    }
+  },
+  "plan": {
+    "artifacts": [
+      {
+        "description": "Per-cell QC metrics and sample labels for all ~17,125 unfiltered cells exactly as computed by sc.pp.calculate_qc_metrics(qc_vars=['mt','ribo','hb'], inplace=True, log1p=True): n_genes_by_counts, log1p_n_genes_by_counts, total_counts, log1p_total_counts, total_counts_mt/ribo/hb, log1p variants, pct_counts_mt/ribo/hb. This is the underlying scientific data of the QC violin and scatter plots.",
+        "path": "qc_metrics_prefilter_obs.csv",
+        "source_evidence": "Code cells 9-10 compute the metrics; cells 12 and 14 only visualize them (sc.pl.violin / sc.pl.scatter)."
+      },
+      {
+        "description": "Gene-level table: mt/ribo/hb gene-set flags; per-gene QC metrics (n_cells_by_counts, mean_counts, pct_dropout_by_counts, total_counts, log1p_total_counts, n_cells) after filtering; and highly-variable-gene selection results for the top 2000 genes across samples (highly_variable, means, dispersions, dispersions_norm). Underlying data of sc.pl.highly_variable_genes.",
+        "path": "var_annotations_hvg.csv",
+        "source_evidence": "Code cells 9-10 (gene groups + per-gene metrics), cell 16 (filter_genes min_cells=3), cells 22-25 (counts layer, normalization, hvg with n_top_genes=2000, batch_key='sample')."
+      },
+      {
+        "description": "Per-cell PCA coordinates (X_pca, 50 principal components) indexed by cell barcode; the embedding behind the sc.pl.pca panels colored by sample and pct_counts_mt.",
+        "path": "pca_coords.csv",
+        "source_evidence": "Code cell 28 (sc.tl.pca); cell 32 only visualizes components."
+      },
+      {
+        "description": "Explained-variance ratio and cumulative variance ratio per PC (PC1..PC50); the data behind sc.pl.pca_variance_ratio(n_pcs=50, log=True).",
+        "path": "pca_variance_ratio.csv",
+        "source_evidence": "Code cells 28-30 (PCA then variance-ratio plot)."
+      },
+      {
+        "description": "Per-cell UMAP1/UMAP2 coordinates, the 2-D embedding used by all later UMAP displays (sample, leiden, QC-metric and marker-gene overlays).",
+        "path": "umap_coords.csv",
+        "source_evidence": "Code cells 34-36 (neighbors then sc.tl.umap); displayed in cells 38, 42, 45, 46, 54, 55, 73."
+      },
+      {
+        "description": "Final per-cell metadata after the full workflow: sample label, all QC metrics (log1p variants), doublet_score, predicted_doublet, leiden (igraph flavor, n_iterations=2), leiden_res_0.02, leiden_res_0.50, leiden_res_2.00, and cell_type_lvl1 lineage annotation.",
+        "path": "cell_metadata_final.csv",
+        "source_evidence": "Code cells 5, 10, 16, 18, 41, 52, 62 (concat, QC, filtering, scrublet, leiden at default and 3 resolutions, cell-type mapping)."
+      },
+      {
+        "description": "Full Wilcoxon rank-sum differential-expression table for every leiden_res_0.50 cluster vs. rest: group, names, scores, pvals, pvals_adj, logfoldchanges, pts. Contains the displayed top-5 genes of cluster 7 (e.g. NKG7, GNLY) and every other cluster's markers shown on the DEG dotplot.",
+        "path": "rank_genes_groups_wilcoxon.csv",
+        "source_evidence": "Code cells 67-73: sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon'), sc.pl.rank_genes_groups_dotplot(n_genes=5), sc.get.rank_genes_groups_df(adata, group='7')."
+      },
+      {
+        "description": "Complete final AnnData object (filtered cells/genes): raw counts layer, median count-depth normalized log1p X, X_pca coordinates, PC loadings (varm['PCs']), variance ratios in uns['pca'], neighbors graph (obsp), X_umap, full obs/var annotations, uns including rank_genes_groups and HVG parameters. Written without chunk-wise gzip compression to fit the bounded runtime; identical scientific data.",
+        "path": "adata_final.h5ad",
+        "source_evidence": "Final state of adata after the last code cell (73); consolidates every analysis branch of the notebook."
+      }
+    ],
+    "branches": [
+      {
+        "artifacts": [
+          "cell_metadata_final.csv",
+          "qc_metrics_prefilter_obs.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Data loading and sample composition",
+        "scientific_result": "Concatenated AnnData of two 10X Multiome bone-marrow samples (s1d1: 8,785 cells, s1d3: 8,340 cells; 36,601 genes) with per-cell sample labels and per-sample cell counts.",
+        "source_evidence": "Code cell 5: sc.read_10x_h5 for both files, var_names_make_unique, ad.concat(adatas, label='sample'), obs_names_make_unique, print of sample value_counts (confirmed by the executed reference log: s1d1 8785, s1d3 8340)."
+      },
+      {
+        "artifacts": [
+          "qc_metrics_prefilter_obs.csv",
+          "var_annotations_hvg.csv"
+        ],
+        "name": "Quality-control metric calculation",
+        "scientific_result": "Per-cell QC metrics (genes detected, total counts, percent counts in mitochondrial/ribosomal/hemoglobin gene sets and log1p variants) and per-gene QC metrics, computed on the unfiltered data.",
+        "source_evidence": "Code cells 9-14 (mt/ribo/hb gene masks; sc.pp.calculate_qc_metrics with qc_vars and log1p=True; violin and scatter are visualizations only)."
+      },
+      {
+        "artifacts": [
+          "cell_metadata_final.csv",
+          "var_annotations_hvg.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Permissive cell and gene filtering",
+        "scientific_result": "Removal of cells with fewer than 100 detected genes and genes detected in fewer than 3 cells; resulting filtered cell/gene dimensions.",
+        "source_evidence": "Code cell 16: sc.pp.filter_cells(adata, min_genes=100); sc.pp.filter_genes(adata, min_cells=3)."
+      },
+      {
+        "artifacts": [
+          "cell_metadata_final.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Scrublet doublet detection",
+        "scientific_result": "Per-cell doublet_score and predicted_doublet from sc.pp.scrublet run per sample (batch_key='sample'), with automatic threshold detection via scikit-image.",
+        "source_evidence": "Code cells 17-18 and their later use in cell 45 UMAP display; sc.pp.scrublet(adata, batch_key='sample')."
+      },
+      {
+        "artifacts": [
+          "var_annotations_hvg.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Normalization and highly-variable gene selection",
+        "scientific_result": "Raw counts preserved in adata.layers['counts']; median count-depth normalization plus log1p; top 2000 highly variable genes selected per batch (flavor seurat default) with means/dispersions/dispersions_norm.",
+        "source_evidence": "Code cells 22-26 (counts layer, sc.pp.normalize_total, sc.pp.log1p, sc.pp.highly_variable_genes(n_top_genes=2000, batch_key='sample'), plot)."
+      },
+      {
+        "artifacts": [
+          "pca_coords.csv",
+          "pca_variance_ratio.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Principal component analysis",
+        "scientific_result": "PCA of the HVG-normalized data: 50 per-cell PCs, per-PC explained variance ratios, and gene loadings.",
+        "source_evidence": "Code cells 28-32 (sc.tl.pca, variance-ratio plot, PCA scatter panels colored by sample and pct_counts_mt)."
+      },
+      {
+        "artifacts": [
+          "umap_coords.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Neighborhood graph and UMAP embedding",
+        "scientific_result": "kNN graph on PCA space and 2-dimensional UMAP coordinates per cell.",
+        "source_evidence": "Code cells 34-36; visualized in cells 38 onward."
+      },
+      {
+        "artifacts": [
+          "cell_metadata_final.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Leiden clustering and level-1 cell-type annotation",
+        "scientific_result": "Leiden clusters (igraph implementation, n_iterations=2) at default resolution and at resolutions 0.02/0.50/2.00, plus the cell_type_lvl1 lineage labels mapped from the 0.02-resolution clustering (Lymphocytes, Monocytes, B Cells, Erythroid).",
+        "source_evidence": "Code cells 41-46 and 52-63 (sc.tl.leiden with flavor='igraph', multi-resolution loop with key_added leiden_res_*, obs['cell_type_lvl1'] mapping)."
+      },
+      {
+        "artifacts": [
+          "rank_genes_groups_wilcoxon.csv",
+          "adata_final.h5ad"
+        ],
+        "name": "Cluster marker genes by Wilcoxon differential expression",
+        "scientific_result": "For every leiden_res_0.50 cluster vs rest: ranked gene names, scores, p-values, adjusted p-values (Benjamini-Hochberg), log fold changes and expression fractions; includes the cluster 7 top-5 markers (NKG7, GNLY, ...) identified as NK-cell markers.",
+        "source_evidence": "Code cells 67-73 (sc.tl.rank_genes_groups method='wilcoxon', rank_genes_groups_dotplot n_genes=5, sc.get.rank_genes_groups_df(adata, group='7').head(5))."
+      }
+    ],
+    "changes": [
+      {
+        "after": "import scanpy as sc\n\nimport os\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+        "before": "import scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+        "justification": "input_staging: add the standard-library os import needed to build local /inputs paths for the staged original data; no analysis semantics change.",
+        "purpose": "input_staging"
+      },
+      {
+        "after": "# Original retrieved the count matrices via the pooch registry\n# doi:10.6084/m9.figshare.22716739.v1/; those exact files (verified against the\n# provider MD5s) are staged locally under /inputs by setup (see\n# /work/setup-inputs.json), so the registry object is not needed offline.",
+        "before": "EXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()",
+        "justification": "input_staging: replaces network DOI registry loading (unavailable offline) with an explanatory comment; no inputs or computation change.",
+        "purpose": "input_staging"
+      },
+      {
+        "after": "    path = os.path.join(\"/inputs\", filename)",
+        "before": "    path = EXAMPLE_DATA.fetch(filename)",
+        "justification": "input_staging: load the identical pre-staged file from /inputs instead of fetching over the network; filename and downstream sc.read_10x_h5 input are unchanged.",
+        "purpose": "input_staging"
+      },
+      {
+        "after": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# Export the per-cell QC metrics (underlying data of the QC violin/scatter plots)\nimport numpy as np\nimport pandas as pd\n\nadata.obs.to_csv(\"/work/outputs/qc_metrics_prefilter_obs.csv\")",
+        "before": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)",
+        "justification": "export: dump the pre-filter per-cell QC metrics (with sample labels) exactly as they exist at this point, before filtering removes cells.",
+        "purpose": "export"
+      },
+      {
+        "after": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\n# Export gene-level annotations and the highly-variable-gene selection results\nadata.var.to_csv(\"/work/outputs/var_annotations_hvg.csv\")",
+        "before": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")",
+        "justification": "export: gene flags, per-gene QC metrics and HVG means/dispersions/flags are the scientific data behind sc.pl.highly_variable_genes.",
+        "purpose": "export"
+      },
+      {
+        "after": "sc.tl.pca(adata)\n\n# Export PCA results: per-cell coordinates and per-PC variance ratios\n# (underlying data of sc.pl.pca and sc.pl.pca_variance_ratio)\n_var_ratio = np.asarray(adata.uns[\"pca\"][\"variance_ratio\"])\npd.DataFrame(\n    {\n        \"pc\": np.arange(1, len(_var_ratio) + 1),\n        \"variance_ratio\": _var_ratio,\n        \"cumulative_variance_ratio\": np.cumsum(_var_ratio),\n    }\n).to_csv(\"/work/outputs/pca_variance_ratio.csv\", index=False)\npd.DataFrame(\n    adata.obsm[\"X_pca\"],\n    index=adata.obs_names,\n    columns=[f\"PC{i + 1}\" for i in range(adata.obsm[\"X_pca\"].shape[1])],\n).to_csv(\"/work/outputs/pca_coords.csv\")",
+        "before": "sc.tl.pca(adata)",
+        "justification": "export: PCA coordinates (X_pca) and explained-variance ratios are the scientific endpoints behind the PCA and variance-ratio plots.",
+        "purpose": "export"
+      },
+      {
+        "after": "sc.tl.umap(adata)\n\n# Export the per-cell UMAP coordinates\npd.DataFrame(\n    adata.obsm[\"X_umap\"], index=adata.obs_names, columns=[\"UMAP1\", \"UMAP2\"]\n).to_csv(\"/work/outputs/umap_coords.csv\")",
+        "before": "sc.tl.umap(adata)",
+        "justification": "export: capture the UMAP embedding underlying every later UMAP display.",
+        "purpose": "export"
+      },
+      {
+        "after": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# Export the full per-cluster differential-expression table (Wilcoxon)\n_leiden = adata.obs[\"leiden_res_0.50\"]\n_groups = (\n    list(_leiden.cat.categories)\n    if isinstance(_leiden.dtype, pd.CategoricalDtype)\n    else sorted(_leiden.astype(str).unique())\n)\n_deg_table = pd.concat(\n    [sc.get.rank_genes_groups_df(adata, group=g).assign(group=g) for g in _groups],\n    ignore_index=True,\n)\n_deg_table.to_csv(\"/work/outputs/rank_genes_groups_wilcoxon.csv\", index=False)",
+        "before": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")",
+        "justification": "export: use the source's own getter (sc.get.rank_genes_groups_df, as in cell 72) to format the already-computed rank_genes_groups result for every cluster.",
+        "purpose": "export"
+      },
+      {
+        "after": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# Export the final annotated AnnData object and its per-cell metadata\nadata.obs.to_csv(\"/work/outputs/cell_metadata_final.csv\")\nadata.write_h5ad(\"/work/outputs/adata_final.h5ad\")",
+        "before": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)",
+        "justification": "export: final obs (sample, QC, doublet, all leiden resolutions, cell_type_lvl1) and the complete final AnnData state (counts layer, PCA, graph, UMAP, uns) are the workflow's consolidated endpoint. Written without gzip compression to keep the write inside the bounded runtime; identical scientific data.",
+        "purpose": "export"
+      }
+    ],
+    "disposition": "prepare",
+    "environment_rationale": "python:3.13.13-slim-bookworm base; scanpy, anndata, umap-learn, numba and scikit-image all ship cp313 wheels. The previous run aborted at sc.pp.scrublet with \"ValueError: `threshold` is None and thus scrublet requires `scikit-image`\" -- scikit-image (the scanpy[scrublet] extra) is required for the source's automatic doublet-threshold detection and is now installed. /work/venv is created with pip; only stdlib modules are used in the staging helper besides the venv pip, so no extra system packages are required. The setup script is strict POSIX because the controller executes it with `sh` (dash on Debian bookworm), which does not support `set -o pipefail`; only `set -eu` is used and no pipelines are relied upon for correctness. RNGs (scrublet, UMAP, Leiden defaults) consume no network. The export additions only use numpy/pandas (scanpy dependencies) and scanpy's own getters, and preserve the module-level future import placement. All steps after scrublet use long-stable scanpy APIs.",
+    "excluded_outputs": [
+      "All rendered figures (violin QC plot, QC scatter, highly_variable_genes plot, pca_variance_ratio plot, pca panels, all sc.pl.umap panels, both marker-gene dotplots, rank_genes_groups_dotplot, final per-gene UMAP): plotting-only visualizations; the underlying scientific data is exported instead and the plotting calls are left intact and executed.",
+      "The duplicate UMAP display of the leiden_res_0.02/0.50/2.00 clusters (code cell 55) repeats code cell 54 exactly; one embedding is exported.",
+      "The bare `print(adata.obs['sample'].value_counts())` and trailing `adata` repr (cell 5): represented by the per-sample counts implicit in the exported obs tables and h5ad.",
+      "The displayed `sc.get.rank_genes_groups_df(adata, group='7').head(5)` slice and the dc_cluster_genes list (cells 72-73): fully contained in rank_genes_groups_wilcoxon.csv for group 7 (top-5 rows).",
+      "Dotplot underlying mean-expression matrices (marker genes x cluster and top-5 DEGs x cluster): these statistics are computed transiently inside the plotting calls and are not stored results of the source; recomputing group statistics would be an alternative analysis, so they are excluded while the cluster labels, marker-gene list (a source input) and the full DEG table are exported.",
+      "The pca plot gene loadings (varm['PCs']) are kept inside adata_final.h5ad rather than as a separate CSV (redundant with the h5ad; per-cell PCs and variance ratios are exported as CSV)."
+    ],
+    "explanation": "The notebook runs one scanpy preprocessing/clustering workflow over two 10X Multiome bone-marrow samples (figshare DOI 10.6084/m9.figshare.22716739.v1, staged at /inputs and already verified: s1d1 8,785 cells, s1d3 8,340 cells). The plan keeps every analysis branch unchanged (QC metrics, filtering, scrublet doublets, log1p normalization, HVG, PCA, neighbors/UMAP, Leiden at 4 parameter settings with level-1 annotation, Wilcoxon rank_genes_groups), replaces only the pooch DOI network retrieval with a faithful local load of the checksum-verified staged files, and appends exports of the underlying scientific data behind each plot (per-cell QC metrics, gene table, PCA coordinates + variance ratios, UMAP, final per-cell metadata incl. clusters/doublets/cell types, full DEG table, and the complete final AnnData). All plotting calls remain intact and run under MPLBACKEND=Agg. This repair fixes the single previous runtime failure: sc.pp.scrublet raises ValueError because automatic doublet-threshold detection requires scikit-image (the scanpy[scrublet] extra); setup now installs scikit-image, the import smoke-check includes skimage, and no analysis code changes. The final h5ad export is written without gzip compression (export format choice only, identical scientific data, smaller wall-clock cost within the bounded runtime).",
+    "setup_sh": "set -eu\n\nmkdir -p /work /work/cache /work/outputs /inputs\n\npython3 -m venv /work/venv\n/work/venv/bin/python -m pip install --upgrade pip setuptools wheel\n# The notebook declares no dependency versions; install the current stable scverse\n# stack required by this tutorial: igraph (+ leidenalg) for flavor=\"igraph\", umap-learn\n# for the UMAP step, pooch per the source imports, and scikit-image because\n# sc.pp.scrublet's automatic threshold detection needs it (scanpy[scrublet] extra).\n# Resolved versions are recorded in /work/setup-inputs.json.\n# No pipelines are used, so plain `set -eu` (POSIX sh / dash compatible) is sufficient.\n/work/venv/bin/python -m pip install --no-cache-dir scanpy anndata pooch leidenalg igraph umap-learn scikit-image\n\n# Smoke-check the environment (not scientific analysis)\n/work/venv/bin/python -c \"import scanpy, anndata, pooch, igraph, leidenalg, umap, numpy, pandas, scipy, sklearn, skimage\"\n\n# Stage the two source input files and record identities plus SHA-256 checksums\n/work/venv/bin/python - <<'PY'\nimport hashlib\nimport json\nimport os\nimport subprocess\nimport urllib.request\n\nspecs = [\n    {\n        \"name\": \"s1d1_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347877\",\n        \"bytes\": 22848647,\n        \"provider_md5\": \"a99285913ea3f3d22600d3d2f8a88e34\",\n    },\n    {\n        \"name\": \"s1d3_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347880\",\n        \"bytes\": 20432298,\n        \"provider_md5\": \"825f7f7578e3dc0b8955f5a97a402338\",\n    },\n]\n\ndef digest(path, algo):\n    h = hashlib.new(algo)\n    with open(path, \"rb\") as f:\n        for chunk in iter(lambda: f.read(1 << 20), b\"\"):\n            h.update(chunk)\n    return h.hexdigest()\n\nos.makedirs(\"/inputs\", exist_ok=True)\ninputs = []\nfor spec in specs:\n    path = os.path.join(\"/inputs\", spec[\"name\"])\n    if not (os.path.exists(path) and digest(path, \"md5\") == spec[\"provider_md5\"]):\n        urllib.request.urlretrieve(spec[\"url\"], path)\n    assert digest(path, \"md5\") == spec[\"provider_md5\"], path\n    assert os.path.getsize(path) == spec[\"bytes\"], path\n    inputs.append(\n        {\n            **spec,\n            \"doi\": \"10.6084/m9.figshare.22716739.v1\",\n            \"local_path\": path,\n            \"sha256\": digest(path, \"sha256\"),\n            \"provider_md5_verified\": True,\n        }\n    )\n\nfreeze = subprocess.run(\n    [\"/work/venv/bin/pip\", \"freeze\"], capture_output=True, text=True, check=True\n).stdout.splitlines()\ndeps = dict(line.split(\"==\", 1) for line in freeze if \"==\" in line)\n\nrecord = {\n    \"source_notebook\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\",\n    \"data_doi\": \"10.6084/m9.figshare.22716739.v1\",\n    \"inputs\": inputs,\n    \"resolved_dependencies\": deps,\n    \"environment_note\": \"scikit-image installed to satisfy sc.pp.scrublet automatic threshold detection (scanpy[scrublet] extra)\",\n}\nwith open(\"/work/setup-inputs.json\", \"w\") as f:\n    json.dump(record, f, indent=2)\nPY",
+    "unresolved_assumptions": [
+      "sc.pp.scrublet with threshold=None requires scikit-image (the scanpy[scrublet] extra) for automatic doublet-threshold detection; setup now installs it. This was the sole cause of the previous run's ValueError at line 80 of the converted script.",
+      "The source notebook declares no dependency versions; the latest stable scanpy/anndata/umap-learn/igraph/leidenalg/scikit-image stack (cp313 compatible) is installed and its exact resolved versions written to /work/setup-inputs.json. Feature use (sc.pp.scrublet batch_key, flavor='igraph' leiden, sc.get.rank_genes_groups_df) is stable across recent scanpy 1.10/1.11 releases.",
+      "The source sets no random seeds; scrublet, UMAP and Leiden run with library defaults, so embeddings/cluster IDs may vary slightly in label identity across runs, faithful to the source behavior.",
+      "Variable variance-ratio storage is read via adata.uns['pca']['variance_ratio'], the interface used by both recent scanpy layouts (dict entry or structured field with that name).",
+      "Playback of the remaining workflow (normalization through rank_genes_groups plots) uses long-stable scanpy APIs that were not yet exercised before the previous scrublet failure; there is no evidence of a source defect, only the missing optional dependency now fixed in setup.",
+      "Setup prefers files already staged under /inputs; if absent or MD5-mismatched it downloads them from the figshare URLs and verifies provider MD5, size and SHA-256 before recording. The setup script itself is strict POSIX (no pipefail) because the controller runs it with dash."
+    ]
+  },
+  "previous_feedback": [
+    {
+      "log_tail": "/work/setup.sh: 1: set: Illegal option -o pipefail\n",
+      "plan": {
+        "artifacts": [
+          {
+            "description": "Per-cell QC metrics and sample labels for all ~16,134 unfiltered cells exactly as computed by sc.pp.calculate_qc_metrics(qc_vars=['mt','ribo','hb'], inplace=True, log1p=True): n_genes_by_counts, log1p_n_genes_by_counts, total_counts, log1p_total_counts, total_counts_mt/ribo/hb, log1p variants, pct_counts_mt/ribo/hb. This is the underlying scientific data of the QC violin and scatter plots.",
+            "path": "qc_metrics_prefilter_obs.csv",
+            "source_evidence": "Code cells 9-10 compute the metrics; cells 12 and 14 only visualize them (sc.pl.violin / sc.pl.scatter)."
+          },
+          {
+            "description": "Gene-level table: mt/ribo/hb gene-set flags; per-gene QC metrics (n_cells_by_counts, mean_counts, pct_dropout_by_counts, total_counts, log1p_total_counts, n_cells) after filtering; and highly-variable-gene selection results for the top 2000 genes across samples (highly_variable, means, dispersions, dispersions_norm). Underlying data of sc.pl.highly_variable_genes.",
+            "path": "var_annotations_hvg.csv",
+            "source_evidence": "Code cells 9-10 (gene groups + per-gene metrics), cell 16 (filter_genes minh\u00e9min_cells=3), cells 22-25 (counts layer, normalization, hvg with n_top_genes=2000, batch_key='sample')."
+          },
+          {
+            "description": "Per-cell PCA coordinates (X_pca, 50 principal components) indexed by cell barcode; the embedding behind the sc.pl.pca panels colored by sample and pct_counts_mt.",
+            "path": "pca_coords.csv",
+            "source_evidence": "Code cell 28 (sc.tl.pca); cell 32 only visualizes components."
+          },
+          {
+            "description": "Explained-variance ratio and cumulative variance ratio per PC (PC1..PC50); the data behind sc.pl.pca_variance_ratio(n_pcs=50, log=True).",
+            "path": "pca_variance_ratio.csv",
+            "source_evidence": "Code cells 28-30 (PCA then variance-ratio plot)."
+          },
+          {
+            "description": "Per-cell UMAP1/UMAP2 coordinates, the 2-D embedding used by all later UMAP displays (sample, leiden, QC-metric and marker-gene overlays).",
+            "path": "umap_coords.csv",
+            "source_evidence": "Code cells 34-36 (neighbors then sc.tl.umap); displayed in cells 38, 42, 45, 46, 54, 55, 73."
+          },
+          {
+            "description": "Final per-cell metadata after the full workflow: sample label, all QC metrics (log1p variants), doublet_score, predicted_doublet, leiden (igraph flavor, n_iterations=2), leiden_res_0.02, leiden_res_0.50, leiden_res_2.00, and cell_type_lvl1 lineage annotation.",
+            "path": "cell_metadata_final.csv",
+            "source_evidence": "Code cells 5, 10, 16, 18, 41, 52, 62 (concat, QC, filtering, scrublet, leiden at default and 3 resolutions, cell-type mapping)."
+          },
+          {
+            "description": "Full Wilcoxon rank-sum differential-expression table for every leiden_res_0.50 cluster vs. rest: group, names, scores, pvals, pvals_adj, logfoldchanges, pts. Contains the displayed top-5 genes of cluster 7 (e.g. NKG7, GNLY) and every other cluster's markers shown on the DEG dotplot.",
+            "path": "rank_genes_groups_wilcoxon.csv",
+            "source_evidence": "Code cells 67-73: sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon'), sc.pl.rank_genes_groups_dotplot(n_genes=5), sc.get.rank_genes_groups_df(adata, group='7')."
+          },
+          {
+            "description": "Complete final AnnData object (filtered cells/genes): raw counts layer, median count-depth normalized log1p X, X_pca coordinates, PC loadings (varm['PCs']), variance ratios in uns['pca'], neighbors graph (obsp), X_umap, full obs/var annotations, uns including rank_genes_groups and HVG parameters.",
+            "path": "adata_final.h5ad",
+            "source_evidence": "Final state of adata after the last code cell (73); consolidates every analysis branch of the notebook."
+          }
+        ],
+        "branches": [
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "qc_metrics_prefilter_obs.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Data loading and sample composition",
+            "scientific_result": "Concatenated AnnData of two 10X Multiome bone-marrow samples (s1d1, s1d3; ~8,000 cells each, 36,601 genes) with per-cell sample labels and per-sample cell counts.",
+            "source_evidence": "Code cell 5: sc.read_10x_h5 for both files, var_names_make_unique, ad.concat(adatas, label='sample'), obs_names_make_unique, print of sample value_counts."
+          },
+          {
+            "artifacts": [
+              "qc_metrics_prefilter_obs.csv",
+              "var_annotations_hvg.csv"
+            ],
+            "name": "Quality-control metric calculation",
+            "scientific_result": "Per-cell QC metrics (genes detected, total counts, percent counts in mitochondrial/ribosomal/hemoglobin gene sets and log1p variants) and per-gene QC metrics, computed on the unfiltered data.",
+            "source_evidence": "Code cells 9-14 (mt/ribo/hb gene masks; sc.pp.calculate_qc_metrics with qc_vars and log1p=True; violin and scatter are visualizations only)."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "var_annotations_hvg.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Permissive cell and gene filtering",
+            "scientific_result": "Removal of cells with fewer than 100 detected genes and genes detected in fewer than 3 cells; resulting filtered cell/gene dimensions.",
+            "source_evidence": "Code cell 16: sc.pp.filter_cells(adata, min_genes=100); sc.pp.filter_genes(adata, min_cells=3)."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Scrublet doublet detection",
+            "scientific_result": "Per-cell doublet_score and predicted_doublet from sc.pp.scrublet run per sample (batch_key='sample').",
+            "source_evidence": "Code cells 17-18 and their later use in cell 45 UMAP display."
+          },
+          {
+            "artifacts": [
+              "var_annotations_hvg.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Normalization and highly-variable gene selection",
+            "scientific_result": "Raw counts preserved in adata.layers['counts']; median count-depth normalization plus log1p; top 2000 highly variable genes selected per batch (flavor seurat default) with means/dispersions/dispersions_norm.",
+            "source_evidence": "Code cells 22-26 (counts layer, sc.pp.normalize_total, sc.pp.log1p, sc.pp.highly_variable_genes(n_top_genes=2000, batch_key='sample'), plot)."
+          },
+          {
+            "artifacts": [
+              "pca_coords.csv",
+              "pca_variance_ratio.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Principal component analysis",
+            "scientific_result": "PCA of the HVG-normalized data: 50 per-cell PCs, per-PC explained variance ratios, and gene loadings.",
+            "source_evidence": "Code cells 28-32 (sc.tl.pca, variance-ratio plot, PCA scatter panels colored by sample and pct_counts_mt)."
+          },
+          {
+            "artifacts": [
+              "umap_coords.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Neighborhood graph and UMAP embedding",
+            "scientific_result": "kNN graph on PCA space and 2-dimensional UMAP coordinates per cell.",
+            "source_evidence": "Code cells 34-36; visualized in cells 38 onward."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Leiden clustering and level-1 cell-type annotation",
+            "scientific_result": "Leiden clusters (igraph implementation, 2 iterations) at default resolution and at resolutions 0.02/0.50/2.00, plus the cell_type_lvl1 lineage labels mapped from the 0.02-resolution clustering (Lymphocytes, Monocytes, B Cells, Erythroid).",
+            "source_evidence": "Code cells 41-46 and 52-63 (sc.tl.leiden with flavor='igraph', multi-resolution loop with key_added leiden_res_*, obs['cell_type_lvl1'] mapping)."
+          },
+          {
+            "artifacts": [
+              "rank_genes_groups_wilcoxon.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Cluster marker genes by Wilcoxon differential expression",
+            "scientific_result": "For every leiden_res_0.50 cluster vs rest: ranked gene names, scores, p-values, adjusted p-values (Benjamini-Hochberg), log fold changes and expression fractions; includes the cluster 7 top-5 markers (NKG7, GNLY, ...) identified as NK-cell markers.",
+            "source_evidence": "Code cells 67-73 (sc.tl.rank_genes_groups method='wilcoxon', rank_genes_groups_dotplot n_genes=5, sc.get.rank_genes_groups_df(adata, group='7').head(5))."
+          }
+        ],
+        "changes": [
+          {
+            "after": "import scanpy as sc\n\nimport os\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+            "before": "import scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+            "justification": "input_staging: add the standard-library os import needed to build local /inputs paths for the staged original data; no analysis semantics change.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "# Original retrieved the count matrices via the pooch registry\n# doi:10.6084/m9.figshare.22716739.v1/; those exact files (verified against the\n# provider MD5s) are staged locally under /inputs by setup (see\n# /work/setup-inputs.json), so the registry object is not needed offline.",
+            "before": "EXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()",
+            "justification": "input_staging: replaces network DOI registry loading (unavailable offline) with an explanatory comment; no inputs or computation change.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "    path = os.path.join(\"/inputs\", filename)",
+            "before": "    path = EXAMPLE_DATA.fetch(filename)",
+            "justification": "input_staging: load the identical pre-staged file from /inputs instead of fetching over the network; filename and downstream sc.read_10x_h5 input are unchanged.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# Export the per-cell QC metrics (underlying data of the QC violin/scatter plots)\nimport numpy as np\nimport pandas as pd\n\nadata.obs.to_csv(\"/work/outputs/qc_metrics_prefilter_obs.csv\")",
+            "before": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)",
+            "justification": "export: dump the pre-filter per-cell QC metrics (with sample labels) exactly as they exist at this point, before filtering removes cells.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\n# Export gene-level annotations and the highly-variable-gene selection results\nadata.var.to_csv(\"/work/outputs/var_annotations_hvg.csv\")",
+            "before": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")",
+            "justification": "export: gene flags, per-gene QC metrics and HVG means/dispersions/flags are the scientific data behind sc.pl.highly_variable_genes.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.tl.pca(adata)\n\n# Export PCA results: per-cell coordinates and per-PC variance ratios\n# (underlying data of sc.pl.pca and sc.pl.pca_variance_ratio)\n_var_ratio = np.asarray(adata.uns[\"pca\"][\"variance_ratio\"])\npd.DataFrame(\n    {\n        \"pc\": np.arange(1, len(_var_ratio) + 1),\n        \"variance_ratio\": _var_ratio,\n        \"cumulative_variance_ratio\": np.cumsum(_var_ratio),\n    }\n).to_csv(\"/work/outputs/pca_variance_ratio.csv\", index=False)\npd.DataFrame(\n    adata.obsm[\"X_pca\"],\n    index=adata.obs_names,\n    columns=[f\"PC{i + 1}\" for i in range(adata.obsm[\"X_pca\"].shape[1])],\n).to_csv(\"/work/outputs/pca_coords.csv\")",
+            "before": "sc.tl.pca(adata)",
+            "justification": "export: PCA coordinates (X_pca) and explained-variance ratios are the scientific endpoints behind the PCA and variance-ratio plots.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.tl.umap(adata)\n\n# Export the per-cell UMAP coordinates\npd.DataFrame(\n    adata.obsm[\"X_umap\"], index=adata.obs_names, columns=[\"UMAP1\", \"UMAP2\"]\n).to_csv(\"/work/outputs/umap_coords.csv\")",
+            "before": "sc.tl.umap(adata)",
+            "justification": "export: capture the UMAP embedding underlying every later UMAP display.",
+            "purpose": "export"
+          },
+          {
+            "after": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# Export the full per-cluster differential-expression table (Wilcoxon)\n_leiden = adata.obs[\"leiden_res_0.50\"]\n_groups = (\n    list(_leiden.cat.categories)\n    if isinstance(_leiden.dtype, pd.CategoricalDtype)\n    else sorted(_leiden.astype(str).unique())\n)\n_deg_table = pd.concat(\n    [sc.get.rank_genes_groups_df(adata, group=g).assign(group=g) for g in _groups],\n    ignore_index=True,\n)\n_deg_table.to_csv(\"/work/outputs/rank_genes_groups_wilcoxon.csv\", index=False)",
+            "before": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")",
+            "justification": "export: use the source's own getter (sc.get.rank_genes_groups_df, as in cell 72) to format the already-computed rank_genes_groups result for every cluster.",
+            "purpose": "export"
+          },
+          {
+            "after": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# Export the final annotated AnnData object and its per-cell metadata\nadata.obs.to_csv(\"/work/outputs/cell_metadata_final.csv\")\nadata.write_h5ad(\"/work/outputs/adata_final.h5ad\", compression=\"gzip\")",
+            "before": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)",
+            "justification": "export: final obs (sample, QC, doublet, all leiden resolutions, cell_type_lvl1) and the complete final AnnData state (counts layer, PCA, graph, UMAP, uns) are the workflow's consolidated endpoint.",
+            "purpose": "export"
+          }
+        ],
+        "disposition": "prepare",
+        "environment_rationale": "python:3.13.13-slim-bookworm base; scanpy, anndata, umap-learn and numba all ship cp313 wheels. /work/venv is created with pip and only stdlib+urllib are used in the staging helper besides the venv pip, so no extra system packages are required. RNGs (scrublet, UMAP, Leiden defaults) consume no network. The export additions only use numpy/pandas (scanpy dependencies) and scanpy's own getters, and preserve the module-level future import placement.",
+        "excluded_outputs": [
+          "All rendered figures (violin QC plot, QC scatter, highly_variable_genes plot, pca_variance_ratio plot, pca panels, all sc.pl.umap panels, both marker-gene dotplots, rank_genes_groups_dotplot, final per-gene UMAP): plotting-only visualizations; the underlying scientific data is exported instead and the plotting calls are left intact and executed.",
+          "The duplicate UMAP display of the leiden_res_0.02/0.50/2.00 clusters (code cell 55) repeats code cell 54 exactly; one embedding is exported.",
+          "The bare `print(adata.obs['sample'].value_counts())` and trailing `adata` repr (cell 5): represented by the per-sample counts implicit in the exported obs tables and h5ad.",
+          "The displayed `sc.get.rank_genes_groups_df(adata, group='7').head(5)` slice and the dc_cluster_genes list (cells 72-73): fully contained in rank_genes_groups_wilcoxon.csv for group 7 (top-5 rows).",
+          "Dotplot underlying mean-expression matrices (marker genes x cluster and top-5 DEGs x cluster): these statistics are computed transiently inside the plotting calls and are not stored results of the source; recomputing group statistics would be an alternative analysis, so they are excluded while the cluster labels, marker-gene list (a source input) and the full DEG table are exported.",
+          "The pca plot gene loadings (varm['PCs']) are kept inside adata_final.h5ad rather than as a separate CSV (redundant with the h5ad; per-cell PCs and variance ratios are exported as CSV)."
+        ],
+        "explanation": "The notebook runs one scanpy preprocessing/clustering workflow over two 10X Multiome bone-marrow samples (figshare DOI 10.6084/m9.figshare.22716739.v1, staged at /inputs). The plan keeps every analysis branch unchanged (QC metrics, filtering, scrublet doublets, log1p normalization, HVG, PCA, neighbors/UMAP, Leiden at 4 parameter settings with level-1 annotation, Wilcoxon rank_genes_groups), replaces only the pooch DOI network retrieval with a faithful local load of the checksum-verified staged files, and appends exports of the underlying scientific data behind each plot (per-cell QC metrics, gene table, PCA coordinates + variance ratios, UMAP, final per-cell metadata incl. clusters/doublets/cell types, full DEG table, and the complete final AnnData). All plotting calls remain intact and run under MPLBACKEND=Agg.",
+        "setup_sh": "set -euo pipefail\n\nmkdir -p /work /work/cache /work/outputs /inputs\n\npython3 -m venv /work/venv\n/work/venv/bin/python -m pip install --upgrade pip setuptools wheel\n# The notebook declares no dependency versions; install the current stable scverse stack\n# required by this tutorial (igraph+leidenalg for flavor=\"igraph\", umap-learn for the\n# UMAP step, pooch per the source imports). Resolved versions are recorded below.\n/work/venv/bin/python -m pip install --no-cache-dir scanpy anndata pooch leidenalg igraph umap-learn\n\n# Smoke-check the environment (not scientific analysis)\n/work/venv/bin/python -c \"import scanpy, anndata, pooch, igraph, leidenalg, umap, numpy, pandas, scipy, sklearn\"\n\n# Stage the two source input files and record identities plus SHA-256 checksums\n/work/venv/bin/python - <<'PY'\nimport hashlib\nimport json\nimport os\nimport subprocess\nimport urllib.request\n\nspecs = [\n    {\n        \"name\": \"s1d1_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347877\",\n        \"bytes\": 22848647,\n        \"provider_md5\": \"a99285913ea3f3d22600d3d2f8a88e34\",\n    },\n    {\n        \"name\": \"s1d3_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347880\",\n        \"bytes\": 20432298,\n        \"provider_md5\": \"825f7f7578e3dc0b8955f5a97a402338\",\n    },\n]\n\ndef digest(path, algo):\n    h = hashlib.new(algo)\n    with open(path, \"rb\") as f:\n        for chunk in iter(lambda: f.read(1 << 20), b\"\"):\n            h.update(chunk)\n    return h.hexdigest()\n\nos.makedirs(\"/inputs\", exist_ok=True)\ninputs = []\nfor spec in specs:\n    path = os.path.join(\"/inputs\", spec[\"name\"])\n    if not (os.path.exists(path) and digest(path, \"md5\") == spec[\"provider_md5\"]):\n        urllib.request.urlretrieve(spec[\"url\"], path)\n    assert digest(path, \"md5\") == spec[\"provider_md5\"], path\n    assert os.path.getsize(path) == spec[\"bytes\"], path\n    inputs.append(\n        {\n            **spec,\n            \"doi\": \"10.6084/m9.figshare.22716739.v1\",\n            \"local_path\": path,\n            \"sha256\": digest(path, \"sha256\"),\n            \"provider_md5_verified\": True,\n        }\n    )\n\nfreeze = subprocess.run(\n    [\"/work/venv/bin/pip\", \"freeze\"], capture_output=True, text=True, check=True\n).stdout.splitlines()\ndeps = dict(line.split(\"==\", 1) for line in freeze if \"==\" in line)\n\nrecord = {\n    \"source_notebook\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\",\n    \"data_doi\": \"10.6084/m9.figshare.22716739.v1\",\n    \"inputs\": inputs,\n    \"resolved_dependencies\": deps,\n}\nwith open(\"/work/setup-inputs.json\", \"w\") as f:\n    json.dump(record, f, indent=2)\nPY",
+        "unresolved_assumptions": [
+          "The source notebook declares no dependency versions; the latest stable scanpy/anndata/umap-learn/igraph/leidenalg stack (cp313 compatible) is installed and its exact resolved versions written to /work/setup-inputs.json. Feature use (sc.pp.scrublet batch_key, flavor='igraph' leiden, sc.get.rank_genes_groups_df) is stable across recent scanpy 1.10/1.11 releases.",
+          "The source sets no random seeds; scrublet, UMAP and Leiden run with library defaults, so embeddings/cluster IDs may vary slightly in label identity across runs, faithful to the source behavior.",
+          "Variable variance-ratio storage is read via adata.uns['pca']['variance_ratio'], the interface used by both recent scanpy layouts (dict entry or structured field with that name).",
+          "Setup prefers files already staged under /inputs; if absent or MD5-mismatched it downloads them from the figshare URLs and verifies provider MD5, size and SHA-256 before recording."
+        ]
+      },
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "elapsed_seconds": 0.0016412734985351562,
+        "exit_code": 2,
+        "finished": 1791997821.0489075,
+        "peak_child_rss_kib": 19676,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1791997821.0472662,
+        "timed_out": false
+      }
+    },
+    {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 3567573,
+            "exists": true,
+            "path": "qc_metrics_prefilter_obs.csv",
+            "sha256": "1d5ff386e550f95cfc395f5efb2c4bd6137a0513b8f5b939fa6ed0495adbf82b"
+          },
+          {
+            "exists": false,
+            "path": "var_annotations_hvg.csv"
+          },
+          {
+            "exists": false,
+            "path": "pca_coords.csv"
+          },
+          {
+            "exists": false,
+            "path": "pca_variance_ratio.csv"
+          },
+          {
+            "exists": false,
+            "path": "umap_coords.csv"
+          },
+          {
+            "exists": false,
+            "path": "cell_metadata_final.csv"
+          },
+          {
+            "exists": false,
+            "path": "rank_genes_groups_wilcoxon.csv"
+          },
+          {
+            "exists": false,
+            "path": "adata_final.h5ad"
+          }
+        ],
+        "declared_artifacts_present": false,
+        "semantic_fidelity_validated": false
+      },
+      "execution": {
+        "argv": [
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "elapsed_seconds": 17.500088214874268,
+        "exit_code": 1,
+        "finished": 1791998000.4350038,
+        "peak_child_rss_kib": 1382492,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1791997982.9349155,
+        "timed_out": false
+      },
+      "log_tail": "/work/reference.py:27: FutureWarning: The method set_figure_params is deprecated and will be removed in the future. Use :func:`scanpy.set_figure_params` instead\n  sc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/reference.py:46: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.\n  adata = ad.concat(adatas, label=\"sample\")\nsample\ns1d1    8785\ns1d3    8340\nName: count, dtype: int64\nTraceback (most recent call last):\n  File \"/work/reference.py\", line 80, in <module>\n    sc.pp.scrublet(adata, batch_key=\"sample\")\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/venv/lib/python3.13/site-packages/legacy_api_wrap/__init__.py\", line 88, in fn_compatible\n    return fn(*args_all, **kw)\n  File \"/work/venv/lib/python3.13/site-packages/scanpy/preprocessing/_scrublet/__init__.py\", line 188, in scrublet\n    raise ValueError(msg)\nValueError: `threshold` is None and thus scrublet requires `scikit-image`. Please install `scanpy[scrublet]` (or `scikit-image` directly) and try again.\n",
+      "plan": {
+        "artifacts": [
+          {
+            "description": "Per-cell QC metrics and sample labels for all ~16,134 unfiltered cells exactly as computed by sc.pp.calculate_qc_metrics(qc_vars=['mt','ribo','hb'], inplace=True, log1p=True): n_genes_by_counts, log1p_n_genes_by_counts, total_counts, log1p_total_counts, total_counts_mt/ribo/hb, log1p variants, pct_counts_mt/ribo/hb. This is the underlying scientific data of the QC violin and scatter plots.",
+            "path": "qc_metrics_prefilter_obs.csv",
+            "source_evidence": "Code cells 9-10 compute the metrics; cells 12 and 14 only visualize them (sc.pl.violin / sc.pl.scatter)."
+          },
+          {
+            "description": "Gene-level table: mt/ribo/hb gene-set flags; per-gene QC metrics (n_cells_by_counts, mean_counts, pct_dropout_by_counts, total_counts, log1p_total_counts, n_cells) after filtering; and highly-variable-gene selection results for the top 2000 genes across samples (highly_variable, means, dispersions, dispersions_norm). Underlying data of sc.pl.highly_variable_genes.",
+            "path": "var_annotations_hvg.csv",
+            "source_evidence": "Code cells 9-10 (gene groups + per-gene metrics), cell 16 (filter_genes min_cells=3), cells 22-25 (counts layer, normalization, hvg with n_top_genes=2000, batch_key='sample')."
+          },
+          {
+            "description": "Per-cell PCA coordinates (X_pca, 50 principal components) indexed by cell barcode; the embedding behind the sc.pl.pca panels colored by sample and pct_counts_mt.",
+            "path": "pca_coords.csv",
+            "source_evidence": "Code cell 28 (sc.tl.pca); cell 32 only visualizes components."
+          },
+          {
+            "description": "Explained-variance ratio and cumulative variance ratio per PC (PC1..PC50); the data behind sc.pl.pca_variance_ratio(n_pcs=50, log=True).",
+            "path": "pca_variance_ratio.csv",
+            "source_evidence": "Code cells 28-30 (PCA then variance-ratio plot)."
+          },
+          {
+            "description": "Per-cell UMAP1/UMAP2 coordinates, the 2-D embedding used by all later UMAP displays (sample, leiden, QC-metric and marker-gene overlays).",
+            "path": "umap_coords.csv",
+            "source_evidence": "Code cells 34-36 (neighbors then sc.tl.umap); displayed in cells 38, 42, 45, 46, 54, 55, 73."
+          },
+          {
+            "description": "Final per-cell metadata after the full workflow: sample label, all QC metrics (log1p variants), doublet_score, predicted_doublet, leiden (igraph flavor, n_iterations=2), leiden_res_0.02, leiden_res_0.50, leiden_res_2.00, and cell_type_lvl1 lineage annotation.",
+            "path": "cell_metadata_final.csv",
+            "source_evidence": "Code cells 5, 10, 16, 18, 41, 52, 62 (concat, QC, filtering, scrublet, leiden at default and 3 resolutions, cell-type mapping)."
+          },
+          {
+            "description": "Full Wilcoxon rank-sum differential-expression table for every leiden_res_0.50 cluster vs. rest: group, names, scores, pvals, pvals_adj, logfoldchanges, pts. Contains the displayed top-5 genes of cluster 7 (e.g. NKG7, GNLY) and every other cluster's markers shown on the DEG dotplot.",
+            "path": "rank_genes_groups_wilcoxon.csv",
+            "source_evidence": "Code cells 67-73: sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon'), sc.pl.rank_genes_groups_dotplot(n_genes=5), sc.get.rank_genes_groups_df(adata, group='7')."
+          },
+          {
+            "description": "Complete final AnnData object (filtered cells/genes): raw counts layer, median count-depth normalized log1p X, X_pca coordinates, PC loadings (varm['PCs']), variance ratios in uns['pca'], neighbors graph (obsp), X_umap, full obs/var annotations, uns including rank_genes_groups and HVG parameters.",
+            "path": "adata_final.h5ad",
+            "source_evidence": "Final state of adata after the last code cell (73); consolidates every analysis branch of the notebook."
+          }
+        ],
+        "branches": [
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "qc_metrics_prefilter_obs.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Data loading and sample composition",
+            "scientific_result": "Concatenated AnnData of two 10X Multiome bone-marrow samples (s1d1, s1d3; ~8,000 cells each, 36,601 genes) with per-cell sample labels and per-sample cell counts.",
+            "source_evidence": "Code cell 5: sc.read_10x_h5 for both files, var_names_make_unique, ad.concat(adatas, label='sample'), obs_names_make_unique, print of sample value_counts."
+          },
+          {
+            "artifacts": [
+              "qc_metrics_prefilter_obs.csv",
+              "var_annotations_hvg.csv"
+            ],
+            "name": "Quality-control metric calculation",
+            "scientific_result": "Per-cell QC metrics (genes detected, total counts, percent counts in mitochondrial/ribosomal/hemoglobin gene sets and log1p variants) and per-gene QC metrics, computed on the unfiltered data.",
+            "source_evidence": "Code cells 9-14 (mt/ribo/hb gene masks; sc.pp.calculate_qc_metrics with qc_vars and log1p=True; violin and scatter are visualizations only)."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "var_annotations_hvg.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Permissive cell and gene filtering",
+            "scientific_result": "Removal of cells with fewer than 100 detected genes and genes detected in fewer than 3 cells; resulting filtered cell/gene dimensions.",
+            "source_evidence": "Code cell 16: sc.pp.filter_cells(adata, min_genes=100); sc.pp.filter_genes(adata, min_cells=3)."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Scrublet doublet detection",
+            "scientific_result": "Per-cell doublet_score and predicted_doublet from sc.pp.scrublet run per sample (batch_key='sample').",
+            "source_evidence": "Code cells 17-18 and their later use in cell 45 UMAP display."
+          },
+          {
+            "artifacts": [
+              "var_annotations_hvg.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Normalization and highly-variable gene selection",
+            "scientific_result": "Raw counts preserved in adata.layers['counts']; median count-depth normalization plus log1p; top 2000 highly variable genes selected per batch (flavor seurat default) with means/dispersions/dispersions_norm.",
+            "source_evidence": "Code cells 22-26 (counts layer, sc.pp.normalize_total, sc.pp.log1p, sc.pp.highly_variable_genes(n_top_genes=2000, batch_key='sample'), plot)."
+          },
+          {
+            "artifacts": [
+              "pca_coords.csv",
+              "pca_variance_ratio.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Principal component analysis",
+            "scientific_result": "PCA of the HVG-normalized data: 50 per-cell PCs, per-PC explained variance ratios, and gene loadings.",
+            "source_evidence": "Code cells 28-32 (sc.tl.pca, variance-ratio plot, PCA scatter panels colored by sample and pct_counts_mt)."
+          },
+          {
+            "artifacts": [
+              "umap_coords.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Neighborhood graph and UMAP embedding",
+            "scientific_result": "kNN graph on PCA space and 2-dimensional UMAP coordinates per cell.",
+            "source_evidence": "Code cells 34-36; visualized in cells 38 onward."
+          },
+          {
+            "artifacts": [
+              "cell_metadata_final.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Leiden clustering and level-1 cell-type annotation",
+            "scientific_result": "Leiden clusters (igraph implementation, 2 iterations) at default resolution and at resolutions 0.02/0.50/2.00, plus the cell_type_lvl1 lineage labels mapped from the 0.02-resolution clustering (Lymphocytes, Monocytes, B Cells, Erythroid).",
+            "source_evidence": "Code cells 41-46 and 52-63 (sc.tl.leiden with flavor='igraph', multi-resolution loop with key_added leiden_res_*, obs['cell_type_lvl1'] mapping)."
+          },
+          {
+            "artifacts": [
+              "rank_genes_groups_wilcoxon.csv",
+              "adata_final.h5ad"
+            ],
+            "name": "Cluster marker genes by Wilcoxon differential expression",
+            "scientific_result": "For every leiden_res_0.50 cluster vs rest: ranked gene names, scores, p-values, adjusted p-values (Benjamini-Hochberg), log fold changes and expression fractions; includes the cluster 7 top-5 markers (NKG7, GNLY, ...) identified as NK-cell markers.",
+            "source_evidence": "Code cells 67-73 (sc.tl.rank_genes_groups method='wilcoxon', rank_genes_groups_dotplot n_genes=5, sc.get.rank_genes_groups_df(adata, group='7').head(5))."
+          }
+        ],
+        "changes": [
+          {
+            "after": "import scanpy as sc\n\nimport os\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+            "before": "import scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")",
+            "justification": "input_staging: add the standard-library os import needed to build local /inputs paths for the staged original data; no analysis semantics change.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "# Original retrieved the count matrices via the pooch registry\n# doi:10.6084/m9.figshare.22716739.v1/; those exact files (verified against the\n# provider MD5s) are staged locally under /inputs by setup (see\n# /work/setup-inputs.json), so the registry object is not needed offline.",
+            "before": "EXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()",
+            "justification": "input_staging: replaces network DOI registry loading (unavailable offline) with an explanatory comment; no inputs or computation change.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "    path = os.path.join(\"/inputs\", filename)",
+            "before": "    path = EXAMPLE_DATA.fetch(filename)",
+            "justification": "input_staging: load the identical pre-staged file from /inputs instead of fetching over the network; filename and downstream sc.read_10x_h5 input are unchanged.",
+            "purpose": "input_staging"
+          },
+          {
+            "after": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# Export the per-cell QC metrics (underlying data of the QC violin/scatter plots)\nimport numpy as np\nimport pandas as pd\n\nadata.obs.to_csv(\"/work/outputs/qc_metrics_prefilter_obs.csv\")",
+            "before": "sc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)",
+            "justification": "export: dump the pre-filter per-cell QC metrics (with sample labels) exactly as they exist at this point, before filtering removes cells.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\n# Export gene-level annotations and the highly-variable-gene selection results\nadata.var.to_csv(\"/work/outputs/var_annotations_hvg.csv\")",
+            "before": "sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")",
+            "justification": "export: gene flags, per-gene QC metrics and HVG means/dispersions/flags are the scientific data behind sc.pl.highly_variable_genes.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.tl.pca(adata)\n\n# Export PCA results: per-cell coordinates and per-PC variance ratios\n# (underlying data of sc.pl.pca and sc.pl.pca_variance_ratio)\n_var_ratio = np.asarray(adata.uns[\"pca\"][\"variance_ratio\"])\npd.DataFrame(\n    {\n        \"pc\": np.arange(1, len(_var_ratio) + 1),\n        \"variance_ratio\": _var_ratio,\n        \"cumulative_variance_ratio\": np.cumsum(_var_ratio),\n    }\n).to_csv(\"/work/outputs/pca_variance_ratio.csv\", index=False)\npd.DataFrame(\n    adata.obsm[\"X_pca\"],\n    index=adata.obs_names,\n    columns=[f\"PC{i + 1}\" for i in range(adata.obsm[\"X_pca\"].shape[1])],\n).to_csv(\"/work/outputs/pca_coords.csv\")",
+            "before": "sc.tl.pca(adata)",
+            "justification": "export: PCA coordinates (X_pca) and explained-variance ratios are the scientific endpoints behind the PCA and variance-ratio plots.",
+            "purpose": "export"
+          },
+          {
+            "after": "sc.tl.umap(adata)\n\n# Export the per-cell UMAP coordinates\npd.DataFrame(\n    adata.obsm[\"X_umap\"], index=adata.obs_names, columns=[\"UMAP1\", \"UMAP2\"]\n).to_csv(\"/work/outputs/umap_coords.csv\")",
+            "before": "sc.tl.umap(adata)",
+            "justification": "export: capture the UMAP embedding underlying every later UMAP display.",
+            "purpose": "export"
+          },
+          {
+            "after": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# Export the full per-cluster differential-expression table (Wilcoxon)\n_leiden = adata.obs[\"leiden_res_0.50\"]\n_groups = (\n    list(_leiden.cat.categories)\n    if isinstance(_leiden.dtype, pd.CategoricalDtype)\n    else sorted(_leiden.astype(str).unique())\n)\n_deg_table = pd.concat(\n    [sc.get.rank_genes_groups_df(adata, group=g).assign(group=g) for g in _groups],\n    ignore_index=True,\n)\n_deg_table.to_csv(\"/work/outputs/rank_genes_groups_wilcoxon.csv\", index=False)",
+            "before": "# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")",
+            "justification": "export: use the source's own getter (sc.get.rank_genes_groups_df, as in cell 72) to format the already-computed rank_genes_groups result for every cluster.",
+            "purpose": "export"
+          },
+          {
+            "after": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# Export the final annotated AnnData object and its per-cell metadata\nadata.obs.to_csv(\"/work/outputs/cell_metadata_final.csv\")\nadata.write_h5ad(\"/work/outputs/adata_final.h5ad\", compression=\"gzip\")",
+            "before": "dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)",
+            "justification": "export: final obs (sample, QC, doublet, all leiden resolutions, cell_type_lvl1) and the complete final AnnData state (counts layer, PCA, graph, UMAP, uns) are the workflow's consolidated endpoint.",
+            "purpose": "export"
+          }
+        ],
+        "disposition": "prepare",
+        "environment_rationale": "python:3.13.13-slim-bookworm base; scanpy, anndata, umap-learn and numba all ship cp313 wheels. /work/venv is created with pip and only stdlib modules are used in the staging helper besides the venv pip, so no extra system packages are required. The setup script is strict POSIX because the controller executes it with `sh` (dash on Debian bookworm), which does not support `set -o pipefail`; only `set -eu` is used and no pipelines are relied upon for correctness. RNGs (scrublet, UMAP, Leiden defaults) consume no network. The export additions only use numpy/pandas (scanpy dependencies) and scanpy's own getters, and preserve the module-level future import placement.",
+        "excluded_outputs": [
+          "All rendered figures (violin QC plot, QC scatter, highly_variable_genes plot, pca_variance_ratio plot, pca panels, all sc.pl.umap panels, both marker-gene dotplots, rank_genes_groups_dotplot, final per-gene UMAP): plotting-only visualizations; the underlying scientific data is exported instead and the plotting calls are left intact and executed.",
+          "The duplicate UMAP display of the leiden_res_0.02/0.50/2.00 clusters (code cell 55) repeats code cell 54 exactly; one embedding is exported.",
+          "The bare `print(adata.obs['sample'].value_counts())` and trailing `adata` repr (cell 5): represented by the per-sample counts implicit in the exported obs tables and h5ad.",
+          "The displayed `sc.get.rank_genes_groups_df(adata, group='7').head(5)` slice and the dc_cluster_genes list (cells 72-73): fully contained in rank_genes_groups_wilcoxon.csv for group 7 (top-5 rows).",
+          "Dotplot underlying mean-expression matrices (marker genes x cluster and top-5 DEGs x cluster): these statistics are computed transiently inside the plotting calls and are not stored results of the source; recomputing group statistics would be an alternative analysis, so they are excluded while the cluster labels, marker-gene list (a source input) and the full DEG table are exported.",
+          "The pca plot gene loadings (varm['PCs']) are kept inside adata_final.h5ad rather than as a separate CSV (redundant with the h5ad; per-cell PCs and variance ratios are exported as CSV)."
+        ],
+        "explanation": "The notebook runs one scanpy preprocessing/clustering workflow over two 10X Multiome bone-marrow samples (figshare DOI 10.6084/m9.figshare.22716739.v1, staged at /inputs). The plan keeps every analysis branch unchanged (QC metrics, filtering, scrublet doublets, log1p normalization, HVG, PCA, neighbors/UMAP, Leiden at 4 parameter settings with level-1 annotation, Wilcoxon rank_genes_groups), replaces only the pooch DOI network retrieval with a faithful local load of the checksum-verified staged files, and appends exports of the underlying scientific data behind each plot (per-cell QC metrics, gene table, PCA coordinates + variance ratios, UMAP, final per-cell metadata incl. clusters/doublets/cell types, full DEG table, and the complete final AnnData). All plotting calls remain intact and run under MPLBACKEND=Agg. This resubmission fixes the single setup failure: the setup script now uses only POSIX `set -eu` (no `pipefail`), since the controller runs it with `sh` (dash), where `set -o pipefail` is an illegal option.",
+        "setup_sh": "set -eu\n\nmkdir -p /work /work/cache /work/outputs /inputs\n\npython3 -m venv /work/venv\n/work/venv/bin/python -m pip install --upgrade pip setuptools wheel\n# The notebook declares no dependency versions; install the current stable scverse stack\n# required by this tutorial (igraph+leidenalg for flavor=\"igraph\", umap-learn for the\n# UMAP step, pooch per the source imports). Resolved versions are recorded below.\n# No pipelines are used, so plain `set -eu` (POSIX sh / dash compatible) is sufficient.\n/work/venv/bin/python -m pip install --no-cache-dir scanpy anndata pooch leidenalg igraph umap-learn\n\n# Smoke-check the environment (not scientific analysis)\n/work/venv/bin/python -c \"import scanpy, anndata, pooch, igraph, leidenalg, umap, numpy, pandas, scipy, sklearn\"\n\n# Stage the two source input files and record identities plus SHA-256 checksums\n/work/venv/bin/python - <<'PY'\nimport hashlib\nimport json\nimport os\nimport subprocess\nimport urllib.request\n\nspecs = [\n    {\n        \"name\": \"s1d1_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347877\",\n        \"bytes\": 22848647,\n        \"provider_md5\": \"a99285913ea3f3d22600d3d2f8a88e34\",\n    },\n    {\n        \"name\": \"s1d3_filtered_feature_bc_matrix.h5\",\n        \"url\": \"https://ndownloader.figshare.com/files/40347880\",\n        \"bytes\": 20432298,\n        \"provider_md5\": \"825f7f7578e3dc0b8955f5a97a402338\",\n    },\n]\n\ndef digest(path, algo):\n    h = hashlib.new(algo)\n    with open(path, \"rb\") as f:\n        for chunk in iter(lambda: f.read(1 << 20), b\"\"):\n            h.update(chunk)\n    return h.hexdigest()\n\nos.makedirs(\"/inputs\", exist_ok=True)\ninputs = []\nfor spec in specs:\n    path = os.path.join(\"/inputs\", spec[\"name\"])\n    if not (os.path.exists(path) and digest(path, \"md5\") == spec[\"provider_md5\"]):\n        urllib.request.urlretrieve(spec[\"url\"], path)\n    assert digest(path, \"md5\") == spec[\"provider_md5\"], path\n    assert os.path.getsize(path) == spec[\"bytes\"], path\n    inputs.append(\n        {\n            **spec,\n            \"doi\": \"10.6084/m9.figshare.22716739.v1\",\n            \"local_path\": path,\n            \"sha256\": digest(path, \"sha256\"),\n            \"provider_md5_verified\": True,\n        }\n    )\n\nfreeze = subprocess.run(\n    [\"/work/venv/bin/pip\", \"freeze\"], capture_output=True, text=True, check=True\n).stdout.splitlines()\ndeps = dict(line.split(\"==\", 1) for line in freeze if \"==\" in line)\n\nrecord = {\n    \"source_notebook\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\",\n    \"data_doi\": \"10.6084/m9.figshare.22716739.v1\",\n    \"inputs\": inputs,\n    \"resolved_dependencies\": deps,\n}\nwith open(\"/work/setup-inputs.json\", \"w\") as f:\n    json.dump(record, f, indent=2)\nPY",
+        "unresolved_assumptions": [
+          "The source notebook declares no dependency versions; the latest stable scanpy/anndata/umap-learn/igraph/leidenalg stack (cp313 compatible) is installed and its exact resolved versions written to /work/setup-inputs.json. Feature use (sc.pp.scrublet batch_key, flavor='igraph' leiden, sc.get.rank_genes_groups_df) is stable across recent scanpy 1.10/1.11 releases.",
+          "The source sets no random seeds; scrublet, UMAP and Leiden run with library defaults, so embeddings/cluster IDs may vary slightly in label identity across runs, faithful to the source behavior.",
+          "Variable variance-ratio storage is read via adata.uns['pca']['variance_ratio'], the interface used by both recent scanpy layouts (dict entry or structured field with that name).",
+          "Setup prefers files already staged under /inputs; if absent or MD5-mismatched it downloads them from the figshare URLs and verifies provider MD5, size and SHA-256 before recording. The setup script itself is strict POSIX (no pipefail) because the controller runs it with dash."
+        ]
+      }
+    }
+  ],
+  "setup_seconds_remaining": 1749,
+  "source": {
+    "license": "BSD-3-Clause",
+    "provenance": {
+      "data_source": {
+        "doi": "10.6084/m9.figshare.22716739.v1",
+        "files": [
+          {
+            "bytes": 22848647,
+            "name": "s1d1_filtered_feature_bc_matrix.h5",
+            "provider_md5": "a99285913ea3f3d22600d3d2f8a88e34",
+            "url": "https://ndownloader.figshare.com/files/40347877"
+          },
+          {
+            "bytes": 20432298,
+            "name": "s1d3_filtered_feature_bc_matrix.h5",
+            "provider_md5": "825f7f7578e3dc0b8955f5a97a402338",
+            "url": "https://ndownloader.figshare.com/files/40347880"
+          }
+        ],
+        "license": {
+          "name": "CC BY 4.0",
+          "url": "https://creativecommons.org/licenses/by/4.0/",
+          "value": 1
+        },
+        "metadata_url": "https://api.figshare.com/v2/articles/22716739/versions/1",
+        "title": "NeurIPS 2021 Benchmark dataset"
+      },
+      "notebook": {
+        "license": "BSD-3-Clause",
+        "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+        "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+        "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb"
+      },
+      "verification": {
+        "data_files_downloaded": false,
+        "notebook_downloaded_and_hashed": true,
+        "provider_checksums_verified_against_download": false
+      }
+    },
+    "question_text": "--- markdown cell 0 ---\n# Preprocessing and clustering\n\n--- code cell 1 ---\n# Core scverse libraries\nfrom __future__ import annotations\n\nimport anndata as ad\n\n# Data retrieval\nimport pooch\n\nimport scanpy as sc\n\n--- code cell 2 ---\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n\n--- markdown cell 3 ---\nThe data used in this basic preprocessing and clustering tutorial was collected from bone marrow mononuclear cells of healthy human donors and was part of [openproblem's NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) {cite}`Luecken2021`. The samples used in this tutorial were measured using the 10X Multiome Gene Expression and Chromatin Accessability kit. \n\n\nWe are reading in the count matrix into an {class}`~anndata.AnnData` object, which holds many slots for annotations and different representations of the data.\nSee {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. \n\n--- code cell 4 ---\nEXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()\n\n--- code cell 5 ---\nsamples = {\n    \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n    \"s1d3\": \"s1d3_filtered_feature_bc_matrix.h5\",\n}\nadatas = {}\n\nfor sample_id, filename in samples.items():\n    path = EXAMPLE_DATA.fetch(filename)\n    sample_adata = sc.read_10x_h5(path)\n    sample_adata.var_names_make_unique()\n    adatas[sample_id] = sample_adata\n\nadata = ad.concat(adatas, label=\"sample\")\nadata.obs_names_make_unique()\nprint(adata.obs[\"sample\"].value_counts())\nadata\n\n--- markdown cell 6 ---\nThe data contains ~8,000 cells per sample and 36,601 measured genes. We'll now investigate these with a basic preprocessing and clustering workflow.\n\n--- markdown cell 7 ---\n## Quality Control\n\n--- markdown cell 8 ---\nThe scanpy function {func}`~scanpy.pp.calculate_qc_metrics` calculates common quality control (QC) metrics, which are largely based on `calculateQCMetrics` from scater {cite}`McCarthy2017`. One can pass specific gene population to {func}`~scanpy.pp.calculate_qc_metrics` in order to calculate proportions of counts for these populations. Mitochondrial, ribosomal and hemoglobin genes are defined by distinct prefixes as listed below. \n\n--- code cell 9 ---\n# mitochondrial genes, \"MT-\" for human, \"mt-\" for mouse\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\n# ribosomal genes\nadata.var[\"ribo\"] = adata.var_names.str.startswith((\"RPS\", \"RPL\"))\n# hemoglobin genes\nadata.var[\"hb\"] = adata.var_names.str.contains(\"^HB[^(P)]\")\n\n--- code cell 10 ---\nsc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n--- markdown cell 11 ---\nOne can now inspect violin plots of some of the computed QC metrics:\n\n* the number of genes expressed in the count matrix\n* the total counts per cell\n* the percentage of counts in mitochondrial genes\n\n--- code cell 12 ---\nsc.pl.violin(\n    adata,\n    [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n    jitter=0.4,\n    multi_panel=True,\n)\n\n--- markdown cell 13 ---\nAdditionally, it is useful to consider QC metrics jointly by inspecting a scatter plot colored by `pct_counts_mt`. \n\n--- code cell 14 ---\nsc.pl.scatter(adata, \"total_counts\", \"n_genes_by_counts\", color=\"pct_counts_mt\")\n\n--- markdown cell 15 ---\nBased on the QC metric plots, one could now remove cells that have too many mitochondrial genes expressed or too many total counts by setting manual or automatic thresholds. However, sometimes what appears to be poor QC metrics can be driven by real biology so we suggest starting with a very permissive filtering strategy and revisiting it at a later point. We therefore now only filter cells with less than 100 genes expressed and genes that are detected in less than 3 cells. \n\nAdditionally, it is important to note that for datasets with multiple batches, quality control should be performed for each sample individually as quality control thresholds can vary substantially between batches. \n\n--- code cell 16 ---\nsc.pp.filter_cells(adata, min_genes=100)\nsc.pp.filter_genes(adata, min_cells=3)\n\n--- markdown cell 17 ---\n### Doublet detection\n\nAs a next step, we run a doublet detection algorithm. Identifying doublets is crucial as they can lead to misclassifications or distortions in downstream analysis steps. Scanpy contains the doublet detection method Scrublet {cite}`Wolock2019`. Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets. {func}`scanpy.pp.scrublet` adds `doublet_score` and `predicted_doublet` to `.obs`. One can now either filter directly on `predicted_doublet` or use the `doublet_score` later during clustering to filter clusters with high doublet scores. \n\n--- code cell 18 ---\nsc.pp.scrublet(adata, batch_key=\"sample\")\n\n--- markdown cell 19 ---\nWe can remove doublets by either filtering out the cells called as doublets, or waiting until we've done a clustering pass and filtering out any clusters with high doublet scores.\n\n--- markdown cell 20 ---\n:::{seealso}\nAlternative methods for doublet detection within the scverse ecosystem are [DoubletDetection](https://github.com/JonathanShor/DoubletDetection) and [SOLO](https://docs.scvi-tools.org/en/stable/user_guide/models/solo.html). You can read more about these in the [Doublet Detection chapter](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#doublet-detection) of Single Cell Best Practices.\n:::\n\n--- markdown cell 21 ---\n## Normalization\n\nThe next preprocessing step is normalization. A common approach is count depth scaling with subsequent log plus one (log1p) transformation. Count depth scaling normalizes the data to a \u201csize factor\u201d such as the median count depth in the dataset, ten thousand (CP10k) or one million (CPM, counts per million). The size factor for count depth scaling can be controlled via `target_sum` in `pp.normalize_total`. We are applying median count depth normalization with log1p transformation (AKA log1PF).\n\n--- code cell 22 ---\n# Saving count data\nadata.layers[\"counts\"] = adata.X.copy()\n\n--- code cell 23 ---\n# Normalizing to median total counts\nsc.pp.normalize_total(adata)\n# Logarithmize the data\nsc.pp.log1p(adata)\n\n--- markdown cell 24 ---\n## Feature selection\n\nAs a next step, we want to reduce the dimensionality of the dataset and only include the most informative genes. This step is commonly known as feature selection. The scanpy function `pp.highly_variable_genes` annotates highly variable genes by reproducing the implementations of Seurat {cite}`Satija2015`, Cell Ranger {cite}`Zheng2017`, and Seurat v3 {cite}`Stuart2019` depending on the chosen `flavor`. \n\n--- code cell 25 ---\nsc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\n--- code cell 26 ---\nsc.pl.highly_variable_genes(adata)\n\n--- markdown cell 27 ---\n## Dimensionality Reduction\nReduce the dimensionality of the data by running principal component analysis (PCA), which reveals the main axes of variation and denoises the data.\n\n--- code cell 28 ---\nsc.tl.pca(adata)\n\n--- markdown cell 29 ---\nLet us inspect the contribution of single PCs to the total variance in the data. This gives us information about how many PCs we should consider in order to compute the neighborhood relations of cells, e.g. used in the clustering function {func}`~scanpy.tl.leiden` or {func}`~scanpy.tl.tsne`. In our experience, there does not seem to be signifigant downside to overestimating the numer of principal components.\n\n--- code cell 30 ---\nsc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n\n--- markdown cell 31 ---\nYou can also plot the principal components to see if there are any potentially undesired features (e.g. batch, QC metrics) driving signifigant variation in this dataset. In this case, there isn't anything too alarming, but it's a good idea to explore this.\n\n--- code cell 32 ---\nsc.pl.pca(\n    adata,\n    color=[\"sample\", \"sample\", \"pct_counts_mt\", \"pct_counts_mt\"],\n    dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)],\n    ncols=2,\n    size=2,\n)\n\n--- markdown cell 33 ---\n## Nearest neighbor graph construction and visualization\n\nLet us compute the neighborhood graph of cells using the PCA representation of the data matrix.\n\n--- code cell 34 ---\nsc.pp.neighbors(adata)\n\n--- markdown cell 35 ---\nThis graph can then be embedded in two dimensions for visualiztion with UMAP {cite:p}`McInnes2018`:\n\n--- code cell 36 ---\nsc.tl.umap(adata)\n\n--- markdown cell 37 ---\nWe can now visualize the UMAP according to the `sample`. \n\n--- code cell 38 ---\nsc.pl.umap(\n    adata,\n    color=\"sample\",\n    # Setting a smaller point size to get prevent overlap\n    size=2,\n)\n\n--- markdown cell 39 ---\nEven though the data considered in this tutorial includes two different samples, we only observe a minor batch effect and we can continue with clustering and annotation of our data. \n\nIf you inspect batch effects in your UMAP it can be beneficial to integrate across samples and perform batch correction/integration. We recommend checking out [`scanorama`](https://github.com/brianhie/scanorama) and [`scvi-tools`](https://scvi-tools.org) for batch integration.\n\n--- markdown cell 40 ---\n## Clustering\n\nAs with Seurat and many other frameworks, we recommend the Leiden graph-clustering method (community detection based on optimizing modularity) {cite}`Traag2019`. Note that Leiden clustering directly clusters the neighborhood graph of cells, which we already computed in the previous section.\n\n--- code cell 41 ---\n# Using the igraph implementation and a fixed number of iterations can be significantly faster,\n# especially for larger datasets\nsc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)\n\n--- code cell 42 ---\nsc.pl.umap(adata, color=[\"leiden\"])\n\n--- markdown cell 43 ---\n```{dropdown} How do I save a plot?\nYou can save a plot by directly accessing the returned Matplotlib figure:\n````python\nsc.pl.umap(adata, color=[\"leiden\"], show).figure.savefig(\"output_path.ext\")\n````\n```\n\n--- markdown cell 44 ---\n## Re-assess quality control and cell filtering \n\nAs indicated before, we will now re-assess our filtering strategy by visualizing different QC metrics using UMAP. \n\n--- code cell 45 ---\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"predicted_doublet\", \"doublet_score\"],\n    # increase horizontal space between panels\n    wspace=0.5,\n    size=3,\n)\n\n--- code cell 46 ---\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"log1p_total_counts\", \"pct_counts_mt\", \"log1p_n_genes_by_counts\"],\n    wspace=0.5,\n    ncols=2,\n)\n\n--- markdown cell 47 ---\n## Manual cell-type annotation\n\n--- markdown cell 48 ---\n:::{note}\nThis section of the tutorial is expanded upon using prior knowledge resources like automated assignment and gene enrichment in the scverse tutorial [here](https://scverse-tutorials.readthedocs.io/page/notebooks/basic-scrna-tutorial.html#cell-type-annotation)\n:::\n\n--- markdown cell 49 ---\nCell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.\n\n--- markdown cell 50 ---\nWe have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.\n\n--- markdown cell 51 ---\nCommonly and classically, cell type annotation uses those marker genes subsequent to the grouping of the cells into clusters. So, let's generate a set of clustering solutions which we can then use to annotate our cell types. Here, we will use the Leiden clustering algorithm which will extract cell communities from our nearest neighbours graph.\n\n--- code cell 52 ---\nfor res in [0.02, 0.5, 2.0]:\n    sc.tl.leiden(\n        adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\"\n    )\n\n--- markdown cell 53 ---\nNotably, the number of clusters that we define is largely arbitrary, and so is the `resolution` parameter that we use to control for it. As such, the number of clusters is ultimately bound to the stable and biologically-meaningful groups that we can ultimately distringuish, typically done by experts in the corresponding field or by using expert-curated prior knowledge in the form of markers.\n\n--- code cell 54 ---\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\n--- code cell 55 ---\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\n--- markdown cell 56 ---\nThough UMAPs should not be over-interpreted, here we can already see that in the highest resolution our data is over-clustered, while the lowest resolution is likely grouping cells which belong to distinct cell identities.\n\n--- markdown cell 57 ---\n### Marker gene set\n\n--- markdown cell 58 ---\nLet's define a set of marker genes for the main cell types that we expect to see in this dataset. These were adapted from [Single Cell Best Practices annotation chapter](https://www.sc-best-practices.org/cellular_structure/annotation.html), for a more detailed overview and best practices in cell type annotation, we refer the user to it.\n\n--- code cell 59 ---\nmarker_genes = {\n    \"CD14+ Mono\": [\"FCN1\", \"CD14\"],\n    \"CD16+ Mono\": [\"TCF7L2\", \"FCGR3A\", \"LYN\"],\n    # Note: DMXL2 should be negative\n    \"cDC2\": [\"CST3\", \"COTL1\", \"LYZ\", \"DMXL2\", \"CLEC10A\", \"FCER1A\"],\n    \"Erythroblast\": [\"MKI67\", \"HBA1\", \"HBB\"],\n    # Note HBM and GYPA are negative markers\n    \"Proerythroblast\": [\"CDK6\", \"SYNGR1\", \"HBM\", \"GYPA\"],\n    \"NK\": [\"GNLY\", \"NKG7\", \"CD247\", \"FCER1G\", \"TYROBP\", \"KLRG1\", \"FCGR3A\"],\n    \"ILC\": [\"ID2\", \"PLCG2\", \"GNLY\", \"SYNE1\"],\n    \"Naive CD20+ B\": [\"MS4A1\", \"IL4R\", \"IGHD\", \"FCRL1\", \"IGHM\"],\n    # Note IGHD and IGHM are negative markers\n    \"B cells\": [\n        \"MS4A1\",\n        \"ITGB1\",\n        \"COL4A4\",\n        \"PRDM1\",\n        \"IRF4\",\n        \"PAX5\",\n        \"BCL11A\",\n        \"BLK\",\n        \"IGHD\",\n        \"IGHM\",\n    ],\n    \"Plasma cells\": [\"MZB1\", \"HSP90B1\", \"FNDC3B\", \"PRDM1\", \"IGKC\", \"JCHAIN\"],\n    # Note PAX5 is a negative marker\n    \"Plasmablast\": [\"XBP1\", \"PRDM1\", \"PAX5\"],\n    \"CD4+ T\": [\"CD4\", \"IL7R\", \"TRBC2\"],\n    \"CD8+ T\": [\"CD8A\", \"CD8B\", \"GZMK\", \"GZMA\", \"CCL5\", \"GZMB\", \"GZMH\", \"GZMA\"],\n    \"T naive\": [\"LEF1\", \"CCR7\", \"TCF7\"],\n    \"pDC\": [\"GZMB\", \"IL3RA\", \"COBLL1\", \"TCF4\"],\n}\n\n--- code cell 60 ---\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.02\", standard_scale=\"var\")\n\n--- markdown cell 61 ---\nThere are fairly clear patterns of expression for our markers show here, which we can use to label our coarsest clustering with broad lineages.\n\n--- code cell 62 ---\nadata.obs[\"cell_type_lvl1\"] = adata.obs[\"leiden_res_0.02\"].map({\n    \"0\": \"Lymphocytes\",\n    \"1\": \"Monocytes\",\n    \"2\": \"B Cells\",\n    \"3\": \"Erythroid\",\n    \"4\": \"Erythroid\",\n})\n\n--- code cell 63 ---\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.50\", standard_scale=\"var\")\n\n--- markdown cell 64 ---\nThis seems like a resolution that suitable to distinguish most of the different cell types in our data. As such, let's try to annotate those by manually using the dotplot above, together with the UMAP of our clusters. Ideally, one would also look specifically into each cluster, and attempt to subcluster those if required.\n\n--- markdown cell 65 ---\n### Differentially-expressed Genes as Markers\n\n--- markdown cell 66 ---\nFurthermore, one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states. This is typically done using simple statistical tests, such as Wilcoxon and t-test, for each cluster vs the rest.\n\n--- code cell 67 ---\n# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n--- markdown cell 68 ---\nWe can then visualize the top 5 differentially-expressed genes on a dotplot.\n\n--- code cell 69 ---\nsc.pl.rank_genes_groups_dotplot(\n    adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n)\n\n--- markdown cell 70 ---\nWe can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).\n\n--- markdown cell 71 ---\nTo create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`\n\n--- code cell 72 ---\nsc.get.rank_genes_groups_df(adata, group=\"7\").head(5)\n\n--- code cell 73 ---\ndc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n--- markdown cell 74 ---\nYou may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider \"pseudo-bulking\" your data by sample (*e.g.* `sc.get.aggregate(adata, by=[\"sample\", \"cell_type\"], func=\"sum\", layer=\"counts\")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.",
+    "source": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+    "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+    "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+    "title": "Scanpy: Preprocessing and clustering",
+    "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb"
+  },
+  "source_diff": "--- baseline.py\n+++ reference.py\n@@ -22,13 +22,14 @@\n \n import scanpy as sc\n \n+import os\n+\n sc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n \n-EXAMPLE_DATA = pooch.create(\n-    path=pooch.os_cache(\"scverse_tutorials\"),\n-    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n-)\n-EXAMPLE_DATA.load_registry_from_doi()\n+# Original retrieved the count matrices via the pooch registry\n+# doi:10.6084/m9.figshare.22716739.v1/; those exact files (verified against the\n+# provider MD5s) are staged locally under /inputs by setup (see\n+# /work/setup-inputs.json), so the registry object is not needed offline.\n \n samples = {\n     \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n@@ -37,7 +38,7 @@\n adatas = {}\n \n for sample_id, filename in samples.items():\n-    path = EXAMPLE_DATA.fetch(filename)\n+    path = os.path.join(\"/inputs\", filename)\n     sample_adata = sc.read_10x_h5(path)\n     sample_adata.var_names_make_unique()\n     adatas[sample_id] = sample_adata\n@@ -58,6 +59,12 @@\n     adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n )\n \n+# Export the per-cell QC metrics (underlying data of the QC violin/scatter plots)\n+import numpy as np\n+import pandas as pd\n+\n+adata.obs.to_csv(\"/work/outputs/qc_metrics_prefilter_obs.csv\")\n+\n sc.pl.violin(\n     adata,\n     [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n@@ -82,9 +89,28 @@\n \n sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n \n+# Export gene-level annotations and the highly-variable-gene selection results\n+adata.var.to_csv(\"/work/outputs/var_annotations_hvg.csv\")\n+\n sc.pl.highly_variable_genes(adata)\n \n sc.tl.pca(adata)\n+\n+# Export PCA results: per-cell coordinates and per-PC variance ratios\n+# (underlying data of sc.pl.pca and sc.pl.pca_variance_ratio)\n+_var_ratio = np.asarray(adata.uns[\"pca\"][\"variance_ratio\"])\n+pd.DataFrame(\n+    {\n+        \"pc\": np.arange(1, len(_var_ratio) + 1),\n+        \"variance_ratio\": _var_ratio,\n+        \"cumulative_variance_ratio\": np.cumsum(_var_ratio),\n+    }\n+).to_csv(\"/work/outputs/pca_variance_ratio.csv\", index=False)\n+pd.DataFrame(\n+    adata.obsm[\"X_pca\"],\n+    index=adata.obs_names,\n+    columns=[f\"PC{i + 1}\" for i in range(adata.obsm[\"X_pca\"].shape[1])],\n+).to_csv(\"/work/outputs/pca_coords.csv\")\n \n sc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n \n@@ -99,6 +125,11 @@\n sc.pp.neighbors(adata)\n \n sc.tl.umap(adata)\n+\n+# Export the per-cell UMAP coordinates\n+pd.DataFrame(\n+    adata.obsm[\"X_umap\"], index=adata.obs_names, columns=[\"UMAP1\", \"UMAP2\"]\n+).to_csv(\"/work/outputs/umap_coords.csv\")\n \n sc.pl.umap(\n     adata,\n@@ -193,6 +224,19 @@\n # Obtain cluster-specific differentially expressed genes\n sc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n \n+# Export the full per-cluster differential-expression table (Wilcoxon)\n+_leiden = adata.obs[\"leiden_res_0.50\"]\n+_groups = (\n+    list(_leiden.cat.categories)\n+    if isinstance(_leiden.dtype, pd.CategoricalDtype)\n+    else sorted(_leiden.astype(str).unique())\n+)\n+_deg_table = pd.concat(\n+    [sc.get.rank_genes_groups_df(adata, group=g).assign(group=g) for g in _groups],\n+    ignore_index=True,\n+)\n+_deg_table.to_csv(\"/work/outputs/rank_genes_groups_wilcoxon.csv\", index=False)\n+\n sc.pl.rank_genes_groups_dotplot(\n     adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n )\n@@ -207,3 +251,7 @@\n     frameon=False,\n     ncols=3,\n )\n+\n+# Export the final annotated AnnData object and its per-cell metadata\n+adata.obs.to_csv(\"/work/outputs/cell_metadata_final.csv\")\n+adata.write_h5ad(\"/work/outputs/adata_final.h5ad\")\n",
+  "staged_original_inputs": {
+    "files": [
+      {
+        "bytes": 22848647,
+        "local_path": "/inputs/s1d1_filtered_feature_bc_matrix.h5",
+        "name": "s1d1_filtered_feature_bc_matrix.h5",
+        "provider_checksum_verified": true,
+        "provider_md5": "a99285913ea3f3d22600d3d2f8a88e34",
+        "sha256": "322c30a7a4905f7f113472442d4aa2c81a1ad736c86651f6c0b81e5b2ff94ac8",
+        "url": "https://ndownloader.figshare.com/files/40347877"
+      },
+      {
+        "bytes": 20432298,
+        "local_path": "/inputs/s1d3_filtered_feature_bc_matrix.h5",
+        "name": "s1d3_filtered_feature_bc_matrix.h5",
+        "provider_checksum_verified": true,
+        "provider_md5": "825f7f7578e3dc0b8955f5a97a402338",
+        "sha256": "ca40b287fac57ac2048f11f56f1b630c7c188718908fc217c6baf2e49bdb1982",
+        "url": "https://ndownloader.figshare.com/files/40347880"
+      }
+    ]
+  }
+}

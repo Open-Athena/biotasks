@@ -1311,3 +1311,14 @@ cap beyond context capacity, and removal of the extra request/response byte caps
 Word-count guidance is still awaiting review. No pipeline execution was launched
 and the earlier explorer was not changed. Browser checks exercised all nine steps,
 verbatim prompt display, hash navigation and mobile width without JavaScript errors.
+
+The user requested actual per-stage input/output artifacts for the specific
+notebook. The map now opens on the rendered original cells beside the complete
+converted Python script. It embeds the final reference preparation/review inputs,
+plans, setup/script/diff, execution records, observed file profiles and incomplete
+coverage outcome. Newly included input records were byte-verified against original
+archive manifests. The recorded endpoint prompt is distinguished from the current
+template. No accepted endpoint proposal, validation, new repair or coverage-review
+output is invented. Full biological files remain remote; per-column examples are
+not represented as aligned table rows. Browser checks exercised every file selector,
+all nine stages, exact converted script/prompt display and mobile layout.

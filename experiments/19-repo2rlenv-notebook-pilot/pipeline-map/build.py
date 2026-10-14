@@ -2,11 +2,12 @@
 
 import hashlib
 import json
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
 HERE = Path(__file__).resolve().parent
-REVISION = "79dd9c3584a4fc7ae82161761f14b0a26c796b94"
+REVISION = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 BASE = f"https://github.com/Open-Athena/biotasks/blob/{REVISION}/"
 EXP = "experiments/19-repo2rlenv-notebook-pilot/"
 
@@ -315,7 +316,141 @@ for stage in STAGES:
         stage["prompt_url"] = BASE + path
         stage["prompt_sha256"] = hashlib.sha256(content.encode()).hexdigest()
 
+DOCUMENTS = {}
+
+
+def document(key, label, path, *, text=None, field=None):
+    value = (ROOT / EXP / path).read_text() if text is None else text
+    if field:
+        value = json.loads(value)[field]
+        value = value if isinstance(value, str) else json.dumps(value, indent=2)
+    DOCUMENTS[key] = dict(label=label, path=path, text=value)
+    return key
+
+
+seed = json.loads((ROOT / EXP / "seeds/current.json").read_text())[0]
+ref = "reference-runs/003/"
+attempt = ref + "attempt-2/"
+cov = "coverage-runs/001/"
+ev = "pipeline-map/evidence/"
+document(
+    "notebook",
+    "Original notebook cells · rendered text",
+    "seeds/current.json",
+    text=seed["question_text"],
+)
+document("seed", "Seed + provenance", "seeds/current.json", text=json.dumps(seed, indent=2))
+document("baseline", "Converted source · baseline.py", "reference-inputs/scanpy/baseline.py")
+document("conversion", "Conversion record", "reference-inputs/scanpy/conversion.json")
+document("staged", "Original data files · staging receipt", ref + "staged-inputs.json")
+document(
+    "prepare-input", "Exact preparation input · all fields", ev + "reference-preparation-input.json"
+)
+document(
+    "review-input",
+    "Exact preparation-review input · all fields",
+    ev + "reference-review-input.json",
+)
+document(
+    "coverage-input",
+    "Exact endpoint-creation input · all fields",
+    ev + "endpoint-creation-input.json",
+)
+document(
+    "used-prompt", "Endpoint prompt used in this recorded run", ev + "endpoint-creation-prompt.md"
+)
+for key, label, filename in [
+    ("plan", "GLM preparation plan", "plan.json"),
+    ("review", "GLM preparation review", "review.json"),
+    ("script", "Executed source · reference.py", "reference.py"),
+    ("diff", "Changes to the converted source", "source.diff"),
+    ("setup", "Generated dependency/setup script", "setup.sh"),
+    ("execution", "Reference execution result", "execution.json"),
+    ("stdout", "Reference stdout/stderr", "reference.log"),
+    ("inventory", "Exported files · sizes and hashes", "artifacts.json"),
+    ("environment", "Resolved dependencies", "environment.txt"),
+]:
+    document(key, label, attempt + filename)
+document("profiles", "All observed file profiles", cov + "profiles/all.json")
+document("inspection", "Inspection outcome", cov + "inspection.json")
+document("retrieval", "Retrieved file identities", cov + "retrieval.json")
+document("coverage-result", "Endpoint-creation outcome · incomplete", cov + "result.json")
+document("coverage-summary", "Request outcomes and token usage", cov + "summary.json")
+profiles = json.loads(DOCUMENTS["profiles"]["text"])
+profile_keys = []
+for i, profile in enumerate(profiles):
+    profile_keys.append(
+        document(
+            f"profile-{i}",
+            profile["path"] + " · observed profile",
+            cov + "profiles/" + profile["path"] + ".profile.json",
+        )
+    )
+
+RECORDS = {
+    "convert": (
+        ["notebook", "seed"],
+        ["baseline", "conversion"],
+        "Actual source conversion",
+        "The input pane shows notebook cells rendered as text; the output pane is the actual complete plain Python script. Conversion did not execute it.",
+    ),
+    "prepare": (
+        ["prepare-input", "notebook", "baseline", "staged"],
+        ["plan", "setup", "script", "diff"],
+        "Reference campaign 003 · preparation pass 2",
+        "This is the final successful preparation pass, after earlier setup/dependency failures. Its exact input includes the earlier feedback. The plan is GLM output; the script and diff are materialized programmatically from that plan.",
+    ),
+    "reference-review": (
+        ["review-input", "plan", "diff"],
+        ["review"],
+        "Reference campaign 003 · review pass 2",
+        "The review was made before execution. Its approval is a static assessment; future-tense checks in it are not measured results.",
+    ),
+    "execute": (
+        ["script", "setup", "staged"],
+        ["execution", "stdout", "inventory", "environment"],
+        "Reference campaign 003 · successful attempt 2",
+        "The full analysis completed in 136.55 seconds and exported eight files. The large biological files are retained remotely, not embedded here. Their actual profiles are available in step 05; this viewer does not reconstruct CSV rows from per-column examples.",
+    ),
+    "inspect": (
+        ["inventory", "retrieval"],
+        ["inspection", *profile_keys, "profiles"],
+        "Coverage campaign 001 · observed profiles",
+        "These are measured profiles of the eight saved reference files. CSV examples are independent samples per column, not aligned row previews. HDF5 previews are partial; full matrices are not displayed.",
+    ),
+    "create": (
+        ["coverage-input", "used-prompt", "notebook", "script", "profiles"],
+        ["coverage-result", "coverage-summary"],
+        "Coverage campaign 001 · no accepted proposal",
+        "Both responses hit the 32,000-token limit. No endpoint proposal was accepted. These are controller outcome records, not a successful model output. The exact prompt used in that run differs from the current template shown below.",
+    ),
+    "check": (
+        [],
+        [],
+        "Not reached for a complete endpoint proposal",
+        "The adapter rejected the truncated responses before an endpoint proposal reached schema/evidence validation. There is no validation result to display for this step.",
+    ),
+    "repair": (
+        [],
+        [],
+        "New one-repair sequence has not run",
+        "The earlier run made an output-limit recovery request, not the newly agreed repair of a proposal rejected by programmatic checks. No input/output pair exists for this new step yet.",
+    ),
+    "coverage-review": (
+        [],
+        [],
+        "Not run",
+        "Endpoint creation did not produce an accepted proposal, so the independent coverage review was never called. There is no review response to display.",
+    ),
+}
+for stage in STAGES:
+    inputs, outputs, label, explanation = RECORDS[stage["id"]]
+    stage["record"] = dict(inputs=inputs, outputs=outputs, label=label, explanation=explanation)
+
 template = (HERE / "template.html").read_text()
 data = json.dumps(STAGES, ensure_ascii=False).replace("<", "\\u003c")
-(HERE / "index.html").write_text(template.replace("__STAGE_DATA__", data))
+documents = json.dumps(DOCUMENTS, ensure_ascii=False).replace("<", "\\u003c")
+(HERE / "index.html").write_text(
+    template.replace("__STAGE_DATA__", data).replace("__DOCUMENT_DATA__", documents)
+)
 print("Built", HERE / "index.html")
