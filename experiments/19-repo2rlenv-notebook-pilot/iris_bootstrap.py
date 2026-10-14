@@ -95,6 +95,22 @@ def export(root, prefix):
         json.dump({"files": receipts, "download_checked": True}, stream)
 
 
+def export_on_host(root, prefix, *, deadline):
+    """Use the provisioned storage client without adding it to upstream's lock."""
+    command(
+        [
+            os.environ["BIOTASKS_EXPORT_PYTHON"],
+            str(Path(__file__).resolve()),
+            "--export",
+            str(root),
+            prefix,
+        ],
+        cwd=root.parent,
+        deadline=deadline,
+        log=root.parent / "reference-export.log",
+    )
+
+
 def main():
     from iris.client.client import iris_ctx
     from iris.cluster.types import JobName
@@ -181,6 +197,7 @@ def main():
             "BIOTASKS_RUNTIME_WHEEL": str(wheel),
             "BIOTASKS_SEED": str(inputs / "seeds.json"),
             "BIOTASKS_CONFIG": str(inputs / "campaign-config.json"),
+            "BIOTASKS_EXPORT_PYTHON": sys.executable,
         }
         if (inputs / "continuation.tar.gz").exists():
             unpack(inputs / "continuation.tar.gz", evidence / "continuation")
@@ -207,4 +224,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) == 4 and sys.argv[1] == "--export":
+        export(Path(sys.argv[2]), sys.argv[3])
+    else:
+        main()

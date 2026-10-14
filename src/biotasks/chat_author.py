@@ -31,6 +31,10 @@ class IncompleteCompletion(RuntimeError):
     """A preserved response must not execute tools or be silently regenerated."""
 
 
+class OutputTokenLimit(IncompleteCompletion):
+    """A received and accounted response stopped at the provider's token limit."""
+
+
 @dataclass(frozen=True)
 class ChatLimits:
     max_output_tokens: int = 16000
@@ -175,6 +179,8 @@ class GLMChatAuthor:
             choice = choices[0]
             if not isinstance(choice, dict):
                 raise IncompleteCompletion("Malformed model choice")
+            if choice.get("finish_reason") == "length":
+                raise OutputTokenLimit("Response reached its output-token limit; no tool executed")
             if choice.get("finish_reason") not in {"stop", "tool_calls"}:
                 raise IncompleteCompletion("Incomplete model response; no tool executed")
             message = choice.get("message", {})

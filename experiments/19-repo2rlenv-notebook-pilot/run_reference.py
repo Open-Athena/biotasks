@@ -78,6 +78,7 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
     limits = ChatLimits(
         max_output_tokens=config["max_output_tokens"],
         request_timeout_sec=config["request_timeout_seconds"],
+        reasoning_effort=config["reasoning_effort"],
     )
     client = AsyncOpenAI(
         base_url=endpoint,
@@ -101,15 +102,39 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
         "cleanup_verified": False,
     }
     feedback = []
+    operation_index = 0
 
     def dispatch(argv, timeout):
+        nonlocal operation_index
         if deadline - time.time() < timeout + config["cleanup_seconds"]:
             raise TimeoutError("Insufficient remaining time for operation and cleanup")
+        operation_index += 1
+        path = root / "operations" / f"{operation_index:03d}.json"
+        record = {
+            "argv": argv,
+            "timeout_seconds": timeout,
+            "started": time.time(),
+            "state": "uncertain",
+        }
+        save_record(path, record)
         # Explicit OS deadline bounds execution even if the provider response is lost.
-        return worker.exec(
+        reply = worker.exec(
             ["timeout", "--signal=TERM", "--kill-after=5", str(timeout), *argv],
             timeout=timeout + 15,
-        ).checked("Reference operation")
+        )
+        save_record(
+            path,
+            {
+                **record,
+                "state": "returned",
+                "finished": time.time(),
+                "returncode": reply.returncode,
+                "stdout": reply.stdout[-24000:],
+                "stderr": reply.stderr[-8000:],
+                "truncated": len(reply.stdout) > 24000 or len(reply.stderr) > 8000,
+            },
+        )
+        return reply.checked("Reference operation")
 
     def upload(path, name):
         worker.upload(path, "/work/" + name)
@@ -129,7 +154,10 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
                 "limitations": "Representative outbound TCP probes, not exhaustive attestation",
             },
         )
-        if any(row["reachable"] is blocked for row in observations):
+        expected = [
+            {"host": host, "port": port, "reachable": not blocked} for host, port in TARGETS
+        ]
+        if observations != expected:
             raise RuntimeError("Network probe did not establish the required state")
 
     async def call(schema, kind, index, context, validator=None):
@@ -368,9 +396,13 @@ async def run(config, *, seed, root, deadline, endpoint, credential):
             # as the sandbox. Reuse the existing hash-verified private export.
             result.update(finished=time.time(), setup_seconds_remaining=setup_remaining)
             save_record(root / "result.json", result)
-            from iris_bootstrap import export
+            from iris_bootstrap import export_on_host
 
-            export(root, os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/reference")
+            export_on_host(
+                root,
+                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/reference",
+                deadline=deadline - config["cleanup_seconds"],
+            )
         finally:
             try:
                 cleaned = cleanup(owner, provider) if creation_started else {"passed": True}

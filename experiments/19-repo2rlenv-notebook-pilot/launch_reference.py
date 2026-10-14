@@ -19,6 +19,7 @@ def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, b
         "upstream.tar.gz": upstream_archive.read_bytes(),
         "seeds.json": frozen_file(repo, revision, EXPERIMENT + "/seeds/current.json"),
         "bootstrap.py": frozen_file(repo, revision, EXPERIMENT + "/iris_bootstrap.py"),
+        "diagnostics.py": frozen_file(repo, revision, EXPERIMENT + "/recover_evidence.py"),
         "campaign-config.json": json.dumps(config, indent=2).encode(),
     }
     files["inputs.json"] = json.dumps(

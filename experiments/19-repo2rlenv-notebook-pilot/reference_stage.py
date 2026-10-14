@@ -10,8 +10,9 @@ from pathlib import Path
 
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.tasksmith.author.artifact import artifact_stage, canonical_digest
+from repo2rlenv.tasksmith.author.bridge import ProviderOutputError
 
-from biotasks.chat_author import GLMChatAuthor
+from biotasks.chat_author import GLMChatAuthor, OutputTokenLimit
 
 
 async def stage(
@@ -29,7 +30,7 @@ async def stage(
     max_requests,
     validate=None,
 ):
-    """One bounded stage; no automatic provider retry or hidden task edits."""
+    """Use upstream's one output recovery, never retry an uncertain transport."""
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
     root.mkdir(parents=True, exist_ok=False)
     identity = {
@@ -50,6 +51,16 @@ async def stage(
         deadline=deadline,
         limits=limits,
     )
+
+    async def run_author(**kwargs):
+        try:
+            return await author(**kwargs)
+        except OutputTokenLimit as error:
+            # The response is recorded and its request slot consumed. Upstream
+            # permits one concise resubmission within the same stage allowance.
+            # Transport errors and other incomplete responses remain terminal.
+            raise ProviderOutputError(str(error)) from error
+
     return await artifact_stage(
         schema=schema,
         stage=name,
@@ -64,6 +75,6 @@ async def stage(
         max_turns=max_requests,
         deadline=deadline,
         validate=validate,
-        agent_runner=author,
+        agent_runner=run_author,
         agent_runner_identity=canonical_digest(identity),
     )

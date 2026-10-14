@@ -1137,3 +1137,30 @@ loopback access (six cases in that file). Ruff, formatting, ty and pre-commit
 passed. Tests used synthetic fixtures and scripted model responses; the source
 conversion is static evidence, not scientific execution. The largest measured
 local test peak was 130,800 KiB under the shared-node guard.
+
+### 2026-10-14: first reference run and bounded infrastructure recovery
+
+Campaign `artifact-reference-001` used checkpoint `9ff57fb9a9cf181ab18868a18b3c957a14650010`.
+Both original data files downloaded and passed the source checksums in five
+seconds. The sandbox reported the requested 4 CPUs, 8 GiB RAM and 10 GiB disk.
+The first GLM preparation response ended at 24,000 output tokens, including
+21,453 reasoning tokens. No partial tool was executed, so no generated setup
+or scientific computation ran. This does not show that the source is broken.
+
+Early durable export selected the upstream environment, which lacks the host's
+S3 client. Final export in the host environment succeeded, then diagnostic
+printing exposed a missing helper in the frozen payload. A read-only recovery
+worker restored the original hash-verified records. Owned sandbox deletion was
+verified. [Selected records and the original archive manifest](reference-runs/001/summary.json)
+preserve this outcome; full model evidence remains in the private campaign archive.
+
+The replacement uses the provisioned host Python for storage export, freezes the
+diagnostic helper, and records commands before dispatch and their returned
+outputs. It checks the complete expected network-probe result. GLM receives a
+32,000-token output allowance with medium reasoning. Only definite received
+token-limit responses enter upstream's one bounded recovery; partial tools never
+execute, and transport uncertainty remains terminal. The source and scientific
+prompts are unchanged. Seventeen focused adapter/reference regressions passed
+with a 132,472 KiB peak. Campaign `artifact-reference-002` reserves another $5;
+conservative reservations total $86, with $14 unallocated and actual charges
+unknown. This stays within the standing $100 authorization without a new request.

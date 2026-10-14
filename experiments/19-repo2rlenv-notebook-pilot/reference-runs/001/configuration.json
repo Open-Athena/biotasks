@@ -1,0 +1,24 @@
+{
+  "artifact_download_ceiling_bytes": 2147483648,
+  "base_image": "python:3.13.13-slim-bookworm",
+  "campaign": "artifact-reference-001",
+  "campaign_seconds": 7200,
+  "cleanup_seconds": 300,
+  "daytona_budget_usd": "5.00",
+  "entrypoint": "run_reference.py",
+  "max_output_tokens": 24000,
+  "max_repairs": 2,
+  "max_requests": 45,
+  "prepare_requests_per_pass": 12,
+  "reference_seconds": 600,
+  "request_timeout_seconds": 600,
+  "review_requests_per_pass": 3,
+  "scope": "Convert, prepare, independently review and execute the full source reference; stop before task construction, quality-loop grading or a blind solver.",
+  "setup_seconds": 1800,
+  "source_directory": "reference-inputs/scanpy",
+  "task": {
+    "cpus": 4,
+    "disk_gib": 10,
+    "memory_gib": 8
+  }
+}

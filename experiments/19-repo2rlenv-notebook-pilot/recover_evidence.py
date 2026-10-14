@@ -15,6 +15,7 @@ SELECTED = {
     "bootstrap-status.json",
     "campaign.log",
     "setup.log",
+    "reference-export.log",
     "inputs.json",
     "pilot/started.json",
     "pilot/compatibility.json",
@@ -63,6 +64,7 @@ def main():
             or relative.startswith("pilot/quality/trials/")
             or relative.startswith("trials/")
             or relative.startswith("continuation/")
+            or (relative.startswith("reference/") and "/outputs/" not in relative)
         )
         if not selected:
             continue

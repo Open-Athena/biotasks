@@ -56,10 +56,16 @@ including malformed-response recovery. The whole job has two hours plus five
 minutes for cleanup. These are ceilings, not expected usage. The solver time
 allowance remains a separate unresolved decision and is not exercised here.
 
-The first campaign reserves $5 from the standing $100 Daytona authorization.
-The aggregate reservation becomes $81, leaving $19 unallocated. These conservative
-reservations are not measured charges. One Iris controller uses already approved
-reserved CPU capacity; GLM uses the approved free endpoint. No GPU is provisioned.
+The current model settings allow 32,000 output tokens with medium reasoning.
+A completely received, accounted response ending at its output-token limit may
+use upstream's one concise recovery within the original stage request allowance.
+Partial tools are never executed; uncertain transport outcomes are not retried.
+
+The second campaign reserves $5 from the standing $100 Daytona authorization.
+The aggregate reservation becomes $86, leaving $14 unallocated. These conservative
+reservations are not measured charges and do not account for any free credits.
+One Iris controller uses already approved reserved CPU capacity; GLM uses the
+approved free endpoint. No GPU is provisioned.
 
 `launch_reference.payload` freezes inputs from a committed Git revision and
 reuses the existing Iris submission/bootstrap mechanism. Submission receipts
@@ -67,6 +73,12 @@ are exclusive: an uncertain response requires reconciliation, not redispatch.
 Evidence is downloaded, hashed and copied to private durable storage before
 sandbox teardown; the existing ownership-label cleanup verifies absence.
 The bootstrap exports the final cleanup record as well.
+
+The first run's [record](reference-runs/001/summary.json) preserves a preparation
+response-length failure. Data staging and checksums succeeded; no generated setup
+or scientific computation ran, and sandbox deletion was verified. The replacement
+also fixes the storage-client environment and includes the diagnostic helper in
+the frozen payload.
 
 ## Remaining validation
 
