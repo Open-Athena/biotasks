@@ -1755,3 +1755,19 @@ manual scientific changes, task construction, solver, release or viewer changes.
 The initial two repeats are observations, not a portability or calibration claim.
 Reserve $2 within the standing $100 ceiling (conservative aggregate holds $98;
 actual provider invoices remain unavailable). Details: [reference replay](reference-replay.md).
+
+
+### Replay 001 result
+
+Both unchanged offline runs succeeded: 223.60 s and 178.18 s, with maximum child
+RSS 4.94 GiB and 4.77 GiB. All three exported files matched the original run's
+SHA-256 exactly, and matched each other. The saved uv lock, installed package
+list and original input hashes also matched. Zero model calls; no repairs.
+This supports repeatability of the pinned reference, not byte-hash grading or
+universal software equivalence. [Full result and evidence](replay-runs/001/README.md).
+The Iris job is terminal, cleanup passed and the full outputs were archived and
+download-verified. Forty-four focused offline tests and targeted lint passed;
+one stale setup-budget fixture was corrected to explicitly unset the value it
+intends to test. Threaded lifecycle tests passed outside the execution sandbox
+(the sandboxed attempt stalled at a fake thread call and was stopped).
+Stop before task construction/solver; comparison rules and controls are next.

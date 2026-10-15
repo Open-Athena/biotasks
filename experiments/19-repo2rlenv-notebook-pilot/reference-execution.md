@@ -159,3 +159,8 @@ snapshot, saved uv lock and unchanged source/exports. It runs two fresh offline
 processes and records byte comparisons, without model calls or scientific edits.
 This supplies initial repeatability evidence for the later acceptance-rule worker;
 it does not itself validate a grader. See [configuration](reference-replay.json).
+
+[Replay 001](replay-runs/001/README.md) completed both offline runs in 223.60 s and
+178.18 s. Every output file matched the original reference byte-for-byte. Zero
+model calls and verified cleanup. This establishes observed repeatability for
+these runs; grading rules and wrong-output controls remain unvalidated.

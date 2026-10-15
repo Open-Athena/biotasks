@@ -1,0 +1,64 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 1098166,
+        "exists": true,
+        "path": "cell_clusters_umap.csv",
+        "sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d"
+      },
+      {
+        "bytes": 28207516,
+        "exists": true,
+        "path": "rank_genes_groups_leiden_res_0.50.csv",
+        "sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b"
+      },
+      {
+        "bytes": 157,
+        "exists": true,
+        "path": "rank_genes_groups_params.json",
+        "sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+      }
+    ],
+    "declared_artifacts_present": true,
+    "semantic_fidelity_validated": false
+  },
+  "comparison_to_original": [
+    {
+      "baseline_sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d",
+      "byte_identical": true,
+      "path": "cell_clusters_umap.csv",
+      "replay_sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d"
+    },
+    {
+      "baseline_sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b",
+      "byte_identical": true,
+      "path": "rank_genes_groups_leiden_res_0.50.csv",
+      "replay_sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b"
+    },
+    {
+      "baseline_sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329",
+      "byte_identical": true,
+      "path": "rank_genes_groups_params.json",
+      "replay_sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+    }
+  ],
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "elapsed_seconds": 223.5951325893402,
+    "exit_code": 0,
+    "finished": 1792102736.8786685,
+    "log": "/work/reference.py:47: FutureWarning: The method set_figure_params is deprecated and will be removed in the future. Use :func:`scanpy.set_figure_params` instead\n  sc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/reference.py:85: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.\n  adata = ad.concat(adatas, label=\"sample\")\nWARNING: dendrogram data not found (using key=dendrogram_leiden_res_0.50). Running `sc.tl.dendrogram` with default parameters. For fine tuning it is recommended to run `sc.tl.dendrogram` independently.\nsample\ns1d1    8785\ns1d3    8340\nName: count, dtype: int64\n",
+    "peak_child_rss_kib": 5174544,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792102513.283536,
+    "timed_out": false
+  },
+  "number": 1,
+  "status": "executed"
+}
