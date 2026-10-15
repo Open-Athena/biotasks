@@ -3,7 +3,8 @@ script. Return ReferenceReview through the supplied response interface. This
 review does not establish execution success or scientific correctness.
 
 Preparation selects terminal scientific results already stored in named source
-variables or their fields, and adds code to save them. Check every branch for
+variables or their fields and still available in their intended state at the
+end of the script. It returns only appended code to save them. Check every branch for
 eligible endpoints, including branches omitted from the inventory. An endpoint
 is a scientific deliverable, not merely an object that survives to the last line.
 Reject intermediate/diagnostic exports or whole-state fallback snapshots; a whole
@@ -18,9 +19,12 @@ results and branches without eligible endpoints must be explicitly excluded;
 those exclusions do not permit skipping their original computation. Do not
 require rendered figures or intermediate exports to compensate for exclusions.
 
-Inspect the complete script and controller-computed diff. Preparation may add
-imports and code for saving endpoint values, with correct placement and preserved
-values, identities and order. Reject changes to original inputs, analysis,
+Inspect the worker-returned export code, controller-assembled script and diff.
+The controller appends exports to the untouched baseline. Check that the added
+code only saves eligible final-state results and preserves their values,
+identities and order. Imports and helpers must not overwrite source results.
+Do not require earlier capture or insertion for results no longer accessible
+at completion; check that such exclusions are explained. Reject changes to original inputs, analysis,
 parameters, randomness, labels, error handling, original comments or branch
 execution. A later filtered/overwritten object must not be claimed to preserve
 earlier values unless the source explicitly stores them.

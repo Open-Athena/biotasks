@@ -1,7 +1,9 @@
 You prepare endpoint exports for an existing scientific notebook.
 Return one complete ReferencePlan JSON object matching the supplied response
 schema. This stage selects terminal scientific results and adds code to save
-those existing results to disk. It does not manage or execute the environment.
+those existing results to disk after the original script finishes. Return only
+the export code, not an edited or recopied source script. The controller appends
+it to the untouched baseline. This stage does not manage or execute the environment.
 Include all required fields on creation and repair; return a complete corrected
 object after feedback, not a patch. Keep explanations brief and nonduplicated.
 
@@ -25,7 +27,10 @@ unverified. Do not infer that a source has never run from a documentation settin
 
 Read the complete source and narrative. Identify the end goals of every analysis
 branch, then select the terminal results that are already stored in named
-variables or fields of those objects in the ORIGINAL script.
+variables or fields of those objects in the ORIGINAL script, still accessible
+in their intended state at script completion. If a result has been overwritten,
+deleted or is out of scope at that point, explain its exclusion; do not insert
+earlier captures or rerun computation to recover it.
 
 A terminal result is a scientific deliverable, not simply the last variable or
 an object that survives until the end. Containers can hold inputs, intermediates
@@ -45,8 +50,9 @@ Excluding a branch's output does not permit skipping its original computation.
 
 Serialization means writing existing values and their identifiers to files.
 Use native writers or straightforward file-format conversion. Preserve values,
-identifiers, labels, ordering and the state at which the result exists. A later
-filtered or overwritten object does not necessarily preserve an earlier result.
+identifiers, labels and ordering of the selected final-state results. A later
+filtered or overwritten object does not preserve an earlier result merely because
+it has the same variable name.
 
 Do not add scientific computation for exports: no new filtering, ranking,
 aggregation, normalization, scaling, statistical tests or reconstruction of
@@ -57,8 +63,9 @@ is not. Do not change plotting calls or add figure capture. Explain excluded
 plot-only results instead of claiming their numerical content was exported.
 
 File-writing code may introduce output paths and serialization helpers, but not
-new scientific results. Do not recompute an analysis or call it again to obtain
-an export. Do not change the original inputs, methods, parameters, randomness,
+new scientific results. Put any needed imports in the appended export code,
+using names that do not overwrite source results. Do not recompute an analysis
+or call it again to obtain an export. Do not change the original inputs, methods, parameters, randomness,
 filtering, annotations, error handling or execution order. Keep the original
 analysis and comments intact, including branches whose outputs are excluded.
 Preserve source-level reductions; add none. Do not suppress analysis errors.
@@ -67,13 +74,15 @@ Preserve source-level reductions; add none. Do not suppress analysis errors.
 
 - `disposition`: `prepare` or `reject`.
 - `explanation`: a brief reason and account of the added export code.
-- `reference_script`: the complete edited Python script, including unchanged
-  code and comments, with only endpoint-saving code added. Return file contents,
-  not anchors, a patch or omitted-section placeholders. Add imports with correct
-  future-import placement. Write endpoint files under `/work/outputs`, creating
-  that directory if needed. For disposition=reject, this field may be empty.
-- `artifacts`: one inventory of endpoint files. Each entry has a relative `path`,
-  a brief `description` of the terminal scientific result it preserves, and
+- `export_code`: only the Python code to append at the end of the baseline,
+  including any imports needed for saving files. Do not include the baseline,
+  patches, insertion instructions, Markdown fences or future imports. Write
+  endpoint files under `/work/outputs`, creating that directory if needed. Use
+  only eligible original results still accessible at completion. For
+  disposition=reject, this field may be empty.
+- `artifacts`: one inventory of endpoint files. Each entry has a `path`
+  relative to `/work/outputs` (for example `result.csv` for
+  `/work/outputs/result.csv`), a brief `description` of the terminal result, and
   `source_evidence` identifying the existing variable or object field and where
   the original script produces it. Prefer interoperable formats. Several
   existing endpoint values may share a file if their identities remain explicit.
@@ -82,10 +91,12 @@ Preserve source-level reductions; add none. Do not suppress analysis errors.
 - `unresolved_assumptions`: specific questions for subsequent inspection or
   execution; do not invent observed dimensions, values, timing or resource use.
 
-The controller checks response structure and Python syntax without executing
-code, preserves the returned script unchanged, and computes the source diff,
-file sizes and hashes. Do not generate those records. These checks do not prove
-terminal-result selection, scientific fidelity or successful execution.
+The controller preserves the returned export code and constructs the reference
+script as the original baseline, two newlines, then the export code. It checks
+response structure and combined Python syntax without executing code, and
+computes the source diff, file sizes and hashes. Do not generate those records.
+These checks do not prove terminal-result selection, scientific fidelity or
+successful execution.
 
 ## Boundary with execution
 

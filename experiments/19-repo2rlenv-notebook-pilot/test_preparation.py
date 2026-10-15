@@ -22,14 +22,14 @@ def response(plan, finish="stop", call_id="call"):
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
     plan = dict(disposition="reject", explanation="No eligible terminal result",
-                reference_script="", artifacts=[], excluded_outputs=["Plot-only result"],
+                export_code="", artifacts=[], excluded_outputs=["Plot-only result"],
                 unresolved_assumptions=[])
 
     async def complete(payload):
         calls.append(payload)
         assert "tools" not in payload
         assert payload["response_format"]["json_schema"]["strict"] is True
-        assert "reference_script" in payload["response_format"]["json_schema"]["schema"]["required"]
+        assert "export_code" in payload["response_format"]["json_schema"]["schema"]["required"]
         properties = payload["response_format"]["json_schema"]["schema"]["properties"]
         assert not {"environment_rationale", "pyproject_toml", "system_packages", "stage_inputs_sh"} & properties.keys()
         context = json.loads(payload["messages"][1]["content"])
@@ -62,18 +62,20 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
 
 
 @pytest.mark.parametrize("repair_syntax", [False, True])
-def test_full_script_is_saved_inert_and_syntax_failure_gets_one_repair(tmp_path, repair_syntax):
+def test_export_code_is_appended_inert_and_syntax_failure_gets_one_repair(tmp_path, repair_syntax):
     calls = []
     generated = None
+    baseline = None
 
     async def complete(payload):
-        nonlocal generated
+        nonlocal generated, baseline
         calls.append(payload)
         context = json.loads(payload["messages"][1]["content"])
-        generated = context["baseline_script"] + "\nraise RuntimeError('must not execute')\n"
+        baseline = context["baseline_script"]
+        generated = "raise RuntimeError('must not execute')\n"
         candidate = dict(
             disposition="prepare", explanation="Synthetic inert preparation fixture",
-            reference_script="result = (" if repair_syntax and len(calls) == 1 else generated,
+            export_code="result = (" if repair_syntax and len(calls) == 1 else generated,
             artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
             excluded_outputs=[], unresolved_assumptions=[],
         )
@@ -89,11 +91,13 @@ def test_full_script_is_saved_inert_and_syntax_failure_gets_one_repair(tmp_path,
         endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
     ))
     assert len(calls) == (2 if repair_syntax else 1)
-    assert (root / "reference.py").read_text() == generated
+    assert (root / "exports.py").read_text() == generated
+    assert (root / "reference.py").read_text() == baseline + "\n\n" + generated
     assert "+raise RuntimeError" in (root / "source.diff").read_text()
     render(root)
     rendered = (root / "plan.md").read_text()
-    assert "Complete edited script" in rendered
+    assert "Worker-returned export code" in rendered
+    assert "Controller-assembled reference script" in rendered
     assert "Python dependencies" not in rendered and "Setup script" not in rendered
     for filename in ("pyproject.toml", "stage-inputs.sh", "setup.sh"):
         assert not (root / filename).exists()

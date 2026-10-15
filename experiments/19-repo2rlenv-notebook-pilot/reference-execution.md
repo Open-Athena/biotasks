@@ -1,18 +1,19 @@
 # Notebook reference workflow
 
-Current agreement, 2026-10-14. Preparation selects existing terminal results and
-adds code to save them. Execution owns environment and input setup. This update
+Current agreement, 2026-10-15. Preparation selects existing terminal results and
+returns export code for the controller to append to the untouched source. Execution owns environment and input setup. This update
 implements the preparation interface; the replacement execution worker is not
-integrated yet. [Preparation run 006](preparation-runs/006/README.md) returned
-a proposal under this contract; no generated script or later stage has run.
+integrated yet. The append-only preparation contract is implemented and locally
+tested, but has not been run with a model. Run 006 used the preceding full-script
+response contract; its original evidence remains unchanged.
 
 ## Stages and exact responsibilities
 
 | Stage | Input | Work | Output and status |
 | --- | --- | --- | --- |
 | Conversion (programmatic) | Pinned original notebook JSON. | Pinned Jupytext `py:nomarker` conversion; preserve Markdown as comments; check source code order and syntax. No notebook execution. | `baseline.py` and conversion receipt. Implemented for the admitted Python profile. |
-| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | Complete `reference_script`, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Run 006 returned a proposal for inspection. |
-| Preparation checks (programmatic) | Complete worker response and untouched baseline. | Validate JSON Schema, Python syntax and unique relative artifact paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
+| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | `export_code` only, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. No model run yet under the append-only interface. |
+| Preparation checks (programmatic) | Complete worker response and untouched baseline. | Append export code to the untouched baseline; validate JSON Schema, combined Python syntax and unique output-relative paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
 | Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. Prompt updated; not run on the new contract. |
 | Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Runnable reference environment and staged inputs. Replacement worker not integrated. |
 | Scientific execution (programmatic) | Prepared environment, staged original inputs and reviewed script. | Run the ordinary script offline, CPU-only, with the agreed resource/time limits; record outputs, logs, timing and failures. | Measured reference evidence. Not launched by preparation. |
@@ -53,7 +54,11 @@ and syntax validator alone cannot enforce them.
 responses. It permits one creation and at most one complete-object structural
 repair, with no extra client token/byte limits and the existing 600-second
 per-request timeout. It creates no task sandbox and executes no generated code.
-No separate branch map or duplicated environment inventory is requested.
+The worker returns `export_code` instead of a full script. The controller saves
+that response as `exports.py` and constructs `reference.py` as the untouched
+baseline, two newlines, then that code. Original text is preserved by
+construction. Artifact paths are relative to `/work/outputs`. No separate branch
+map or duplicated environment inventory is requested.
 
 The former combined runner is retired. `run_reference.py` and its packaging path
 refuse execution before submitting a job. This prevents the old text-only
@@ -67,8 +72,10 @@ claim that the replacement worker is ready.
 ## Existing evidence and next step
 
 [Preparation run 006](preparation-runs/006/README.md) passed structural checks
-on its first call. Its CSV endpoint selection, comment edits and path convention
-remain for inspection before advancing. No scientific approval is implied.
+on its first call under the earlier full-script response contract. Its CSV
+endpoint selection remains unvalidated. The new append-only contract prevents
+source-comment edits by construction and makes the output path base explicit;
+these changes have not been tested in a new model run.
 
 [Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
 its full-object export and newly captured expression are not evidence of
@@ -76,7 +83,7 @@ compliance with the revised selection rule. Its recorded output stays unchanged.
 The [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
 explains earlier reference runs under the superseded workflow.
 
-The returned preparation output needs inspection before advancing. Tool-enabled setup
+A new append-only preparation output needs inspection before advancing. Tool-enabled setup
 is the next implementation boundary; it must preserve the science while resolving
 dependencies and staging inputs. Task construction, artifact comparisons, Harbor
 validation, blind solving and publication remain downstream work. The preparation run is complete; execution and viewer updates remain deferred.

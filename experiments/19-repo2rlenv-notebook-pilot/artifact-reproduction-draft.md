@@ -1,6 +1,6 @@
 # Notebook2task through artifact reproduction
 
-Local discussion draft — 2026-10-14. Scope clarified with the user: one task per
+Local discussion draft — updated 2026-10-15. Scope clarified with the user: one task per
 notebook, considering all branches and exporting eligible existing terminal
 scientific results. Branches without eligible outputs are explicitly excluded
 from the target inventory, while their original computation remains intact.
@@ -65,8 +65,10 @@ intended result; execution establishes its provenance and reproducibility.
 Several files can constitute one result, such as a matrix and its identifiers.
 
 For this version, targets must already be stored in named variables or fields
-of those objects in the original source. Preparation adds code to save those
-values and their identifiers. It must not capture a previously unnamed expression
+of those objects in the original source. Preparation returns only code to save those values and their identifiers at
+script completion; the controller appends it to the untouched baseline. Results
+that are overwritten, deleted or out of scope by the end must be explicitly
+excluded. Earlier capture/insertion support is deferred. It must not capture a previously unnamed expression
 into a variable or reconstruct values computed only inside plotting functions.
 For plots, export eligible existing terminal data only; do not introduce new
 aggregation, filtering, ranking, scaling or other scientific computation to
@@ -137,7 +139,7 @@ not become measured facts merely because it is executable code.
 | Responsibility | Programmatic work | GLM work |
 | --- | --- | --- |
 | Source intake | Pin notebook/data identities; inventory cells and files; record provenance and source terms. | Identify relevant data references, environment requirements and unresolved source assumptions. |
-| Endpoint preparation | Validate response structure and syntax; preserve the full script and compute its diff. | With no tools, select terminal results already held in original named variables or fields and add faithful saving code. Explain exclusions and uncertainties in one inventory. |
+| Endpoint preparation | Validate response structure; append exports to untouched source, check combined syntax and compute the diff. | With no tools, select terminal results already held in original named variables or fields and return only end-of-script saving code. Explain exclusions and uncertainties in one inventory. |
 | Script conversion | Check the source against a supported-feature profile before export; use a pinned deterministic exporter and verify code coverage/order after allowed transformations. | Reason over the scripts and source narrative to interpret unresolved assumptions and branch coverage. |
 | Environment and input setup | Execute setup commands, preserve recipes/locks and input hashes, enforce the execution boundary. | With tools, inspect dependencies, diagnose installation failures, stage original inputs and adapt offline paths/caches. Preparation does none of this. |
 | Reference execution | Run from a clean state under the intended limits; capture artifacts, hashes, elapsed time, errors and available resource diagnostics. | Distinguish setup failures from broken analysis code; propose bounded setup fixes and record reasons to reject a seed. |
@@ -165,8 +167,9 @@ These are logical stages, not necessarily separate agents or one LLM call each.
 1. **Convert, then prepare terminal-result exports.** Deterministically convert
    supported sources to plain scripts retaining narrative comments. GLM reads
    the script, provenance, conversion receipt and execution limits, without data
-   contents or tools. It returns the complete script with saving code, one
-   endpoint inventory and brief exclusions/uncertainties. Programmatic checks
+   contents or tools. It returns only export code, one endpoint inventory and brief
+   exclusions/uncertainties. The controller appends that code after the unchanged
+   script; selected results must still be accessible in their intended state. Programmatic checks
    preserve the response, check structure/syntax and compute the diff. A separate
    review checks eligibility and unchanged science against the original source.
 2. **Establish a runnable script reference.** A tool-enabled execution worker
@@ -511,7 +514,7 @@ unmeasured; conversion retains the scientific dependencies and computations.
 The [factual profiler](../../src/biotasks/data_profile.py) covers bounded
 file structure and identity. The prepared [Tasksmith integration](design_stage.py)
 provides structured proposal machinery. The current preparation worker uses
-strict JSON-schema responses, a complete script and one complete-object repair.
+strict JSON-schema responses, appended export code and one complete-object repair.
 The tool-enabled execution worker is not integrated yet. Harbor and the existing quality/release
 components remain candidates downstream.
 

@@ -106,6 +106,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
         save_record(root / "plan.json", plan.model_dump())
         if plan.disposition == "prepare":
             script, diff = materialize(context["baseline_script"], plan)
+            (root / "exports.py").write_text(plan.export_code)
             (root / "reference.py").write_text(script)
             (root / "source.diff").write_text(diff)
         result.update(status="ready_for_user_inspection", disposition=plan.disposition)

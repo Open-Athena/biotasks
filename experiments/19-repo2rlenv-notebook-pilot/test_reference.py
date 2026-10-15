@@ -22,8 +22,8 @@ def plan(**changes):
     return ReferencePlan.model_validate(
         {
             "disposition": "prepare",
-            "explanation": "Complete synthetic source fixture",
-            "reference_script": "result = 1\nprint(result)\n",
+            "explanation": "Synthetic export fixture",
+            "export_code": "print(result)\n",
             "artifacts": [
                 {"path": "value.txt", "description": "value", "source_evidence": "result"}
             ],
@@ -34,24 +34,27 @@ def plan(**changes):
     )
 
 
-def test_complete_script_is_preserved_and_diff_is_computed_without_execution():
-    baseline = "result = 1\nresult = 1\n# Narrative stays here.\n"
-    generated = baseline + "raise RuntimeError('must not execute')\n"
-    script, diff = materialize(baseline, plan(reference_script=generated))
-    assert script == generated
+@pytest.mark.parametrize("ending", ["", "\n", "\r\n"])
+def test_exports_append_without_rewriting_or_executing_baseline(ending):
+    baseline = "from __future__ import annotations\nresult = 1\n# Original narrative — unchanged." + ending
+    exports = "raise RuntimeError('must not execute')\n"
+    script, diff = materialize(baseline, plan(export_code=exports))
+    assert script.startswith(baseline)
+    assert script[len(baseline):] == "\n\n" + exports
     assert "+raise RuntimeError" in diff
     assert "--- baseline.py" in diff and "+++ reference.py" in diff
 
 
-@pytest.mark.parametrize("script", ["", "  \n", "result = (", "x = 1\nfrom __future__ import annotations\n"])
-def test_missing_or_invalid_script_is_rejected_before_execution(script):
-    with pytest.raises(ValueError, match="complete reference script|valid Python"):
-        materialize("result = 1\n", plan(reference_script=script))
+@pytest.mark.parametrize("code", ["", "  \n", "result = (", "from __future__ import annotations\n"])
+def test_missing_or_invalid_export_code_is_rejected_before_execution(code):
+    with pytest.raises(ValueError, match="nonempty export code|valid Python"):
+        materialize("result = 1\n", plan(export_code=code))
 
 
-def test_patch_protocol_is_not_accepted_as_a_script():
+@pytest.mark.parametrize("obsolete", [{"changes": []}, {"reference_script": "result = 2\n"}])
+def test_patch_and_full_script_protocols_are_not_accepted(obsolete):
     with pytest.raises(ValidationError, match="Extra inputs"):
-        plan(changes=[])
+        plan(**obsolete)
 
 
 def test_output_paths_and_inventory_fail_closed():

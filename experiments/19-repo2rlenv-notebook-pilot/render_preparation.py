@@ -44,7 +44,13 @@ def render(directory):
     for artifact in plan["artifacts"]:
         field("Artifact: " + artifact["path"], artifact["description"])
         parts.append("Source evidence: " + artifact["source_evidence"])
-    if "reference_script" in plan:
+    if "export_code" in plan:
+        field("Worker-returned export code", code(plan["export_code"], "python"))
+        if (directory / "reference.py").exists():
+            field("Controller-assembled reference script", "[reference.py](reference.py): untouched original script followed by the export code above.")
+        if (directory / "source.diff").exists():
+            field("Controller-computed diff", code((directory / "source.diff").read_text(), "diff"))
+    elif "reference_script" in plan:
         field("Complete edited script", code(plan["reference_script"], "python"))
         if (directory / "source.diff").exists():
             field("Controller-computed diff", code((directory / "source.diff").read_text(), "diff"))

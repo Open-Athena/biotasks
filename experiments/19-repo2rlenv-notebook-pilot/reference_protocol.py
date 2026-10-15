@@ -19,7 +19,7 @@ class StrictModel(BaseModel):
 
 
 class Artifact(StrictModel):
-    path: str
+    path: str = Field(description="Path relative to /work/outputs.")
     description: str = Field(min_length=1)
     source_evidence: str = Field(min_length=1)
 
@@ -42,8 +42,8 @@ class ReferencePlan(StrictModel):
         description="Required admission decision: prepare a faithful reference, or reject with a reason."
     )
     explanation: str = Field(min_length=1)
-    reference_script: str = Field(
-        description="Complete source script with terminal-result exports only; empty only when rejecting."
+    export_code: str = Field(
+        description="Only Python code to append after the unchanged baseline, saving existing terminal results. Empty only when rejecting."
     )
     artifacts: list[Artifact]
     excluded_outputs: list[str]
@@ -100,16 +100,18 @@ class ReferenceReview(StrictModel):
 
 
 def materialize(baseline: str, plan: ReferencePlan) -> tuple[str, str]:
-    """Check syntax and derive a diff without executing or rewriting model output.
+    """Append returned export code to the untouched baseline and check syntax.
 
     These checks do not establish scientific fidelity. That requires the later
     review of the complete script and diff against the preserved baseline.
     """
     if plan.disposition != "prepare":
         raise ValueError("Rejected plans cannot execute")
-    script = plan.reference_script
-    if not script.strip():
-        raise ValueError("A prepare plan must include the complete reference script")
+    if not plan.export_code.strip():
+        raise ValueError("A prepare plan must include nonempty export code")
+    # Separate from a final comment or statement even when the baseline has no
+    # trailing newline. The original text remains an exact prefix.
+    script = baseline + "\n\n" + plan.export_code
     try:
         compile(ast.parse(script), "reference.py", "exec")
     except SyntaxError as error:
