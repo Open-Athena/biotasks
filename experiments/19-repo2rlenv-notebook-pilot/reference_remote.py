@@ -5,8 +5,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import resource
 import re
+import resource
 import signal
 import subprocess
 import sys
@@ -57,6 +57,28 @@ def verify_inputs():
         if actual != item["sha256"]:
             raise ValueError("Original staged input changed")
     print(json.dumps({"original_inputs_unchanged": True, "files": len(records)}), flush=True)
+
+
+def snapshot_inputs(manifest_path, receipt_path, roots=(Path("/inputs"), Path("/work/cache"))):
+    """Hash the worker's declared input/cache files; never trust worker hashes."""
+    manifest = json.loads(Path(manifest_path).read_text())
+    if not isinstance(manifest, dict) or not isinstance(manifest.get("files"), list):
+        raise ValueError("Input manifest requires a files array")
+    records = []
+    seen = set()
+    for item in manifest["files"]:
+        if not isinstance(item, dict) or any(not isinstance(item.get(k), str) or not item[k] for k in ("local_path", "source")):
+            raise ValueError("Each input needs local_path and source")
+        path = Path(item["local_path"])
+        if not path.is_absolute() or str(path) in seen or not any(path.resolve().is_relative_to(root.resolve()) for root in roots) or not path.is_file():
+            raise ValueError("Invalid staged input path")
+        seen.add(str(path))
+        with path.open("rb") as stream:
+            sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
+        records.append({"local_path": str(path), "source": item["source"], "bytes": path.stat().st_size, "sha256": sha256})
+    receipt = {"files": records}
+    Path(receipt_path).write_text(json.dumps(receipt, indent=2))
+    return receipt
 
 
 def verify_staging(receipt_path, roots=(Path("/inputs"), Path("/work/cache"))):
@@ -161,6 +183,8 @@ if __name__ == "__main__":
         stage_inputs(sys.argv[2])
     elif sys.argv[1] == "verify-inputs":
         verify_inputs()
+    elif sys.argv[1] == "snapshot-inputs":
+        print(json.dumps(snapshot_inputs(sys.argv[2], sys.argv[3])), flush=True)
     elif sys.argv[1] == "verify-staging":
         print(json.dumps(verify_staging(sys.argv[2])), flush=True)
     elif sys.argv[1] == "inventory":

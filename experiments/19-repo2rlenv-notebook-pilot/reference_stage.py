@@ -31,6 +31,9 @@ async def stage(
     validate=None,
     recover_output_limit=True,
     output_format="tools",
+    shell=None,
+    extra_tools=None,
+    extra_handlers=None,
 ):
     """Use upstream's one output recovery, never retry an uncertain transport."""
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
@@ -81,6 +84,9 @@ async def stage(
         max_turns=max_requests,
         deadline=deadline,
         validate=validate,
+        shell=shell,
+        extra_tools=extra_tools,
+        extra_handlers=extra_handlers,
         agent_runner=run_author,
         agent_runner_identity=canonical_digest(identity),
     )

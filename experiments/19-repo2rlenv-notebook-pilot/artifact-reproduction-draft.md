@@ -524,8 +524,11 @@ file structure and identity. The prepared [Tasksmith integration](design_stage.p
 provides structured proposal machinery. The current preparation worker uses
 strict JSON-schema responses and appended export code. Preparation makes one
 call, validates structure/syntax and preserves failures without automatic repair.
-The tool-enabled execution worker is not integrated yet. Harbor and the existing quality/release
-components remain candidates downstream.
+The separate tool-enabled setup/offline-test worker is implemented with synthetic
+boundary tests; its first remote run is pending the new request/test-count decision.
+See [the current workflow](reference-execution.md) for the actual prompt, inputs,
+outputs and limits. Harbor and the existing quality/release components remain
+candidates downstream.
 
 ## 8. A small experiment that would test the idea
 

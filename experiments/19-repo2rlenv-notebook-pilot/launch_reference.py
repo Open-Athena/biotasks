@@ -22,6 +22,9 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
     """Common frozen inputs; each stage wrapper validates its own configuration."""
     if config["entrypoint"] == "run_reference.py":
         raise NotImplementedError(EXECUTION_PENDING)
+    if config["entrypoint"] == "run_reference_setup.py":
+        from run_reference_setup import check_config
+        check_config(config)
     files = {
         "biotasks.tar": subprocess.check_output(["git", "archive", revision], cwd=repo),
         "upstream.tar.gz": upstream_archive.read_bytes(),

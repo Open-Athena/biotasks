@@ -1,0 +1,387 @@
+"""One tool-enabled GLM setup session and controlled offline reference tests.
+
+Run on Iris; all generated commands run in a disposable Daytona sandbox.
+The retired combined runner is deliberately not re-enabled.
+"""
+
+from __future__ import annotations
+
+import asyncio
+import json
+import os
+import time
+from pathlib import Path
+
+import httpx
+from daytona import CreateSandboxFromImageParams, Daytona, Resources
+from design_stage import completion_transport
+from openai import AsyncOpenAI
+from preflight import PROBE, TARGETS
+from reference_setup import TEST_TOOL, PreparedReference, SetupOutcome, SetupSession
+from reference_stage import stage
+from repo2rlenv.campaigns.budget import BudgetLedger
+from repo2rlenv.execution.daytona import DaytonaWorker
+from repo2rlenv.execution.daytona_cleanup import cleanup
+from repo2rlenv.execution.lifecycle import save_record
+from repo2rlenv.quality.loop.client import RunBudget
+from repo2rlenv.tasksmith.author.budget import AuthorBudget
+
+from biotasks.chat_author import ChatLimits
+from biotasks.inference_gate import Allowance, RequestLedger
+
+HERE = Path(__file__).parent
+
+
+def check_config(config):
+    if config.get("entrypoint") != "run_reference_setup.py":
+        raise ValueError("Use the separate reference-setup entry point")
+    for name in (
+        "max_requests",
+        "max_tests",
+        "setup_seconds",
+        "reference_seconds",
+        "campaign_seconds",
+        "cleanup_seconds",
+        "request_timeout_seconds",
+    ):
+        if type(config.get(name)) is not int or config[name] < 1:
+            raise ValueError(f"Explicit agreed {name} is required before execution")
+    if config["max_requests"] < 3:
+        raise ValueError("Tool-enabled setup needs room for a tool call and final submission")
+    if config["reference_seconds"] != 600:
+        raise ValueError("The current reference computation allowance is 600 seconds")
+    if config["campaign_seconds"] <= config["cleanup_seconds"]:
+        raise ValueError("Campaign must leave time for cleanup")
+    if not 0 < float(config["daytona_budget_usd"]) <= 100:
+        raise ValueError("A positive reservation within the standing spending ceiling is required")
+    directory = Path(config["preparation_directory"])
+    if directory.is_absolute() or ".." in directory.parts:
+        raise ValueError("Preparation must be within the frozen experiment")
+
+
+class Remote:
+    """Recorded, timeout-bounded I/O using upstream DaytonaWorker."""
+
+    def __init__(self, worker, sandbox, root, deadline, cpus):
+        self.worker, self.sandbox, self.root = worker, sandbox, root
+        self.deadline, self.cpus = deadline, cpus
+        self.uncertain = False
+        self.operation = 0
+
+    def remaining(self, requested):
+        if self.uncertain:
+            raise RuntimeError(
+                "Remote operation outcome uncertain; cleanup/reconciliation required"
+            )
+        remaining = int(self.deadline - time.time()) - 15
+        if requested > remaining:
+            raise TimeoutError("Insufficient time for the full operation and its return")
+        return requested
+
+    async def upload(self, local, remote):
+        await asyncio.to_thread(self.worker.upload, local, remote)
+
+    async def download(self, remote, local):
+        local.parent.mkdir(parents=True, exist_ok=True)
+        await asyncio.to_thread(self.worker.download, remote, local)
+
+    async def command(self, argv, seconds, label, *, cwd="/work"):
+        self.remaining(seconds)
+        self.operation += 1
+        directory = self.root / "operations" / f"{self.operation:04d}"
+        directory.mkdir(parents=True)
+        record = {
+            "argv": argv,
+            "seconds": seconds,
+            "label": label,
+            "state": "uncertain",
+            "started": time.time(),
+        }
+        save_record(directory / "operation.json", record)
+        # Generated setup may overwrite files; reinstall the controller's runner.
+        await self.upload(HERE / "reference_remote.py", "/work/remote.py")
+        self.uncertain = True
+        env = [
+            "env",
+            *[
+                f"{name}={self.cpus}"
+                for name in (
+                    "OMP_NUM_THREADS",
+                    "OPENBLAS_NUM_THREADS",
+                    "MKL_NUM_THREADS",
+                    "NUMEXPR_NUM_THREADS",
+                    "POLARS_MAX_THREADS",
+                    "RAYON_NUM_THREADS",
+                )
+            ],
+        ]
+        try:
+            result = await asyncio.to_thread(
+                self.worker.exec,
+                [
+                    *env,
+                    "timeout",
+                    "--signal=TERM",
+                    "--kill-after=5",
+                    str(seconds + 10),
+                    "python",
+                    "/work/remote.py",
+                    "execute",
+                    json.dumps(argv),
+                    str(seconds),
+                    cwd,
+                    label,
+                ],
+                timeout=seconds + 25,
+            )
+            result.checked("Reference controller operation")
+            process = json.loads(result.stdout)
+            await self.download("/work/logs/" + label + ".log", directory / "output.log")
+            self.uncertain = False
+            record.update(state="returned", process=process, finished=time.time())
+            save_record(directory / "operation.json", record)
+            return {**process, "log": (directory / "output.log").read_text(errors="replace")}
+        except BaseException as error:
+            record.update(error_type=type(error).__name__, finished=time.time())
+            save_record(directory / "operation.json", record)
+            raise
+
+    async def helper(self, args, label):
+        # Every invocation restores the helper from controller-owned source.
+        result = await self.command(["python", "/work/remote.py", *args], 120, label)
+        if result["exit_code"]:
+            raise RuntimeError("Controller evidence check failed; inspect the preserved log")
+        return json.loads(result["log"])
+
+    async def network(self, blocked):
+        self.remaining(45)
+        await asyncio.to_thread(
+            self.sandbox.update_network_settings, network_block_all=blocked, request_timeout=30
+        )
+        await asyncio.to_thread(self.sandbox.refresh_data, request_timeout=15)
+        if self.sandbox.network_block_all is not blocked:
+            raise RuntimeError("Provider network policy differs from requested state")
+        result = await self.command(
+            ["python", "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
+            30,
+            f"network-{self.operation}",
+        )
+        probes = json.loads(result["log"])
+        if result["exit_code"] or probes != [
+            {"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS
+        ]:
+            raise RuntimeError("Network probe did not establish the required state")
+        save_record(
+            self.root / "network" / f"{self.operation}.json",
+            {
+                "blocked": blocked,
+                "probes": probes,
+                "limitations": "Representative outbound TCP probes, not exhaustive attestation",
+            },
+        )
+
+
+async def run(config, *, root, deadline, endpoint, credential, provider=None, complete=None):
+    check_config(config)
+    prepared = PreparedReference.load(HERE / config["preparation_directory"])
+    target = prepared.context["limits"]
+    if target.get("gpu") is not False:
+        raise ValueError("This execution profile is CPU-only")
+    if config["reference_seconds"] != target["reference_seconds"]:
+        raise ValueError("Reference allowance differs from the reviewed preparation")
+    root.mkdir(parents=True, exist_ok=False)
+    save_record(root / "configuration.json", config)
+    save_record(root / "preparation-input.json", prepared.context)
+    result = {
+        "status": "started",
+        "started": time.time(),
+        "construction_run": False,
+        "solver_run": False,
+        "semantic_fidelity_validated": False,
+        "cleanup_verified": False,
+    }
+    provider = provider or Daytona()
+    client = None
+    owner = config["campaign"]
+    created, creation_started = False, False
+    work_deadline = (
+        min(deadline, time.time() + config["campaign_seconds"]) - config["cleanup_seconds"]
+    )
+    ledger = RequestLedger(
+        root / "requests.sqlite", {"setup": Allowance(config["max_requests"], None)}
+    )
+    spend = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1")
+    try:
+        reservation = BudgetLedger(
+            root / "daytona-budget.sqlite", limit_usd=config["daytona_budget_usd"]
+        )
+        reservation.reserve(
+            owner,
+            config["daytona_budget_usd"],
+            "Full setup campaign reservation; not measured cost",
+        )
+        save_record(root / "sandbox-claim.json", {"owner": owner, "state": "creation_uncertain"})
+        creation_started = True
+        sandbox = await asyncio.to_thread(
+            provider.create,
+            CreateSandboxFromImageParams(
+                name="biotasks19-" + owner,
+                image=target["base_image"],
+                language="python",
+                os_user="root",
+                resources=Resources(
+                    cpu=target["task_cpus"],
+                    memory=target["task_memory_gib"],
+                    disk=target["task_disk_gib"],
+                ),
+                labels={"repo2rlenv.job": owner},
+                auto_stop_interval=30,
+                auto_delete_interval=0,
+                ttl_minutes=(config["campaign_seconds"] + config["cleanup_seconds"] + 59) // 60,
+                public=False,
+            ),
+            timeout=420,
+        )
+        created = True
+        await asyncio.to_thread(sandbox.refresh_data, request_timeout=15)
+        resources = {key: getattr(sandbox, key) for key in ("cpu", "memory", "disk")}
+        save_record(
+            root / "sandbox-claim.json",
+            {"owner": owner, "id": sandbox.id, "state": "created", "resources": resources},
+        )
+        if resources != {
+            "cpu": target["task_cpus"],
+            "memory": target["task_memory_gib"],
+            "disk": target["task_disk_gib"],
+        }:
+            raise RuntimeError("Provider resource envelope mismatch")
+        worker = DaytonaWorker(provider, sandbox)
+        # Provision only the controller's working directory before its runner exists.
+        (
+            await asyncio.to_thread(worker.exec, ["mkdir", "-p", "/work", "/work/logs"], timeout=30)
+        ).checked("Initialize controller directory")
+        remote = Remote(worker, sandbox, root, work_deadline, target["task_cpus"])
+        session = SetupSession(
+            prepared=prepared,
+            remote=remote,
+            root=root / "setup",
+            setup_seconds=config["setup_seconds"],
+            reference_seconds=config["reference_seconds"],
+            max_tests=config["max_tests"],
+        )
+        await session.initialize()
+        context = {
+            "preparation": {
+                "source": prepared.context["source"],
+                "conversion": prepared.context["conversion"],
+                "plan": prepared.plan.model_dump(),
+            },
+            "paths": {
+                "original.py": "/work/frozen/original.py",
+                "exports.py": "/work/frozen/exports.py",
+                "plan.json": "/work/frozen/plan.json",
+                "setup": "/work/setup",
+            },
+            "limits": {
+                **target,
+                **{
+                    k: config[k]
+                    for k in (
+                        "max_requests",
+                        "max_tests",
+                        "setup_seconds",
+                        "reference_seconds",
+                        "campaign_seconds",
+                        "request_timeout_seconds",
+                    )
+                },
+            },
+        }
+        limits = ChatLimits(
+            max_output_tokens=None,
+            max_input_bytes=None,
+            max_response_bytes=None,
+            tool_output_chars=None,
+            reasoning_effort="medium",
+            request_timeout_sec=config["request_timeout_seconds"],
+        )
+        if complete is None:
+            client = AsyncOpenAI(
+                base_url=endpoint,
+                api_key=credential,
+                max_retries=0,
+                timeout=limits.request_timeout_sec,
+                http_client=httpx.AsyncClient(follow_redirects=False),
+            )
+            complete = completion_transport(client)
+        outcome = await stage(
+            schema=SetupOutcome,
+            name="setup",
+            prompt_name="notebook-reference-setup",
+            context=context,
+            root=root / "worker",
+            ledger=ledger,
+            budget=AuthorBudget(spend, root / "charges", "setup"),
+            complete=complete,
+            deadline=work_deadline,
+            limits=limits,
+            max_requests=config["max_requests"],
+            validate=session.validate_outcome,
+            recover_output_limit=False,
+            shell=session.shell,
+            extra_tools=[TEST_TOOL],
+            extra_handlers={"test_reference": session.test_reference},
+        )
+        save_record(root / "outcome.json", outcome.model_dump())
+        result.update(
+            status="reference_executed_requires_review"
+            if outcome.disposition == "tested"
+            else "worker_blocked",
+            reference_tests=session.tests,
+            setup_seconds_remaining=session.setup_remaining,
+            last_passing_test=session.last_pass,
+        )
+    except BaseException as error:
+        result.update(status="incomplete", error_type=type(error).__name__)
+        raise
+    finally:
+        try:
+            if client is not None:
+                await client.close()
+            result["finished"] = time.time()
+            save_record(root / "result.json", result)
+            from iris_bootstrap import export_on_host
+
+            await asyncio.to_thread(
+                export_on_host,
+                root,
+                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/reference-setup",
+                deadline=deadline - config["cleanup_seconds"],
+            )
+        finally:
+            try:
+                cleaned = (
+                    await asyncio.to_thread(cleanup, owner, provider)
+                    if creation_started
+                    else {"passed": True}
+                )
+                result["cleanup_verified"] = cleaned["passed"] and (not creation_started or created)
+                save_record(root / "cleanup.json", cleaned)
+            finally:
+                result["finished"] = time.time()
+                save_record(root / "result.json", result)
+    if not result["cleanup_verified"]:
+        raise RuntimeError("Owned sandbox cleanup needs reconciliation")
+    return result
+
+
+if __name__ == "__main__":
+    asyncio.run(
+        run(
+            json.loads(Path(os.environ["BIOTASKS_CONFIG"]).read_text()),
+            root=Path("/evidence/reference-setup"),
+            deadline=float(os.environ["BIOTASKS_CAMPAIGN_DEADLINE"]),
+            endpoint=os.environ["BIOTASKS_MODEL_ENDPOINT"],
+            credential=os.environ["GLM_BULK_TOKEN"],
+        )
+    )

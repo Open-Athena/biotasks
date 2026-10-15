@@ -6,18 +6,19 @@ returns export code for the controller to append to the untouched source.
 confirmed [run 009](preparation-runs/009/README.md) with byte-identical prompt,
 input and API request. Prompt iteration is satisfactory for this seed; runtime,
 numerical fidelity and cross-notebook generality remain untested. Execution owns
-environment and input setup; its replacement worker is not integrated yet.
+environment and input setup. The separate tool-enabled setup/test worker is now
+implemented and tested with synthetic providers, but has not run on Daytona.
 
 ## Stages and exact responsibilities
 
 | Stage | Input | Work | Output and status |
 | --- | --- | --- | --- |
 | Conversion (programmatic) | Pinned original notebook JSON. | Pinned Jupytext `py:nomarker` conversion; preserve Markdown as comments; check source code order and syntax. No notebook execution. | `baseline.py` and conversion receipt. Implemented for the admitted Python profile. |
-| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | `export_code` only, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Run 007 returned a proposal; full-state/diagnostic selection is flagged. |
+| Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | `export_code` only, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Runs 009 and 010 pass static source/export review; actual execution remains untested. |
 | Preparation checks (programmatic) | Complete worker response and untouched baseline. | Append export code to the untouched baseline; validate JSON Schema, combined Python syntax and unique output-relative paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
 | Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. Prompt updated; not run on the new contract. |
-| Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Runnable reference environment and staged inputs. Replacement worker not integrated. |
-| Scientific execution (programmatic) | Prepared environment, staged original inputs and reviewed script. | Run the ordinary script offline, CPU-only, with the agreed resource/time limits; record outputs, logs, timing and failures. | Measured reference evidence. Not launched by preparation. |
+| Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Recipe, uv lock/environment records, staged-file hashes, failed/successful trial evidence and an outcome requiring scientific review. Implemented; remote execution pending. |
+| Scientific execution (programmatic) | Prepared environment, staged original inputs and reviewed script. | Run the ordinary script offline, CPU-only, with the agreed resource/time limits; record outputs, logs, timing and failures. | Measured reference evidence from the setup worker’s controller-owned test_reference tool. Implemented; not yet run on the current contract. |
 
 The current converter admits ordinary Python nbformat-4 sources. Unsupported
 kernel-dependent syntax/state is rejected; other languages need separate
@@ -47,9 +48,7 @@ preparatory statistics and diagnostics supporting other results are not extra
 targets merely because they survive or are displayed. Apply selection within
 annotation tables as well as within outer objects; preserve endpoint fields and
 necessary identifiers/context. Explain independent outcomes lacking an eligible
-stored result in the exclusions. Explain
-branches or plot-only results without eligible stored outputs in
-`excluded_outputs`. Their original computation remains intact. Reject if there
+stored result in `excluded_outputs`. Their original computation remains intact. Reject if there
 are no eligible terminal results. The preparation worker leaves input-loading
 code unchanged and does not generate dependency manifests or staging scripts.
 
@@ -75,9 +74,57 @@ refuse execution before submitting a job. This prevents the old text-only
 setup workflow from running against the new preparation schema. Its historical
 implementation is preserved at
 [2e1fb63](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/run_reference.py).
-Reusable environment, execution and evidence helpers remain available for the
-replacement worker. This document does not assign new execution budgets or
-claim that the replacement worker is ready.
+The separate `run_reference_setup.py` consumes a reviewed preparation directory.
+It reuses the Tasksmith artifact-stage tool loop, GLM adapter, uv helpers,
+DaytonaWorker, network checks and owned-resource cleanup. It does not regenerate
+preparation or invoke task construction, a solver or publication. The retired
+entry point remains disabled.
+
+## Tool-enabled setup and offline test
+
+The canonical [setup prompt](../../src/biotasks/prompts/notebook-reference-setup.md)
+is the actual worker prompt. The worker receives preparation provenance,
+inventory/exclusions/uncertainties, sandbox file paths and explicit allowances.
+The full original script and frozen exports are files it can inspect with tools.
+It produces five editable files under `/work/setup`: `analysis.py`,
+`pyproject.toml`, `system-packages.json`, `stage-inputs.sh` and `inputs.json`.
+The final model report is small: tested/blocked, explanation, source-adaptation
+rationale and unresolved assumptions. The report does not contain a new script,
+export selection or hand-authored evidence.
+
+| Responsibility | Worker | Controller |
+| --- | --- | --- |
+| Dependencies and data | Inspect source/docs and actual errors; declare dependencies and original input/cache sources; write the staging recipe. | Build a fresh uv virtual environment, generate a lockfile, record installed packages, execute staging and hash the declared files. |
+| Source adaptation | Make only necessary offline input/path/cache changes to an editable analysis copy, explaining them. | Preserve the original and compute every diff; append reviewed exports unchanged. Semantic faithfulness still requires review. |
+| Testing | Call `test_reference`; diagnose failures within agreed bounds; report a blocker when the science or exports would need changing. | Clear working/output directories, enforce offline network policy, run the complete reference for up to 600 seconds, verify input hashes, inventory and download outputs with checksum verification. |
+| Completion | Submit the brief outcome. | Reject a success claim without a passing test or if files changed since that test; preserve every failed trial and clean up the owned sandbox. |
+
+Shell exploration has network access; full scientific computation belongs only
+in `test_reference`. A test allowance is consumed before validation/build, even
+if setup fails. The controller records raw logs; it does not interpret a model's
+success claim as execution evidence. Transport uncertainty ends the session
+rather than launching a possibly duplicate command. Provider policy readback
+and representative network probes are recorded, not described as exhaustive
+network attestation.
+
+A passing outcome is `reference_executed_requires_review`. Syntax, file hashes
+and process success cannot establish that a source adaptation preserved science.
+The input receipt covers declared files, not a proven complete dependency graph.
+The virtual environment is rebuilt for each test; OS packages and caches share
+the disposable sandbox, so this is not a fresh-image reproducibility proof.
+All such limitations stay distinct from a validated task or grader.
+
+`reference-setup.json` points to reviewed preparation run 010. It carries the
+existing 30-minute cumulative setup-tool allowance, 600-second reference tests,
+2-hour campaign/5-minute cleanup and $5 reservation as proposed execution values.
+The model-request and reference-test counts are deliberately unset, and both
+packaging and execution reject unset counts. They need a concrete decision for
+this new tool-enabled stage; historical preparation/45-request budgets are not
+silently inherited. GLM remains medium effort with no extra client token/input/
+response caps. Each individual model request retains the 600-second timeout.
+Upstream's final-report tool schema/size limits still apply; scripts and logs
+are files rather than fields in that report. No new model or sandbox run has
+occurred as part of implementation.
 
 ## Existing evidence and next step
 
@@ -95,9 +142,8 @@ preceding full-script response contract. The
 [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
 describes scientific runs under a superseded workflow.
 
-The latest output is ready for user inspection. Tool-enabled setup is the next
-implementation boundary; it must preserve the science while resolving
-dependencies and staging inputs. Actual execution must check version
+The latest preparation remains unchanged. Review the setup prompt and settle
+the new stage’s request/test counts before its first remote run. Actual execution must check version
 compatibility, artifact contents and runtime. Task construction, comparisons,
 Harbor validation, solving and publication remain downstream work. No viewer
 update or downstream execution accompanies this preparation iteration.

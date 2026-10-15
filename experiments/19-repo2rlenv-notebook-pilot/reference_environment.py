@@ -28,7 +28,7 @@ def validate_environment(pyproject_toml: str, system_packages: list[str]) -> Non
             raise ValueError("System packages must be Debian package names, optionally versioned")
 
 
-def setup_script(system_packages: list[str], *, has_staging: bool = True) -> str:
+def setup_script(system_packages: list[str], *, has_staging: bool = True, verify_inputs: bool = True) -> str:
     lines = ["#!/bin/sh", "set -eu", "cd /work", "export DEBIAN_FRONTEND=noninteractive"]
     if system_packages:
         lines += ["apt-get update", "apt-get install -y --no-install-recommends " + shlex.join(system_packages)]
@@ -44,14 +44,15 @@ def setup_script(system_packages: list[str], *, has_staging: bool = True) -> str
         "rm -f /work/setup-inputs.json",
         "sh -eu /work/stage-inputs.sh",
     ]
-    if not has_staging:
+    if not has_staging and verify_inputs:
         lines.append("printf '%s\\n' '{\"files\": []}' > /work/setup-inputs.json")
-    lines.append("python /work/remote.py verify-staging /work/setup-inputs.json")
+    if verify_inputs:
+        lines.append("python /work/remote.py verify-staging /work/setup-inputs.json")
     return "\n".join(lines) + "\n"
 
 
-def write_environment(directory: Path, plan) -> None:
+def write_environment(directory: Path, plan, *, verify_inputs: bool = True) -> None:
     validate_environment(plan.pyproject_toml, plan.system_packages)
     (directory / "pyproject.toml").write_text(plan.pyproject_toml)
     (directory / "stage-inputs.sh").write_text(plan.stage_inputs_sh)
-    (directory / "setup.sh").write_text(setup_script(plan.system_packages, has_staging=bool(plan.stage_inputs_sh.strip())))
+    (directory / "setup.sh").write_text(setup_script(plan.system_packages, has_staging=bool(plan.stage_inputs_sh.strip()), verify_inputs=verify_inputs))

@@ -24,6 +24,7 @@ def test_list_and_read_prompts_outside_checkout(
         "notebook-quality",
         "notebook-reference-prepare",
         "notebook-reference-review",
+        "notebook-reference-setup",
         "notebook-schema-audit",
         "notebook-task-construction",
         "notebook-task-design",
