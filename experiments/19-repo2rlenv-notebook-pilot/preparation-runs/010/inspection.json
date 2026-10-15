@@ -1,0 +1,26 @@
+{
+  "status": "ready_for_user_inspection",
+  "disposition": "prepare",
+  "response_format": "json_schema",
+  "json_schema_valid": true,
+  "original_evidence_hashes_verified": true,
+  "input_identical_to_public_run_006": true,
+  "original_source_exact_prefix": true,
+  "assembled_script_verified": true,
+  "scientific_fidelity_reviewed": false,
+  "generated_code_executed": false,
+  "artifact_paths": [
+    "cell_clusters_umap.csv",
+    "rank_genes_groups_leiden_res_0.50.csv",
+    "rank_genes_groups_params.json"
+  ],
+  "notes": [
+    "Explicit clustering, lineage annotation, identity/sample and UMAP fields; no broad annotation dumps or supporting QC/doublet/HVG/PCA exports.",
+    "Full ranked DE results preserve gene/group identifiers, scores, effect sizes and p-values; stored run parameters provide interpretation context rather than a new scientific target.",
+    "Named cluster-7 excerpt is explicitly covered by the full ranked DE table; no duplicate export or new subset computation.",
+    "Prompt, complete input and serialized API request are byte-identical to run 009; both pass static preparation review, with different file layout and serializer code.",
+    "No scientific execution, independent numerical validation or cross-notebook validation. Environment compatibility, realized schemas and runtime remain to be tested."
+  ],
+  "review_kind": "static_source_and_output_inspection",
+  "static_preparation_acceptable": true
+}

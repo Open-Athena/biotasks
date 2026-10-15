@@ -29,5 +29,6 @@ tokens, including 22,639 reasoning tokens. Exactly one request, no repair;
 no extra client token/byte caps and the existing 600-second request timeout.
 
 The remote job and local clients are terminal. No scientific setup/execution,
-sandbox, separate model review, construction, solver or viewer update. An
-unchanged-prompt confirmation run is planned before concluding prompt iteration.
+sandbox, separate model review, construction, solver or viewer update. The
+[unchanged-prompt confirmation, run 010](../010/README.md), also passed static
+preparation review.

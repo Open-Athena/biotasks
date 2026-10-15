@@ -1,13 +1,12 @@
 # Notebook reference workflow
 
 Current agreement, 2026-10-15. Preparation selects existing terminal results and
-returns export code for the controller to append to the untouched source. Execution owns environment and input setup. This update
-implements the preparation interface; the replacement execution worker is not
-integrated yet. The append-only preparation contract is implemented and locally
-tested. [Run 007](preparation-runs/007/README.md) returned an append-only proposal
-with exact source preservation, but endpoint selection remains flagged for
-review. Run 006 used the preceding full-script response contract; its original
-evidence remains unchanged.
+returns export code for the controller to append to the untouched source.
+[Run 010](preparation-runs/010/README.md) passed static preparation review and
+confirmed [run 009](preparation-runs/009/README.md) with byte-identical prompt,
+input and API request. Prompt iteration is satisfactory for this seed; runtime,
+numerical fidelity and cross-notebook generality remain untested. Execution owns
+environment and input setup; its replacement worker is not integrated yet.
 
 ## Stages and exact responsibilities
 
@@ -82,26 +81,23 @@ claim that the replacement worker is ready.
 
 ## Existing evidence and next step
 
-[Preparation run 006](preparation-runs/006/README.md) passed structural checks
-on its first call under the earlier full-script response contract. Its CSV
-endpoint selection remains unvalidated. The new append-only contract prevents
-source-comment edits by construction and makes the output path base explicit;
-source preservation and the explicit path convention passed run 007 checks.
-Run 007 nevertheless proposed full-state and diagnostic exports; this requires
-selection review before execution. The revised prompt excludes mixed-state
-containers explicitly and requires evidence of each result’s scientific role.
-The revised prompt and single-call policy completed [run 008](preparation-runs/008/README.md):
-one call, no repair, structural checks passed. It avoids the full-object dump
-but still exports diagnostic/intermediate columns in broad cell/gene tables.
-Endpoint selection remains unresolved.
+Runs 009 and 010 select explicit cell-result fields, UMAP and full ranked marker
+results, excluding the unwanted supporting diagnostics/intermediates. Run 010
+also saves stored test parameters as context. Both passed static source/export
+review, structural checks and exact source preservation. Their different file
+layouts are acceptable; the prompt does not prescribe package names, field names
+or a seed-specific output list. The same scientific-role test must be evaluated
+on other seeds before claiming generality.
 
-[Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
-its full-object export and newly captured expression are not evidence of
-compliance with the revised selection rule. Its recorded output stays unchanged.
-The [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
-explains earlier reference runs under the superseded workflow.
+Earlier outputs remain unchanged: run 007 exported a mixed-state object; run 008
+avoided that dump but still copied broad diagnostic tables. Run 006 used the
+preceding full-script response contract. The
+[historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
+describes scientific runs under a superseded workflow.
 
-The latest run 008 preparation output needs inspection before advancing. Tool-enabled setup
-is the next implementation boundary; it must preserve the science while resolving
-dependencies and staging inputs. Task construction, artifact comparisons, Harbor
-validation, blind solving and publication remain downstream work. The preparation run is complete; execution and viewer updates remain deferred.
+The latest output is ready for user inspection. Tool-enabled setup is the next
+implementation boundary; it must preserve the science while resolving
+dependencies and staging inputs. Actual execution must check version
+compatibility, artifact contents and runtime. Task construction, comparisons,
+Harbor validation, solving and publication remain downstream work. No viewer
+update or downstream execution accompanies this preparation iteration.

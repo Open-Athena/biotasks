@@ -1,0 +1,21 @@
+{
+  "runs": [
+    "009",
+    "010"
+  ],
+  "identical_inputs": {
+    "prepare/system-prompt.md": true,
+    "prepare/input.json": true,
+    "prepare/artifact-stage/trace/1/request.json": true
+  },
+  "static_preparation_acceptable": true,
+  "reviewer": "Codex static inspection; not an independent model review",
+  "generalization_tested": false,
+  "scientific_execution": false,
+  "differences": [
+    "Cell table filename, UMAP column names and CSV index representation differ.",
+    "009 uses the documented native stored-result accessor; 010 flattens the stored arrays directly.",
+    "010 also exports stored DE method/grouping parameters as context."
+  ],
+  "conclusion": "Satisfactory preparation output for this seed in two consecutive calls. Stop prompt iteration; execution and cross-seed evaluation remain separate."
+}
