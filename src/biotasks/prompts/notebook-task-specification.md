@@ -40,7 +40,8 @@ explicit arguments may select mutually exclusive behavior.
 
 These tools cannot install, import or execute code. Release sources do not prove
 native binary build options. You have no shell, full biological inputs or full
-output tables. Do not claim measurements or validations absent from the evidence.
+output tables. Do not claim measurements or validations absent from the evidence. Static source
+review does not change recorded validation flags or establish numerical validation.
 
 ## Review coverage and fidelity
 
@@ -118,6 +119,13 @@ Write instructions containing:
 4. The supplied execution constraints and open software choice. State that
    comparison rules are pending executable validation; this is a draft, not a
    complete grading contract.
+
+Before submission, check schema consistency across the entire response. Identify
+what each table row or matrix axis represents and which keys identify it. Derive
+cross-file relationships from those units and the export code: sharing a grouping
+key does not imply equal row counts or interchangeable populations. A relationship
+must agree with each file's own row definition in both the brief and handoff.
+Resolve such contradictions now; they are not tolerance-calibration questions.
 
 Do not include reference answers, output previews, measured result counts,
 private paths or the original script. Source-defined methodological constants,
