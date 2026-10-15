@@ -1622,3 +1622,7 @@ Addressed the review's directory/reset timing and test-invocation accounting fin
 ### 2026-10-15 — First setup/reference session authorized
 
 After reviewing the worker/tool division and confirming that this step includes the actual reference run, the user requested launch. Use preparation 010 unchanged, one GLM-5.3 medium setup session with no request-count cap, up to two combined setup/test invocations, 30 minutes cumulative setup-tool time and ten minutes per complete reference computation. Retain the configured two-hour campaign/five-minute cleanup, CPU-only 4-vCPU/8-GiB/10-GiB sandbox and $5 reservation within the standing $100 authorization. No automatic fresh worker session or downstream task construction. Preserve generated files and failed trials for inspection; no manual seed-specific fixes.
+
+### 2026-10-15 — Setup/reference session 001 submitted
+
+Submitted exactly one remote host from checkpoint `e2da746ec48d48a0fe8445ee6a9b110e3055a1c3`; startup status is RUNNING, one task, zero completed/failed. The initial credential handoff was blocked before submission; the user identified the current approved credential store and requested correction of the private access guide. The guide was updated, then the launcher retrieved credentials directly into memory and submitted successfully. No credential values or private routes enter this record. Local launcher terminated successfully at about 492 MiB peak RSS. Scientific execution and generated output remain unobserved at this checkpoint; no downstream work or duplicate session.
