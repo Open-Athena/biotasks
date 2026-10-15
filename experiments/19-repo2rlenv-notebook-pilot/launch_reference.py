@@ -26,7 +26,11 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
         from run_reference_setup import check_config
         check_config(config)
     files = {
-        "biotasks.tar": subprocess.check_output(["git", "archive", revision], cwd=repo),
+        # The bootstrap auto-detects compression. Keep the existing transport key
+        # while avoiding large uncompressed copies in the Iris submission client.
+        "biotasks.tar": subprocess.check_output(
+            ["git", "archive", "--format=tar.gz", revision], cwd=repo
+        ),
         "upstream.tar.gz": upstream_archive.read_bytes(),
         "seeds.json": frozen_file(repo, revision, EXPERIMENT + "/seeds/current.json"),
         "bootstrap.py": frozen_file(repo, revision, EXPERIMENT + "/iris_bootstrap.py"),

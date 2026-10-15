@@ -80,7 +80,7 @@ def delivery_fixture():
         "disposition": "needs_evidence",
         "review": "## Coverage\n\nThe supplied source exports its terminal table.\n\n- The algorithm default is not supplied.\n- No scientific execution was requested.",
         "task_brief": "",
-        "validation_plan": "## Evidence needed\n\nInspect the pinned implementation to establish the omitted default.\n\nDo not guess a value or withhold this plan.",
+        "validation_handoff": "## Evidence needed\n\nInspect the pinned implementation to establish the omitted default.\n\nDo not guess a value or withhold this plan.",
     }
 
 

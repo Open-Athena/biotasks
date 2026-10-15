@@ -152,7 +152,7 @@ not become measured facts merely because it is executable code.
 | Environment and input setup | Execute setup commands, preserve recipes/locks and input hashes, enforce the execution boundary. | With tools, inspect dependencies, diagnose installation failures, stage original inputs and adapt offline paths/caches. Preparation does none of this. |
 | Reference execution | Run from a clean state under the intended limits; capture artifacts, hashes, elapsed time, errors and available resource diagnostics. | Distinguish setup failures from broken analysis code; propose bounded setup fixes and record reasons to reject a seed. |
 | Task coverage and feasibility | Check the reviewed branch-to-artifact mapping, input availability and combined resource measurements. | Independently review endpoint completeness against the original source; explain endpoint representations, exclusions and feasibility blockers. |
-| Instructions | Validate structure and link requirements to source/evidence. | Translate the executed analysis into a complete public specification, including consequential defaults and parameters. |
+| Instructions | Validate structure and link requirements to source/evidence. | Draft the reference recipe and output schemas, explaining scientific purpose and naming versioned operations, explicit parameters and relevant state transitions. Defer acceptance-rule calibration to executable validation. |
 | Grading | Apply reusable comparators; run references, valid alternatives and wrong-output controls; calculate reward. | Propose scientifically meaningful equivalences, failure cases and any custom checks that templates cannot express. |
 | Packaging and evaluation | Assemble Harbor files, enforce visibility boundaries, run blind attempts and preserve results. | Produce remaining task-specific text/code and repair permitted defects within the boundary and budgets below. |
 
@@ -575,7 +575,7 @@ later testing should freeze the rules before trying other notebook domains.
 
 | Question | Working default | Trade-off |
 | --- | --- | --- |
-| How close must reproduction be? | Match the specified computation, allowing documented equivalences and software alternatives. | Easier to define than “same biological conclusion,” but may reject scientifically reasonable alternative analyses. |
+| How close must reproduction be? | Reproduce the pinned reference workflow; solver tools remain open if they meet the validated output contract. Do not promise universal implementation independence. | Easier to define than “same biological conclusion,” but may reject scientifically reasonable alternative analyses. |
 | Where may a task start? | Use the original inputs used by the source notebook. Defer added reductions and new starting checkpoints beyond v1. | Keeps extraction simple and preserves the source workflow, but excludes analyses that need adaptation to fit. |
 | Which endpoints are included? | Include eligible terminal results already held in original named variables or object fields; explain branches without eligible results. Keep all original computation. | Simpler exports, with explicit omissions where the source does not store a terminal result. No intermediate or full-state fallback. |
 | What about endpoints presented as plots? | Save eligible existing results only; exclude plot-only results rather than reconstructing plotting internals. | Less custom code, but some displayed scientific results will not become graded targets. |

@@ -34,6 +34,7 @@ def priority(entry):
     name = entry["path"]
     if name.startswith("specification/") and name.rsplit("/", 1)[-1] in {
         "specification.json", "review.md", "task-brief.md", "validation-plan.md",
+        "validation-handoff.md",
         "result.json", "configuration.json", "requests.sqlite", "catalog.json",
         "artifact.json", "operation.json",
     }:

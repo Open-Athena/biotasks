@@ -31,9 +31,11 @@ provisional limits. Reference runtime does not establish solver runtime.
 versions. Optional tools list files, search literal text and read line ranges.
 Use them to resolve a specific ambiguity in the reference recipe, an identity
 rule or a suspected fidelity defect. Cite version, file and lines when relying
-on inspected code. You do not need to reverse-engineer each named operation or
-translate all library internals into prose. A pinned operation can define its
-omitted defaults. Do not guess an expanded explanation from a parameter list:
+on inspected code. Do not inspect package code solely to enumerate defaults or expand a named
+operation into its internal algorithm. The pinned operation defines omitted
+defaults. Inspect only when resolving a concrete source/evidence inconsistency
+or a missing fact that the named operation cannot define. Do not guess an
+expanded explanation from a parameter list:
 explicit arguments may select mutually exclusive behavior.
 
 These tools cannot install, import or execute code. Release sources do not prove
@@ -60,8 +62,12 @@ new endpoints or add starting checkpoints.
 The task asks for the results of the recorded reference workflow. Its named
 package operations, versions, explicit arguments, state transitions and input
 choices define the target. Explain their scientific purpose and how they connect.
-It is acceptable to specify an operation by its qualified name and pinned
-version, retaining that version's defaults where the reference omits arguments.
+Specify each operation by its qualified name, pinned version and explicit
+source arguments, retaining that version's defaults for omitted arguments. Keep
+prose at the level of scientific purpose and state transitions. Do not add
+internal formulas, default-parameter catalogues or illustrative identity examples
+that the source does not supply. The named operation is the definition; an
+incomplete paraphrase must not become a competing definition.
 The solver may use other software if its outputs satisfy the eventual public
 grading contract. Do not promise that every scientifically reasonable method or
 implementation produces an acceptable answer.
@@ -101,7 +107,12 @@ Write instructions containing:
    all original branches. Explain the biological or analytical purpose in plain
    language. The brief must stand alone without access to the private script.
 3. Required output files and schemas, units, row identities and relationships
-   between outputs. Preserve observed export representations. Distinguish stable
+   between outputs. Describe cardinality symbolically (for example, one row per
+   retained entity or per computed group and tested feature). Do not copy
+   observed row counts, group counts, label ranges or example records from the
+   reference outputs. These are private measurements, not recipe constants.
+   Preserve the export representation without publishing its measured contents.
+   Distinguish stable
    identities from reference label conventions; state source-defined mappings
    faithfully without proposing untested relabelings.
 4. The supplied execution constraints and open software choice. State that
@@ -117,11 +128,13 @@ only allowed implementation.
 ## Validation handoff
 
 Provide a short, private handoff listing endpoint-specific comparison questions
-or risks that later executable validation must resolve. Identify dependencies
+or risks that later executable validation must resolve. Ask what must be measured
+or decided; do not propose checks, acceptance predicates or presumed answers.
+Distinguish questions about repeatability from claims that repeatability is known. Identify dependencies
 between outputs that matter for alignment. Do not prescribe an untested
 transformation as valid: relabeling an identifier can change a downstream
 biological lookup. Distinguish representation changes from newly computed
-results. Do not expand this handoff into an exhaustive control suite or claim
+results. Do not expand this handoff into a control suite or claim
 that all internal methods can be verified from terminal outputs.
 
 The later stage remains responsible for justified public acceptance rules,

@@ -54,7 +54,7 @@ def test_delivery_probe_detects_semantic_and_newline_corruption(mode):
         if corruption == "newlines":
             value["review"] = value["review"].replace("\n", "n")
         if corruption == "placeholder":
-            value["validation_plan"] = "placeholder"
+            value["validation_handoff"] = "placeholder"
         result = inspect_response(
             mode,
             {"choices": [{"finish_reason": "stop", "message": {"content": json.dumps(value)}}]},
