@@ -1702,3 +1702,7 @@ Operator review rejects the generated draft_ready disposition: its feature-selec
 ### 2026-10-15 — General consistency checks for specification 008
 
 The user requested continued iteration until satisfactory. Strengthened the canonical prompt in two general ways: resolve argument precedence through the actually selected implementation branch; work through hypothetical representation changes across all dependent outputs and verify that scientific meanings are preserved. Contradictory semantic rules cannot be deferred to numerical calibration. No notebook-specific methods, thresholds, gene names or corrective answers were added. Keep the exact run-007 evidence bundle, tools, model/settings and time/resource bounds. A supported needs_evidence decision is an acceptable stage result; do not force draft_ready by changing the frozen science or exports. Run only specification; no construction or viewer update.
+
+### 2026-10-15 — Specification 008 startup failure; identical-prompt retry 009
+
+The host failed before invoking the specification worker because its selected cluster had no registered endpoint for the approved model route. Zero model requests; no scientific outcome. Preserved the original bootstrap status separately. A documented alternate route is running; retry the unchanged prompt, run-007 evidence and tools as specification 009 on existing reserved CPU capacity. Same GLM-5.3 medium and time bounds, no automatic relaunch, no new paid capacity, sandbox, reference execution or downstream stage.
