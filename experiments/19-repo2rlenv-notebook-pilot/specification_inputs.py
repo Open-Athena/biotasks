@@ -5,6 +5,8 @@ import hashlib
 import json
 from pathlib import Path
 
+from package_inspection import inspection_context, package_catalog
+
 INPUT_FILES = (
     "provenance.json",
     "inputs/original.py",
@@ -24,7 +26,7 @@ INPUT_FILES = (
 )
 
 
-def specification_context(run, policy):
+def specification_context(run, policy, *, inspect_packages=False):
     """Check original evidence hashes and audit lineage, without executing it."""
     manifest = json.loads((run / "artifact-manifest.json").read_text())
     originals = {item["path"]: item for item in manifest["files"]}
@@ -65,7 +67,7 @@ def specification_context(run, policy):
         or not all(item["download_hash_verified"] for item in audit)
     ):
         raise ValueError("Declared exports, executed outputs and audited files disagree")
-    return {
+    context = {
         "files": {path: value for path, value in files.items() if path != "trial/uv.lock"},
         "file_sha256": hashes,
         "retained_evidence": {
@@ -82,6 +84,14 @@ def specification_context(run, policy):
             "measurement, calibrated grader or solver evidence. No tools in this pass."
         ),
     }
+    if inspect_packages:
+        context["package_inspection"] = inspection_context(
+            package_catalog(files["trial/uv.lock"], files["trial/environment.txt"])
+        )
+        context["evidence_boundary"] = context["evidence_boundary"].replace(
+            "No tools in this pass.", "Read-only package-source tools are available."
+        )
+    return context
 
 
 if __name__ == "__main__":

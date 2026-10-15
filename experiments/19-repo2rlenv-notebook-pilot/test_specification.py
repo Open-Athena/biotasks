@@ -95,7 +95,9 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, 
             ]
         }
 
-    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    config = json.loads(
+        (Path(__file__).parent / "specification-diagnostic-config.json").read_text()
+    )
     config["output_format"] = output_format
     root = tmp_path / "specification"
     coroutine = run(
@@ -119,3 +121,82 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, 
     assert result["daytona_sandboxes_created"] == 0
     assert not result["construction_run"]
     assert not result["solver_run"]
+
+
+def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path, monkeypatch):
+    import asyncio
+    import time
+
+    from package_inspection import PackageInspection
+    from run_specification import run
+
+    calls = []
+
+    async def listing(self, package, prefix=""):
+        assert package in self.catalog
+        return json.dumps({"package": package, "files": ["example.py"]})
+
+    monkeypatch.setattr(PackageInspection, "list_package_files", listing)
+    artifact = dict(
+        disposition="needs_evidence",
+        review="Remaining measurement gap",
+        task_brief="",
+        validation_plan="Measure the identified uncertainty",
+    )
+
+    async def complete(payload):
+        calls.append(payload)
+        names = {t["function"]["name"] for t in payload["tools"]}
+        assert names == {
+            "submit_artifact",
+            "revise_artifact",
+            "list_package_files",
+            "search_package",
+            "read_package_file",
+        }
+        assert "response_format" not in payload and "max_tokens" not in payload
+        if len(calls) == 1:
+            name, args = "list_package_files", {"package": "scanpy"}
+        elif len(calls) == 2:
+            assert "example.py" in payload["messages"][-1]["content"]
+            name, args = "submit_artifact", {**artifact, "task_brief": "Invalid blocked brief"}
+        else:
+            assert "Artifact committed." not in payload["messages"][-1]["content"]
+            name, args = "submit_artifact", artifact
+        return {
+            "choices": [
+                {
+                    "finish_reason": "tool_calls",
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {
+                                "id": str(len(calls)),
+                                "type": "function",
+                                "function": {"name": name, "arguments": json.dumps(args)},
+                            }
+                        ],
+                    },
+                }
+            ]
+        }
+
+    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    root = tmp_path / "specification"
+    asyncio.run(
+        run(
+            config,
+            root=root,
+            endpoint="unused",
+            credential="unused",
+            deadline=time.time() + 60,
+            complete=complete,
+        )
+    )
+    result = json.loads((root / "result.json").read_text())
+    assert len(calls) == result["model_request_slots_used"] == 3
+    assert result["package_inspection_enabled"]
+    assert not result["scientific_analysis_executed"]
+    assert not result["solver_run"] and not result["construction_run"]
+    assert json.loads((root / "specification.json").read_text()) == artifact

@@ -32,6 +32,12 @@ SELECTED = {
 
 def priority(entry):
     name = entry["path"]
+    if name.startswith("specification/") and name.rsplit("/", 1)[-1] in {
+        "specification.json", "review.md", "task-brief.md", "validation-plan.md",
+        "result.json", "configuration.json", "requests.sqlite", "catalog.json",
+        "artifact.json", "operation.json",
+    }:
+        return (0, name)
     if name in SELECTED or name.startswith("pilot/trial-claims/"):
         return (0, name)
     if name.endswith(("/remote-job.json", "/trial.json", "/result.json")):
@@ -70,6 +76,10 @@ def main():
             or relative.startswith(("preparation/", "schema-probe/", "specification/"))
         )
         if not selected:
+            continue
+        if relative.startswith("specification/package-sources/") and not relative.endswith(".json"):
+            # Verified distributions are retained in the full archive. Do not
+            # crowd final text and tool traces out of the diagnostic log transfer.
             continue
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.

@@ -1,4 +1,4 @@
-"""Review executed evidence and draft a task in one call; no construction."""
+"""Review executed evidence in one specification session; no construction."""
 
 import asyncio
 import json
@@ -10,6 +10,7 @@ from pathlib import Path
 import httpx
 from design_stage import completion_transport
 from openai import AsyncOpenAI
+from package_inspection import PACKAGE_TOOLS, PackageInspection
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
@@ -23,22 +24,36 @@ from biotasks.inference_gate import Allowance, RequestLedger
 
 
 async def run(config, *, root, endpoint, credential, deadline, complete=None):
-    if config["entrypoint"] != "run_specification.py" or config["max_requests"] != 1:
-        raise ValueError("Specification requires exactly one call with no automatic repair")
+    if config["entrypoint"] != "run_specification.py":
+        raise ValueError("Specification cannot launch another stage")
+    inspect_packages = config.get("inspect_packages", False)
     output_format = config.get("output_format", "json_schema")
-    if output_format not in {"json_schema", "json_unconstrained"}:
-        raise ValueError("Specification requires a JSON response, without tools")
+    if inspect_packages:
+        if output_format != "tools":
+            raise ValueError("Read-only inspection requires native tool calls")
+    elif config["max_requests"] != 1 or output_format not in {"json_schema", "json_unconstrained"}:
+        raise ValueError("Tool-free specification requires one JSON response")
     root.mkdir(parents=True, exist_ok=False)
     experiment = Path(__file__).parent
     context = specification_context(
         experiment / config["reference_directory"],
         json.loads((experiment / config["policy_file"]).read_text()),
+        inspect_packages=inspect_packages,
     )
     expected = json.loads((experiment / config["input_file"]).read_text())
     if context != expected:
         raise ValueError("Specification context differs from the reviewed input bundle")
     save_record(root / "configuration.json", config)
-    ledger = RequestLedger(root / "requests.sqlite", {"specify": Allowance(1, None)})
+    ledger = RequestLedger(
+        root / "requests.sqlite", {"specify": Allowance(config["max_requests"], None)}
+    )
+    inspection = (
+        PackageInspection(
+            context["package_inspection"]["packages"], root / "package-sources", deadline
+        )
+        if inspect_packages
+        else None
+    )
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "specify", "1")
     limits = ChatLimits(
         max_output_tokens=None,
@@ -60,6 +75,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         model="glm-5.3",
         reasoning_effort="medium",
         output_format=output_format,
+        package_inspection_enabled=inspect_packages,
         output_token_policy="No client max_tokens; provider limits/defaults apply.",
         provider_generation_limit_verified=False,
     )
@@ -86,9 +102,11 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             complete=complete,
             deadline=deadline,
             limits=limits,
-            max_requests=1,
+            max_requests=config["max_requests"],
             recover_output_limit=False,
             output_format=output_format,
+            extra_tools=PACKAGE_TOOLS if inspection else None,
+            extra_handlers=inspection.handlers if inspection else None,
         )
         save_record(root / "specification.json", plan.model_dump())
         (root / "review.md").write_text(plan.review + "\n")
