@@ -1,0 +1,19 @@
+{
+  "chat_template_kwargs": {
+    "reasoning_effort": "medium"
+  },
+  "messages": [
+    {
+      "content": "This is a serialization test. Return the supplied JSON object exactly, preserving every field and string, including Markdown newlines. Do not analyze or replace its content. Return JSON only, without a code fence.",
+      "role": "system"
+    },
+    {
+      "content": "{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3",
+  "stream": false,
+  "temperature": 1.0,
+  "top_p": 1.0
+}

@@ -1,0 +1,51 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage/n/nThe supplied source exports its terminal table./n/n- The algorithm default is not supplied./n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed/n/nInspect the pinned implementation to establish the omitted default./n/nDo not guess a value or withhold this plan.\"}",
+        "function_call": null,
+        "reasoning": "The user is asking me to return the supplied JSON object exactly, preserving every field and string. This is a straightforward serialization test. I need to return the JSON exactly as provided, without a code fence, without adding any analysis.\n\nLet me look at the JSON:\n\n```json\n{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}\n```\n\nI should return this exactly as-is. The instruction says \"Return JSON only, without a code fence.\" So I just output the JSON object itself.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": null
+      },
+      "routed_experts": null,
+      "stop_reason": 154827,
+      "token_ids": null
+    }
+  ],
+  "created": 1792089257,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-a27647d6b9aa8ad0",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 254,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 170,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 136,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 64,
+      "created_cache_tokens": 64,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 390
+  }
+}

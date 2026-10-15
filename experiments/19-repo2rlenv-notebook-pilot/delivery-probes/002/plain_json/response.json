@@ -1,0 +1,51 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}",
+        "function_call": null,
+        "reasoning": "The user is asking me to return the supplied JSON object exactly, preserving every field and string, including Markdown newlines. This is a serialization test. I should return the JSON exactly as provided, without a code fence.\n\nLet me look at the JSON:\n\n{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}\n\nI need to return this exactly. The question is whether to return it as the escaped JSON string (with \\n as literal escape sequences) or as formatted JSON with actual newlines.\n\nThe instruction says \"preserving every field and string, including Markdown newlines.\" The supplied JSON has \\n escape sequences within the strings. If I return the raw JSON as supplied, it would include the \\n escape sequences as they appear in the source. If I pretty-print or re-serialize, the newlines might become actual newlines.\n\nThe safest interpretation of \"Return the supplied JSON object exactly\" is to return the exact text that was supplied, which includes the \\n escape sequences. This preserves the string values exactly as they would be parsed, and preserves the serialization as given.\n\nReturn JSON only, without a code fence. So I should output:\n\n{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}\n\nThat's the exact JSON as supplied. I'll return it exactly, without any code fence or additional text.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": null
+      },
+      "routed_experts": null,
+      "stop_reason": 154827,
+      "token_ids": null
+    }
+  ],
+  "created": 1792089254,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-8745c6a5d236325f",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 491,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 407,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 136,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 128,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 627
+  }
+}
