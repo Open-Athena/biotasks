@@ -20,8 +20,10 @@ and `file_sha256`, identifying the exact supplied files:
   adapted analysis, actually tested script and changes from the original.
 - `candidate/inputs.json`, `trial/inputs-before.json`: staged input descriptions
   and their recorded identities.
-- `candidate/pyproject.toml`, `trial/uv.lock`, `trial/environment.txt`: proposed
-  dependencies and the environment actually resolved for the reference.
+- `candidate/pyproject.toml`, `trial/environment.txt`: proposed dependencies and
+  the exact package versions actually resolved for the reference. The full lock
+  is retained outside model context; `retained_evidence` supplies its hash and
+  size. Its wheel URLs/hashes are not needed to specify the scientific analysis.
 - `trial/result.json`: execution outcome, warnings, resource measurements and
   output inventory. `result.json` records setup-stage completion and cleanup.
 - `output-audit.json`: observed output schemas, structural checks and previews.

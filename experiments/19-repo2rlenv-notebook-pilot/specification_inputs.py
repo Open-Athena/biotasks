@@ -66,8 +66,15 @@ def specification_context(run, policy):
     ):
         raise ValueError("Declared exports, executed outputs and audited files disagree")
     return {
-        "files": files,
+        "files": {path: value for path, value in files.items() if path != "trial/uv.lock"},
         "file_sha256": hashes,
+        "retained_evidence": {
+            "trial/uv.lock": {
+                "sha256": hashes["trial/uv.lock"],
+                "bytes": originals["trial/uv.lock"]["bytes"],
+                "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context.",
+            }
+        },
         "task_policy": policy,
         "evidence_boundary": (
             "One passing reference test and structural output audit. No full data tables "

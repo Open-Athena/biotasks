@@ -1,0 +1,37 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "disposition": {
+      "enum": [
+        "draft_ready",
+        "needs_evidence",
+        "reference_work_required",
+        "reject"
+      ],
+      "title": "Disposition",
+      "type": "string"
+    },
+    "review": {
+      "minLength": 1,
+      "title": "Review",
+      "type": "string"
+    },
+    "task_brief": {
+      "title": "Task Brief",
+      "type": "string"
+    },
+    "validation_plan": {
+      "minLength": 1,
+      "title": "Validation Plan",
+      "type": "string"
+    }
+  },
+  "required": [
+    "disposition",
+    "review",
+    "task_brief",
+    "validation_plan"
+  ],
+  "title": "TaskSpecification",
+  "type": "object"
+}

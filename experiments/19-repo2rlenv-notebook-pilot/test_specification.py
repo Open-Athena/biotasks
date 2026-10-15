@@ -18,6 +18,11 @@ def run(tmp_path):
 def test_current_evidence_and_modified_source(run):
     context = specification_context(run, {})
     assert context["files"]["trial/result.json"]["execution"]["exit_code"] == 0
+    assert "trial/uv.lock" not in context["files"]
+    assert (
+        context["retained_evidence"]["trial/uv.lock"]["sha256"]
+        == context["file_sha256"]["trial/uv.lock"]
+    )
     with (run / "candidate/analysis.py").open("a") as stream:
         stream.write("\n# unrecorded change\n")
     with pytest.raises(ValueError, match="Original evidence changed"):
