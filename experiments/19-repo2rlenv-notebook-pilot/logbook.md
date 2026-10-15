@@ -1706,3 +1706,7 @@ The user requested continued iteration until satisfactory. Strengthened the cano
 ### 2026-10-15 — Specification 008 startup failure; identical-prompt retry 009
 
 The host failed before invoking the specification worker because its selected cluster had no registered endpoint for the approved model route. Zero model requests; no scientific outcome. Preserved the original bootstrap status separately. A documented alternate route is running; retry the unchanged prompt, run-007 evidence and tools as specification 009 on existing reserved CPU capacity. Same GLM-5.3 medium and time bounds, no automatic relaunch, no new paid capacity, sandbox, reference execution or downstream stage.
+
+### 2026-10-15 — Specification 009 transport failure; fresh session 010
+
+Session 009 received 50 responses (48 successful source-tool actions and two invalid-argument responses), then request 51 failed with APIConnectionError; its slot remains uncertain. Worker elapsed 500.94 seconds. No artifact was submitted, so no scientific disposition can be assessed. Preserved original results, ledger, transport-failure receipt and hash-verified trace navigation; complete originals remain archived. The remote job is terminal. The documented model route still reports running. Under the user's iteration authorization, launch one fresh session 010 with unchanged prompt/evidence/tools/settings/bounds. No automatic retry, manual scientific correction or downstream stage.
