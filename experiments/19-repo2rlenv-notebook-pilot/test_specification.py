@@ -48,3 +48,61 @@ def test_blocked_response_cannot_supply_an_accepted_brief(decision):
         TaskSpecification(
             disposition=decision, review="A blocker", task_brief="Do this", validation_plan="Check"
         )
+
+
+@pytest.mark.parametrize("mode", ["ready", "needs_evidence", "invalid", "truncated"])
+def test_one_call_preserves_response_without_running_downstream(tmp_path, mode):
+    import asyncio
+    import time
+
+    from run_specification import run
+
+    calls = []
+    candidate = dict(
+        disposition="draft_ready" if mode == "ready" else "needs_evidence",
+        review="Source review",
+        task_brief="Complete brief" if mode == "ready" else "",
+        validation_plan="Executable checks needed",
+    )
+    if mode == "invalid":
+        candidate["task_brief"] = "Blocked but nonempty"
+
+    async def complete(payload):
+        calls.append(payload)
+        assert "tools" not in payload
+        assert "max_tokens" not in payload
+        assert payload["response_format"]["json_schema"]["strict"] is True
+        context = json.loads(payload["messages"][1]["content"])
+        assert "trial/reference.py" in context["files"]
+        return {
+            "choices": [
+                {
+                    "finish_reason": "length" if mode == "truncated" else "stop",
+                    "message": {"role": "assistant", "content": json.dumps(candidate)},
+                }
+            ]
+        }
+
+    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    root = tmp_path / "specification"
+    coroutine = run(
+        config,
+        root=root,
+        endpoint="unused",
+        credential="unused",
+        deadline=time.time() + 60,
+        complete=complete,
+    )
+    if mode in {"invalid", "truncated"}:
+        with pytest.raises(RuntimeError):
+            asyncio.run(coroutine)
+    else:
+        asyncio.run(coroutine)
+        assert json.loads((root / "specification.json").read_text()) == candidate
+    assert len(calls) == 1
+    assert (root / "task-brief.md").exists() == (mode == "ready")
+    result = json.loads((root / "result.json").read_text())
+    assert result["model_request_slots_used"] == 1
+    assert result["daytona_sandboxes_created"] == 0
+    assert not result["construction_run"]
+    assert not result["solver_run"]

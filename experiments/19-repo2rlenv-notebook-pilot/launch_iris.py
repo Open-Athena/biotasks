@@ -115,7 +115,7 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                     artifact_prefix, endpoint_job, cluster, reference_archive=None):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
     config = json.loads(files["campaign-config.json"])
-    preparation_only = config.get("entrypoint") in {"run_preparation.py", "run_schema_probe.py"}
+    preparation_only = config.get("entrypoint") in {"run_preparation.py", "run_schema_probe.py", "run_specification.py"}
     if not token or (not preparation_only and not daytona_key) or not artifact_prefix.startswith("s3://"):
         raise ValueError("Approved credentials and a private artifact destination are required")
     if preparation_only and daytona_key:

@@ -1,6 +1,6 @@
 # Next stage: coverage review and task specification
 
-Prepared for prompt/input review; **no model request has run**. This is stage 3
+The reviewed input bundle for specification run 001. This is stage 3
 of the artifact-reproduction proposal. One fresh GLM pass reviews preparation's
 endpoint choices against the original source and the executed reference, then
 drafts one task spanning all eligible endpoints. It does not select a new scope.
@@ -20,8 +20,7 @@ The full biological data and result tables are not included. Audit previews are
 explicitly distinguished from full-file measurements.
 
 The proposed worker interface is one GLM-5.3 medium JSON-schema response, with no
-tools or automatic repair and no additional token/byte caps. A model run and its
-launcher are not part of this checkpoint. Missing scientific evidence is a valid
+tools or automatic repair and no additional token/byte caps. The runner is `run_specification.py`; its launcher packages committed inputs only. Missing scientific evidence is a valid
 result: the worker must request the specific inspection instead of guessing.
 
 The response has four fields: a disposition, a coverage/fidelity review, a public
@@ -33,8 +32,7 @@ This pass replaces the old scope-selection design step for the current workflow.
 It also replaces the obsolete coverage-proposal-plus-coverage-review sequence;
 it reviews the preparation worker's existing inventory rather than generating
 another independent inventory first. Earlier prompts/runners remain evidence of
-the earlier approach and are not invoked by this checkpoint. No scientific
-execution, task construction, solver, publication of a task or viewer update.
+the earlier approach and are not invoked by this checkpoint. This stage performs no scientific execution, task construction, solver, publication of a task or viewer update.
 
 Regenerate the exact input from the repository root:
 
