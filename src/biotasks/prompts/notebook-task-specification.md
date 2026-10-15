@@ -92,10 +92,36 @@ Write a private comparison plan mapping each required result to a scientific
 check. File existence, schema and plausibility checks alone are insufficient.
 Address legitimate variation, identities, arbitrary labels, stochastic results,
 ties, coordinate symmetries and numerical differences where relevant. Explain
-which comparisons require repeat runs or valid alternative implementations;
-do not assume a geometric alignment or other invariance is sufficient merely
-because it is possible. Include meaningful wrong-result controls and an empty
-submission. Do not invent numerical tolerances from a single reference run.
+which comparisons require repeat runs; do not assume a geometric alignment or
+other invariance is sufficient merely because it is possible. Do not invent
+numerical tolerances from a single reference run.
+
+Plan the following executable controls before the grader can be frozen:
+
+- The reference passes, an empty/no-op submission fails, and omitting any
+  required endpoint fails.
+- At least one consequential wrong-method or wrong-result control fails for
+  each scientific branch with a required endpoint. Test the claimed scientific
+  distinction, not merely file presence, formatting or plausible value ranges.
+- Valid representation alternatives permitted by the public contract pass.
+  Wherever numerical or software portability is claimed, require an independently
+  computed conforming alternative for that branch, using the public inputs and
+  contract without reading reference artifacts. Record its computation and why
+  it conforms. Copying, reordering or reformatting reference outputs tests only
+  representation handling, not independent computational validity.
+
+Identify consequential instructed methods that the selected terminal outputs
+cannot distinguish. Matching those outputs does not establish that every internal
+procedure was followed. Use wrong-method controls to test the distinctions they
+can support. Do not add intermediate exports or claim verification of unobserved
+procedures. Narrow the verification claim explicitly; if a required scientific
+distinction cannot be checked, flag the blocker or reject the candidate rather
+than silently weakening the scientific contract.
+
+If an independent alternative or discriminating control cannot be validated,
+leave the corresponding claim unvalidated. One successful alternative supports
+that tested case, not universal portability. These are plans for later execution;
+do not describe controls as passed without recorded execution evidence.
 
 Use one overall binary reward: all required scientific checks must pass. This is
 a proposed comparison plan, not an implemented or calibrated grader. Remaining
