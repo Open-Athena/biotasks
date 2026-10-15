@@ -195,14 +195,16 @@ These are logical stages, not necessarily separate agents or one LLM call each.
    Measurements from reduced inputs or a different execution plan do not establish eligibility.
    The [canonical prompt](../../src/biotasks/prompts/notebook-task-specification.md)
    reviews the existing preparation inventory; it does not choose a new scope.
-   It returns a public brief and private validation plan only when scientific
-   semantics are supported. Otherwise it returns a focused evidence request and
-   an empty brief. The [current input](specification-inputs/007/README.md) is
-   grounded in setup run 001. In one session, the worker can list, search and
-   read hash-verified package release sources for the recorded installed versions.
-   It has no shell or scientific execution tools. Native artifact submission and
-   local validation handle the final response. Specification iterations are recorded separately;
-   schema acceptance is not acceptance of the scientific contract.
+   It drafts a pinned reference recipe and output schemas, with open solver tool
+   choice. Named package operations and versions may define omitted defaults;
+   the worker need not reverse-engineer library internals into a software-neutral
+   specification. It returns a public draft and short private validation handoff,
+   or a focused evidence request and empty brief when genuinely blocked.
+   The [current input](specification-inputs/011/README.md) retains setup run 001's
+   evidence. Optional read-only package inspection can resolve ambiguities, with
+   no shell or scientific execution. Local schema validation is not scientific
+   acceptance. The draft is not ready for solving until executable validation
+   establishes the acceptance rules.
 4. **Construct and validate.** Wrap the runnable reference and exports as the
    private solution. Generate the public brief and grading contract. Execute
    controls and calibrate any numerical comparisons before freezing the task.
@@ -346,10 +348,15 @@ pipeline.
 
 ## 6. What does “reproduce” mean?
 
-Proposed default: reproduce the specified computational result from the source
-analysis, with documented tolerances and genuine equivalences. The reference
-environment is pinned; the solver's software choice stays open when it satisfies
-that public contract. The reference cannot impose hidden package-specific details.
+Accepted default: reproduce the pinned reference workflow's results. The public
+recipe may name versioned package operations, their explicit arguments and their
+defaults, while explaining the scientific purpose and relevant state transitions.
+Solver tool choice stays open: an alternative implementation must satisfy the
+validated public output contract. This does not promise that all scientifically
+reasonable implementations are interchangeable. Executable validation establishes
+comparison rules, tolerances and accepted variations before solving; specification
+only drafts the recipe, schemas and unresolved comparison questions. Any detail
+enforced by grading must appear in the final public contract.
 
 An endpoint with a portable representation can still depend strongly on the
 scientific method. For example, Scanpy's gene-ranking operation takes choices

@@ -110,7 +110,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         )
         save_record(root / "specification.json", plan.model_dump())
         (root / "review.md").write_text(plan.review + "\n")
-        (root / "validation-plan.md").write_text(plan.validation_plan + "\n")
+        (root / "validation-handoff.md").write_text(plan.validation_handoff + "\n")
         if plan.task_brief:
             (root / "task-brief.md").write_text(plan.task_brief + "\n")
         result.update(status="ready_for_user_inspection", disposition=plan.disposition)

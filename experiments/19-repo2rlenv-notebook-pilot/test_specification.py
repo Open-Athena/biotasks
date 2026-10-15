@@ -51,7 +51,10 @@ def test_missing_export_audit_is_rejected(run):
 def test_blocked_response_cannot_supply_an_accepted_brief(decision):
     with pytest.raises(ValueError, match="Only draft_ready"):
         TaskSpecification(
-            disposition=decision, review="A blocker", task_brief="Do this", validation_plan="Check"
+            disposition=decision,
+            review="A blocker",
+            task_brief="Do this",
+            validation_handoff="Check",
         )
 
 
@@ -68,7 +71,7 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, 
         disposition="draft_ready" if mode == "ready" else "needs_evidence",
         review="Source review",
         task_brief="Complete brief" if mode == "ready" else "",
-        validation_plan="Executable checks needed",
+        validation_handoff="Executable checks needed",
     )
     if mode == "invalid":
         candidate["task_brief"] = "Blocked but nonempty"
@@ -114,6 +117,9 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, 
     else:
         asyncio.run(coroutine)
         assert json.loads((root / "specification.json").read_text()) == candidate
+        assert (root / "validation-handoff.md").read_text() == candidate[
+            "validation_handoff"
+        ] + "\n"
     assert len(calls) == 1
     assert (root / "task-brief.md").exists() == (mode == "ready")
     result = json.loads((root / "result.json").read_text())
@@ -141,7 +147,7 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
         disposition="needs_evidence",
         review="Remaining measurement gap",
         task_brief="",
-        validation_plan="Measure the identified uncertainty",
+        validation_handoff="Measure the identified uncertainty",
     )
 
     async def complete(payload):
@@ -200,3 +206,5 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
     assert not result["scientific_analysis_executed"]
     assert not result["solver_run"] and not result["construction_run"]
     assert json.loads((root / "specification.json").read_text()) == artifact
+    assert (root / "validation-handoff.md").read_text() == artifact["validation_handoff"] + "\n"
+    assert not (root / "validation-plan.md").exists()

@@ -7,19 +7,21 @@ from reference_protocol import StrictModel
 
 
 class TaskSpecification(StrictModel):
-    disposition: Literal["draft_ready", "needs_evidence", "reference_work_required", "reject"] = Field(
-        description="Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science."
+    disposition: Literal["draft_ready", "needs_evidence", "reference_work_required", "reject"] = (
+        Field(
+            description="draft_ready means a supported reference recipe and output schemas, pending executable grading validation. Named pinned operations may define defaults. Choose needs_evidence for missing facts needed to define the reference, not merely uncalibrated tolerances or unproven portability."
+        )
     )
     review: str = Field(
         min_length=1,
         description="Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.",
     )
     task_brief: str = Field(
-        description="Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.",
+        description="Public reference recipe and output schemas when draft_ready; empty string otherwise. Standalone draft with acceptance rules explicitly pending validation. No placeholders or dependence on private evidence.",
     )
-    validation_plan: str = Field(
+    validation_handoff: str = Field(
         min_length=1,
-        description="Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.",
+        description="Short factory-facing handoff of unresolved endpoint comparison questions and cross-output dependencies, or focused evidence requests when blocked. Do not invent tolerances, equivalences or an exhaustive grading plan.",
     )
 
     @model_validator(mode="after")
