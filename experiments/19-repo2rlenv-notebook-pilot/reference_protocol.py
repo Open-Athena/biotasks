@@ -21,7 +21,10 @@ class StrictModel(BaseModel):
 class Artifact(StrictModel):
     path: str = Field(description="Path relative to /work/outputs.")
     description: str = Field(min_length=1)
-    source_evidence: str = Field(min_length=1)
+    source_evidence: str = Field(
+        min_length=1,
+        description="Why this is a scientific endpoint according to the source goals, and which existing variable or field stores it.",
+    )
 
     @model_validator(mode="after")
     def relative_path(self):

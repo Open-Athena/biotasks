@@ -18,7 +18,7 @@ def response(plan, finish="stop", call_id="call"):
     }}]}
 
 
-@pytest.mark.parametrize("mode", ["accepted", "truncated", "structural_repair", "twice_invalid"])
+@pytest.mark.parametrize("mode", ["accepted", "truncated", "invalid_schema"])
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
     plan = dict(disposition="reject", explanation="No eligible terminal result",
@@ -37,7 +37,7 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
         assert "question_text" not in context["source"]
         assert "max_tokens" not in payload
         candidate = dict(plan)
-        if mode == "twice_invalid" or (mode == "structural_repair" and len(calls) == 1):
+        if mode == "invalid_schema":
             candidate.pop("disposition")
         return response(candidate, "length" if mode == "truncated" else "stop", str(len(calls)))
 
@@ -47,22 +47,23 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
         seed=json.loads((HERE / "seeds/current.json").read_text())[0],
         endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
     )
-    if mode in {"truncated", "twice_invalid"}:
+    if mode in {"truncated", "invalid_schema"}:
         with pytest.raises(RuntimeError):
             asyncio.run(coroutine)
     else:
         asyncio.run(coroutine)
         assert json.loads((tmp_path / "preparation/plan.json").read_text()) == plan
-    assert len(calls) == (2 if mode in {"structural_repair", "twice_invalid"} else 1)
+    assert len(calls) == 1
     result = json.loads((tmp_path / "preparation/result.json").read_text())
+    assert result["model_request_slots_used"] == 1
     assert result["daytona_sandboxes_created"] == 0
     assert result["scientific_analysis_executed"] is False
     assert result["setup_executed"] is False
     assert result["independent_review_run"] is False
 
 
-@pytest.mark.parametrize("repair_syntax", [False, True])
-def test_export_code_is_appended_inert_and_syntax_failure_gets_one_repair(tmp_path, repair_syntax):
+@pytest.mark.parametrize("invalid_syntax", [False, True])
+def test_export_code_is_appended_inert_and_syntax_failure_stops(tmp_path, invalid_syntax):
     calls = []
     generated = None
     baseline = None
@@ -75,22 +76,34 @@ def test_export_code_is_appended_inert_and_syntax_failure_gets_one_repair(tmp_pa
         generated = "raise RuntimeError('must not execute')\n"
         candidate = dict(
             disposition="prepare", explanation="Synthetic inert preparation fixture",
-            export_code="result = (" if repair_syntax and len(calls) == 1 else generated,
+            export_code="result = (" if invalid_syntax else generated,
             artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
             excluded_outputs=[], unresolved_assumptions=[],
         )
-        if len(calls) == 2:
-            assert "valid Python" in payload["messages"][-1]["content"]
-            assert "complete corrected artifact" in payload["messages"][-1]["content"]
         return response(candidate)
 
     root = tmp_path / "preparation"
-    asyncio.run(run(
+    coroutine = run(
         json.loads((HERE / "preparation-inputs.json").read_text()),
         root=root, seed=json.loads((HERE / "seeds/current.json").read_text())[0],
         endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
-    ))
-    assert len(calls) == (2 if repair_syntax else 1)
+    )
+    if invalid_syntax:
+        with pytest.raises(RuntimeError):
+            asyncio.run(coroutine)
+        assert len(calls) == 1
+        assert not (root / "reference.py").exists()
+        draft = json.loads((root / "prepare/artifact-stage/draft.json").read_text())
+        assert draft["artifact"]["export_code"] == "result = ("
+        assert "valid Python" in draft["validation_error"]
+        assert (root / "prepare/artifact-stage/trace/1/response.json").exists()
+        result = json.loads((root / "result.json").read_text())
+        assert result["status"] == "incomplete"
+        assert result["model_request_slots_used"] == 1
+        assert result["scientific_analysis_executed"] is False
+        return
+    asyncio.run(coroutine)
+    assert len(calls) == 1
     assert (root / "exports.py").read_text() == generated
     assert (root / "reference.py").read_text() == baseline + "\n\n" + generated
     assert "+raise RuntimeError" in (root / "source.diff").read_text()
@@ -107,3 +120,12 @@ def test_export_code_is_appended_inert_and_syntax_failure_gets_one_repair(tmp_pa
     assert result["scientific_analysis_executed"] is False
     assert result["independent_review_run"] is False
     assert result["daytona_sandboxes_created"] == 0
+
+
+def test_old_two_call_configuration_is_rejected_before_request(tmp_path):
+    config = json.loads((HERE / "preparation-inputs.json").read_text())
+    config["max_requests"] = 2
+    root = tmp_path / "preparation"
+    with pytest.raises(ValueError, match="exactly one call"):
+        asyncio.run(run(config, root=root, seed={}, endpoint="unused", credential="unused", deadline=time.time()+60))
+    assert not root.exists()

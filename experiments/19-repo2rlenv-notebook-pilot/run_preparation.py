@@ -1,4 +1,4 @@
-"""Run only reference preparation: one creation and at most one structural repair.
+"""Run only reference preparation: one call, validation, then inspection.
 
 No data staging, sandbox, shell tool, model review or scientific execution.
 Generated commands remain inert files for the user's inspection.
@@ -43,13 +43,13 @@ def preparation_context(source, seed, target):
 
 
 async def run(config, *, root, seed, endpoint, credential, deadline, complete=None):
-    if config["entrypoint"] != "run_preparation.py" or config["max_requests"] != 2:
-        raise ValueError("Preparation requires one creation and at most one structural repair")
+    if config["entrypoint"] != "run_preparation.py" or config["max_requests"] != 1:
+        raise ValueError("Preparation requires exactly one call with no automatic repair")
     root.mkdir(parents=True, exist_ok=False)
     experiment = Path(__file__).parent
     context = preparation_context(experiment / config["source_directory"], seed, config["target"])
     save_record(root / "configuration.json", config)
-    ledger = RequestLedger(root / "requests.sqlite", {"prepare": Allowance(2, None)})
+    ledger = RequestLedger(root / "requests.sqlite", {"prepare": Allowance(1, None)})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "prepare", "1")
     limits = ChatLimits(
         max_output_tokens=None,
@@ -98,7 +98,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
             complete=complete,
             deadline=deadline,
             limits=limits,
-            max_requests=2,
+            max_requests=1,
             validate=validate,
             recover_output_limit=False,
             output_format="json_schema",

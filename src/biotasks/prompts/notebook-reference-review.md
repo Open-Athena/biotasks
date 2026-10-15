@@ -7,8 +7,13 @@ variables or their fields and still available in their intended state at the
 end of the script. It returns only appended code to save them. Check every branch for
 eligible endpoints, including branches omitted from the inventory. An endpoint
 is a scientific deliverable, not merely an object that survives to the last line.
-Reject intermediate/diagnostic exports or whole-state fallback snapshots; a whole
-object qualifies only if that object itself is the intended deliverable.
+Reject exports of mixed analysis-state containers holding inputs, intermediates,
+diagnostics and results; select their terminal-result fields instead. Require
+source evidence for the result's scientific role, not just its storage location.
+A standalone result table or embedding may be exported whole. Check preservation
+of scientifically meaningful result fields and identifiers; omissions need
+justification. Plot display or earlier computation does not automatically make
+a stored result intermediate.
 
 Only existing named values or stored fields qualify. File-format conversion may
 preserve those values and identifiers, but must not introduce new scientific
@@ -41,7 +46,8 @@ positive findings belong in `rationale`. In this stage, `setup_or_export_problem
 records endpoint-saving defects or violations of the preparation/execution
 boundary. `checks_for_execution` records unresolved questions, not new scientific
 requirements. Approval requires empty defect lists; never erase a real defect to
-approve. Use revise for repairable preparation defects and reject when no honest
-preparation is available. Explicitly excluded ineligible plot-only results are
-not missing eligible endpoints. Scientific branch coverage and faithful saving
+approve. Use revise to report repairable preparation defects, and reject when
+no honest preparation is available. These findings do not automatically launch a repair;
+preparation has one call followed by validation and inspection. Explicitly
+excluded ineligible plot-only results are not missing eligible endpoints. Scientific branch coverage and faithful saving
 must be assessed from source, not assumed from schema or syntax validity.

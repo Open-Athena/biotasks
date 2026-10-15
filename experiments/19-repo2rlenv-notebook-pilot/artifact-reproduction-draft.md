@@ -76,8 +76,11 @@ recreate a figure. Explain plot-only results that have no eligible stored output
 Visual styling and image reproduction remain outside this version.
 
 Intermediate results, diagnostic counts, preprocessing states and checkpoints
-are not exported targets. A whole object qualifies only if it is itself the
-scientific deliverable; full-state export cannot defer endpoint selection.
+are not exported targets. Select scientific results from the source goals before
+choosing storage. Exclude mixed analysis-state containers and select terminal
+fields instead. Standalone result tables or embeddings may be exported whole;
+preserve meaningful fields and identifiers and justify omissions. Plot display
+or earlier computation does not automatically make a stored result intermediate.
 Consider every branch and explain any without an eligible terminal result in the
 single inventory's exclusions. Keep all original computation, including excluded
 branches. Reject a source with no eligible terminal results.
@@ -149,8 +152,8 @@ not become measured facts merely because it is executable code.
 | Packaging and evaluation | Assemble Harbor files, enforce visibility boundaries, run blind attempts and preserve results. | Produce remaining task-specific text/code and repair permitted defects within the boundary and budgets below. |
 
 The controller owns scheduling, limits, artifact identity and retry accounting.
-The preparation worker has no tools: one creation and at most one complete-object
-repair, medium reasoning, strict JSON-schema responses and no extra client
+The preparation worker has no tools: exactly one call, no automatic repair,
+medium reasoning, strict JSON-schema responses and no extra client
 token/byte caps. Execution setup can use tools to inspect and diagnose actual
 failures; running the scientific script itself is programmatic. See the
 [current workflow](reference-execution.md) for implemented boundaries and status.
@@ -313,8 +316,8 @@ Proposed finite budgets for the first experiment:
 | Reference or independently computed valid alternative | 600 seconds per complete execution, including imports, all branches and artifact exports. Environment construction and input downloads are separate. |
 | Verifier | 120 seconds per invocation, separate from the solver clock. |
 | Blind solver | Provisionally 600 seconds per attempt, with the total agent allowance to be revisited separately; at most two attempts, with a fresh attempt allowed after a permitted repair. The clock starts when the prepared sandbox and task are handed to the solver, before its first model request. It includes model latency and tool use; it excludes environment setup and final verification. |
-| Preparation repairs | One creation and at most one complete-object repair. Scientific source repairs remain forbidden. Execution/construction budgets need reconciliation with the new stage separation before launch. |
-| Model requests | Preparation permits at most two GLM-5.3 calls, medium reasoning, no extra client token/byte caps and the existing 600-second per-request timeout. Record execution-worker and downstream budgets before those stages launch. No automatic model escalation. |
+| Preparation repairs | None automatically: one call, schema/syntax validation, preserve output or failure, then inspection. Scientific source repairs remain forbidden. Execution/construction budgets need reconciliation with the new stage separation before launch. |
+| Model requests | Preparation permits exactly one GLM-5.3 call, medium reasoning, no extra client token/byte caps and the existing 600-second per-request timeout. Record execution-worker and downstream budgets before those stages launch. No automatic model escalation. |
 | Whole experiment | Two hours of wall-clock work, including every stage and retry, followed by up to five minutes of active cleanup. Stop starting work when any applicable limit is exhausted; report and track unresolved cleanup rather than declaring it complete. |
 
 All limits apply together. Exhausting a budget leaves a rejected, unresolved or
@@ -514,7 +517,8 @@ unmeasured; conversion retains the scientific dependencies and computations.
 The [factual profiler](../../src/biotasks/data_profile.py) covers bounded
 file structure and identity. The prepared [Tasksmith integration](design_stage.py)
 provides structured proposal machinery. The current preparation worker uses
-strict JSON-schema responses, appended export code and one complete-object repair.
+strict JSON-schema responses and appended export code. Preparation makes one
+call, validates structure/syntax and preserves failures without automatic repair.
 The tool-enabled execution worker is not integrated yet. Harbor and the existing quality/release
 components remain candidates downstream.
 

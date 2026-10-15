@@ -31,8 +31,11 @@ and `seeds/current.json`. No seed-specific endpoint rules are in the factory.
 Select scientific end products, not every object that remains in memory.
 Eligible results must already be stored in named variables or fields in the
 original script. Save their values and identifiers through native writers or
-straightforward format conversion. A whole object qualifies only if it is itself
-the scientific deliverable; it is not a fallback for selecting endpoints.
+straightforward format conversion. Select results from the analysis goals before
+choosing storage. Exclude mixed analysis-state containers; select their terminal
+fields instead. Standalone result tables or embeddings may be exported whole,
+preserving meaningful fields and identifiers. Explain any omitted result fields.
+Plot display or earlier computation does not automatically make a result intermediate.
 
 Intermediate matrices, diagnostic counts, checkpoints and full-state snapshots
 are outside the exported targets. Do not add computation for exporting results:
@@ -53,9 +56,9 @@ and syntax validator alone cannot enforce them.
 ## Preparation interface and run boundary
 
 `run_preparation.py` uses GLM-5.3, medium reasoning and strict JSON-schema
-responses. It permits one creation and at most one complete-object structural
-repair, with no extra client token/byte limits and the existing 600-second
-per-request timeout. It creates no task sandbox and executes no generated code.
+responses. It makes exactly one call, with no automatic repair, no extra client
+token/byte limits and the existing 600-second per-request timeout. Schema or
+syntax failures preserve the response and stop for inspection. It creates no task sandbox and executes no generated code.
 The worker returns `export_code` instead of a full script. The controller saves
 that response as `exports.py` and constructs `reference.py` as the untouched
 baseline, two newlines, then that code. Original text is preserved by
@@ -79,7 +82,9 @@ endpoint selection remains unvalidated. The new append-only contract prevents
 source-comment edits by construction and makes the output path base explicit;
 source preservation and the explicit path convention passed run 007 checks.
 Run 007 nevertheless proposed full-state and diagnostic exports; this requires
-selection review before execution.
+selection review before execution. The revised prompt excludes mixed-state
+containers explicitly and requires evidence of each result’s scientific role.
+The revised prompt and single-call policy have not yet had a model run.
 
 [Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
 its full-object export and newly captured expression are not evidence of
