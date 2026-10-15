@@ -15,6 +15,15 @@ of scientifically meaningful result fields and identifiers; omissions need
 justification. Plot display or earlier computation does not automatically make
 a stored result intermediate.
 
+Coverage means independent scientific outcomes, not one export per tutorial
+section or processing step. Check endpoint roles from the narrative and use of
+results. Preparatory statistics and diagnostics supporting downstream analysis
+are not extra targets merely because they survive or are displayed. Apply field
+selection within tables as well as within outer objects; full annotation tables
+can mix results with intermediates. Identifiers and interpretation context can
+accompany endpoints. Require justification for independently interpreted results,
+including ones used downstream; do not demand literal graph leaves.
+
 Only existing named values or stored fields qualify. File-format conversion may
 preserve those values and identifiers, but must not introduce new scientific
 computation. Reject new aggregation, scaling, filtering, ranking or statistical

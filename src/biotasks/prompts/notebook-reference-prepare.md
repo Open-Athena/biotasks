@@ -4,8 +4,7 @@ schema. This stage selects terminal scientific results and adds code to save
 those existing results to disk after the original script finishes. Return only
 the export code, not an edited or recopied source script. The controller appends
 it to the untouched baseline. This stage does not manage or execute the environment.
-Return one complete object with all required fields. There is one preparation
-call and no automatic repair. Keep explanations brief and nonduplicated.
+There is one preparation call and no automatic repair. Keep explanations brief and nonduplicated.
 
 ## Inputs
 
@@ -24,39 +23,50 @@ unverified. Do not infer that a source has never run from a documentation settin
 
 ## Select terminal scientific results
 
-Read the complete source and narrative. Identify the end goals of every analysis
-branch, then select the terminal results that are already stored in named
-variables or fields of those objects in the ORIGINAL script, still accessible
-in their intended state at script completion. If a result has been overwritten,
-deleted or is out of scope at that point, explain its exclusion; do not insert
-earlier captures or rerun computation to recover it.
+First identify the scientific conclusions or end products the source aims to
+produce. Use its narrative and how results are interpreted, not a list of its
+sections, functions or stored variables. Include the independent scientific
+outcomes of all analysis branches in one task. Preparatory and diagnostic steps
+supporting those outcomes are not additional branches that need an export.
 
-Select scientific results before choosing their storage format. Identify each
-result from the source's analysis goals, then identify the existing variables
-or fields that represent it. A terminal result is an intended scientific
-output, not simply the last variable or an object that survives until the end.
+For each candidate result, distinguish its role:
 
-Do not export a mixed analysis-state container containing inputs, intermediates,
-diagnostics and results. Select its terminal-result fields instead. An object's
-survival until script completion, or its containing every branch's results,
-does not make the whole object a deliverable. Intermediate matrices,
-preprocessing states, diagnostics and checkpoints are outside the exported
-targets in this version.
+- An endpoint reports a scientific finding or final representation that the
+  source interprets in its own right.
+- An intermediate prepares data or supplies another analysis step.
+- A diagnostic checks data quality, model fit or parameter choices in support
+  of the analysis. Its being displayed, discussed or retained does not by itself
+  make it a scientific endpoint.
 
-A standalone result, such as a result table or embedding matrix, may be exported
-whole. Preserve its scientifically meaningful fields and identifiers; explicitly
-justify any omitted result fields. Selecting existing result fields or columns
-for export is allowed; changing the analyzed population or introducing new
-scientific computation is not. A result displayed in a plot can still be an
-endpoint when its values already exist outside the plotting function. Neither
-plot display nor position earlier in the script automatically makes a result
-intermediate. Output size alone does not determine eligibility.
+Select the endpoints. A value used downstream can still qualify when the source
+also interprets it as an independent result; a value with no downstream consumer
+can still be only a diagnostic. Do not equate endpoints with either literal
+execution-graph leaves or objects surviving to the end. If the source does not
+establish an independent endpoint role, explain the exclusion or uncertainty
+rather than adding an export just for completeness.
 
-Include the eligible terminal results of all branches in one inventory for one
-task. A branch with no eligible existing result must be named and explained in
-`excluded_outputs`; do not invent an export to cover it or claim it was captured.
+Then locate the selected results in existing named variables or fields in the
+ORIGINAL script. They must still hold the intended values at script completion.
+If a result has been overwritten, deleted or is out of scope, explain its
+exclusion; do not insert earlier captures or rerun computation to recover it.
+A result displayed in a plot can qualify if its values already exist outside
+the plotting function. Values computed only inside plotting functions cannot.
+
+Select fields by their scientific role before choosing a file format. This rule
+applies recursively: a table inside a mixed analysis object can itself mix final
+results with inputs, preprocessing statistics and diagnostics. Export only the
+selected endpoint fields and the identifiers/context needed to interpret them;
+do not copy all columns or dump a whole object because it is convenient. A
+standalone result table or embedding may be exported whole when its contents
+meet this rule. Preserve its meaningful result fields and identifiers, explaining
+any omissions. Selecting stored fields is allowed; changing the analyzed
+population or adding scientific computation is not. Output size alone does not
+determine eligibility.
+
+Explain meaningful exclusions and any independent outcome without an eligible
+stored result in `excluded_outputs`. Do not enumerate every processing step.
 If no eligible terminal result can be exported, return disposition=reject.
-Excluding a branch's output does not permit skipping its original computation.
+Excluding an output never permits skipping its original computation.
 
 ## Save existing values only
 
@@ -97,7 +107,9 @@ Preserve source-level reductions; add none. Do not suppress analysis errors.
   `/work/outputs/result.csv`), a brief `description` of the terminal result, and
   `source_evidence` explaining why this is an endpoint based on the source
   analysis goals, and identifying the existing variable or object field and
-  where the original script produces it. Prefer interoperable formats. Several
+  where the original script produces it. Cite the source narrative or use that
+  establishes its endpoint role; mere persistence or a function name is not
+  evidence of that role. Prefer interoperable formats. Several
   existing endpoint values may share a file if their identities remain explicit.
 - `excluded_outputs`: meaningful non-target outputs and branches with no eligible
   terminal result, with a brief reason. Do not enumerate every intermediate.
