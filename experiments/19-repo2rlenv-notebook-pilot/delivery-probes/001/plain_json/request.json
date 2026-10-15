@@ -1,0 +1,19 @@
+{
+  "chat_template_kwargs": {
+    "reasoning_effort": "medium"
+  },
+  "messages": [
+    {
+      "content": "This is a serialization test. Return the supplied JSON object exactly, preserving every field and string, including Markdown newlines. Do not analyze or replace its content. Return JSON only, without a code fence.",
+      "role": "system"
+    },
+    {
+      "content": "{\"schema\": {\"additionalProperties\": false, \"properties\": {\"disposition\": {\"description\": \"Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.\", \"enum\": [\"draft_ready\", \"needs_evidence\", \"reference_work_required\", \"reject\"], \"title\": \"Disposition\", \"type\": \"string\"}, \"review\": {\"description\": \"Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.\", \"minLength\": 1, \"title\": \"Review\", \"type\": \"string\"}, \"task_brief\": {\"description\": \"Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.\", \"title\": \"Task Brief\", \"type\": \"string\"}, \"validation_plan\": {\"description\": \"Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.\", \"minLength\": 1, \"title\": \"Validation Plan\", \"type\": \"string\"}}, \"required\": [\"disposition\", \"review\", \"task_brief\", \"validation_plan\"], \"title\": \"TaskSpecification\", \"type\": \"object\"}, \"object_to_return\": {\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}}",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3",
+  "stream": false,
+  "temperature": 1.0,
+  "top_p": 1.0
+}

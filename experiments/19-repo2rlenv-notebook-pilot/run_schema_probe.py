@@ -100,9 +100,7 @@ def delivery_payload(mode):
             },
             {
                 "role": "user",
-                "content": json.dumps(
-                    {"schema": schema, "object_to_return": delivery_fixture()}, ensure_ascii=False
-                ),
+                "content": json.dumps(delivery_fixture(), ensure_ascii=False),
             },
         ],
         "chat_template_kwargs": {"reasoning_effort": "medium"},

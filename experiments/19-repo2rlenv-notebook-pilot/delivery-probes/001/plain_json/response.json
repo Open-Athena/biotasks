@@ -1,0 +1,51 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "{\"schema\": {\"additionalProperties\": false, \"properties\": {\"disposition\": {\"description\": \"Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.\", \"enum\": [\"draft_ready\", \"needs_evidence\", \"reference_work_required\", \"reject\"], \"title\": \"Disposition\", \"type\": \"string\"}, \"review\": {\"description\": \"Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.\", \"minLength\": 1, \"title\": \"Review\", \"type\": \"string\"}, \"task_brief\": {\"description\": \"Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.\", \"title\": \"Task Brief\", \"type\": \"string\"}, \"validation_plan\": {\"description\": \"Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.\", \"minLength\": 1, \"title\": \"Validation Plan\", \"type\": \"string\"}}, \"required\": [\"disposition\", \"review\", \"task_brief\", \"validation_plan\"], \"title\": \"TaskSpecification\", \"type\": \"object\"}, \"object_to_return\": {\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}}",
+        "function_call": null,
+        "reasoning": "The user is asking me to return the supplied JSON object exactly, preserving every field and string, including Markdown newlines. This is a serialization test. I should return the JSON only, without a code fence.\n\nLet me look at the JSON object:\n\n```json\n{\"schema\": {\"additionalProperties\": false, \"properties\": {\"disposition\": {\"description\": \"Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.\", \"enum\": [\"draft_ready\", \"needs_evidence\", \"reference_work_required\", \"reject\"], \"title\": \"Disposition\", \"type\": \"string\"}, \"review\": {\"description\": \"Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.\", \"minLength\": 1, \"title\": \"Review\", \"type\": \"string\"}, \"task_brief\": {\"description\": \"Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.\", \"title\": \"Task Brief\", \"type\": \"string\"}, \"validation_plan\": {\"description\": \"Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.\", \"minLength\": 1, \"title\": \"Validation Plan\", \"type\": \"string\"}}, \"required\": [\"disposition\", \"review\", \"task_brief\", \"validation_plan\"], \"title\": \"TaskSpecification\", \"type\": \"object\"}, \"object_to_return\": {\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}}\n```\n\nI need to return this JSON exactly as supplied. The format is compact JSON. Let me reproduce it exactly, character for character.\n\nThe JSON as given is on what appears to be a single line (or possibly with some formatting). Looking at the input, it appears to be a single-line JSON string. I should return it exactly as given.\n\nLet me carefully copy it:\n\n{\"schema\": {\"additionalProperties\": false, \"properties\": {\"disposition\": {\"description\": \"Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.\", \"enum\": [\"draft_ready\", \"needs_evidence\", \"reference_work_required\", \"reject\"], \"title\": \"Disposition\", \"type\": \"string\"}, \"review\": {\"description\": \"Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.\", \"minLength\": 1, \"title\": \"Review\", \"type\": \"string\"}, \"task_brief\": {\"description\": \"Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.\", \"title\": \"Task Brief\", \"type\": \"string\"}, \"validation_plan\": {\"description\": \"Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.\", \"minLength\": 1, \"title\": \"Validation Plan\", \"type\": \"string\"}}, \"required\": [\"disposition\", \"review\", \"task_brief\", \"validation_plan\"], \"title\": \"TaskSpecification\", \"type\": \"object\"}, \"object_to_return\": {\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}}\n\nImportant: the \\n in the strings are escaped newline sequences within JSON strings \u2014 \"\\n\" \u2014 I must preserve them as literal \"\\n\" escape sequences in the JSON, not convert them to actual newlines. Since I'm returning JSON, the strings contain \"\\n\" which in JSON source is the two characters backslash-n. I need to keep those as-is.\n\nThe instruction says \"including Markdown newlines\" \u2014 meaning the \\n sequences embedded in the string values. So I keep \"\\n\" as literal characters in the JSON output.\n\nThe output should be the JSON only, no code fence. I'll return it as a single line matching the input format exactly.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": null
+      },
+      "routed_experts": null,
+      "stop_reason": 154827,
+      "token_ids": null
+    }
+  ],
+  "created": 1792088977,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-a648fe0cb7dde5f2",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 1414,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 1030,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 436,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 0,
+      "created_cache_tokens": 384,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 1850
+  }
+}

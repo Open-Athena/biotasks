@@ -34,7 +34,7 @@ def test_probe_sends_complete_schema_and_detects_missing_and_extra_fields(mode):
 
 
 def test_delivery_probe_changes_only_server_response_constraint():
-    from run_schema_probe import delivery_payload
+    from run_schema_probe import delivery_fixture, delivery_payload
 
     plain = delivery_payload("plain_json")
     constrained = delivery_payload("json_schema")
@@ -42,6 +42,7 @@ def test_delivery_probe_changes_only_server_response_constraint():
     assert constrained == plain
     assert "max_tokens" not in plain
     assert "tools" not in plain
+    assert json.loads(plain["messages"][-1]["content"]) == delivery_fixture()
 
 
 @pytest.mark.parametrize("mode", ["plain_json", "json_schema"])

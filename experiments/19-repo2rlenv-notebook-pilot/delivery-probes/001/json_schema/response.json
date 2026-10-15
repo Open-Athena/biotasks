@@ -1,0 +1,51 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage</br></br>The supplied source exports its terminal table.</br></br>- The algorithm default is not supplied.</br>- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed</br></br>Inspect the pinned implementation to establish the omitted default.</br></br>Do not guess a value or withhold this plan.\"}",
+        "function_call": null,
+        "reasoning": "The user says this is a serialization test. I need to return the supplied JSON object exactly, preserving every field and string. Return JSON only, without a code fence.\n\nLooking at the input, it's a JSON object with \"schema\" and \"object_to_return\" keys? Wait, let me re-read.\n\nThe input appears to be: an object with \"schema\" and \"object_to_return\" keys. The \"object_to_return\" contains the actual disposition/review/task_brief/validation_plan.\n\nThe instruction says \"Return the supplied JSON object exactly\". Does that mean the whole thing (schema + object_to_return), or the object_to_return?\n\nThe schema describes \"TaskSpecification\" with required fields: disposition, review, task_brief, validation_plan. That matches \"object_to_return\". The name \"object_to_return\" strongly suggests I should return that object.\n\nBut \"Return the supplied JSON object exactly, preserving every field and string\" \u2014 the \"object_to_return\" is literally the object to return. The schema is metadata describing what to return. So I should return the object_to_return value.\n\nHmm, but \"the supplied JSON object\" could mean the entire input. The field name \"object_to_return\" is a strong signal: the task is to return the object contained in \"object_to_return\", which conforms to the schema.\n\nSo the answer should be:\n\n{\"disposition\": \"needs_evidence\", \"review\": \"## Coverage\\n\\nThe supplied source exports its terminal table.\\n\\n- The algorithm default is not supplied.\\n- No scientific execution was requested.\", \"task_brief\": \"\", \"validation_plan\": \"## Evidence needed\\n\\nInspect the pinned implementation to establish the omitted default.\\n\\nDo not guess a value or withhold this plan.\"}\n\nReturn JSON only, without a code fence. No formatting.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": null
+      },
+      "routed_experts": null,
+      "stop_reason": 154827,
+      "token_ids": null
+    }
+  ],
+  "created": 1792088984,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-b33e5778aae9ebe4",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 463,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 371,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 436,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 320,
+      "created_cache_tokens": 64,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 899
+  }
+}

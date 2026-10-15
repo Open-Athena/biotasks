@@ -1,0 +1,117 @@
+{
+  "cases": [
+    {
+      "artifact": {
+        "object_to_return": {
+          "disposition": "needs_evidence",
+          "review": "## Coverage\n\nThe supplied source exports its terminal table.\n\n- The algorithm default is not supplied.\n- No scientific execution was requested.",
+          "task_brief": "",
+          "validation_plan": "## Evidence needed\n\nInspect the pinned implementation to establish the omitted default.\n\nDo not guess a value or withhold this plan."
+        },
+        "schema": {
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "description": "Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.",
+              "enum": [
+                "draft_ready",
+                "needs_evidence",
+                "reference_work_required",
+                "reject"
+              ],
+              "title": "Disposition",
+              "type": "string"
+            },
+            "review": {
+              "description": "Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.",
+              "minLength": 1,
+              "title": "Review",
+              "type": "string"
+            },
+            "task_brief": {
+              "description": "Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.",
+              "title": "Task Brief",
+              "type": "string"
+            },
+            "validation_plan": {
+              "description": "Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.",
+              "minLength": 1,
+              "title": "Validation Plan",
+              "type": "string"
+            }
+          },
+          "required": [
+            "disposition",
+            "review",
+            "task_brief",
+            "validation_plan"
+          ],
+          "title": "TaskSpecification",
+          "type": "object"
+        }
+      },
+      "elapsed_seconds": 7.074767351150513,
+      "errors": [
+        "Additional properties are not allowed ('object_to_return', 'schema' were unexpected)",
+        "'disposition' is a required property",
+        "'review' is a required property",
+        "'task_brief' is a required property",
+        "'validation_plan' is a required property"
+      ],
+      "exact_fixture_match": false,
+      "finish_reason": "stop",
+      "mode": "plain_json",
+      "schema_valid": false,
+      "usage": {
+        "completion_tokens": 1414,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 1030,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens": 436,
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0,
+          "created_cache_tokens": 384,
+          "multimodal_tokens": null
+        },
+        "total_tokens": 1850
+      }
+    },
+    {
+      "artifact": {
+        "disposition": "needs_evidence",
+        "review": "## Coverage</br></br>The supplied source exports its terminal table.</br></br>- The algorithm default is not supplied.</br>- No scientific execution was requested.",
+        "task_brief": "",
+        "validation_plan": "## Evidence needed</br></br>Inspect the pinned implementation to establish the omitted default.</br></br>Do not guess a value or withhold this plan."
+      },
+      "elapsed_seconds": 2.9245309829711914,
+      "errors": [],
+      "exact_fixture_match": false,
+      "finish_reason": "stop",
+      "mode": "json_schema",
+      "schema_valid": true,
+      "usage": {
+        "completion_tokens": 463,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 371,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens": 436,
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 320,
+          "created_cache_tokens": 64,
+          "multimodal_tokens": null
+        },
+        "total_tokens": 899
+      }
+    }
+  ],
+  "model_calls": 2,
+  "notebook_run": false
+}
