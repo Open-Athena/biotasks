@@ -73,7 +73,7 @@ class GLMChatAuthor:
             limits.max_output_tokens is None or limits.max_output_tokens > token_bound
         ):
             raise ValueError("Output tokens exceed the request ledger allowance")
-        if output_format not in {"tools", "json_schema"}:
+        if output_format not in {"tools", "json_schema", "json_unconstrained"}:
             raise ValueError("Unsupported artifact output format")
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
@@ -151,9 +151,12 @@ class GLMChatAuthor:
                 "top_p": 1.0,
                 "chat_template_kwargs": {"reasoning_effort": self.limits.reasoning_effort},
             }
-            if self.output_format == "json_schema":
+            if self.output_format in {"json_schema", "json_unconstrained"}:
                 for key in ("tools", "tool_choice", "parallel_tool_calls"):
                     del payload[key]
+            # Diagnostic plain JSON keeps local artifact validation and original
+            # responses, but does not request server-side grammar constraints.
+            if self.output_format == "json_schema":
                 payload["response_format"] = {
                     "type": "json_schema",
                     "json_schema": {
@@ -221,7 +224,7 @@ class GLMChatAuthor:
             message = choice.get("message", {})
             if not isinstance(message, dict) or message.get("role") != "assistant":
                 raise IncompleteCompletion("Expected an assistant message")
-            if self.output_format == "json_schema":
+            if self.output_format in {"json_schema", "json_unconstrained"}:
                 if (
                     message.get("refusal")
                     or message.get("tool_calls")

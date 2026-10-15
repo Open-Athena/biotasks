@@ -25,6 +25,9 @@ from biotasks.inference_gate import Allowance, RequestLedger
 async def run(config, *, root, endpoint, credential, deadline, complete=None):
     if config["entrypoint"] != "run_specification.py" or config["max_requests"] != 1:
         raise ValueError("Specification requires exactly one call with no automatic repair")
+    output_format = config.get("output_format", "json_schema")
+    if output_format not in {"json_schema", "json_unconstrained"}:
+        raise ValueError("Specification requires a JSON response, without tools")
     root.mkdir(parents=True, exist_ok=False)
     experiment = Path(__file__).parent
     context = specification_context(
@@ -56,6 +59,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         daytona_sandboxes_created=0,
         model="glm-5.3",
         reasoning_effort="medium",
+        output_format=output_format,
         output_token_policy="No client max_tokens; provider limits/defaults apply.",
         provider_generation_limit_verified=False,
     )
@@ -84,7 +88,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             limits=limits,
             max_requests=1,
             recover_output_limit=False,
-            output_format="json_schema",
+            output_format=output_format,
         )
         save_record(root / "specification.json", plan.model_dump())
         (root / "review.md").write_text(plan.review + "\n")

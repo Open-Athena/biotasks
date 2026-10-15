@@ -286,7 +286,8 @@ def test_oversized_context_refuses_dispatch_and_retains_quota(tmp_path):
         assert db.execute("SELECT COUNT(*) FROM calls").fetchone() == (0,)
 
 
-def test_json_schema_repair_resubmits_entire_object_without_merge(tmp_path):
+@pytest.mark.parametrize("output_format", ["json_schema", "json_unconstrained"])
+def test_json_schema_repair_resubmits_entire_object_without_merge(tmp_path, output_format):
     payloads, submissions = [], []
 
     async def complete(payload):
@@ -314,7 +315,7 @@ def test_json_schema_repair_resubmits_entire_object_without_merge(tmp_path):
     async def forbidden(**kwargs):
         pytest.fail("Merge-patch handler must not be called")
 
-    author, _ = make_author(tmp_path, complete, requests=2, output_format="json_schema")
+    author, _ = make_author(tmp_path, complete, requests=2, output_format=output_format)
     result = asyncio.run(
         author(
             **options(tmp_path, {"submit_artifact": submit, "revise_artifact": forbidden}, turns=2)
@@ -323,15 +324,19 @@ def test_json_schema_repair_resubmits_entire_object_without_merge(tmp_path):
     assert result["turns"] == 2
     assert submissions == [{"old": 1}, {"new": 2}]
     assert all("tools" not in p and "tool_choice" not in p for p in payloads)
-    assert payloads[0]["response_format"] == payloads[1]["response_format"]
-    assert payloads[0]["response_format"]["json_schema"]["strict"] is True
+    if output_format == "json_schema":
+        assert payloads[0]["response_format"] == payloads[1]["response_format"]
+        assert payloads[0]["response_format"]["json_schema"]["strict"] is True
+    else:
+        assert all("response_format" not in p for p in payloads)
     assert payloads[1]["messages"][2]["reasoning"] == "kept"
     assert "new required" in payloads[1]["messages"][-1]["content"]
     assert "revise_artifact" not in payloads[1]["messages"][-1]["content"]
 
 
 @pytest.mark.parametrize("kind", ["tool", "length", "refusal"])
-def test_json_schema_incomplete_or_wrong_response_never_submits(tmp_path, kind):
+@pytest.mark.parametrize("output_format", ["json_schema", "json_unconstrained"])
+def test_json_schema_incomplete_or_wrong_response_never_submits(tmp_path, kind, output_format):
     async def complete(payload):
         r = reply(finish="length" if kind == "length" else "stop")
         if kind == "refusal":
@@ -341,7 +346,7 @@ def test_json_schema_incomplete_or_wrong_response_never_submits(tmp_path, kind):
     async def forbidden(**kwargs):
         pytest.fail("Must not submit invalid response")
 
-    author, _ = make_author(tmp_path, complete, output_format="json_schema")
+    author, _ = make_author(tmp_path, complete, output_format=output_format)
     with pytest.raises(IncompleteCompletion):
         asyncio.run(
             author(

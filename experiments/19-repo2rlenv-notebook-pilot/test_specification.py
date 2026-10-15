@@ -55,8 +55,9 @@ def test_blocked_response_cannot_supply_an_accepted_brief(decision):
         )
 
 
-@pytest.mark.parametrize("mode", ["ready", "needs_evidence", "invalid", "truncated"])
-def test_one_call_preserves_response_without_running_downstream(tmp_path, mode):
+@pytest.mark.parametrize("mode", ["ready", "needs_evidence", "invalid", "truncated", "malformed"])
+@pytest.mark.parametrize("output_format", ["json_schema", "json_unconstrained"])
+def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, output_format):
     import asyncio
     import time
 
@@ -76,19 +77,26 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode):
         calls.append(payload)
         assert "tools" not in payload
         assert "max_tokens" not in payload
-        assert payload["response_format"]["json_schema"]["strict"] is True
+        if output_format == "json_schema":
+            assert payload["response_format"]["json_schema"]["strict"] is True
+        else:
+            assert "response_format" not in payload
         context = json.loads(payload["messages"][1]["content"])
         assert "trial/reference.py" in context["files"]
         return {
             "choices": [
                 {
                     "finish_reason": "length" if mode == "truncated" else "stop",
-                    "message": {"role": "assistant", "content": json.dumps(candidate)},
+                    "message": {
+                        "role": "assistant",
+                        "content": "not JSON" if mode == "malformed" else json.dumps(candidate),
+                    },
                 }
             ]
         }
 
     config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    config["output_format"] = output_format
     root = tmp_path / "specification"
     coroutine = run(
         config,
@@ -98,7 +106,7 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode):
         deadline=time.time() + 60,
         complete=complete,
     )
-    if mode in {"invalid", "truncated"}:
+    if mode in {"invalid", "truncated", "malformed"}:
         with pytest.raises(RuntimeError):
             asyncio.run(coroutine)
     else:
