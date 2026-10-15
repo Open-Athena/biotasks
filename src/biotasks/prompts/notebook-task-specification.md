@@ -166,6 +166,13 @@ limits and report an unset allowance as an operational question.
 
 ## Return a reviewable proposal
 
+All four fields are requested factory outputs. Return their actual text here.
+"Private" means that the factory must keep the validation plan out of the
+solver's files; it does not mean secret from this caller or omitted from the
+response. Do not substitute promises, endorsements, "see the plan", withheld
+sections or placeholders. If evidence is insufficient, the complete useful
+response is a focused review and evidence request with an empty task brief.
+
 Return the supplied JSON schema with:
 
 - `disposition`: `draft_ready`, `needs_evidence`, `reference_work_required`, or

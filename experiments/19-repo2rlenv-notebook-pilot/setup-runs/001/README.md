@@ -65,9 +65,12 @@ reusing this resolved environment.
 
 The test recreated the virtual environment and working/output directories but
 shared OS state and caches with exploration. Cold-image reconstruction and
-repeat-run numerical stability are not established. The source itself warns
-about duplicate observation names; downstream comparisons must preserve sample
-identity instead of assuming the barcode alone identifies a row. Do not treat
+repeat-run numerical stability are not established. The source warns about
+duplicate observation names during concatenation, then explicitly calls
+`obs_names_make_unique()`. Later specification review corrected the initial
+interpretation of that warning: comparisons must preserve the source's exported
+identifier scheme and sample attribution, rather than infer that final
+identifiers remain duplicated. Do not treat
 this one source as evidence of cross-notebook generality.
 
 All scientific branches and the reviewed terminal exports ran within the agreed
