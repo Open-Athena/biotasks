@@ -193,10 +193,13 @@ These are logical stages, not necessarily separate agents or one LLM call each.
    of all required endpoints, then write instructions grounded in the execution.
    Retain all eligible endpoints, explicit exclusions and the source's computation.
    Measurements from reduced inputs or a different execution plan do not establish eligibility.
-   The [current prompt and exact input bundle](specification-inputs/001/README.md)
-   are prepared for review from setup run 001. This pass reviews the existing
-   preparation inventory and writes a public brief plus private validation plan;
-   it does not choose a new task scope. No specification model call has run yet.
+   The [canonical prompt](../../src/biotasks/prompts/notebook-task-specification.md)
+   reviews the existing preparation inventory; it does not choose a new scope.
+   It returns a public brief and private validation plan only when scientific
+   semantics are supported. Otherwise it returns a focused evidence request and
+   an empty brief. The [current input](specification-inputs/005/README.md) is
+   grounded in setup run 001. Specification iterations are recorded separately;
+   schema acceptance is not acceptance of the scientific contract.
 4. **Construct and validate.** Wrap the runnable reference and exports as the
    private solution. Generate the public brief and grading contract. Execute
    controls and calibrate any numerical comparisons before freezing the task.

@@ -71,3 +71,10 @@ pass. A justified `needs_evidence` response remains an acceptable outcome.
 
 The four existing prompt/CLI checks and whitespace validation passed. No new
 model request, scientific execution, task construction or viewer update.
+
+## Subsequent evidence-presentation change
+
+After run 001, the optional lockfile summarization was adopted for run 002 and
+later inputs. The full lock is still retained and hash-checked; the worker sees
+its identity and the exact resolved package/version list. This supersedes the
+initial deferral above without changing the original review or run-001 evidence.

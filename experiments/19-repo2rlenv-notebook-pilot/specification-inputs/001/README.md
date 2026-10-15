@@ -34,7 +34,11 @@ it reviews the preparation worker's existing inventory rather than generating
 another independent inventory first. Earlier prompts/runners remain evidence of
 the earlier approach and are not invoked by this checkpoint. This stage performs no scientific execution, task construction, solver, publication of a task or viewer update.
 
-Regenerate the exact input from the repository root:
+This input is historical: it includes the full lockfile. Later iterations retain
+the lock hash and supply the recorded package versions instead. To regenerate
+this exact input, use factory checkpoint
+`2ce946dc89ec28c9da2156afaf4937d5ae3f8ab7`; do not overwrite it with the current
+builder. From a checkout of that revision:
 
 ```bash
 python experiments/19-repo2rlenv-notebook-pilot/specification_inputs.py \
