@@ -65,6 +65,13 @@ Read the full original source and check two things:
    source choices, observed facts and unknown implementation semantics. A package
    version identifies code to inspect, not evidence for a default or formula.
 
+When translating a library call into instructions, follow the implementation
+branch selected by its actual arguments. Explicit options may disable defaults,
+replace selection rules or change the population used by a calculation. Do not
+combine mutually exclusive modes into a plausible-sounding procedure. Check the
+resulting prose against the selected branch, including delegated helpers, rather
+than merely copying a function's parameter list or general documentation.
+
 Choose:
 
 - `needs_evidence` if a consequential scientific method, default, identity rule
@@ -88,6 +95,8 @@ Calibration and portability experiments may remain future validation if the
 scientific contract is otherwise unambiguous. They are not automatically drafting
 blockers. If a missing measurement actually determines what a required result
 means, explain that specific dependency instead of demanding general repeat runs.
+Calibration can determine numerical tolerances; it cannot settle contradictory
+definitions of what an output means or which transformations preserve that meaning.
 
 ## Only when draft_ready: public task brief
 
@@ -104,6 +113,16 @@ alignment and ordering without assuming unique names or stable arbitrary labels.
 Apply any allowed equivalence consistently across all dependent outputs. If a
 source mapping ties arbitrary labels to biological annotations, it must remain
 interpretable without guessing hidden reference numbering.
+
+Before declaring a draft ready, work through a concrete hypothetical example of
+each permitted relabeling, reordering or coordinate change. Trace its effect through
+every dependent output and lookup: identities and references may need to change,
+but named scientific meanings must remain unchanged. Verify that the public brief,
+the grader's proposed alignment and the valid-alternative control all accept the
+same transformed result. Reapplying a fixed lookup to renamed identifiers is not
+automatically meaning-preserving. If the source does not establish a portable
+interpretation, report the missing evidence or policy decision instead of allowing
+both inconsistent rules or inventing a new scientific method.
 
 Do not reveal reference answers, output previews, measured result counts, private
 code or hidden locations. Source-defined methodological constants and prior
