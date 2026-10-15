@@ -1562,3 +1562,9 @@ Updated preparation/review prompts, controller, schema probe fixture, renderer a
 ### 2026-10-15 — Append-only preparation run 007 authorization
 
 The user requested just the preparation worker with the append-only prompt, for inspection before advancing. Keep the unchanged newer Scanpy conversion, GLM-5.3 medium reasoning, strict JSON-schema responses, one creation and at most one structural repair, no extra client token/byte caps and the existing 600-second request timeout. Preserve worker-returned `export_code` separately from the controller-assembled reference and computed diff. No scientific setup/execution, task sandbox, separate model review, construction, solver or viewer update.
+
+### 2026-10-15 — Append-only preparation run 007 complete
+
+Checkpoint `b1a0463b6974aa4231d56fadec598e46ebf5bdc9` returned one GLM-5.3 response in 71 seconds; no repair. Preserved all 17 original preparation files after checksum verification. JSON Schema, exact original-source prefix, export-code identity, combined syntax and diff checks passed. Worker returned only export code; the controller assembled the reference. Public input is identical to run 006; candidate evidence was screened for credential/private-service markers before publication.
+
+The worker reintroduced a complete AnnData snapshot plus all per-cell annotations, including QC/doublet diagnostics, alongside the DE table. Static inspection flags this as inconsistent with the intended terminal-only selection, despite the explanation claiming the whole container is the deliverable. Append-only construction prevented source edits but did not establish endpoint quality. Original response remains unchanged. Remote job and local clients terminal; no additional model call, manual task correction, generated-code execution, scientific setup, sandbox, independent review, construction, solver or viewer update. Output is in `preparation-runs/007/`; user inspection remains the next step.

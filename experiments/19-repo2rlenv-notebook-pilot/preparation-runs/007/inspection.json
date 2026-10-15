@@ -1,0 +1,24 @@
+{
+  "status": "ready_for_user_inspection",
+  "disposition": "prepare",
+  "response_format": "json_schema",
+  "json_schema_valid": true,
+  "original_evidence_hashes_verified": true,
+  "input_identical_to_public_run_006": true,
+  "original_source_exact_prefix": true,
+  "assembled_script_verified": true,
+  "scientific_fidelity_reviewed": false,
+  "generated_code_executed": false,
+  "artifact_paths": [
+    "adata_annotated.h5ad",
+    "per_cell_annotations.csv",
+    "rank_genes_groups_leiden_res_0.50.csv"
+  ],
+  "notes": [],
+  "ready_for_execution": false,
+  "review_kind": "Static inspection of endpoint selection, not an independent model review",
+  "findings": [
+    "The worker exports the entire final AnnData state, justifying it because every analysis branch terminates in that container. This does not establish that the whole container is the intended scientific deliverable; it appears to reinstate the full-state fallback excluded by the prompt.",
+    "The per-cell CSV exports all adata.obs columns, including QC and doublet diagnostics, although diagnostic targets were excluded from this version. Terminal-result selection needs review before execution."
+  ]
+}

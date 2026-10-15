@@ -1,0 +1,43 @@
+{
+  "input_digest": "0a61e4ccf71359de78d18bfe34968decd6be4ccb626fbd735aee2c265978998e",
+  "tool_protocol": 2,
+  "status": "unvalidated",
+  "number": 1,
+  "origin": "submit_artifact",
+  "artifact": {
+    "disposition": "prepare",
+    "explanation": "Every analysis branch (QC and filtering, doublet detection, normalization, HVG, PCA/neighbors/UMAP, multi-resolution Leiden, cell_type_lvl1 annotation, and per-cluster Wilcoxon DE) terminates inside the single final `adata` object, which is the notebook's intended scientific deliverable. The appended code only writes this existing final state to disk: `adata` \u2192 h5ad via the native writer, `adata.obs` \u2192 per-cell annotation CSV, and the stored `adata.uns['rank_genes_groups']` \u2192 per-cluster CSV via scanpy's documented accessor (pure format conversion of already-computed values, with group identities read from the stored result itself). No computation, filtering, plot calls or input handling are added or changed.",
+    "export_code": "import os as _os\n\nimport pandas as _pd\n\n# Endpoint exports (appended by the preparation stage)\n_EXPORT_DIR = \"/work/outputs\"\n_os.makedirs(_EXPORT_DIR, exist_ok=True)\n\n# Terminal deliverable: the fully processed and annotated AnnData object.\n# Holds filtered cells/genes, raw counts layer, log-normalized matrix,\n# QC and doublet annotations, highly-variable-gene flags, PCA, neighborhood\n# graph, UMAP, all Leiden clusterings, cell_type_lvl1, and the stored\n# Wilcoxon rank_genes_groups results.\nadata.write_h5ad(_os.path.join(_EXPORT_DIR, \"adata_annotated.h5ad\"))\n\n# Per-cell annotation table from the final state of adata.obs (cell\n# barcodes as row index): sample, QC metrics, doublet_score/\n# predicted_doublet, leiden clusterings at all resolutions, cell_type_lvl1.\nadata.obs.to_csv(_os.path.join(_EXPORT_DIR, \"per_cell_annotations.csv\"))\n\n# Differential-expression endpoint: convert the existing\n# adata.uns[\"rank_genes_groups\"] result (Wilcoxon, leiden_res_0.50)\n# to a long table with scanpy's documented accessor. Groups are taken\n# from the stored result's own identifiers; no test is recomputed.\n_rg_groups = adata.uns[\"rank_genes_groups\"][\"names\"].dtype.names\n_de_frames = []\nfor _rg in _rg_groups:\n    _frame = sc.get.rank_genes_groups_df(\n        adata, group=_rg, key=\"rank_genes_groups\"\n    )\n    _frame.insert(0, \"group\", str(_rg))\n    _de_frames.append(_frame)\n_pd.concat(_de_frames, ignore_index=True).to_csv(\n    _os.path.join(_EXPORT_DIR, \"rank_genes_groups_leiden_res_0.50.csv\"),\n    index=False,\n)",
+    "artifacts": [
+      {
+        "path": "adata_annotated.h5ad",
+        "description": "Final annotated single-cell dataset: filtered cells/genes, raw counts layer, log-normalized matrix, per-cell QC and doublet annotations, HVG flags, PCA, neighborhood graph, UMAP coordinates, Leiden clusterings (leiden, leiden_res_0.02/0.50/2.00), cell_type_lvl1 labels, and the stored per-cluster DE result.",
+        "source_evidence": "Variable `adata`, built by ad.concat(adatas, label='sample') and mutated in place across the script: sc.pp.calculate_qc_metrics, sc.pp.filter_cells/filter_genes, sc.pp.scrublet(adata, batch_key='sample'), adata.layers['counts']=adata.X.copy(), sc.pp.normalize_total/sc.pp.log1p, sc.pp.highly_variable_genes, sc.tl.pca, sc.pp.neighbors, sc.tl.umap, sc.tl.leiden (default plus resolutions 0.02/0.5/2.0), the adata.obs['cell_type_lvl1'] mapping cell, and sc.tl.rank_genes_groups."
+      },
+      {
+        "path": "per_cell_annotations.csv",
+        "description": "Per-cell annotation table from the final state: sample identity, QC metrics, doublet_score/predicted_doublet, all Leiden cluster assignments, and cell_type_lvl1, with cell barcodes as row identifiers.",
+        "source_evidence": "`adata.obs` at script completion; its endpoint columns are produced by sc.pp.scrublet, the sc.tl.leiden calls (including leiden_res_{0.02,0.50,2.00}), and the manual adata.obs['cell_type_lvl1'] mapping from leiden_res_0.02."
+      },
+      {
+        "path": "rank_genes_groups_leiden_res_0.50.csv",
+        "description": "Differentially expressed genes per cluster of the leiden_res_0.50 clustering (Wilcoxon): gene names, scores, fold changes and p-values per group, in the stored rank order.",
+        "source_evidence": "adata.uns['rank_genes_groups'] produced by sc.tl.rank_genes_groups(adata, groupby='leiden_res_0.50', method='wilcoxon'); serialized via scanpy's documented accessor sc.get.rank_genes_groups_df without recomputation."
+      }
+    ],
+    "excluded_outputs": [
+      "All plotting outputs (sc.pl.violin, sc.pl.scatter, sc.pl.highly_variable_genes, sc.pl.pca_variance_ratio, sc.pl.pca, all sc.pl.umap panels including the duplicated clustering panel, and both sc.pl.dotplot calls including rank_genes_groups_dotplot): figures rendered for display only; no figure capture or plot modification is added, so their numerical content is not separately exported.",
+      "dc_cluster_genes: a head(5) subset of DE gene names for cluster 7 used only as input to the final UMAP plot; its content is fully contained in the exported rank_genes_groups CSV.",
+      "adatas / per-sample sample_adata objects: per-sample intermediates merged into `adata`; remain in scope but are not the deliverable (post-filtering raw counts are preserved in adata.layers['counts'] within the h5ad export).",
+      "marker_genes dict: curated prior-knowledge input for annotation, not a computed result.",
+      "PCA coordinates, UMAP coordinates, HVG flags and connectivity graph: contained in adata_annotated.h5ad (obsm/var/obsp/uns) and not written as separate files."
+    ],
+    "unresolved_assumptions": [
+      "Whether the full pipeline (scrublet, PCA, neighbors, UMAP, Leiden, Wilcoxon DE on roughly 16k cells by tens of thousands of genes) plus the h5ad write fits the 8 GiB memory and 600 s reference time limits is an execution-stage question; it is unverified here.",
+      "h5ad write compatibility of pandas nullable/boolean columns (e.g. predicted_doublet) and sparse layers depends on the installed anndata version.",
+      "sc.get.rank_genes_groups_df availability and column set depend on the installed scanpy version; the per-group loop was chosen for robustness but has not been executed.",
+      "Exact size of adata_annotated.h5ad (two sparse matrix layers) is unverified; expected well within the 10 GiB disk limit.",
+      "Availability of the figshare example data and pooch retrieval during network-enabled setup is owned by the execution stage and was not tested."
+    ]
+  }
+}
