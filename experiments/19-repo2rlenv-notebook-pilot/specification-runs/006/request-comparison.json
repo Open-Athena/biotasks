@@ -1,0 +1,54 @@
+{
+  "comparison_run": "005",
+  "same_payload_except_removed_response_format": true,
+  "old_request_sha256": "c014fe97f6ed136ece960693228ad744c75208c647f012a17ea8245909c99670",
+  "new_request_sha256": "da1c665a7a274623f57b9d28020ca823dcae8cafbf2a7ff21ace1179a4cd5774",
+  "removed_response_format": {
+    "json_schema": {
+      "name": "artifact",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {
+          "disposition": {
+            "description": "Choose needs_evidence when a consequential method/default/identity is unresolved. draft_ready requires a complete self-contained public brief with no guessed science.",
+            "enum": [
+              "draft_ready",
+              "needs_evidence",
+              "reference_work_required",
+              "reject"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "review": {
+            "description": "Actual Markdown coverage/fidelity review with evidence citations and concrete blockers. A generic endorsement or promise of a review is not a review.",
+            "minLength": 1,
+            "title": "Review",
+            "type": "string"
+          },
+          "task_brief": {
+            "description": "Complete standalone solver instructions when draft_ready; empty string otherwise. Never a placeholder, summary or cross-reference to the private plan. The solver will receive only this field and the public input files.",
+            "title": "Task Brief",
+            "type": "string"
+          },
+          "validation_plan": {
+            "description": "Return the actual factory-facing validation plan or precise evidence requests in full. Private means excluded from solver-visible files, not withheld from this response. Include checks/controls still needed; do not invent numeric tolerances.",
+            "minLength": 1,
+            "title": "Validation Plan",
+            "type": "string"
+          }
+        },
+        "required": [
+          "disposition",
+          "review",
+          "task_brief",
+          "validation_plan"
+        ],
+        "title": "TaskSpecification",
+        "type": "object"
+      },
+      "strict": true
+    },
+    "type": "json_schema"
+  }
+}
