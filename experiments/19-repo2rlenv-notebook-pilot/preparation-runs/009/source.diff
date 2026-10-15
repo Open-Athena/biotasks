@@ -1,0 +1,50 @@
+--- baseline.py
++++ reference.py
+@@ -321,3 +321,47 @@
+ )
+ 
+ # You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider "pseudo-bulking" your data by sample (*e.g.* `sc.get.aggregate(adata, by=["sample", "cell_type"], func="sum", layer="counts")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.
++
++
++# --- Endpoint exports: persist terminal results already computed above ---
++from pathlib import Path
++
++import pandas as pd
++
++_export_dir = Path("/work/outputs")
++_export_dir.mkdir(parents=True, exist_ok=True)
++
++# Per-cell endpoints: sample identity, the Leiden clustering solutions
++# (default key plus the three annotation resolutions), the manual level-1
++# cell-type annotation, and the 2-D UMAP embedding interpreted for batch
++# effects and cluster structure.
++_cell_table = adata.obs[
++    [
++        "sample",
++        "leiden",
++        "leiden_res_0.02",
++        "leiden_res_0.50",
++        "leiden_res_2.00",
++        "cell_type_lvl1",
++    ]
++].copy()
++_cell_table.insert(0, "cell_id", adata.obs_names)
++_cell_table["UMAP1"] = adata.obsm["X_umap"][:, 0]
++_cell_table["UMAP2"] = adata.obsm["X_umap"][:, 1]
++_cell_table.to_csv(_export_dir / "cell_metadata.csv", index=False)
++
++# Cluster-level endpoint: the stored per-cluster differential-expression
++# results (sc.tl.rank_genes_groups, groupby="leiden_res_0.50", Wilcoxon) for
++# every cluster, extracted with the helper the source documents for this
++# purpose and labelled by cluster; the stored values are not recomputed or
++# filtered.
++_de_groups = adata.uns["rank_genes_groups"]["names"].dtype.names
++_de_frames = []
++for _de_group in _de_groups:
++    _de_group = str(_de_group)
++    _de_part = sc.get.rank_genes_groups_df(adata, group=_de_group)
++    if "group" not in _de_part.columns:
++        _de_part.insert(0, "group", _de_group)
++    _de_frames.append(_de_part)
++_de_table = pd.concat(_de_frames, ignore_index=True)
++_de_table.to_csv(_export_dir / "rank_genes_groups_leiden_res_0.50.csv", index=False)

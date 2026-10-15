@@ -1,0 +1,151 @@
+# Preparation worker output
+
+Rendered from [plan.json](plan.json). Generated commands and source edits have not been executed. Only structural checks have run; scientific fidelity is unreviewed.
+
+## Decision
+
+prepare
+
+The source's terminal scientific products are (i) the per-cell Leiden clustering solutions, the manual level-1 cell-type annotation and the UMAP embedding that the narrative interprets (batch effect, over/under-clustering), and (ii) the per-cluster Wilcoxon differentially-expressed-gene/marker table. The appended code saves only these existing end-state values to two CSVs under /work/outputs: a per-cell table built from adata.obs (sample, 'leiden', the three 'leiden_res_*' solutions, 'cell_type_lvl1') plus cell barcodes and adata.obsm['X_umap'], and the full stored adata.uns['rank_genes_groups'] results for every cluster, extracted with the helper the source itself documents (sc.get.rank_genes_groups_df). It adds imports, the output directory and file writing only; no recomputation, filtering, ranking or plot capture. QC metrics, doublet scores, HVG/PCA/neighbor intermediates and plot-only summaries are diagnostics and are not exported.
+
+## Artifact: cell_metadata.csv
+
+Per-cell terminal results: cell barcode, sample, Leiden cluster assignments (default 'leiden' plus 'leiden_res_0.02', 'leiden_res_0.50', 'leiden_res_2.00'), manual level-1 cell-type annotation, and UMAP1/UMAP2 coordinates.
+
+Source evidence: The notebook's stated goal is clustering followed by manual annotation: 'let's generate a set of clustering solutions which we can then use to annotate our cell types' (the sc.tl.leiden loop producing adata.obs['leiden_res_0.02'/'leiden_res_0.50'/'leiden_res_2.00']) and 'which we can use to label our coarsest clustering with broad lineages' (assignment of adata.obs['cell_type_lvl1'] by mapping adata.obs['leiden_res_0.02']). The default solution adata.obs['leiden'] from sc.tl.leiden(adata, flavor='igraph', n_iterations=2) is the clustering shown during the QC re-assessment section. The UMAP embedding adata.obsm['X_umap'] (from sc.tl.umap) is the final 2-D representation interpreted in its own right ('we only observe a minor batch effect', over-/under-clustering judgements across resolutions). All fields are still present in adata.obs/adata.obsm at script completion.
+
+## Artifact: rank_genes_groups_leiden_res_0.50.csv
+
+Cluster-level differentially expressed genes (Wilcoxon, each leiden_res_0.50 cluster vs rest): cluster label plus the stored names, scores, p-values, adjusted p-values and any other stored DE fields, in stored rank order.
+
+Source evidence: 'one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology' -> sc.tl.rank_genes_groups(adata, groupby='leiden_res_0.50', method='wilcoxon'), with results the source interprets as findings ('Cluster 7 is expressing NKG7 and GNLY, suggesting these are NK cells'). The source itself designates sc.get.rank_genes_groups_df as the convenient extraction of these results; the values live in adata.uns['rank_genes_groups'] (structured arrays keyed 'names'/'scores'/'pvals'/'pvals_adj'), and the export writes every stored cluster's results without recomputation or filtering.
+
+## Worker-returned export code
+
+```python
+# --- Endpoint exports: persist terminal results already computed above ---
+from pathlib import Path
+
+import pandas as pd
+
+_export_dir = Path("/work/outputs")
+_export_dir.mkdir(parents=True, exist_ok=True)
+
+# Per-cell endpoints: sample identity, the Leiden clustering solutions
+# (default key plus the three annotation resolutions), the manual level-1
+# cell-type annotation, and the 2-D UMAP embedding interpreted for batch
+# effects and cluster structure.
+_cell_table = adata.obs[
+    [
+        "sample",
+        "leiden",
+        "leiden_res_0.02",
+        "leiden_res_0.50",
+        "leiden_res_2.00",
+        "cell_type_lvl1",
+    ]
+].copy()
+_cell_table.insert(0, "cell_id", adata.obs_names)
+_cell_table["UMAP1"] = adata.obsm["X_umap"][:, 0]
+_cell_table["UMAP2"] = adata.obsm["X_umap"][:, 1]
+_cell_table.to_csv(_export_dir / "cell_metadata.csv", index=False)
+
+# Cluster-level endpoint: the stored per-cluster differential-expression
+# results (sc.tl.rank_genes_groups, groupby="leiden_res_0.50", Wilcoxon) for
+# every cluster, extracted with the helper the source documents for this
+# purpose and labelled by cluster; the stored values are not recomputed or
+# filtered.
+_de_groups = adata.uns["rank_genes_groups"]["names"].dtype.names
+_de_frames = []
+for _de_group in _de_groups:
+    _de_group = str(_de_group)
+    _de_part = sc.get.rank_genes_groups_df(adata, group=_de_group)
+    if "group" not in _de_part.columns:
+        _de_part.insert(0, "group", _de_group)
+    _de_frames.append(_de_part)
+_de_table = pd.concat(_de_frames, ignore_index=True)
+_de_table.to_csv(_export_dir / "rank_genes_groups_leiden_res_0.50.csv", index=False)
+```
+
+## Controller-assembled reference script
+
+[reference.py](reference.py): untouched original script followed by the export code above.
+
+## Controller-computed diff
+
+```diff
+--- baseline.py
++++ reference.py
+@@ -321,3 +321,47 @@
+ )
+ 
+ # You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider "pseudo-bulking" your data by sample (*e.g.* `sc.get.aggregate(adata, by=["sample", "cell_type"], func="sum", layer="counts")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.
++
++
++# --- Endpoint exports: persist terminal results already computed above ---
++from pathlib import Path
++
++import pandas as pd
++
++_export_dir = Path("/work/outputs")
++_export_dir.mkdir(parents=True, exist_ok=True)
++
++# Per-cell endpoints: sample identity, the Leiden clustering solutions
++# (default key plus the three annotation resolutions), the manual level-1
++# cell-type annotation, and the 2-D UMAP embedding interpreted for batch
++# effects and cluster structure.
++_cell_table = adata.obs[
++    [
++        "sample",
++        "leiden",
++        "leiden_res_0.02",
++        "leiden_res_0.50",
++        "leiden_res_2.00",
++        "cell_type_lvl1",
++    ]
++].copy()
++_cell_table.insert(0, "cell_id", adata.obs_names)
++_cell_table["UMAP1"] = adata.obsm["X_umap"][:, 0]
++_cell_table["UMAP2"] = adata.obsm["X_umap"][:, 1]
++_cell_table.to_csv(_export_dir / "cell_metadata.csv", index=False)
++
++# Cluster-level endpoint: the stored per-cluster differential-expression
++# results (sc.tl.rank_genes_groups, groupby="leiden_res_0.50", Wilcoxon) for
++# every cluster, extracted with the helper the source documents for this
++# purpose and labelled by cluster; the stored values are not recomputed or
++# filtered.
++_de_groups = adata.uns["rank_genes_groups"]["names"].dtype.names
++_de_frames = []
++for _de_group in _de_groups:
++    _de_group = str(_de_group)
++    _de_part = sc.get.rank_genes_groups_df(adata, group=_de_group)
++    if "group" not in _de_part.columns:
++        _de_part.insert(0, "group", _de_group)
++    _de_frames.append(_de_part)
++_de_table = pd.concat(_de_frames, ignore_index=True)
++_de_table.to_csv(_export_dir / "rank_genes_groups_leiden_res_0.50.csv", index=False)
+```
+
+## Excluded outputs
+
+- QC metrics (n_genes_by_counts, total_counts, pct_counts_mt/ribo/hb and log1p variants in adata.obs/adata.var) and the violin/scatter QC plots: diagnostics that justify the permissive filtering thresholds, not independent findings.
+
+- Scrublet doublet output (adata.obs['doublet_score'], adata.obs['predicted_doublet']): preprocessing diagnostic that is only visualized on the UMAP here; no cell or cluster is actually filtered on it in this source.
+
+- Highly-variable-gene annotations, PCA scores/variance-ratio plot and neighborhood graph: intermediates feeding UMAP and clustering; their plots are parameter-choice and batch diagnostics.
+
+- Marker-gene dotplots and UMAP panels (the curated marker_genes dictionary, QC-colored and DE-gene-colored UMAPs): expression summaries computed inside plotting functions, so their numerical content cannot be exported; the curated marker_genes list is a prior-knowledge input rather than a result. The DE results themselves are exported from adata.uns['rank_genes_groups'].
+
+- adata.layers['counts'] and the normalized/log1p matrix adata.X: pipeline data representations, not terminal scientific results.
+
+- The displayed sc.get.rank_genes_groups_df(adata, group='7').head(5) excerpt: a 5-row display of a subset; the full stored table for all clusters is exported instead, with no new subset capture.
+
+## Unresolved assumptions
+
+- How many genes per cluster the installed scanpy stores in adata.uns['rank_genes_groups'] (all screened genes versus a top set, depending on version defaults) is unverified; the CSV will contain exactly whatever was stored.
+
+- Cluster labels, cluster counts and cell counts are unverified without execution; groups are read from the stored recarray field names at runtime.
+
+- Optional stored DE fields (e.g., logfoldchanges) and the exact column set returned by sc.get.rank_genes_groups_df depend on the installed scanpy version; whichever fields are present are written.
+
+- Whether the many sc.pl.* calls render successfully in a headless offline reference environment is an execution-stage question that determines whether the script reaches these exports.

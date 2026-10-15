@@ -42,7 +42,13 @@ are outside the exported targets. Do not add computation for exporting results:
 no new filtering, ranking, aggregation, scaling or reconstruction of plotting
 internals. Do not turn a previously unnamed expression into a new variable.
 
-Consider all analysis branches in one endpoint inventory for one task. Explain
+Cover independent scientific outcomes in one task, not every tutorial section
+or processing step. Classify results from the source narrative and interpretation:
+preparatory statistics and diagnostics supporting other results are not extra
+targets merely because they survive or are displayed. Apply selection within
+annotation tables as well as within outer objects; preserve endpoint fields and
+necessary identifiers/context. Explain independent outcomes lacking an eligible
+stored result in the exclusions. Explain
 branches or plot-only results without eligible stored outputs in
 `excluded_outputs`. Their original computation remains intact. Reject if there
 are no eligible terminal results. The preparation worker leaves input-loading

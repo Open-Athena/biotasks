@@ -81,8 +81,13 @@ choosing storage. Exclude mixed analysis-state containers and select terminal
 fields instead. Standalone result tables or embeddings may be exported whole;
 preserve meaningful fields and identifiers and justify omissions. Plot display
 or earlier computation does not automatically make a stored result intermediate.
-Consider every branch and explain any without an eligible terminal result in the
-single inventory's exclusions. Keep all original computation, including excluded
+Cover independent scientific outcomes in one task, not every tutorial section
+or processing step. Classify results from the source narrative and interpretation:
+preparatory statistics and diagnostics supporting other results are not extra
+targets merely because they survive or are displayed. Apply selection within
+annotation tables as well as within outer objects; preserve endpoint fields and
+necessary identifiers/context. Explain independent outcomes lacking an eligible
+stored result in the exclusions. Keep all original computation, including excluded
 branches. Reject a source with no eligible terminal results.
 
 For a notebook with two analysis branches, a single task would cover:
