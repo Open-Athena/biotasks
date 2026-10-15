@@ -29,6 +29,7 @@ def test_list_and_read_prompts_outside_checkout(
         "notebook-task-construction",
         "notebook-task-design",
         "notebook-task-design-review",
+        "notebook-task-specification",
     ]
 
     for name in list_prompts():
