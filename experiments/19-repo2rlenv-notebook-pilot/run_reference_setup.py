@@ -36,7 +36,6 @@ def check_config(config):
     if config.get("entrypoint") != "run_reference_setup.py":
         raise ValueError("Use the separate reference-setup entry point")
     for name in (
-        "max_requests",
         "max_tests",
         "setup_seconds",
         "reference_seconds",
@@ -46,8 +45,8 @@ def check_config(config):
     ):
         if type(config.get(name)) is not int or config[name] < 1:
             raise ValueError(f"Explicit agreed {name} is required before execution")
-    if config["max_requests"] < 3:
-        raise ValueError("Tool-enabled setup needs room for a tool call and final submission")
+    if "max_requests" not in config or config["max_requests"] is not None:
+        raise ValueError("Setup uses explicit null max_requests: no request-count cap")
     if config["reference_seconds"] != 600:
         raise ValueError("The current reference computation allowance is 600 seconds")
     if config["campaign_seconds"] <= config["cleanup_seconds"]:

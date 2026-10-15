@@ -98,3 +98,9 @@ or a real authoring workspace. The updated canonical design prompt requires
 this standalone stage; the legacy direct-call campaign now refuses it. See
 [the integration assessment](../design-intake-reuse.md) for the remaining launch
 requirements and validation limits.
+
+`0010-optional-artifact-turn-limit.patch` lets the artifact stage pass an explicit
+`None` turn allowance to the injected GLM runtime. This removes a request-count
+cap without replacing it with a large integer. Existing integer limits retain
+their behavior; the stage deadline and cost checks remain active. The default
+upstream agent runtime is unchanged; uncapped calls use our injected runtime.

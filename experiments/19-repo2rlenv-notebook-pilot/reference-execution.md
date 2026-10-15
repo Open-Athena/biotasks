@@ -117,10 +117,11 @@ All such limitations stay distinct from a validated task or grader.
 `reference-setup.json` points to reviewed preparation run 010. It carries the
 existing 30-minute cumulative setup-tool allowance, 600-second reference tests,
 2-hour campaign/5-minute cleanup and $5 reservation as proposed execution values.
-The model-request and reference-test counts are deliberately unset, and both
-packaging and execution reject unset counts. They need a concrete decision for
-this new tool-enabled stage; historical preparation/45-request budgets are not
-silently inherited. GLM remains medium effort with no extra client token/input/
+The model-request count is explicitly `null`: there is no request-count cap.
+Requests remain recorded, with time and spending limits active. The reference-test
+allowance is still undecided; packaging and execution reject an unset test count.
+Each invocation counts even if validation or setup fails before computation.
+Historical preparation/45-request budgets are not inherited. GLM remains medium effort with no extra client token/input/
 response caps. Each individual model request retains the 600-second timeout.
 Upstream's final-report tool schema/size limits still apply; scripts and logs
 are files rather than fields in that report. No new model or sandbox run has
@@ -143,7 +144,7 @@ preceding full-script response contract. The
 describes scientific runs under a superseded workflow.
 
 The latest preparation remains unchanged. Review the setup prompt and settle
-the new stage’s request/test counts before its first remote run. Actual execution must check version
+the new stage’s reference-test allowance before its first remote run. Actual execution must check version
 compatibility, artifact contents and runtime. Task construction, comparisons,
 Harbor validation, solving and publication remain downstream work. No viewer
 update or downstream execution accompanies this preparation iteration.

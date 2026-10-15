@@ -22,7 +22,7 @@ from urllib.parse import urlsplit
 
 @dataclass(frozen=True)
 class Allowance:
-    requests: int
+    requests: int | None
     output_tokens: int | None
 
 
@@ -30,7 +30,8 @@ class RequestLedger:
     def __init__(self, path: Path, allowances: dict[str, Allowance]):
         self.path, self.allowances = path, allowances
         if not allowances or any(
-            v.requests < 0 or (v.output_tokens is not None and v.output_tokens < 1)
+            (v.requests is not None and (type(v.requests) is not int or v.requests < 0))
+            or (v.output_tokens is not None and v.output_tokens < 1)
             for v in allowances.values()
         ):
             raise ValueError("Nonnegative request and positive output-token bounds are required")
@@ -54,7 +55,7 @@ class RequestLedger:
         with sqlite3.connect(self.path) as db:
             db.execute("BEGIN IMMEDIATE")
             count = db.execute("SELECT COUNT(*) FROM calls WHERE scope=?", (scope,)).fetchone()[0]
-            if count >= limit.requests:
+            if limit.requests is not None and count >= limit.requests:
                 raise RuntimeError("Request allowance exhausted")
             result = db.execute(
                 "INSERT INTO calls(scope,digest,state) VALUES (?,?,?)",

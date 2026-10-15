@@ -138,7 +138,7 @@ def test_real_preparation_is_consumed_without_regeneration(tmp_path):
 
 
 def test_pending_budgets_refuse_before_any_execution():
-    with pytest.raises(ValueError, match="Explicit agreed max_requests"):
+    with pytest.raises(ValueError, match="Explicit agreed max_tests"):
         check_config(json.loads((HERE / "reference-setup.json").read_text()))
 
 
@@ -248,7 +248,7 @@ def test_upstream_worker_uses_extra_test_tool_and_validates_submission(tmp_path)
             assert "test_reference" in [t["function"]["name"] for t in calls[0]["tools"]]
             return answers[len(calls) - 1]
 
-        ledger = RequestLedger(tmp_path / "requests.sqlite", {"setup": Allowance(5, None)})
+        ledger = RequestLedger(tmp_path / "requests.sqlite", {"setup": Allowance(None, None)})
         result = await stage(
             schema=SetupOutcome,
             name="setup",
@@ -270,7 +270,7 @@ def test_upstream_worker_uses_extra_test_tool_and_validates_submission(tmp_path)
                 tool_output_chars=None,
                 reasoning_effort="medium",
             ),
-            max_requests=5,
+            max_requests=None,
             validate=s.validate_outcome,
             recover_output_limit=False,
             shell=s.shell,
@@ -385,7 +385,7 @@ def test_run_failure_exports_evidence_then_cleans_owned_sandbox(
     )
     monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "s3://fixture")
     config = json.loads((HERE / "reference-setup.json").read_text()) | {
-        "max_requests": 5,
+        "max_requests": None,
         "max_tests": 1,
     }
     with pytest.raises(RuntimeError, match="fixture (stage|export) failure"):

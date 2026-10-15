@@ -24,3 +24,12 @@ Smallest fix: say that each invocation consumes one allowance, including validat
 ## Assessment
 
 The overall stage is coherent: the worker handles setup investigation and recipes, while the controller performs the complete offline reference test and preserves the fixed exports. The five generated files and brief typed final report are understandable. The prompt appropriately refuses scientific rewrites and distinguishes process completion from scientific validation. I found no reason to reintroduce preparation repairs, a new design stage, notebook-specific package rules or another orchestration layer. Address the two execution-contract ambiguities before the first run; then evaluate actual setup behavior.
+
+## Author response — 15 October 2026
+
+Addressed both P2 findings and the two smaller clarifications in the canonical
+prompt: exact working directories/reset order, test-invocation accounting,
+immutable staged inputs versus runtime scratch files, and base-image Python.
+The user approved removing the arbitrary model-request cap. One worker session
+now has no request-count limit; time and spending bounds remain. The test-tool
+allowance remains undecided, and no live run was launched.

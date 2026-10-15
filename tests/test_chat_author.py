@@ -348,3 +348,57 @@ def test_json_schema_incomplete_or_wrong_response_never_submits(tmp_path, kind):
                 **options(tmp_path, {"submit_artifact": forbidden, "revise_artifact": forbidden})
             )
         )
+
+
+def test_uncapped_session_records_requests_and_keeps_tools_available(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if len(calls) <= 21:
+            assert "shell" in [t["function"]["name"] for t in payload["tools"]]
+            return reply("shell", {"command": "inspect"}, call_id=str(len(calls)))
+        return reply(call_id=str(len(calls)))
+
+    async def shell(command):
+        assert command == "inspect"
+        return "observed"
+
+    author, ledger = make_author(tmp_path, complete, requests=None)
+    result = asyncio.run(
+        author(
+            **options(
+                tmp_path,
+                {
+                    "shell": shell,
+                    "submit_artifact": committed,
+                    "revise_artifact": committed,
+                },
+                turns=None,
+            )
+        )
+    )
+    assert result["turns"] == 22
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 22
+
+
+def test_uncapped_session_still_stops_at_deadline(tmp_path):
+    async def complete(_payload):
+        pytest.fail("Expired session must not call the model")
+
+    author, _ = make_author(tmp_path, complete, requests=None)
+    author.deadline = time.time() - 1
+    with pytest.raises(TimeoutError, match="deadline exhausted"):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {
+                        "submit_artifact": committed,
+                        "revise_artifact": committed,
+                    },
+                    turns=None,
+                )
+            )
+        )

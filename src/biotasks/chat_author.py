@@ -89,15 +89,14 @@ class GLMChatAuthor:
         tools: list[dict[str, Any]],
         handlers: dict[str, Callable[..., Awaitable[str]]],
         trace: Path,
-        max_turns: int,
+        max_turns: int | None,
         max_cost: float,
         runtime: str,
     ) -> dict[str, Any]:
         if model != "glm-5.3" or runtime != "biotasks-glm-chat-v1":
             raise ValueError("This adapter supports only the approved GLM runtime")
         if (
-            type(max_turns) is not int
-            or max_turns < 1
+            (max_turns is not None and (type(max_turns) is not int or max_turns < 1))
             or not math.isfinite(max_cost)
             or max_cost <= 0
         ):
@@ -127,14 +126,17 @@ class GLMChatAuthor:
             output_format=self.output_format,
         )
         seen_call_ids = set()
-        for turn in range(1, max_turns + 1):
+        turn = 0
+        while max_turns is None or turn < max_turns:
+            turn += 1
             remaining = self.deadline - time.time()
             if remaining <= 0:
                 raise TimeoutError("Design deadline exhausted")
             available_tools = [
                 tool
                 for tool in tools
-                if max_turns - turn >= 2
+                if max_turns is None
+                or max_turns - turn >= 2
                 or tool["function"]["name"] in {"submit_artifact", "revise_artifact"}
             ]
             permitted = {tool["function"]["name"] for tool in available_tools}

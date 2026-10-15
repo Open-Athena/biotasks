@@ -16,7 +16,8 @@ conversion receipt, reviewed export inventory, exclusions and uncertainties.
   input-path/cache adaptations. It must not contain the appended exports.
 
 You also receive the actual base image, CPU/RAM/disk limits and explicit session,
-request, setup and reference-test allowances. There are no scientific data files
+setup and reference-test allowances. There is no model-request-count cap;
+the supplied time and spending limits still apply. There are no scientific data files
 unless you stage them. Prior preparation was text-only; its assumptions are not
 observations. The model client and service credentials stay outside this sandbox.
 
@@ -29,7 +30,10 @@ observations. The model client and service credentials stay outside this sandbox
   the declarations, creates the uv environment, runs the input-staging recipe,
   records resolved dependencies and input hashes, then runs the full reference
   offline from a fresh working/output directory. It appends the frozen exports
-  itself. Read the returned logs and receipts to diagnose setup failures.
+  itself. Each invocation consumes one test allowance, even if declaration
+  validation, dependency installation or input staging fails before computation
+  starts. Use inexpensive file, manifest and import checks with `shell` first.
+  Read the returned logs and receipts to diagnose setup failures.
 - `submit_artifact`: finish with a brief result and explanation. A successful
   report is accepted only when the current files match a successful controller
   test. Report a blocked outcome honestly when you cannot complete within scope.
@@ -38,6 +42,14 @@ Run full scientific computation only through `test_reference`, not through the
 setup shell. Do not put scientific computation or endpoint files in a setup
 recipe. Shell experiments do not replace a recorded recipe and controlled test.
 
+## Working directories
+
+The setup shell starts in `/work/setup`; `stage-inputs.sh` runs in `/work`;
+the scientific script runs in `/work/run`. After staging, the controller deletes
+and recreates `/work/run` and `/work/outputs`. Do not stage inputs or symlinks
+there: they would be removed. Keep staged inputs in `/inputs` or `/work/cache`
+and use necessary input-path adaptations to refer to those persistent paths.
+
 ## Files to produce
 
 Keep one small setup directory with these files:
@@ -45,7 +57,9 @@ Keep one small setup directory with these files:
 - `pyproject.toml`: a dependency-only Python project with name, version,
   requires-python and dependencies. Use uv; do not invent a lockfile. Choose
   versions from source requirements and observed compatibility, not guesses.
-  Do not add a build backend or dynamic project fields.
+  Inspect the base image's Python first: uv uses that interpreter and automatic
+  Python downloads are disabled. `requires-python` does not install another
+  interpreter. Do not add a build backend or dynamic project fields.
 - `system-packages.json`: an array of Debian package names (empty if unnecessary).
 - `stage-inputs.sh`: a POSIX shell recipe that stages the original inputs and
   needed caches. It runs with the resolved Python environment on PATH. It must
@@ -55,7 +69,9 @@ Keep one small setup directory with these files:
   and `source` (the original URL/provenance). Stage data under `/inputs` or
   `/work/cache`. Include input and cache files needed for offline execution;
   do not list environment packages as scientific data. The controller hashes
-  and verifies the listed files; your claims do not substitute for that check.
+  and verifies the listed files; they must remain byte-identical through the
+  reference run. These are supplied inputs, not scratch files or new caches
+  created by the analysis. Your claims do not substitute for that check.
 - `analysis.py`: the original source with only necessary input/cache/path
   adaptations. Prefer staging the expected paths/caches to changing source.
   Preserve comments and all scientific computation. Keep the frozen export code

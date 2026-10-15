@@ -1,0 +1,29 @@
+--- a/src/repo2rlenv/tasksmith/author/artifact.py
++++ b/src/repo2rlenv/tasksmith/author/artifact.py
+@@ -88,7 +88,7 @@
+     model: str,
+     runtime: str,
+     max_cost: float,
+-    max_turns: int,
++    max_turns: int | None,
+     deadline: float,
+     shell: Callable[..., Awaitable[str]] | None = None,
+     extra_tools: list[dict] | None = None,
+@@ -313,7 +313,7 @@
+             for provider_attempt in range(2):
+                 trace = root / ("trace.jsonl" if not provider_attempt else "trace-recovery1.jsonl")
+                 remaining_cost = max_cost - (budget.spent - operation["starting_spend"])
+-                if remaining_cost <= 0 or used_turns >= max_turns:
++                if remaining_cost <= 0 or (max_turns is not None and used_turns >= max_turns):
+                     raise BudgetExceeded("Author recovery exhausted the original stage allowance")
+                 try:
+                     await (agent_runner or run_agent)(
+@@ -324,7 +324,7 @@
+                         tools=tools,
+                         handlers=handlers,
+                         trace=trace,
+-                        max_turns=max_turns - used_turns,
++                        max_turns=None if max_turns is None else max_turns - used_turns,
+                         max_cost=remaining_cost,
+                         runtime=runtime,
+                     )
