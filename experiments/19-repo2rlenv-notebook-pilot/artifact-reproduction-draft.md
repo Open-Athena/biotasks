@@ -197,8 +197,11 @@ These are logical stages, not necessarily separate agents or one LLM call each.
    reviews the existing preparation inventory; it does not choose a new scope.
    It returns a public brief and private validation plan only when scientific
    semantics are supported. Otherwise it returns a focused evidence request and
-   an empty brief. The [current input](specification-inputs/005/README.md) is
-   grounded in setup run 001. Specification iterations are recorded separately;
+   an empty brief. The [current input](specification-inputs/007/README.md) is
+   grounded in setup run 001. In one session, the worker can list, search and
+   read hash-verified package release sources for the recorded installed versions.
+   It has no shell or scientific execution tools. Native artifact submission and
+   local validation handle the final response. Specification iterations are recorded separately;
    schema acceptance is not acceptance of the scientific contract.
 4. **Construct and validate.** Wrap the runnable reference and exports as the
    private solution. Generate the public brief and grading contract. Execute
