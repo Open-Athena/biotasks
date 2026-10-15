@@ -28,7 +28,7 @@ def validate_environment(pyproject_toml: str, system_packages: list[str]) -> Non
             raise ValueError("System packages must be Debian package names, optionally versioned")
 
 
-def setup_script(system_packages: list[str], *, has_staging: bool = True, verify_inputs: bool = True) -> str:
+def setup_script(system_packages: list[str], *, has_staging: bool = True, verify_inputs: bool = True, locked: bool = False) -> str:
     lines = ["#!/bin/sh", "set -eu", "cd /work", "export DEBIAN_FRONTEND=noninteractive"]
     if system_packages:
         lines += ["apt-get update", "apt-get install -y --no-install-recommends " + shlex.join(system_packages)]
@@ -37,7 +37,7 @@ def setup_script(system_packages: list[str], *, has_staging: bool = True, verify
         f"python -m pip install --disable-pip-version-check uv=={UV_VERSION}",
         "export UV_PROJECT_ENVIRONMENT=/work/venv",
         "export UV_PYTHON_DOWNLOADS=never",
-        'uv lock --project /work/environment --python "$(command -v python)"',
+        *([] if locked else ['uv lock --project /work/environment --python "$(command -v python)"']),
         'uv sync --project /work/environment --locked --no-dev --no-install-project --python "$(command -v python)"',
         "uv pip freeze --python /work/venv/bin/python > /work/environment/environment.txt",
         "export PATH=/work/venv/bin:$PATH",

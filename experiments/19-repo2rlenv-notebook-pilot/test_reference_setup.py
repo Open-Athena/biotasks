@@ -139,7 +139,7 @@ def test_real_preparation_is_consumed_without_regeneration(tmp_path):
 
 def test_pending_budgets_refuse_before_any_execution():
     with pytest.raises(ValueError, match="Explicit agreed max_tests"):
-        check_config(json.loads((HERE / "reference-setup.json").read_text()))
+        check_config(json.loads((HERE / "reference-setup.json").read_text()) | {"max_tests": None})
 
 
 def test_offline_test_uses_frozen_exports_and_records_original_candidate(tmp_path):

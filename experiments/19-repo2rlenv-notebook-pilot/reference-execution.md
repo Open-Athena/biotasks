@@ -151,3 +151,11 @@ session were needed. Task construction, comparisons, Harbor validation, solving
 and publication remain downstream work. No viewer update or downstream execution
 accompanies this iteration. Cold-image reconstruction and repeat-run stability
 remain untested; consult the run review before interpreting its evidence.
+
+## Reference repeatability before grading
+
+The [programmatic replay step](reference-replay.md) reuses the successful setup
+snapshot, saved uv lock and unchanged source/exports. It runs two fresh offline
+processes and records byte comparisons, without model calls or scientific edits.
+This supplies initial repeatability evidence for the later acceptance-rule worker;
+it does not itself validate a grader. See [configuration](reference-replay.json).

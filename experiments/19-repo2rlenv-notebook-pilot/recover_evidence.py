@@ -73,6 +73,7 @@ def main():
             or relative.startswith("continuation/")
             or (relative.startswith("reference/") and "/outputs/" not in relative)
             or relative.startswith("coverage/")
+            or (relative.startswith("reference-replay/") and "/outputs/" not in relative)
             or (relative.startswith("reference-setup/") and "/outputs/" not in relative)
             or relative.startswith(("preparation/", "schema-probe/", "specification/"))
         )

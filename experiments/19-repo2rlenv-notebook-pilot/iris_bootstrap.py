@@ -119,7 +119,7 @@ def main():
     manifest = json.loads((inputs / "inputs.json").read_text())
     configuration = json.loads((inputs / "campaign-config.json").read_text())
     entrypoint = configuration.get("entrypoint", "run_pilot.py")
-    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py"}:
+    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py", "run_reference_replay.py"}:
         raise ValueError("Unsupported checkpointed experiment entrypoint")
     deadline = min(time.time() + 7200, configuration.get("absolute_deadline", float("inf")))
     evidence = Path("/evidence")
@@ -178,17 +178,19 @@ def main():
             log=evidence / "setup.log",
         )
         (wheel,) = (evidence / "runtime").glob("*.whl")
-        route = (
-            iris_ctx()
-            .client.resolver_for_job(JobName.from_string(os.environ["GLM_ENDPOINT_JOB"]))
-            .resolve("glm-5.3")
-            .endpoints
-        )
-        if not route:
-            raise RuntimeError("Approved model route has no available endpoint")
-        endpoint = route[0].url.rstrip("/")
-        if not endpoint.endswith("/v1"):
-            endpoint += "/v1"
+        endpoint = ""
+        if entrypoint != "run_reference_replay.py":
+            route = (
+                iris_ctx()
+                .client.resolver_for_job(JobName.from_string(os.environ["GLM_ENDPOINT_JOB"]))
+                .resolve("glm-5.3")
+                .endpoints
+            )
+            if not route:
+                raise RuntimeError("Approved model route has no available endpoint")
+            endpoint = route[0].url.rstrip("/")
+            if not endpoint.endswith("/v1"):
+                endpoint += "/v1"
         env = {
             **os.environ,
             "PYTHONPATH": str(code / "src") + os.pathsep + str(experiment),

@@ -1742,3 +1742,16 @@ Session 012 returned in 18 calls and 250.34 seconds, with all original responses
 The third iteration under the narrower contract returned in one GLM-5.3 medium call, 226.75 seconds, with no package-source calls or submission repair. The exact input remains 011. Original request/prompt identity, all nine small output files, the complete trace and the one raw response were verified. Public result sizes are symbolic and the cell-versus-gene row-unit contradiction is resolved. Named reference operations define methods while solver tool choice remains open; grading rules are explicitly pending.
 
 Stop specification iteration for user inspection. Operator assessment is a usable reference-recipe/schema draft, not final task acceptance. The separate review flags nullable-lineage wording, the need to expose the resolved environment at packaging and remaining executable comparison/controls work. All generated content remains unchanged; no manual task repair or seed-specific prompt clause. No construction, scientific execution, solver or viewer update. All owned jobs and local clients are terminal. This one-seed result does not establish generality or guarantee one call on future seeds.
+
+
+## 2026-10-15 — Next step: frozen reference repeatability
+
+Following the user's instruction to proceed after specification 013, start
+executable validation with two programmatic reference repeats. This checks a
+prerequisite for grading before asking GLM to choose acceptance rules. Reuse the
+existing sandbox lifecycle, offline controls, generated setup and frozen exports;
+install from the recorded lock and reject environment/input drift. No model calls,
+manual scientific changes, task construction, solver, release or viewer changes.
+The initial two repeats are observations, not a portability or calibration claim.
+Reserve $2 within the standing $100 ceiling (conservative aggregate holds $98;
+actual provider invoices remain unavailable). Details: [reference replay](reference-replay.md).

@@ -115,8 +115,11 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                     artifact_prefix, endpoint_job, cluster, reference_archive=None):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
     config = json.loads(files["campaign-config.json"])
+    replay_only = config.get("entrypoint") == "run_reference_replay.py"
+    if replay_only and (token or endpoint_job):
+        raise ValueError("Programmatic replay must not receive model credentials or routes")
     preparation_only = config.get("entrypoint") in {"run_preparation.py", "run_schema_probe.py", "run_specification.py"}
-    if not token or (not preparation_only and not daytona_key) or not artifact_prefix.startswith("s3://"):
+    if (not replay_only and not token) or (not preparation_only and not daytona_key) or not artifact_prefix.startswith("s3://"):
         raise ValueError("Approved credentials and a private artifact destination are required")
     if preparation_only and daytona_key:
         raise ValueError("Preparation-only jobs must not receive Daytona credentials")
@@ -153,9 +156,8 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                 )
             ],
             env_vars={
-                "GLM_BULK_TOKEN": token,
+                **({"GLM_BULK_TOKEN": token, "GLM_ENDPOINT_JOB": endpoint_job} if not replay_only else {}),
                 **({"DAYTONA_API_KEY": daytona_key} if daytona_key else {}),
-                "GLM_ENDPOINT_JOB": endpoint_job,
                 "BIOTASKS_ARTIFACT_PREFIX": artifact_prefix.rstrip("/") + "/" + job_name,
                 "BIOTASKS_IRIS_WORKER_ID": job_name,
                 **({"BIOTASKS_REFERENCE_ARCHIVE": reference_archive} if reference_archive else {}),

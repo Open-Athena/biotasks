@@ -33,7 +33,7 @@ HERE = Path(__file__).parent
 
 
 def check_config(config):
-    if config.get("entrypoint") != "run_reference_setup.py":
+    if config.get("entrypoint") not in {"run_reference_setup.py", "run_reference_replay.py"}:
         raise ValueError("Use the separate reference-setup entry point")
     for name in (
         "max_tests",
@@ -188,6 +188,11 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
         raise ValueError("This execution profile is CPU-only")
     if config["reference_seconds"] != target["reference_seconds"]:
         raise ValueError("Reference allowance differs from the reviewed preparation")
+    replay = config["entrypoint"] == "run_reference_replay.py"
+    if replay:
+        from reference_replay import load_snapshot, replay_reference
+
+        snapshot = load_snapshot(HERE / config["reference_directory"], prepared)
     root.mkdir(parents=True, exist_ok=False)
     save_record(root / "configuration.json", config)
     save_record(root / "preparation-input.json", prepared.context)
@@ -260,86 +265,91 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
             await asyncio.to_thread(worker.exec, ["mkdir", "-p", "/work", "/work/logs"], timeout=30)
         ).checked("Initialize controller directory")
         remote = Remote(worker, sandbox, root, work_deadline, target["task_cpus"])
-        session = SetupSession(
-            prepared=prepared,
-            remote=remote,
-            root=root / "setup",
-            setup_seconds=config["setup_seconds"],
-            reference_seconds=config["reference_seconds"],
-            max_tests=config["max_tests"],
-        )
-        await session.initialize()
-        context = {
-            "preparation": {
-                "source": prepared.context["source"],
-                "conversion": prepared.context["conversion"],
-                "plan": prepared.plan.model_dump(),
-            },
-            "paths": {
-                "original.py": "/work/frozen/original.py",
-                "exports.py": "/work/frozen/exports.py",
-                "plan.json": "/work/frozen/plan.json",
-                "setup": "/work/setup",
-            },
-            "limits": {
-                **target,
-                **{
-                    k: config[k]
-                    for k in (
-                        "max_requests",
-                        "max_tests",
-                        "setup_seconds",
-                        "reference_seconds",
-                        "campaign_seconds",
-                        "request_timeout_seconds",
-                    )
-                },
-            },
-        }
-        limits = ChatLimits(
-            max_output_tokens=None,
-            max_input_bytes=None,
-            max_response_bytes=None,
-            tool_output_chars=None,
-            reasoning_effort="medium",
-            request_timeout_sec=config["request_timeout_seconds"],
-        )
-        if complete is None:
-            client = AsyncOpenAI(
-                base_url=endpoint,
-                api_key=credential,
-                max_retries=0,
-                timeout=limits.request_timeout_sec,
-                http_client=httpx.AsyncClient(follow_redirects=False),
+        if replay:
+            result.update(await replay_reference(
+                remote=remote, snapshot=snapshot, root=root / "replay", config=config,
+            ))
+        else:
+            session = SetupSession(
+                prepared=prepared,
+                remote=remote,
+                root=root / "setup",
+                setup_seconds=config["setup_seconds"],
+                reference_seconds=config["reference_seconds"],
+                max_tests=config["max_tests"],
             )
-            complete = completion_transport(client)
-        outcome = await stage(
-            schema=SetupOutcome,
-            name="setup",
-            prompt_name="notebook-reference-setup",
-            context=context,
-            root=root / "worker",
-            ledger=ledger,
-            budget=AuthorBudget(spend, root / "charges", "setup"),
-            complete=complete,
-            deadline=work_deadline,
-            limits=limits,
-            max_requests=config["max_requests"],
-            validate=session.validate_outcome,
-            recover_output_limit=False,
-            shell=session.shell,
-            extra_tools=[TEST_TOOL],
-            extra_handlers={"test_reference": session.test_reference},
-        )
-        save_record(root / "outcome.json", outcome.model_dump())
-        result.update(
-            status="reference_executed_requires_review"
-            if outcome.disposition == "tested"
-            else "worker_blocked",
-            reference_tests=session.tests,
-            setup_seconds_remaining=session.setup_remaining,
-            last_passing_test=session.last_pass,
-        )
+            await session.initialize()
+            context = {
+                "preparation": {
+                    "source": prepared.context["source"],
+                    "conversion": prepared.context["conversion"],
+                    "plan": prepared.plan.model_dump(),
+                },
+                "paths": {
+                    "original.py": "/work/frozen/original.py",
+                    "exports.py": "/work/frozen/exports.py",
+                    "plan.json": "/work/frozen/plan.json",
+                    "setup": "/work/setup",
+                },
+                "limits": {
+                    **target,
+                    **{
+                        k: config[k]
+                        for k in (
+                            "max_requests",
+                            "max_tests",
+                            "setup_seconds",
+                            "reference_seconds",
+                            "campaign_seconds",
+                            "request_timeout_seconds",
+                        )
+                    },
+                },
+            }
+            limits = ChatLimits(
+                max_output_tokens=None,
+                max_input_bytes=None,
+                max_response_bytes=None,
+                tool_output_chars=None,
+                reasoning_effort="medium",
+                request_timeout_sec=config["request_timeout_seconds"],
+            )
+            if complete is None:
+                client = AsyncOpenAI(
+                    base_url=endpoint,
+                    api_key=credential,
+                    max_retries=0,
+                    timeout=limits.request_timeout_sec,
+                    http_client=httpx.AsyncClient(follow_redirects=False),
+                )
+                complete = completion_transport(client)
+            outcome = await stage(
+                schema=SetupOutcome,
+                name="setup",
+                prompt_name="notebook-reference-setup",
+                context=context,
+                root=root / "worker",
+                ledger=ledger,
+                budget=AuthorBudget(spend, root / "charges", "setup"),
+                complete=complete,
+                deadline=work_deadline,
+                limits=limits,
+                max_requests=config["max_requests"],
+                validate=session.validate_outcome,
+                recover_output_limit=False,
+                shell=session.shell,
+                extra_tools=[TEST_TOOL],
+                extra_handlers={"test_reference": session.test_reference},
+            )
+            save_record(root / "outcome.json", outcome.model_dump())
+            result.update(
+                status="reference_executed_requires_review"
+                if outcome.disposition == "tested"
+                else "worker_blocked",
+                reference_tests=session.tests,
+                setup_seconds_remaining=session.setup_remaining,
+                last_passing_test=session.last_pass,
+            )
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)
         raise
@@ -354,7 +364,7 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
             await asyncio.to_thread(
                 export_on_host,
                 root,
-                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/reference-setup",
+                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + ("/reference-replay" if replay else "/reference-setup"),
                 deadline=deadline - config["cleanup_seconds"],
             )
         finally:
