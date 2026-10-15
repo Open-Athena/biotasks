@@ -1,0 +1,54 @@
+{
+  "input_digest": "6874574ed2554365b3d5ff1a7f59366f11830d825bacf113077c96c4946bf9c8",
+  "tool_protocol": 2,
+  "status": "unvalidated",
+  "number": 1,
+  "origin": "submit_artifact",
+  "artifact": {
+    "disposition": "prepare",
+    "explanation": "Every terminal result of this pipeline already exists on the final adata or in a named variable: per-cell QC metrics, scrublet doublet_score/predicted_doublet, four Leiden clustering solutions and the manual cell_type_lvl1 annotation (adata.obs); gene QC flags/metrics and highly-variable-gene results (adata.var); the UMAP layout (adata.obsm['X_umap']); the Wilcoxon cluster-vs-rest differential-expression ranking (adata.uns['rank_genes_groups']); and the named top-5 cluster-7 marker list dc_cluster_genes. The appended code only serializes these existing values into five CSV files under /work/outputs; the DE structured arrays are reformatted into a tidy table (the same extraction the tutorial demonstrates with sc.get.rank_genes_groups_df), with the per-group fraction-expressing table joined by gene identifier when scanpy stored it. No computation, filtering or ranking is added, plotting calls are untouched, and mixed analysis-state content (count/normalized matrices, PCA, neighbor graph, whole-object h5ad) is excluded in favor of the endpoint fields.",
+    "export_code": "# ---------------------------------------------------------------------------\n# Endpoint export: save the terminal scientific results computed above.\n# Only already-existing values are serialized; nothing is recomputed.\n# ---------------------------------------------------------------------------\nimport os\n\nimport pandas as pd\n\n_EXPORT_DIR = \"/work/outputs\"\nos.makedirs(_EXPORT_DIR, exist_ok=True)\n\n# 1) Final per-cell results: sample identity, per-cell QC metrics, Scrublet\n#    doublet score/call, Leiden clusterings (default plus resolutions\n#    0.02/0.50/2.00) and the manual cell_type_lvl1 annotation.\n_cells = adata.obs.copy()\n_cells.index.name = \"cell_barcode\"\n_cells.to_csv(os.path.join(_EXPORT_DIR, \"cell_annotations.csv\"))\n\n# 2) Final per-gene results: gene QC flags/metrics and the highly-variable\n#    gene annotations from feature selection.\n_genes = adata.var.copy()\n_genes.index.name = \"gene\"\n_genes.to_csv(os.path.join(_EXPORT_DIR, \"gene_annotations.csv\"))\n\n# 3) UMAP embedding: the 2-D cell layout used for the script's sample,\n#    cluster, QC and marker-gene visualizations.\n_umap = pd.DataFrame(\n    adata.obsm[\"X_umap\"],\n    index=pd.Index(adata.obs_names, name=\"cell_barcode\"),\n    columns=[\"umap_1\", \"umap_2\"],\n)\n_umap.to_csv(os.path.join(_EXPORT_DIR, \"umap_embedding.csv\"))\n\n# 4) Wilcoxon cluster-vs-rest differential expression per leiden_res_0.50\n#    cluster, reformatted from the existing structured arrays stored by\n#    sc.tl.rank_genes_groups into a tidy table (same content the tutorial\n#    extracts with sc.get.rank_genes_groups_df).\n_rgg = adata.uns[\"rank_genes_groups\"]\n_fields = [\n    f\n    for f in (\"names\", \"scores\", \"pvals\", \"pvals_adj\", \"logfoldchanges\")\n    if f in _rgg\n]\n_pts = _rgg.get(\"pts\")\n_frames = []\nfor _g in _rgg[\"names\"].dtype.names:\n    _frame = pd.DataFrame({f: _rgg[f][_g] for f in _fields})\n    _frame.insert(0, \"group\", _g)\n    if _pts is not None and _g in getattr(_pts, \"columns\", ()):\n        _frame[\"pts\"] = _frame[\"names\"].map(_pts[_g])\n    _frames.append(_frame)\npd.concat(_frames, ignore_index=True).to_csv(\n    os.path.join(_EXPORT_DIR, \"rank_genes_groups.csv\"), index=False\n)\n\n# 5) The tutorial's example extraction: top-5 DE genes of cluster 7, kept\n#    in the named variable dc_cluster_genes.\n_dc_genes = dc_cluster_genes.rename(\"gene\")\n_dc_genes.index.name = \"rank\"\n_dc_genes.to_csv(os.path.join(_EXPORT_DIR, \"cluster7_top5_de_genes.csv\"))\n",
+    "artifacts": [
+      {
+        "path": "cell_annotations.csv",
+        "description": "Final per-cell result table from the QC, doublet-detection, clustering and annotation branches: sample label, per-cell QC metrics (n_genes_by_counts, total_counts and mt/ribo/hb percentages with log1p variants), scrublet doublet_score and predicted_doublet, Leiden labels at the default setting and at resolutions 0.02/0.50/2.00, and the manual cell_type_lvl1 annotation; row index is the unique cell barcode.",
+        "source_evidence": "All values are existing adata.obs fields written by the original script: sc.pp.calculate_qc_metrics, sc.pp.scrublet(batch_key='sample'), sc.tl.leiden (default key and the key_added loop over resolutions 0.02/0.5/2.0), and the cell_type_lvl1 mapping applied to obs['leiden_res_0.02']. None of these obs columns is overwritten afterwards, so the final state is the endpoint of those branches."
+      },
+      {
+        "path": "gene_annotations.csv",
+        "description": "Final per-gene result table: mitochondrial/ribosomal/hemoglobin flags, per-gene QC metrics (n_cells_by_counts, mean/dropout counts, total counts and log1p variants) from sc.pp.calculate_qc_metrics, and the feature-selection result (highly_variable plus means/dispersions/dispersions_norm); row index is the unique gene symbol.",
+        "source_evidence": "Existing adata.var fields set by the adata.var['mt'/'ribo'/'hb'] assignments, sc.pp.calculate_qc_metrics and sc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key='sample'); adata.var is not overwritten after these steps."
+      },
+      {
+        "path": "umap_embedding.csv",
+        "description": "Per-cell 2-D UMAP coordinates (umap_1, umap_2): the final embedding on which the script reads sample mixing, cluster structure, QC re-assessment and marker-gene expression.",
+        "source_evidence": "Existing adata.obsm['X_umap'] produced by sc.tl.umap(adata) after sc.pp.neighbors(adata); the coordinates already exist outside the later sc.pl.umap calls, so the plotted endpoint values are exported without touching plotting."
+      },
+      {
+        "path": "rank_genes_groups.csv",
+        "description": "Tidy Wilcoxon cluster-vs-rest differential-expression results per leiden_res_0.50 cluster: group, ranked gene names, scores, p-values, pvals_adj, logfoldchanges, and the per-group fraction of expressing cells (pts) when scanpy stored it; groups are concatenated in scanpy's ranking order. The uns entry's 'params' dict (groupby/method settings) is run configuration rather than per-gene data, so it is documented here instead of being written as a column; 'pts_rest' is absent because the reference is 'rest'.",
+        "source_evidence": "sc.tl.rank_genes_groups(adata, groupby='leiden_res_0.50', method='wilcoxon') stores the result in adata.uns['rank_genes_groups']; the appended code only reformats those existing structured arrays (the extraction the tutorial itself performs with sc.get.rank_genes_groups_df)."
+      },
+      {
+        "path": "cluster7_top5_de_genes.csv",
+        "description": "Top-5 differentially-expressed marker genes for cluster 7 (rank, gene): the tutorial's worked example of marker-driven cell-type interpretation.",
+        "source_evidence": "The named variable dc_cluster_genes = sc.get.rank_genes_groups_df(adata, group='7').head(5)['names'] is created after the DE step and only used for plotting afterwards; it persists unchanged to script completion."
+      }
+    ],
+    "excluded_outputs": [
+      "Raw and normalized expression matrices (adata.layers['counts'], log-normalized adata.X) and the raw per-sample AnnData objects (adatas): intake/processing state, not terminal results; the whole mixed-state adata is deliberately not dumped as .h5ad - its endpoint fields are exported instead.",
+      "PCA results (adata.obsm['X_pca'], adata.varm['PCs'], adata.uns['pca'] including variance ratios) and the neighborhood graph (adata.obsp distances/connectivities): intermediate representations consumed by neighbors, UMAP and clustering, and diagnostics used only to sanity-check PC usage.",
+      "All figures (violin, scatter, highly-variable-genes, PCA/variance-ratio, UMAP overlays, dotplots and rank_genes_groups_dotplot): plot-only summaries computed inside the plotting calls; no figure capture was added. Where plotted values exist outside plotting (QC metrics, cluster labels, UMAP coordinates, DE table) they are exported; the per-cluster mean marker-expression values behind sc.pl.dotplot exist only inside the plotting function.",
+      "marker_genes dict: curated prior-knowledge input defining candidate cell-type markers; it is an annotation input rather than a computed endpoint.",
+      "The standalone display expression sc.get.rank_genes_groups_df(adata, group='7').head(5): never assigned in the baseline; its content is already captured by the named dc_cluster_genes, which is exported.",
+      "Method/configuration records in adata.uns (scrublet, hvg, pca settings and rank_genes_groups 'params'): run diagnostics rather than per-observation results."
+    ],
+    "unresolved_assumptions": [
+      "Whether leiden_res_0.50 yields a cluster labelled '7' (and the full set of cluster labels, hence the group rows and size of the DE table) is only known at execution; the baseline itself already indexes group '7', so it would fail before export if absent.",
+      "Whether adata.uns['rank_genes_groups']['pts'] is present and its column labels in the installed scanpy version; the export writes the pts column only when present.",
+      "Whether cell_type_lvl1 contains missing values for any leiden_res_0.02 cluster beyond '0'-'4' (the provided mapping covers only five labels) is only known at execution; values are preserved as computed.",
+      "Exact obs/var column sets depend on the installed scanpy's calculate_qc_metrics output; the export serializes the final tables as-is.",
+      "Headless rendering of the sc.pl.* calls, successful pooch retrieval during setup, and whether the full pipeline (scrublet, PCA, neighbors, UMAP, multiple Leiden runs, Wilcoxon DE over all genes x clusters) fits the 600 s / 8 GiB / 4 CPU limits are execution-stage questions."
+    ]
+  }
+}

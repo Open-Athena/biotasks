@@ -84,7 +84,10 @@ source preservation and the explicit path convention passed run 007 checks.
 Run 007 nevertheless proposed full-state and diagnostic exports; this requires
 selection review before execution. The revised prompt excludes mixed-state
 containers explicitly and requires evidence of each result’s scientific role.
-The revised prompt and single-call policy have not yet had a model run.
+The revised prompt and single-call policy completed [run 008](preparation-runs/008/README.md):
+one call, no repair, structural checks passed. It avoids the full-object dump
+but still exports diagnostic/intermediate columns in broad cell/gene tables.
+Endpoint selection remains unresolved.
 
 [Preparation run 005](preparation-runs/005/README.md) used the preceding contract:
 its full-object export and newly captured expression are not evidence of
@@ -92,7 +95,7 @@ compliance with the revised selection rule. Its recorded output stays unchanged.
 The [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
 explains earlier reference runs under the superseded workflow.
 
-The run 007 append-only preparation output needs inspection before advancing. Tool-enabled setup
+The latest run 008 preparation output needs inspection before advancing. Tool-enabled setup
 is the next implementation boundary; it must preserve the science while resolving
 dependencies and staging inputs. Task construction, artifact comparisons, Harbor
 validation, blind solving and publication remain downstream work. The preparation run is complete; execution and viewer updates remain deferred.

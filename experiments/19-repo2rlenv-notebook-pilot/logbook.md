@@ -1578,3 +1578,9 @@ Preparation now makes exactly one GLM call, followed by schema/syntax validation
 ### 2026-10-15 — Preparation run 008 authorization
 
 The user requested a rerun of preparation only after reviewing the general endpoint-selection and single-call changes. Run the unchanged newer Scanpy conversion with GLM-5.3 medium, strict JSON-schema responses and exactly one request, no automatic repair. Preserve the original response, appended code, computed diff and checks for inspection. No scientific setup/execution, sandbox, separate review worker, construction, solver or viewer update.
+
+### 2026-10-15 — Preparation run 008 complete
+
+Checkpoint `c41bc9d9f642dba73b3146af94718b947236e23e` completed one GLM-5.3 medium request in 193 seconds, no repair. JSON Schema, combined syntax, exact original-source prefix, export-code identity, computed diff and all 17 original evidence hashes passed. Input context matches the previously public run 006. Publication files were screened for credential/private-service markers. Reported usage was 7,249 prompt and 27,689 completion tokens, including 25,314 reasoning tokens.
+
+The worker avoids the full AnnData dump and exports UMAP coordinates, DE results and the existing cluster-7 marker list, but also copies all cell/gene annotations including diagnostics and feature-selection intermediates. Static inspection flags these broad exports and their survival-to-completion justification; structural acceptance is not endpoint approval. Original output remains unchanged. Initial log retrieval was incomplete; another read of the same terminal job recovered all records. Remote worker and local clients are terminal. No additional model request, manual fix, scientific execution, sandbox, independent model review, downstream stage or viewer update. Inspect `preparation-runs/008/` before advancing.

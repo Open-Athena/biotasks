@@ -1,0 +1,60 @@
+# ---------------------------------------------------------------------------
+# Endpoint export: save the terminal scientific results computed above.
+# Only already-existing values are serialized; nothing is recomputed.
+# ---------------------------------------------------------------------------
+import os
+
+import pandas as pd
+
+_EXPORT_DIR = "/work/outputs"
+os.makedirs(_EXPORT_DIR, exist_ok=True)
+
+# 1) Final per-cell results: sample identity, per-cell QC metrics, Scrublet
+#    doublet score/call, Leiden clusterings (default plus resolutions
+#    0.02/0.50/2.00) and the manual cell_type_lvl1 annotation.
+_cells = adata.obs.copy()
+_cells.index.name = "cell_barcode"
+_cells.to_csv(os.path.join(_EXPORT_DIR, "cell_annotations.csv"))
+
+# 2) Final per-gene results: gene QC flags/metrics and the highly-variable
+#    gene annotations from feature selection.
+_genes = adata.var.copy()
+_genes.index.name = "gene"
+_genes.to_csv(os.path.join(_EXPORT_DIR, "gene_annotations.csv"))
+
+# 3) UMAP embedding: the 2-D cell layout used for the script's sample,
+#    cluster, QC and marker-gene visualizations.
+_umap = pd.DataFrame(
+    adata.obsm["X_umap"],
+    index=pd.Index(adata.obs_names, name="cell_barcode"),
+    columns=["umap_1", "umap_2"],
+)
+_umap.to_csv(os.path.join(_EXPORT_DIR, "umap_embedding.csv"))
+
+# 4) Wilcoxon cluster-vs-rest differential expression per leiden_res_0.50
+#    cluster, reformatted from the existing structured arrays stored by
+#    sc.tl.rank_genes_groups into a tidy table (same content the tutorial
+#    extracts with sc.get.rank_genes_groups_df).
+_rgg = adata.uns["rank_genes_groups"]
+_fields = [
+    f
+    for f in ("names", "scores", "pvals", "pvals_adj", "logfoldchanges")
+    if f in _rgg
+]
+_pts = _rgg.get("pts")
+_frames = []
+for _g in _rgg["names"].dtype.names:
+    _frame = pd.DataFrame({f: _rgg[f][_g] for f in _fields})
+    _frame.insert(0, "group", _g)
+    if _pts is not None and _g in getattr(_pts, "columns", ()):
+        _frame["pts"] = _frame["names"].map(_pts[_g])
+    _frames.append(_frame)
+pd.concat(_frames, ignore_index=True).to_csv(
+    os.path.join(_EXPORT_DIR, "rank_genes_groups.csv"), index=False
+)
+
+# 5) The tutorial's example extraction: top-5 DE genes of cluster 7, kept
+#    in the named variable dc_cluster_genes.
+_dc_genes = dc_cluster_genes.rename("gene")
+_dc_genes.index.name = "rank"
+_dc_genes.to_csv(os.path.join(_EXPORT_DIR, "cluster7_top5_de_genes.csv"))
