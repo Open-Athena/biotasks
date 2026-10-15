@@ -1,0 +1,41 @@
+"""Read archived output bytes; no model, sandbox or scientific recomputation."""
+import csv, hashlib, io, json, math, os, tempfile
+from collections import Counter
+from pathlib import Path
+import fsspec
+prefix=os.environ['EVIDENCE_PREFIX']
+with fsspec.open(prefix+'/export-manifest.json','rb').open() as f:
+ manifest=json.load(f)
+reports=[]
+for item in manifest['files']:
+ if not item['path'].startswith('reference-setup/setup/trials/1/outputs/'): continue
+ h=hashlib.sha256();n=0
+ with tempfile.TemporaryFile() as raw:
+  with fsspec.open(prefix+'/'+item['path'],'rb').open() as f:
+   while chunk:=f.read(1024*1024): h.update(chunk);n+=len(chunk);raw.write(chunk)
+  assert n==item['bytes'] and h.hexdigest()==item['sha256']
+  raw.seek(0)
+  report={'file':Path(item['path']).name,'bytes':n,'sha256':h.hexdigest(),'download_hash_verified':True}
+  stream=io.TextIOWrapper(raw,encoding='utf-8')
+  if item['path'].endswith('.csv'):
+   reader=csv.DictReader(stream);report['columns']=reader.fieldnames;rows=0;first=[];states={k:{'blank':0,'numeric':0,'nonfinite':0,'min':None,'max':None} for k in reader.fieldnames}
+   for row in reader:
+    assert None not in row, 'Malformed CSV row'
+    rows+=1
+    if rows<=3: first.append(row)
+    for k,v in row.items():
+     state=states[k]
+     if v is None or not v.strip(): state['blank']+=1;continue
+     try: x=float(v)
+     except ValueError: continue
+     state['numeric']+=1
+     if not math.isfinite(x):state['nonfinite']+=1;continue
+     state['min']=x if state['min'] is None else min(x,state['min'])
+     state['max']=x if state['max'] is None else max(x,state['max'])
+   report.update(rows=rows,first_rows=first,column_stats=states)
+  else: report['content']=json.load(stream)
+  reports.append(report)
+result={'scope':'Archived file integrity and structural/numeric-range inspection only; not independent scientific reproduction','outputs':reports}
+serialized=json.dumps(result,indent=2,allow_nan=False)
+with fsspec.open(prefix+'/inspection/output-audit.json','w').open() as f:f.write(serialized)
+print('OUTPUT_AUDIT '+json.dumps(result,allow_nan=False),flush=True)

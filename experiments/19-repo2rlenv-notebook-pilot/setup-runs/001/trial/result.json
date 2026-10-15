@@ -1,0 +1,71 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 1098166,
+        "exists": true,
+        "path": "cell_clusters_umap.csv",
+        "sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d"
+      },
+      {
+        "bytes": 28207516,
+        "exists": true,
+        "path": "rank_genes_groups_leiden_res_0.50.csv",
+        "sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b"
+      },
+      {
+        "bytes": 157,
+        "exists": true,
+        "path": "rank_genes_groups_params.json",
+        "sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+      }
+    ],
+    "declared_artifacts_present": true,
+    "semantic_fidelity_validated": false
+  },
+  "candidate_sha256": {
+    "analysis.py": "5dde61e6f8013f8f2c5712a56825fa94db197b6a987b9cc33108ad3b2b1e6a46",
+    "inputs.json": "1146443461fa108f125e1da33c879dd8e81a919a5289f738af89284d1277ad70",
+    "pyproject.toml": "99c91961b8b1cb93f02ec0cba6dfbf6cefefef2a5052e27bf19e421917b36973",
+    "stage-inputs.sh": "d0bc0cda328d0df9cd2549ece995de0e335553668b2538492dc55c4e2f39b548",
+    "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "elapsed_seconds": 147.50729751586914,
+    "exit_code": 0,
+    "finished": 1792081347.7313523,
+    "log": "/work/reference.py:47: FutureWarning: The method set_figure_params is deprecated and will be removed in the future. Use :func:`scanpy.set_figure_params` instead\n  sc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/reference.py:85: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.\n  adata = ad.concat(adatas, label=\"sample\")\nWARNING: dendrogram data not found (using key=dendrogram_leiden_res_0.50). Running `sc.tl.dendrogram` with default parameters. For fine tuning it is recommended to run `sc.tl.dendrogram` independently.\nsample\ns1d1    8785\ns1d3    8340\nName: count, dtype: int64\n",
+    "peak_child_rss_kib": 5175376,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792081200.2240548,
+    "timed_out": false
+  },
+  "inputs_after": {
+    "files": 3,
+    "staged_inputs_verified": true
+  },
+  "semantic_fidelity_validated": false,
+  "setup": {
+    "argv": [
+      "sh",
+      "-eu",
+      "/work/setup.sh"
+    ],
+    "elapsed_seconds": 3.320296287536621,
+    "exit_code": 0,
+    "finished": 1792081192.9488862,
+    "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 243.4 MB/s  0:00:00\nInstalling collected packages: uv\n  Attempting uninstall: uv\n    Found existing installation: uv 0.13.1\n    Uninstalling uv-0.13.1:\n      Successfully uninstalled uv-0.13.1\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 69 packages in 279ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 69 packages in 0.87ms\nDownloading pillow (6.6MiB)\nDownloading pydantic-core (2.1MiB)\nDownloading fonttools (5.1MiB)\nDownloading networkx (2.0MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading h5py (5.2MiB)\nDownloading numba (3.7MiB)\nDownloading pandas (10.3MiB)\nDownloading numpy (15.9MiB)\nDownloading scikit-learn (8.7MiB)\nDownloading scipy (33.7MiB)\nDownloading leidenalg (2.6MiB)\nDownloading igraph (5.4MiB)\nDownloading matplotlib (9.4MiB)\nDownloading numcodecs (1.4MiB)\nDownloading statsmodels (11.5MiB)\nDownloading llvmlite (56.9MiB)\nDownloading scanpy (2.1MiB)\nDownloading scikit-image (13.0MiB)\n Downloaded kiwisolver\n Downloaded numcodecs\n Downloaded scanpy\n Downloaded pydantic-core\n Downloaded networkx\n Downloaded leidenalg\n Downloaded numba\n Downloaded h5py\n Downloaded igraph\n Downloaded fonttools\n Downloaded pillow\n Downloaded scikit-learn\n Downloaded matplotlib\n Downloaded statsmodels\n Downloaded scikit-image\n Downloaded pandas\n Downloaded numpy\n Downloaded scipy\n Downloaded llvmlite\nPrepared 66 packages in 918ms\nInstalled 66 packages in 915ms\n + anndata==0.13.4\n + annotated-types==0.8.0\n + array-api-compat==1.15.0\n + certifi==2026.7.22\n + charset-normalizer==3.5.2\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + donfig==0.8.1.post1\n + fast-array-utils==1.5.1\n + fonttools==4.67.0\n + formulaic==1.2.2\n + google-crc32c==1.9.0\n + h5py==3.16.0\n + idna==3.20\n + igraph==1.0.0\n + imageio==2.38.1\n + interface-meta==2.0.1\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + lazy-loader==0.6\n + legacy-api-wrap==1.5\n + leidenalg==0.12.0\n + llvmlite==0.50.0\n + matplotlib==3.11.2\n + msgspec==0.22.0\n + narwhals==2.27.1\n + natsort==8.4.0\n + networkx==3.7\n + numba==0.68.0\n + numcodecs==0.17.0\n + numpy==2.5.4\n + packaging==26.3\n + pandas==3.0.6\n + patsy==1.0.3\n + pillow==12.3.0\n + platformdirs==4.13.0\n + pooch==1.9.0\n + pydantic==2.14.1\n + pydantic-core==2.50.1\n + pydantic-settings==2.16.0\n + pynndescent==0.6.0\n + pyparsing==3.3.3\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.4\n + pyyaml==6.0.3\n + requests==2.34.2\n + scanpy==1.12.4\n + scikit-image==0.26.0\n + scikit-learn==1.9.1\n + scipy==1.18.1\n + scverse-misc==0.1.7\n + seaborn==0.13.2\n + session-info2==0.4.2\n + six==1.17.0\n + statsmodels==0.15.0\n + texttable==1.7.1\n + threadpoolctl==3.7.0\n + tifffile==2026.9.20\n + tqdm==4.70.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + umap-learn==0.5.12\n + urllib3==2.8.0\n + wrapt==2.5.1\n + zarr==3.4.1\nUsing Python 3.13.13 environment at: venv\nstage-inputs: staged s1d1_filtered_feature_bc_matrix.h5 (22848647 bytes, md5 a99285913ea3f3d22600d3d2f8a88e34 verified)\nstage-inputs: staged s1d3_filtered_feature_bc_matrix.h5 (20432298 bytes, md5 825f7f7578e3dc0b8955f5a97a402338 verified)\nstage-inputs: wrote /work/cache/scverse_tutorials/registry.txt\nstage-inputs: cache for 10.6084/m9.figshare.22716739.v1:\n  registry.txt 144\n  s1d1_filtered_feature_bc_matrix.h5 22848647\n  s1d3_filtered_feature_bc_matrix.h5 20432298\nstage-inputs: done\n",
+    "peak_child_rss_kib": 120172,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792081189.6285899,
+    "timed_out": false
+  },
+  "status": "reference_executed",
+  "test": 1
+}

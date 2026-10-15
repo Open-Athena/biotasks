@@ -525,7 +525,10 @@ provides structured proposal machinery. The current preparation worker uses
 strict JSON-schema responses and appended export code. Preparation makes one
 call, validates structure/syntax and preserves failures without automatic repair.
 The separate tool-enabled setup/offline-test worker is implemented with synthetic
-boundary tests; its first remote run is pending agreement on the reference-test allowance. The setup worker has no model-request-count cap; time and spending bounds remain.
+boundary tests. Its first remote run passed the full offline reference in 147.5
+seconds with all reviewed exports preserved; see [run 001](setup-runs/001/README.md)
+for evidence and limits. The setup worker has no model-request-count cap; time
+and spending bounds remain.
 See [the current workflow](reference-execution.md) for the actual prompt, inputs,
 outputs and limits. Harbor and the existing quality/release components remain
 candidates downstream.

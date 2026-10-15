@@ -1,0 +1,50 @@
+--- original.py
++++ analysis.py
+@@ -17,6 +17,26 @@
+ # Core scverse libraries
+ from __future__ import annotations
+ 
++# Offline execution adaptations (environment/input-path only; no change to
++# the scientific content: same data, population, algorithms, parameters,
++# filtering, annotations and branches):
++#
++# 1. The reference run is headless (no display), so select matplotlib's
++#    non-interactive Agg backend before scanpy imports pyplot. All plotting
++#    calls below are kept and still render off-screen.
++# 2. Input-path adaptation: pin the pooch data cache to the persistent
++#    controller cache root (/work/cache) that the input-staging recipe
++#    populates, so pooch.os_cache("scverse_tutorials") resolves to
++#    /work/cache/scverse_tutorials (the staged original dataset files)
++#    instead of the default user cache under $HOME.
++import os
++
++os.environ["XDG_CACHE_HOME"] = "/work/cache"
++
++import matplotlib
++
++matplotlib.use("Agg")
++
+ import anndata as ad
+ 
+ # Data retrieval
+@@ -36,7 +56,19 @@
+     path=pooch.os_cache("scverse_tutorials"),
+     base_url="doi:10.6084/m9.figshare.22716739.v1/",
+ )
+-EXAMPLE_DATA.load_registry_from_doi()
++# Offline execution adaptation: upstream, this call queries the figshare data
++# repository API over the network to learn the article's file names and md5
++# checksums for doi:10.6084/m9.figshare.22716739.v1. The reference environment
++# is offline, so the identical registry (one '<name> md5:<provider_md5>' line
++# per dataset file, built from that same provider metadata) is written into the
++# cache by the input-staging recipe and loaded from disk here. Only that
++# ambient network access is removed: pooch still resolves each cached file
++# and checks its md5 against this registry before sc.read_10x_h5 reads it, so
++# the dataset bytes the analysis sees are the original provider files.
++EXAMPLE_DATA.load_registry(
++    pooch.os_cache("scverse_tutorials") / "registry.txt"
++)
++
+ 
+ samples = {
+     "s1d1": "s1d1_filtered_feature_bc_matrix.h5",
