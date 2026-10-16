@@ -1,0 +1,86 @@
+{
+  "status": "runtime_parity_controls_passed",
+  "cases": [
+    {
+      "case": "empty",
+      "native_learner_private_paths_absent": true,
+      "native_exit_code": 0,
+      "native_reward": 0.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_result": {
+        "status": "graded",
+        "reward": 0.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "{\n  \"final_reward\": 0.0,\n  \"components\": {\n    \"format_valid\": 0.0,\n    \"size_sanity\": 0.0,\n    \"file_targeting\": 0.0,\n    \"region_overlap\": 0.0,\n    \"similarity\": 0.0,\n    \"llm_judge\": null\n  },\n  \"weights\": {\n    \"format_valid\": 0.0,\n    \"size_sanity\": 0.08,\n    \"file_targeting\": 0.12,\n    \"region_overlap\": 0.2,\n    \"similarity\": 0.1,\n    \"llm_judge\": 0.5\n  },\n  \"judge_model\": null,\n  \"judge_endpoint\": null,\n  \"judge_status\": \"no_api_key\"\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ rm -f /logs/verifier/reward.txt /logs/verifier/reward.json /logs/verifier/reward-details.json\n+ git add -A\n+ git diff --cached 566dbe73c62a13f790713245c24f883d7eb92983\n+ : START_VERIFY_OUTPUT\n+ python3 /tests/verifier.py /tests/oracle.patch /tmp/predicted.patch /tests/instruction.md\n+ : END_VERIFY_OUTPUT\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 0.0,
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "reference",
+      "native_learner_private_paths_absent": true,
+      "native_exit_code": 0,
+      "native_reward": 1.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_result": {
+        "status": "graded",
+        "reward": 1.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "{\n  \"final_reward\": 1.0,\n  \"components\": {\n    \"format_valid\": 1.0,\n    \"size_sanity\": 1.0,\n    \"file_targeting\": 1.0,\n    \"region_overlap\": 1.0,\n    \"similarity\": 1.0,\n    \"llm_judge\": null\n  },\n  \"weights\": {\n    \"format_valid\": 0.0,\n    \"size_sanity\": 0.08,\n    \"file_targeting\": 0.12,\n    \"region_overlap\": 0.2,\n    \"similarity\": 0.1,\n    \"llm_judge\": 0.5\n  },\n  \"judge_model\": null,\n  \"judge_endpoint\": null,\n  \"judge_status\": \"no_api_key\"\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ rm -f /logs/verifier/reward.txt /logs/verifier/reward.json /logs/verifier/reward-details.json\n+ git add -A\n+ git diff --cached 566dbe73c62a13f790713245c24f883d7eb92983\n+ : START_VERIFY_OUTPUT\n+ python3 /tests/verifier.py /tests/oracle.patch /tmp/predicted.patch /tests/instruction.md\n+ : END_VERIFY_OUTPUT\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 1.0,
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "unrelated_change",
+      "native_learner_private_paths_absent": true,
+      "native_exit_code": 0,
+      "native_reward": 0.002353,
+      "marin_learner_private_paths_absent": true,
+      "marin_result": {
+        "status": "graded",
+        "reward": 0.002353,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "{\n  \"final_reward\": 0.002353,\n  \"components\": {\n    \"format_valid\": 1.0,\n    \"size_sanity\": 0.014706,\n    \"file_targeting\": 0.0,\n    \"region_overlap\": 0.0,\n    \"similarity\": 0.0,\n    \"llm_judge\": null\n  },\n  \"weights\": {\n    \"format_valid\": 0.0,\n    \"size_sanity\": 0.08,\n    \"file_targeting\": 0.12,\n    \"region_overlap\": 0.2,\n    \"similarity\": 0.1,\n    \"llm_judge\": 0.5\n  },\n  \"judge_model\": null,\n  \"judge_endpoint\": null,\n  \"judge_status\": \"no_api_key\"\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ rm -f /logs/verifier/reward.txt /logs/verifier/reward.json /logs/verifier/reward-details.json\n+ git add -A\n+ git diff --cached 566dbe73c62a13f790713245c24f883d7eb92983\n+ : START_VERIFY_OUTPUT\n+ python3 /tests/verifier.py /tests/oracle.patch /tmp/predicted.patch /tests/instruction.md\n+ : END_VERIFY_OUTPUT\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 0.002353,
+      "marin_postgrade_private_paths_absent": true
+    }
+  ],
+  "reward_semantics": "native_patch_similarity_not_functional_correctness",
+  "image": "localhost:5000/biotasks21/pr2630@sha256:6fe327150aa398bbf4937c4ac96c3ef3d41bcf842cf8f6b37e01cf9f57def9da",
+  "model_calls": 0
+}

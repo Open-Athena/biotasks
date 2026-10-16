@@ -1,0 +1,36 @@
+{
+  "final_reward": 0.002353,
+  "components": {
+    "format_valid": 1.0,
+    "size_sanity": 0.014706,
+    "file_targeting": 0.0,
+    "region_overlap": 0.0,
+    "similarity": 0.0,
+    "llm_judge": null
+  },
+  "weights": {
+    "format_valid": 0.0,
+    "size_sanity": 0.08,
+    "file_targeting": 0.12,
+    "region_overlap": 0.2,
+    "similarity": 0.1,
+    "llm_judge": 0.5
+  },
+  "judge_model": null,
+  "judge_endpoint": null,
+  "judge_status": "no_api_key"
+}
++++ dirname /tests/test.sh
+++ cd /tests
+++ pwd
++ SCRIPT_DIR=/tests
++ cd /workspace
++ git config --global --add safe.directory /workspace
++ mkdir -p /logs/verifier
++ rm -f /logs/verifier/reward.txt /logs/verifier/reward.json /logs/verifier/reward-details.json
++ git add -A
++ git diff --cached 566dbe73c62a13f790713245c24f883d7eb92983
++ : START_VERIFY_OUTPUT
++ python3 /tests/verifier.py /tests/oracle.patch /tmp/predicted.patch /tests/instruction.md
++ : END_VERIFY_OUTPUT
++ exit 0
