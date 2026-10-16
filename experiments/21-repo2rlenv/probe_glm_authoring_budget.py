@@ -10,8 +10,11 @@ import argparse
 import json
 import os
 import time
+from functools import partial
 from pathlib import Path
+from unittest.mock import patch
 
+import litellm
 from pydantic import TypeAdapter
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.llm import LLMResponse, complete
@@ -48,19 +51,28 @@ def main():
         "model_calls_dispatched": 1,
         "model": "glm-5.3",
         "max_output_tokens": 16384,
+        "reasoning_effort": "medium",
+        "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
         "biological_execution": False,
         "paid_fallback": False,
     }
     args.output.write_text(json.dumps(record, indent=2) + "\n")
     started = time.monotonic()
     try:
-        response = complete(
-            spec,
-            system=request["system"],
-            user=request["user"],
-            max_tokens=16384,
-            response_schema=request["response_schema"],
+        # The pinned LLMSpec has no effort field. Scope this explicit service
+        # adapter to the one native call, retaining its schema and retry policy.
+        adapted_completion = partial(
+            litellm.completion,
+            extra_body={"chat_template_kwargs": {"reasoning_effort": "medium"}},
         )
+        with patch("litellm.completion", new=adapted_completion):
+            response = complete(
+                spec,
+                system=request["system"],
+                user=request["user"],
+                max_tokens=16384,
+                response_schema=request["response_schema"],
+            )
         # LiteLLM usage is only shallowly converted to dict by the native client;
         # nested token-detail objects still need Pydantic JSON normalization.
         normalized = TypeAdapter(LLMResponse).dump_python(response, mode="json")

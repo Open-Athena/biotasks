@@ -28,12 +28,22 @@ except TypeError:
     pass
 else:
     raise AssertionError("Fixture must reproduce nested usage serialization failure")
-mod.complete = lambda *a, **k: LLMResponse(
-    content='{"issue":"Example observable bug","reason":"Fixture"}',
-    usage=usage,
-    prompt_tokens=7,
-    completion_tokens=15,
-)
+
+
+def fixture_complete(*args, **kwargs):
+    assert mod.litellm.completion.keywords == {
+        "extra_body": {"chat_template_kwargs": {"reasoning_effort": "medium"}}
+    }
+    assert kwargs["max_tokens"] == 16384
+    return LLMResponse(
+        content='{"issue":"Example observable bug","reason":"Fixture"}',
+        usage=usage,
+        prompt_tokens=7,
+        completion_tokens=15,
+    )
+
+
+mod.complete = fixture_complete
 mod.issue_violations = lambda *a: []
 
 os.environ["BIOTASKS21_GLM_ENDPOINT"] = "https://example.invalid/v1"
