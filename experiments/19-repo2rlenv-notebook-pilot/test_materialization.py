@@ -133,7 +133,16 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
     result = asyncio.run(
         run_materialization(
             session=session,
-            context={},
+            context={
+                "specification": {
+                    "task_brief": "Synthetic question",
+                    "validation_handoff": "Later grader plan",
+                },
+                "policy": {},
+                "source_evidence": {},
+                "reference_observations": {},
+                "paths": {},
+            },
             root=root,
             config={"reference_seconds": 600, "request_timeout_seconds": 600},
             endpoint="unused",
@@ -142,6 +151,9 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
             complete=complete,
         )
     )
+    assert json.loads((root / "materialize/input.json").read_text())["specification"] == {
+        "task_brief": "Synthetic question"
+    }
     assert result["oracle_executed"]
     assert not result["numerical_comparison_validated"]
     assert json.loads((root / "materialization-candidate.json").read_text()) == candidate

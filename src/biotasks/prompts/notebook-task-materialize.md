@@ -5,7 +5,8 @@ Follow the scientific scope in `policy` and the latest `specification`. Older
 exports are evidence, not a requirement to ask the solver for all of them.
 Do not copy the original function-by-function recipe into the public question.
 
-You receive the source, export evidence, scientific task proposal and handoff.
+You receive the source, export evidence and the approved public scientific task proposal.
+Grader design and independent-implementation plans belong to later workers.
 The shell runs in a locked Python environment, offline. `/work/reference` contains
 read-only original terminal artifacts. `original_inputs` identifies read-only
 original input files and their recorded identities. Work under `/work/author`.
@@ -54,7 +55,9 @@ alone does not validate numerical equivalence: a separate comparison stage check
 the oracle outputs against the projected reference and tests alternatives/errors.
 Do not spend this stage constructing a grader, a separate clean-room implementation,
 or a broad mutation suite. Prefer the simplest faithful oracle, normally using the
-reference packages already installed. A fresh worker will independently implement
+reference packages already installed: adapt the source computation to the approved
+scope and supplied inputs. Do not reimplement those packages from statistical
+primitives in this stage. A fresh worker will independently implement
 the public question during comparison validation; do not duplicate that stage here.
 Still report an actual conflict between the public definition and the reference.
 

@@ -21,15 +21,24 @@ from biotasks.inference_gate import Allowance, RequestLedger
 HERE = Path(__file__).parent
 
 
+def materialization_context(context, source, seconds):
+    """Give this stage its scientific proposal, not downstream grader work plans."""
+    return {
+        "specification": {"task_brief": context["specification"]["task_brief"]},
+        "policy": context["policy"],
+        "source_evidence": context["source_evidence"],
+        "reference_observations": context["reference_observations"],
+        "paths": context["paths"],
+        "original_inputs": json.loads((source / "trial/inputs-before.json").read_text()),
+        "reference_seconds": seconds,
+    }
+
+
 async def run_materialization(
     *, session, context, root, config, endpoint, credential, deadline, complete=None
 ):
     source = session.snapshot["directory"]
-    context = {
-        **context,
-        "original_inputs": json.loads((source / "trial/inputs-before.json").read_text()),
-        "reference_seconds": config["reference_seconds"],
-    }
+    context = materialization_context(context, source, config["reference_seconds"])
     ledger = RequestLedger(root / "requests.sqlite", {"materialize": Allowance(None, None)})
     budget = RunBudget(
         BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "materialize", "1"
