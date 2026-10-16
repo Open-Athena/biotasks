@@ -1,0 +1,66 @@
+{
+  "records": [
+    {
+      "candidate_id": "0e17fb52981f3f272561",
+      "native_controls_passed": true,
+      "stage": "native_controls_completed",
+      "task": "/evidence/native/validation/tasks/0e17fb52981f3f272561/swe-smith-0e17fb52981f3f272561",
+      "trials": [
+        {
+          "agent": "nop",
+          "command": [
+            "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+            "run",
+            "--path",
+            "/evidence/native/validation/tasks/0e17fb52981f3f272561/swe-smith-0e17fb52981f3f272561",
+            "--agent",
+            "nop",
+            "--env",
+            "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+            "--n-concurrent",
+            "1",
+            "--max-retries",
+            "0",
+            "--job-name",
+            "smith-0e17fb52981f3f272561-nop",
+            "--jobs-dir",
+            "/evidence/native/validation/jobs",
+            "--quiet"
+          ],
+          "completed": true,
+          "exception_type": null,
+          "returncode": 0,
+          "reward": 0.0,
+          "timeout_sec": 900
+        },
+        {
+          "agent": "oracle",
+          "command": [
+            "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+            "run",
+            "--path",
+            "/evidence/native/validation/tasks/0e17fb52981f3f272561/swe-smith-0e17fb52981f3f272561",
+            "--agent",
+            "oracle",
+            "--env",
+            "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+            "--n-concurrent",
+            "1",
+            "--max-retries",
+            "0",
+            "--job-name",
+            "smith-0e17fb52981f3f272561-oracle",
+            "--jobs-dir",
+            "/evidence/native/validation/jobs",
+            "--quiet"
+          ],
+          "completed": true,
+          "exception_type": null,
+          "returncode": 0,
+          "reward": 1.0,
+          "timeout_sec": 900
+        }
+      ]
+    }
+  ]
+}
