@@ -88,6 +88,12 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monk
     assert (task / "tests/reference/y.txt").read_bytes() == b"1"
     assert not (task / "environment/reference").exists()
     assert "COPY inputs/" in (task / "environment/Dockerfile").read_text()
+    instruction = (task / "instruction.md").read_text()
+    assert instruction.startswith((grading / "instruction.md").read_text())
+    assert "`/workspace/inputs/`" in instruction
+    assert "`/workspace/outputs/`" in instruction
+    assert "COPY inputs/ /workspace/inputs/" in (task / "environment/Dockerfile").read_text()
+    assert "/workspace/outputs" in (task / "tests/verify.py").read_text()
     assert (task / "solution/oracle.py").exists()
     assert (task / "environment/LICENSE.source").read_text() == "Fixture source notice\n"
     assert (task / "environment/SOURCE-LICENSES.json").is_file()

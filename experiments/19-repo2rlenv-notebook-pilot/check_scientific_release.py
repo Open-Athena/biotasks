@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 from repo2rlenv.emitter.bundle import inspect_bundle
+from scientific_bundle import runtime_instruction
 
 native, task, grading = map(Path, sys.argv[1:])
 
@@ -67,7 +68,9 @@ assert {"reference", "recomputed", "alternative", "empty", "missing", "probe"} <
     c["kind"] for c in controls
 }
 assert (task / "tests/grade.py").read_text() == candidate["grader_code"] + "\n"
-assert (task / "instruction.md").read_bytes() == (grading / "instruction.md").read_bytes()
+assert (task / "instruction.md").read_text() == runtime_instruction(
+    (grading / "instruction.md").read_text()
+)
 assert read(task / "tests/checks.json") == candidate["checks"]
 print(
     json.dumps(

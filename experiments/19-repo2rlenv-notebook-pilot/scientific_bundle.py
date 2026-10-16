@@ -42,6 +42,18 @@ reward.write_text('1\\n' if value['passed'] else '0\\n')
 """
 
 
+def runtime_instruction(instruction):
+    """Append host-controlled paths without editing the authored scientific contract."""
+    return (
+        instruction.rstrip()
+        + "\n\n## Task directories\n\n"
+        + "Read the supplied inputs from `/workspace/inputs/`. "
+        + "Write all required output files under `/workspace/outputs/`, "
+        + "using the relative filenames specified above. "
+        + "The working directory is `/workspace`.\n"
+    )
+
+
 def package(
     *, materialization, grading, environment, destination, name, revision, attribution=None
 ):
@@ -123,7 +135,9 @@ def package(
     if attribution is not None:
         # Attribution is frozen before native trials, so the released executable
         # bundle identity includes the notices rather than adding them afterward.
-        assets["environment/SOURCE-LICENSES.json"] = TaskFile.text(json.dumps(attribution, indent=2) + "\n")
+        assets["environment/SOURCE-LICENSES.json"] = TaskFile.text(
+            json.dumps(attribution, indent=2) + "\n"
+        )
         source_license = attribution.get("notebook_license", {})
         if source_license.get("text"):
             assets["environment/LICENSE.source"] = TaskFile.text(source_license["text"])
@@ -146,7 +160,7 @@ def package(
         TaskBundle(
             name=name,
             org="biotasks",
-            instruction=(grading / "instruction.md").read_text(),
+            instruction=runtime_instruction((grading / "instruction.md").read_text()),
             files=assets,
             metadata={
                 "recipe": "notebook-artifact-reproduction",
