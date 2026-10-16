@@ -566,14 +566,52 @@ async def run_grading(
             return await session.shell(command, timeout_sec, role="probe")
 
         probe_context = {
-            **context,
-            "public_instruction": candidate.instruction,
+            "public_instruction": context["specification"]["task_brief"].rstrip()
+            + "\n\n## Acceptance rules\n\n"
+            + candidate.instruction,
             "checks": [c.model_dump() for c in candidate.checks],
             "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/probe"},
+            "output_paths": session.paths,
+            "reference_seconds": config["reference_seconds"],
+            "verifier_seconds": config["verifier_seconds"],
         }
-        probes = await call(
-            Probes, "probes", "notebook-grader-probes", probe_context, validate_probes, probe_shell
-        )
+        hide_inputs = "materialization" in snapshot
+        if hide_inputs:
+            reply = await session.command(
+                ["chmod", "700", "/work/task-inputs"], 30, "hide-raw-inputs-from-probe-author"
+            )
+            if reply["exit_code"]:
+                raise RuntimeError("Cannot isolate probe author from raw task inputs")
+        try:
+            if hide_inputs:
+                isolated = await probe_shell(
+                    "/work/venv/bin/python -c "
+                    + shlex.quote(
+                        "from pathlib import Path\n"
+                        "try:\n list(Path('/work/task-inputs').iterdir())\n"
+                        "except PermissionError:\n print('isolated')\n"
+                        "else:\n raise RuntimeError('Raw task inputs accessible')\n"
+                    ),
+                    15,
+                )
+                checked = json.loads(isolated)
+                if checked["exit_code"] or checked["stdout"].strip() != "isolated":
+                    raise RuntimeError("Probe raw-input isolation check failed")
+            probes = await call(
+                Probes,
+                "probes",
+                "notebook-grader-probes",
+                probe_context,
+                validate_probes,
+                probe_shell,
+            )
+        finally:
+            if hide_inputs:
+                reply = await session.command(
+                    ["chmod", "555", "/work/task-inputs"], 30, "restore-raw-inputs-after-probes"
+                )
+                if reply["exit_code"]:
+                    raise RuntimeError("Cannot restore raw-input permissions")
         save_record(root / "probes.json", probes.model_dump())
         if probes.disposition == "blocked":
             return {"status": "probe_author_blocked", "grader_construction_run": True}

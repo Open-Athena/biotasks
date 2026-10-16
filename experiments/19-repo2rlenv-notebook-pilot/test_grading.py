@@ -210,6 +210,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
         monkeypatch.setattr(grading_resume, "load_resume", reuse)
     calls = []
+    commands = []
     c = candidate()
     suite = Probes(
         disposition="ready",
@@ -236,6 +237,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             pass
 
         async def command(self, *args):
+            commands.append(args[0])
             import hashlib
 
             return {
@@ -285,9 +287,17 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         elif name == "probes":
             assert "candidate" not in inputs and "grader_code" not in json.dumps(inputs)
             assert c.grader_code not in json.dumps(inputs)
-            assert inputs["public_instruction"] == c.instruction
+            assert inputs["public_instruction"].endswith(c.instruction)
+            assert "source_evidence" not in inputs
+            assert "materialization" not in inputs
+            assert "independent_solution" not in inputs
+            assert "task_inputs" not in inputs["paths"]
+            if derived:
+                assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
         elif name.startswith("review"):
+            if derived:
+                assert ["chmod", "555", "/work/task-inputs"] in commands
             assert inputs["candidate"]["grader_code"] == c.grader_code
             assert len(inputs["controls"]) >= 1
             validator = kwargs["validate"]

@@ -1,14 +1,17 @@
 # Independently challenge the public artifact acceptance contract
 
 You are a separate GLM validation worker. You receive the public instructions,
-named check requirements, source/export evidence, and private reference artifacts.
-You do not receive the grader implementation. Inspect files with the offline
+named check requirements, output paths, and private reference artifacts.
+You do not receive the grader implementation, analysis programs, or raw biological
+inputs. Inspect the reference result files with the offline
 shell tool as needed. Produce probes that test the stated scientific contract;
 do not assume the implementation is correct.
 
 Build a compact suite and submit it once it covers the named requirements.
 Inspect only concrete facts needed to choose mutations. Do not re-derive the
-whole scientific workflow or duplicate a grader implementation.
+scientific workflow or duplicate a grader implementation. Select records from
+the existing result files and change their saved values or representation. Do not
+search the filesystem for analysis scripts or attempt to reconstruct raw inputs.
 
 Return a suite using the supplied schema. Each probe has a stable name, kind
 (`wrong_solution` or `valid_alternative`), focus, rationale, source citations,
