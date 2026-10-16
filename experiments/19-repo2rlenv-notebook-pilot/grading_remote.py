@@ -69,6 +69,11 @@ def run_as(uid, argv, cwd, seconds):
         stderr=subprocess.PIPE,
         text=True,
     )
+
+    def interrupted(_signal, _frame):
+        raise TimeoutError("Outer controller interrupted generated execution")
+
+    previous_handler = signal.signal(signal.SIGTERM, interrupted)
     try:
         stdout, stderr = process.communicate(timeout=seconds)
         return {"exit_code": process.returncode, "stdout": stdout, "stderr": stderr}
@@ -86,6 +91,7 @@ def run_as(uid, argv, cwd, seconds):
         except ProcessLookupError:
             pass
         process.communicate()
+        signal.signal(signal.SIGTERM, previous_handler)
 
 
 def prepare(kind, omitted=None):

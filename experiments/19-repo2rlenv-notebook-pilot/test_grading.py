@@ -251,3 +251,55 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, mon
     assert result["status"] == "grader_candidate_validated"
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()
+
+
+def test_outer_termination_reaps_generated_process_group(tmp_path):
+    import os
+    import signal
+    import time
+
+    pid_file = tmp_path / "child-pid"
+    child = (
+        "import os,time;from pathlib import Path;Path("
+        + repr(str(pid_file))
+        + ").write_text(str(os.getpid()));time.sleep(30)"
+    )
+    wrapper = f"""
+import sys,os
+sys.path.insert(0,{str(HERE)!r})
+import grading_remote
+os.setgroups=lambda _:None
+os.setgid=lambda _:None
+os.setuid=lambda _:None
+try:
+    grading_remote.run_as(os.getuid(),[{sys.executable!r},'-c',{child!r}],{str(tmp_path)!r},30)
+except TimeoutError:
+    print('interrupted-and-reaped')
+"""
+    process = subprocess.Popen(
+        [sys.executable, "-c", wrapper], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True
+    )
+    child_pid = None
+    try:
+        until = time.monotonic() + 5
+        while (
+            not pid_file.exists() or not pid_file.read_text().strip()
+        ) and time.monotonic() < until:
+            time.sleep(0.01)
+        assert pid_file.exists(), "synthetic child did not start"
+        child_pid = int(pid_file.read_text())
+        process.send_signal(signal.SIGTERM)
+        stdout, stderr = process.communicate(timeout=5)
+        assert process.returncode == 0, stderr
+        assert stdout.strip() == "interrupted-and-reaped"
+        with pytest.raises(ProcessLookupError):
+            os.killpg(child_pid, 0)
+    finally:
+        if process.poll() is None:
+            process.kill()
+            process.communicate()
+        if child_pid is not None:
+            try:
+                os.killpg(child_pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass

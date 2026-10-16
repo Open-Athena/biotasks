@@ -1,0 +1,108 @@
+{
+  "candidate_sha256": "55268f87f52f082d9e915ab271669528fff20d11dbb0f0f134a8d9532c1a131d",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "cell_table_structure",
+          "message": "cell_clusters_umap.csv has the required header, field counts, unique non-empty identifiers and assignments, and finite numeric coordinates",
+          "passed": true
+        },
+        {
+          "id": "cell_row_identity",
+          "message": "the 'cell_id' sequence matches the reference row by row",
+          "passed": true
+        },
+        {
+          "id": "cell_sample_assignment",
+          "message": "column 'sample' matches the reference for every row (each cell's donor sample)",
+          "passed": true
+        },
+        {
+          "id": "leiden_default_clustering",
+          "message": "column 'leiden' matches the reference for every row (default-resolution Leiden cluster)",
+          "passed": true
+        },
+        {
+          "id": "leiden_coarse_clustering",
+          "message": "column 'leiden_res_0.02' matches the reference for every row (0.02-resolution Leiden cluster)",
+          "passed": true
+        },
+        {
+          "id": "leiden_de_clustering",
+          "message": "column 'leiden_res_0.50' matches the reference for every row (0.50-resolution Leiden cluster)",
+          "passed": true
+        },
+        {
+          "id": "leiden_fine_clustering",
+          "message": "column 'leiden_res_2.00' matches the reference for every row (2.00-resolution Leiden cluster)",
+          "passed": true
+        },
+        {
+          "id": "cell_type_annotation",
+          "message": "column 'cell_type_lvl1' matches the reference for every row (broad lineage annotation)",
+          "passed": true
+        },
+        {
+          "id": "umap_embedding",
+          "message": "both UMAP coordinates agree with the reference at the stored float32 precision for every row",
+          "passed": true
+        },
+        {
+          "id": "de_table_structure",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_group_blocks",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_wilcoxon_scores",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_pvalues",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_gene_ranking",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_logfoldchanges",
+          "message": "required file rank_genes_groups_leiden_res_0.50.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_run_params",
+          "message": "rank_genes_groups_params.json records the reference DE run parameters",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_before": {
+      "cell_clusters_umap.csv": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d",
+      "rank_genes_groups_params.json": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+    },
+    "submission_sha256": {
+      "cell_clusters_umap.csv": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d",
+      "rank_genes_groups_params.json": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+    }
+  },
+  "kind": "missing",
+  "omitted": "rank_genes_groups_leiden_res_0.50.csv",
+  "passed_control": true,
+  "probe": null
+}

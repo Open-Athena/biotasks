@@ -1,0 +1,108 @@
+{
+  "candidate_sha256": "55268f87f52f082d9e915ab271669528fff20d11dbb0f0f134a8d9532c1a131d",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "cell_table_structure",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "cell_row_identity",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "cell_sample_assignment",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "leiden_default_clustering",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "leiden_coarse_clustering",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "leiden_de_clustering",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "leiden_fine_clustering",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "cell_type_annotation",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "umap_embedding",
+          "message": "required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_table_structure",
+          "message": "rank_genes_groups_leiden_res_0.50.csv has the required header, field counts, unique (group, gene) pairs and finite numeric values",
+          "passed": true
+        },
+        {
+          "id": "de_group_blocks",
+          "message": "cannot verify the group label set against cell_clusters_umap.csv: required file cell_clusters_umap.csv is missing",
+          "passed": false
+        },
+        {
+          "id": "de_wilcoxon_scores",
+          "message": "Wilcoxon scores match the reference at the stored float32 precision in every group",
+          "passed": true
+        },
+        {
+          "id": "de_pvalues",
+          "message": "raw and Benjamini-Hochberg adjusted p-values match the reference exactly, including exact zeros",
+          "passed": true
+        },
+        {
+          "id": "de_gene_ranking",
+          "message": "the per-group gene ranking matches the reference, up to permutation inside rows with identical score, pvals and pvals_adj",
+          "passed": true
+        },
+        {
+          "id": "de_logfoldchanges",
+          "message": "per-gene log fold changes match the reference at the stored float32 precision in every group",
+          "passed": true
+        },
+        {
+          "id": "de_run_params",
+          "message": "rank_genes_groups_params.json records the reference DE run parameters",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_before": {
+      "rank_genes_groups_leiden_res_0.50.csv": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b",
+      "rank_genes_groups_params.json": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+    },
+    "submission_sha256": {
+      "rank_genes_groups_leiden_res_0.50.csv": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b",
+      "rank_genes_groups_params.json": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+    }
+  },
+  "kind": "missing",
+  "omitted": "cell_clusters_umap.csv",
+  "passed_control": true,
+  "probe": null
+}

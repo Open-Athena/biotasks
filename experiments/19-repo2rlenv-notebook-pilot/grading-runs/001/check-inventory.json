@@ -1,0 +1,132 @@
+[
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "cell_table_structure",
+    "kind": "structural",
+    "public_requirement": "The file exists as a regular UTF-8 CSV file with exactly one header row reading cell_id,sample,leiden,leiden_res_0.02,leiden_res_0.50,leiden_res_2.00,cell_type_lvl1,umap_1,umap_2 in that order, with one 9-field row per retained cell; cell_id, sample, leiden, leiden_res_0.02, leiden_res_0.50 and leiden_res_2.00 values are non-empty strings, cell_id values are unique within the file, umap_1/umap_2 values are finite decimal numbers."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "cell_row_identity",
+    "kind": "structural",
+    "public_requirement": "The cell_id column of the per-cell file equals the reference's cell_id sequence row for row: the reference's number of rows, the reference's row order (reference stored order), no extra, missing, duplicated or reordered rows. This fixes the row alignment used by all other per-cell comparisons."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "cell_sample_assignment",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell (aligned by row), the column 'sample' equals the reference value as a categorical string (each cell's donor sample label)."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "leiden_default_clustering",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell, column 'leiden' equals the reference Leiden cluster assignment (default resolution) as a string, compared literally."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "leiden_coarse_clustering",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell, column 'leiden_res_0.02' equals the reference coarsest Leiden assignment as a string, compared literally. These labels are also the keys of the manual lineage map."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv",
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "leiden_de_clustering",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell, column 'leiden_res_0.50' equals the reference 0.50-resolution Leiden assignment as a string, compared literally. These labels are the DE groups of rank_genes_groups_leiden_res_0.50.csv."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "leiden_fine_clustering",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell, column 'leiden_res_2.00' equals the reference 2.00-resolution Leiden assignment as a string, compared literally."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "cell_type_annotation",
+    "kind": "scientific",
+    "public_requirement": "For every retained cell, column 'cell_type_lvl1' equals the reference broad-lineage annotation, compared literally, including blank values exactly where the reference is blank (the map leaves cells of unmapped coarsest clusters unlabeled)."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv"
+    ],
+    "id": "umap_embedding",
+    "kind": "scientific",
+    "public_requirement": "Columns umap_1 and umap_2 are finite decimal numbers and, for every retained cell, each submission coordinate equals (within the stored binary32 rounding, i.e. at most half a float32 unit-in-the-last-place) the reference UMAP coordinate of the same cell and axis. Axis correspondence is fixed: umap_1 to umap_1, umap_2 to umap_2; no axis swap, sign change, rotation, scaling or translation is accepted."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_table_structure",
+    "kind": "structural",
+    "public_requirement": "The file exists as a regular UTF-8 CSV file with exactly one header row reading group,names,scores,pvals_adj,pvals,logfoldchanges in that order, with one 6-field data row per ranked gene per group; group and names values are non-empty strings, each (group, names) pair appears exactly once, and scores, pvals_adj, pvals, logfoldchanges are finite decimal numbers."
+  },
+  {
+    "artifacts": [
+      "cell_clusters_umap.csv",
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_group_blocks",
+    "kind": "scientific",
+    "public_requirement": "The rows of the DE file form consecutive blocks of equal 'group' values; each reference group appears as exactly one block, block order equals the reference stored group order, each block contains the reference's number of ranked genes for that group, and the set of 'group' values equals the set of labels in column leiden_res_0.50 of the per-cell file (set identity only; the two files have different row units)."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_wilcoxon_scores",
+    "kind": "scientific",
+    "public_requirement": "Within every group block, column 'scores' appears in non-increasing (descending) rank order, every score is a decimal number, and every submission score equals, within half a float32 unit-in-the-last-place, the reference Wilcoxon rank-sum statistic of the same (group, gene) ranking position."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_pvalues",
+    "kind": "scientific",
+    "public_requirement": "Columns pvals_adj and pvals are finite decimal numbers in [0,1] and equal the reference values exactly as parsed double-precision numbers, for every (group, gene) ranking position, with zeros and non-zeros preserved exactly."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_gene_ranking",
+    "kind": "scientific",
+    "public_requirement": "Within every group block: the set of ranked genes equals the reference gene set, and any two submission rows whose (scores, pvals, pvals_adj) differ do not have their gene identities permuted relative to reference rows with the same (scores, pvals, pvals_adj). Rows may only be permuted among rows with identical score, pvals and pvals_adj."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_leiden_res_0.50.csv"
+    ],
+    "id": "de_logfoldchanges",
+    "kind": "scientific",
+    "public_requirement": "For every (group, gene) ranking position, column 'logfoldchanges' equals, within half a float32 unit-in-the-last-place, the reference log fold change of the same gene in the same group, after accounting for the tie-class rule above."
+  },
+  {
+    "artifacts": [
+      "rank_genes_groups_params.json"
+    ],
+    "id": "de_run_params",
+    "kind": "scientific",
+    "public_requirement": "The file is a valid JSON object mapping recording exactly the reference's set of run parameter keys with each value equal to the reference's value and of the same JSON type (e.g. use_raw boolean, layer null). No additional or missing keys."
+  }
+]

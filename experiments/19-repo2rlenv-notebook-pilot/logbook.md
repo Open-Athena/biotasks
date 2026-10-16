@@ -1788,3 +1788,30 @@ report completeness, independent-probe context isolation, review gating and the
 optional repair path. The guarded check peaked at 129 MiB. Reserve the final $2
 of the standing aggregate authorization; all $100 is now conservatively reserved,
 not measured spent. Details: [grading execution](grading-execution.md).
+
+### Grading 001 result — candidate retained, independent validation incomplete
+
+GLM authoring completed in 75.64 minutes and 112 requests. The generated 16-check
+grader passed the five controller cases (reference, empty and three missing-file
+submissions). A separate probe worker used 23 requests and 36.72 minutes but did
+not submit a suite before the remaining working allowance became insufficient
+for its next tool operation. No scientific probe execution, final review or
+separate repair occurred. Preserve the candidate unchanged; basic controls do
+not establish task acceptance. Operator review records ambiguous CSV/extra-file
+wording, a dangling table reference and the need for precise numerical wording.
+The author and independent probe worker duplicated substantial inspection;
+narrower responsibilities are preferable to increasing budgets blindly.
+
+The first export exhausted its remaining allowance, but the bootstrap's final
+export completed: 709 files / 222,623,420 bytes, independently download-verified.
+Recovered 540 small diagnostics with original hashes; reconstructed the missing
+probe input from verified fields and matched its original hash exactly. The
+sandbox was deleted and a separate provider readback found zero owned sandboxes.
+The Iris host is terminal. No replacement, solver, release or viewer update.
+[Result and original generated artifacts](grading-runs/001/README.md).
+
+After launch, fixed a generic child-process cleanup edge case: outer SIGTERM now
+raises through the helper's finally block and reaps its generated process group.
+The 12 focused grading tests passed, including a real synthetic interruption;
+Ruff passed. This fix is separate from the run checkpoint and from task-specific
+GLM work. No generated grading code, instructions or scientific results were edited.
