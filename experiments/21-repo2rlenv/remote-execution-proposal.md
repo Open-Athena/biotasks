@@ -1,6 +1,6 @@
 # Remote execution proposal
 
-Status: user approved only the $100 ceiling on 2026-10-16. Other numerical limits below are proposals awaiting agreement. The initial probe was launched after an incorrect interpretation of that approval and interrupted when the user objected; reconcile its cleanup before any further dispatch.
+Status: user approved only the $100 ceiling on 2026-10-16. The user separately approved up to four concurrent sandboxes, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. Other numerical limits below are proposals awaiting agreement. The initial probe was launched after an incorrect interpretation of that approval and interrupted when the user objected; reconcile its cleanup before any further dispatch.
 
 The remaining executable recipes require Docker builds and target-code execution
 on remote workers. Start with the pinned Repo2RLEnv Daytona worker probe before
@@ -12,11 +12,9 @@ committing generation time to a backend that may not support Docker-in-Docker.
   the controller. This is a spending allowance, not a price quote or a promise
   that every recipe will finish within it. Establish a conservative resource-rate
   estimate before dispatch; if it cannot fit the allowance, stop before launch.
-- One remote generation worker at a time: 2 vCPU, 4 GiB RAM, 10 GiB disk initially.
+- Approved: up to four remote CPU sandboxes at once, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. This does not set model-request or Codex-agent concurrency.
   No GPUs, new inference deployments, or paid model fallbacks.
-- At most eight aggregate remote worker/controller hours. Each worker has at
-  most a two-hour execution window. The first backend probe has a 30-minute
-  controller deadline, with cleanup allowed to finish afterward.
+- Approved: no aggregate remote-hour cap; the $100 ceiling applies across the campaign. Generation runs have an initial two-hour execution timeout. A fresh compatibility probe has a 30-minute execution deadline, with cleanup allowed to finish afterward.
 - Existing GLM-5.3 bulk service only. Proposed ceiling: 500 model calls and eight
   million total input/output tokens across generation, repair, and review; all
   retries count. Enforce reservations before requests and reconcile usage after
