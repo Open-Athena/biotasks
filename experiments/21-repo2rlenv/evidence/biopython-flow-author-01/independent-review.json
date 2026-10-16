@@ -4,7 +4,12 @@
   "records": [
     {
       "candidate_id": "5a16004c2d7522727d44",
-      "decision": "pending_source_and_execution_review"
+      "decision": "source_contract_supported_grader_coverage_concern",
+      "notes": [
+        "Pinned GC_skew implements case-insensitive G/C counting in consecutive windows and returns zero on zero denominator. SeqRecord implements count, supporting the generated input-type requirement.",
+        "Selected test_GC_skew only checks the first returned value for 50 A characters supplied as str, Seq, and SeqRecord. An always-zero implementation is a concrete insufficient-coverage hypothesis requiring native execution; this is not a measured grader exploit.",
+        "No independent acceptance until incorrect nonzero-skew behavior is rejected."
+      ]
     },
     {
       "candidate_id": "4e4e60d7b36914ae432d",
@@ -17,5 +22,19 @@
       "reason": "Instruction ends at an incomplete gc_fraction signature; no usable ambiguity-mode requirements. Raw call-006 finished stop and strict JSON markdown equals emitted instruction."
     }
   ],
-  "preservation": "Original raw outputs and instructions unchanged; literal n formatting originates in raw model content."
+  "preservation": "Original raw outputs and instructions unchanged; literal n formatting originates in raw model content.",
+  "sources": [
+    {
+      "repository": "biopython/biopython",
+      "revision": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "path": "Bio/SeqUtils/__init__.py",
+      "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0"
+    },
+    {
+      "repository": "biopython/biopython",
+      "revision": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "path": "Bio/SeqRecord.py",
+      "sha256": "dee517bba7f1316be467f5ec555567aa4bdfdd77eefe2281a3a5e930f79949df"
+    }
+  ]
 }

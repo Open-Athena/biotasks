@@ -1,0 +1,30 @@
+{
+  "stage": "source_review_not_acceptance",
+  "source": {
+    "repository": "scikit-bio/scikit-bio",
+    "revision": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+    "path": "skbio/diversity/alpha/_base.py",
+    "sha256": "04401c1c15fd2a94c54a059b624e590e072d4fc5889d3e5dd453e5ce4dcb2a90"
+  },
+  "records": [
+    {
+      "candidate_id": "3cd37b06ec9a972757c3",
+      "decision": "source_contract_supported_controls_pending",
+      "notes": [
+        "Reference sorts positive abundances in descending order and takes max cumulative proportion minus rank/S. The report uses absolute differences, equivalent because descending positive abundances have cumulative proportion at least rank/S.",
+        "For [1,2,3,1], the maximum deviation is 3/14. Empty-community decorator returns NaN after zero removal.",
+        "Report over-specifies np.float64 versus documented float; runtime and independent grader checks remain pending."
+      ]
+    },
+    {
+      "candidate_id": "e3fc0018c5332295d4ab",
+      "decision": "source_contract_supported_controls_pending",
+      "notes": [
+        "Reference W=(f1*(N-f1)+2*N*f2)/N**3 is algebraically equivalent to the report formula.",
+        "Reference z is rounded to 1.959963985; report gives 1.959963984540054. These are not byte-identical constants; numerical agreement with the declared tolerance needs runtime checking.",
+        "Empty-community decorator returns scalar NaN, consistent with the report assertion accepting scalar or array NaN.",
+        "Mutation-specific actual outputs still require cross-check against original candidate evidence."
+      ]
+    }
+  ]
+}
