@@ -27,6 +27,20 @@ def test_syntax_failure_is_a_repairable_schema_error():
         )
 
 
+def test_recovered_draft_refuses_changed_code(tmp_path):
+    import json
+    from task_materialization import recovered_author_files
+
+    (tmp_path / "oracle.py").write_text("pass")
+    (tmp_path / "manifest.json").write_text(json.dumps({"files": [{
+        "path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()
+    }]}))
+    assert recovered_author_files(tmp_path)["files"] == {"oracle.py": "pass"}
+    (tmp_path / "oracle.py").write_text("fail")
+    with pytest.raises(ValueError, match="identity"):
+        recovered_author_files(tmp_path)
+
+
 def test_source_corruption_and_unsafe_output_links_fail(tmp_path):
     source = tmp_path / "input.txt"
     source.write_bytes(b"original")
@@ -52,7 +66,8 @@ def test_source_corruption_and_unsafe_output_links_fail(tmp_path):
         inventory(out)
 
 
-def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp_path):
+@pytest.mark.parametrize("finalize", [False, True])
+def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp_path, finalize):
     import asyncio
     import json
     import time
@@ -76,6 +91,12 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         oracle_code="pass",
         rationale="Synthetic fixture",
     )
+    prior = tmp_path / "prior"
+    prior.mkdir()
+    (prior / "oracle.py").write_text("pass")
+    (prior / "manifest.json").write_text(json.dumps({"files": [{
+        "path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()
+    }]}))
     uploads = []
 
     async def upload(local, remote):
@@ -102,6 +123,12 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         raise AssertionError("Synthetic author needs no shell")
 
     async def complete(payload):
+        if finalize:
+            assert "tools" not in payload
+            assert payload["response_format"]["type"] == "json_schema"
+            return {"choices": [{"finish_reason": "stop", "message": {
+                "role": "assistant", "content": json.dumps(candidate)
+            }}]}
         return {
             "choices": [
                 {
@@ -144,7 +171,8 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
                 "paths": {},
             },
             root=root,
-            config={"reference_seconds": 600, "request_timeout_seconds": 600},
+            config={"reference_seconds": 600, "request_timeout_seconds": 600,
+                    **({"prior_author_files": str(prior)} if finalize else {})},
             endpoint="unused",
             credential="unused",
             deadline=time.time() + 60,

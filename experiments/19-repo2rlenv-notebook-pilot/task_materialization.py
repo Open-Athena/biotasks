@@ -21,6 +21,24 @@ from biotasks.inference_gate import Allowance, RequestLedger
 HERE = Path(__file__).parent
 
 
+def recovered_author_files(directory):
+    """Read an unchanged worker-authored draft; never synthesize missing code."""
+    directory = Path(directory)
+    manifest = json.loads((directory / "manifest.json").read_text())
+    files = {}
+    for item in manifest["files"]:
+        name = item["path"]
+        if Path(name).name != name or name in files:
+            raise ValueError("Invalid recovered author path")
+        path = directory / name
+        if path.is_symlink() or path.stat().st_size != item["bytes"] or sha256(path) != item["sha256"]:
+            raise ValueError("Recovered author file identity mismatch")
+        files[name] = path.read_text()
+    if not files:
+        raise ValueError("Empty recovered author draft")
+    return {"provenance": manifest, "files": files}
+
+
 def materialization_context(context, source, seconds):
     """Give this stage its scientific proposal, not downstream grader work plans."""
     return {
@@ -39,6 +57,9 @@ async def run_materialization(
 ):
     source = session.snapshot["directory"]
     context = materialization_context(context, source, config["reference_seconds"])
+    finalize = config.get("prior_author_files")
+    if finalize:
+        context["prior_worker_draft"] = recovered_author_files(HERE / finalize)
     ledger = RequestLedger(root / "requests.sqlite", {"materialize": Allowance(None, None)})
     budget = RunBudget(
         BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "materialize", "1"
@@ -89,7 +110,7 @@ async def run_materialization(
         candidate = await stage(
             schema=Materialization,
             name="materialize",
-            prompt_name="notebook-task-materialize",
+            prompt_name="notebook-task-finalize" if finalize else "notebook-task-materialize",
             context=context,
             root=root / "materialize",
             ledger=ledger,
@@ -106,7 +127,8 @@ async def run_materialization(
             ),
             max_requests=None,
             validate=validate,
-            shell=session.shell,
+            output_format="json_schema" if finalize else "tools",
+            shell=None if finalize else session.shell,
             shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
         )

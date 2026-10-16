@@ -1,0 +1,5 @@
+# Materialization 003 — interrupted before submission
+
+The GLM worker produced derivation and oracle drafts and measured full-table agreement close to floating-point precision, but continued investigating numerical details without submitting a candidate. The operator captured its original programs with two identical reads and SHA-256 identities, then sent SIGINT only to the owned author process. No generated scientific code was manually edited. These are unsubmitted drafts; clean execution and scientific validation are not established.
+
+A fresh finalization session will receive these exact drafts and the public task, return a complete schema response, and receive controlled execution feedback. Independent numerical calibration remains a later stage. Full archival and cleanup reconciliation are pending.
