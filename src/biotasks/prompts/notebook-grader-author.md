@@ -8,8 +8,10 @@ saved outputs and available recomputations; it does not construct a Harbor image
 
 ## Inputs and tools
 
-The user message contains the frozen task draft, coverage review, validation
-handoff, source/export evidence, task policy, and measured repeatability results.
+The user message contains the current task question, source/export evidence,
+task policy, measured repeatability results and available execution records.
+Use those executed records for validation facts; earlier planning proposals are
+not additional requirements or evidence that a check has run.
 It names the directory containing private reference output files in your sandbox.
 The shell tool runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in

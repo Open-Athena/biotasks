@@ -334,10 +334,12 @@ async def run_grading(
     }
     if "materialization" in snapshot:
         context["materialization"] = snapshot["materialization"]
+        # The executed task supersedes speculative specification-stage plans.
+        # Actual replay and independent-execution records supply validation facts.
         context["specification"] = {
-            **context["specification"],
             "task_brief": snapshot["materialization"]["candidate"]["instruction"],
         }
+        context.pop("operator_handoff")
         context["paths"]["task_inputs"] = "/work/task-inputs"
         context["paths"]["recomputed_outputs"] = "/work/recomputed"
     if config.get("materialize_task"):

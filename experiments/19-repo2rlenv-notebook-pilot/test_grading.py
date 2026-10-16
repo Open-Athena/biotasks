@@ -231,6 +231,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         name = kwargs["name"]
         inputs = kwargs["context"]
         calls.append(name)
+        if derived and name not in {"independent", "probes"}:
+            assert inputs["specification"] == {"task_brief": "Scientific question"}
+            assert "operator_handoff" not in inputs
+            assert "repeatability" in inputs and "source_evidence" in inputs
         if name == "independent":
             assert "private-original-oracle" not in json.dumps(inputs)
             assert "source_evidence" not in inputs and "materialization" not in inputs
