@@ -73,7 +73,11 @@ class GradingSession:
             setup_script(self.snapshot["system_packages"], verify_inputs=False, locked=True)
         )
         staging = self.root / "no-input-staging.sh"
-        staging.write_text("#!/bin/sh\nexit 0\n")
+        staging.write_text(
+            (source / "candidate/stage-inputs.sh").read_text()
+            if self.config.get("materialize_task")
+            else "#!/bin/sh\nexit 0\n"
+        )
         reply = await self.command(
             ["mkdir", "-p", "/work/environment", "/work/grading-private/oracle", "/work/reference"],
             30,
@@ -133,6 +137,12 @@ class GradingSession:
         )
         if locked["exit_code"]:
             raise RuntimeError("Cannot freeze grading reference permissions")
+        if self.config.get("materialize_task"):
+            expected_inputs = source / "trial/inputs-before.json"
+            await self.remote.upload(expected_inputs, "/work/original-inputs.json")
+            await self.remote.helper(
+                ["verify-staging", "/work/original-inputs.json"], "materialization-original-inputs"
+            )
         await self.remote.network(True)
         # Verify actual filesystem/user boundaries before any generated code runs.
         for role in ("author", "probe"):
@@ -260,10 +270,25 @@ async def run_grading(
         "repeatability": json.loads(
             (HERE / config["replay_directory"] / "result.json").read_text()
         ),
-        "policy": json.loads((HERE / "specification-reference-policy.json").read_text()),
+        "policy": json.loads(
+            (HERE / config.get("policy_file", "specification-reference-policy.json")).read_text()
+        ),
         "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/author"},
         "verifier_seconds": config["verifier_seconds"],
     }
+    if config.get("materialize_task"):
+        from task_materialization import run_materialization
+
+        return await run_materialization(
+            session=session,
+            context=context,
+            root=root,
+            config=config,
+            endpoint=endpoint,
+            credential=credential,
+            deadline=deadline,
+            complete=complete,
+        )
     scopes = ("grader", "probes", "review", "repair", "review-repair")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")

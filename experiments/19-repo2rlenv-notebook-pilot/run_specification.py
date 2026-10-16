@@ -39,6 +39,9 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         experiment / config["reference_directory"],
         json.loads((experiment / config["policy_file"]).read_text()),
         inspect_packages=inspect_packages,
+        revision_context=json.loads((experiment / config["revision_context_file"]).read_text())
+        if config.get("revision_context_file")
+        else None,
     )
     expected = json.loads((experiment / config["input_file"]).read_text())
     if context != expected:

@@ -188,7 +188,9 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
             ]
         }
 
-    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    config = json.loads(
+        (Path(__file__).parent / "specification-runs/013/configuration.json").read_text()
+    )
     root = tmp_path / "specification"
     asyncio.run(
         run(
@@ -208,3 +210,13 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
     assert json.loads((root / "specification.json").read_text()) == artifact
     assert (root / "validation-handoff.md").read_text() == artifact["validation_handoff"] + "\n"
     assert not (root / "validation-plan.md").exists()
+
+
+def test_revision_feedback_is_explicit_model_input(run):
+    feedback = {
+        "prior_proposal": {"task_brief": "Prior draft"},
+        "operator_feedback": ["Check units"],
+    }
+    context = specification_context(run, {}, revision_context=feedback)
+    assert context["revision_context"] == feedback
+    assert "package_inspection" not in context

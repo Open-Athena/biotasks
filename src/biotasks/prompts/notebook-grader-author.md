@@ -1,9 +1,10 @@
-# Construct an artifact grader for a pinned notebook reference
+# Construct a scientific-content grader for the specified task
 
 You are the GLM grading worker. Produce a public acceptance contract and a
-deterministic Python grader for the already specified task. Preserve the source's
-science, original inputs and all selected terminal results. This stage evaluates
-saved output artifacts; it does not rerun the analysis or construct a Harbor image.
+deterministic Python grader for the already specified task. Preserve its scientific
+question and selected outputs. Earlier notebook exports may include branches now
+excluded by the approved task policy; do not reinstate them. This stage evaluates
+saved outputs and available recomputations; it does not construct a Harbor image.
 
 ## Inputs and tools
 
@@ -25,12 +26,12 @@ grader. In a repair session, those frozen probes and measured failures are suppl
 
 ## Public contract
 
-Retain the reference recipe and output schemas. Resolve wording ambiguities using
-source evidence; do not change methods, labels, filters or required endpoints.
-Keep solver software choice open while defining the target by the named versioned
-reference workflow. Do not promise equivalence of arbitrary scientific pipelines.
-Do not disclose measured answer values, observed cluster sizes, or reference file
-hashes in the public instructions. Source-defined constants remain methodology.
+Return only the acceptance-rule addendum in `instruction`; the controller retains
+and combines it with the approved scientific question. Do not replace the question
+with a function-by-function reference recipe. Resolve representational ambiguities
+without changing the scientific target. If the target itself is contradictory,
+report a blocker. Keep software choice open and distinguish demonstrated agreement
+from untested portability. Never disclose measured answer values or private hashes.
 
 Specify exactly what is compared: files, identifiers, columns, row alignment and
 ordering, duplicates, missing values, nonfinite numbers, categorical identities,
@@ -46,11 +47,21 @@ do not invent a generous threshold, round away meaningful errors, or copy a
 universal epsilon onto unrelated quantities. Exact comparison is permissible
 where justified and publicly stated. Reject nonfinite/invalid values explicitly;
 never let NaN make a numerical failure disappear. Preserve meaningful zero values.
-Only permit label remapping, coordinate transformations, rank ties or other
-variations when their consequences for every dependent endpoint are resolved and
-can be validated. Do not add those equivalences just because they sound plausible.
+Normalize representation differences only when their consequences for every
+dependent endpoint are resolved and can be validated. Use stable identifiers for
+alignment; arbitrary row order is not a scientific target. Validate uniqueness,
+coverage and multiplicity before normalization. Do not require original row order
+or literal arbitrary labels merely because the reference used them. Do not add those equivalences just because they sound plausible.
 No independent software-equivalence claim can be established by modifying a copy
-of reference outputs. If evidence is insufficient, report a blocker.
+of reference outputs. Use supplied independently executed outputs when establishing numerical rules.
+Do not mistake synthetic edits of answers for independent recomputation. If
+evidence is insufficient for a claimed tolerance or freedom, report the specific
+missing check rather than substituting an exact-recipe requirement.
+
+Keep this stage focused: inspect the needed data properties, implement the
+comparator, and submit a complete candidate. Controller submission executes basic
+controls; a separate worker owns the independent mutation suite. Do not duplicate
+that suite or spend the session repeatedly auditing unrelated source internals.
 
 ## Grader interface
 

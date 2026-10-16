@@ -26,7 +26,7 @@ INPUT_FILES = (
 )
 
 
-def specification_context(run, policy, *, inspect_packages=False):
+def specification_context(run, policy, *, inspect_packages=False, revision_context=None):
     """Check original evidence hashes and audit lineage, without executing it."""
     manifest = json.loads((run / "artifact-manifest.json").read_text())
     originals = {item["path"]: item for item in manifest["files"]}
@@ -84,6 +84,8 @@ def specification_context(run, policy, *, inspect_packages=False):
             "measurement, calibrated grader or solver evidence. No tools in this pass."
         ),
     }
+    if revision_context is not None:
+        context["revision_context"] = revision_context
     if inspect_packages:
         context["package_inspection"] = inspection_context(
             package_catalog(files["trial/uv.lock"], files["trial/environment.txt"])

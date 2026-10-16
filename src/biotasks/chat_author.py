@@ -181,6 +181,10 @@ class GLMChatAuthor:
             operation = budget.reserve(0.000001, f"Free GLM design request {call_id}")
             event("model_request", turn=turn, call_id=call_id, operation=operation)
             started = time.monotonic()
+            print(
+                json.dumps({"event": "model_request_started", "stage": self.scope, "turn": turn}),
+                flush=True,
+            )
             try:
                 response = await asyncio.wait_for(
                     self.complete(payload),
@@ -202,6 +206,17 @@ class GLMChatAuthor:
                 self.save_record(request_root / "failure.json", {"error_type": "oversize_response"})
                 raise IncompleteCompletion("Response exceeds the evidence bound")
             self.save_record(request_root / "response.json", response)
+            print(
+                json.dumps(
+                    {
+                        "event": "model_response_received",
+                        "stage": self.scope,
+                        "turn": turn,
+                        "elapsed_seconds": round(time.monotonic() - started, 2),
+                    }
+                ),
+                flush=True,
+            )
             self.ledger.finish(call_id, "response_received")
             budget.settle(operation, 0.0)
             event(

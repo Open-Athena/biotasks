@@ -6,7 +6,8 @@ execution reports. This is an LLM review, not the reward or an independent
 scientific recomputation. Return `accept_for_packaging`, `revise` or `blocked`,
 a concise rationale, and actionable issues with evidence.
 
-Check that all selected terminal scientific results are covered, the public
+Check that the approved scientific outputs (not excluded notebook branches) are
+covered, the public
 contract matches executable checks, numerical comparisons have a defensible
 precision/serialization basis, identities and cross-file relations are correct,
 and meaningful wrong outputs fail without relying on crashes or malformed files.
@@ -16,8 +17,11 @@ probe flaws, untested equivalences, and shortcuts that merely satisfy this suite
 
 Successful reference/empty/missing/probe controls are necessary, not sufficient.
 Valid representation edits are not independent algorithmic implementations.
-Do not demand a universal software-independence claim: this task intentionally
-has a named, pinned reference target with open solver tool choice. Do not repair
+The public scientific question defines the target; private API calls are not
+additional solver requirements. Keep software choice open, but do not claim
+universal portability from a finite set of runs. Check separately what the
+original reference, independently executed solution and representation probes
+establish. A tolerance chosen to accommodate a wrong scientific method is invalid. Do not repair
 science, change selected outputs, or weaken acceptance rules to make controls pass.
 A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.

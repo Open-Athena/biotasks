@@ -6,6 +6,10 @@ You do not receive the grader implementation. Inspect files with the offline
 shell tool as needed. Produce probes that test the stated scientific contract;
 do not assume the implementation is correct.
 
+Build a compact suite and submit it once it covers the named requirements.
+Inspect only concrete facts needed to choose mutations. Do not re-derive the
+whole scientific workflow or duplicate a grader implementation.
+
 Return a suite using the supplied schema. Each probe has a stable name, kind
 (`wrong_solution` or `valid_alternative`), focus, rationale, source citations,
 Python `script`, and `check_ids` identifying its intended checks. Cover every
