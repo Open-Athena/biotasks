@@ -1891,3 +1891,9 @@ Session 005 is terminal with one canceled request and no candidate. The final ar
 Finalization 006 returned its first complete candidate after 664.46 seconds. Controlled derivation rejected an inventory mismatch and returned it to GLM for repair. The submitted declarations include directory prefixes while derivation roots already provide them. Future schema descriptions and the finalization prompt now clarify the root-relative convention, and runtime mismatch feedback lists missing/unexpected paths. These are generic interface improvements; active checkpoint 006 and its generated artifacts are unchanged.
 
 All twelve focused materialization regressions pass after the path-contract clarification. The running session remains frozen at 0698fbc.
+
+## 2026-10-16 — Fixed-group task materialization passes
+
+Finalization 006 completed with three GLM submissions. It repaired declared-path prefixes and a sparse-matrix dimension check through controlled feedback. Final derivation plus isolated oracle execution took 24.16 seconds; the oracle itself reported 14.4 seconds and produced the full 398,259-row endpoint. Four public inputs and one private answer artifact passed identity/inventory checks. No data-reconciliation warnings occurred on the fixed provider files. The archive and downloaded evidence hashes are verified, cleanup passed, and no owned sandbox remains. Numerical fidelity is still pending.
+
+Prepared grading 002 against unchanged materialization 006: a fresh answer-isolated implementation precedes numerical calibration, deterministic grader construction, separate probes, review and optional repair. Authoring request wait is 1800 seconds; science/solver remain 600 seconds and verification 120 seconds. Reserved $1 using the recorded profile bound, bringing conservative holds to $97 with $3 unallocated.
