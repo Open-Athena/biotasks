@@ -8,13 +8,13 @@ committing generation time to a backend that may not support Docker-in-Docker.
 
 ## Agreed campaign limits
 
-- At most $100 total incremental CPU/sandbox charges, including failed builds and
+- At most $300 total incremental CPU/sandbox charges, including failed builds and
   the controller. This is a spending allowance, not a price quote or a promise
   that every recipe will finish within it. Establish a conservative resource-rate
   estimate before dispatch; if it cannot fit the allowance, stop before launch.
 - Approved: up to four remote CPU sandboxes at once, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. This does not set model-request or Codex-agent concurrency.
   No GPUs, new inference deployments, or paid model fallbacks.
-- Approved: no aggregate remote-hour cap; the $100 ceiling applies across the campaign. Generation runs have an initial two-hour execution timeout. A fresh compatibility probe has a 30-minute execution deadline, with cleanup allowed to finish afterward.
+- Approved: no aggregate remote-hour cap; the $300 ceiling applies across the campaign. Generation runs have an initial two-hour execution timeout. A fresh compatibility probe has a 30-minute execution deadline, with cleanup allowed to finish afterward.
 - Existing free GLM-5.3 only, up to four simultaneous requests across the campaign. No additional global call-count or token cap. For explicitly adapted generation, the user subsequently approved 131,072 combined reasoning-and-answer tokens, medium effort, and a 1,200-second request timeout (see glm-generation-adaptation.json). Preserve recipe repair bounds and record every call, retry, and input/output usage. Original recipe-limit outcomes remain separate evidence; solver limits below are unchanged. The earlier 500-call / eight-million-token proposal is superseded.
 - Solver evaluation: all tasks that pass reference/grader validation, one blind GLM attempt per task initially. Each attempt has an approved 15-minute execution timeout and 12-turn limit; 2,048 output tokens per solver request are approved. Preserve solver traces and native rewards; report infrastructure failures separately from scored attempts. The same campaign budget and concurrency limits apply.
 - Retain the issue's three independently validated tasks / ten candidates per
