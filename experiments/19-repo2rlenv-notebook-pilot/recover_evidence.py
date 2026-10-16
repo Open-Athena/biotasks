@@ -32,7 +32,11 @@ SELECTED = {
 
 def priority(entry):
     name = entry["path"]
-    if name.startswith("grading/") and name.rsplit("/", 1)[-1] in {
+    if name.startswith(("grading/", "native/")) and name.rsplit("/", 1)[-1] in {
+        "materialization-candidate.json",
+        "manifest.json",
+        "independent-solution.json",
+        "independent-result.json",
         "final-candidate.json",
         "final-controls.json",
         "instruction.md",
@@ -95,7 +99,7 @@ def main():
             or relative.startswith("continuation/")
             or (relative.startswith("reference/") and "/outputs/" not in relative)
             or relative.startswith("coverage/")
-            or relative.startswith(("grading/", "grading-retrieval/"))
+            or relative.startswith(("grading/", "grading-retrieval/", "native/"))
             or (relative.startswith("reference-replay/") and "/outputs/" not in relative)
             or (relative.startswith("reference-setup/") and "/outputs/" not in relative)
             or relative.startswith(("preparation/", "schema-probe/", "specification/"))

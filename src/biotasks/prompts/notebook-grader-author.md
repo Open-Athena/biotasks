@@ -110,3 +110,11 @@ packaging validation. It does not yet constitute a released task.
 If blocked, submit `disposition: "blocked"` and explain the evidence gap in the
 private rationale/concerns. Ready artifacts use `disposition: "ready"`. A blocked
 submission stops this stage; do not fabricate a candidate just to fill the schema.
+
+## Shell execution
+
+Run commands in the foreground. Each shell call terminates its remaining child
+processes when it returns; background/nohup work cannot continue between calls.
+For longer computations, explicitly set `timeout_sec` up to the supplied
+`reference_seconds` limit (the shell default is 120 seconds). Save useful results
+to files before returning, then inspect them in later calls.

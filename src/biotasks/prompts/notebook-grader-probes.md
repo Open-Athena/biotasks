@@ -47,3 +47,11 @@ private rationale/concerns. Ready artifacts use `disposition: "ready"`. A blocke
 submission stops this stage; do not fabricate a candidate just to fill the schema.
 
 Make probe scripts deterministic: choose explicit records and fixed perturbations, and seed any randomness. The controller records the script, input identities, mutated artifact hashes and grader report; a probe must be reproducible from those inputs.
+
+## Shell execution
+
+Run commands in the foreground. Each shell call terminates its remaining child
+processes when it returns; background/nohup work cannot continue between calls.
+For longer computations, explicitly set `timeout_sec` up to the supplied
+`reference_seconds` limit (the shell default is 120 seconds). Save useful results
+to files before returning, then inspect them in later calls.

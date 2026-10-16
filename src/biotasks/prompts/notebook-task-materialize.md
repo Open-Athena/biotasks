@@ -56,3 +56,11 @@ Do not spend this stage constructing a grader or a broad mutation suite.
 
 Use `disposition: ready` or `blocked`; explain blockers in rationale. Tools are
 shell, submit_artifact and revise_artifact. Do not claim tests you did not run.
+
+## Shell execution
+
+Run commands in the foreground. Each shell call terminates its remaining child
+processes when it returns; background/nohup work cannot continue between calls.
+For longer computations, explicitly set `timeout_sec` up to the supplied
+`reference_seconds` limit (the shell default is 120 seconds). Save useful results
+to files before returning, then inspect them in later calls.

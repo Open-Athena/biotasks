@@ -24,3 +24,11 @@ and validates acceptance rules. Do not claim agreement you have not observed.
 Keep the implementation and inspection focused; submit a complete program rather
 than building your own grader or mutation suite. If blocked, return
 `disposition: blocked`, an empty code string and a specific explanation.
+
+## Shell execution
+
+Run commands in the foreground. Each shell call terminates its remaining child
+processes when it returns; background/nohup work cannot continue between calls.
+For longer computations, explicitly set `timeout_sec` up to the supplied
+`reference_seconds` limit (the shell default is 120 seconds). Save useful results
+to files before returning, then inspect them in later calls.

@@ -330,6 +330,7 @@ async def run_grading(
         ),
         "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/author"},
         "verifier_seconds": config["verifier_seconds"],
+        "reference_seconds": config["reference_seconds"],
     }
     if "materialization" in snapshot:
         context["materialization"] = snapshot["materialization"]
