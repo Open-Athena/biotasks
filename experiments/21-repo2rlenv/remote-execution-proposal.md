@@ -1,6 +1,6 @@
 # Remote execution proposal
 
-Status: prepared, not launched; billable allowance awaits user approval.
+Status: user approved up to $100 on 2026-10-16; dispatch pending preflight. All other campaign limits below remain in force.
 
 The remaining executable recipes require Docker builds and target-code execution
 on remote workers. Start with the pinned Repo2RLEnv Daytona worker probe before
@@ -8,7 +8,7 @@ committing generation time to a backend that may not support Docker-in-Docker.
 
 ## Requested campaign limits
 
-- At most $25 total incremental CPU/sandbox charges, including failed builds and
+- At most $100 total incremental CPU/sandbox charges, including failed builds and
   the controller. This is a spending allowance, not a price quote or a promise
   that every recipe will finish within it. Establish a conservative resource-rate
   estimate before dispatch; if it cannot fit the allowance, stop before launch.
@@ -54,3 +54,7 @@ estimate. If artifact export fails, preserve the receipt and report the failure;
 do not retain an indefinitely billable worker. Archive sanitized evidence on the
 research branch or in an immutable bucket snapshot before removing temporary
 local files.
+
+## Initial rate check (2026-10-16)
+
+[Daytona published pricing](https://www.daytona.io/pricing) lists $0.0504/vCPU-hour, $0.0162/GiB-hour RAM, and $0.000108/GiB-hour storage. Charging all 10 GiB conservatively gives $0.16668/hour for the initial 2 CPU / 4 GiB worker, or $0.08334 for 30 minutes before setup/cleanup overhead. Reserve $5 for this dispatch. This is an estimate, not an account receipt; reconcile lifetime and any build charges after deletion. The controller initially runs lightweight SDK requests on the existing VM, with no incremental remote controller allocated.
