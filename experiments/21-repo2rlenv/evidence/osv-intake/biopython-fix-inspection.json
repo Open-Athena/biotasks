@@ -1,0 +1,13 @@
+{
+  "fix_commit": "736c96f37b190732ecca9da80ad0cb9d4967214d",
+  "url": "https://github.com/biopython/biopython/commit/736c96f37b190732ecca9da80ad0cb9d4967214d",
+  "changed_files": [
+    "Bio/Entrez/Parser.py",
+    "CONTRIB.rst",
+    "NEWS.rst",
+    "Tests/test_Entrez_parser.py"
+  ],
+  "regression_test": "Tests/test_Entrez_parser.py::UrlSecurityCheckTest::test_continued_url_security_checking",
+  "finding": "Upstream fix includes a regression test for continued URL security checks; a native route need not synthesize a missing regression test. The regression uses inline XML, packaged DTDs, and a reserved .invalid hostname. Offline execution and before/after contrast remain unverified.",
+  "status": "source_inspection_only"
+}
