@@ -11,6 +11,12 @@ HERE = Path(__file__).parent
 
 
 def selected_outputs(config):
+    if config.get("materialization_directory"):
+        from materialization_inputs import archive_selection
+
+        return archive_selection(
+            HERE / config["materialization_directory"]
+        ), "grading/materialized/reference/"
     snapshot = json.loads(
         (HERE / config["reference_directory"] / "artifact-manifest.json").read_text()
     )

@@ -102,7 +102,14 @@ def prepare(kind, omitted=None):
     if kind == "empty":
         (CASE / "submission").mkdir()
     else:
-        shutil.copytree(PRIVATE / "oracle", CASE / "submission")
+        origin = (
+            "recomputed"
+            if kind == "recomputed"
+            else "alternative"
+            if kind == "alternative"
+            else "oracle"
+        )
+        shutil.copytree(PRIVATE / origin, CASE / "submission")
     if omitted:
         (CASE / "submission" / omitted).unlink()
     for directory in (CASE / "reference", CASE / "submission"):

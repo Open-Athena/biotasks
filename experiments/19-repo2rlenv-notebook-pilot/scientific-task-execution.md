@@ -52,3 +52,21 @@ at most ten minutes per derivation or solution execution. GLM uses medium reason
 no client token/byte/request-count cap, and a ten-minute individual API timeout.
 Only one sandbox is active at a time. The materialization session reserves $2 from
 remaining approved funds; this is a conservative hold, not measured billing.
+
+## Independent comparison evidence
+
+For a materialized task, grading first asks a fresh GLM session to implement the
+public scientific question from supplied inputs. Its context excludes original
+solution code, answer tables and private source review. During that session,
+filesystem checks confirm that original answers, the first oracle's outputs and
+private author/controller directories are inaccessible. It receives execution
+feedback only, not expected scientific values. This is a calibration implementation,
+not the later held-out solver attempt, and does not prove universal portability.
+
+The grader then receives original projected answers, the first oracle's outputs
+and this independent implementation's outputs. All must satisfy the final
+comparator, alongside independently authored wrong-result/valid-representation
+probes. A scientific disagreement must be diagnosed, not automatically covered
+by a tolerance. The public acceptance addendum is combined programmatically with
+the retained question. No grader can remove the scientific question by returning
+only a short acceptance document.

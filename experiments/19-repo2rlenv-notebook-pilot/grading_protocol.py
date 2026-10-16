@@ -123,3 +123,20 @@ def parse_report(report, candidate):
     if report["passed"] != all(r["passed"] for r in rows):
         raise ValueError("Overall reward disagrees with named checks")
     return report
+
+
+class AlternativeSolution(StrictModel):
+    disposition: Literal["ready", "blocked"]
+    code: str
+    rationale: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def executable(self):
+        if self.disposition == "ready":
+            if not self.code.strip():
+                raise ValueError("A ready independent solution requires code")
+            try:
+                ast.parse(self.code)
+            except SyntaxError as error:
+                raise ValueError(str(error)) from error
+        return self

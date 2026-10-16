@@ -31,6 +31,9 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
     if inspect_packages:
         if output_format != "tools":
             raise ValueError("Read-only inspection requires native tool calls")
+    elif output_format == "tools":
+        if config["max_requests"] is not None:
+            raise ValueError("Submission-only sessions use the explicit time boundary")
     elif config["max_requests"] != 1 or output_format not in {"json_schema", "json_unconstrained"}:
         raise ValueError("Tool-free specification requires one JSON response")
     root.mkdir(parents=True, exist_ok=False)

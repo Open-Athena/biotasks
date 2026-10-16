@@ -14,7 +14,10 @@ It names the directory containing private reference output files in your sandbox
 The shell tool runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference
-copies. Raw biological inputs are not staged. Do not rerun the scientific analysis.
+copies. When `paths` supplies task inputs and recomputed outputs, inspect those
+as recorded evidence too. Otherwise raw biological inputs are not available.
+Do not rerun the entire analysis in this grader-author stage; independently
+executed controls are the evidence for recomputation agreement.
 
 Use submit_artifact (or revise_artifact after rejection) to return the complete
 candidate: public instructions, grader code, named checks and rationale. Submission

@@ -7,7 +7,15 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
-from grading_protocol import Grader, Probes, Review, check_coverage, check_probes, parse_report
+from grading_protocol import (
+    AlternativeSolution,
+    Grader,
+    Probes,
+    Review,
+    check_coverage,
+    check_probes,
+    parse_report,
+)
 from openai import AsyncOpenAI
 from reference_environment import setup_script
 from reference_replay import sha256
@@ -50,6 +58,7 @@ class GradingSession:
         self.last_controls = []
         self.frozen_probes = None
         self.frozen_checks = None
+        self.alternative_validated = False
         self.root.mkdir(parents=True, exist_ok=False)
 
     async def command(self, argv, seconds, label):
@@ -107,7 +116,12 @@ class GradingSession:
             await self.remote.download("/work/environment/" + name, self.root / name)
             if sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]:
                 raise RuntimeError("Grading environment differs from the reference")
-        root = Path("/work/grading-inputs/reference-replay/replay/trials/1/outputs")
+        root = Path(
+            self.snapshot.get(
+                "restored_outputs_root",
+                "/work/grading-inputs/reference-replay/replay/trials/1/outputs",
+            )
+        )
         for item in self.snapshot["outputs"]:
             original = root / item["path"]
             if sha256(original) != item["sha256"] or original.stat().st_size != item["bytes"]:
@@ -122,6 +136,41 @@ class GradingSession:
                 if made["exit_code"]:
                     raise RuntimeError("Cannot create reference artifact directory")
                 await self.remote.upload(original, parent + "/" + item["path"])
+        if "materialization" in self.snapshot:
+            derived = self.snapshot["materialization"]["execution"]
+            for kind, remote_root in (
+                ("inputs", "/work/task-inputs"),
+                ("oracle_outputs", "/work/grading-private/recomputed"),
+            ):
+                for item in derived[kind]:
+                    local = Path("/work/grading-inputs/grading/materialized") / kind / item["path"]
+                    if local.stat().st_size != item["bytes"] or sha256(local) != item["sha256"]:
+                        raise ValueError("Derived input/oracle archive identity mismatch")
+                    made = await self.command(
+                        ["mkdir", "-p", str(Path(remote_root, item["path"]).parent)],
+                        30,
+                        "derived-parent-" + str(time.time_ns()),
+                    )
+                    if made["exit_code"]:
+                        raise RuntimeError("Cannot stage derived artifact")
+                    await self.remote.upload(local, remote_root + "/" + item["path"])
+            copied = await self.command(
+                [
+                    "sh",
+                    "-eu",
+                    "-c",
+                    "cp -a /work/grading-private/recomputed /work/recomputed; chmod -R a+rX,a-w /work/recomputed",
+                ],
+                30,
+                "stage-recomputed-comparison",
+            )
+            if copied["exit_code"]:
+                raise RuntimeError("Cannot expose recomputation evidence")
+            sealed = await self.command(
+                ["chmod", "-R", "a-w", "/work/task-inputs"], 30, "seal-task-inputs"
+            )
+            if sealed["exit_code"]:
+                raise RuntimeError("Cannot freeze derived inputs")
         expected = self.root / "expected.json"
         save_record(expected, {p["path"]: p["sha256"] for p in self.snapshot["outputs"]})
         await self.remote.upload(expected, "/work/grading-private/expected.json")
@@ -158,8 +207,8 @@ class GradingSession:
         )
 
     async def shell(self, command, timeout_sec=120, *, role="author"):
-        if type(timeout_sec) is not int or timeout_sec < 1:
-            raise ValueError("Positive shell timeout required")
+        if type(timeout_sec) is not int or not 1 <= timeout_sec <= self.config["reference_seconds"]:
+            raise ValueError("Shell timeout must fit the agreed single-computation allowance")
         reply = await self.helper(
             ["shell", role, command, str(timeout_sec)],
             timeout_sec + 10,
@@ -201,7 +250,9 @@ class GradingSession:
                 return record
             report = parse_report(reply["report"], candidate)
             failed = {r["id"] for r in report["checks"] if not r["passed"]}
-            expected_pass = kind == "reference" or (probe and probe.kind == "valid_alternative")
+            expected_pass = kind in {"reference", "recomputed", "alternative"} or (
+                probe and probe.kind == "valid_alternative"
+            )
             record["passed_control"] = report["passed"] == bool(expected_pass)
             if probe and probe.kind == "wrong_solution":
                 record["passed_control"] &= set(probe.check_ids) <= failed
@@ -232,6 +283,10 @@ class GradingSession:
             await self.case(candidate, kind="reference"),
             await self.case(candidate, kind="empty"),
         ]
+        if "materialization" in self.snapshot:
+            controls.append(await self.case(candidate, kind="recomputed"))
+        if self.alternative_validated:
+            controls.append(await self.case(candidate, kind="alternative"))
         for name in self.paths:
             controls.append(await self.case(candidate, kind="missing", omit=name))
         if self.frozen_probes:
@@ -276,6 +331,14 @@ async def run_grading(
         "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/author"},
         "verifier_seconds": config["verifier_seconds"],
     }
+    if "materialization" in snapshot:
+        context["materialization"] = snapshot["materialization"]
+        context["specification"] = {
+            **context["specification"],
+            "task_brief": snapshot["materialization"]["candidate"]["instruction"],
+        }
+        context["paths"]["task_inputs"] = "/work/task-inputs"
+        context["paths"]["recomputed_outputs"] = "/work/recomputed"
     if config.get("materialize_task"):
         from task_materialization import run_materialization
 
@@ -289,7 +352,7 @@ async def run_grading(
             deadline=deadline,
             complete=complete,
         )
-    scopes = ("grader", "probes", "review", "repair", "review-repair")
+    scopes = ("independent", "grader", "probes", "review", "repair", "review-repair")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
     limits = ChatLimits(
@@ -330,6 +393,125 @@ async def run_grading(
         )
 
     try:
+        if "materialization" in snapshot:
+
+            async def independent_shell(command, timeout_sec=120):
+                return await session.shell(command, timeout_sec, role="probe")
+
+            async def validate_independent(value):
+                if value.disposition == "blocked":
+                    return
+                folder = root / "independent-executions" / str(time.time_ns())
+                folder.mkdir(parents=True)
+                save_record(
+                    folder / "request.json",
+                    {
+                        "code": value.code,
+                        "output_paths": session.paths,
+                        "seconds": config["reference_seconds"],
+                    },
+                )
+                await session.remote.upload(
+                    folder / "request.json", "/work/grading-private/alternative-request.json"
+                )
+                await session.remote.upload(
+                    HERE / "alternative_remote.py", "/work/alternative_remote.py"
+                )
+                await session.remote.upload(HERE / "grading_remote.py", "/work/grading_remote.py")
+                reply = await session.command(
+                    ["python", "/work/alternative_remote.py"],
+                    config["reference_seconds"] + 30,
+                    "independent-" + folder.name,
+                )
+                result = {"controller": reply}
+                if reply["exit_code"] == 0:
+                    result["execution"] = json.loads(reply["log"])
+                save_record(folder / "result.json", result)
+                if (
+                    reply["exit_code"]
+                    or result["execution"]["status"] != "executed_without_answer_access"
+                ):
+                    raise ValueError("Independent execution failed: " + json.dumps(result))
+                for item in result["execution"]["outputs"]:
+                    path = root / "independent-outputs" / item["path"]
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    await session.remote.download(
+                        "/work/grading-private/alternative/" + item["path"], path
+                    )
+                    if sha256(path) != item["sha256"] or path.stat().st_size != item["bytes"]:
+                        raise ValueError("Independent output download identity mismatch")
+                save_record(root / "independent-result.json", result["execution"])
+                session.alternative_validated = True
+
+            hidden = await session.command(
+                ["chmod", "700", "/work/reference", "/work/recomputed"],
+                30,
+                "hide-validation-answers",
+            )
+            if hidden["exit_code"]:
+                raise RuntimeError("Cannot isolate independent solution from answers")
+            try:
+                isolation = await independent_shell(
+                    "/work/venv/bin/python -c "
+                    + shlex.quote(
+                        "from pathlib import Path\n"
+                        "for p in ['/work/reference','/work/recomputed','/work/grading-private','/work/author']:\n"
+                        " try:\n  list(Path(p).iterdir())\n"
+                        " except PermissionError:\n  continue\n"
+                        " raise RuntimeError('Private answers accessible')\n"
+                        "print('isolated')"
+                    ),
+                    15,
+                )
+                if json.loads(isolation)["exit_code"]:
+                    raise RuntimeError("Independent solution isolation check failed")
+                independent = await call(
+                    AlternativeSolution,
+                    "independent",
+                    "notebook-task-independent-solution",
+                    {
+                        "public_instruction": context["specification"]["task_brief"],
+                        "input_paths": snapshot["materialization"]["candidate"]["input_paths"],
+                        "output_paths": session.paths,
+                        "environment": context["source_evidence"]["trial/environment.txt"],
+                        "paths": {
+                            "inputs": "/work/task-inputs",
+                            "working_directory": "/work/probe",
+                        },
+                        "reference_seconds": config["reference_seconds"],
+                        "policy": context["policy"],
+                    },
+                    validate_independent,
+                    independent_shell,
+                )
+                save_record(root / "independent-solution.json", independent.model_dump())
+            finally:
+                restored = await session.command(
+                    ["chmod", "555", "/work/reference", "/work/recomputed"],
+                    30,
+                    "restore-author-reference-access",
+                )
+                if restored["exit_code"]:
+                    raise RuntimeError("Cannot restore grading evidence access")
+            if independent.disposition == "blocked":
+                return {"status": "independent_solution_blocked"}
+            exposed = await session.command(
+                [
+                    "sh",
+                    "-eu",
+                    "-c",
+                    "cp -a /work/grading-private/alternative /work/alternative; chmod -R a+rX,a-w /work/alternative",
+                ],
+                30,
+                "expose-independent-evidence",
+            )
+            if exposed["exit_code"]:
+                raise RuntimeError("Cannot expose independent evidence for comparison")
+            context["independent_solution"] = independent.model_dump()
+            context["independent_execution"] = json.loads(
+                (root / "independent-result.json").read_text()
+            )
+            context["paths"]["independent_outputs"] = "/work/alternative"
         candidate = await call(
             Grader,
             "grader",
@@ -417,7 +599,12 @@ async def run_grading(
             save_record(root / "review-repair.json", assessment.model_dump())
         save_record(root / "final-controls.json", session.last_controls)
         save_record(root / "final-candidate.json", candidate.model_dump())
-        (root / "instruction.md").write_text(candidate.instruction + "\n")
+        (root / "instruction.md").write_text(
+            context["specification"]["task_brief"].rstrip()
+            + "\n\n## Acceptance rules\n\n"
+            + candidate.instruction
+            + "\n"
+        )
         (root / "grade.py").write_text(candidate.grader_code + "\n")
         return {
             "status": "grader_candidate_validated"

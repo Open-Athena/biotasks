@@ -220,3 +220,65 @@ def test_revision_feedback_is_explicit_model_input(run):
     context = specification_context(run, {}, revision_context=feedback)
     assert context["revision_context"] == feedback
     assert "package_inspection" not in context
+
+
+def test_submission_only_revision_receives_rejection_feedback(tmp_path):
+    import asyncio
+    import time
+
+    from run_specification import run
+
+    calls = []
+    proposal = dict(
+        disposition="draft_ready",
+        review="Review",
+        task_brief="Scientific task",
+        validation_handoff="Measure comparisons",
+    )
+
+    async def complete(payload):
+        calls.append(payload)
+        assert {t["function"]["name"] for t in payload["tools"]} == {
+            "submit_artifact",
+            "revise_artifact",
+        }
+        if len(calls) > 1:
+            assert "Artifact rejected" in payload["messages"][-1]["content"]
+        value = proposal | ({"task_brief": ""} if len(calls) == 1 else {})
+        return {
+            "choices": [
+                {
+                    "finish_reason": "tool_calls",
+                    "message": {
+                        "role": "assistant",
+                        "content": None,
+                        "tool_calls": [
+                            {
+                                "id": str(len(calls)),
+                                "type": "function",
+                                "function": {
+                                    "name": "submit_artifact",
+                                    "arguments": json.dumps(value),
+                                },
+                            }
+                        ],
+                    },
+                }
+            ]
+        }
+
+    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    assert config["output_format"] == "tools" and not config["inspect_packages"]
+    root = tmp_path / "submission-only"
+    asyncio.run(
+        run(
+            config,
+            root=root,
+            endpoint="unused",
+            credential="unused",
+            deadline=time.time() + 60,
+            complete=complete,
+        )
+    )
+    assert len(calls) == 2
+    assert json.loads((root / "specification.json").read_text()) == proposal

@@ -162,7 +162,10 @@ def test_probe_blocker_is_representable():
 
 
 @pytest.mark.parametrize("repair", [False, True])
-def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, monkeypatch, repair):
+@pytest.mark.parametrize("derived", [False, True])
+def test_orchestration_separates_probe_author_and_gates_acceptance(
+    tmp_path, monkeypatch, repair, derived
+):
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
@@ -180,15 +183,39 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, mon
             self.case_number = 0
             self.frozen_probes = None
             self.frozen_checks = None
+            self.paths = ["value.txt"]
+            self.remote = self
+
+        async def upload(self, *args):
+            pass
+
+        async def download(self, remote, local):
+            local.write_bytes(b"1")
 
         async def initialize(self):
             pass
 
         async def command(self, *args):
-            return {"exit_code": 0}
+            import hashlib
+
+            return {
+                "exit_code": 0,
+                "log": json.dumps(
+                    {
+                        "status": "executed_without_answer_access",
+                        "outputs": [
+                            {
+                                "path": "value.txt",
+                                "bytes": 1,
+                                "sha256": hashlib.sha256(b"1").hexdigest(),
+                            }
+                        ],
+                    }
+                ),
+            }
 
         async def shell(self, *args, **kwargs):
-            return "unused"
+            return json.dumps({"exit_code": 0, "stdout": "isolated"})
 
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]
@@ -204,7 +231,14 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, mon
         name = kwargs["name"]
         inputs = kwargs["context"]
         calls.append(name)
-        if name == "probes":
+        if name == "independent":
+            assert "private-original-oracle" not in json.dumps(inputs)
+            assert "source_evidence" not in inputs and "materialization" not in inputs
+            assert inputs["public_instruction"] == "Scientific question"
+            value = module.AlternativeSolution(
+                disposition="ready", code="pass", rationale="fixture"
+            )
+        elif name == "probes":
             assert "candidate" not in inputs and "grader_code" not in json.dumps(inputs)
             assert c.grader_code not in json.dumps(inputs)
             assert inputs["public_instruction"] == c.instruction
@@ -238,7 +272,23 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, mon
     result = asyncio.run(
         module.run_grading(
             remote=None,
-            snapshot={"directory": HERE / config["reference_directory"]},
+            snapshot={
+                "directory": HERE / config["reference_directory"],
+                **(
+                    {
+                        "materialization": {
+                            "candidate": {
+                                "instruction": "Scientific question",
+                                "input_paths": ["input.txt"],
+                                "oracle_code": "private-original-oracle",
+                            },
+                            "execution": {},
+                        }
+                    }
+                    if derived
+                    else {}
+                ),
+            },
             root=tmp_path,
             config=config,
             endpoint="",
@@ -247,7 +297,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(tmp_path, mon
             complete=object(),
         )
     )
-    assert calls == ["grader", "probes", "review"] + (["repair", "review-repair"] if repair else [])
+    assert calls == (["independent"] if derived else []) + ["grader", "probes", "review"] + (
+        ["repair", "review-repair"] if repair else []
+    )
     assert result["status"] == "grader_candidate_validated"
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()

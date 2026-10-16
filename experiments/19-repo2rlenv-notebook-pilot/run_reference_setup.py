@@ -67,6 +67,7 @@ def check_config(config):
         "reference_directory",
         "replay_directory",
         "specification_directory",
+        "materialization_directory",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts
@@ -213,6 +214,16 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
         from reference_replay import load_snapshot, replay_reference
 
         snapshot = load_snapshot(HERE / config["reference_directory"], prepared)
+        if grading and config.get("materialization_directory"):
+            from materialization_inputs import load_materialized
+
+            candidate, derived = load_materialized(HERE / config["materialization_directory"])
+            snapshot = {
+                **snapshot,
+                "outputs": derived["reference"],
+                "materialization": {"candidate": candidate, "execution": derived},
+                "restored_outputs_root": "/work/grading-inputs/grading/materialized/reference",
+            }
     root.mkdir(parents=True, exist_ok=False)
     save_record(root / "configuration.json", config)
     save_record(root / "preparation-input.json", prepared.context)
