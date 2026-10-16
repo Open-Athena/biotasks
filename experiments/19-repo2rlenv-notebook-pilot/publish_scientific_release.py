@@ -26,15 +26,29 @@ assert old["repo_id"] == repo_id
 # the replacement. Never delete unrelated Hub files or historical commits.
 obsolete = sorted(set(old["files"]) - set(files["files"]))
 assert all(not p.startswith("/") and ".." not in Path(p).parts for p in obsolete)
+assert all(not any(char in p for char in "*?[") for p in obsolete)
 
 
 class Replacement:
+    def __init__(self):
+        self.parent_commit = head
+
     def create_repo(self, *args, **kwargs):
         return api.create_repo(*args, **kwargs)
 
     def upload_folder(self, **kwargs):
         assert kwargs["repo_id"] == repo_id
-        return api.upload_folder(**kwargs, parent_commit=head, delete_patterns=obsolete or None)
+        commit = api.upload_folder(
+            **kwargs, parent_commit=self.parent_commit, delete_patterns=obsolete or None
+        )
+        self.parent_commit = commit.oid
+        return commit
+
+    def upload_file(self, **kwargs):
+        assert kwargs["repo_id"] == repo_id
+        commit = api.upload_file(**kwargs, parent_commit=self.parent_commit)
+        self.parent_commit = commit.oid
+        return commit
 
     def __getattr__(self, key):
         return getattr(api, key)
