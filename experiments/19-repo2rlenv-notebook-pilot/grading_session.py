@@ -355,6 +355,22 @@ async def run_grading(
             deadline=deadline,
             complete=complete,
         )
+    resumed = None
+    if config.get("resume_grading_directory"):
+        from grading_resume import load_resume
+
+        if "materialization" not in snapshot:
+            raise ValueError("Grading resume requires materialized task inputs")
+        resumed = load_resume(HERE / config["resume_grading_directory"], context)
+        save_record(
+            root / "resume.json",
+            {
+                "source": config["resume_grading_directory"],
+                "reexecute_independent": True,
+                "revalidate_grader_controls": True,
+                "prior_acceptance_reused": False,
+            },
+        )
     scopes = ("independent", "grader", "probes", "review", "repair", "review-repair")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
@@ -469,25 +485,29 @@ async def run_grading(
                 )
                 if json.loads(isolation)["exit_code"]:
                     raise RuntimeError("Independent solution isolation check failed")
-                independent = await call(
-                    AlternativeSolution,
-                    "independent",
-                    "notebook-task-independent-solution",
-                    {
-                        "public_instruction": context["specification"]["task_brief"],
-                        "input_paths": snapshot["materialization"]["candidate"]["input_paths"],
-                        "output_paths": session.paths,
-                        "environment": context["source_evidence"]["trial/environment.txt"],
-                        "paths": {
-                            "inputs": "/work/task-inputs",
-                            "working_directory": "/work/probe",
+                if resumed:
+                    independent = resumed[0]
+                    await validate_independent(independent)
+                else:
+                    independent = await call(
+                        AlternativeSolution,
+                        "independent",
+                        "notebook-task-independent-solution",
+                        {
+                            "public_instruction": context["specification"]["task_brief"],
+                            "input_paths": snapshot["materialization"]["candidate"]["input_paths"],
+                            "output_paths": session.paths,
+                            "environment": context["source_evidence"]["trial/environment.txt"],
+                            "paths": {
+                                "inputs": "/work/task-inputs",
+                                "working_directory": "/work/probe",
+                            },
+                            "reference_seconds": config["reference_seconds"],
+                            "policy": context["policy"],
                         },
-                        "reference_seconds": config["reference_seconds"],
-                        "policy": context["policy"],
-                    },
-                    validate_independent,
-                    independent_shell,
-                )
+                        validate_independent,
+                        independent_shell,
+                    )
                 save_record(root / "independent-solution.json", independent.model_dump())
             finally:
                 restored = await session.command(
@@ -516,14 +536,18 @@ async def run_grading(
                 (root / "independent-result.json").read_text()
             )
             context["paths"]["independent_outputs"] = "/work/alternative"
-        candidate = await call(
-            Grader,
-            "grader",
-            "notebook-grader-author",
-            context,
-            session.validate_candidate,
-            session.shell,
-        )
+        if resumed:
+            candidate = resumed[1]
+            await session.validate_candidate(candidate)
+        else:
+            candidate = await call(
+                Grader,
+                "grader",
+                "notebook-grader-author",
+                context,
+                session.validate_candidate,
+                session.shell,
+            )
         save_record(root / "candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":
             return {"status": "grader_blocked", "grader_construction_run": True}

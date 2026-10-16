@@ -162,13 +162,25 @@ def test_probe_blocker_is_representable():
 
 
 @pytest.mark.parametrize("repair", [False, True])
-@pytest.mark.parametrize("derived", [False, True])
+@pytest.mark.parametrize("derived,resume", [(False, False), (True, False), (True, True)])
 def test_orchestration_separates_probe_author_and_gates_acceptance(
-    tmp_path, monkeypatch, repair, derived
+    tmp_path, monkeypatch, repair, derived, resume
 ):
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
+    if resume:
+        import grading_resume
+
+        config["resume_grading_directory"] = "saved-run"
+
+        def reuse(directory, context):
+            assert "independent_solution" not in context
+            return module.AlternativeSolution(
+                disposition="ready", code="pass", rationale="fixture"
+            ), candidate()
+
+        monkeypatch.setattr(grading_resume, "load_resume", reuse)
     calls = []
     c = candidate()
     suite = Probes(
@@ -301,9 +313,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
-    assert calls == (["independent"] if derived else []) + ["grader", "probes", "review"] + (
-        ["repair", "review-repair"] if repair else []
-    )
+    assert calls == ([] if resume else (["independent"] if derived else []) + ["grader"]) + [
+        "probes",
+        "review",
+    ] + (["repair", "review-repair"] if repair else [])
     assert result["status"] == "grader_candidate_validated"
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()

@@ -26,6 +26,15 @@ science, change selected outputs, or weaken acceptance rules to make controls pa
 A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.
 
+Treat the candidate's prose as claims to check, not as additional experimental
+evidence. Verify numerical explanations and margins against the actual controls
+and recorded measurements. An arbitrary safety factor is not a precision argument.
+Do not claim that every incorrect method is detected when only particular
+counterexamples were executed, or describe two implementations as independent
+without checking their provenance. Public rules should explain what is accepted;
+keep run-specific calibration measurements and validation history in the private
+rationale. Flag contradictions between the original question and the addendum.
+
 Acceptance here means this grader candidate is suitable for subsequent Harbor
 packaging and its own isolation/oracle checks. It does not validate those later
 checks, a blind solver, or a release. If revised, affected controls and review
