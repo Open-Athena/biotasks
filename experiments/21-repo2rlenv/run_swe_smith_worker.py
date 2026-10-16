@@ -64,7 +64,7 @@ def main():
                 "-c",
                 (
                     "set -eu; cd /work/native; tar -xzf source.tar.gz; "
-                    "uv sync --frozen --no-dev --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee "
+                    "uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee "
                     ">/evidence/native/setup.log 2>&1"
                 ),
             ],
