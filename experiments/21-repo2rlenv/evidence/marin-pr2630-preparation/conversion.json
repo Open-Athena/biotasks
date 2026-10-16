@@ -1,0 +1,128 @@
+{
+  "status": "prepared_unvalidated",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "native_manifest": [
+    {
+      "path": "environment/Dockerfile",
+      "sha256": "cbce40e60a48ace5665af5ecae64b743504356293fdd23e2b7817eeda37fe77f",
+      "mode": "0644"
+    },
+    {
+      "path": "instruction.md",
+      "sha256": "37d250563757fdbfbdb665d279538dd79061d5617b893e53299b1c43785735d1",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/patch.diff",
+      "sha256": "7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/solve.sh",
+      "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+      "mode": "0755"
+    },
+    {
+      "path": "task.toml",
+      "sha256": "8dab648ed7abaabcac5a40e93237efe1b4dde1adb464854c03dd69a2880fcde6",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/instruction.md",
+      "sha256": "37d250563757fdbfbdb665d279538dd79061d5617b893e53299b1c43785735d1",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/oracle.patch",
+      "sha256": "7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/test.sh",
+      "sha256": "a109e23c2c009a701ccf01bbff238d84c713c223b31891dda44e613e02122242",
+      "mode": "0755"
+    },
+    {
+      "path": "tests/verifier.py",
+      "sha256": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706",
+      "mode": "0644"
+    }
+  ],
+  "native_manifest_sha256": "8979275bcfe2303858353b37e70c6e20ff25147fab26a84c5973f7546a515ed9",
+  "importer_sha256": "b1e5ceef80cf96d5a98904e36ad78f4a1d25d705806e352c0639ef86607a3d14",
+  "native_metadata": {
+    "version": "1.0",
+    "task": {
+      "name": "Open-Athena/scikit-bio__scikit-bio-2630",
+      "description": "BUG: restrict Sequence case conversion to ASCII letters"
+    },
+    "metadata": {
+      "difficulty": "medium",
+      "category": "bugfix",
+      "keywords": [
+        "scikit-bio",
+        "pr_diff"
+      ],
+      "repo2env": {
+        "pipeline": "pr_diff",
+        "pipeline_version": "0.3.0",
+        "repo": "scikit-bio/scikit-bio",
+        "ref": "566dbe73c62a13f790713245c24f883d7eb92983",
+        "reference": "https://github.com/scikit-bio/scikit-bio/pull/2630",
+        "source_access": "public",
+        "built_at": "2026-10-16T20:12:32.022914+00:00",
+        "reward_kinds": [
+          "diff_similarity"
+        ],
+        "spec_version": "0.2.0",
+        "content_hash": "sha256:8decc332f47c7e13b0ca85527c3e1fb266a615dbc8a713a279c8612f663aa4f1",
+        "pr_diff": {
+          "pr_merged_at": "2026-10-10T06:50:08Z",
+          "diff_format": "unified",
+          "context_files": [
+            "CHANGELOG.md",
+            "skbio/io/format/tests/test_fasta.py",
+            "skbio/io/format/tests/test_fastq.py",
+            "skbio/sequence/_sequence.py",
+            "skbio/sequence/tests/test_sequence.py"
+          ]
+        },
+        "reward_calibration": {
+          "baseline_reward": 0.0,
+          "loc_changed": 68,
+          "difficulty": "medium"
+        },
+        "evaluation": {
+          "schema_version": "1",
+          "status": "unverified",
+          "stage": "generation",
+          "reason_codes": [
+            "validation_not_run"
+          ],
+          "detail": "Generated task; validation has not been established.",
+          "provenance": "unknown",
+          "evidence": []
+        },
+        "reproducibility": {
+          "mode": "local_only",
+          "image_ref": "python:3.12-slim",
+          "image_tag": "python:3.12-slim",
+          "image_visibility": "private"
+        }
+      }
+    },
+    "agent": {
+      "timeout_sec": 1800.0
+    },
+    "verifier": {
+      "timeout_sec": 300.0
+    }
+  },
+  "reward_contract": "unchanged native scalar diff similarity; not functional correctness",
+  "pending": [
+    "pinned schema validation",
+    "fresh build",
+    "native/converted reward parity",
+    "grader isolation and workspace capture checks"
+  ]
+}

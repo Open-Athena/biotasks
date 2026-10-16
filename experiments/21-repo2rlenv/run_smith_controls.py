@@ -31,7 +31,9 @@ def main():
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
     parser.add_argument(
-        "--stage", choices=("smith-controls", "biopython-cve"), default="smith-controls"
+        "--stage",
+        choices=("smith-controls", "biopython-cve", "marin-schema"),
+        default="smith-controls",
     )
     parser.add_argument("--generation-archive", type=Path)
     parser.add_argument("--issues", type=Path)
@@ -75,7 +77,7 @@ def main():
                 "--issues /work/native/issues.json --config /work/native/config.json "
                 "--output /evidence/native/validation "
             )
-        else:
+        elif args.stage == "biopython-cve":
             for source, target in (
                 ("replay_biopython_cve.py", "replay_biopython_cve.py"),
                 ("biopython-cve.Dockerfile", "Dockerfile"),
@@ -85,6 +87,15 @@ def main():
                 worker.upload(root / source, "/work/native/" + target)
             unpack = ""
             entry = "/work/native/replay_biopython_cve.py "
+        else:
+            worker.upload(
+                root / "validate_marin_preparation.py", "/work/native/validate_marin_preparation.py"
+            )
+            worker.upload(
+                root / "evidence/marin-pr2630-preparation/task.json", "/work/native/task.json"
+            )
+            unpack = ""
+            entry = "/work/native/validate_marin_preparation.py "
         setup = worker.exec(
             [
                 "sh",
