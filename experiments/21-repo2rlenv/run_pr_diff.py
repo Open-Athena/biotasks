@@ -56,7 +56,7 @@ def main():
         record = {"repository": repo, "started_at": datetime.now(UTC).isoformat()}
         events = []
         pipeline = PRDiffPipeline(spec, PRDiffOptions(limit=10))
-        pipeline.set_progress_callback(lambda **event: events.append(event))
+        pipeline.set_progress_callback(lambda events=events, **event: events.append(event))
         try:
             result = dataclasses.asdict(pipeline.run(destination))
             result["out_dir"] = str(result["out_dir"])
@@ -74,7 +74,9 @@ def main():
     files = {}
     for path in sorted(args.output.rglob("*")):
         if path.is_file():
-            files[str(path.relative_to(args.output))] = hashlib.sha256(path.read_bytes()).hexdigest()
+            files[str(path.relative_to(args.output))] = hashlib.sha256(
+                path.read_bytes()
+            ).hexdigest()
     (args.output / "sha256.json").write_text(json.dumps(files, indent=2) + "\n")
 
 

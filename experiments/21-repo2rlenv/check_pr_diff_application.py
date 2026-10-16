@@ -33,7 +33,9 @@ def main():
         workspace = args.output / task.name
         workspace.mkdir()
         try:
-            paths = sorted(set(line[6:] for line in patch.splitlines() if line.startswith("--- a/")))
+            paths = sorted(
+                set(line[6:] for line in patch.splitlines() if line.startswith("--- a/"))
+            )
             if len(paths) > 5 or "GIT binary patch" in patch:
                 raise ValueError("Outside bounded text patch profile")
             for name in paths:
@@ -49,13 +51,42 @@ def main():
                 target = workspace / name
                 target.parent.mkdir(parents=True, exist_ok=True)
                 target.write_bytes(content)
-                record["files"].append({"path": name, "url": url, "bytes": len(content), "sha256": hashlib.sha256(content).hexdigest()})
-            result = subprocess.run(["git", "apply", "--check", str(patch_path.resolve())], cwd=workspace, capture_output=True, text=True, timeout=15, check=False)
-            record.update(status="patch_applies" if result.returncode == 0 else "patch_does_not_apply", exit_code=result.returncode, diagnostic=result.stderr[:8000])
+                record["files"].append(
+                    {
+                        "path": name,
+                        "url": url,
+                        "bytes": len(content),
+                        "sha256": hashlib.sha256(content).hexdigest(),
+                    }
+                )
+            result = subprocess.run(
+                ["git", "apply", "--check", str(patch_path.resolve())],
+                cwd=workspace,
+                capture_output=True,
+                text=True,
+                timeout=15,
+                check=False,
+            )
+            record.update(
+                status="patch_applies" if result.returncode == 0 else "patch_does_not_apply",
+                exit_code=result.returncode,
+                diagnostic=result.stderr[:8000],
+            )
         except (OSError, ValueError, subprocess.SubprocessError) as exc:
             record.update(status="check_incomplete", diagnostic=f"{type(exc).__name__}: {exc}")
         records.append(record)
-        (args.output / "report.json").write_text(json.dumps({"stage": "patch_application_check", "limitations": "Text files only; no container build, target-code execution, full checkout, or scientific grading.", "downloaded_bytes": downloaded, "tasks": records}, indent=2) + "\n")
+        (args.output / "report.json").write_text(
+            json.dumps(
+                {
+                    "stage": "patch_application_check",
+                    "limitations": "Text files only; no container build, target-code execution, full checkout, or scientific grading.",
+                    "downloaded_bytes": downloaded,
+                    "tasks": records,
+                },
+                indent=2,
+            )
+            + "\n"
+        )
         print(task.name, record["status"], flush=True)
 
 

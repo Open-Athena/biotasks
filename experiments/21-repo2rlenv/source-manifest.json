@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": "https://github.com/Open-Athena/biotasks/issues/21",
-  "stage": "static_inspection",
+  "stage": "partial_generation_and_diagnostics",
   "biotasks_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "repo2rlenv_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
   "source_revisions": {
@@ -18,7 +18,7 @@
     "stop_on_any_budget_limit": true
   },
   "execution": {
-    "generation_started": false,
+    "generation_started": true,
     "model_calls": 0,
     "worker_launches": 0,
     "paid_fallback": false,
@@ -28,7 +28,12 @@
     "worker_backend": null,
     "aggregate_token_cap": null,
     "aggregate_worker_hours": null,
-    "billable_allowance_usd": 0
+    "billable_allowance_usd": 0,
+    "completed_routes": [
+      "pr_diff/native"
+    ],
+    "exported_bundles": 19,
+    "independently_validated_tasks": 0
   },
   "next_gates": [
     "Resolve route-specific model clients and candidate-budget enforcement",

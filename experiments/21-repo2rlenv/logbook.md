@@ -16,3 +16,24 @@ Next: inspect dedicated model paths and cap semantics, select bounded historical
 ### Bounded PR discovery
 
 Recorded ten merged PR locators per repository in pr-discovery.json (40 total), using the CLI default updated ordering. These are discovery records, not 40 generation attempts. Titles suggest useful leads: Biopython #5344 (alignment score), scikit-bio #2630 (sequence case conversion), bedtools #999 (genome-file line endings), and DESeq2 #118 (greaterAbs with useT). Source/test diffs, historical environments, and exact execution base/head commits remain to inspect. Documentation-only and maintenance changes stay in the discovery ledger rather than disappearing from the denominator.
+
+## 2026-10-16 — native PR-diff run and independent diagnostics
+
+- Checkpoint d1a7d15 recorded the four-cohort, ten-candidate, zero-model/worker run. Native generation completed in 53.71 seconds at 45,932 KiB peak RSS; no owned worker remained. Local load/memory stayed within the shared-node thresholds.
+- Forty candidates yielded 19 exports: Biopython 4, scikit-bio 3, bedtools 6, DESeq2 6. All native skips are retained. Exact bundles, checksums, configurations, and logs are in evidence/pr-diff-01.
+- Scorer-only controls produced oracle=1 and empty=0 on all 19. Reversing added/deleted lines still scores 0.806–0.900. This string-level probe demonstrates similarity sensitivity, not an executable exploit or biological grading result.
+- Bounded pinned-file downloads and git apply --check succeeded for 17/19 patches. bedtools #1067 and #1083 fail against the base recorded by the generator. One passing patch has a file-mode warning because raw downloads do not preserve executable bits. No full checkout or container has been tested.
+- Instruction inspection found maintenance/docstring/vignette tasks, contribution-template boilerplate, explicit solution hints, and GPU-related content among exports. Repository membership and oracle score alone do not establish useful biological tasks.
+- Current pinned pr_diff code keeps the oracle/verifier in tests/, not the learner Dockerfile; this differs from the older published dataset assessment. Runtime isolation still requires validation.
+- Confirmed CodeMidas is also incompatible with GLM configuration alone: recipe_options.py restricts author/reviewer to Sol/Luna, pipeline.py rejects custom endpoints, and the dedicated OpenAI agent has a matching allowlist. Record it as a model blocker, alongside Tasksmith, before any optional adaptation.
+- Installation initially failed because the selectively extracted source omitted THIRD_PARTY_NOTICES.md. Restoring it from the same archive allowed locked installation; original failure retained. This was preparation, not a generation candidate failure.
+
+No tasks are independently validated or admitted to Marin yet. Patch failures, scientific relevance, container execution, and remaining recipes are still open; the research objective is not complete.
+
+### Confirmed newline defect
+
+The two failing bedtools patches are not a base-selection error. Fetching gh pr diff as bytes preserves 13 CRLF lines for #1067 and 8 for #1083. Each raw patch applies to the same recorded base files. Replacing CRLF with LF produces exactly the exported patch bytes. The pinned GitHub client's subprocess.run(text=True) performs this normalization. Evidence is in evidence/pr-diff-01/newline-diagnosis.json; keep the original failed exports unchanged. This is a concrete non-Python-panel finding and motivates a separately recorded byte-preservation intervention.
+
+Prepared remote_worker_probe.py and remote-execution-proposal.md. The backend probe is import/argument checked only, with no provision call made. User approval is pending for the proposed $25 / eight aggregate remote-hour CPU allowance; GLM call/token limits are proposed and generation guards remain to implement. No paid fallback is permitted.
+
+Ruff 0.16.9 formatted the experiment scripts after execution; it also flagged a loop-variable capture in the synchronous progress callback. Bound that callback explicitly for future runs. The original executed script revisions remain preserved by their pre-run commits.
