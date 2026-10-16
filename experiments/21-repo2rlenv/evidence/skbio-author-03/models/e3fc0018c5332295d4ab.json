@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "issue:swe-smith:e3fc0018c5332295d4ab",
+  "request_sha256": "108b730518f45a6645fbab0880aa80734d8522f9827ace9bce64322b47d035fd",
+  "response": {
+    "completion_tokens": 123327,
+    "content": "{\"issue\": \"## `esty_ci` returns an inflated upper confidence bound whenever the sample contains singletons\\n\\n### Summary\\n\\n`skbio.diversity.alpha.esty_ci(counts)` returns a `(lower, upper)` pair. The lower bound is correct in every observed case, but the upper bound is wrong for any count vector that contains at least one singleton taxon (a taxon with count exactly 1) and more than one individual in total. The returned upper bound exceeds the correct value by exactly `f1 * (n - 1/n)`, where `f1` is the number of singletons and `n = counts.sum()` \u2014 consistent with the singleton count `f1 * n` being used as the interval's center in place of the singleton proportion `f1 / n`. The interval is therefore asymmetric, and the upper bound can be far too large: `12.377195244780573` is returned for a 6-individual sample whose correct upper bound is `0.71052858`. The values of `n`, `f1`, and `f2` are evidently computed correctly, since the lower bound \u2014 which depends on all three \u2014 always matches.\\n\\n### Reproducer\\n\\n```python\\nimport numpy as np\\nfrom skbio.diversity.alpha import esty_ci\\n\\n# 3 individuals in 2 observed taxa: one doubleton (count 2) and one\\n# singleton (count 1).  n = 3, f1 = 1, f2 = 1.\\ncounts = np.array([0, 2, 1, 0, 0])\\n\\nlower, upper = esty_ci(counts)\\n\\n# Observed:  lower = -0.73353593 (correct), upper = 4.066869261662654 (wrong)\\n# Expected:  lower = -0.73353593, upper = 1.40020259\\nassert np.isclose(lower, -0.73353593)   # passes\\nassert np.isclose(upper, 1.40020259)    # fails: upper is 4.066869261662654\\n```\\n\\nFurther evidenced failures (count vectors are per-taxon counts; the lower bound is returned correctly in every case):\\n\\n| counts | n | f1 | f2 | lower (correct) | upper returned | upper expected |\\n|---|---|---|---|---|---|---|\\n| `[0, 3, 1, 0, 0]` | 4 | 1 | 0 | -0.17434465 | 4.424344650378146 | 0.67434465 |\\n| `[0, 4, 1, 1, 0]` | 6 | 2 | 0 | -0.04386191 | 12.377195244780573 | 0.71052858 |\\n| `[0, 4, 2, 1, 0]` | 7 | 1 | 1 | -0.33042054 | 7.473277686010688 | 0.61613483 |\\n\\n### Expected behavior\\n\\nWith `n = counts.sum()`, `f1` = number of taxa with count exactly 1, `f2` = number of taxa with count exactly 2, and `z = 1.959963984540054` (the two-sided 95% standard-normal critical value, `scipy.stats.norm.ppf(0.975)`), the two bounds must be equidistant from the singleton proportion `f1 / n`:\\n\\n```\\nlower = f1/n - z * sqrt(f1*(n - f1)/n**3 + 2*f2/n**2)\\nupper = f1/n + z * sqrt(f1*(n - f1)/n**3 + 2*f2/n**2)\\n```\\n\\nEquivalently, `lower + upper == 2 * f1 / n`. These formulas reproduce all ten expected bound pairs (inputs covering n = 1\u201310, f1 = 0\u20132, f2 = 0\u20132). Agreement with the expected values is required within `rtol = 1e-07`, `atol = 0`, i.e. `|actual - expected| <= 1e-07 * |expected|`.\\n\\n### Boundary cases that must continue to hold\\n\\n- No singletons (`f1 = 0`): the upper bound is currently correct and must remain so, e.g. `esty_ci(np.array([0, 2, 0, 0, 0]))` \u2192 `(-1.38590382, 1.38590382)` and `esty_ci(np.array([0, 5, 2, 2, 0]))` \u2192 `(-0.43554755, 0.43554755)`.\\n- A single individual (`n = 1`, necessarily a singleton): `esty_ci(np.array([0, 1, 0, 0, 0]))` \u2192 `(1.0, 1.0)`; currently correct only because `f1 * n == f1 / n` when `n = 1`.\\n- An all-zero count vector: `esty_ci([0, 0])` must yield NaN.\\n\\n```python\\nimport numpy as np\\nfrom skbio.diversity.alpha import esty_ci\\n\\nassert np.allclose(esty_ci(np.array([0, 5, 2, 2, 0])), (-0.43554755, 0.43554755))\\nassert np.allclose(esty_ci(np.array([0, 1, 0, 0, 0])), (1.0, 1.0))\\nassert np.isnan(np.asarray(esty_ci([0, 0]), dtype=float)).all()\\n```\", \"reason\": \"The execution log shows esty_ci's upper bounds mismatching 7 of 10 expected values (max absolute error 11.66666666, tolerance rtol=1e-07/atol=0) while all ten lower bounds match. The mismatching inputs are exactly those whose cumulative count vectors contain singleton taxa, and every logged actual upper equals f1*n + half-width rather than f1/n + half-width, an error of exactly f1*(n - 1/n). The test source supplies the expected (lower, upper) pairs for the cumulative count vectors plus boundary expectations (f1=0, n=1, and an all-zero input yielding NaN), which together pin down the symmetric-interval definition, the z constant, and the tolerance stated in the report.\"}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 1582,
+    "usage": {
+      "completion_tokens": 123327,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 121832,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 1582,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 448,
+        "created_cache_tokens": 1088,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 124909
+    }
+  },
+  "status": "completed"
+}

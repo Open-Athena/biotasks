@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "docstring:flow:4e4e60d7b36914ae432d",
+  "request_sha256": "90051ab2a198eb3059e1cb03bf6d03a0ec2a603c5aac6874a1d8262035f5c07d",
+  "response": {
+    "completion_tokens": 1377,
+    "content": "{\n  \"functions\": [\n    {\n      \"node_id\": \"Bio/SeqUtils/__init__.py:420:molecular_weight\",\n      \"docstring\": \"Calculates the molecular weight of a DNA, RNA, or protein sequence as a float. Only unambiguous letters are allowed, and nucleotide sequences are assumed to have a 5' phosphate. Whitespace is stripped from the sequence and letters are uppercased before calculation. A SeqRecord is accepted via its .seq attribute. The molecular weight of an empty sequence is not defined and raises a ValueError. Examples: molecular_weight('AGC') with the default DNA type gives 949.61, 'AGC' as RNA gives 997.61, and 'AGC' as protein gives 249.29. Args: seq (str, Seq, or SeqRecord): The sequence whose molecular weight is calculated. seq_type (str, optional): The type of the sequence; one of 'DNA', 'RNA', or 'protein'. Defaults to 'DNA'. double_stranded (bool, optional): Whether to calculate the mass for the double-stranded molecule, adding the mass of the complementary strand. Defaults to False. Not valid for protein sequences. circular (bool, optional): Whether the molecule is circular (has no ends). Defaults to False. monoisotopic (bool, optional): Whether to use the monoisotopic mass tables. Defaults to False. Returns: float: The molecular weight of the sequence. Raises: ValueError: If the sequence is empty; if seq_type is not one of 'DNA', 'RNA', or 'protein'; if the sequence contains a letter that is not a valid unambiguous letter for the given seq_type; or if double_stranded is True for a protein sequence.\"\n    }\n  ]\n}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 2148,
+    "usage": {
+      "completion_tokens": 1377,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 1005,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 2148,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 1152,
+        "created_cache_tokens": 960,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 3525
+    }
+  },
+  "status": "completed"
+}

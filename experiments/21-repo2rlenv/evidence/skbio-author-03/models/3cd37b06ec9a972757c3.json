@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "issue:swe-smith:3cd37b06ec9a972757c3",
+  "request_sha256": "052f25f7eab653c80a21776c3611cb7755a0812487763ddee637fa75d52832c2",
+  "response": {
+    "completion_tokens": 26013,
+    "content": "{\"issue\": \"# `skbio.diversity.alpha.strong` returns 2.0 instead of Strong's dominance index\\n\\n## Summary\\n\\n`strong` returns `np.float64(2.0)` for the count vector `[1, 2, 3, 1]`. The correct value is `3/14 \u2248 0.214285714` (the logged deviation from the expected value is `1.785714286`). The failure is isolated to `strong`; the other alpha-diversity metrics exercised by the same suite pass.\\n\\n## Reproducer\\n\\n```python\\nimport numpy as np\\nfrom skbio.diversity.alpha import strong\\n\\ncounts = np.array([1, 2, 3, 1])\\nresult = strong(counts)\\nprint(result)  # actual: np.float64(2.0)\\n\\nexpected = 3 / 14  # Strong's dominance index for [1, 2, 3, 1] = 0.214285714285714...\\nassert abs(result - expected) < 5e-8, (\\n    f\\\"strong([1, 2, 3, 1]) returned {result}, expected ~{expected}\\\"\\n)\\n```\\n\\n## Actual behavior\\n\\n`strong(np.array([1, 2, 3, 1]))` returns `np.float64(2.0)`.\\n\\n## Expected behavior\\n\\nStrong's dominance index for a counts vector with total count `N` and `S` observed taxa is\\n\\n```\\nD = max_{i=1..S} | b_i / N - i / S |\\n```\\n\\nwhere `b_i` is the cumulative abundance of the `i` most abundant taxa (counts sorted in decreasing order).\\n\\nFor `[1, 2, 3, 1]`: `N = 7`, `S = 4`; sorted counts `[3, 2, 1, 1]`; cumulative proportions `[3/7, 5/7, 6/7, 1]`; `i/S = [1/4, 1/2, 3/4, 1]`; absolute differences `[5/28, 6/28, 3/28, 0]`; hence `D = 6/28 = 3/14 \u2248 0.2142857142857143`.\\n\\nRequired accuracy: the result must match `3/14` to 7 decimal places, i.e. `round(result - 3/14, 7) == 0` (a difference smaller than `5e-8`).\\n\\n## Why the current output cannot be correct\\n\\nBoth compared quantities lie in `[0, 1]`: `b_i / N` is a cumulative share of the total count and `i / S` is a fraction of the observed taxa. Their maximum absolute difference is therefore at most `1`, so every correct return value of `strong` lies in `[0, 1]`. The observed `2.0` violates this invariant, so the function is not computing the index for this input; this is a structural error, not a floating-point tolerance issue.\\n\\n## Boundary cases that must hold\\n\\n- An all-zero counts vector must return `NaN`: `strong([0, 0])` is expected to be `NaN`, not a finite number and not an exception. (The failing run stops at the non-zero case before this one is exercised, so current behavior for all-zero input is unverified; the requirement itself stands.)\\n- The counts vector must be accepted both as a Python list and as a NumPy array.\\n- The return value is a NumPy floating-point scalar (`np.float64`).\", \"reason\": \"The execution log records a single failure: `strong(np.array([1, 2, 3, 1]))` returned `np.float64(2.0)` where `0.214285714` was expected under a 7-decimal comparison (logged difference `1.785714286`). `0.214285714` is exactly `3/14`, which is Strong's dominance index `max_i |b_i/N - i/S|` for that vector (N=7, S=4, sorted counts [3,2,1,1], cumulative proportions [3/7,5/7,6/7,1] vs i/S [1/4,1/2,3/4,1]), establishing both the expected value and the correct formula. The returned `2.0` also violates the index's [0,1] range, confirming a real malfunction rather than tolerance drift. The suite's second expectation (NaN for an all-zero vector) was never reached because the first assertion failed, so it is reported as a requirement rather than an observed result; the list-vs-array acceptance and np.float64 return type are taken from the test source and log.\"}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 799,
+    "usage": {
+      "completion_tokens": 26013,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 24935,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 799,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 448,
+        "created_cache_tokens": 320,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 26812
+    }
+  },
+  "status": "completed"
+}

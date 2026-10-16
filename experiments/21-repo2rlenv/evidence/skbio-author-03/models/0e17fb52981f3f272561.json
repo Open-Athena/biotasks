@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "issue:swe-smith:0e17fb52981f3f272561",
+  "request_sha256": "9ad12c4bcf599ec1b34c79fb15c2007a399ca559e6e699e7bb1b4f2ab9d329ec",
+  "response": {
+    "completion_tokens": 41424,
+    "content": "{\n  \"issue\": \"# `kempton_taylor_q` returns incorrect diversity values\\n\\n## Summary\\n\\n`skbio.diversity.alpha.kempton_taylor_q` returns numerically wrong results. Two input/output pairs are established by the failing run (all other alpha-diversity functions tested in the same run pass, so the problem is specific to this function):\\n\\n| Input | Returned | Expected |\\n|---|---|---|\\n| 30-count Magurran (1998, p. 143) abundance vector, default quantiles | `14.018258178984697` | `14 / ln(34/4)` = `6.5418538168595255` |\\n| `np.arange(1, 11)` with quantiles `(0.1, 0.9)` | `6.213349345596119` | `8 / ln(10/2)` = `4.970679476476895` |\\n\\nThe absolute errors are `7.476404362125171` and `1.242669869119224` respectively, far outside the required agreement (see below).\\n\\n## Reproducer\\n\\n```python\\nimport numpy as np\\nfrom skbio.diversity.alpha import kempton_taylor_q\\n\\n# Magurran (1998) p. 143 example: 30 species abundances.\\nmagurran = np.array([2, 3, 3, 3, 3, 3, 4, 4, 4, 6, 6, 7, 7, 9, 9, 11, 14,\\n                     15, 15, 20, 29, 33, 34, 36, 37, 53, 57, 138, 146, 170])\\nramp = np.arange(1, 11)\\n\\nactual_default = kempton_taylor_q(magurran)          # default quantiles\\nactual_custom = kempton_taylor_q(ramp, 0.1, 0.9)\\n\\nexpected_default = 14 / np.log(34 / 4)\\nexpected_custom = 8 / np.log(10 / 2)\\n\\nprint(\\\"default quantiles:\\\", actual_default, \\\"expected:\\\", expected_default)\\nprint(\\\"(0.1, 0.9) quantiles:\\\", actual_custom, \\\"expected:\\\", expected_custom)\\n# observed:\\n#   default quantiles: 14.018258178984697 expected: 6.5418538168595255\\n#   (0.1, 0.9) quantiles: 6.213349345596119 expected: 4.970679476476895\\n\\nassert abs(actual_default - expected_default) < 1e-7\\nassert abs(actual_custom - expected_custom) < 1e-7\\n```\\n\\n## Observation (limited to the two cases above)\\n\\nIn both established cases the returned value equals `len(counts)` divided by the log-ratio that appears in the corresponding expected value:\\n\\n- `14.018258178984697 == 30 / ln(34/4)` (the expected value's numerator is 14)\\n- `6.213349345596119 == 10 / ln(10/2)` (the expected value's numerator is 8)\\n\\nSo for these two inputs the log-ratio factor matches the expected one, while the other factor is the total number of counts instead of the value required by the quantile range. These two data points do not establish that this pattern holds for every input, nor that the error always has the same direction; they are recorded only as observed.\\n\\n## Expected behavior\\n\\nThe result must depend on the requested quantiles and on the counts, not on the number of counts alone (e.g. for `np.arange(1, 11)`, quantiles `(0.1, 0.9)` and `(0, 0.9)` are required to give different values). The following values are required; the first two rows are the confirmed failures above, the remaining rows are pinned by the project's test suite but their current outputs were not observed in the failing run. Required agreement: `round(actual - expected, 7) == 0` (unittest `assertAlmostEqual` default, i.e. 7 decimal places).\\n\\n- `kempton_taylor_q(magurran)` (30-count vector above, default quantiles) \u2192 `14 / ln(34/4)`\\n- `kempton_taylor_q(np.arange(1, 11), 0.1, 0.9)` \u2192 `8 / ln(10/2)`\\n- `kempton_taylor_q(np.arange(1, 11), 0, 0.9)` \u2192 `9 / ln(10)`\\n- `kempton_taylor_q(np.arange(1, 11), 0, np.nextafter(1.0, 0.0))` \u2192 `9 / ln(10)`\\n- `kempton_taylor_q(np.arange(1, 11), 0, 1)` \u2192 `9 / ln(10)`\\n- `kempton_taylor_q([1, 2], 0, 1)` \u2192 `1 / ln(2)`\\n\\nBoundary behavior a fix must preserve:\\n\\n- The result is invariant under permutation of the input counts.\\n- `lower_quantile=0` and `upper_quantile=1` are valid, as is an upper quantile just below 1 (`np.nextafter(1.0, 0.0)`); `upper_quantile=1` must resolve to a count within the sorted vector (no out-of-range indexing) and gives the same result as an upper quantile just below 1 for `np.arange(1, 11)`.\\n- `kempton_taylor_q([0, 0])` returns NaN.\",\n  \"reason\": \"The execution log records two exact failing pairs for kempton_taylor_q: the Magurran 30-count vector with default quantiles returns 14.018258178984697 against an expected 14/ln(34/4) = 6.5418538168595255, and np.arange(1, 11) with quantiles (0.1, 0.9) returns 6.213349345596119 against an expected 8/ln(10/2) = 4.970679476476895. Both returned values equal len(counts) divided by the expected log-ratio (30/ln(34/4) and 10/ln(10/2)), which grounds the numerator observation, reported as scoped to these two cases only. The test source additionally pins expected values for the quantile boundary cases (0, 0.9), (0, nextafter(1, 0)), (0, 1), [1, 2] with (0, 1), NaN for [0, 0], and invariance under shuffling; because each test stops at its first failed assertion, only the two logged outputs are established, so the report makes no universal claim about the numerator or the direction of the error and does not prescribe an implementation.\"\n}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 1419,
+    "usage": {
+      "completion_tokens": 41424,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 39808,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 1419,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 1216,
+        "created_cache_tokens": 192,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 42843
+    }
+  },
+  "status": "completed"
+}

@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "docstring:flow:68531686a46a16006a58",
+  "request_sha256": "53fa3aaa47135fecb4385a6c2ab7bf6730c2d67c1f987efa4fb7efbe032ce46b",
+  "response": {
+    "completion_tokens": 1689,
+    "content": "{\n  \"functions\": [\n    {\n      \"node_id\": \"Bio/SeqUtils/__init__.py:53:gc_fraction\",\n      \"docstring\": \"Calculates the G+C fraction of a nucleotide sequence, returning a float between 0 and 1. Handles mixed-case sequences and both DNA and RNA (U is treated like T). Ambiguous nucleotides in this context are those other than A, T, C, G, S, W, and U (S is G or C, W is A or T; B, D, H, K, M, N, R, V, X, Y are ambiguous). The `ambiguous` parameter controls how these are handled, affecting both the GC numerator and the sequence length used as the denominator: with 'remove', only G, C, and S count toward the GC total and only A, C, T, G, S, W, U contribute to the length (equivalent to removing all B, D, H, K, M, N, R, V, X, Y characters before calculating GC content); with 'ignore', only unambiguous nucleotides (G, C, S) count toward the GC percentage but all characters contribute to the length; with 'weighted', ambiguous characters contribute a mean value (e.g., G and C count as 1, N and X as 0.5, D as 0.33; see Bio.SeqUtils._gc_values for the full list) while the length is the full sequence length. Returns 0 when the effective length is zero (e.g., an empty sequence, or a sequence containing only ambiguous characters under 'remove' mode). Raises ValueError if `ambiguous` is not one of 'remove', 'ignore', or 'weighted'.\"\n    }\n  ]\n}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 2371,
+    "usage": {
+      "completion_tokens": 1689,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 1316,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 2371,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 1152,
+        "created_cache_tokens": 1216,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 4060
+    }
+  },
+  "status": "completed"
+}

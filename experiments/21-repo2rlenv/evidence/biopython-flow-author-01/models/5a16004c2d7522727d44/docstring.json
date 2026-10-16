@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "docstring:flow:5a16004c2d7522727d44",
+  "request_sha256": "fa2311896dc7e98d23e1c983ff75a9dbb7afc79bfbd9745cce17e5555a6b355f",
+  "response": {
+    "completion_tokens": 1666,
+    "content": "{\"functions\": [{\"node_id\": \"Bio/SeqUtils/__init__.py:192:GC_skew\", \"docstring\": \"Calculates the GC skew (G-C)/(G+C) for consecutive windows along a nucleotide sequence, returning one ratio per window in sequence order. Both uppercase and lowercase G and C characters are counted; ambiguous nucleotides are ignored. Windows containing no G or C nucleotides yield 0.0 rather than raising a division error. The number of values equals ceil(len(seq) / window), with the final window possibly shorter than the others when the sequence length is not a multiple of the window size. No exceptions are raised for normal inputs. Args: seq (str): The nucleotide sequence to analyze. window (int, optional): The window size in bases used to partition the sequence. Defaults to 100. Returns: List[float]: The GC skew ratio (G-C)/(G+C) computed for each window along the sequence.\"}]}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 1493,
+    "usage": {
+      "completion_tokens": 1666,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 1461,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 1493,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 1152,
+        "created_cache_tokens": 320,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 3159
+    }
+  },
+  "status": "completed"
+}
