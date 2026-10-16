@@ -36,6 +36,7 @@ def main():
             "smith-controls",
             "flow-controls",
             "biopython-cve",
+            "biopython-commit",
             "marin-schema",
             "marin-runtime",
         ),
@@ -92,6 +93,13 @@ def main():
             )
             if args.stage == "flow-controls":
                 entry += "--recipe swe_flow "
+        elif args.stage == "biopython-commit":
+            worker.upload(
+                root / "replay_biopython_commit.py", "/work/native/replay_biopython_commit.py"
+            )
+            worker.upload(root / "biopython-cve.Dockerfile", "/work/native/Dockerfile")
+            unpack = ""
+            entry = "/work/native/replay_biopython_commit.py "
         elif args.stage == "biopython-cve":
             for source, target in (
                 ("replay_biopython_cve.py", "replay_biopython_cve.py"),
