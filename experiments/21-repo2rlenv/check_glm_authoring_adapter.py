@@ -11,6 +11,7 @@ import litellm
 from glm_authoring_adapter import adapted_authoring
 from litellm.types.utils import Usage
 from repo2rlenv.campaigns.budget import BudgetLedger
+from repo2rlenv.pipelines.recipes.swe_flow.author import author as flow_author
 from repo2rlenv.pipelines.recipes.swe_smith import issue
 from repo2rlenv.spec.input import LLMSpec
 
@@ -86,3 +87,73 @@ with tempfile.TemporaryDirectory() as tmp:
 print(
     "PASS: adapted wire settings, durable raw/normalized evidence, native repair bound; zero model calls"
 )
+
+# SWE-flow has a distinct structured metering site and three-attempt bound.
+
+candidate = {
+    "functions": {"pkg/api.py:1:count": {"name": "count", "source": "def count(x): return len(x)"}},
+    "test_evidence": "count([]) == 0; count([1, 2]) == 2",
+}
+with tempfile.TemporaryDirectory() as tmp:
+    out = Path(tmp)
+    ledger = BudgetLedger(out / "ledger.sqlite", limit_usd="5")
+    calls.clear()
+    with (
+        patch.object(litellm, "completion", new=transport),
+        adapted_authoring(settings, out, metering_target="structured"),
+    ):
+        try:
+            flow_author(candidate, spec, ledger, out, operation_prefix="flow-invalid", resume=False)
+        except ValueError as exc:
+            assert "exhausted 3 attempts" in str(exc)
+        else:
+            raise AssertionError("Invalid docstrings must fail before specification")
+    assert len(calls) == 3
+    assert not (out / "specification.json").exists()
+    for stem in ("docstring", "docstring-repair-1", "docstring-repair-2"):
+        assert json.loads((out / f"{stem}.request.json").read_text())["max_tokens"] == 131072
+
+with tempfile.TemporaryDirectory() as tmp:
+    out = Path(tmp)
+    ledger = BudgetLedger(out / "ledger.sqlite", limit_usd="5")
+    calls.clear()
+    responses = iter(
+        [
+            json.dumps(
+                {
+                    "functions": [
+                        {
+                            "node_id": "pkg/api.py:1:count",
+                            "docstring": "Return the number of elements in the supplied sequence.",
+                        }
+                    ]
+                }
+            ),
+            json.dumps(
+                {
+                    "markdown": "Implement count(x), returning the number of elements in x. An empty sequence yields zero. Preserve the public function name and accept sequences containing arbitrary values."
+                }
+            ),
+        ]
+    )
+
+    def successful_transport(*args, **kwargs):
+        response = transport(*args, **kwargs)
+        response.choices[0].message.content = next(responses)
+        response.choices[0].finish_reason = "stop"
+        return response
+
+    with (
+        patch.object(litellm, "completion", new=successful_transport),
+        adapted_authoring(settings, out, metering_target="structured"),
+    ):
+        documents, instruction = flow_author(
+            candidate, spec, ledger, out, operation_prefix="flow-valid", resume=False
+        )
+    assert len(calls) == 2
+    assert set(documents) == set(candidate["functions"])
+    assert instruction.startswith("Implement count")
+    request = json.loads((out / "specification.request.json").read_text())
+    assert "public_docstrings" in json.dumps(request)
+    assert len(list((out / "raw").glob("*.json"))) == 2
+print("PASS: native SWE-flow two-stage authoring and three-attempt repair bound; zero model calls")

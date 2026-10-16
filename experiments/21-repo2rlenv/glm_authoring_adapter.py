@@ -4,18 +4,21 @@ from contextlib import contextmanager
 from unittest.mock import patch
 
 import litellm
+from repo2rlenv.campaigns import structured
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.pipelines.recipes.swe_smith import issue
 
 
 @contextmanager
-def adapted_authoring(settings, output):
+def adapted_authoring(settings, output, *, metering_target="swe_smith"):
     """Override the recorded output allowance and retain raw response evidence.
 
     This context is serial and process-local. Native candidate and repair bounds
     remain in write_issue; the original recipe implementation is not edited.
     """
-    original_metered = issue.metered_complete
+    targets = {"swe_smith": issue, "structured": structured}
+    target = targets[metering_target]
+    original_metered = target.metered_complete
     original_completion = litellm.completion
     calls = 0
 
@@ -49,7 +52,7 @@ def adapted_authoring(settings, output):
         return original_metered(*args, **kwargs)
 
     with (
-        patch.object(issue, "metered_complete", new=metered),
+        patch.object(target, "metered_complete", new=metered),
         patch.object(litellm, "completion", new=completion),
     ):
         yield

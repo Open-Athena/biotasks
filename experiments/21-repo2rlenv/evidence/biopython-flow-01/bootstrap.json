@@ -1,0 +1,23 @@
+{
+  "build_time_sec": 39.67,
+  "dockerfile_reconstruction": "FROM python:3.12.3-slim\nWORKDIR /workspace\nRUN python -m pip install --no-cache-dir pytest==9.0.3\nCOPY . /workspace\nRUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'pytest==9.0.3' && mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && test -L LICENSE && test \"$(readlink LICENSE)\" = LICENSE.rst && cmp LICENSE LICENSE.rst && rm LICENSE && cp LICENSE.rst LICENSE && cmp LICENSE LICENSE.rst\nRUN rm -rf /workspace/.git /root/.cache/pip\nENV PYTHONDONTWRITEBYTECODE=1 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1\nENV HF_HUB_OFFLINE=1 TRANSFORMERS_OFFLINE=1 HF_DATASETS_OFFLINE=1\n",
+  "extra": {
+    "dockerfile_path": "/work/bootstrap-profiles/f789ea79e306664bd7120ab6d8044ef5304935cca60972b33aeee994aa5940f3.Dockerfile",
+    "source": "user_dockerfile"
+  },
+  "image_digest": "sha256:aee2493e6a8a282c9ae4e803fc0b6f31b6b363924d70f527630b805dcab81285",
+  "image_tag": "local/r2e-bootstrap/biopython__biopython:4eda92397bde",
+  "iterations": 0,
+  "language": "unknown",
+  "llm_cost_estimate_usd": 0.0,
+  "llm_provider": "none/explicit-dockerfile",
+  "pushed_to_registry": false,
+  "rebuild_cmds": [],
+  "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+  "repo": "biopython/biopython",
+  "smoke_passed": true,
+  "test_cmds": [],
+  "transcript_path": null,
+  "verify_detail": "",
+  "verify_passed": false
+}
