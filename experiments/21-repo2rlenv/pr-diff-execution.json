@@ -1,0 +1,25 @@
+{
+  "stage": "checkpoint_before_generation",
+  "route": "pr_diff/native",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "python": "3.12.3",
+  "dependencies": "upstream uv.lock, uv sync --frozen --no-dev",
+  "execution": "native PRDiffPipeline.run, default PRDiffOptions except limit=10",
+  "cohorts": 4,
+  "max_candidates_per_cohort": 10,
+  "max_candidates_total": 40,
+  "model_calls": 0,
+  "worker_launches": 0,
+  "billable_allowance_usd": 0,
+  "wall_time_limit_seconds": 600,
+  "estimated_peak_memory_mib": 200,
+  "parallelism": 1,
+  "generation_output": "outside Git under /tmp/biotasks21-runtime/pr-diff-01 until eligibility review and archival",
+  "limitations": [
+    "Native discovery overfetches at most 30 PR records per cohort, then returns at most 10 candidates.",
+    "Native API discovery is live; prior PR discovery file is not injected into the generator.",
+    "Generated metadata records selected base commits; patch application must still be independently checked.",
+    "Generation exports candidates before independent validation; at most three validated tasks per cohort will be selected.",
+    "No claim of container execution, biological correctness, or Marin admission."
+  ]
+}
