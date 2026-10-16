@@ -29,6 +29,7 @@ def run(config, *, root=Path("/evidence/native")):
         destination=root / "tasks",
         name=config["task_name"],
         revision=config["factory_revision"],
+        attribution=json.loads((HERE / config["attribution_file"]).read_text()),
     )
     requests = RequestLedger(root / "requests.sqlite", {"solver": Allowance(None, None)})
     gate = InferenceGate(

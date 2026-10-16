@@ -82,12 +82,15 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path):
         destination=tmp_path / "bundles",
         name="fixture",
         revision="a" * 40,
+        attribution={"notebook_license": {"text": "Fixture source notice\n"}},
     )
     task = package(**options)
     assert (task / "tests/reference/y.txt").read_bytes() == b"1"
     assert not (task / "environment/reference").exists()
     assert "COPY inputs/" in (task / "environment/Dockerfile").read_text()
     assert (task / "solution/oracle.py").exists()
+    assert (task / "environment/LICENSE.source").read_text() == "Fixture source notice\n"
+    assert (task / "environment/SOURCE-LICENSES.json").is_file()
     controls[0]["candidate_sha256"] = "b" * 64
     save(grading / "final-controls.json", controls)
     with pytest.raises(ValueError, match="different grader"):

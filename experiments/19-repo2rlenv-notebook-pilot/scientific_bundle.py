@@ -42,7 +42,9 @@ reward.write_text('1\\n' if value['passed'] else '0\\n')
 """
 
 
-def package(*, materialization, grading, environment, destination, name, revision):
+def package(
+    *, materialization, grading, environment, destination, name, revision, attribution=None
+):
     materialization, grading, environment = map(Path, (materialization, grading, environment))
     candidate = Materialization.model_validate_json(
         (materialization / "candidate.json").read_text()
@@ -118,6 +120,13 @@ def package(*, materialization, grading, environment, destination, name, revisio
             "#!/bin/sh\nset -eu\npython /tests/verify.py\n", executable=True
         ),
     }
+    if attribution is not None:
+        # Attribution is frozen before native trials, so the released executable
+        # bundle identity includes the notices rather than adding them afterward.
+        assets["environment/SOURCE-LICENSES.json"] = TaskFile.text(json.dumps(attribution, indent=2) + "\n")
+        source_license = attribution.get("notebook_license", {})
+        if source_license.get("text"):
+            assets["environment/LICENSE.source"] = TaskFile.text(source_license["text"])
     manifest = json.loads((materialization / "manifest.json").read_text())
     for kind, names, prefix in [
         ("inputs", candidate.input_paths, "environment/inputs"),
