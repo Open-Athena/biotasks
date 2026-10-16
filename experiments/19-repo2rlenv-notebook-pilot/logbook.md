@@ -1869,3 +1869,5 @@ The native runner now archives its exact pre-trial task package with upstream co
 ## 2026-10-16 — Keep grading grounded in the executed task
 
 For tasks that have been materialized, the grading stage now receives the current public question rather than the full earlier specification and operator handoff. It retains source/provenance, actual materialization, repeatability and independent-execution evidence. This prevents outdated proposed work plans or status statements from becoming new requirements after their stage has passed. Four offline orchestration regressions pass, including independent-worker isolation and review/repair paths. The active materialization 003 checkpoint is unchanged; no generated scientific code was edited.
+
+Native solver trajectories now bypass the per-file small-diagnostic cutoff while remaining inside the existing total 4 MB recovery bound, and are prioritized with native receipts. The two recovery regressions pass, including exact reconstruction of a 300 KB synthetic trajectory and refusal of changed evidence. This is an evidence-transfer change, not a model input/output limit or a scientific artifact edit.

@@ -12,10 +12,11 @@ def prepare(tmp_path, monkeypatch):
     records = []
     for name, data in [
         ("grading/result.json", b'{"status":"fixture"}'),
+        ("native/terminus-2/job/trial/agent/trajectory.json", b'{"messages":[]}' + b" " * 300_000),
         ("grading/trace.txt", b"trace" * 2000),
     ]:
         path = tmp_path / name
-        path.parent.mkdir(exist_ok=True)
+        path.parent.mkdir(parents=True, exist_ok=True)
         path.write_bytes(data)
         records.append(
             {"path": name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}

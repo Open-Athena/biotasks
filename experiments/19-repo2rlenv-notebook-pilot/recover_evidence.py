@@ -68,7 +68,7 @@ def priority(entry):
         return (0, name)
     if name in SELECTED or name.startswith("pilot/trial-claims/"):
         return (0, name)
-    if name.endswith(("/remote-job.json", "/trial.json", "/result.json")):
+    if name.endswith(("/remote-job.json", "/trial.json", "/result.json", "/agent/trajectory.json")):
         return (1, name)
     if name.startswith(("pilot/fidelity/", "pilot/quality/revisions/", "pilot/tasks/")):
         return (2, name)
@@ -114,9 +114,11 @@ def main():
             continue
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.
+        native_trajectory = relative.startswith("native/") and relative.endswith("/agent/trajectory.json")
         if (
             entry["bytes"] > 256_000
             and not relative.startswith(("preparation/", "schema-probe/", "specification/"))
+            and not native_trajectory
         ) or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
