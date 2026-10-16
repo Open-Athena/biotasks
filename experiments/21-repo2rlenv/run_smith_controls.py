@@ -117,6 +117,8 @@ def main():
                 root / "replay_biopython_commit.py", "/work/native/replay_biopython_commit.py"
             )
             worker.upload(root / "biopython-cve.Dockerfile", "/work/native/Dockerfile")
+            for script in ("check_glm_solver_transport.py", "glm_solver_settings.py"):
+                worker.upload(root / script, "/work/native/" + script)
             unpack = ""
             entry = "/work/native/replay_biopython_commit.py "
         elif args.stage == "biopython-cve":
@@ -158,6 +160,19 @@ def main():
         )
         record["setup_returncode"] = setup.returncode
         setup.checked("locked runtime install")
+        if args.stage == "biopython-commit":
+            fixture = worker.exec(
+                [
+                    "sh",
+                    "-c",
+                    "LITELLM_LOCAL_MODEL_COST_MAP=True "
+                    "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python "
+                    "/work/native/check_glm_solver_transport.py "
+                    ">/evidence/native/solver-transport-fixture.log 2>&1",
+                ],
+                timeout=60,
+            )
+            record["solver_transport_fixture_returncode"] = fixture.returncode
         result = worker.exec(
             [
                 "sh",
