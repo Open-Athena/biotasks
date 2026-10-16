@@ -119,7 +119,7 @@ def main():
     manifest = json.loads((inputs / "inputs.json").read_text())
     configuration = json.loads((inputs / "campaign-config.json").read_text())
     entrypoint = configuration.get("entrypoint", "run_pilot.py")
-    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py", "run_reference_replay.py"}:
+    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py", "run_reference_replay.py", "run_notebook_grader.py"}:
         raise ValueError("Unsupported checkpointed experiment entrypoint")
     deadline = min(time.time() + 7200, configuration.get("absolute_deadline", float("inf")))
     evidence = Path("/evidence")
@@ -205,6 +205,12 @@ def main():
             unpack(inputs / "continuation.tar.gz", evidence / "continuation")
             env["BIOTASKS_CONTINUATION"] = str(evidence / "continuation")
         shutil.copyfile(inputs / "inputs.json", evidence / "inputs.json")
+        if entrypoint == "run_notebook_grader.py":
+            command(
+                [sys.executable, str(experiment / "grading_inputs.py"), str(inputs / "campaign-config.json")],
+                cwd=experiment, deadline=min(deadline, time.time() + 1800), env=env,
+                log=evidence / "grading-retrieval.log",
+            )
         if entrypoint == "run_coverage.py":
             command(
                 [sys.executable, str(experiment / "coverage_inputs.py"), str(inputs / "campaign-config.json")],

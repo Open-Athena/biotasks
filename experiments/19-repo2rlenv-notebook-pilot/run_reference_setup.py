@@ -33,10 +33,19 @@ HERE = Path(__file__).parent
 
 
 def check_config(config):
-    if config.get("entrypoint") not in {"run_reference_setup.py", "run_reference_replay.py"}:
+    if config.get("entrypoint") not in {
+        "run_reference_setup.py",
+        "run_reference_replay.py",
+        "run_notebook_grader.py",
+    }:
         raise ValueError("Use the separate reference-setup entry point")
+    grading = config["entrypoint"] == "run_notebook_grader.py"
+    if grading:
+        if config.get("max_tests", "missing") is not None or config.get("verifier_seconds") != 120:
+            raise ValueError("Grading uses time-bounded checks and the agreed 120-second verifier")
+    elif type(config.get("max_tests")) is not int or config["max_tests"] < 1:
+        raise ValueError("Explicit agreed max_tests is required before execution")
     for name in (
-        "max_tests",
         "setup_seconds",
         "reference_seconds",
         "campaign_seconds",
@@ -53,6 +62,16 @@ def check_config(config):
         raise ValueError("Campaign must leave time for cleanup")
     if not 0 < float(config["daytona_budget_usd"]) <= 100:
         raise ValueError("A positive reservation within the standing spending ceiling is required")
+    for key in (
+        "preparation_directory",
+        "reference_directory",
+        "replay_directory",
+        "specification_directory",
+    ):
+        if key in config and (
+            not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts
+        ):
+            raise ValueError("Input directories must be checkpoint-relative")
     directory = Path(config["preparation_directory"])
     if directory.is_absolute() or ".." in directory.parts:
         raise ValueError("Preparation must be within the frozen experiment")
@@ -189,7 +208,8 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
     if config["reference_seconds"] != target["reference_seconds"]:
         raise ValueError("Reference allowance differs from the reviewed preparation")
     replay = config["entrypoint"] == "run_reference_replay.py"
-    if replay:
+    grading = config["entrypoint"] == "run_notebook_grader.py"
+    if replay or grading:
         from reference_replay import load_snapshot, replay_reference
 
         snapshot = load_snapshot(HERE / config["reference_directory"], prepared)
@@ -211,10 +231,6 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
     work_deadline = (
         min(deadline, time.time() + config["campaign_seconds"]) - config["cleanup_seconds"]
     )
-    ledger = RequestLedger(
-        root / "requests.sqlite", {"setup": Allowance(config["max_requests"], None)}
-    )
-    spend = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1")
     try:
         reservation = BudgetLedger(
             root / "daytona-budget.sqlite", limit_usd=config["daytona_budget_usd"]
@@ -265,11 +281,38 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
             await asyncio.to_thread(worker.exec, ["mkdir", "-p", "/work", "/work/logs"], timeout=30)
         ).checked("Initialize controller directory")
         remote = Remote(worker, sandbox, root, work_deadline, target["task_cpus"])
-        if replay:
-            result.update(await replay_reference(
-                remote=remote, snapshot=snapshot, root=root / "replay", config=config,
-            ))
+        if grading:
+            from grading_session import run_grading
+
+            result.update(
+                await run_grading(
+                    remote=remote,
+                    snapshot=snapshot,
+                    root=root,
+                    config=config,
+                    endpoint=endpoint,
+                    credential=credential,
+                    deadline=work_deadline,
+                    complete=complete,
+                )
+            )
+        elif replay:
+            RequestLedger(root / "requests.sqlite", {"setup": Allowance(None, None)})
+            result.update(
+                await replay_reference(
+                    remote=remote,
+                    snapshot=snapshot,
+                    root=root / "replay",
+                    config=config,
+                )
+            )
         else:
+            ledger = RequestLedger(
+                root / "requests.sqlite", {"setup": Allowance(config["max_requests"], None)}
+            )
+            spend = RunBudget(
+                BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1"
+            )
             session = SetupSession(
                 prepared=prepared,
                 remote=remote,
@@ -364,7 +407,10 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
             await asyncio.to_thread(
                 export_on_host,
                 root,
-                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + ("/reference-replay" if replay else "/reference-setup"),
+                os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/")
+                + (
+                    "/grading" if grading else "/reference-replay" if replay else "/reference-setup"
+                ),
                 deadline=deadline - config["cleanup_seconds"],
             )
         finally:

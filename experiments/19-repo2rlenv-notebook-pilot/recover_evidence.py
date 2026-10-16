@@ -32,11 +32,33 @@ SELECTED = {
 
 def priority(entry):
     name = entry["path"]
+    if name.startswith("grading/") and name.rsplit("/", 1)[-1] in {
+        "final-candidate.json",
+        "final-controls.json",
+        "instruction.md",
+        "grade.py",
+        "probes.json",
+        "review.json",
+        "review-repair.json",
+        "result.json",
+        "configuration.json",
+        "requests.sqlite",
+        "system-prompt.md",
+        "isolation.json",
+    }:
+        return (0, name)
     if name.startswith("specification/") and name.rsplit("/", 1)[-1] in {
-        "specification.json", "review.md", "task-brief.md", "validation-plan.md",
+        "specification.json",
+        "review.md",
+        "task-brief.md",
+        "validation-plan.md",
         "validation-handoff.md",
-        "result.json", "configuration.json", "requests.sqlite", "catalog.json",
-        "artifact.json", "operation.json",
+        "result.json",
+        "configuration.json",
+        "requests.sqlite",
+        "catalog.json",
+        "artifact.json",
+        "operation.json",
     }:
         return (0, name)
     if name in SELECTED or name.startswith("pilot/trial-claims/"):
@@ -73,6 +95,7 @@ def main():
             or relative.startswith("continuation/")
             or (relative.startswith("reference/") and "/outputs/" not in relative)
             or relative.startswith("coverage/")
+            or relative.startswith(("grading/", "grading-retrieval/"))
             or (relative.startswith("reference-replay/") and "/outputs/" not in relative)
             or (relative.startswith("reference-setup/") and "/outputs/" not in relative)
             or relative.startswith(("preparation/", "schema-probe/", "specification/"))
@@ -85,7 +108,10 @@ def main():
             continue
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.
-        if (entry["bytes"] > 256_000 and not relative.startswith(("preparation/", "schema-probe/", "specification/"))) or total + entry["bytes"] > 4_000_000:
+        if (
+            entry["bytes"] > 256_000
+            and not relative.startswith(("preparation/", "schema-probe/", "specification/"))
+        ) or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
             continue

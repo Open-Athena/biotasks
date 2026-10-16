@@ -22,7 +22,7 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
     """Common frozen inputs; each stage wrapper validates its own configuration."""
     if config["entrypoint"] == "run_reference.py":
         raise NotImplementedError(EXECUTION_PENDING)
-    if config["entrypoint"] in {"run_reference_setup.py", "run_reference_replay.py"}:
+    if config["entrypoint"] in {"run_reference_setup.py", "run_reference_replay.py", "run_notebook_grader.py"}:
         from run_reference_setup import check_config
         check_config(config)
     files = {

@@ -123,7 +123,7 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
         raise ValueError("Approved credentials and a private artifact destination are required")
     if preparation_only and daytona_key:
         raise ValueError("Preparation-only jobs must not receive Daytona credentials")
-    if config.get("entrypoint") == "run_coverage.py" and (
+    if config.get("entrypoint") in {"run_coverage.py", "run_notebook_grader.py"} and (
         not reference_archive or not reference_archive.startswith("s3://")
     ):
         raise ValueError("Coverage requires the recorded private reference archive")

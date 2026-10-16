@@ -1771,3 +1771,20 @@ one stale setup-budget fixture was corrected to explicitly unset the value it
 intends to test. Threaded lifecycle tests passed outside the execution sandbox
 (the sandboxed attempt stalled at a fake thread call and was stopped).
 Stop before task construction/solver; comparison rules and controls are next.
+
+
+### 2026-10-16 — Grader construction and artifact controls
+
+Proceeding after the successful reference repeats, add a pre-Harbor grading stage
+using Tasksmith structured authoring and upstream semantic-probe schemas. Separate
+GLM sessions author the grader, propose independent counterexamples and review
+actual control results; at most one separate repair uses frozen checks/probes.
+Only generated task content changes. Restore saved outputs and the locked reference
+environment; no full analysis, solver or viewer update. Unprivileged users and
+read-only reference copies separate generated code from controller evidence.
+
+Fifty-five focused offline tests passed, including real synthetic grader execution,
+report completeness, independent-probe context isolation, review gating and the
+optional repair path. The guarded check peaked at 129 MiB. Reserve the final $2
+of the standing aggregate authorization; all $100 is now conservatively reserved,
+not measured spent. Details: [grading execution](grading-execution.md).
