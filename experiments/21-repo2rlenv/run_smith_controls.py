@@ -35,6 +35,7 @@ def main():
         choices=(
             "smith-controls",
             "flow-controls",
+            "flow-independent",
             "biopython-cve",
             "biopython-commit",
             "marin-schema",
@@ -52,6 +53,8 @@ def main():
         parser.error("Repository controls require --generation-archive and --issues")
     if args.stage == "flow-controls" and args.config is None:
         parser.error("Flow controls require --config")
+    if args.stage == "flow-independent" and args.generation_archive is None:
+        parser.error("Independent controls require the original control archive")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
     args.campaign.mkdir(parents=True, exist_ok=False)
@@ -93,6 +96,12 @@ def main():
             )
             if args.stage == "flow-controls":
                 entry += "--recipe swe_flow "
+        elif args.stage == "flow-independent":
+            worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
+            for script in ("prepare_flow_independent_controls.py", "run_flow_independent.py"):
+                worker.upload(root / script, "/work/native/" + script)
+            unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
+            entry = "/work/native/run_flow_independent.py "
         elif args.stage == "biopython-commit":
             worker.upload(
                 root / "replay_biopython_commit.py", "/work/native/replay_biopython_commit.py"
