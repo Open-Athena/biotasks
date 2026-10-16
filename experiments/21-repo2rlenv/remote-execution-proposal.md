@@ -1,6 +1,6 @@
 # Remote execution proposal
 
-Status: user approved up to $100 on 2026-10-16; dispatch pending preflight. All other campaign limits below remain in force.
+Status: user approved only the $100 ceiling on 2026-10-16. Other numerical limits below are proposals awaiting agreement. The initial probe was launched after an incorrect interpretation of that approval and interrupted when the user objected; reconcile its cleanup before any further dispatch.
 
 The remaining executable recipes require Docker builds and target-code execution
 on remote workers. Start with the pinned Repo2RLEnv Daytona worker probe before
