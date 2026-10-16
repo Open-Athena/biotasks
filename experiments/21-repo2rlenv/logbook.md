@@ -198,3 +198,9 @@ Prepared one native export/control run for the saved scikit-bio candidate 0e17fb
 ## 2026-10-16 — generation adaptation limits agreed individually
 
 The user proposed 128k output headroom for remaining generation, interpreted explicitly in the conversation as 131,072 combined reasoning-and-answer tokens. They subsequently approved medium effort and a 20-minute per-request timeout in separate UI questions. Recorded these settings in glm-generation-adaptation.json. The two-hour generation deadline, existing candidate/repair bounds, four-request campaign concurrency limit, free GLM restriction, and unchanged solver settings remain in force. Original recipe-limit failures remain separate evidence. No request with the newly agreed limit has run yet; endpoint acceptance remains to verify. Private service documentation was inspected for context capacity, but no private service details are copied into this public record.
+
+## 2026-10-16 — generation adapter implementation prepared
+
+Added an opt-in generation adapter around the unchanged SWE-smith issue writer. It overrides the max_tokens argument before native request hashing/metering, sends medium effort through the documented template field, and preserves raw reasoning/content/usage/finish reason before native reduction. The authoring entrypoint reads the approved adaptation file for its request timeout. Native two-attempt repair bounds and serial requests remain unchanged. Added an offline transport fixture exercising real native metering and the two-failure repair limit. Ruff lint/format passes; the fixture has not run yet because the existing remote-control controller holds the shared heavy-work lock. No adapted generation job was launched.
+
+Live provider inspection confirmed the existing control sandbox STARTED, with its first nop trial still in Docker build and no reward yet. The original controller session remains running; no replacement job was submitted.

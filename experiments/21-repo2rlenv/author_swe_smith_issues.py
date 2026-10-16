@@ -9,6 +9,7 @@ Harbor tasks; model review is not the reward.
 import argparse
 import json
 import os
+from contextlib import nullcontext
 from pathlib import Path
 
 from repo2rlenv.campaigns.budget import BudgetLedger
@@ -21,24 +22,41 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--generation", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--adaptation", type=Path)
     args = parser.parse_args()
     generation = json.loads((args.generation / "generation.json").read_text())
     if generation["attempted"] > 10 or len(generation["candidates"]) > 3:
         raise ValueError("Input exceeds the checkpointed cohort limits")
     args.output.mkdir(parents=True, exist_ok=False)
+    settings = json.loads(args.adaptation.read_text()) if args.adaptation else None
+    if settings:
+        if settings["stage"] != "generation_only" or settings["paid_fallback"]:
+            raise ValueError("Invalid generation adaptation")
+        save_record(args.output / "adaptation.json", settings)
     model = LLMSpec(
         provider="openai",
         model="glm-5.3",
         endpoint=os.environ["BIOTASKS21_GLM_ENDPOINT"],
         api_key_env="BIOTASKS21_GLM_KEY",
         max_concurrent=1,
-        timeout_sec=120,
+        timeout_sec=settings["request_timeout_sec"] if settings else 120,
         fallback=None,
     )
     # Retain native reservations for audit. This ledger does not measure free
     # GLM's actual charges; zero-cost responses remain uncertain upstream.
     ledger = BudgetLedger(args.output / "native-model-reservations.sqlite", limit_usd="5")
     records = []
+    if settings:
+        from glm_authoring_adapter import adapted_authoring
+
+        context = adapted_authoring(settings, args.output)
+    else:
+        context = nullcontext()
+    with context:
+        author_candidates(args, generation, model, ledger, records)
+
+
+def author_candidates(args, generation, model, ledger, records):
     for candidate in generation["candidates"]:
         identifier = candidate["id"]
         record = {"candidate_id": identifier, "status": "dispatched"}
@@ -51,7 +69,7 @@ def main():
                 model,
                 ledger,
                 args.output / "models" / f"{identifier}.json",
-                operation_id=f"issue:skbio-smith:{identifier}",
+                operation_id=f"issue:swe-smith:{identifier}",
             )
             record.update(status="authored", issue=issue.issue, reason=issue.reason)
         except Exception as exc:
