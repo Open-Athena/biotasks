@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="12" time="0.381" timestamp="2026-10-16T21:58:38.512157+00:00" hostname="a2618e457592"><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_GC_skew" time="0.004" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_checksum1" time="0.001" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_checksum2" time="0.001" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_checksum3" time="0.001" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_codon_adaptation_index_calculation" time="0.002" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_codon_adaptation_index_initialization" time="0.000"><failure message="FileNotFoundError: [Errno 2] No such file or directory: 'GenBank/NC_005816.gb'">Tests/test_SeqUtils.py:46: in test_codon_adaptation_index_initialization
+    record = SeqIO.read(dna_filename, "genbank")
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Bio/SeqIO/__init__.py:720: in read
+    with parse(handle, format, alphabet) as records:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Bio/SeqIO/__init__.py:675: in parse
+    return iterator_generator(handle)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+Bio/SeqIO/InsdcIO.py:105: in __init__
+    super().__init__(source, fmt="GenBank")
+Bio/SeqIO/Interfaces.py:82: in __init__
+    self.stream = open(source, "r" + mode)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: 'GenBank/NC_005816.gb'</failure></testcase><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_crc_checksum_collision" time="0.000" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_gc_fraction" time="0.000" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_lcc_mult" time="0.000" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_lcc_simp" time="0.000" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_molecular_weight_empty_sequence" time="0.000" /><testcase classname="Tests.test_SeqUtils.SeqUtilsTests" name="test_seq1_seq3" time="0.000" /></testsuite></testsuites>
