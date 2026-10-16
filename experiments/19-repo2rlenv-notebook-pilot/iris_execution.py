@@ -83,6 +83,9 @@ class IrisDaytonaExecution:
         solver_endpoints: tuple[str, str] | None = None,
         usage_ledger=None,
         probe_results: dict[str, Path] | None = None,
+        task_resources: dict[str, int] | None = None,
+        solver_seconds: int = 300,
+        trial_reservation_usd: str = "0.057",
     ):
         self.worker = AttachedHost(worker_id)
         if deadline.tzinfo is None or deadline <= datetime.now(UTC):
@@ -96,6 +99,25 @@ class IrisDaytonaExecution:
         self.solver_endpoints = solver_endpoints
         self.usage_ledger = usage_ledger
         self.probe_results = probe_results or {}
+        self.task_resources = task_resources or {"cpus": 1, "memory_mb": 2048, "storage_mb": 10240}
+        ceilings = {"cpus": 4, "memory_mb": 8192, "storage_mb": 10240}
+        if set(self.task_resources) != set(ceilings) or any(
+            type(v) is not int or not 1 <= v <= ceilings[k] for k, v in self.task_resources.items()
+        ):
+            raise ValueError("Task resources exceed the approved CPU-only envelope")
+        if type(solver_seconds) is not int or not 1 <= solver_seconds <= 600:
+            raise ValueError("Solver time exceeds the approved allowance")
+        from decimal import Decimal
+
+        if not Decimal(trial_reservation_usd).is_finite() or Decimal(trial_reservation_usd) <= 0:
+            raise ValueError("Positive finite trial reservation required")
+        # The old small trial reservation is specific to the original resource profile.
+        if self.task_resources != {"cpus": 1, "memory_mb": 2048, "storage_mb": 10240} and Decimal(
+            trial_reservation_usd
+        ) < Decimal("0.25"):
+            raise ValueError("Larger sandboxes require a conservative updated trial reservation")
+        self.solver_seconds = solver_seconds
+        self.trial_reservation_usd = trial_reservation_usd
 
     def identity(self):
         return dict(
@@ -104,6 +126,9 @@ class IrisDaytonaExecution:
             deadline=self.deadline.isoformat(),
             max_trials=self.max_trials,
             max_solver_attempts=self.max_solver_attempts,
+            task_resources=self.task_resources,
+            solver_seconds=self.solver_seconds,
+            trial_reservation_usd=self.trial_reservation_usd,
             solver_route_sha256=hashlib.sha256(
                 json.dumps(self.solver_endpoints).encode()
             ).hexdigest(),
@@ -169,7 +194,9 @@ class IrisDaytonaExecution:
             json.dump(dict(trial_id=trial_id, solving=solving, output=str(output)), stream)
         if self.usage_ledger is not None:
             self.usage_ledger.reserve(
-                "trial:" + trial_id, "0.057", "Conservative Daytona trial allowance"
+                "trial:" + trial_id,
+                self.trial_reservation_usd,
+                "Conservative Daytona trial allowance",
             )
         result = run_trial(
             worker,
@@ -178,8 +205,8 @@ class IrisDaytonaExecution:
             trial_id=trial_id,
             agent=agent,
             environment="daytona",
-            agent_timeout_sec=300 if solving else None,
-            resource_overrides={"cpus": 1, "memory_mb": 2048, "storage_mb": 10240},
+            agent_timeout_sec=self.solver_seconds if solving else None,
+            resource_overrides=self.task_resources,
             **kwargs,
         )
         job = json.loads((output / "remote-job.json").read_text())

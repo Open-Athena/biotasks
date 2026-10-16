@@ -259,3 +259,31 @@ def test_solver_attempts_use_separate_request_allowances(tmp_path, monkeypatch):
         )
     assert [call.kwargs["model"].endpoint for call in dispatch.call_args_list] == list(endpoints)
     assert model.endpoint is None
+
+
+def test_scientific_task_profile_uses_agreed_larger_limits(tmp_path, monkeypatch):
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
+    options = dict(
+        worker_id="test-worker",
+        deadline=datetime.now(UTC) + timedelta(hours=1),
+        records=tmp_path / "claims",
+        max_trials=3,
+        max_solver_attempts=2,
+        task_resources={"cpus": 4, "memory_mb": 8192, "storage_mb": 10240},
+        solver_seconds=600,
+    )
+    with pytest.raises(ValueError, match="updated trial reservation"):
+        IrisDaytonaExecution(**options)
+    adapter = IrisDaytonaExecution(**options, trial_reservation_usd="0.25")
+    dispatch = Mock(side_effect=TimeoutError("uncertain"))
+    monkeypatch.setattr(harbor, "run_trial", dispatch)
+    with pytest.raises(TimeoutError):
+        adapter.run_trial(
+            adapter.worker,
+            Path("fixture"),
+            tmp_path / "trial",
+            trial_id="larger",
+            agent="terminus-2",
+        )
+    assert dispatch.call_args.kwargs["agent_timeout_sec"] == 600
+    assert dispatch.call_args.kwargs["resource_overrides"] == options["task_resources"]

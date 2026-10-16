@@ -17,7 +17,9 @@ Return a complete structured artifact:
 - `instruction`: standalone solver question with scientific methods, inputs under
   `inputs/`, outputs under `outputs/`, identifiers, schemas and resource limits.
   No private paths, measured answer values or exhaustive API recipe. Grading
-  tolerances remain pending validation; do not invent them.
+  tolerances remain pending validation; do not invent them. Keep pipeline status
+  and pending-validation notes in the private rationale, not the solver question.
+  The controller will append the validated acceptance rules before solving.
 - `input_paths`, `output_paths`: relative files inside the respective directories.
 - `derive_code`: Python CLI accepting `--source-inputs PATH` (JSON manifest of
   original absolute paths), `--reference-dir PATH` (original terminal artifacts),
