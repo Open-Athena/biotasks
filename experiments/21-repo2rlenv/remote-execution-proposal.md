@@ -1,12 +1,12 @@
 # Remote execution proposal
 
-Status: user approved only the $100 ceiling on 2026-10-16. The user separately approved up to four concurrent sandboxes, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. Other numerical limits below are proposals awaiting agreement. The initial probe was launched after an incorrect interpretation of that approval and interrupted when the user objected; reconcile its cleanup before any further dispatch.
+Status: operational and model limits below were individually agreed on 2026-10-16. The second zero-model backend probe passed, and provider deletion was verified with HTTP 404. The first probe was interrupted after an incorrectly inferred approval; its cleanup is separately preserved in the logbook.
 
 The remaining executable recipes require Docker builds and target-code execution
 on remote workers. Start with the pinned Repo2RLEnv Daytona worker probe before
 committing generation time to a backend that may not support Docker-in-Docker.
 
-## Requested campaign limits
+## Agreed campaign limits
 
 - At most $100 total incremental CPU/sandbox charges, including failed builds and
   the controller. This is a spending allowance, not a price quote or a promise
@@ -15,10 +15,7 @@ committing generation time to a backend that may not support Docker-in-Docker.
 - Approved: up to four remote CPU sandboxes at once, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. This does not set model-request or Codex-agent concurrency.
   No GPUs, new inference deployments, or paid model fallbacks.
 - Approved: no aggregate remote-hour cap; the $100 ceiling applies across the campaign. Generation runs have an initial two-hour execution timeout. A fresh compatibility probe has a 30-minute execution deadline, with cleanup allowed to finish afterward.
-- Existing GLM-5.3 bulk service only. Proposed ceiling: 500 model calls and eight
-  million total input/output tokens across generation, repair, and review; all
-  retries count. Enforce reservations before requests and reconcile usage after
-  responses. No blind solver sample is included initially.
+- Existing free GLM-5.3 only, up to four simultaneous requests across the campaign. No additional global call-count or token cap. Preserve native per-request output limits and recipe repair bounds; record every call, retry, and input/output usage. The earlier 500-call / eight-million-token proposal is superseded. No blind solver sample is included initially.
 - Retain the issue's three independently validated tasks / ten candidates per
   applicable route and input cohort. Stop on any campaign or cohort limit.
 
