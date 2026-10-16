@@ -1,0 +1,70 @@
+hint: Using 'master' as the name for the initial branch. This default branch name
+hint: is subject to change. To configure the initial branch name to use in all
+hint: of your new repositories, which will suppress this warning, call:
+hint: 
+hint: 	git config --global init.defaultBranch <name>
+hint: 
+hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+hint: 'development'. The just-created branch can be renamed via this command:
+hint: 
+hint: 	git branch -m <name>
+Initialized empty Git repository in /work/marin/.git/
+From https://github.com/marin-community/marin
+ * branch            45a044387ccd95ab698b4a592056aadaff961540 -> FETCH_HEAD
+HEAD is now at 45a0443 Move native package wheels to macOS 15 runners (#10204)
+Using CPython 3.12.3 interpreter at: /usr/bin/python3.12
+Creating virtual environment at: /work/marin/.venv
+   Building marin-rigging @ file:///work/marin/lib/rigging
+   Building marin-taskcompendium @ file:///work/marin/lib/taskcompendium
+   Building marin-shellbox @ file:///work/marin/lib/shellbox
+   Building marin-verifyit @ file:///work/marin/lib/verifyit
+Downloading numpy (15.8MiB)
+Downloading pygments (1.2MiB)
+Downloading fonttools (4.7MiB)
+Downloading sympy (5.9MiB)
+Downloading grpcio (6.3MiB)
+Downloading pillow (6.6MiB)
+Downloading zstandard (5.3MiB)
+Downloading matplotlib (8.3MiB)
+Downloading pydantic-core (2.1MiB)
+Downloading reasoning-gym (6.7MiB)
+Downloading botocore (13.7MiB)
+Downloading pyqwest (5.2MiB)
+Downloading cryptography (4.5MiB)
+Downloading kiwisolver (1.4MiB)
+Downloading pyfiglet (1.0MiB)
+   Building cellpylib==2.4.0
+   Building zss==1.2.0
+   Building pycosat==0.6.6
+ Downloaded kiwisolver
+ Downloaded pydantic-core
+ Downloaded pyfiglet
+ Downloaded pygments
+ Downloaded zstandard
+ Downloaded cryptography
+ Downloaded fonttools
+ Downloaded pyqwest
+ Downloaded grpcio
+ Downloaded reasoning-gym
+ Downloaded pillow
+      Built marin-rigging @ file:///work/marin/lib/rigging
+ Downloaded numpy
+ Downloaded matplotlib
+ Downloaded sympy
+      Built cellpylib==2.4.0
+      Built marin-verifyit @ file:///work/marin/lib/verifyit
+      Built zss==1.2.0
+      Built marin-taskcompendium @ file:///work/marin/lib/taskcompendium
+  × Failed to build `pycosat==0.6.6`
+  ├─▶ The build backend returned an error
+  ╰─▶ Call to `setuptools.build_meta:__legacy__.build_wheel` failed (exit
+      status: 1)
+
+      [stderr]
+      error: [Errno 2] No such file or directory: 'x86_64-linux-gnu-gcc'
+
+      hint: This usually indicates a problem with the package or the build
+      environment.
+  help: `pycosat` (v0.6.6) was included because `marin-taskcompendium`
+        (v0.1.0) depends on `marin-verifyit[reasoning-gym]` (v0.1.0) which
+        depends on `reasoning-gym` (v0.1.25) which depends on `pycosat`

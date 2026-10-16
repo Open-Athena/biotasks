@@ -16,6 +16,15 @@ def main():
     evidence = Path("/evidence/native")
     with (evidence / "marin-setup.log").open("w") as log:
         for command in (
+            ["apt-get", "update"],
+            [
+                "apt-get",
+                "install",
+                "-y",
+                "--no-install-recommends",
+                "build-essential",
+                "python3-dev",
+            ],
             ["git", "init", str(repo)],
             [
                 "git",

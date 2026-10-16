@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
+    parser.add_argument("--recipe", choices=("swe_smith", "swe_flow"), default="swe_smith")
     parser.add_argument(
         "--config",
         type=Path,
@@ -48,7 +49,12 @@ def main():
         timeout_sec=7200,
         name=args.worker_name,
     )
-    record = {"stage": "native_mutation_contrasts", "model_calls": 0, "status": "starting"}
+    record = {
+        "stage": "native_repository_contrasts",
+        "recipe": args.recipe,
+        "model_calls": 0,
+        "status": "starting",
+    }
     record["config_sha256"] = hashlib.sha256(args.config.read_bytes()).hexdigest()
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
@@ -84,7 +90,7 @@ def main():
                     "export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
                     "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; "
                     "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python "
-                    "-m repo2rlenv.pipelines.recipes.swe_smith.worker "
+                    f"-m repo2rlenv.pipelines.recipes.{args.recipe}.worker "
                     "/work/native/config.json /evidence/native/generation "
                     ">/evidence/native/worker.log 2>&1; code=$?; "
                     "printf '%s\\n' \"$code\" >/evidence/native/worker-exit.txt; exit $code"
