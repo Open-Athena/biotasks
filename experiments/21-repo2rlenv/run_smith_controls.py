@@ -1,0 +1,135 @@
+"""Export native SWE-smith tasks and run deterministic Harbor controls remotely.
+
+Preserve complete task bundles and control evidence before worker deletion.
+No model calls or blind solving occur here.
+"""
+
+import argparse
+import hashlib
+import signal
+from pathlib import Path
+
+from repo2rlenv.campaigns.budget import BudgetLedger
+from repo2rlenv.execution.base import WorkerSpec
+from repo2rlenv.execution.lifecycle import (
+    prepare_docker,
+    provision_worker,
+    save_record,
+    stop_worker,
+)
+
+SOURCE_SHA256 = "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+
+
+def deadline(signum, frame):
+    raise TimeoutError("Native control worker deadline reached")
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--campaign", type=Path, required=True)
+    parser.add_argument("--worker-name", required=True)
+    parser.add_argument("--source-archive", type=Path, required=True)
+    parser.add_argument("--generation-archive", type=Path, required=True)
+    parser.add_argument("--issues", type=Path, required=True)
+    args = parser.parse_args()
+    if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
+        raise ValueError("Unexpected generator source archive")
+    args.campaign.mkdir(parents=True, exist_ok=False)
+    ledger = BudgetLedger(args.campaign / "budget.sqlite", limit_usd="5")
+    spec = WorkerSpec(
+        provider="daytona",
+        cpus=2,
+        memory_mb=4096,
+        disk_gb=10,
+        timeout_sec=7200,
+        name=args.worker_name,
+    )
+    record = {"stage": "native_export_controls", "model_calls": 0, "status": "starting"}
+    worker = None
+    for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
+        signal.signal(sig, deadline)
+    signal.alarm(7200)
+    try:
+        worker, receipt = provision_worker(spec, args.campaign / "workers", ledger, reserve_usd="5")
+        prepare_docker(worker)
+        worker.exec(["mkdir", "-p", "/work/native", "/evidence/native"], timeout=30).checked(
+            "mkdir"
+        )
+        worker.upload(args.source_archive, "/work/native/source.tar.gz")
+        worker.upload(args.generation_archive, "/work/native/generation.tar.gz")
+        worker.upload(args.issues, "/work/native/issues.json")
+        worker.upload(
+            Path(__file__).with_name("export_verify_smith.py"),
+            "/work/native/export_verify_smith.py",
+        )
+        worker.upload(
+            Path(__file__).with_name("swe-smith-skbio-worker.json"), "/work/native/config.json"
+        )
+        setup = worker.exec(
+            [
+                "sh",
+                "-c",
+                (
+                    "set -eu; cd /work/native; tar -xzf source.tar.gz; mkdir inputs; tar -xzf generation.tar.gz -C inputs; "
+                    "uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee "
+                    ">/evidence/native/setup.log 2>&1"
+                ),
+            ],
+            timeout=600,
+        )
+        record["setup_returncode"] = setup.returncode
+        setup.checked("locked runtime install")
+        result = worker.exec(
+            [
+                "sh",
+                "-c",
+                (
+                    "export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
+                    "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; "
+                    "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python "
+                    "/work/native/export_verify_smith.py "
+                    "--generation /work/native/inputs/native/generation "
+                    "--issues /work/native/issues.json --config /work/native/config.json "
+                    "--output /evidence/native/validation "
+                    ">/evidence/native/worker.log 2>&1; code=$?; "
+                    "printf '%s\\n' \"$code\" >/evidence/native/worker-exit.txt; exit $code"
+                ),
+            ],
+            timeout=6000,
+        )
+        record.update(
+            worker_returncode=result.returncode,
+            status="worker_completed" if result.returncode == 0 else "worker_failed",
+        )
+    except BaseException as exc:
+        record.update(status="failed", error_type=type(exc).__name__)
+        raise
+    finally:
+        signal.alarm(0)
+        save_record(args.campaign / "result.json", record)
+        if worker is not None:
+            try:
+                packed = worker.exec(
+                    [
+                        "sh",
+                        "-c",
+                        "tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz",
+                    ],
+                    timeout=120,
+                )
+                packed.checked("preserve partial worker evidence")
+                size = int(packed.stdout.strip())
+                if size > 200 * 1024 * 1024:
+                    raise ValueError("Evidence exceeds bounded local download allowance")
+                worker.download(
+                    "/work/native-evidence.tar.gz", args.campaign / "native-evidence.tar.gz"
+                )
+                record["evidence_bytes"] = size
+            finally:
+                record["cleanup"] = stop_worker(receipt, ledger)["state"]
+                save_record(args.campaign / "result.json", record)
+
+
+if __name__ == "__main__":
+    main()
