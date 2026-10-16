@@ -1,7 +1,7 @@
 # Finalize an existing worker-authored task draft
 
-Return one complete JSON artifact matching the response schema. The prior worker
-performed exploratory construction but did not submit an artifact. Its unchanged
+Submit one complete artifact through `submit_artifact`, matching its schema. The
+prior worker performed exploratory construction but did not submit an artifact. Its unchanged
 programs are supplied in `prior_worker_draft`, with their recorded identities.
 They are drafts, not validated task outputs. You also receive the current public
 scientific question, source evidence, approved policy and execution limits.
@@ -35,9 +35,9 @@ Return these fields:
 - `rationale`: explain provenance, scientific fidelity and unresolved validation
   questions. Distinguish earlier exploratory observations from controlled tests.
 
-No exploratory shell is available in this finalization session. Submitting a
-ready artifact triggers real derivation and isolated oracle execution. If the
-controller returns a runtime or interface error, return a complete corrected
-artifact using the same schema. Fix the demonstrated defect; do not change the
-scientific target or manufacture expected values. A successful execution is only
+Only submission and revision tools are available; there is no exploratory shell.
+Submitting a ready artifact triggers real derivation and isolated oracle execution. If the
+controller returns a runtime or interface error, submit a complete corrected
+artifact through `revise_artifact` using the same schema. Fix the demonstrated
+defect; do not change the scientific target or manufacture expected values. A successful execution is only
 the handoff to numerical validation, not proof of scientific validity.

@@ -124,11 +124,10 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
 
     async def complete(payload):
         if finalize:
-            assert "tools" not in payload
-            assert payload["response_format"]["type"] == "json_schema"
-            return {"choices": [{"finish_reason": "stop", "message": {
-                "role": "assistant", "content": json.dumps(candidate)
-            }}]}
+            assert {t["function"]["name"] for t in payload["tools"]} == {
+                "submit_artifact", "revise_artifact"
+            }
+            assert "response_format" not in payload
         return {
             "choices": [
                 {

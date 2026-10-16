@@ -127,7 +127,6 @@ async def run_materialization(
             ),
             max_requests=None,
             validate=validate,
-            output_format="json_schema" if finalize else "tools",
             shell=None if finalize else session.shell,
             shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
