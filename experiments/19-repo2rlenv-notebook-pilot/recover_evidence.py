@@ -8,6 +8,7 @@ import base64
 import hashlib
 import json
 import os
+from concurrent.futures import ThreadPoolExecutor
 
 import fsspec
 
@@ -83,6 +84,7 @@ def main():
     manifest = json.loads(manifest_bytes)
     total = 0
     skipped = []
+    selected_entries = []
     print("RECOVERY_MANIFEST " + base64.b64encode(manifest_bytes).decode(), flush=True)
     for entry in sorted(manifest["files"], key=priority):
         relative = entry["path"]
@@ -119,27 +121,39 @@ def main():
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
             continue
-        with fsspec.open(prefix + "/" + relative, "rb").open() as stream:
+        selected_entries.append(entry)
+        total += entry["bytes"]
+
+    def fetch(entry):
+        with fsspec.open(prefix + "/" + entry["path"], "rb").open() as stream:
             data = stream.read(entry["bytes"] + 1)
         if len(data) != entry["bytes"] or hashlib.sha256(data).hexdigest() != entry["sha256"]:
             raise ValueError("Recovered diagnostic failed its original export hash")
-        total += len(data)
-        encoded = base64.b64encode(data).decode()
-        # Bound individual log lines; reassembly is checked against the original hash.
-        for offset in range(0, len(encoded), 6000):
-            print(
-                "RECOVERY_CHUNK "
-                + json.dumps(
-                    {
-                        "path": relative,
-                        "offset": offset,
-                        "data": encoded[offset : offset + 6000],
-                        "sha256": entry["sha256"],
-                    }
-                ),
-                flush=True,
-            )
+        return entry, data
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        for entry, data in pool.map(fetch, selected_entries):
+            emit_chunks(entry, data)
     print("RECOVERY_COMPLETE " + json.dumps({"bytes": total, "skipped": skipped}), flush=True)
+
+
+def emit_chunks(entry, data):
+    relative = entry["path"]
+    encoded = base64.b64encode(data).decode()
+    # Bound individual log lines; reassembly is checked against the original hash.
+    for offset in range(0, len(encoded), 6000):
+        print(
+            "RECOVERY_CHUNK "
+            + json.dumps(
+                {
+                    "path": relative,
+                    "offset": offset,
+                    "data": encoded[offset : offset + 6000],
+                    "sha256": entry["sha256"],
+                }
+            ),
+            flush=True,
+        )
 
 
 if __name__ == "__main__":
