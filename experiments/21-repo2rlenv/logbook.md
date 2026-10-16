@@ -326,3 +326,9 @@ The native SWE-flow control worker was dispatched at 23:06 UTC. Import/CLI prefl
 ## 2026-10-16 — pinned solver-route source inspection
 
 Located the cached Harbor 0.22.0 package matching Repo2RLEnv's lock and inspected Terminus-2, LiteLLM and Daytona environment code. Terminus-2 accepts api_base and llm_call_kwargs; the client forwards these to completion. The endpoint rejection occurs in Repo2RLEnv's run_trial wrapper. Recorded source hashes and a scoped owned-adaptation plan using the existing approved service, while retaining 900 seconds / 12 turns / 2,048 output tokens and the native separate verifier. This is source inspection only, not live compatibility or a solver result. Private service discovery remains outside public artifacts. The active native-control controller remains running; no duplicate was launched.
+
+## 2026-10-16 — blind-solver transport fixture prepared
+
+Prepared separate solver settings retaining openai/glm-5.3, 900-second attempt budget, 12 turns and 2,048 output tokens. Endpoint routing is supplied at runtime, without embedding credentials or private routes. The fixture instantiates exact Harbor 0.22.0 Terminus-2 and calls its actual _query_llm/Chat/LiteLLM path with only the final transport mocked. It will assert endpoint, output limit and absence of a generation-effort override. Lint/format pass; execution remains pending while the native control controller owns the local heavy-work slot. No solver call occurred.
+
+A lightweight read from the existing Daytona worker at 23:12 UTC confirmed it remains STARTED; the first candidate's nop control completed with reward 0 and no exception, while its oracle control remained active. This is partial native-control evidence, not completion of the cohort. No job was restarted or duplicated.
