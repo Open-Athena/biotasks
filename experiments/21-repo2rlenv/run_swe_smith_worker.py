@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
-    parser.add_argument("--recipe", choices=("swe_smith", "swe_flow"), default="swe_smith")
+    parser.add_argument("--recipe", choices=("swe_smith", "swe_flow", "r2e"), default="swe_smith")
     parser.add_argument("--flow-test-paths", action="store_true")
     parser.add_argument(
         "--config",
@@ -59,6 +59,8 @@ def main():
         "status": "starting",
     }
     record["config_sha256"] = hashlib.sha256(args.config.read_bytes()).hexdigest()
+    if args.recipe == "r2e":
+        record["stage"] = "native_function_candidate_preparation"
     entrypoint = f"-m repo2rlenv.pipelines.recipes.{args.recipe}.worker"
     if args.flow_test_paths:
         adaptation = Path(__file__).with_name("swe_flow_test_paths.py")
