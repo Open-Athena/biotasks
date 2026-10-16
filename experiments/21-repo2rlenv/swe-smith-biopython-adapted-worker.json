@@ -15,16 +15,13 @@
     "dependencies": [
       "pytest==9.0.3"
     ],
-    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'pytest==9.0.3' && mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb",
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'pytest==9.0.3' && mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && test -L LICENSE && test \"$(readlink LICENSE)\" = LICENSE.rst && cmp LICENSE LICENSE.rst && rm LICENSE && cp LICENSE.rst LICENSE && cmp LICENSE LICENSE.rst",
     "test_cpus": 1,
     "test_memory_mb": 2048,
     "test_timeout_sec": 90,
     "max_candidates": 10,
     "target": 3,
     "seed": 24,
-    "max_per_entity": 2,
-    "materialize_document_links": [
-      "LICENSE"
-    ]
+    "max_per_entity": 2
   }
 }
