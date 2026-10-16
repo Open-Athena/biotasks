@@ -352,3 +352,5 @@ At 23:23 UTC an authenticated read of the existing scheduler handles confirmed B
 ## 2026-10-16 — independent submission execution prepared
 
 Prepared the remote runner for the three observed_features diagnostic submissions, retaining the exact native grader and task assets except the explicit oracle implementation and diagnostic identity. Each Harbor oracle trial has a 900-second deadline and no retries; no model calls or blind solve occur. Lint/format passed. Reserve $5 for the distinct worker, bringing estimates and holds to $98/$300. Expected controller working set is 120 MiB; execution results remain pending.
+
+Independent-control worker dispatched at 23:25:13 UTC from checkpoint 7871e81, with 2 vCPU / 4 GiB / 10 GiB and no model calls. The controller remains the observation target. Import/CLI preflight passed in 0.14 seconds, peak RSS 30,856 KiB. Local load and available memory remained within limits after dispatch.
