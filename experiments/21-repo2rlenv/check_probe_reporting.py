@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import os
 import sys
 import tempfile
 from pathlib import Path
@@ -34,7 +35,6 @@ mod.complete = lambda *a, **k: LLMResponse(
     completion_tokens=15,
 )
 mod.issue_violations = lambda *a: []
-import os
 
 os.environ["BIOTASKS21_GLM_ENDPOINT"] = "https://example.invalid/v1"
 os.environ["BIOTASKS21_GLM_KEY"] = "offline-fixture"
