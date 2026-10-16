@@ -20,8 +20,12 @@ def relative_paths(paths):
 class Materialization(StrictModel):
     disposition: Literal["ready", "blocked"]
     instruction: str
-    input_paths: list[str]
-    output_paths: list[str]
+    input_paths: list[str] = Field(
+        description="Paths relative to the input root, e.g. data.csv, not inputs/data.csv."
+    )
+    output_paths: list[str] = Field(
+        description="Paths relative to each output root, e.g. result.csv, not outputs/result.csv."
+    )
     derive_code: str
     oracle_code: str
     rationale: str = Field(min_length=1)

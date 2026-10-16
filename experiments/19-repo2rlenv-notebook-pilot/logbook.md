@@ -1887,3 +1887,7 @@ Reviewing earlier evidence found prior content-fidelity failures with strict JSO
 Stopped the pending first request of 005 after revisiting the saved format-comparison evidence; this is an operator protocol correction, not a demonstrated provider failure. Finalization 006 uses submit/revise only, retaining schema validation and controlled execution. It is gated on 005 cleanup. Reserved $1 using the published Linux CPU/RAM/disk rates: 4 CPU, 8 GiB, all 10 GiB charged for 7500 seconds is $0.69225, plus $0.10 storage margin, below $1. No credits or actual invoice are assumed. Aggregate holds are $96 with $4 unallocated.
 
 Session 005 is terminal with one canceled request and no candidate. The final archive and selected diagnostics were hash-verified; controller cleanup passed and independent provider inventory returned zero sandboxes. Finalization 006 is clear to launch.
+
+Finalization 006 returned its first complete candidate after 664.46 seconds. Controlled derivation rejected an inventory mismatch and returned it to GLM for repair. The submitted declarations include directory prefixes while derivation roots already provide them. Future schema descriptions and the finalization prompt now clarify the root-relative convention, and runtime mismatch feedback lists missing/unexpected paths. These are generic interface improvements; active checkpoint 006 and its generated artifacts are unchanged.
+
+All twelve focused materialization regressions pass after the path-contract clarification. The running session remains frozen at 0698fbc.

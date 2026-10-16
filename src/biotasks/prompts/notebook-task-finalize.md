@@ -21,7 +21,10 @@ Return these fields:
   identifiers, methods, output schema and resource limits. No private paths,
   measured answers, exhaustive API recipe or provisional workflow commentary.
   Acceptance rules will be appended after validation.
-- `input_paths`, `output_paths`: exact relative file inventories.
+- `input_paths`, `output_paths`: exact file inventories relative to their respective
+  roots. For example, declare `data.csv` and `result.csv`, while public instructions
+  refer to `/workspace/inputs/data.csv` and `/workspace/outputs/result.csv`.
+  Do not include the `inputs/` or `outputs/` directory prefix in these inventories.
 - `derive_code`: complete Python CLI taking `--source-inputs PATH` (JSON manifest
   with original absolute input paths), `--reference-dir PATH`, `--destination PATH`.
   Create exactly `destination/inputs/` and `destination/reference/`: copy original

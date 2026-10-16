@@ -69,7 +69,11 @@ def main():
             "reference/" + p for p in candidate["output_paths"]
         }
         if set(actual) != expected:
-            raise ValueError("Derived artifact inventory differs from declaration")
+            raise ValueError(
+                "Derived artifact inventory differs from declaration: "
+                + json.dumps({"missing": sorted(expected - set(actual)),
+                              "unexpected": sorted(set(actual) - expected)})
+            )
         # Freeze and archive derivation products before exposing only inputs.
         saved = PRIVATE / "materialized"
         shutil.rmtree(saved, ignore_errors=True)
