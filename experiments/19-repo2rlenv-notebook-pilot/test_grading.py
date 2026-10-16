@@ -105,11 +105,38 @@ def test_bad_code_is_recoverable_schema_feedback():
     )
 
 
-def test_restored_reference_selection_and_config():
+def test_restored_reference_selection_and_config(tmp_path, monkeypatch):
+    import grading_inputs
+
     config = json.loads((HERE / "grading-config.json").read_text())
     check_config(config)
-    items, prefix = selected_outputs(config)
-    assert len(items) == 3 and all(p["path"].startswith(prefix) for p in items)
+    monkeypatch.setattr(grading_inputs, "HERE", tmp_path)
+    original = tmp_path / "original"
+    replay = tmp_path / "replay"
+    original.mkdir()
+    replay.mkdir()
+    prefix = "reference-replay/replay/trials/1/outputs/"
+    item = {"path": "value.txt", "bytes": 1, "sha256": "recorded-digest"}
+    (original / "artifact-manifest.json").write_text(json.dumps({"large_outputs": [item]}))
+    path = replay / "artifact-manifest.json"
+    path.write_text(json.dumps({"large_outputs": [item | {"path": prefix + item["path"]}]}))
+    (replay / "result.json").write_text(
+        json.dumps(
+            {
+                "all_outputs_byte_identical_to_original": True,
+                "cleanup_verified": True,
+            }
+        )
+    )
+    selection = {"reference_directory": "original", "replay_directory": "replay"}
+    items, actual_prefix = selected_outputs(selection)
+    assert actual_prefix == prefix
+    assert items == [item | {"path": prefix + "value.txt"}]
+    changed = json.loads(path.read_text())
+    changed["large_outputs"][0]["bytes"] += 1
+    path.write_text(json.dumps(changed))
+    with pytest.raises(ValueError, match="identities disagree"):
+        selected_outputs(selection)
     ast.parse(ISOLATION_PROBE)
 
 
@@ -169,6 +196,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
+    config.pop("resume_grading_directory", None)
     if resume:
         import grading_resume
 
