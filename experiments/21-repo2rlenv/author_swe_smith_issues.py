@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--generation", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--adaptation", type=Path)
+    parser.add_argument("--review-feedback", type=Path)
     args = parser.parse_args()
     generation = json.loads((args.generation / "generation.json").read_text())
     if generation["attempted"] > 10 or len(generation["candidates"]) > 3:
@@ -53,10 +54,13 @@ def main():
     else:
         context = nullcontext()
     with context:
-        author_candidates(args, generation, model, ledger, records)
+        feedback = json.loads(args.review_feedback.read_text()) if args.review_feedback else {}
+        if feedback:
+            save_record(args.output / "review-feedback.json", feedback)
+        author_candidates(args, generation, model, ledger, records, feedback)
 
 
-def author_candidates(args, generation, model, ledger, records):
+def author_candidates(args, generation, model, ledger, records, feedback):
     for candidate in generation["candidates"]:
         identifier = candidate["id"]
         record = {"candidate_id": identifier, "status": "dispatched"}
@@ -70,6 +74,7 @@ def author_candidates(args, generation, model, ledger, records):
                 ledger,
                 args.output / "models" / f"{identifier}.json",
                 operation_id=f"issue:swe-smith:{identifier}",
+                review_feedback=feedback.get(identifier),
             )
             record.update(status="authored", issue=issue.issue, reason=issue.reason)
         except Exception as exc:
