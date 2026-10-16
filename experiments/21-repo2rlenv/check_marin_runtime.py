@@ -88,7 +88,12 @@ async def controls(task, image, oracle, verifier):
                     row["native_reward"] = float(reward.stdout)
                 else:
                     attempt = GradingAttempt(
-                        ConversationTrace(events=(TextMessage(role="assistant", content="Done."),))
+                        ConversationTrace(
+                            events=(
+                                *task.context.events,
+                                TextMessage(role="assistant", content="Done."),
+                            )
+                        )
                     )
                     result = await grade_in_sandbox(
                         task, attempt, factory, spec, task_machine=learner, timeout=120
