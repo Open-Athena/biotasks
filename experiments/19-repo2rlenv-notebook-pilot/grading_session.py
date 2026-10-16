@@ -557,6 +557,15 @@ async def run_grading(
         )
         if cleared["exit_code"]:
             raise RuntimeError("Cannot isolate independent probe author")
+        # The independent solver used this same unprivileged work directory.
+        # Its submitted code and outputs are already preserved by the controller.
+        cleared = await session.command(
+            ["find", "/work/probe", "-mindepth", "1", "-delete"],
+            30,
+            "clear-independent-workspace-before-probes",
+        )
+        if cleared["exit_code"]:
+            raise RuntimeError("Cannot clear prior independent-solution working files")
 
         async def validate_probes(suite):
             if suite.disposition == "ready":

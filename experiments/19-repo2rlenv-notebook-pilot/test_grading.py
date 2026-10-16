@@ -289,6 +289,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert c.grader_code not in json.dumps(inputs)
             assert inputs["public_instruction"].endswith(c.instruction)
             assert "source_evidence" not in inputs
+            assert ["find", "/work/probe", "-mindepth", "1", "-delete"] in commands
             assert "materialization" not in inputs
             assert "independent_solution" not in inputs
             assert "task_inputs" not in inputs["paths"]
