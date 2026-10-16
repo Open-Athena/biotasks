@@ -1,0 +1,210 @@
+{
+  "as_of_utc": "2026-10-16T22:28:50.833047+00:00",
+  "ceiling_usd": 100,
+  "historical_holds_usd": 90,
+  "accounted_estimates_and_holds_usd": 54,
+  "provider_invoice_verified": false,
+  "pricing_source": "https://www.daytona.io/pricing",
+  "pricing_checked_date": "2026-10-16",
+  "daytona_hourly_rate_usd": 0.16668,
+  "storage_basis": "All 10 GiB charged; no free credits or free storage deducted.",
+  "limitations": "Explicit conservative estimates, not billed charges. Original incomplete probe and all Iris CPU controller holds retained. Free GLM inference uses no paid fallback. Reconcile additional allocations before dispatch.",
+  "runs": [
+    {
+      "run": "biopython-baseline-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 85.266,
+      "padded_rate_estimate_usd": 0.031728,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "biopython-baseline-02",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 67.809,
+      "padded_rate_estimate_usd": 0.03092,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "biopython-cve-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "retain original hold; incomplete lifetime or active worker",
+      "accounted_usd": 5,
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "biopython-smith-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 56.103,
+      "padded_rate_estimate_usd": 0.030378,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "biopython-smith-02",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 70.45,
+      "padded_rate_estimate_usd": 0.031042,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "daytona-probe-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "retain original hold; incomplete lifetime or active worker",
+      "accounted_usd": 5,
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "daytona-probe-02",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 6.546,
+      "padded_rate_estimate_usd": 0.028083,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "skbio-baseline-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 146.296,
+      "padded_rate_estimate_usd": 0.034553,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "skbio-controls-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 340.817,
+      "padded_rate_estimate_usd": 0.04356,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "skbio-smith-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 151.393,
+      "padded_rate_estimate_usd": 0.03479,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "skbio-smith-02",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 181.074,
+      "padded_rate_estimate_usd": 0.036164,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "glm-schema-01",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "glm-schema-02",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "skbio-author-01",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "author-budget-01",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "author-budget-02",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "author-budget-03",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    },
+    {
+      "run": "biopython-author-02",
+      "provider": "iris_cpu_controller",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "rate/charge not independently established; retain full hold",
+      "status": "unreconciled_hold"
+    }
+  ],
+  "remaining_allowance_usd": 46
+}
