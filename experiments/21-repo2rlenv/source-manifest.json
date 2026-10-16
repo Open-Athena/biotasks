@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "issue": "https://github.com/Open-Athena/biotasks/issues/21",
+  "stage": "static_inspection",
+  "biotasks_base": "2a1950d239f1ada467c35393991dac87debe35f7",
+  "repo2rlenv_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_revisions": {
+    "biopython/biopython": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+    "scikit-bio/scikit-bio": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+    "arq5x/bedtools2": "614e9a5c5935ab86e873dab9072fbbaf003c1b7e",
+    "thelovelab/DESeq2": "76c5f8523716804dbe0a9500b4b7e216c6af225c",
+    "marin-community/marin": "45a044387ccd95ab698b4a592056aadaff961540"
+  },
+  "selection": "Default-branch tips fetched from GitHub at preparation; historical candidates need separate base/head pins.",
+  "per_cohort": {
+    "validated_target": 3,
+    "candidate_attempt_cap": 10,
+    "stop_on_any_budget_limit": true
+  },
+  "execution": {
+    "generation_started": false,
+    "model_calls": 0,
+    "worker_launches": 0,
+    "paid_fallback": false,
+    "model": "glm-5.3",
+    "model_revision": null,
+    "runtime_revision": null,
+    "worker_backend": null,
+    "aggregate_token_cap": null,
+    "aggregate_worker_hours": null,
+    "billable_allowance_usd": 0
+  },
+  "next_gates": [
+    "Resolve route-specific model clients and candidate-budget enforcement",
+    "Select historical inputs and repository test profiles",
+    "Fix aggregate limits and backend with explicit approval before billable execution",
+    "Checkpoint executable inputs",
+    "Preflight GLM and worker compatibility"
+  ]
+}
