@@ -1,0 +1,46 @@
+{
+  "status": "static_selection_only; not executable campaign configuration",
+  "repo2rlenv_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "scope": "Initial mutation, reconstruction and function-equivalence cohorts; historical PR/commit recipes need change-matched profiles at each historical revision.",
+  "profiles": [
+    {
+      "repository": "biopython/biopython",
+      "revision": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "source_paths": [
+        "Bio/SeqUtils"
+      ],
+      "test_paths": [
+        "Tests/test_SeqUtils.py"
+      ],
+      "inspected_test_git_blob": "b68cf1c26292d692f05da4b3b83249ab1c66954e",
+      "required_fixture_paths": [
+        "Tests/GenBank/NC_005816.gb"
+      ],
+      "input_lineage": "Mixed: inline example sequences and upstream tests with attributed biological sequences; GenBank fixture has not yet been independently inspected.",
+      "readiness_blockers": [
+        "Shared recipe runner forces /workspace working directory; CAI initialization test opens GenBank/NC_005816.gb relative to Tests. Preserve that test and fixture; establish an explicit compatibility adaptation, not a silent exclusion.",
+        "Full package build includes C extensions; inspect and freeze compiler and Python dependency environment before execution.",
+        "No collection, baseline test execution, parser compatibility or hidden-test isolation has been demonstrated."
+      ]
+    },
+    {
+      "repository": "scikit-bio/scikit-bio",
+      "revision": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "source_paths": [
+        "skbio/diversity/alpha/_base.py"
+      ],
+      "test_paths": [
+        "skbio/diversity/alpha/tests/test_base.py"
+      ],
+      "inspected_test_git_blob": "ef2c46628f467a49307e53755ccab20479bf89cf",
+      "required_fixture_paths": [],
+      "input_lineage": "Inspected suite uses inline arrays and trees; treat these as software-test fixtures, not observed biological datasets.",
+      "readiness_blockers": [
+        "Whole skbio import and package build require compiled and scientific dependencies; freeze environment before execution.",
+        "Source inspection found no external fixture reads in this test file; imported package hooks and conftest behavior remain to check.",
+        "No collection, baseline test execution, parser compatibility or hidden-test isolation has been demonstrated."
+      ]
+    }
+  ],
+  "limits": "No execution limits are approved by this artifact; campaign limits require separate agreement."
+}
