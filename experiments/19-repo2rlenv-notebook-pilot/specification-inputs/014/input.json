@@ -1,0 +1,1092 @@
+{
+  "files": {
+    "provenance.json": {
+      "license": "BSD-3-Clause",
+      "provenance": {
+        "data_source": {
+          "doi": "10.6084/m9.figshare.22716739.v1",
+          "files": [
+            {
+              "bytes": 22848647,
+              "name": "s1d1_filtered_feature_bc_matrix.h5",
+              "provider_md5": "a99285913ea3f3d22600d3d2f8a88e34",
+              "url": "https://ndownloader.figshare.com/files/40347877"
+            },
+            {
+              "bytes": 20432298,
+              "name": "s1d3_filtered_feature_bc_matrix.h5",
+              "provider_md5": "825f7f7578e3dc0b8955f5a97a402338",
+              "url": "https://ndownloader.figshare.com/files/40347880"
+            }
+          ],
+          "license": {
+            "name": "CC BY 4.0",
+            "url": "https://creativecommons.org/licenses/by/4.0/",
+            "value": 1
+          },
+          "metadata_url": "https://api.figshare.com/v2/articles/22716739/versions/1",
+          "title": "NeurIPS 2021 Benchmark dataset"
+        },
+        "notebook": {
+          "license": "BSD-3-Clause",
+          "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+          "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+          "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb"
+        },
+        "verification": {
+          "data_files_downloaded": false,
+          "notebook_downloaded_and_hashed": true,
+          "provider_checksums_verified_against_download": false
+        }
+      },
+      "source": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+      "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+      "title": "Scanpy: Preprocessing and clustering",
+      "url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb"
+    },
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: notebook\n#     language: python\n#     name: python3\n# ---\n\n# # Preprocessing and clustering\n\n# Core scverse libraries\nfrom __future__ import annotations\n\nimport anndata as ad\n\n# Data retrieval\nimport pooch\n\nimport scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n\n# The data used in this basic preprocessing and clustering tutorial was collected from bone marrow mononuclear cells of healthy human donors and was part of [openproblem's NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) {cite}`Luecken2021`. The samples used in this tutorial were measured using the 10X Multiome Gene Expression and Chromatin Accessability kit. \n#\n#\n# We are reading in the count matrix into an {class}`~anndata.AnnData` object, which holds many slots for annotations and different representations of the data.\n# See {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. \n\nEXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\nEXAMPLE_DATA.load_registry_from_doi()\n\nsamples = {\n    \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n    \"s1d3\": \"s1d3_filtered_feature_bc_matrix.h5\",\n}\nadatas = {}\n\nfor sample_id, filename in samples.items():\n    path = EXAMPLE_DATA.fetch(filename)\n    sample_adata = sc.read_10x_h5(path)\n    sample_adata.var_names_make_unique()\n    adatas[sample_id] = sample_adata\n\nadata = ad.concat(adatas, label=\"sample\")\nadata.obs_names_make_unique()\nprint(adata.obs[\"sample\"].value_counts())\nadata\n\n# The data contains ~8,000 cells per sample and 36,601 measured genes. We'll now investigate these with a basic preprocessing and clustering workflow.\n\n# ## Quality Control\n\n# The scanpy function {func}`~scanpy.pp.calculate_qc_metrics` calculates common quality control (QC) metrics, which are largely based on `calculateQCMetrics` from scater {cite}`McCarthy2017`. One can pass specific gene population to {func}`~scanpy.pp.calculate_qc_metrics` in order to calculate proportions of counts for these populations. Mitochondrial, ribosomal and hemoglobin genes are defined by distinct prefixes as listed below. \n\n# mitochondrial genes, \"MT-\" for human, \"mt-\" for mouse\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\n# ribosomal genes\nadata.var[\"ribo\"] = adata.var_names.str.startswith((\"RPS\", \"RPL\"))\n# hemoglobin genes\nadata.var[\"hb\"] = adata.var_names.str.contains(\"^HB[^(P)]\")\n\nsc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# One can now inspect violin plots of some of the computed QC metrics:\n#\n# * the number of genes expressed in the count matrix\n# * the total counts per cell\n# * the percentage of counts in mitochondrial genes\n\nsc.pl.violin(\n    adata,\n    [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n    jitter=0.4,\n    multi_panel=True,\n)\n\n# Additionally, it is useful to consider QC metrics jointly by inspecting a scatter plot colored by `pct_counts_mt`. \n\nsc.pl.scatter(adata, \"total_counts\", \"n_genes_by_counts\", color=\"pct_counts_mt\")\n\n# Based on the QC metric plots, one could now remove cells that have too many mitochondrial genes expressed or too many total counts by setting manual or automatic thresholds. However, sometimes what appears to be poor QC metrics can be driven by real biology so we suggest starting with a very permissive filtering strategy and revisiting it at a later point. We therefore now only filter cells with less than 100 genes expressed and genes that are detected in less than 3 cells. \n#\n# Additionally, it is important to note that for datasets with multiple batches, quality control should be performed for each sample individually as quality control thresholds can vary substantially between batches. \n\nsc.pp.filter_cells(adata, min_genes=100)\nsc.pp.filter_genes(adata, min_cells=3)\n\n# ### Doublet detection\n#\n# As a next step, we run a doublet detection algorithm. Identifying doublets is crucial as they can lead to misclassifications or distortions in downstream analysis steps. Scanpy contains the doublet detection method Scrublet {cite}`Wolock2019`. Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets. {func}`scanpy.pp.scrublet` adds `doublet_score` and `predicted_doublet` to `.obs`. One can now either filter directly on `predicted_doublet` or use the `doublet_score` later during clustering to filter clusters with high doublet scores. \n\nsc.pp.scrublet(adata, batch_key=\"sample\")\n\n# We can remove doublets by either filtering out the cells called as doublets, or waiting until we've done a clustering pass and filtering out any clusters with high doublet scores.\n\n# :::{seealso}\n# Alternative methods for doublet detection within the scverse ecosystem are [DoubletDetection](https://github.com/JonathanShor/DoubletDetection) and [SOLO](https://docs.scvi-tools.org/en/stable/user_guide/models/solo.html). You can read more about these in the [Doublet Detection chapter](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#doublet-detection) of Single Cell Best Practices.\n# :::\n\n# ## Normalization\n#\n# The next preprocessing step is normalization. A common approach is count depth scaling with subsequent log plus one (log1p) transformation. Count depth scaling normalizes the data to a “size factor” such as the median count depth in the dataset, ten thousand (CP10k) or one million (CPM, counts per million). The size factor for count depth scaling can be controlled via `target_sum` in `pp.normalize_total`. We are applying median count depth normalization with log1p transformation (AKA log1PF).\n\n# Saving count data\nadata.layers[\"counts\"] = adata.X.copy()\n\n# Normalizing to median total counts\nsc.pp.normalize_total(adata)\n# Logarithmize the data\nsc.pp.log1p(adata)\n\n# ## Feature selection\n#\n# As a next step, we want to reduce the dimensionality of the dataset and only include the most informative genes. This step is commonly known as feature selection. The scanpy function `pp.highly_variable_genes` annotates highly variable genes by reproducing the implementations of Seurat {cite}`Satija2015`, Cell Ranger {cite}`Zheng2017`, and Seurat v3 {cite}`Stuart2019` depending on the chosen `flavor`. \n\nsc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\nsc.pl.highly_variable_genes(adata)\n\n# ## Dimensionality Reduction\n# Reduce the dimensionality of the data by running principal component analysis (PCA), which reveals the main axes of variation and denoises the data.\n\nsc.tl.pca(adata)\n\n# Let us inspect the contribution of single PCs to the total variance in the data. This gives us information about how many PCs we should consider in order to compute the neighborhood relations of cells, e.g. used in the clustering function {func}`~scanpy.tl.leiden` or {func}`~scanpy.tl.tsne`. In our experience, there does not seem to be signifigant downside to overestimating the numer of principal components.\n\nsc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n\n# You can also plot the principal components to see if there are any potentially undesired features (e.g. batch, QC metrics) driving signifigant variation in this dataset. In this case, there isn't anything too alarming, but it's a good idea to explore this.\n\nsc.pl.pca(\n    adata,\n    color=[\"sample\", \"sample\", \"pct_counts_mt\", \"pct_counts_mt\"],\n    dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)],\n    ncols=2,\n    size=2,\n)\n\n# ## Nearest neighbor graph construction and visualization\n#\n# Let us compute the neighborhood graph of cells using the PCA representation of the data matrix.\n\nsc.pp.neighbors(adata)\n\n# This graph can then be embedded in two dimensions for visualiztion with UMAP {cite:p}`McInnes2018`:\n\nsc.tl.umap(adata)\n\n# We can now visualize the UMAP according to the `sample`. \n\nsc.pl.umap(\n    adata,\n    color=\"sample\",\n    # Setting a smaller point size to get prevent overlap\n    size=2,\n)\n\n# Even though the data considered in this tutorial includes two different samples, we only observe a minor batch effect and we can continue with clustering and annotation of our data. \n#\n# If you inspect batch effects in your UMAP it can be beneficial to integrate across samples and perform batch correction/integration. We recommend checking out [`scanorama`](https://github.com/brianhie/scanorama) and [`scvi-tools`](https://scvi-tools.org) for batch integration.\n\n# ## Clustering\n#\n# As with Seurat and many other frameworks, we recommend the Leiden graph-clustering method (community detection based on optimizing modularity) {cite}`Traag2019`. Note that Leiden clustering directly clusters the neighborhood graph of cells, which we already computed in the previous section.\n\n# Using the igraph implementation and a fixed number of iterations can be significantly faster,\n# especially for larger datasets\nsc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)\n\nsc.pl.umap(adata, color=[\"leiden\"])\n\n# ```{dropdown} How do I save a plot?\n# You can save a plot by directly accessing the returned Matplotlib figure:\n# ````python\n# sc.pl.umap(adata, color=[\"leiden\"], show).figure.savefig(\"output_path.ext\")\n# ````\n# ```\n\n# ## Re-assess quality control and cell filtering \n#\n# As indicated before, we will now re-assess our filtering strategy by visualizing different QC metrics using UMAP. \n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"predicted_doublet\", \"doublet_score\"],\n    # increase horizontal space between panels\n    wspace=0.5,\n    size=3,\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"log1p_total_counts\", \"pct_counts_mt\", \"log1p_n_genes_by_counts\"],\n    wspace=0.5,\n    ncols=2,\n)\n\n# ## Manual cell-type annotation\n\n# :::{note}\n# This section of the tutorial is expanded upon using prior knowledge resources like automated assignment and gene enrichment in the scverse tutorial [here](https://scverse-tutorials.readthedocs.io/page/notebooks/basic-scrna-tutorial.html#cell-type-annotation)\n# :::\n\n# Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.\n\n# We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.\n\n# Commonly and classically, cell type annotation uses those marker genes subsequent to the grouping of the cells into clusters. So, let's generate a set of clustering solutions which we can then use to annotate our cell types. Here, we will use the Leiden clustering algorithm which will extract cell communities from our nearest neighbours graph.\n\nfor res in [0.02, 0.5, 2.0]:\n    sc.tl.leiden(\n        adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\"\n    )\n\n# Notably, the number of clusters that we define is largely arbitrary, and so is the `resolution` parameter that we use to control for it. As such, the number of clusters is ultimately bound to the stable and biologically-meaningful groups that we can ultimately distringuish, typically done by experts in the corresponding field or by using expert-curated prior knowledge in the form of markers.\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\n# Though UMAPs should not be over-interpreted, here we can already see that in the highest resolution our data is over-clustered, while the lowest resolution is likely grouping cells which belong to distinct cell identities.\n\n# ### Marker gene set\n\n# Let's define a set of marker genes for the main cell types that we expect to see in this dataset. These were adapted from [Single Cell Best Practices annotation chapter](https://www.sc-best-practices.org/cellular_structure/annotation.html), for a more detailed overview and best practices in cell type annotation, we refer the user to it.\n\nmarker_genes = {\n    \"CD14+ Mono\": [\"FCN1\", \"CD14\"],\n    \"CD16+ Mono\": [\"TCF7L2\", \"FCGR3A\", \"LYN\"],\n    # Note: DMXL2 should be negative\n    \"cDC2\": [\"CST3\", \"COTL1\", \"LYZ\", \"DMXL2\", \"CLEC10A\", \"FCER1A\"],\n    \"Erythroblast\": [\"MKI67\", \"HBA1\", \"HBB\"],\n    # Note HBM and GYPA are negative markers\n    \"Proerythroblast\": [\"CDK6\", \"SYNGR1\", \"HBM\", \"GYPA\"],\n    \"NK\": [\"GNLY\", \"NKG7\", \"CD247\", \"FCER1G\", \"TYROBP\", \"KLRG1\", \"FCGR3A\"],\n    \"ILC\": [\"ID2\", \"PLCG2\", \"GNLY\", \"SYNE1\"],\n    \"Naive CD20+ B\": [\"MS4A1\", \"IL4R\", \"IGHD\", \"FCRL1\", \"IGHM\"],\n    # Note IGHD and IGHM are negative markers\n    \"B cells\": [\n        \"MS4A1\",\n        \"ITGB1\",\n        \"COL4A4\",\n        \"PRDM1\",\n        \"IRF4\",\n        \"PAX5\",\n        \"BCL11A\",\n        \"BLK\",\n        \"IGHD\",\n        \"IGHM\",\n    ],\n    \"Plasma cells\": [\"MZB1\", \"HSP90B1\", \"FNDC3B\", \"PRDM1\", \"IGKC\", \"JCHAIN\"],\n    # Note PAX5 is a negative marker\n    \"Plasmablast\": [\"XBP1\", \"PRDM1\", \"PAX5\"],\n    \"CD4+ T\": [\"CD4\", \"IL7R\", \"TRBC2\"],\n    \"CD8+ T\": [\"CD8A\", \"CD8B\", \"GZMK\", \"GZMA\", \"CCL5\", \"GZMB\", \"GZMH\", \"GZMA\"],\n    \"T naive\": [\"LEF1\", \"CCR7\", \"TCF7\"],\n    \"pDC\": [\"GZMB\", \"IL3RA\", \"COBLL1\", \"TCF4\"],\n}\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.02\", standard_scale=\"var\")\n\n# There are fairly clear patterns of expression for our markers show here, which we can use to label our coarsest clustering with broad lineages.\n\nadata.obs[\"cell_type_lvl1\"] = adata.obs[\"leiden_res_0.02\"].map({\n    \"0\": \"Lymphocytes\",\n    \"1\": \"Monocytes\",\n    \"2\": \"B Cells\",\n    \"3\": \"Erythroid\",\n    \"4\": \"Erythroid\",\n})\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.50\", standard_scale=\"var\")\n\n# This seems like a resolution that suitable to distinguish most of the different cell types in our data. As such, let's try to annotate those by manually using the dotplot above, together with the UMAP of our clusters. Ideally, one would also look specifically into each cluster, and attempt to subcluster those if required.\n\n# ### Differentially-expressed Genes as Markers\n\n# Furthermore, one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states. This is typically done using simple statistical tests, such as Wilcoxon and t-test, for each cluster vs the rest.\n\n# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# We can then visualize the top 5 differentially-expressed genes on a dotplot.\n\nsc.pl.rank_genes_groups_dotplot(\n    adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n)\n\n# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).\n\n# To create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`\n\nsc.get.rank_genes_groups_df(adata, group=\"7\").head(5)\n\ndc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider \"pseudo-bulking\" your data by sample (*e.g.* `sc.get.aggregate(adata, by=[\"sample\", \"cell_type\"], func=\"sum\", layer=\"counts\")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.\n",
+    "inputs/exports.py": "# ---------------------------------------------------------------------------\n# Endpoint exports (appended stage): serialize existing terminal results only.\n# No new scientific computation, filtering, ranking or plotting is added.\n# ---------------------------------------------------------------------------\n\nimport json\nimport os\n\nimport pandas as pd\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\n# Endpoint 1 -- per-cell terminal results: Leiden cluster assignments\n# (default resolution and the three annotation resolutions), the manual\n# cell-type annotation, the sample identifier and the UMAP embedding.\n_per_cell_obs = adata.obs[\n    [\n        \"sample\",\n        \"leiden\",\n        \"leiden_res_0.02\",\n        \"leiden_res_0.50\",\n        \"leiden_res_2.00\",\n        \"cell_type_lvl1\",\n    ]\n].copy()\n_umap_table = pd.DataFrame(adata.obsm[\"X_umap\"])\n_umap_table.columns = [\"umap_1\", \"umap_2\"]\n_umap_table.index = adata.obs_names\n_per_cell = pd.concat([_per_cell_obs, _umap_table], axis=1)\n_per_cell.index.name = \"cell_id\"\n_per_cell.to_csv(os.path.join(_export_dir, \"cell_clusters_umap.csv\"), index=True)\n\n# Endpoint 2 -- differentially expressed genes per cluster of the\n# leiden_res_0.50 solution, flattened from the stored rankings in\n# adata.uns[\"rank_genes_groups\"]; stored group order and rank order are kept.\n_rgg = adata.uns[\"rank_genes_groups\"]\n_de_fields = [\n    _f\n    for _f in (\"names\", \"scores\", \"pvals_adj\", \"pvals\", \"logfoldchanges\")\n    if _f in _rgg\n]\n_de_parts = []\nfor _grp in _rgg[\"names\"].dtype.names:\n    _part = {\"group\": _grp}\n    for _f in _de_fields:\n        _part[_f] = _rgg[_f][_grp]\n    _de_parts.append(pd.DataFrame(_part))\n_rank_genes_groups_table = pd.concat(_de_parts, ignore_index=True)\n_rank_genes_groups_table.to_csv(\n    os.path.join(_export_dir, \"rank_genes_groups_leiden_res_0.50.csv\"),\n    index=False,\n)\n\n# Context for endpoint 2: the stored run parameters of the DE test.\nwith open(\n    os.path.join(_export_dir, \"rank_genes_groups_params.json\"), \"w\"\n) as _params_fh:\n    json.dump(dict(_rgg[\"params\"]), _params_fh, indent=2, default=str)",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "Per-cell terminal results: cell barcode index; originating sample; Leiden cluster assignment at the default resolution and at resolutions 0.02/0.50/2.00; the manual broad-lineage cell-type annotation (cell_type_lvl1); and the 2-D UMAP coordinates (umap_1, umap_2).",
+          "path": "cell_clusters_umap.csv",
+          "source_evidence": "The clustering/annotation branch is the notebook's stated end product: 'we recommend the Leiden graph-clustering method' (sc.tl.leiden(adata, flavor='igraph', n_iterations=2) fills adata.obs['leiden']); 'let's generate a set of clustering solutions which we can then use to annotate our cell types' (the resolution loop writes adata.obs['leiden_res_0.02'/'leiden_res_0.50'/'leiden_res_2.00'] via key_added); the marker patterns are used 'to label our coarsest clustering with broad lineages' (adata.obs['cell_type_lvl1'] mapped from leiden_res_0.02); the UMAP embedding is interpreted in its own right ('we only observe a minor batch effect', and it is the surface for cluster, QC and marker visualization) and is stored by sc.tl.umap(adata) in adata.obsm['X_umap']. adata.obs['sample'] (from ad.concat(adatas, label='sample')) is the per-cell sample identifier needed to read the embedding. All keys are fixed and survive to script completion."
+        },
+        {
+          "description": "Differentially expressed genes per cluster of the leiden_res_0.50 solution (Wilcoxon vs rest): one row per ranked gene per cluster with group, names, scores, pvals_adj, pvals and logfoldchanges, in the stored group and rank order.",
+          "path": "rank_genes_groups_leiden_res_0.50.csv",
+          "source_evidence": "The marker-gene/DE branch yields an independent interpreted outcome: 'one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states', and the result is directly read as a finding ('Cluster 7 is expressing NKG7 and GNLY, suggesting these are NK cells'). It is produced by sc.tl.rank_genes_groups(adata, groupby='leiden_res_0.50', method='wilcoxon') and stored in adata.uns['rank_genes_groups']; the notebook itself notes the results 'can be extracted in a convenient format with scanpy.get.rank_genes_groups_df' (called with group='7'), confirming this stored object is the readable result table. The export flattens those same stored recarrays (all stored fields, groups and ranking order preserved) without recomputation."
+        },
+        {
+          "description": "Run parameters stored with the DE result (groupby, method, reference, correction method), identifying which clustering and test produced the exported DE table.",
+          "path": "rank_genes_groups_params.json",
+          "source_evidence": "Written from adata.uns['rank_genes_groups']['params'], populated by the sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon') call in the baseline; these identifiers are the context needed to interpret the endpoint table."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "QC metrics and QC figures (adata.obs n_genes_by_counts, total_counts, pct_counts_{mt,ribo,hb} and log1p variants; violin and scatter plots): diagnostics used to motivate the deliberately permissive filtering and re-assessed on the UMAP; no thresholds beyond min_genes/min_cells are derived from them.",
+        "Scrublet doublet results (adata.obs['doublet_score'], adata.obs['predicted_doublet']): diagnostic QC supporting cluster assessment; the notebook only inspects them alongside the clusters and explicitly leaves doublet-based filtering as an unexecuted option.",
+        "Highly variable gene annotations (adata.var highly_variable, dispersions/means columns): feature-selection intermediate feeding PCA; the HVG set is not itself interpreted as an independent result.",
+        "PCA results (adata.obsm['X_pca'], variance ratio): intermediate consumed by the neighbor graph; the variance-ratio and PCA plots are checks on parameter choice and batch effects.",
+        "Count layer adata.layers['counts'] and the normalized/log1p matrix adata.X: intermediates consumed by HVG, PCA, dotplots and the DE test; excluded on role, not size.",
+        "dc_cluster_genes and the unnamed sc.get.rank_genes_groups_df(adata, group='7').head(5) display: a top-5 display subset of the cluster-7 ranking fully contained in the exported DE table; the follow-up UMAP coloring of those genes is computed inside sc.pl.umap and is not exported.",
+        "marker_genes dictionary and the marker-gene dotplots: the dictionary is prior-knowledge input, and dotplot values are computed inside the plotting function; neither is a stored computed result eligible for export."
+      ],
+      "explanation": "The notebook's terminal scientific outcomes are (i) the Leiden clustering solutions, the UMAP embedding they are interpreted on, and the manual broad-lineage cell-type annotation derived from the coarsest solution, and (ii) the per-cluster differentially expressed genes (Wilcoxon) used to annotate the 0.50-resolution clusters. The appended code only serializes values that exist at completion: selected adata.obs columns plus adata.obsm['X_umap'] in one per-cell CSV, and the stored adata.uns['rank_genes_groups'] rankings flattened group-by-group into a CSV, with the stored DE run parameters written as context. No values are recomputed, filtered, re-ranked or plotted; the source analysis is untouched.",
+      "export_code": "# ---------------------------------------------------------------------------\n# Endpoint exports (appended stage): serialize existing terminal results only.\n# No new scientific computation, filtering, ranking or plotting is added.\n# ---------------------------------------------------------------------------\n\nimport json\nimport os\n\nimport pandas as pd\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\n# Endpoint 1 -- per-cell terminal results: Leiden cluster assignments\n# (default resolution and the three annotation resolutions), the manual\n# cell-type annotation, the sample identifier and the UMAP embedding.\n_per_cell_obs = adata.obs[\n    [\n        \"sample\",\n        \"leiden\",\n        \"leiden_res_0.02\",\n        \"leiden_res_0.50\",\n        \"leiden_res_2.00\",\n        \"cell_type_lvl1\",\n    ]\n].copy()\n_umap_table = pd.DataFrame(adata.obsm[\"X_umap\"])\n_umap_table.columns = [\"umap_1\", \"umap_2\"]\n_umap_table.index = adata.obs_names\n_per_cell = pd.concat([_per_cell_obs, _umap_table], axis=1)\n_per_cell.index.name = \"cell_id\"\n_per_cell.to_csv(os.path.join(_export_dir, \"cell_clusters_umap.csv\"), index=True)\n\n# Endpoint 2 -- differentially expressed genes per cluster of the\n# leiden_res_0.50 solution, flattened from the stored rankings in\n# adata.uns[\"rank_genes_groups\"]; stored group order and rank order are kept.\n_rgg = adata.uns[\"rank_genes_groups\"]\n_de_fields = [\n    _f\n    for _f in (\"names\", \"scores\", \"pvals_adj\", \"pvals\", \"logfoldchanges\")\n    if _f in _rgg\n]\n_de_parts = []\nfor _grp in _rgg[\"names\"].dtype.names:\n    _part = {\"group\": _grp}\n    for _f in _de_fields:\n        _part[_f] = _rgg[_f][_grp]\n    _de_parts.append(pd.DataFrame(_part))\n_rank_genes_groups_table = pd.concat(_de_parts, ignore_index=True)\n_rank_genes_groups_table.to_csv(\n    os.path.join(_export_dir, \"rank_genes_groups_leiden_res_0.50.csv\"),\n    index=False,\n)\n\n# Context for endpoint 2: the stored run parameters of the DE test.\nwith open(\n    os.path.join(_export_dir, \"rank_genes_groups_params.json\"), \"w\"\n) as _params_fh:\n    json.dump(dict(_rgg[\"params\"]), _params_fh, indent=2, default=str)",
+      "unresolved_assumptions": [
+        "The export assumes the baseline completes and the fixed keys it reads exist at append time ('leiden', 'leiden_res_0.02'/'leiden_res_0.50'/'leiden_res_2.00', 'cell_type_lvl1' in adata.obs; 'X_umap' in adata.obsm with 2 components; 'rank_genes_groups' in adata.uns). cell_type_lvl1 is defined only for leiden_res_0.02 clusters 0-4, matching the notebook's hardcoded map; whether the clustering yields exactly those clusters is untested.",
+        "Staging of the two 10x .h5 inputs via pupper/pooch and figshare plus headless behavior of the scanpy plotting calls are execution-stage concerns that determine whether the baseline reaches completion; this preparation does not assume observed runtimes.",
+        "Whether the full two-sample workflow (scrublet, PCA, neighbors, UMAP, Wilcoxon DE) fits the 600-second CPU-only, 8 GiB limit is untested; the size of the DE table (number of leiden_res_0.50 clusters x stored genes) is likewise unobserved and not assumed."
+      ]
+    },
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: notebook\n#     language: python\n#     name: python3\n# ---\n\n# # Preprocessing and clustering\n\n# Core scverse libraries\nfrom __future__ import annotations\n\n# Offline execution adaptations (environment/input-path only; no change to\n# the scientific content: same data, population, algorithms, parameters,\n# filtering, annotations and branches):\n#\n# 1. The reference run is headless (no display), so select matplotlib's\n#    non-interactive Agg backend before scanpy imports pyplot. All plotting\n#    calls below are kept and still render off-screen.\n# 2. Input-path adaptation: pin the pooch data cache to the persistent\n#    controller cache root (/work/cache) that the input-staging recipe\n#    populates, so pooch.os_cache(\"scverse_tutorials\") resolves to\n#    /work/cache/scverse_tutorials (the staged original dataset files)\n#    instead of the default user cache under $HOME.\nimport os\n\nos.environ[\"XDG_CACHE_HOME\"] = \"/work/cache\"\n\nimport matplotlib\n\nmatplotlib.use(\"Agg\")\n\nimport anndata as ad\n\n# Data retrieval\nimport pooch\n\nimport scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n\n# The data used in this basic preprocessing and clustering tutorial was collected from bone marrow mononuclear cells of healthy human donors and was part of [openproblem's NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) {cite}`Luecken2021`. The samples used in this tutorial were measured using the 10X Multiome Gene Expression and Chromatin Accessability kit. \n#\n#\n# We are reading in the count matrix into an {class}`~anndata.AnnData` object, which holds many slots for annotations and different representations of the data.\n# See {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. \n\nEXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\n# Offline execution adaptation: upstream, this call queries the figshare data\n# repository API over the network to learn the article's file names and md5\n# checksums for doi:10.6084/m9.figshare.22716739.v1. The reference environment\n# is offline, so the identical registry (one '<name> md5:<provider_md5>' line\n# per dataset file, built from that same provider metadata) is written into the\n# cache by the input-staging recipe and loaded from disk here. Only that\n# ambient network access is removed: pooch still resolves each cached file\n# and checks its md5 against this registry before sc.read_10x_h5 reads it, so\n# the dataset bytes the analysis sees are the original provider files.\nEXAMPLE_DATA.load_registry(\n    pooch.os_cache(\"scverse_tutorials\") / \"registry.txt\"\n)\n\n\nsamples = {\n    \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n    \"s1d3\": \"s1d3_filtered_feature_bc_matrix.h5\",\n}\nadatas = {}\n\nfor sample_id, filename in samples.items():\n    path = EXAMPLE_DATA.fetch(filename)\n    sample_adata = sc.read_10x_h5(path)\n    sample_adata.var_names_make_unique()\n    adatas[sample_id] = sample_adata\n\nadata = ad.concat(adatas, label=\"sample\")\nadata.obs_names_make_unique()\nprint(adata.obs[\"sample\"].value_counts())\nadata\n\n# The data contains ~8,000 cells per sample and 36,601 measured genes. We'll now investigate these with a basic preprocessing and clustering workflow.\n\n# ## Quality Control\n\n# The scanpy function {func}`~scanpy.pp.calculate_qc_metrics` calculates common quality control (QC) metrics, which are largely based on `calculateQCMetrics` from scater {cite}`McCarthy2017`. One can pass specific gene population to {func}`~scanpy.pp.calculate_qc_metrics` in order to calculate proportions of counts for these populations. Mitochondrial, ribosomal and hemoglobin genes are defined by distinct prefixes as listed below. \n\n# mitochondrial genes, \"MT-\" for human, \"mt-\" for mouse\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\n# ribosomal genes\nadata.var[\"ribo\"] = adata.var_names.str.startswith((\"RPS\", \"RPL\"))\n# hemoglobin genes\nadata.var[\"hb\"] = adata.var_names.str.contains(\"^HB[^(P)]\")\n\nsc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# One can now inspect violin plots of some of the computed QC metrics:\n#\n# * the number of genes expressed in the count matrix\n# * the total counts per cell\n# * the percentage of counts in mitochondrial genes\n\nsc.pl.violin(\n    adata,\n    [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n    jitter=0.4,\n    multi_panel=True,\n)\n\n# Additionally, it is useful to consider QC metrics jointly by inspecting a scatter plot colored by `pct_counts_mt`. \n\nsc.pl.scatter(adata, \"total_counts\", \"n_genes_by_counts\", color=\"pct_counts_mt\")\n\n# Based on the QC metric plots, one could now remove cells that have too many mitochondrial genes expressed or too many total counts by setting manual or automatic thresholds. However, sometimes what appears to be poor QC metrics can be driven by real biology so we suggest starting with a very permissive filtering strategy and revisiting it at a later point. We therefore now only filter cells with less than 100 genes expressed and genes that are detected in less than 3 cells. \n#\n# Additionally, it is important to note that for datasets with multiple batches, quality control should be performed for each sample individually as quality control thresholds can vary substantially between batches. \n\nsc.pp.filter_cells(adata, min_genes=100)\nsc.pp.filter_genes(adata, min_cells=3)\n\n# ### Doublet detection\n#\n# As a next step, we run a doublet detection algorithm. Identifying doublets is crucial as they can lead to misclassifications or distortions in downstream analysis steps. Scanpy contains the doublet detection method Scrublet {cite}`Wolock2019`. Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets. {func}`scanpy.pp.scrublet` adds `doublet_score` and `predicted_doublet` to `.obs`. One can now either filter directly on `predicted_doublet` or use the `doublet_score` later during clustering to filter clusters with high doublet scores. \n\nsc.pp.scrublet(adata, batch_key=\"sample\")\n\n# We can remove doublets by either filtering out the cells called as doublets, or waiting until we've done a clustering pass and filtering out any clusters with high doublet scores.\n\n# :::{seealso}\n# Alternative methods for doublet detection within the scverse ecosystem are [DoubletDetection](https://github.com/JonathanShor/DoubletDetection) and [SOLO](https://docs.scvi-tools.org/en/stable/user_guide/models/solo.html). You can read more about these in the [Doublet Detection chapter](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#doublet-detection) of Single Cell Best Practices.\n# :::\n\n# ## Normalization\n#\n# The next preprocessing step is normalization. A common approach is count depth scaling with subsequent log plus one (log1p) transformation. Count depth scaling normalizes the data to a “size factor” such as the median count depth in the dataset, ten thousand (CP10k) or one million (CPM, counts per million). The size factor for count depth scaling can be controlled via `target_sum` in `pp.normalize_total`. We are applying median count depth normalization with log1p transformation (AKA log1PF).\n\n# Saving count data\nadata.layers[\"counts\"] = adata.X.copy()\n\n# Normalizing to median total counts\nsc.pp.normalize_total(adata)\n# Logarithmize the data\nsc.pp.log1p(adata)\n\n# ## Feature selection\n#\n# As a next step, we want to reduce the dimensionality of the dataset and only include the most informative genes. This step is commonly known as feature selection. The scanpy function `pp.highly_variable_genes` annotates highly variable genes by reproducing the implementations of Seurat {cite}`Satija2015`, Cell Ranger {cite}`Zheng2017`, and Seurat v3 {cite}`Stuart2019` depending on the chosen `flavor`. \n\nsc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\nsc.pl.highly_variable_genes(adata)\n\n# ## Dimensionality Reduction\n# Reduce the dimensionality of the data by running principal component analysis (PCA), which reveals the main axes of variation and denoises the data.\n\nsc.tl.pca(adata)\n\n# Let us inspect the contribution of single PCs to the total variance in the data. This gives us information about how many PCs we should consider in order to compute the neighborhood relations of cells, e.g. used in the clustering function {func}`~scanpy.tl.leiden` or {func}`~scanpy.tl.tsne`. In our experience, there does not seem to be signifigant downside to overestimating the numer of principal components.\n\nsc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n\n# You can also plot the principal components to see if there are any potentially undesired features (e.g. batch, QC metrics) driving signifigant variation in this dataset. In this case, there isn't anything too alarming, but it's a good idea to explore this.\n\nsc.pl.pca(\n    adata,\n    color=[\"sample\", \"sample\", \"pct_counts_mt\", \"pct_counts_mt\"],\n    dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)],\n    ncols=2,\n    size=2,\n)\n\n# ## Nearest neighbor graph construction and visualization\n#\n# Let us compute the neighborhood graph of cells using the PCA representation of the data matrix.\n\nsc.pp.neighbors(adata)\n\n# This graph can then be embedded in two dimensions for visualiztion with UMAP {cite:p}`McInnes2018`:\n\nsc.tl.umap(adata)\n\n# We can now visualize the UMAP according to the `sample`. \n\nsc.pl.umap(\n    adata,\n    color=\"sample\",\n    # Setting a smaller point size to get prevent overlap\n    size=2,\n)\n\n# Even though the data considered in this tutorial includes two different samples, we only observe a minor batch effect and we can continue with clustering and annotation of our data. \n#\n# If you inspect batch effects in your UMAP it can be beneficial to integrate across samples and perform batch correction/integration. We recommend checking out [`scanorama`](https://github.com/brianhie/scanorama) and [`scvi-tools`](https://scvi-tools.org) for batch integration.\n\n# ## Clustering\n#\n# As with Seurat and many other frameworks, we recommend the Leiden graph-clustering method (community detection based on optimizing modularity) {cite}`Traag2019`. Note that Leiden clustering directly clusters the neighborhood graph of cells, which we already computed in the previous section.\n\n# Using the igraph implementation and a fixed number of iterations can be significantly faster,\n# especially for larger datasets\nsc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)\n\nsc.pl.umap(adata, color=[\"leiden\"])\n\n# ```{dropdown} How do I save a plot?\n# You can save a plot by directly accessing the returned Matplotlib figure:\n# ````python\n# sc.pl.umap(adata, color=[\"leiden\"], show).figure.savefig(\"output_path.ext\")\n# ````\n# ```\n\n# ## Re-assess quality control and cell filtering \n#\n# As indicated before, we will now re-assess our filtering strategy by visualizing different QC metrics using UMAP. \n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"predicted_doublet\", \"doublet_score\"],\n    # increase horizontal space between panels\n    wspace=0.5,\n    size=3,\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"log1p_total_counts\", \"pct_counts_mt\", \"log1p_n_genes_by_counts\"],\n    wspace=0.5,\n    ncols=2,\n)\n\n# ## Manual cell-type annotation\n\n# :::{note}\n# This section of the tutorial is expanded upon using prior knowledge resources like automated assignment and gene enrichment in the scverse tutorial [here](https://scverse-tutorials.readthedocs.io/page/notebooks/basic-scrna-tutorial.html#cell-type-annotation)\n# :::\n\n# Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.\n\n# We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.\n\n# Commonly and classically, cell type annotation uses those marker genes subsequent to the grouping of the cells into clusters. So, let's generate a set of clustering solutions which we can then use to annotate our cell types. Here, we will use the Leiden clustering algorithm which will extract cell communities from our nearest neighbours graph.\n\nfor res in [0.02, 0.5, 2.0]:\n    sc.tl.leiden(\n        adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\"\n    )\n\n# Notably, the number of clusters that we define is largely arbitrary, and so is the `resolution` parameter that we use to control for it. As such, the number of clusters is ultimately bound to the stable and biologically-meaningful groups that we can ultimately distringuish, typically done by experts in the corresponding field or by using expert-curated prior knowledge in the form of markers.\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\n# Though UMAPs should not be over-interpreted, here we can already see that in the highest resolution our data is over-clustered, while the lowest resolution is likely grouping cells which belong to distinct cell identities.\n\n# ### Marker gene set\n\n# Let's define a set of marker genes for the main cell types that we expect to see in this dataset. These were adapted from [Single Cell Best Practices annotation chapter](https://www.sc-best-practices.org/cellular_structure/annotation.html), for a more detailed overview and best practices in cell type annotation, we refer the user to it.\n\nmarker_genes = {\n    \"CD14+ Mono\": [\"FCN1\", \"CD14\"],\n    \"CD16+ Mono\": [\"TCF7L2\", \"FCGR3A\", \"LYN\"],\n    # Note: DMXL2 should be negative\n    \"cDC2\": [\"CST3\", \"COTL1\", \"LYZ\", \"DMXL2\", \"CLEC10A\", \"FCER1A\"],\n    \"Erythroblast\": [\"MKI67\", \"HBA1\", \"HBB\"],\n    # Note HBM and GYPA are negative markers\n    \"Proerythroblast\": [\"CDK6\", \"SYNGR1\", \"HBM\", \"GYPA\"],\n    \"NK\": [\"GNLY\", \"NKG7\", \"CD247\", \"FCER1G\", \"TYROBP\", \"KLRG1\", \"FCGR3A\"],\n    \"ILC\": [\"ID2\", \"PLCG2\", \"GNLY\", \"SYNE1\"],\n    \"Naive CD20+ B\": [\"MS4A1\", \"IL4R\", \"IGHD\", \"FCRL1\", \"IGHM\"],\n    # Note IGHD and IGHM are negative markers\n    \"B cells\": [\n        \"MS4A1\",\n        \"ITGB1\",\n        \"COL4A4\",\n        \"PRDM1\",\n        \"IRF4\",\n        \"PAX5\",\n        \"BCL11A\",\n        \"BLK\",\n        \"IGHD\",\n        \"IGHM\",\n    ],\n    \"Plasma cells\": [\"MZB1\", \"HSP90B1\", \"FNDC3B\", \"PRDM1\", \"IGKC\", \"JCHAIN\"],\n    # Note PAX5 is a negative marker\n    \"Plasmablast\": [\"XBP1\", \"PRDM1\", \"PAX5\"],\n    \"CD4+ T\": [\"CD4\", \"IL7R\", \"TRBC2\"],\n    \"CD8+ T\": [\"CD8A\", \"CD8B\", \"GZMK\", \"GZMA\", \"CCL5\", \"GZMB\", \"GZMH\", \"GZMA\"],\n    \"T naive\": [\"LEF1\", \"CCR7\", \"TCF7\"],\n    \"pDC\": [\"GZMB\", \"IL3RA\", \"COBLL1\", \"TCF4\"],\n}\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.02\", standard_scale=\"var\")\n\n# There are fairly clear patterns of expression for our markers show here, which we can use to label our coarsest clustering with broad lineages.\n\nadata.obs[\"cell_type_lvl1\"] = adata.obs[\"leiden_res_0.02\"].map({\n    \"0\": \"Lymphocytes\",\n    \"1\": \"Monocytes\",\n    \"2\": \"B Cells\",\n    \"3\": \"Erythroid\",\n    \"4\": \"Erythroid\",\n})\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.50\", standard_scale=\"var\")\n\n# This seems like a resolution that suitable to distinguish most of the different cell types in our data. As such, let's try to annotate those by manually using the dotplot above, together with the UMAP of our clusters. Ideally, one would also look specifically into each cluster, and attempt to subcluster those if required.\n\n# ### Differentially-expressed Genes as Markers\n\n# Furthermore, one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states. This is typically done using simple statistical tests, such as Wilcoxon and t-test, for each cluster vs the rest.\n\n# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# We can then visualize the top 5 differentially-expressed genes on a dotplot.\n\nsc.pl.rank_genes_groups_dotplot(\n    adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n)\n\n# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).\n\n# To create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`\n\nsc.get.rank_genes_groups_df(adata, group=\"7\").head(5)\n\ndc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider \"pseudo-bulking\" your data by sample (*e.g.* `sc.get.aggregate(adata, by=[\"sample\", \"cell_type\"], func=\"sum\", layer=\"counts\")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.\n",
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: notebook\n#     language: python\n#     name: python3\n# ---\n\n# # Preprocessing and clustering\n\n# Core scverse libraries\nfrom __future__ import annotations\n\n# Offline execution adaptations (environment/input-path only; no change to\n# the scientific content: same data, population, algorithms, parameters,\n# filtering, annotations and branches):\n#\n# 1. The reference run is headless (no display), so select matplotlib's\n#    non-interactive Agg backend before scanpy imports pyplot. All plotting\n#    calls below are kept and still render off-screen.\n# 2. Input-path adaptation: pin the pooch data cache to the persistent\n#    controller cache root (/work/cache) that the input-staging recipe\n#    populates, so pooch.os_cache(\"scverse_tutorials\") resolves to\n#    /work/cache/scverse_tutorials (the staged original dataset files)\n#    instead of the default user cache under $HOME.\nimport os\n\nos.environ[\"XDG_CACHE_HOME\"] = \"/work/cache\"\n\nimport matplotlib\n\nmatplotlib.use(\"Agg\")\n\nimport anndata as ad\n\n# Data retrieval\nimport pooch\n\nimport scanpy as sc\n\nsc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n\n# The data used in this basic preprocessing and clustering tutorial was collected from bone marrow mononuclear cells of healthy human donors and was part of [openproblem's NeurIPS 2021 benchmarking dataset](https://openproblems.bio/competitions/neurips_2021/) {cite}`Luecken2021`. The samples used in this tutorial were measured using the 10X Multiome Gene Expression and Chromatin Accessability kit. \n#\n#\n# We are reading in the count matrix into an {class}`~anndata.AnnData` object, which holds many slots for annotations and different representations of the data.\n# See {doc}`anndata:tutorials/notebooks/getting-started` for a tutorial. \n\nEXAMPLE_DATA = pooch.create(\n    path=pooch.os_cache(\"scverse_tutorials\"),\n    base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n)\n# Offline execution adaptation: upstream, this call queries the figshare data\n# repository API over the network to learn the article's file names and md5\n# checksums for doi:10.6084/m9.figshare.22716739.v1. The reference environment\n# is offline, so the identical registry (one '<name> md5:<provider_md5>' line\n# per dataset file, built from that same provider metadata) is written into the\n# cache by the input-staging recipe and loaded from disk here. Only that\n# ambient network access is removed: pooch still resolves each cached file\n# and checks its md5 against this registry before sc.read_10x_h5 reads it, so\n# the dataset bytes the analysis sees are the original provider files.\nEXAMPLE_DATA.load_registry(\n    pooch.os_cache(\"scverse_tutorials\") / \"registry.txt\"\n)\n\n\nsamples = {\n    \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n    \"s1d3\": \"s1d3_filtered_feature_bc_matrix.h5\",\n}\nadatas = {}\n\nfor sample_id, filename in samples.items():\n    path = EXAMPLE_DATA.fetch(filename)\n    sample_adata = sc.read_10x_h5(path)\n    sample_adata.var_names_make_unique()\n    adatas[sample_id] = sample_adata\n\nadata = ad.concat(adatas, label=\"sample\")\nadata.obs_names_make_unique()\nprint(adata.obs[\"sample\"].value_counts())\nadata\n\n# The data contains ~8,000 cells per sample and 36,601 measured genes. We'll now investigate these with a basic preprocessing and clustering workflow.\n\n# ## Quality Control\n\n# The scanpy function {func}`~scanpy.pp.calculate_qc_metrics` calculates common quality control (QC) metrics, which are largely based on `calculateQCMetrics` from scater {cite}`McCarthy2017`. One can pass specific gene population to {func}`~scanpy.pp.calculate_qc_metrics` in order to calculate proportions of counts for these populations. Mitochondrial, ribosomal and hemoglobin genes are defined by distinct prefixes as listed below. \n\n# mitochondrial genes, \"MT-\" for human, \"mt-\" for mouse\nadata.var[\"mt\"] = adata.var_names.str.startswith(\"MT-\")\n# ribosomal genes\nadata.var[\"ribo\"] = adata.var_names.str.startswith((\"RPS\", \"RPL\"))\n# hemoglobin genes\nadata.var[\"hb\"] = adata.var_names.str.contains(\"^HB[^(P)]\")\n\nsc.pp.calculate_qc_metrics(\n    adata, qc_vars=[\"mt\", \"ribo\", \"hb\"], inplace=True, log1p=True\n)\n\n# One can now inspect violin plots of some of the computed QC metrics:\n#\n# * the number of genes expressed in the count matrix\n# * the total counts per cell\n# * the percentage of counts in mitochondrial genes\n\nsc.pl.violin(\n    adata,\n    [\"n_genes_by_counts\", \"total_counts\", \"pct_counts_mt\"],\n    jitter=0.4,\n    multi_panel=True,\n)\n\n# Additionally, it is useful to consider QC metrics jointly by inspecting a scatter plot colored by `pct_counts_mt`. \n\nsc.pl.scatter(adata, \"total_counts\", \"n_genes_by_counts\", color=\"pct_counts_mt\")\n\n# Based on the QC metric plots, one could now remove cells that have too many mitochondrial genes expressed or too many total counts by setting manual or automatic thresholds. However, sometimes what appears to be poor QC metrics can be driven by real biology so we suggest starting with a very permissive filtering strategy and revisiting it at a later point. We therefore now only filter cells with less than 100 genes expressed and genes that are detected in less than 3 cells. \n#\n# Additionally, it is important to note that for datasets with multiple batches, quality control should be performed for each sample individually as quality control thresholds can vary substantially between batches. \n\nsc.pp.filter_cells(adata, min_genes=100)\nsc.pp.filter_genes(adata, min_cells=3)\n\n# ### Doublet detection\n#\n# As a next step, we run a doublet detection algorithm. Identifying doublets is crucial as they can lead to misclassifications or distortions in downstream analysis steps. Scanpy contains the doublet detection method Scrublet {cite}`Wolock2019`. Scrublet predicts cell doublets using a nearest-neighbor classifier of observed transcriptomes and simulated doublets. {func}`scanpy.pp.scrublet` adds `doublet_score` and `predicted_doublet` to `.obs`. One can now either filter directly on `predicted_doublet` or use the `doublet_score` later during clustering to filter clusters with high doublet scores. \n\nsc.pp.scrublet(adata, batch_key=\"sample\")\n\n# We can remove doublets by either filtering out the cells called as doublets, or waiting until we've done a clustering pass and filtering out any clusters with high doublet scores.\n\n# :::{seealso}\n# Alternative methods for doublet detection within the scverse ecosystem are [DoubletDetection](https://github.com/JonathanShor/DoubletDetection) and [SOLO](https://docs.scvi-tools.org/en/stable/user_guide/models/solo.html). You can read more about these in the [Doublet Detection chapter](https://www.sc-best-practices.org/preprocessing_visualization/quality_control.html#doublet-detection) of Single Cell Best Practices.\n# :::\n\n# ## Normalization\n#\n# The next preprocessing step is normalization. A common approach is count depth scaling with subsequent log plus one (log1p) transformation. Count depth scaling normalizes the data to a “size factor” such as the median count depth in the dataset, ten thousand (CP10k) or one million (CPM, counts per million). The size factor for count depth scaling can be controlled via `target_sum` in `pp.normalize_total`. We are applying median count depth normalization with log1p transformation (AKA log1PF).\n\n# Saving count data\nadata.layers[\"counts\"] = adata.X.copy()\n\n# Normalizing to median total counts\nsc.pp.normalize_total(adata)\n# Logarithmize the data\nsc.pp.log1p(adata)\n\n# ## Feature selection\n#\n# As a next step, we want to reduce the dimensionality of the dataset and only include the most informative genes. This step is commonly known as feature selection. The scanpy function `pp.highly_variable_genes` annotates highly variable genes by reproducing the implementations of Seurat {cite}`Satija2015`, Cell Ranger {cite}`Zheng2017`, and Seurat v3 {cite}`Stuart2019` depending on the chosen `flavor`. \n\nsc.pp.highly_variable_genes(adata, n_top_genes=2000, batch_key=\"sample\")\n\nsc.pl.highly_variable_genes(adata)\n\n# ## Dimensionality Reduction\n# Reduce the dimensionality of the data by running principal component analysis (PCA), which reveals the main axes of variation and denoises the data.\n\nsc.tl.pca(adata)\n\n# Let us inspect the contribution of single PCs to the total variance in the data. This gives us information about how many PCs we should consider in order to compute the neighborhood relations of cells, e.g. used in the clustering function {func}`~scanpy.tl.leiden` or {func}`~scanpy.tl.tsne`. In our experience, there does not seem to be signifigant downside to overestimating the numer of principal components.\n\nsc.pl.pca_variance_ratio(adata, n_pcs=50, log=True)\n\n# You can also plot the principal components to see if there are any potentially undesired features (e.g. batch, QC metrics) driving signifigant variation in this dataset. In this case, there isn't anything too alarming, but it's a good idea to explore this.\n\nsc.pl.pca(\n    adata,\n    color=[\"sample\", \"sample\", \"pct_counts_mt\", \"pct_counts_mt\"],\n    dimensions=[(0, 1), (2, 3), (0, 1), (2, 3)],\n    ncols=2,\n    size=2,\n)\n\n# ## Nearest neighbor graph construction and visualization\n#\n# Let us compute the neighborhood graph of cells using the PCA representation of the data matrix.\n\nsc.pp.neighbors(adata)\n\n# This graph can then be embedded in two dimensions for visualiztion with UMAP {cite:p}`McInnes2018`:\n\nsc.tl.umap(adata)\n\n# We can now visualize the UMAP according to the `sample`. \n\nsc.pl.umap(\n    adata,\n    color=\"sample\",\n    # Setting a smaller point size to get prevent overlap\n    size=2,\n)\n\n# Even though the data considered in this tutorial includes two different samples, we only observe a minor batch effect and we can continue with clustering and annotation of our data. \n#\n# If you inspect batch effects in your UMAP it can be beneficial to integrate across samples and perform batch correction/integration. We recommend checking out [`scanorama`](https://github.com/brianhie/scanorama) and [`scvi-tools`](https://scvi-tools.org) for batch integration.\n\n# ## Clustering\n#\n# As with Seurat and many other frameworks, we recommend the Leiden graph-clustering method (community detection based on optimizing modularity) {cite}`Traag2019`. Note that Leiden clustering directly clusters the neighborhood graph of cells, which we already computed in the previous section.\n\n# Using the igraph implementation and a fixed number of iterations can be significantly faster,\n# especially for larger datasets\nsc.tl.leiden(adata, flavor=\"igraph\", n_iterations=2)\n\nsc.pl.umap(adata, color=[\"leiden\"])\n\n# ```{dropdown} How do I save a plot?\n# You can save a plot by directly accessing the returned Matplotlib figure:\n# ````python\n# sc.pl.umap(adata, color=[\"leiden\"], show).figure.savefig(\"output_path.ext\")\n# ````\n# ```\n\n# ## Re-assess quality control and cell filtering \n#\n# As indicated before, we will now re-assess our filtering strategy by visualizing different QC metrics using UMAP. \n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"predicted_doublet\", \"doublet_score\"],\n    # increase horizontal space between panels\n    wspace=0.5,\n    size=3,\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden\", \"log1p_total_counts\", \"pct_counts_mt\", \"log1p_n_genes_by_counts\"],\n    wspace=0.5,\n    ncols=2,\n)\n\n# ## Manual cell-type annotation\n\n# :::{note}\n# This section of the tutorial is expanded upon using prior knowledge resources like automated assignment and gene enrichment in the scverse tutorial [here](https://scverse-tutorials.readthedocs.io/page/notebooks/basic-scrna-tutorial.html#cell-type-annotation)\n# :::\n\n# Cell type annotation is laborous and repetitive task, one which typically requires multiple rounds of subclustering and re-annotation. It's difficult to show the entirety of the process in this tutorial, but we aim to show how the tools scanpy provides assist in this process.\n\n# We have now reached a point where we have obtained a set of cells with decent quality, and we can proceed to their annotation to known cell types. Typically, this is done using genes that are exclusively expressed by a given cell type, or in other words these genes are the marker genes of the cell types, and are thus used to distinguish the heterogeneous groups of cells in our data. Previous efforts have collected and curated various marker genes into available resources, such as [CellMarker](http://bio-bigdata.hrbmu.edu.cn/CellMarker/), [TF-Marker](http://bio.liclab.net/TF-Marker/), and [PanglaoDB](https://panglaodb.se/). The [cellxgene gene expression tool](https://cellxgene.cziscience.com/gene-expression) can also be quite useful to see which cell types a gene has been expressed in across many existing datasets.\n\n# Commonly and classically, cell type annotation uses those marker genes subsequent to the grouping of the cells into clusters. So, let's generate a set of clustering solutions which we can then use to annotate our cell types. Here, we will use the Leiden clustering algorithm which will extract cell communities from our nearest neighbours graph.\n\nfor res in [0.02, 0.5, 2.0]:\n    sc.tl.leiden(\n        adata, key_added=f\"leiden_res_{res:4.2f}\", resolution=res, flavor=\"igraph\"\n    )\n\n# Notably, the number of clusters that we define is largely arbitrary, and so is the `resolution` parameter that we use to control for it. As such, the number of clusters is ultimately bound to the stable and biologically-meaningful groups that we can ultimately distringuish, typically done by experts in the corresponding field or by using expert-curated prior knowledge in the form of markers.\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\nsc.pl.umap(\n    adata,\n    color=[\"leiden_res_0.02\", \"leiden_res_0.50\", \"leiden_res_2.00\"],\n    legend_loc=\"on data\",\n)\n\n# Though UMAPs should not be over-interpreted, here we can already see that in the highest resolution our data is over-clustered, while the lowest resolution is likely grouping cells which belong to distinct cell identities.\n\n# ### Marker gene set\n\n# Let's define a set of marker genes for the main cell types that we expect to see in this dataset. These were adapted from [Single Cell Best Practices annotation chapter](https://www.sc-best-practices.org/cellular_structure/annotation.html), for a more detailed overview and best practices in cell type annotation, we refer the user to it.\n\nmarker_genes = {\n    \"CD14+ Mono\": [\"FCN1\", \"CD14\"],\n    \"CD16+ Mono\": [\"TCF7L2\", \"FCGR3A\", \"LYN\"],\n    # Note: DMXL2 should be negative\n    \"cDC2\": [\"CST3\", \"COTL1\", \"LYZ\", \"DMXL2\", \"CLEC10A\", \"FCER1A\"],\n    \"Erythroblast\": [\"MKI67\", \"HBA1\", \"HBB\"],\n    # Note HBM and GYPA are negative markers\n    \"Proerythroblast\": [\"CDK6\", \"SYNGR1\", \"HBM\", \"GYPA\"],\n    \"NK\": [\"GNLY\", \"NKG7\", \"CD247\", \"FCER1G\", \"TYROBP\", \"KLRG1\", \"FCGR3A\"],\n    \"ILC\": [\"ID2\", \"PLCG2\", \"GNLY\", \"SYNE1\"],\n    \"Naive CD20+ B\": [\"MS4A1\", \"IL4R\", \"IGHD\", \"FCRL1\", \"IGHM\"],\n    # Note IGHD and IGHM are negative markers\n    \"B cells\": [\n        \"MS4A1\",\n        \"ITGB1\",\n        \"COL4A4\",\n        \"PRDM1\",\n        \"IRF4\",\n        \"PAX5\",\n        \"BCL11A\",\n        \"BLK\",\n        \"IGHD\",\n        \"IGHM\",\n    ],\n    \"Plasma cells\": [\"MZB1\", \"HSP90B1\", \"FNDC3B\", \"PRDM1\", \"IGKC\", \"JCHAIN\"],\n    # Note PAX5 is a negative marker\n    \"Plasmablast\": [\"XBP1\", \"PRDM1\", \"PAX5\"],\n    \"CD4+ T\": [\"CD4\", \"IL7R\", \"TRBC2\"],\n    \"CD8+ T\": [\"CD8A\", \"CD8B\", \"GZMK\", \"GZMA\", \"CCL5\", \"GZMB\", \"GZMH\", \"GZMA\"],\n    \"T naive\": [\"LEF1\", \"CCR7\", \"TCF7\"],\n    \"pDC\": [\"GZMB\", \"IL3RA\", \"COBLL1\", \"TCF4\"],\n}\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.02\", standard_scale=\"var\")\n\n# There are fairly clear patterns of expression for our markers show here, which we can use to label our coarsest clustering with broad lineages.\n\nadata.obs[\"cell_type_lvl1\"] = adata.obs[\"leiden_res_0.02\"].map({\n    \"0\": \"Lymphocytes\",\n    \"1\": \"Monocytes\",\n    \"2\": \"B Cells\",\n    \"3\": \"Erythroid\",\n    \"4\": \"Erythroid\",\n})\n\nsc.pl.dotplot(adata, marker_genes, groupby=\"leiden_res_0.50\", standard_scale=\"var\")\n\n# This seems like a resolution that suitable to distinguish most of the different cell types in our data. As such, let's try to annotate those by manually using the dotplot above, together with the UMAP of our clusters. Ideally, one would also look specifically into each cluster, and attempt to subcluster those if required.\n\n# ### Differentially-expressed Genes as Markers\n\n# Furthermore, one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states. This is typically done using simple statistical tests, such as Wilcoxon and t-test, for each cluster vs the rest.\n\n# Obtain cluster-specific differentially expressed genes\nsc.tl.rank_genes_groups(adata, groupby=\"leiden_res_0.50\", method=\"wilcoxon\")\n\n# We can then visualize the top 5 differentially-expressed genes on a dotplot.\n\nsc.pl.rank_genes_groups_dotplot(\n    adata, groupby=\"leiden_res_0.50\", standard_scale=\"var\", n_genes=5\n)\n\n# We can then use these genes to figure out what cell types we're looking at. For example, Cluster 7 is expressing [*NKG7*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=NKG7&keywords=nkg7) and [*GNLY*](https://www.genecards.org/cgi-bin/carddisp.pl?gene=GNLY&keywords=GNLY), suggesting these are [NK cells](https://en.wikipedia.org/wiki/Natural_killer_cell).\n\n# To create your own plots, or use a more automated approach, the differentially expressed genes can be extracted in a convenient format with {func}`scanpy.get.rank_genes_groups_df`\n\nsc.get.rank_genes_groups_df(adata, group=\"7\").head(5)\n\ndc_cluster_genes = sc.get.rank_genes_groups_df(adata, group=\"7\").head(5)[\"names\"]\nsc.pl.umap(\n    adata,\n    color=[*dc_cluster_genes, \"leiden_res_0.50\"],\n    legend_loc=\"on data\",\n    frameon=False,\n    ncols=3,\n)\n\n# You may have noticed that the p-values found here are extremely low. This is due to the statistical test being performed considering each cell as an independent sample. For a more conservative approach you may want to consider \"pseudo-bulking\" your data by sample (*e.g.* `sc.get.aggregate(adata, by=[\"sample\", \"cell_type\"], func=\"sum\", layer=\"counts\")`) and using a more powerful differential expression tool, like {doc}`pydeseq2 <pydeseq2:index>`.\n\n\n# ---------------------------------------------------------------------------\n# Endpoint exports (appended stage): serialize existing terminal results only.\n# No new scientific computation, filtering, ranking or plotting is added.\n# ---------------------------------------------------------------------------\n\nimport json\nimport os\n\nimport pandas as pd\n\n_export_dir = \"/work/outputs\"\nos.makedirs(_export_dir, exist_ok=True)\n\n# Endpoint 1 -- per-cell terminal results: Leiden cluster assignments\n# (default resolution and the three annotation resolutions), the manual\n# cell-type annotation, the sample identifier and the UMAP embedding.\n_per_cell_obs = adata.obs[\n    [\n        \"sample\",\n        \"leiden\",\n        \"leiden_res_0.02\",\n        \"leiden_res_0.50\",\n        \"leiden_res_2.00\",\n        \"cell_type_lvl1\",\n    ]\n].copy()\n_umap_table = pd.DataFrame(adata.obsm[\"X_umap\"])\n_umap_table.columns = [\"umap_1\", \"umap_2\"]\n_umap_table.index = adata.obs_names\n_per_cell = pd.concat([_per_cell_obs, _umap_table], axis=1)\n_per_cell.index.name = \"cell_id\"\n_per_cell.to_csv(os.path.join(_export_dir, \"cell_clusters_umap.csv\"), index=True)\n\n# Endpoint 2 -- differentially expressed genes per cluster of the\n# leiden_res_0.50 solution, flattened from the stored rankings in\n# adata.uns[\"rank_genes_groups\"]; stored group order and rank order are kept.\n_rgg = adata.uns[\"rank_genes_groups\"]\n_de_fields = [\n    _f\n    for _f in (\"names\", \"scores\", \"pvals_adj\", \"pvals\", \"logfoldchanges\")\n    if _f in _rgg\n]\n_de_parts = []\nfor _grp in _rgg[\"names\"].dtype.names:\n    _part = {\"group\": _grp}\n    for _f in _de_fields:\n        _part[_f] = _rgg[_f][_grp]\n    _de_parts.append(pd.DataFrame(_part))\n_rank_genes_groups_table = pd.concat(_de_parts, ignore_index=True)\n_rank_genes_groups_table.to_csv(\n    os.path.join(_export_dir, \"rank_genes_groups_leiden_res_0.50.csv\"),\n    index=False,\n)\n\n# Context for endpoint 2: the stored run parameters of the DE test.\nwith open(\n    os.path.join(_export_dir, \"rank_genes_groups_params.json\"), \"w\"\n) as _params_fh:\n    json.dump(dict(_rgg[\"params\"]), _params_fh, indent=2, default=str)",
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -17,6 +17,26 @@\n # Core scverse libraries\n from __future__ import annotations\n \n+# Offline execution adaptations (environment/input-path only; no change to\n+# the scientific content: same data, population, algorithms, parameters,\n+# filtering, annotations and branches):\n+#\n+# 1. The reference run is headless (no display), so select matplotlib's\n+#    non-interactive Agg backend before scanpy imports pyplot. All plotting\n+#    calls below are kept and still render off-screen.\n+# 2. Input-path adaptation: pin the pooch data cache to the persistent\n+#    controller cache root (/work/cache) that the input-staging recipe\n+#    populates, so pooch.os_cache(\"scverse_tutorials\") resolves to\n+#    /work/cache/scverse_tutorials (the staged original dataset files)\n+#    instead of the default user cache under $HOME.\n+import os\n+\n+os.environ[\"XDG_CACHE_HOME\"] = \"/work/cache\"\n+\n+import matplotlib\n+\n+matplotlib.use(\"Agg\")\n+\n import anndata as ad\n \n # Data retrieval\n@@ -36,7 +56,19 @@\n     path=pooch.os_cache(\"scverse_tutorials\"),\n     base_url=\"doi:10.6084/m9.figshare.22716739.v1/\",\n )\n-EXAMPLE_DATA.load_registry_from_doi()\n+# Offline execution adaptation: upstream, this call queries the figshare data\n+# repository API over the network to learn the article's file names and md5\n+# checksums for doi:10.6084/m9.figshare.22716739.v1. The reference environment\n+# is offline, so the identical registry (one '<name> md5:<provider_md5>' line\n+# per dataset file, built from that same provider metadata) is written into the\n+# cache by the input-staging recipe and loaded from disk here. Only that\n+# ambient network access is removed: pooch still resolves each cached file\n+# and checks its md5 against this registry before sc.read_10x_h5 reads it, so\n+# the dataset bytes the analysis sees are the original provider files.\n+EXAMPLE_DATA.load_registry(\n+    pooch.os_cache(\"scverse_tutorials\") / \"registry.txt\"\n+)\n+\n \n samples = {\n     \"s1d1\": \"s1d1_filtered_feature_bc_matrix.h5\",\n",
+    "candidate/inputs.json": {
+      "files": [
+        {
+          "local_path": "/work/cache/scverse_tutorials/s1d1_filtered_feature_bc_matrix.h5",
+          "source": "https://ndownloader.figshare.com/files/40347877 (s1d1_filtered_feature_bc_matrix.h5, doi:10.6084/m9.figshare.22716739.v1, NeurIPS 2021 Benchmark dataset, CC BY 4.0; provider md5 a99285913ea3f3d22600d3d2f8a88e34)"
+        },
+        {
+          "local_path": "/work/cache/scverse_tutorials/s1d3_filtered_feature_bc_matrix.h5",
+          "source": "https://ndownloader.figshare.com/files/40347880 (s1d3_filtered_feature_bc_matrix.h5, doi:10.6084/m9.figshare.22716739.v1, NeurIPS 2021 Benchmark dataset, CC BY 4.0; provider md5 825f7f7578e3dc0b8955f5a97a402338)"
+        },
+        {
+          "local_path": "/work/cache/scverse_tutorials/registry.txt",
+          "source": "pooch registry for doi:10.6084/m9.figshare.22716739.v1 derived from https://api.figshare.com/v2/articles/22716739/versions/1 (file names and provider md5 checksums); loaded via Pooch.load_registry by analysis.py"
+        }
+      ]
+    },
+    "trial/inputs-before.json": {
+      "files": [
+        {
+          "local_path": "/work/cache/scverse_tutorials/s1d1_filtered_feature_bc_matrix.h5",
+          "source": "https://ndownloader.figshare.com/files/40347877 (s1d1_filtered_feature_bc_matrix.h5, doi:10.6084/m9.figshare.22716739.v1, NeurIPS 2021 Benchmark dataset, CC BY 4.0; provider md5 a99285913ea3f3d22600d3d2f8a88e34)",
+          "bytes": 22848647,
+          "sha256": "322c30a7a4905f7f113472442d4aa2c81a1ad736c86651f6c0b81e5b2ff94ac8"
+        },
+        {
+          "local_path": "/work/cache/scverse_tutorials/s1d3_filtered_feature_bc_matrix.h5",
+          "source": "https://ndownloader.figshare.com/files/40347880 (s1d3_filtered_feature_bc_matrix.h5, doi:10.6084/m9.figshare.22716739.v1, NeurIPS 2021 Benchmark dataset, CC BY 4.0; provider md5 825f7f7578e3dc0b8955f5a97a402338)",
+          "bytes": 20432298,
+          "sha256": "ca40b287fac57ac2048f11f56f1b630c7c188718908fc217c6baf2e49bdb1982"
+        },
+        {
+          "local_path": "/work/cache/scverse_tutorials/registry.txt",
+          "source": "pooch registry for doi:10.6084/m9.figshare.22716739.v1 derived from https://api.figshare.com/v2/articles/22716739/versions/1 (file names and provider md5 checksums); loaded via Pooch.load_registry by analysis.py",
+          "bytes": 144,
+          "sha256": "43235e5d401b2463419b2a632b1aca653b15d4b46d6cd76ce3fe448991ccf815"
+        }
+      ]
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"scanpy-clustering-analysis\"\nversion = \"1.0.0\"\ndescription = \"Offline-science environment for the scanpy 'Preprocessing and clustering' tutorial reference run.\"\nrequires-python = \">=3.13,<3.14\"\ndependencies = [\n  \"anndata>=0.12.14\",\n  \"h5py>=3.11\",\n  \"igraph>=0.10.8\",\n  \"leidenalg>=0.10.1\",\n  \"matplotlib>=3.10\",\n  \"numpy>=2.2.5\",\n  \"pandas>=2.3\",\n  \"pooch>=1.8.0\",\n  \"scanpy>=1.11.4\",\n  \"scikit-image>=0.25\",\n  \"scikit-learn>=1.6\",\n  \"scipy>=1.15\",\n  \"seaborn>=0.13.2\",\n  \"statsmodels>=0.14.5\",\n  \"umap-learn>=0.5.12\",\n]\n",
+    "trial/environment.txt": "anndata==0.13.4\nannotated-types==0.8.0\narray-api-compat==1.15.0\ncertifi==2026.7.22\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\ndonfig==0.8.1.post1\nfast-array-utils==1.5.1\nfonttools==4.67.0\nformulaic==1.2.2\ngoogle-crc32c==1.9.0\nh5py==3.16.0\nidna==3.20\nigraph==1.0.0\nimageio==2.38.1\ninterface-meta==2.0.1\njoblib==1.6.0\nkiwisolver==1.5.1\nlazy-loader==0.6\nlegacy-api-wrap==1.5\nleidenalg==0.12.0\nllvmlite==0.50.0\nmatplotlib==3.11.2\nmsgspec==0.22.0\nnarwhals==2.27.1\nnatsort==8.4.0\nnetworkx==3.7\nnumba==0.68.0\nnumcodecs==0.17.0\nnumpy==2.5.4\npackaging==26.3\npandas==3.0.6\npatsy==1.0.3\npillow==12.3.0\nplatformdirs==4.13.0\npooch==1.9.0\npydantic==2.14.1\npydantic-core==2.50.1\npydantic-settings==2.16.0\npynndescent==0.6.0\npyparsing==3.3.3\npython-dateutil==2.9.0.post0\npython-dotenv==1.2.4\npyyaml==6.0.3\nrequests==2.34.2\nscanpy==1.12.4\nscikit-image==0.26.0\nscikit-learn==1.9.1\nscipy==1.18.1\nscverse-misc==0.1.7\nseaborn==0.13.2\nsession-info2==0.4.2\nsix==1.17.0\nstatsmodels==0.15.0\ntexttable==1.7.1\nthreadpoolctl==3.7.0\ntifffile==2026.9.20\ntqdm==4.70.1\ntyping-extensions==4.16.0\ntyping-inspection==0.4.4\numap-learn==0.5.12\nurllib3==2.8.0\nwrapt==2.5.1\nzarr==3.4.1\n",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 1098166,
+            "exists": true,
+            "path": "cell_clusters_umap.csv",
+            "sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d"
+          },
+          {
+            "bytes": 28207516,
+            "exists": true,
+            "path": "rank_genes_groups_leiden_res_0.50.csv",
+            "sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b"
+          },
+          {
+            "bytes": 157,
+            "exists": true,
+            "path": "rank_genes_groups_params.json",
+            "sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "5dde61e6f8013f8f2c5712a56825fa94db197b6a987b9cc33108ad3b2b1e6a46",
+        "inputs.json": "1146443461fa108f125e1da33c879dd8e81a919a5289f738af89284d1277ad70",
+        "pyproject.toml": "99c91961b8b1cb93f02ec0cba6dfbf6cefefef2a5052e27bf19e421917b36973",
+        "stage-inputs.sh": "d0bc0cda328d0df9cd2549ece995de0e335553668b2538492dc55c4e2f39b548",
+        "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "elapsed_seconds": 147.50729751586914,
+        "exit_code": 0,
+        "finished": 1792081347.7313523,
+        "log": "/work/reference.py:47: FutureWarning: The method set_figure_params is deprecated and will be removed in the future. Use :func:`scanpy.set_figure_params` instead\n  sc.settings.set_figure_params(dpi=50, facecolor=\"white\")\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/venv/lib/python3.13/site-packages/scanpy/readwrite.py:248: UserWarning: Variable names are not unique. To make them unique, call `.var_names_make_unique`.\n  adata = adata.copy()\n/work/reference.py:85: UserWarning: Observation names are not unique. To make them unique, call `.obs_names_make_unique`.\n  adata = ad.concat(adatas, label=\"sample\")\nWARNING: dendrogram data not found (using key=dendrogram_leiden_res_0.50). Running `sc.tl.dendrogram` with default parameters. For fine tuning it is recommended to run `sc.tl.dendrogram` independently.\nsample\ns1d1    8785\ns1d3    8340\nName: count, dtype: int64\n",
+        "peak_child_rss_kib": 5175376,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792081200.2240548,
+        "timed_out": false
+      },
+      "inputs_after": {
+        "files": 3,
+        "staged_inputs_verified": true
+      },
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "elapsed_seconds": 3.320296287536621,
+        "exit_code": 0,
+        "finished": 1792081192.9488862,
+        "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 20.4/20.4 MB 243.4 MB/s  0:00:00\nInstalling collected packages: uv\n  Attempting uninstall: uv\n    Found existing installation: uv 0.13.1\n    Uninstalling uv-0.13.1:\n      Successfully uninstalled uv-0.13.1\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 69 packages in 279ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 69 packages in 0.87ms\nDownloading pillow (6.6MiB)\nDownloading pydantic-core (2.1MiB)\nDownloading fonttools (5.1MiB)\nDownloading networkx (2.0MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading h5py (5.2MiB)\nDownloading numba (3.7MiB)\nDownloading pandas (10.3MiB)\nDownloading numpy (15.9MiB)\nDownloading scikit-learn (8.7MiB)\nDownloading scipy (33.7MiB)\nDownloading leidenalg (2.6MiB)\nDownloading igraph (5.4MiB)\nDownloading matplotlib (9.4MiB)\nDownloading numcodecs (1.4MiB)\nDownloading statsmodels (11.5MiB)\nDownloading llvmlite (56.9MiB)\nDownloading scanpy (2.1MiB)\nDownloading scikit-image (13.0MiB)\n Downloaded kiwisolver\n Downloaded numcodecs\n Downloaded scanpy\n Downloaded pydantic-core\n Downloaded networkx\n Downloaded leidenalg\n Downloaded numba\n Downloaded h5py\n Downloaded igraph\n Downloaded fonttools\n Downloaded pillow\n Downloaded scikit-learn\n Downloaded matplotlib\n Downloaded statsmodels\n Downloaded scikit-image\n Downloaded pandas\n Downloaded numpy\n Downloaded scipy\n Downloaded llvmlite\nPrepared 66 packages in 918ms\nInstalled 66 packages in 915ms\n + anndata==0.13.4\n + annotated-types==0.8.0\n + array-api-compat==1.15.0\n + certifi==2026.7.22\n + charset-normalizer==3.5.2\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + donfig==0.8.1.post1\n + fast-array-utils==1.5.1\n + fonttools==4.67.0\n + formulaic==1.2.2\n + google-crc32c==1.9.0\n + h5py==3.16.0\n + idna==3.20\n + igraph==1.0.0\n + imageio==2.38.1\n + interface-meta==2.0.1\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + lazy-loader==0.6\n + legacy-api-wrap==1.5\n + leidenalg==0.12.0\n + llvmlite==0.50.0\n + matplotlib==3.11.2\n + msgspec==0.22.0\n + narwhals==2.27.1\n + natsort==8.4.0\n + networkx==3.7\n + numba==0.68.0\n + numcodecs==0.17.0\n + numpy==2.5.4\n + packaging==26.3\n + pandas==3.0.6\n + patsy==1.0.3\n + pillow==12.3.0\n + platformdirs==4.13.0\n + pooch==1.9.0\n + pydantic==2.14.1\n + pydantic-core==2.50.1\n + pydantic-settings==2.16.0\n + pynndescent==0.6.0\n + pyparsing==3.3.3\n + python-dateutil==2.9.0.post0\n + python-dotenv==1.2.4\n + pyyaml==6.0.3\n + requests==2.34.2\n + scanpy==1.12.4\n + scikit-image==0.26.0\n + scikit-learn==1.9.1\n + scipy==1.18.1\n + scverse-misc==0.1.7\n + seaborn==0.13.2\n + session-info2==0.4.2\n + six==1.17.0\n + statsmodels==0.15.0\n + texttable==1.7.1\n + threadpoolctl==3.7.0\n + tifffile==2026.9.20\n + tqdm==4.70.1\n + typing-extensions==4.16.0\n + typing-inspection==0.4.4\n + umap-learn==0.5.12\n + urllib3==2.8.0\n + wrapt==2.5.1\n + zarr==3.4.1\nUsing Python 3.13.13 environment at: venv\nstage-inputs: staged s1d1_filtered_feature_bc_matrix.h5 (22848647 bytes, md5 a99285913ea3f3d22600d3d2f8a88e34 verified)\nstage-inputs: staged s1d3_filtered_feature_bc_matrix.h5 (20432298 bytes, md5 825f7f7578e3dc0b8955f5a97a402338 verified)\nstage-inputs: wrote /work/cache/scverse_tutorials/registry.txt\nstage-inputs: cache for 10.6084/m9.figshare.22716739.v1:\n  registry.txt 144\n  s1d1_filtered_feature_bc_matrix.h5 22848647\n  s1d3_filtered_feature_bc_matrix.h5 20432298\nstage-inputs: done\n",
+        "peak_child_rss_kib": 120172,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792081189.6285899,
+        "timed_out": false
+      },
+      "status": "reference_executed",
+      "test": 1
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "finished": 1792081401.1838608,
+      "last_passing_test": {
+        "hashes": {
+          "analysis.py": "5dde61e6f8013f8f2c5712a56825fa94db197b6a987b9cc33108ad3b2b1e6a46",
+          "inputs.json": "1146443461fa108f125e1da33c879dd8e81a919a5289f738af89284d1277ad70",
+          "pyproject.toml": "99c91961b8b1cb93f02ec0cba6dfbf6cefefef2a5052e27bf19e421917b36973",
+          "stage-inputs.sh": "d0bc0cda328d0df9cd2549ece995de0e335553668b2538492dc55c4e2f39b548",
+          "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "source_changed": true,
+        "test": 1
+      },
+      "reference_tests": 1,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1691.6854570360156,
+      "solver_run": false,
+      "started": 1792080675.6278656,
+      "status": "reference_executed_requires_review"
+    },
+    "output-audit.json": {
+      "scope": "Archived file integrity and structural/numeric-range inspection only; not independent scientific reproduction",
+      "outputs": [
+        {
+          "file": "cell_clusters_umap.csv",
+          "bytes": 1098166,
+          "sha256": "6f2fc91d14c144f7b7ffc852766318d1dec0acc0312a2e28c08007ce488d7d4d",
+          "download_hash_verified": true,
+          "columns": [
+            "cell_id",
+            "sample",
+            "leiden",
+            "leiden_res_0.02",
+            "leiden_res_0.50",
+            "leiden_res_2.00",
+            "cell_type_lvl1",
+            "umap_1",
+            "umap_2"
+          ],
+          "rows": 17041,
+          "first_rows": [
+            {
+              "cell_id": "AAACCCAAGGATGGCT-1",
+              "sample": "s1d1",
+              "leiden": "0",
+              "leiden_res_0.02": "0",
+              "leiden_res_0.50": "0",
+              "leiden_res_2.00": "0",
+              "cell_type_lvl1": "Lymphocytes",
+              "umap_1": "0.00617068",
+              "umap_2": "-0.35228986"
+            },
+            {
+              "cell_id": "AAACCCAAGGCCTAGA-1",
+              "sample": "s1d1",
+              "leiden": "1",
+              "leiden_res_0.02": "1",
+              "leiden_res_0.50": "1",
+              "leiden_res_2.00": "1",
+              "cell_type_lvl1": "Monocytes",
+              "umap_1": "2.7619786",
+              "umap_2": "13.504758"
+            },
+            {
+              "cell_id": "AAACCCAAGTGAGTGC-1",
+              "sample": "s1d1",
+              "leiden": "2",
+              "leiden_res_0.02": "2",
+              "leiden_res_0.50": "2",
+              "leiden_res_2.00": "2",
+              "cell_type_lvl1": "B Cells",
+              "umap_1": "4.4179196",
+              "umap_2": "-7.197026"
+            }
+          ],
+          "column_stats": {
+            "cell_id": {
+              "blank": 0,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "sample": {
+              "blank": 0,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "leiden": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 24.0
+            },
+            "leiden_res_0.02": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 4.0
+            },
+            "leiden_res_0.50": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 16.0
+            },
+            "leiden_res_2.00": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 35.0
+            },
+            "cell_type_lvl1": {
+              "blank": 0,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "umap_1": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": -7.7080717,
+              "max": 14.865676
+            },
+            "umap_2": {
+              "blank": 0,
+              "numeric": 17041,
+              "nonfinite": 0,
+              "min": -10.346118,
+              "max": 15.574993
+            }
+          }
+        },
+        {
+          "file": "rank_genes_groups_leiden_res_0.50.csv",
+          "bytes": 28207516,
+          "sha256": "33aae2d3ccc29065fd647c712a99731274c59a15284bbe910f148bec68ffca2b",
+          "download_hash_verified": true,
+          "columns": [
+            "group",
+            "names",
+            "scores",
+            "pvals_adj",
+            "pvals",
+            "logfoldchanges"
+          ],
+          "rows": 398259,
+          "first_rows": [
+            {
+              "group": "0",
+              "names": "TPT1",
+              "scores": "85.90431",
+              "pvals_adj": "0.0",
+              "pvals": "0.0",
+              "logfoldchanges": "2.5481253"
+            },
+            {
+              "group": "0",
+              "names": "RPL34",
+              "scores": "84.51204",
+              "pvals_adj": "0.0",
+              "pvals": "0.0",
+              "logfoldchanges": "2.9147897"
+            },
+            {
+              "group": "0",
+              "names": "RPL30",
+              "scores": "84.47343",
+              "pvals_adj": "0.0",
+              "pvals": "0.0",
+              "logfoldchanges": "2.8922489"
+            }
+          ],
+          "column_stats": {
+            "group": {
+              "blank": 0,
+              "numeric": 398259,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 16.0
+            },
+            "names": {
+              "blank": 0,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "scores": {
+              "blank": 0,
+              "numeric": 398259,
+              "nonfinite": 0,
+              "min": -67.24169,
+              "max": 85.90431
+            },
+            "pvals_adj": {
+              "blank": 0,
+              "numeric": 398259,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "pvals": {
+              "blank": 0,
+              "numeric": 398259,
+              "nonfinite": 0,
+              "min": 0.0,
+              "max": 1.0
+            },
+            "logfoldchanges": {
+              "blank": 0,
+              "numeric": 398259,
+              "nonfinite": 0,
+              "min": -29.894245,
+              "max": 25.739277
+            }
+          }
+        },
+        {
+          "file": "rank_genes_groups_params.json",
+          "bytes": 157,
+          "sha256": "c16515e9501618953cdd5d82cee0c9a42a457d9e9c24d44b44c5f8fce7f75329",
+          "download_hash_verified": true,
+          "content": {
+            "groupby": "leiden_res_0.50",
+            "reference": "rest",
+            "method": "wilcoxon",
+            "use_raw": false,
+            "layer": null,
+            "corr_method": "benjamini-hochberg"
+          }
+        }
+      ]
+    }
+  },
+  "file_sha256": {
+    "provenance.json": "7574b95dc0c1d4d3025912e28d5a79bfdd1a5111b14210aaaf60e3ddcfadbac4",
+    "inputs/original.py": "ea678a3584d7b3e18214f8c032dd4fcaa107083ca681a0d044c2eecfbcb71d71",
+    "inputs/exports.py": "e32025e0e7a8fb67dcb361ba3c37aaa58e5d64aff9616a3d964cce2ee6e8baf2",
+    "inputs/plan.json": "2299934b9c36de9809e459cd10de16097a87807446dc16362c0c941c26b93d3e",
+    "candidate/analysis.py": "5dde61e6f8013f8f2c5712a56825fa94db197b6a987b9cc33108ad3b2b1e6a46",
+    "trial/reference.py": "7ad8513c81ede3803e1c1bd2b467169149babba1da9f76b77ec8c603a0bfeba2",
+    "trial/source.diff": "b41f1ff219778322d291fc357c02643b33eced8c2d48df920fb795dd63d14d4d",
+    "candidate/inputs.json": "1146443461fa108f125e1da33c879dd8e81a919a5289f738af89284d1277ad70",
+    "trial/inputs-before.json": "6feb17eca8da83166152307b3315679e9dec6b737f90b02dbf2cb4e605f162c7",
+    "candidate/pyproject.toml": "99c91961b8b1cb93f02ec0cba6dfbf6cefefef2a5052e27bf19e421917b36973",
+    "trial/uv.lock": "ac97b311d9aa1579ff8df565405fdc811a8a83d4a2ee1ac28b01281204adc97d",
+    "trial/environment.txt": "56389a2a81313e89a0d7e28db78cef32f2d8d344c3a153fda8794ec8e09c6836",
+    "trial/result.json": "6e01b24e147e69aebdf5f1735356c809f8e04d5bd5896c4086820cc02b57487d",
+    "result.json": "c6ac15ae80f9d0ee3676ab79cc65c0cea085c697f5a8f5fdb62db2fdebdc0046",
+    "output-audit.json": "b20579ebb9856801ebc834b121571f07e0e55b25144e6b3b3e3fb67866795bef"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "sha256": "ac97b311d9aa1579ff8df565405fdc811a8a83d4a2ee1ac28b01281204adc97d",
+      "bytes": 127039,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context."
+    }
+  },
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "approved_scope": {
+      "inputs": "Original expression data plus fixed cell-group assignments derived from the recorded reference. Select the assignment appropriate to its marker analysis and document provenance; do not represent it as biological ground truth.",
+      "outputs": "Marker/differential-expression results for the supplied groups.",
+      "excluded": "Discovering clusters and reproducing UMAP coordinates.",
+      "constraints": "Keep downstream science grounded in the source. Choose and justify remaining preprocessing, test definitions and compact meaningful outputs without prescribing API calls. Do not supply marker answers as inputs."
+    }
+  },
+  "evidence_boundary": "One passing reference test and structural output audit. No full data tables in this context, no independent scientific reproduction, repeatability measurement, calibrated grader or solver evidence. Read-only package-source tools are available.",
+  "package_inspection": {
+    "packages": {
+      "anndata": {
+        "version": "0.13.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/54/23/f1b1af76bc5a1845d5fcad297e4c460223a7670f1ca15e167d7dcf32aaab/anndata-0.13.4-py3-none-any.whl",
+          "hash": "sha256:028c4e4f968a68965d3d0fc465c947890fa8e5aa6d2506104590f46080c7736d",
+          "size": 190231
+        },
+        "kind": "universal_wheel"
+      },
+      "annotated-types": {
+        "version": "0.8.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/99/91/8acff4f5e50511b911bbccb72b8628a49c68ce14148cd9f6431094859a90/annotated_types-0.8.0-py3-none-any.whl",
+          "hash": "sha256:f072f4d804ea359e4eaf198b1af7a8b0943881a87f31bb764f8bf219bb9419e0",
+          "size": 13427
+        },
+        "kind": "universal_wheel"
+      },
+      "array-api-compat": {
+        "version": "1.15.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/86/16/1a8fd2b19544b84575cf84ef7aa3ad4c173b756d5f087c91f85d1b295777/array_api_compat-1.15.0-py3-none-any.whl",
+          "hash": "sha256:7b1b9c53269061403fd5f45a8de349f16e7887653328bfa0c5f2d45299ff0a8e",
+          "size": 79113
+        },
+        "kind": "universal_wheel"
+      },
+      "certifi": {
+        "version": "2026.7.22",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/0b/a7/71ac2cff56fec219ed242bb11b8efb69fcc4bec75db06fb7bfe35de520e6/certifi-2026.7.22-py3-none-any.whl",
+          "hash": "sha256:62f22742b58a1a33014a2b6b706588a8d7e2a88ae7bd1a6ebe8c992928483775",
+          "size": 136983
+        },
+        "kind": "universal_wheel"
+      },
+      "charset-normalizer": {
+        "version": "3.5.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/fc/ad/d07d7862a62ffa6d79d68074d14823243dd235a77c45262acbf6adeb28bf/charset_normalizer-3.5.2-py3-none-any.whl",
+          "hash": "sha256:b6b751274acb69d77b3323d6b7dbaa3c7fdfc1eb829b7eb61d262f32e1af9685",
+          "size": 68872
+        },
+        "kind": "universal_wheel"
+      },
+      "cloudpickle": {
+        "version": "3.1.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/88/39/799be3f2f0f38cc727ee3b4f1445fe6d5e4133064ec2e4115069418a5bb6/cloudpickle-3.1.2-py3-none-any.whl",
+          "hash": "sha256:9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+          "size": 22228
+        },
+        "kind": "universal_wheel"
+      },
+      "contourpy": {
+        "version": "1.4.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/83/5a/a55177dd22553a277388e8a1b3220e92de91bacb28356cdc73caa240121d/contourpy-1.4.0.tar.gz",
+          "hash": "sha256:20156f5a1ac4f8ce02656e39a61e82164a3d359796dc8026f75b062783d500e1",
+          "size": 13323726
+        },
+        "kind": "sdist"
+      },
+      "cycler": {
+        "version": "0.12.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl",
+          "hash": "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+          "size": 8321
+        },
+        "kind": "universal_wheel"
+      },
+      "donfig": {
+        "version": "0.8.1.post1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/0c/d5/c5db1ea3394c6e1732fb3286b3bd878b59507a8f77d32a2cebda7d7b7cd4/donfig-0.8.1.post1-py3-none-any.whl",
+          "hash": "sha256:2a3175ce74a06109ff9307d90a230f81215cbac9a751f4d1c6194644b8204f9d",
+          "size": 21592
+        },
+        "kind": "universal_wheel"
+      },
+      "fast-array-utils": {
+        "version": "1.5.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/44/1e/28539d717756e661963f136e03cba4b46b2c79d74dff814cd9c8ab3f5e32/fast_array_utils-1.5.1-py3-none-any.whl",
+          "hash": "sha256:0ce2246f99a4f0755fbd978886be1b4206ccb2c2ad61518f74ebf1b9156856aa",
+          "size": 40636
+        },
+        "kind": "universal_wheel"
+      },
+      "fonttools": {
+        "version": "4.67.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/3d/61/4161946319472aaa9b897bd18ad5108a5b10f5ebaa503d921a001ac4fff9/fonttools-4.67.0-py3-none-any.whl",
+          "hash": "sha256:4304f03ed7f4ba000a8dcc941ad854bfa52e2f3b6112b8f099b6f431cf98e701",
+          "size": 1213142
+        },
+        "kind": "universal_wheel"
+      },
+      "formulaic": {
+        "version": "1.2.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/fc/75/0576b03f7889ad25b5385b4f6c69e0543713425a6f193b056c9b0a2e65ce/formulaic-1.2.2-py3-none-any.whl",
+          "hash": "sha256:0f84ff49e3fc9dc0e68ab08a0a9427874021aa6c558e66b44dc634a35739b09b",
+          "size": 118939
+        },
+        "kind": "universal_wheel"
+      },
+      "google-crc32c": {
+        "version": "1.9.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/fa/25/9cb0c1c31c45b893eb8f11ae70b3f4309432d59b5acaebca5dbe791729a4/google_crc32c-1.9.0.tar.gz",
+          "hash": "sha256:7b8c84c3d159ab6817fe3f74e6e6cef099c3f95dcec3abc0d8afb1404642efbe",
+          "size": 14857
+        },
+        "kind": "sdist"
+      },
+      "h5py": {
+        "version": "3.16.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/db/33/acd0ce6863b6c0d7735007df01815403f5589a21ff8c2e1ee2587a38f548/h5py-3.16.0.tar.gz",
+          "hash": "sha256:a0dbaad796840ccaa67a4c144a0d0c8080073c34c76d5a6941d6818678ef2738",
+          "size": 446526
+        },
+        "kind": "sdist"
+      },
+      "idna": {
+        "version": "3.20",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+          "hash": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+          "size": 69583
+        },
+        "kind": "universal_wheel"
+      },
+      "igraph": {
+        "version": "1.0.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/23/be/56bef1919005b4caf1f71522b300d359f7faeb7ae93a3b0baa9b4f146a87/igraph-1.0.0.tar.gz",
+          "hash": "sha256:2414d0be2e4d77ee5357807d100974b40f6082bb1bb71988ec46cfb6728651ee",
+          "size": 5077105
+        },
+        "kind": "sdist"
+      },
+      "imageio": {
+        "version": "2.38.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/7d/8a/3b7f62b9df56460959f1b9bef094248d2a4d7f393c5b0d2da8efcdf0e40e/imageio-2.38.1-py3-none-any.whl",
+          "hash": "sha256:36d23eb7423d2fb63f637098758edb3d2df3687f7125e0a5ce8596572022dcf9",
+          "size": 328389
+        },
+        "kind": "universal_wheel"
+      },
+      "interface-meta": {
+        "version": "2.0.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a1/d3/20a61a248feb1249cd81f83ce731f0bdf5170ed96a08a298f7081cda9e90/interface_meta-2.0.1-py3-none-any.whl",
+          "hash": "sha256:f38016bef9a4429b6d0792d809be7b65e9781820c674bf7f463999086b6e6323",
+          "size": 15330
+        },
+        "kind": "universal_wheel"
+      },
+      "joblib": {
+        "version": "1.6.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl",
+          "hash": "sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+          "size": 306115
+        },
+        "kind": "universal_wheel"
+      },
+      "kiwisolver": {
+        "version": "1.5.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz",
+          "hash": "sha256:f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+          "size": 104395
+        },
+        "kind": "sdist"
+      },
+      "lazy-loader": {
+        "version": "0.6",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/23/93/4e45e37f26c820216704b36b8e67cc55c490a7abd287a78a26a2c0e21386/lazy_loader-0.6-py3-none-any.whl",
+          "hash": "sha256:77253be3391b06124a0e16105bd663b6c54470af1a9ca8e1cf026f38d58ed056",
+          "size": 8791
+        },
+        "kind": "universal_wheel"
+      },
+      "legacy-api-wrap": {
+        "version": "1.5",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/41/5b/058db09c45ba58a7321bdf2294cae651b37d6fec68117265af90cde043b0/legacy_api_wrap-1.5-py3-none-any.whl",
+          "hash": "sha256:5a8ea50e3e3bcbcdec3447b77034fd0d32cb2cf4089db799238708e4d7e0098d",
+          "size": 10182
+        },
+        "kind": "universal_wheel"
+      },
+      "leidenalg": {
+        "version": "0.12.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/82/b7/45bae25ab59321a14902bec2f47e32b92e76f8b4b3887a13ee69a0b32c60/leidenalg-0.12.0.tar.gz",
+          "hash": "sha256:c81a45a2fb874fe71e903d43a869d0efeb7f907af70476c03f6945ef0e8f44c5",
+          "size": 453641
+        },
+        "kind": "sdist"
+      },
+      "llvmlite": {
+        "version": "0.50.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/11/c5/907cec40688a34eb489cded74d555e1ee4af8cf49d83e03dba2c2d4cfe27/llvmlite-0.50.0.tar.gz",
+          "hash": "sha256:f2a2cd6ec9ffcc1b7147dea0d7a49efebf17a2b434e0c2844fe175999d571eb4",
+          "size": 194522
+        },
+        "kind": "sdist"
+      },
+      "matplotlib": {
+        "version": "3.11.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/e7/c8/9aa712a0afb882649424dd8de8ad9aa6235e796e84c6052e8f6dc1598d0d/matplotlib-3.11.2.tar.gz",
+          "hash": "sha256:cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4",
+          "size": 32660610
+        },
+        "kind": "sdist"
+      },
+      "msgspec": {
+        "version": "0.22.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/d0/e6/6dcf9306ff3c5e486578f3bf29ed11dfbdbbc2a8bf0caf7e07d392887fda/msgspec-0.22.0.tar.gz",
+          "hash": "sha256:0a13624a4969159fe35d8c2a3d377b2b61bbd8585e327440d5e52725affcce38",
+          "size": 343188
+        },
+        "kind": "sdist"
+      },
+      "narwhals": {
+        "version": "2.27.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/d1/89/5d4c86da1130d9059681e5b6cd7645df5c10279a6a079c5c37dcb2cc6f3f/narwhals-2.27.1-py3-none-any.whl",
+          "hash": "sha256:d057df13f5852b8e157596e82eb5e955fad267425df5e420e0ee9863da483b31",
+          "size": 483211
+        },
+        "kind": "universal_wheel"
+      },
+      "natsort": {
+        "version": "8.4.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ef/82/7a9d0550484a62c6da82858ee9419f3dd1ccc9aa1c26a1e43da3ecd20b0d/natsort-8.4.0-py3-none-any.whl",
+          "hash": "sha256:4732914fb471f56b5cce04d7bae6f164a592c7712e1c85f9ef585e197299521c",
+          "size": 38268
+        },
+        "kind": "universal_wheel"
+      },
+      "networkx": {
+        "version": "3.7",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/7e/cd/fe58041e9011f307c490e3e17dd48cc516448f7c698a3f2d9d9d65d7e6a8/networkx-3.7-py3-none-any.whl",
+          "hash": "sha256:e3fd2c13a7814cee3746340d8d7f8598a67f16a58bf47fb7f8793fab6efca1b0",
+          "size": 2142205
+        },
+        "kind": "universal_wheel"
+      },
+      "numba": {
+        "version": "0.68.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/4e/cd/e8280f9ffa30fea9fabc5341223701231fcc5d53a31f51419d42d4bec3a6/numba-0.68.0.tar.gz",
+          "hash": "sha256:8a781de54b980b98f43bff7f1093701b5f07c80d031c7cfa8a87493d8bf73f2d",
+          "size": 2855363
+        },
+        "kind": "sdist"
+      },
+      "numcodecs": {
+        "version": "0.17.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/dd/ec/260cdb6304868de6db14eb31064bd2735c0200bcb3331d6b4c9e9be02a03/numcodecs-0.17.0.tar.gz",
+          "hash": "sha256:e8db2e337bdafd3bb5f891a2543b53b2b36a509ce9d587af2846db3715b6c8b9",
+          "size": 6288352
+        },
+        "kind": "sdist"
+      },
+      "numpy": {
+        "version": "2.5.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "hash": "sha256:9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "size": 20866315
+        },
+        "kind": "sdist"
+      },
+      "packaging": {
+        "version": "26.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+          "hash": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+          "size": 129956
+        },
+        "kind": "universal_wheel"
+      },
+      "pandas": {
+        "version": "3.0.6",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/e2/17/d7b106e05bfa642e8694451e7d3d759c6a241c5386a5d962e4f66c047e06/pandas-3.0.6.tar.gz",
+          "hash": "sha256:66b07ef7315a31bfe1089cd3d71a7de781c9dca986762d0b4fe7c0ef17465d10",
+          "size": 4667686
+        },
+        "kind": "sdist"
+      },
+      "patsy": {
+        "version": "1.0.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/20/70/cd3cf5cff538323076a879edef02cce6f13f7d75e03d12f211b0a0dbd178/patsy-1.0.3-py2.py3-none-any.whl",
+          "hash": "sha256:d3dbebe8fd5f46e29912d030b63c6268647b59bf788a99e2af28a30234cf357c",
+          "size": 233318
+        },
+        "kind": "universal_wheel"
+      },
+      "pillow": {
+        "version": "12.3.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/1c/3d/bb7fca845737cf9d7dbde16ed1843984665ff2e0a518f5db43e77ec540b9/pillow-12.3.0.tar.gz",
+          "hash": "sha256:3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce",
+          "size": 47025035
+        },
+        "kind": "sdist"
+      },
+      "platformdirs": {
+        "version": "4.13.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/8d/15/1633010b26e88e872c93b67c0b6c5e174fb74cb6fb5c1472b4d51d4a8f22/platformdirs-4.13.0-py3-none-any.whl",
+          "hash": "sha256:3dbcf4cd708f21cf876c4eaa90e58412bc4f033d87143f41b1493ff77c25b7e1",
+          "size": 32724
+        },
+        "kind": "universal_wheel"
+      },
+      "pooch": {
+        "version": "1.9.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/2a/2d/d4bf65e47cea8ff2c794a600c4fd1273a7902f268757c531e0ee9f18aa58/pooch-1.9.0-py3-none-any.whl",
+          "hash": "sha256:f265597baa9f760d25ceb29d0beb8186c243d6607b0f60b83ecf14078dbc703b",
+          "size": 67175
+        },
+        "kind": "universal_wheel"
+      },
+      "pydantic": {
+        "version": "2.14.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/35/ea/a56b9fe5066f3537b7882f77e9c5dfb26d8c2eefdaed9b5fc73d57b4dc22/pydantic-2.14.1-py3-none-any.whl",
+          "hash": "sha256:9195d967ec791692a04438115466764fb8b9a27b31f14a760437694f40d6b454",
+          "size": 488106
+        },
+        "kind": "universal_wheel"
+      },
+      "pydantic-core": {
+        "version": "2.50.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a6/24/af4ec4be49fbc810f35b0bdcacc3d433b56bbfa469fd3bfd4ae116cd9bf1/pydantic_core-2.50.1.tar.gz",
+          "hash": "sha256:e50d7b94baac6c7d09927fa5ca5800a0c7ee5015c7fcff65beb3a1931b5a6e09",
+          "size": 513515
+        },
+        "kind": "sdist"
+      },
+      "pydantic-settings": {
+        "version": "2.16.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/53/f4/b987bf8c51e5b19a95fa66d1ee596074141e085d9c2ddf97920803c7029b/pydantic_settings-2.16.0-py3-none-any.whl",
+          "hash": "sha256:7e73acf7f61936a15e5a3b6eedaea29f133357faf7272f2607ba479b049dd7f2",
+          "size": 80364
+        },
+        "kind": "universal_wheel"
+      },
+      "pynndescent": {
+        "version": "0.6.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/b2/e6/94145d714402fd5ade00b5661f2d0ab981219e07f7db9bfa16786cdb9c04/pynndescent-0.6.0-py3-none-any.whl",
+          "hash": "sha256:dc8c74844e4c7f5cbd1e0cd6909da86fdc789e6ff4997336e344779c3d5538ef",
+          "size": 73511
+        },
+        "kind": "universal_wheel"
+      },
+      "pyparsing": {
+        "version": "3.3.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/38/bb/d215ee7c73b61497b28a5503f9f53523f294fcc936762b7caf90e0c1c2b5/pyparsing-3.3.3-py3-none-any.whl",
+          "hash": "sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+          "size": 126420
+        },
+        "kind": "universal_wheel"
+      },
+      "python-dateutil": {
+        "version": "2.9.0.post0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+          "hash": "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427",
+          "size": 229892
+        },
+        "kind": "universal_wheel"
+      },
+      "python-dotenv": {
+        "version": "1.2.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/60/d1/38f3a3405989a89ac18390803e70c6ad7c7760da4f9b83cbeca0c44a0c72/python_dotenv-1.2.4-py3-none-any.whl",
+          "hash": "sha256:42269a8a5b3fd54ffa6f3d84b18abed50064717576b4ecf03dc4a55d8aa04fdc",
+          "size": 23266
+        },
+        "kind": "universal_wheel"
+      },
+      "pyyaml": {
+        "version": "6.0.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz",
+          "hash": "sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+          "size": 130960
+        },
+        "kind": "sdist"
+      },
+      "requests": {
+        "version": "2.34.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+          "hash": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+          "size": 73075
+        },
+        "kind": "universal_wheel"
+      },
+      "scanpy": {
+        "version": "1.12.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/6f/5c/b8cd4faf65463e7ba3a78d8dd4f60dab9e1b330eb395bd8f654c3b194b63/scanpy-1.12.4-py3-none-any.whl",
+          "hash": "sha256:a12a7ca9500e4b247fbb5fb9318fb204907125e411183bad3e9c62e5b988f37c",
+          "size": 2157501
+        },
+        "kind": "universal_wheel"
+      },
+      "scikit-image": {
+        "version": "0.26.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a1/b4/2528bb43c67d48053a7a649a9666432dc307d66ba02e3a6d5c40f46655df/scikit_image-0.26.0.tar.gz",
+          "hash": "sha256:f5f970ab04efad85c24714321fcc91613fcb64ef2a892a13167df2f3e59199fa",
+          "size": 22729739
+        },
+        "kind": "sdist"
+      },
+      "scikit-learn": {
+        "version": "1.9.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/d2/eb/eaf5e07fcc0da7149b0e084f24e54edd7441b9a89ce7e034032ae97fe3a0/scikit_learn-1.9.1.tar.gz",
+          "hash": "sha256:629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977",
+          "size": 7786908
+        },
+        "kind": "sdist"
+      },
+      "scipy": {
+        "version": "1.18.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz",
+          "hash": "sha256:52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307",
+          "size": 30781235
+        },
+        "kind": "sdist"
+      },
+      "scverse-misc": {
+        "version": "0.1.7",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/17/d0/e4479b1916f81b3be32d2edc73e7ddf26958af894dc04cbeccfd1ea0af49/scverse_misc-0.1.7-py3-none-any.whl",
+          "hash": "sha256:92fc7f46053979512d6d2b1a6449a8bddb6ffcea8fb4a03cc1fafc58e42b4bd1",
+          "size": 26863
+        },
+        "kind": "universal_wheel"
+      },
+      "seaborn": {
+        "version": "0.13.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/83/11/00d3c3dfc25ad54e731d91449895a79e4bf2384dc3ac01809010ba88f6d5/seaborn-0.13.2-py3-none-any.whl",
+          "hash": "sha256:636f8336facf092165e27924f223d3c62ca560b1f2bb5dff7ab7fad265361987",
+          "size": 294914
+        },
+        "kind": "universal_wheel"
+      },
+      "session-info2": {
+        "version": "0.4.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/9b/41/b5af3c12d874fcbdb45abd67500aff8030de0d350a5d6163da45378609c4/session_info2-0.4.2-py3-none-any.whl",
+          "hash": "sha256:dbf5f58769115651fad28e8ffc930b6a848a629a242ce2ecd730d12f5e3e9315",
+          "size": 17665
+        },
+        "kind": "universal_wheel"
+      },
+      "six": {
+        "version": "1.17.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl",
+          "hash": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+          "size": 11050
+        },
+        "kind": "universal_wheel"
+      },
+      "statsmodels": {
+        "version": "0.15.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a8/1f/a3cbf6ed7cf6286afec694bfef561f3e51483197716717fb8476f1f0c50e/statsmodels-0.15.0.tar.gz",
+          "hash": "sha256:5d257fe58d0772bc46a557880ca78e2a8e07fec7bfd9d11074aef8e33e1aecbc",
+          "size": 15736853
+        },
+        "kind": "sdist"
+      },
+      "texttable": {
+        "version": "1.7.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/05/00/096f6adea031f9a605d7b287f68ccb84d9280e4d12e25d5c603a5d4c846c/texttable-1.7.1-py2.py3-none-any.whl",
+          "hash": "sha256:f1af220bea35ea5cf2bc86105a46a3ca4c5acadf3949cb5a8d3a088d6c03dbda",
+          "size": 10876
+        },
+        "kind": "universal_wheel"
+      },
+      "threadpoolctl": {
+        "version": "3.7.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl",
+          "hash": "sha256:cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+          "size": 26362
+        },
+        "kind": "universal_wheel"
+      },
+      "tifffile": {
+        "version": "2026.9.20",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/05/bf/04f3e61cb20a03678ca43f29bae9a7d0b7d9f563b86f5f600b2d8fba9712/tifffile-2026.9.20-py3-none-any.whl",
+          "hash": "sha256:9b913167b8f66a57f2e7c0454486c4c4607196d494797461226166bd0755c0e6",
+          "size": 275004
+        },
+        "kind": "universal_wheel"
+      },
+      "tqdm": {
+        "version": "4.70.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl",
+          "hash": "sha256:c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73",
+          "size": 80199
+        },
+        "kind": "universal_wheel"
+      },
+      "typing-extensions": {
+        "version": "4.16.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl",
+          "hash": "sha256:481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+          "size": 45571
+        },
+        "kind": "universal_wheel"
+      },
+      "typing-inspection": {
+        "version": "0.4.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/67/81/4add07e5172b7ac40d8ed5ff580409a7801a4fe26d529bdd915401dabfbe/typing_inspection-0.4.4-py3-none-any.whl",
+          "hash": "sha256:65b8397ba37ccbce054456aaccddfc91e6e3083c92824df348d96ca832f3f147",
+          "size": 14750
+        },
+        "kind": "universal_wheel"
+      },
+      "umap-learn": {
+        "version": "0.5.12",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/1b/98/f63318ccbe75c810011fe9233884c5d348d94d90005de1b79e5f93bef9c0/umap_learn-0.5.12-py3-none-any.whl",
+          "hash": "sha256:f2a85d2a2adcb52b541bed9b27a23ca169b56bb1b23283abeebfb8dfb8a42fe5",
+          "size": 91849
+        },
+        "kind": "universal_wheel"
+      },
+      "urllib3": {
+        "version": "2.8.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+          "hash": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+          "size": 135717
+        },
+        "kind": "universal_wheel"
+      },
+      "wrapt": {
+        "version": "2.5.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/bc/0c/7da7513ddcc8f1d831ec4bfbedc9f7f174ecb91042bc16916fc1e0d06b22/wrapt-2.5.1-py3-none-any.whl",
+          "hash": "sha256:c6e6c226b1ca5402d7ae5fb34a0d21f1b49124fe4200e5884d1e19e53c47ac1d",
+          "size": 81849
+        },
+        "kind": "universal_wheel"
+      },
+      "zarr": {
+        "version": "3.4.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a6/82/0dbc9bc77b49cfb9268dc2b2b1dcd04346c8c7ed52e272b76a628a941656/zarr-3.4.1-py3-none-any.whl",
+          "hash": "sha256:38b540578a119352bdce02a720d7bfd99846e77f0728c58b1bab3d1f547526a0",
+          "size": 405257
+        },
+        "kind": "universal_wheel"
+      }
+    },
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Unavailable source remains an evidence gap."
+  }
+}

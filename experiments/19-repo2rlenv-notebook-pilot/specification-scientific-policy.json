@@ -1,0 +1,23 @@
+{
+  "sandbox": {
+    "cpus": 4,
+    "memory_gib": 8,
+    "disk_gib": 10,
+    "gpu": false
+  },
+  "reference_timeout_seconds": 600,
+  "solver_timeout_seconds": 600,
+  "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+  "verifier_timeout_seconds": 120,
+  "solver_and_verifier_network": "offline",
+  "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+  "reward": "binary; all required checks must pass",
+  "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+  "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+  "approved_scope": {
+    "inputs": "Original expression data plus fixed cell-group assignments derived from the recorded reference. Select the assignment appropriate to its marker analysis and document provenance; do not represent it as biological ground truth.",
+    "outputs": "Marker/differential-expression results for the supplied groups.",
+    "excluded": "Discovering clusters and reproducing UMAP coordinates.",
+    "constraints": "Keep downstream science grounded in the source. Choose and justify remaining preprocessing, test definitions and compact meaningful outputs without prescribing API calls. Do not supply marker answers as inputs."
+  }
+}

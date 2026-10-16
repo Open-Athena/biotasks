@@ -1815,3 +1815,9 @@ raises through the helper's finally block and reaps its generated process group.
 The 12 focused grading tests passed, including a real synthetic interruption;
 Ruff passed. This fix is separate from the run checkpoint and from task-specific
 GLM work. No generated grading code, instructions or scientific results were edited.
+
+### 2026-10-16 — scientific task scope after user review
+
+The user approved fixed reference-derived groups as supplied inputs and marker/DE outputs, excluding clustering and UMAP reproduction, then authorized proceeding through completion using judgment. The generic specification prompt now requests a scientific question, explicit scope reductions/input derivations, endpoint selection and proposed comparisons rather than named API recipes. Notebook-specific scope is supplied only in the experiment policy. Input 014 retains original setup evidence; previous specifications and grader 001 remain unchanged. Numerical tolerances and the precise derived-input/output projection are unvalidated until downstream executable checks. No manual task-specific edits.
+
+Specification 014 will use the existing read-only tool session, GLM-5.3 medium, reserved Iris CPU host, two-hour campaign boundary and no Daytona sandbox. It requires no new Daytona reservation. Seventeen focused offline specification checks and targeted Ruff checks passed (83,772 KiB peak RSS). Before paid sandbox continuation, reconcile the conservative $100 reservation ledger against lifecycle evidence; reservations are not measured charges. The original grader's exact-recipe contract is not the acceptance baseline for the new task.
