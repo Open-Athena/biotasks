@@ -104,3 +104,9 @@ requirements and validation limits.
 cap without replacing it with a large integer. Existing integer limits retain
 their behavior; the stage deadline and cost checks remain active. The default
 upstream agent runtime is unchanged; uncapped calls use our injected runtime.
+
+
+`0011-optional-terminus-caps.patch` lets the existing Terminus runner omit extra
+turn and completion-token limits with explicit `None`, retaining the configured
+wall-clock deadline and existing integer behavior. Harbor/provider defaults still
+apply. The Responses harness continues to require its existing integer limits.

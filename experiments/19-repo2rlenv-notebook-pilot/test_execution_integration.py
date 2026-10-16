@@ -287,3 +287,35 @@ def test_scientific_task_profile_uses_agreed_larger_limits(tmp_path, monkeypatch
         )
     assert dispatch.call_args.kwargs["agent_timeout_sec"] == 600
     assert dispatch.call_args.kwargs["resource_overrides"] == options["task_resources"]
+
+
+def test_terminus_can_omit_extra_caps(tmp_path, monkeypatch):
+    task = bundle(tmp_path)
+    monkeypatch.setenv("DAYTONA_API_KEY", "fake")
+    monkeypatch.setenv("PILOT_MODEL_KEY", "fake")
+    worker = Mock(id="test-worker")
+    launch = Mock()
+    monkeypatch.setattr(harbor, "launch_job", launch)
+    monkeypatch.setattr(harbor, "observe_job", lambda *a, **kw: {"state": "completed"})
+    monkeypatch.setattr(harbor, "_collect_trial", lambda *a: None)
+    model = LLMSpec(
+        provider="openai",
+        model="test-model",
+        endpoint="https://example.test/v1",
+        api_key_env="PILOT_MODEL_KEY",
+        model_info={"max_input_tokens": 120000},
+    )
+    harbor.run_trial(
+        worker,
+        task,
+        tmp_path / "trial",
+        trial_id="uncapped-test",
+        agent="terminus-2",
+        model=model,
+        ledger=BudgetLedger(tmp_path / "budget.db", limit_usd="10"),
+        environment="daytona",
+        max_turns=None,
+        max_tokens=None,
+    )
+    command = launch.call_args.args[2]
+    assert not any(x.startswith(("max_turns=", "llm_call_kwargs=")) for x in command)

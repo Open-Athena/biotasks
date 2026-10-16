@@ -75,7 +75,9 @@ def package(*, materialization, grading, environment, destination, name, revisio
     kinds = {c["kind"] for c in controls}
     if not {"reference", "recomputed", "alternative", "empty", "missing", "probe"} <= kinds:
         raise ValueError("Missing native-content or independent comparison controls")
-    packages = json.loads((environment / "candidate/system-packages.json").read_text())
+    packages = sorted(
+        set(json.loads((environment / "candidate/system-packages.json").read_text())) | {"tmux"}
+    )
     project = (environment / "candidate/pyproject.toml").read_text()
     validate_environment(project, packages)
     # This infrastructure wrapper never authors scientific task code or values.

@@ -1,0 +1,51 @@
+--- a/src/repo2rlenv/execution/harbor.py
++++ b/src/repo2rlenv/execution/harbor.py
+@@ -206,8 +206,8 @@
+     ledger: BudgetLedger | None = None,
+     reservation_usd: str = "4.00",
+     reservation_wait_sec: int = 0,
+-    max_turns: int = 12,
+-    max_tokens: int = 2048,
++    max_turns: int | None = 12,
++    max_tokens: int | None = 2048,
+     timeout_sec: int = 900,
+     probe: str | None = None,
+     submitted_path: str | None = None,
+@@ -236,7 +236,12 @@
+         from repo2rlenv.tasksmith.author.openai_agent import model_name
+ 
+         model_name(model.qualified_name)
+-    if not (1 <= max_turns <= 100 and 256 <= max_tokens <= 8192 and 30 <= timeout_sec <= 3600):
++    if (
++        (max_turns is not None and not 1 <= max_turns <= 100)
++        or (max_tokens is not None and not 256 <= max_tokens <= 8192)
++        or not 30 <= timeout_sec <= 3600
++        or (agent == "responses" and (max_turns is None or max_tokens is None))
++    ):
+         raise ValueError("Trial limits are outside the supported bounded range")
+     if type(reservation_wait_sec) is not int or not 0 <= reservation_wait_sec <= 300:
+         raise ValueError("Reservation wait must be an integer from 0 to 300 seconds")
+@@ -429,18 +434,11 @@
+                 ]
+             )
+         elif model:
+-            command.extend(
+-                [
+-                    "--model",
+-                    model.qualified_name,
+-                    "--ak",
+-                    f"max_turns={max_turns}",
+-                    "--ak",
+-                    "record_terminal_session=false",
+-                    "--ak",
+-                    "llm_call_kwargs=" + json.dumps(completion_token_limit(model, max_tokens)),
+-                ]
+-            )
++            command.extend(["--model", model.qualified_name, "--ak", "record_terminal_session=false"])
++            if max_turns is not None:
++                command.extend(["--ak", f"max_turns={max_turns}"])
++            if max_tokens is not None:
++                command.extend(["--ak", "llm_call_kwargs=" + json.dumps(completion_token_limit(model, max_tokens))])
+         if agent_timeout_sec is not None:
+             command.extend(["--agent-timeout-multiplier", str(agent_timeout_sec / base_timeout)])
+         for resource, value in (resource_overrides or {}).items():
