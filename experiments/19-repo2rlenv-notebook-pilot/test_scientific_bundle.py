@@ -12,7 +12,7 @@ def save(path, value):
     path.write_text(json.dumps(value))
 
 
-def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path):
+def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monkeypatch):
     materialized, grading, environment = [
         tmp_path / p for p in ("materialized", "grading", "environment")
     ]
@@ -91,6 +91,27 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path):
     assert (task / "solution/oracle.py").exists()
     assert (task / "environment/LICENSE.source").read_text() == "Fixture source notice\n"
     assert (task / "environment/SOURCE-LICENSES.json").is_file()
+    import tarfile
+    from unittest.mock import Mock
+
+    import run_scientific_native as native
+    from repo2rlenv.emitter.bundle import inspect_bundle
+
+    exporter = Mock()
+    monkeypatch.setattr(native, "export_on_host", exporter)
+    monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "s3://fixture/campaign")
+    archive_root = tmp_path / "native"
+    archive_root.mkdir()
+    native.archive_task(task, archive_root, 9999999999)
+    with tarfile.open(archive_root / "package/task.tar.gz") as archive:
+        assert (
+            archive.extractfile(task.name + "/instruction.md").read()
+            == (task / "instruction.md").read_bytes()
+        )
+    assert json.loads((archive_root / "package/identity.json").read_text()) == inspect_bundle(task)
+    exporter.assert_called_once_with(
+        archive_root / "package", "s3://fixture/campaign/native/package", deadline=9999999999
+    )
     controls[0]["candidate_sha256"] = "b" * 64
     save(grading / "final-controls.json", controls)
     with pytest.raises(ValueError, match="different grader"):
