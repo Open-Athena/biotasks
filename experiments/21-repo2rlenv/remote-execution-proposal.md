@@ -15,7 +15,8 @@ committing generation time to a backend that may not support Docker-in-Docker.
 - Approved: up to four remote CPU sandboxes at once, each initially 2 vCPU, 4 GiB RAM, and 10 GiB disk. This does not set model-request or Codex-agent concurrency.
   No GPUs, new inference deployments, or paid model fallbacks.
 - Approved: no aggregate remote-hour cap; the $100 ceiling applies across the campaign. Generation runs have an initial two-hour execution timeout. A fresh compatibility probe has a 30-minute execution deadline, with cleanup allowed to finish afterward.
-- Existing free GLM-5.3 only, up to four simultaneous requests across the campaign. No additional global call-count or token cap. Preserve native per-request output limits and recipe repair bounds; record every call, retry, and input/output usage. The earlier 500-call / eight-million-token proposal is superseded. No blind solver sample is included initially.
+- Existing free GLM-5.3 only, up to four simultaneous requests across the campaign. No additional global call-count or token cap. Preserve native per-request output limits and recipe repair bounds; record every call, retry, and input/output usage. The earlier 500-call / eight-million-token proposal is superseded.
+- Solver evaluation: all tasks that pass reference/grader validation, one blind GLM attempt per task initially. Solver-specific timeout and turn limits remain to be agreed before dispatch. Preserve solver traces and native rewards; report infrastructure failures separately from scored attempts. The same campaign budget and concurrency limits apply.
 - Retain the issue's three independently validated tasks / ten candidates per
   applicable route and input cohort. Stop on any campaign or cohort limit.
 
