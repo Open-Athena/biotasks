@@ -26,8 +26,8 @@ async def test_long_foreground_call_and_over_limit_rejection(tmp_path, monkeypat
         tool = next(t for t in kwargs["tools"] if t["function"]["name"] == "shell")
         assert tool["function"]["parameters"]["properties"]["timeout_sec"]["maximum"] == 600
         await kwargs["handlers"]["shell"]("compute", timeout_sec=300)
-        with pytest.raises(ValueError, match="stage allowance"):
-            await kwargs["handlers"]["shell"]("compute", timeout_sec=601)
+        reply = await kwargs["handlers"]["shell"]("compute", timeout_sec=601)
+        assert "Invalid tool arguments" in reply and "No command executed" in reply
         assert "committed" in await kwargs["handlers"]["submit_artifact"](value=1)
 
     monkeypatch.setattr(artifact, "run_agent", agent)

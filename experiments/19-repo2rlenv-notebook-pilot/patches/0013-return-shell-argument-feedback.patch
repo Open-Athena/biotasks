@@ -1,0 +1,11 @@
+--- a/src/repo2rlenv/tasksmith/author/artifact.py
++++ b/src/repo2rlenv/tasksmith/author/artifact.py
+@@ -303,7 +303,7 @@
+         if accepted is not None:
+             return "Stage output committed; shell closed."
+         if type(timeout_sec) is not int or not 1 <= timeout_sec <= shell_timeout_sec:
+-            raise ValueError("Shell timeout exceeds the stage allowance")
++            return f"Invalid tool arguments: timeout_sec must be an integer from 1 to {shell_timeout_sec}. No command executed."
+         remaining = int(deadline - time.time())
+         if remaining <= 0:
+             raise TimeoutError("Candidate deadline exhausted")

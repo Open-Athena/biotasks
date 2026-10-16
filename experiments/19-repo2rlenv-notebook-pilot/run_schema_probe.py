@@ -150,6 +150,10 @@ def inspect_response(mode, response, *, delivery=False):
 
 
 async def run(root, config):
+    if config.get("probe_kind") == "tool_reasoning":
+        from run_tool_reasoning_probe import run as reasoning_probe
+
+        return await reasoning_probe(root, config)
     if config.get("entrypoint") != "run_schema_probe.py" or config.get("max_requests") != 2:
         raise ValueError("Only the two-case synthetic probe is allowed")
     profile = config.get("profile", "schema_enforcement")

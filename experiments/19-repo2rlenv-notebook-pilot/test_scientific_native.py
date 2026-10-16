@@ -25,6 +25,9 @@ def test_native_gates_and_blind_attempt(tmp_path, monkeypatch, oracle_reward, ex
     gate.start.return_value = gate
     gate.endpoint.return_value = "http://localhost:1234/solver/v1"
     monkeypatch.setattr(native, "InferenceGate", Mock(return_value=gate))
+    monkeypatch.setattr(native, "archive_task", Mock())
+    attribution = tmp_path / "attribution.json"
+    attribution.write_text("{}")
     agents = []
 
     def trial(*args, agent, **kwargs):
@@ -49,6 +52,7 @@ def test_native_gates_and_blind_attempt(tmp_path, monkeypatch, oracle_reward, ex
         factory_revision="a" * 40,
         daytona_budget_usd="2",
         campaign="native-test",
+        attribution_file=str(attribution),
     )
     if oracle_reward == 1:
         result = native.run(config, root=root)

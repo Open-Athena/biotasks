@@ -2,12 +2,15 @@
 
 import json
 import os
+import tarfile
 import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+from iris_bootstrap import export_on_host
 from iris_execution import IrisDaytonaExecution
 from repo2rlenv.campaigns.budget import BudgetLedger
+from repo2rlenv.emitter.bundle import inspect_bundle
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.spec.input import LLMSpec
 from scientific_bundle import package
@@ -15,6 +18,25 @@ from scientific_bundle import package
 from biotasks.inference_gate import Allowance, InferenceGate, RequestLedger
 
 HERE = Path(__file__).parent
+
+
+def archive_task(task, root, deadline):
+    """Preserve the exact pre-trial bundle for inspection and eventual release."""
+    directory = root / "package"
+    directory.mkdir()
+    identity = inspect_bundle(task)
+    if not identity["integrity_passed"]:
+        raise ValueError("Native task bundle identity failed")
+    with tarfile.open(directory / "task.tar.gz", "w:gz") as archive:
+        archive.add(task, arcname=task.name)
+    if inspect_bundle(task) != identity:
+        raise ValueError("Native task changed during archival")
+    save_record(directory / "identity.json", identity)
+    export_on_host(
+        directory,
+        os.environ["BIOTASKS_ARTIFACT_PREFIX"].rstrip("/") + "/native/package",
+        deadline=deadline,
+    )
 
 
 def run(config, *, root=Path("/evidence/native")):
@@ -31,6 +53,7 @@ def run(config, *, root=Path("/evidence/native")):
         revision=config["factory_revision"],
         attribution=json.loads((HERE / config["attribution_file"]).read_text()),
     )
+    archive_task(task, root, deadline)
     requests = RequestLedger(root / "requests.sqlite", {"solver": Allowance(None, None)})
     gate = InferenceGate(
         upstream=os.environ["BIOTASKS_MODEL_ENDPOINT"],
