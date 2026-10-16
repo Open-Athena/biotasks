@@ -30,9 +30,14 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
-    parser.add_argument("--generation-archive", type=Path, required=True)
-    parser.add_argument("--issues", type=Path, required=True)
+    parser.add_argument(
+        "--stage", choices=("smith-controls", "biopython-cve"), default="smith-controls"
+    )
+    parser.add_argument("--generation-archive", type=Path)
+    parser.add_argument("--issues", type=Path)
     args = parser.parse_args()
+    if args.stage == "smith-controls" and (args.generation_archive is None or args.issues is None):
+        parser.error("Smith controls require --generation-archive and --issues")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
     args.campaign.mkdir(parents=True, exist_ok=False)
@@ -45,7 +50,7 @@ def main():
         timeout_sec=7200,
         name=args.worker_name,
     )
-    record = {"stage": "native_export_controls", "model_calls": 0, "status": "starting"}
+    record = {"stage": args.stage, "model_calls": 0, "status": "starting"}
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
@@ -57,22 +62,37 @@ def main():
             "mkdir"
         )
         worker.upload(args.source_archive, "/work/native/source.tar.gz")
-        worker.upload(args.generation_archive, "/work/native/generation.tar.gz")
-        worker.upload(args.issues, "/work/native/issues.json")
-        worker.upload(
-            Path(__file__).with_name("export_verify_smith.py"),
-            "/work/native/export_verify_smith.py",
-        )
-        worker.upload(
-            Path(__file__).with_name("swe-smith-skbio-worker.json"), "/work/native/config.json"
-        )
+        root = Path(__file__).parent
+        if args.stage == "smith-controls":
+            worker.upload(args.generation_archive, "/work/native/generation.tar.gz")
+            worker.upload(args.issues, "/work/native/issues.json")
+            worker.upload(root / "export_verify_smith.py", "/work/native/export_verify_smith.py")
+            worker.upload(root / "swe-smith-skbio-worker.json", "/work/native/config.json")
+            unpack = "mkdir inputs; tar -xzf generation.tar.gz -C inputs; "
+            entry = (
+                "/work/native/export_verify_smith.py "
+                "--generation /work/native/inputs/native/generation "
+                "--issues /work/native/issues.json --config /work/native/config.json "
+                "--output /evidence/native/validation "
+            )
+        else:
+            for source, target in (
+                ("replay_biopython_cve.py", "replay_biopython_cve.py"),
+                ("biopython-cve.Dockerfile", "Dockerfile"),
+                ("evidence/osv-intake/biopython.json", "advisories.json"),
+                ("evidence/osv-intake/biopython-fix.diff", "fix.diff"),
+            ):
+                worker.upload(root / source, "/work/native/" + target)
+            unpack = ""
+            entry = "/work/native/replay_biopython_cve.py "
         setup = worker.exec(
             [
                 "sh",
                 "-c",
                 (
-                    "set -eu; cd /work/native; tar -xzf source.tar.gz; mkdir inputs; tar -xzf generation.tar.gz -C inputs; "
-                    "uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee "
+                    "set -eu; cd /work/native; tar -xzf source.tar.gz; "
+                    + unpack
+                    + "uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee "
                     ">/evidence/native/setup.log 2>&1"
                 ),
             ],
@@ -88,11 +108,8 @@ def main():
                     "export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
                     "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; "
                     "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python "
-                    "/work/native/export_verify_smith.py "
-                    "--generation /work/native/inputs/native/generation "
-                    "--issues /work/native/issues.json --config /work/native/config.json "
-                    "--output /evidence/native/validation "
-                    ">/evidence/native/worker.log 2>&1; code=$?; "
+                    + entry
+                    + ">/evidence/native/worker.log 2>&1; code=$?; "
                     "printf '%s\\n' \"$code\" >/evidence/native/worker-exit.txt; exit $code"
                 ),
             ],
