@@ -390,6 +390,7 @@ async def run_grading(
             max_requests=None,
             validate=validate,
             shell=shell,
+            shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
         )
 

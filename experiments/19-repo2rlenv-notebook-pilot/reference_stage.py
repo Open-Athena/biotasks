@@ -32,6 +32,7 @@ async def stage(
     recover_output_limit=True,
     output_format="tools",
     shell=None,
+    shell_timeout_sec=120,
     extra_tools=None,
     extra_handlers=None,
 ):
@@ -85,6 +86,7 @@ async def stage(
         deadline=deadline,
         validate=validate,
         shell=shell,
+        shell_timeout_sec=shell_timeout_sec,
         extra_tools=extra_tools,
         extra_handlers=extra_handlers,
         agent_runner=run_author,

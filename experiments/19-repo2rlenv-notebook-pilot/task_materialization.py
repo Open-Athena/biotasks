@@ -98,6 +98,7 @@ async def run_materialization(
             max_requests=None,
             validate=validate,
             shell=session.shell,
+            shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
         )
         save_record(root / "materialization-candidate.json", candidate.model_dump())

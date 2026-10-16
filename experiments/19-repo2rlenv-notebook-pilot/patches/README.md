@@ -110,3 +110,10 @@ upstream agent runtime is unchanged; uncapped calls use our injected runtime.
 turn and completion-token limits with explicit `None`, retaining the configured
 wall-clock deadline and existing integer behavior. Harbor/provider defaults still
 apply. The Responses harness continues to require its existing integer limits.
+
+
+`0012-configurable-artifact-shell-timeout.patch` exposes a per-stage shell ceiling
+in both the tool schema and handler. Upstream's default remains 120 seconds; the
+scientific workers explicitly use the agreed 600-second computation allowance.
+The previous schema still advertised 120 seconds despite the downstream controller
+allowing more, contributing to the materialization worker's background workaround.
