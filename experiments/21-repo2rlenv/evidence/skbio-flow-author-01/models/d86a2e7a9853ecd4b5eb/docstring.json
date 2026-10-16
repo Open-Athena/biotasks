@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "docstring:flow:d86a2e7a9853ecd4b5eb",
+  "request_sha256": "5e070b4b6bd9891b37442f0e9ea5c81fb67e3c1d0b608d8324236675958255a5",
+  "response": {
+    "completion_tokens": 3839,
+    "content": "{\n  \"functions\": [\n    {\n      \"node_id\": \"skbio/diversity/alpha/_base.py:1291:simpson\",\n      \"docstring\": \"Calculates Simpson's diversity index (a.k.a. Gini-Simpson index or Gini impurity) for a sample of taxa counts. The index is defined as 1 - sum(p_i^2), where p_i is the proportion of the sample represented by taxon i, and can be interpreted as the probability that two randomly selected individuals belong to different taxa (Hurlbert's probability of interspecific encounter, PIE). Equivalent to 1 - D, where D is Simpson's dominance index. Originally described in Simpson (1949), Nature 163:688, with the PIE interpretation from Hurlbert (1971), Ecology 52(4):577-586. Related to the dominance function, which computes D directly. Simpson's index ranges from 0 (single taxon, no diversity) toward 1 as evenness and richness increase; with finite=True, the value is corrected for finite sample size and is bounded by 1 - 1/N for a sample of N individuals. Behavior is identical for int and float inputs with non-negative values, including zeros; an empty or all-zero counts vector yields NaN. Does not validate input types or non-negativity, so invalid inputs may produce NaN or misleading values without an exception. No exceptions are raised by this function itself. See also: dominance, simpson_e, enspie, berger_parker. Parameters: counts (1-D array_like of int or float, required): Vector of counts (or equivalent non-negative values) of individuals per taxon. finite (bool, optional, defaults to False): If True, applies a finite-sample correction when computing the underlying dominance value D; if False, computes the uncorrected index.\"\n    }\n  ]\n}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 1717,
+    "usage": {
+      "completion_tokens": 3839,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 3441,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 1717,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0,
+        "created_cache_tokens": 1664,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 5556
+    }
+  },
+  "status": "completed"
+}

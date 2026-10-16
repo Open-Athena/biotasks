@@ -1,0 +1,31 @@
+{
+  "content": "{\n  \"functions\": [\n    {\n      \"node_id\": \"skbio/diversity/alpha/_base.py:968:observed_features\",\n      \"docstring\": \"Calculates the number of distinct features observed in a counts vector. This function is an alias for ``sobs``.\"\n    }\n  ]\n}",
+  "finish_reason": "stop",
+  "reasoning_content": "The user wants me to generate a docstring for the `observed_features` function from `skbio/diversity/alpha/_base.py`. Let me analyze the function:\n\n```python\ndef observed_features(counts):\n    \"\"\"Calculate the number of distinct features.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    int\n        Distinct feature count.\n\n    See Also\n    --------\n    sobs\n\n    Notes\n    -----\n    ``observed_features`` is an alias for ``sobs``.\n\n    \"\"\"\n    return sobs(counts)\n```\n\nThe function takes a `counts` parameter (1-D array_like of int) and returns an int representing the number of distinct features (i.e., the count of non-zero features/OTUs in the vector). It's an alias for `sobs`.\n\nI need to convert this to Google Docstring style:\n\n```python\n\"\"\"\nCalculates the number of distinct features in a counts vector.\n\nArgs:\n    counts (array_like of int): A 1-D vector of counts.\n\nReturns:\n    int: The number of distinct features.\n\"\"\"\n```\n\nThe function is an alias for `sobs`, which computes observed features (number of non-zero entries). But per the requirements, I should not reference implementation details. However, mentioning it's an alias might be useful context \u2014 but the instructions say \"Do not include any implementation logic or algorithmic details.\" The alias relationship is more of a documentation note than implementation logic. I could mention it briefly or omit it. The original docstring mentions it. I'll keep it concise.\n\nActually, the description should describe the primary purpose: calculating the number of distinct features observed in the counts vector. The parameter is `counts`, a 1-D array_like of ints. Returns an int \u2014 the distinct feature count.\n\nLet me write the Google-style docstring:\n\n```\nCalculates the number of distinct features present in a counts vector.\n\nArgs:\n    counts (array_like of int): 1-D vector of counts.\n\nReturns:\n    int: The number of distinct features.\n```\n\nShould I mention it's an alias for sobs? The note in the original says \"observed_features is an alias for sobs\". This is useful public API information. I could add it as a note. But keeping it concise, I might include it. The requirement says don't include implementation logic \u2014 an alias note is API-level documentation, not implementation. I'll include a brief note.\n\nAlso, should there be exceptions? The function may raise errors if counts is invalid, but that's from sobs, and we don't have evidence of specific exceptions. Omit.\n\nFormat per the task: return JSON schema with one entry per node_id, plain docstring content, no code fences.\n\nThe node_id is \"skbio/diversity/alpha/_base.py:968:observed_features\".\n\nSo the output should be a JSON like:\n\n```json\n{\n  \"skbio/diversity/alpha/_base.py:968:observed_features\": {\n    \"docstring\": \"...\"\n  }\n}\n```\n\nHmm, the instructions say \"return the requested JSON schema\" \u2014 the upstream examples show user/assistant pairs with content. The \"OWNED ADAPTATION\" says \"return one entry per supplied node_id, with plain docstring content, no code fences.\"\n\nGiven the input is a JSON object keyed by node_id, I should return a JSON object mapping node_id to the docstring content. Let me structure it as:\n\n```json\n{\n  \"skbio/diversity/alpha/_base.py:968:observed_features\": \"Calculates the number of distinct features...\"\n}\n```\n\nOr with a \"docstring\" key. The instruction \"return one entry per supplied node_id, with plain docstring content\" suggests mapping node_id -> docstring string directly.\n\nLet me write the docstring:\n\n```\nCalculates the number of distinct features in a vector of counts.\n\nArgs:\n    counts (array_like of int): A 1-D vector of feature counts.\n\nReturns:\n    int: The number of distinct features observed.\n\nNotes:\n    This function is an alias for ``sobs``.\n```\n\nHmm, \"distinct features\" \u2014 in this context, observed_features counts the number of non-zero counts (features observed at least once). The original docstring says \"Calculate the number of distinct features.\" I'll keep the description aligned with the original: \"Calculates the number of distinct features.\"\n\nShould I mention the alias? The original docstring does, and it's useful. I'll include it in the description or a note. Google style has \"Notes:\" section. Let me include it.\n\nFinal docstring:\n\n```\nCalculates the number of distinct features observed in a counts vector.\n\nArgs:\n    counts (array_like of int): A 1-D vector of counts.\n\nReturns:\n    int: The number of distinct features.\n\nNotes:\n    This function is an alias for ``sobs``.\n```\n\nThat's concise and follows Google style. JSON output:\n\n{\n  \"skbio/diversity/alpha/_base.py:968:observed_features\": \"Calculates the number of distinct features observed in a counts vector.\\n\\nArgs:\\n    counts (array_like of int): A 1-D vector of counts.\\n\\nReturns:\\n    int: The number of distinct features.\\n\\nNotes:\\n    This function is an alias for ``sobs``.\"\n}\n\nI'll present it as valid JSON.",
+  "requested_max_tokens": 131072,
+  "requested_reasoning_effort": "medium",
+  "requested_timeout_sec": 1200,
+  "usage": {
+    "completion_tokens": 1213,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "image_tokens": null,
+      "reasoning_tokens": 1144,
+      "rejected_prediction_tokens": null,
+      "text_tokens": null,
+      "video_tokens": null
+    },
+    "prompt_tokens": 1391,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 1152,
+      "created_cache_tokens": 192,
+      "image_tokens": null,
+      "multimodal_tokens": null,
+      "text_tokens": null,
+      "video_tokens": null
+    },
+    "total_tokens": 2604
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "specification:flow:d86a2e7a9853ecd4b5eb",
+  "request_sha256": "b4d68d6a9064536ace650dc26d8af8e2dc475b7685fd223f48c6a33821ab48dc",
+  "response": {
+    "completion_tokens": 20122,
+    "content": "{ \"markdown\": \"# Development Requirements Documentn n---nn## **Background**nnAlpha diversity analysis summarizes the taxa present within a single ecological sample from a vector of counts, where each entry records the number of individuals observed for one taxon. Among established summary statistics, Simpson's diversity index \u2014 also known as the Gini-Simpson index or Gini impurity \u2014 expresses the probability that two randomly selected individuals belong to different taxa, and it is closely tied to related measures in the same family (the dominance index and the Tsallis entropy generalization). A diversity library that exposes this index must compute it deterministically from a counts vector, keep its values numerically consistent with those related measures, support an optional correction for finite sample size, and return well-defined results for degenerate communities such as single-taxon, empty, or all-zero count vectors.nn---nn## **Development Requirements**nn### **Goal 1: Compute Simpson's diversity index from a counts vector**nn#### **Feature Description**nProvide a public function that calculates Simpson's diversity index for a sample of taxa counts. The index is defined as `1 - \u03a3 p_i\u00b2`, where `p_i` is the proportion of the total count represented by taxon `i`. It is equivalent to `1 - D`, where `D` is Simpson's dominance index, and is interpretable as Hurlbert's probability of interspecific encounter (PIE). The index ranges from 0 (single taxon, no diversity) toward 1 as evenness and richness increase.nn#### **Required Functionality**n- Implement `simpson` in `skbio/diversity/alpha/_base.py`, publicly importable from `skbio.diversity.alpha`.n- Signature: `simpson(counts, finite=False)`.n- `counts` (required): 1-D array_like of int or float; a vector of counts (or equivalent non-negative values) of individuals per taxon. Both numpy arrays and plain lists must be accepted, and behavior must be identical for int and float inputs with non-negative values, including zero entries.n- Return value: a float \u2014 Simpson's diversity index.n- Compute the index as 1 minus the dominance value `D` for the same counts, obtained from the existing `dominance` function with the same `finite` setting.n- Perform no input validation and raise no exceptions from this function itself; invalid inputs (wrong types, negative values) may yield NaN or misleading values rather than errors.nn---nn### **Goal 2: Support an optional finite-sample correction**nn#### **Feature Description**nThe `finite` parameter controls whether the underlying dominance value `D` is corrected for finite sample size before forming the index.nn#### **Required Functionality**n- `finite` is a boolean, optional, and defaults to `False`.n- `finite=False` (default): compute the uncorrected index `1 - \u03a3 p_i\u00b2`.n- `finite=True`: apply a finite-sample correction when computing `D`; the corrected value is bounded by `1 - 1/N` for a sample of `N` individuals. The precise form of the correction is that of the underlying `dominance` computation (existing functionality, unchanged).n- Observable requirement: for a single-taxon sample the result is exactly 0 under both settings \u2014 `simpson([5])` returns 0 and `simpson([5], finite=True)` returns 0.nn---nn### **Goal 3: Define behavior for degenerate communities**nn#### **Feature Description**nCommunities with no diversity or with no individuals must yield well-defined results.nn#### **Required Functionality**n- Single-taxon community (exactly one non-zero count): the index is exactly 0, regardless of the `finite` setting.n- Empty or all-zero counts vector (total count of 0): the index is NaN, e.g., `simpson([0, 0])` returns NaN.nn---nn### **Goal 4: Produce values consistent with the closed-form definition and related measures**nn#### **Feature Description**nComputed values must match the mathematical definition and remain numerically consistent with related diversity measures that reference Simpson's index.nn#### **Required Functionality**n- For the counts vector `[1, 0, 2, 5, 2]`, return 0.66 (i.e., `1 - 34/100`) to 7 decimal places.n- For the counts vector `[1, 2, 3, 4, 5]`, return 0.75555556 (i.e., `1 - 55/225`) to 7 decimal places; this value equals the Tsallis entropy of order `q = 2` for the same counts, so consistency with that generalization is preserved.nn---nn## **Methods and Functionality Overview**nn| Method name | Input parameters | Output / functionality |n|---|---|---|n| `simpson` | `counts`: 1-D array_like of int or float (required); `finite`: bool, optional, default `False` | Returns a float: Simpson's diversity index `1 - D`, where `D` is the dominance value (finite-sample corrected when `finite=True`); exactly 0 for a single-taxon sample; NaN for an empty or all-zero counts vector |nnNote: `dominance` (and related measures such as the Tsallis entropy) are existing public functions outside the present implementation scope; `simpson` relies on `dominance` for the underlying `D` value, and their behavior is unchanged.nn---nn## **Expected Outcomes**n1. `simpson` is importable from `skbio.diversity.alpha` and returns a float for any 1-D array_like of int or float counts.n2. `simpson(np.array([1, 0, 2, 5, 2]))` returns approximately 0.66.n3. `simpson(np.array([5]))` returns exactly 0, and `simpson(np.array([5]), finite=True)` returns exactly 0.n4. `simpson([0, 0])` returns NaN.n5. `simpson(np.array([1, 2, 3, 4, 5]))` returns approximately 0.75555556, matching the order-2 Tsallis entropy of the same counts.n6. The `finite` flag defaults to `False`; when `True`, the underlying dominance value is corrected for finite sample size (the corrected index is bounded by `1 - 1/N` for `N` individuals).n7. List and numpy array inputs of int or float are handled identically for non-negative values; the function performs no input validation and raises no exceptions itself.\" }",
+    "cost_usd": 0.0,
+    "prompt_tokens": 4407,
+    "usage": {
+      "completion_tokens": 20122,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 18713,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 4407,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0,
+        "created_cache_tokens": 4352,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 24529
+    }
+  },
+  "status": "completed"
+}

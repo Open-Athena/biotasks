@@ -1,0 +1,37 @@
+{
+  "cost_basis": "litellm_estimate",
+  "ledger": "/app/author-output/native-model-reservations.sqlite",
+  "model": "openai/glm-5.3",
+  "operation_id": "specification:flow:c80f6a9306c83c7db638",
+  "request_sha256": "8f131f78b1d388ba46d0a91a2008e3b8764c05f5b27f56218f0f714fe4dcec63",
+  "response": {
+    "completion_tokens": 4741,
+    "content": "{\n  \"markdown\": \"# Development Requirements Documentn---nn## **Background**nAlpha (within-sample) diversity analysis summarizes the composition of a single sample from a vector of feature counts, where each entry records the abundance of one feature (e.g., a taxon or operational taxonomic unit). A fundamental summary statistic is the number of distinct features actually observed in the sample, historically exposed under the name `sobs`. This document specifies a feature-oriented alias for that measure, which must remain numerically identical to the established `sobs` metric.nn---nn## **Development Requirements**nn### **Goal 1: Compute the Number of Distinct Observed Features**nn#### **Feature Description**nProvide a public function, `observed_features`, that calculates the number of distinct features observed in a counts vector. Per its documentation, this function is an alias for `sobs`.nn#### **Required Functionality**n- Signature: `observed_features(counts)`.n- **Parameter:** `counts` \u2014 a 1-D array_like of ints; the vector of counts.n- **Return value:** an `int` \u2014 the distinct feature count.n- The returned value must be exactly what `sobs` returns for the same input, since the function is an alias for `sobs`.nn---nn### **Goal 2: Guarantee Behavioral Equivalence with `sobs`**nn#### **Feature Description**nBecause `observed_features` is documented as an alias for `sobs`, the two functions must produce identical results for the same counts vector.nn#### **Required Functionality**n- For any valid counts vector \u2014 including vectors that contain zero-valued counts \u2014 `observed_features(counts)` must equal `sobs(counts)` exactly.n- The equivalence must hold generally across inputs, not only for specific examples.nn---nn## **Methods and Functionality Overview**nn| Method Name         | Input Parameters                | Output/Functionality                                                                    |n|---------------------|--------------------------------|-----------------------------------------------------------------------------------------|n| `observed_features` | `counts` (1-D array_like, int) | Returns an `int`: the number of distinct observed features; must equal `sobs(counts)`     |nn---nn## **Expected Outcomes**n1. `observed_features` accepts a 1-D counts vector of ints and returns an integer distinct-feature count.n2. For every counts vector, including those containing zero counts, `observed_features(counts)` returns exactly the same value as `sobs(counts)`.n3. Only `observed_features` is in scope for implementation; `sobs` and the other alpha diversity metrics referenced alongside it retain their existing behavior.\"\n}",
+    "cost_usd": 0.0,
+    "prompt_tokens": 3424,
+    "usage": {
+      "completion_tokens": 4741,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "image_tokens": null,
+        "reasoning_tokens": 4183,
+        "rejected_prediction_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "prompt_tokens": 3424,
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 3008,
+        "created_cache_tokens": 384,
+        "image_tokens": null,
+        "multimodal_tokens": null,
+        "text_tokens": null,
+        "video_tokens": null
+      },
+      "total_tokens": 8165
+    }
+  },
+  "status": "completed"
+}
