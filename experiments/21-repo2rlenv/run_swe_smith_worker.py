@@ -31,12 +31,15 @@ def main():
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
     parser.add_argument("--recipe", choices=("swe_smith", "swe_flow"), default="swe_smith")
+    parser.add_argument("--flow-test-paths", action="store_true")
     parser.add_argument(
         "--config",
         type=Path,
         default=Path(__file__).with_name("swe-smith-skbio-worker.json"),
     )
     args = parser.parse_args()
+    if args.flow_test_paths and args.recipe != "swe_flow":
+        parser.error("--flow-test-paths requires --recipe swe_flow")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
     args.campaign.mkdir(parents=True, exist_ok=False)
@@ -56,6 +59,12 @@ def main():
         "status": "starting",
     }
     record["config_sha256"] = hashlib.sha256(args.config.read_bytes()).hexdigest()
+    entrypoint = f"-m repo2rlenv.pipelines.recipes.{args.recipe}.worker"
+    if args.flow_test_paths:
+        adaptation = Path(__file__).with_name("swe_flow_test_paths.py")
+        record["adaptation_sha256"] = hashlib.sha256(adaptation.read_bytes()).hexdigest()
+        record["stage"] = "adapted_repository_contrasts"
+        entrypoint = "/work/native/swe_flow_test_paths.py"
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
@@ -68,6 +77,8 @@ def main():
         )
         worker.upload(args.source_archive, "/work/native/source.tar.gz")
         worker.upload(args.config, "/work/native/config.json")
+        if args.flow_test_paths:
+            worker.upload(adaptation, "/work/native/swe_flow_test_paths.py")
         setup = worker.exec(
             [
                 "sh",
@@ -90,7 +101,7 @@ def main():
                     "export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 "
                     "MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; "
                     "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python "
-                    f"-m repo2rlenv.pipelines.recipes.{args.recipe}.worker "
+                    f"{entrypoint} "
                     "/work/native/config.json /evidence/native/generation "
                     ">/evidence/native/worker.log 2>&1; code=$?; "
                     "printf '%s\\n' \"$code\" >/evidence/native/worker-exit.txt; exit $code"
