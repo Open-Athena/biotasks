@@ -73,3 +73,11 @@ Prepared probe_glm_client.py for a single native-client JSON-schema request, wit
 ## 2026-10-16 — public artifact preservation complete
 
 The user chose public preservation. Uploaded the exact allowlist plus source notices to the existing open-athena/biotasks HF bucket under research/21-repo2rlenv/2026-10-16/8fe7d33b4f42f1489b95c391806786ae76031065ed66abc62f5fc2118328fc79/. Verified anonymous fresh download of all 17 objects and hashes/sizes/modes of all 226 regular archive members. No overwrite or deletion performed. Manifest was checkpointed in 4f694d8 before upload; receipt is hf-upload-receipt.json. Transfer elapsed 2.25 seconds with 89,952 KiB peak RSS, exit zero. The snapshot is preserved research evidence, with 19 generated and zero independently validated tasks. Private service/provider artifacts and credentials were excluded.
+
+## 2026-10-16 — free GLM native-client schema probe succeeds
+
+The first Iris probe failed in setup because the trimmed workspace omitted config/, required by a dependency's wheel force-include. No model request ran. Preserved that failure, then submitted a separate corrected bundle with the directory included. Both attempts used 2 vCPUs / 4 GiB RAM / 10 GiB disk, a 30-minute job deadline and zero scheduler retries. Local submissions peaked at 280,112 and 272,196 KiB respectively, within the shared-node limits.
+
+The second attempt completed with scheduler state SUCCEEDED. The pinned Repo2RLEnv complete() client successfully used free GLM with an explicit custom endpoint/key and strict JSON-schema response: one request, 36 prompt tokens, 32 completion tokens, 5.87 seconds. Native client estimated $0; that is not a provider receipt. No paid fallback, biological execution, or task solving occurred. Sanitized reports are evidence/glm-preflight/attempt-01.json and attempt-02.json. Private route discovery and job handles remain outside public artifacts. Both Iris attempts are terminal; no Daytona workers are active. Preserve $20 total conservative reservations across the four probe attempts pending reconciliation.
+
+This establishes the basic generation-client route and schema compatibility. It does not validate recipe-specific prompts, free-service ledger settlement, global concurrency enforcement, or the Harbor solver path, whose pinned wrapper rejects custom endpoints.

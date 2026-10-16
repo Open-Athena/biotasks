@@ -19,7 +19,7 @@
   },
   "execution": {
     "generation_started": true,
-    "model_calls": 0,
+    "model_calls": 1,
     "worker_launches": 2,
     "paid_fallback": false,
     "model": "glm-5.3",
@@ -37,7 +37,7 @@
     "worker_probe_status": "second probe passed; deletion verified HTTP 404",
     "active_workers": 0,
     "operational_limits_status": "compute and model limits individually agreed",
-    "cost_reconciliation_status": "pending; retain $10 total reservations",
+    "cost_reconciliation_status": "pending; $20 conservative reservations across two Daytona and two Iris probe attempts",
     "max_concurrent_sandboxes": 4,
     "initial_sandbox_vcpus": 2,
     "initial_sandbox_memory_gib": 4,
@@ -48,7 +48,11 @@
     "max_concurrent_glm_requests": 4,
     "aggregate_model_call_cap": null,
     "aggregate_model_call_policy": "explicitly no additional global cap; native recipe limits and agreed cohort/run bounds",
-    "aggregate_token_policy": "explicitly no global cap; native per-request limits and usage logging"
+    "aggregate_token_policy": "explicitly no global cap; native per-request limits and usage logging",
+    "glm_probe_attempts": 2,
+    "glm_probe_status": "schema probe passed; job SUCCEEDED",
+    "observed_prompt_tokens": 36,
+    "observed_completion_tokens": 32
   },
   "next_gates": [
     "Resolve route-specific model clients and candidate-budget enforcement",
