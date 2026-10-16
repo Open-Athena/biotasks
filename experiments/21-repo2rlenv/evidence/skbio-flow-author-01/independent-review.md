@@ -19,3 +19,21 @@ establish usable instructions or task acceptance.
 Raw specification responses contain these same formatting defects; recovery did
 not introduce them. No automatic replacement of literal `n` is justified. No
 solver attempts or independently accepted tasks are claimed.
+
+## Follow-up source review
+
+Reject `d86a2e7a9853ecd4b5eb`'s instruction as semantically incorrect. The pinned
+`dominance` implementation computes finite D as
+`sum(n_i * (n_i - 1)) / (N * (N - 1))`; `simpson` returns `1 - D`. Thus `[1, 1]`
+has finite diversity 1, exceeding the instruction's asserted bound `1 - 1/N =
+0.5`. This counterexample is derived from the inspected implementation, not a
+reported new target execution. The instruction's promise of no exceptions for
+invalid inputs also ignores `dominance`'s `_validate_alpha` decorator, which
+calls `_validate_counts_vector`.
+
+`observed_features` delegates to `sobs`; that function's decorator validates
+counts and drops zero entries before its body returns `counts.size`. This
+supports the generated distinct-observed-feature/alias contract on valid count
+vectors. Its generated docstring also states the alias correctly. Formatting
+remains defective; native execution controls and independent grader checks have
+not yet run. Do not treat this source review as final task acceptance.

@@ -32,14 +32,25 @@ def main():
     parser.add_argument("--source-archive", type=Path, required=True)
     parser.add_argument(
         "--stage",
-        choices=("smith-controls", "biopython-cve", "marin-schema", "marin-runtime"),
+        choices=(
+            "smith-controls",
+            "flow-controls",
+            "biopython-cve",
+            "marin-schema",
+            "marin-runtime",
+        ),
         default="smith-controls",
     )
     parser.add_argument("--generation-archive", type=Path)
     parser.add_argument("--issues", type=Path)
+    parser.add_argument("--config", type=Path)
     args = parser.parse_args()
-    if args.stage == "smith-controls" and (args.generation_archive is None or args.issues is None):
-        parser.error("Smith controls require --generation-archive and --issues")
+    if args.stage in ("smith-controls", "flow-controls") and (
+        args.generation_archive is None or args.issues is None
+    ):
+        parser.error("Repository controls require --generation-archive and --issues")
+    if args.stage == "flow-controls" and args.config is None:
+        parser.error("Flow controls require --config")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
     args.campaign.mkdir(parents=True, exist_ok=False)
@@ -65,11 +76,13 @@ def main():
         )
         worker.upload(args.source_archive, "/work/native/source.tar.gz")
         root = Path(__file__).parent
-        if args.stage == "smith-controls":
+        if args.stage in ("smith-controls", "flow-controls"):
             worker.upload(args.generation_archive, "/work/native/generation.tar.gz")
             worker.upload(args.issues, "/work/native/issues.json")
             worker.upload(root / "export_verify_smith.py", "/work/native/export_verify_smith.py")
-            worker.upload(root / "swe-smith-skbio-worker.json", "/work/native/config.json")
+            worker.upload(
+                args.config or root / "swe-smith-skbio-worker.json", "/work/native/config.json"
+            )
             unpack = "mkdir inputs; tar -xzf generation.tar.gz -C inputs; "
             entry = (
                 "/work/native/export_verify_smith.py "
@@ -77,6 +90,8 @@ def main():
                 "--issues /work/native/issues.json --config /work/native/config.json "
                 "--output /evidence/native/validation "
             )
+            if args.stage == "flow-controls":
+                entry += "--recipe swe_flow "
         elif args.stage == "biopython-cve":
             for source, target in (
                 ("replay_biopython_cve.py", "replay_biopython_cve.py"),
