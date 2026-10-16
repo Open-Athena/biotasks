@@ -1,4 +1,4 @@
-"""One remote scikit-bio baseline build/test; no model calls or mutations."""
+"""One remote pinned repository baseline; no model calls or mutations."""
 
 import argparse
 import json
@@ -23,7 +23,18 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
+    parser.add_argument("--profile", choices=("scikit-bio", "biopython"), default="scikit-bio")
     args = parser.parse_args()
+    image = (
+        "biotasks21-skbio-baseline"
+        if args.profile == "scikit-bio"
+        else "biotasks21-biopython-baseline"
+    )
+    test_path = (
+        "skbio/diversity/alpha/tests/test_base.py"
+        if args.profile == "scikit-bio"
+        else "Tests/test_SeqUtils.py"
+    )
     args.campaign.mkdir(parents=True, exist_ok=False)
     ledger = BudgetLedger(args.campaign / "budget.sqlite", limit_usd="5")
     spec = WorkerSpec(
@@ -34,7 +45,14 @@ def main():
         timeout_sec=7200,
         name=args.worker_name,
     )
-    record = {"stage": "repository_baseline", "model_calls": 0, "status": "starting"}
+    record = {
+        "stage": "repository_baseline",
+        "model_calls": 0,
+        "status": "starting",
+        "profile": args.profile,
+        "test_path": test_path,
+        "working_directory": "/workspace",
+    }
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
@@ -44,7 +62,7 @@ def main():
         prepare_docker(worker)
         worker.exec(["mkdir", "-p", "/work/baseline"], timeout=30).checked("mkdir")
         worker.upload(
-            Path(__file__).with_name("scikit-bio-baseline.Dockerfile"),
+            Path(__file__).with_name(f"{args.profile}-baseline.Dockerfile"),
             "/work/baseline/Dockerfile",
         )
         build = worker.exec(
@@ -53,7 +71,7 @@ def main():
                 "build",
                 "--progress=plain",
                 "-t",
-                "biotasks21-skbio-baseline",
+                image,
                 "/work/baseline",
             ],
             timeout=1800,
@@ -62,12 +80,10 @@ def main():
         (args.campaign / "build.stderr").write_text(build.stderr)
         record["build_returncode"] = build.returncode
         build.checked("pinned repository build")
-        details = worker.exec(
-            ["docker", "image", "inspect", "biotasks21-skbio-baseline"], timeout=30
-        )
+        details = worker.exec(["docker", "image", "inspect", image], timeout=30)
         (args.campaign / "image.json").write_text(details.stdout)
         command = (
-            "python -m pytest -o addopts= skbio/diversity/alpha/tests/test_base.py "
+            f"python -m pytest -o addopts= {test_path} "
             "-q --tb=short --junitxml=/tmp/results.xml; code=$?; "
             "cp /opt/baseline-freeze.txt /tmp/freeze.txt; exit $code"
         )
@@ -85,7 +101,7 @@ def main():
                 "2048m",
                 "--pids-limit",
                 "256",
-                "biotasks21-skbio-baseline",
+                image,
                 "sh",
                 "-c",
                 command,
