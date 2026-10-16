@@ -20,7 +20,7 @@
   "execution": {
     "generation_started": true,
     "model_calls": 1,
-    "worker_launches": 2,
+    "worker_launches": 3,
     "paid_fallback": false,
     "model": "glm-5.3",
     "model_revision": null,
@@ -37,7 +37,7 @@
     "worker_probe_status": "second probe passed; deletion verified HTTP 404",
     "active_workers": 0,
     "operational_limits_status": "compute and model limits individually agreed",
-    "cost_reconciliation_status": "pending; $20 conservative reservations across two Daytona and two Iris probe attempts",
+    "cost_reconciliation_status": "pending; $25 conservative reservations across three Daytona and two Iris attempts",
     "max_concurrent_sandboxes": 4,
     "initial_sandbox_vcpus": 2,
     "initial_sandbox_memory_gib": 4,
@@ -52,7 +52,10 @@
     "glm_probe_attempts": 2,
     "glm_probe_status": "schema probe passed; job SUCCEEDED",
     "observed_prompt_tokens": 36,
-    "observed_completion_tokens": 32
+    "observed_completion_tokens": 32,
+    "repository_baselines": {
+      "scikit-bio": "34 tests and 8 subtests passed offline; no generated task validated"
+    }
   },
   "next_gates": [
     "Resolve route-specific model clients and candidate-budget enforcement",
