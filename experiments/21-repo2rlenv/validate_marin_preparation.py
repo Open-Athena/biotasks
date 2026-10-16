@@ -1,5 +1,6 @@
 """Validate prepared JSON with the exact Marin checkout on a remote CPU worker."""
 
+import argparse
 import json
 import os
 import subprocess
@@ -9,6 +10,9 @@ REVISION = "45a044387ccd95ab698b4a592056aadaff961540"
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--runtime", action="store_true")
+    args = parser.parse_args()
     if os.environ.get("REPO2RLENV_REMOTE_WORKER") != "1":
         raise RuntimeError("Remote worker required")
     repo = Path("/work/marin")
@@ -93,6 +97,16 @@ Path('/evidence/native/schema-result.json').write_text(json.dumps({
     )
     if result.returncode:
         raise SystemExit(result.returncode)
+    if args.runtime:
+        with (evidence / "runtime-check.log").open("w") as log:
+            result = subprocess.run(
+                [str(repo / ".venv/bin/python"), "/work/native/check_marin_runtime.py"],
+                stdout=log,
+                stderr=log,
+                timeout=3000,
+            )
+        if result.returncode:
+            raise SystemExit(result.returncode)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,315 @@
+{
+  "function_catalog": {
+    "Bio/SeqUtils/CheckSum.py:108:seguid": {
+      "line": 108,
+      "name": "seguid",
+      "path": "Bio/SeqUtils/CheckSum.py",
+      "source": "def seguid(seq):\n    \"\"\"Return the SEGUID (string) for a sequence (string or Seq object).\n\n    Given a nucleotide or amino-acid sequence (or any string),\n    returns the SEGUID string (A SEquence Globally Unique IDentifier).\n    seq type = str.\n\n    Note that the case is not important:\n\n    >>> seguid(\"ACGTACGTACGT\")\n    'If6HIvcnRSQDVNiAoefAzySc6i4'\n    >>> seguid(\"acgtACGTacgt\")\n    'If6HIvcnRSQDVNiAoefAzySc6i4'\n\n    For more information about SEGUID, see:\n    http://bioinformatics.anl.gov/seguid/\n    https://doi.org/10.1002/pmic.200600032\n    \"\"\"\n    import base64\n    import hashlib\n\n    m = hashlib.sha1()\n    try:\n        # Assume it's a Seq object\n        seq = bytes(seq)\n    except TypeError:\n        # Assume it's a string\n        seq = seq.encode()\n    m.update(seq.upper())\n    tmp = base64.encodebytes(m.digest())\n    return tmp.decode().replace(\"\\n\", \"\").rstrip(\"=\")"
+    },
+    "Bio/SeqUtils/CheckSum.py:16:crc32": {
+      "line": 16,
+      "name": "crc32",
+      "path": "Bio/SeqUtils/CheckSum.py",
+      "source": "def crc32(seq):\n    \"\"\"Return the crc32 checksum for a sequence (string or Seq object).\n\n    Note that the case is important:\n\n    >>> crc32(\"ACGTACGTACGT\")\n    20049947\n    >>> crc32(\"acgtACGTacgt\")\n    1688586483\n\n    \"\"\"\n    try:\n        # Assume it's a Seq object\n        s = bytes(seq)\n    except TypeError:\n        # Assume it's a string\n        s = seq.encode()\n    return binascii.crc32(s)"
+    },
+    "Bio/SeqUtils/CheckSum.py:36:_init_table_h": {
+      "line": 36,
+      "name": "_init_table_h",
+      "path": "Bio/SeqUtils/CheckSum.py",
+      "source": "def _init_table_h():\n    _table_h = []\n    for i in range(256):\n        part_l = i\n        part_h = 0\n        for j in range(8):\n            rflag = part_l & 1\n            part_l >>= 1\n            if part_h & 1:\n                part_l |= 1 << 31\n            part_h >>= 1\n            if rflag:\n                part_h ^= 0xD8000000\n        _table_h.append(part_h)\n    return _table_h"
+    },
+    "Bio/SeqUtils/CheckSum.py:57:crc64": {
+      "line": 57,
+      "name": "crc64",
+      "path": "Bio/SeqUtils/CheckSum.py",
+      "source": "def crc64(s):\n    \"\"\"Return the crc64 checksum for a sequence (string or Seq object).\n\n    Note that the case is important:\n\n    >>> crc64(\"ACGTACGTACGT\")\n    'CRC-C4FBB762C4A87EBD'\n    >>> crc64(\"acgtACGTacgt\")\n    'CRC-DA4509DC64A87EBD'\n\n    \"\"\"\n    crcl = 0\n    crch = 0\n    for c in s:\n        shr = (crch & 0xFF) << 24\n        temp1h = crch >> 8\n        temp1l = (crcl >> 8) | shr\n        idx = (crcl ^ ord(c)) & 0xFF\n        crch = temp1h ^ _table_h[idx]\n        crcl = temp1l\n\n    return f\"CRC-{crch:08X}{crcl:08X}\""
+    },
+    "Bio/SeqUtils/CheckSum.py:81:gcg": {
+      "line": 81,
+      "name": "gcg",
+      "path": "Bio/SeqUtils/CheckSum.py",
+      "source": "def gcg(seq):\n    \"\"\"Return the GCG checksum (int) for a sequence (string or Seq object).\n\n    Given a nucleotide or amino-acid sequence (or any string),\n    returns the GCG checksum (int). Checksum used by GCG program.\n    seq type = str.\n\n    Based on BioPerl GCG_checksum. Adapted by Sebastian Bassi\n    with the help of John Lenton, Pablo Ziliani, and Gabriel Genellina.\n\n    All sequences are converted to uppercase.\n\n    >>> gcg(\"ACGTACGTACGT\")\n    5688\n    >>> gcg(\"acgtACGTacgt\")\n    5688\n\n    \"\"\"\n    index = checksum = 0\n    for char in seq:\n        index += 1\n        checksum += index * ord(char.upper())\n        if index == 57:\n            index = 0\n    return checksum % 10000"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:379:make_table": {
+      "line": 379,
+      "name": "make_table",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def make_table(oldtable=None, values=None):\n    \"\"\"Return a table with thermodynamic parameters (as dictionary).\n\n    Arguments:\n     - oldtable: An existing dictionary with thermodynamic parameters.\n     - values: A dictionary with new or updated values.\n\n    E.g., to replace the initiation parameters in the Sugimoto '96 dataset with\n    the initiation parameters from Allawi & SantaLucia '97:\n\n    >>> from Bio.SeqUtils.MeltingTemp import make_table, DNA_NN2\n    >>> table = DNA_NN2                               # Sugimoto '96\n    >>> table['init_A/T']\n    (0, 0)\n    >>> newtable = make_table(oldtable=DNA_NN2, values={'init': (0, 0),\n    ...                       'init_A/T': (2.3, 4.1),\n    ...                       'init_G/C': (0.1, -2.8)})\n    >>> print(\"%0.1f, %0.1f\" % newtable['init_A/T'])\n    2.3, 4.1\n\n    \"\"\"\n    if oldtable is None:\n        table = {\n            \"init\": (0, 0),\n            \"init_A/T\": (0, 0),\n            \"init_G/C\": (0, 0),\n            \"init_oneG/C\": (0, 0),\n            \"init_allA/T\": (0, 0),\n            \"init_5T/A\": (0, 0),\n            \"sym\": (0, 0),\n            \"AA/TT\": (0, 0),\n            \"AT/TA\": (0, 0),\n            \"TA/AT\": (0, 0),\n            \"CA/GT\": (0, 0),\n            \"GT/CA\": (0, 0),\n            \"CT/GA\": (0, 0),\n            \"GA/CT\": (0, 0),\n            \"CG/GC\": (0, 0),\n            \"GC/CG\": (0, 0),\n            \"GG/CC\": (0, 0),\n        }\n    else:\n        table = oldtable.copy()\n    if values:\n        table.update(values)\n    return table"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:427:_check": {
+      "line": 427,
+      "name": "_check",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def _check(seq, method):\n    \"\"\"Return a sequence which fulfills the requirements of the given method (PRIVATE).\n\n    All Tm methods in this package require the sequence in uppercase format.\n    Most methods make use of the length of the sequence (directly or\n    indirectly), which can only be expressed as len(seq) if the sequence does\n    not contain whitespaces and other non-base characters. RNA sequences are\n    backtranscribed to DNA. This method is PRIVATE.\n\n    Arguments:\n     - seq: The sequence as given by the user (passed as string).\n     - method: Tm_Wallace, Tm_GC or Tm_NN.\n\n    >>> from Bio.SeqUtils import MeltingTemp as mt\n    >>> mt._check('10 ACGTTGCAAG tccatggtac', 'Tm_NN')\n    'ACGTTGCAAGTCCATGGTAC'\n\n    \"\"\"\n    seq = \"\".join(seq.split()).upper()\n    seq = str(Seq.Seq(seq).back_transcribe())\n    if method == \"Tm_Wallace\":\n        return seq\n    if method == \"Tm_GC\":\n        baseset = (\n            \"A\",\n            \"B\",\n            \"C\",\n            \"D\",\n            \"G\",\n            \"H\",\n            \"I\",\n            \"K\",\n            \"M\",\n            \"N\",\n            \"R\",\n            \"S\",\n            \"T\",\n            \"V\",\n            \"W\",\n            \"X\",\n            \"Y\",\n        )\n    if method == \"Tm_NN\":\n        baseset = (\"A\", \"C\", \"G\", \"T\", \"I\")\n    seq = \"\".join([base for base in seq if base in baseset])\n    return seq"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:475:salt_correction": {
+      "line": 475,
+      "name": "salt_correction",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def salt_correction(Na=0, K=0, Tris=0, Mg=0, dNTPs=0, method=1, seq=None):\n    \"\"\"Calculate a term to correct Tm for salt ions.\n\n    Depending on the Tm calculation, the term will correct Tm or entropy. To\n    calculate corrected Tm values, different operations need to be applied:\n\n     - methods 1-4: Tm(new) = Tm(old) + corr\n     - method 5: deltaS(new) = deltaS(old) + corr\n     - methods 6+7: Tm(new) = 1/(1/Tm(old) + corr)\n\n    Arguments:\n     - Na, K, Tris, Mg, dNTPS: Millimolar concentration of respective ion. To\n       have a simple 'salt correction', just pass Na. If any of K, Tris, Mg and\n       dNTPS is non-zero, a 'sodium-equivalent' concentration is calculated\n       according to von Ahsen et al. (2001, Clin Chem 47: 1956-1961):\n       [Na_eq] = [Na+] + [K+] + [Tris]/2 + 120*([Mg2+] - [dNTPs])^0.5\n       If [dNTPs] >= [Mg2+]: [Na_eq] = [Na+] + [K+] + [Tris]/2\n     - method: Which method to be applied. Methods 1-4 correct Tm, method 5\n       corrects deltaS, methods 6 and 7 correct 1/Tm. The methods are:\n\n       1. 16.6 x log[Na+]\n          (Schildkraut & Lifson (1965), Biopolymers 3: 195-208)\n       2. 16.6 x log([Na+]/(1.0 + 0.7*[Na+]))\n          (Wetmur (1991), Crit Rev Biochem Mol Biol 126: 227-259)\n       3. 12.5 x log(Na+]\n          (SantaLucia et al. (1996), Biochemistry 35: 3555-3562\n       4. 11.7 x log[Na+]\n          (SantaLucia (1998), Proc Natl Acad Sci USA 95: 1460-1465\n       5. Correction for deltaS: 0.368 x (N-1) x ln[Na+]\n          (SantaLucia (1998), Proc Natl Acad Sci USA 95: 1460-1465)\n       6. (4.29(%GC)-3.95)x1e-5 x ln[Na+] + 9.40e-6 x ln[Na+]^2\n          (Owczarzy et al. (2004), Biochemistry 43: 3537-3554)\n       7. Complex formula with decision tree and 7 empirical constants.\n          Mg2+ is corrected for dNTPs binding (if present)\n          (Owczarzy et al. (2008), Biochemistry 47: 5336-5353)\n\n    Examples\n    --------\n    >>> from Bio.SeqUtils.MeltingTemp import salt_correction\n    >>> print('%0.2f' % salt_correction(Na=50, method=1))\n    -21.60\n    >>> print('%0.2f' % salt_correction(Na=50, method=2))\n    -21.85\n    >>> print('%0.2f' % salt_correction(Na=100, Tris=20, method=2))\n    -16.45\n    >>> print('%0.2f' % salt_correction(Na=100, Tris=20, Mg=1.5, method=2))\n    -10.99\n\n    \"\"\"\n    if method in (5, 6, 7) and not seq:\n        raise ValueError(\n            \"sequence is missing (is needed to calculate GC content or sequence length).\"\n        )\n    corr = 0\n    if not method:\n        return corr\n    Mon = Na + K + Tris / 2.0  # Note: all these values are millimolar\n    mg = Mg * 1e-3  # Lowercase ions (mg, mon, dntps) are molar\n    # Na equivalent according to von Ahsen et al. (2001):\n    if sum((K, Mg, Tris, dNTPs)) > 0 and method != 7 and dNTPs < Mg:\n        # dNTPs bind Mg2+ strongly. If [dNTPs] is larger or equal than\n        # [Mg2+], free Mg2+ is considered not to be relevant.\n        Mon += 120 * math.sqrt(Mg - dNTPs)\n    mon = Mon * 1e-3\n    # Note: math.log = ln(), math.log10 = log()\n    if method in range(1, 7) and not mon:\n        raise ValueError(\n            \"Total ion concentration of zero is not allowed in this method.\"\n        )\n    if method == 1:\n        corr = 16.6 * math.log10(mon)\n    if method == 2:\n        corr = 16.6 * math.log10((mon) / (1.0 + 0.7 * (mon)))\n    if method == 3:\n        corr = 12.5 * math.log10(mon)\n    if method == 4:\n        corr = 11.7 * math.log10(mon)\n    if method == 5:\n        corr = 0.368 * (len(seq) - 1) * math.log(mon)\n    if method == 6:\n        corr = (\n            (4.29 * SeqUtils.gc_fraction(seq, \"ignore\") - 3.95) * 1e-5 * math.log(mon)\n        ) + 9.40e-6 * math.log(mon) ** 2\n    # Turn black code style off\n    # fmt: off\n    if method == 7:\n        a, b, c, d = 3.92, -0.911, 6.26, 1.42\n        e, f, g = -48.2, 52.5, 8.31\n        if dNTPs > 0:\n            dntps = dNTPs * 1e-3\n            ka = 3e4  # Dissociation constant for Mg:dNTP\n            # Free Mg2+ calculation:\n            mg = (-(ka * dntps - ka * mg + 1.0)\n                  + math.sqrt((ka * dntps - ka * mg + 1.0) ** 2\n                              + 4.0 * ka * mg)) / (2.0 * ka)\n        if Mon > 0:\n            R = math.sqrt(mg) / mon\n            if R < 0.22:\n                corr = (4.29 * SeqUtils.gc_fraction(seq, \"ignore\") - 3.95) * \\\n                    1e-5 * math.log(mon) + 9.40e-6 * math.log(mon) ** 2\n                return corr\n            elif R < 6.0:\n                a = 3.92 * (0.843 - 0.352 * math.sqrt(mon) * math.log(mon))\n                d = 1.42 * (1.279 - 4.03e-3 * math.log(mon)\n                            - 8.03e-3 * math.log(mon) ** 2)\n                g = 8.31 * (0.486 - 0.258 * math.log(mon)\n                            + 5.25e-3 * math.log(mon) ** 3)\n        corr = (a + b * math.log(mg) + (SeqUtils.gc_fraction(seq, \"ignore\"))\n                * (c + d * math.log(mg)) + (1 / (2.0 * (len(seq) - 1)))\n                * (e + f * math.log(mg) + g * math.log(mg) ** 2)) * 1e-5\n    # Turn black code style on\n    # fmt: on\n    if method > 7:\n        raise ValueError(\"Allowed values for parameter 'method' are 1-7.\")\n    return corr"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:592:chem_correction": {
+      "line": 592,
+      "name": "chem_correction",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def chem_correction(\n    melting_temp, DMSO=0, fmd=0, DMSOfactor=0.75, fmdfactor=0.65, fmdmethod=1, GC=None\n):\n    \"\"\"Correct a given Tm for DMSO and formamide.\n\n    Please note that these corrections are +/- rough approximations.\n\n    Arguments:\n     - melting_temp: Melting temperature.\n     - DMSO: Percent DMSO.\n     - fmd: Formamide concentration in %(fmdmethod=1) or molar (fmdmethod=2).\n     - DMSOfactor: How much should Tm decreases per percent DMSO. Default=0.65\n       (von Ahsen et al. 2001). Other published values are 0.5, 0.6 and 0.675.\n     - fmdfactor: How much should Tm decrease per percent formamide.\n       Default=0.65. Several papers report factors between 0.6 and 0.72.\n     - fmdmethod:\n\n         1. Tm = Tm - factor(%formamide) (Default)\n         2. Tm = Tm + (0.453(f(GC)) - 2.88) x [formamide]\n\n       Here f(GC) is fraction of GC.\n       Note (again) that in fmdmethod=1 formamide concentration is given in %,\n       while in fmdmethod=2 it is given in molar.\n     - GC: GC content in percent.\n\n    Examples:\n        >>> from Bio.SeqUtils import MeltingTemp as mt\n        >>> mt.chem_correction(70)\n        70\n        >>> print('%0.2f' % mt.chem_correction(70, DMSO=3))\n        67.75\n        >>> print('%0.2f' % mt.chem_correction(70, fmd=5))\n        66.75\n        >>> print('%0.2f' % mt.chem_correction(70, fmdmethod=2, fmd=1.25,\n        ...                                    GC=50))\n        66.68\n\n    \"\"\"\n    if DMSO:\n        melting_temp -= DMSOfactor * DMSO\n    if fmd:\n        # McConaughy et al. (1969), Biochemistry 8: 3289-3295\n        if fmdmethod == 1:\n            # Note: Here fmd is given in percent\n            melting_temp -= fmdfactor * fmd\n        # Blake & Delcourt (1996), Nucl Acids Res 11: 2095-2103\n        if fmdmethod == 2:\n            if GC is None or GC < 0:\n                raise ValueError(\"'GC' is missing or negative\")\n            # Note: Here fmd is given in molar\n            melting_temp += (0.453 * (GC / 100.0) - 2.88) * fmd\n        if fmdmethod not in (1, 2):\n            raise ValueError(\"'fmdmethod' must be 1 or 2\")\n    return melting_temp"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:648:Tm_Wallace": {
+      "line": 648,
+      "name": "Tm_Wallace",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def Tm_Wallace(seq, check=True, strict=True):\n    \"\"\"Calculate and return the Tm using the 'Wallace rule'.\n\n    Tm = 4 degC * (G + C) + 2 degC * (A+T)\n\n    The Wallace rule (Thein & Wallace 1986, in Human genetic diseases: a\n    practical approach, 33-50) is often used as rule of thumb for approximate\n    Tm calculations for primers of 14 to 20 nt length.\n\n    Non-DNA characters (e.g., E, F, J, !, 1, etc) are ignored by this method.\n\n    Examples:\n        >>> from Bio.SeqUtils import MeltingTemp as mt\n        >>> mt.Tm_Wallace('ACGTTGCAATGCCGTA')\n        48.0\n        >>> mt.Tm_Wallace('ACGT TGCA ATGC CGTA')\n        48.0\n        >>> mt.Tm_Wallace('1ACGT2TGCA3ATGC4CGTA')\n        48.0\n\n    \"\"\"\n    seq = str(seq)\n    if check:\n        seq = _check(seq, \"Tm_Wallace\")\n\n    melting_temp = 2 * (sum(map(seq.count, (\"A\", \"T\", \"W\")))) + 4 * (\n        sum(map(seq.count, (\"C\", \"G\", \"S\")))\n    )\n\n    # Intermediate values for ambiguous positions:\n    tmp = (\n        3 * (sum(map(seq.count, (\"K\", \"M\", \"N\", \"R\", \"Y\"))))\n        + 10 / 3.0 * (sum(map(seq.count, (\"B\", \"V\"))))\n        + 8 / 3.0 * (sum(map(seq.count, (\"D\", \"H\"))))\n    )\n    if strict and tmp:\n        raise ValueError(\n            \"ambiguous bases B, D, H, K, M, N, R, V, Y not allowed when strict=True\"\n        )\n    else:\n        melting_temp += tmp\n    return melting_temp"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:692:Tm_GC": {
+      "line": 692,
+      "name": "Tm_GC",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def Tm_GC(\n    seq,\n    check=True,\n    strict=True,\n    valueset=7,\n    userset=None,\n    Na=50,\n    K=0,\n    Tris=0,\n    Mg=0,\n    dNTPs=0,\n    saltcorr=0,\n    mismatch=True,\n):\n    \"\"\"Return the Tm using empirical formulas based on GC content.\n\n    General format: Tm = A + B(%GC) - C/N + salt correction - D(%mismatch)\n\n    A, B, C, D: empirical constants, N: primer length\n    D (amount of decrease in Tm per % mismatch) is often 1, but sometimes other\n    values have been used (0.6-1.5). Use 'X' to indicate the mismatch position\n    in the sequence. Note that this mismatch correction is a rough estimate.\n\n    >>> from Bio.SeqUtils import MeltingTemp as mt\n    >>> print(\"%0.2f\" % mt.Tm_GC('CTGCTGATXGCACGAGGTTATGG', valueset=2))\n    69.20\n\n    Arguments:\n     - valueset: A few often cited variants are included:\n\n        1. Tm = 69.3 + 0.41(%GC) - 650/N\n           (Marmur & Doty 1962, J Mol Biol 5: 109-118; Chester & Marshak 1993),\n           Anal Biochem 209: 284-290)\n        2. Tm = 81.5 + 0.41(%GC) - 675/N - %mismatch\n           'QuikChange' formula. Recommended (by the manufacturer) for the\n           design of primers for QuikChange mutagenesis.\n        3. Tm = 81.5 + 0.41(%GC) - 675/N + 16.6 x log[Na+]\n           (Marmur & Doty 1962, J Mol Biol 5: 109-118; Schildkraut & Lifson\n           1965, Biopolymers 3: 195-208)\n        4. Tm = 81.5 + 0.41(%GC) - 500/N + 16.6 x log([Na+]/(1.0 + 0.7 x\n           [Na+])) - %mismatch\n           (Wetmur 1991, Crit Rev Biochem Mol Biol 126: 227-259). This is the\n           standard formula in approximative mode of MELTING 4.3.\n        5. Tm = 78 + 0.7(%GC) - 500/N + 16.6 x log([Na+]/(1.0 + 0.7 x [Na+]))\n           - %mismatch\n           (Wetmur 1991, Crit Rev Biochem Mol Biol 126: 227-259). For RNA.\n        6. Tm = 67 + 0.8(%GC) - 500/N + 16.6 x log([Na+]/(1.0 + 0.7 x [Na+]))\n           - %mismatch\n           (Wetmur 1991, Crit Rev Biochem Mol Biol 126: 227-259). For RNA/DNA\n           hybrids.\n        7. Tm = 81.5 + 0.41(%GC) - 600/N + 16.6 x log[Na+]\n           Used by Primer3Plus to calculate the product Tm. Default set.\n        8. Tm = 77.1 + 0.41(%GC) - 528/N + 11.7 x log[Na+]\n           (von Ahsen et al. 2001, Clin Chem 47: 1956-1961). Recommended 'as a\n           tradeoff between accuracy and ease of use'.\n\n     - userset: Tuple of four values for A, B, C, and D. Usersets override\n       valuesets.\n     - Na, K, Tris, Mg, dNTPs: Concentration of the respective ions [mM]. If\n       any of K, Tris, Mg and dNTPS is non-zero, a 'sodium-equivalent'\n       concentration is calculated and used for salt correction (von Ahsen et\n       al., 2001).\n     - saltcorr: Type of salt correction (see method salt_correction).\n       Default=0. 0 or None means no salt correction.\n     - mismatch: If 'True' (default) every 'X' in the sequence is counted as\n       mismatch.\n\n    \"\"\"\n    if saltcorr == 5:\n        raise ValueError(\"salt-correction method 5 not applicable to Tm_GC\")\n    seq = str(seq)\n    if check:\n        seq = _check(seq, \"Tm_GC\")\n\n    if strict and any(x in seq for x in \"KMNRYBVDH\"):\n        raise ValueError(\n            \"ambiguous bases B, D, H, K, M, N, R, V, Y not allowed when 'strict=True'\"\n        )\n\n    # Ambiguous bases: add 0.5, 0.67 or 0.33% depending on G+C probability:\n    percent_gc = SeqUtils.gc_fraction(seq, \"weighted\") * 100\n\n    # gc_fraction counts X as 0.5\n    if mismatch:\n        percent_gc -= seq.count(\"X\") * 50.0 / len(seq)\n\n    if userset:\n        A, B, C, D = userset\n    else:\n        if valueset == 1:\n            A, B, C, D = (69.3, 0.41, 650, 1)\n            saltcorr = 0\n        if valueset == 2:\n            A, B, C, D = (81.5, 0.41, 675, 1)\n            saltcorr = 0\n        if valueset == 3:\n            A, B, C, D = (81.5, 0.41, 675, 1)\n            saltcorr = 1\n        if valueset == 4:\n            A, B, C, D = (81.5, 0.41, 500, 1)\n            saltcorr = 2\n        if valueset == 5:\n            A, B, C, D = (78.0, 0.7, 500, 1)\n            saltcorr = 2\n        if valueset == 6:\n            A, B, C, D = (67.0, 0.8, 500, 1)\n            saltcorr = 2\n        if valueset == 7:\n            A, B, C, D = (81.5, 0.41, 600, 1)\n            saltcorr = 1\n        if valueset == 8:\n            A, B, C, D = (77.1, 0.41, 528, 1)\n            saltcorr = 4\n    if valueset > 8:\n        raise ValueError(\"allowed values for parameter 'valueset' are 0-8.\")\n\n    melting_temp = A + B * percent_gc - C / len(seq)\n    if saltcorr:\n        melting_temp += salt_correction(\n            Na=Na, K=K, Tris=Tris, Mg=Mg, dNTPs=dNTPs, seq=seq, method=saltcorr\n        )\n    if mismatch:\n        melting_temp -= D * (seq.count(\"X\") * 100.0 / len(seq))\n    return melting_temp"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:818:_key_error": {
+      "line": 818,
+      "name": "_key_error",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def _key_error(neighbors, strict):\n    \"\"\"Throw an error or a warning if there is no data for the neighbors (PRIVATE).\"\"\"\n    # We haven't found the key in the tables\n    if strict:\n        raise ValueError(f\"no thermodynamic data for neighbors {neighbors!r} available\")\n    else:\n        warnings.warn(\n            \"no themodynamic data for neighbors %r available. \"\n            \"Calculation will be wrong\" % neighbors,\n            BiopythonWarning,\n        )"
+    },
+    "Bio/SeqUtils/MeltingTemp.py:831:Tm_NN": {
+      "line": 831,
+      "name": "Tm_NN",
+      "path": "Bio/SeqUtils/MeltingTemp.py",
+      "source": "def Tm_NN(\n    seq,\n    check=True,\n    strict=True,\n    c_seq=None,\n    shift=0,\n    nn_table=None,\n    tmm_table=None,\n    imm_table=None,\n    de_table=None,\n    dnac1=25,\n    dnac2=25,\n    selfcomp=False,\n    Na=50,\n    K=0,\n    Tris=0,\n    Mg=0,\n    dNTPs=0,\n    saltcorr=5,\n):\n    \"\"\"Return the Tm using nearest neighbor thermodynamics.\n\n    Arguments:\n     - seq: The primer/probe sequence as string or Biopython sequence object.\n       For RNA/DNA hybridizations seq must be the RNA sequence.\n     - c_seq: Complementary sequence. The sequence of the template/target in\n       3'->5' direction. c_seq is necessary for mismatch correction and\n       dangling-ends correction. Both corrections will automatically be\n       applied if mismatches or dangling ends are present. Default=None.\n     - shift: Shift of the primer/probe sequence on the template/target\n       sequence, e.g.::\n\n                           shift=0       shift=1        shift= -1\n        Primer (seq):      5' ATGC...    5'  ATGC...    5' ATGC...\n        Template (c_seq):  3' TACG...    3' CTACG...    3'  ACG...\n\n       The shift parameter is necessary to align seq and c_seq if they have\n       different lengths or if they should have dangling ends. Default=0\n     - table: Thermodynamic NN values, eight tables are implemented:\n       For DNA/DNA hybridizations:\n\n        - DNA_NN1: values from Breslauer et al. (1986)\n        - DNA_NN2: values from Sugimoto et al. (1996)\n        - DNA_NN3: values from Allawi & SantaLucia (1997) (default)\n        - DNA_NN4: values from SantaLucia & Hicks (2004)\n\n       For RNA/RNA hybridizations:\n\n        - RNA_NN1: values from Freier et al. (1986)\n        - RNA_NN2: values from Xia et al. (1998)\n        - RNA_NN3: values from Chen et al. (2012)\n\n       For RNA/DNA hybridizations:\n\n        - R_DNA_NN1: values from Sugimoto et al. (1995)\n          Note that ``seq`` must be the RNA sequence.\n\n       Use the module's maketable method to make a new table or to update one\n       one of the implemented tables.\n     - tmm_table: Thermodynamic values for terminal mismatches.\n       Default: DNA_TMM1 (SantaLucia & Peyret, 2001)\n     - imm_table: Thermodynamic values for internal mismatches, may include\n       insosine mismatches. Default: DNA_IMM1 (Allawi & SantaLucia, 1997-1998;\n       Peyret et al., 1999; Watkins & SantaLucia, 2005)\n     - de_table: Thermodynamic values for dangling ends:\n\n        - DNA_DE1: for DNA. Values from Bommarito et al. (2000) (default)\n        - RNA_DE1: for RNA. Values from Turner & Mathews (2010)\n\n     - dnac1: Concentration of the higher concentrated strand [nM]. Typically\n       this will be the primer (for PCR) or the probe. Default=25.\n     - dnac2: Concentration of the lower concentrated strand [nM]. In PCR this\n       is the template strand which concentration is typically very low and may\n       be ignored (dnac2=0). In oligo/oligo hybridization experiments, dnac1\n       equals dnac1. Default=25.\n       MELTING and Primer3Plus use k = [Oligo(Total)]/4 by default. To mimic\n       this behaviour, you have to divide [Oligo(Total)] by 2 and assign this\n       concentration to dnac1 and dnac2. E.g., Total oligo concentration of\n       50 nM in Primer3Plus means dnac1=25, dnac2=25.\n     - selfcomp: Is the sequence self-complementary? Default=False. If 'True'\n       the primer is thought binding to itself, thus dnac2 is not considered.\n     - Na, K, Tris, Mg, dNTPs: See method 'Tm_GC' for details. Defaults: Na=50,\n       K=0, Tris=0, Mg=0, dNTPs=0.\n     - saltcorr: See method 'Tm_GC'. Default=5. 0 means no salt correction.\n\n    \"\"\"\n    # Set defaults\n    if not nn_table:\n        nn_table = DNA_NN3\n    if not tmm_table:\n        tmm_table = DNA_TMM1\n    if not imm_table:\n        imm_table = DNA_IMM1\n    if not de_table:\n        de_table = DNA_DE1\n\n    seq = str(seq)\n    if not c_seq:\n        # c_seq must be provided by user if dangling ends or mismatches should\n        # be taken into account. Otherwise take perfect complement.\n        c_seq = Seq.Seq(seq).complement()\n    c_seq = str(c_seq)\n    if check:\n        seq = _check(seq, \"Tm_NN\")\n        c_seq = _check(c_seq, \"Tm_NN\")\n    tmp_seq = seq\n    tmp_cseq = c_seq\n    delta_h = 0\n    delta_s = 0\n    d_h = 0  # Names for indexes\n    d_s = 1  # 0 and 1\n\n    # Dangling ends?\n    if shift or len(seq) != len(c_seq):\n        # Align both sequences using the shift parameter\n        if shift > 0:\n            tmp_seq = \".\" * shift + seq\n        if shift < 0:\n            tmp_cseq = \".\" * abs(shift) + c_seq\n        if len(tmp_cseq) > len(tmp_seq):\n            tmp_seq += (len(tmp_cseq) - len(tmp_seq)) * \".\"\n        if len(tmp_cseq) < len(tmp_seq):\n            tmp_cseq += (len(tmp_seq) - len(tmp_cseq)) * \".\"\n        # Remove 'over-dangling' ends\n        while tmp_seq.startswith(\"..\") or tmp_cseq.startswith(\"..\"):\n            tmp_seq = tmp_seq[1:]\n            tmp_cseq = tmp_cseq[1:]\n        while tmp_seq.endswith(\"..\") or tmp_cseq.endswith(\"..\"):\n            tmp_seq = tmp_seq[:-1]\n            tmp_cseq = tmp_cseq[:-1]\n        # Now for the dangling ends\n        if tmp_seq.startswith(\".\") or tmp_cseq.startswith(\".\"):\n            left_de = tmp_seq[:2] + \"/\" + tmp_cseq[:2]\n            try:\n                delta_h += de_table[left_de][d_h]\n                delta_s += de_table[left_de][d_s]\n            except KeyError:\n                _key_error(left_de, strict)\n            tmp_seq = tmp_seq[1:]\n            tmp_cseq = tmp_cseq[1:]\n        if tmp_seq.endswith(\".\") or tmp_cseq.endswith(\".\"):\n            right_de = tmp_cseq[-2:][::-1] + \"/\" + tmp_seq[-2:][::-1]\n            try:\n                delta_h += de_table[right_de][d_h]\n                delta_s += de_table[right_de][d_s]\n            except KeyError:\n                _key_error(right_de, strict)\n            tmp_seq = tmp_seq[:-1]\n            tmp_cseq = tmp_cseq[:-1]\n\n    # Now for terminal mismatches\n    left_tmm = tmp_cseq[:2][::-1] + \"/\" + tmp_seq[:2][::-1]\n    if left_tmm in tmm_table:\n        delta_h += tmm_table[left_tmm][d_h]\n        delta_s += tmm_table[left_tmm][d_s]\n        tmp_seq = tmp_seq[1:]\n        tmp_cseq = tmp_cseq[1:]\n    right_tmm = tmp_seq[-2:] + \"/\" + tmp_cseq[-2:]\n    if right_tmm in tmm_table:\n        delta_h += tmm_table[right_tmm][d_h]\n        delta_s += tmm_table[right_tmm][d_s]\n        tmp_seq = tmp_seq[:-1]\n        tmp_cseq = tmp_cseq[:-1]\n\n    # Now everything 'unusual' at the ends is handled and removed and we can\n    # look at the initiation.\n    # One or several of the following initiation types may apply:\n\n    # Type: General initiation value\n    delta_h += nn_table[\"init\"][d_h]\n    delta_s += nn_table[\"init\"][d_s]\n\n    # Type: Duplex with no (allA/T) or at least one (oneG/C) GC pair\n    if SeqUtils.gc_fraction(seq, \"ignore\") == 0:\n        delta_h += nn_table[\"init_allA/T\"][d_h]\n        delta_s += nn_table[\"init_allA/T\"][d_s]\n    else:\n        delta_h += nn_table[\"init_oneG/C\"][d_h]\n        delta_s += nn_table[\"init_oneG/C\"][d_s]\n\n    # Type: Penalty if 5' end is T\n    if seq.startswith(\"T\"):\n        delta_h += nn_table[\"init_5T/A\"][d_h]\n        delta_s += nn_table[\"init_5T/A\"][d_s]\n    if seq.endswith(\"A\"):\n        delta_h += nn_table[\"init_5T/A\"][d_h]\n        delta_s += nn_table[\"init_5T/A\"][d_s]\n\n    # Type: Different values for G/C or A/T terminal basepairs\n    ends = seq[0] + seq[-1]\n    AT = ends.count(\"A\") + ends.count(\"T\")\n    GC = ends.count(\"G\") + ends.count(\"C\")\n    delta_h += nn_table[\"init_A/T\"][d_h] * AT\n    delta_s += nn_table[\"init_A/T\"][d_s] * AT\n    delta_h += nn_table[\"init_G/C\"][d_h] * GC\n    delta_s += nn_table[\"init_G/C\"][d_s] * GC\n\n    # Finally, the 'zipping'\n    for basenumber in range(len(tmp_seq) - 1):\n        neighbors = (\n            tmp_seq[basenumber : basenumber + 2]\n            + \"/\"\n            + tmp_cseq[basenumber : basenumber + 2]\n        )\n        if neighbors in imm_table:\n            delta_h += imm_table[neighbors][d_h]\n            delta_s += imm_table[neighbors][d_s]\n        elif neighbors[::-1] in imm_table:\n            delta_h += imm_table[neighbors[::-1]][d_h]\n            delta_s += imm_table[neighbors[::-1]][d_s]\n        elif neighbors in nn_table:\n            delta_h += nn_table[neighbors][d_h]\n            delta_s += nn_table[neighbors][d_s]\n        elif neighbors[::-1] in nn_table:\n            delta_h += nn_table[neighbors[::-1]][d_h]\n            delta_s += nn_table[neighbors[::-1]][d_s]\n        else:\n            # We haven't found the key...\n            _key_error(neighbors, strict)\n\n    k = (dnac1 - (dnac2 / 2.0)) * 1e-9\n    if selfcomp:\n        k = dnac1 * 1e-9\n        delta_h += nn_table[\"sym\"][d_h]\n        delta_s += nn_table[\"sym\"][d_s]\n    R = 1.987  # universal gas constant in Cal/degrees C*Mol\n    if saltcorr:\n        corr = salt_correction(\n            Na=Na, K=K, Tris=Tris, Mg=Mg, dNTPs=dNTPs, method=saltcorr, seq=seq\n        )\n    if saltcorr == 5:\n        delta_s += corr\n    melting_temp = (1000 * delta_h) / (delta_s + (R * (math.log(k)))) - 273.15\n    if saltcorr in (1, 2, 3, 4):\n        melting_temp += corr\n    if saltcorr in (6, 7):\n        # Tm = 1/(1/Tm + corr)\n        melting_temp = 1 / (1 / (melting_temp + 273.15) + corr) - 273.15\n\n    return melting_temp"
+    },
+    "Bio/SeqUtils/__init__.py:150:GC123": {
+      "line": 150,
+      "name": "GC123",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def GC123(seq):\n    \"\"\"Calculate G+C content: total, for first, second and third positions.\n\n    Returns a tuple of four floats (percentages between 0 and 100) for the\n    entire sequence, and the three codon positions.  e.g.\n\n    >>> from Bio.SeqUtils import GC123\n    >>> GC123(\"ACTGTN\")\n    (40.0, 50.0, 50.0, 0.0)\n\n    Copes with mixed case sequences, but does NOT deal with ambiguous\n    nucleotides.\n    \"\"\"\n    d = {}\n    for nt in [\"A\", \"T\", \"G\", \"C\"]:\n        d[nt] = [0, 0, 0]\n\n    for i in range(0, len(seq), 3):\n        codon = seq[i : i + 3]\n        if len(codon) < 3:\n            codon += \"  \"\n        for pos in range(3):\n            for nt in [\"A\", \"T\", \"G\", \"C\"]:\n                if codon[pos] == nt or codon[pos] == nt.lower():\n                    d[nt][pos] += 1\n    gc = {}\n    gcall = 0\n    nall = 0\n    for i in range(3):\n        try:\n            n = d[\"G\"][i] + d[\"C\"][i] + d[\"T\"][i] + d[\"A\"][i]\n            gc[i] = (d[\"G\"][i] + d[\"C\"][i]) * 100.0 / n\n        except Exception:  # TODO - ValueError?\n            gc[i] = 0\n\n        gcall = gcall + d[\"G\"][i] + d[\"C\"][i]\n        nall = nall + n\n\n    gcall = 100.0 * gcall / nall\n    return gcall, gc[0], gc[1], gc[2]"
+    },
+    "Bio/SeqUtils/__init__.py:192:GC_skew": {
+      "line": 192,
+      "name": "GC_skew",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def GC_skew(seq, window=100):\n    \"\"\"Calculate GC skew (G-C)/(G+C) for multiple windows along the sequence.\n\n    Returns a list of ratios (floats), controlled by the length of the sequence\n    and the size of the window.\n\n    Returns 0 for windows without any G/C by handling zero division errors.\n\n    Does NOT look at any ambiguous nucleotides.\n    \"\"\"\n    # 8/19/03: Iddo: added lowercase\n    values = []\n    for i in range(0, len(seq), window):\n        s = seq[i : i + window]\n        g = s.count(\"G\") + s.count(\"g\")\n        c = s.count(\"C\") + s.count(\"c\")\n        try:\n            skew = (g - c) / (g + c)\n        except ZeroDivisionError:\n            skew = 0.0\n        values.append(skew)\n    return values"
+    },
+    "Bio/SeqUtils/__init__.py:216:xGC_skew": {
+      "line": 216,
+      "name": "xGC_skew",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def xGC_skew(seq, window=1000, zoom=100, r=300, px=100, py=100):\n    \"\"\"Calculate and plot normal and accumulated GC skew (GRAPHICS !!!).\"\"\"\n    import tkinter\n\n    yscroll = tkinter.Scrollbar(orient=tkinter.VERTICAL)\n    xscroll = tkinter.Scrollbar(orient=tkinter.HORIZONTAL)\n    canvas = tkinter.Canvas(\n        yscrollcommand=yscroll.set, xscrollcommand=xscroll.set, background=\"white\"\n    )\n    win = canvas.winfo_toplevel()\n    win.geometry(\"700x700\")\n\n    yscroll.config(command=canvas.yview)\n    xscroll.config(command=canvas.xview)\n    yscroll.pack(side=tkinter.RIGHT, fill=tkinter.Y)\n    xscroll.pack(side=tkinter.BOTTOM, fill=tkinter.X)\n    canvas.pack(fill=tkinter.BOTH, side=tkinter.LEFT, expand=1)\n    canvas.update()\n\n    X0, Y0 = r + px, r + py\n    x1, x2, y1, y2 = X0 - r, X0 + r, Y0 - r, Y0 + r\n\n    ty = Y0\n    canvas.create_text(X0, ty, text=\"%s...%s (%d nt)\" % (seq[:7], seq[-7:], len(seq)))\n    ty += 20\n    canvas.create_text(X0, ty, text=f\"GC {gc_fraction(seq):3.2f}%\")\n    ty += 20\n    canvas.create_text(X0, ty, text=\"GC Skew\", fill=\"blue\")\n    ty += 20\n    canvas.create_text(X0, ty, text=\"Accumulated GC Skew\", fill=\"magenta\")\n    ty += 20\n    canvas.create_oval(x1, y1, x2, y2)\n\n    acc = 0\n    start = 0\n    for gc in GC_skew(seq, window):\n        r1 = r\n        acc += gc\n        # GC skew\n        alpha = pi - (2 * pi * start) / len(seq)\n        r2 = r1 - gc * zoom\n        x1 = X0 + r1 * sin(alpha)\n        y1 = Y0 + r1 * cos(alpha)\n        x2 = X0 + r2 * sin(alpha)\n        y2 = Y0 + r2 * cos(alpha)\n        canvas.create_line(x1, y1, x2, y2, fill=\"blue\")\n        # accumulated GC skew\n        r1 = r - 50\n        r2 = r1 - acc\n        x1 = X0 + r1 * sin(alpha)\n        y1 = Y0 + r1 * cos(alpha)\n        x2 = X0 + r2 * sin(alpha)\n        y2 = Y0 + r2 * cos(alpha)\n        canvas.create_line(x1, y1, x2, y2, fill=\"magenta\")\n\n        canvas.update()\n        start += window\n\n    canvas.configure(scrollregion=canvas.bbox(tkinter.ALL))"
+    },
+    "Bio/SeqUtils/__init__.py:277:nt_search": {
+      "line": 277,
+      "name": "nt_search",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def nt_search(seq, subseq):\n    \"\"\"Search for a DNA subseq in seq, return list of [subseq, positions].\n\n    Use ambiguous values (like N = A or T or C or G, R = A or G etc.),\n    searches only on forward strand.\n    \"\"\"\n    pattern = \"\"\n    for nt in subseq:\n        value = IUPACData.ambiguous_dna_values[nt]\n        if len(value) == 1:\n            pattern += value\n        else:\n            pattern += f\"[{value}]\"\n\n    pos = -1\n    result = [pattern]\n    while True:\n        pos += 1\n        s = seq[pos:]\n        m = re.search(pattern, s)\n        if not m:\n            break\n        pos += int(m.start(0))\n        result.append(pos)\n    return result"
+    },
+    "Bio/SeqUtils/__init__.py:309:seq3": {
+      "line": 309,
+      "name": "seq3",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def seq3(seq, custom_map=None, undef_code=\"Xaa\"):\n    \"\"\"Convert protein sequence from one-letter to three-letter code.\n\n    The single required input argument 'seq' should be a protein sequence using\n    single letter codes, either as a Python string or as a Seq or MutableSeq\n    object.\n\n    This function returns the amino acid sequence as a string using the three\n    letter amino acid codes. Output follows the IUPAC standard (including\n    ambiguous characters B for \"Asx\", J for \"Xle\" and X for \"Xaa\", and also U\n    for \"Sel\" and O for \"Pyl\") plus \"Ter\" for a terminator given as an\n    asterisk. Any unknown character (including possible gap characters),\n    is changed into 'Xaa' by default.\n\n    e.g.\n\n    >>> from Bio.SeqUtils import seq3\n    >>> seq3(\"MAIVMGRWKGAR*\")\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaArgTer'\n\n    You can set a custom translation of the codon termination code using the\n    dictionary \"custom_map\" argument (which defaults to {'*': 'Ter'}), e.g.\n\n    >>> seq3(\"MAIVMGRWKGAR*\", custom_map={\"*\": \"***\"})\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaArg***'\n\n    You can also set a custom translation for non-amino acid characters, such\n    as '-', using the \"undef_code\" argument, e.g.\n\n    >>> seq3(\"MAIVMGRWKGA--R*\", undef_code='---')\n    'MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer'\n\n    If not given, \"undef_code\" defaults to \"Xaa\", e.g.\n\n    >>> seq3(\"MAIVMGRWKGA--R*\")\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaXaaXaaArgTer'\n\n    This function was inspired by BioPerl's seq3.\n    \"\"\"\n    if custom_map is None:\n        custom_map = {\"*\": \"Ter\"}\n    # not doing .update() on IUPACData dict with custom_map dict\n    # to preserve its initial state (may be imported in other modules)\n    threecode = dict(\n        list(IUPACData.protein_letters_1to3_extended.items()) + list(custom_map.items())\n    )\n    # We use a default of 'Xaa' for undefined letters\n    # Note this will map '-' to 'Xaa' which may be undesirable!\n    return \"\".join(threecode.get(aa, undef_code) for aa in seq)"
+    },
+    "Bio/SeqUtils/__init__.py:360:seq1": {
+      "line": 360,
+      "name": "seq1",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def seq1(seq, custom_map=None, undef_code=\"X\"):\n    \"\"\"Convert protein sequence from three-letter to one-letter code.\n\n    The single required input argument 'seq' should be a protein sequence\n    using three-letter codes, either as a Python string or as a Seq or\n    MutableSeq object.\n\n    This function returns the amino acid sequence as a string using the one\n    letter amino acid codes. Output follows the IUPAC standard (including\n    ambiguous characters \"B\" for \"Asx\", \"J\" for \"Xle\", \"X\" for \"Xaa\", \"U\" for\n    \"Sel\", and \"O\" for \"Pyl\") plus \"*\" for a terminator given the \"Ter\" code.\n    Any unknown character (including possible gap characters), is changed\n    into '-' by default.\n\n    e.g.\n\n    >>> from Bio.SeqUtils import seq1\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAlaArgTer\")\n    'MAIVMGRWKGAR*'\n\n    The input is case insensitive, e.g.\n\n    >>> from Bio.SeqUtils import seq1\n    >>> seq1(\"METalaIlEValMetGLYArgtRplysGlyAlaARGTer\")\n    'MAIVMGRWKGAR*'\n\n    You can set a custom translation of the codon termination code using the\n    dictionary \"custom_map\" argument (defaulting to {'Ter': '*'}), e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla***\", custom_map={\"***\": \"*\"})\n    'MAIVMGRWKGA*'\n\n    You can also set a custom translation for non-amino acid characters, such\n    as '-', using the \"undef_code\" argument, e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer\", undef_code='?')\n    'MAIVMGRWKGA??R*'\n\n    If not given, \"undef_code\" defaults to \"X\", e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer\")\n    'MAIVMGRWKGAXXR*'\n\n    \"\"\"\n    if custom_map is None:\n        custom_map = {\"Ter\": \"*\"}\n    # reverse map of threecode\n    # upper() on all keys to enable caps-insensitive input seq handling\n    onecode = {k.upper(): v for k, v in IUPACData.protein_letters_3to1_extended.items()}\n    # add the given termination codon code and custom maps\n    onecode.update((k.upper(), v) for k, v in custom_map.items())\n    seqlist = [seq[3 * i : 3 * (i + 1)] for i in range(len(seq) // 3)]\n    return \"\".join(onecode.get(aa.upper(), undef_code) for aa in seqlist)"
+    },
+    "Bio/SeqUtils/__init__.py:420:molecular_weight": {
+      "line": 420,
+      "name": "molecular_weight",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def molecular_weight(\n    seq, seq_type=\"DNA\", double_stranded=False, circular=False, monoisotopic=False\n):\n    \"\"\"Calculate the molecular mass of DNA, RNA or protein sequences as float.\n\n    Only unambiguous letters are allowed. Nucleotide sequences are assumed to\n    have a 5' phosphate.\n\n    Arguments:\n     - seq: string, Seq, or SeqRecord object.\n     - seq_type: The default is to assume DNA; override this with a string\n       \"DNA\", \"RNA\", or \"protein\".\n     - double_stranded: Calculate the mass for the double stranded molecule?\n     - circular: Is the molecule circular (has no ends)?\n     - monoisotopic: Use the monoisotopic mass tables?\n\n    >>> print(\"%0.2f\" % molecular_weight(\"AGC\"))\n    949.61\n    >>> print(\"%0.2f\" % molecular_weight(Seq(\"AGC\")))\n    949.61\n\n    However, it is better to be explicit - for example with strings:\n\n    >>> print(\"%0.2f\" % molecular_weight(\"AGC\", \"DNA\"))\n    949.61\n    >>> print(\"%0.2f\" % molecular_weight(\"AGC\", \"RNA\"))\n    997.61\n    >>> print(\"%0.2f\" % molecular_weight(\"AGC\", \"protein\"))\n    249.29\n\n    The molecular weight of an empty sequence is not defined, and raises\n    a ValueError:\n\n    >>> molecular_weight(\"\", \"DNA\")\n    Traceback (most recent call last):\n        ...\n    ValueError: molecular_weight requires a non-empty sequence\n\n    \"\"\"\n    try:\n        seq = seq.seq\n    except AttributeError:  # not a  SeqRecord object\n        pass\n    seq = \"\".join(str(seq).split()).upper()  # Do the minimum formatting\n\n    if not seq:\n        raise ValueError(\"molecular_weight requires a non-empty sequence\")\n\n    if seq_type == \"DNA\":\n        if monoisotopic:\n            weight_table = IUPACData.monoisotopic_unambiguous_dna_weights\n        else:\n            weight_table = IUPACData.unambiguous_dna_weights\n    elif seq_type == \"RNA\":\n        if monoisotopic:\n            weight_table = IUPACData.monoisotopic_unambiguous_rna_weights\n        else:\n            weight_table = IUPACData.unambiguous_rna_weights\n    elif seq_type == \"protein\":\n        if monoisotopic:\n            weight_table = IUPACData.monoisotopic_protein_weights\n        else:\n            weight_table = IUPACData.protein_weights\n    else:\n        raise ValueError(f\"Allowed seq_types are DNA, RNA or protein, not {seq_type!r}\")\n\n    if monoisotopic:\n        water = 18.010565\n    else:\n        water = 18.0153\n\n    try:\n        weight = sum(weight_table[x] for x in seq) - (len(seq) - 1) * water\n        if circular:\n            weight -= water\n    except KeyError as e:\n        raise ValueError(\n            f\"'{e}' is not a valid unambiguous letter for {seq_type}\"\n        ) from None\n\n    if double_stranded:\n        if seq_type == \"protein\":\n            raise ValueError(\"protein sequences cannot be double-stranded\")\n        elif seq_type == \"DNA\":\n            seq = complement(seq)\n        elif seq_type == \"RNA\":\n            seq = complement_rna(seq)\n        weight += sum(weight_table[x] for x in seq) - (len(seq) - 1) * water\n        if circular:\n            weight -= water\n\n    return weight"
+    },
+    "Bio/SeqUtils/__init__.py:514:six_frame_translations": {
+      "line": 514,
+      "name": "six_frame_translations",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def six_frame_translations(seq, genetic_code=1):\n    \"\"\"Return pretty string showing the 6 frame translations and GC content.\n\n    Nice looking 6 frame translation with GC content - code from xbbtools\n    similar to DNA Striders six-frame translation\n\n    >>> from Bio.SeqUtils import six_frame_translations\n    >>> print(six_frame_translations(\"AUGGCCAUUGUAAUGGGCCGCUGA\"))\n    GC_Frame: a:5 t:0 g:8 c:5\n    Sequence: auggccauug ... gggccgcuga, 24 nt, 54.17 %GC\n    <BLANKLINE>\n    <BLANKLINE>\n    1/1\n      G  H  C  N  G  P  L\n     W  P  L  *  W  A  A\n    M  A  I  V  M  G  R  *\n    auggccauuguaaugggccgcuga   54 %\n    uaccgguaacauuacccggcgacu\n    A  M  T  I  P  R  Q\n     H  G  N  Y  H  A  A  S\n      P  W  Q  L  P  G  S\n    <BLANKLINE>\n    <BLANKLINE>\n\n    \"\"\"  # noqa for pep8 W291 trailing whitespace\n    from Bio.Seq import reverse_complement\n    from Bio.Seq import reverse_complement_rna\n\n    if \"u\" in seq.lower():\n        anti = reverse_complement_rna(seq)\n    else:\n        anti = reverse_complement(seq)\n    comp = anti[::-1]\n    length = len(seq)\n    frames = {}\n    for i in range(3):\n        fragment_length = 3 * ((length - i) // 3)\n        frames[i + 1] = translate(seq[i : i + fragment_length], genetic_code)\n        frames[-(i + 1)] = translate(anti[i : i + fragment_length], genetic_code)[::-1]\n\n    # create header\n    if length > 20:\n        short = f\"{seq[:10]} ... {seq[-10:]}\"\n    else:\n        short = seq\n    header = \"GC_Frame:\"\n    for nt in [\"a\", \"t\", \"g\", \"c\"]:\n        header += \" %s:%d\" % (nt, seq.count(nt.upper()))\n\n    gc = 100 * gc_fraction(seq, ambiguous=\"ignore\")\n    header += \"\\nSequence: %s, %d nt, %0.2f %%GC\\n\\n\\n\" % (\n        short.lower(),\n        length,\n        gc,\n    )\n    res = header\n\n    for i in range(0, length, 60):\n        subseq = seq[i : i + 60]\n        csubseq = comp[i : i + 60]\n        p = i // 3\n        res += \"%d/%d\\n\" % (i + 1, i / 3 + 1)\n        res += \"  \" + \"  \".join(frames[3][p : p + 20]) + \"\\n\"\n        res += \" \" + \"  \".join(frames[2][p : p + 20]) + \"\\n\"\n        res += \"  \".join(frames[1][p : p + 20]) + \"\\n\"\n        # seq\n        res += subseq.lower() + \"%5d %%\\n\" % int(gc)\n        res += csubseq.lower() + \"\\n\"\n        # - frames\n        res += \"  \".join(frames[-2][p : p + 20]) + \"\\n\"\n        res += \" \" + \"  \".join(frames[-1][p : p + 20]) + \"\\n\"\n        res += \"  \" + \"  \".join(frames[-3][p : p + 20]) + \"\\n\\n\"\n    return res"
+    },
+    "Bio/SeqUtils/__init__.py:53:gc_fraction": {
+      "line": 53,
+      "name": "gc_fraction",
+      "path": "Bio/SeqUtils/__init__.py",
+      "source": "def gc_fraction(seq, ambiguous=\"remove\"):\n    \"\"\"Calculate G+C percentage in seq (float between 0 and 1).\n\n    Copes with mixed case sequences. Ambiguous Nucleotides in this context are\n    those different from ATCGSWU (S is G or C, and W is A or T).\n\n    If ambiguous equals \"remove\" (default), will only count GCS and will only\n    include ACTGSWU when calculating the sequence length. Equivalent to removing\n    all characters in the set BDHKMNRVXY before calculating the GC content, as\n    each of these ambiguous nucleotides can either be in (A,T) or in (C,G).\n\n    If ambiguous equals \"ignore\", it will treat only unambiguous nucleotides (GCS)\n    as counting towards the GC percentage, but will include all ambiguous and\n    unambiguous nucleotides when calculating the sequence length.\n\n    If ambiguous equals \"weighted\", will use a \"mean\" value when counting the\n    ambiguous characters, for example, G and C will be counted as 1, N and X will\n    be counted as 0.5, D will be counted as 0.33 etc. See Bio.SeqUtils._gc_values\n    for a full list.\n\n    Will raise a ValueError for any other value of the ambiguous parameter.\n\n\n    >>> from Bio.SeqUtils import gc_fraction\n    >>> seq = \"ACTG\"\n    >>> print(f\"GC content of {seq} : {gc_fraction(seq):.2f}\")\n    GC content of ACTG : 0.50\n\n    Example with an RNA sequence:\n\n    >>> seq = \"GGAUCUUCGGAUCU\"\n    >>> print(f\"GC content of {seq} : {gc_fraction(seq):.2f}\")\n    GC content of GGAUCUUCGGAUCU : 0.50\n\n    S and W are ambiguous for the purposes of calculating the GC content.\n\n    >>> seq = \"ACTGSSSS\"\n    >>> gc = gc_fraction(seq, \"remove\")\n    >>> print(f\"GC content of {seq} : {gc:.2f}\")\n    GC content of ACTGSSSS : 0.75\n    >>> gc = gc_fraction(seq, \"ignore\")\n    >>> print(f\"GC content of {seq} : {gc:.2f}\")\n    GC content of ACTGSSSS : 0.75\n    >>> gc = gc_fraction(seq, \"weighted\")\n    >>> print(f\"GC content with ambiguous counting: {gc:.2f}\")\n    GC content with ambiguous counting: 0.75\n\n    Some examples with ambiguous nucleotides.\n\n    >>> seq = \"ACTGN\"\n    >>> gc = gc_fraction(seq, \"ignore\")\n    >>> print(f\"GC content of {seq} : {gc:.2f}\")\n    GC content of ACTGN : 0.40\n    >>> gc = gc_fraction(seq, \"weighted\")\n    >>> print(f\"GC content with ambiguous counting: {gc:.2f}\")\n    GC content with ambiguous counting: 0.50\n    >>> gc = gc_fraction(seq, \"remove\")\n    >>> print(f\"GC content with ambiguous removing: {gc:.2f}\")\n    GC content with ambiguous removing: 0.50\n\n    Ambiguous nucleotides are also removed from the length of the sequence.\n\n    >>> seq = \"GDVV\"\n    >>> gc = gc_fraction(seq, \"ignore\")\n    >>> print(f\"GC content of {seq} : {gc:.2f}\")\n    GC content of GDVV : 0.25\n    >>> gc = gc_fraction(seq, \"weighted\")\n    >>> print(f\"GC content with ambiguous counting: {gc:.4f}\")\n    GC content with ambiguous counting: 0.6667\n    >>> gc = gc_fraction(seq, \"remove\")\n    >>> print(f\"GC content with ambiguous removing: {gc:.2f}\")\n    GC content with ambiguous removing: 1.00\n\n\n    Note that this will return zero for an empty sequence.\n    \"\"\"\n    if ambiguous not in (\"weighted\", \"remove\", \"ignore\"):\n        raise ValueError(f\"ambiguous value '{ambiguous}' not recognized\")\n\n    gc = sum(seq.count(x) for x in \"CGScgs\")\n\n    if ambiguous == \"remove\":\n        length = gc + sum(seq.count(x) for x in \"ATWUatwu\")\n    else:\n        length = len(seq)\n\n    if ambiguous == \"weighted\":\n        gc += sum(\n            (seq.count(x) + seq.count(x.lower())) * _gc_values[x] for x in \"BDHKMNRVXY\"\n        )\n\n    if length == 0:\n        return 0\n\n    return gc / length"
+    },
+    "Bio/SeqUtils/lcc.py:120:lcc_simp": {
+      "line": 120,
+      "name": "lcc_simp",
+      "path": "Bio/SeqUtils/lcc.py",
+      "source": "def lcc_simp(seq):\n    \"\"\"Calculate Local Composition Complexity (LCC) for a sequence.\n\n    seq - an unambiguous DNA sequence (a string or Seq object)\n\n    Returns the Local Composition Complexity (LCC) value for the entire\n    sequence (as a float).\n\n    Reference:\n    Andrzej K Konopka (2005) Sequence Complexity and Composition\n    https://doi.org/10.1038/npg.els.0005260\n    \"\"\"\n    wsize = len(seq)\n    seq = seq.upper()\n    l4 = math.log(4)\n    # Check to avoid calculating the log of 0.\n    if \"A\" not in seq:\n        term_a = 0\n    else:\n        term_a = (seq.count(\"A\") / wsize) * math.log(seq.count(\"A\") / wsize) / l4\n    if \"C\" not in seq:\n        term_c = 0\n    else:\n        term_c = (seq.count(\"C\") / wsize) * math.log(seq.count(\"C\") / wsize) / l4\n    if \"T\" not in seq:\n        term_t = 0\n    else:\n        term_t = (seq.count(\"T\") / wsize) * math.log(seq.count(\"T\") / wsize) / l4\n    if \"G\" not in seq:\n        term_g = 0\n    else:\n        term_g = (seq.count(\"G\") / wsize) * math.log(seq.count(\"G\") / wsize) / l4\n    return -(term_a + term_c + term_t + term_g)"
+    },
+    "Bio/SeqUtils/lcc.py:13:lcc_mult": {
+      "line": 13,
+      "name": "lcc_mult",
+      "path": "Bio/SeqUtils/lcc.py",
+      "source": "def lcc_mult(seq, wsize):\n    \"\"\"Calculate Local Composition Complexity (LCC) values over sliding window.\n\n    Returns a list of floats, the LCC values for a sliding window over\n    the sequence.\n\n    seq - an unambiguous DNA sequence (a string or Seq object)\n    wsize - window size, integer\n\n    The result is the same as applying lcc_simp multiple times, but this\n    version is optimized for speed. The optimization works by using the\n    value of previous window as a base to compute the next one.\n    \"\"\"\n    l4 = math.log(4)\n    seq = seq.upper()\n    tamseq = len(seq)\n    compone = [0]\n    lccsal = []\n    for i in range(wsize):\n        compone.append(((i + 1) / wsize) * math.log((i + 1) / wsize) / l4)\n    window = seq[0:wsize]\n    cant_a = window.count(\"A\")\n    cant_c = window.count(\"C\")\n    cant_t = window.count(\"T\")\n    cant_g = window.count(\"G\")\n    term_a = compone[cant_a]\n    term_c = compone[cant_c]\n    term_t = compone[cant_t]\n    term_g = compone[cant_g]\n    lccsal.append(-(term_a + term_c + term_t + term_g))\n    tail = seq[0]\n    for x in range(tamseq - wsize):\n        window = seq[x + 1 : wsize + x + 1]\n        if tail == window[-1]:\n            lccsal.append(lccsal[-1])\n        elif tail == \"A\":\n            cant_a -= 1\n            if window.endswith(\"C\"):\n                cant_c += 1\n                term_a = compone[cant_a]\n                term_c = compone[cant_c]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_a = compone[cant_a]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_a = compone[cant_a]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"C\":\n            cant_c -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_c = compone[cant_c]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_c = compone[cant_c]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_c = compone[cant_c]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"T\":\n            cant_t -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"C\"):\n                cant_c += 1\n                term_c = compone[cant_c]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_t = compone[cant_t]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"G\":\n            cant_g -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"C\"):\n                cant_c += 1\n                term_c = compone[cant_c]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_t = compone[cant_t]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        tail = window[0]\n    return lccsal"
+    }
+  },
+  "steps": [
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/__init__.py:192:GC_skew"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/__init__.py:192:GC_skew"
+      ],
+      "previous_tests": [],
+      "step": 0,
+      "target_nodes": [
+        "Bio/SeqUtils/__init__.py:192:GC_skew"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/__init__.py:420:molecular_weight"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/__init__.py:420:molecular_weight"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew"
+      ],
+      "step": 1,
+      "target_nodes": [
+        "Bio/SeqUtils/__init__.py:420:molecular_weight"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/__init__.py:53:gc_fraction"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/__init__.py:53:gc_fraction"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence"
+      ],
+      "step": 2,
+      "target_nodes": [
+        "Bio/SeqUtils/__init__.py:53:gc_fraction"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/lcc.py:120:lcc_simp"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/lcc.py:120:lcc_simp"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction"
+      ],
+      "step": 3,
+      "target_nodes": [
+        "Bio/SeqUtils/lcc.py:120:lcc_simp"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/lcc.py:13:lcc_mult"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/lcc.py:13:lcc_mult"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp"
+      ],
+      "step": 4,
+      "target_nodes": [
+        "Bio/SeqUtils/lcc.py:13:lcc_mult"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/__init__.py:309:seq3",
+        "Bio/SeqUtils/__init__.py:360:seq1"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/__init__.py:309:seq3",
+        "Bio/SeqUtils/__init__.py:360:seq1"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult"
+      ],
+      "step": 5,
+      "target_nodes": [
+        "Bio/SeqUtils/__init__.py:309:seq3",
+        "Bio/SeqUtils/__init__.py:360:seq1"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_seq1_seq3"
+      ]
+    },
+    {
+      "core_nodes": [
+        "Bio/SeqUtils/CheckSum.py:108:seguid",
+        "Bio/SeqUtils/CheckSum.py:16:crc32",
+        "Bio/SeqUtils/CheckSum.py:57:crc64",
+        "Bio/SeqUtils/CheckSum.py:81:gcg"
+      ],
+      "dependent_nodes": [],
+      "edges": [],
+      "nodes_to_develop": [
+        "Bio/SeqUtils/CheckSum.py:108:seguid",
+        "Bio/SeqUtils/CheckSum.py:16:crc32",
+        "Bio/SeqUtils/CheckSum.py:57:crc64",
+        "Bio/SeqUtils/CheckSum.py:81:gcg"
+      ],
+      "previous_tests": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult",
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_seq1_seq3"
+      ],
+      "step": 6,
+      "target_nodes": [
+        "Bio/SeqUtils/CheckSum.py:108:seguid",
+        "Bio/SeqUtils/CheckSum.py:16:crc32",
+        "Bio/SeqUtils/CheckSum.py:57:crc64",
+        "Bio/SeqUtils/CheckSum.py:81:gcg"
+      ],
+      "test_ids": [
+        "Tests/test_SeqUtils.py::SeqUtilsTests::test_crc_checksum_collision"
+      ]
+    }
+  ]
+}

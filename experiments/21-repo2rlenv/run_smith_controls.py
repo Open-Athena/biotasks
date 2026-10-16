@@ -32,7 +32,7 @@ def main():
     parser.add_argument("--source-archive", type=Path, required=True)
     parser.add_argument(
         "--stage",
-        choices=("smith-controls", "biopython-cve", "marin-schema"),
+        choices=("smith-controls", "biopython-cve", "marin-schema", "marin-runtime"),
         default="smith-controls",
     )
     parser.add_argument("--generation-archive", type=Path)
@@ -96,6 +96,11 @@ def main():
             )
             unpack = ""
             entry = "/work/native/validate_marin_preparation.py "
+            if args.stage == "marin-runtime":
+                worker.upload(
+                    root / "check_marin_runtime.py", "/work/native/check_marin_runtime.py"
+                )
+                entry += "--runtime "
         setup = worker.exec(
             [
                 "sh",
