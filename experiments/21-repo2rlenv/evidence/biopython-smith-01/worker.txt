@@ -1,0 +1,16 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/pipelines/recipes/swe_smith/worker.py", line 150, in <module>
+    main()
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/pipelines/recipes/swe_smith/worker.py", line 141, in main
+    result = generate(
+             ^^^^^^^^^
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/pipelines/recipes/swe_smith/worker.py", line 47, in generate
+    boot, base = bootstrap_snapshot(repo, options, destination)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/execution/python_repository.py", line 224, in bootstrap_snapshot
+    clean_snapshot(base, options, destination)
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/execution/python_repository.py", line 236, in clean_snapshot
+    raise ValueError(
+ValueError: Repository snapshot has symlinks requiring explicit support: LICENSE
