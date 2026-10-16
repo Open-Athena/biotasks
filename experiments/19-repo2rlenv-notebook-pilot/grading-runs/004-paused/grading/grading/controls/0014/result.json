@@ -1,0 +1,109 @@
+{
+  "candidate_sha256": "bcd10ff07dfc7db1019ca78dcbb051e1d35c18cb174a12a81b490fd3f514d666",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "wrote non-finite, blank and ragged defects into 398259 rows\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "file_present_parseable",
+          "message": "blank field on row 200002",
+          "passed": false
+        },
+        {
+          "id": "row_key_coverage",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "row_ordering",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "numeric_finiteness",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "score_agreement",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "pvalue_agreement",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "pvalue_adj_agreement",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "log2fc_agreement",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        },
+        {
+          "id": "rank_consistency",
+          "message": "submission table unreadable; check failed",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "cluster_marker_genes.csv": "6e15cc888e0d8afdbf708816d9cc73b8c84a2684d7d74918d0169608dfeb15d8"
+    },
+    "submission_before": {
+      "cluster_marker_genes.csv": "b608555dea023007db0c55cd7b96fd67a1d4bcaba980f1d4f294cfc7409054b9"
+    },
+    "submission_sha256": {
+      "cluster_marker_genes.csv": "6e15cc888e0d8afdbf708816d9cc73b8c84a2684d7d74918d0169608dfeb15d8"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "file_present_parseable",
+      "row_key_coverage",
+      "row_ordering",
+      "numeric_finiteness",
+      "score_agreement",
+      "pvalue_agreement",
+      "pvalue_adj_agreement",
+      "log2fc_agreement",
+      "rank_consistency"
+    ],
+    "evidence": [
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "8,6001,CHST10,0.16413909,0.8696216445592904,1.0,1.7438126"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "cluster,rank,gene,score,pval,pval_adj,log2fc"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "nonfinite-and-malformed-rows",
+    "rationale": "The contract states that a file with non-finite values, blank fields or ragged rows fails all checks (it does not count as a run).  This control damages an otherwise intact table with a small explicit set of such defects: cluster 8 ranks 6001-6005 carry nan/inf/-inf in pval and log2fc (the classic zero-denominator effect size), cluster 8 rank 12585 has a blank pval, and cluster 8 rank 12586 is ragged (six fields).",
+    "script": "\"\"\"Wrong-result control: non-finite values and malformed rows.\n\nRule 2 requires every numeric field to parse as a finite decimal number and\nrule 1 requires exactly seven non-blank fields per row.  This control writes\na small, explicit set of such defects into an otherwise intact table:\n  - cluster 8, ranks 6001-6005 (CHST10, IGLV10-54, IGHV3-72, AC073593.2,\n    AC137590.2): nan / inf / -inf written into pval and log2fc, the classic\n    side effect of a zero-denominator effect size or the log of a negative\n    quantity;\n  - cluster 8 rank 12585 (AL358473.1): pval left blank;\n  - cluster 8 rank 12586 (NAT8L): a ragged row with only six fields.\n\"\"\"\nimport csv\nimport math\nimport os\n\nPATH = \"cluster_marker_genes.csv\"\nCOLS = [\"cluster\", \"rank\", \"gene\", \"score\", \"pval\", \"pval_adj\", \"log2fc\"]\n\n\ndef read_rows():\n    with open(PATH, newline=\"\") as fh:\n        return [dict(r) for r in csv.DictReader(fh)]\n\n\ndef blocks(rows):\n    b = {}\n    for r in rows:\n        b.setdefault(r[\"cluster\"], []).append(r)\n    return b\n\n\ndef relabel(rows):\n    b = blocks(rows)\n    out = []\n    for c in sorted(b, key=lambda s: float(s)):\n        for i, r in enumerate(b[c], 1):\n            r[\"rank\"] = str(i)\n            out.append(r)\n    return out\n\n\nrows = read_rows()\nseq = relabel(rows)\n# non-finite numerics on the fixed rank slice 6001-6005 of cluster 8\neight = [r for r in seq if r[\"cluster\"] == \"8\"]\ncorrupt = [(\"nan\", \"nan\"),\n           (\"inf\", \"inf\"),\n           (\"-inf\", \"inf\"),\n           (repr(0.0), \"nan\"),\n           (\"nan\", repr(1.0))]\nfor r, (p, fc) in zip(eight[6000:6005], corrupt):\n    r[\"pval\"] = p\n    r[\"log2fc\"] = fc\n# blank field on cluster 8 rank 12585 (AL358473.1) and a ragged row on\n# cluster 8 rank 12586 (NAT8L): both taken from the same tie block, so the\n# damage is limited to two neighbouring rows of one cluster\nblank_target = eight[12584]\nragg_target = eight[12585]\nblank_target[\"pval\"] = \"\"\nragg_target[\"pval\"] = None  # field dropped below, making the row ragged\n\nout = []\nfor r in seq:\n    if r.get(\"pval\") is None:\n        out.append(\",\".join([r[\"cluster\"], r[\"rank\"], r[\"gene\"], r[\"score\"],\n                             r[\"pval_adj\"], r[\"log2fc\"]])\n                    + \"\\n\")\n    else:\n        out.append(r)\n\ntmp = PATH + \".tmp\"\nwith open(tmp, \"w\", newline=\"\") as fh:\n    w = csv.DictWriter(fh, fieldnames=COLS, lineterminator=\"\\n\")\n    w.writeheader()\n    for r in out:\n        if isinstance(r, str):\n            fh.write(r)\n        else:\n            w.writerow({k: r[k] for k in COLS})\nos.replace(tmp, PATH)\nprint(\"wrote non-finite, blank and ragged defects into %d rows\" % len(out))\n"
+  }
+}

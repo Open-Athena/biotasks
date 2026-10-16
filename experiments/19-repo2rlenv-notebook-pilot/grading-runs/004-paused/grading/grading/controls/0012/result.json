@@ -1,0 +1,106 @@
+{
+  "candidate_sha256": "bcd10ff07dfc7db1019ca78dcbb051e1d35c18cb174a12a81b490fd3f514d666",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "rotated cluster-8 rank window; lexicographic cluster order, 398259 rows, selfcheck ok\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "file_present_parseable",
+          "message": "398259 data rows parsed with the required header",
+          "passed": true
+        },
+        {
+          "id": "row_key_coverage",
+          "message": "398259 (cluster, gene) pairs match the reference exactly",
+          "passed": true
+        },
+        {
+          "id": "row_ordering",
+          "message": "rows are not sorted by ascending numeric cluster label then ascending rank",
+          "passed": false
+        },
+        {
+          "id": "numeric_finiteness",
+          "message": "all score/pval/pval_adj/log2fc values present, finite and in range",
+          "passed": true
+        },
+        {
+          "id": "score_agreement",
+          "message": "all 398259 score values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_agreement",
+          "message": "all 398259 pval values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_adj_agreement",
+          "message": "all 398259 pval_adj values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "log2fc_agreement",
+          "message": "all 398259 log2fc values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "rank_consistency",
+          "message": "cluster 8: reference score increases by 0.0491 between submitted ranks 2001 and 2002; cluster 8: submitted score increases by 0.0491 between ranks 2001 and 2002",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "cluster_marker_genes.csv": "0502a811dbfbeee5e72be26f7c1fcbe73f8e62255918c049762d366e4b8e2d6a"
+    },
+    "submission_before": {
+      "cluster_marker_genes.csv": "b608555dea023007db0c55cd7b96fd67a1d4bcaba980f1d4f294cfc7409054b9"
+    },
+    "submission_sha256": {
+      "cluster_marker_genes.csv": "0502a811dbfbeee5e72be26f7c1fcbe73f8e62255918c049762d366e4b8e2d6a"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "row_ordering",
+      "rank_consistency"
+    ],
+    "evidence": [
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "8,2001,GRB2,2.2453249,0.024747289229728818,0.19461387874617558,0.37601775"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "8,2002,ACADM,2.24129,0.025007284935055593,0.19652655624741608,0.95148534"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "cluster,rank,gene,score,pval,pval_adj,log2fc"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "wrong-ordering-rank-sequence",
+    "rationale": "Pure arrangement defects with every value and key left as the reference: (1) the file is sorted lexicographically by cluster label (0, 1, 10, 11, ..., 16, 2, ...) instead of by ascending numeric label, which rule 7 forbids; (2) inside cluster 8 a fixed 40-gene window (ranks 2001-2040, e.g. GRB2 2.2453249 and ACADM 2.24129) is rotated by one rank position, so the reported rank no longer follows the descending-score order and the rank sequence within that window stops being consecutive.",
+    "script": "\"\"\"Wrong-result control: physical ordering and rank sequence.\n\nAll numeric values and keys are left exactly as the reference; only the\narrangement is damaged:\n  1. rows are sorted lexicographically by cluster label (..., 0, 1, 10, 11,\n     ..., 2, ...) instead of numerically, which rule 7 forbids;\n  2. inside cluster 8 a 40-gene window is rotated by one rank position so the\n     reported rank no longer follows the descending-score order and the rank\n     sequence inside that window is not 1..G (rules 8 and 9).\n\"\"\"\nimport csv\nimport math\nimport os\n\nPATH = \"cluster_marker_genes.csv\"\nCOLS = [\"cluster\", \"rank\", \"gene\", \"score\", \"pval\", \"pval_adj\", \"log2fc\"]\n\n\ndef read_rows():\n    with open(PATH, newline=\"\") as fh:\n        return [dict(r) for r in csv.DictReader(fh)]\n\n\ndef write_rows(rows):\n    tmp = PATH + \".tmp\"\n    with open(tmp, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=COLS, lineterminator=\"\\n\")\n        w.writeheader()\n        for r in rows:\n            w.writerow({k: r[k] for k in COLS})\n    os.replace(tmp, PATH)\n\n\ndef blocks(rows):\n    b = {}\n    for r in rows:\n        b.setdefault(r[\"cluster\"], []).append(r)\n    return b\n\n\ndef selfcheck():\n    with open(PATH, newline=\"\") as fh:\n        rd = csv.reader(fh)\n        assert next(rd) == COLS\n        n = 0\n        for row in rd:\n            assert len(row) == 7 and all(f.strip() for f in row)\n            for k in (3, 4, 5, 6):\n                assert math.isfinite(float(row[k]))\n            int(row[1])\n            n += 1\n    return n\n\n\nrows = read_rows()\nblk = blocks(rows)\n\n# rotate a fixed 40-gene window of cluster 8 by one rank position\nwindow = blk[\"8\"][2000:2040]\nrotated = [window[-1]] + window[:-1]\nfor dst, src in zip(window, rotated):\n    dst[\"rank\"], src[\"rank\"] = src[\"rank\"], dst[\"rank\"]\n\nout = []\nfor c in sorted(blk, key=str):  # lexicographic cluster order (wrong on purpose)\n    for r in sorted(blk[c], key=lambda x: int(x[\"rank\"])):\n        out.append(r)\n\nwrite_rows(out)\nprint(\"rotated cluster-8 rank window; lexicographic cluster order, %d rows, selfcheck ok\"\n      % selfcheck())\n"
+  }
+}

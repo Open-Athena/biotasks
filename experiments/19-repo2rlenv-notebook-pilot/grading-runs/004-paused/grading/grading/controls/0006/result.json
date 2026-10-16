@@ -1,0 +1,105 @@
+{
+  "candidate_sha256": "bcd10ff07dfc7db1019ca78dcbb051e1d35c18cb174a12a81b490fd3f514d666",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "ln-base rows: 28227, sign-swapped rows: 500, 398259 rows, selfcheck ok\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "file_present_parseable",
+          "message": "398259 data rows parsed with the required header",
+          "passed": true
+        },
+        {
+          "id": "row_key_coverage",
+          "message": "398259 (cluster, gene) pairs match the reference exactly",
+          "passed": true
+        },
+        {
+          "id": "row_ordering",
+          "message": "rows ordered by ascending numeric cluster then rank; ranks 1..23427 in every cluster",
+          "passed": true
+        },
+        {
+          "id": "numeric_finiteness",
+          "message": "all score/pval/pval_adj/log2fc values present, finite and in range",
+          "passed": true
+        },
+        {
+          "id": "score_agreement",
+          "message": "all 398259 score values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_agreement",
+          "message": "all 398259 pval values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_adj_agreement",
+          "message": "all 398259 pval_adj values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "log2fc_agreement",
+          "message": "28719 of 398259 log2fc values disagree; first: ('0', 'TPT1') 2.5481253 vs 1.7662258674084648 (|diff| = 0.782 > 0.0001)",
+          "passed": false
+        },
+        {
+          "id": "rank_consistency",
+          "message": "within-cluster ranking is a valid descending-score order consistent with the reference",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "cluster_marker_genes.csv": "5db0619dcb813c14bdb0ec357470f07a37ec3b4d470517966e324214a541bd4d"
+    },
+    "submission_before": {
+      "cluster_marker_genes.csv": "b608555dea023007db0c55cd7b96fd67a1d4bcaba980f1d4f294cfc7409054b9"
+    },
+    "submission_sha256": {
+      "cluster_marker_genes.csv": "5db0619dcb813c14bdb0ec357470f07a37ec3b4d470517966e324214a541bd4d"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "log2fc_agreement"
+    ],
+    "evidence": [
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "0,1,TPT1,85.90431,0.0,0.0,2.5481253"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "7,1,NKG7,48.16957,0.0,0.0,6.9154406"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "cluster,rank,gene,score,pval,pval_adj,log2fc"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "wrong-log2fc-effect-variants",
+    "rationale": "Two independently plausible effect-size errors on the log2fc column, kept parseable and finite, with all other columns and every key untouched so the failure isolates the stabilized log2 fold change: (1) natural-log base instead of log2 (log2fc * ln 2) for the whole of cluster 0 and the fixed rank slice 1000-1300 of every other cluster; (2) in-group and rest means swapped (log2fc -> -log2fc) for the top-500 ranked genes of cluster 7. Both defects move the affected values by orders of magnitude more than the 1e-4 absolute tolerance (e.g. 2.5481253 -> 1.766..., 6.9154406 -> -6.9154406).",
+    "script": "\"\"\"Wrong-result control: stabilized log2 fold change (effect size).\n\nTwo independently plausible effect-size errors, both kept parseable and finite:\n  1. natural-log base instead of log2 (log2fc * ln 2) for every gene of\n     cluster 0 and for the fixed rank slice 1000-1300 of every other cluster;\n  2. in-group and rest means swapped (log2fc -> -log2fc) for the top-500\n     ranked genes of cluster 7.\nBoth defects leave score/pval/pval_adj untouched, so the failure isolates the\nlog2fc column of the marker table (check log2fc_agreement).\n\"\"\"\nimport csv\nimport math\nimport os\n\nPATH = \"cluster_marker_genes.csv\"\nCOLS = [\"cluster\", \"rank\", \"gene\", \"score\", \"pval\", \"pval_adj\", \"log2fc\"]\n\n\ndef read_rows():\n    with open(PATH, newline=\"\") as fh:\n        return [dict(r) for r in csv.DictReader(fh)]\n\n\ndef write_rows(rows, lineterminator=\"\\n\"):\n    tmp = PATH + \".tmp\"\n    with open(tmp, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=COLS, lineterminator=lineterminator)\n        w.writeheader()\n        for r in rows:\n            w.writerow({k: r[k] for k in COLS})\n    os.replace(tmp, PATH)\n\n\ndef fmt(x):\n    x = float(x)\n    return \"0.0\" if x == 0.0 else repr(x)\n\n\ndef blocks(rows):\n    b = {}\n    for r in rows:\n        b.setdefault(r[\"cluster\"], []).append(r)\n    return b\n\n\ndef relabel(rows):\n    b = blocks(rows)\n    out = []\n    for c in sorted(b, key=lambda s: float(s)):\n        for i, r in enumerate(b[c], 1):\n            r[\"rank\"] = str(i)\n            out.append(r)\n    return out\n\n\ndef selfcheck():\n    with open(PATH, newline=\"\") as fh:\n        rd = csv.reader(fh)\n        assert next(rd) == COLS\n        n = 0\n        for row in rd:\n            assert len(row) == 7 and all(f.strip() for f in row)\n            for k in (3, 4, 5, 6):\n                assert math.isfinite(float(row[k]))\n            int(row[1])\n            n += 1\n    return n\n\n\nrows = read_rows()\nblk = blocks(rows)\nn_base = 0\nfor c, b in blk.items():\n    targets = b if c == \"0\" else b[1000:1300]\n    for r in targets:\n        r[\"log2fc\"] = fmt(float(r[\"log2fc\"]) * 0.6931471805599453)  # ln, not log2\n        n_base += 1\nn_sign = 0\nfor r in blk[\"7\"][:500]:\n    r[\"log2fc\"] = fmt(-float(r[\"log2fc\"]))  # in-group / rest means swapped\n    n_sign += 1\n\nwrite_rows(relabel(rows))\nprint(\"ln-base rows: %d, sign-swapped rows: %d, %d rows, selfcheck ok\"\n      % (n_base, n_sign, selfcheck()))\n"
+  }
+}

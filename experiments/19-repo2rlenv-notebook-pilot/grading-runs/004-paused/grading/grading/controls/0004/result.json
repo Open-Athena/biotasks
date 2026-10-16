@@ -1,0 +1,72 @@
+{
+  "candidate_sha256": "bcd10ff07dfc7db1019ca78dcbb051e1d35c18cb174a12a81b490fd3f514d666",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "file_present_parseable",
+          "message": "398259 data rows parsed with the required header",
+          "passed": true
+        },
+        {
+          "id": "row_key_coverage",
+          "message": "398259 (cluster, gene) pairs match the reference exactly",
+          "passed": true
+        },
+        {
+          "id": "row_ordering",
+          "message": "rows ordered by ascending numeric cluster then rank; ranks 1..23427 in every cluster",
+          "passed": true
+        },
+        {
+          "id": "numeric_finiteness",
+          "message": "all score/pval/pval_adj/log2fc values present, finite and in range",
+          "passed": true
+        },
+        {
+          "id": "score_agreement",
+          "message": "all 398259 score values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_agreement",
+          "message": "all 398259 pval values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_adj_agreement",
+          "message": "all 398259 pval_adj values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "log2fc_agreement",
+          "message": "all 398259 log2fc values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "rank_consistency",
+          "message": "within-cluster ranking is a valid descending-score order consistent with the reference",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_before": {
+      "cluster_marker_genes.csv": "926ba18a350f909ebbac4f1a25c16c7ae90e10236d30ed64c07a0de0b7f3365c"
+    },
+    "submission_sha256": {
+      "cluster_marker_genes.csv": "926ba18a350f909ebbac4f1a25c16c7ae90e10236d30ed64c07a0de0b7f3365c"
+    }
+  },
+  "kind": "alternative",
+  "omitted": null,
+  "passed_control": true,
+  "probe": null
+}

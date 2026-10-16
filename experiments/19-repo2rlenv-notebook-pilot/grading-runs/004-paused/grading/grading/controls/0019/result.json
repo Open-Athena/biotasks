@@ -1,0 +1,113 @@
+{
+  "candidate_sha256": "bcd10ff07dfc7db1019ca78dcbb051e1d35c18cb174a12a81b490fd3f514d666",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "near-tie pairs swapped: 3400, sub-1e-303 tails written as 0: 72, 398259 rows, selfcheck ok\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "file_present_parseable",
+          "message": "398259 data rows parsed with the required header",
+          "passed": true
+        },
+        {
+          "id": "row_key_coverage",
+          "message": "398259 (cluster, gene) pairs match the reference exactly",
+          "passed": true
+        },
+        {
+          "id": "row_ordering",
+          "message": "rows ordered by ascending numeric cluster then rank; ranks 1..23427 in every cluster",
+          "passed": true
+        },
+        {
+          "id": "numeric_finiteness",
+          "message": "all score/pval/pval_adj/log2fc values present, finite and in range",
+          "passed": true
+        },
+        {
+          "id": "score_agreement",
+          "message": "all 398259 score values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_agreement",
+          "message": "all 398259 pval values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "pvalue_adj_agreement",
+          "message": "all 398259 pval_adj values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "log2fc_agreement",
+          "message": "all 398259 log2fc values agree within tolerance",
+          "passed": true
+        },
+        {
+          "id": "rank_consistency",
+          "message": "within-cluster ranking is a valid descending-score order consistent with the reference",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "cluster_marker_genes.csv": "b051fd217ca6ab9ee1c4f61553c95a1caa9073ae3e1bc49ef9b1017ded19b4ea"
+    },
+    "submission_before": {
+      "cluster_marker_genes.csv": "b608555dea023007db0c55cd7b96fd67a1d4bcaba980f1d4f294cfc7409054b9"
+    },
+    "submission_sha256": {
+      "cluster_marker_genes.csv": "b051fd217ca6ab9ee1c4f61553c95a1caa9073ae3e1bc49ef9b1017ded19b4ea"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "file_present_parseable",
+      "row_key_coverage",
+      "row_ordering",
+      "numeric_finiteness",
+      "score_agreement",
+      "pvalue_agreement",
+      "pvalue_adj_agreement",
+      "log2fc_agreement",
+      "rank_consistency"
+    ],
+    "evidence": [
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "0,193,ATP5MC2,37.23927,1.5806601725858915e-303,1.879701820465466e-301,1.2729273"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "8,2001,GRB2,2.2453249,0.024747289229728818,0.19461387874617558,0.37601775"
+      },
+      {
+        "path": "cluster_marker_genes.csv",
+        "quote": "0,4658,GPM6B,0.733119,0.4634858424408348,0.9997122646305252,0.11824388"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "valid_alternative",
+    "name": "valid-underflow-near-tie-swap",
+    "rationale": "Boundary valid-alternative for both tolerance freedoms: (1) rule 9's 'near-tied genes (scores within the tolerance) may legitimately appear in either order' -- inside every cluster the first 200 adjacent gene pairs with a score gap <= 1e-4 (half of the 2e-4 tolerance, e.g. cluster 8 ranks 2001/2002 with a gap of 0.0040349 would not qualify, but 4e-4-gap pairs do) are swapped and ranks renumbered 1..G; (2) rule 12's underflow equivalence -- every pval and pval_adj with 0 < value <= 1e-303 is written as '0'.  No value, key or row is otherwise altered, so every check must still pass, including both ordering rules and the numeric agreement checks (the near-tie swaps stay inside the score and p-value tolerances).",
+    "script": "\"\"\"Valid alternative: near-tie ordering band and underflow zeros.\n\nTwo freedoms the acceptance rules explicitly grant:\n  1. rule 9 -- \"near-tied genes (scores within the tolerance) may\n     legitimately appear in either order\": inside every cluster the first\n     200 adjacent gene pairs whose score difference is <= 1e-4 (half of the\n     2e-4 tolerance) are swapped, ranks renumbered 1..G, so the reported\n     ordering is still a valid tolerance-banded descending-score ordering\n     while the rank-to-gene association changes;\n  2. rule 12 -- a reported 0 stands for any tail <= 1e-303: every pval and\n     pval_adj with 0 < value <= 1e-303 is rewritten as \"0\".\nNo value, key, or row is added or removed; the parsed doubles of every other\nfield are unchanged.\n\"\"\"\nimport csv\nimport math\nimport os\n\nPATH = \"cluster_marker_genes.csv\"\nCOLS = [\"cluster\", \"rank\", \"gene\", \"score\", \"pval\", \"pval_adj\", \"log2fc\"]\n\n\ndef read_rows():\n    with open(PATH, newline=\"\") as fh:\n        return [dict(r) for r in csv.DictReader(fh)]\n\n\ndef write_rows(rows):\n    tmp = PATH + \".tmp\"\n    with open(tmp, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=COLS, lineterminator=\"\\n\")\n        w.writeheader()\n        for r in rows:\n            w.writerow({k: r[k] for k in COLS})\n    os.replace(tmp, PATH)\n\n\ndef blocks(rows):\n    b = {}\n    for r in rows:\n        b.setdefault(r[\"cluster\"], []).append(r)\n    return b\n\n\ndef selfcheck():\n    with open(PATH, newline=\"\") as fh:\n        rd = csv.reader(fh)\n        assert next(rd) == COLS\n        n = 0\n        for row in rd:\n            assert len(row) == 7 and all(f.strip() for f in row)\n            for k in (3, 4, 5, 6):\n                assert math.isfinite(float(row[k]))\n            int(row[1])\n            n += 1\n    return n\n\n\nrows = read_rows()\nblk = blocks(rows)\nn_swapped = 0\nout = []\nfor c in sorted(blk, key=lambda s: float(s)):\n    b = blk[c]\n    i = 0\n    swapped = 0\n    while i < len(b) - 1 and swapped < 200:\n        d = float(b[i][\"score\"]) - float(b[i + 1][\"score\"])\n        if 0.0 < d <= 1e-4:  # near tie inside half of the score tolerance\n            b[i], b[i + 1] = b[i + 1], b[i]\n            swapped += 1\n            i += 2\n        else:\n            i += 1\n    n_swapped += swapped\n    for k, r in enumerate(b, 1):\n        r[\"rank\"] = str(k)\n        out.append(r)\n\nn_zeroed = 0\nfor r in out:\n    for col in (\"pval\", \"pval_adj\"):\n        v = float(r[col])\n        if 0.0 < v <= 1e-303:\n            r[col] = \"0\"\n            n_zeroed += 1\n\nwrite_rows(out)\nprint(\"near-tie pairs swapped: %d, sub-1e-303 tails written as 0: %d, %d rows, selfcheck ok\"\n      % (n_swapped, n_zeroed, selfcheck()))\n"
+  }
+}
