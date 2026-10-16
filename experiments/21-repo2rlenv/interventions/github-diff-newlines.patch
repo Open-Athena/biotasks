@@ -1,0 +1,23 @@
+--- a/src/repo2rlenv/github.py
++++ b/src/repo2rlenv/github.py
+@@ -65,8 +65,7 @@
+             proc = subprocess.run(
+                 ["gh", *args],
+                 capture_output=True,
+-                text=True,
+-                encoding="utf-8",
++                text=False,
+                 timeout=60,
+                 env=env,
+                 check=False,
+@@ -77,8 +76,8 @@
+                 raise
+             time.sleep(0.5 * 2**attempt)
+     if proc.returncode != 0:
+-        raise GitHubError(f"gh {' '.join(args)!r} failed: {proc.stderr.strip()}")
+-    return proc.stdout
++        raise GitHubError(f"gh {' '.join(args)!r} failed: {proc.stderr.decode('utf-8').strip()}")
++    return proc.stdout.decode("utf-8")
+ 
+ 
+ def _fetch_base_sha(owner: str, name: str, number: int, *, token: str | None = None) -> str | None:
