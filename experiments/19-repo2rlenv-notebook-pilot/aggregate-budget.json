@@ -3,8 +3,8 @@
   "ceiling_before_credits": "100.00",
   "authorization_date": "2026-10-13",
   "basis": "User authorized up to $100 total to complete issue 19 and routine recovery/retries without repeated approval.",
-  "reserved_upper_bound_usd": "100.00",
-  "unallocated_usd": "0.00",
+  "reserved_upper_bound_usd": "85.00",
+  "unallocated_usd": "15.00",
   "reservations": [
     {
       "scope": "original pilot 001",
@@ -12,7 +12,8 @@
     },
     {
       "scope": "replacement slots 1 through 10, including read-only recovery allocations",
-      "ceiling_usd": "50.00"
+      "ceiling_usd": "40.00",
+      "reconciliation": "Released $10 for two documented read-only recovery slots (003 and 007), each recorded with zero Daytona usage in campaign-registry.json. Other eight slot ceilings remain fully held."
     },
     {
       "scope": "additional campaign 012 and recovery worker 013 combined",
@@ -40,7 +41,8 @@
     },
     {
       "scope": "artifact-reference-002: bounded output recovery and host export integration",
-      "ceiling_usd": "5.00"
+      "ceiling_usd": "0.00",
+      "reconciliation": "Released $5: reference-runs/002/summary.json records generated_setup_executed=false, scientific_computation_executed=false, cleanup_verified=true; preparation/review and artifact recovery did not provision a task sandbox."
     },
     {
       "scope": "artifact-reference-003: explicit review defect schema and scientific-data exports",
@@ -61,8 +63,9 @@
   ],
   "actual_provider_invoice_usd": null,
   "limitations": [
-    "Reservations deliberately overcount read-only recovery slots and are not measured charges.",
+    "Remaining reservations are conservative holds, not measured charges. Only documented no-sandbox allocations have been released.",
     "Recovery worker 013 carries prior campaign 012 holds and does not add another $5 reservation.",
     "Any further run must reserve within the unallocated balance before submission."
-  ]
+  ],
+  "reconciliation_date": "2026-10-16"
 }
