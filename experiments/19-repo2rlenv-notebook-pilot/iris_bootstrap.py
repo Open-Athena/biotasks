@@ -56,41 +56,52 @@ def command(argv, *, cwd, deadline, log, env=None):
 
 
 def export(root, prefix):
+    from concurrent.futures import ThreadPoolExecutor
+
     import fsspec
 
-    receipts = []
-    secrets = [os.environ.get(key, "").encode() for key in ("GLM_BULK_TOKEN", "DAYTONA_API_KEY")]
+    secrets = [
+        os.environ[key].encode()
+        for key in ("GLM_BULK_TOKEN", "DAYTONA_API_KEY", "HF_TOKEN")
+        if os.environ.get(key)
+    ]
+    overlap = max(map(len, secrets), default=0)
+    paths = []
     for path in sorted(root.rglob("*")):
         if path.is_symlink():
             raise ValueError("Do not follow artifact symlinks")
-        if not path.is_file():
-            continue
+        if path.is_file():
+            paths.append(path)
+
+    def transfer(path):
+        # Bounded streaming per file, including with no credentials configured.
         with path.open("rb") as stream:
             tail = b""
             while chunk := stream.read(1024 * 1024):
                 combined = tail + chunk
-                if any(secret and secret in combined for secret in secrets):
+                if any(secret in combined for secret in secrets):
                     raise ValueError("Credential detected in evidence; export requires redaction")
-                tail = combined[-max(map(len, secrets)) :]
+                tail = combined[-overlap:] if overlap else b""
         relative = path.relative_to(root).as_posix()
         uri = prefix.rstrip("/") + "/" + relative
+        expected = digest(path)
         with path.open("rb") as source, fsspec.open(uri, "wb").open() as target:
             shutil.copyfileobj(source, target, 1024 * 1024)
         value = hashlib.sha256()
         with fsspec.open(uri, "rb").open() as source:
             while chunk := source.read(1024 * 1024):
                 value.update(chunk)
-        expected = digest(path)
-        if value.hexdigest() != expected:
-            raise ValueError("Artifact download hash mismatch")
-        receipts.append(
-            {
-                "path": relative,
-                "sha256": expected,
-                "bytes": path.stat().st_size,
-                "mode": path.stat().st_mode & 0o777,
-            }
-        )
+        if value.hexdigest() != expected or digest(path) != expected:
+            raise ValueError("Artifact download hash mismatch or source changed")
+        return {
+            "path": relative, "sha256": expected,
+            "bytes": path.stat().st_size, "mode": path.stat().st_mode & 0o777,
+        }
+
+    # Remote Iris storage I/O only: four bounded transfers, no scientific workers.
+    # map preserves manifest order; every object is downloaded and hash checked.
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        receipts = list(pool.map(transfer, paths))
     with fsspec.open(prefix.rstrip("/") + "/export-manifest.json", "w").open() as stream:
         json.dump({"files": receipts, "download_checked": True}, stream)
 
