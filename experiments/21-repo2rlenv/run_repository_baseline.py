@@ -24,7 +24,10 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--profile", choices=("scikit-bio", "biopython"), default="scikit-bio")
+    parser.add_argument("--biopython-fixture-copy", action="store_true")
     args = parser.parse_args()
+    if args.biopython_fixture_copy and args.profile != "biopython":
+        parser.error("Fixture-layout adaptation applies only to the Biopython profile")
     image = (
         "biotasks21-skbio-baseline"
         if args.profile == "scikit-bio"
@@ -52,6 +55,7 @@ def main():
         "profile": args.profile,
         "test_path": test_path,
         "working_directory": "/workspace",
+        "fixture_layout": "workspace_copy" if args.biopython_fixture_copy else "original",
     }
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
@@ -87,6 +91,14 @@ def main():
             "-q --tb=short --junitxml=/tmp/results.xml; code=$?; "
             "cp /opt/baseline-freeze.txt /tmp/freeze.txt; exit $code"
         )
+        if args.biopython_fixture_copy:
+            command = (
+                "mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb "
+                "&& cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb "
+                "&& sha256sum Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb "
+                "> /tmp/fixture-hashes.txt && " + command
+            )
+        record["test_command"] = command
         result = worker.exec(
             [
                 "docker",
@@ -113,7 +125,7 @@ def main():
         record["test_returncode"] = result.returncode
         state = worker.exec(["docker", "inspect", "biotasks21-baseline-test"], timeout=30)
         record["container_state"] = json.loads(state.stdout)[0]["State"]
-        for name in ("results.xml", "freeze.txt"):
+        for name in ("results.xml", "freeze.txt", "fixture-hashes.txt"):
             copied = worker.exec(
                 ["docker", "cp", f"biotasks21-baseline-test:/tmp/{name}", f"/work/baseline/{name}"],
                 timeout=30,

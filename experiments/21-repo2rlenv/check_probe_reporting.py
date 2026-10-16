@@ -6,9 +6,9 @@ import os
 import sys
 import tempfile
 from pathlib import Path
+from types import SimpleNamespace
 
 from litellm.types.utils import Usage
-from repo2rlenv.llm import LLMResponse
 
 root = Path(__file__).resolve().parent
 spec = importlib.util.spec_from_file_location("probe", root / "probe_glm_authoring_budget.py")
@@ -31,19 +31,30 @@ else:
 
 
 def fixture_complete(*args, **kwargs):
-    assert mod.litellm.completion.keywords == {
-        "extra_body": {"chat_template_kwargs": {"reasoning_effort": "medium"}}
-    }
-    assert kwargs["max_tokens"] == 16384
-    return LLMResponse(
-        content='{"issue":"Example observable bug","reason":"Fixture"}',
-        usage=usage,
-        prompt_tokens=7,
-        completion_tokens=15,
+    assert kwargs["extra_body"] == {"chat_template_kwargs": {"reasoning_effort": "medium"}}
+    assert kwargs["max_tokens"] == 65536
+    assert kwargs["timeout"] == 600
+    assert kwargs["num_retries"] == 0
+    return SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                finish_reason="stop",
+                message=SimpleNamespace(
+                    content='{"issue":"Example observable bug","reason":"Fixture"}',
+                    reasoning_content="Offline fixture reasoning",
+                ),
+            )
+        ],
+        usage=Usage(
+            prompt_tokens=7,
+            completion_tokens=15,
+            total_tokens=22,
+            completion_tokens_details={"reasoning_tokens": 10},
+        ),
     )
 
 
-mod.complete = fixture_complete
+mod.litellm.completion = fixture_complete
 mod.issue_violations = lambda *a: []
 
 os.environ["BIOTASKS21_GLM_ENDPOINT"] = "https://example.invalid/v1"
@@ -62,6 +73,9 @@ with tempfile.TemporaryDirectory() as tmp:
     mod.main()
     r = json.loads(out.read_text())
     assert r["status"] == "passed"
+    generation = json.loads(out.with_suffix(".generation.json").read_text())
+    assert generation["finish_reason"] == "stop"
+    assert generation["reasoning_content"] == "Offline fixture reasoning"
     assert r["reasoning_tokens"] == 10
     assert r["non_reasoning_completion_tokens"] == 5
     assert (

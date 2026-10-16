@@ -1,4 +1,4 @@
-"""One approved 16,384-token replay of a saved native authoring request.
+"""One approved 65,536-token replay of a saved native authoring request.
 
 The private launcher discovers the approved endpoint in its execution cluster
 and supplies BIOTASKS21_GLM_ENDPOINT and BIOTASKS21_GLM_KEY in the environment.
@@ -10,7 +10,6 @@ import argparse
 import json
 import os
 import time
-from functools import partial
 from pathlib import Path
 from unittest.mock import patch
 
@@ -42,7 +41,7 @@ def main():
         endpoint=os.environ["BIOTASKS21_GLM_ENDPOINT"],
         api_key_env="BIOTASKS21_GLM_KEY",
         max_concurrent=1,
-        timeout_sec=120,
+        timeout_sec=600,
         fallback=None,
     )
     record = {
@@ -50,7 +49,7 @@ def main():
         "stage": "authoring_combined_token_adaptation",
         "model_calls_dispatched": 1,
         "model": "glm-5.3",
-        "max_output_tokens": 16384,
+        "max_output_tokens": 65536,
         "reasoning_effort": "medium",
         "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
         "biological_execution": False,
@@ -61,16 +60,31 @@ def main():
     try:
         # The pinned LLMSpec has no effort field. Scope this explicit service
         # adapter to the one native call, retaining its schema and retry policy.
-        adapted_completion = partial(
-            litellm.completion,
-            extra_body={"chat_template_kwargs": {"reasoning_effort": "medium"}},
-        )
+        original_completion = litellm.completion
+
+        def adapted_completion(*call_args, **call_kwargs):
+            call_kwargs["extra_body"] = {"chat_template_kwargs": {"reasoning_effort": "medium"}}
+            raw = original_completion(*call_args, **call_kwargs)
+            choice = raw.choices[0]
+            save_record(
+                args.output.with_suffix(".generation.json"),
+                {
+                    "finish_reason": choice.finish_reason,
+                    "reasoning_content": getattr(choice.message, "reasoning_content", None),
+                    "content": choice.message.content,
+                    "requested_effort": "medium",
+                    "requested_max_tokens": 65536,
+                    "requested_timeout_sec": 600,
+                },
+            )
+            return raw
+
         with patch("litellm.completion", new=adapted_completion):
             response = complete(
                 spec,
                 system=request["system"],
                 user=request["user"],
-                max_tokens=16384,
+                max_tokens=65536,
                 response_schema=request["response_schema"],
             )
         # LiteLLM usage is only shallowly converted to dict by the native client;
