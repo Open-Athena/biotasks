@@ -1,0 +1,26 @@
+{
+  "build_returncode": 0,
+  "cleanup": "terminated",
+  "container_state": {
+    "Dead": false,
+    "Error": "",
+    "ExitCode": 0,
+    "FinishedAt": "2026-10-16T22:04:45.66529001Z",
+    "OOMKilled": false,
+    "Paused": false,
+    "Pid": 0,
+    "Restarting": false,
+    "Running": false,
+    "StartedAt": "2026-10-16T22:04:44.672434674Z",
+    "Status": "exited"
+  },
+  "fixture_layout": "workspace_copy",
+  "model_calls": 0,
+  "profile": "biopython",
+  "stage": "repository_baseline",
+  "status": "tests_passed",
+  "test_command": "mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && sha256sum Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb > /tmp/fixture-hashes.txt && python -m pytest -o addopts= Tests/test_SeqUtils.py -q --tb=short --junitxml=/tmp/results.xml; code=$?; cp /opt/baseline-freeze.txt /tmp/freeze.txt; exit $code",
+  "test_path": "Tests/test_SeqUtils.py",
+  "test_returncode": 0,
+  "working_directory": "/workspace"
+}

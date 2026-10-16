@@ -30,6 +30,11 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
+    parser.add_argument(
+        "--config",
+        type=Path,
+        default=Path(__file__).with_name("swe-smith-skbio-worker.json"),
+    )
     args = parser.parse_args()
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
@@ -44,6 +49,7 @@ def main():
         name=args.worker_name,
     )
     record = {"stage": "native_mutation_contrasts", "model_calls": 0, "status": "starting"}
+    record["config_sha256"] = hashlib.sha256(args.config.read_bytes()).hexdigest()
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
@@ -55,9 +61,7 @@ def main():
             "mkdir"
         )
         worker.upload(args.source_archive, "/work/native/source.tar.gz")
-        worker.upload(
-            Path(__file__).with_name("swe-smith-skbio-worker.json"), "/work/native/config.json"
-        )
+        worker.upload(args.config, "/work/native/config.json")
         setup = worker.exec(
             [
                 "sh",
