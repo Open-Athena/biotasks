@@ -1,0 +1,195 @@
+diff --git a/Bio/Entrez/Parser.py b/Bio/Entrez/Parser.py
+index baed1cc5de0..4e7bab984d8 100644
+--- a/Bio/Entrez/Parser.py
++++ b/Bio/Entrez/Parser.py
+@@ -354,7 +354,7 @@ def __init__(self, validate, escape, ignore_errors):
+         self.dtd_urls = []
+         self.element = None
+         self.level = 0
+-        self.secure = False
++        self.bypass_url_security = False
+         self.data = []
+         self.attributes = None
+         self.allowed_tags = None
+@@ -1081,21 +1081,20 @@ def save_xsd_file(self, filename, text):
+             handle.write(text)
+             handle.close()
+ 
+-    def verify_security(self, url):
+-        """Check if the url is from a trustable sournce."""
+-        if not self.secure:
++    def verify_security(self, url, verify_hostname=True):
++        """Check if the given URL is from a trustable source.
++
++        When ``self.bypass_url_security`` evaluates to ``True``,
++        all URL security checks will be skipped.
++        """
++        if not self.bypass_url_security:
+             parts = urlparse(url)
+             scheme = parts.scheme
+             hostname = parts.hostname
+-            hostnames = (
+-                "www.ncbi.nlm.nih.gov",
+-                "dtd.nlm.nih.gov",
+-                "eutils.ncbi.nlm.nih.gov",
+-            )
+-            if scheme != "https" or hostname not in hostnames:
+-                raise ValueError(f"expected secure URL to NCBI, found {url}")
+-            # Trust URLs linked from NCBI
+-            self.secure = True
++            if scheme != "https" or (
++                verify_hostname and not hostname.endswith(".nlm.nih.gov")
++            ):
++                raise ValueError(f"Expected secure URL to NCBI, found {url!r}")
+ 
+     def externalEntityRefHandler(self, context, base, systemId, publicId):
+         """Handle external entity reference in order to cache DTD locally.
+@@ -1125,27 +1124,42 @@ def externalEntityRefHandler(self, context, base, systemId, publicId):
+             url = source.rstrip("/") + "/" + systemId
+         else:
+             raise ValueError("Unexpected URL scheme %r" % urlinfo.scheme)
++
++        # NOTE: This trusts any external references from a trusted parent,
++        #       even if these external references go to unknown hosts,
++        #       e.g. when NCBI starts referencing things on a new host
++        #       from existing DTD files.
++        #       Needs to be checked *prior* to appending to ``self.dtd_urls``.
++        self.verify_security(url, verify_hostname=not self.dtd_urls)
++
++        # NOTE: Since ``self.dtd_urls`` being non-empty has security
++        #       consequences with the check above, we use a ``finally`` wrap
++        #       here, in order to guarantee that push and pop are matched.
+         self.dtd_urls.append(url)
+-        self.verify_security(url)
+-        # First, try to load the local version of the DTD file
+-        location, filename = os.path.split(systemId)
+-        handle = self.open_dtd_file(filename)
+-        if not handle:
+-            # DTD is not available as a local file. Try accessing it through
+-            # the internet instead.
+-            try:
+-                handle = urlopen(url)
+-            except OSError:
+-                raise RuntimeError(f"Failed to access {filename} at {url}") from None
+-            text = handle.read()
++        try:
++            # First, try to load the local version of the DTD file
++            location, filename = os.path.split(systemId)
++            handle = self.open_dtd_file(filename)
++            if not handle:
++                # DTD is not available as a local file. Try accessing it through
++                # the internet instead.
++                try:
++                    handle = urlopen(url)
++                except OSError:
++                    raise RuntimeError(
++                        f"Failed to access {filename} at {url}"
++                    ) from None
++                text = handle.read()
++                handle.close()
++                self.save_dtd_file(filename, text)
++                handle = BytesIO(text)
++
++            parser = self.parser.ExternalEntityParserCreate(context)
++            parser.ElementDeclHandler = self.elementDecl
++            parser.ParseFile(handle)
+             handle.close()
+-            self.save_dtd_file(filename, text)
+-            handle = BytesIO(text)
+-
+-        parser = self.parser.ExternalEntityParserCreate(context)
+-        parser.ElementDeclHandler = self.elementDecl
+-        parser.ParseFile(handle)
+-        handle.close()
+-        self.dtd_urls.pop()
++        finally:
++            self.dtd_urls.pop()
++
+         self.parser.StartElementHandler = self.startElementHandler
+         return 1
+diff --git a/CONTRIB.rst b/CONTRIB.rst
+index e0f2fc83092..cde5f7f0f4a 100644
+--- a/CONTRIB.rst
++++ b/CONTRIB.rst
+@@ -314,6 +314,7 @@ please open an issue on GitHub or mention it on the mailing list.
+ - Sean Johnson <https://github.com/seanrjohnson>
+ - Sean Workman <https://github.com/sean-workman>
+ - Sebastian Bassi <https://about.me/bassi>
++- Sebastian Pipping <https://blog.hartwork.org/>
+ - Sergei Lebedev <https://github.com/superbobry>
+ - Sergio Valqui <https://github.com/svalqui>
+ - Seth Sims <https://github.com/xzy3>
+diff --git a/NEWS.rst b/NEWS.rst
+index 42b5d90bc63..e8793ae0148 100644
+--- a/NEWS.rst
++++ b/NEWS.rst
+@@ -23,6 +23,7 @@ possible, especially the following contributors:
+ - Timothy Dennis (first contribution)
+ - Ziyan Rao (first contribution)
+ - Manuel Lera-Ramirez
++- Sebastian Pipping
+ 
+ 28 October 2025: Biopython 1.86
+ ===============================
+diff --git a/Tests/test_Entrez_parser.py b/Tests/test_Entrez_parser.py
+index abd611b2884..62636cc8bdd 100644
+--- a/Tests/test_Entrez_parser.py
++++ b/Tests/test_Entrez_parser.py
+@@ -9,6 +9,8 @@
+ import pickle
+ import unittest
+ from io import BytesIO
++from textwrap import dedent
++from unittest.mock import call, Mock
+ 
+ from Bio import Entrez
+ from Bio import StreamModeError
+@@ -8867,6 +8869,48 @@ def test_truncated_xml(self):
+         self.assertRaises(CorruptedXMLError, next, records)
+ 
+ 
++class UrlSecurityCheckTest(unittest.TestCase):
++    """Test for DTD and XSL URL validation."""
++
++    def test_continued_url_security_checking(self):
++        content = dedent(
++            """\
++                <?xml version="1.0" encoding="UTF-8"?>
++                <!DOCTYPE BlastOutput PUBLIC "-//NCBI//NCBI BlastOutput/EN" "https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd">
++                <IPGReportSet xmlns:xsi="https://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://host.invalid/404.dtd" />
++                <!--                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ -->
++            """
++        ).encode("utf-8")
++
++        handler = Entrez.Parser.DataHandler(
++            validate=True, escape=False, ignore_errors=False
++        )
++        handler.verify_security = Mock(side_effect=handler.verify_security)
++
++        with self.assertRaises(ValueError) as caught:
++            handler.read(BytesIO(content))
++
++        self.assertIn("Expected secure URL to NCBI", caught.exception.args[0])
++        self.assertEqual(
++            handler.verify_security.call_args_list,
++            [
++                call(
++                    "https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd",
++                    verify_hostname=True,
++                ),
++                call(
++                    "https://www.ncbi.nlm.nih.gov/dtd/NCBI_Entity.mod.dtd",
++                    verify_hostname=False,
++                ),
++                call(
++                    "https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.mod.dtd",
++                    verify_hostname=False,
++                ),
++                call("https://host.invalid/404.dtd"),
++            ],
++        )
++
++
+ if __name__ == "__main__":
+     runner = unittest.TextTestRunner(verbosity=2)
+     unittest.main(testRunner=runner)

@@ -38,6 +38,7 @@ def main():
             "flow-independent",
             "biopython-cve",
             "biopython-commit",
+            "biopython-pr",
             "marin-schema",
             "marin-runtime",
         ),
@@ -102,6 +103,15 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_flow_independent.py "
+        elif args.stage == "biopython-pr":
+            worker.upload(root / "replay_biopython_pr.py", "/work/native/replay_biopython_pr.py")
+            worker.upload(root / "biopython-cve.Dockerfile", "/work/native/Dockerfile")
+            for filename in ("pr5148.json", "pr5148.diff", "issue5109.json"):
+                worker.upload(
+                    root / "evidence/pr-runtime-intake" / filename, "/work/native/" + filename
+                )
+            unpack = ""
+            entry = "/work/native/replay_biopython_pr.py "
         elif args.stage == "biopython-commit":
             worker.upload(
                 root / "replay_biopython_commit.py", "/work/native/replay_biopython_commit.py"
