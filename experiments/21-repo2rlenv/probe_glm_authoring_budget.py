@@ -12,7 +12,9 @@ import os
 import time
 from pathlib import Path
 
-from repo2rlenv.llm import complete
+from pydantic import TypeAdapter
+from repo2rlenv.execution.lifecycle import save_record
+from repo2rlenv.llm import LLMResponse, complete
 from repo2rlenv.pipelines.recipes.swe_smith.issue import IssueReport, issue_violations
 from repo2rlenv.spec.input import LLMSpec
 
@@ -59,11 +61,15 @@ def main():
             max_tokens=16384,
             response_schema=request["response_schema"],
         )
-        record["content"] = response.content
-        record["usage"] = response.usage
+        # LiteLLM usage is only shallowly converted to dict by the native client;
+        # nested token-detail objects still need Pydantic JSON normalization.
+        normalized = TypeAdapter(LLMResponse).dump_python(response, mode="json")
+        save_record(args.output.with_suffix(".response.json"), normalized)
+        record["content"] = normalized["content"]
+        record["usage"] = normalized["usage"]
         record["prompt_tokens"] = response.prompt_tokens
         record["completion_tokens"] = response.completion_tokens
-        details = (response.usage or {}).get("completion_tokens_details") or {}
+        details = (normalized["usage"] or {}).get("completion_tokens_details") or {}
         reasoning = details.get("reasoning_tokens")
         record["reasoning_tokens"] = reasoning
         record["non_reasoning_completion_tokens"] = (
