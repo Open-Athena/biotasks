@@ -1,8 +1,8 @@
 {
-  "as_of_utc": "2026-10-16T22:34:41.260993+00:00",
+  "as_of_utc": "2026-10-16T22:46:31.944898+00:00",
   "ceiling_usd": 300,
-  "historical_holds_usd": 95,
-  "accounted_estimates_and_holds_usd": 59,
+  "historical_holds_usd": 115,
+  "accounted_estimates_and_holds_usd": 63,
   "provider_invoice_verified": false,
   "pricing_source": "https://www.daytona.io/pricing",
   "pricing_checked_date": "2026-10-16",
@@ -43,9 +43,11 @@
       "memory_gib": 4,
       "disk_gib": 10,
       "historical_hold_usd": 5,
-      "basis": "retain original hold; incomplete lifetime or active worker",
-      "accounted_usd": 5,
-      "status": "unreconciled_hold"
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 78.169577,
+      "padded_rate_estimate_usd": 0.031399,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
     },
     {
       "run": "biopython-smith-01",
@@ -212,9 +214,56 @@
       "accounted_usd": 5,
       "basis": "rate/charge not independently established; retain full hold",
       "status": "unreconciled_hold"
+    },
+    {
+      "run": "marin-schema-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 42.710053,
+      "padded_rate_estimate_usd": 0.029757,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "marin-schema-02",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 45.592393,
+      "padded_rate_estimate_usd": 0.029891,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "skbio-flow-01",
+      "provider": "daytona",
+      "cpus": 2,
+      "memory_gib": 4,
+      "disk_gib": 10,
+      "historical_hold_usd": 5,
+      "basis": "published rate over recorded lifetime plus 10 minutes overhead, rounded up to whole USD",
+      "lifetime_seconds": 180.701608,
+      "padded_rate_estimate_usd": 0.036146,
+      "accounted_usd": 1,
+      "status": "estimated_after_termination"
+    },
+    {
+      "run": "biopython-flow-01",
+      "provider": "daytona",
+      "historical_hold_usd": 5,
+      "accounted_usd": 5,
+      "basis": "reserved for next bounded SWE-flow dispatch",
+      "status": "reserved_hold"
     }
   ],
-  "remaining_allowance_usd": 241,
+  "remaining_allowance_usd": 237,
   "authorization_note": "User increased campaign ceiling to $300 on 2026-10-16. Other operational limits unchanged. Credits and actual billed charges remain unverified.",
   "credit_balance_verified": false
 }
