@@ -52,7 +52,11 @@ the oracle from a clean directory for the supplied reference time limit. It retu
 runtime/schema failures so you can repair your programs. Successful execution
 alone does not validate numerical equivalence: a separate comparison stage checks
 the oracle outputs against the projected reference and tests alternatives/errors.
-Do not spend this stage constructing a grader or a broad mutation suite.
+Do not spend this stage constructing a grader, a separate clean-room implementation,
+or a broad mutation suite. Prefer the simplest faithful oracle, normally using the
+reference packages already installed. A fresh worker will independently implement
+the public question during comparison validation; do not duplicate that stage here.
+Still report an actual conflict between the public definition and the reference.
 
 Use `disposition: ready` or `blocked`; explain blockers in rationale. Tools are
 shell, submit_artifact and revise_artifact. Do not claim tests you did not run.

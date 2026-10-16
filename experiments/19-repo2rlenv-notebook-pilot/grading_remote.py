@@ -76,7 +76,12 @@ def run_as(uid, argv, cwd, seconds):
     previous_handler = signal.signal(signal.SIGTERM, interrupted)
     try:
         stdout, stderr = process.communicate(timeout=seconds)
-        return {"exit_code": process.returncode, "stdout": stdout, "stderr": stderr}
+        return {
+            "exit_code": process.returncode,
+            "stdout": stdout,
+            "stderr": stderr,
+            "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        }
     except subprocess.TimeoutExpired:
         return {
             "exit_code": None,

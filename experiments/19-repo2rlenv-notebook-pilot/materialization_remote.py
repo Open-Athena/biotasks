@@ -85,6 +85,9 @@ def main():
         (task / "oracle.py").write_text(candidate["oracle_code"])
         (task / "oracle.py").chmod(0o444)
         owned(task / "outputs", ORACLE, 0o700)
+        # A private writable home supports ordinary library caches without
+        # polluting the declared output inventory or making inputs mutable.
+        owned(task / "home", ORACLE, 0o700)
         reference = Path("/work/reference")
         reference.chmod(0o700)
         for item in sources["files"]:
@@ -118,7 +121,7 @@ def main():
                     "--output-dir",
                     "/task/outputs",
                 ],
-                task,
+                task / "home",
                 candidate["seconds"],
             )
         finally:
