@@ -37,3 +37,11 @@ The two failing bedtools patches are not a base-selection error. Fetching gh pr 
 Prepared remote_worker_probe.py and remote-execution-proposal.md. The backend probe is import/argument checked only, with no provision call made. User approval is pending for the proposed $25 / eight aggregate remote-hour CPU allowance; GLM call/token limits are proposed and generation guards remain to implement. No paid fallback is permitted.
 
 Ruff 0.16.9 formatted the experiment scripts after execution; it also flagged a loop-variable capture in the synchronous progress callback. Bound that callback explicitly for future runs. The original executed script revisions remain preserved by their pre-run commits.
+
+## 2026-10-16 — byte-preserving intervention and Marin contract inspection
+
+Previous goal turn made progress (native generation and diagnostics), not a verified remote wait. Remote CPU approval remains unanswered; no paid action was taken.
+
+Checkpoint 19f0eb8 records a separate GitHub-reader patch and frozen-input replay. On the same two PR inputs, the original reader/emitter loses CRLF and both oracle patches fail; the intervention preserves exact original diff bytes and both apply. Public instructions remain byte-identical. JSON output and UTF-8 subprocess-error behavior also pass. Both replays completed in under one second without network, models, containers, or biological code execution. The complete fixture/replay archive and hashes are in evidence/newline-intervention. This is a narrow reader/emitter regression result, not a full pipeline rerun or independent task acceptance.
+
+Inspected the pinned Marin TaskSpec and repository conversion/export contracts. The generic-looking Harbor exporter is the reverse direction; existing TaskTrove SWE converters require a different test-ID contract. Recorded the required native workspace/reward/private-resource mapping in marin-contract-assessment.md. /workspace versus /testbed and Git-state capture need explicit treatment before any runtime parity claim. No converter or Atlas release has been executed.
