@@ -942,3 +942,8 @@ Added a separate frozen-source SWE-gen entrypoint and controller. Local mocked l
 ### 2026-10-17 20:53 UTC — SCALER provider dispatch packages
 
 Prepared and hash-checked complete input packages for all three accepted SCALER tasks (39 transferred files total), plus three sequential no-model dispatch launchers. Each launcher requires the existing capacity claims to be released and its own budget reservation before submission. Native expected rewards remain -1/+1. No job was submitted and no model call was made; solver attempts remain pending provider controls and cleanup verification.
+
+
+### 2026-10-17 20:54 UTC — Fixture-adapted R2E-Gym exported one task
+
+The fixture-root adaptation completed at 20:52:09 UTC and exported one PR2633 task. Healthy tests passed 60/60; the defective variant passed 59/60. Native nop/oracle rewards were 0/1. The one free GLM authoring response used 7,459 output tokens (6,508 reasoning). Independent acceptance and blind solving remain pending. The supported archive (141,739,641 bytes) and nested archive were hash-verified; the separate remote evidence capture reported RemoteCommandError, so it is not claimed complete. Worker absence was independently confirmed with HTTP 404 at 20:54:15 UTC and the two-slot claim released. Original native missing-fixture failure remains a separate result.
