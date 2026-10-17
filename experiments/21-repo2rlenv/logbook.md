@@ -882,3 +882,7 @@ Exercised the pinned native dispatcher with explicitly synthetic shell/make and 
 ### 2026-10-17 — R2E-Gym history result
 
 Controller succeeded but exported zero tasks. Native scan examined 1,197 history records, filtered 1,196 by source and attempted one PR2633 materialization. Healthy reference had four failures from absent `atlas_feature_table.csv` in staged test data; defective execution additionally failed the underflow regression. Preserve native rejection rather than count successful controller exit as a valid task. Outer 77,589,682-byte archive and nested archive hashes verified; independent Daytona lookup returned 404 before releasing two slots. TMax remains active; public archive and any explicitly adapted replay remain pending.
+
+### 2026-10-17 — SWE-Next native calibration preparation
+
+Prepared first SWE-Next execution from the frozen PR2633 cache and native profile. Shared history reference staging may reproduce the R2E-Gym missing-fixture failure; keep this native baseline explicit. One selected PR cannot produce three independent problems. Native options/context checks pass; reserve $10, total $358 conservative holds, with two slots available after independently confirmed R2E-Gym cleanup. No dispatch yet.
