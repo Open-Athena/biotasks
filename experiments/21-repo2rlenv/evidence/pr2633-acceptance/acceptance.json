@@ -1,0 +1,75 @@
+{
+  "stage": "independent_acceptance",
+  "status": "accepted_for_bounded_pilot",
+  "observed_at_utc": "2026-10-17T17:26:24.586361+00:00",
+  "accepted_tasks": 1,
+  "task_id": "repo2rlenv-pr-runtime/818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
+  "route": "pr_runtime/native",
+  "repository": "scikit-bio",
+  "profile": "portable_offline",
+  "native_original_bundle_accepted": false,
+  "profile_interventions": [
+    "Inline recorded baseline Dockerfile instead of ephemeral parent tag",
+    "Restore baseline compiled extensions before learner start",
+    "Enforce no-network learner/verifier profile"
+  ],
+  "scope": "Numerical software repair of the reported ANCOM-BC2 responsibility-underflow regression, with native product reward and retained regression suite. Not evidence of general scientific equivalence to R.",
+  "competencies": [
+    "Python debugging",
+    "Numerical stability and masked division",
+    "Scientific-library regression preservation"
+  ],
+  "biological_reasoning": "limited; issue supplies reproducer, expected values and a proposed fix",
+  "inputs": "Upstream numerical regression fixture; not established observed biological measurements. Sampling provenance is limited to the upstream issue report.",
+  "reward": {
+    "kind": "graded_correctness",
+    "range": [
+      0,
+      1
+    ],
+    "formula": "F2P pass fraction multiplied by P2P pass fraction, rounded to six decimals",
+    "f2p": 1,
+    "p2p": 59,
+    "strict_resolution": "all F2P and P2P passing; recorded separately"
+  },
+  "gates": {
+    "instruction_verifier_agreement": "The private regression uses the exact four-by-three reproducer, grouping contrast, expected LFCs and p-values stated in the issue; regression protection covers existing library behavior. E-step-only success does not contradict the instruction, which does not require the extra M-step edit.",
+    "tolerances": "Upstream numpy.testing.assert_allclose uses explicit atol=1e-6 and its native default relative tolerance. This preserves the native regression contract; the R implementation was not independently rerun.",
+    "full_partial_incorrect": "Reference 1, alternative 1, baseline 0, wrong uniform responsibilities 0, grouping regression 0.983051, with all 60 outcomes parsed in native and converted runs.",
+    "repeatability": "The original five native rewards repeated on fresh workers; the six portable-profile rewards match native and converted paths. Limited deterministic replay, not exhaustive platform stability.",
+    "isolation": "Private oracle/verifier paths absent before all 12 learner executions; converted grading uses separate sandbox and leaves private paths absent afterward. Dockerfile fetches the pinned baseline, removes remotes/other refs and expires reflogs; private solution and test-patch assets are staged separately.",
+    "environment": "Portable context builds; initial imports pass in all 12 executions. Exact tested dependency versions recorded in controls; base-image tag and package-index resolution remain rebuild dependencies.",
+    "conversion": "Pinned Marin 45a044387ccd95ab698b4a592056aadaff961540 schema and native/converted six-case reward/count parity verified."
+  },
+  "limitations": [
+    "Acceptance is for the explicit adapted pilot profile, not the original ephemeral-tag task.",
+    "One F2P fixture and 59 P2P tests do not establish exhaustive numerical generalization.",
+    "Prompt contains expected values and a suggested fix, limiting difficulty.",
+    "Deferred report-integrity diagnostic remains unexecuted; these results do not claim adversarial grader hardening.",
+    "Public image publication, Atlas admission and training readiness remain separate."
+  ],
+  "evidence": {
+    "controls": "../marin-pr-runtime-02/controls.json",
+    "repeatability": "../skbio-pr-controls-03",
+    "conversion": "../marin-pr2633-preparation",
+    "runtime_archive_receipt": "../../hf-marin-pr-runtime-02-upload-receipt.json"
+  },
+  "asset_sha256": {
+    "environment/Dockerfile": "fbd6c29dd6a14966b62a4c858d2cb8644e3766b87cafff08a2fc4cc903b58feb",
+    "instruction.md": "26b54857800b93eafc306643415a989942c2453b668c848644cb269b003c8ba8",
+    "solution/patch.diff": "b227ad05ee2ed0a4df9585bf1eade2331a0a435d6f34555eb58ff84a80b67dda",
+    "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+    "task.toml": "58439b13c6df426333da72a07fc79a56fd312708efdd96d5247e4e8dfc02b610",
+    "tests/f2p.json": "3618259946eb24dedfe443b0c897c4bb266b488207a06caa65d5440dceacfb1d",
+    "tests/p2p.json": "31462324486798b8c24ef800eb4c502d57c4d3cbc583e2df54112366abe10e68",
+    "tests/test.sh": "9920eb730fda3e261bee777718ea5df820a575719d9110ac1d1241a36daa0f98",
+    "tests/verifier.py": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+  },
+  "blind_solver": {
+    "attempts": 0,
+    "approved_attempts": 1,
+    "timeout_sec": 900,
+    "max_turns": 12,
+    "max_output_tokens": 2048
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "stage": "prepared_not_dispatched",
+  "task_id": "repo2rlenv-pr-runtime/818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
+  "acceptance_sha256": "856f4fdcbc3225ee0b64f8446bceed48fff3f9963a4f483c72e69ae759edc1c4",
+  "task_directory": "evidence/marin-pr2633-preparation/harbor-task",
+  "backend": "Harbor 0.22.0 Daytona direct sandbox",
+  "native_wrapper_limitation": "Repo2RLEnv run_trial rejects custom model.endpoint; direct Harbor host-side Terminus2 is a separately recorded transport adaptation.",
+  "preflight_required": [
+    "nop reward 0 and oracle reward 1 on the exact provider/profile",
+    "private assets unavailable during the learner phase",
+    "confirmed provider network blocking and cleanup",
+    "mocked request forwarding with no generation settings applied"
+  ],
+  "solver": {
+    "agent": "terminus-2",
+    "model": "openai/glm-5.3",
+    "attempts": 1,
+    "attempt_deadline_sec": 900,
+    "max_turns": 12,
+    "max_output_tokens_per_request": 2048,
+    "reasoning_effort": "unset; native solver behavior",
+    "paid_fallback": false,
+    "job_retries": 0
+  },
+  "resource_limits": {
+    "controller_cpu": 2,
+    "controller_memory_gib": 4,
+    "worker_cpu": 2,
+    "worker_memory_gib": 4,
+    "worker_disk_gib": 10,
+    "simultaneous_workers": 1
+  },
+  "capture": "Host-side transcript, task artifacts, native reward details and provider cleanup receipts; preserve partial results on timeout. Private service routing excluded from public evidence.",
+  "dispatch_constraint": "Wait until a running controller/worker pair completes and deletion is confirmed; SETA and R2E currently occupy the four-instance allowance.",
+  "live_provider_control_status": "not_executed",
+  "solver_status": "not_executed"
+}
