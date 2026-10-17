@@ -896,3 +896,7 @@ Traced missing reference data to native `stage_tests`: the profile named only on
 ### 2026-10-17 — Public R2E-Gym native failure evidence
 
 Uploaded history selection, original healthy/defective results and stdout, failure traceback, profile, controller code and cleanup evidence to HF snapshot `ab2d2fb97a903c4ca83483355b97ca1c5b2be82ed7326b808a85c187c70d700d`. All 21 objects verified by fresh anonymous downloads. Source notices retained; private input/accounting/provider configuration and duplicate source checkouts excluded. SWE-Next observed RUNNING at 20:26 UTC.
+
+### 2026-10-17 — observed_features acceptance review
+
+Recovered the exact 2,036-file native task and verified its native bundle identity against the original control archive. All non-submission diagnostic assets match the original bundle, and all three independent controls preserve the expected 1/0/0 rewards. The 34-test contract, learner stub and separate verifier declaration agree. The substantive instruction requests a direct alias to existing `sobs`, so characterize competency as small library API reconstruction, not independent biological inference. Raw newline formatting remains malformed but readable. Final acceptance still requires fresh runtime boundary/submission checks; no new accepted task or blind score claimed.
