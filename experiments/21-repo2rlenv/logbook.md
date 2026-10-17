@@ -908,3 +908,7 @@ The scikit-bio author job began at 15:36 UTC; supported attempt-output preservat
 ### 2026-10-17 — Durable author-child capture checks
 
 Added a capture helper that writes child stdout/stderr and terminal status to supported attempt storage, preserves partial output after errors/timeouts and refuses to overwrite an existing attempt. Synthetic success, exit-7 failure and timeout cases each preserved and verified partial evidence. Prepared a future scikit-bio wrapper using this helper and recorded wrapper/author/helper hashes. No model call, provider allocation or duplicate author run occurred; historical outcome remains unknown.
+
+### 2026-10-17 — Full LCC conversion/runtime archive
+
+Published HF snapshot `732d2ff628e16bf89d6ca771cd6f79484666bce458eda45862aaf59977a30dd1`, preserving the full adapted LCC TaskSpec, separate build contexts, six control submissions and native/Marin results. All 21 objects and 80 archive members were verified via anonymous downloads, including streamed decompression/hash verification of the 339,361,177-byte TaskSpec. Source notices retained. Historical preparation tags are preserved with acceptance/runtime evidence; this does not claim training readiness or Atlas admission.
