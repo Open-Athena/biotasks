@@ -19,9 +19,7 @@
     "pytest_args": [],
     "test_selectors": [],
     "public_exclude": [],
-    "materialize_document_links": [
-      "LICENSE"
-    ],
+    "materialize_document_links": [],
     "base_image": "python:3.12.3-slim",
     "use_system_site_packages": false,
     "dependencies": [
@@ -29,7 +27,7 @@
       "coverage==7.16.0"
     ],
     "hub_assets": [],
-    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && ln -s r2e_tests/Tests/PDB /workspace/PDB",
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'from pathlib import Path; import hashlib; p=Path('\"'\"'LICENSE'\"'\"'); t=Path('\"'\"'LICENSE.rst'\"'\"'); b=t.read_bytes(); assert (p.is_symlink() and p.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (p.is_file() and p.read_bytes()==b); assert hashlib.sha1(b'\"'\"'blob '\"'\"'+str(len(b)).encode()+b'\"'\"'\\0'\"'\"'+b).hexdigest()=='\"'\"'eb5e305afbc43dc771e9e9935479af4aa9515674'\"'\"'; p.unlink() if p.is_symlink() else None; p.write_bytes(b); f=Path('\"'\"'Tests/PDB/1A8O.pdb'\"'\"'); f=f if f.exists() else Path('\"'\"'PDB/1A8O.pdb'\"'\"'); data=f.read_bytes(); assert hashlib.sha256(data).hexdigest()=='\"'\"'2928bb4a4680a104be0d7555cd7e7f36bd6731531f476cb7eb7209ccfa7ebadb'\"'\"'; dest=Path('\"'\"'PDB'\"'\"'); dest.mkdir(exist_ok=True); (dest/'\"'\"'1A8O.pdb'\"'\"').write_bytes(data)'",
     "task_install_command": null,
     "freeze_git_version": false,
     "test_timeout_sec": 90,
@@ -53,8 +51,9 @@
     "Full original selected test module retained",
     "Unchanged PDB fixture included in declared test roots",
     "SWE-Next fixture retained as explicit private test asset after native selected-test narrowing",
-    "R2E-Gym fixture lookup targets its native r2e_tests staging directory; test_selectors unset so native staged selected modules execute",
-    "Materialize repository LICENSE symlink to unchanged document bytes using native materialize_document_links; pinned tree mode120000 verified"
+    "R2E-Gym stages selected test modules under r2e_tests; test_selectors remain unset; fixture lookup uses the unchanged regular PDB copy created during bootstrap",
+    "Explicit build-time document/fixture packaging adaptation: materialize LICENSE.rst bytes at LICENSE and copy the unchanged selected PDB fixture to its original relative lookup location; assert pinned hashes; do not modify source or tests",
+    "Explicit build-time document/fixture packaging adaptation: materialize LICENSE.rst bytes at LICENSE and copy the unchanged selected PDB fixture to its original relative lookup location; assert pinned hashes; do not modify source or tests"
   ],
   "limitations": [
     "Input preparation only; no native build, contrast, authoring, export or acceptance",
