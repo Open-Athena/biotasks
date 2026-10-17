@@ -142,7 +142,7 @@ def main():
             entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
         elif args.stage in ('history-independent', 'qcp-independent'):
             worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
-            scripts = ('prepare_skbio_pr_controls.py', 'prepare_qcp_controls.py', 'run_qcp_independent.py') if args.stage == 'qcp-independent' else ('prepare_skbio_pr_controls.py', 'run_history_independent.py')
+            scripts = ('prepare_skbio_pr_controls.py', 'prepare_qcp_controls.py', 'run_qcp_independent.py', 'pack_qcp_evidence.py') if args.stage == 'qcp-independent' else ('prepare_skbio_pr_controls.py', 'run_history_independent.py')
             for script in scripts:
                 worker.upload(root/script, '/work/native/'+script)
             unpack = 'mkdir -p inputs; tar -xzf controls.tar.gz -C inputs; '
@@ -293,7 +293,11 @@ def main():
                     [
                         "sh",
                         "-c",
-                        "tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz",
+                        (
+                            "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/pack_qcp_evidence.py && stat -c %s /work/native-evidence.tar.gz"
+                            if args.stage == "qcp-independent"
+                            else "tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz"
+                        ),
                     ],
                     timeout=120,
                 )

@@ -1132,3 +1132,7 @@ Submitted `/exedev/biotasks21-qcp-independent-20261017-01` from35688c2 after pri
 ### 2026-10-17 22:33 UTC — SWE-gen correctness archive public
 
 Public snapshot06d178064645af18de08700c98d909f3eb69d1260dc7f1f58a38a938720d4d10 contains19 objects and122 members, all anonymously downloaded and verified. Includes full case traces, per-case solutions, unchanged-asset manifest and exact frozen execution-code bytes; duplicate source trees link to the original native task snapshot. Updated route matrix and interim comparison to reflect scikit-bio controls and the Biopython QCP export without promoting either to final acceptance.
+
+### 2026-10-17 QCP control evidence capture failure
+
+QCP independent worker exited 0, but the controller rejected its full archive above the 200 MiB bounded download allowance and deleted the worker in cleanup. The supported Iris archive preserves controller/process metadata only; all detailed case outcomes remain unknown and acceptance is pending. Independent lookup confirmed worker deletion. No model calls occurred. The two-slot reservation is released; its budget hold remains. Added compact QCP packaging that retains all reports, solution variants and asset manifest while omitting only hash-verified duplicates of the original public source bundle. Synthetic checks cover retained executable modes, reports and changed-asset rejection. This correction is locally checked, not remotely executed; no rerun has been launched.
