@@ -1176,3 +1176,7 @@ First execution finished successfully at the controller level with one considere
 ### 2026-10-17 Corrected QCP control run reservation
 
 Reserved $10 for qcp-independent-02, repeating the unchanged six no-model controls with the frozen, real-bundle-checked compact evidence packer. Original run01 remains an evidence-capture failure with unknown individual rewards. No generator candidate allowance is reset and no model call is needed. SWE-Next controller is terminal and worker independently absent, freeing two slots alongside the two reserved by Biopython R2E. Total estimates/holds are $488/$1,000. Corrected run not yet dispatched at this checkpoint.
+
+### 2026-10-17 Corrected QCP validation submitted
+
+Submitted the frozen six-control no-model run at checkpoint bdc9cb65cdb569a2a62526e7ab3af338f05e7c6b. Two slots are reserved alongside the existing Biopython R2E run, authoritatively RUNNING at 23:12 UTC. The original QCP capture failure remains unchanged evidence; new individual rewards are pending. Added the completed Biopython SWE-Next source-filter outcome to the partial funnel: one considered candidate, zero eligible candidates, zero model calls and nine candidates remaining. This remains an incomplete campaign subset.

@@ -39,6 +39,16 @@ def build():
                      'accepted':d['independently_accepted_tasks'],
                      'blind_attempts':d.get('blind_attempts',d.get('blind_solver_attempts')),
                      'preserved_model_responses':count,**tokens(usage),'source':path})
+    path='evidence/swe-next-biopython-01/summary.json';d=read(path)
+    rows.append({'run':'swe-next-biopython-01','recipe':'swe_next','repository':'biopython',
+                 'lineage_group':'biopython-pr5317','candidates':d['candidates_considered'],
+                 'eligible_candidates':d['eligible_candidates'],'exports':d['exports'],
+                 'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
+                 'preserved_model_responses':d['authoring_calls'],
+                 'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
+                 'candidate_allowance_consumed':d['candidate_allowance_consumed'],
+                 'remaining_first_pass_candidate_allowance':d['remaining_first_pass_candidate_allowance'],
+                 'outcome':d['stage'],'source':path})
     path='evidence/r2e-skbio-author-01/summary.json';d=read(path)
     rows.append({'run':'r2e-skbio-author-01','recipe':'r2e','repository':'scikit-bio',
                  'candidates':d['candidate_result']['candidates'],'exports':d['candidate_result']['emitted'],
