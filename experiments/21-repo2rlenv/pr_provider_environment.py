@@ -39,3 +39,24 @@ class RecordedDaytonaEnvironment(DaytonaEnvironment):
                 'network_block_all': sandbox.network_block_all,
                 'private_paths_and_import_returncode': result.return_code})
         assert result.return_code == 0, 'Learner readiness or private path check failed'
+
+        if os.environ.get('BIOTASKS21_RUNTIME_MANIFEST'):
+            from harbor.agents.terminus_2.tmux_session import TmuxSession
+            installed = await self.exec(command='tmux -V', timeout_sec=15)
+            assert installed.return_code == 0, 'tmux must be preinstalled for offline solver'
+            session = TmuxSession(
+                session_name='biotasks21-setup-check', environment=self,
+                logging_path=Path('/tmp/biotasks21-terminal-check.log'),
+                local_asciinema_recording_path=None, remote_asciinema_recording_path=None,
+                user=self.default_user,
+            )
+            try:
+                await session.start()
+                live = await self.exec(command='tmux has-session -t biotasks21-setup-check', timeout_sec=15)
+                assert live.return_code == 0
+                record({'stage': 'native_terminal_setup', 'sandbox_id': sandbox.id,
+                        'tmux_version': installed.stdout.strip(), 'session_started': True,
+                        'model_calls': 0})
+            finally:
+                stopped = await self.exec(command='tmux kill-session -t biotasks21-setup-check && rm -f /tmp/biotasks21-terminal-check.log', timeout_sec=15)
+                assert stopped.return_code == 0

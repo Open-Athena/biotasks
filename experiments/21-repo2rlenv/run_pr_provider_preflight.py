@@ -18,8 +18,25 @@ from preserve_author_output import preserve
 def check_task(task, acceptance):
     decision = json.loads(acceptance.read_text())
     assert decision['status'] == 'accepted_for_bounded_pilot'
+    runtime_path = os.environ.get('BIOTASKS21_RUNTIME_MANIFEST')
+    runtime = json.loads(Path(runtime_path).read_text()) if runtime_path else None
+    if runtime:
+        assert runtime['changed_assets'] == ['environment/Dockerfile']
+        assert runtime['task_id'] == decision['task_id']
+        assert set(runtime['asset_sha256']) == set(decision['asset_sha256'])
+        expected_append = ('\n# Solver runtime tooling: installed at build time; learner remains offline.\n'
+                           'RUN apt-get update && apt-get install -y --no-install-recommends tmux && rm -rf /var/lib/apt/lists/* \\\n'
+                           '    && tmux -V > /opt/terminus-tool-version.txt\n')
+        assert runtime['dockerfile_append'] == expected_append
     for name, digest in decision['asset_sha256'].items():
-        assert hashlib.sha256((task / name).read_bytes()).hexdigest() == digest, name
+        data = (task / name).read_bytes()
+        if runtime:
+            assert hashlib.sha256(data).hexdigest() == runtime['asset_sha256'][name], name
+            if name == 'environment/Dockerfile':
+                suffix = expected_append.encode()
+                assert data.endswith(suffix)
+                data = data[:-len(suffix)]
+        assert hashlib.sha256(data).hexdigest() == digest, name
     assert not (task / 'environment/docker-compose.yaml').exists()
 
 

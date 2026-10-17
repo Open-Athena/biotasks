@@ -1,0 +1,49 @@
+{
+  "stage": "reserved_solver_runtime_controls",
+  "task_acceptance": "evidence/pr2633-acceptance/acceptance.json",
+  "case_agents": [
+    "nop",
+    "oracle"
+  ],
+  "expected_rewards": [
+    0,
+    1
+  ],
+  "model_calls": 0,
+  "deadline_seconds": 1800,
+  "deadline_includes": "wrapper setup, native build and trials; cleanup may finish afterward",
+  "worker": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10,
+    "max_concurrent": 1
+  },
+  "controller": {
+    "cpus": 2,
+    "memory_gib": 4
+  },
+  "reservation_usd": 5,
+  "checks": [
+    "exact accepted-task asset hashes and restored file modes",
+    "provider network_block_all flag true",
+    "private paths absent before agent setup",
+    "initial scientific-library imports",
+    "native baseline and reference rewards",
+    "independent absence lookup after every trial",
+    "tmux preinstalled and native TmuxSession startup succeeds without model calls"
+  ],
+  "sources": {
+    "pr_provider_environment.py": "42ef59acab2cb9a7f0bb95982ec5dc7e5bf53f7f5cf288b8ea1c25e69598873a",
+    "run_pr_provider_preflight.py": "a02fd94ccfb98b5fb6776471f3c46c3b319bc35add11ec1fe5cff7d6481ab481",
+    "check_pr_provider_setup.py": "873ed0cf94e432b0869bfd322e156bb514f06e6806afcb568798ec0892322c3d",
+    "package_provider_task.py": "6ef38b7abfddbf96abb9ea73df921ffac51c5ef9b2e9462da1e0d146698683cd"
+  },
+  "private_launcher_hashes": {
+    "pr-solver-runtime-remote-01.py": "11c51725da3a83dda7fcfb7d885aa6013cfef5bd04b22b9ad46ebff762beca25",
+    "submit-pr-solver-runtime-01.py": "28800cb0b583edd08b1af4dc2e18f917e09b4da5850d5b3b97337bb610484b90"
+  },
+  "offline_checks": "passed; no live calls",
+  "live_status": "not_dispatched",
+  "intervention": "Exact appended build-time tmux installation; original assets otherwise verified against accepted parent; native terminal startup required before agent setup.",
+  "runtime_manifest": "evidence/pr2633-solver-runtime-preparation/manifest.json"
+}
