@@ -19,6 +19,8 @@ The two completed blind attempts both earned reward 1. They are selected, indepe
 
 ## Generation and execution limitations
 
+- Endless biological adaptation exhausted ten candidates with 34 model responses and zero exports: two design parse failures and eight exhausted initial-test repair sequences. No task build or solver trial started. See [Endless evidence](evidence/endless-biological-02).
+
 - TMax's selected biological cohort produced zero exports from three candidates and twelve model calls. All nine initial-test responses failed native test-shape validation. The preserved responses explain the validator outcome but do not establish whether the underlying formatting problem originated in the model or an earlier transport component. See [TMax evidence](evidence/tmax-biological-02).
 - Scikit-bio R2E exhausted its ten-candidate allowance with thirty authoring responses and zero exports. Preserve syntax and empty-comment failures rather than manually repairing the generated program and reporting it as native success. See [R2E audit](evidence/r2e-skbio-author-01).
 - SETA Evol materialization timed out on its first builder request. No response was preserved; usage is unknown, not zero. Its second schema-valid saved design was unattempted. See [result](evidence/parent-evolution-build-01/result-summary.json) and [public preservation receipt](hf-parent-evolution-build-01-upload-receipt.json).
