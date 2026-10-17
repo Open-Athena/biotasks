@@ -926,3 +926,7 @@ One PR2633 candidate emitted one task. Healthy reference passed all 60 tests; de
 Prepared a distinct fixture-root run after the completed native baseline. Only test-data staging configuration changes; native selection, test identities, source bytes, candidate/repair limits and approved free-GLM generation settings remain. Reserved $10, bringing estimates/holds to $368 of $1,000. Two slots fit alongside TMax after SWE-Next terminal status and independently confirmed cleanup. Wrapper/launcher/profile hashes checkpointed; dispatch remains separate from results.
 
 Submitted adapted fixture run `/exedev/biotasks21-r2e-gym-skbio-fixtures-20261017-02` at 20:42 UTC from `b37e2789fe3e5fdbdbb2b597d26cf22dc3059b55`. Its two slots plus TMax two slots exhaust campaign concurrency. No adapted outcome yet.
+
+### 2026-10-17 — SWE-Next archive manifest correction
+
+Initial upload completed but anonymous member verification rejected mode metadata: the manifest used filesystem mode `0100644` while serialized tar entries store permission mode `0644`. All 1,945 member hashes and byte sizes match. Corrected modes from the serialized archive and added explicit supersession metadata; original snapshot `7962024dc0b412535c4121b55934f17bffa01344f8999c78898bd8c543f22368` remains retained, verification-failed. Re-publication uses a new manifest-hash prefix, without rewriting task/evidence bytes or existing objects.
