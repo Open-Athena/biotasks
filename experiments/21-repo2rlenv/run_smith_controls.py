@@ -51,6 +51,7 @@ def main():
             "marin-runtime",
             "marin-pr-runtime",
             "marin-lcc-runtime",
+            "marin-scaler-runtime",
         ),
         default="smith-controls",
     )
@@ -69,7 +70,7 @@ def main():
         parser.error("Independent controls require the original control archive")
     if args.stage in ("skbio-pr-controls", "skbio-pr-controls-offline", "skbio-pr-controls-partial") and args.generation_archive is None:
         parser.error("Scikit-bio PR controls require the original native task archive")
-    if args.stage == "marin-lcc-runtime" and args.generation_archive is None:
+    if args.stage in ("marin-lcc-runtime", "marin-scaler-runtime") and args.generation_archive is None:
         parser.error("LCC parity requires its source-hashed input archive")
     if args.stage == "code-instruct-validation":
         authored = json.loads(args.issues.read_text())
@@ -180,6 +181,12 @@ def main():
                 worker.upload(root / source, "/work/native/" + target)
             unpack = ""
             entry = "/work/native/replay_biopython_cve.py "
+        elif args.stage == "marin-scaler-runtime":
+            for name in ("validate_marin_preparation.py", "check_marin_runtime.py", "check_marin_scaler_runtime.py"):
+                worker.upload(root / name, "/work/native/" + name)
+            worker.upload(args.generation_archive, "/work/native/scaler-inputs.tar.gz")
+            unpack = "tar -xzf scaler-inputs.tar.gz; "
+            entry = "/work/native/validate_marin_preparation.py --runtime --runtime-script check_marin_scaler_runtime.py "
         elif args.stage == "marin-lcc-runtime":
             for name in ("validate_marin_preparation.py", "check_marin_runtime.py", "check_marin_lcc_runtime.py"):
                 worker.upload(root / name, "/work/native/" + name)

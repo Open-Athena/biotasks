@@ -826,3 +826,7 @@ All three complete task exports and the custom synthetic family seeds are preser
 ### 2026-10-17 — LCC direct provider passed; blind attempt prepared
 
 Iris probe completed successfully at 19:52:20 UTC. Exact-task nop/reference rewards 0/1, two native terminal startups, four separately created learner/verifier sandboxes all independently absent at 19:53:58 UTC. Results preserved in `evidence/lcc-provider-01/`; controller and native trial success verified separately. The accepted LCC task is ready for one blind free-GLM attempt with the unchanged solver limits (900 seconds, 12 turns, 2,048 output tokens, effort unset). Reserve $10, bringing estimates/holds to $313 of $1,000; capacity claim from provider probe released.
+
+### 2026-10-17 — SCALER native/Marin runtime preparation
+
+Prepared full TaskSpecs for all three synthetic-family instances, preserving separate learner/verifier contexts and original grader bytes. Twelve fixed controls cover equivalent decimal/scientific answers and incorrect numeric/text submissions; 24 native/Marin route executions are planned. Asset byte roundtrips and driver syntax checked; pinned schema validation and execution remain pending. The runtime driver records score-range metadata separately from reward equality so a default 0/1 annotation cannot silently stand in for native -1/+1. No model calls or additional remote worker launched. LCC blind solver was observed RUNNING at 19:55:54 UTC.
