@@ -738,3 +738,7 @@ Extended the explicit generation adapter to native history-pipeline and SWE-gen 
 ## 2026-10-17 — History pipeline entrypoint prepared
 
 Prepared the native SWE-Next/R2E-Gym selection/contrast/authoring/export entrypoint for a supplied worker. SWE-Next consumes source-hashed PR metadata through its native cached pulls.json path, with original title/body context retained and no remote GitHub credential. Offline checks verify both native worker configurations, repository/profile identity, candidate bounds and rejection of altered PR context. GLM remains serial with the approved generation adapter. Full source contexts will be archived without pruning under a bounded streaming remote capture; allocation/cleanup controller and dispatch remain pending. R2E and DataArc were still RUNNING at 18:56 UTC.
+
+## 2026-10-17 — Streaming recovery ready for active jobs
+
+R2E and DataArc were confirmed RUNNING on their original attempts at 19:02 UTC. Prepared DataArc recovery and replaced the R2E whole-archive memory read with bounded streaming recovery using 1 MiB chunks and a 1 GiB archive allowance. Exact declared size and local SHA-256 are recorded; truncated, oversized and conflicting downloads cannot replace a completed archive. Interrupted partial evidence remains for inspection. Six offline recovery cases passed under the shared-node guard. No new allocation, generation call, recovered remote result or acceptance is claimed.
