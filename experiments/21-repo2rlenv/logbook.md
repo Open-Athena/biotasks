@@ -854,3 +854,7 @@ The real native TMax preparation accepts the copied flat-file seed layout and re
 ### 2026-10-17 — native SCALER acceptance
 
 All three unchanged native SCALER exports accepted for the bounded pilot after rechecking shortest-path answers, exact runtime asset hashes, original no-op/oracle trials and four independent native/Marin controls per task. They share one synthetic algorithm family. Marin raw-value parity passes but result-range metadata remains incompatible, a separate conversion finding. The provider/solver gates now accept the explicit native -1 baseline without changing rewards; prior PR provider and blind-solver regression checks passed, plus a fixture proving the wrong baseline contract is rejected. No new model calls or blind attempts. TMax-02 observed RUNNING at 20:08:47 UTC.
+
+### 2026-10-17 — first R2E-Gym dispatch prepared
+
+Rechecked frozen history configuration, native entity/cache gates and controller cleanup fixtures. Preparing first R2E-Gym history scan on pinned scikit-bio composition source/tests, target3/max10/history2000; native bug-edit/test-match requirements unchanged. Two slots reserved alongside TMax two; no other claims. Free GLM serial generation settings unchanged. PR2633-overlapping outputs retain shared lineage. Separate $10 hold brings accounted estimates/holds to $348 of $1,000.
