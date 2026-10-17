@@ -1136,3 +1136,7 @@ Public snapshot06d178064645af18de08700c98d909f3eb69d1260dc7f1f58a38a938720d4d10 
 ### 2026-10-17 QCP control evidence capture failure
 
 QCP independent worker exited 0, but the controller rejected its full archive above the 200 MiB bounded download allowance and deleted the worker in cleanup. The supported Iris archive preserves controller/process metadata only; all detailed case outcomes remain unknown and acceptance is pending. Independent lookup confirmed worker deletion. No model calls occurred. The two-slot reservation is released; its budget hold remains. Added compact QCP packaging that retains all reports, solution variants and asset manifest while omitting only hash-verified duplicates of the original public source bundle. Synthetic checks cover retained executable modes, reports and changed-asset rejection. This correction is locally checked, not remotely executed; no rerun has been launched.
+
+### 2026-10-17 Biopython R2E authoring reservation
+
+Reserved $10 for the first author/execute/refine stage on the existing ten-function Biopython cohort (preparation made zero model calls). Target3/max10/maxrounds3 and approved GLM settings remain unchanged. Frozen eight-file dispatch inputs are hash-checked before submission. QCP control controller is terminal and worker independently absent; Endless holds two slots, leaving two for this controller/worker pair. Total estimates and holds are $468 of $1,000, not billed charges. Submission and native results remain pending at this checkpoint.
