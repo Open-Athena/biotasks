@@ -1256,3 +1256,11 @@ Strong rejection evidence is publicly preserved in snapshot5c22518ce98df7b7f5a34
 ### 2026-10-17 Corrected GC-skew native controls completed
 
 The idempotent license-bootstrap adaptation completed native export and grading: no-op reward 0, reference reward 1. This establishes native build/contrast only; independent correctness acceptance remains pending. Recovered 42,424,531-byte outer archive SHA256 bdbb15b594be07d9e43a27b56bb8cb4d73ec9a8e86cc5c47b7728beb7338b1a6, verified nested capture, and retained 4,943 native files with modes. No model calls. Controller terminal and independent worker absence verified before releasing the two slots. Original run01 build failure remains retained.
+
+### 2026-10-17 Esty controls submitted and corrected GC-skew publicly preserved
+
+Submitted five Esty controls at checkpoint09e2ecc1232d93531317e40ca8fa94bf0e4dd2ba after terminal GC-skew run02 and independent worker404. Two slots alongside R2E authoring; zero model calls. Corrected GC-skew snapshot685ac7de8ea763133aeab45fafacf36bbd586d27885cac7c4567de4a35e65158 anonymously verified18 objects and4,938 archive members with modes. Corrected uploader receipt status copied from the failed-build template; the immutable manifest and trial rewards already identify successful native contrast. Independent GC-skew controls prepared separately, retaining original tests and grading assets.
+
+### 2026-10-17 GC-skew independent controls reserved
+
+Prepared five controls retaining all native grading assets: no-op, reference, character-loop alternative, single-zero output and zero-per-window output. Incorrect controls have observational rewards because the native test exercises only an all-A input. Synthetic checks confirm isolated function replacement, independent mixed-case/window examples and input rejection before allocation. Frozen12-file payload uses exact corrected task archive SHA256 c5e560586e771537d6b15ee0fb9cc63f7c71638d186939055898488f81a80fe2. Reserved$10; estimates/holds$548 of$1000. Launcher awaits terminal Esty controls and independently absent worker; no dispatch yet.

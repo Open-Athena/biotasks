@@ -42,6 +42,7 @@ def main():
             "history-independent",
             "qcp-independent",
             "alpha-independent",
+            "gc-skew-independent",
             "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
@@ -96,6 +97,15 @@ def main():
         with args.generation_archive.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != alpha_config['archive_sha256']:
                 parser.error('Alpha control archive changed')
+    if args.stage == 'gc-skew-independent':
+        if args.generation_archive is None or args.config is None:
+            parser.error('GC-skew controls require frozen archive and configuration')
+        gc_config = json.loads(args.config.read_text())
+        if gc_config.get('candidate_id') != '5a16004c2d7522727d44':
+            parser.error('Unknown reviewed GC-skew task')
+        with args.generation_archive.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != gc_config['archive_sha256']:
+                parser.error('GC-skew control archive changed')
     if args.stage == "code-instruct-validation":
         authored = json.loads(args.issues.read_text())
         if authored.get("stage") != "authoring_only" or not 1 <= len(authored.get("records", [])) <= 10:
@@ -151,6 +161,14 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
+        elif args.stage == 'gc-skew-independent':
+            worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
+            for script in ('prepare_skbio_pr_controls.py', 'prepare_alpha_mutation_controls.py', 'prepare_gc_skew_controls.py', 'run_gc_skew_independent.py', 'pack_qcp_evidence.py'):
+                worker.upload(root/script, '/work/native/'+script)
+            unpack = 'mkdir -p inputs; tar -xzf controls.tar.gz -C inputs; '
+            identifier = gc_config['candidate_id']
+            task_path = '/work/native/inputs/native/validation/tasks/' + identifier + '/swe-flow-' + identifier
+            entry = '/work/native/run_gc_skew_independent.py --task ' + task_path + ' '
         elif args.stage == 'alpha-independent':
             worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
             for script in ('prepare_skbio_pr_controls.py', 'prepare_alpha_mutation_controls.py', 'run_alpha_mutation_independent.py', 'pack_qcp_evidence.py'):
@@ -314,7 +332,7 @@ def main():
                         "-c",
                         (
                             "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/pack_qcp_evidence.py && stat -c %s /work/native-evidence.tar.gz"
-                            if args.stage in ("qcp-independent", "alpha-independent")
+                            if args.stage in ("qcp-independent", "alpha-independent", "gc-skew-independent")
                             else "tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz"
                         ),
                     ],
