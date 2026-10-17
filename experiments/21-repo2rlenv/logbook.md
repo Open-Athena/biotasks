@@ -937,3 +937,8 @@ Corrected SWE-Next snapshot `0d000fc90afd260a28cd11bd709d8c250c1bca69dec1f5a16d5
 ### 2026-10-17 20:51 UTC — SWE-gen controller prepared
 
 Added a separate frozen-source SWE-gen entrypoint and controller. Local mocked lifecycle checks passed: source hash rejection before allocation, exact native source-cache contents, preserved generation failure, cleanup confirmation and supported output capture. No model calls or new remote workers were launched. TMax corrected02 and fixture-adapted R2E-Gym02 were both confirmed RUNNING at 20:49–20:50 UTC; together they retain all four slots. SWE-gen execution remains pending capacity and a checkpointed dispatch.
+
+
+### 2026-10-17 20:53 UTC — SCALER provider dispatch packages
+
+Prepared and hash-checked complete input packages for all three accepted SCALER tasks (39 transferred files total), plus three sequential no-model dispatch launchers. Each launcher requires the existing capacity claims to be released and its own budget reservation before submission. Native expected rewards remain -1/+1. No job was submitted and no model call was made; solver attempts remain pending provider controls and cleanup verification.
