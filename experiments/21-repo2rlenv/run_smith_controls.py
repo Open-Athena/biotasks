@@ -38,6 +38,7 @@ def main():
             "flow-controls",
             "flow-independent",
             "lcc-independent",
+            "history-independent",
             "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
@@ -72,6 +73,15 @@ def main():
         parser.error("Scikit-bio PR controls require the original native task archive")
     if args.stage in ("marin-lcc-runtime", "marin-scaler-runtime") and args.generation_archive is None:
         parser.error("LCC parity requires its source-hashed input archive")
+    if args.stage == 'history-independent':
+        if args.generation_archive is None or args.config is None:
+            parser.error('History controls require frozen task archive and configuration')
+        history_config = json.loads(args.config.read_text())
+        if history_config['task'] not in ('swe-next-bf5a63ab005130388e02', 'r2e-gym-bf5a63ab005130388e02'):
+            parser.error('Unknown reviewed history task')
+        with args.generation_archive.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != history_config['archive_sha256']:
+                parser.error('History task archive changed')
     if args.stage == "code-instruct-validation":
         authored = json.loads(args.issues.read_text())
         if authored.get("stage") != "authoring_only" or not 1 <= len(authored.get("records", [])) <= 10:
@@ -124,6 +134,12 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
+        elif args.stage == 'history-independent':
+            worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
+            for script in ('prepare_skbio_pr_controls.py', 'run_history_independent.py'):
+                worker.upload(root/script, '/work/native/'+script)
+            unpack = 'mkdir -p inputs; tar -xzf controls.tar.gz -C inputs; '
+            entry = '/work/native/run_history_independent.py --task /work/native/inputs/native/tasks/' + history_config['task'] + ' '
         elif args.stage in ("flow-independent", "lcc-independent"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
             family = "flow" if args.stage == "flow-independent" else "lcc"

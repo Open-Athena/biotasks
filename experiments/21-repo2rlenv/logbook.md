@@ -957,3 +957,8 @@ Published the fixture-adapted R2E-Gym task at HF snapshot d7edfe75c4cc0d89a01ad3
 ### 2026-10-17 21:00 UTC — History export integrity correction
 
 Independent bundle inspection found that local archive extraction lost executable permissions on four files in each of SWE-Next and fixture-adapted R2E-Gym. Previously published snapshots faithfully matched those extracted copies but therefore did not preserve native bundle identity. Restored modes from the hash-verified original archives after checking every task file byte hash. Both native bundle identities now pass inspection. Append-only corrected snapshots explicitly supersede the previous uploads; no original evidence is overwritten. Static contract review confirms the same learner/reference source pair and regression test AST across both recipes. Twelve correctness-control cases were prepared with unchanged non-solution assets, including binary rejection of a grouping regression; these controls remain unexecuted and acceptance remains pending.
+
+
+### 2026-10-17 21:04 UTC — History independent-control runner
+
+Added a no-model native control runner and controller stage for the two reviewed history exports. It verifies the original bundle before preparing six submissions, preserves all non-solution assets, executes trials serially, and retains per-case evidence. The partial E-step fix is an observation-only case, while the grouping regression is required to fail the binary grader. Mocked execution checks passed for both expected results and an incorrectly accepted regression. Frozen archive hashes/configurations are prepared for each task; no native control run was dispatched because TMax and SWE-gen remain active.
