@@ -7,6 +7,7 @@ No model calls or blind solving occur here.
 import argparse
 import hashlib
 import json
+import os
 import signal
 from pathlib import Path
 
@@ -88,6 +89,9 @@ def main():
             parser.error("Expected one to ten authored candidates before allocating a worker")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
+    controller_timeout = int(os.environ.get("BIOTASKS21_CONTROLLER_DEADLINE", "7200"))
+    if not 60 <= controller_timeout <= 7200:
+        raise ValueError("Invalid controller deadline")
     args.campaign.mkdir(parents=True, exist_ok=False)
     ledger = BudgetLedger(args.campaign / "budget.sqlite", limit_usd="5")
     spec = WorkerSpec(
@@ -102,7 +106,7 @@ def main():
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
-    signal.alarm(7200)
+    signal.alarm(controller_timeout)
     try:
         worker, receipt = provision_worker(spec, args.campaign / "workers", ledger, reserve_usd="5")
         prepare_docker(worker)
