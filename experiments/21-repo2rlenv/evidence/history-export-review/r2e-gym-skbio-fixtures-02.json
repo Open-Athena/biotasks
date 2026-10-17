@@ -1,0 +1,59 @@
+{
+  "stage": "independent_static_review_controls_prepared",
+  "status": "acceptance_pending_independent_runtime_controls",
+  "task": "r2e-gym-bf5a63ab005130388e02",
+  "bundle_hash": "sha256:66a071c674ff32e5e35b741f42c98f4442adfc56bdc92e42c54af73298f1afde",
+  "native_integrity_passed": true,
+  "expected_tests": 60,
+  "healthy_passes": 60,
+  "defective_passes": 59,
+  "regression_test_ast_sha256": "50b4c2cac373a13a29c29faaaa78bea140f52911051435c1170b5d611f3db89c",
+  "learner_source_sha256": "6f8639701171dd30b9e194938797397ed9c7e9cd5fe7b7bfec3a032920ca0eeb",
+  "reference_source_sha256": "58c87b5c12de414627e2e3178e8100c2366df6cd262a222bf87734fe17658753",
+  "grader_sha256": "e525b964f4bd013bb452e259e87ab098dcee13f509dbcd0a09c2469cf94b395f",
+  "controls_prepared": [
+    {
+      "case": "baseline",
+      "expected_reward": 0,
+      "interpretation": "correctness control"
+    },
+    {
+      "case": "native_reference",
+      "expected_reward": 1,
+      "interpretation": "native reference replay"
+    },
+    {
+      "case": "alternative_masked_division",
+      "expected_reward": 1,
+      "interpretation": "correctness control"
+    },
+    {
+      "case": "e_step_only",
+      "expected_reward": null,
+      "interpretation": "coverage observation only"
+    },
+    {
+      "case": "wrong_uniform_responsibilities",
+      "expected_reward": 0,
+      "interpretation": "correctness control"
+    },
+    {
+      "case": "fixed_underflow_with_grouping_regression",
+      "expected_reward": 0,
+      "interpretation": "correctness control"
+    }
+  ],
+  "unchanged_asset_count": 1952,
+  "native_rewards": {
+    "nop": 0,
+    "oracle": 1
+  },
+  "blind_attempts": 0,
+  "scientific_contract": "Avoid EM underflow NaNs and match the upstream R-reference log-fold changes and p-values while preserving other behavior.",
+  "limitations": [
+    "Same PR2633 lineage as existing PR-runtime task.",
+    "R-reference values are upstream reported, not independently rerun in R here.",
+    "Native instruction formatting is compressed but substantive requirements are readable.",
+    "Prepared controls have not been executed on these exported bundles; runtime separation is not established by static review."
+  ]
+}

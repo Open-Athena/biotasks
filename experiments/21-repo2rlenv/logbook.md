@@ -952,3 +952,8 @@ The fixture-root adaptation completed at 20:52:09 UTC and exported one PR2633 ta
 ### 2026-10-17 20:57 UTC — R2E-Gym archive verified; SWE-gen submitted
 
 Published the fixture-adapted R2E-Gym task at HF snapshot d7edfe75c4cc0d89a01ad3a9e7033d46d40cfc0797911c2c0e26c3197499f5cb, with 18 objects and 1,956 archive members anonymously downloaded and verified. Submitted first SWE-gen PR2633 calibration from checkpoint f5a9e08231cd3b3dab974636737eed4bd71a6fdf into the two released history slots; TMax retains the other two. The $10 SWE-gen reservation brings estimates/holds to $378, leaving $622. No SWE-gen outcome or independent acceptance is claimed at dispatch.
+
+
+### 2026-10-17 21:00 UTC — History export integrity correction
+
+Independent bundle inspection found that local archive extraction lost executable permissions on four files in each of SWE-Next and fixture-adapted R2E-Gym. Previously published snapshots faithfully matched those extracted copies but therefore did not preserve native bundle identity. Restored modes from the hash-verified original archives after checking every task file byte hash. Both native bundle identities now pass inspection. Append-only corrected snapshots explicitly supersede the previous uploads; no original evidence is overwritten. Static contract review confirms the same learner/reference source pair and regression test AST across both recipes. Twelve correctness-control cases were prepared with unchanged non-solution assets, including binary rejection of a grouping regression; these controls remain unexecuted and acceptance remains pending.
