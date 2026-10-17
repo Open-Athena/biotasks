@@ -620,3 +620,5 @@ SETA public subset uploaded at immutable snapshot `c24492bc90365fbb04aa3749f8d73
 ## 2026-10-17 — Direct-Daytona solver provider preflight prepared
 
 Prepared a no-model Harbor 0.22.0 baseline/reference trial pair on the accepted portable task. Retain exact bytes and restore source file modes after Iris transfer. Before agent setup, verify provider network_block_all, absent oracle/verifier paths, and initial imports. Record owned IDs durably and independently confirm deletion after each case. Uncertain creation is a reconciliation failure, not silently counted as cleanup. Thirty-minute setup/execution deadline, cleanup afterward; no GLM credential delivered. Offline checks passed with pinned Harbor/Daytona extras, including rejection of unblocked network and failed readiness, plus owned-ID cleanup. Reserve $10; conservative accounting becomes $228/$300.
+
+Provider preflight dispatched at 17:40 UTC as `/exedev/biotasks21-pr-provider-20261017-01`, from checkpoint 86f8be6. No model credential or calls. R2E remains the only other active controller/worker pair.
