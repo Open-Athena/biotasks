@@ -818,3 +818,7 @@ LCC direct-provider preparation uses an explicit Biopython readiness profile for
 ### 2026-10-17 — DataArc authoring diagnosis and public preservation
 
 Offline AST inspection of unchanged responses found an imports-only first verifier (no top-level tests despite eight declared weights) and invalid Python prose in the second. Native repair feedback independently recorded these validation failures. Environment files do contain real newlines; no blanket newline repair or causal reasoning-budget claim is justified. Public snapshot `eeb78c52527d043f28a53ee595aca4c385d769195383565c5f8bf2eb5fd6e19b` was uploaded append-only and all 10 objects / seven archive members verified through anonymous downloads. Snapshot recovery metadata correctly reflects publication-pending at capture time; current receipt supersedes that state.
+
+### 2026-10-17 — SCALER exports preserved publicly
+
+All three complete task exports and the custom synthetic family seeds are preserved at public snapshot `afb5a91ef2e43d21e407db86d1f3c9be410bc4d0c1925e82123a35b804556450`. Anonymous downloads verified 13 objects and 38 archive members against the committed manifest. Native export metadata remains unchanged; one family / three instances, not three independent scientific competencies. Independent runtime controls, representative Marin parity and blind solver attempts remain pending. Historical snapshot metadata records publication pending at capture time; current upload receipt supersedes it.
