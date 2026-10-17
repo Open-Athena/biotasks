@@ -997,3 +997,9 @@ Retrieved three original tutorial recordings with the native bounded intake. Two
 ### 2026-10-17 21:22 UTC — Endless remote capture preparation
 
 Prepared the native Endless Terminals remote setup wrapper with supported child stdout/stderr, exit status and partial-output capture. Mocked success, child timeout and setup failure cases pass without model calls, workers or installation. Frozen a flat transfer manifest for source, runtime helpers and the explicit ten-draw biological adaptation. No dispatch or new budget hold yet; live capacity must be reconciled before launch. TerminalWorld page review found only player-software license markers, so the separate original-recording cohort remains at intake pending content reuse terms.
+
+### 2026-10-17 21:24 UTC — SWE-Next independent controls recovered
+
+All six no-model cases completed in the unchanged native grader with 60 tests each. Baseline59/60 gives0; native reference60/60 and masked-division alternative60/60 give1; incorrect uniform responsibilities51/60 and grouping regression59/60 give0. E-step-only60/60 gives1 as a coverage observation, not proof that all numerical branches are tested. The supported 59,426,736-byte archive was hash-verified and extracted with modes preserved. Worker absence independently confirmed404; two history slots released. Fresh provider boundary validation, final acceptance, public full-trace archive and blind solving remain pending.
+
+Reserved $10 for the already-prepared explicit Endless biological-context adaptation, bringing estimates/holds to$398 of$1,000. Submission must verify all input hashes, the completed SWE-Next controller and absent worker, and existing TMax capacity before allocating two slots. No additional candidate allowance or model-setting change.
