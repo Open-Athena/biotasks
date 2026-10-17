@@ -1012,3 +1012,8 @@ Endless submitted at21:25UTC from d79ca13: `/exedev/biotasks21-endless-biologica
 Recovered the successful controller attempt ending21:21:27: three selected candidates, twelve GLM calls, zero exported tasks. All nine initial-test responses (including two repairs per candidate) decode to single-line comments with zero newline characters and zero AST nodes; native five-to-ten-test validation rejects them. No generated test execution, task build, independent acceptance or blind solver result. No automatic response rewriting or new candidate search. Supported archive hash and modes verified; separate worker404 confirmed and two slots released.
 
 SWE-Next independent controls are now public in snapshot26afcec7afc641a5a1c9bc5f369b561d12d6c8bca6b633df252c7082c44d6db2: 18 objects and122 archive members verified through anonymous downloads, including hashes and modes.
+
+
+### 2026-10-17 21:30 UTC — R2E-Gym controls submitted
+
+Submitted six serial no-model correctness cases for the exact fixture-adapted R2E-Gym PR2633 bundle, using the existing controller and preserved control configuration. Native archive digest checked before dispatch; completed TMax controller and absent worker verified; Endless reserves the other two slots. Checkpoint52354ae; estimates/holds now$408, remaining$592. No result claimed at submission. Frozen the TMax raw-response archive manifest for public preservation.

@@ -1,0 +1,434 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "checkpoint_commit": "4da905494e3061bfa3759cd096da6918d82d9499",
+  "stage": "tmax_native_generation_zero_exports",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "candidates": 3,
+  "exports": 0,
+  "model_calls": 12,
+  "independently_accepted_tasks": 0,
+  "blind_solver_attempts": 0,
+  "biological_inputs": "Native taxonomy-selected descriptions; no observed biological inputs executed.",
+  "failure": "All nine initial-test responses decode to comment-only single-line Python with no newline characters and zero AST nodes; native TestProgram validator rejects them before materialization.",
+  "retention": "Retain while referenced; no automatic deletion.",
+  "eligibility": "Model responses including reasoning, original requests, native validation errors and input taxonomy records for reproducibility. No generated program execution or task export. Private input/provider/accounting files omitted; exact credentials and private route markers scanned absent.",
+  "files": [
+    {
+      "path": "code/build_tmax_biological.py",
+      "bytes": 3790,
+      "sha256": "f66d26cfbf24302b848531ef9e90fc06e7b6ce6b4f4f33f00824b03b30cb49cd"
+    },
+    {
+      "path": "code/glm-generation-adaptation.json",
+      "bytes": 597,
+      "sha256": "682d4054fba546d67697c0d4985fc1c5af8ab5aa54c18fc40033678dc5d081ba"
+    },
+    {
+      "path": "code/glm_authoring_adapter.py",
+      "bytes": 3665,
+      "sha256": "55a3495ba5d7baea8e0dcbc95d900680fb011c533ddfa72c052853ba3ca30868"
+    },
+    {
+      "path": "code/run_tmax_controller.py",
+      "bytes": 6870,
+      "sha256": "cf42fc13a103fc8077870006f53764d703a09523ee757732ad9615bbe1678a57"
+    },
+    {
+      "path": "evidence/tmax-biological-02/cleanup-verification.json",
+      "bytes": 194,
+      "sha256": "e6572ef11f1b43a6ab58b14ab3859afd18ef191c10e1db02ecc58d1ad0ca2c63"
+    },
+    {
+      "path": "evidence/tmax-biological-02/controller-result.json",
+      "bytes": 320,
+      "sha256": "3cbc424a6b43bd6a3c1a26fd0e644ac19e6c682d5f61d52564adc2909f6e3b3c"
+    },
+    {
+      "path": "evidence/tmax-biological-02/dispatch-execution.json",
+      "bytes": 199,
+      "sha256": "96fefa9065974a5fd4da1a29797bc68a0c6d2c6ffa63177e707db49952cce28d"
+    },
+    {
+      "path": "evidence/tmax-biological-02/dispatch.json",
+      "bytes": 229,
+      "sha256": "90b8d4bcad9f1038195906530f23ed2b9233f017c6874e8df7850e75c09c03c5"
+    },
+    {
+      "path": "evidence/tmax-biological-02/job-observation.json",
+      "bytes": 122,
+      "sha256": "1f3db0c34666ebcc584802b394ddb47c2ddd6864cc607701ae611d682ee24e8d"
+    },
+    {
+      "path": "evidence/tmax-biological-02/model-usage.json",
+      "bytes": 10877,
+      "sha256": "60d13adbf7cca48f80f9743ed4f112a655c878ef810e19a93bcca1fa83d6a3a0"
+    },
+    {
+      "path": "evidence/tmax-biological-02/observation.json",
+      "bytes": 124,
+      "sha256": "97ed7905407e73bdf1d751dc8fac4a0d570d9e57c650e3d5efa3c0ebd1190955"
+    },
+    {
+      "path": "evidence/tmax-biological-02/recovery.json",
+      "bytes": 221,
+      "sha256": "db7e0ce14012a37ff4ed776d4677e116f1ba3be9d2cf407595abd96d42e8f8ed"
+    },
+    {
+      "path": "evidence/tmax-biological-02/response-shape-review.json",
+      "bytes": 2230,
+      "sha256": "c9978945219a489c50261239ad59927dfef47ed27158312cb1cea1d17a56673c"
+    },
+    {
+      "path": "evidence/tmax-biological-02/submission.json",
+      "bytes": 229,
+      "sha256": "90b8d4bcad9f1038195906530f23ed2b9233f017c6874e8df7850e75c09c03c5"
+    },
+    {
+      "path": "evidence/tmax-biological-02/tmax-result.json",
+      "bytes": 143,
+      "sha256": "b62879d86393c4994dafd0940991febc11261781c321443f036aa8caf7655700"
+    },
+    {
+      "path": "evidence/tmax-biological-02/tmax-settings.json",
+      "bytes": 2539,
+      "sha256": "d95062d62b091d5f8ee3a5ab537823b6c366810d0111026c5b0055eef15876f0"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 635453,
+      "sha256": "1977182869404ac5b0fbc2b5f2c400d18995adebc5cc0d7b34789ed25e990672",
+      "members": [
+        {
+          "path": "native/controller-result.json",
+          "bytes": 320,
+          "sha256": "3cbc424a6b43bd6a3c1a26fd0e644ac19e6c682d5f61d52564adc2909f6e3b3c",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-001.json",
+          "bytes": 284465,
+          "sha256": "a28007acd054c93a7e7515253c565b06fe8b92e10c768a7b9b987a3e6edfe122",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-002.json",
+          "bytes": 246836,
+          "sha256": "6aaa93b0948839fb00377479a82b4b984776d673a366165bc7473c0078964add",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-003.json",
+          "bytes": 71733,
+          "sha256": "53d5df2d0bad75f938a5d7bbd70406d6c9043ad342278e05c86ebcb7c9fa67cc",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-004.json",
+          "bytes": 98387,
+          "sha256": "5f7c94cca73ebe3004d225b4dfbda0d667fa69235022dc95902a6d6cdf691203",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-005.json",
+          "bytes": 361230,
+          "sha256": "b10f73a51e06d711448191459e85e33c99bbcd9ce30cbc1611e4f2d7dcf93a27",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-006.json",
+          "bytes": 243973,
+          "sha256": "47ea462a42f54198df8fd3e73dfd39d54274dd697906d8cf4d3b3c604c91ee5e",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-007.json",
+          "bytes": 205294,
+          "sha256": "10c09c038841f9e2ec8dbb62bfa090d12995ff874ea201f942b61e3c605bd651",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-008.json",
+          "bytes": 47063,
+          "sha256": "b6bc847b9f626cfdf06cb33dd4b4b9ddf50fe89bf33426a408867e006471e7bd",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-009.json",
+          "bytes": 258611,
+          "sha256": "0dd696ca19b920e3494f59c5b25aa4d9aa409aac734469e54c11c5f0c370bdf9",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-010.json",
+          "bytes": 177514,
+          "sha256": "c4784d6b2d505fae849677b5e1ee121e51a26e87c2b62c5d0efd040f094a0662",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-011.json",
+          "bytes": 160426,
+          "sha256": "2d1fb938d5c22c44fee7d08eedfca569e68df1d0f94320478d5b76a394d325fb",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/raw/call-012.json",
+          "bytes": 90157,
+          "sha256": "7c615af8202500d2de6e546b39eb0bc491937f8aafcc649e5e364ff1f534575a",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/design-error.json",
+          "bytes": 361,
+          "sha256": "703124e682534220442fc54201c7dd92d65c1627cfbe80a14bb4aa05eeeb701f",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/design-model.json",
+          "bytes": 1502,
+          "sha256": "8235c76c9e46ea1efa20135abec7e977c92ca49cea5be4a65028313919dc3786",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/design-model.request.json",
+          "bytes": 6709,
+          "sha256": "e2ae95a2a87b95ea99959928a73e0da43802c7065681f2a60f7d2a6b4d68de51",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-1-validation.json",
+          "bytes": 334,
+          "sha256": "28b07ec8d5d66b5fa3af177cdc4eb3caaf98904ff8a92a2267a235b0175c87db",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-1.json",
+          "bytes": 8090,
+          "sha256": "0b040876f5c11359bc8db27ba509d33e742e6ff45762d51b7dd18cab8556a5cf",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-1.request.json",
+          "bytes": 3181,
+          "sha256": "ce3a6e9649494df08df07b72e7f463e8fc6235a8ca53aaca9006bb9a32846b75",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-2-validation.json",
+          "bytes": 334,
+          "sha256": "10be821db797a50da00c164ac0554291eee313e684001873de73c1fc91ae13b5",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-2.json",
+          "bytes": 7657,
+          "sha256": "a4c4fe7a1710f6f1387965d769552fbfe6fd09c05ff82bfc497a032239e310c9",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-repair-2.request.json",
+          "bytes": 9993,
+          "sha256": "14e72d35a7df6a75b0da79d0a09d778efbc104a532395d9275b0fe95817baad4",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model-validation.json",
+          "bytes": 332,
+          "sha256": "ea17a45702943251d531e9292787e81c0f3ea7e45f6e3a8a54e0a6bc73ed2070",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model.json",
+          "bytes": 1276,
+          "sha256": "8a3be7da4944fa79f9994b0738444f0b85a234acb715deb008e030437a9f2aa7",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/initial-model.request.json",
+          "bytes": 2390,
+          "sha256": "23b07869617144744b526ec4fb4a6a0f935656f3b68df409360af41cb9da2407",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/1346eea2818201d6/seed.json",
+          "bytes": 922,
+          "sha256": "85db0ba95422d74451edbda2cd22746213b1a399d6d0377f1c58c9c145a31839",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/design-error.json",
+          "bytes": 361,
+          "sha256": "e744aa1b839d397ddf34c1ddba16ff459e7c3d2960e79cda81ca16d015b591e8",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/design-model.json",
+          "bytes": 10560,
+          "sha256": "d911c378aae35514e48ce4059297a7883ffee96fffad723971774d0622cd8c22",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/design-model.request.json",
+          "bytes": 6591,
+          "sha256": "0b79c9fd8c8b140de7439ac98bc7dd86cc3e89d8c68c85e52a3187551b23100c",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-1-validation.json",
+          "bytes": 334,
+          "sha256": "69410dcb25a545f88bd8ef8d60a3740f402faffac49c9f71028e3c94dc725910",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-1.json",
+          "bytes": 9561,
+          "sha256": "ba910170eaa1ed2ef299feed38e689f7c12a16b2c049851f2fa905629c750ac2",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-1.request.json",
+          "bytes": 21519,
+          "sha256": "e1e802c45b5c2d65881a73444641782c0f82571d5b04e4149eefdc61d958ae54",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-2-validation.json",
+          "bytes": 334,
+          "sha256": "7e38fce22e3dd3b9aa6de4327a00a7d1cac1f4ce9648d5813dbe342dba3aaeb0",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-2.json",
+          "bytes": 9552,
+          "sha256": "d85e5e10c52bee62934e97dd773f3f8277c8085c99583a58eb6dc3de67b23e7d",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-repair-2.request.json",
+          "bytes": 20514,
+          "sha256": "968486ea6d4f56cd14310359603bc26b40977004e64783ebf2e77da692dc8097",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model-validation.json",
+          "bytes": 334,
+          "sha256": "6f0e6ce4a97762130499b040e9d10d88ec90d8622c45503aa0472bf346d58a0e",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model.json",
+          "bytes": 10556,
+          "sha256": "a7c5c75451e5397e3afd545602354e0d280f0475673ed6e1918a41554b673801",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/initial-model.request.json",
+          "bytes": 11444,
+          "sha256": "c0a8a22accc053de2fe65887c76112aad55ad3d66353cb8326b5bd725009ff8e",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/b015f6bf06e8112e/seed.json",
+          "bytes": 804,
+          "sha256": "9c3039ca28f75ee411c41b72e6e7905ab4f86f7b4b344c4ce6563eb0cff28de8",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/design-error.json",
+          "bytes": 361,
+          "sha256": "86f2c70e4ee11706bfb4bd3c0b45035ee438f97de503c95a94ba56f9d8029f04",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/design-model.json",
+          "bytes": 1875,
+          "sha256": "2a57f9437f2a4fa80f3e72c4b6597be68d22506f3a374c16b144b894ea59cccc",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/design-model.request.json",
+          "bytes": 6632,
+          "sha256": "7df61c25f75331145c81f9b169f0ab47d0759ae5ec7d17df9225f7b9f90061f1",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-1-validation.json",
+          "bytes": 332,
+          "sha256": "1c41536728d726e7ff34ba870b061e89552a6a0f8fa173adeae7d06864f3c7f5",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-1.json",
+          "bytes": 31114,
+          "sha256": "a6ef007402b9c01a1f74e3e881b15e2e1e698434213ca6b7f8454abf5fa90f71",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-1.request.json",
+          "bytes": 33379,
+          "sha256": "ac03d51f1023da9cb7a2e5b55225e9335c88b06c75a2effacb8e2fa5a83258d0",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-2-validation.json",
+          "bytes": 334,
+          "sha256": "d980713dd74d70b96a2b2313997d16eeab44d2bb554334d0fb7290f719bc2f9b",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-2.json",
+          "bytes": 8535,
+          "sha256": "eea8c78e59eac99bb111ecfeaf6ef335ed6d857aea1f3a0b74195e7297286267",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-repair-2.request.json",
+          "bytes": 33372,
+          "sha256": "c586ff2e6c8a7b7f02a0021fba9e1127028bd3a43f98767a04d704f5a4fd22c6",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model-validation.json",
+          "bytes": 334,
+          "sha256": "bfb8d8cbf0e0d5b10da21ddd9e648bf62d318934a530cd24e9f3200e8bf35969",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model.json",
+          "bytes": 31101,
+          "sha256": "937e63731cc851e2b9fc10f82b7082388c502789ac9d92c7dc019579008107f5",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/initial-model.request.json",
+          "bytes": 2757,
+          "sha256": "5d45b5a4f74ac2e0fd7c17d31af2c891ea9b9776611a7f96dac46dec603304c6",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/runs/tmax-biological-build-01/candidates/bc97b04774f4a3ff/seed.json",
+          "bytes": 845,
+          "sha256": "0dd4d1f47a43ea15063f8006426ea2794cd92fd5a47150505aaa932aae8bffd6",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/tmax-result.json",
+          "bytes": 143,
+          "sha256": "b62879d86393c4994dafd0940991febc11261781c321443f036aa8caf7655700",
+          "mode": "0o600"
+        },
+        {
+          "path": "native/tmax-settings.json",
+          "bytes": 2539,
+          "sha256": "d95062d62b091d5f8ee3a5ab537823b6c366810d0111026c5b0055eef15876f0",
+          "mode": "0o600"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ]
+}
