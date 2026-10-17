@@ -932,3 +932,8 @@ Submitted adapted fixture run `/exedev/biotasks21-r2e-gym-skbio-fixtures-2026101
 Initial upload completed but anonymous member verification rejected mode metadata: the manifest used filesystem mode `0100644` while serialized tar entries store permission mode `0644`. All 1,945 member hashes and byte sizes match. Corrected modes from the serialized archive and added explicit supersession metadata; original snapshot `7962024dc0b412535c4121b55934f17bffa01344f8999c78898bd8c543f22368` remains retained, verification-failed. Re-publication uses a new manifest-hash prefix, without rewriting task/evidence bytes or existing objects.
 
 Corrected SWE-Next snapshot `0d000fc90afd260a28cd11bd709d8c250c1bca69dec1f5a16d55653daa18344a` is now anonymously verified: 19 objects, 1,945 archive members, including the complete native task and original author response. Native generation and controls are preserved; independent acceptance and blind solver remain pending.
+
+
+### 2026-10-17 20:51 UTC — SWE-gen controller prepared
+
+Added a separate frozen-source SWE-gen entrypoint and controller. Local mocked lifecycle checks passed: source hash rejection before allocation, exact native source-cache contents, preserved generation failure, cleanup confirmation and supported output capture. No model calls or new remote workers were launched. TMax corrected02 and fixture-adapted R2E-Gym02 were both confirmed RUNNING at 20:49–20:50 UTC; together they retain all four slots. SWE-gen execution remains pending capacity and a checkpointed dispatch.
