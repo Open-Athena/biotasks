@@ -1083,3 +1083,8 @@ Reviewed original scikit-bio SWE-gen bundle a3bd9378 with native integrity verif
 ### 2026-10-17 22:10 UTC — SWE-gen control transfer verified
 
 Frozen nine dispatch inputs for the six-case scikit-bio SWE-gen correctness run. Streamed the task archive and verified all1982 files against original bytes, modes and complete file membership; original task identity was already checked by independent static review. Prepared hash-checking submission and observation/recovery launchers; submission requires terminal prior controller, independent worker absence and an exclusive slot claim. No new budget hold, submission or model call. Live observations at22:10UTC confirm both Endless and Biopython SWE-gen RUNNING, so four slots remain reserved.
+
+
+### 2026-10-17 22:12 UTC — SCALER blind wrapper prepared
+
+Added a dedicated SCALER wrapper using the existing single-attempt solver and provider contract. It requires baseline/reference/acceptance files before setup, uses the approved relay selected by private launcher environment, dispatches one child, propagates failure status and preserves partial solver output. Offline wrapper and existing provider/solver contract checks pass, including native-1 baseline handling, asset/control identity and approved900s/12turn/2048token settings. Original SCALER learner image already installs tmux, so no runtime asset alteration was needed. No provider/model calls occurred. Fresh provider controls, verified cleanup, three-slot availability and frozen control evidence remain required before each blind attempt.
