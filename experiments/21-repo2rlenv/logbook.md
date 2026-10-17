@@ -518,3 +518,7 @@ Scikit-bio PR-runtime first candidate completed in 118.060 seconds: image build 
 Prepared a separate `skbio-pr-compiled` profile, unexecuted: cache baseline .so files under /opt at build time, record their hashes, restore them before each native test stage, and retain the resolved package freeze. Restrict the adaptation to the frozen three-file pure-Python patch; preserve native patch application, tests and reward logic. Original profile and failure remain available. Python entrypoints parse; live compatibility remains unverified. Prepared public failure snapshot (21 objects, 9 archive members, 138,999 bytes); eligibility scan found no configured sensitive patterns. Upload pending.
 
 Public failure archive uploaded and anonymously verified in 12.814 seconds: 22 objects and all nine archive members verified. Prefix `research/21-repo2rlenv/2026-10-17/37f3c8e75072d266b21539c2876bb2263310d95d938866620a2452b834e8279a`. Original pre-upload metadata remains in the immutable snapshot.
+
+## 2026-10-17 — scikit-bio compiled-asset profile intervention reservation
+
+Reserve $5 for the separate compiled-asset restoration profile on the same frozen PR2633 candidate. The baseline collection failure is already public and immutable. No new candidate is counted; this explicitly records an environment intervention. Native test patches, validation and reward logic remain unchanged. The new run records dependency versions and baseline extension hashes, preserves results and deletes its worker. Zero model calls. Conservative estimates/holds become $173/$300.
