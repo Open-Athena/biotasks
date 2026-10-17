@@ -1,0 +1,601 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "checkpoint_commit": "87042e97d97ea14613169c4a976f5bbb4c233b68",
+  "stage": "accepted_adapted_lcc_native_marin_runtime_parity",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "task_id": "repo2rlenv-swe-smith/8ab8eb1ddfed62315e8f8f0e04330836098aec80b7500ccc1437b717321f2511",
+  "runtime_control_cases": 6,
+  "native_and_marin_executions": 12,
+  "retention": "Retain while referenced; no automatic deletion.",
+  "eligibility": "Explicitly adapted public Biopython LCC task, full inline TaskSpec with distinct learner/verifier contexts, six control submissions and native/Marin runtime results. Existing source notices retained. Private accounting and worker configuration omitted; exact credentials and private route markers scanned absent. Historical unvalidated preparation tags remain unchanged; acceptance/runtime evidence supersedes them. No training-readiness or Atlas-admission claim.",
+  "files": [
+    {
+      "path": "code/check_marin_lcc_runtime.py",
+      "bytes": 6760,
+      "sha256": "373a17d99e6084afe476e8d09a60064d716633c0425da966bb4fbb5b2b5925b6"
+    },
+    {
+      "path": "code/finalize_lcc_acceptance.py",
+      "bytes": 5107,
+      "sha256": "a1de2effef3ae0000100c860d9c062b3916cd327136ed9bfa65f3783affde7b4"
+    },
+    {
+      "path": "code/prepare_lcc_marin.py",
+      "bytes": 5521,
+      "sha256": "9915c6ac9bc0e1c2fbe5f52286a01ffe7d3aeb4f3ee1e84635838d76daed485b"
+    },
+    {
+      "path": "conversion/conversion.json",
+      "bytes": 1002168,
+      "sha256": "95d06b45223b0a6fb36798e6644c64d9bb2910bc258bb3a4ad3b5d5a7d5f98f9"
+    },
+    {
+      "path": "conversion/task.json.gz",
+      "bytes": 56135416,
+      "sha256": "d6d4c8d74e09aa434d5e26f96afe4cfdca0b62552362479dd51992158e49ad4c",
+      "decompressed": {
+        "sha256": "de59f292a15e2431208cf19644f73f2242461d3303aa0b7add2f2ed592c6aa8e",
+        "bytes": 339361177,
+        "format": "Marin TaskSpec JSON"
+      }
+    },
+    {
+      "path": "evidence/lcc-acceptance-review/acceptance.json",
+      "bytes": 4081,
+      "sha256": "97977c255263409ef66211ffcbc3f4fdde9b1c4408fb7fccc06c8924c87dd787"
+    },
+    {
+      "path": "evidence/lcc-acceptance-review/assessment.json",
+      "bytes": 2280,
+      "sha256": "a087ea700a23a8c9220ce5cbd0d8b39471096fb3ece887195847767945122214"
+    },
+    {
+      "path": "evidence/lcc-acceptance-review/finalization-execution.json",
+      "bytes": 199,
+      "sha256": "979197b6cb08adb03891ef8bb2137aa89fc43a6cbb3e428446b42b0d100be830"
+    },
+    {
+      "path": "evidence/lcc-acceptance-review/provider-check-execution.json",
+      "bytes": 199,
+      "sha256": "4b3d2c4e0763419a4ce9b2d810a1db0d26798861e72153c0506e225ff9b0a951"
+    },
+    {
+      "path": "evidence/lcc-acceptance-review/transfer-check-execution.json",
+      "bytes": 199,
+      "sha256": "40bf80cc15a46343ba19f9df5c9b7ddd9406c8ab5c404b8b8d3630c71a373ef9"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/archive-receipt.json",
+      "bytes": 194,
+      "sha256": "cfa9811d20991145f16068b87bf944975227119d0988a8ca0897b7665656ff33"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/capacity-release.json",
+      "bytes": 153,
+      "sha256": "3da51105b2f2948f1d1079f5f3c11e726857787f5e4af6e1934c53734004c65c"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/cleanup-verification.json",
+      "bytes": 205,
+      "sha256": "c173e9e77eae6d4f4720eba00d8cdc55e5f2c39915abb13ae3da0cb2d96fa12b"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/controller-result.json",
+      "bytes": 193,
+      "sha256": "e01dc16ed4241ccd4adaaa16318cce915df1db6f3ccf249befff90c7377adcd7"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/execution.json",
+      "bytes": 201,
+      "sha256": "8744ea8ad22080f812c249df049981fde524a7c1d075e05829ee7aa5ee81b801"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/runtime-result.json",
+      "bytes": 12050,
+      "sha256": "9062806ea1bfa7e903d739359e2db5544e97be0f6c2a940b525d642a1157687b"
+    },
+    {
+      "path": "evidence/marin-lcc-runtime-02/schema-result.json",
+      "bytes": 434,
+      "sha256": "551f19dfd27ec90f192a5fec573261e053fb885e50db9b3ffbbeb840736b458d"
+    },
+    {
+      "path": "runtime/runtime-evidence.tar.gz",
+      "bytes": 213724,
+      "sha256": "05e2b990b437da56f7b1d38efc1ccb96898cf945971bba086933f21570f281c0",
+      "members": [
+        {
+          "path": "native/validated-task-id.txt",
+          "bytes": 86,
+          "sha256": "00073e13fa9f0306dff865f875b76cfadb87e294ebad551cdd240f45c28c210a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/schema-result.json",
+          "bytes": 434,
+          "sha256": "551f19dfd27ec90f192a5fec573261e053fb885e50db9b3ffbbeb840736b458d",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/process-result.json",
+          "bytes": 80,
+          "sha256": "fdb85cd4634110dd62d0b31c295aceaee1badcd63d9c3d860aef0d0f8c2fe536",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/resolved-task.json",
+          "bytes": 34360,
+          "sha256": "9f3dce70da837af4a697e5d128b5f249fde3c8017774122ce216605215a23580",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/baseline/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 5502,
+          "sha256": "67ba90afb38b006c7e69b9560a2182ab612e91d8baa5103de897c20abd7b01b8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/reference/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 5502,
+          "sha256": "5c16386511a8462504aa6cf9e5d8672e93cb8bd79b2a12146bb5442611ed31df",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/partial_dna_only/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 2154,
+          "sha256": "40108ea21e30a7d2d15b8d397cf8f79d4eacc424aa1d8ed87e2e19d971bd3827",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/equivalent_dna_entropy_preserve_legacy/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 6346,
+          "sha256": "4aa3630415cab521fc8c4f11129b05b73dc8ae0ceac0940632ca95a94dedc1ab",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_constant_zero/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 2015,
+          "sha256": "dd738b90bd1be963a3151f7e2423676eb16811ce3285609a5d6591b10e0090aa",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/CheckSum.py",
+          "bytes": 3510,
+          "sha256": "ba79ac9fd752909aa6b878ee48c9c9c9d95bc8c956a2d9ba0ac1f131b1483a99",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/IsoelectricPoint.py",
+          "bytes": 6557,
+          "sha256": "93a0d329ba6379edd07c53f5ea8ecb39c9684d9218ab3fcb4736e1324e2caed2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/MeltingTemp.py",
+          "bytes": 43151,
+          "sha256": "4f3cbc585ffd68d54386d40f5edb113a7c2eae4aa4388c6b496bceecdec06500",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/ProtParam.py",
+          "bytes": 13174,
+          "sha256": "d0a53eca43f7fa791fa6d000a57c2630a7694304c29a1cf5be39736004f2004f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/ProtParamData.py",
+          "bytes": 18172,
+          "sha256": "488a4c336556c5e6aa41e9208cd4a9390d7a29d3d83e2c8be1f0cb518c718947",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/__init__.py",
+          "bytes": 25939,
+          "sha256": "339a960f2b5d859d21b1f9ce73c17a67693df8430a0c3e1cd37f0000e44fe5c0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/submissions/wrong_whole_sequence/workspace/Bio/SeqUtils/lcc.py",
+          "bytes": 2025,
+          "sha256": "692c1dd3cccb712cac74e4aab99cf652023aecf275ae4671acd83f6b7fcc94d5",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/baseline/result.json",
+          "bytes": 890,
+          "sha256": "ed22f68cdc66895ac90aca57d4c001a958380b8d7304f12b9cc9f0fcd5f98b53",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/baseline/results.xml",
+          "bytes": 1850,
+          "sha256": "b0a1a372be3e7cfcb99999bdcd11c2807373b335a65936b45b203121878d2224",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/baseline/reward.txt",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/baseline/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/baseline/stdout.txt",
+          "bytes": 1344,
+          "sha256": "67de699ef775094aaa77b9671546aae4d0923a3859114740d2fb354888888e3e",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/reference/result.json",
+          "bytes": 889,
+          "sha256": "02cde869b76f02ed3d1d4c37e1be3554771f97c4f7d29fc29bdd0a10df994800",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/reference/results.xml",
+          "bytes": 1451,
+          "sha256": "30a9c80ce692a1486b8af511f0b54b0e84353ea6ce09516ff568e7c098362723",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/reference/reward.txt",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/reference/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/reference/stdout.txt",
+          "bytes": 743,
+          "sha256": "0d27b24ed1fe00fd6599d69934f85867c618dd2e82442acd54dcc752c5188dde",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/partial_dna_only/result.json",
+          "bytes": 890,
+          "sha256": "7f039380c8b82b8e1c4d8cbf0da7e51d961e6205acc690e31f22f92d4c9b6aff",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/partial_dna_only/results.xml",
+          "bytes": 9379,
+          "sha256": "c86926ae8ce39e8adab6e6255218843901c4ef3dd6b964c4ba5c719c5b98f641",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/partial_dna_only/reward.txt",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/partial_dna_only/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/partial_dna_only/stdout.txt",
+          "bytes": 5348,
+          "sha256": "40c1c221382cf14fded05b0d687732aa3dfcff73f7381ad93a9c17d9d3af6283",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/equivalent_dna_entropy_preserve_legacy/result.json",
+          "bytes": 889,
+          "sha256": "02cde869b76f02ed3d1d4c37e1be3554771f97c4f7d29fc29bdd0a10df994800",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/equivalent_dna_entropy_preserve_legacy/results.xml",
+          "bytes": 1451,
+          "sha256": "0855acfb750d90f90dc224f684d587ede048db0ad6bc6aca99a647272ddb7dd6",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/equivalent_dna_entropy_preserve_legacy/reward.txt",
+          "bytes": 2,
+          "sha256": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/equivalent_dna_entropy_preserve_legacy/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/equivalent_dna_entropy_preserve_legacy/stdout.txt",
+          "bytes": 743,
+          "sha256": "ce6e79f3943858bb73565eebdab59e5f266489f65805563cd39ec22dc1f7a43b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_constant_zero/result.json",
+          "bytes": 890,
+          "sha256": "8a73bc0c2e02de1873f297378d75fd10c3e33f036ddb05c12a0963b478b66431",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_constant_zero/results.xml",
+          "bytes": 4425,
+          "sha256": "e9f823444970ad6a9c0ad74d7644999a778703e9a228ea3f171a87504e259a0b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_constant_zero/reward.txt",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_constant_zero/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_constant_zero/stdout.txt",
+          "bytes": 3296,
+          "sha256": "5d1bf9ac515dca78723f133036ce86204d2debaefe2d8f98ea6f651f61ff1f65",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_whole_sequence/result.json",
+          "bytes": 890,
+          "sha256": "57866268e5119629c0651e7c553ee066552ff4838433177b34c48d8d40b65448",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_whole_sequence/results.xml",
+          "bytes": 9674,
+          "sha256": "2f594a7b8e3379aac45c0d5a7adf694a532aab754e22a7d67a9001642fd1d6db",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_whole_sequence/reward.txt",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_whole_sequence/stderr.txt",
+          "bytes": 0,
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/native-logs/wrong_whole_sequence/stdout.txt",
+          "bytes": 5724,
+          "sha256": "b6b0e85fa225a331a9d50867608de2bb30fe66c62266dac5732976b9ffb75347",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/controls.json",
+          "bytes": 10935,
+          "sha256": "414137f419e61f05dc75e7308c85950e157ec1411b937e4946697998b8571a60",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/result.json",
+          "bytes": 12050,
+          "sha256": "9062806ea1bfa7e903d739359e2db5544e97be0f6c2a940b525d642a1157687b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/runtime/registry-cleanup.json",
+          "bytes": 18,
+          "sha256": "df4d721d233a2334088d2d2e0110346ae9e509ff46bf0b379fbcfa85c715af4d",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/worker-exit.txt",
+          "bytes": 2,
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+          "mode": "0o644"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Biopython-LICENSE",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ]
+}
