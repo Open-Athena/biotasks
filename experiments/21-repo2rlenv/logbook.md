@@ -842,3 +842,7 @@ All three SCALER tasks completed four fixed controls on native and Marin routes 
 ### 2026-10-17 — public LCC solve and TMax dispatch gate
 
 LCC solve snapshot `60525d5c04398379458eb10533beeb04f31ba4bd577fd827cb65c9b73cb78eb6` is public; 11 objects and 19 members anonymously verified. Original messages and submitted files unchanged, private service route redacted from copied result. TMax first-run gate now reconciles completed jobs by live state and recorded independent cleanup instead of treating old receipts as active workers. Three frozen selected records, native target3/max10/max2repair settings unchanged. Reserved $10, bringing estimates/holds to $328 of $1,000.
+
+### 2026-10-17 — TMax startup transfer failure
+
+First TMax job exited before reading its manifest: `FileNotFoundError: seed/manifest.json`. The recovered 144-byte output archive contains wrapper status; bounded native logs identify the missing file before worker provisioning/model calls. Frozen seed files will be transferred as flat workdir entries with wrapper manifest path updated; original inputs and candidate/repair/model limits unchanged. First attempt evidence retained. A corrected launch is prepared, not dispatched.

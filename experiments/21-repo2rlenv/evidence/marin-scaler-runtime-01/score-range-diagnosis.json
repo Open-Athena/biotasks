@@ -1,0 +1,23 @@
+{
+  "stage": "pinned_source_and_runtime_compatibility_finding",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "source_sha256": {
+    "grading_result.py": "64e737fd8b000a9fc8aa73768959fd3cc6100e1e639453162c9ee7286ba5feaf",
+    "models.py": "ae242979edfebc308b031c616b21edf43da987254d811ceeb640c2c08eccc21c",
+    "runtime/grading.py": "fad5b1e1163edfc729f7038a98771c8dc9df49463ca8b4315372299a97a70911"
+  },
+  "file_reward_schema_fields": [
+    "kind",
+    "files",
+    "pass_above"
+  ],
+  "default_result_bounds": {
+    "score_min": 0.0,
+    "score_max": 1.0
+  },
+  "raw_reward_preserved": true,
+  "empirical_evidence": "runtime-result.json",
+  "conclusion": "The pinned file-reward schema has no range override; runtime returns the raw numeric reward with default GradeResult bounds 0/1. SCALER raw -1/+1 parity passes but direct TaskSpec score-range metadata is incompatible.",
+  "resolution_status": "requires explicit Marin schema/runtime range support or a separately documented execution adapter; neither silently rewriting results nor reward normalization applied",
+  "native_task_acceptance": "assess separately from conversion metadata compatibility"
+}

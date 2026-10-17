@@ -1,0 +1,17 @@
+Traceback (most recent call last):
+  File "/app/run_tmax_controller.py", line 150, in <module>
+    main()
+  File "/app/run_tmax_controller.py", line 146, in main
+    run(args)
+  File "/app/run_tmax_controller.py", line 83, in run
+    build_tmax_biological.prepare(spec, args.manifest, settings)
+  File "/app/build_tmax_biological.py", line 22, in prepare
+    manifest=json.loads(manifest_path.read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/uv/cache/python/cpython-3.12.3-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/uv/cache/python/cpython-3.12.3-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'seed/manifest.json'
