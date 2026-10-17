@@ -1,0 +1,8 @@
+{
+  "command": "set -uxo pipefail\ncd /workspace\ngit config --global --add safe.directory /workspace\ngit reset --hard HEAD\ngit clean -fdx -e .venv -e venv -e __pycache__ || true\nrm -f task_module.py task_module.pyc || true\necho YXNzZXJ0IEZhbHNl | base64 -d > test_r2e_0123456789.py\n: 'START_TEST_OUTPUT'\npython -m pytest test_r2e_0123456789.py -v --no-header || true\n: 'END_TEST_OUTPUT'\n",
+  "duration_sec": 0.01,
+  "exit_code": 0,
+  "stderr": "",
+  "stdout": "1 passed in 0.01s",
+  "timeout_sec": 180
+}
