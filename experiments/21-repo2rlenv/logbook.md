@@ -530,3 +530,13 @@ The explicit baseline compiled-extension restoration profile completed in 137.65
 Prepared a separate public snapshot: 23 artifact objects, 173,979 bytes and 21 archive members. Configured sensitive-pattern scan checked 43 regular files with zero matches. Upload/anonymous verification pending. Independent controls, contract review, repeatability/isolation, Marin runtime equivalence and solver evaluation remain required.
 
 Corrected PR-runtime snapshot uploaded and anonymously verified in 13.923 seconds: 24 objects and 21 archive members checked. Prefix `research/21-repo2rlenv/2026-10-17/ecb0d167af0c67a3056d95ad1857bbd782dadf9d97d454ef9cc5de13f2de9bab`. Original failed profile and its public archive remain unchanged.
+
+## 2026-10-17 — SETA design recovery and author-job status
+
+Recovered the successful SETA attempt through the documented CoreWeave S3 configuration using Google Secret Manager credentials in process memory. The earlier inference that missing local environment variables blocked retrieval was premature. Outer archive size 202,814 bytes and SHA-256 match Iris metadata; the nested author archive also matches its receipt. Three native-schema design drafts were returned from three calls, all finish_reason=stop. No builds, accepted tasks or solver scores. All draft_spec strings have zero newlines and apparent n separators already present in the raw strict-JSON response; originals remain unchanged. Review this formatting before building.
+
+Both existing code-instruct author jobs are now SUCCEEDED, exit 0, confirmed at 16:21 UTC. Biopython finished 15:43:18 UTC; scikit-bio finished 16:15:33 UTC. Parent logs remain empty, so generated counts remain unknown. No restart. The local scikit-bio Harbor contract check did not reach task parsing because its environment lacks Harbor; this is a tooling failure, not an invalid-task finding.
+
+Prepared SETA public preservation with the original model responses, drafts, usage, native reservation ledger, seed lineage and notices; 28 objects, 774,216 bytes, configured sensitive-pattern scan zero matches. Temporary Iris output storage is not relied upon for permanent retention.
+
+SETA snapshot uploaded and all 29 objects anonymously downloaded and hash/size verified in 16.884 seconds. Prefix `research/21-repo2rlenv/2026-10-17/325d21d907b909b65db5f2b3d78694b3c399b18b835c13ebbce6c5307e4be9b3`. Three designs preserved, zero built/accepted tasks.
