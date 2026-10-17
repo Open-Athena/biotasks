@@ -34,6 +34,14 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
         from repo2rlenv.pipelines.recipes.dataarc import recipe
 
         targets["dataarc"] = recipe
+    if metering_target == "history":
+        from repo2rlenv.pipelines.recipes.history import pipeline
+
+        targets["history"] = pipeline
+    if metering_target == "swe_gen":
+        from repo2rlenv.pipelines.recipes.swe_gen import instruction
+
+        targets["swe_gen"] = instruction
     target = targets[metering_target]
     original_metered = target.metered_complete
     original_completion = litellm.completion

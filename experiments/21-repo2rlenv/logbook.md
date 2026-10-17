@@ -730,3 +730,7 @@ Prepared SWE-Next and R2E-Gym scikit-bio composition profiles using native optio
 ## 2026-10-17 — Native history entity gates pass on frozen PR2633
 
 Verified the merge commit first parent through GitHub and fetched both immutable source/test revisions. The actual pinned SWE-Next and R2E-Gym check_entities filters both pass: one edited function (_estimate_bias_em), no added/deleted entities, zero module statement changes and matching changed regression test. Input byte hashes and native selections are recorded. This does not cover the complete history worker path/size filter, snapshots, bootstrap or old/new test contrast. R2E and DataArc remained RUNNING at 18:52 UTC; no additional worker was allocated.
+
+## 2026-10-17 — History and SWE-gen GLM transport preparation
+
+Extended the explicit generation adapter to native history-pipeline and SWE-gen instruction metering. Mocked transport checks pass through the native meter and schemas, verifying explicit endpoint/key, 131,072 combined tokens, medium effort, 1,200-second timeout, zero retries, raw capture and restoration of patched context. The initial fixture lacked required source/test profile paths; fixed that fixture and reran successfully. No live call, native candidate selection, bootstrap, export or solver setting change occurred.
