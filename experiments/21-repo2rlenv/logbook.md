@@ -1025,3 +1025,8 @@ TMax public snapshot6fda079179e8f274d99555fcbf8827bdc66165e2951c84a25081b61f23e1
 First controller failed before worker allocation and model calls because its run ID used an underscore, rejected by the native GenerationInput validator. Supported failure output recovered after correcting the local recovery launcher's Marin configuration working directory. Worker404 confirmed. Changed run ID to hyphenated form and added a regression check exercising the real native validator before allocation. Existing wrapper success/timeout/setup-failure checks also pass. Prepared a separately recorded second dispatch with the same frozen cohort and candidate limits, retaining the first failure and its budget hold. Additional conservative reservation$10 brings estimates/holds to$418, remaining$582.
 
 Corrected Endless controller submitted21:32:51UTC from1413872; no generation outcome yet. R2E-Gym controls retain the other two slots.
+
+
+### 2026-10-17 21:35 UTC — SWE-Next evidence reconciliation
+
+Verified the original native bundle identity and bound all six recovered correctness cases to the exact1,941 non-submission asset hashes. Every verifier report contains the identical60 test identities from the original contract; native binary reward agrees with all-tests-pass status, and published small reports match recovered bytes. Correctness controls are verified, with E-step-only coverage limitation retained. Acceptance remains pending fresh solver-runtime checks; no blind attempt is inferred. Live observations confirm R2E-Gym controls and corrected Endless generation running.
