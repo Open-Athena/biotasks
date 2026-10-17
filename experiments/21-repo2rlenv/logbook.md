@@ -1023,3 +1023,5 @@ TMax public snapshot6fda079179e8f274d99555fcbf8827bdc66165e2951c84a25081b61f23e1
 ### 2026-10-17 21:32 UTC — Endless setup failure corrected
 
 First controller failed before worker allocation and model calls because its run ID used an underscore, rejected by the native GenerationInput validator. Supported failure output recovered after correcting the local recovery launcher's Marin configuration working directory. Worker404 confirmed. Changed run ID to hyphenated form and added a regression check exercising the real native validator before allocation. Existing wrapper success/timeout/setup-failure checks also pass. Prepared a separately recorded second dispatch with the same frozen cohort and candidate limits, retaining the first failure and its budget hold. Additional conservative reservation$10 brings estimates/holds to$418, remaining$582.
+
+Corrected Endless controller submitted21:32:51UTC from1413872; no generation outcome yet. R2E-Gym controls retain the other two slots.
