@@ -838,3 +838,7 @@ The single approved free-GLM attempt completed with reward 1 and 12/12 native te
 ### 2026-10-17 — SCALER native rewards preserved, score bounds mismatch
 
 All three SCALER tasks completed four fixed controls on native and Marin routes (24 executions). Equivalent decimal and scientific answers scored +1; off-by-one and invalid text scored -1. All learner private-path checks passed. Marin returns the correct raw reward but annotates every result with score_min=0/score_max=1, inconsistent with native -1/+1. This is a conversion metadata defect requiring reconciliation; do not claim full Atlas/training compatibility or normalize native rewards. Independent worker HTTP404 confirmed and capacity released. LCC public transcript preparation also completed: 19 files, original model messages and seven submitted Python files unchanged, private service route redacted from copied result only; upload pending.
+
+### 2026-10-17 — public LCC solve and TMax dispatch gate
+
+LCC solve snapshot `60525d5c04398379458eb10533beeb04f31ba4bd577fd827cb65c9b73cb78eb6` is public; 11 objects and 19 members anonymously verified. Original messages and submitted files unchanged, private service route redacted from copied result. TMax first-run gate now reconciles completed jobs by live state and recorded independent cleanup instead of treating old receipts as active workers. Three frozen selected records, native target3/max10/max2repair settings unchanged. Reserved $10, bringing estimates/holds to $328 of $1,000.
