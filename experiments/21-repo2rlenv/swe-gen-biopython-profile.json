@@ -1,0 +1,58 @@
+{
+  "stage": "native_source_resolved_execution_pending",
+  "recipe": "swe_gen",
+  "source": {
+    "kind": "pr",
+    "urls": [
+      "https://github.com/biopython/biopython/pull/5317"
+    ]
+  },
+  "options": {
+    "source_paths": [
+      "Bio/PDB/qcprot.py"
+    ],
+    "test_paths": [
+      "Tests/test_PDB_QCPSuperimposer.py",
+      "Tests/PDB/1A8O.pdb"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [
+      "Tests/test_PDB_QCPSuperimposer.py"
+    ],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && ln -s Tests/PDB /workspace/PDB",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "force_generate_instruction": false
+  },
+  "source_sha256": "1d3c2c941b00db06e95cd5235b4130e73eb5e5691d69e460f2e4af83f9bd9804",
+  "lineage": "Biopython PR5317 QCP collinear alignment; independent of PR2633 and LCC",
+  "biological_inputs": "Synthetic collinear coordinates in new regression; existing module also uses repository PDB/1A8O.pdb fixture. Fixture provenance not independently verified yet.",
+  "profile_decisions": [
+    "Keep full original test module, including unchanged structure fixture test",
+    "Include unchanged Tests/PDB/1A8O.pdb in verifier test roots",
+    "Build-time /workspace/PDB symlink preserves original relative fixture lookup without changing tests",
+    "Pin NumPy and testing tools; compile Biopython extensions during remote image build"
+  ],
+  "limitations": [
+    "One selected PR does not meet target three",
+    "No builds, contrast, model authoring, task exports or independent acceptance yet",
+    "Fixture lineage and exact dependency/runtime compatibility remain to verify"
+  ],
+  "run_id": "swe-gen-biopython-01"
+}

@@ -9,13 +9,15 @@ from unittest.mock import Mock, patch
 import run_swe_gen_controller as controller
 
 root = Path(__file__).resolve().parent
+profile_name = os.environ.get('BIOTASKS21_TEST_PROFILE', 'skbio')
+assert profile_name in {'skbio', 'biopython'}
 with tempfile.TemporaryDirectory() as temp:
     temp = Path(temp)
     args = SimpleNamespace(campaign=temp/'campaign', wheel=temp/'runtime.whl',
-        profile=root/'swe-gen-skbio-profile.json',
+        profile=root/f'swe-gen-{profile_name}-profile.json',
         adaptation=root/'glm-generation-adaptation.json', worker_name='fixture',
-        source=root/'evidence/swe-gen-skbio-preparation/source.json',
-        source_sha256=hashlib.sha256((root/'evidence/swe-gen-skbio-preparation/source.json').read_bytes()).hexdigest())
+        source=root/f'evidence/swe-gen-{profile_name}-preparation/source.json',
+        source_sha256=hashlib.sha256((root/f'evidence/swe-gen-{profile_name}-preparation/source.json').read_bytes()).hexdigest())
     worker = SimpleNamespace(id='fixture', client=Mock())
     missing = RuntimeError('fixture absent'); missing.status_code = 404
     worker.client.get.side_effect = missing
@@ -47,6 +49,14 @@ with tempfile.TemporaryDirectory() as temp:
     cache = args.campaign/'runs'/spec.execution.run_id/'candidates'/hashlib.sha256(url.encode()).hexdigest()[:20]/'source.json'
     assert json.loads(cache.read_text()) == json.loads(args.source.read_text())
     assert pipeline.name == 'pr_to_env' and options.force_generate_instruction is False
+    invalid_profile = json.loads(json.dumps(profile))
+    invalid_profile['options']['test_paths'] = ['UnrelatedTests']
+    try:
+        controller.run_swe_gen_recipe.prepare(spec, invalid_profile, settings, args.source, args.source_sha256)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('Out-of-profile changed tests accepted')
     worker.client.get.side_effect = None
     assert not controller.verify_deleted(worker, timeout=0)['independently_confirmed']
     # Invalid frozen input must fail before a worker is allocated.

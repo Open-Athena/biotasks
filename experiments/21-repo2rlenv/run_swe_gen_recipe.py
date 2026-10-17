@@ -8,7 +8,7 @@ import dataclasses
 import hashlib
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from glm_authoring_adapter import adapted_authoring
 from preserve_author_output import preserve
 from repo2rlenv.execution.lifecycle import save_record
@@ -38,8 +38,15 @@ def prepare(spec, profile, settings, source, source_sha256):
     record = json.loads(raw)
     if spec.source.urls != [record['url']] or not record.get('head') or not record.get('source_diff'):
         raise ValueError('Frozen source does not match selected PR')
-    if record['source_files'] != options.source_paths or record['test_files'] != options.test_paths:
+    if record['source_files'] != options.source_paths:
         raise ValueError('Frozen source paths differ from profile')
+    # A repository profile may include unchanged fixture paths in addition to
+    # changed test modules. The native resolver reports changed files only.
+    if not record['test_files'] or any(
+        not any(PurePosixPath(name).is_relative_to(root) for root in options.test_paths)
+        for name in record['test_files']
+    ):
+        raise ValueError('Frozen changed tests fall outside profile test roots')
     cache = spec.execution.campaign_dir / 'runs' / spec.execution.run_id / 'candidates' / hashlib.sha256(record['url'].encode()).hexdigest()[:20] / 'source.json'
     save_record(cache, record)
     return PRToEnvPipeline(spec, options), options

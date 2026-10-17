@@ -66,7 +66,7 @@ def run(args):
     profile = json.loads(args.profile.read_text())
     settings = json.loads(args.adaptation.read_text())
     recipe = profile['recipe']
-    run_id = recipe.replace('_', '-') + '-skbio-01'
+    run_id = profile.get('run_id', recipe.replace('_', '-') + '-skbio-01')
     spec = GenerationInput.model_validate({
         "source": profile['source'],
         "pipeline": {"name": "pr_to_env", "recipe": recipe},
