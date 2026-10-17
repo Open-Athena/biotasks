@@ -1,0 +1,68 @@
+{
+  "stage": "recovered_native_controls_asset_reconciliation",
+  "status": "correctness_controls_verified_acceptance_pending",
+  "task": "r2e-gym-bf5a63ab005130388e02",
+  "bundle_hash": "sha256:66a071c674ff32e5e35b741f42c98f4442adfc56bdc92e42c54af73298f1afde",
+  "native_integrity_passed": true,
+  "cases": [
+    {
+      "case": "baseline",
+      "reward": 0.0,
+      "passed_tests": 59,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "76def39c5346579a957ab9c3f288bfb473fbeb29eb7ac5da4b8d1f65f97e0370"
+    },
+    {
+      "case": "native_reference",
+      "reward": 1.0,
+      "passed_tests": 60,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "3aad7e5eaba1c6a0af34ebc748cd4b92b1b3e9f18ae9153fb30bf1fdb0153a78"
+    },
+    {
+      "case": "alternative_masked_division",
+      "reward": 1.0,
+      "passed_tests": 60,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "22c54727ec19899b2a75a9fe9ef102f6d8223430a80f9b94cbb06a5c960a53bc"
+    },
+    {
+      "case": "e_step_only",
+      "reward": 1.0,
+      "passed_tests": 60,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "8844efb97cd32d516d57d8bc6bfe7b829b8cd7bad2df971e974495363953de40"
+    },
+    {
+      "case": "wrong_uniform_responsibilities",
+      "reward": 0.0,
+      "passed_tests": 51,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "d8447248229676c2b20d2d084535ca7dc3ac1122b57e2d70a085141931b6f8b1"
+    },
+    {
+      "case": "fixed_underflow_with_grouping_regression",
+      "reward": 0.0,
+      "passed_tests": 59,
+      "total_tests": 60,
+      "non_submission_asset_hashes_match": 1952,
+      "solution_script_sha256": "55db05cf4ebec4882e3327e1f5b014aba9a102aba344abb73e59c8f1b297cb72"
+    }
+  ],
+  "reward_contract": "binary_all_expected_tests_pass",
+  "competency": "Numerical underflow repair in ANCOM-BC expectation-maximization while preserving the scientific-library regression suite.",
+  "scientific_reference": "Upstream R-reference log-fold changes and p-values; R itself was not rerun independently.",
+  "coverage_limit": "E-step-only implementation passes the entire native suite; full intended numerical branch coverage is not established.",
+  "lineage": "Same scikit-bio PR2633 as previous runtime/history variants, not a distinct independent problem.",
+  "remaining_acceptance_gates": [
+    "Fresh learner/verifier runtime checks for the exact solver profile",
+    "Record all solver-profile interventions and repeat native reference checks"
+  ],
+  "solver_attempts": 0,
+  "new_model_calls": 0
+}

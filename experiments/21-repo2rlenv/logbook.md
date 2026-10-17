@@ -1030,3 +1030,7 @@ Corrected Endless controller submitted21:32:51UTC from1413872; no generation out
 ### 2026-10-17 21:35 UTC — SWE-Next evidence reconciliation
 
 Verified the original native bundle identity and bound all six recovered correctness cases to the exact1,941 non-submission asset hashes. Every verifier report contains the identical60 test identities from the original contract; native binary reward agrees with all-tests-pass status, and published small reports match recovered bytes. Correctness controls are verified, with E-step-only coverage limitation retained. Acceptance remains pending fresh solver-runtime checks; no blind attempt is inferred. Live observations confirm R2E-Gym controls and corrected Endless generation running.
+
+### 2026-10-17 21:38 UTC — R2E-Gym independent controls completed
+
+Recovered the controller ending21:36:17: six completed no-model cases, all with60 expected test identities and unchanged non-submission asset hashes. Rewards baseline0/reference1/alternative1/E-step-only1/wrong-uniform0/grouping-regression0. Native binary grading and recovered/public report bytes reconcile. The original fixture-adapted bundle identity passes. E-step-only remains a coverage limitation; provider runtime checks and acceptance are still pending. Archive59,810,608bytes verified; nested11,831files/127,867,761bytes extracted preserving modes. Worker404 confirmed and two slots released. Corrected Endless retains its two slots. No new model or budget allowance used for this verification.
