@@ -742,3 +742,7 @@ Prepared the native SWE-Next/R2E-Gym selection/contrast/authoring/export entrypo
 ## 2026-10-17 — Streaming recovery ready for active jobs
 
 R2E and DataArc were confirmed RUNNING on their original attempts at 19:02 UTC. Prepared DataArc recovery and replaced the R2E whole-archive memory read with bounded streaming recovery using 1 MiB chunks and a 1 GiB archive allowance. Exact declared size and local SHA-256 are recorded; truncated, oversized and conflicting downloads cannot replace a completed archive. Interrupted partial evidence remains for inspection. Six offline recovery cases passed under the shared-node guard. No new allocation, generation call, recovered remote result or acceptance is claimed.
+
+## 2026-10-17 — History controller and remote wrapper prepared
+
+Added the bounded lifecycle controller for native SWE-Next and R2E-Gym, using their distinct PR-runtime and commit-runtime pipeline identities. Frozen profile/PR checks precede allocation; generation failures retain evidence and trigger worker cleanup plus an independent absence check. Offline checks cover both native profiles, rejected altered PR metadata, timeout, failed capture/deletion and output preservation. An initial equality assertion overlooked native schema defaults; the field-specific assertion passes. Peak RSS was 213,976 KiB. Prepared and syntax-checked the private remote wrapper with Harbor/Daytona dependencies and setup time deducted from the generation deadline. No allocation or model call occurred; submission launcher, capacity and budget reservation remain pending.
