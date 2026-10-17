@@ -1039,3 +1039,5 @@ Recovered the controller ending21:36:17: six completed no-model cases, all with6
 ### 2026-10-17 21:40 UTC — SETA Evol build dispatch preparation
 
 Prepared native materialization from the two unchanged saved schema-valid designs, retaining the failed third design and existing candidate/repair bounds. Parent9 assets round-trip with exact bytes/modes; fourteen transfer inputs frozen and saved-design digest verified. Added supported child output capture; controller failure/cleanup and wrapper success/timeout/setup-failure checks pass with zero model/provider calls. Reserved$10 within campaign, bringing estimates/holds to$428 and remaining$572. Dispatch requires live R2E-Gym completion, its independently absent worker and two available slots beside corrected Endless. No build result yet.
+
+Submitted21:40:39UTC froma9daf69: `/exedev/biotasks21-parent-evolution-build-20261017-01`. This records the previously pending native build stage, not acceptance or an export.
