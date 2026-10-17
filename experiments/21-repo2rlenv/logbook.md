@@ -692,3 +692,9 @@ Prepared the private submission launcher with an exclusive dispatch receipt, no 
 ## 2026-10-17 — LCC acceptance evidence reconciliation
 
 Rechecked the existing control summaries and diagnostic test identities. The original alternative is a meaningful partial solution: it repairs the DNA target but fails two legacy protein checks (10/12 passing), receiving the native binary reward zero. The revised alternative and two incorrect controls repeat rewards 1/0/0 on fresh workers. Independently evaluated the prompt's normalized entropy formula over all thirteen windows; maximum discrepancy from supplied reference values is 0.0000752973 and all stated rounding comparisons pass. Saved a source-hashed assessment without changing task text or reward. Acceptance still needs exact-runtime initial-state checks and Marin separate-verifier mapping/parity; no new trial or solver call occurred.
+
+## 2026-10-17 — SETA Evol design recovery and DataArc dispatch
+
+SETA Evol finished successfully at 18:33:52 UTC. Recovered and hash-verified the 184,303-byte temporary archive and nested author archive. Two designs pass the native schema, one fails validation; both successful draft specifications contain only a heading. All three requests stopped normally (37,772 / 33,151 / 32,154 completion tokens). These are design outputs only, with zero builds or accepted children. Public archival remains pending. Recovery initially lacked the Marin working directory required for storage configuration; corrected recovery succeeded without rerunning generation.
+
+DataArc submitted at 18:37:06–11 UTC from checkpoint 11ee6d5 after a live terminal-state check for the parent design job. The launcher retains two R2E instance slots and uses two for DataArc. No retries configured. Existing $10 reservation retained; campaign estimates/holds remain $273.

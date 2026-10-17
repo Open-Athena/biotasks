@@ -1,0 +1,46 @@
+{
+  "built_tasks": 0,
+  "independently_accepted_tasks": 0,
+  "parent_bundle_hash": "sha256:b6fb8d16018ceb6c59188421938fad3ff17da4de286a3061b59ae4b140851149",
+  "records": [
+    {
+      "design": {
+        "core_capabilities": [
+          "Locate and comprehend a dense, vectorized NumPy E-M routine inside a large scientific codebase (skbio/stats/composition/_ancombc.py::_estimate_bias_em)",
+          "Build a reproduction harness that captures exceptions and floating-point warnings (np.errstate / warnings) across a battery of degenerate inputs",
+          "Diagnose and repair multiple 0/0 (NaN-producing) sites in the same E-M loop under the R ANCOMBC2 convention (undefined quantities resolve to zero)",
+          "Write warning-free masked/guarded NumPy arithmetic (np.divide(..., where=...), np.copyto(..., where=...)) instead of after-the-fact NaN scrubbing",
+          "Validate numerical parity against R reference values to 1e-6 and verify determinism across repeated runs",
+          "Maintain regression discipline against the repository's existing 59-test module and follow repo conventions (CHANGELOG entry)"
+        ],
+        "draft_spec": "# Draft Spec: scikit-bio__scikit-bio-2633__increase_difficulty_1 (ancombc2 bias-EM hardening variant 1 of 1; sibling variant 2 targets the same bug via a different axis)",
+        "filtered_reason": null
+      },
+      "seed_sha256": "5b01c0e2a0d19f726cd63d45a3a5d756660db9cfe766f71a6c205ad3c9705a0c",
+      "status": "designed",
+      "title": "parent: increase_difficulty #1"
+    },
+    {
+      "design": {
+        "core_capabilities": [
+          "diagnose silent NaN propagation from unguarded 0/0 division across a polyglot pipeline (bash + SQLite + NumPy + strict JSON)",
+          "read SQL aggregation and shell orchestration to trace a data flow end-to-end",
+          "implement guarded divisions matching a reference implementation's exact numeric semantics",
+          "verify exact report values and keep existing tests green"
+        ],
+        "draft_spec": "# Draft Spec: change_context-2/cvr-report-zero-click-rate (variant 2 of parent scikit-bio ancombc2 underflow task)",
+        "filtered_reason": null
+      },
+      "seed_sha256": "4a5cb9923e133301c75dacd0d9fc4846a7dee31e7e4acb9e3da7e626453f65cb",
+      "status": "designed",
+      "title": "parent: change_context #2"
+    },
+    {
+      "error_type": "ValidationError",
+      "seed_sha256": "d0654a9f1b948b803eb5f85d5e393dcb3ded0f0360f38e68ccef67bfb0a90ce4",
+      "status": "failed",
+      "title": "parent: decrease_difficulty #3"
+    }
+  ],
+  "stage": "seta_evol_design_only"
+}
