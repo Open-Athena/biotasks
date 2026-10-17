@@ -78,7 +78,7 @@ def main():
         if args.generation_archive is None or args.config is None:
             parser.error('History controls require frozen task archive and configuration')
         history_config = json.loads(args.config.read_text())
-        if history_config['task'] not in ('swe-next-bf5a63ab005130388e02', 'r2e-gym-bf5a63ab005130388e02'):
+        if history_config['task'] not in ('swe-next-bf5a63ab005130388e02', 'r2e-gym-bf5a63ab005130388e02', 'swe-gen-30ce0424b0dc2d06bf6b'):
             parser.error('Unknown reviewed history task')
         with args.generation_archive.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != history_config['archive_sha256']:
