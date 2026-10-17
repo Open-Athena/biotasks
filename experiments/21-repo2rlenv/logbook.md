@@ -1208,3 +1208,7 @@ Run01 completed at23:21:18.260 UTC: all2000 first-parent history records source-
 ### 2026-10-17 GC-skew native control preparation
 
 Prepared native export/nop/oracle for saved Biopython GC_skew candidate5a16004c2d7522727d44, preserving its original author response and existing profile/contrast. Other two authored instructions remain rejected and are excluded. Nine dispatch inputs frozen, original21MB generation archive matched public receipt. No new authoring or candidate generation; no independent acceptance implied. Independent incorrect-submission checks follow only after a usable native bundle exists. Reserved$10, total$508/$1000 and remaining$492, for controller/worker after R2E-Gym terminal and independently confirmed cleanup. Dispatch pending checkpoint.
+
+### 2026-10-17 GC-skew native controls submitted
+
+Submitted saved-candidate native export and nop/oracle at checkpointde4a30abcc837e8d4293f5d8525ff08b2b107fe3. No generation model calls; original instruction retained. Two slots reserved alongside R2E authoring. Results, task preservation and independent acceptance remain pending.
