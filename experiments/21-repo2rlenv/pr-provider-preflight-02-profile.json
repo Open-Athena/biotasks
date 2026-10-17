@@ -1,0 +1,47 @@
+{
+  "stage": "reserved_corrected_input_transfer",
+  "task_acceptance": "evidence/pr2633-acceptance/acceptance.json",
+  "case_agents": [
+    "nop",
+    "oracle"
+  ],
+  "expected_rewards": [
+    0,
+    1
+  ],
+  "model_calls": 0,
+  "deadline_seconds": 1800,
+  "deadline_includes": "wrapper setup, native build and trials; cleanup may finish afterward",
+  "worker": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10,
+    "max_concurrent": 1
+  },
+  "controller": {
+    "cpus": 2,
+    "memory_gib": 4
+  },
+  "reservation_usd": 10,
+  "checks": [
+    "exact accepted-task asset hashes and restored file modes",
+    "provider network_block_all flag true",
+    "private paths absent before agent setup",
+    "initial scientific-library imports",
+    "native baseline and reference rewards",
+    "independent absence lookup after every trial"
+  ],
+  "sources": {
+    "pr_provider_environment.py": "dc026ddab4e46a81941c7983496d968fce6fdec5da93bdc5978f34a9df83b9f3",
+    "run_pr_provider_preflight.py": "2e9141e21d64e883f20bab867da16200330045cc9562c65df1737dd2f8eb683d",
+    "check_pr_provider_setup.py": "873ed0cf94e432b0869bfd322e156bb514f06e6806afcb568798ec0892322c3d",
+    "package_provider_task.py": "6ef38b7abfddbf96abb9ea73df921ffac51c5ef9b2e9462da1e0d146698683cd"
+  },
+  "private_launcher_hashes": {
+    "pr-provider-remote-02.py": "e2d83672a49a8afa3dc4818ebc97852511b1b9dcaf9abd43b23c143392b17d29",
+    "submit-pr-provider-02.py": "840f5ca4f34dd551be8f8bffa075985eb1c92707add507158534463631e95e26"
+  },
+  "offline_checks": "passed; no live calls",
+  "live_status": "not_dispatched",
+  "intervention": "Single task archive replacing nested inline workdir files; all nine asset hashes and modes checked before allocation"
+}

@@ -18,11 +18,15 @@ def main():
     started = time.monotonic()
     try:
         required = ['repo2rlenv-source.tar.gz', 'task-file-modes.json', 'acceptance.json',
+                    'task-bundle.tar.gz', 'task-bundle-manifest.json', 'package_provider_task.py',
                     'run_pr_provider_preflight.py', 'pr_provider_environment.py',
                     'preserve_author_output.py']
         state['input_presence'] = {name: Path(name).is_file() for name in required}
         if not all(state['input_presence'].values()):
             raise FileNotFoundError('Missing setup input; see input_presence')
+        state['phase'] = 'task_archive_unpack'
+        from package_provider_task import unpack
+        unpack(Path('task-bundle.tar.gz'), Path('task-bundle-manifest.json'), Path('.'))
         modes = json.loads(Path('task-file-modes.json').read_text())
         missing = [name for name in modes if not (Path('task') / name).is_file()]
         state['missing_task_paths'] = missing
@@ -59,6 +63,7 @@ def main():
             subprocess.run([str(python), '-c', code], env=env, stdout=log, stderr=log,
                            check=True, timeout=120)
         state.update(status='passed', phase='complete')
+        return root, env
     except Exception as exc:
         state.update(status='failed', error_type=type(exc).__name__, error=str(exc))
         (output / 'traceback.txt').write_text(traceback.format_exc())
