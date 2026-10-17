@@ -676,3 +676,7 @@ Blind-solver public snapshot `34770bf6f4da35f071ea21d819889458b1aa5b5a4281c0c793
 ## 2026-10-17 — Campaign budget increase
 
 The user authorized a $1,000 campaign ceiling, replacing $300. All other agreed execution and model limits remain unchanged. Recorded estimates and retained holds total $263, leaving $737 of planning allowance; these are not verified billed charges.
+
+## 2026-10-17 — DataArc build entrypoint preparation
+
+Added the entrypoint for the pinned experimental DataArc implementation. It verifies the twelve frozen parent-derived seed records before executing native materialization/build/repair/trial/export with target three, at most ten candidates and two repairs. It retains native context omissions and lineage, records settings, and preserves partial output. Offline native-loader checks passed, including rejection of changed identities, repair bounds, concurrency and deadlines. No DataArc calls or workers launched; enclosing controller and dispatch remain pending. R2E and SETA Evol jobs were independently observed RUNNING at 18:29 UTC.
