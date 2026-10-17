@@ -41,6 +41,7 @@ def main():
             "lcc-independent",
             "history-independent",
             "qcp-independent",
+            "alpha-independent",
             "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
@@ -85,6 +86,16 @@ def main():
         with args.generation_archive.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != history_config['archive_sha256']:
                 parser.error('History task archive changed')
+    if args.stage == 'alpha-independent':
+        if args.generation_archive is None or args.config is None:
+            parser.error('Alpha controls require frozen archive and configuration')
+        alpha_config = json.loads(args.config.read_text())
+        allowed_alpha = {'strong':'3cd37b06ec9a972757c3', 'esty_ci':'e3fc0018c5332295d4ab'}
+        if alpha_config.get('function') not in allowed_alpha or alpha_config.get('candidate_id') != allowed_alpha[alpha_config['function']]:
+            parser.error('Unknown reviewed alpha-diversity task')
+        with args.generation_archive.open('rb') as stream:
+            if hashlib.file_digest(stream, 'sha256').hexdigest() != alpha_config['archive_sha256']:
+                parser.error('Alpha control archive changed')
     if args.stage == "code-instruct-validation":
         authored = json.loads(args.issues.read_text())
         if authored.get("stage") != "authoring_only" or not 1 <= len(authored.get("records", [])) <= 10:
@@ -140,6 +151,14 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
+        elif args.stage == 'alpha-independent':
+            worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
+            for script in ('prepare_skbio_pr_controls.py', 'prepare_alpha_mutation_controls.py', 'run_alpha_mutation_independent.py', 'pack_qcp_evidence.py'):
+                worker.upload(root/script, '/work/native/'+script)
+            unpack = 'mkdir -p inputs; tar -xzf controls.tar.gz -C inputs; '
+            identifier = alpha_config['candidate_id']
+            task_path = '/work/native/inputs/native/validation/tasks/' + identifier + '/swe-smith-' + identifier
+            entry = '/work/native/run_alpha_mutation_independent.py --task ' + task_path + ' --function ' + alpha_config['function'] + ' '
         elif args.stage in ('history-independent', 'qcp-independent'):
             worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
             scripts = ('prepare_skbio_pr_controls.py', 'prepare_qcp_controls.py', 'run_qcp_independent.py', 'pack_qcp_evidence.py') if args.stage == 'qcp-independent' else ('prepare_skbio_pr_controls.py', 'run_history_independent.py')
@@ -295,7 +314,7 @@ def main():
                         "-c",
                         (
                             "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/pack_qcp_evidence.py && stat -c %s /work/native-evidence.tar.gz"
-                            if args.stage == "qcp-independent"
+                            if args.stage in ("qcp-independent", "alpha-independent")
                             else "tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz"
                         ),
                     ],
