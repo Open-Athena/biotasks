@@ -1,0 +1,27 @@
+{
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "Bio/SeqUtils"
+    ],
+    "test_paths": [
+      "Tests/test_SeqUtils.py"
+    ],
+    "base_image": "python:3.12.3-slim",
+    "dependencies": [
+      "pytest==9.0.3"
+    ],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'pytest==9.0.3' && mkdir -p GenBank && cp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && cmp Tests/GenBank/NC_005816.gb GenBank/NC_005816.gb && test -f LICENSE && test ! -L LICENSE && cmp LICENSE LICENSE.rst",
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "test_timeout_sec": 90,
+    "max_candidates": 10,
+    "target": 3,
+    "seed": 24,
+    "max_per_entity": 2
+  }
+}
