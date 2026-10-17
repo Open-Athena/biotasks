@@ -566,3 +566,11 @@ PR2633 controls run 01 completed in 130.321 seconds at the controller level, but
 Prepared a separate explicit offline compatibility profile: environment, agent and verifier all request no-network; the host-blocking Compose fragment is replaced by the offline adapter's isolated namespace, and native grading/instruction files remain unchanged. The original profile/failure remains preserved. Offline preparation checks cover both profiles and passed. This adaptation has not run remotely yet.
 
 Original PR control failure is now public: snapshot `research/21-repo2rlenv/2026-10-17/e3117fe78b477f965240bbe064d47a374b06f87989106457879dcd06725ff6f9`, 17 objects and 64 archive members anonymously verified. Reserve $5 for the separate offline compatibility profile, bringing conservative accounted estimates/holds to $193/$300. Native grader and original task evidence remain unchanged.
+
+## 2026-10-17 — PR2633 offline correctness-control results
+
+The explicit offline profile completed five Harbor trials in 185.639 controller seconds: baseline 0, native reference 1, alternative masked division 1, E-step-only correction 1, incorrect uniform responsibilities 0. Every trial parsed 60 tests normally, without exit-code fallback. Baseline retained all 59 P2P tests; the incorrect uniform implementation retained 51/59 but failed the F2P test, yielding zero under the native product reward.
+
+The E-step-only correction also passes all 60 tests. Thus this suite does not require the reference patch's extra M-step correction; it is not evidence that E-step-only is globally correct or incorrect. No fractional reward was observed. Fractional reward, repeatability, portable rebuild, remaining acceptance checks and Marin runtime comparison remain pending; zero independently accepted tasks and zero blind solver attempts. Worker absence was independently confirmed (404) at 16:46:28 UTC.
+
+Offline PR controls public snapshot verified: `research/21-repo2rlenv/2026-10-17/9ab5512b3151a936ec5d3ff9afb6780634c778340a11a93adb3d1507b1d1a9fd`, 17 objects and 127 archive members, anonymous hash/size/mode checks passed.
