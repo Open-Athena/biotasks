@@ -1,0 +1,31 @@
+{
+  "synthetic_dna_edit_distance": {
+    "name": "Synthetic DNA-string edit distance",
+    "logic_description": "Two independent synthetic strings use the DNA alphabet A, C, G, T. Compute the minimum number of single-character insertions, deletions, and substitutions needed to transform first into second. Each operation costs one; matching characters cost zero. Reordering, transpositions, reverse complements, and affine gap penalties are not operations in this problem. These strings are algorithm fixtures, not observed biological samples or a model of biological evolution.",
+    "generate_testcase": "\"\"\"Generate independent synthetic strings, not sampled or designed biological sequences.\"\"\"\nimport random\n\n\ndef generate_testcase(params):\n    length = params['length']\n    first = ''.join(random.choice('ACGT') for _ in range(length))\n    second = ''.join(random.choice('ACGT') for _ in range(length))\n    return first + '\\n' + second + '\\n', {'first': first, 'second': second}\n",
+    "params": {
+      "length": {
+        "base": 1,
+        "min": 4
+      }
+    },
+    "difficulty_dict": {
+      "2": 2,
+      "4": 4,
+      "6": 6,
+      "8": 8,
+      "10": 10,
+      "12": 12
+    },
+    "solutions": {
+      "solution": [
+        "\"\"\"Exact unit-cost edit distance; one-row dynamic programming.\"\"\"\nimport sys\n\n\ndef distance(first, second):\n    row = list(range(len(second) + 1))\n    for i, left in enumerate(first, 1):\n        following = [i]\n        for j, right in enumerate(second, 1):\n            following.append(min(following[-1] + 1, row[j] + 1,\n                                 row[j - 1] + (left != right)))\n        row = following\n    return row[-1]\n\n\nif __name__ == '__main__':\n    first, second = sys.stdin.read().splitlines()\n    print(distance(first, second))\n"
+      ],
+      "language": [
+        3
+      ]
+    },
+    "output_type": "number",
+    "instruction": "Return one nonnegative integer: the exact minimum edit cost."
+  }
+}

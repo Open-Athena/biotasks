@@ -750,3 +750,7 @@ Added the bounded lifecycle controller for native SWE-Next and R2E-Gym, using th
 ## 2026-10-17 — LCC validation launcher prepared
 
 Prepared the full six-case native/Marin validation launcher with source and input archive hash checks. Its capacity gate requires a fresh terminal R2E controller observation and independent Daytona worker absence; DataArc retains two reserved slots. The real launcher correctly refused to proceed before credential retrieval or allocation because the required terminal observation is unavailable. A five-dollar hold must be recorded before eventual dispatch. No worker or model call occurred.
+
+## 2026-10-17 — SCALER custom synthetic input cohort
+
+Prepared one DNA-string edit-distance family for the native SCALER generator. Inputs are uniformly sampled synthetic alphabet strings, not observed sequences or a biological evolutionary model. This is a custom experiment-authored seed, not an upstream released family fixture. Exact integer outputs use unit-cost insert/delete/substitute semantics; length scaling is not a claim of measured solver difficulty. Native family loading, compatibility transformations and first-comma input parsing pass. The reference agrees with independent shortest-path calculations for all 225 short binary-alphabet pairs and 36 generated ACGT instances. Target three, maximum ten candidates and native repair/generator limits remain in the profile; all instances share one split group. Remote generation, native -1/+1 controls, independent grading and blind solving remain pending.

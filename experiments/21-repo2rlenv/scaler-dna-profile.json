@@ -1,0 +1,33 @@
+{
+  "stage": "custom_family_prepared_not_executed_remotely",
+  "pipeline": "reasoning_synth",
+  "recipe": "scaler",
+  "source": {
+    "kind": "family",
+    "path": "seeds/scaler-dna-edit-v1/families.json"
+  },
+  "source_sha256": "da0a2a390785f43175a39709c3eaf28d82328b72348bc01b5656e2d42c329265",
+  "options": {
+    "target": 3,
+    "max_candidates": 10,
+    "seed": 24,
+    "difficulties": [
+      2,
+      4,
+      6,
+      8,
+      10,
+      12
+    ],
+    "samples_per_difficulty": 2
+  },
+  "input_origin": "Wholly synthetic uniformly sampled strings over ACGT; custom experiment-authored family, not an upstream released fixture or observed sequence.",
+  "protocol": "Native SCALER expansion/export and -1/+1 grading; no generation model calls. Preserve native export metadata and this separate custom-input provenance.",
+  "split_group": "scaler-dna-edit-v1",
+  "independent_family_count": 1,
+  "limitations": [
+    "Difficulty means string-length scaling only; empirical solver difficulty unmeasured.",
+    "Instances share one algorithm and must not be represented as independent scientific problems.",
+    "Native containers, baseline/reference, independent grading and blind solver remain unexecuted."
+  ]
+}
