@@ -862,3 +862,7 @@ Rechecked frozen history configuration, native entity/cache gates and controller
 ### 2026-10-17 — R2E-Gym first history dispatch
 
 Submitted `/exedev/biotasks21-r2e-gym-skbio-20261017-01` from checkpoint `745f1df2a435770b8a4ff474bb1a511211d12d36`: target 3, at most 10 candidates and 2,000 history entries, with approved free-GLM generation settings. TMax run 02 remains running. Each reserves one controller and one worker, totaling four slots. Budget estimates and holds total $348 of $1,000; actual charges remain unverified. Dispatch is not a generation or validation result.
+
+### 2026-10-17 — SCALER solver transfer queue
+
+Prepared all three accepted native tasks without modifying their assets. Deterministic archive roundtrips verified hashes and modes for all 36 files. Provider controls must preserve nop −1 / oracle +1 before one blind attempt per task (900 seconds, 12 turns, 2,048 output tokens, effort unset). No models or remote allocations occurred during preparation. Dispatch awaits capacity, reservation and provider control evidence. R2E-Gym was independently observed RUNNING at 20:16 UTC.
