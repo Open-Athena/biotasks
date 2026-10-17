@@ -12,6 +12,7 @@ from pathlib import Path
 
 from code_instruct_adapter import adapted_code_instruct, code_instruct
 from code_instruct_glm import adapted_code_instruct_glm
+from preserve_author_output import preserve
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.spec.input import GenerationInput, LLMSpec
 from repo2rlenv.spec.options import CodeInstructOptions
@@ -84,14 +85,18 @@ def main():
         'options': options.model_dump(mode='json'), 'adaptation': settings,
         'validation_deferred': True, 'exported_tasks': 0,
     })
-    with adapted_code_instruct(args.output), adapted_code_instruct_glm(settings, args.output / 'models'):
-        result = collector.run(args.output / 'native-run')
-    save_record(args.output / 'summary.json', {
-        'stage': 'authoring_only', 'seed_candidates_attempted': result.candidates,
-        'authored_candidates': len(collector.records), 'native_emitted': result.emitted,
-        'skip_reasons': result.skip_reasons, 'validation_executed': False,
-        'note': 'validation_deferred is staging, not a failed execution result',
-    })
+    try:
+        with adapted_code_instruct(args.output), adapted_code_instruct_glm(settings, args.output / 'models'):
+            result = collector.run(args.output / 'native-run')
+        save_record(args.output / 'summary.json', {
+            'stage': 'authoring_only', 'seed_candidates_attempted': result.candidates,
+            'authored_candidates': len(collector.records), 'native_emitted': result.emitted,
+            'skip_reasons': result.skip_reasons, 'validation_executed': False,
+            'note': 'validation_deferred is staging, not a failed execution result',
+        })
+    finally:
+        if recovery := os.environ.get('IRIS_OUTPUT_DIR'):
+            preserve(args.output, Path(recovery))
 
 
 if __name__ == '__main__':
