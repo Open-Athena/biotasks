@@ -1115,3 +1115,8 @@ Published append-only snapshot64729bf45d2a854ded7a6c7e41eefd779de4bb629a27c6c05c
 ### 2026-10-17 22:27 UTC — QCP independent control preparations
 
 Prepared six variants from the original native QCP bundle: unchanged baseline/reference, an alternative SVD computation of rotation/RMSD, and incorrect translation, identity-rotation and zero-reported-RMS variants. Preserved4888 non-solution assets byte-for-byte and parsed each modified source without executing biological code locally. Expectations are0,1,1,0,0,0 under the unchanged binary9-test contract; only remote execution can establish outcomes. Added dedicated runner/stage and mocked six-case/failure-propagation checks, with zero provider/model calls. Public task archive supplies the frozen control input. No wider degenerate-coordinate coverage is claimed.
+
+
+### 2026-10-17 22:28 UTC — QCP validation transfer ready
+
+Frozen ten control-dispatch inputs and checked all4889 original task files in the public archive for exact content, complete membership and modes. Config/archive accepted through the preallocation path; invalid controller deadline rejects before any worker call. Prepared submission/observation/recovery launchers gated on terminal SWE-gen controls, independent worker absence, exclusive two-slot claim and budget hold. No submission or new hold yet. SWE-gen controls remain RUNNING at22:27:46UTC.
