@@ -42,7 +42,7 @@ def check_task(task, acceptance):
 
 def config(task, output, agent):
     provider = os.environ.get('BIOTASKS21_PROVIDER_MODULE', 'pr_provider_environment')
-    if provider not in {'pr_provider_environment', 'lcc_provider_environment', 'scaler_provider_environment'}:
+    if provider not in {'pr_provider_environment', 'lcc_provider_environment', 'scaler_provider_environment', 'history_provider_environment'}:
         raise ValueError('Unreviewed provider module')
     return TrialConfig.model_validate({
         'task': {'path': str(task.resolve())}, 'trial_name': agent,
@@ -93,10 +93,10 @@ def cleanup(output):
     assert requested <= created, 'Uncertain creation requires provider reconciliation'
 
 
-async def run(args):
+async def run(args, *, validate_task=check_task):
     assert os.environ.get('REPO2RLENV_MODEL_WORKER') == '1'
     assert version('harbor') == '0.22.0'
-    check_task(args.task, args.acceptance)
+    validate_task(args.task, args.acceptance)
     bounds = json.loads(args.acceptance.read_text())['reward']['range']
     assert bounds in ([0, 1], [-1, 1]), 'Unexpected accepted reward range'
     args.output.mkdir(parents=True, exist_ok=False)

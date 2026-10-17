@@ -1140,3 +1140,7 @@ QCP independent worker exited 0, but the controller rejected its full archive ab
 ### 2026-10-17 Biopython R2E authoring reservation
 
 Reserved $10 for the first author/execute/refine stage on the existing ten-function Biopython cohort (preparation made zero model calls). Target3/max10/maxrounds3 and approved GLM settings remain unchanged. Frozen eight-file dispatch inputs are hash-checked before submission. QCP control controller is terminal and worker independently absent; Endless holds two slots, leaving two for this controller/worker pair. Total estimates and holds are $468 of $1,000, not billed charges. Submission and native results remain pending at this checkpoint.
+
+### 2026-10-17 History runtime probe preparation
+
+Prepared an explicit pre-acceptance provider probe for the unchanged scikit-bio SWE-gen export. Native Dockerfile already includes tmux; no task assets changed. The pending-input gate checks exact file set, hashes and modes, source identity, recipe/repository scope, offline configuration and separate verifier. Existing accepted-task callers retain their original acceptance gate. Frozen source/control lineage and all dispatch hashes are recorded. Real 65,321,428-byte task transfer roundtrip passed; synthetic no-model/preallocation/context checks and existing provider checks passed. No provider allocation or model call occurred. Probe requires three slots (controller plus separate learner/verifier), so it awaits capacity while two recipe runs reserve four slots. Runtime success, final acceptance and blind solve remain pending.
