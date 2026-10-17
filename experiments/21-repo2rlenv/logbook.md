@@ -1160,3 +1160,7 @@ Endless public snapshot 8b1cb5bc82967fbfb6937abe08689c02536194e69df9f9dc4bdb3d14
 ### 2026-10-17 Biopython SWE-Next reservation
 
 Reserved $10 for first Biopython SWE-Next execution using the already frozen QCP PR5317 profile and exact unchanged license/fixture-copy packaging adaptation. The selected source is one PR, not three independent tasks; target3/max10 remains the configured limit. Frozen file hashes are checked before dispatch. Endless is terminal and independently cleaned up; its freed two slots can accommodate this controller/worker pair alongside Biopython R2E. Total conservative estimates/holds are $478/$1,000. No new native result at this checkpoint.
+
+### 2026-10-17 QCP compact capture verified on actual bundles
+
+The compact packer was applied to hard-linked copies of the six prepared QCP control bundles under the shared local work guard. It verified 4,888 unchanged assets per case and omitted 29,328 exact duplicate files, retaining all six solution scripts with exact bytes/modes and the reconstruction manifest. The archive is 230,700 bytes (eight members) before remote execution logs. This is packaging validation only, not recovered or newly executed control rewards. Frozen qcp-independent-02 dispatch preparation changes only run_smith_controls.py and the added pack_qcp_evidence.py; source archive, solutions and grader remain byte-identical. No model calls, remote allocation or new budget reservation occurred; dispatch awaits capacity.
