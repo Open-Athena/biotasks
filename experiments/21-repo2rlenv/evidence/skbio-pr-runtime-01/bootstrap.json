@@ -1,0 +1,22 @@
+{
+  "build_time_sec": 104.72102319821715,
+  "dockerfile_reconstruction": "FROM python:3.13.2-slim\nENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 POLARS_MAX_THREADS=1 RAYON_NUM_THREADS=1\nRUN apt-get update && apt-get install -y --no-install-recommends git build-essential && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace\nRUN git init && git remote add origin https://github.com/scikit-bio/scikit-bio.git && git fetch --depth=1 origin 71286a24bddff66c82cb25a7ca13441aa13c2f2c && git checkout --detach FETCH_HEAD\nRUN python -m pip install --no-cache-dir -e '.[test]' 'numpy==2.5.3' 'scipy==1.18.1' 'pandas==3.0.6' 'pytest==9.0.3'\nRUN python -m pip freeze --all > /opt/baseline-freeze.txt\n",
+  "extra": {},
+  "image_digest": "sha256:2bd099840bd1e6e5f5d7d890b0a4857071a2edb4308fc805c55e2163ef7520fe",
+  "image_tag": "biotasks21-skbio-pr",
+  "iterations": 0,
+  "language": "python",
+  "llm_cost_estimate_usd": 0.0,
+  "llm_provider": "none; explicit Docker profile",
+  "pushed_to_registry": false,
+  "rebuild_cmds": [],
+  "ref": "71286a24bddff66c82cb25a7ca13441aa13c2f2c",
+  "repo": "scikit-bio/scikit-bio",
+  "smoke_passed": false,
+  "test_cmds": [
+    "cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py"
+  ],
+  "transcript_path": null,
+  "verify_detail": "",
+  "verify_passed": false
+}

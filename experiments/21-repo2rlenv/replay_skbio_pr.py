@@ -5,6 +5,7 @@ Generation and grading logic remain native; this is not independent problem dive
 """
 
 import dataclasses
+import argparse
 import json
 import os
 import subprocess
@@ -28,6 +29,12 @@ TEST = "cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/
 def main():
     if os.environ.get("REPO2RLENV_REMOTE_WORKER") != "1":
         raise RuntimeError("Run on the authorized remote worker only")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--restore-compiled", action="store_true")
+    args = parser.parse_args()
+    test_command = TEST
+    if args.restore_compiled:
+        test_command = "cp -a /opt/skbio-baseline-extensions/. /workspace/ && " + TEST
     output = Path("/evidence/native")
     output.mkdir(parents=True, exist_ok=True)
     inputs = Path("/work/native")
@@ -43,6 +50,14 @@ def main():
     digest = subprocess.check_output(
         ["docker", "image", "inspect", IMAGE, "--format", "{{.Id}}"], text=True
     ).strip()
+    for filename in (["baseline-freeze.txt", "skbio-baseline-extension-sha256.txt"]
+                     if args.restore_compiled else ["baseline-freeze.txt"]):
+        recorded = subprocess.check_output(
+            ["docker", "run", "--rm", "--network", "none", "--cpus", "1",
+             "--memory", "128m", digest, "cat", "/opt/" + filename],
+            text=True, timeout=30,
+        )
+        (output / filename).write_text(recorded)
     bootstrap = BootstrapResult(
         image_digest=digest,
         image_tag=IMAGE,
@@ -50,7 +65,7 @@ def main():
         repo="scikit-bio/scikit-bio",
         ref=PARENT,
         rebuild_cmds=[],
-        test_cmds=[TEST],
+        test_cmds=[test_command],
         smoke_passed=False,
         iterations=0,
         build_time_sec=time.monotonic() - started,
@@ -111,6 +126,11 @@ def main():
     pr = PullRequestSummary(**json.loads((inputs / "pr2633.json").read_text()))
     issue = json.loads((inputs / "issue2631.json").read_text())
     diff = (inputs / "pr2633.diff").read_text()
+    if args.restore_compiled and set(pr.changed_files) != {
+        "CHANGELOG.md", "skbio/stats/composition/_ancombc.py",
+        "skbio/stats/composition/tests/test_ancombc.py",
+    }:
+        raise ValueError("Compiled restoration applies only to the frozen pure-Python patch")
     if pr.number != 2633 or pr.base_sha != PARENT or issue["number"] != 2631:
         raise ValueError("Frozen cohort mismatch")
 

@@ -1,0 +1,12 @@
+{
+  "classification": "environment_collection_failure",
+  "native_skip_reason": "no_fail_to_pass",
+  "independent_interpretation": "Neither stage collected usable test outcomes because the compiled module was removed. This does not establish absence of a regression.",
+  "source_evidence": "Native pre_log explicitly records removal of the compiled _intersection module; both pre/post logs report its import failure.",
+  "candidate_attempts": 1,
+  "exported_tasks": 0,
+  "accepted_tasks": 0,
+  "model_calls": 0,
+  "proposed_intervention": "Preserve baseline compiled extension files outside the cleaned checkout and restore them before each native test stage. Restrict to this pure-Python patch; source and test patch logic stay unchanged.",
+  "intervention_executed": false
+}
