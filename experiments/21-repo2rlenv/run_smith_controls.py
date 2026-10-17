@@ -36,6 +36,7 @@ def main():
             "smith-controls",
             "flow-controls",
             "flow-independent",
+            "lcc-independent",
             "biopython-cve",
             "biopython-commit",
             "biopython-pr",
@@ -54,7 +55,7 @@ def main():
         parser.error("Repository controls require --generation-archive and --issues")
     if args.stage == "flow-controls" and args.config is None:
         parser.error("Flow controls require --config")
-    if args.stage == "flow-independent" and args.generation_archive is None:
+    if args.stage in ("flow-independent", "lcc-independent") and args.generation_archive is None:
         parser.error("Independent controls require the original control archive")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
@@ -97,12 +98,13 @@ def main():
             )
             if args.stage == "flow-controls":
                 entry += "--recipe swe_flow "
-        elif args.stage == "flow-independent":
+        elif args.stage in ("flow-independent", "lcc-independent"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
-            for script in ("prepare_flow_independent_controls.py", "run_flow_independent.py"):
+            family = "flow" if args.stage == "flow-independent" else "lcc"
+            for script in (f"prepare_{family}_independent_controls.py", f"run_{family}_independent.py"):
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
-            entry = "/work/native/run_flow_independent.py "
+            entry = f"/work/native/run_{family}_independent.py "
         elif args.stage == "biopython-pr":
             worker.upload(root / "replay_biopython_pr.py", "/work/native/replay_biopython_pr.py")
             worker.upload(root / "biopython-cve.Dockerfile", "/work/native/Dockerfile")
