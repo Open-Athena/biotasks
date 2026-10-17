@@ -886,3 +886,5 @@ Controller succeeded but exported zero tasks. Native scan examined 1,197 history
 ### 2026-10-17 — SWE-Next native calibration preparation
 
 Prepared first SWE-Next execution from the frozen PR2633 cache and native profile. Shared history reference staging may reproduce the R2E-Gym missing-fixture failure; keep this native baseline explicit. One selected PR cannot produce three independent problems. Native options/context checks pass; reserve $10, total $358 conservative holds, with two slots available after independently confirmed R2E-Gym cleanup. No dispatch yet.
+
+SWE-Next submitted at 20:24 UTC as `/exedev/biotasks21-swe-next-skbio-20261017-01`, checkpoint `48e938454a97c6851a605b7b776075f5f403a0e2`. Two slots reserved, alongside TMax two slots. No generation result yet.
