@@ -1,0 +1,53 @@
+{
+  "stage": "local_native_parser_dispatch_probe",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_path": "src/repo2rlenv/log_parsers/__init__.py",
+  "source_sha256": "97b901787ea5242d6f9901eebba69537a8b25aab9ced8b20359aa2bc11311c21",
+  "fixtures": "Synthetic runner text, not repository execution logs.",
+  "cases": [
+    {
+      "case": "bedtools_shell",
+      "commands": [
+        "bash test.sh"
+      ],
+      "language": "cpp",
+      "synthetic_log": "intersection: ok\n",
+      "recognized_runner": "unknown",
+      "parsed_test_count": 0
+    },
+    {
+      "case": "bedtools_make",
+      "commands": [
+        "make test"
+      ],
+      "language": "cpp",
+      "synthetic_log": "intersection: ok\n",
+      "recognized_runner": "unknown",
+      "parsed_test_count": 0
+    },
+    {
+      "case": "r_testthat",
+      "commands": [
+        "Rscript -e 'testthat::test_dir(\"tests/testthat\")'"
+      ],
+      "language": "r",
+      "synthetic_log": "[ FAIL 0 | WARN 0 | SKIP 0 | PASS 2 ]\n",
+      "recognized_runner": "unknown",
+      "parsed_test_count": 0
+    },
+    {
+      "case": "python_control",
+      "commands": [
+        "pytest -v"
+      ],
+      "language": "python",
+      "synthetic_log": "tests/test_example.py::test_one PASSED\n",
+      "recognized_runner": "pytest",
+      "parsed_test_count": 1
+    }
+  ],
+  "repository_builds": 0,
+  "repository_tests": 0,
+  "model_calls": 0,
+  "finding": "Pinned dispatch recognizes neither these shell/make commands with cpp fallback nor Rscript/testthat with r fallback. Both return empty maps before runner-specific parsing. A C++ or R runtime profile requires an explicit parser adaptation; this does not imply repository incompatibility."
+}

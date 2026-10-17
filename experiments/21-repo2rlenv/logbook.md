@@ -874,3 +874,7 @@ Archived native acceptance decisions, all three derived TaskSpecs and 24 runtime
 ### 2026-10-17 — SCALER provider preparation
 
 Prepared the no-model direct-provider wrapper with a 30-minute deadline and separate cleanup grace. Imported the actual provider configuration and verified both native nop/oracle configs and accepted asset hashes for all three task bundles. No provider API or model calls occurred. Execution requires three free slots including the controller; TMax and R2E-Gym remain independently observed RUNNING at 20:18–20:19 UTC, so no additional worker was dispatched.
+
+### 2026-10-17 — Non-Python parser coverage and ledger correction
+
+Exercised the pinned native dispatcher with explicitly synthetic shell/make and R/testthat output. All three commands resolve to unknown and produce empty per-test maps; the pytest positive control yields one test. This confirms the native parser gap, not failed repository execution or blanket C++/R incompatibility. Updated the coverage ledger from existing acceptance, solver, archive and live observation evidence: LCC and SCALER acceptance, DataArc incomplete failure, and active TMax/R2E-Gym are no longer described as merely prepared. Historical raw evidence remains unchanged.
