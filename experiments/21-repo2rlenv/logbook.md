@@ -660,3 +660,11 @@ Solver-runtime controls submitted from 4d35bd2 at 18:08 UTC. Runtime and origina
 Runtime probe succeeded at 18:12:12 UTC. Baseline 0 and reference 1 share the new tooling-only task checksum; native tmux 3.3a session startup, imports, private-path checks and provider network blocking passed in both sandboxes. Both deletions confirmed. Supported archive and nested hashes verified. This validates the explicit runtime variant without changing task content/reward. Reserve $5 for the approved single blind GLM attempt (900 seconds, 12 turns, 2,048 output tokens/request, no generation-effort override). Conservative estimates/holds now $258/$300.
 
 Single blind GLM attempt submitted from 4c8f240 at 18:14 UTC as `/exedev/biotasks21-pr-blind-solver-20261017-01`. Task archive matches validated runtime archive. No job retry or paid-model fallback. No solver score available at dispatch.
+
+Prepared a one-controller, no-Daytona SETA Evol design dispatch with verified flat parent archive, source revision hash, bounded setup/deadline, and supported partial-output recovery. Not reserved or submitted while solver and R2E occupy the four-instance allocation. Updated applicability lifecycle cells to reflect accepted PR2633 and running R2E rather than stale preparation-only status.
+
+## 2026-10-17 — First blind GLM score recovered
+
+One blind attempt completed with reward 1: 1/1 F2P and 59/59 P2P, all 60 tests parsed, no native exception. Ten model turns, 160.896 seconds for the native trial, 128,188 input tokens (107,328 cached) and 7,485 completion tokens; largest single completion 1,576, below the 2,048 cap. Cleanup confirmed after one asynchronous conflict. Transcript shows an E-step numerical fix plus a regression test; original transcript retained. No separate final source-tree artifact was declared by the native task, so edits/diff are preserved in the transcript rather than a source snapshot. Public copied configuration redacts private api_base; exact secret/route scan passed. This is one hinted numerical repair, not a broad capability estimate.
+
+Reserve $5 for SETA Evol design-only stage now that solver capacity is released. Conservative estimates/holds become $263/$300. No Daytona worker needed; at most three free model requests on one Iris controller.
