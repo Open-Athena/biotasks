@@ -1248,3 +1248,7 @@ Prepared corrected run02 submission/recovery launchers, gated on terminal Strong
 ### 2026-10-17 Strong native task rejected after independent controls
 
 Recovered the completed five-control run: baseline/reference/alternative/fixed-example/zero rewards0,1,1,1,0. The incorrect constant3/14 implementation passed all34 native tests, demonstrating insufficient task coverage. This native export is rejected for solver evaluation; no grader modification or new model calls occurred. Original archive201413bytes SHA256feaea05a35fc93a3a9530ca8a6a99ecfe74b85e8e01c24ab0956eef3c4966e55 and nested capture hash verified,101 native evidence files recovered with modes. Independent worker404 at23:47:28 UTC; controller terminal and two-slot claim released. Public compact evidence preservation remains pending.
+
+### 2026-10-17 Strong archive verified and Esty controls reserved
+
+Strong rejection evidence is publicly preserved in snapshot5c22518ce98df7b7f5a34738dcc8673767f67bc5222717641b3bb577ac72e6b6:23 objects and98 archive members verified by anonymous downloads including hashes and modes. Prepared Esty independent control launchers against11 previously frozen inputs, gated on GC-skew run02 termination and independent cleanup. Reserved$10 for five no-model controls; total estimates/holds$538 of$1000. Esty remains unsubmitted; no additional slots allocated.
