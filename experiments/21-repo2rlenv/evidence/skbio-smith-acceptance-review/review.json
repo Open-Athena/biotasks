@@ -1,0 +1,72 @@
+{
+  "stage": "static_review_not_acceptance",
+  "records": [
+    {
+      "candidate_id": "3cd37b06ec9a972757c3",
+      "function": "strong",
+      "status": "independent_controls_and_runtime_pending",
+      "stage": "static_instruction_contract_review",
+      "native_rewards": {
+        "nop": 0.0,
+        "oracle": 1.0
+      },
+      "expected_test_count": 34,
+      "competency": "Repair of an alpha-diversity statistic in a biological software library; generated instruction exposes the intended formula and numerical examples.",
+      "source_sha256": {
+        "instruction.md": "d2b61a31f9397bd03d93d77c3584691c43a33097a997ee3af56bb80ede48f566",
+        "task.toml": "681da8c39c32b87f3652c63e92e6a199eb400f05ddbfb137c517aeb41d839743",
+        "tests/contract.json": "29926cbd8390cdb27ff1983bb878fe83c149121024193271fa6935c54aa92e72",
+        "tests/source/skbio/diversity/alpha/tests/test_base.py": "f5ca7e89104f04052e654ea895db1ccf0191b0e0e16063145f20fd65aee93604",
+        "environment/source/skbio/diversity/alpha/_base.py": "e81ad2dab6c009264ba6bb93eb5f89fec307efada8e31032d180f0166b98906a"
+      },
+      "target_test_source": "def test_strong(self):\n        self.assertAlmostEqual(strong(np.array([1, 2, 3, 1])), 0.214285714)\n        self.assertTrue(np.isnan(strong([0, 0])))",
+      "limits": [
+        "Only selected archive files inspected here; original archive hash verified, not a fresh full-bundle integrity check.",
+        "Native positive/negative controls are not independent acceptance.",
+        "No new repository execution, solver trial or model call occurred."
+      ],
+      "coverage": "One nonzero vector [1,2,3,1] plus an all-zero input; no diverse nonzero abundance vectors in the target test.",
+      "instruction_review": "Absolute-value form in instruction agrees with subtraction for sorted nonnegative abundances when the zero-count preprocessing contract is retained; explicit NumPy scalar type is not separately asserted in the target test.",
+      "proposed_controls": [
+        "Alternative correct cumulative-abundance implementation preserving preprocessing",
+        "Incorrect constant 3/14 for every nonempty input; test whether narrow coverage accepts it",
+        "Incorrect zero for every nonempty input"
+      ],
+      "unexecuted_hypothesis": "A constant matching the single numerical example may pass the native grader. This is not an observed result."
+    },
+    {
+      "candidate_id": "e3fc0018c5332295d4ab",
+      "function": "esty_ci",
+      "status": "independent_controls_and_runtime_pending",
+      "stage": "static_instruction_contract_review",
+      "native_rewards": {
+        "nop": 0.0,
+        "oracle": 1.0
+      },
+      "expected_test_count": 34,
+      "competency": "Repair of an alpha-diversity statistic in a biological software library; generated instruction exposes the intended formula and numerical examples.",
+      "source_sha256": {
+        "instruction.md": "3d70527946b9ab81b28291217fa3065bf34cf9fd3082e129a2385ae83b4c1723",
+        "task.toml": "5c754688aa1949798c9b71625e7189e3fd4ebf46caf8061ea358804e808b6c9c",
+        "tests/contract.json": "60a2ac2ed0053b348701fd6b1ddb553e8810de832740bde960da6baf816d1457",
+        "tests/source/skbio/diversity/alpha/tests/test_base.py": "f5ca7e89104f04052e654ea895db1ccf0191b0e0e16063145f20fd65aee93604",
+        "environment/source/skbio/diversity/alpha/_base.py": "59de8313ef5e7b22ae04a6a6e9e45cc33e907adccaf883297b3cbd05f770b862"
+      },
+      "target_test_source": "def test_esty_ci(self):\n        def _diversity(indices, f):\n            \"\"\"Calculate diversity index for each window of size 1.\n\n            indices: vector of indices of taxa\n            f: f(counts) -> diversity measure\n\n            \"\"\"\n            result = []\n            max_size = max(indices) + 1\n            freqs = np.zeros(max_size, dtype=int)\n            for i in range(len(indices)):\n                freqs += np.bincount(indices[i:i + 1], minlength=max_size)\n                try:\n                    curr = f(freqs)\n                except (ZeroDivisionError, FloatingPointError):\n                    curr = 0\n                result.append(curr)\n            return np.array(result)\n\n        data = [1, 1, 2, 1, 1, 3, 2, 1, 3, 4]\n\n        observed_lower, observed_upper = zip(*_diversity(data, esty_ci))\n\n        expected_lower = np.array([1, -1.38590382, -0.73353593, -0.17434465,\n                                   -0.15060902, -0.04386191, -0.33042054,\n                                   -0.29041008, -0.43554755, -0.33385652])\n        expected_upper = np.array([1, 1.38590382, 1.40020259, 0.67434465,\n                                   0.55060902, 0.71052858, 0.61613483,\n                                   0.54041008, 0.43554755, 0.53385652])\n\n        npt.assert_allclose(observed_lower, expected_lower)\n        npt.assert_allclose(observed_upper, expected_upper)\n\n        self.assertTrue(np.isnan(esty_ci([0, 0])))",
+      "limits": [
+        "Only selected archive files inspected here; original archive hash verified, not a fresh full-bundle integrity check.",
+        "Native positive/negative controls are not independent acceptance.",
+        "No new repository execution, solver trial or model call occurred."
+      ],
+      "coverage": "Ten cumulative count vectors with lower/upper expected arrays using assert_allclose, plus all-zero input.",
+      "instruction_review": "Displayed variance is algebraically the same as source docstring. Instruction uses a more precise normal critical value than the source literal 1.959963985; numerical equivalence still needs independent runtime evidence.",
+      "proposed_controls": [
+        "Alternative correct factored variance and symmetric bounds",
+        "Incorrect clipping of negative lower bounds to zero",
+        "Incorrect omission of doubleton contribution to variance"
+      ],
+      "unexecuted_hypothesis": "Clipping or omitting doubletons should fail existing varied bounds; no independent controls executed yet."
+    }
+  ],
+  "archive_evidence": "../skbio-smith-controls-02/archive.json"
+}

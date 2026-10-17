@@ -1212,3 +1212,7 @@ Prepared native export/nop/oracle for saved Biopython GC_skew candidate5a16004c2
 ### 2026-10-17 GC-skew native controls submitted
 
 Submitted saved-candidate native export and nop/oracle at checkpointde4a30abcc837e8d4293f5d8525ff08b2b107fe3. No generation model calls; original instruction retained. Two slots reserved alongside R2E authoring. Results, task preservation and independent acceptance remain pending.
+
+### 2026-10-17 Remaining scikit-bio SWE-smith static review
+
+Hash-verified the preserved56MB control archive and streamed64 selected files/1.6MB for instruction/contract inspection. Both strong and esty_ci retain native0/1 and34-test binary contracts. Strong target test has one nonzero vector and empty input, motivating an unexecuted incorrect-constant control; esty_ci checks ten bound pairs and empty input, motivating alternative variance, wrong clipping and omitted-doubleton controls. Instructions supply formulas/examples, limiting biological-inference difficulty. Independent controls, full-bundle recheck and fresh runtime remain pending. No biological execution or model calls occurred locally.
