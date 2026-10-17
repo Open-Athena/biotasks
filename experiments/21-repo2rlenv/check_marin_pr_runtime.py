@@ -59,8 +59,11 @@ async def controls(task, image, oracle, verifier):
                     row['marin_result']=asdict(result)
                     row['marin_reward']=result.reward
                     assert result.status=='graded', row
-                    assert not result.diagnostics['stdout_truncated']
                     parsed=native.parse_pytest(result.diagnostics['stdout'])
+                    # Marin bounds diagnostic output independently of file reward
+                    # extraction. A truncated traceback can still retain every
+                    # test outcome; require the exact expected test-ID set.
+                    assert set(parsed)==set(f2p+p2p), 'Incomplete per-test diagnostics'
                     row['marin_test_counts']={'tests_parsed':len(parsed),
                         'f2p_passed':sum(parsed.get(x)=='PASSED' for x in f2p),
                         'p2p_passed':sum(parsed.get(x)=='PASSED' for x in p2p)}
