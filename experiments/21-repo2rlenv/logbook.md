@@ -858,3 +858,7 @@ All three unchanged native SCALER exports accepted for the bounded pilot after r
 ### 2026-10-17 — first R2E-Gym dispatch prepared
 
 Rechecked frozen history configuration, native entity/cache gates and controller cleanup fixtures. Preparing first R2E-Gym history scan on pinned scikit-bio composition source/tests, target3/max10/history2000; native bug-edit/test-match requirements unchanged. Two slots reserved alongside TMax two; no other claims. Free GLM serial generation settings unchanged. PR2633-overlapping outputs retain shared lineage. Separate $10 hold brings accounted estimates/holds to $348 of $1,000.
+
+### 2026-10-17 — R2E-Gym first history dispatch
+
+Submitted `/exedev/biotasks21-r2e-gym-skbio-20261017-01` from checkpoint `745f1df2a435770b8a4ff474bb1a511211d12d36`: target 3, at most 10 candidates and 2,000 history entries, with approved free-GLM generation settings. TMax run 02 remains running. Each reserves one controller and one worker, totaling four slots. Budget estimates and holds total $348 of $1,000; actual charges remain unverified. Dispatch is not a generation or validation result.
