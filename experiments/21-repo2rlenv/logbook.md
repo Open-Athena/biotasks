@@ -1078,3 +1078,8 @@ Submitted22:07UTC `/exedev/biotasks21-swe-gen-biopython-20261017-01` from0c1cc31
 ### 2026-10-17 22:09 UTC — SWE-gen independent checks prepared
 
 Reviewed original scikit-bio SWE-gen bundle a3bd9378 with native integrity verification, exact60-test contrast (healthy60; defective59+underflow failure) and original nop0/oracle1 evidence. Prepared six solution variants while preserving1981 non-solution assets; binary full-pass reward retains regression rejection. The E-step-only case is an observation, not presumed incorrect. Archived the original task in a source-hashed21,135,357-byte transfer package, added its exact reviewed task ID to the existing control runner, and checked config/hash/deadline rejection before allocation. No remote controls or model calls occurred. Biopython SWE-gen observed RUNNING at22:08:13UTC; four slots remain reserved with Endless.
+
+
+### 2026-10-17 22:10 UTC — SWE-gen control transfer verified
+
+Frozen nine dispatch inputs for the six-case scikit-bio SWE-gen correctness run. Streamed the task archive and verified all1982 files against original bytes, modes and complete file membership; original task identity was already checked by independent static review. Prepared hash-checking submission and observation/recovery launchers; submission requires terminal prior controller, independent worker absence and an exclusive slot claim. No new budget hold, submission or model call. Live observations at22:10UTC confirm both Endless and Biopython SWE-gen RUNNING, so four slots remain reserved.
