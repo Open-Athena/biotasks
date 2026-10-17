@@ -1192,3 +1192,7 @@ Prepared a first Biopython R2E-Gym submission/recovery path against the previous
 ### 2026-10-17 QCP independent controls recovered; R2E-Gym reserved
 
 Corrected QCP run02 completed successfully (23:13:22.906–23:16:59.815 UTC). All six preserved controls match expected rewards: baseline0, reference1, alternativeSVD1, wrong translation0, wrong identity rotation0, wrong reported RMS0. Recovered and checksum-verified the supported archive and nested capture, preserving120 native files/784414 bytes and permissions. Compact receipt verifies29328 duplicate assets omitted; all detailed results retained. Separate provider404 at23:18:54 confirms cleanup; history slot claim released. Original run01 unknown detailed results remain unchanged. Fresh provider runtime and final acceptance remain pending; public archive next. Reserved$10 for first Biopython R2E-Gym run, total estimates/holds$498/$1000, remaining$502; dispatch pending checkpoint.
+
+### 2026-10-17 Biopython R2E-Gym submitted
+
+Submitted first frozen R2E-Gym history cohort at checkpoint564e94df50ae72bbc234a5843bfb6a0a50de82ae after terminal QCP and independent cleanup verification. Native target3/max10/history2000 preserved; two slots reserved alongside the existing R2E authoring run. No task result or acceptance implied by submission. Total estimates/holds$498/$1000.
