@@ -12,7 +12,7 @@ REVISION = "45a044387ccd95ab698b4a592056aadaff961540"
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime", action="store_true")
-    parser.add_argument("--runtime-script", choices=("check_marin_runtime.py", "check_marin_pr_runtime.py"), default="check_marin_runtime.py")
+    parser.add_argument("--runtime-script", choices=("check_marin_runtime.py", "check_marin_pr_runtime.py", "check_marin_lcc_runtime.py"), default="check_marin_runtime.py")
     args = parser.parse_args()
     if os.environ.get("REPO2RLENV_REMOTE_WORKER") != "1":
         raise RuntimeError("Remote worker required")
@@ -68,7 +68,10 @@ from taskcompendium.models import TaskSpec, require_resolved_environment
 from shellbox.machine import UnsupportedMachineSpec
 p=Path('/work/native/task.json')
 t=TaskSpec.model_validate_json(p.read_text())
-Path('/evidence/native/validated-task.json').write_text(t.model_dump_json(indent=2)+'\\n')
+if t.id.startswith('repo2rlenv-swe-smith/'):
+    Path('/evidence/native/validated-task-id.txt').write_text(t.id+'\\n')
+else:
+    Path('/evidence/native/validated-task.json').write_text(t.model_dump_json(indent=2)+'\\n')
 assert not t.resources.worker and not t.resources.all
 assert t.resources.oracle and t.resources.verifier
 try:

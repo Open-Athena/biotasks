@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import subprocess
+import shutil
 from dataclasses import asdict
 from pathlib import Path
 
@@ -106,6 +107,10 @@ def main():
         cases=json.loads(Path('/work/native/lcc-cases/manifest.json').read_text())['cases']
         asyncio.run(controls(task,images,cases))
     finally:
+        # Exact original contexts remain in the hashed input artifact. Avoid
+        # archiving hundreds of MB of duplicate disposable materialization.
+        for role in ('learner','verifier'):
+            shutil.rmtree(base.ROOT/('build-'+role),ignore_errors=True)
         result=subprocess.run(['docker','rm','-f',base.REGISTRY],capture_output=True)
         (base.ROOT/'registry-cleanup.json').write_text(json.dumps({'returncode':result.returncode})+'\n')
 
