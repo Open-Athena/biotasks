@@ -1,0 +1,112 @@
+{
+  "stage": "offline_preserved_response_audit",
+  "responses": [
+    {
+      "file": "raw/call-001.json",
+      "sha256": "83b2911697f43b5acb094f469a8eae1a1bfa7f139ddf3e8725730ca032871b56",
+      "finish_reason": "stop",
+      "test_characters": 1571,
+      "test_newlines": 0,
+      "test_literal_backslash_n": 0,
+      "declared_weight_names": [
+        "test_clr_transform_matches_skbio",
+        "test_responsibilities_match_manual_formula",
+        "test_responsibilities_pi_scale_invariance",
+        "test_responsibilities_underflow_zero_without_warning",
+        "test_em_recovers_well_separated_components",
+        "test_em_respects_max_iter_cap_and_validation",
+        "test_cli_end_to_end_report",
+        "test_cli_validation_errors"
+      ],
+      "environment_files": [
+        {
+          "path": "structzero.py",
+          "newlines": 93
+        },
+        {
+          "path": "example/counts.csv",
+          "newlines": 7
+        },
+        {
+          "path": "example/mu.csv",
+          "newlines": 4
+        },
+        {
+          "path": "example/var_hat.csv",
+          "newlines": 4
+        }
+      ],
+      "syntax_valid": true,
+      "top_level_nodes": [
+        "Import"
+      ],
+      "top_level_tests": []
+    },
+    {
+      "file": "raw/call-002.json",
+      "sha256": "3b25174fd893a7f45b17000cd6ab022fee98c87e8dca43a0babe7776475e179d",
+      "finish_reason": "stop",
+      "test_characters": 162,
+      "test_newlines": 0,
+      "test_literal_backslash_n": 0,
+      "declared_weight_names": [
+        "test_clr_transform_matches_skbio",
+        "test_responsibilities_match_manual_formula",
+        "test_responsibilities_pi_scale_invariance",
+        "test_responsibilities_underflow_zero_without_warning",
+        "test_em_recovers_well_separated_components",
+        "test_em_respects_max_iter_cap_and_validation",
+        "test_cli_end_to_end_report",
+        "test_cli_validation_errors"
+      ],
+      "environment_files": [
+        {
+          "path": "structzero.py",
+          "newlines": 74
+        },
+        {
+          "path": "example/counts.csv",
+          "newlines": 7
+        },
+        {
+          "path": "example/mu.csv",
+          "newlines": 4
+        },
+        {
+          "path": "example/var_hat.csv",
+          "newlines": 4
+        }
+      ],
+      "syntax_valid": false,
+      "syntax_error": "invalid syntax",
+      "syntax_error_line": 1
+    }
+  ],
+  "repair_feedback": [
+    {
+      "file": "runs/dataarc-build-01/candidates/141e3755e1c39330/builder-0.request.json",
+      "materialization_errors": []
+    },
+    {
+      "file": "runs/dataarc-build-01/candidates/141e3755e1c39330/builder-1.request.json",
+      "materialization_errors": [
+        "1 validation error for TerminalDraft\n  Value error, Weights must name each top-level pytest test exactly once [type=value_error, input_value={'environment_setup': \"RU...nd warm start support.\"}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+      ]
+    },
+    {
+      "file": "runs/dataarc-build-01/candidates/141e3755e1c39330/builder-2.request.json",
+      "materialization_errors": [
+        "1 validation error for TerminalDraft\n  Value error, Weights must name each top-level pytest test exactly once [type=value_error, input_value={'environment_setup': \"RU...nd warm start support.\"}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error",
+        "invalid syntax (<unknown>, line 1)"
+      ]
+    }
+  ],
+  "generated_code_executed": false,
+  "new_model_calls": 0,
+  "conclusion": "First tests field contains imports but no tests; second is invalid Python. Environment file fields contain actual newlines. Neither saved response supplies a runnable verifier.",
+  "limitations": [
+    "No causal claim about model reasoning effort or token allocation.",
+    "Third dispatched request has no saved response.",
+    "No generated prose claiming test success is execution evidence."
+  ]
+}
