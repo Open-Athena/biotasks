@@ -40,6 +40,7 @@ def main():
             "flow-independent",
             "lcc-independent",
             "history-independent",
+            "qcp-independent",
             "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
@@ -74,11 +75,12 @@ def main():
         parser.error("Scikit-bio PR controls require the original native task archive")
     if args.stage in ("marin-lcc-runtime", "marin-scaler-runtime") and args.generation_archive is None:
         parser.error("LCC parity requires its source-hashed input archive")
-    if args.stage == 'history-independent':
+    if args.stage in ('history-independent', 'qcp-independent'):
         if args.generation_archive is None or args.config is None:
             parser.error('History controls require frozen task archive and configuration')
         history_config = json.loads(args.config.read_text())
-        if history_config['task'] not in ('swe-next-bf5a63ab005130388e02', 'r2e-gym-bf5a63ab005130388e02', 'swe-gen-30ce0424b0dc2d06bf6b'):
+        allowed = ('swe-gen-d929391f2255c34c2485',) if args.stage == 'qcp-independent' else ('swe-next-bf5a63ab005130388e02', 'r2e-gym-bf5a63ab005130388e02', 'swe-gen-30ce0424b0dc2d06bf6b')
+        if history_config['task'] not in allowed:
             parser.error('Unknown reviewed history task')
         with args.generation_archive.open('rb') as stream:
             if hashlib.file_digest(stream, 'sha256').hexdigest() != history_config['archive_sha256']:
@@ -138,12 +140,14 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
-        elif args.stage == 'history-independent':
+        elif args.stage in ('history-independent', 'qcp-independent'):
             worker.upload(args.generation_archive, '/work/native/controls.tar.gz')
-            for script in ('prepare_skbio_pr_controls.py', 'run_history_independent.py'):
+            scripts = ('prepare_skbio_pr_controls.py', 'prepare_qcp_controls.py', 'run_qcp_independent.py') if args.stage == 'qcp-independent' else ('prepare_skbio_pr_controls.py', 'run_history_independent.py')
+            for script in scripts:
                 worker.upload(root/script, '/work/native/'+script)
             unpack = 'mkdir -p inputs; tar -xzf controls.tar.gz -C inputs; '
-            entry = '/work/native/run_history_independent.py --task /work/native/inputs/native/tasks/' + history_config['task'] + ' '
+            runner = 'run_qcp_independent.py' if args.stage == 'qcp-independent' else 'run_history_independent.py'
+            entry = '/work/native/' + runner + ' --task /work/native/inputs/native/tasks/' + history_config['task'] + ' '
         elif args.stage in ("flow-independent", "lcc-independent"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
             family = "flow" if args.stage == "flow-independent" else "lcc"

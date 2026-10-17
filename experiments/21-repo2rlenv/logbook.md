@@ -1110,3 +1110,8 @@ Submitted22:21UTC `/exedev/biotasks21-swe-gen-independent-20261017-01` from87036
 ### 2026-10-17 22:24 UTC — QCP task public preservation verified
 
 Published append-only snapshot64729bf45d2a854ded7a6c7e41eefd779de4bb629a27c6c05c46977e7bec8bff with23 objects and4892 native archive members. Fresh anonymous downloads verify every hash, byte count and mode. Exact credential scans pass; eight copies of four upstream Entrez source/doc/test files contain API parameter markers and were verified byte-for-byte using pinned public Git blob hashes before inclusion. Private input/provider/accounting files and duplicate checkouts excluded. The immutable snapshot retains its pre-upload summary; current summary points to the verified receipt. This preserves a native export, not independent acceptance.
+
+
+### 2026-10-17 22:27 UTC — QCP independent control preparations
+
+Prepared six variants from the original native QCP bundle: unchanged baseline/reference, an alternative SVD computation of rotation/RMSD, and incorrect translation, identity-rotation and zero-reported-RMS variants. Preserved4888 non-solution assets byte-for-byte and parsed each modified source without executing biological code locally. Expectations are0,1,1,0,0,0 under the unchanged binary9-test contract; only remote execution can establish outcomes. Added dedicated runner/stage and mocked six-case/failure-propagation checks, with zero provider/model calls. Public task archive supplies the frozen control input. No wider degenerate-coordinate coverage is claimed.

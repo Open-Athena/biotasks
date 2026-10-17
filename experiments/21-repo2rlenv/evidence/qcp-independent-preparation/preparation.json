@@ -1,0 +1,44 @@
+{
+  "stage": "prepared_unexecuted",
+  "source_bundle_hash": "sha256:884d3ca9f209c943c27378076368faf76fb812522d09bc1644633aecd6c82200",
+  "reward_contract": "binary_all_expected_tests_pass",
+  "cases": [
+    {
+      "case": "baseline",
+      "expected_reward": 0,
+      "interpretation": "independent correctness control"
+    },
+    {
+      "case": "native_reference",
+      "expected_reward": 1,
+      "interpretation": "unchanged native reference replay"
+    },
+    {
+      "case": "alternative_svd",
+      "expected_reward": 1,
+      "interpretation": "independent correctness control"
+    },
+    {
+      "case": "wrong_translation",
+      "expected_reward": 0,
+      "interpretation": "independent correctness control"
+    },
+    {
+      "case": "wrong_identity_rotation",
+      "expected_reward": 0,
+      "interpretation": "independent correctness control"
+    },
+    {
+      "case": "wrong_zero_reported_rms",
+      "expected_reward": 0,
+      "interpretation": "independent correctness control"
+    }
+  ],
+  "limits": [
+    "No independent runtime result yet",
+    "One collinear regression and eight existing tests; wider degeneracies untested"
+  ],
+  "unchanged_asset_count": 4888,
+  "model_calls": 0,
+  "workers": 0
+}
