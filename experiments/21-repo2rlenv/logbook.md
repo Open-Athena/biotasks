@@ -1017,3 +1017,5 @@ SWE-Next independent controls are now public in snapshot26afcec7afc641a5a1c9bc5f
 ### 2026-10-17 21:30 UTC — R2E-Gym controls submitted
 
 Submitted six serial no-model correctness cases for the exact fixture-adapted R2E-Gym PR2633 bundle, using the existing controller and preserved control configuration. Native archive digest checked before dispatch; completed TMax controller and absent worker verified; Endless reserves the other two slots. Checkpoint52354ae; estimates/holds now$408, remaining$592. No result claimed at submission. Frozen the TMax raw-response archive manifest for public preservation.
+
+TMax public snapshot6fda079179e8f274d99555fcbf8827bdc66165e2951c84a25081b61f23e17e32 verified anonymously: 19 objects, 54 archive members. All nine failed initial-test contents match captured LiteLLM responses exactly. This rules out a post-receipt code transformation but does not identify whether model, constrained decoding, relay serialization or earlier client processing caused the malformed single-line output; no wire-level response was captured.

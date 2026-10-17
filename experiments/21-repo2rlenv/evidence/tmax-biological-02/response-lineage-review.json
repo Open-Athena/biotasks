@@ -1,0 +1,90 @@
+{
+  "stage": "read_only_response_lineage_diagnosis",
+  "records": [
+    {
+      "candidate": "1346eea2818201d6",
+      "receipt": "initial-model-repair-1.json",
+      "raw_call": "call-011.json",
+      "content_sha256": "39d38f285a64f298d99f5fbedff88fdb4fccfe0d5cae1ada06953cdf80fc9183",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "1346eea2818201d6",
+      "receipt": "initial-model-repair-2.json",
+      "raw_call": "call-012.json",
+      "content_sha256": "def094411cbeef71c936d8d97f97bcb88a614accd71bd9355187aa44089bf79d",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "1346eea2818201d6",
+      "receipt": "initial-model.json",
+      "raw_call": "call-010.json",
+      "content_sha256": "82b45fde49dbe30625333ee7d545166e994573e91b66c0f5c520f2e9c3c75d97",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "b015f6bf06e8112e",
+      "receipt": "initial-model-repair-1.json",
+      "raw_call": "call-007.json",
+      "content_sha256": "c5bbd4e4e75f46f9150b8427ab638445e3e9ddea5b021601873b9d8901b654fd",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "b015f6bf06e8112e",
+      "receipt": "initial-model-repair-2.json",
+      "raw_call": "call-008.json",
+      "content_sha256": "263ecc12701d88767e09cc0978b08802246a065f5543ad3f76a053629c1b988e",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "b015f6bf06e8112e",
+      "receipt": "initial-model.json",
+      "raw_call": "call-006.json",
+      "content_sha256": "b7f4cbb9656c021772cdb4d42ff902f4e75938f182be209cf14262f82c09ea4b",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "bc97b04774f4a3ff",
+      "receipt": "initial-model-repair-1.json",
+      "raw_call": "call-003.json",
+      "content_sha256": "5e962b63a48b6b41ed322b681eb1c3c7fd64eb63b03208c02b8494582a5178f9",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "bc97b04774f4a3ff",
+      "receipt": "initial-model-repair-2.json",
+      "raw_call": "call-004.json",
+      "content_sha256": "5db7a31d11c70ed084ba595865022f5ff2090cc382c4d40a4c1f701a8b9bb4aa",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    },
+    {
+      "candidate": "bc97b04774f4a3ff",
+      "receipt": "initial-model.json",
+      "raw_call": "call-002.json",
+      "content_sha256": "0cccb8942fd4db607a2968e8a362a5ccdbc74083b05d81df652531c7e5a66945",
+      "raw_equals_metered_content": true,
+      "decoded_code_newlines": 0,
+      "decoded_code_literal_backslash_n": 0
+    }
+  ],
+  "finding": "The comment-only code is already present in the captured LiteLLM message content and is identical in the metered receipts. Native structured validation performs model_validate_json on that content. No post-receipt code transformation explains this failure.",
+  "unresolved": "No wire-level relay response was captured; these artifacts cannot distinguish model generation, constrained decoding, provider serialization or client-side processing before the captured message.",
+  "new_model_calls": 0,
+  "response_rewriting": false
+}
