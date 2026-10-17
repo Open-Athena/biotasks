@@ -714,3 +714,7 @@ Prepared a remote-only comparison runner that builds distinct learner and verifi
 ## 2026-10-17 — LCC remote stage wired and inputs packaged
 
 Added a distinct marin-lcc-runtime stage to the existing no-model remote controller and pinned Marin validator. It consumes the full prepared input archive, skips duplicating the large unresolved TaskSpec into evidence, and removes only disposable materialized build contexts after execution; original hashed inputs, logs and graded submissions remain retained. Packaged 71,686,963 bytes with SHA-256 e6a0149c0abf65a47329e5ffd637e04aff27c8ad647f3493efeda03f7ae20044. All three entrypoints parse and the embedded remote schema-check program compiles. No worker allocated or runtime success claimed; capacity and dispatch are pending.
+
+## 2026-10-17 — SETA Evol build-stage replay preparation
+
+Prepared the native build/repair/trial/export entrypoint with the recipe-specific builder prompt and a frozen design callback. The two schema-valid designs are returned exactly as recorded, including their heading-only specifications. The original validation failure remains a failed design in the native candidate loop; it is not regenerated or silently dropped. Offline checks using the native parent loader verify unchanged designs, retained failure, rejection of changed seed/evidence and zero new design calls. Remote controller, launcher and actual materialization remain pending.
