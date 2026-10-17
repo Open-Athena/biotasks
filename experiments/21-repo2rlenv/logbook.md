@@ -786,3 +786,7 @@ Published append-only HF snapshot 49da0fb2aaaefd6aa07d9e7580841a473b922e656dffe1
 ## 2026-10-17 — SCALER native generation and controls complete
 
 The SCALER job succeeded at 19:25:07 UTC, producing all three requested exports from three candidates. All six native trials completed without exceptions: no-op rewards -1 and oracle rewards +1 for every task. Generation used no model calls. The controller independently confirmed worker absence with 404. Recovered the 314,330-byte archive and verified outer provider and nested receipt checksums (225 files, 482,998 uncompressed bytes). These are three concrete instances of one synthetic sequence-distance family. Independent acceptance, public task archival, Marin conversion and blind solver attempts remain pending.
+
+## 2026-10-17 — LCC runtime validation reserved after SCALER cleanup
+
+Fresh live checks confirmed SCALER and R2E controllers terminal and SCALER worker absent (404), releasing the exclusive replacement-slot claim. Reserved five dollars for the prepared full LCC native/Marin six-case comparison on one CPU sandbox with no model calls. DataArc retains two slots; the replacement claim conservatively reserves the other two while LCC uses one worker. Total estimates/holds are 288 of 1,000 dollars, leaving 712. Input archive and source hashes remain required before dispatch.
