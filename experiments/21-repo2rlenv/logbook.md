@@ -892,3 +892,7 @@ SWE-Next submitted at 20:24 UTC as `/exedev/biotasks21-swe-next-skbio-20261017-0
 ### 2026-10-17 — R2E-Gym fixture-root adaptation
 
 Traced missing reference data to native `stage_tests`: the profile named only one test file, so its sibling data directory was not copied. Prepared a separate profile adding `skbio/stats/composition/tests/data`. Native staging on the recovered head restored all nine fixture files (70,513 bytes), with unchanged selected module and unchanged test bytes. No upstream code changes, test exclusions, model calls or runtime tests occurred. Keep the original zero-export profile as baseline; the adapted remote contrast and generation remain pending.
+
+### 2026-10-17 — Public R2E-Gym native failure evidence
+
+Uploaded history selection, original healthy/defective results and stdout, failure traceback, profile, controller code and cleanup evidence to HF snapshot `ab2d2fb97a903c4ca83483355b97ca1c5b2be82ed7326b808a85c187c70d700d`. All 21 objects verified by fresh anonymous downloads. Source notices retained; private input/accounting/provider configuration and duplicate source checkouts excluded. SWE-Next observed RUNNING at 20:26 UTC.
