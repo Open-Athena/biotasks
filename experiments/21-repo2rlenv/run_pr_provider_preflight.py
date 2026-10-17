@@ -42,7 +42,7 @@ def check_task(task, acceptance):
 
 def config(task, output, agent):
     provider = os.environ.get('BIOTASKS21_PROVIDER_MODULE', 'pr_provider_environment')
-    if provider not in {'pr_provider_environment', 'lcc_provider_environment'}:
+    if provider not in {'pr_provider_environment', 'lcc_provider_environment', 'scaler_provider_environment'}:
         raise ValueError('Unreviewed provider module')
     return TrialConfig.model_validate({
         'task': {'path': str(task.resolve())}, 'trial_name': agent,
@@ -97,13 +97,15 @@ async def run(args):
     assert os.environ.get('REPO2RLENV_MODEL_WORKER') == '1'
     assert version('harbor') == '0.22.0'
     check_task(args.task, args.acceptance)
+    bounds = json.loads(args.acceptance.read_text())['reward']['range']
+    assert bounds in ([0, 1], [-1, 1]), 'Unexpected accepted reward range'
     args.output.mkdir(parents=True, exist_ok=False)
     os.environ['BIOTASKS21_PROVIDER_RECEIPTS'] = str((args.output / 'provider.jsonl').resolve())
     state = {'stage': 'no_model_provider_controls', 'model_calls': 0, 'cases': [], 'status': 'running'}
     deadline = time.monotonic() + int(os.environ['BIOTASKS21_PREFLIGHT_REMAINING_SEC'])
     try:
         for agent in args.agents:
-            expected = {'nop': 0, 'oracle': 1}[agent]
+            expected = {'nop': bounds[0], 'oracle': bounds[1]}[agent]
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise TimeoutError('Compatibility probe deadline reached')

@@ -14,11 +14,11 @@ from preserve_author_output import preserve
 from run_pr_provider_preflight import check_task, cleanup, config
 
 
-def check_controls(baseline, reference):
+def check_controls(baseline, reference, expected_baseline=0):
     base = json.loads(baseline.read_text())
     ref = json.loads(reference.read_text())
     assert base['exception_info'] is None
-    assert base['verifier_result']['rewards']['reward'] == 0
+    assert base['verifier_result']['rewards']['reward'] == expected_baseline
     assert ref['status'] == 'passed' and ref['model_calls'] == 0
     cases = [x for x in ref['cases'] if x['agent'] == 'oracle']
     assert len(cases) == 1
@@ -42,7 +42,9 @@ async def run(args):
     assert os.environ.get('REPO2RLENV_MODEL_WORKER') == '1'
     assert version('harbor') == '0.22.0'
     check_task(args.task, args.acceptance)
-    expected_checksum = check_controls(args.baseline, args.reference)
+    bounds = json.loads(args.acceptance.read_text())['reward']['range']
+    assert bounds in ([0, 1], [-1, 1]), 'Unexpected accepted reward range'
+    expected_checksum = check_controls(args.baseline, args.reference, bounds[0])
     assert Task(args.task).checksum == expected_checksum, 'Provider-control task changed'
     endpoint = os.environ['BIOTASKS21_GLM_ENDPOINT']
     assert os.environ.get('BIOTASKS21_GLM_KEY')

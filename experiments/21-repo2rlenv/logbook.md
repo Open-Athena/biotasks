@@ -850,3 +850,7 @@ First TMax job exited before reading its manifest: `FileNotFoundError: seed/mani
 ### 2026-10-17 — corrected TMax input layout verified
 
 The real native TMax preparation accepts the copied flat-file seed layout and reproduces the exact three selected records; changed-input rejection still passes. Reserved a separate $10 for the corrected startup, retaining the original failure and hold. No generation candidate was consumed by the first attempt. Accounted estimates/holds now $338 of $1,000.
+
+### 2026-10-17 — native SCALER acceptance
+
+All three unchanged native SCALER exports accepted for the bounded pilot after rechecking shortest-path answers, exact runtime asset hashes, original no-op/oracle trials and four independent native/Marin controls per task. They share one synthetic algorithm family. Marin raw-value parity passes but result-range metadata remains incompatible, a separate conversion finding. The provider/solver gates now accept the explicit native -1 baseline without changing rewards; prior PR provider and blind-solver regression checks passed, plus a fixture proving the wrong baseline contract is rejected. No new model calls or blind attempts. TMax-02 observed RUNNING at 20:08:47 UTC.
