@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 22:48 UTC result reconciliation. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 23:15 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -19,6 +19,7 @@ The two completed blind attempts both earned reward 1. They are selected, indepe
 
 ## Generation and execution limitations
 
+- Biopython SWE-Next rejected its first source candidate before model calls because the selected test change only reformats an existing expression. One of ten candidates is consumed; broader bounded source selection remains pending. See [source review](evidence/swe-next-biopython-01/source-filter-review.json).
 - Endless biological adaptation exhausted ten candidates with 34 model responses and zero exports: two design parse failures and eight exhausted initial-test repair sequences. No task build or solver trial started. See [Endless evidence](evidence/endless-biological-02).
 
 - TMax's selected biological cohort produced zero exports from three candidates and twelve model calls. All nine initial-test responses failed native test-shape validation. The preserved responses explain the validator outcome but do not establish whether the underlying formatting problem originated in the model or an earlier transport component. See [TMax evidence](evidence/tmax-biological-02).
@@ -32,7 +33,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links ten generation/materialization rows and two solver rows to thirteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links eleven generation/materialization rows and two solver rows to fourteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -40,6 +41,7 @@ The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json
 | swe-next-skbio-01 | 1 | 1 | 1 | 6388 | 25000 | 23740 |
 | r2e-gym-skbio-fixtures-02 | 1 | 1 | 1 | 5661 | 7459 | 6508 |
 | swe-gen-biopython-01 | 1 | 1 | 1 | 3347 | 13623 | 12557 |
+| swe-next-biopython-01 | 1 | 0 | 0 | 0 | 0 | 0 |
 | r2e-skbio-author-01 | 10 | 0 | 30 | 94162 | 1179584 | unknown |
 | tmax-biological-02 | 3 | 0 | 12 | 54166 | 647644 | 601324 |
 | endless-biological-02 | 10 | 0 | 34 | 130826 | 860060 | 768301 |
@@ -55,7 +57,9 @@ Harbor is the preserved native task format for executed exports. Marin conversio
 
 SCALER demonstrates why numeric reward agreement is insufficient: its native -1/+1 values survive the converted runtime, but the pinned Marin result metadata still reports 0/1 bounds. [The range diagnosis](evidence/marin-scaler-runtime-01/score-range-diagnosis.json) records the exact pinned source and runtime evidence. This is an unresolved compatibility finding; silently normalizing the rewards would change the task contract.
 
-The native/converted PR-runtime and LCC controls provide evidence for their specific tested structures and profiles. They do not establish admission or training readiness for other exports. Remaining structures and candidate bundles require their own assessment, including preservation of private grading assets, fixture lineage, environment behavior and native reward semantics.
+The [structure reconciliation](evidence/marin-structure-coverage/coverage.json) confirms four representative structures were executed: PR-diff patch similarity (three matching controls), portable PR-runtime fractional F2P/P2P grading (six), LCC separate-context binary grading (six), and SCALER numeric grading (twelve across three tasks). The corrected PR-diff runtime already passed; the earlier harness failure is preserved separately. Its similarity reward is not functional correctness, and its temporary image is not a published training image.
+
+The three scikit-bio history exports share byte-identical grader and wrapper code with the tested LCC structure. This reduces duplicate structure-level work but does not establish candidate runtime readiness, acceptance or Atlas admission: source images, fixtures, allowed files and task contracts differ. Fresh candidate runtime probes are prepared and await capacity. Any subsequently exported task with a distinct structure still requires representative conversion and execution.
 
 ## Still required for the final report
 
