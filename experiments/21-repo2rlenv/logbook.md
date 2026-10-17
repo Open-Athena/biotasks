@@ -380,3 +380,5 @@ Native commit/PR module import preflight passed in 0.29 seconds, peak RSS 40,856
 ## 2026-10-17 — recovered completed commit-runtime evidence
 
 Recovered the terminal controller result and original validation evidence: worker completed with exit 0, one candidate emitted, one failing-to-passing test and 54 passing-to-passing tests; all 55 tests pass after the reference fix. The separate mocked solver transport fixture passed with zero model calls. Controller reports termination; independent deletion verification remains pending. This is the same historical fix as the CVE replay, not another independent problem. Full task acceptance and blind solving remain pending. The grader integrity diagnostic remains unimplemented and unexecuted; no finding is claimed. Archive hash recorded; public upload pending.
+
+At 01:41:50 UTC, live scheduler observation confirmed Biopython authoring SUCCEEDED with child exit 0: one authored candidate, one Timeout and one ValueError. Full authoring artifacts and independent review remain pending. Read-only observation took 2.03 seconds, peak RSS 205432 KiB; no jobs were restarted.
