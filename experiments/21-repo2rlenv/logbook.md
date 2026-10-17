@@ -464,3 +464,7 @@ Authoring job observed RUNNING at 15:25:02 and 15:27:27 UTC; no log entries or c
 ## 2026-10-17 — code-instruct validation environment preparation
 
 Prepared the remote validation entrypoint and controller stage. It reuses the preserved corrected Biopython export environment, verifies and restores the original LCC source, builds a local image, then runs saved candidates through native validation in fresh bounded containers. It explicitly tracks installed build assets because the native validator resets/cleans its checkout. Local preparation checked 2,440 source files: only Bio/SeqUtils/lcc.py changed, exactly matching the retained original reference. Original/adapted Dockerfile hashes and source reference hash are recorded. Preparation took 1.370 seconds. Docker build and live candidate validation remain unexecuted pending author outputs. No additional remote reservation or model call was made by this preparation.
+
+## 2026-10-17 — revised LCC public archive preparation
+
+Prepared a distinct append-only snapshot for the passing revised LCC controls: 21 objects, 128,997,091 bytes and 14,753 archive members. Eligibility scan checked 14,773 regular files with zero configured sensitive-pattern matches. Preparation took 6.732 seconds. Upload and anonymous verification pending; estimated transfer working set 384 MiB. Authoring task enumeration independently showed one RUNNING attempt started at 15:24:12 UTC, with no reported error and no returned log entries at 15:32:02 UTC. No restart or new author dispatch occurred.
