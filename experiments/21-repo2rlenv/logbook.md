@@ -822,3 +822,7 @@ Offline AST inspection of unchanged responses found an imports-only first verifi
 ### 2026-10-17 — SCALER exports preserved publicly
 
 All three complete task exports and the custom synthetic family seeds are preserved at public snapshot `afb5a91ef2e43d21e407db86d1f3c9be410bc4d0c1925e82123a35b804556450`. Anonymous downloads verified 13 objects and 38 archive members against the committed manifest. Native export metadata remains unchanged; one family / three instances, not three independent scientific competencies. Independent runtime controls, representative Marin parity and blind solver attempts remain pending. Historical snapshot metadata records publication pending at capture time; current upload receipt supersedes it.
+
+### 2026-10-17 — LCC direct provider passed; blind attempt prepared
+
+Iris probe completed successfully at 19:52:20 UTC. Exact-task nop/reference rewards 0/1, two native terminal startups, four separately created learner/verifier sandboxes all independently absent at 19:53:58 UTC. Results preserved in `evidence/lcc-provider-01/`; controller and native trial success verified separately. The accepted LCC task is ready for one blind free-GLM attempt with the unchanged solver limits (900 seconds, 12 turns, 2,048 output tokens, effort unset). Reserve $10, bringing estimates/holds to $313 of $1,000; capacity claim from provider probe released.
