@@ -416,3 +416,11 @@ Public follow-up snapshot upload and fresh anonymous verification completed succ
 ## 2026-10-17 — scikit-bio native controls and Biopython follow-up preparation
 
 The already-reserved scikit-bio SWE-smith controls worker is running. Its first candidate, strong (3cd37b06ec9a972757c3), completed native baseline/reference trials with rewards 0/1 and no exceptions. The esty_ci candidate remains in progress; final archive and cleanup verification are pending. No model calls were made. Prepared separate Biopython lcc_mult submission controls using an independent per-window Shannon entropy implementation, constant-zero output and an incorrect whole-sequence replacement. The helper preserves native grading assets and checks unchanged-asset hashes; the single-reference layout was verified against the pinned exporter. These controls are prepared and syntax-checked only, not remotely executed or accepted. Mathematical and original-bundle preparation checks remain pending until the current controller releases the shared execution lock.
+
+## 2026-10-17 — both scikit-bio SWE-smith native controls pass
+
+The original worker completed both strong and esty_ci native baseline/reference trials with rewards 0/1, all completed without exceptions and zero model calls. The local observation handle exited 143, but the original controller continued, saved a 56,002,063-byte archive and confirmed termination. A separate recovery attempt overlapped completed cleanup and made no changes; provider lookup independently returned 404. Preserved original summary, trial results and archive hash. Full public archive upload and independent acceptance remain pending.
+
+Biopython LCC independent-control preparation completed in 10.6 seconds with 280,836 KiB peak RSS (above the 256 MiB estimate but below the 500 MiB local limit). Original/derived bundle integrity and unchanged grading-asset hashes passed. Independent entropy checks passed for the authored 13-window example, homopolymer, lowercase balanced composition and a two-base window. These are local preparation checks, not native grader execution.
+
+Reserved $5 for the distinct Biopython LCC independent-controls worker, using the existing corrected-profile export archive and three prepared submission variants. Total conservative estimates and holds are $138/$300. No model calls or blind solving are included.
