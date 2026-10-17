@@ -1,0 +1,154 @@
+{
+  "observed_utc": "2026-10-17T21:05:29.684323+00:00",
+  "objective": "finish #21",
+  "completion_proven": false,
+  "scope_sha256": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6",
+  "requirements": [
+    {
+      "requirement": "route_inventory",
+      "status": "partially_complete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "4cd7416fd52bf01ac4395514b11cb7ecde82d8ae8e5a3197c29d432950401c23"
+        }
+      ],
+      "finding": "23 executable routes plus planned sec_bench identified; keep missing-input and unsupported cases separate from failures."
+    },
+    {
+      "requirement": "applicable_repository_routes",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "4cd7416fd52bf01ac4395514b11cb7ecde82d8ae8e5a3197c29d432950401c23"
+        }
+      ],
+      "finding": "Biopython SWE-gen/SWE-Next/R2E-Gym and R2E authoring remain pending; scikit-bio commit-runtime pending; code-instruct authoring output unknown after archive capture failure."
+    },
+    {
+      "requirement": "candidate_targets_and_caps",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "swe-gen-skbio-profile.json",
+          "sha256": "66b9c6048e42a1a4bec9d1b8d8a030c0b8242a3f6dbd69b66fb26c9e31d718b5"
+        },
+        {
+          "path": "swe-next-skbio-profile.json",
+          "sha256": "e0ee853b6d411632e60c8b5455f4f912841c1504dd5664dbd606af5f65913f32"
+        },
+        {
+          "path": "r2e-gym-skbio-fixtures-profile.json",
+          "sha256": "baf1e33c34ee26f95165234253b8c091c7bcd5d5ec27a735cf2713617a6bb972"
+        }
+      ],
+      "finding": "History calibrations share one PR2633 lineage; they do not establish three independent accepted tasks per applicable route/repository. Reconcile all cohort attempts and stop criteria before further candidate selection."
+    },
+    {
+      "requirement": "independent_acceptance",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "evidence/pr2633-acceptance/acceptance.json",
+          "sha256": "856f4fdcbc3225ee0b64f8446bceed48fff3f9963a4f483c72e69ae759edc1c4"
+        },
+        {
+          "path": "evidence/lcc-acceptance-review/acceptance.json",
+          "sha256": "97977c255263409ef66211ffcbc3f4fdde9b1c4408fb7fccc06c8924c87dd787"
+        },
+        {
+          "path": "evidence/scaler-native-acceptance/summary.json",
+          "sha256": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9"
+        },
+        {
+          "path": "evidence/history-export-review/swe-next-skbio-01.json",
+          "sha256": "bada5b0eb45b24fe337b9332896fa9999d6f7dacd5bc8c025dc150b1042b2c3c"
+        },
+        {
+          "path": "evidence/history-export-review/r2e-gym-skbio-fixtures-02.json",
+          "sha256": "d1112eab408b4f3b488a60c1b8a880a89f77f2ae9b9715d4e4d48da87f752df2"
+        }
+      ],
+      "finding": "Five native pilot tasks accepted across PR2633, LCC and three SCALER variants. History correctness controls, observed_features runtime boundary checks, Biopython historical task and remaining SWE-smith/SWE-flow reviews still pending."
+    },
+    {
+      "requirement": "every_accepted_task_one_blind_attempt",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "evidence/pr-blind-solver-01/summary.json",
+          "sha256": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76"
+        },
+        {
+          "path": "evidence/lcc-blind-solver-01/summary.json",
+          "sha256": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80"
+        },
+        {
+          "path": "evidence/scaler-native-acceptance/summary.json",
+          "sha256": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9"
+        }
+      ],
+      "finding": "Two accepted tasks have recorded blind outcomes; all three accepted SCALER tasks await provider controls and one blind attempt each. Newly accepted tasks must also be evaluated."
+    },
+    {
+      "requirement": "seed_routes",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "4cd7416fd52bf01ac4395514b11cb7ecde82d8ae8e5a3197c29d432950401c23"
+        }
+      ],
+      "finding": "SETA Evol materialization pending; TMax active; EndlessTerminals and TerminalWorld still lack resolved biological inputs. DataArc and seed2synth failed bounded builds remain preserved findings."
+    },
+    {
+      "requirement": "marin_reward_and_runtime_compatibility",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "evidence/marin-scaler-runtime-01/score-range-diagnosis.json",
+          "sha256": "d58a91a0063a023b1f81101738635e486ce99e5d434c1d1c13f1c2c927650b4d"
+        }
+      ],
+      "finding": "PR2633 and LCC runtime evidence exists; SCALER raw -1/+1 reward matches but GradeResult bounds remain 0/1. Other distinct verifier structures require representative coverage or explicit unsupported findings."
+    },
+    {
+      "requirement": "artifact_retention",
+      "status": "partially_complete",
+      "evidence": [
+        {
+          "path": "hf-swe-next-skbio-01-permissions-corrected-upload-receipt.json",
+          "sha256": "1baeb21b61763367574063c7081f42a8cce0f2d2ca1213d0716c6bf0380f0aa0"
+        },
+        {
+          "path": "hf-r2e-gym-skbio-fixtures-02-permissions-corrected-upload-receipt.json",
+          "sha256": "1aca8112cd64ca94fe1c9a11c20590d64579c177ca023ce6651d2a26412f5642"
+        }
+      ],
+      "finding": "Recent history tasks have corrected public snapshots with exact permissions verified. Continue preserving pending runs and audit earlier recovery paths for the same permission-loss bug before using any unverified task copy."
+    },
+    {
+      "requirement": "final_comparison_and_conclusions",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "4cd7416fd52bf01ac4395514b11cb7ecde82d8ae8e5a3197c29d432950401c23"
+        },
+        {
+          "path": "budget-reconciliation-20261016.json",
+          "sha256": "dfbf0b08832f0ccf6cc0e5846a9e7c2e7c70b3ba10751177355ea45e880d9ea6"
+        }
+      ],
+      "finding": "Final route/repository/cohort funnels, competency comparisons, manual interventions, worker/model usage and expansion conclusions are not yet assembled against complete execution evidence."
+    }
+  ],
+  "next_priority": [
+    "Recover active TMax and SWE-gen results, independently verify cleanup",
+    "Run three accepted SCALER provider checks and blind attempts when three slots are free",
+    "Execute prepared history correctness controls; finalize acceptance only on passing evidence",
+    "Complete remaining applicable repository/seed routes within original per-cohort caps",
+    "Reconcile all evidence and report final funnel/limitations without counting shared lineage as independent problems"
+  ]
+}

@@ -962,3 +962,8 @@ Independent bundle inspection found that local archive extraction lost executabl
 ### 2026-10-17 21:04 UTC — History independent-control runner
 
 Added a no-model native control runner and controller stage for the two reviewed history exports. It verifies the original bundle before preparing six submissions, preserves all non-solution assets, executes trials serially, and retains per-case evidence. The partial E-step fix is an observation-only case, while the grouping regression is required to fail the binary grader. Mocked execution checks passed for both expected results and an incorrectly accepted regression. Frozen archive hashes/configurations are prepared for each task; no native control run was dispatched because TMax and SWE-gen remain active.
+
+
+### 2026-10-17 21:06 UTC — Scope reconciliation
+
+Re-read the current issue body and recorded a requirement-level incomplete-work audit with evidence hashes. The matrix contains 23 executable routes plus one planned route. Updated stale SWE-gen/SWE-Next/R2E-Gym entries to reflect current dispatch, adaptation, public permission corrections and outstanding acceptance gates. Five native pilot tasks are accepted, with two blind outcomes recorded and three SCALER attempts pending. Shared PR2633 history variants do not satisfy independent-task targets. The remaining work includes applicable repository cohorts, seed routes, independent controls, reward metadata compatibility and final comparative reporting; no completion claim is supported.
