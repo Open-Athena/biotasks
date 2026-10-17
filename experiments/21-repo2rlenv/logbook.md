@@ -658,3 +658,5 @@ Solver-runtime controls submitted from 4d35bd2 at 18:08 UTC. Runtime and origina
 ## 2026-10-17 — Solver runtime controls passed; blind attempt reserved
 
 Runtime probe succeeded at 18:12:12 UTC. Baseline 0 and reference 1 share the new tooling-only task checksum; native tmux 3.3a session startup, imports, private-path checks and provider network blocking passed in both sandboxes. Both deletions confirmed. Supported archive and nested hashes verified. This validates the explicit runtime variant without changing task content/reward. Reserve $5 for the approved single blind GLM attempt (900 seconds, 12 turns, 2,048 output tokens/request, no generation-effort override). Conservative estimates/holds now $258/$300.
+
+Single blind GLM attempt submitted from 4c8f240 at 18:14 UTC as `/exedev/biotasks21-pr-blind-solver-20261017-01`. Task archive matches validated runtime archive. No job retry or paid-model fallback. No solver score available at dispatch.
