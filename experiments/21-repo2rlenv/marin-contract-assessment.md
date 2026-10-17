@@ -1,7 +1,7 @@
 # Marin conversion contract assessment
 
 Inspection pin: `45a044387ccd95ab698b4a592056aadaff961540`.
-This is source inspection, not an executed TaskSpec conversion or runtime check.
+The initial assessment below records source inspection. Later executed evidence is reconciled in the dated section at the end; preparation, runtime parity and admission remain distinct.
 
 The existing task-curation repository converters are dataset-specific. The
 TaskTrove `swe_task` helper requires `tests/config.json` with FAIL_TO_PASS or
@@ -53,3 +53,18 @@ publication has been performed.
 - [TaskTrove repository input contract](https://github.com/marin-community/marin/blob/45a044387ccd95ab698b4a592056aadaff961540/experiments/post_training/task_curation/datasets/tasktrove/conversion/executable.py)
 - [Deferred repository build and grader mapping](https://github.com/marin-community/marin/blob/45a044387ccd95ab698b4a592056aadaff961540/experiments/post_training/task_curation/datasets/tasktrove/repository_build.py)
 - [TaskSpec-to-Harbor exporter restrictions](https://github.com/marin-community/marin/blob/45a044387ccd95ab698b4a592056aadaff961540/experiments/post_training/task_curation/tasktrove/harbor_export.py)
+
+## 2026-10-17 executed structure coverage
+
+The [evidence reconciliation](evidence/marin-structure-coverage/coverage.json) checks saved case-level rewards at the same Marin pin. No new remote execution was performed for this review.
+
+| Structure | Representative | Executed evidence | Remaining limit |
+| --- | --- | --- | --- |
+| Workspace/Git patch similarity | scikit-bio PR2630 PR-diff | Corrected runtime02: empty 0, reference 1, unrelated change 0.002353; native and Marin agree in all three cases | Similarity is not functional correctness. First runtime01 failed due to a conversation-prefix harness error; retain it as a distinct failure. The temporary registry digest does not provide a public training image. |
+| Repository test grader with fractional F2P/P2P reward | Portable scikit-bio PR2633 profile | Six native/Marin comparisons agree, including partial reward | Explicit compiled-runtime adaptation; evidence is specific to this profile. |
+| Separate learner/verifier source contexts, allowed-source collection, binary pytest reward | Biopython LCC | Six native/Marin comparisons agree, including rejection of partial correctness | Other source builds, fixtures and task contracts still require candidate-specific checks. |
+| Separate numeric-answer verifier, native -1/+1 reward | Three SCALER variants from one synthetic family | Twelve native/Marin comparisons agree numerically | Pinned GradeResult metadata remains 0/1: direct range metadata is incompatible. No silent normalization. |
+
+The [static grader comparison](evidence/marin-structure-coverage/history-grader-comparison.json) confirms that the three scikit-bio history exports have identical grader and shell-wrapper bytes to the executed LCC representative. Their Docker contexts and test contracts differ. This helps group the conversion structures; it does not certify the history candidates or replace their pending provider/runtime and acceptance checks.
+
+All four structures have representative execution evidence, but numeric range metadata is unresolved for SCALER. Newly emitted structures must be assessed on their own. No Atlas admission, public image availability, or general training readiness follows from these controls. Full per-task funnels and blind evaluation remain separate outstanding work.

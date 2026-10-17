@@ -1,0 +1,209 @@
+{
+  "stage": "evidence_reconciliation_not_new_execution",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "atlas_admission_established": false,
+  "structures": [
+    {
+      "name": "PR-diff workspace/Git patch similarity",
+      "representative": "scikit-bio PR2630",
+      "status": "representative_runtime_parity_passed",
+      "cases": [
+        {
+          "case": "empty",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "reference",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "unrelated_change",
+          "native_reward": 0.002353,
+          "marin_reward": 0.002353
+        }
+      ],
+      "limitation": "Three controls match after the ConversationTrace harness correction. Similarity is not functional correctness; the ephemeral local registry image is not a public training image."
+    },
+    {
+      "name": "Portable repository test grader with fractional F2P/P2P reward",
+      "representative": "scikit-bio PR2633 portable profile",
+      "status": "representative_runtime_parity_passed",
+      "cases": [
+        {
+          "case": "baseline",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "native_reference",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "alternative_masked_division",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "e_step_only",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "wrong_uniform_responsibilities",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "fixed_underflow_with_grouping_regression",
+          "native_reward": 0.983051,
+          "marin_reward": 0.983051
+        }
+      ],
+      "limitation": "Applies to this explicit compiled-runtime adaptation; does not validate every repository or native history export."
+    },
+    {
+      "name": "Separate learner/verifier source contexts with allowed-source collection and binary pytest reward",
+      "representative": "Biopython LCC",
+      "status": "representative_runtime_parity_passed",
+      "cases": [
+        {
+          "case": "baseline",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "reference",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "partial_dna_only",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "equivalent_dna_entropy_preserve_legacy",
+          "native_reward": 1.0,
+          "marin_reward": 1.0
+        },
+        {
+          "case": "wrong_constant_zero",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        },
+        {
+          "case": "wrong_whole_sequence",
+          "native_reward": 0.0,
+          "marin_reward": 0.0
+        }
+      ],
+      "grader_sha256": "e525b964f4bd013bb452e259e87ab098dcee13f509dbcd0a09c2469cf94b395f",
+      "wrapper_sha256": "ca028a35babdbcb443869a39875bdfe48e5225e0a4090e469c23a9c0a2371c0c",
+      "limitation": "Representative structure covered. Different source images, fixtures, allowed files and candidate contracts still require task-specific validation."
+    },
+    {
+      "name": "Separate numeric-answer verifier with native -1/+1 reward",
+      "representative": "SCALER synthetic edit-distance family",
+      "status": "raw_reward_parity_but_metadata_incompatible",
+      "tasks": [
+        {
+          "task_id": "repo2rlenv-scaler/6015a4908f93f61dc648ad264bf4d90ed7b03d43921618581a0c2ad3bdb6acde",
+          "cases": [
+            {
+              "case": "equivalent_decimal",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "equivalent_scientific",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "wrong_off_by_one",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            },
+            {
+              "case": "invalid_text",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            }
+          ],
+          "range_metadata_matches": false
+        },
+        {
+          "task_id": "repo2rlenv-scaler/a7d0c9e204f8e40935a482f15f49879ae205269ad0f073e4591d561774a19934",
+          "cases": [
+            {
+              "case": "equivalent_decimal",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "equivalent_scientific",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "wrong_off_by_one",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            },
+            {
+              "case": "invalid_text",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            }
+          ],
+          "range_metadata_matches": false
+        },
+        {
+          "task_id": "repo2rlenv-scaler/4bcdc2e2bf620d9913c110031261065cabadca0fbaa5c42b952d3d8077fa4369",
+          "cases": [
+            {
+              "case": "equivalent_decimal",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "equivalent_scientific",
+              "native_reward": 1.0,
+              "marin_reward": 1.0
+            },
+            {
+              "case": "wrong_off_by_one",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            },
+            {
+              "case": "invalid_text",
+              "native_reward": -1.0,
+              "marin_reward": -1.0
+            }
+          ],
+          "range_metadata_matches": false
+        }
+      ],
+      "limitation": "The pinned file-reward schema has no range override; runtime returns the raw numeric reward with default GradeResult bounds 0/1. SCALER raw -1/+1 parity passes but direct TaskSpec score-range metadata is incompatible."
+    }
+  ],
+  "source_sha256": {
+    "evidence/marin-pr-runtime-02/controls.json": "677d0f98d532070eeef7d09d48d4767168c16d25e40fb88957257272fe8b5de2",
+    "evidence/marin-lcc-runtime-02/runtime-result.json": "9062806ea1bfa7e903d739359e2db5544e97be0f6c2a940b525d642a1157687b",
+    "evidence/marin-scaler-runtime-01/runtime-result.json": "65e9c72092db6332a11c2fd9a146c79859036a85a7a88d1563e69c32d0b07d87",
+    "evidence/marin-scaler-runtime-01/score-range-diagnosis.json": "d58a91a0063a023b1f81101738635e486ce99e5d434c1d1c13f1c2c927650b4d",
+    "evidence/marin-runtime-02/native/runtime/controls.json": "e2d60bde7af9da97495d87d0400ad02c36304adac24b8e996aa821c95a117929",
+    "evidence/marin-runtime-02/controller-result.json": "6804a68c89d14761dcb22bea3e77962ddfda39a1c70686cda4f8fa449478885a",
+    "evidence/lcc-marin-preparation/conversion-summary.json": "c50db0b3258640c2d5c6d3c3554adb54ac11581a02431059df827f43af01cdaa"
+  },
+  "next_required": [
+    "PR-diff representative reward parity is established; task acceptance and public image availability remain separate checks.",
+    "Retain the SCALER score-range metadata incompatibility; do not normalize native rewards silently.",
+    "Inspect any new export for genuinely different verifier/environment structures.",
+    "Complete task-specific acceptance and solver work independently of representative conversion evidence."
+  ]
+}
