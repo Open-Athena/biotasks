@@ -480,3 +480,7 @@ Scikit-bio code-instruct author job submitted successfully and independently obs
 ## 2026-10-17 — scikit-bio code-instruct validation preparation
 
 Extended the prepared validation entrypoint to the pinned scikit-bio environment and original reference source. Local context preparation checked 1,012 source files: only skbio/diversity/alpha/_base.py changed, exactly matching the retained reference hash. Preparation took 1.016 seconds; no Docker build or native candidate validation occurred. Added an author-only, one-to-ten-record preallocation check; an empty collection exited with code 2 before source archive access or campaign-directory creation, with zero remote workers and model calls. Saved both executable checks and their execution receipts. Both author jobs were still RUNNING at the preceding 15:39 UTC observation, without returned log entries; no candidate or solver result is inferred.
+
+## 2026-10-17 — LCC reward repeatability reservation
+
+Reserve $5 for one fresh-worker repeat of all three revised LCC independent controls, using the unchanged input archive, control constructor and native grader from the passing run. This supplies the still-missing repeatability comparison; it is not a new candidate search or solver attempt. Two author workers remain active, so maximum concurrent workers is three. No model calls. Conservative estimates/holds total $158/$300; actual charges and credits remain unverified. Preserve results before deleting the new sandbox.
