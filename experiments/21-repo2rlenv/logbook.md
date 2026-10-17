@@ -746,3 +746,7 @@ R2E and DataArc were confirmed RUNNING on their original attempts at 19:02 UTC. 
 ## 2026-10-17 — History controller and remote wrapper prepared
 
 Added the bounded lifecycle controller for native SWE-Next and R2E-Gym, using their distinct PR-runtime and commit-runtime pipeline identities. Frozen profile/PR checks precede allocation; generation failures retain evidence and trigger worker cleanup plus an independent absence check. Offline checks cover both native profiles, rejected altered PR metadata, timeout, failed capture/deletion and output preservation. An initial equality assertion overlooked native schema defaults; the field-specific assertion passes. Peak RSS was 213,976 KiB. Prepared and syntax-checked the private remote wrapper with Harbor/Daytona dependencies and setup time deducted from the generation deadline. No allocation or model call occurred; submission launcher, capacity and budget reservation remain pending.
+
+## 2026-10-17 — LCC validation launcher prepared
+
+Prepared the full six-case native/Marin validation launcher with source and input archive hash checks. Its capacity gate requires a fresh terminal R2E controller observation and independent Daytona worker absence; DataArc retains two reserved slots. The real launcher correctly refused to proceed before credential retrieval or allocation because the required terminal observation is unavailable. A five-dollar hold must be recorded before eventual dispatch. No worker or model call occurred.
