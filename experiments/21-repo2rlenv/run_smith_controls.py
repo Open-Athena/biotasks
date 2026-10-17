@@ -42,6 +42,7 @@ def main():
             "biopython-cve",
             "biopython-commit",
             "biopython-pr",
+            "skbio-pr",
             "marin-schema",
             "marin-runtime",
         ),
@@ -119,6 +120,14 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = f"/work/native/run_{family}_independent.py "
+        elif args.stage == "skbio-pr":
+            worker.upload(root / "replay_skbio_pr.py", "/work/native/replay_skbio_pr.py")
+            worker.upload(root / "skbio-pr.Dockerfile", "/work/native/Dockerfile")
+            for filename in ("pr2633.json", "pr2633.diff", "issue2631.json"):
+                worker.upload(root / "evidence/skbio-pr-runtime-intake" / filename,
+                              "/work/native/" + filename)
+            unpack = ""
+            entry = "/work/native/replay_skbio_pr.py "
         elif args.stage == "biopython-pr":
             worker.upload(root / "replay_biopython_pr.py", "/work/native/replay_biopython_pr.py")
             worker.upload(root / "biopython-cve.Dockerfile", "/work/native/Dockerfile")
