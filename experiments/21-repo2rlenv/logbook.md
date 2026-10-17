@@ -1066,3 +1066,8 @@ Both pinned Git trees contain only the LICENSE -> LICENSE.rst symlink, with iden
 ### 2026-10-17 22:03 UTC — SETA Evol materialization timeout recovered
 
 Original job finished FAILED at22:01:39UTC. First candidate builder request was dispatched and timed out at the configured1200s request deadline; no response was preserved and usage is unknown. Second saved design was not attempted. Zero exports, independent acceptances or solver attempts. Recovered the61368-byte Iris output archive and verified the nested evidence checksum;14 files/102526 bytes extracted with modes preserved. Separate provider lookup confirmed worker404 at22:03:23UTC, allowing release of its two reserved slots. Retained budget hold; no relaunch or candidate reset. Public preservation remains pending. Endless remains RUNNING at22:01:59UTC.
+
+
+### 2026-10-17 22:06 UTC — SETA archive verified and Biopython dispatch prepared
+
+SETA materialization snapshot544207812765acc2a94e1f1a77736f1f2f9ce23adda811fd18769950327ccfe5 publicly uploaded:16 objects and7 archive members anonymously verified for hashes, sizes and modes. Provider wrapper excluded from this snapshot after private-route marker detection; private input and accounting files omitted. Original failed run retained locally. Prepared hash-checked Biopython SWE-gen dispatch revision03, with exclusive slot claim, live terminal SETA check and prior independent worker absence; existing Endless retains two slots. Reserved$10, bringing estimates/holds to$438 of$1000, remaining$562; actual charges unknown. Dispatch pending this checkpoint. One selected QCP PR calibration does not meet target3.
