@@ -1,0 +1,188 @@
+{
+  "stage": "native_build_attempt_from_saved_designs",
+  "job_state": "FAILED",
+  "attempt": 0,
+  "exit_code": 1,
+  "started_at": "2026-10-17T16:31:16.866000+00:00",
+  "finished_at": "2026-10-17T17:24:10.876000+00:00",
+  "controller_error_type": "Timeout",
+  "seed_cohort_size": 3,
+  "candidates_started": 2,
+  "candidates_schema_or_materialization_exhausted": 1,
+  "candidates_interrupted_on_first_request": 1,
+  "candidates_not_started": 1,
+  "completed_model_responses": 3,
+  "additional_dispatched_request_without_response": 1,
+  "exported_tasks": 0,
+  "independently_accepted_tasks": 0,
+  "solver_attempts": 0,
+  "native_trials": 0,
+  "recovery": {
+    "provider_archive_bytes": 779794,
+    "provider_archive_sha256": "b48ed3898c251a1c0ebe16fae68224591723c1c09f8983667db609675ebf9d3e",
+    "download_hash_verified": true,
+    "nested_archive_hash_verified": true,
+    "private_original_retained": true,
+    "public_subset": "Raw model answers, rendered requests, seeds/designs, run state and controller result; private routing/configuration and accounting database omitted."
+  },
+  "finding": "All completed responses fail native TerminalDraft validation. Code and instruction string fields have zero actual newlines. No newline rewriting or manual repair applied. Second candidate request timed out; response/usage unavailable.",
+  "calls": [
+    {
+      "call": "call-001.json",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 103023,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "image_tokens": null,
+          "reasoning_tokens": 98488,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "prompt_tokens": 8461,
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0,
+          "created_cache_tokens": 8448,
+          "image_tokens": null,
+          "multimodal_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "total_tokens": 111484
+      },
+      "text_fields": {
+        "environment_setup": {
+          "characters": 100,
+          "newlines": 0
+        },
+        "instruction": {
+          "characters": 2947,
+          "newlines": 0
+        },
+        "tests_python": {
+          "characters": 2925,
+          "newlines": 0
+        },
+        "solution_shell": {
+          "characters": 2620,
+          "newlines": 0
+        },
+        "self_review": {
+          "characters": 2588,
+          "newlines": 0
+        }
+      },
+      "native_schema_valid": false,
+      "error_type": "ValidationError",
+      "error": "1 validation error for TerminalDraft\n  Value error, Weights must name each top-level pytest test exactly once "
+    },
+    {
+      "call": "call-002.json",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 90292,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "image_tokens": null,
+          "reasoning_tokens": 81981,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "prompt_tokens": 13436,
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 8384,
+          "created_cache_tokens": 4992,
+          "image_tokens": null,
+          "multimodal_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "total_tokens": 103728
+      },
+      "text_fields": {
+        "environment_setup": {
+          "characters": 100,
+          "newlines": 0
+        },
+        "instruction": {
+          "characters": 3126,
+          "newlines": 0
+        },
+        "tests_python": {
+          "characters": 12162,
+          "newlines": 0
+        },
+        "solution_shell": {
+          "characters": 5720,
+          "newlines": 0
+        },
+        "self_review": {
+          "characters": 2997,
+          "newlines": 0
+        }
+      },
+      "native_schema_valid": false,
+      "error_type": "SyntaxError",
+      "error": "invalid syntax (<unknown>, line 1)"
+    },
+    {
+      "call": "call-003.json",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 73168,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "image_tokens": null,
+          "reasoning_tokens": 64071,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "prompt_tokens": 22119,
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 13312,
+          "created_cache_tokens": 8768,
+          "image_tokens": null,
+          "multimodal_tokens": null,
+          "text_tokens": null,
+          "video_tokens": null
+        },
+        "total_tokens": 95287
+      },
+      "text_fields": {
+        "environment_setup": {
+          "characters": 100,
+          "newlines": 0
+        },
+        "instruction": {
+          "characters": 3160,
+          "newlines": 0
+        },
+        "tests_python": {
+          "characters": 14456,
+          "newlines": 0
+        },
+        "solution_shell": {
+          "characters": 5506,
+          "newlines": 0
+        },
+        "self_review": {
+          "characters": 3501,
+          "newlines": 0
+        }
+      },
+      "native_schema_valid": false,
+      "error_type": "SyntaxError",
+      "error": "invalid syntax (<unknown>, line 1)"
+    }
+  ],
+  "cleanup": "Original immediate lookup still-present; independent later lookup confirms sandbox absent (404)."
+}
