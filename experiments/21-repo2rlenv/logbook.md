@@ -474,3 +474,5 @@ Revised LCC snapshot upload and fresh anonymous verification completed in 27.992
 ## 2026-10-17 — scikit-bio code-instruct authoring cohort reservation
 
 Reviewed current issue scope and reserved the second Python code-instruct cohort: pinned scikit-bio alpha-diversity Python sources, explicit skbio anchoring, ten native seed candidates with three attempts per seed, approved generation settings and two-hour CPU deadline. Author-only staging remains distinct from native validation/export. With the existing Biopython job, maximum simultaneous model requests is two, within four. Reserve $5, bringing conservative estimates/holds to $153/$300. No native validation success is implied by dispatch.
+
+Scikit-bio code-instruct author job submitted successfully and independently observed RUNNING at 15:36:12 UTC, attempt zero started at 15:36:06 UTC, with no reported error or returned log entries. The Biopython attempt was also confirmed running earlier this turn. No author outputs, native task validations or solver scores have yet been recovered for these cohorts.
