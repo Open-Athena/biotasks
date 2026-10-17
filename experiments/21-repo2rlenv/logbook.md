@@ -1224,3 +1224,7 @@ Prepared five controls each for strong and esty_ci, preserving all non-solution 
 ### 2026-10-17 GC-skew export build failure recovered
 
 Controller completed at23:33:02.142 UTC, but native nop/oracle both failed Docker build with null reward. One task exported; no completed grading or acceptance. Source packaging already materialized LICENSE as a regular file identical to LICENSE.rst, while retained bootstrap requires test-L LICENSE. Both contexts show the same mismatch. Preserve original; a separately recorded idempotent packaging adaptation is needed. Recovered42.6MB supported archive with exact hash, nested capture and4918 native files/255770826 bytes with modes. Independent404 at23:34:42 confirms worker absence; two-slot claim released. Local extraction initially referenced the wrong archive root, then recovered from the retained author-output root; no remote rerun occurred.
+
+### 2026-10-17 Strong independent controls reservation
+
+Reserved$10 for five native Strong dominance controls from the frozen alpha payload: baseline/reference, valid alternative, incorrect zero and fixed-example coverage observation. No model calls or new generated candidate. Dispatch requires completed GC-skew controller and independent cleanup; two slots alongside R2E authoring. Total estimates/holds$518/$1000, remaining$482. Dispatch pending checkpoint.
