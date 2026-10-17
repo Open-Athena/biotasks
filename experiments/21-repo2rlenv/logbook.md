@@ -726,3 +726,7 @@ Prepared the controller and private wrapper for native build continuation using 
 ## 2026-10-17 — History-recipe profile preparation
 
 Prepared SWE-Next and R2E-Gym scikit-bio composition profiles using native option schemas, explicit in-package test paths, target three and maximum ten candidates. GitHub confirms the frozen PR2633 merge revision. SWE-Next begins with a one-PR calibration against preserved lineage; reaching target three still requires additional independent PRs. R2E-Gym retains the native history limit and stricter bug-edit/test-match gates. No history cloning, selection execution, bootstrap, model call or export occurred. These profiles remove the unexamined test-layout uncertainty but do not establish runtime compatibility.
+
+## 2026-10-17 — Native history entity gates pass on frozen PR2633
+
+Verified the merge commit first parent through GitHub and fetched both immutable source/test revisions. The actual pinned SWE-Next and R2E-Gym check_entities filters both pass: one edited function (_estimate_bias_em), no added/deleted entities, zero module statement changes and matching changed regression test. Input byte hashes and native selections are recorded. This does not cover the complete history worker path/size filter, snapshots, bootstrap or old/new test contrast. R2E and DataArc remained RUNNING at 18:52 UTC; no additional worker was allocated.
