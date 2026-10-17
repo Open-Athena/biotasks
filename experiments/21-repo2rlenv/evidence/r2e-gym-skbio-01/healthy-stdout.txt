@@ -1,0 +1,80 @@
+..........................................F...FF...........F       [100%]
+=================================== FAILURES ===================================
+_______________________ AncombcTests.test_ancombc_atlas ________________________
+r2e_tests/skbio/stats/composition/tests/test_ancombc.py:1570: in test_ancombc_atlas
+    table = pd.read_csv(get_data_path("atlas_feature_table.csv"), index_col=0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:872: in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300: in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1643: in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1907: in _make_engine
+    self.handles = get_handle(
+/usr/local/lib/python3.12/site-packages/pandas/io/common.py:930: in get_handle
+    handle = open(
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/r2e_tests/skbio/stats/composition/tests/data/atlas_feature_table.csv'
+______________________ Ancombc2Tests.test_ancombc2_atlas _______________________
+r2e_tests/skbio/stats/composition/tests/test_ancombc.py:1808: in test_ancombc2_atlas
+    table = pd.read_csv(get_data_path("atlas_feature_table.csv"), index_col=0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:872: in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300: in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1643: in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1907: in _make_engine
+    self.handles = get_handle(
+/usr/local/lib/python3.12/site-packages/pandas/io/common.py:930: in get_handle
+    handle = open(
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/r2e_tests/skbio/stats/composition/tests/data/atlas_feature_table.csv'
+___________________ Ancombc2Tests.test_ancombc2_sensitivity ____________________
+r2e_tests/skbio/stats/composition/tests/test_ancombc.py:1855: in test_ancombc2_sensitivity
+    table = pd.read_csv(get_data_path("atlas_feature_table.csv"), index_col=0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:872: in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300: in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1643: in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1907: in _make_engine
+    self.handles = get_handle(
+/usr/local/lib/python3.12/site-packages/pandas/io/common.py:930: in get_handle
+    handle = open(
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/r2e_tests/skbio/stats/composition/tests/data/atlas_feature_table.csv'
+_____________________ StrucZeroTests.test_struc_zero_atlas _____________________
+r2e_tests/skbio/stats/composition/tests/test_ancombc.py:2146: in test_struc_zero_atlas
+    table = pd.read_csv(get_data_path("atlas_feature_table.csv"), index_col=0)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:872: in read_csv
+    return _read(filepath_or_buffer, kwds)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:300: in _read
+    parser = TextFileReader(filepath_or_buffer, **kwds)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1643: in __init__
+    self._engine = self._make_engine(f, self.engine)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/local/lib/python3.12/site-packages/pandas/io/parsers/readers.py:1907: in _make_engine
+    self.handles = get_handle(
+/usr/local/lib/python3.12/site-packages/pandas/io/common.py:930: in get_handle
+    handle = open(
+E   FileNotFoundError: [Errno 2] No such file or directory: '/workspace/r2e_tests/skbio/stats/composition/tests/data/atlas_feature_table.csv'
+=========================== short test summary info ============================
+FAILED r2e_tests/skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas
+FAILED r2e_tests/skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas
+FAILED r2e_tests/skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity
+FAILED r2e_tests/skbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas
+4 failed, 56 passed, 6 subtests passed in 6.06s

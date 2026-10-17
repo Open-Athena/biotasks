@@ -878,3 +878,7 @@ Prepared the no-model direct-provider wrapper with a 30-minute deadline and sepa
 ### 2026-10-17 — Non-Python parser coverage and ledger correction
 
 Exercised the pinned native dispatcher with explicitly synthetic shell/make and R/testthat output. All three commands resolve to unknown and produce empty per-test maps; the pytest positive control yields one test. This confirms the native parser gap, not failed repository execution or blanket C++/R incompatibility. Updated the coverage ledger from existing acceptance, solver, archive and live observation evidence: LCC and SCALER acceptance, DataArc incomplete failure, and active TMax/R2E-Gym are no longer described as merely prepared. Historical raw evidence remains unchanged.
+
+### 2026-10-17 — R2E-Gym history result
+
+Controller succeeded but exported zero tasks. Native scan examined 1,197 history records, filtered 1,196 by source and attempted one PR2633 materialization. Healthy reference had four failures from absent `atlas_feature_table.csv` in staged test data; defective execution additionally failed the underflow regression. Preserve native rejection rather than count successful controller exit as a valid task. Outer 77,589,682-byte archive and nested archive hashes verified; independent Daytona lookup returned 404 before releasing two slots. TMax remains active; public archive and any explicitly adapted replay remain pending.
