@@ -870,3 +870,7 @@ Prepared all three accepted native tasks without modifying their assets. Determi
 ### 2026-10-17 — Public SCALER runtime evidence
 
 Archived native acceptance decisions, all three derived TaskSpecs and 24 runtime control results under HF bucket snapshot `8444dd97ccd4822457fb7eab5b60e4c0b5865feaf9ed51310f66aa4f3379ff99`. Fresh anonymous downloads verified all 27 objects and 60 archive members. Includes the unresolved Marin score-range metadata finding; archival does not imply Atlas admission. Blind attempts remain pending.
+
+### 2026-10-17 — SCALER provider preparation
+
+Prepared the no-model direct-provider wrapper with a 30-minute deadline and separate cleanup grace. Imported the actual provider configuration and verified both native nop/oracle configs and accepted asset hashes for all three task bundles. No provider API or model calls occurred. Execution requires three free slots including the controller; TMax and R2E-Gym remain independently observed RUNNING at 20:18–20:19 UTC, so no additional worker was dispatched.
