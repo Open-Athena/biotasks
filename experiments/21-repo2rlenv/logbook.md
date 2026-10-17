@@ -734,3 +734,7 @@ Verified the merge commit first parent through GitHub and fetched both immutable
 ## 2026-10-17 — History and SWE-gen GLM transport preparation
 
 Extended the explicit generation adapter to native history-pipeline and SWE-gen instruction metering. Mocked transport checks pass through the native meter and schemas, verifying explicit endpoint/key, 131,072 combined tokens, medium effort, 1,200-second timeout, zero retries, raw capture and restoration of patched context. The initial fixture lacked required source/test profile paths; fixed that fixture and reran successfully. No live call, native candidate selection, bootstrap, export or solver setting change occurred.
+
+## 2026-10-17 — History pipeline entrypoint prepared
+
+Prepared the native SWE-Next/R2E-Gym selection/contrast/authoring/export entrypoint for a supplied worker. SWE-Next consumes source-hashed PR metadata through its native cached pulls.json path, with original title/body context retained and no remote GitHub credential. Offline checks verify both native worker configurations, repository/profile identity, candidate bounds and rejection of altered PR context. GLM remains serial with the approved generation adapter. Full source contexts will be archived without pruning under a bounded streaming remote capture; allocation/cleanup controller and dispatch remain pending. R2E and DataArc were still RUNNING at 18:56 UTC.
