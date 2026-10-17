@@ -1180,3 +1180,7 @@ Reserved $10 for qcp-independent-02, repeating the unchanged six no-model contro
 ### 2026-10-17 Corrected QCP validation submitted
 
 Submitted the frozen six-control no-model run at checkpoint bdc9cb65cdb569a2a62526e7ab3af338f05e7c6b. Two slots are reserved alongside the existing Biopython R2E run, authoritatively RUNNING at 23:12 UTC. The original QCP capture failure remains unchanged evidence; new individual rewards are pending. Added the completed Biopython SWE-Next source-filter outcome to the partial funnel: one considered candidate, zero eligible candidates, zero model calls and nine candidates remaining. This remains an incomplete campaign subset.
+
+### 2026-10-17 History runtime dispatch preparation
+
+Prepared submission, observation and supported-archive recovery launchers for the three frozen scikit-bio history runtime probes (SWE-gen, SWE-Next and R2E-Gym). Checked all 36 frozen input hashes and sizes and parsed each launcher. Launchers require released existing slot claims, a separately checkpointed $10 hold, and three reserved slots for controller plus learner/verifier. Credential and payload checks precede claim creation. No remote allocation, budget reservation, model call or new acceptance result occurred. These probes retain the original tasks and reward contracts; they will establish fresh provider runtime readiness before final acceptance and blind evaluation.
