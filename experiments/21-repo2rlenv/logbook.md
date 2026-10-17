@@ -1005,3 +1005,10 @@ All six no-model cases completed in the unchanged native grader with 60 tests ea
 Reserved $10 for the already-prepared explicit Endless biological-context adaptation, bringing estimates/holds to$398 of$1,000. Submission must verify all input hashes, the completed SWE-Next controller and absent worker, and existing TMax capacity before allocating two slots. No additional candidate allowance or model-setting change.
 
 Endless submitted at21:25UTC from d79ca13: `/exedev/biotasks21-endless-biological-20261017-01`. Exact transfer hashes passed before submission; live predecessor completion and worker404 verified. Two slots reserved alongside TMax. Generation outcome remains pending.
+
+
+### 2026-10-17 21:28 UTC — TMax completed with zero exports
+
+Recovered the successful controller attempt ending21:21:27: three selected candidates, twelve GLM calls, zero exported tasks. All nine initial-test responses (including two repairs per candidate) decode to single-line comments with zero newline characters and zero AST nodes; native five-to-ten-test validation rejects them. No generated test execution, task build, independent acceptance or blind solver result. No automatic response rewriting or new candidate search. Supported archive hash and modes verified; separate worker404 confirmed and two slots released.
+
+SWE-Next independent controls are now public in snapshot26afcec7afc641a5a1c9bc5f369b561d12d6c8bca6b633df252c7082c44d6db2: 18 objects and122 archive members verified through anonymous downloads, including hashes and modes.

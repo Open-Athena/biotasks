@@ -1,0 +1,59 @@
+{
+  "adaptation": {
+    "authorization_date": "2026-10-16",
+    "campaign_max_concurrent_requests": 4,
+    "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
+    "generation_run_timeout_sec": 7200,
+    "global_call_cap": null,
+    "global_token_cap": null,
+    "live_131072_token_request_verified": false,
+    "max_output_tokens": 131072,
+    "model": "glm-5.3",
+    "output_budget_includes_reasoning": true,
+    "paid_fallback": false,
+    "preserve_recipe_candidate_and_repair_limits": true,
+    "reasoning_effort": "medium",
+    "request_timeout_sec": 1200,
+    "solver_settings_changed": false,
+    "stage": "generation_only"
+  },
+  "independently_accepted_tasks": 0,
+  "input_selection_intervention": true,
+  "manifest": {
+    "biological_provenance": "Taxonomy-only seed descriptions; no observed biological data. Generated fixtures must be classified and independently reviewed before acceptance.",
+    "cohort": "tmax-biological-v1",
+    "files": {
+      "native-samples.json": "9ce74d9de512ddea3a088a01d34f248844156cbd537fc36a1f954a6bdbbbeb19",
+      "sampler.json": "78a2b4a006119e17d90e287b1024875e5025950dedcb40080e4a1420f8a31df8",
+      "selected-inputs.json": "247291f344ead98daacb0e0448512471a55d3a41ed9d8e0e8b2071740f1d654e",
+      "selection.json": "40c9d841c03e1d17d70c26ca229d348dca114674ae49e5f458a5be875eb6d617"
+    },
+    "limitations": [
+      "Biological intent in a seed does not establish biological content of a generated task.",
+      "All sampler-selected skills remain intact, including non-biological numerical or infrastructure skills.",
+      "No design calls, environment builds, exports, acceptance or solver trials yet."
+    ],
+    "native_samples": 10,
+    "options": {
+      "max_candidates": 10,
+      "max_repairs": 2,
+      "target": 3
+    },
+    "recipe": "tmax",
+    "repo2rlenv_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+    "selected_inputs": 3,
+    "selection_intervention": "Run the native designer/materializer on these selected records; the unmodified pipeline would consume all ten sampler records.",
+    "selection_rule": "Retain explicit bioinformatics scenario or FASTA/PDB format-parsing skill from native scientific-computing/Python sampler; no seed search or record rewriting.",
+    "stage": "input_selection_prepared_unexecuted"
+  },
+  "native_options": {
+    "exclude_seed_sha256": [],
+    "max_candidates": 10,
+    "max_repairs": 2,
+    "max_tokens": 10000,
+    "review_drafts": false,
+    "seed": 24,
+    "target": 3,
+    "test_timeout_sec": 120
+  }
+}
