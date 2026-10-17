@@ -947,3 +947,8 @@ Prepared and hash-checked complete input packages for all three accepted SCALER 
 ### 2026-10-17 20:54 UTC — Fixture-adapted R2E-Gym exported one task
 
 The fixture-root adaptation completed at 20:52:09 UTC and exported one PR2633 task. Healthy tests passed 60/60; the defective variant passed 59/60. Native nop/oracle rewards were 0/1. The one free GLM authoring response used 7,459 output tokens (6,508 reasoning). Independent acceptance and blind solving remain pending. The supported archive (141,739,641 bytes) and nested archive were hash-verified; the separate remote evidence capture reported RemoteCommandError, so it is not claimed complete. Worker absence was independently confirmed with HTTP 404 at 20:54:15 UTC and the two-slot claim released. Original native missing-fixture failure remains a separate result.
+
+
+### 2026-10-17 20:57 UTC — R2E-Gym archive verified; SWE-gen submitted
+
+Published the fixture-adapted R2E-Gym task at HF snapshot d7edfe75c4cc0d89a01ad3a9e7033d46d40cfc0797911c2c0e26c3197499f5cb, with 18 objects and 1,956 archive members anonymously downloaded and verified. Submitted first SWE-gen PR2633 calibration from checkpoint f5a9e08231cd3b3dab974636737eed4bd71a6fdf into the two released history slots; TMax retains the other two. The $10 SWE-gen reservation brings estimates/holds to $378, leaving $622. No SWE-gen outcome or independent acceptance is claimed at dispatch.
