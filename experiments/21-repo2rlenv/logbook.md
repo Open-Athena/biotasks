@@ -920,3 +920,7 @@ Native resolver selected PR2633 head `4c07596c68e8e6c1f51f5ea917e642e933802aa7`,
 ### 2026-10-17 — SWE-Next native export
 
 One PR2633 candidate emitted one task. Healthy reference passed all 60 tests; defective implementation failed the intended regression (59 pass/1 fail). Native nop/oracle controls completed at rewards 0/1. One GLM call finished normally with 25,000 output tokens, including 23,740 reasoning tokens, and 6,388 input tokens. Supported attempt storage preserved the task and contrast/trial evidence despite an extra remote-evidence archive error. Outer/nested hashes and native trial-result hashes verified; worker independently absent before releasing two slots. Acceptance, blind solve and public upload remain pending; shared PR2633 lineage remains explicit.
+
+### 2026-10-17 — Adapted R2E-Gym dispatch preparation
+
+Prepared a distinct fixture-root run after the completed native baseline. Only test-data staging configuration changes; native selection, test identities, source bytes, candidate/repair limits and approved free-GLM generation settings remain. Reserved $10, bringing estimates/holds to $368 of $1,000. Two slots fit alongside TMax after SWE-Next terminal status and independently confirmed cleanup. Wrapper/launcher/profile hashes checkpointed; dispatch remains separate from results.
