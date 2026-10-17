@@ -6,10 +6,11 @@ import tempfile
 import tomllib
 from pathlib import Path
 
-from prepare_skbio_pr_controls import prepare,retained_hashes
+from prepare_skbio_pr_controls import prepare,retained_hashes,E_OLD,E_SAFE,M_OLD,M_SAFE,GROUPING_OLD,GROUPING_WRONG
 
 parser=argparse.ArgumentParser()
 parser.add_argument('--task',type=Path,required=True)
+parser.add_argument('--source',type=Path)
 args=parser.parse_args()
 with tempfile.TemporaryDirectory() as tmp:
     output=Path(tmp)/'controls'
@@ -33,4 +34,15 @@ with tempfile.TemporaryDirectory() as tmp:
         assert not (path/'environment/docker-compose.yaml').exists()
         assert config['metadata']['repo2env']['original_content_hash']
 
-print('PASS: five native and five explicit offline controls prepared; grading/instruction unchanged; generated scripts parse; no execution or model calls')
+    partial=prepare(args.task,Path(tmp)/'partial',offline=True,partial=True)
+    assert len(partial)==6
+    for case in partial:
+        assert retained_hashes(Path(case['bundle']),offline=True)==retained_hashes(args.task,offline=True)
+    assert sum(x['expected_reward']=='fractional' for x in partial)==1
+    if args.source:
+        source=args.source.read_text()
+        for before,after in [(E_OLD,E_SAFE),(M_OLD,M_SAFE),(GROUPING_OLD,GROUPING_WRONG)]:
+            assert source.count(before)==1
+            source=source.replace(before,after,1)
+        ast.parse(source)
+print('PASS: native/offline controls plus six-case partial profile prepared; grading/instruction unchanged; generated scripts parse; no execution or model calls')

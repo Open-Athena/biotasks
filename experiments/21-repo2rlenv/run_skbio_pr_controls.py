@@ -17,6 +17,7 @@ def main():
         raise RuntimeError("Remote execution required")
     parser = argparse.ArgumentParser()
     parser.add_argument("--offline-profile", action="store_true")
+    parser.add_argument("--partial-control", action="store_true")
     args = parser.parse_args()
     output = Path("/evidence/native/independent")
     output.mkdir(parents=True, exist_ok=False)
@@ -36,7 +37,8 @@ def main():
             str(original),
             "--output",
             str(output / "bundles"),
-        ] + (["--offline-profile"] if args.offline_profile else []),
+        ] + (["--offline-profile"] if args.offline_profile else [])
+          + (["--partial-control"] if args.partial_control else []),
         check=True,
         timeout=120,
     )
@@ -99,7 +101,10 @@ def main():
         record["passed"] = (
             record["returncode"] == 0
             and evidence.completed
-            and (case["expected_reward"] is None or evidence.reward == case["expected_reward"])
+            and (
+                0 < evidence.reward < 1 if case["expected_reward"] == "fractional"
+                else case["expected_reward"] is None or evidence.reward == case["expected_reward"]
+            )
         )
         save_record(output / "summary.json", {"records": records})
     if not all(r["passed"] for r in records):

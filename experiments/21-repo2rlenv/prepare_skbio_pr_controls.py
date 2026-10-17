@@ -18,6 +18,8 @@ M_OLD = '        l1, l2 = numer / denom'
 E_SAFE = ('        totals = np.sum(resp, axis=0, keepdims=True)\n'
           '        resp[:] = np.divide(resp, totals, out=np.zeros_like(resp), where=totals != 0)')
 M_SAFE = '        l1, l2 = np.divide(numer, denom, out=np.zeros_like(numer), where=denom != 0)'
+GROUPING_OLD = '    if idx.size < 2:'
+GROUPING_WRONG = '    if idx.size < 0:'
 CASES = {
     'baseline': ({}, 0),
     'alternative_masked_division': ({E_OLD:E_SAFE, M_OLD:M_SAFE}, 1),
@@ -52,11 +54,16 @@ def offline_profile(task):
     (task / 'environment/docker-compose.yaml').unlink()
 
 
-def prepare(task, output, *, offline=False):
+def prepare(task, output, *, offline=False, partial=False):
     hashes = retained_hashes(task, offline=offline)
     output.mkdir(parents=True, exist_ok=False)
     records = []
-    for name, (replacements, expected) in CASES.items():
+    cases = dict(CASES)
+    if partial:
+        cases['fixed_underflow_with_grouping_regression'] = (
+            {E_OLD:E_SAFE, M_OLD:M_SAFE, GROUPING_OLD:GROUPING_WRONG}, 'fractional',
+        )
+    for name, (replacements, expected) in cases.items():
         dest = output/name
         shutil.copytree(task, dest)
         if offline:
@@ -77,7 +84,7 @@ def prepare(task, output, *, offline=False):
         offline_profile(dest)
     assert retained_hashes(dest, offline=offline) == hashes
     records.insert(1,{'case':'native_reference','bundle':str(dest),'expected_reward':1,'interpretation':'native reference replay'})
-    (output/'manifest.json').write_text(json.dumps({'stage':'prepared_unexecuted_controls','offline_profile':offline,'unchanged_assets':hashes,'cases':records},indent=2)+'\n')
+    (output/'manifest.json').write_text(json.dumps({'stage':'prepared_unexecuted_controls','offline_profile':offline,'partial_control':partial,'unchanged_assets':hashes,'cases':records},indent=2)+'\n')
     return records
 
 
@@ -86,5 +93,6 @@ if __name__ == '__main__':
     parser.add_argument('--task',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
     parser.add_argument('--offline-profile',action='store_true')
+    parser.add_argument('--partial-control',action='store_true')
     args=parser.parse_args()
-    prepare(args.task,args.output,offline=args.offline_profile)
+    prepare(args.task,args.output,offline=args.offline_profile,partial=args.partial_control)

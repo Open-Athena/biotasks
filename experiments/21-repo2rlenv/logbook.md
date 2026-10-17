@@ -574,3 +574,7 @@ The explicit offline profile completed five Harbor trials in 185.639 controller 
 The E-step-only correction also passes all 60 tests. Thus this suite does not require the reference patch's extra M-step correction; it is not evidence that E-step-only is globally correct or incorrect. No fractional reward was observed. Fractional reward, repeatability, portable rebuild, remaining acceptance checks and Marin runtime comparison remain pending; zero independently accepted tasks and zero blind solver attempts. Worker absence was independently confirmed (404) at 16:46:28 UTC.
 
 Offline PR controls public snapshot verified: `research/21-repo2rlenv/2026-10-17/9ab5512b3151a936ec5d3ff9afb6780634c778340a11a93adb3d1507b1d1a9fd`, 17 objects and 127 archive members, anonymous hash/size/mode checks passed.
+
+## 2026-10-17 — PR2633 fractional reward and repeatability reservation
+
+Prepare a sixth submission that retains the correct E/M underflow changes but weakens _validate_grouping by no longer rejecting fewer than two design covariates. This is a real source-code regression, not altered test output. The hypothesis is full F2P success with partial P2P preservation and a fractional native product reward. The prior five submissions are repeated unchanged on a fresh worker. Exact replacement contexts are unique in the fetched pinned source; changed source parses, and all grading/instruction assets remain unchanged. Reserve $5; conservative estimates/holds become $198/$300. No model calls or blind solver.
