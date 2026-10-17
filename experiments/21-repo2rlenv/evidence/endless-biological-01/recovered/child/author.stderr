@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/app/run_endless_controller.py", line 150, in <module>
+    main()
+  File "/app/run_endless_controller.py", line 146, in main
+    run(args)
+  File "/app/run_endless_controller.py", line 68, in run
+    spec = GenerationInput.model_validate({
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/r2e/huggingface-Repo2RLEnv-27d04ee/.venv/lib/python3.12/site-packages/pydantic/main.py", line 732, in model_validate
+    return cls.__pydantic_validator__.validate_python(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pydantic_core._pydantic_core.ValidationError: 1 validation error for GenerationInput
+execution.run_id
+  String should match pattern '^[a-z][a-z0-9-]{0,60}$' [type=string_pattern_mismatch, input_value='endless_terminals-biological-build-01', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.13/v/string_pattern_mismatch

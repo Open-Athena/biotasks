@@ -75,7 +75,7 @@ def run(args):
         "execution": {"worker_receipt": str((args.campaign / "pending-worker.json").resolve()),
                       "runtime_wheel": str(args.wheel.resolve()),
                       "campaign_dir": str(args.campaign.resolve()),
-                      "run_id": "endless_terminals-biological-build-01", "timeout_sec": 6600, "resume": False},
+                      "run_id": "endless-terminals-biological-build-01", "timeout_sec": 6600, "resume": False},
         "output": {"destination": str((args.campaign / "tasks").resolve()),
                    "org": "open-athena", "dataset_name": "biotasks21-endless_terminals-biological"},
         "auth": {"use_gh_cli": False},

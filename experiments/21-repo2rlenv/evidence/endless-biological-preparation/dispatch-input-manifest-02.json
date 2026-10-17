@@ -1,0 +1,79 @@
+{
+  "stage": "dispatch_preparation_only",
+  "run": "endless-biological-02",
+  "target_tasks": 3,
+  "max_candidates": 10,
+  "max_repairs": 2,
+  "reserved_slots_required": 2,
+  "dispatched": false,
+  "files": [
+    {
+      "transfer_name": "run_endless_remote.py",
+      "sha256": "789b95e5576965c405da46d91c96459f0f1d8cf55493ea94f0361f3020c8dacb",
+      "bytes": 2549
+    },
+    {
+      "transfer_name": "run_endless_controller.py",
+      "sha256": "d8ca1e271fd2501f4350bd55e49f7da8830f17d708f3c9ec58b130d6fe9ecebd",
+      "bytes": 6983
+    },
+    {
+      "transfer_name": "build_endless_biological.py",
+      "sha256": "1e695c542b02b1c57110a5e971b3227706cc5cdfcfaee5161b600c1cb8d1dbb6",
+      "bytes": 4300
+    },
+    {
+      "transfer_name": "glm_authoring_adapter.py",
+      "sha256": "55a3495ba5d7baea8e0dcbc95d900680fb011c533ddfa72c052853ba3ca30868",
+      "bytes": 3665
+    },
+    {
+      "transfer_name": "preserve_author_output.py",
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd",
+      "bytes": 2190
+    },
+    {
+      "transfer_name": "capture_author_process.py",
+      "sha256": "71cdddc5b612f8435559ee58c353ef68c21398016b56aebdc4965a329ce3efc8",
+      "bytes": 2823
+    },
+    {
+      "transfer_name": "glm-generation-adaptation.json",
+      "sha256": "682d4054fba546d67697c0d4985fc1c5af8ab5aa54c18fc40033678dc5d081ba",
+      "bytes": 597
+    },
+    {
+      "transfer_name": "manifest.json",
+      "sha256": "2ee2e8ce8977790aac18f14dd22752a58028e87dcc5ca684c2b2e72c7ad2b934",
+      "bytes": 1581
+    },
+    {
+      "transfer_name": "sampler.json",
+      "sha256": "6b8aca8b63e9985d9384b9cf11357fe7104b20feeffb74970bf7bac0c39de6bd",
+      "bytes": 155
+    },
+    {
+      "transfer_name": "native-samples.json",
+      "sha256": "e15844ab70db51a3eb2b9234239584c0f4b2b9ee210864701db9afc4ad5c430b",
+      "bytes": 7416
+    },
+    {
+      "transfer_name": "adapted-inputs.json",
+      "sha256": "38e41b219d43f0cb496728f8d359ed57a082e849e232cab41732ba471073978f",
+      "bytes": 15348
+    },
+    {
+      "transfer_name": "repo2rlenv-source.tar.gz",
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755",
+      "bytes": 6906904
+    }
+  ],
+  "capture": "Child stdout/stderr, process status, partial campaign evidence, controller cleanup evidence.",
+  "remaining_gates": [
+    "Checkpoint inputs before dispatch",
+    "Budget reservation and live capacity reconciliation before submission"
+  ],
+  "wrapper_check": "remote-wrapper-check.json",
+  "prior_failure": "endless-biological-01: native run_id format rejected before worker/model/candidate use",
+  "controller_input_check": "controller-input-check.json"
+}

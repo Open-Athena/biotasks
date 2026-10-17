@@ -24,7 +24,7 @@ try:
  remaining=int(6900-(time.monotonic()-started))
  if remaining<900:raise TimeoutError('Insufficient remaining generation window')
  env.update(REPO2RLENV_MODEL_WORKER='1',BIOTASKS21_GLM_ENDPOINT=endpoint,BIOTASKS21_CONTROLLER_DEADLINE=str(remaining))
- code=capture([str(root/'.venv/bin/python'),'run_endless_controller.py','--campaign','author-output','--wheel',str(wheels[0]),'--manifest','manifest.json','--adaptation','glm-generation-adaptation.json','--worker-name','biotasks21-endless-biological-01'],source=Path('author-output'),output=capture_dir/'child',env=env,timeout=remaining+240)
+ code=capture([str(root/'.venv/bin/python'),'run_endless_controller.py','--campaign','author-output','--wheel',str(wheels[0]),'--manifest','manifest.json','--adaptation','glm-generation-adaptation.json','--worker-name','biotasks21-endless-biological-02'],source=Path('author-output'),output=capture_dir/'child',env=env,timeout=remaining+240)
  (capture_dir/'wrapper-status.json').write_text(json.dumps({'stage':'endless_design_build_repair_trial_export','child_exit_code':code}))
  raise SystemExit(code)
 except Exception as exc:

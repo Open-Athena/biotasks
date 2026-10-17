@@ -31,7 +31,7 @@ def check(child_code=0, setup_fails=False):
         def fake_capture(command, **kwargs):
             calls.append((command, kwargs))
             assert command[1] == 'run_endless_controller.py'
-            assert command[-1] == 'biotasks21-endless-biological-01'
+            assert command[-1] == 'biotasks21-endless-biological-02'
             assert kwargs['output'] == output / 'child'
             assert kwargs['source'] == Path('author-output')
             assert 900 <= int(kwargs['env']['BIOTASKS21_CONTROLLER_DEADLINE']) <= 6900
