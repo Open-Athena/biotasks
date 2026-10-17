@@ -82,7 +82,8 @@ async def run(args):
     state = {'stage': 'no_model_provider_controls', 'model_calls': 0, 'cases': [], 'status': 'running'}
     deadline = time.monotonic() + int(os.environ['BIOTASKS21_PREFLIGHT_REMAINING_SEC'])
     try:
-        for agent, expected in [('nop', 0), ('oracle', 1)]:
+        for agent in args.agents:
+            expected = {'nop': 0, 'oracle': 1}[agent]
             remaining = deadline - time.monotonic()
             if remaining <= 0:
                 raise TimeoutError('Compatibility probe deadline reached')
@@ -113,4 +114,5 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     for name in ('task', 'acceptance', 'output'):
         parser.add_argument('--' + name, type=Path, required=True)
+    parser.add_argument('--agents', nargs='+', choices=['nop', 'oracle'], default=['nop', 'oracle'])
     asyncio.run(run(parser.parse_args()))

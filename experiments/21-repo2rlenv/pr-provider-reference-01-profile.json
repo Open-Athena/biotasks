@@ -1,0 +1,46 @@
+{
+  "stage": "reserved_remaining_reference_control",
+  "task_acceptance": "evidence/pr2633-acceptance/acceptance.json",
+  "case_agents": [
+    "oracle"
+  ],
+  "expected_rewards": [
+    1
+  ],
+  "model_calls": 0,
+  "deadline_seconds": 1800,
+  "deadline_includes": "wrapper setup, native build and trials; cleanup may finish afterward",
+  "worker": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10,
+    "max_concurrent": 1
+  },
+  "controller": {
+    "cpus": 2,
+    "memory_gib": 4
+  },
+  "reservation_usd": 5,
+  "checks": [
+    "exact accepted-task asset hashes and restored file modes",
+    "provider network_block_all flag true",
+    "private paths absent before agent setup",
+    "initial scientific-library imports",
+    "native baseline and reference rewards",
+    "independent absence lookup after every trial"
+  ],
+  "sources": {
+    "pr_provider_environment.py": "dc026ddab4e46a81941c7983496d968fce6fdec5da93bdc5978f34a9df83b9f3",
+    "run_pr_provider_preflight.py": "95d21e6ce9a55e251a74b8fe5ef890838e9429d2f8a536a95a34478f721d31b4",
+    "check_pr_provider_setup.py": "873ed0cf94e432b0869bfd322e156bb514f06e6806afcb568798ec0892322c3d",
+    "package_provider_task.py": "6ef38b7abfddbf96abb9ea73df921ffac51c5ef9b2e9462da1e0d146698683cd"
+  },
+  "private_launcher_hashes": {
+    "pr-provider-reference-remote-01.py": "52abe1f51ee92aa31ebda1d43c94f73c5cbfe0163768b7e71d5272c4c706f528",
+    "submit-pr-provider-reference-01.py": "893a23d500833e0414aafb362b875952f49b4c8ec09c9d98d6e2e87b69e9bfd5"
+  },
+  "offline_checks": "passed; no live calls",
+  "live_status": "not_dispatched",
+  "intervention": "Run the remaining reference control with bounded asynchronous deletion reconciliation; task content and reward unchanged.",
+  "baseline_evidence": "evidence/pr-provider-02/baseline-result.json"
+}
