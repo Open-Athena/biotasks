@@ -9,7 +9,7 @@ from importlib.metadata import version
 from pathlib import Path
 
 from daytona import Daytona
-from daytona.common.errors import DaytonaNotFoundError
+from daytona.common.errors import DaytonaNotFoundError, DaytonaConflictError
 from harbor.models.trial.config import TrialConfig
 from harbor.trial.trial import Trial
 from preserve_author_output import preserve
@@ -41,20 +41,32 @@ def cleanup(output):
     client = Daytona()
     receipts = []
     for identity in sorted(ids):
-        item = {'sandbox_id': identity}
-        try:
-            sandbox = client.get(identity)
-            client.delete(sandbox, timeout=180)
-            item['additional_delete_requested'] = True
-        except DaytonaNotFoundError:
-            pass
-        try:
-            client.get(identity)
-            item['confirmed_absent'] = False
-        except DaytonaNotFoundError:
-            item.update(confirmed_absent=True, lookup_http_status=404)
+        item = {'sandbox_id': identity, 'confirmed_absent': False,
+                'delete_conflicts': 0}
         receipts.append(item)
-    (output / 'cleanup.json').write_text(json.dumps(receipts, indent=2) + '\n')
+        deadline = time.monotonic() + 180
+        try:
+            while time.monotonic() < deadline:
+                try:
+                    sandbox = client.get(identity)
+                except DaytonaNotFoundError:
+                    item.update(confirmed_absent=True, lookup_http_status=404)
+                    break
+                if not item.get('additional_delete_requested'):
+                    try:
+                        client.delete(sandbox, timeout=max(1, int(deadline-time.monotonic())))
+                        item['additional_delete_requested'] = True
+                    except DaytonaNotFoundError:
+                        # Confirm with a separate lookup on the next iteration.
+                        pass
+                    except DaytonaConflictError:
+                        # Harbor may already have initiated asynchronous deletion.
+                        item['delete_conflicts'] += 1
+                time.sleep(min(5, max(0, deadline-time.monotonic())))
+            if not item['confirmed_absent']:
+                raise TimeoutError('Owned sandbox deletion was not confirmed within 180 seconds')
+        finally:
+            (output / 'cleanup.json').write_text(json.dumps(receipts, indent=2) + '\n')
     assert all(item['confirmed_absent'] for item in receipts)
     requested = {row['environment_name'] for row in records if row.get('stage') == 'create_requested'}
     created = {row['environment_name'] for row in records if row.get('stage') == 'created'}

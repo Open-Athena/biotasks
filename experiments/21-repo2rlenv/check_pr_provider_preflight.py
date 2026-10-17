@@ -54,9 +54,31 @@ async def check():
                 return SimpleNamespace(id=identity)
             def delete(self,sandbox,timeout):
                 actions.append(sandbox.id);self.deleted=True
-        with patch.object(runner,'Daytona',new=Client):runner.cleanup(out)
+        with patch.object(runner,'Daytona',new=Client),patch.object(runner.time,'sleep'):
+            runner.cleanup(out)
         assert actions==['synthetic-sandbox']
         assert json.loads((out/'cleanup.json').read_text())[0]['confirmed_absent']
+        class DeletingClient(Client):
+            lookups=0
+            def get(self,identity):
+                self.lookups+=1
+                if self.lookups>=3:raise runner.DaytonaNotFoundError('deletion completed')
+                return SimpleNamespace(id=identity)
+            def delete(self,sandbox,timeout):
+                raise runner.DaytonaConflictError('Sandbox state change in progress')
+        with patch.object(runner,'Daytona',new=DeletingClient),patch.object(runner.time,'sleep'):
+            runner.cleanup(out)
+        receipt=json.loads((out/'cleanup.json').read_text())[0]
+        assert receipt['confirmed_absent'] and receipt['delete_conflicts']==2
+        class StuckClient(Client):
+            def delete(self,sandbox,timeout):
+                raise runner.DaytonaConflictError('still transitioning')
+        with patch.object(runner,'Daytona',new=StuckClient),patch.object(runner.time,'sleep'),patch.object(runner.time,'monotonic',side_effect=[0,1,2,3,181,182]):
+            try:runner.cleanup(out)
+            except TimeoutError:pass
+            else:raise AssertionError('Unconfirmed deletion accepted')
+        assert not json.loads((out/'cleanup.json').read_text())[0]['confirmed_absent']
+
     print('PASS: real Harbor config, asset identity, network/readiness rejection and owned-sandbox cleanup; zero provider/model calls')
 
 asyncio.run(check())

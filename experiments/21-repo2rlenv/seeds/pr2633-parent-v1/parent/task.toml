@@ -1,0 +1,139 @@
+version = "1.0"
+
+[task]
+name = "open-athena/scikit-bio__scikit-bio-2633"
+description = "Fix ANCOM-BC2 EM responsibility underflow"
+
+[metadata]
+difficulty = "medium"
+category = "bugfix"
+keywords = [
+    "scikit-bio",
+    "pr_runtime",
+]
+
+[metadata.repo2env]
+pipeline = "pr_runtime"
+pipeline_version = "0.3.0"
+repo = "scikit-bio/scikit-bio"
+ref = "71286a24bddff66c82cb25a7ca13441aa13c2f2c"
+reference = "https://github.com/scikit-bio/scikit-bio/pull/2633"
+source_access = "auto"
+built_at = "2026-10-17T16:12:04.424403+00:00"
+reward_kinds = [
+    "test_execution",
+    "diff_similarity",
+]
+spec_version = "0.2.0"
+original_content_hash = "sha256:3ae8005fba6edad4957c06452779882a9f520189c4a8b0cc66c289efab651214"
+validation_profile = "portable_offline_unvalidated"
+bundle_hash = "sha256:b6fb8d16018ceb6c59188421938fad3ff17da4de286a3061b59ae4b140851149"
+
+[metadata.repo2env.pr_runtime]
+pr_url = "https://github.com/scikit-bio/scikit-bio/pull/2633"
+pr_merged_at = "2026-10-13T20:18:14Z"
+base_commit = "71286a24bddff66c82cb25a7ca13441aa13c2f2c"
+fail_to_pass = [
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow",
+]
+pass_to_pass = [
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient",
+    "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc",
+    "skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc",
+    "skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas",
+    "skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng",
+    "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection",
+    "skbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts",
+    "skbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero",
+    "skbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas",
+]
+validation_status = "verified"
+bootstrap_image = "sha256:0334400ba98d1646c236ba1a61085f6cea7faa14e8db9868fac2380d7ccf7986"
+reward_mode = "graded"
+
+[metadata.repo2env.reward_calibration]
+f2p_count = 1
+p2p_count = 59
+source_files = 2
+loc_changed = 18
+difficulty = "small"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+evidence = []
+
+[metadata.repo2env.original_reproducibility]
+mode = "local_only"
+image_ref = "biotasks21-skbio-pr"
+image_tag = "biotasks21-skbio-pr"
+image_visibility = "private"
+
+[agent]
+timeout_sec = 1800.0
+network_mode = "no-network"
+
+[verifier]
+timeout_sec = 300.0
+network_mode = "no-network"
+
+[environment]
+network_mode = "no-network"
+cpus = 1
+memory_mb = 2048

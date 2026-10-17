@@ -1,0 +1,135 @@
+{
+  "stage": "native_parent_loader_preparation_only",
+  "cohort": "pr2633-parent-v1",
+  "accepted_parent_tasks": 1,
+  "parent_task_id": "repo2rlenv-pr-runtime/818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
+  "parent_bundle_hash": "sha256:b6fb8d16018ceb6c59188421938fad3ff17da4de286a3061b59ae4b140851149",
+  "parent_transform": "Only native bundle_hash metadata added; all executable configuration and other file bytes unchanged.",
+  "related_variant_policy": "All children retain the same parent lineage and must share any train/evaluation split; variants are not independent source problems.",
+  "biological_competency": "Numerical software repair with limited biological reasoning; upstream regression fixture, not an observed assay.",
+  "original_exclusion_marker_matches": [],
+  "recipes": {
+    "seta_evol": {
+      "options": {
+        "target": 3,
+        "max_candidates": 10,
+        "max_repairs": 2,
+        "seed": 24,
+        "max_tokens": 10000,
+        "test_timeout_sec": 120,
+        "review_drafts": false,
+        "exclude_seed_sha256": [],
+        "strategies": [
+          "increase_difficulty",
+          "change_context",
+          "decrease_difficulty"
+        ],
+        "variants_per_parent": 3
+      },
+      "input_pool_size": 3,
+      "attempt_ceiling": 10,
+      "records": [
+        {
+          "title": "parent: increase_difficulty #1",
+          "sha256": "5b01c0e2a0d19f726cd63d45a3a5d756660db9cfe766f71a6c205ad3c9705a0c"
+        },
+        {
+          "title": "parent: change_context #2",
+          "sha256": "4a5cb9923e133301c75dacd0d9fc4846a7dee31e7e4acb9e3da7e626453f65cb"
+        },
+        {
+          "title": "parent: decrease_difficulty #3",
+          "sha256": "d0654a9f1b948b803eb5f85d5e393dcb3ded0f0360f38e68ccef67bfb0a90ce4"
+        }
+      ]
+    },
+    "dataarc": {
+      "options": {
+        "target": 3,
+        "max_candidates": 10,
+        "max_repairs": 2,
+        "seed": 24,
+        "max_tokens": 10000,
+        "test_timeout_sec": 120,
+        "review_drafts": false,
+        "exclude_seed_sha256": [],
+        "strategies": [
+          "few_shot",
+          "self_instruct",
+          "evol_instruct"
+        ],
+        "evol_directions": [
+          "in_depth",
+          "in_breadth"
+        ],
+        "samples_per_strategy": 3
+      },
+      "input_pool_size": 12,
+      "attempt_ceiling": 10,
+      "records": [
+        {
+          "title": "parent: few_shot  #1",
+          "sha256": "9fb4dd77ad2758406ad6e1a52c50c10e9b5ca0618a4bd870ba198919644ffe9d"
+        },
+        {
+          "title": "parent: few_shot  #2",
+          "sha256": "633d3c895b033c0509da5d64369b8673cef659cbd662145d7bee9d7b8dfa04a0"
+        },
+        {
+          "title": "parent: few_shot  #3",
+          "sha256": "caebb9ef105dbb4a4034587c6e8b900a12aafd9156d6d9e754cabb1d4d6bbf94"
+        },
+        {
+          "title": "parent: self_instruct  #1",
+          "sha256": "b5b0bf35915a20b14064ce7192919cb1442886e42c3b5dd636806a5618d42997"
+        },
+        {
+          "title": "parent: self_instruct  #2",
+          "sha256": "141e3755e1c393308432aa8a465b63806fe262a5b1714e0979a25a4b9fc3e79a"
+        },
+        {
+          "title": "parent: self_instruct  #3",
+          "sha256": "9f4e4686184a9ac0e48ece31cb9c0279c07eae5112883d47372bca8a0b2e1841"
+        },
+        {
+          "title": "parent: evol_instruct in_depth #1",
+          "sha256": "ac6d2cfb831541773723a2aa4a818afbcfce4cace75be6ced704bd0595d09c03"
+        },
+        {
+          "title": "parent: evol_instruct in_depth #2",
+          "sha256": "505b342f5d029346e60955a4e33e07d08295004ae940272fdecfe910158de8f7"
+        },
+        {
+          "title": "parent: evol_instruct in_depth #3",
+          "sha256": "e0820609934a4ce4d7c419cd56f50b74dfe8bae151ad38e5aebc752c4665ec3f"
+        },
+        {
+          "title": "parent: evol_instruct in_breadth #1",
+          "sha256": "8c39b2a4b650966b3c104c1a0765bce3578c11ecc638ebdf1246ec5db8c492c6"
+        },
+        {
+          "title": "parent: evol_instruct in_breadth #2",
+          "sha256": "4cabcaba4eb8c6c4189532d68441d8886636e4bfc0ec67a3a2d08477ca46423d"
+        },
+        {
+          "title": "parent: evol_instruct in_breadth #3",
+          "sha256": "365baeaf85bd8b5ae4d1d0ed4487d86952179259a43929da59296e04129dbfc5"
+        }
+      ]
+    }
+  },
+  "model_calls": 0,
+  "built_children": 0,
+  "accepted_children": 0,
+  "dataarc_context_limits": {
+    "reference_patch_omitted": true,
+    "verifier_module_omitted": true,
+    "f2p_p2p_lists_omitted": true,
+    "test_script_source_characters": 3077,
+    "test_script_retained_characters": 3076,
+    "interpretation": "Native loader loses referenced oracle/grader assets and truncates seed-file excerpts over 3500 characters; this parent test script is below that limit. Preserve this limitation in any baseline run; a fuller context would be a separate intervention.",
+    "truncated_seed_files": [
+      "task.toml"
+    ]
+  }
+}
