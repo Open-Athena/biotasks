@@ -1,8 +1,8 @@
 {
-  "stage": "prepared_not_dispatched",
+  "stage": "reserved_blind_attempt",
   "task_id": "repo2rlenv-pr-runtime/818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
   "acceptance_sha256": "856f4fdcbc3225ee0b64f8446bceed48fff3f9963a4f483c72e69ae759edc1c4",
-  "task_directory": "evidence/marin-pr2633-preparation/harbor-task",
+  "task_directory": "evidence/pr2633-solver-runtime-preparation/harbor-task",
   "backend": "Harbor 0.22.0 Daytona direct sandbox",
   "native_wrapper_limitation": "Repo2RLEnv run_trial rejects custom model.endpoint; direct Harbor host-side Terminus2 is a separately recorded transport adaptation.",
   "preflight_required": [
@@ -32,7 +32,19 @@
   },
   "capture": "Host-side transcript, task artifacts, native reward details and provider cleanup receipts; preserve partial results on timeout. Private service routing excluded from public evidence.",
   "dispatch_constraint": "SETA worker absence confirmed at 17:30:41 UTC; R2E controller/worker remains active. Capacity available for one additional controller/worker pair within the four-instance limit.",
-  "live_provider_control_status": "passed baseline 0 (probe 02) and reference 1 (reference 01), same task checksum; cleanup confirmed",
+  "live_provider_control_status": "passed baseline 0 and reference 1 plus both native terminal setups on explicit tmux runtime; cleanup confirmed",
   "solver_status": "not_executed",
-  "remaining_setup_requirement": "Terminus2 requires tmux; accepted Dockerfile does not install it, and native fallback installation needs network. Prepare an explicit build-time tmux runtime adaptation before blind solve."
+  "runtime_manifest": "evidence/pr2633-solver-runtime-preparation/manifest.json",
+  "control_evidence": "evidence/pr-solver-runtime-01/status.json",
+  "reservation_usd": 5,
+  "private_launcher_hashes": {
+    "pr-blind-solver-remote-01.py": "5d43c0cf419dc34142af5f00c59d0f9fde3e3124bb417c6065b417ae35de09ef",
+    "submit-pr-blind-solver-01.py": "7fe17f9fbea264f649940009c5ee73f8554aabc7d83e12031af30ac1c16e2dce"
+  },
+  "source_hashes": {
+    "run_pr_blind_solver.py": "46c116028ecf4a8dfda98efc96f06c7d50590a72fd2bd5c224bd392632195dd8",
+    "glm_solver_settings.py": "40e08884bf7417647430824c7ca90808b13ac3d9c4f3d6f2346018921a307bb7",
+    "run_pr_provider_preflight.py": "a02fd94ccfb98b5fb6776471f3c46c3b319bc35add11ec1fe5cff7d6481ab481",
+    "pr_provider_environment.py": "42ef59acab2cb9a7f0bb95982ec5dc7e5bf53f7f5cf288b8ea1c25e69598873a"
+  }
 }

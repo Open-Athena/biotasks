@@ -654,3 +654,7 @@ Reference-only job from 50d81ce succeeded at 18:03:49 UTC. Recovered archive (7,
 Reserve $5 for baseline/reference controls of the explicit tmux runtime variant, including native terminal-session startup before any agent execution. The accepted parent still defines every original byte; only the literal recorded Dockerfile append is allowed. Zero model calls, one controller/worker pair and 30-minute setup/execution deadline. Conservative estimates/holds become $253/$300.
 
 Solver-runtime controls submitted from 4d35bd2 at 18:08 UTC. Runtime and original R2E jobs both confirmed running at 18:09 UTC. Prepared native SETA Evol design authoring with the three manifest-verified strategies and approved GLM adaptation; offline tests preserve schema failure, design success and filtered outcome plus raw output archives. No parent-evolution model calls or builds have run.
+
+## 2026-10-17 — Solver runtime controls passed; blind attempt reserved
+
+Runtime probe succeeded at 18:12:12 UTC. Baseline 0 and reference 1 share the new tooling-only task checksum; native tmux 3.3a session startup, imports, private-path checks and provider network blocking passed in both sandboxes. Both deletions confirmed. Supported archive and nested hashes verified. This validates the explicit runtime variant without changing task content/reward. Reserve $5 for the approved single blind GLM attempt (900 seconds, 12 turns, 2,048 output tokens/request, no generation-effort override). Conservative estimates/holds now $258/$300.
