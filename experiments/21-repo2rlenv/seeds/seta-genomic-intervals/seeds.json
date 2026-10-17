@@ -1,0 +1,41 @@
+[
+  {
+    "source": "Open-Athena/biotasks issue 21 original experiment seed",
+    "content_license": "Apache-2.0",
+    "question_author": "Codex, for the issue 21 experiment",
+    "domain": "computational biology / genomic intervals",
+    "biological_input_kind": "simulated",
+    "provenance": "Original agent-authored workflow question. Coordinates and feature identifiers are synthetic; no patient, organism, genome assembly, benchmark question or observed assay is represented.",
+    "repository": "https://github.com/arq5x/bedtools2",
+    "repository_revision": "614e9a5c5935ab86e873dab9072fbbaf003c1b7e",
+    "id": "covered_bases",
+    "title": "Measure union coverage of synthetic genomic features",
+    "question_text": "How can I use command-line interval tools to calculate the number and fraction of bases in each target feature covered by a collection of assay intervals? All coordinates are zero-based, half-open: [start,end), with integer start < end. Chromosomes are independent; strand is ignored. Overlapping or duplicate assay intervals must not double-count bases. Each target row has a unique feature ID; overlapping targets are scored independently. Retain target rows with zero coverage, report covered integer bases and a fraction with absolute error at most 1e-8, and sort output by feature ID. For target chrA:[10,20) and assay intervals chrA:[8,13), chrA:[12,17), chrA:[19,22), the covered union within the target is [10,17) plus [19,20): 8 bases, fraction 0.8. A row on chrB contributes nothing to this target. Create a reproducible offline terminal workflow using pinned bedtools2, small explicitly synthetic BED fixtures, and separate output files. Include an explanation of the coordinate convention and why interval counts differ from covered-base counts. Do not infer biological enrichment or significance from these synthetic examples."
+  },
+  {
+    "source": "Open-Athena/biotasks issue 21 original experiment seed",
+    "content_license": "Apache-2.0",
+    "question_author": "Codex, for the issue 21 experiment",
+    "domain": "computational biology / genomic intervals",
+    "biological_input_kind": "simulated",
+    "provenance": "Original agent-authored workflow question. Coordinates and feature identifiers are synthetic; no patient, organism, genome assembly, benchmark question or observed assay is represented.",
+    "repository": "https://github.com/arq5x/bedtools2",
+    "repository_revision": "614e9a5c5935ab86e873dab9072fbbaf003c1b7e",
+    "id": "closest_features",
+    "title": "Find nearest synthetic features with explicit tie handling",
+    "question_text": "How can I build an offline command-line workflow that assigns every synthetic query interval all nearest annotated features on the same chromosome? Use zero-based half-open intervals, integer start < end, and unique IDs. Define gap distance here as max(0, feature_start-query_end, query_start-feature_end); therefore overlapping and book-ended intervals both have gap zero. Keep all ties, including multiple overlaps, ignore strand, sort rows by query ID then feature ID, and output NA for the feature ID and distance when the chromosome has no features. For query chrA:[10,15), features chrA:[0,8) and chrA:[17,20) both have gap 2; chrA:[15,16) has gap 0. This deliberately defined gap may differ from a tool's reported distance convention: explain and verify any transformation instead of silently using another convention. Use pinned bedtools2 in a reproducible CPU-only environment, with deterministic synthetic BED inputs and a machine-readable TSV result. This is an interval-annotation exercise, not evidence that the closest feature regulates a query region."
+  },
+  {
+    "source": "Open-Athena/biotasks issue 21 original experiment seed",
+    "content_license": "Apache-2.0",
+    "question_author": "Codex, for the issue 21 experiment",
+    "domain": "computational biology / genomic intervals",
+    "biological_input_kind": "simulated",
+    "provenance": "Original agent-authored workflow question. Coordinates and feature identifiers are synthetic; no patient, organism, genome assembly, benchmark question or observed assay is represented.",
+    "repository": "https://github.com/arq5x/bedtools2",
+    "repository_revision": "614e9a5c5935ab86e873dab9072fbbaf003c1b7e",
+    "id": "consensus_regions",
+    "title": "Build replicate-supported synthetic interval consensus",
+    "question_text": "How can I create consensus regions covered by at least two of three synthetic assay replicates, using an offline bedtools2 terminal workflow? Intervals are zero-based half-open [start,end), integer start < end. Treat duplicate and overlapping rows within each replicate as one binary coverage indicator; count distinct replicates, not rows. Strand is ignored and chromosomes are independent. Output the maximal contiguous spans where at least two replicates cover each base, merging book-ended qualifying spans even if the identities of the supporting replicates change. Sort by chromosome lexicographically, then numeric start and end. For replicate A [0,10), B [5,15), and C [8,12) on chrA, consensus is [5,12); A's duplicate [0,10) must not change that. Supply explicit deterministic synthetic fixtures including empty chromosomes, overlaps within one replicate, ties at boundaries and disjoint regions. Preserve intermediate per-replicate unions and a final BED file so results are auditable. Explain that this geometric consensus is not a statistical reproducibility or differential-enrichment test."
+  }
+]
