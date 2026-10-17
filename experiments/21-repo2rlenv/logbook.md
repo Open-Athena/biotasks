@@ -1127,3 +1127,8 @@ Frozen ten control-dispatch inputs and checked all4889 original task files in th
 Six scikit-bio SWE-gen cases completed with rewards0,1,1,1,0,0 and passed-test counts59,60,60,60,51,59 of60. Reconciled exact test identities, original bundle integrity and1981 non-solution hashes in every variant; small reports match recovered native bytes. E-step-only passing remains a coverage limitation. Fresh solver runtime and final acceptance remain pending. Recovered127780304-byte provider archive with exact checksum, nested checksum and12005 files/393365599 native bytes; modes preserved. Public control archive pending. Separate worker404 at22:31:02UTC releases two slots. Reserved$10 for six QCP correctness controls: estimates/holds$458 of$1000, remaining$542. No new model calls.
 
 Submitted `/exedev/biotasks21-qcp-independent-20261017-01` from35688c2 after prior controller/cleanup gates; six no-model cases, two reserved slots alongside Endless.
+
+
+### 2026-10-17 22:33 UTC — SWE-gen correctness archive public
+
+Public snapshot06d178064645af18de08700c98d909f3eb69d1260dc7f1f58a38a938720d4d10 contains19 objects and122 members, all anonymously downloaded and verified. Includes full case traces, per-case solutions, unchanged-asset manifest and exact frozen execution-code bytes; duplicate source trees link to the original native task snapshot. Updated route matrix and interim comparison to reflect scikit-bio controls and the Biopython QCP export without promoting either to final acceptance.

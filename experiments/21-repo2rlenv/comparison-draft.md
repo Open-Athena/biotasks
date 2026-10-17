@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 22:33 UTC archive verification. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -10,8 +10,8 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 | Biopython LCC, full-source SWE-smith adaptation | Sequence complexity / entropy implementation | Independently accepted; one blind GLM attempt scored 1 with 12/12 tests | Explicit source-packaging and solver-tooling adaptations; bounded library-function task rather than an end-to-end biological analysis |
 | SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison | One synthetic family, not three distinct competencies; blind attempts remain pending |
 | scikit-bio SWE-Next and fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Native exports and six independent correctness controls per export | Shared problem lineage; fresh solver runtime/final acceptance and blind attempts pending |
-| scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export, static review and six controls prepared | Independent controls have not run for this bundle; results from other exports cannot be transferred to it |
-| Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | Profiles prepared; SWE-gen submitted | No completed build, export or independent acceptance result yet |
+| scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export and six independent correctness controls verified | Fresh solver-runtime validation, final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
+| Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | One SWE-gen export: native healthy 9/9, defective 8/9, nop 0/reference 1; independent controls submitted | Native export publicly preserved; independent acceptance and blind attempt pending |
 
 Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
 
