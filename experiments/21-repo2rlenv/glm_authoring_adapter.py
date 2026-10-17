@@ -22,6 +22,10 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
         from repo2rlenv.pipelines.recipes.terminal import runner
 
         targets["terminal_builder"] = runner
+    if metering_target == "r2e":
+        from repo2rlenv.pipelines.recipes.r2e import pipeline
+
+        targets["r2e"] = pipeline
     target = targets[metering_target]
     original_metered = target.metered_complete
     original_completion = litellm.completion

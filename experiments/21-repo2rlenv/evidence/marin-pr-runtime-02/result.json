@@ -1,0 +1,393 @@
+{
+  "status": "native_marin_runtime_parity_controls_passed",
+  "cases": [
+    {
+      "case": "baseline",
+      "expected_reward": 0.0,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "p2p_total": 59,
+        "p2p_passed": 59,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 1,
+        "command_resolved": false
+      },
+      "native_reward": 0.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 0.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics PASSED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em PASSED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow FAILED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias PASSED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping PASSED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc PASSED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas PASSED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 PASSED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas PASSED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity PASSED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n=================================== FAILURES ===================================\n__________________ CoreTests.test_estimate_bias_em_underflow ___________________\nskbio/stats/composition/tests/test_ancombc.py:1200: in test_estimate_bias_em_underflow\n    result = ancombc2(table, metadata, \"g\", p_adjust=None).result\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nskbio/stats/composition/_ancombc.py:777: in ancombc2\n    return _ancombc_core(\nskbio/stats/composition/_ancombc.py:912: in _ancombc_core\n    bias[i] = _estimate_bias_em(beta_i, var_i, tol=tol, max_iter=max_iter)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nskbio/stats/composition/_ancombc.py:2432: in _estimate_bias_em\n    return _estimate_bias_var(beta, var_hat, params)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nskbio/stats/composition/_ancombc.py:2516: in _estimate_bias_var\n    q1, q2 = np.quantile(beta, (pi1, 1.0 - pi2))\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.13/site-packages/numpy/lib/_function_base_impl.py:4495: in quantile\n    raise ValueError(\"Quantiles must be in the range [0, 1]\")\nE   ValueError: Quantiles must be in the range [0, 1]\n=============================== warnings summary ===============================\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow\n  /workspace/skbio/stats/composition/_ancombc.py:2371: RuntimeWarning: invalid value encountered in divide\n    resp /= np.sum(resp, axis=0, keepdims=True)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ============================\nFAILED skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow\n========== 1 failed, 59 passed, 1 warning, 6 subtests passed in 5.82s ==========\n{\n  \"reward\": 0.0,\n  \"resolved\": false,\n  \"f2p_total\": 1,\n  \"f2p_passed\": 0,\n  \"f2p_rate\": 0.0,\n  \"p2p_total\": 59,\n  \"p2p_passed\": 59,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 60,\n  \"exit_code\": 1,\n  \"command_resolved\": false\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=1\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 1 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 0.0,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 0,
+        "p2p_passed": 59
+      },
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "native_reference",
+      "expected_reward": 1.0,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 59,
+        "p2p_passed": 59,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_reward": 1.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 1.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics PASSED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em PASSED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow PASSED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias PASSED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping PASSED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc PASSED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas PASSED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 PASSED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas PASSED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity PASSED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n==================== 60 passed, 6 subtests passed in 6.07s =====================\n{\n  \"reward\": 1.0,\n  \"resolved\": true,\n  \"f2p_total\": 1,\n  \"f2p_passed\": 1,\n  \"f2p_rate\": 1.0,\n  \"p2p_total\": 59,\n  \"p2p_passed\": 59,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 60,\n  \"exit_code\": 0,\n  \"command_resolved\": true\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=0\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 0 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 1.0,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 1,
+        "p2p_passed": 59
+      },
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "alternative_masked_division",
+      "expected_reward": 1.0,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 59,
+        "p2p_passed": 59,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_reward": 1.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 1.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics PASSED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em PASSED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow PASSED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias PASSED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping PASSED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc PASSED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas PASSED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 PASSED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas PASSED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity PASSED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n==================== 60 passed, 6 subtests passed in 5.83s =====================\n{\n  \"reward\": 1.0,\n  \"resolved\": true,\n  \"f2p_total\": 1,\n  \"f2p_passed\": 1,\n  \"f2p_rate\": 1.0,\n  \"p2p_total\": 59,\n  \"p2p_passed\": 59,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 60,\n  \"exit_code\": 0,\n  \"command_resolved\": true\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=0\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 0 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 1.0,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 1,
+        "p2p_passed": 59
+      },
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "e_step_only",
+      "expected_reward": 1.0,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 59,
+        "p2p_passed": 59,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_reward": 1.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 1.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics PASSED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em PASSED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow PASSED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias PASSED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping PASSED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc PASSED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas PASSED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 PASSED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas PASSED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity PASSED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n==================== 60 passed, 6 subtests passed in 6.07s =====================\n{\n  \"reward\": 1.0,\n  \"resolved\": true,\n  \"f2p_total\": 1,\n  \"f2p_passed\": 1,\n  \"f2p_rate\": 1.0,\n  \"p2p_total\": 59,\n  \"p2p_passed\": 59,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 60,\n  \"exit_code\": 0,\n  \"command_resolved\": true\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=0\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 0 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 1.0,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 1,
+        "p2p_passed": 59
+      },
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "wrong_uniform_responsibilities",
+      "expected_reward": 0.0,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "p2p_total": 59,
+        "p2p_passed": 51,
+        "p2p_rate": 0.864407,
+        "regressions": [
+          "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2",
+          "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas",
+          "skbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity",
+          "skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc",
+          "skbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas",
+          "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics",
+          "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em",
+          "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias"
+        ],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 1,
+        "command_resolved": false
+      },
+      "native_reward": 0.0,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 0.0,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics FAILED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em FAILED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow FAILED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias FAILED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping PASSED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc FAILED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas FAILED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 FAILED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas FAILED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity FAILED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n=================================== FAILURES ===================================\n________________________ CoreTests.test_calc_statistics ________________________\nskbio/stats/composition/tests/test_ancombc.py:1274: in test_calc_statistics\n    npt.assert_allclose(obs[2], exp_W, atol=1e-3)\nE   AssertionError: \nE   Not equal to tolerance rtol=1e-07, atol=0.001\nE   \nE   Mismatched elements: 14 / 14 (100%)\nE   First 5 mismatches are at indices:\nE    [0, 0]: 16.583129944466965 (ACTUAL), 21.4805775 (DESIRED)\nE    [0, 1]: -2.8603100579499094 (ACTUAL), -3.06882664 (DESIRED)\nE    [1, 0]: 30.37118688207059 (ACTUAL), 39.5639779 (DESIRED)\nE    [1, 1]: -4.724518041659532 (ACTUAL), -5.55591315 (DESIRED)\nE    [2, 0]: -1.0901537840840243 (ACTUAL), 0.8056173 (DESIRED)\nE   Max absolute difference among violations: 10.72117121\nE   Max relative difference among violations: 86.41798854\nE    ACTUAL: DesignMatrix([[ 16.58313 ,  -2.86031 ],\nE                 [ 30.371187,  -4.724518],\nE                 [ -1.090154,   1.237089],...\nE    DESIRED: array([[ 2.148058e+01, -3.068827e+00],\nE          [ 3.956398e+01, -5.555913e+00],\nE          [ 8.056173e-01,  5.705474e-01],...\n_______________________ CoreTests.test_estimate_bias_em ________________________\nskbio/stats/composition/tests/test_ancombc.py:1160: in test_estimate_bias_em\n    npt.assert_array_equal(obs.round(5), exp)\nE   AssertionError: \nE   Arrays are not equal\nE   \nE   Mismatched elements: 6 / 6 (100%)\nE   First 5 mismatches are at indices:\nE    [0, 0]: 1.38468 (ACTUAL), 1.28803 (DESIRED)\nE    [0, 1]: 1.29147 (ACTUAL), 1.28828 (DESIRED)\nE    [0, 2]: 0.00173 (ACTUAL), 0.00168 (DESIRED)\nE    [1, 0]: -0.71793 (ACTUAL), 0.06374 (DESIRED)\nE    [1, 1]: -0.29269 (ACTUAL), 0.06394 (DESIRED)\nE   Max absolute difference among violations: 0.78167\nE   Max relative difference among violations: 12.26341387\nE    ACTUAL: array([[ 1.38468,  1.29147,  0.00173],\nE          [-0.71793, -0.29269,  0.1181 ]])\nE    DESIRED: array([[1.28803, 1.28828, 0.00168],\nE          [0.06374, 0.06394, 0.02038]])\n__________________ CoreTests.test_estimate_bias_em_underflow ___________________\nskbio/stats/composition/tests/test_ancombc.py:1205: in test_estimate_bias_em_underflow\n    npt.assert_allclose(observed[\"Log(FC)\"], expected_lfc, atol=1e-6)\nE   AssertionError: \nE   Not equal to tolerance rtol=1e-07, atol=1e-06\nE   \nE   Mismatched elements: 3 / 3 (100%)\nE   Mismatch at indices:\nE    [0]: -0.5873895140307587 (ACTUAL), -1.08292235 (DESIRED)\nE    [1]: 0.6619966126788074 (ACTUAL), 0.16646377 (DESIRED)\nE    [2]: 0.36397477378143395 (ACTUAL), -0.13155807 (DESIRED)\nE   Max absolute difference among violations: 0.49553284\nE   Max relative difference among violations: 3.76664726\nE    ACTUAL: array([-0.58739 ,  0.661997,  0.363975])\nE    DESIRED: array([-1.082922,  0.166464, -0.131558])\n__________________________ CoreTests.test_sample_bias __________________________\nskbio/stats/composition/tests/test_ancombc.py:1220: in test_sample_bias\n    npt.assert_allclose(obs, exp, atol=1e-5)\nE   AssertionError: \nE   Not equal to tolerance rtol=1e-07, atol=1e-05\nE   \nE   Mismatched elements: 6 / 6 (100%)\nE   First 5 mismatches are at indices:\nE    [0]: 2.5218960590220907 (ACTUAL), 2.43809627 (DESIRED)\nE    [1]: 2.508280319050044 (ACTUAL), 2.42448053 (DESIRED)\nE    [2]: 2.1667193756954326 (ACTUAL), 2.08291958 (DESIRED)\nE    [3]: 2.5287081571331176 (ACTUAL), 2.36465192 (DESIRED)\nE    [4]: 2.5701299029883065 (ACTUAL), 2.40607366 (DESIRED)\nE   Max absolute difference among violations: 0.16405624\nE   Max relative difference among violations: 0.0693786\nE    ACTUAL: array([2.521896, 2.50828 , 2.166719, 2.528708, 2.57013 , 2.592712])\nE    DESIRED: array([2.438096, 2.424481, 2.08292 , 2.364652, 2.406074, 2.428655])\n__________________________ AncombcTests.test_ancombc ___________________________\nskbio/stats/composition/tests/test_ancombc.py:1534: in test_ancombc\n    npt.assert_array_equal(obs, exp)\nE   AssertionError: \nE   Arrays are not equal\nE   \nE   Mismatched elements: 3 / 14 (21.4%)\nE   Mismatch at indices:\nE    [6]: True (ACTUAL), 0.0 (DESIRED)\nE    [10]: True (ACTUAL), 0.0 (DESIRED)\nE    [12]: True (ACTUAL), 0.0 (DESIRED)\nE   Max absolute difference among violations: 1.\nE   Max relative difference among violations: inf\nE    ACTUAL: array([ True,  True,  True,  True, False, False,  True, False, False,\nE          False,  True, False,  True, False])\nE    DESIRED: array([1., 1., 1., 1., 0., 0., 0., 0., 0., 0., 0., 0., 0., 0.])\n_______________________ AncombcTests.test_ancombc_atlas ________________________\nskbio/stats/composition/tests/test_ancombc.py:1582: in test_ancombc_atlas\n    pdt.assert_frame_equal(obs, exp, atol=1e-3)\npandas/_libs/testing.pyx:53: in pandas._libs.testing.assert_almost_equal\n    ???\npandas/_libs/testing.pyx:171: in pandas._libs.testing.assert_almost_equal\n    ???\nE   AssertionError: DataFrame.iloc[:, 0] (column name=\"Log(FC)\") are different\nE   \nE   DataFrame.iloc[:, 0] (column name=\"Log(FC)\") values are different (85.71429 %)\nE   [index]: [(Actinobacteria, Intercept), (Actinobacteria, region[T.NE]), (Actinobacteria, region[T.SE]), (Actinobacteria, region[T.US]), (Actinobacteria, bmi[T.overweight]), (Actinobacteria, bmi[T.obese]), (Actinobacteria, age), (Bacteroidetes, Intercept), (Bacteroidetes, region[T.NE]), (Bacteroidetes, region[T.SE]), (Bacteroidetes, region[T.US]), (Bacteroidetes, bmi[T.overweight]), (Bacteroidetes, bmi[T.obese]), (Bacteroidetes, age), (Cyanobacteria, Intercept), (Cyanobacteria, region[T.NE]), (Cyanobacteria, region[T.SE]), (Cyanobacteria, region[T.US]), (Cyanobacteria, bmi[T.overweight]), (Cyanobacteria, bmi[T.obese]), (Cyanobacteria, age), (Bacilli, Intercept), (Bacilli, region[T.NE]), (Bacilli, region[T.SE]), (Bacilli, region[T.US]), (Bacilli, bmi[T.overweight]), (Bacilli, bmi[T.obese]), (Bacilli, age), (Clostridium cluster I, Intercept), (Clostridium cluster I, region[T.NE]), (Clostridium cluster I, region[T.SE]), (Clostridium cluster I, region[T.US]), (Clostridium cluster I, bmi[T.overweight]), (Clostridium cluster I, bmi[T.obese]), (Clostridium cluster I, age), (Clostridium cluster III, Intercept), (Clostridium cluster III, region[T.NE]), (Clostridium cluster III, region[T.SE]), (Clostridium cluster III, region[T.US]), (Clostridium cluster III, bmi[T.overweight]), (Clostridium cluster III, bmi[T.obese]), (Clostridium cluster III, age), (Clostridium cluster IV, Intercept), (Clostridium cluster IV, region[T.NE]), (Clostridium cluster IV, region[T.SE]), (Clostridium cluster IV, region[T.US]), (Clostridium cluster IV, bmi[T.overweight]), (Clostridium cluster IV, bmi[T.obese]), (Clostridium cluster IV, age), (Clostridium cluster IX, Intercept), (Clostridium cluster IX, region[T.NE]), (Clostridium cluster IX, region[T.SE]), (Clostridium cluster IX, region[T.US]), (Clostridium cluster IX, bmi[T.overweight]), (Clostridium cluster IX, bmi[T.obese]), (Clostridium cluster IX, age), (Clostridium cluster XI, Intercept), (Clostridium cluster XI, region[T.NE]), (Clostridium cluster XI, region[T.SE]), (Clostridium cluster XI, region[T.US]), (Clostridium cluster XI, bmi[T.overweight]), (Clostridium cluster XI, bmi[T.obese]), (Clostridium cluster XI, age), (Clostridium cluster XIII, Intercept), (Clostridium cluster XIII, region[T.NE]), (Clostridium cluster XIII, region[T.SE]), (Clostridium cluster XIII, region[T.US]), (Clostridium cluster XIII, bmi[T.overweight]), (Clostridium cluster XIII, bmi[T.obese]), (Clostridium cluster XIII, age), (Clostridium cluster XIVa, Intercept), (Clostridium cluster XIVa, region[T.NE]), (Clostridium cluster XIVa, region[T.SE]), (Clostridium cluster XIVa, region[T.US]), (Clostridium cluster XIVa, bmi[T.overweight]), (Clostridium cluster XIVa, bmi[T.obese]), (Clostridium cluster XIVa, age), (Clostridium cluster XV, Intercept), (Clostridium cluster XV, region[T.NE]), (Clostridium cluster XV, region[T.SE]), (Clostridium cluster XV, region[T.US]), (Clostridium cluster XV, bmi[T.overweight]), (Clostridium cluster XV, bmi[T.obese]), (Clostridium cluster XV, age), (Clostridium cluster XVI, Intercept), (Clostridium cluster XVI, region[T.NE]), (Clostridium cluster XVI, region[T.SE]), (Clostridium cluster XVI, region[T.US]), (Clostridium cluster XVI, bmi[T.overweight]), (Clostridium cluster XVI, bmi[T.obese]), (Clostridium cluster XVI, age), (Clostridium cluster XVII, Intercept), (Clostridium cluster XVII, region[T.NE]), (Clostridium cluster XVII, region[T.SE]), (Clostridium cluster XVII, region[T.US]), (Clostridium cluster XVII, bmi[T.overweight]), (Clostridium cluster XVII, bmi[T.obese]), (Clostridium cluster XVII, age), (Clostridium cluster XVIII, Intercept), (Clostridium cluster XVIII, region[T.NE]), ...]\nE   [left]:  [2.9069975246473176, 0.6907364490291756, 0.5948671704052745, 0.15622114146254995, 0.04782948927021916, -0.021083849803534394, -0.01690086018023802, 4.897135429750135, -0.6556721802439636, -0.4957337355942586, -0.11244959045782386, -0.1396245451875287, 0.15451552254359388, 0.0043631245461746015, -2.236523577422767, -0.2709366122474887, -0.26181634376652463, -0.16727395208510304, -0.007041670888560579, -0.008418741316654321, 0.0026178531509754664, 2.3907532456083156, 0.271427212587335, 0.06115994309784814, 0.23632732496093928, 0.057437528008466264, -0.125326570401364, -0.001423065743328983, 0.7765112966514129, -0.025427721170886777, 0.014865648291238959, -0.10744188748199256, -0.020361328766602564, -0.07509552885573384, 0.0009193681718260135, 0.39406284397013147, 0.35028356489943674, 0.0741547194901698, 0.26970516129522737, -0.04072443998107419, 0.27074450423304186, -0.007637309661553542, 5.671253720810654, -0.12491650906693276, 0.01310444614886655, -0.2254395297434615, -0.11855395995693119, -0.06777412795855228, ",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=1\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 1 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": true,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 0.0,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 0,
+        "p2p_passed": 51
+      },
+      "marin_postgrade_private_paths_absent": true
+    },
+    {
+      "case": "fixed_underflow_with_grouping_regression",
+      "expected_reward": 0.983051,
+      "native_learner_private_paths_absent": true,
+      "native_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "native_exit_code": 0,
+      "native_details": {
+        "reward": 0.983051,
+        "resolved": false,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 59,
+        "p2p_passed": 58,
+        "p2p_rate": 0.983051,
+        "regressions": [
+          "skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping"
+        ],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 60,
+        "exit_code": 1,
+        "command_resolved": false
+      },
+      "native_reward": 0.983051,
+      "marin_learner_private_paths_absent": true,
+      "marin_initial_imports": {
+        "skbio": "0.7.5-dev",
+        "numpy": "2.5.3",
+        "scipy": "1.18.1",
+        "pandas": "3.0.6"
+      },
+      "marin_result": {
+        "status": "graded",
+        "reward": 0.983051,
+        "error": null,
+        "detail": null,
+        "passed": null,
+        "diagnostics": {
+          "stdout": "+ cp -a /opt/skbio-baseline-extensions/. /workspace/\n+ cd /workspace\n+ python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py\n============================= test session starts ==============================\nplatform linux -- Python 3.13.2, pytest-9.0.3, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\ncollecting ... collected 60 items\n\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_adjust_variance PASSED [  1%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_apply_pinv PASSED [  3%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_covariance PASSED [  5%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_pvalues PASSED [  6%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual PASSED [  8%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_residual_sparse PASSED [ 10%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics PASSED [ 11%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_statistics_inplace PASSED [ 13%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_var_cov PASSED [ 15%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_calc_variance PASSED [ 16%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_estimability_guards PASSED [ 18%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_core_parameter_validation PASSED [ 20%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em PASSED [ 21%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_bias_em_underflow PASSED [ 23%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_constant PASSED [ 25%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense PASSED [ 26%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_dense_corrected PASSED [ 28%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_grouped PASSED [ 30%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_singular PASSED [ 31%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse PASSED [ 33%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_direct PASSED [ 35%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_grouped PASSED [ 36%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_sparse_solvers PASSED [ 38%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_estimate_params_unbalanced PASSED [ 40%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_global_stats_cache PASSED [ 41%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_init_bias_params PASSED [ 43%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_dense PASSED [ 45%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse PASSED [ 46%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_batch PASSED [ 48%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_lstsq_sparse_local_references PASSED [ 50%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_numerical_fallbacks PASSED [ 51%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_inherit_fit_settings PASSED [ 53%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_post_hoc_methods_recalculate PASSED [ 55%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_posthoc_retention PASSED [ 56%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_r_fit_info_and_rebase_filtering PASSED [ 58%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sample_bias PASSED [ 60%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths \nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_sparse_failed_fit_paths PASSED [ 61%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_statistical_helpers PASSED [ 63%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_transform_data PASSED [ 65%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_trend_test_default_rng PASSED [ 66%]\nskbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping FAILED [ 68%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc PASSED [ 70%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_ancombc_atlas PASSED [ 71%]\nskbio/stats/composition/tests/test_ancombc.py::AncombcTests::test_grouping_validation PASSED [ 73%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2 PASSED [ 75%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_aggregator PASSED [ 76%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_atlas PASSED [ 78%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_ancombc2_sensitivity PASSED [ 80%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_grouping_controls_posthoc_availability PASSED [ 81%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient PASSED [ 83%]\nskbio/stats/composition/tests/test_ancombc.py::Ancombc2Tests::test_rank_deficient_posthoc PASSED [ 85%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_constrain_est_identity PASSED [ 86%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_dunn_bootstrap_counts PASSED [ 88%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_dunnett PASSED [ 90%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_fractional_families PASSED [ 91%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_mdfdr_inflated_families PASSED [ 93%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_prepared_trend_projection PASSED [ 95%]\nskbio/stats/composition/tests/test_ancombc.py::PostHocTests::test_trend_bootstrap_counts PASSED [ 96%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero PASSED [ 98%]\nskbio/stats/composition/tests/test_ancombc.py::StrucZeroTests::test_struc_zero_atlas PASSED [100%]\n\n=================================== FAILURES ===================================\n_______________________ CoreTests.test_validate_grouping _______________________\nskbio/stats/composition/tests/test_ancombc.py:1451: in test_validate_grouping\n    with self.assertRaisesRegex(ValueError, \"at least two covariates\"):\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE   AssertionError: ValueError not raised\n=========================== short test summary info ============================\nFAILED skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping\n=============== 1 failed, 59 passed, 6 subtests passed in 5.89s ================\n{\n  \"reward\": 0.983051,\n  \"resolved\": false,\n  \"f2p_total\": 1,\n  \"f2p_passed\": 1,\n  \"f2p_rate\": 1.0,\n  \"p2p_total\": 59,\n  \"p2p_passed\": 58,\n  \"p2p_rate\": 0.983051,\n  \"regressions\": [\n    \"skbio/stats/composition/tests/test_ancombc.py::CoreTests::test_validate_grouping\"\n  ],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 60,\n  \"exit_code\": 1,\n  \"command_resolved\": false\n}\n",
+          "stderr": "+++ dirname /tests/test.sh\n++ cd /tests\n++ pwd\n+ SCRIPT_DIR=/tests\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ mkdir -p /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ git apply --verbose --reject -\nChecking patch skbio/stats/composition/tests/test_ancombc.py...\nApplied patch skbio/stats/composition/tests/test_ancombc.py cleanly.\n+ R2E_APPLY_RC=0\n+ '[' 0 -ne 0 ']'\n+ TEST_EXIT_CODE=1\n+ cat /logs/verifier/test_output.log\n+ python3 /tests/verifier.py --log /logs/verifier/test_output.log --f2p /tests/f2p.json --p2p /tests/p2p.json --test-cmds 'cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/stats/composition/tests/test_ancombc.py' --exit-code 1 --out-dir /logs/verifier\n+ git checkout 71286a24bddff66c82cb25a7ca13441aa13c2f2c -- skbio/stats/composition/tests/test_ancombc.py\n+ exit 0\n",
+          "exit_code": 0,
+          "stdout_truncated": false,
+          "stderr_truncated": false
+        },
+        "failure": null,
+        "score_min": 0.0,
+        "score_max": 1.0
+      },
+      "marin_reward": 0.983051,
+      "marin_test_counts": {
+        "tests_parsed": 60,
+        "f2p_passed": 1,
+        "p2p_passed": 58
+      },
+      "marin_postgrade_private_paths_absent": true
+    }
+  ],
+  "reward_semantics": "native_f2p_rate_times_p2p_rate",
+  "model_calls": 0,
+  "blind_solver_attempts": 0,
+  "image": "localhost:5000/biotasks21/pr2633@sha256:ea3c87ce8db578198d77aafad79b860aede89a9d39d9bc6e8aa8524f886ae635",
+  "limitations": "Fixed six-control suite; public image publication and final acceptance remain separate."
+}

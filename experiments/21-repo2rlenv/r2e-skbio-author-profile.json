@@ -1,0 +1,34 @@
+{
+  "stage": "prepared_not_dispatched",
+  "recipe": "r2e",
+  "repository": "scikit-bio",
+  "source_revision": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+  "candidate_profile": "r2e-skbio-worker.json",
+  "target_native_exports": 3,
+  "max_candidates": 10,
+  "max_test_author_rounds_per_candidate": 3,
+  "max_specification_calls_per_candidate": 1,
+  "max_recipe_completion_calls": 40,
+  "limits_note": "Native transport retries remain in effect; no new global model-call cap. Two-hour controller limit includes setup. Independent acceptance and blind solving are separate.",
+  "worker_concurrency": {
+    "iris_controllers": 1,
+    "daytona_workers": 1,
+    "each_cpu": 2,
+    "each_memory_gib": 4,
+    "each_disk_gib": 10
+  },
+  "generation_settings": "glm-generation-adaptation.json",
+  "recovery": "Supported Iris output archive with bounded private campaign capture, including interrupted state and remaining remote evidence before cleanup",
+  "source_sha256": {
+    "run_r2e_authoring.py": "d87a23b61bbdb60b1a380b28be732575cf25884099db8b2a29844fb6a172409c",
+    "glm_authoring_adapter.py": "6714ac73c097ac94a0e767a33499969c7044b4a83b814f2762b08b57556ecf10",
+    "check_r2e_authoring.py": "c8d87c3823439d52c389a57982c18f4080e353df143bd067f53f25d48455d18b"
+  },
+  "launcher_sha256": {
+    "r2e-skbio-author-remote-01.py": "742dfa6fce6d50c01d9349a3fbdd658790797580bcec760405feb4148c5740ca",
+    "submit-r2e-skbio-author-01.py": "a2589bc4bb7e51ed8c66b1a4daa283fc0f8ac7cecc617ba4e207f2d0ecbedcac"
+  },
+  "offline_checks": "passed: mocked GLM request settings, native bounds, success/failure output recovery and deletion; no live calls",
+  "budget_reserved": true,
+  "reservation_usd": 10
+}
