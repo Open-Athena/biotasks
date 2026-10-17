@@ -376,3 +376,7 @@ The independent-control worker completed successfully in 6:25.07, peak controlle
 ## 2026-10-16 — commit-runtime dispatch preparation and solver fixture limitation
 
 Native commit/PR module import preflight passed in 0.29 seconds, peak RSS 40,856 KiB. Commit options retain native filters, P2P cap 50 and no-model fallback. The local mocked Harbor solver transport check failed before execution because tenacity is absent from the thin local environment (2.34 seconds, peak RSS 196,448 KiB); no model call occurred. The next commit worker runs that independent mock fixture in its full locked Harbor environment and preserves its outcome separately from commit generation. Reserve $5 for commit replay: total estimates/holds $103/$300. Expected local controller working set 120 MiB.
+
+## 2026-10-17 — recovered completed commit-runtime evidence
+
+Recovered the terminal controller result and original validation evidence: worker completed with exit 0, one candidate emitted, one failing-to-passing test and 54 passing-to-passing tests; all 55 tests pass after the reference fix. The separate mocked solver transport fixture passed with zero model calls. Controller reports termination; independent deletion verification remains pending. This is the same historical fix as the CVE replay, not another independent problem. Full task acceptance and blind solving remain pending. The grader integrity diagnostic remains unimplemented and unexecuted; no finding is claimed. Archive hash recorded; public upload pending.
