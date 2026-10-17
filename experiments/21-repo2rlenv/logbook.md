@@ -924,3 +924,5 @@ One PR2633 candidate emitted one task. Healthy reference passed all 60 tests; de
 ### 2026-10-17 — Adapted R2E-Gym dispatch preparation
 
 Prepared a distinct fixture-root run after the completed native baseline. Only test-data staging configuration changes; native selection, test identities, source bytes, candidate/repair limits and approved free-GLM generation settings remain. Reserved $10, bringing estimates/holds to $368 of $1,000. Two slots fit alongside TMax after SWE-Next terminal status and independently confirmed cleanup. Wrapper/launcher/profile hashes checkpointed; dispatch remains separate from results.
+
+Submitted adapted fixture run `/exedev/biotasks21-r2e-gym-skbio-fixtures-20261017-02` at 20:42 UTC from `b37e2789fe3e5fdbdbb2b597d26cf22dc3059b55`. Its two slots plus TMax two slots exhaust campaign concurrency. No adapted outcome yet.
