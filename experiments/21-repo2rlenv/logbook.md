@@ -1098,3 +1098,8 @@ Previous Biopython R2E evidence shows ten candidate functions prepared and zero 
 ### 2026-10-17 22:18 UTC — Biopython history dispatch packages frozen
 
 Prepared separate SWE-Next and R2E-Gym transfer packages:19 total files with exact sizes/hashes. SWE-Next retains one pinned PR5317 metadata input; R2E-Gym retains bounded history and native selection rules. Both use the explicit unchanged document/fixture-copy profile previously checked, and a wrapper with child logs and up to2GiB remote evidence preservation. Mocked success, child timeout and setup failure pass for both recipe branches; SWE-Next-only PR arguments are checked. No budget reservation, submission or model calls. Both existing generation jobs were confirmed RUNNING at22:17UTC; their four slots remain reserved.
+
+
+### 2026-10-17 22:20 UTC — Biopython SWE-gen exported QCP task
+
+Run succeeded22:18:02UTC. One candidate emitted swe-gen-d929391f2255c34c2485, bundle884d3ca9f209c943c27378076368faf76fb812522d09bc1644633aecd6c82200; recovered native integrity passes. Healthy9/9, defective8/9 with one failure, nop0/oracle1. One GLM call used3347 input and13623 output tokens (12557 reasoning). Independent acceptance and blind solving remain pending. Outer622960991-byte archive matches provider checksum; nested archive checksum and12298 files/740188274 uncompressed bytes recovered with modes retained. Auxiliary remote capture reported RemoteCommandError; supported output archive preserved results. Separate worker404 at22:19:58UTC releases two slots. Public archive pending. Reserved$10 for prepared scikit-bio SWE-gen independent controls, bringing estimates/holds to$448 and remaining$552; no model calls in that planned validation.
