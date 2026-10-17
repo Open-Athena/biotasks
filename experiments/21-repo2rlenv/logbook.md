@@ -1244,3 +1244,7 @@ Append-only snapshot9d2b5bfc032cb45a7acf6d41c251509f4dcfb2702b6160731ddcda51c431
 ### 2026-10-17 Corrected GC-skew dispatch reservation
 
 Prepared corrected run02 submission/recovery launchers, gated on terminal Strong control job and independent worker cleanup before claiming its two slots. Frozen dispatch differs from original run01 only in the license bootstrap profile; no new candidate/model call. Reserved$10, total estimates/holds$528/$1000, remaining$472. Corrected run remains unsubmitted at this checkpoint.
+
+### 2026-10-17 Strong native task rejected after independent controls
+
+Recovered the completed five-control run: baseline/reference/alternative/fixed-example/zero rewards0,1,1,1,0. The incorrect constant3/14 implementation passed all34 native tests, demonstrating insufficient task coverage. This native export is rejected for solver evaluation; no grader modification or new model calls occurred. Original archive201413bytes SHA256feaea05a35fc93a3a9530ca8a6a99ecfe74b85e8e01c24ab0956eef3c4966e55 and nested capture hash verified,101 native evidence files recovered with modes. Independent worker404 at23:47:28 UTC; controller terminal and two-slot claim released. Public compact evidence preservation remains pending.
