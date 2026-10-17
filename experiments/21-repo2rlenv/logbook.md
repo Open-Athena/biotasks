@@ -766,3 +766,5 @@ From the fixed native scientific-computing/Python sampler (seed 24; ten records)
 ## 2026-10-17 — SCALER no-model controller prepared
 
 Prepared the native family-expansion controller with no LLM configuration or model credentials. Frozen family hashing precedes allocation. Offline failure-path checks pass for preserved timeout, evidence recovery failure, cleanup conflict, independent absence and final capture. The private wrapper has Harbor/Daytona dependencies and subtracts setup time from the two-hour window. No worker allocation occurred; submission, capacity, native baseline/reference grading and independent acceptance remain pending. Both original R2E and DataArc jobs were confirmed RUNNING at 19:13 UTC.
+
+Prepared SCALER submission, observation and recovery scripts. Submission requires a live terminal R2E controller, independent worker absence, no conflicting dispatch receipts and a recorded ten-dollar reservation; DataArc retains two slots. The new job would consume two instances and use no model credentials. Scripts compile, but no submission or live gate test occurred; no new reservation is recorded.
