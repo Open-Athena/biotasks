@@ -1,0 +1,32 @@
+{
+  "stage": "corrected_runtime_driver_prepared",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "cases": 6,
+  "native_and_marin_executions": 12,
+  "model_calls": 0,
+  "worker": {
+    "cpu": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "runtime_inputs": "evidence/lcc-marin-preparation/runtime-inputs.json",
+  "input_archive_local": "/tmp/biotasks21-private/lcc-marin-preparation/runtime-inputs.tar.gz",
+  "input_archive_bytes": 71686963,
+  "acceptance_status": "pending",
+  "checks": [
+    "Pinned Marin schema accepts full TaskSpec",
+    "Both native build contexts build",
+    "Initial Bio import readiness",
+    "Private paths absent in learner before and after grading",
+    "Six native/Marin reward comparisons",
+    "Native per-test identities preserved"
+  ],
+  "cleanup": "Discard only duplicate materialized build contexts; retain hashed original input, native logs, collected submissions and conversion results; outer controller preserves evidence before worker deletion",
+  "source_sha256": {
+    "check_marin_lcc_runtime.py": "373a17d99e6084afe476e8d09a60064d716633c0425da966bb4fbb5b2b5925b6",
+    "check_marin_runtime.py": "ea065e55500094d9b6b30b4bd539f98594fa497fa78a09897d54fdc0ed73b8b7",
+    "validate_marin_preparation.py": "673db7a8ddba423a966eb63254807dd15d6554c2faaffe6be359fdb1802a9670",
+    "run_smith_controls.py": "97921aa4543e3b7e5ac8b339888210a5dcd23409e87754f6257c477f5854b778"
+  },
+  "previous_attempt": "evidence/marin-lcc-runtime-01/failure-assessment.json"
+}

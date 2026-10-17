@@ -62,7 +62,7 @@ async def controls(task, images, cases):
                         await verifier.close()
                 else:
                     attempt=GradingAttempt(ConversationTrace(events=(*task.context.events,TextMessage(role='assistant',content='Done.'))))
-                    result=await grade_in_sandbox(task,attempt,factory,specs['learner'],task_machine=learner,timeout=120)
+                    result=await grade_in_sandbox(task,attempt,factory,specs['verifier'],task_machine=learner,timeout=120)
                     row['marin_result']=asdict(result)
                     row['marin_reward']=result.reward
                     assert result.status=='graded'
