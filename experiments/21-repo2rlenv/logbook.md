@@ -684,3 +684,7 @@ Added the entrypoint for the pinned experimental DataArc implementation. It veri
 ## 2026-10-17 — DataArc controller preparation
 
 Added a remote controller that validates frozen parent records before allocation, preserves partial evidence, attempts cleanup even after capture failure, and checks worker absence separately. Its offline failure-path test passed. Prepared a private wrapper with pinned Harbor/Daytona extras, verified parent archive transfer and partial-output fallback. No DataArc dispatch or campaign reservation yet: R2E and SETA Evol were still RUNNING at 18:32 UTC, potentially occupying three of four allowed instances; DataArc needs two. Submission launcher remains to prepare.
+
+## 2026-10-17 — DataArc submission preparation
+
+Prepared the private submission launcher with an exclusive dispatch receipt, no retries and a live capacity gate requiring the worker-free SETA Evol controller to finish while retaining two slots for R2E. Reserved $10 within the approved $1,000 ceiling; total retained estimates/holds are $273 and remaining planning allowance is $727. No submission occurred. Both existing jobs were observed RUNNING at 18:33 UTC.
