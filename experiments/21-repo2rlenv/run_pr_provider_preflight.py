@@ -41,11 +41,14 @@ def check_task(task, acceptance):
 
 
 def config(task, output, agent):
+    provider = os.environ.get('BIOTASKS21_PROVIDER_MODULE', 'pr_provider_environment')
+    if provider not in {'pr_provider_environment', 'lcc_provider_environment'}:
+        raise ValueError('Unreviewed provider module')
     return TrialConfig.model_validate({
         'task': {'path': str(task.resolve())}, 'trial_name': agent,
         'trials_dir': str((output / 'trials').resolve()),
         'agent': {'name': agent, 'override_timeout_sec': 900},
-        'environment': {'import_path': 'pr_provider_environment:RecordedDaytonaEnvironment',
+        'environment': {'import_path': provider + ':RecordedDaytonaEnvironment',
                         'delete': True, 'override_cpus': 2, 'override_memory_mb': 4096,
                         'override_storage_mb': 10240, 'override_gpus': 0},
     })

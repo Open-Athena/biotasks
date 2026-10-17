@@ -15,6 +15,14 @@ def record(value):
 
 
 class RecordedDaytonaEnvironment(DaytonaEnvironment):
+    def readiness_command(self):
+        return ("test ! -e /tests && test ! -e /solution && test ! -e /oracle.patch && "
+                "cd /workspace && python -c 'import skbio,numpy,scipy,pandas; "
+                "from skbio.stats.composition import ancombc2'")
+
+    def check_terminal(self):
+        return bool(os.environ.get('BIOTASKS21_RUNTIME_MANIFEST'))
+
     async def _create_sandbox(self, params, daytona=None):
         record({'stage': 'create_requested', 'environment_name': self.environment_name})
         try:
@@ -30,9 +38,7 @@ class RecordedDaytonaEnvironment(DaytonaEnvironment):
         sandbox = await client.get(self._sandbox.id)
         assert sandbox.network_block_all is True, 'Provider must report blocked network'
         result = await self.exec(
-            command="test ! -e /tests && test ! -e /solution && test ! -e /oracle.patch && "
-                    "cd /workspace && python -c 'import skbio,numpy,scipy,pandas; "
-                    "from skbio.stats.composition import ancombc2'",
+            command=self.readiness_command(),
             timeout_sec=60,
         )
         record({'stage': 'learner_preflight', 'sandbox_id': sandbox.id,
@@ -40,7 +46,7 @@ class RecordedDaytonaEnvironment(DaytonaEnvironment):
                 'private_paths_and_import_returncode': result.return_code})
         assert result.return_code == 0, 'Learner readiness or private path check failed'
 
-        if os.environ.get('BIOTASKS21_RUNTIME_MANIFEST'):
+        if self.check_terminal():
             from harbor.agents.terminus_2.tmux_session import TmuxSession
             installed = await self.exec(command='tmux -V', timeout_sec=15)
             assert installed.return_code == 0, 'tmux must be preinstalled for offline solver'
