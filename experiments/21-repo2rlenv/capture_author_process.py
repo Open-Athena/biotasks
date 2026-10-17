@@ -10,13 +10,15 @@ from pathlib import Path
 from preserve_author_output import preserve
 
 
-def capture(command, *, source, output, timeout, env=None):
+def capture(command, *, source, output, timeout, env=None, maximum_bytes=128 * 1024**2):
+    if not 0 < maximum_bytes <= 2 * 1024**3:
+        raise ValueError("Capture allowance must be positive and at most 2 GiB")
     source, output = Path(source), Path(output)
     output.mkdir(parents=True, exist_ok=True)
     status_path = output / 'author-process-status.json'
     if status_path.exists():
         raise FileExistsError(status_path)
-    status = {'stage': 'author_process', 'state': 'started', 'timeout_seconds': timeout}
+    status = {'stage': 'author_process', 'state': 'started', 'timeout_seconds': timeout, 'maximum_evidence_bytes': maximum_bytes}
     status_path.write_text(json.dumps(status, indent=2) + '\n')
     started = time.monotonic()
     child = None
@@ -55,7 +57,7 @@ def capture(command, *, source, output, timeout, env=None):
                             h.update(block)
                     assert h.hexdigest() == receipt['sha256']
                 else:
-                    receipt = preserve(source, output)
+                    receipt = preserve(source, output, max_bytes=maximum_bytes)
                 status.update(evidence_preserved=True, evidence_sha256=receipt['sha256'])
             else:
                 status['evidence_preserved'] = False

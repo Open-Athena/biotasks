@@ -1046,3 +1046,8 @@ Submitted21:40:39UTC froma9daf69: `/exedev/biotasks21-parent-evolution-build-202
 ### 2026-10-17 21:46 UTC — Biopython SWE-gen source prepared
 
 Selected merged PR5317 from a bounded ten-result public search and pinned exact head6fc6bf3. It repairs collinear coordinate alignment when quaternion cofactors vanish, a distinct scientific-software competency. Retained the full original test module, including PDB/1A8O.pdb fixture; pinned fixture bytes/hash and verified the selected NumPy release has a Python3.12 Linux wheel. Profile records a build-time fixture-path symlink rather than rewriting tests. The native source resolver reports changed tests only, so the campaign guard now allows additional unchanged fixture paths while still rejecting changed tests outside declared roots. Existing scikit-bio and new Biopython controller checks pass, including invalid-source rejection and failure cleanup. Added an explicit profile run ID to avoid scikit-bio labels on Biopython runs. No build, model call, export or acceptance yet; target three remains unmet.
+
+
+### 2026-10-17 21:49 UTC — Biopython SWE-gen dispatch inputs frozen
+
+Prepared eleven flat transfer inputs with exact hashes and checked source/profile agreement for PR5317. Remote wrapper preserves child logs, process status and partial full-source evidence with an explicit2GiB allowance; default capture remains128MiB. Tiny-fixture tests verify invalid allowances reject before execution and preservation obeys configured bounds. Wrapper success/timeout/setup-failure tests pass. Existing jobs retain four slots; no new reservation or dispatch. Source/context archive size remains bounded remotely and biological builds remain remote-only.
