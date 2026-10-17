@@ -1,0 +1,53 @@
+{
+  "status": "acceptance_pending_runtime_and_conversion_checks",
+  "bundle_identity": "sha256:1a00379124b1cd12878b53b98298bc143ed01eb32f83062265e4df3aaa92cbe6",
+  "prompt_sha256": "8476a8a5fdea65d9fa0178183eae6b249a90521e341e8178f2b9a8f1599bcaed",
+  "prompt_arithmetic": {
+    "windows": 13,
+    "maximum_error": 7.529722733423672e-05,
+    "all_native_rounding_comparisons_pass": true
+  },
+  "existing_controls": {
+    "biopython-lcc-independent-01": {
+      "equivalent_entropy": 0.0,
+      "wrong_constant_zero": 0.0,
+      "wrong_whole_sequence": 0.0
+    },
+    "biopython-lcc-independent-02": {
+      "equivalent_dna_entropy_preserve_legacy": 1.0,
+      "wrong_constant_zero": 0.0,
+      "wrong_whole_sequence": 0.0
+    },
+    "biopython-lcc-repeatability-01": {
+      "equivalent_dna_entropy_preserve_legacy": 1.0,
+      "wrong_constant_zero": 0.0,
+      "wrong_whole_sequence": 0.0
+    }
+  },
+  "partial_solution": {
+    "classification": "DNA target repaired but legacy protein behavior regressed",
+    "passed_tests": 10,
+    "failed_tests": 2,
+    "native_binary_reward": 0,
+    "new_trial": false
+  },
+  "evidence_sha256": {
+    "biopython-lcc-independent-01/summary.json": "8288b1cb1622c90c4af4b81e8c132625a0ee32d7692b5d89bfbd39f7d6a6ff18",
+    "biopython-lcc-independent-02/summary.json": "8071a4c5a6aa38ce9fe7e1209beb601cd7b451376f7ac58e55372fd719be17b8",
+    "biopython-lcc-repeatability-01/summary.json": "8071a4c5a6aa38ce9fe7e1209beb601cd7b451376f7ac58e55372fd719be17b8",
+    "biopython-lcc-independent-01/diagnosis/result.json": "7f039380c8b82b8e1c4d8cbf0da7e51d961e6205acc690e31f22f92d4c9b6aff"
+  },
+  "remaining": [
+    "Initial learner import and private-path absence checks on exact runtime",
+    "Marin separate-verifier mapping and native reward parity",
+    "Final acceptance decision before one blind solver attempt"
+  ],
+  "limitations": [
+    "Finite native test coverage; supplied DNA example and expected values reduce difficulty",
+    "Uniform windows is ambiguous shorthand; preceding text explicitly means equal base counts",
+    "Partial correctness maps to zero under native binary reward; do not introduce fractional reward",
+    "Deferred report-integrity diagnostic remains unexecuted"
+  ],
+  "new_model_calls": 0,
+  "new_remote_trials": 0
+}

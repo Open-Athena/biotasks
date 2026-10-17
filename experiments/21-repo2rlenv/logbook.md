@@ -688,3 +688,7 @@ Added a remote controller that validates frozen parent records before allocation
 ## 2026-10-17 — DataArc submission preparation
 
 Prepared the private submission launcher with an exclusive dispatch receipt, no retries and a live capacity gate requiring the worker-free SETA Evol controller to finish while retaining two slots for R2E. Reserved $10 within the approved $1,000 ceiling; total retained estimates/holds are $273 and remaining planning allowance is $727. No submission occurred. Both existing jobs were observed RUNNING at 18:33 UTC.
+
+## 2026-10-17 — LCC acceptance evidence reconciliation
+
+Rechecked the existing control summaries and diagnostic test identities. The original alternative is a meaningful partial solution: it repairs the DNA target but fails two legacy protein checks (10/12 passing), receiving the native binary reward zero. The revised alternative and two incorrect controls repeat rewards 1/0/0 on fresh workers. Independently evaluated the prompt's normalized entropy formula over all thirteen windows; maximum discrepancy from supplied reference values is 0.0000752973 and all stated rounding comparisons pass. Saved a source-hashed assessment without changing task text or reward. Acceptance still needs exact-runtime initial-state checks and Marin separate-verifier mapping/parity; no new trial or solver call occurred.
