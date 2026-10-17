@@ -718,3 +718,7 @@ Added a distinct marin-lcc-runtime stage to the existing no-model remote control
 ## 2026-10-17 — SETA Evol build-stage replay preparation
 
 Prepared the native build/repair/trial/export entrypoint with the recipe-specific builder prompt and a frozen design callback. The two schema-valid designs are returned exactly as recorded, including their heading-only specifications. The original validation failure remains a failed design in the native candidate loop; it is not regenerated or silently dropped. Offline checks using the native parent loader verify unchanged designs, retained failure, rejection of changed seed/evidence and zero new design calls. Remote controller, launcher and actual materialization remain pending.
+
+## 2026-10-17 — SETA Evol controller ready; applicability reconciled
+
+Prepared the controller and private wrapper for native build continuation using unchanged saved designs. Its offline failure-path check confirms preserved generation timeout, cleanup after capture failure/deletion conflict, independent absence checks and retained evidence. Two designs are materializable under the saved native schema; one original failure remains in the candidate loop. No new worker or model call was made. The submission launcher and capacity remain pending. Reconciled stale applicability descriptions with completed SETA Evol design calls and DataArc/R2E runs confirmed active at 18:48 UTC.
