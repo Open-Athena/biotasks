@@ -830,3 +830,7 @@ Iris probe completed successfully at 19:52:20 UTC. Exact-task nop/reference rewa
 ### 2026-10-17 — SCALER native/Marin runtime preparation
 
 Prepared full TaskSpecs for all three synthetic-family instances, preserving separate learner/verifier contexts and original grader bytes. Twelve fixed controls cover equivalent decimal/scientific answers and incorrect numeric/text submissions; 24 native/Marin route executions are planned. Asset byte roundtrips and driver syntax checked; pinned schema validation and execution remain pending. The runtime driver records score-range metadata separately from reward equality so a default 0/1 annotation cannot silently stand in for native -1/+1. No model calls or additional remote worker launched. LCC blind solver was observed RUNNING at 19:55:54 UTC.
+
+### 2026-10-17 — LCC blind solve passed
+
+The single approved free-GLM attempt completed with reward 1 and 12/12 native tests passing, no trial exception. Five model episodes used 30,476 input and 3,481 output tokens (per response 474, 472, 1079, 1140, 316), all within the 2,048 cap; configured 900 seconds/12 turns, effort unset. Final submitted source artifacts are preserved with hashes. Both learner/verifier sandboxes independently absent at 19:59:06 UTC. Public transcript/artifact archive pending. This is a single-task first-attempt result under the accepted profile, not a general benchmark estimate. SCALER no-model parity reservation brings accounted estimates/holds to $318.
