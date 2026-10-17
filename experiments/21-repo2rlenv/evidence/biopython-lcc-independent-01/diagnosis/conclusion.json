@@ -1,0 +1,18 @@
+{
+  "stage": "failed_control_diagnosis",
+  "alternative_reward": 0,
+  "incorrect_control_rewards": [
+    0,
+    0
+  ],
+  "native_tests_passed": 10,
+  "native_tests_failed": 2,
+  "failed_tests": [
+    "test_checksum1",
+    "test_checksum2"
+  ],
+  "cause": "Control replaces behavior on protein strings, where legacy reference returns 13 outputs rather than all 91 possible windows. The original task requires preserving other public behavior.",
+  "dna_example_test": "test_checksum3 passed",
+  "interpretation": "The attempted alternative is not equivalent across the complete regression contract; this does not establish a grader defect.",
+  "next_control": "Retain native behavior for non-ACGT inputs and independently recompute normalized entropy for unambiguous DNA."
+}
