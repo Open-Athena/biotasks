@@ -1228,3 +1228,11 @@ Controller completed at23:33:02.142 UTC, but native nop/oracle both failed Docke
 ### 2026-10-17 Strong independent controls reservation
 
 Reserved$10 for five native Strong dominance controls from the frozen alpha payload: baseline/reference, valid alternative, incorrect zero and fixed-example coverage observation. No model calls or new generated candidate. Dispatch requires completed GC-skew controller and independent cleanup; two slots alongside R2E authoring. Total estimates/holds$518/$1000, remaining$482. Dispatch pending checkpoint.
+
+### 2026-10-17 GC-skew idempotent build adaptation prepared
+
+Frozen corrected native export payload changes only the profile install command: replace symlink-only LICENSE conversion with a byte-equality assertion, since the preserved export already materializes identical LICENSE/ LICENSE.rst files. All other eight dispatch inputs are identical to run01. Synthetic fixture checks accept identical regular files and symlinks, reject differing contents. No source/test/instruction changes, new generated candidate, model call or remote allocation. Native export identity will differ through the Dockerfile; original failure remains retained. Corrected run awaits capacity and a separate hold.
+
+### 2026-10-17 Strong independent controls submitted
+
+Submitted five frozen controls at checkpoint334bfb870d8ac7e0aa3e688fa7571f7eb2911e82, zero model calls. Two slots reserved alongside existing R2E authoring; outcome and acceptance pending. Total estimates/holds$518/$1000.
