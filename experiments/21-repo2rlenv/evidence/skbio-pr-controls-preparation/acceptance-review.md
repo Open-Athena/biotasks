@@ -6,7 +6,7 @@ The only F2P case is a four-sample, three-feature table. It checks three log-fol
 
 The native reward is F2P pass fraction multiplied by P2P pass fraction; strict resolution is recorded separately. With one F2P test, no partial credit is possible within the targeted regression, although P2P regressions can reduce a positive reward. Downstream Marin conversion must preserve this graded reward and its provenance. The verifier retains its native exit-code fallback for unparseable logs; acceptance must inspect per-test parsed evidence, not only the scalar score.
 
-The environment starts from an ephemeral local image tag. The preserved baseline Dockerfile and dependency freeze support reconstruction, but this is not yet a portable released Harbor task. Initial independent controls and fresh-worker repetition now have evidence (see below); portable learner-ready rebuild and Marin execution remain pending. No blind GLM solver attempt is justified until the applicable acceptance gates are met.
+The environment starts from an ephemeral local image tag. The preserved baseline Dockerfile and dependency freeze support reconstruction, but this is not yet a portable released Harbor task. The separate portable/offline profile now has a fresh learner-ready build and six successful native/Marin runtime comparisons (marin-pr-runtime-02); the original ephemeral-tag bundle is not thereby made portable. No blind GLM solver attempt is justified until the applicable acceptance gates are met.
 
 Five proposed controls retain instruction, environment and all grading files exactly: unchanged code, native patch, alternative masked division for both updates, E-step-only correction, and incorrect uniform responsibilities. The E-step-only result is exploratory because it may already satisfy the reported example. These deterministic controls are not blind solver scores and are not five distinct generated tasks.
 
@@ -15,3 +15,7 @@ The alternative uses zero-initialized outputs with masked division for both the 
 ## Executed controls
 
 The offline-profile controls and fresh-worker repeat are recorded in skbio-pr-controls-02 and skbio-pr-controls-03. Baseline and incorrect uniform responsibilities score zero; reference, equivalent masked division and E-step-only score one. A correct underflow fix with broken grouping validation scores 0.983051 (58/59 P2P, all F2P, resolved=false). All runs parse 60 tests normally. Five repeated scores match. These are limited behavioral checks, not exhaustive scientific validation or blind solver results.
+
+## Portable and Marin execution evidence
+
+At source checkpoint 2cdf52d, the portable profile passed all six deterministic controls through native and pinned Marin grading, including the fractional outcome 0.983051. Each path parsed all 60 expected tests. All 12 fresh learner imports passed. Private verifier/oracle paths were absent before submission in both paths and after converted grading in all six cases. These ordinary isolation checks do not claim the deferred report-integrity diagnostic was executed. Worker deletion was independently confirmed. Full acceptance still requires a consolidated instruction/verifier and isolation review, distinguishing this adapted profile from the original native export. Public registry publication and training admission remain separate from execution compatibility.
