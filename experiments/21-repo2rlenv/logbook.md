@@ -977,3 +977,8 @@ Both completed code-instruct author jobs lack preserved results; their actual at
 ### 2026-10-17 21:10 UTC — Endless Terminals input cohort
 
 Pinned native taxonomy contains generic computing contexts but no biological scenario. Prepared a separately labeled synthetic genomic-interval cohort with ten native draws (seed24), preserving categories and complexity and retaining original records alongside explicit biological-context adaptations. Native recipe authoring and grading logic are unchanged. Frozen-input validation, flat transfer layout and changed-input rejection passed locally. Target3/max10/maxrepairs2; no model or remote execution yet. TerminalWorld still requires an eligible recording and is not claimed covered by this cohort.
+
+
+### 2026-10-17 21:11 UTC — SWE-gen native export recovered
+
+First SWE-gen calibration finished 21:07:56 UTC and exported one PR2633 task. Healthy60/60, defective59/60 and nop/oracle0/1; one completed GLM response used 12,034 output tokens, including 11,077 reasoning. Supported archive211,835,164bytes and nested archive hashes verified; extraction preserved file modes and native bundle identity passes. Extra remote evidence capture failed separately. Worker404 confirmed21:10:42 and two-slot claim released. Same PR2633 source lineage, independent acceptance/public task archive/blind solving pending.
