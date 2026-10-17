@@ -992,3 +992,8 @@ Submitted six serial no-model correctness cases from checkpoint286a910 into the 
 ### 2026-10-17 21:20 UTC — TerminalWorld recording intake
 
 Retrieved three original tutorial recordings with the native bounded intake. Two pass the native screen; the Swiss-Prot recording is excluded by its privacy filter without override. Pinned the author notebook and recorded sequence accession lineage, including the tutorial filename/gene-name mismatch. Raw transcripts are not redistributed. Recording reuse terms and missing BLAST fixture provenance remain gates before authoring; no model or biological execution occurred. Live Iris observations confirm TMax and independent SWE-Next controls remain running.
+
+
+### 2026-10-17 21:22 UTC — Endless remote capture preparation
+
+Prepared the native Endless Terminals remote setup wrapper with supported child stdout/stderr, exit status and partial-output capture. Mocked success, child timeout and setup failure cases pass without model calls, workers or installation. Frozen a flat transfer manifest for source, runtime helpers and the explicit ten-draw biological adaptation. No dispatch or new budget hold yet; live capacity must be reconciled before launch. TerminalWorld page review found only player-software license markers, so the separate original-recording cohort remains at intake pending content reuse terms.
