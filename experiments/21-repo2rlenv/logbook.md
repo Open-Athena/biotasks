@@ -916,3 +916,7 @@ Published HF snapshot `732d2ff628e16bf89d6ca771cd6f79484666bce458eda45862aaf5997
 ### 2026-10-17 — SWE-gen public-source preparation
 
 Native resolver selected PR2633 head `4c07596c68e8e6c1f51f5ea917e642e933802aa7`, distinct from history merge `9bbf05b530a9fe08ab200e9c073a118e60096d3c`. An initial equality assertion failed before any remote/model work; source metadata now freezes the actual native head, base metadata, source diff and selected test. Native PRSource/options validate with target3/max10 and default force_generate_instruction=false. Bootstrap/reverse-source contrast/authoring/export remain pending. One PR calibration shares existing lineage and cannot yield three independent problems.
+
+### 2026-10-17 — SWE-Next native export
+
+One PR2633 candidate emitted one task. Healthy reference passed all 60 tests; defective implementation failed the intended regression (59 pass/1 fail). Native nop/oracle controls completed at rewards 0/1. One GLM call finished normally with 25,000 output tokens, including 23,740 reasoning tokens, and 6,388 input tokens. Supported attempt storage preserved the task and contrast/trial evidence despite an extra remote-evidence archive error. Outer/nested hashes and native trial-result hashes verified; worker independently absent before releasing two slots. Acceptance, blind solve and public upload remain pending; shared PR2633 lineage remains explicit.
