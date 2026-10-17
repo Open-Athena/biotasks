@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 22:33 UTC archive verification. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 22:48 UTC result reconciliation. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -11,7 +11,7 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 | SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison | One synthetic family, not three distinct competencies; blind attempts remain pending |
 | scikit-bio SWE-Next and fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Native exports and six independent correctness controls per export | Shared problem lineage; fresh solver runtime/final acceptance and blind attempts pending |
 | scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export and six independent correctness controls verified | Fresh solver-runtime validation, final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
-| Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | One SWE-gen export: native healthy 9/9, defective 8/9, nop 0/reference 1; independent controls submitted | Native export publicly preserved; independent acceptance and blind attempt pending |
+| Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | One SWE-gen export: native healthy 9/9, defective 8/9, nop 0/reference 1; independent worker exited 0 but detailed controls were lost at the evidence-download bound | Native export publicly preserved; independent outcomes are unknown, acceptance and blind attempt pending |
 
 Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
 
@@ -27,6 +27,24 @@ The two completed blind attempts both earned reward 1. They are selected, indepe
 - TerminalWorld intake remains gated by recording reuse terms and missing fixtures. Model/backend constraints on Tasksmith, CodeMidas and FrontierSmith are separate from generation failures. The route matrix records these distinctions.
 
 These observations support further evaluation of source-grounded software-repair tasks and careful investigation of structured authoring failures. They do not yet support ranking recipe productivity or a final expansion recommendation.
+
+## Preserved model usage (partial)
+
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links nine generation/materialization rows and two solver rows to eleven hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+
+| Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| swe-gen-skbio-01 | 1 | 1 | 1 | 4042 | 12034 | 11077 |
+| swe-next-skbio-01 | 1 | 1 | 1 | 6388 | 25000 | 23740 |
+| r2e-gym-skbio-fixtures-02 | 1 | 1 | 1 | 5661 | 7459 | 6508 |
+| swe-gen-biopython-01 | 1 | 1 | 1 | 3347 | 13623 | 12557 |
+| r2e-skbio-author-01 | 10 | 0 | 30 | 94162 | 1179584 | unknown |
+| tmax-biological-02 | 3 | 0 | 12 | 54166 | 647644 | 601324 |
+| parent-evolution-build-01 | unknown | 0 | 0 | unknown | unknown | unknown |
+| code-instruct-biopython | unknown | unknown | unknown | unknown | unknown | unknown |
+| code-instruct-scikit-bio | unknown | unknown | unknown | unknown | unknown | unknown |
+
+SETA Evol's row covers materialization only: one builder request was dispatched, no completed response was preserved, and the second saved design was unattempted. Its candidate-build count is not comparable to generator candidate counts. Both Code-instruct allowances are conservatively consumed, but actual attempts and exports remain unknown. Reasoning tokens are included in combined output totals; unavailable breakdowns remain unknown. These rows do not justify cost-per-task or whole-campaign yield estimates.
 
 ## Harbor and Marin compatibility
 
