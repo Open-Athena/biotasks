@@ -1,0 +1,21 @@
+{
+  "stage": "historical_capture_diagnosis",
+  "job_id": "/exedev/biotasks21-skbio-code-instruct-20261017-01",
+  "job_started_utc": "2026-10-17T15:36:06.530Z",
+  "job_finished_utc": "2026-10-17T16:15:33.900Z",
+  "capture_fix_commit": "7b428abe296289053b39f88f0ffd30132bfe7cec",
+  "capture_fix_committed_utc": "2026-10-17T15:54:11+00:00",
+  "pre_fix_author_commit": "47af6ac099fdfc714e19c04e6f14f3ab202a6209",
+  "pre_fix_author_sha256": "a178df1723f58a5874c1ee07a3ebb8ed87514ab90bf5c05f3209d0a9e49ac111",
+  "saved_wrapper_sha256": "d954c0439b7b0b1c651b423ce31055f7d7d3777313a41268d4f6115b248b9dae",
+  "finding": "Job began before the committed supported-output preservation fix. Pre-fix author and saved wrapper contain no IRIS_OUTPUT_DIR writes. Wrapper emits recovery as base64 stdout; archived task output was empty and retained parent logs had zero entries. A later local code fix cannot change already submitted workdir bytes.",
+  "certainty": "Explains an evidence-capture gap; exact submitted author bytes were not recorded in the dispatch receipt, so timestamp comparison alone is not full provenance proof. Does not establish why parent logs are absent.",
+  "generated_tasks": null,
+  "model_usage": null,
+  "rerun_launched": false,
+  "remaining": [
+    "Retain outcome as unknown, not zero-export scientific result",
+    "Any future author run must checkpoint wrapper and author hashes and preserve outputs in supported attempt storage",
+    "Test failure and timeout capture before another dispatch"
+  ]
+}

@@ -900,3 +900,7 @@ Uploaded history selection, original healthy/defective results and stdout, failu
 ### 2026-10-17 — observed_features acceptance review
 
 Recovered the exact 2,036-file native task and verified its native bundle identity against the original control archive. All non-submission diagnostic assets match the original bundle, and all three independent controls preserve the expected 1/0/0 rewards. The 34-test contract, learner stub and separate verifier declaration agree. The substantive instruction requests a direct alias to existing `sobs`, so characterize competency as small library API reconstruction, not independent biological inference. Raw newline formatting remains malformed but readable. Final acceptance still requires fresh runtime boundary/submission checks; no new accepted task or blind score claimed.
+
+### 2026-10-17 — Historical code-instruct capture gap
+
+The scikit-bio author job began at 15:36 UTC; supported attempt-output preservation was committed at 15:54 UTC. The pre-fix author and saved wrapper do not write `IRIS_OUTPUT_DIR`; the wrapper emits base64 evidence only to stdout, whose retained parent log is empty. This explains a plausible capture gap without proving the exact submitted bytes or cause of absent logs. The dispatch receipt lacks an author checkpoint hash. Generated counts and usage remain unknown, not zero. No duplicate run was launched. Future dispatch must record all source hashes and verify durable success/failure/timeout capture.
