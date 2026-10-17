@@ -436,3 +436,9 @@ Six-run snapshot upload and anonymous verification completed in 88.910 seconds: 
 ## 2026-10-17 — revised LCC compatibility control
 
 Prepared a separately named alternative that calculates entropy independently for valid unambiguous DNA and preserves the native implementation for other inputs. Local comparison passed 1,252 short DNA sequence/window pairs with zero maximum difference and six legacy input/window outcomes. The first local comparison assumed legacy inputs always returned; it encountered a native IndexError, so the check was corrected to compare exceptions as well as values. Native grading remains pending. Reserve $5 for a distinct revised-control run, preserving the previous failed control: conservative estimates/holds $143/$300. No model calls.
+
+## 2026-10-17 — revised LCC control passes; code-instruct profile check
+
+The revised independent-control run completed in 181.019 seconds with no model calls. Independent DNA entropy with retained legacy behavior scored 1; constant-zero and whole-sequence incorrect controls each scored 0. All three trials completed without exceptions. Original failed control remains preserved. Saved full archive and selected trial results; provider 404 independently confirms cleanup. Public upload of this new archive, broader determinism/isolation checks and full acceptance remain pending.
+
+Executed pinned code_instruct package detection on the saved Biopython source: null despite Bio/__init__.py being present. The native pipeline would skip repository anchoring in this case. Its target-three loop permits 15 candidates, exceeding the approved ten. Recorded explicit package mapping and candidate-cap adaptations as prerequisites, without claiming generation or validation. The check made no model calls.
