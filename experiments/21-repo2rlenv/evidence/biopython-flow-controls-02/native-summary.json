@@ -1,0 +1,66 @@
+{
+  "records": [
+    {
+      "candidate_id": "5a16004c2d7522727d44",
+      "native_controls_passed": true,
+      "stage": "native_controls_completed",
+      "task": "/evidence/native/validation/tasks/5a16004c2d7522727d44/swe-flow-5a16004c2d7522727d44",
+      "trials": [
+        {
+          "agent": "nop",
+          "command": [
+            "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+            "run",
+            "--path",
+            "/evidence/native/validation/tasks/5a16004c2d7522727d44/swe-flow-5a16004c2d7522727d44",
+            "--agent",
+            "nop",
+            "--env",
+            "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+            "--n-concurrent",
+            "1",
+            "--max-retries",
+            "0",
+            "--job-name",
+            "flow-5a16004c2d7522727d44-nop",
+            "--jobs-dir",
+            "/evidence/native/validation/jobs",
+            "--quiet"
+          ],
+          "completed": true,
+          "exception_type": null,
+          "returncode": 0,
+          "reward": 0.0,
+          "timeout_sec": 900
+        },
+        {
+          "agent": "oracle",
+          "command": [
+            "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+            "run",
+            "--path",
+            "/evidence/native/validation/tasks/5a16004c2d7522727d44/swe-flow-5a16004c2d7522727d44",
+            "--agent",
+            "oracle",
+            "--env",
+            "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+            "--n-concurrent",
+            "1",
+            "--max-retries",
+            "0",
+            "--job-name",
+            "flow-5a16004c2d7522727d44-oracle",
+            "--jobs-dir",
+            "/evidence/native/validation/jobs",
+            "--quiet"
+          ],
+          "completed": true,
+          "exception_type": null,
+          "returncode": 0,
+          "reward": 1.0,
+          "timeout_sec": 900
+        }
+      ]
+    }
+  ]
+}

@@ -1252,3 +1252,7 @@ Recovered the completed five-control run: baseline/reference/alternative/fixed-e
 ### 2026-10-17 Strong archive verified and Esty controls reserved
 
 Strong rejection evidence is publicly preserved in snapshot5c22518ce98df7b7f5a34738dcc8673767f67bc5222717641b3bb577ac72e6b6:23 objects and98 archive members verified by anonymous downloads including hashes and modes. Prepared Esty independent control launchers against11 previously frozen inputs, gated on GC-skew run02 termination and independent cleanup. Reserved$10 for five no-model controls; total estimates/holds$538 of$1000. Esty remains unsubmitted; no additional slots allocated.
+
+### 2026-10-17 Corrected GC-skew native controls completed
+
+The idempotent license-bootstrap adaptation completed native export and grading: no-op reward 0, reference reward 1. This establishes native build/contrast only; independent correctness acceptance remains pending. Recovered 42,424,531-byte outer archive SHA256 bdbb15b594be07d9e43a27b56bb8cb4d73ec9a8e86cc5c47b7728beb7338b1a6, verified nested capture, and retained 4,943 native files with modes. No model calls. Controller terminal and independent worker absence verified before releasing the two slots. Original run01 build failure remains retained.
