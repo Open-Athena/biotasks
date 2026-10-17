@@ -468,3 +468,5 @@ Prepared the remote validation entrypoint and controller stage. It reuses the pr
 ## 2026-10-17 — revised LCC public archive preparation
 
 Prepared a distinct append-only snapshot for the passing revised LCC controls: 21 objects, 128,997,091 bytes and 14,753 archive members. Eligibility scan checked 14,773 regular files with zero configured sensitive-pattern matches. Preparation took 6.732 seconds. Upload and anonymous verification pending; estimated transfer working set 384 MiB. Authoring task enumeration independently showed one RUNNING attempt started at 15:24:12 UTC, with no reported error and no returned log entries at 15:32:02 UTC. No restart or new author dispatch occurred.
+
+Revised LCC snapshot upload and fresh anonymous verification completed in 27.992 seconds: 22 objects including the exact manifest and all 14,753 archive members verified for sizes, hashes and modes. Prefix: `research/21-repo2rlenv/2026-10-17/8ae059c8f0d9b0cbfc2109cfac549b68e4e696afd31cc429679e8d8a16b61d39`. Maximum resident set size (kbytes): 323572. Updated the current archive pointer; the snapshot retains its original pre-upload metadata. No earlier snapshot was overwritten.
