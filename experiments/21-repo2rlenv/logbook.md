@@ -1264,3 +1264,7 @@ Submitted five Esty controls at checkpoint09e2ecc1232d93531317e40ca8fa94bf0e4dd2
 ### 2026-10-17 GC-skew independent controls reserved
 
 Prepared five controls retaining all native grading assets: no-op, reference, character-loop alternative, single-zero output and zero-per-window output. Incorrect controls have observational rewards because the native test exercises only an all-A input. Synthetic checks confirm isolated function replacement, independent mixed-case/window examples and input rejection before allocation. Frozen12-file payload uses exact corrected task archive SHA256 c5e560586e771537d6b15ee0fb9cc63f7c71638d186939055898488f81a80fe2. Reserved$10; estimates/holds$548 of$1000. Launcher awaits terminal Esty controls and independently absent worker; no dispatch yet.
+
+### 2026-10-17 Esty worker-name failure and corrected dispatch preparation
+
+Run01 failed in WorkerSpec validation before provision_worker because the environment worker name contained an underscore. All five controls remain unexecuted; no biological execution, grading or model calls. Supported2934-byte archive and nested capture recovered, controller error retained, independent worker absence confirmed, and slot claim released. Prepared run02 using the same11 frozen input files and only a valid hyphenated environment worker name. No native source/contract change. Reserved an additional$10 conservatively, retaining the failed controller hold; total estimates/holds$558/$1000. GC-skew independent dispatch now gates on corrected Esty run02 cleanup.
