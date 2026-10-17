@@ -18,6 +18,10 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
     remain in write_issue; the original recipe implementation is not edited.
     """
     targets = {"swe_smith": issue, "structured": structured, "seta_seed2synth": seta}
+    if metering_target == "terminal_builder":
+        from repo2rlenv.pipelines.recipes.terminal import runner
+
+        targets["terminal_builder"] = runner
     target = targets[metering_target]
     original_metered = target.metered_complete
     original_completion = litellm.completion

@@ -542,3 +542,9 @@ Prepared SETA public preservation with the original model responses, drafts, usa
 SETA snapshot uploaded and all 29 objects anonymously downloaded and hash/size verified in 16.884 seconds. Prefix `research/21-repo2rlenv/2026-10-17/325d21d907b909b65db5f2b3d78694b3c399b18b835c13ebbce6c5307e4be9b3`. Three designs preserved, zero built/accepted tasks.
 
 Scikit-bio author attempt archive also confirmed empty (0 bytes, no URI) at 16:23 UTC. Outcome remains unknown. Issue updated at https://github.com/Open-Athena/biotasks/issues/21#issuecomment-6236568619 and published text verified.
+
+## 2026-10-17 — SETA native build continuation preparation
+
+Added frozen-design replay for the native terminal runner: exact seed and source-file hashes are required, original design strings are preserved, and replay receipts explicitly record zero new design calls. The native builder consumes these strings as design evidence, so no speculative global replacement of the letter n is applied. Added generation-only GLM adaptation for the native builder metering target and a continuation entrypoint retaining target three, three available candidates, and the native two-repair limit. Native baseline/reference trials and export remain unchanged.
+
+Offline checks passed: three exact design replays; modified seed/archive rejected; native builder metering received 131072 combined tokens, medium effort and 1200-second timeout with raw response retention. Zero live model calls or remote builds. The prepared continuation still needs controller/worker lifecycle integration before execution; no native-build result is claimed.
