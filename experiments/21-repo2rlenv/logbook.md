@@ -672,3 +672,7 @@ Reserve $5 for SETA Evol design-only stage now that solver capacity is released.
 SETA Evol design-only job submitted from 1853850 at 18:21 UTC. Completed control/solver allocations are marked terminal in the budget ledger, with their conservative amounts retained pending cost reconciliation rather than treated as active allocations.
 
 Blind-solver public snapshot `34770bf6f4da35f071ea21d819889458b1aa5b5a4281c0c793d3c5c92424a283` archived in open-athena/biotasks. All 13 objects and 11 archive members anonymously downloaded and hash/mode verified. Private original archive retained; public trace and grade bytes unchanged, with only private api_base redacted from copied configuration.
+
+## 2026-10-17 — Campaign budget increase
+
+The user authorized a $1,000 campaign ceiling, replacing $300. All other agreed execution and model limits remain unchanged. Recorded estimates and retained holds total $263, leaving $737 of planning allowance; these are not verified billed charges.
