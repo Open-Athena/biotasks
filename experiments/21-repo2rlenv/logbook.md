@@ -1034,3 +1034,8 @@ Verified the original native bundle identity and bound all six recovered correct
 ### 2026-10-17 21:38 UTC — R2E-Gym independent controls completed
 
 Recovered the controller ending21:36:17: six completed no-model cases, all with60 expected test identities and unchanged non-submission asset hashes. Rewards baseline0/reference1/alternative1/E-step-only1/wrong-uniform0/grouping-regression0. Native binary grading and recovered/public report bytes reconcile. The original fixture-adapted bundle identity passes. E-step-only remains a coverage limitation; provider runtime checks and acceptance are still pending. Archive59,810,608bytes verified; nested11,831files/127,867,761bytes extracted preserving modes. Worker404 confirmed and two slots released. Corrected Endless retains its two slots. No new model or budget allowance used for this verification.
+
+
+### 2026-10-17 21:40 UTC — SETA Evol build dispatch preparation
+
+Prepared native materialization from the two unchanged saved schema-valid designs, retaining the failed third design and existing candidate/repair bounds. Parent9 assets round-trip with exact bytes/modes; fourteen transfer inputs frozen and saved-design digest verified. Added supported child output capture; controller failure/cleanup and wrapper success/timeout/setup-failure checks pass with zero model/provider calls. Reserved$10 within campaign, bringing estimates/holds to$428 and remaining$572. Dispatch requires live R2E-Gym completion, its independently absent worker and two available slots beside corrected Endless. No build result yet.
