@@ -1,0 +1,139 @@
+{
+  "adaptation": {
+    "authorization_date": "2026-10-16",
+    "campaign_max_concurrent_requests": 4,
+    "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
+    "generation_run_timeout_sec": 7200,
+    "global_call_cap": null,
+    "global_token_cap": null,
+    "live_131072_token_request_verified": false,
+    "max_output_tokens": 131072,
+    "model": "glm-5.3",
+    "output_budget_includes_reasoning": true,
+    "paid_fallback": false,
+    "preserve_recipe_candidate_and_repair_limits": true,
+    "reasoning_effort": "medium",
+    "request_timeout_sec": 1200,
+    "solver_settings_changed": false,
+    "stage": "generation_only"
+  },
+  "blind_solver_attempts": 0,
+  "independently_accepted_tasks": 0,
+  "native_options": {
+    "base_image": "python:3.12.3-slim",
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "exclude_candidate_ids": [],
+    "freeze_git_version": false,
+    "history_limit": 2000,
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'from pathlib import Path; import hashlib; p=Path('\"'\"'LICENSE'\"'\"'); t=Path('\"'\"'LICENSE.rst'\"'\"'); b=t.read_bytes(); assert (p.is_symlink() and p.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (p.is_file() and p.read_bytes()==b); assert hashlib.sha1(b'\"'\"'blob '\"'\"'+str(len(b)).encode()+b'\"'\"'\\0'\"'\"'+b).hexdigest()=='\"'\"'eb5e305afbc43dc771e9e9935479af4aa9515674'\"'\"'; p.unlink() if p.is_symlink() else None; p.write_bytes(b); f=Path('\"'\"'Tests/PDB/1A8O.pdb'\"'\"'); f=f if f.exists() else Path('\"'\"'PDB/1A8O.pdb'\"'\"'); data=f.read_bytes(); assert hashlib.sha256(data).hexdigest()=='\"'\"'2928bb4a4680a104be0d7555cd7e7f36bd6731531f476cb7eb7209ccfa7ebadb'\"'\"'; dest=Path('\"'\"'PDB'\"'\"'); dest.mkdir(exist_ok=True); (dest/'\"'\"'1A8O.pdb'\"'\"').write_bytes(data)'",
+    "materialize_document_links": [],
+    "max_added_entities": 1,
+    "max_candidates": 10,
+    "max_edited_entities": 4,
+    "max_non_test_edited_lines": 200,
+    "max_non_test_files": 5,
+    "max_patch_length": 10000,
+    "max_prs": 300,
+    "max_statement_entities": 6,
+    "pr_numbers": [
+      5317
+    ],
+    "private_test_paths": [
+      "Tests/PDB/1A8O.pdb"
+    ],
+    "public_exclude": [],
+    "pytest_args": [],
+    "require_bug_edit": false,
+    "require_test_match": false,
+    "source_paths": [
+      "Bio/PDB/qcprot.py"
+    ],
+    "target": 3,
+    "task_install_command": null,
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "test_paths": [
+      "Tests/test_PDB_QCPSuperimposer.py",
+      "Tests/PDB/1A8O.pdb"
+    ],
+    "test_selectors": [],
+    "test_timeout_sec": 90,
+    "use_system_site_packages": false
+  },
+  "profile": {
+    "limitations": [
+      "Input preparation only; no native build, contrast, authoring, export or acceptance",
+      "Shares QCP lineage with SWE-gen if the same fix is selected",
+      "One SWE-Next selected PR does not meet target three"
+    ],
+    "model_calls": 0,
+    "options": {
+      "base_image": "python:3.12.3-slim",
+      "dependencies": [
+        "pytest==9.0.3",
+        "coverage==7.16.0"
+      ],
+      "exclude_candidate_ids": [],
+      "freeze_git_version": false,
+      "history_limit": 2000,
+      "hub_assets": [],
+      "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'from pathlib import Path; import hashlib; p=Path('\"'\"'LICENSE'\"'\"'); t=Path('\"'\"'LICENSE.rst'\"'\"'); b=t.read_bytes(); assert (p.is_symlink() and p.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (p.is_file() and p.read_bytes()==b); assert hashlib.sha1(b'\"'\"'blob '\"'\"'+str(len(b)).encode()+b'\"'\"'\\0'\"'\"'+b).hexdigest()=='\"'\"'eb5e305afbc43dc771e9e9935479af4aa9515674'\"'\"'; p.unlink() if p.is_symlink() else None; p.write_bytes(b); f=Path('\"'\"'Tests/PDB/1A8O.pdb'\"'\"'); f=f if f.exists() else Path('\"'\"'PDB/1A8O.pdb'\"'\"'); data=f.read_bytes(); assert hashlib.sha256(data).hexdigest()=='\"'\"'2928bb4a4680a104be0d7555cd7e7f36bd6731531f476cb7eb7209ccfa7ebadb'\"'\"'; dest=Path('\"'\"'PDB'\"'\"'); dest.mkdir(exist_ok=True); (dest/'\"'\"'1A8O.pdb'\"'\"').write_bytes(data)'",
+      "materialize_document_links": [],
+      "max_added_entities": 1,
+      "max_candidates": 10,
+      "max_edited_entities": 4,
+      "max_non_test_edited_lines": 200,
+      "max_non_test_files": 5,
+      "max_patch_length": 10000,
+      "max_prs": 300,
+      "max_statement_entities": 6,
+      "pr_numbers": [
+        5317
+      ],
+      "private_test_paths": [
+        "Tests/PDB/1A8O.pdb"
+      ],
+      "public_exclude": [],
+      "pytest_args": [],
+      "require_bug_edit": false,
+      "require_test_match": false,
+      "source_paths": [
+        "Bio/PDB/qcprot.py"
+      ],
+      "target": 3,
+      "task_install_command": null,
+      "test_cpus": 1,
+      "test_memory_mb": 2048,
+      "test_paths": [
+        "Tests/test_PDB_QCPSuperimposer.py",
+        "Tests/PDB/1A8O.pdb"
+      ],
+      "test_selectors": [],
+      "test_timeout_sec": 90,
+      "use_system_site_packages": false
+    },
+    "profile_decisions": [
+      "Full original selected test module retained",
+      "Unchanged PDB fixture included in declared test roots",
+      "SWE-Next fixture retained as explicit private test asset after native selected-test narrowing",
+      "R2E-Gym stages selected test modules under r2e_tests; test_selectors remain unset; fixture lookup uses the unchanged regular PDB copy created during bootstrap",
+      "Explicit build-time document/fixture packaging adaptation: materialize LICENSE.rst bytes at LICENSE and copy the unchanged selected PDB fixture to its original relative lookup location; assert pinned hashes; do not modify source or tests",
+      "Explicit build-time document/fixture packaging adaptation: materialize LICENSE.rst bytes at LICENSE and copy the unchanged selected PDB fixture to its original relative lookup location; assert pinned hashes; do not modify source or tests"
+    ],
+    "provenance": "Pinned Biopython history ending at PR5317 merge; native recipe-specific selection and constraints unchanged. SWE-Next selects PR5317; R2E-Gym may select other eligible earlier changes within the QCP source path.",
+    "recipe": "swe_next",
+    "repo": {
+      "access": "public",
+      "ref": "c911b1210e69df202834418ec43fba62a9d0b100",
+      "url": "https://github.com/biopython/biopython"
+    },
+    "run_id": "swe-next-biopython-01",
+    "stage": "profile_prepared_unexecuted",
+    "workers": 0
+  },
+  "pulls_sha256": "8ebbbc3f1b82c5e008a21405398770f90269988208ff96e5f476c323a3b28eb0"
+}
