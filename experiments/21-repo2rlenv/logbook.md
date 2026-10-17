@@ -1071,3 +1071,5 @@ Original job finished FAILED at22:01:39UTC. First candidate builder request was 
 ### 2026-10-17 22:06 UTC — SETA archive verified and Biopython dispatch prepared
 
 SETA materialization snapshot544207812765acc2a94e1f1a77736f1f2f9ce23adda811fd18769950327ccfe5 publicly uploaded:16 objects and7 archive members anonymously verified for hashes, sizes and modes. Provider wrapper excluded from this snapshot after private-route marker detection; private input and accounting files omitted. Original failed run retained locally. Prepared hash-checked Biopython SWE-gen dispatch revision03, with exclusive slot claim, live terminal SETA check and prior independent worker absence; existing Endless retains two slots. Reserved$10, bringing estimates/holds to$438 of$1000, remaining$562; actual charges unknown. Dispatch pending this checkpoint. One selected QCP PR calibration does not meet target3.
+
+Submitted22:07UTC `/exedev/biotasks21-swe-gen-biopython-20261017-01` from0c1cc31. Original SETA controller terminal and worker absence gates passed; Endless retains two slots. This is submission only, with no build/export or acceptance claim.
