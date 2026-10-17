@@ -846,3 +846,7 @@ LCC solve snapshot `60525d5c04398379458eb10533beeb04f31ba4bd577fd827cb65c9b73cb7
 ### 2026-10-17 — TMax startup transfer failure
 
 First TMax job exited before reading its manifest: `FileNotFoundError: seed/manifest.json`. The recovered 144-byte output archive contains wrapper status; bounded native logs identify the missing file before worker provisioning/model calls. Frozen seed files will be transferred as flat workdir entries with wrapper manifest path updated; original inputs and candidate/repair/model limits unchanged. First attempt evidence retained. A corrected launch is prepared, not dispatched.
+
+### 2026-10-17 — corrected TMax input layout verified
+
+The real native TMax preparation accepts the copied flat-file seed layout and reproduces the exact three selected records; changed-input rejection still passes. Reserved a separate $10 for the corrected startup, retaining the original failure and hold. No generation candidate was consumed by the first attempt. Accounted estimates/holds now $338 of $1,000.

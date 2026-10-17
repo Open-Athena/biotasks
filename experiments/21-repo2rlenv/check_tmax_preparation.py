@@ -20,6 +20,10 @@ with tempfile.TemporaryDirectory() as temp:
     for p in seed.iterdir():
         if p.is_file():(temp/p.name).write_bytes(p.read_bytes())
     spec.source.path=temp/'sampler.json'
+    # Iris workdir transfer uses the files' flat names. Validate the actual layout
+    # consumed by the corrected wrapper before testing tamper rejection.
+    flat = prepare(spec, temp/'manifest.json', settings)
+    assert flat[2] == selected and flat[3] == manifest
     (temp/'selected-inputs.json').write_text('[]')
     try:prepare(spec,temp/'manifest.json',settings)
     except ValueError:pass
