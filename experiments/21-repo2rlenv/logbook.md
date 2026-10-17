@@ -540,3 +540,5 @@ Both existing code-instruct author jobs are now SUCCEEDED, exit 0, confirmed at 
 Prepared SETA public preservation with the original model responses, drafts, usage, native reservation ledger, seed lineage and notices; 28 objects, 774,216 bytes, configured sensitive-pattern scan zero matches. Temporary Iris output storage is not relied upon for permanent retention.
 
 SETA snapshot uploaded and all 29 objects anonymously downloaded and hash/size verified in 16.884 seconds. Prefix `research/21-repo2rlenv/2026-10-17/325d21d907b909b65db5f2b3d78694b3c399b18b835c13ebbce6c5307e4be9b3`. Three designs preserved, zero built/accepted tasks.
+
+Scikit-bio author attempt archive also confirmed empty (0 bytes, no URI) at 16:23 UTC. Outcome remains unknown. Issue updated at https://github.com/Open-Athena/biotasks/issues/21#issuecomment-6236568619 and published text verified.
