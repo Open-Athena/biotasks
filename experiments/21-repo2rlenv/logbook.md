@@ -702,3 +702,7 @@ DataArc submitted at 18:37:06–11 UTC from checkpoint 11ee6d5 after a live term
 ## 2026-10-17 — SETA Evol public evidence archived
 
 Published append-only snapshot `9aa13245c4d16446870237814bb1a840de120b1ea9b5c87c56b88ac44fa672fc`. Fresh anonymous downloads verified all eleven objects and eight archive members for hashes, sizes and modes. Original raw answers, reasoning, requests and design settings are preserved unchanged; accounting database, model ledger receipts and setup logs are omitted. Exact approved credentials and known private routing values were absent from the public subset. The snapshot is design-only research evidence, with no built or accepted children. Its captured summary retains the original pre-upload state; the current local summary now points to the verified upload receipt.
+
+## 2026-10-17 — LCC Marin mapping preparation
+
+Prepared the full unresolved Marin TaskSpec with distinct learner/verifier Docker contexts, native binary reward, private role assets and exactly seven submitted Python files transferred to grading. Streaming serialization retained all input bytes and modes while keeping local peak RSS at 188,684 KiB; output JSON is 339,361,177 bytes. A synthetic fixture verifies valid serialized JSON, distinct contexts and exact artifact mapping. This is preparation only: real TaskSpec schema validation, builds and native/Marin reward parity remain pending on remote compute. Large local artifacts remain private temporary files pending public archive; Git records their hashes and bounded preparation receipt.
