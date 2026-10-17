@@ -982,3 +982,8 @@ Pinned native taxonomy contains generic computing contexts but no biological sce
 ### 2026-10-17 21:11 UTC — SWE-gen native export recovered
 
 First SWE-gen calibration finished 21:07:56 UTC and exported one PR2633 task. Healthy60/60, defective59/60 and nop/oracle0/1; one completed GLM response used 12,034 output tokens, including 11,077 reasoning. Supported archive211,835,164bytes and nested archive hashes verified; extraction preserved file modes and native bundle identity passes. Extra remote evidence capture failed separately. Worker404 confirmed21:10:42 and two-slot claim released. Same PR2633 source lineage, independent acceptance/public task archive/blind solving pending.
+
+
+### 2026-10-17 21:13 UTC — Independent SWE-Next controls submitted
+
+Submitted six serial no-model correctness cases from checkpoint286a910 into the two released history slots. Inputs are the corrected original SWE-Next task archive; grader and all non-solution assets remain fixed. The remote controller includes setup in its execution deadline and preserves supported outputs on success/failure. TMax retains two slots; total estimates/holds now$388, remaining$612. No validation outcome is claimed at dispatch.
