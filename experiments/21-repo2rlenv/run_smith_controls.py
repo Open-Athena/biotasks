@@ -6,6 +6,7 @@ No model calls or blind solving occur here.
 
 import argparse
 import hashlib
+import json
 import signal
 from pathlib import Path
 
@@ -49,6 +50,7 @@ def main():
     parser.add_argument("--generation-archive", type=Path)
     parser.add_argument("--issues", type=Path)
     parser.add_argument("--config", type=Path)
+    parser.add_argument("--validation-repo", choices=("biopython", "scikit-bio"), default="biopython")
     args = parser.parse_args()
     if args.stage in ("smith-controls", "flow-controls", "code-instruct-validation") and (
         args.generation_archive is None or args.issues is None
@@ -58,6 +60,10 @@ def main():
         parser.error("Flow controls require --config")
     if args.stage in ("flow-independent", "lcc-independent") and args.generation_archive is None:
         parser.error("Independent controls require the original control archive")
+    if args.stage == "code-instruct-validation":
+        authored = json.loads(args.issues.read_text())
+        if authored.get("stage") != "authoring_only" or not 1 <= len(authored.get("records", [])) <= 10:
+            parser.error("Expected one to ten authored candidates before allocating a worker")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
         raise ValueError("Unexpected generator source archive")
     args.campaign.mkdir(parents=True, exist_ok=False)
@@ -105,7 +111,7 @@ def main():
             for script in ("run_code_instruct_validation.py", "validate_code_instruct.py"):
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
-            entry = "/work/native/run_code_instruct_validation.py "
+            entry = "/work/native/run_code_instruct_validation.py --repo " + args.validation_repo + " "
         elif args.stage in ("flow-independent", "lcc-independent"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
             family = "flow" if args.stage == "flow-independent" else "lcc"
