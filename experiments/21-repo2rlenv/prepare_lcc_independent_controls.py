@@ -16,11 +16,14 @@ import tomli_w
 from repo2rlenv.emitter.bundle import inspect_bundle
 
 TARGET = Path("solution/reference.py")
-# These replacements apply only to lcc_mult; all other source remains unchanged.
+# The equivalent control computes DNA entropy independently and retains a native
+# fallback for other inputs. Other public functions and grading assets are unchanged.
 CASES = {
-    "equivalent_entropy": (
+    "equivalent_dna_entropy_preserve_legacy": (
         "import math\n"
         "seq = seq.upper()\n"
+        "if wsize <= 0 or wsize > len(seq) or any(base not in 'ACGT' for base in seq):\n"
+        "    return _lcc_legacy_other_inputs(seq, wsize)\n"
         "return [sum(-p * math.log(p, 4) for base in 'ACGT' "
         "if (p := seq[i:i+wsize].count(base) / wsize) > 0) "
         "for i in range(len(seq) - wsize + 1)]",
@@ -49,9 +52,15 @@ def replace_return(source, expression):
     if not body:
         raise ValueError("Expected an executable function body")
     lines = source.splitlines(keepends=True)
+    legacy = ""
+    if "_lcc_legacy_other_inputs" in expression:
+        if "_lcc_legacy_other_inputs" in source:
+            raise ValueError("Unexpected helper name collision")
+        legacy = "".join(lines[function.lineno - 1 : function.end_lineno])
+        legacy = legacy.replace("def lcc_mult(", "def _lcc_legacy_other_inputs(", 1)
     replacement = [" " * body[0].col_offset + line + "\n" for line in expression.splitlines()]
     lines[body[0].lineno - 1 : function.end_lineno] = replacement
-    changed = "".join(lines)
+    changed = "".join(lines) + ("\n\n" + legacy if legacy else "")
     ast.parse(changed)
     return changed
 
