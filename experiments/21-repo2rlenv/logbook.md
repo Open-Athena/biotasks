@@ -904,3 +904,7 @@ Recovered the exact 2,036-file native task and verified its native bundle identi
 ### 2026-10-17 — Historical code-instruct capture gap
 
 The scikit-bio author job began at 15:36 UTC; supported attempt-output preservation was committed at 15:54 UTC. The pre-fix author and saved wrapper do not write `IRIS_OUTPUT_DIR`; the wrapper emits base64 evidence only to stdout, whose retained parent log is empty. This explains a plausible capture gap without proving the exact submitted bytes or cause of absent logs. The dispatch receipt lacks an author checkpoint hash. Generated counts and usage remain unknown, not zero. No duplicate run was launched. Future dispatch must record all source hashes and verify durable success/failure/timeout capture.
+
+### 2026-10-17 — Durable author-child capture checks
+
+Added a capture helper that writes child stdout/stderr and terminal status to supported attempt storage, preserves partial output after errors/timeouts and refuses to overwrite an existing attempt. Synthetic success, exit-7 failure and timeout cases each preserved and verified partial evidence. Prepared a future scikit-bio wrapper using this helper and recorded wrapper/author/helper hashes. No model call, provider allocation or duplicate author run occurred; historical outcome remains unknown.
