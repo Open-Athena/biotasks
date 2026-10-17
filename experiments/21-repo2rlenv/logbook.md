@@ -782,3 +782,7 @@ Submitted the SCALER synthetic family expansion as /exedev/biotasks21-scaler-dna
 ## 2026-10-17 — R2E failure evidence publicly archived
 
 Published append-only HF snapshot 49da0fb2aaaefd6aa07d9e7580841a473b922e656dffe1e785400208ad1ae54d. Fresh anonymous downloads verified all nine objects and all 64 archive members. It preserves unchanged raw responses/reasoning, requests, sampled candidate records, events and settings, with source notices. Private routing/worker receipts, accounting database, ledger receipts and redundant source/remote-preparation archives were excluded; original recovery remains private. Exact credential and routing-value scans passed. The uploaded recovery summary truthfully said public archival was pending at capture time; the current summary now links the verification receipt without overwriting that snapshot.
+
+## 2026-10-17 — SCALER native generation and controls complete
+
+The SCALER job succeeded at 19:25:07 UTC, producing all three requested exports from three candidates. All six native trials completed without exceptions: no-op rewards -1 and oracle rewards +1 for every task. Generation used no model calls. The controller independently confirmed worker absence with 404. Recovered the 314,330-byte archive and verified outer provider and nested receipt checksums (225 files, 482,998 uncompressed bytes). These are three concrete instances of one synthetic sequence-distance family. Independent acceptance, public task archival, Marin conversion and blind solver attempts remain pending.
