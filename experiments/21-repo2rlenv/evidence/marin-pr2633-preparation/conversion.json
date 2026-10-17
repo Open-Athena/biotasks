@@ -1,0 +1,119 @@
+{
+  "stage": "prepared_unvalidated",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "source_manifest": [
+    {
+      "path": "environment/Dockerfile",
+      "sha256": "23c9d981ae2291f13e5a544777a2b2764951e9306335a6a684713a7490e65dba",
+      "mode": "0644"
+    },
+    {
+      "path": "environment/docker-compose.yaml",
+      "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1",
+      "mode": "0644"
+    },
+    {
+      "path": "instruction.md",
+      "sha256": "26b54857800b93eafc306643415a989942c2453b668c848644cb269b003c8ba8",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/patch.diff",
+      "sha256": "b227ad05ee2ed0a4df9585bf1eade2331a0a435d6f34555eb58ff84a80b67dda",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/solve.sh",
+      "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+      "mode": "0755"
+    },
+    {
+      "path": "task.toml",
+      "sha256": "2662da9ddca44d5a86c9f5d5d82b376d1cae81a11a2832f68eaf4209c0a8337b",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/f2p.json",
+      "sha256": "3618259946eb24dedfe443b0c897c4bb266b488207a06caa65d5440dceacfb1d",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/p2p.json",
+      "sha256": "31462324486798b8c24ef800eb4c502d57c4d3cbc583e2df54112366abe10e68",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/test.sh",
+      "sha256": "9920eb730fda3e261bee777718ea5df820a575719d9110ac1d1241a36daa0f98",
+      "mode": "0755"
+    },
+    {
+      "path": "tests/verifier.py",
+      "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+      "mode": "0644"
+    }
+  ],
+  "portable_manifest": [
+    {
+      "path": "environment/Dockerfile",
+      "sha256": "fbd6c29dd6a14966b62a4c858d2cb8644e3766b87cafff08a2fc4cc903b58feb",
+      "mode": "0644"
+    },
+    {
+      "path": "instruction.md",
+      "sha256": "26b54857800b93eafc306643415a989942c2453b668c848644cb269b003c8ba8",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/patch.diff",
+      "sha256": "b227ad05ee2ed0a4df9585bf1eade2331a0a435d6f34555eb58ff84a80b67dda",
+      "mode": "0644"
+    },
+    {
+      "path": "solution/solve.sh",
+      "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+      "mode": "0755"
+    },
+    {
+      "path": "task.toml",
+      "sha256": "58439b13c6df426333da72a07fc79a56fd312708efdd96d5247e4e8dfc02b610",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/f2p.json",
+      "sha256": "3618259946eb24dedfe443b0c897c4bb266b488207a06caa65d5440dceacfb1d",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/p2p.json",
+      "sha256": "31462324486798b8c24ef800eb4c502d57c4d3cbc583e2df54112366abe10e68",
+      "mode": "0644"
+    },
+    {
+      "path": "tests/test.sh",
+      "sha256": "9920eb730fda3e261bee777718ea5df820a575719d9110ac1d1241a36daa0f98",
+      "mode": "0755"
+    },
+    {
+      "path": "tests/verifier.py",
+      "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+      "mode": "0644"
+    }
+  ],
+  "portable_manifest_sha256": "818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
+  "baseline_dockerfile_sha256": "e595a001128259ec0c5e19637390e505204e280e9aa2656e8584c9ee0ebb325e",
+  "change": "Inline the preserved baseline Dockerfile in place of the local FROM tag; use the explicit offline runtime profile; restore baseline compiled extensions after checkout cleanup for learner imports.",
+  "native_reward": "f2p_rate * p2p_rate; strict resolved status is separate",
+  "native_grading_reference_instruction_bytes_and_modes_preserved": true,
+  "worker_resources": 0,
+  "oracle_resources": 2,
+  "verifier_resources": 4,
+  "docker_build_executed": false,
+  "marin_schema_validated": false,
+  "marin_runtime_parity": false,
+  "limitations": [
+    "Package indexes and base-image tag must resolve during a fresh build.",
+    "Network policy and resource isolation must be enforced by the execution harness.",
+    "Prepared context still requires build validation and native/Marin reward comparisons."
+  ]
+}
