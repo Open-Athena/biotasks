@@ -1236,3 +1236,7 @@ Frozen corrected native export payload changes only the profile install command:
 ### 2026-10-17 Strong independent controls submitted
 
 Submitted five frozen controls at checkpoint334bfb870d8ac7e0aa3e688fa7571f7eb2911e82, zero model calls. Two slots reserved alongside existing R2E authoring; outcome and acceptance pending. Total estimates/holds$518/$1000.
+
+### 2026-10-17 Failed GC-skew export publicly archived
+
+Append-only snapshot9d2b5bfc032cb45a7acf6d41c251509f4dcfb2702b6160731ddcda51c4312c90 now preserves original task, failed-build traces and exact frozen inputs. Anonymous fresh downloads verified21 objects and4913 archive members by bytes/hash/mode. Known api_key parameter/documentation markers in eight source copies were checked against exact upstream public tree blobs at4eda92397bdedff82f04ac218a862ae25ebdc4a8; actual credentials and private service markers separately absent. Original failure remains distinct from the unexecuted correction. Partial funnel now includes the source-filtered Biopython R2E-Gym history outcome without equating history records to generation attempts.
