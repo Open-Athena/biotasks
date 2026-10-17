@@ -7,6 +7,7 @@ import litellm
 from repo2rlenv.campaigns import structured
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.pipelines.recipes.swe_smith import issue
+from repo2rlenv.pipelines.recipes.seta_seed2synth import recipe as seta
 
 
 @contextmanager
@@ -16,7 +17,7 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
     This context is serial and process-local. Native candidate and repair bounds
     remain in write_issue; the original recipe implementation is not edited.
     """
-    targets = {"swe_smith": issue, "structured": structured}
+    targets = {"swe_smith": issue, "structured": structured, "seta_seed2synth": seta}
     target = targets[metering_target]
     original_metered = target.metered_complete
     original_completion = litellm.completion
