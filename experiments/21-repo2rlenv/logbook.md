@@ -722,3 +722,7 @@ Prepared the native build/repair/trial/export entrypoint with the recipe-specifi
 ## 2026-10-17 — SETA Evol controller ready; applicability reconciled
 
 Prepared the controller and private wrapper for native build continuation using unchanged saved designs. Its offline failure-path check confirms preserved generation timeout, cleanup after capture failure/deletion conflict, independent absence checks and retained evidence. Two designs are materializable under the saved native schema; one original failure remains in the candidate loop. No new worker or model call was made. The submission launcher and capacity remain pending. Reconciled stale applicability descriptions with completed SETA Evol design calls and DataArc/R2E runs confirmed active at 18:48 UTC.
+
+## 2026-10-17 — History-recipe profile preparation
+
+Prepared SWE-Next and R2E-Gym scikit-bio composition profiles using native option schemas, explicit in-package test paths, target three and maximum ten candidates. GitHub confirms the frozen PR2633 merge revision. SWE-Next begins with a one-PR calibration against preserved lineage; reaching target three still requires additional independent PRs. R2E-Gym retains the native history limit and stricter bug-edit/test-match gates. No history cloning, selection execution, bootstrap, model call or export occurred. These profiles remove the unexamined test-layout uncertainty but do not establish runtime compatibility.

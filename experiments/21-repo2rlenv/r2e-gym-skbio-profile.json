@@ -1,0 +1,57 @@
+{
+  "stage": "profile_prepared_unexecuted",
+  "recipe": "r2e_gym",
+  "repo": {
+    "url": "https://github.com/scikit-bio/scikit-bio",
+    "ref": "9bbf05b530a9fe08ab200e9c073a118e60096d3c",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "skbio/stats/composition/_ancombc.py"
+    ],
+    "test_paths": [
+      "skbio/stats/composition/tests/test_ancombc.py"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3' && python -m pip install --no-cache-dir 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "history_limit": 2000,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": true,
+    "require_test_match": true,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6
+  },
+  "provenance": "Frozen PR2633 history calibration; shares lineage with prior PR-runtime task, not a new independent problem.",
+  "limitations": [
+    "Native source/entity filters, snapshot creation and bootstrap remain unexecuted",
+    "SWE-Next initial calibration has one selected PR; additional independent PRs are needed to reach target three",
+    "R2E-Gym retains native bug-edit/test-match constraints and a bounded history scan",
+    "Instruction authoring must use existing free GLM and explicit approved generation adaptation",
+    "No claim of native Harbor export, independent acceptance or solver result"
+  ],
+  "model_calls": 0,
+  "worker_created": false
+}
