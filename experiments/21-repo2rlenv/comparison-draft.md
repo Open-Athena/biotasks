@@ -19,6 +19,8 @@ The two completed blind attempts both earned reward 1. They are selected, indepe
 
 ## Generation and execution limitations
 
+- Biopython R2E-Gym scanned 2,000 first-parent history records under the narrow QCP profile, all source-filtered before model calls. This is not 2,000 generation attempts or a repository-wide incompatibility finding. Broader profile coverage remains pending.
+- Biopython GC-skew exported one saved candidate but baseline/reference Docker builds failed on a symlink-only LICENSE bootstrap assertion. No grader reward was produced. A separately frozen correction is prepared; original failure retained.
 - Biopython SWE-Next rejected its first source candidate before model calls because the selected test change only reformats an existing expression. One of ten candidates is consumed; broader bounded source selection remains pending. See [source review](evidence/swe-next-biopython-01/source-filter-review.json).
 - Endless biological adaptation exhausted ten candidates with 34 model responses and zero exports: two design parse failures and eight exhausted initial-test repair sequences. No task build or solver trial started. See [Endless evidence](evidence/endless-biological-02).
 
@@ -33,7 +35,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links eleven generation/materialization rows and two solver rows to fourteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links twelve generation/materialization rows and two solver rows to fifteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -42,6 +44,7 @@ The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json
 | r2e-gym-skbio-fixtures-02 | 1 | 1 | 1 | 5661 | 7459 | 6508 |
 | swe-gen-biopython-01 | 1 | 1 | 1 | 3347 | 13623 | 12557 |
 | swe-next-biopython-01 | 1 | 0 | 0 | 0 | 0 | 0 |
+| r2e-gym-biopython-01 | 0 eligible (2000 history records filtered) | 0 | 0 | 0 | 0 | 0 |
 | r2e-skbio-author-01 | 10 | 0 | 30 | 94162 | 1179584 | unknown |
 | tmax-biological-02 | 3 | 0 | 12 | 54166 | 647644 | 601324 |
 | endless-biological-02 | 10 | 0 | 34 | 130826 | 860060 | 768301 |
