@@ -804,3 +804,7 @@ Independent worker lookup confirmed first LCC sandbox absent (404) at 19:36 UTC.
 ### 2026-10-17 — corrected LCC native/Marin runtime comparison
 
 The corrected grader-image argument passed all six controls on both routes: baseline 0, reference 1, partial DNA-only 0, equivalent DNA entropy preserving legacy behavior 1, constant-zero 0, and whole-sequence 0. Each native control retained 12 test identities. Learner import readiness and private-path absence before/after grading passed. Zero model calls; blind solver and final acceptance review remain pending. Evidence: `evidence/marin-lcc-runtime-02/`. Independent Daytona lookup returned HTTP404 at 19:41:19 UTC; the capacity claim is released. The previous driver failure remains preserved. Estimates/holds remain $293 of $1,000; actual charges unverified.
+
+### 2026-10-17 — DataArc timeout evidence recovered
+
+Iris reports FAILED, exit 1, ending 19:32:04 UTC. The controller records Timeout; one candidate has two completed GLM responses and a third dispatched request without a preserved response. The completed responses used 15,502 input and 227,667 output tokens (217,852 reasoning); unfinished-request usage is unknown. No independently validated tasks or blind attempts. Both archive hashes verified on recovery; 19 files preserved privately pending publication review. Independent Daytona HTTP404 at 19:43:46 UTC confirms cleanup. No rerun launched. See `evidence/dataarc-build-01/`; distinguish timeout from a scientific result and diagnose prior repair failures before deciding continuation.
