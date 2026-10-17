@@ -1088,3 +1088,8 @@ Frozen nine dispatch inputs for the six-case scikit-bio SWE-gen correctness run.
 ### 2026-10-17 22:12 UTC — SCALER blind wrapper prepared
 
 Added a dedicated SCALER wrapper using the existing single-attempt solver and provider contract. It requires baseline/reference/acceptance files before setup, uses the approved relay selected by private launcher environment, dispatches one child, propagates failure status and preserves partial solver output. Offline wrapper and existing provider/solver contract checks pass, including native-1 baseline handling, asset/control identity and approved900s/12turn/2048token settings. Original SCALER learner image already installs tmux, so no runtime asset alteration was needed. No provider/model calls occurred. Fresh provider controls, verified cleanup, three-slot availability and frozen control evidence remain required before each blind attempt.
+
+
+### 2026-10-17 22:16 UTC — Biopython R2E authoring inputs frozen
+
+Previous Biopython R2E evidence shows ten candidate functions prepared and zero model calls; authoring remains unexecuted. Kept its exact adapted repository profile and source revision, seed24, target3/max10/maxrounds3. Added a wrapper around the existing controller with bounded512MiB child evidence capture and private relay selection through launcher environment. Both repository profiles pass mocked GLM/settings, success/failure recovery and worker cleanup checks; wrapper success, child timeout and setup failure checks pass. Frozen eight transfer inputs with exact hashes. No worker, model call, budget reservation or dispatch occurred; this does not reset the cohort allowance.

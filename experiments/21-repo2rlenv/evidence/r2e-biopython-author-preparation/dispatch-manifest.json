@@ -1,0 +1,81 @@
+{
+  "stage": "prepared_not_submitted",
+  "run": "r2e-biopython-author-01",
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+    "access": "public"
+  },
+  "target": 3,
+  "max_candidates": 10,
+  "max_rounds": 3,
+  "seed": 24,
+  "prior_stage": "native_function_candidate_preparation",
+  "prior_functions": [
+    "GC_skew",
+    "seq1",
+    "gc_fraction",
+    "Tm_GC",
+    "Tm_Wallace",
+    "molecular_weight",
+    "seq3",
+    "crc32",
+    "make_table",
+    "nt_search"
+  ],
+  "model_calls": 0,
+  "workers": 0,
+  "budget_reserved": false,
+  "required_slots": 2,
+  "capture_limit_bytes": 536870912,
+  "files": [
+    {
+      "name": "glm_remote.py",
+      "bytes": 2396,
+      "sha256": "54e8e7f4fea28464c8a2d12d9c803000012bf86e9f3b02f58a4e8a42c2db1963"
+    },
+    {
+      "name": "repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "name": "r2e-profile.json",
+      "bytes": 1125,
+      "sha256": "96a7297f63fb77051d19f5fc51a8fecb96f5ddd09336e7d1683d665d2b417d78"
+    },
+    {
+      "name": "run_r2e_authoring.py",
+      "bytes": 7690,
+      "sha256": "d87a23b61bbdb60b1a380b28be732575cf25884099db8b2a29844fb6a172409c"
+    },
+    {
+      "name": "glm_authoring_adapter.py",
+      "bytes": 3665,
+      "sha256": "55a3495ba5d7baea8e0dcbc95d900680fb011c533ddfa72c052853ba3ca30868"
+    },
+    {
+      "name": "glm-generation-adaptation.json",
+      "bytes": 597,
+      "sha256": "682d4054fba546d67697c0d4985fc1c5af8ab5aa54c18fc40033678dc5d081ba"
+    },
+    {
+      "name": "capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "name": "preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    }
+  ],
+  "remaining_gates": [
+    "live capacity and cleanup reconciliation",
+    "budget reservation",
+    "submission checkpoint",
+    "native authoring and execution",
+    "independent acceptance",
+    "blind solve for accepted tasks"
+  ]
+}

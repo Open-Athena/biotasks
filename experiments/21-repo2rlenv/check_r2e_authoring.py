@@ -20,6 +20,8 @@ import run_r2e_authoring as controller
 from glm_authoring_adapter import adapted_authoring
 
 ROOT = Path(__file__).resolve().parent
+profile_name = os.environ.get('BIOTASKS21_R2E_CHECK_PROFILE', 'r2e-skbio-worker.json')
+assert profile_name in ('r2e-skbio-worker.json', 'r2e-biopython-adapted-worker.json')
 settings = json.loads((ROOT / 'glm-generation-adaptation.json').read_text())
 os.environ.update(REPO2RLENV_MODEL_WORKER='1', BIOTASKS21_GLM_ENDPOINT='https://example.invalid/v1', OFFLINE_R2E_KEY='fixture')
 calls=[]
@@ -61,7 +63,7 @@ with tempfile.TemporaryDirectory() as tmp:
                 (out.parent/'partial.json').write_text('{"stage":"author"}')
                 if fail:raise RuntimeError('fixture interruption')
                 return Result(out)
-        args=SimpleNamespace(profile=ROOT/'r2e-skbio-worker.json',adaptation=ROOT/'glm-generation-adaptation.json',wheel=root/'fixture.whl',campaign=directory/'campaign',worker_name='fixture',run_id='fixture')
+        args=SimpleNamespace(profile=ROOT/profile_name,adaptation=ROOT/'glm-generation-adaptation.json',wheel=root/'fixture.whl',campaign=directory/'campaign',worker_name='fixture',run_id='fixture')
         with patch.object(controller,'check_runtime_wheel',return_value='fixture'),patch.object(controller,'provision_worker',new=provision),patch.object(controller,'stop_worker',new=lambda *a:stopped.append(True)),patch.object(controller,'R2EPipeline',new=Pipeline),patch.object(controller,'adapted_authoring',new=lambda *a,**k:contextlib.nullcontext()):
             try:controller.run(args)
             except RuntimeError:
