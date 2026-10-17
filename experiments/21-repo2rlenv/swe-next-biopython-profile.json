@@ -1,0 +1,72 @@
+{
+  "stage": "profile_prepared_unexecuted",
+  "recipe": "swe_next",
+  "run_id": "swe-next-biopython-01",
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "c911b1210e69df202834418ec43fba62a9d0b100",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "Bio/PDB/qcprot.py"
+    ],
+    "test_paths": [
+      "Tests/test_PDB_QCPSuperimposer.py",
+      "Tests/PDB/1A8O.pdb"
+    ],
+    "private_test_paths": [
+      "Tests/PDB/1A8O.pdb"
+    ],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [
+      "LICENSE"
+    ],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && ln -s Tests/PDB /workspace/PDB",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "history_limit": 2000,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": false,
+    "require_test_match": false,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6,
+    "max_prs": 300,
+    "pr_numbers": [
+      5317
+    ]
+  },
+  "provenance": "Pinned Biopython history ending at PR5317 merge; native recipe-specific selection and constraints unchanged. SWE-Next selects PR5317; R2E-Gym may select other eligible earlier changes within the QCP source path.",
+  "profile_decisions": [
+    "Full original selected test module retained",
+    "Unchanged PDB fixture included in declared test roots",
+    "SWE-Next fixture retained as explicit private test asset after native selected-test narrowing",
+    "R2E-Gym fixture lookup targets its native r2e_tests staging directory; test_selectors unset so native staged selected modules execute",
+    "Materialize repository LICENSE symlink to unchanged document bytes using native materialize_document_links; pinned tree mode120000 verified"
+  ],
+  "limitations": [
+    "Input preparation only; no native build, contrast, authoring, export or acceptance",
+    "Shares QCP lineage with SWE-gen if the same fix is selected",
+    "One SWE-Next selected PR does not meet target three"
+  ],
+  "model_calls": 0,
+  "workers": 0
+}

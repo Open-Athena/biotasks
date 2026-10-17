@@ -21,7 +21,9 @@
       "Tests/test_PDB_QCPSuperimposer.py"
     ],
     "public_exclude": [],
-    "materialize_document_links": [],
+    "materialize_document_links": [
+      "LICENSE"
+    ],
     "base_image": "python:3.12.3-slim",
     "use_system_site_packages": false,
     "dependencies": [
@@ -47,7 +49,8 @@
     "Keep full original test module, including unchanged structure fixture test",
     "Include unchanged Tests/PDB/1A8O.pdb in verifier test roots",
     "Build-time /workspace/PDB symlink preserves original relative fixture lookup without changing tests",
-    "Pin NumPy and testing tools; compile Biopython extensions during remote image build"
+    "Pin NumPy and testing tools; compile Biopython extensions during remote image build",
+    "Materialize repository LICENSE symlink to unchanged document bytes using native materialize_document_links; pinned tree mode120000 verified"
   ],
   "limitations": [
     "One selected PR does not meet target three",

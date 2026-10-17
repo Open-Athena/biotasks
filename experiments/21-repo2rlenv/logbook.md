@@ -1051,3 +1051,8 @@ Selected merged PR5317 from a bounded ten-result public search and pinned exact 
 ### 2026-10-17 21:49 UTC — Biopython SWE-gen dispatch inputs frozen
 
 Prepared ten flat transfer inputs with exact hashes and checked source/profile agreement for PR5317. Remote wrapper preserves child logs, process status and partial full-source evidence with an explicit2GiB allowance; default capture remains128MiB. Tiny-fixture tests verify invalid allowances reject before execution and preservation obeys configured bounds. Wrapper success/timeout/setup-failure tests pass. Existing jobs retain four slots; no new reservation or dispatch. Source/context archive size remains bounded remotely and biological builds remain remote-only.
+
+
+### 2026-10-17 21:56 UTC — Biopython profile validation correction
+
+Verified both existing Endless and SETA materialization jobs remain RUNNING at21:55UTC, retaining four reserved slots. QCP history profiles preserve the pinned test module and fixture lineage. A subsequent LICENSE symlink materialization setting invalidated the earlier passing input checks: all three native option schemas reject extensionless LICENSE, allowing only .md/.rst/.txt paths. Removing only this entry validates all three schemas, but source packaging still requires investigation before dispatch. Preserved the failed combined-check receipt and a separate three-schema diagnostic; no model calls or provider allocations. Prior passing controller evidence is explicitly limited to the earlier profile revision; dispatch manifest02 is marked not dispatchable. This does not change previously running checkpointed jobs.

@@ -1,0 +1,10 @@
+[
+  {
+    "body": "- [x] I hereby agree to dual licence this and any previous contributions under both the _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit`` locally, and understand that continuous integration checks will be used to confirm the Biopython unit tests and style checks pass with these changes.\n- [x] I have added my name to the alphabetical contributors listings in the files ``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed already, or do not wish to be listed. (*This acknowledgement is optional.*)\n\nCloses #5309\n\n## Summary\n\n`QCPSuperimposer` reports `get_rms() = 0` on a collinear reference, then every 4\u00d74 cofactor quaternion has `qsqr` below `evecprec`, so the current rotation is `I`. `get_transformed()` is then unaligned. `SVDSuperimposer` still aligns the same points. This change uses Kabsch SVD of the already-built correlation matrix `A` on that last arm, with a `det < 0` column flip. `SVDSuperimposer` is not rewritten.\n\nMeasured on BioPython 1.87, three collinear points, rigid rotation \u03b8=0.9 about `[1,2,3]`:\n\n| method | get_rms | transformed RMSD | rot is I |\n| --- | --- | --- | --- |\n| QCP before | 0 | 0.6844581042158798 | yes |\n| QCP after (u @ vt) | 0 | 9.68e-16 | no |\n| SVDSuperimposer | 1.12e-15 | 1.12e-15 | no |\n| wrong orientation vt.T @ u.T | \u2014 | 1.243 | no |\n\nNon-collinear tetrahedron control: QCP already matched `u @ vt` to 3e-15 and does not take this arm.\n",
+    "head": "c911b1210e69df202834418ec43fba62a9d0b100",
+    "merged_at": "2026-10-17T19:57:36Z",
+    "number": 5317,
+    "title": "QCPSuperimposer: Kabsch SVD when quaternion cofactors vanish",
+    "url": "https://github.com/biopython/biopython/pull/5317"
+  }
+]

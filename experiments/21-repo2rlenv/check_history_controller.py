@@ -9,13 +9,16 @@ from unittest.mock import Mock, patch
 import run_history_controller as controller
 
 root = Path(__file__).resolve().parent
+profile_name = os.environ.get('BIOTASKS21_TEST_PROFILE', 'skbio')
+assert profile_name in {'skbio', 'biopython'}
+pulls_dir = 'history-profile-preparation' if profile_name == 'skbio' else 'history-biopython-preparation'
 with tempfile.TemporaryDirectory() as temp:
     temp = Path(temp)
     args = SimpleNamespace(campaign=temp/'campaign', wheel=temp/'runtime.whl',
-        profile=root/'swe-next-skbio-profile.json',
+        profile=root/f'swe-next-{profile_name}-profile.json',
         adaptation=root/'glm-generation-adaptation.json', worker_name='fixture',
-        pulls=root/'evidence/history-profile-preparation/pulls.json',
-        pulls_sha256=hashlib.sha256((root/'evidence/history-profile-preparation/pulls.json').read_bytes()).hexdigest())
+        pulls=root/'evidence'/pulls_dir/'pulls.json',
+        pulls_sha256=hashlib.sha256((root/'evidence'/pulls_dir/'pulls.json').read_bytes()).hexdigest())
     worker = SimpleNamespace(id='fixture', client=Mock())
     missing = RuntimeError('fixture absent'); missing.status_code = 404
     worker.client.get.side_effect = missing
@@ -55,7 +58,7 @@ with tempfile.TemporaryDirectory() as temp:
             raise AssertionError('Changed PR context accepted')
         allocate.assert_not_called()
     # R2E-Gym needs no PR cache and must preserve its native pipeline identity.
-    args.profile = root/'r2e-gym-skbio-profile.json'
+    args.profile = root/f'r2e-gym-{profile_name}-profile.json'
     args.campaign = temp/'gym-campaign'
     worker.client.get.side_effect = missing
     with patch.dict(os.environ, {'REPO2RLENV_MODEL_WORKER':'1', 'IRIS_OUTPUT_DIR':str(temp/'gym-capture'),
