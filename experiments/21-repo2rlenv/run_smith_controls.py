@@ -37,6 +37,7 @@ def main():
             "flow-controls",
             "flow-independent",
             "lcc-independent",
+            "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
             "biopython-pr",
@@ -49,7 +50,7 @@ def main():
     parser.add_argument("--issues", type=Path)
     parser.add_argument("--config", type=Path)
     args = parser.parse_args()
-    if args.stage in ("smith-controls", "flow-controls") and (
+    if args.stage in ("smith-controls", "flow-controls", "code-instruct-validation") and (
         args.generation_archive is None or args.issues is None
     ):
         parser.error("Repository controls require --generation-archive and --issues")
@@ -98,6 +99,13 @@ def main():
             )
             if args.stage == "flow-controls":
                 entry += "--recipe swe_flow "
+        elif args.stage == "code-instruct-validation":
+            worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
+            worker.upload(args.issues, "/work/native/candidates.json")
+            for script in ("run_code_instruct_validation.py", "validate_code_instruct.py"):
+                worker.upload(root / script, "/work/native/" + script)
+            unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
+            entry = "/work/native/run_code_instruct_validation.py "
         elif args.stage in ("flow-independent", "lcc-independent"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
             family = "flow" if args.stage == "flow-independent" else "lcc"
