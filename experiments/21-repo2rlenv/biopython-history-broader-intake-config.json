@@ -1,0 +1,48 @@
+{
+  "stage": "source_intake_only_not_generation_profile",
+  "recipe": "r2e_gym",
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "c911b1210e69df202834418ec43fba62a9d0b100",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "Bio"
+    ],
+    "test_paths": [
+      "Tests"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "true",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "history_limit": 2000,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": true,
+    "require_test_match": true,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6
+  },
+  "limitation": "Inert install command is an intake-only placeholder; no environment build or test execution permitted."
+}
