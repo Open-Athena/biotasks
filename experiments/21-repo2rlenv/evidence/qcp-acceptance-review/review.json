@@ -1,0 +1,66 @@
+{
+  "stage": "independent_instruction_and_contract_review",
+  "status": "acceptance_pending_runtime_and_tolerance_review",
+  "source_bundle_hash": "sha256:884d3ca9f209c943c27378076368faf76fb812522d09bc1644633aecd6c82200",
+  "native_integrity_passed": true,
+  "unchanged_non_solution_assets": 4888,
+  "controls": [
+    {
+      "case": "baseline",
+      "reward": 0.0,
+      "passed_tests": 8,
+      "tests": 9
+    },
+    {
+      "case": "native_reference",
+      "reward": 1.0,
+      "passed_tests": 9,
+      "tests": 9
+    },
+    {
+      "case": "alternative_svd",
+      "reward": 1.0,
+      "passed_tests": 9,
+      "tests": 9
+    },
+    {
+      "case": "wrong_translation",
+      "reward": 0.0,
+      "passed_tests": 2,
+      "tests": 9
+    },
+    {
+      "case": "wrong_identity_rotation",
+      "reward": 0.0,
+      "passed_tests": 3,
+      "tests": 9
+    },
+    {
+      "case": "wrong_zero_reported_rms",
+      "reward": 0.0,
+      "passed_tests": 5,
+      "tests": 9
+    }
+  ],
+  "competency": "Numerical coordinate alignment repair in a structural biology library; includes synthetic coordinate arrays and a retained PDB fixture.",
+  "instruction_verifier_agreement": {
+    "submission": "Only Bio/PDB/qcprot.py is collected; unchanged tests run separately.",
+    "collinear_regression": "Instruction reproduction matches the specific regression checked at 12 decimal places for transformed RMSD.",
+    "nondegenerate_tolerance": "Instruction suggests agreement near 1e-15; native comparison tests use atol=1e-3 and three decimal places for ordinary SVD comparisons. The stricter instruction claim is not established by the reward.",
+    "generalization": "Instruction requires arbitrary collinear rotations/translations; one new regression plus existing line tests does not establish universal coverage."
+  },
+  "limitations": [
+    "Successful controls establish bounded correctness evidence, not general numerical guarantees.",
+    "Native instruction supplies a concrete reproduction and diagnosis; record this assistance when interpreting solver performance.",
+    "Fresh learner/verifier provider readiness remains unexecuted.",
+    "No final acceptance or blind solver result is claimed."
+  ],
+  "source_sha256": {
+    "instruction.md": "739760e904af325c20991fd41d670cfbef386d9f589371cd6305d4e09fa213f3",
+    "task.toml": "90f06d66c722f07c0e934485a320f0a0e7089add6cdf2ecf4cbcb47fad36f688",
+    "tests/contract.json": "87106ce3ca23a0786be0befca7e363b03eb6395f9d115ab205ae0eedb3f5955c",
+    "tests/source/Tests/test_PDB_QCPSuperimposer.py": "569b4e59d75727a95c0679e231541ff5dbb6162d6bd9506cbdf7b28458ee6a5f",
+    "environment/Dockerfile": "488483b6e01622dd211359672d467997eeef348ffb70183f8430ee9e18a1b290",
+    "tests/Dockerfile": "afcd2eacbb4366315889585d183d2a417297589b5dec6ede8dbbc5c6385f5231"
+  }
+}

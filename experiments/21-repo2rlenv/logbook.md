@@ -1196,3 +1196,7 @@ Corrected QCP run02 completed successfully (23:13:22.906–23:16:59.815 UTC). Al
 ### 2026-10-17 Biopython R2E-Gym submitted
 
 Submitted first frozen R2E-Gym history cohort at checkpoint564e94df50ae72bbc234a5843bfb6a0a50de82ae after terminal QCP and independent cleanup verification. Native target3/max10/history2000 preserved; two slots reserved alongside the existing R2E authoring run. No task result or acceptance implied by submission. Total estimates/holds$498/$1000.
+
+### 2026-10-17 QCP controls publicly preserved and contract reviewed
+
+Uploaded append-only snapshot085347fca2b9373bc3dd94b598e7504a5935ca47a5bdb7e4ad5e658bd1557f26; all21 objects and117 control archive members anonymously verified by size/hash/mode. Exact frozen control code and both source notices retained; three worker setup/log files excluded from the public control archive, original recovery retained privately. Native original task remains linked by immutable snapshot. Instruction/contract review reconciled all9 test identities per case and4888 unchanged assets: passed counts8,9,9,2,3,5. Ordinary comparison tests use1e-3 despite instruction suggesting1e-15; no strong tolerance guarantee is established. The collinear regression checks transformed RMSD at12 decimal places. Final acceptance remains pending fresh runtime and tolerance review; controls are bounded evidence, not universal coverage.
