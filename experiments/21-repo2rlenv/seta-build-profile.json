@@ -1,0 +1,31 @@
+{
+  "stage": "reserved_native_build",
+  "cohort": "seta-genomic-intervals-v1",
+  "designs_sha256": "f9c0b3c7b2c99ec3c6dcfa847509aee235c97b37282aabbedc771ecf09e15b2d",
+  "target": 3,
+  "max_candidates": 3,
+  "native_max_repairs": 2,
+  "generation_tokens": 131072,
+  "effort": "medium",
+  "request_timeout_sec": 1200,
+  "max_concurrent_requests": 1,
+  "worker": {
+    "cpu": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "controller": {
+    "cpu": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "generation_deadline_sec": 6900,
+  "worker_timeout_sec": 7200,
+  "reserved_usd": 10,
+  "native_trials": [
+    "nop",
+    "oracle"
+  ],
+  "blind_solver_attempts": 0,
+  "capture": "Iris output archives before and after cleanup; remaining remote trial logs recovered before worker deletion"
+}
