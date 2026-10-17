@@ -26,7 +26,10 @@ def main():
             raise FileNotFoundError('Missing setup input; see input_presence')
         state['phase'] = 'task_archive_unpack'
         from package_provider_task import unpack
-        unpack(Path('task-bundle.tar.gz'), Path('task-bundle-manifest.json'), Path('.'))
+        transfer_limit = int(os.environ.get('BIOTASKS21_TASK_TRANSFER_MAX_BYTES', 4 * 1024**2))
+        state['task_transfer_max_bytes'] = transfer_limit
+        unpack(Path('task-bundle.tar.gz'), Path('task-bundle-manifest.json'), Path('.'),
+               maximum_bytes=transfer_limit)
         modes = json.loads(Path('task-file-modes.json').read_text())
         missing = [name for name in modes if not (Path('task') / name).is_file()]
         state['missing_task_paths'] = missing

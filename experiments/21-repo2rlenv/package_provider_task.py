@@ -25,14 +25,16 @@ def pack(task, archive):
     return {'files': records, 'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest()}
 
 
-def unpack(archive, manifest, destination):
+def unpack(archive, manifest, destination, *, maximum_bytes=4 * 1024**2):
+    if not 0 < maximum_bytes <= 384 * 1024**2:
+        raise ValueError('Explicit transfer allowance must be within 384 MiB')
     data = json.loads(manifest.read_text())
     assert hashlib.sha256(archive.read_bytes()).hexdigest() == data['archive_sha256']
     with tarfile.open(archive) as source:
         members = source.getmembers()
         assert {m.name for m in members} == {'task/' + n for n in data['files']}
         assert len(members) == len(data['files'])
-        assert sum(m.size for m in members) <= 4 * 1024**2
+        assert sum(m.size for m in members) <= maximum_bytes
         for member in members:
             name = Path(member.name)
             assert member.isfile() and not name.is_absolute() and '..' not in name.parts

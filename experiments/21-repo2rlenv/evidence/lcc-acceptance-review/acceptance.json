@@ -1,0 +1,95 @@
+{
+  "status": "accepted_for_bounded_pilot",
+  "stage": "independent_acceptance",
+  "task_id": "repo2rlenv-swe-smith/8ab8eb1ddfed62315e8f8f0e04330836098aec80b7500ccc1437b717321f2511",
+  "repository": "Biopython",
+  "route": "swe_smith",
+  "profile": "explicit_full_source_build_with_separate_verifier",
+  "native_original_bundle_accepted": false,
+  "bundle_identity": "sha256:1a00379124b1cd12878b53b98298bc143ed01eb32f83062265e4df3aaa92cbe6",
+  "exact_runtime_asset_manifest_sha256": "8ab8eb1ddfed62315e8f8f0e04330836098aec80b7500ccc1437b717321f2511",
+  "profile_interventions": [
+    "Recorded full source build contexts, editable install and required GenBank fixture",
+    "Regular LICENSE bytes replacing source symlink",
+    "Preinstalled tmux for terminal solver"
+  ],
+  "scope": "Repair a synthetic constant mutation in local sequence-composition complexity while preserving native regression tests.",
+  "inputs": "Synthetic code mutation and supplied DNA example; not observed biological measurements.",
+  "competencies": [
+    "Python debugging",
+    "Sliding-window composition entropy",
+    "Scientific-library regression preservation"
+  ],
+  "reward": {
+    "kind": "native_binary_all_expected_tests_pass",
+    "range": [
+      0,
+      1
+    ],
+    "tests": 12
+  },
+  "gates": {
+    "prompt_arithmetic": {
+      "windows": 13,
+      "maximum_error": 7.529722733423672e-05,
+      "all_native_rounding_comparisons_pass": true
+    },
+    "full_partial_incorrect": {
+      "baseline": 0,
+      "reference": 1,
+      "partial_dna_only": 0,
+      "equivalent_dna_entropy_preserve_legacy": 1,
+      "wrong_constant_zero": 0,
+      "wrong_whole_sequence": 0
+    },
+    "repeatability": {
+      "biopython-lcc-independent-01": {
+        "equivalent_entropy": 0.0,
+        "wrong_constant_zero": 0.0,
+        "wrong_whole_sequence": 0.0
+      },
+      "biopython-lcc-independent-02": {
+        "equivalent_dna_entropy_preserve_legacy": 1.0,
+        "wrong_constant_zero": 0.0,
+        "wrong_whole_sequence": 0.0
+      },
+      "biopython-lcc-repeatability-01": {
+        "equivalent_dna_entropy_preserve_legacy": 1.0,
+        "wrong_constant_zero": 0.0,
+        "wrong_whole_sequence": 0.0
+      }
+    },
+    "runtime_parity": "evidence/marin-lcc-runtime-02/runtime-result.json",
+    "exact_runtime_assets_verified": 4892,
+    "separate_verifier": true
+  },
+  "asset_sha256": {
+    "environment/Dockerfile": "ac3d1f19b8d45a24a11cfb1e9b053fbaeb6cb8cccdae3cf81a3e22f27bc7a863",
+    "instruction.md": "8476a8a5fdea65d9fa0178183eae6b249a90521e341e8178f2b9a8f1599bcaed",
+    "solution/reference.py": "5c16386511a8462504aa6cf9e5d8672e93cb8bd79b2a12146bb5442611ed31df",
+    "solution/solve.sh": "7113249655336d2fb28294065f19c160f7f8b5b83f82d620a5f88e07ae60cf61",
+    "task.toml": "c1bfb8aab9079ae165eba2977f321a3f13fabf584ab7135636ed469e017da871",
+    "tests/Dockerfile": "bf7ff0b7dc36a9eaffc82616654b21f1a5cfcd48e34dc866f9640f3e6650f089",
+    "tests/contract.json": "e8a6673c152ddee8178f1075940e17d4146f23319c5bd448cba0f33010ca0741",
+    "tests/grade.py": "e525b964f4bd013bb452e259e87ab098dcee13f509dbcd0a09c2469cf94b395f",
+    "tests/test.sh": "ca028a35babdbcb443869a39875bdfe48e5225e0a4090e469c23a9c0a2371c0c"
+  },
+  "limitations": [
+    "Finite native test coverage; supplied DNA example and expected values reduce difficulty",
+    "Uniform windows is ambiguous shorthand; preceding text explicitly means equal base counts",
+    "Partial correctness maps to zero under native binary reward; do not introduce fractional reward",
+    "Deferred report-integrity diagnostic remains unexecuted",
+    "Acceptance applies only to the recorded adapted runtime profile.",
+    "Base-image tags and package indexes remain rebuild dependencies.",
+    "Public image publication, Atlas admission and training readiness are separate.",
+    "A direct-provider terminal startup check remains required before a blind attempt."
+  ],
+  "blind_solver": {
+    "attempts": 0,
+    "approved_attempts": 1,
+    "timeout_sec": 900,
+    "max_turns": 12,
+    "max_output_tokens": 2048
+  },
+  "model_calls": 0
+}
