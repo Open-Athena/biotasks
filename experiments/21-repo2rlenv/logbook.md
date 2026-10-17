@@ -522,3 +522,9 @@ Public failure archive uploaded and anonymously verified in 12.814 seconds: 22 o
 ## 2026-10-17 — scikit-bio compiled-asset profile intervention reservation
 
 Reserve $5 for the separate compiled-asset restoration profile on the same frozen PR2633 candidate. The baseline collection failure is already public and immutable. No new candidate is counted; this explicitly records an environment intervention. Native test patches, validation and reward logic remain unchanged. The new run records dependency versions and baseline extension hashes, preserves results and deletes its worker. Zero model calls. Conservative estimates/holds become $173/$300.
+
+## 2026-10-17 — scikit-bio PR-runtime corrected result
+
+The explicit baseline compiled-extension restoration profile completed in 137.657 seconds, with zero model calls. Native validation verified one fail-to-pass test (`CoreTests::test_estimate_bias_em_underflow`) and 59 pass-to-pass tests; the native pipeline exported one task. Before the fix: 1 failed/59 passed; after: the regression joined the passing set. This is native execution/export, not independent acceptance or a solver score. The original collection failure remains separately preserved. Recorded dependency freeze and seven baseline extension hashes. Sandbox deletion independently confirmed (404) at 16:12:37 UTC.
+
+Prepared a separate public snapshot: 23 artifact objects, 173,979 bytes and 21 archive members. Configured sensitive-pattern scan checked 43 regular files with zero matches. Upload/anonymous verification pending. Independent controls, contract review, repeatability/isolation, Marin runtime equivalence and solver evaluation remain required.
