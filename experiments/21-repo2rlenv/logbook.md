@@ -790,3 +790,5 @@ The SCALER job succeeded at 19:25:07 UTC, producing all three requested exports 
 ## 2026-10-17 — LCC runtime validation reserved after SCALER cleanup
 
 Fresh live checks confirmed SCALER and R2E controllers terminal and SCALER worker absent (404), releasing the exclusive replacement-slot claim. Reserved five dollars for the prepared full LCC native/Marin six-case comparison on one CPU sandbox with no model calls. DataArc retains two slots; the replacement claim conservatively reserves the other two while LCC uses one worker. Total estimates/holds are 288 of 1,000 dollars, leaving 712. Input archive and source hashes remain required before dispatch.
+
+Launched LCC validation from bb263e2 at 19:29 UTC. The worker is provisioned with the agreed 2-vCPU/4-GiB/10-GiB shape, using the full source-hashed input archive; twelve native/Marin executions are planned across six cases. No model calls or acceptance result yet. The local controller remains foreground under the shared-node guard.
