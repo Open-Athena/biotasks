@@ -987,3 +987,8 @@ First SWE-gen calibration finished 21:07:56 UTC and exported one PR2633 task. He
 ### 2026-10-17 21:13 UTC — Independent SWE-Next controls submitted
 
 Submitted six serial no-model correctness cases from checkpoint286a910 into the two released history slots. Inputs are the corrected original SWE-Next task archive; grader and all non-solution assets remain fixed. The remote controller includes setup in its execution deadline and preserves supported outputs on success/failure. TMax retains two slots; total estimates/holds now$388, remaining$612. No validation outcome is claimed at dispatch.
+
+
+### 2026-10-17 21:20 UTC — TerminalWorld recording intake
+
+Retrieved three original tutorial recordings with the native bounded intake. Two pass the native screen; the Swiss-Prot recording is excluded by its privacy filter without override. Pinned the author notebook and recorded sequence accession lineage, including the tutorial filename/gene-name mismatch. Raw transcripts are not redistributed. Recording reuse terms and missing BLAST fixture provenance remain gates before authoring; no model or biological execution occurred. Live Iris observations confirm TMax and independent SWE-Next controls remain running.
