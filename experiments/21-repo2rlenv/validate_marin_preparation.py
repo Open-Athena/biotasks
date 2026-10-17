@@ -12,6 +12,7 @@ REVISION = "45a044387ccd95ab698b4a592056aadaff961540"
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--runtime", action="store_true")
+    parser.add_argument("--runtime-script", choices=("check_marin_runtime.py", "check_marin_pr_runtime.py"), default="check_marin_runtime.py")
     args = parser.parse_args()
     if os.environ.get("REPO2RLENV_REMOTE_WORKER") != "1":
         raise RuntimeError("Remote worker required")
@@ -100,7 +101,7 @@ Path('/evidence/native/schema-result.json').write_text(json.dumps({
     if args.runtime:
         with (evidence / "runtime-check.log").open("w") as log:
             result = subprocess.run(
-                [str(repo / ".venv/bin/python"), "/work/native/check_marin_runtime.py"],
+                [str(repo / ".venv/bin/python"), "/work/native/" + args.runtime_script],
                 stdout=log,
                 stderr=log,
                 timeout=3000,

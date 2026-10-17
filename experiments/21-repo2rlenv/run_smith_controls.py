@@ -49,6 +49,7 @@ def main():
             "skbio-pr-controls-partial",
             "marin-schema",
             "marin-runtime",
+            "marin-pr-runtime",
         ),
         default="smith-controls",
     )
@@ -180,16 +181,19 @@ def main():
             worker.upload(
                 root / "validate_marin_preparation.py", "/work/native/validate_marin_preparation.py"
             )
-            worker.upload(
-                root / "evidence/marin-pr2630-preparation/task.json", "/work/native/task.json"
-            )
+            prepared = "marin-pr2633-preparation" if args.stage == "marin-pr-runtime" else "marin-pr2630-preparation"
+            worker.upload(root / "evidence" / prepared / "task.json", "/work/native/task.json")
             unpack = ""
             entry = "/work/native/validate_marin_preparation.py "
-            if args.stage == "marin-runtime":
+            if args.stage in ("marin-runtime", "marin-pr-runtime"):
                 worker.upload(
                     root / "check_marin_runtime.py", "/work/native/check_marin_runtime.py"
                 )
                 entry += "--runtime "
+                if args.stage == "marin-pr-runtime":
+                    worker.upload(root / "check_marin_pr_runtime.py", "/work/native/check_marin_pr_runtime.py")
+                    worker.upload(root / "evidence/marin-pr2633-preparation/parity-controls.json", "/work/native/parity-controls.json")
+                    entry += "--runtime-script check_marin_pr_runtime.py "
         setup = worker.exec(
             [
                 "sh",

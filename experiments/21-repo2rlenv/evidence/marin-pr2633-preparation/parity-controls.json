@@ -1,0 +1,42 @@
+{
+  "stage": "prepared_unexecuted_parity_controls",
+  "source_archive_sha256": "0e14a08fde4f6d5833c9fa63e29d2725c75710adae4382d90c50b1fce679c613",
+  "cases": [
+    {
+      "case": "baseline",
+      "expected_reward": 0.0,
+      "solution_shell": "#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\nfrom pathlib import Path\np=Path('/workspace/skbio/stats/composition/_ancombc.py')\ns=p.read_text()\np.write_text(s)\nPYCONTROL\n",
+      "solution_sha256": "76def39c5346579a957ab9c3f288bfb473fbeb29eb7ac5da4b8d1f65f97e0370"
+    },
+    {
+      "case": "native_reference",
+      "expected_reward": 1.0,
+      "solution_shell": "#!/bin/bash\nset -euxo pipefail\ncd /workspace\ngit config --global --add safe.directory /workspace\nPATCH=\"$(dirname \"$0\")/patch.diff\"\ngit apply --verbose --reject \"$PATCH\"\n",
+      "solution_sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+    },
+    {
+      "case": "alternative_masked_division",
+      "expected_reward": 1.0,
+      "solution_shell": "#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\nfrom pathlib import Path\np=Path('/workspace/skbio/stats/composition/_ancombc.py')\ns=p.read_text()\nassert s.count('        resp /= np.sum(resp, axis=0, keepdims=True)') == 1\ns=s.replace('        resp /= np.sum(resp, axis=0, keepdims=True)','        totals = np.sum(resp, axis=0, keepdims=True)\\n        resp[:] = np.divide(resp, totals, out=np.zeros_like(resp), where=totals != 0)',1)\nassert s.count('        l1, l2 = numer / denom') == 1\ns=s.replace('        l1, l2 = numer / denom','        l1, l2 = np.divide(numer, denom, out=np.zeros_like(numer), where=denom != 0)',1)\np.write_text(s)\nPYCONTROL\n",
+      "solution_sha256": "22c54727ec19899b2a75a9fe9ef102f6d8223430a80f9b94cbb06a5c960a53bc"
+    },
+    {
+      "case": "e_step_only",
+      "expected_reward": 1.0,
+      "solution_shell": "#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\nfrom pathlib import Path\np=Path('/workspace/skbio/stats/composition/_ancombc.py')\ns=p.read_text()\nassert s.count('        resp /= np.sum(resp, axis=0, keepdims=True)') == 1\ns=s.replace('        resp /= np.sum(resp, axis=0, keepdims=True)','        totals = np.sum(resp, axis=0, keepdims=True)\\n        resp[:] = np.divide(resp, totals, out=np.zeros_like(resp), where=totals != 0)',1)\np.write_text(s)\nPYCONTROL\n",
+      "solution_sha256": "8844efb97cd32d516d57d8bc6bfe7b829b8cd7bad2df971e974495363953de40"
+    },
+    {
+      "case": "wrong_uniform_responsibilities",
+      "expected_reward": 0.0,
+      "solution_shell": "#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\nfrom pathlib import Path\np=Path('/workspace/skbio/stats/composition/_ancombc.py')\ns=p.read_text()\nassert s.count('        resp /= np.sum(resp, axis=0, keepdims=True)') == 1\ns=s.replace('        resp /= np.sum(resp, axis=0, keepdims=True)','        resp[:] = 1.0 / 3.0',1)\nassert s.count('        l1, l2 = numer / denom') == 1\ns=s.replace('        l1, l2 = numer / denom','        l1, l2 = np.divide(numer, denom, out=np.zeros_like(numer), where=denom != 0)',1)\np.write_text(s)\nPYCONTROL\n",
+      "solution_sha256": "d8447248229676c2b20d2d084535ca7dc3ac1122b57e2d70a085141931b6f8b1"
+    },
+    {
+      "case": "fixed_underflow_with_grouping_regression",
+      "expected_reward": 0.983051,
+      "solution_shell": "#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\nfrom pathlib import Path\np=Path('/workspace/skbio/stats/composition/_ancombc.py')\ns=p.read_text()\nassert s.count('        resp /= np.sum(resp, axis=0, keepdims=True)') == 1\ns=s.replace('        resp /= np.sum(resp, axis=0, keepdims=True)','        totals = np.sum(resp, axis=0, keepdims=True)\\n        resp[:] = np.divide(resp, totals, out=np.zeros_like(resp), where=totals != 0)',1)\nassert s.count('        l1, l2 = numer / denom') == 1\ns=s.replace('        l1, l2 = numer / denom','        l1, l2 = np.divide(numer, denom, out=np.zeros_like(numer), where=denom != 0)',1)\nassert s.count('    if idx.size < 2:') == 1\ns=s.replace('    if idx.size < 2:','    if idx.size < 0:',1)\np.write_text(s)\nPYCONTROL\n",
+      "solution_sha256": "55db05cf4ebec4882e3327e1f5b014aba9a102aba344abb73e59c8f1b297cb72"
+    }
+  ]
+}
