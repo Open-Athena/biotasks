@@ -888,3 +888,7 @@ Controller succeeded but exported zero tasks. Native scan examined 1,197 history
 Prepared first SWE-Next execution from the frozen PR2633 cache and native profile. Shared history reference staging may reproduce the R2E-Gym missing-fixture failure; keep this native baseline explicit. One selected PR cannot produce three independent problems. Native options/context checks pass; reserve $10, total $358 conservative holds, with two slots available after independently confirmed R2E-Gym cleanup. No dispatch yet.
 
 SWE-Next submitted at 20:24 UTC as `/exedev/biotasks21-swe-next-skbio-20261017-01`, checkpoint `48e938454a97c6851a605b7b776075f5f403a0e2`. Two slots reserved, alongside TMax two slots. No generation result yet.
+
+### 2026-10-17 — R2E-Gym fixture-root adaptation
+
+Traced missing reference data to native `stage_tests`: the profile named only one test file, so its sibling data directory was not copied. Prepared a separate profile adding `skbio/stats/composition/tests/data`. Native staging on the recovered head restored all nine fixture files (70,513 bytes), with unchanged selected module and unchanged test bytes. No upstream code changes, test exclusions, model calls or runtime tests occurred. Keep the original zero-export profile as baseline; the adapted remote contrast and generation remain pending.
