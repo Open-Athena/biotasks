@@ -1,0 +1,53 @@
+{
+  "stage": "native_export_build_failure",
+  "candidate_id": "5a16004c2d7522727d44",
+  "exports": 1,
+  "native_trials_completed": 0,
+  "model_calls": 0,
+  "independently_accepted_tasks": 0,
+  "blind_attempts": 0,
+  "trials": [
+    {
+      "agent": "oracle",
+      "exception_type": "RuntimeError",
+      "reward": null,
+      "report_sha256": "c7210e34b8a1af2581a8e7c8a46a869c80f7784f3474046d16902d2b86f26c36"
+    },
+    {
+      "agent": "nop",
+      "exception_type": "RuntimeError",
+      "reward": null,
+      "report_sha256": "cec7fcffc557387d161c9c9ea015f307a9c8edbee35846279c5278c1d651b3e8"
+    }
+  ],
+  "packaging_diagnosis": {
+    "environment": {
+      "license_regular_file": true,
+      "license_equals_license_rst": true,
+      "license_sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453",
+      "bootstrap_requires_symlink": true,
+      "dockerfile_sha256": "1dbced3fa14459efdb1ef95fcf2bab192415db0bd3b0c6f6b090e4757ef21518"
+    },
+    "tests": {
+      "license_regular_file": true,
+      "license_equals_license_rst": true,
+      "license_sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453",
+      "bootstrap_requires_symlink": true,
+      "dockerfile_sha256": "2aad577fd1cf5001b88d14a683cfa7c10d26bb9baea1b6d2a14de3388391d37e"
+    }
+  },
+  "finding": "Bootstrap requires a LICENSE symlink, but exported source already contains the identical regular file; test -L fails. No grader outcome was reached.",
+  "recovery": {
+    "outer_bytes": 42629844,
+    "outer_sha256": "2b99e915b9954bb410044cec23e06c120d8b3f4aaf9317cc4bddb3e51c8b76f5",
+    "nested_sha256_verified": true,
+    "native_files": 4918,
+    "native_uncompressed_bytes": 255770826,
+    "modes_preserved": true
+  },
+  "limitations": [
+    "Original task and failure retained",
+    "Corrected idempotent packaging adaptation not yet executed",
+    "Task archive public publication pending"
+  ]
+}
