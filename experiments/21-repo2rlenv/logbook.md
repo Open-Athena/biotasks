@@ -800,3 +800,7 @@ The LCC controller exited zero after preserving a worker-return-code-one failure
 Separately, the SCALER offline semantic audit passed for all three exports: independent shortest-path costs are 10, 7 and 8 and match the private references. Native instructions and artifact contracts agree; this does not establish runtime isolation or full acceptance.
 
 Independent worker lookup confirmed first LCC sandbox absent (404) at 19:36 UTC. Released its capacity claim and reserved five dollars for the corrected driver with unchanged task inputs and control set. Total estimates and holds are 293 dollars; this is validation-harness correction, not additional generation candidates or solver attempts.
+
+### 2026-10-17 — corrected LCC native/Marin runtime comparison
+
+The corrected grader-image argument passed all six controls on both routes: baseline 0, reference 1, partial DNA-only 0, equivalent DNA entropy preserving legacy behavior 1, constant-zero 0, and whole-sequence 0. Each native control retained 12 test identities. Learner import readiness and private-path absence before/after grading passed. Zero model calls; blind solver and final acceptance review remain pending. Evidence: `evidence/marin-lcc-runtime-02/`. Independent Daytona lookup returned HTTP404 at 19:41:19 UTC; the capacity claim is released. The previous driver failure remains preserved. Estimates/holds remain $293 of $1,000; actual charges unverified.

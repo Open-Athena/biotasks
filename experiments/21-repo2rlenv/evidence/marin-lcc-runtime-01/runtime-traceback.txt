@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/work/native/check_marin_lcc_runtime.py", line 119, in <module>
+    main()
+  File "/work/native/check_marin_lcc_runtime.py", line 108, in main
+    asyncio.run(controls(task,images,cases))
+  File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.12/asyncio/base_events.py", line 687, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/work/native/check_marin_lcc_runtime.py", line 65, in controls
+    result=await grade_in_sandbox(task,attempt,factory,specs['learner'],task_machine=learner,timeout=120)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/marin/lib/taskcompendium/src/taskcompendium/runtime/grading.py", line 452, in grade_in_sandbox
+    validate_machine_spec(grading.environment, factory, machine_spec)
+  File "/work/marin/lib/taskcompendium/src/taskcompendium/runtime/environment.py", line 59, in validate_machine_spec
+    factory.check_environment(requirements, bound_machine_spec(requirements, factory, spec))
+  File "/work/marin/lib/shellbox/src/shellbox/backends/docker/machine.py", line 277, in check_environment
+    check_execution_requirements(
+  File "/work/marin/lib/shellbox/src/shellbox/machine.py", line 216, in check_execution_requirements
+    raise UnsupportedMachineSpec("Machine must use the task's required image")
+shellbox.machine.UnsupportedMachineSpec: Machine must use the task's required image
