@@ -972,3 +972,8 @@ Re-read the current issue body and recorded a requirement-level incomplete-work 
 ### 2026-10-17 21:08 UTC — Code-instruct candidate allowance reconciliation
 
 Both completed code-instruct author jobs lack preserved results; their actual attempts and generation outcomes remain unknown. Verified that the recorded pre-fix adapter already bounded seed attempts to ten, while exact submitted-byte provenance remains incomplete. Conservatively account all ten candidates against each original cohort rather than resetting the allowance and repeating work. Record first-pass outcomes as inconclusive evidence-capture failures, not scientific zero-yield results. The tested capture repair is preparation for a separately scoped future run, not authorization to expand this first pass.
+
+
+### 2026-10-17 21:10 UTC — Endless Terminals input cohort
+
+Pinned native taxonomy contains generic computing contexts but no biological scenario. Prepared a separately labeled synthetic genomic-interval cohort with ten native draws (seed24), preserving categories and complexity and retaining original records alongside explicit biological-context adaptations. Native recipe authoring and grading logic are unchanged. Frozen-input validation, flat transfer layout and changed-input rejection passed locally. Target3/max10/maxrepairs2; no model or remote execution yet. TerminalWorld still requires an eligible recording and is not claimed covered by this cohort.
