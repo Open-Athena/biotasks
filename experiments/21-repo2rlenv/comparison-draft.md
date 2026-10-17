@@ -32,7 +32,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links nine generation/materialization rows and two solver rows to eleven hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links ten generation/materialization rows and two solver rows to thirteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -42,6 +42,7 @@ The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json
 | swe-gen-biopython-01 | 1 | 1 | 1 | 3347 | 13623 | 12557 |
 | r2e-skbio-author-01 | 10 | 0 | 30 | 94162 | 1179584 | unknown |
 | tmax-biological-02 | 3 | 0 | 12 | 54166 | 647644 | 601324 |
+| endless-biological-02 | 10 | 0 | 34 | 130826 | 860060 | 768301 |
 | parent-evolution-build-01 | unknown | 0 | 0 | unknown | unknown | unknown |
 | code-instruct-biopython | unknown | unknown | unknown | unknown | unknown | unknown |
 | code-instruct-scikit-bio | unknown | unknown | unknown | unknown | unknown | unknown |

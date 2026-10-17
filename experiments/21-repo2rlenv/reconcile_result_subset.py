@@ -50,6 +50,13 @@ def build():
                  'candidates':d['candidates'],'exports':d['emitted'],
                  'preserved_model_responses':len(u['calls']),**tokens([x['usage'] for x in u['calls']]),
                  'source':path,'usage_source':usage_path})
+    path='evidence/endless-biological-02/summary.json';d=read(path)
+    usage_path='evidence/endless-biological-02/model-usage.json';u=read(usage_path)
+    rows.append({'run':'endless-biological-02','recipe':'endless_terminals','repository':None,
+                 'candidates':d['candidates'],'exports':d['exports'],
+                 'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
+                 'preserved_model_responses':d['preserved_model_responses'],
+                 **tokens([x['usage'] for x in u['calls']]),'source':path,'usage_source':usage_path})
     path='evidence/parent-evolution-build-01/result-summary.json';d=read(path)
     rows.append({'run':'parent-evolution-build-01','recipe':'seta_evol','repository':None,
                  'candidate_builds_started':d['candidate_builds_started'],
