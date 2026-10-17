@@ -680,3 +680,7 @@ The user authorized a $1,000 campaign ceiling, replacing $300. All other agreed 
 ## 2026-10-17 — DataArc build entrypoint preparation
 
 Added the entrypoint for the pinned experimental DataArc implementation. It verifies the twelve frozen parent-derived seed records before executing native materialization/build/repair/trial/export with target three, at most ten candidates and two repairs. It retains native context omissions and lineage, records settings, and preserves partial output. Offline native-loader checks passed, including rejection of changed identities, repair bounds, concurrency and deadlines. No DataArc calls or workers launched; enclosing controller and dispatch remain pending. R2E and SETA Evol jobs were independently observed RUNNING at 18:29 UTC.
+
+## 2026-10-17 — DataArc controller preparation
+
+Added a remote controller that validates frozen parent records before allocation, preserves partial evidence, attempts cleanup even after capture failure, and checks worker absence separately. Its offline failure-path test passed. Prepared a private wrapper with pinned Harbor/Daytona extras, verified parent archive transfer and partial-output fallback. No DataArc dispatch or campaign reservation yet: R2E and SETA Evol were still RUNNING at 18:32 UTC, potentially occupying three of four allowed instances; DataArc needs two. Submission launcher remains to prepare.

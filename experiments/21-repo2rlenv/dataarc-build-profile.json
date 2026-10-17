@@ -1,0 +1,30 @@
+{
+  "stage": "prepared_not_submitted",
+  "recipe": "dataarc",
+  "parent_manifest": "seeds/pr2633-parent-v1/manifest.json",
+  "generation_settings": "glm-generation-adaptation.json",
+  "target": 3,
+  "max_candidates": 10,
+  "max_repairs": 2,
+  "controller": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "worker": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "native_audit_ledger_usd": 50,
+  "native_audit_ledger_note": "Includes synthetic native reservations for free GLM calls; not billed costs or campaign reservation.",
+  "dispatch_constraint": "Needs two free instance slots; existing R2E plus SETA Evol may use three of four. Recheck before dispatch.",
+  "checkpoint_sha256": {
+    "build_dataarc.py": "7fa21d9e64a6981b84f2c2f0995eca06fd89c6b76ed33b4e796cc1be9e5f95e0",
+    "run_dataarc_build.py": "6dd4e3a5209203c614e5cc6d494c3732790b03550c4d2787d80946bbdf105b6d",
+    "glm_authoring_adapter.py": "684e86c0108486d4ca61f871a3260337e4eddea7abec1912cab645bed2312ded",
+    "preserve_author_output.py": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd",
+    "package_provider_task.py": "6ef38b7abfddbf96abb9ea73df921ffac51c5ef9b2e9462da1e0d146698683cd"
+  },
+  "private_wrapper_sha256": "20268db52c672b3066252057108aa49e88cc1b5a19e6570ca9b4251731bb5394"
+}
