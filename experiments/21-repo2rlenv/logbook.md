@@ -967,3 +967,8 @@ Added a no-model native control runner and controller stage for the two reviewed
 ### 2026-10-17 21:06 UTC — Scope reconciliation
 
 Re-read the current issue body and recorded a requirement-level incomplete-work audit with evidence hashes. The matrix contains 23 executable routes plus one planned route. Updated stale SWE-gen/SWE-Next/R2E-Gym entries to reflect current dispatch, adaptation, public permission corrections and outstanding acceptance gates. Five native pilot tasks are accepted, with two blind outcomes recorded and three SCALER attempts pending. Shared PR2633 history variants do not satisfy independent-task targets. The remaining work includes applicable repository cohorts, seed routes, independent controls, reward metadata compatibility and final comparative reporting; no completion claim is supported.
+
+
+### 2026-10-17 21:08 UTC — Code-instruct candidate allowance reconciliation
+
+Both completed code-instruct author jobs lack preserved results; their actual attempts and generation outcomes remain unknown. Verified that the recorded pre-fix adapter already bounded seed attempts to ten, while exact submitted-byte provenance remains incomplete. Conservatively account all ten candidates against each original cohort rather than resetting the allowance and repeating work. Record first-pass outcomes as inconclusive evidence-capture failures, not scientific zero-yield results. The tested capture repair is preparation for a separately scoped future run, not authorization to expand this first pass.
