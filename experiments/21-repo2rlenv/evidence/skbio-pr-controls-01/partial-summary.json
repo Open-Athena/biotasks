@@ -1,0 +1,29 @@
+{
+  "records": [
+    {
+      "case": "baseline",
+      "command": [
+        "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+        "run",
+        "--path",
+        "/evidence/native/independent/bundles/baseline",
+        "--agent",
+        "oracle",
+        "--env",
+        "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+        "--n-concurrent",
+        "1",
+        "--max-retries",
+        "0",
+        "--job-name",
+        "baseline",
+        "--jobs-dir",
+        "/evidence/native/independent/jobs",
+        "--quiet"
+      ],
+      "expected_reward": 0,
+      "stage": "running",
+      "timeout_sec": 900
+    }
+  ]
+}

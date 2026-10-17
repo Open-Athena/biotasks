@@ -556,3 +556,13 @@ Submitted `/exedev/biotasks21-seta-intervals-build-20261017-01` at 16:30 UTC fro
 ## 2026-10-17 — PR2633 independent-control preparation
 
 Prepared five deterministic submissions through the unchanged native task: unchanged baseline, original reference, an alternative masked-division implementation covering E/M updates, an E-step-only coverage observation, and incorrect uniform responsibilities. E-step-only is not presupposed incorrect: the reported example may be resolved without the additional M-step correction. Control preparation verifies all instruction, grading and environment files remain byte-identical; only solve.sh changes for diagnostic submissions. Offline preparation and generated Python parsing passed. Remote Harbor contract load precedes the baseline image build. Reserve $5 for one fresh CPU worker; conservative accounted estimates/holds become $188/$300. Zero model calls, no solver score, no independent-acceptance claim.
+
+## 2026-10-17 — CLI-Gym selected-profile compatibility
+
+Static AST inspection confirms the pinned native constructor rejects any test_paths other than [tests]. Both selected Python profiles use different paths, so these exact native profiles are incompatible before remote execution. Source hash and the concrete paths are preserved. This is not a remote-run result or a claim that a separately adapted layout or another repository cannot work. No model calls or worker allocation for this finding.
+
+PR2633 controls run 01 completed in 130.321 seconds at the controller level, but its worker failed before producing a trial. Harbor loaded the task and built the baseline image; the unchanged native task's network policy was rejected by OfflineDockerEnvironment. The reporting helper subsequently found no per-trial result. Zero completed trials, unknown control rewards, no scientific outcome. Saved the 89,940-byte native archive; independent provider lookup confirmed sandbox absence (404) at 16:39:31 UTC.
+
+Prepared a separate explicit offline compatibility profile: environment, agent and verifier all request no-network; the host-blocking Compose fragment is replaced by the offline adapter's isolated namespace, and native grading/instruction files remain unchanged. The original profile/failure remains preserved. Offline preparation checks cover both profiles and passed. This adaptation has not run remotely yet.
+
+Original PR control failure is now public: snapshot `research/21-repo2rlenv/2026-10-17/e3117fe78b477f965240bbe064d47a374b06f87989106457879dcd06725ff6f9`, 17 objects and 64 archive members anonymously verified. Reserve $5 for the separate offline compatibility profile, bringing conservative accounted estimates/holds to $193/$300. Native grader and original task evidence remain unchanged.

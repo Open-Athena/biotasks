@@ -45,6 +45,7 @@ def main():
             "skbio-pr",
             "skbio-pr-compiled",
             "skbio-pr-controls",
+            "skbio-pr-controls-offline",
             "marin-schema",
             "marin-runtime",
         ),
@@ -63,7 +64,7 @@ def main():
         parser.error("Flow controls require --config")
     if args.stage in ("flow-independent", "lcc-independent") and args.generation_archive is None:
         parser.error("Independent controls require the original control archive")
-    if args.stage == "skbio-pr-controls" and args.generation_archive is None:
+    if args.stage in ("skbio-pr-controls", "skbio-pr-controls-offline") and args.generation_archive is None:
         parser.error("Scikit-bio PR controls require the original native task archive")
     if args.stage == "code-instruct-validation":
         authored = json.loads(args.issues.read_text())
@@ -124,13 +125,15 @@ def main():
                 worker.upload(root / script, "/work/native/" + script)
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = f"/work/native/run_{family}_independent.py "
-        elif args.stage == "skbio-pr-controls":
+        elif args.stage in ("skbio-pr-controls", "skbio-pr-controls-offline"):
             worker.upload(args.generation_archive, "/work/native/controls.tar.gz")
             for filename in ("prepare_skbio_pr_controls.py", "run_skbio_pr_controls.py"):
                 worker.upload(root / filename, "/work/native/" + filename)
             worker.upload(root / "skbio-pr-compiled.Dockerfile", "/work/native/Dockerfile")
             unpack = "mkdir inputs; tar -xzf controls.tar.gz -C inputs; "
             entry = "/work/native/run_skbio_pr_controls.py "
+            if args.stage == "skbio-pr-controls-offline":
+                entry += "--offline-profile "
         elif args.stage in ("skbio-pr", "skbio-pr-compiled"):
             worker.upload(root / "replay_skbio_pr.py", "/work/native/replay_skbio_pr.py")
             dockerfile = "skbio-pr-compiled.Dockerfile" if args.stage == "skbio-pr-compiled" else "skbio-pr.Dockerfile"

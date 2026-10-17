@@ -1,5 +1,6 @@
 """Run alternative-correct and incorrect submissions through the unchanged grader."""
 
+import argparse
 import json
 import os
 import signal
@@ -14,6 +15,9 @@ from repo2rlenv.execution.lifecycle import save_record
 def main():
     if os.environ.get("REPO2RLENV_REMOTE_WORKER") != "1":
         raise RuntimeError("Remote execution required")
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--offline-profile", action="store_true")
+    args = parser.parse_args()
     output = Path("/evidence/native/independent")
     output.mkdir(parents=True, exist_ok=False)
     original = Path(
@@ -32,7 +36,7 @@ def main():
             str(original),
             "--output",
             str(output / "bundles"),
-        ],
+        ] + (["--offline-profile"] if args.offline_profile else []),
         check=True,
         timeout=120,
     )
@@ -80,7 +84,12 @@ def main():
                     except subprocess.TimeoutExpired:
                         os.killpg(process.pid, signal.SIGKILL)
                         process.wait()
-        evidence = read_trial(output / "jobs" / name)
+        try:
+            evidence = read_trial(output / "jobs" / name)
+        except Exception as exc:
+            record.update(stage="evidence_unavailable", error_type=type(exc).__name__)
+            save_record(output / "summary.json", {"records": records})
+            raise
         record.update(
             stage="completed",
             completed=evidence.completed,

@@ -8,7 +8,10 @@ import argparse
 import hashlib
 import json
 import shutil
+import tomllib
 from pathlib import Path
+
+import tomli_w
 
 E_OLD = '        resp /= np.sum(resp, axis=0, keepdims=True)'
 M_OLD = '        l1, l2 = numer / denom'
@@ -23,23 +26,41 @@ CASES = {
 }
 
 
-def retained_hashes(task):
+def retained_hashes(task, *, offline=False):
     result = {}
     for p in sorted(task.rglob('*')):
         if p.is_symlink():
             raise ValueError('Unexpected linked task asset')
-        if p.is_file() and str(p.relative_to(task)) != 'solution/solve.sh':
+        excluded = {'solution/solve.sh'}
+        if offline:
+            excluded |= {'task.toml', 'environment/docker-compose.yaml'}
+        if p.is_file() and str(p.relative_to(task)) not in excluded:
             result[str(p.relative_to(task))] = hashlib.sha256(p.read_bytes()).hexdigest()
     return result
 
 
-def prepare(task, output):
-    hashes = retained_hashes(task)
+def offline_profile(task):
+    path = task / 'task.toml'
+    config = tomllib.loads(path.read_text())
+    for phase in ('environment', 'agent', 'verifier'):
+        config.setdefault(phase, {})['network_mode'] = 'no-network'
+    config['environment'].update(cpus=1, memory_mb=2048)
+    metadata = config['metadata']['repo2env']
+    metadata['original_content_hash'] = metadata.pop('content_hash', '')
+    metadata['validation_profile'] = 'offline_runtime_compatibility_unvalidated'
+    path.write_text(tomli_w.dumps(config))
+    (task / 'environment/docker-compose.yaml').unlink()
+
+
+def prepare(task, output, *, offline=False):
+    hashes = retained_hashes(task, offline=offline)
     output.mkdir(parents=True, exist_ok=False)
     records = []
     for name, (replacements, expected) in CASES.items():
         dest = output/name
         shutil.copytree(task, dest)
+        if offline:
+            offline_profile(dest)
         program = ('from pathlib import Path\n'
                    "p=Path('/workspace/skbio/stats/composition/_ancombc.py')\n"
                    's=p.read_text()\n')
@@ -47,13 +68,16 @@ def prepare(task, output):
             program += f'assert s.count({before!r}) == 1\ns=s.replace({before!r},{after!r},1)\n'
         program += 'p.write_text(s)\n'
         (dest/'solution/solve.sh').write_text("#!/bin/bash\nset -eu\npython3 - <<'PYCONTROL'\n" + program + 'PYCONTROL\n')
-        assert retained_hashes(dest) == hashes
+        assert retained_hashes(dest, offline=offline) == hashes
         records.append({'case':name,'bundle':str(dest),'expected_reward':expected,
                         'interpretation':'coverage observation only' if expected is None else 'correctness control'})
     dest=output/'native_reference'
     shutil.copytree(task,dest)
+    if offline:
+        offline_profile(dest)
+    assert retained_hashes(dest, offline=offline) == hashes
     records.insert(1,{'case':'native_reference','bundle':str(dest),'expected_reward':1,'interpretation':'native reference replay'})
-    (output/'manifest.json').write_text(json.dumps({'stage':'prepared_unexecuted_controls','unchanged_assets':hashes,'cases':records},indent=2)+'\n')
+    (output/'manifest.json').write_text(json.dumps({'stage':'prepared_unexecuted_controls','offline_profile':offline,'unchanged_assets':hashes,'cases':records},indent=2)+'\n')
     return records
 
 
@@ -61,5 +85,6 @@ if __name__ == '__main__':
     parser=argparse.ArgumentParser()
     parser.add_argument('--task',type=Path,required=True)
     parser.add_argument('--output',type=Path,required=True)
+    parser.add_argument('--offline-profile',action='store_true')
     args=parser.parse_args()
-    prepare(args.task,args.output)
+    prepare(args.task,args.output,offline=args.offline_profile)

@@ -1,0 +1,30 @@
+{
+  "stage": "static_source_inspection",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_path": "src/repo2rlenv/pipelines/recipes/cli_gym/pipeline.py",
+  "source_sha256": "e80f34610cfc4ff1593d6cf399ae7cbf852161286d5f99773f0984bb6ef87314",
+  "native_required_test_paths": [
+    "tests"
+  ],
+  "profiles": [
+    {
+      "repo": "biopython",
+      "profile_file": "swe-smith-biopython-adapted-worker.json",
+      "selected_test_paths": [
+        "Tests/test_SeqUtils.py"
+      ],
+      "native_constructor_rejects_selected_paths": true
+    },
+    {
+      "repo": "scikit-bio",
+      "profile_file": "swe-smith-skbio-worker.json",
+      "selected_test_paths": [
+        "skbio/diversity/alpha/tests/test_base.py"
+      ],
+      "native_constructor_rejects_selected_paths": true
+    }
+  ],
+  "remote_runs": 0,
+  "model_calls": 0,
+  "limitation": "Applies to the selected native profiles only. Does not prove that a separately adapted test layout or a different repository is unsupported."
+}
