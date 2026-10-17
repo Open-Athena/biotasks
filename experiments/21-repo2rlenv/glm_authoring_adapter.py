@@ -1,6 +1,6 @@
 """Explicit generation-only GLM adaptation; preserve upstream authoring logic."""
 
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from unittest.mock import patch
 
 import litellm
@@ -42,8 +42,12 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
         from repo2rlenv.pipelines.recipes.swe_gen import instruction
 
         targets["swe_gen"] = instruction
-    target = targets[metering_target]
-    original_metered = target.metered_complete
+    if metering_target == "terminal_stages":
+        from repo2rlenv.pipelines.recipes.terminal import templates, runner
+
+        selected_targets = [templates, structured, runner]
+    else:
+        selected_targets = [targets[metering_target]]
     original_completion = litellm.completion
     calls = 0
 
@@ -72,12 +76,15 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
         )
         return raw
 
-    def metered(*args, **kwargs):
-        kwargs["max_tokens"] = settings["max_output_tokens"]
-        return original_metered(*args, **kwargs)
+    def wrap_metered(original):
+        def metered(*args, **kwargs):
+            kwargs["max_tokens"] = settings["max_output_tokens"]
+            return original(*args, **kwargs)
+        return metered
 
-    with (
-        patch.object(target, "metered_complete", new=metered),
-        patch.object(litellm, "completion", new=completion),
-    ):
+    with ExitStack() as stack:
+        for target in selected_targets:
+            stack.enter_context(patch.object(target, "metered_complete",
+                                            new=wrap_metered(target.metered_complete)))
+        stack.enter_context(patch.object(litellm, "completion", new=completion))
         yield
