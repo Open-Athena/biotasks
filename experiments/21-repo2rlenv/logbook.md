@@ -912,3 +912,7 @@ Added a capture helper that writes child stdout/stderr and terminal status to su
 ### 2026-10-17 — Full LCC conversion/runtime archive
 
 Published HF snapshot `732d2ff628e16bf89d6ca771cd6f79484666bce458eda45862aaf59977a30dd1`, preserving the full adapted LCC TaskSpec, separate build contexts, six control submissions and native/Marin results. All 21 objects and 80 archive members were verified via anonymous downloads, including streamed decompression/hash verification of the 339,361,177-byte TaskSpec. Source notices retained. Historical preparation tags are preserved with acceptance/runtime evidence; this does not claim training readiness or Atlas admission.
+
+### 2026-10-17 — SWE-gen public-source preparation
+
+Native resolver selected PR2633 head `4c07596c68e8e6c1f51f5ea917e642e933802aa7`, distinct from history merge `9bbf05b530a9fe08ab200e9c073a118e60096d3c`. An initial equality assertion failed before any remote/model work; source metadata now freezes the actual native head, base metadata, source diff and selected test. Native PRSource/options validate with target3/max10 and default force_generate_instruction=false. Bootstrap/reverse-source contrast/authoring/export remain pending. One PR calibration shares existing lineage and cannot yield three independent problems.
