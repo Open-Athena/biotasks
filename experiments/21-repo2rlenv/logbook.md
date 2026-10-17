@@ -1093,3 +1093,8 @@ Added a dedicated SCALER wrapper using the existing single-attempt solver and pr
 ### 2026-10-17 22:16 UTC — Biopython R2E authoring inputs frozen
 
 Previous Biopython R2E evidence shows ten candidate functions prepared and zero model calls; authoring remains unexecuted. Kept its exact adapted repository profile and source revision, seed24, target3/max10/maxrounds3. Added a wrapper around the existing controller with bounded512MiB child evidence capture and private relay selection through launcher environment. Both repository profiles pass mocked GLM/settings, success/failure recovery and worker cleanup checks; wrapper success, child timeout and setup failure checks pass. Frozen eight transfer inputs with exact hashes. No worker, model call, budget reservation or dispatch occurred; this does not reset the cohort allowance.
+
+
+### 2026-10-17 22:18 UTC — Biopython history dispatch packages frozen
+
+Prepared separate SWE-Next and R2E-Gym transfer packages:19 total files with exact sizes/hashes. SWE-Next retains one pinned PR5317 metadata input; R2E-Gym retains bounded history and native selection rules. Both use the explicit unchanged document/fixture-copy profile previously checked, and a wrapper with child logs and up to2GiB remote evidence preservation. Mocked success, child timeout and setup failure pass for both recipe branches; SWE-Next-only PR arguments are checked. No budget reservation, submission or model calls. Both existing generation jobs were confirmed RUNNING at22:17UTC; their four slots remain reserved.
