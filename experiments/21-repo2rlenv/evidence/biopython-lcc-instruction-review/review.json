@@ -1,0 +1,46 @@
+{
+  "stage": "independent_instruction_test_contract_review",
+  "candidate_id": "e4027e396d2357882bc7",
+  "method": "source inspection of preserved exported bundle; prior arithmetic and execution evidence reviewed separately",
+  "input_sha256": {
+    "instruction.md": "8476a8a5fdea65d9fa0178183eae6b249a90521e341e8178f2b9a8f1599bcaed",
+    "tests/contract.json": "e8a6673c152ddee8178f1075940e17d4146f23319c5bd448cba0f33010ca0741",
+    "tests/source/Tests/test_SeqUtils.py": "db85ec98332a646a1ef65c355e1015edcebeeaee17fd3c9194f2261381dc4b5d",
+    "solution/reference.py": "5c16386511a8462504aa6cf9e5d8672e93cb8bd79b2a12146bb5442611ed31df"
+  },
+  "findings": [
+    {
+      "claim": "The stated DNA reproducer and expected values agree with test_checksum3.",
+      "evidence": "Tests/test_SeqUtils.py:329; independent-review.json in biopython-author-02 checks all 13 entropies.",
+      "status": "supported"
+    },
+    {
+      "claim": "The grader also requires preserving other public behavior.",
+      "evidence": "instruction.md final paragraph; contract.json requires 12 named passing tests including checksum1 and checksum2.",
+      "status": "supported_with_important_legacy_constraint"
+    },
+    {
+      "claim": "The task tests the full stated DNA mathematical contract.",
+      "evidence": "Native tests exercise the 32-base example at window 20 and ACGATAGC at full length; this does not establish arbitrary-sequence or arbitrary-window coverage.",
+      "status": "not_established"
+    },
+    {
+      "claim": "The phrase uniform windows is unambiguous.",
+      "evidence": "Earlier text says equal A/C/G/T counts; final shorthand could also mean homopolymer windows, which have zero entropy.",
+      "status": "wording_ambiguity"
+    }
+  ],
+  "scientific_tolerance": "Native checksum tests use unittest.assertAlmostEqual(..., places=2); the shorter full-window case uses places=4. Rounded-decimal assertions do not by themselves prove a portable strict absolute-error contract at exact rounding boundaries.",
+  "competency": "Software repair of a sequence-composition statistic, with a supplied Shannon-entropy definition; biological knowledge beyond the stated contract is limited.",
+  "acceptance": "pending",
+  "remaining": [
+    "fresh-worker reward repeatability",
+    "resolve instruction wording ambiguity before release",
+    "complete solver isolation assessment",
+    "assess adequacy of finite native correctness coverage",
+    "Marin conversion and runtime controls",
+    "blind solver evaluation only after acceptance"
+  ],
+  "model_calls": 0,
+  "remote_execution_in_this_review": false
+}
