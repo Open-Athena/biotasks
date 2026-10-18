@@ -1276,3 +1276,7 @@ Four additional public commit metadata records were documentation/lint-oriented 
 ### 2026-10-18 Interim validation reconciliation
 
 Extended the evidence-linked subset with four validation rows: Strong native coverage rejection, GC-skew original build failure, corrected native contrast, and Esty pre-allocation failure. The twelve generation rows and two solver rows remain unchanged; twenty source records are hashed. Repeated export/control runs are not counted as new generation candidates or independent problems. Updated route/comparison status; fixed one pre-existing unquoted-comma CSV reason and verified a full24-row round trip. Corrected Esty run02 remains active as observed00:00 UTC. Full funnel and completion audit remain incomplete.
+
+### 2026-10-18 Esty independent controls passed
+
+Corrected run02 completed all five34-test native controls: baseline0 (33 passed), reference1 (34), alternative factored variance1 (34), incorrect clipped lower bound0 (33), incorrect omitted-doubleton variance0 (33). All native grading completed without runtime exceptions or model calls. Recovered201300-byte supported archive SHA25674ce83d684dfe88cf9dc4ba259539c870793f8b8569e3b917ca22a18ede51ad7 and hash-verified nested capture;101 native evidence files retained with modes. Independent worker404 confirmed, controller terminal and two-slot claim released. Fresh provider runtime, final instruction/tolerance review and blind attempt remain pending.
