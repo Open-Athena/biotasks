@@ -1,0 +1,26 @@
+{
+  "stage": "dependency_profile_plan_not_frozen_or_dispatched",
+  "source_pr": 2636,
+  "same_source_lineage_not_a_new_task": true,
+  "proposed_changes": {
+    "add_cpu_dependencies": [
+      "numba==0.68.0",
+      "llvmlite==0.50.0"
+    ],
+    "retain_existing_numpy": "2.5.3",
+    "retain_python": "3.13.2",
+    "no_GPU_packages_or_hardware": true,
+    "no_skip_predicate_change": true
+  },
+  "compatibility_primary_reference": "https://numba.readthedocs.io/en/stable/user/installing.html#version-support-information",
+  "package_metadata_references": [
+    "https://pypi.org/pypi/numba/0.68.0/json",
+    "https://pypi.org/pypi/llvmlite/0.50.0/json"
+  ],
+  "compatibility_checked": "Official table lists Numba0.68 support for Python3.10 through3.15, NumPy2 below2.6, and llvmlite0.50; current NumPy/Python need not change.",
+  "candidate_allowance_if_run": "Charge one additional execution profile conservatively: current4 to5of10; no new independent source lineage or cap reset.",
+  "new_hold_reserved_usd": 0,
+  "model_calls_dispatched": 0,
+  "independent_admissions": 0,
+  "limits": "This can enable intended CPU mock/Numba tests; it does not establish physical GPU correctness or resolve instruction/grader agreement by itself."
+}

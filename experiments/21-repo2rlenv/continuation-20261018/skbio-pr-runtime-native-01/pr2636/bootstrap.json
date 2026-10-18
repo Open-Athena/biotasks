@@ -1,0 +1,22 @@
+{
+  "build_time_sec": 108.92101506143808,
+  "dockerfile_reconstruction": "FROM python:3.13.2-slim\nENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 POLARS_MAX_THREADS=1 RAYON_NUM_THREADS=1\nRUN apt-get update && apt-get install -y --no-install-recommends git build-essential && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace\nRUN git init && git remote add origin https://github.com/scikit-bio/scikit-bio.git && git fetch --depth=1 origin e6f51b1ef6de5fba07cb184fa5152ee8920abd87 && git checkout --detach FETCH_HEAD\nRUN python -m pip install --no-cache-dir -e '.[test]' 'numpy==2.5.3' 'scipy==1.18.1' 'pandas==3.0.6' 'pytest==9.0.3'\nRUN python -m pip freeze --all > /opt/baseline-freeze.txt\nRUN mkdir -p /opt/skbio-baseline-extensions && find skbio -type f -name \"*.so\" -exec cp --parents {} /opt/skbio-baseline-extensions/ \\; && find /opt/skbio-baseline-extensions -type f -exec sha256sum {} \\; > /opt/skbio-baseline-extension-sha256.txt\n",
+  "extra": {},
+  "image_digest": "sha256:553187f0d99bebb74e8f872622366220a7c4bafe0c2fecde4d6169aa3de22bdd",
+  "image_tag": "biotasks21-skbio-pr-2636",
+  "iterations": 0,
+  "language": "python",
+  "llm_cost_estimate_usd": 0.0,
+  "llm_provider": "none; explicit frozen Docker profile",
+  "pushed_to_registry": false,
+  "rebuild_cmds": [],
+  "ref": "e6f51b1ef6de5fba07cb184fa5152ee8920abd87",
+  "repo": "scikit-bio/scikit-bio",
+  "smoke_passed": false,
+  "test_cmds": [
+    "cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && python -m pytest -o addopts= -v --tb=short skbio/tree/tests/bp/test_bp.py"
+  ],
+  "transcript_path": null,
+  "verify_detail": "",
+  "verify_passed": false
+}

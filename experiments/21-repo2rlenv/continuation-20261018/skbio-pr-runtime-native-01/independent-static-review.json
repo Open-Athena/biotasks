@@ -1,0 +1,60 @@
+{
+  "records": [
+    {
+      "pr": 2630,
+      "stage": "independent_static_instruction_and_native_evidence_review",
+      "instruction_sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c",
+      "native_F2P": 4,
+      "native_P2P": 316,
+      "native_reward": "graded correctness: f2p_rate times p2p_rate, rounded six decimals",
+      "independently_admitted": false,
+      "new_control_executions": 0,
+      "model_calls": 0,
+      "decision": "proceed_to_portable_native_controls",
+      "notes": [
+        "Linked issue supplies observable ASCII-letter-only conversion, mask preservation and FASTA/FASTQ examples. The proposed ASCII ranges are part of the original issue; no generated instruction rewrite.",
+        "Four F2P checks exercise two Sequence methods and both writers; 316 regression expectations retained.",
+        "Need full/partial/incorrect/alternative native graded controls and portability before admission."
+      ]
+    },
+    {
+      "pr": 2636,
+      "stage": "independent_static_instruction_and_native_evidence_review",
+      "instruction_sha256": "f0ec58661e1491512f2e405c5aa0ac1bdfda1776c634f2766529705b3550f7e8",
+      "native_F2P": 2,
+      "native_P2P": 82,
+      "native_reward": "graded correctness: f2p_rate times p2p_rate, rounded six decimals",
+      "independently_admitted": false,
+      "new_control_executions": 0,
+      "model_calls": 0,
+      "decision": "rejected_current_CPU_profile",
+      "reasons": [
+        "Native F2P contains only fast-engine resolution and failed-import probe caching. Instruction also requires GPU out-of-memory behavior and correct device selection.",
+        "GPU-specific coverage cannot be established on the approved CPU-only profile; preserve skips instead of treating caching-only coverage as full validation.",
+        "Rendered instruction ends in a truncated performance section after describing fix details from the PR-body fallback."
+      ],
+      "limitations": [
+        "No independent partial-fix control was executed; coverage concern follows the retained native instruction/F2P/P2P evidence, not a measured incomplete-patch reward.",
+        "No accelerator request, prompt truncation repair, scope reduction or end-to-end grader integrity diagnostic."
+      ],
+      "native_log_evidence": {
+        "post_summary": "============== 84 passed, 24 skipped, 87 subtests passed in 1.40s ==============",
+        "skipped_CPU_fallback_method_examples": [
+          "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_out_of_memory_keeps_the_gpu SKIPPED [ 85%]",
+          "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_out_of_memory_recognized SKIPPED [ 86%]",
+          "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_use_device SKIPPED [ 87%]"
+        ]
+      },
+      "followup": "Consider separately pinned Numba CPU profile without changing skip conditions, hardware resources or original evidence. Real-device cases remain distinct.",
+      "skip_dependency_finding": {
+        "source_revision": "b9b66848f1c560da26894acd93118389050eb9f9",
+        "decorator_source": "skbio/util/_testing.py:numba_code",
+        "decorator_source_sha256": "f2fec31b4910dea5282bb150888bba59054fa99f5ad67209bf24dbe2f4868d1e",
+        "test_source_sha256": "9b0fa138417263bc4291f139e9a61c28d27547ce95e8f74e2948f2240e565089",
+        "finding": "BPGPUFallbackTests is gated by optional Numba import. Its fake-module fallback tests can run on CPU when Numba is installed; their current skips are not proof that GPU hardware is needed.",
+        "current_profile_still_unaccepted": true
+      }
+    }
+  ],
+  "new_admissions": 0
+}
