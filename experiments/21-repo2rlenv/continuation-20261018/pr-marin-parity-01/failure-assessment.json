@@ -1,0 +1,42 @@
+{
+  "stage": "one_profile_runtime_parity_two_artifact_transport_failures",
+  "marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
+  "schema_validated_profiles": 3,
+  "runtime_parity_validated_profiles": 1,
+  "native_control_executions": 8,
+  "Marin_graded_control_executions": 6,
+  "Marin_submission_failures_before_grading": 2,
+  "model_calls": 0,
+  "Atlas_admissions": 0,
+  "rows": [
+    {
+      "pr": 2630,
+      "schema_validated": true,
+      "paired_native_Marin_controls_passed": 6,
+      "runtime_parity": true,
+      "converted_grade_status": "graded",
+      "conversion_error": null,
+      "native_reward_does_not_prove_Marin_execution": false
+    },
+    {
+      "pr": 5317,
+      "schema_validated": true,
+      "paired_native_Marin_controls_passed": 0,
+      "runtime_parity": false,
+      "converted_grade_status": "submission_failure",
+      "conversion_error": "Grading artifact contains a link: ./LICENSE",
+      "native_reward_does_not_prove_Marin_execution": true
+    },
+    {
+      "pr": 5308,
+      "schema_validated": true,
+      "paired_native_Marin_controls_passed": 0,
+      "runtime_parity": false,
+      "converted_grade_status": "submission_failure",
+      "conversion_error": "Grading artifact contains a link: ./LICENSE",
+      "native_reward_does_not_prove_Marin_execution": true
+    }
+  ],
+  "finding": "Both Biopython workspace transfers are rejected because upstream LICENSE is a symlink. Submission-failure reward0 is not a measured native/Marin match or a solver/scientific failure. Scikit-bio2630 has six successful matching rewards and exact parsed counts.",
+  "next_action": "Preserve original failure; any supported transport normalization of the known in-repository license link must be an explicit separate conversion profile with byte-identical license content and fresh paired tests. Do not weaken Marin link rejection or alter source tests/reward."
+}

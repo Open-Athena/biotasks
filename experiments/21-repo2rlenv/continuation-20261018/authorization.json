@@ -1,11 +1,11 @@
 {
-  "recorded_utc": "2026-10-18T18:21:44.145611+00:00",
-  "stage": "continuation_first_contrast_submitted",
+  "recorded_utc": "2026-10-18T20:51:02.773528+00:00",
+  "stage": "CoreWeave_inference_only_client_exception_authorized",
   "campaign_ceiling_usd": 2000,
   "ceiling_is_total_not_additional": true,
   "first_pass_evidence_commit": "8b4f2eeb6c8d2ae25b63060aff04b0dd33310186",
   "historical_estimates_and_holds_usd": 908,
-  "remaining_conservative_allowance_usd": 1092,
+  "remaining_conservative_allowance_usd": 1037,
   "actual_billing_and_credits_verified": false,
   "cpu_execution": "existing_free_TRC_capacity_only",
   "paid_coreweave_cpu_fallback": false,
@@ -31,5 +31,10 @@
   },
   "candidate_policy": "Original per-route/repository target3/cap10 unchanged; unknown allowances remain conservatively consumed. No cap reset or duplicate solver attempt.",
   "remote_launches": 1,
-  "model_calls": 0
+  "model_calls": 0,
+  "cpu_execution_scope": "Repository builds, tests and their controllers; separate inference-only client exception below.",
+  "glm_client_cpu_backend": "existing_allocated_CoreWeave_CPU",
+  "glm_client_cpu_authorized": true,
+  "coreweave_capacity_cost_basis": "User explicitly states allocated CoreWeave capacity is free; no generic platform pricing claim.",
+  "coreweave_scope": "Small CPU client for existing free GLM requests, request formatting and response preservation only. Repository builds/tests remain on free TRC with Daytona; no accelerators or paid model fallback."
 }
