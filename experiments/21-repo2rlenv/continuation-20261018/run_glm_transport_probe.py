@@ -21,7 +21,7 @@ def main():
         token = os.environ['BIOTASKS21_INFERENCE_CLIENT_TOKEN']
         payload = {'model': 'glm-5.3', 'max_tokens': 2048, 'messages': [{'role': 'user', 'content': 'Synthetic body transport check. ' * 64}]}
         raw = json.dumps(payload).encode()
-        headers = {'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json'}
+        headers = {'X-Biotasks21-Inference-Token': token, 'Content-Type': 'application/json'}
         with httpx.Client(timeout=45, follow_redirects=False) as client:
             missing = client.post(base + '/v1/transport-check', content=raw)
             record['checks'].append({'case': 'missing_application_bearer', 'status': missing.status_code, 'passed': missing.status_code == 401})

@@ -1,0 +1,82 @@
+{
+  "stage": "independent_correctness_gates_passed_public_preservation_pending",
+  "records": [
+    {
+      "pr": 2630,
+      "repository_key": "skbio",
+      "portable_asset_sha256": "a26ec72cc2e4b5ce6b9383ba0803b746a556254abb1be45bf7dd97c66313481f",
+      "native_instruction_grader_reference_unchanged": true,
+      "control_bundles_change_only_solution_script": true,
+      "separate_oracle_and_grading_assets": true,
+      "offline_runtime_and_terminal_tooling_configured": true,
+      "six_controls_passed": true,
+      "cases": [
+        {
+          "case": "baseline",
+          "reward": 0.0,
+          "parse_status": "ok",
+          "F2P_passed": 0,
+          "F2P_total": 4,
+          "P2P_passed": 50,
+          "P2P_total": 50
+        },
+        {
+          "case": "native_reference",
+          "reward": 1.0,
+          "parse_status": "ok",
+          "F2P_passed": 4,
+          "F2P_total": 4,
+          "P2P_passed": 50,
+          "P2P_total": 50
+        },
+        {
+          "case": "alternative",
+          "reward": 1.0,
+          "parse_status": "ok",
+          "F2P_passed": 4,
+          "F2P_total": 4,
+          "P2P_passed": 50,
+          "P2P_total": 50
+        },
+        {
+          "case": "partial",
+          "reward": 0.25,
+          "parse_status": "ok",
+          "F2P_passed": 1,
+          "F2P_total": 4,
+          "P2P_passed": 50,
+          "P2P_total": 50
+        },
+        {
+          "case": "incorrect",
+          "reward": 0.0,
+          "parse_status": "ok",
+          "F2P_passed": 0,
+          "F2P_total": 4,
+          "P2P_passed": 44,
+          "P2P_total": 50
+        },
+        {
+          "case": "alternative_repeat",
+          "reward": 1.0,
+          "parse_status": "ok",
+          "F2P_passed": 4,
+          "F2P_total": 4,
+          "P2P_passed": 50,
+          "P2P_total": 50
+        }
+      ]
+    }
+  ],
+  "controls_executed": 6,
+  "model_calls": 0,
+  "blind_attempts": 0,
+  "Atlas_admissions": 0,
+  "limitations": [
+    "Public durable readback and exact sandbox cleanup are separate gates.",
+    "Checks cover the native test contract, not exhaustive software correctness.",
+    "No end-to-end grader-integrity diagnostic is claimed.",
+    "Parent package/OS indexes and image tags remain rebuild dependencies.",
+    "Public historical PR lineages overlap other recipe cohorts and are not independent scientific domains."
+  ]
+}

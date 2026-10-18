@@ -6,6 +6,7 @@ upstream model service, execute target repositories, or hold sandbox credentials
 import hashlib
 import hmac
 import json
+import logging
 import os
 import signal
 import threading
@@ -46,12 +47,24 @@ def transport_check(body):
     return {'stage': 'authenticated_body_transport_check', 'request_sha256': hashlib.sha256(body).hexdigest(), 'request_bytes': len(body), 'model_calls': 0, 'repository_execution': False}
 
 
+def registration_address(host, server):
+    # Named ports may request zero: register the OS-selected listening port,
+    # following Iris's own worker-pool server pattern.
+    port = int(server.server_address[1])
+    if not 0 < port <= 65535:
+        raise ValueError('A bound nonzero service port is required')
+    formatted_host = '[' + host + ']' if ':' in host and not host.startswith('[') else host
+    return f'http://{formatted_host}:{port}'
+
+
 class Server(ThreadingHTTPServer):
     daemon_threads = True
     request_queue_size = 4
 
 
 def main():
+    for name in ('httpx', 'httpcore'):
+        logging.getLogger(name).setLevel(logging.WARNING)
     if os.environ.get('DAYTONA_API_KEY') or os.environ.get('REPO2RLENV_REMOTE_WORKER'):
         raise RuntimeError('Inference-only client must not receive sandbox execution credentials')
     token = os.environ['BIOTASKS21_INFERENCE_CLIENT_TOKEN']
@@ -92,7 +105,10 @@ def main():
             self.wfile.write(raw)
 
         def dispatch(self):
-            if not hmac.compare_digest(self.headers.get('Authorization', '').encode(), ('Bearer ' + token).encode()):
+            # Iris authenticates the capability URL and strips Authorization
+            # before forwarding. Keep our separate application credential in a
+            # nonreserved header that its documented proxy preserves.
+            if not hmac.compare_digest(self.headers.get('X-Biotasks21-Inference-Token', '').encode(), token.encode()):
                 self.reply(401, b'{"error":"unauthorized"}')
                 return
             allowed = (self.command, self.path) in {('GET', '/v1/models'), ('POST', '/v1/chat/completions'), ('POST', '/v1/transport-check')}
@@ -168,8 +184,9 @@ def main():
         signal.signal(sig, shutdown)
     status = {'stage': 'finite_authenticated_inference_only_client', 'status': 'starting', 'model': 'existing_free_glm_5_3', 'CPU_cost_basis': 'user_allocated_free_CoreWeave', 'repository_execution': False, 'sandbox_credentials_supplied': False, 'maximum_concurrent_forwarded_requests': 1, 'native_solver_max_output_tokens': 2048, 'lifetime_sec': 7200, 'upstream_service_modified': False}
     try:
-        with ctx.registry.registered('inference', f'http://{info.advertise_host}:{port}', {'purpose': 'issue21_native_solver_inference_only'}, access=EndpointAccess.ENDPOINT_ACCESS_LINK):
+        with ctx.registry.registered('inference', registration_address(info.advertise_host, server), {'purpose': 'issue21_native_solver_inference_only'}, access=EndpointAccess.ENDPOINT_ACCESS_LINK):
             status['status'] = 'serving'
+            status['registered_bound_port_nonzero'] = True
             (output / 'client-status.json').write_text(json.dumps(status, indent=2) + '\n')
             while not stop.is_set() and time.monotonic() - started < 7200:
                 server.handle_request()
