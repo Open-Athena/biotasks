@@ -68,6 +68,14 @@ def build():
                     charge += data['attempted']
                     cap_note += ' Continuation native attempts included; contrasts are not admissions.'
             next_action = 'Continue frozen remaining-allowance mutation cohort, then author/review/control/admit and one blind solve until three admissions or cap/budget stop.'
+        if route == 'repo_reconstruct/swe_flow':
+            counters_path = ROOT / 'flow-candidate-counters.json'
+            if counters_path.exists():
+                counters = json.loads(counters_path.read_text())
+                prefix = 'biopython-flow-' if unit['repository'] == 'biopython/biopython' else 'skbio-flow-'
+                charge = sum(x['generation']['attempted'] for x in counters['runs'] if x['run'].startswith(prefix))
+                cap_note = 'Exact saved native generation counters agree with events: empty Biopython trace run 0, adapted Biopython 3, scikit-bio 3. Prior authoring/export reuses saved identities.'
+                next_action = 'Use native exclusion IDs and remaining allowance for new development steps; independently review instructions and validate graders before admission.'
         if route == 'reasoning_synth/scaler':
             charge = 3
             cap_note = 'Three independently admitted synthetic task instances, one family; native reward -1/+1. Marin range metadata unresolved.'
