@@ -1,6 +1,7 @@
 """Reject changed inputs and exercise control lifecycle without provider/model calls."""
 import asyncio
 import copy
+import hashlib
 import json
 import os
 import shutil
@@ -14,6 +15,8 @@ from harbor.trial.network_policy import resolve_trial_network_plan
 from prdiff_runtime_input import check_task
 import run_prdiff_provider_controls as controls
 from run_pr_provider_preflight import config
+from run_prdiff_blind_solver import inputs as blind_inputs
+import run_prdiff_blind_solver as blind
 
 ROOT=Path('/tmp/biotasks21-private/prdiff-pilot-tasks-02')
 for cohort_name in ('biopython','skbio','bedtools','deseq'):
@@ -64,6 +67,39 @@ with tempfile.TemporaryDirectory() as temporary:
         asyncio.run(controls.run(path,root/'output'))
         assert len(calls)==6 and clean.call_count==7
         assert json.loads((root/'output/status.json').read_text())['status']=='passed'
+        control_path=root/'output/status.json'
+        accepted={'cohort':cohort['cohort'],'stage':'accepted_for_bounded_similarity_pilot',
+                  'controls_sha256':hashlib.sha256(control_path.read_bytes()).hexdigest(),
+                  'task_checksums':{x['task']:Task(Path(x['path'])).checksum for x in cohort['tasks']}}
+        acceptance=root/'acceptance.json';acceptance.write_text(json.dumps(accepted))
+        assert len(blind_inputs(path,control_path,acceptance)[1])==3
+        altered=copy.deepcopy(accepted);altered['controls_sha256']='0'*64;acceptance.write_text(json.dumps(altered))
+        try:blind_inputs(path,control_path,acceptance)
+        except AssertionError:pass
+        else:raise AssertionError('Unmatched provider controls accepted')
+        altered=copy.deepcopy(accepted);altered['task_checksums'][cohort['tasks'][0]['task']]='wrong';acceptance.write_text(json.dumps(altered))
+        try:blind_inputs(path,control_path,acceptance)
+        except AssertionError:pass
+        else:raise AssertionError('Changed accepted task checksum accepted')
+        acceptance.write_text(json.dumps(accepted));solver_calls=[]
+        async def solve_create(spec):
+            assert spec.agent.name=='terminus-2' and spec.agent.override_timeout_sec==900
+            assert spec.agent.kwargs['max_turns']==12 and spec.agent.kwargs['llm_call_kwargs']=={'max_tokens':2048}
+            solver_calls.append(spec.trial_name)
+            checksum=Task(spec.task.path).checksum
+            async def run_solver():
+                sidecar=spec.trials_dir/spec.trial_name/'verifier/reward-details.json';sidecar.parent.mkdir(parents=True)
+                sidecar.write_text(json.dumps({'components':{'llm_judge':None},'judge_model':None,'judge_endpoint':None}))
+                value={'exception_info':None,'task_checksum':checksum,'verifier_result':{'rewards':{'reward':0.25}}}
+                return SimpleNamespace(exception_info=None,task_checksum=checksum,model_dump=lambda **kw:value)
+            return SimpleNamespace(run=run_solver)
+        args=SimpleNamespace(cohort=path,controls=control_path,acceptance=acceptance,output=root/'blind-output')
+        with patch.dict(os.environ,{'BIOTASKS21_GLM_ENDPOINT':'https://example.invalid/v1','BIOTASKS21_GLM_KEY':'synthetic-test-value'}), \
+             patch.object(blind.Trial,'create',new=AsyncMock(side_effect=solve_create)),patch.object(blind,'cleanup'),patch.object(blind,'preserve'):
+            asyncio.run(blind.run(args))
+        assert len(solver_calls)==len(set(solver_calls))==3
+        saved=json.loads((args.output/'solver-status.json').read_text())
+        assert saved['status']=='completed' and all(x['result']['verifier_result']['rewards']['reward']==0.25 for x in saved['attempts'])
         bad_reward=True
         try:asyncio.run(controls.run(path,root/'wrong-reward'))
         except AssertionError:pass
