@@ -1,0 +1,114 @@
+{
+  "stage": "public_pr_metadata_diff_intake",
+  "observed_utc": "2026-10-18T01:48:09.738985+00:00",
+  "repository": "biopython/biopython",
+  "selection": "Associated public PRs for three commits already found in the bounded broader history intake.",
+  "records": [
+    {
+      "number": 5308,
+      "title": "Issue #5193 - Add __hash__ to SimpleLocation",
+      "head": "fe0a671bbc02b6a6a8ca4651e38e4774654ebab2",
+      "base": "dc262b5c437e07a8cc1cfb8a734c0d84a4434b23",
+      "merge_commit": "24e0b3fcea1882339b1753f5fe5f2d04fc282ecd",
+      "changed_files": [
+        "Bio/SeqFeature.py",
+        "Tests/test_SeqFeature.py"
+      ],
+      "test_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "added_test_or_assert_lines": 24,
+      "examples": [
+        "+    def test_hash_consistent_with_eq(self):",
+        "+        self.assertEqual(loc1, loc2)",
+        "+        self.assertEqual(hash(loc1), hash(loc2))",
+        "+        self.assertEqual(loc1, loc2)",
+        "+        self.assertEqual(hash(loc1), hash(loc2))"
+      ],
+      "metadata_sha256": "3242597616d897a79ea1cefac638faae77f5f7616ab35d6cbe5787a496776b3d",
+      "diff_sha256": "4c8e9d5157845d338a3527a82b6547bc6ecbd7481a6ca87f0608aa78862d7f39",
+      "status": "metadata_and_diff_intake_only"
+    },
+    {
+      "number": 5316,
+      "title": "Issue #5193 - Add __hash__ to CompoundLocation",
+      "head": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+      "base": "bbc55712db23d048cdc2cebc643453418f66593c",
+      "merge_commit": "5bbc6c12c505301f2d681f932c30fdb8fcbe9a6e",
+      "changed_files": [
+        "Bio/SeqFeature.py",
+        "Tests/test_SeqFeature.py"
+      ],
+      "test_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "added_test_or_assert_lines": 24,
+      "examples": [
+        "+    def test_hash_consistent_with_eq(self):",
+        "+        self.assertEqual(loc1, loc2)",
+        "+        self.assertEqual(hash(loc1), hash(loc2))",
+        "+        self.assertEqual(loc1, loc2)",
+        "+        self.assertEqual(hash(loc1), hash(loc2))"
+      ],
+      "metadata_sha256": "0155fb1aad94b45a70137374d54ee3a40a980c27d3ed58f34c63a31c24d6c561",
+      "diff_sha256": "425b64d9c2f37ee298e681eafad12e80bb839a4e67bdee9c51336c86c719435f",
+      "status": "metadata_and_diff_intake_only"
+    },
+    {
+      "number": 5358,
+      "title": "Accept CLUSTALW as a Clustal header word",
+      "head": "66663b71f1d6be95babc6a38cbdc66b0af295d07",
+      "base": "372c71069d9d0e7c86af4e318ce212241c2d10dd",
+      "merge_commit": "e38c64daa2433ecf21f596f76287d41122a4a000",
+      "changed_files": [
+        "Bio/Align/clustal.py",
+        "Bio/AlignIO/ClustalIO.py",
+        "CONTRIB.rst",
+        "NEWS.rst",
+        "Tests/test_AlignIO_ClustalIO.py",
+        "Tests/test_Align_clustal.py"
+      ],
+      "test_files": [
+        "Tests/test_AlignIO_ClustalIO.py",
+        "Tests/test_Align_clustal.py"
+      ],
+      "added_test_or_assert_lines": 8,
+      "examples": [
+        "+    def test_clustalw_header(self):",
+        "+        self.assertEqual(2, len(alignment))",
+        "+    def test_clustalw_header(self):",
+        "+        self.assertEqual(alignments.metadata[\"Program\"], \"CLUSTALW\")",
+        "+        self.assertNotIn(\"Version\", alignments.metadata)"
+      ],
+      "metadata_sha256": "3c05973d2a1b5cd6c2a70ef9792d7210b2922b5cb9cbe221af7a45e25fc713ad",
+      "diff_sha256": "2efceb6e8e6c16e1f5492fb01245ad3c3d9e39840f05831cbfe90f523dbdcf18",
+      "status": "metadata_and_diff_intake_only"
+    }
+  ],
+  "source_groups": [
+    {
+      "issue": 5193,
+      "pulls": [
+        5308,
+        5316
+      ],
+      "limitation": "SimpleLocation/CompoundLocation hashing share a problem lineage."
+    },
+    {
+      "pulls": [
+        5358
+      ],
+      "topic": "Clustal header compatibility"
+    }
+  ],
+  "remote_workers": 0,
+  "model_calls": 0,
+  "functional_tests": 0,
+  "generation_attempts": 0,
+  "limits": [
+    "Preserves exact returned PR base/head plus merge identities and full public patch bytes.",
+    "Added assertion/test lines demonstrate textual test changes, not passed native entity/eligibility filters or functional contrast.",
+    "Original PR5317 source-filter failure remains preserved and consumes its recorded allowance; no cap reset.",
+    "Packaging/test fixtures and native source selection still need review before generation."
+  ]
+}

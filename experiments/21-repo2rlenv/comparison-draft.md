@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:23 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:51 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -87,3 +87,5 @@ Final acceptance review rejects the unchanged SWE-gen and SWE-Next scikit-bio in
 Four added source-authoring rows join saved candidate records to native exports: Biopython SWE-smith authored1/3 and exported1 (four prior mutation attempts, three contrasts); scikit-bio SWE-smith authored2/3 and exported2; Biopython SWE-flow authored3/3 and exported1, with two incomplete instructions rejected before export; scikit-bio SWE-flow authored3/3 and exported3. These are stage counts, not four independent end-to-end yield estimates, and exclude earlier token-limit diagnostic calls. Source hashes and preserved response usage are in the linked subset.
 
 R2E-Gym blind result: native binary reward0, no trial exception,12 agent episodes,185345 input/163776 cached-input/7703 combined output tokens. All per-episode reported completion counts are within2048. Source remained byte-identical to the defective input; only the underflow regression failed, with59/60 tests passing. Both sandboxes independently absent. This is a scored unsuccessful attempt, not a task-validity failure or an infrastructure-exception claim. The native commit-runtime profile for alternate scikit-bio fix71912 is prepared and tested at the input boundary, but remains unsubmitted.
+
+The [broader Biopython PR intake](evidence/biopython-broader-pr-intake/intake.json) preserves metadata and full diffs for PR5308/5316 (shared location-hashing issue5193) and PR5358 (Clustal header compatibility), selected through the existing bounded history intake. Test/assertion additions are visible, but native PR entity filters, packaging and runtime contrasts remain unexecuted. These are not new generation attempts or exported tasks.

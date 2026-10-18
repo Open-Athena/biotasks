@@ -1,0 +1,114 @@
+diff --git a/Bio/Align/clustal.py b/Bio/Align/clustal.py
+index 82e97d71b5c..a26c58f21d5 100644
+--- a/Bio/Align/clustal.py
++++ b/Bio/Align/clustal.py
+@@ -107,6 +107,7 @@ def _read_header(self, stream):
+         words = line.split()
+         known_programs = [
+             "CLUSTAL",
++            "CLUSTALW",
+             "PROBCONS",
+             "MUSCLE",
+             "MSAPROBS",
+diff --git a/Bio/AlignIO/ClustalIO.py b/Bio/AlignIO/ClustalIO.py
+index 69499c7b10e..1e28fe6aa1e 100644
+--- a/Bio/AlignIO/ClustalIO.py
++++ b/Bio/AlignIO/ClustalIO.py
+@@ -113,6 +113,7 @@ def __next__(self):
+         # Whitelisted headers we know about
+         known_headers = [
+             "CLUSTAL",
++            "CLUSTALW",
+             "PROBCONS",
+             "MUSCLE",
+             "MSAPROBS",
+diff --git a/CONTRIB.rst b/CONTRIB.rst
+index 1bc4983896c..493927a460b 100644
+--- a/CONTRIB.rst
++++ b/CONTRIB.rst
+@@ -269,6 +269,7 @@ please open an issue on GitHub or mention it on the mailing list.
+ - Mike Poidinger <Michael.Poidinger at domain eBioinformatics.com>
+ - Mikel Martinez Goikoetxea <https://github.com/Mikel-MG>
+ - Milind Luthra <https://github.com/milindl>
++- Mohit Arvind Khakharia <https://github.com/Mohit-Ak>
+ - morrme <https://github.com/morrme>
+ - Mustafa Anil Tuncel <https://github.com/anilbey>
+ - Nader Morshed <https://github.com/naderm>
+diff --git a/NEWS.rst b/NEWS.rst
+index 8b2b9554b90..b4052ce9271 100644
+--- a/NEWS.rst
++++ b/NEWS.rst
+@@ -18,6 +18,14 @@ Python 3.15 release candidate. It has also been tested on PyPy3.10 v7.3.19, as
+ well as Python 3.11+ on Windows for ARM64. Python 3.10 is approaching end of
+ life, our support for it is now deprecated.
+ 
++The Clustal parsers in ``Bio.AlignIO`` and ``Bio.Align`` now accept files whose
++header line starts with ``CLUSTALW`` as a single word, as written by some tools.
++
++Many thanks to the Biopython developers and community for making this release
++possible, especially the following contributors:
++
++- Mohit Arvind Khakharia (first contribution)
++
+ 6 August 2026: Biopython 1.88
+ =============================
+ 
+diff --git a/Tests/test_AlignIO_ClustalIO.py b/Tests/test_AlignIO_ClustalIO.py
+index 9a74cc39247..35040d4a0d0 100644
+--- a/Tests/test_AlignIO_ClustalIO.py
++++ b/Tests/test_AlignIO_ClustalIO.py
+@@ -198,6 +198,14 @@
+ 
+ """
+ 
++aln_example6 = """\
++CLUSTALW
++
++Test1seq             GCTGGGGATGGAGAGGGAACAGAGTT-
++AT3G20900.1-SEQ      GCTGGGGATGGAGAGGGAACAGAGTAG
++
++"""
++
+ 
+ class TestClustalIO(unittest.TestCase):
+     def test_one(self):
+@@ -285,6 +293,11 @@ def test_biopython_header(self):
+         self.assertEqual(2, len(alignment))
+         self.assertEqual(alignment._version, "1.80.dev0")
+ 
++    def test_clustalw_header(self):
++        """Make sure we can parse a header using CLUSTALW as one word."""
++        alignment = next(ClustalIterator(StringIO(aln_example6)))
++        self.assertEqual(2, len(alignment))
++
+ 
+ if __name__ == "__main__":
+     runner = unittest.TextTestRunner(verbosity=2)
+diff --git a/Tests/test_Align_clustal.py b/Tests/test_Align_clustal.py
+index dcc28d5c943..2ec41c4c70c 100644
+--- a/Tests/test_Align_clustal.py
++++ b/Tests/test_Align_clustal.py
+@@ -1076,6 +1076,23 @@ def test_empty(self):
+         with self.assertRaises(ValueError):
+             Align.parse(stream, "clustal")
+ 
++    def test_clustalw_header(self):
++        """Make sure we can parse a header using CLUSTALW as one word."""
++        stream = StringIO(
++            "CLUSTALW\n"
++            "\n"
++            "Test1seq             GCTGGGGATGGAGAGGGAACAGAGTT-\n"
++            "AT3G20900.1-SEQ      GCTGGGGATGGAGAGGGAACAGAGTAG\n"
++            "\n"
++        )
++        alignments = Align.parse(stream, "clustal")
++        self.assertEqual(alignments.metadata["Program"], "CLUSTALW")
++        self.assertNotIn("Version", alignments.metadata)
++        alignment = next(alignments)
++        self.assertEqual(len(alignment), 2)
++        self.assertEqual(alignment[0], "GCTGGGGATGGAGAGGGAACAGAGTT-")
++        self.assertEqual(alignment[1], "GCTGGGGATGGAGAGGGAACAGAGTAG")
++
+ 
+ if __name__ == "__main__":
+     runner = unittest.TextTestRunner(verbosity=2)

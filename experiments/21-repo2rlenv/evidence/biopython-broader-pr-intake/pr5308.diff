@@ -1,0 +1,113 @@
+diff --git a/Bio/SeqFeature.py b/Bio/SeqFeature.py
+index 7ca867bd82e..67ffad38c65 100644
+--- a/Bio/SeqFeature.py
++++ b/Bio/SeqFeature.py
+@@ -1195,7 +1195,10 @@ def __iter__(self):
+             yield from range(self._start, self._end)
+ 
+     def __eq__(self, other):
+-        """Implement equality by comparing all the location attributes."""
++        """Implement equality by comparing all the location attributes.
++
++        See also __hash__, which is kept consistent with this method.
++        """
+         if not isinstance(other, SimpleLocation):
+             return False
+         return (
+@@ -1206,6 +1209,18 @@ def __eq__(self, other):
+             and self.ref_db == other.ref_db
+         )
+ 
++    def __hash__(self):
++        """Implement hash with all the location attributes.
++
++        Based on start, end, strand, ref and ref_db, matching the attributes
++        used by __eq__. Note this reflects equality of coordinates (and,
++        where set, an external reference), not identity of the parent
++        sequence: two SimpleLocation objects with the same coordinates but
++        no ref/ref_db will compare equal and hash equal even if they were
++        created against different parent sequences.
++        """
++        return hash((self._start, self._end, self._strand, self.ref, self.ref_db))
++
+     def _shift(self, offset):
+         """Return a copy of the SimpleLocation shifted by an offset (PRIVATE).
+ 
+diff --git a/Tests/test_SeqFeature.py b/Tests/test_SeqFeature.py
+index aacfef616ab..da0e1560d2a 100644
+--- a/Tests/test_SeqFeature.py
++++ b/Tests/test_SeqFeature.py
+@@ -117,6 +117,73 @@ def test_eq_not_identical(self):
+         loc2 = SimpleLocation(23, 42, 1, "foo", "baz")
+         self.assertNotEqual(loc1, loc2)
+ 
++    def test_hash_consistent_with_eq(self):
++        """Test equal locations hash equally, and can be used in a set."""
++        loc1 = SimpleLocation(23, 42, 1)
++        loc2 = SimpleLocation(23, 42, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        loc1 = SimpleLocation(23, 42, 1, "foo", "bar")
++        loc2 = SimpleLocation(23, 42, 1, "foo", "bar")
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        loc1 = SimpleLocation(23, 42, 1, "foo")
++        loc2 = SimpleLocation(23, 42, 1, "bar")
++        self.assertNotEqual(loc1, loc2)
++        self.assertNotEqual(hash(loc1), hash(loc2))
++
++        loc1 = SimpleLocation(23, 42, 1, "foo", "bar")
++        loc2 = SimpleLocation(23, 42, 1, "foo", "baz")
++        self.assertNotEqual(loc1, loc2)
++        self.assertNotEqual(hash(loc1), hash(loc2))
++
++    def test_hash_in_set(self):
++        """Test that equal locations collapse into one entry in a set."""
++        loc_a = SimpleLocation(23, 42, 1, "foo", "bar")
++        loc_b = SimpleLocation(23, 42, 1, "foo", "bar")  # equal to loc_a
++        loc_c = SimpleLocation(23, 43, 1, "foo", "bar")  # different end
++
++        locations1 = {loc_a, loc_b, loc_c}
++        locations2 = {loc_c, loc_a, loc_b}
++        self.assertEqual(locations1, locations2)
++        self.assertEqual(hash(frozenset(locations1)), hash(frozenset(locations2)))
++        self.assertEqual(len(locations1), 2)
++        self.assertIn(loc_a, locations1)
++        self.assertIn(loc_c, locations1)
++
++    def test_hash_consistent_with_eq_fuzzy_positions(self):
++        """Test fuzzy positions hash consistently with the equality they satisfy."""
++        # BeforePosition(23) compares equal to plain int 23, so a location
++        # built from it should be equal, and hash equal, to one built from 23.
++        loc1 = SimpleLocation(BeforePosition(23), 42, 1)
++        loc2 = SimpleLocation(23, 42, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        # WithinPosition compares equal based on its integer value alone,
++        # regardless of its left/right fuzziness bounds.
++        loc1 = SimpleLocation(WithinPosition(10, left=10, right=13), 42, 1)
++        loc2 = SimpleLocation(WithinPosition(10, left=8, right=10), 42, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++    def test_hash_unknown_position(self):
++        """Test UnknownPosition hashes as None, even though instances are not equal."""
++        loc1 = SimpleLocation(UnknownPosition(), 42, 1)
++        loc2 = SimpleLocation(UnknownPosition(), 42, 1)
++        # UnknownPosition does not define __eq__, so distinct instances
++        # compare by identity and are not equal to each other...
++        self.assertNotEqual(loc1, loc2)
++        # ...but UnknownPosition.__hash__ always returns hash(None), so
++        # locations built from different UnknownPosition instances still
++        # hash equal. This is a legitimate hash collision (equal objects
++        # must hash equal, but the converse isn't required), so it should
++        # not cause them to collapse in a set.
++        self.assertEqual(hash(loc1), hash(loc2))
++        self.assertEqual(len({loc1, loc2}), 2)
++
+     def test_start_before_end(self):
+         expected = "must be greater than or equal to start location"
+         with self.assertRaises(ValueError) as err:
