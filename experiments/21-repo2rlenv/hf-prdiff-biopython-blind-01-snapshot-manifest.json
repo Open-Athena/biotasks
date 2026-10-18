@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "native_similarity_blind_scored",
+  "checkpoint_commit": "79c75c486fd2737ccd0a46323a7c2d27a4bd5339",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "cohort": "biopython",
+  "accepted_similarity_tasks": 3,
+  "blind_attempts": 3,
+  "native_similarity_rewards": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "source_control_snapshot": "research/21-repo2rlenv/2026-10-18/66eb7038e01d9f9b54cac753fc9234b52961dcffa0362e195cca555f4a30e8c1",
+  "reward_semantics": "Native continuous oracle-patch similarity; not functional correctness, biological performance, pass@1 or a pooled benchmark score.",
+  "public_redactions": {
+    "field": "api_base",
+    "files": [
+      "solver-status.json",
+      "trials/biopython__biopython-5338-blind-01/config.json",
+      "trials/biopython__biopython-5338-blind-01/lock.json",
+      "trials/biopython__biopython-5338-blind-01/result.json",
+      "trials/biopython__biopython-5369-blind-01/config.json",
+      "trials/biopython__biopython-5369-blind-01/lock.json",
+      "trials/biopython__biopython-5369-blind-01/result.json",
+      "trials/biopython__biopython-5376-blind-01/config.json",
+      "trials/biopython__biopython-5376-blind-01/lock.json",
+      "trials/biopython__biopython-5376-blind-01/result.json"
+    ],
+    "policy": "Only private service routing fields changed in public copies; original messages, trajectories, task edits and reward evidence preserved."
+  },
+  "retention": "Retain while referenced; no automatic deletion.",
+  "eligibility": "Public upstream-derived task inputs, complete copied runtime archive with private API routing fields redacted, original messages and reward evidence unchanged, exact credential/private-route scans passed. Original route-bearing archive retained privately. No actual billing or credential material.",
+  "files": [
+    {
+      "path": "evidence/prdiff-biopython-blind-01/cleanup-verification.json",
+      "bytes": 651,
+      "sha256": "eebe1171c218b0a1e5053ce614a59998b0fb4209cc73e0a8392fb4aa20c7d2b7"
+    },
+    {
+      "path": "evidence/prdiff-biopython-blind-01/submission.json",
+      "bytes": 438,
+      "sha256": "57ab12e8b25d75baa0ebf96fcc7d6917b33967b28a361a3eb05d2bfb6bd0288d"
+    },
+    {
+      "path": "evidence/prdiff-biopython-blind-01/summary.json",
+      "bytes": 5066,
+      "sha256": "18f21888267c1088fd73976846d83eac886d8b4a8470b3d2b3b7ba72ff5c1be8"
+    },
+    {
+      "path": "frozen-inputs/acceptance.json",
+      "bytes": 1209,
+      "sha256": "abde01f3461c0570ff65b7ce75c980395022c153a6df68b7a9d1c718fd30ac5a"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/cohort-tasks.tar.gz",
+      "bytes": 53060,
+      "sha256": "f4bc3dc30ef8d1430fae2c0d78089ac393468444710038458c2f6d1125795325"
+    },
+    {
+      "path": "frozen-inputs/cohort-transfer.json",
+      "bytes": 101,
+      "sha256": "989746a69a903cb809a658b8f1238ae90fc122a3ee7f89ecc5c4d7753c28e980"
+    },
+    {
+      "path": "frozen-inputs/cohort.json",
+      "bytes": 1293,
+      "sha256": "88331e1ab2aaa09a08edfe97f772059662d32533a363c9a24572327f4baa9c33"
+    },
+    {
+      "path": "frozen-inputs/controls.json",
+      "bytes": 24697,
+      "sha256": "3e967580a73146c8c522e35f5938610903c7b55600a71111a090491b71ac722a"
+    },
+    {
+      "path": "frozen-inputs/glm_remote.py",
+      "bytes": 192,
+      "sha256": "06e73e980689b79d5909683133e9f97fd37d0ed43595217624c04a1f7eab9850"
+    },
+    {
+      "path": "frozen-inputs/glm_solver_settings.py",
+      "bytes": 689,
+      "sha256": "40e08884bf7417647430824c7ca90808b13ac3d9c4f3d6f2346018921a307bb7"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 2705,
+      "sha256": "4a21f7fc8b257aab705a53fa5af90795ee1e9fc1d3011956ec04fa0c1b997550"
+    },
+    {
+      "path": "frozen-inputs/pr_provider_environment.py",
+      "bytes": 3235,
+      "sha256": "9499c85a14d345eae2317ba562ee40b1688207872a404c6783c57bbaabc6b177"
+    },
+    {
+      "path": "frozen-inputs/prdiff_provider_environment.py",
+      "bytes": 746,
+      "sha256": "a1f07e550ccb94c4d19ac3e1c5d9b392ff12fac78f7f0666f88cbbd6eb4ced48"
+    },
+    {
+      "path": "frozen-inputs/prdiff_runtime_input.py",
+      "bytes": 2628,
+      "sha256": "690b7297983b900551ccdb9f8794ede0cb997c08a2e9636278634d02fbf70afc"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_blind_solver.py",
+      "bytes": 3642,
+      "sha256": "f5428d821b2647c2d6aba288b347724f02fcb24f48fcf0b5eaf803570be3e7ef"
+    },
+    {
+      "path": "frozen-inputs/run_pr_provider_preflight.py",
+      "bytes": 7175,
+      "sha256": "b5d37854a562f93f58e0d5b3f6835ce9dfd72c607fd1b19bdeac226e97dddb86"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_blind_solver.py",
+      "bytes": 4548,
+      "sha256": "0b250eaab2061c7ac0f33fccfd6405768e930120663ce73daf8cfc187dd3448c"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_provider_remote.py",
+      "bytes": 3822,
+      "sha256": "784fe2b3faf251986fdd050a48e653ec6f6b01fd03ee504ca59593e99159769e"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 128216,
+      "sha256": "f66d3b42b824ff5e237639142f380840a35e7b40622dffa57a3bf33387b92e44",
+      "members": [
+        {
+          "path": "native/cleanup.json",
+          "bytes": 465,
+          "sha256": "3ebd22d2e6bd645b9e3f6dcbb8e7c78a197ca5b2951f5e3e36619f41444a4c63",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/provider.jsonl",
+          "bytes": 1554,
+          "sha256": "f493dbf74fa56f3f932720ba3f348cd159094cde7cbe5f2dc81eae974a0994f4",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/solver-status.json",
+          "bytes": 15252,
+          "sha256": "224c3736071784d4b7779f3bab1fb445ba69f4285434d0dc6f15b20cb6cbd505",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/agent/terminus_2.pane",
+          "bytes": 36544,
+          "sha256": "cff1424a4d1447faa3812652c3daf4d6b9abfcfabbbebebc46ab6f06dd6503a8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/agent/trajectory.json",
+          "bytes": 83902,
+          "sha256": "101804320a5a2835a536a100d12bd995aef9433d96caf3fb94627ec370e2c2d6",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/config.json",
+          "bytes": 698,
+          "sha256": "c1bb8d5da8febf0f62c34bdf57421087aecc0507bb9e51bd4ffdfd6d0845965a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/lock.json",
+          "bytes": 1252,
+          "sha256": "148e20ca55fe60d1ab91d55fecc65f0246caa90f36781c990bdb69d73183d0f2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/result.json",
+          "bytes": 3962,
+          "sha256": "2ad8b0ea28714288319298ef321ea62a6984edbbd6df3ee23d9df461b577c758",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/trial.log",
+          "bytes": 1785,
+          "sha256": "3ed4956a799f747cfd227ead43d65d43b481ec9951f4b6528f644ba637ab9105",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5338-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "c25c2d5a42bd90d6fc0c1b03a5558b3f17b6e324a5a1b7d592f0d463c748e70a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/agent/terminus_2.pane",
+          "bytes": 169371,
+          "sha256": "691dc238e53147f73f7ae0fefa0fca29f68c9608d2f56c03b9af631c6680e621",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/agent/trajectory.json",
+          "bytes": 91207,
+          "sha256": "59fe2e610dcef3aefb5919b9030dcb59c4c4bc01c8797bba4d26595610a5d25a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/config.json",
+          "bytes": 698,
+          "sha256": "78d35bf5f148dc24a65a39e6b69e87f5b0c40c523cbd911f36fbd698a0105cd2",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/lock.json",
+          "bytes": 1252,
+          "sha256": "24c1c545388f20e805950b0fa30a4787a245afca822e9b025283d29663ba5247",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/result.json",
+          "bytes": 3965,
+          "sha256": "113c1df8e8a5c36fe47a2d766ff33b0c785fa64db735b339c6838dfe15ab5c1b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/trial.log",
+          "bytes": 1785,
+          "sha256": "dcedeec4ec7ce737ad9ebac8ab82e6ea5032287cb00e49c91bd19be10e699eda",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5369-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "7162f1f28a745da301b8df04e48af5481f4fd1c5074bd40f88172917f1954160",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/agent/terminus_2.pane",
+          "bytes": 105444,
+          "sha256": "335ebbfe7db52d6cbb915115ecae9b6e60b5c86c418789e408e59055450c0f46",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/agent/trajectory.json",
+          "bytes": 78173,
+          "sha256": "f6b3e8f51eb48edff48cb473a43f90b1eebf14c1c98946a2d0cdd3be46a7d7c8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/config.json",
+          "bytes": 698,
+          "sha256": "147b2826fda1a47592be48ac0354abdea1d7b3d2a3a3a1f2301e5b7cc1cc4fe8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/lock.json",
+          "bytes": 1252,
+          "sha256": "96ef13fc3dc787bd50fcb35e58e0a0359b3529129135e97cb49778a7043d5ecb",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/result.json",
+          "bytes": 3963,
+          "sha256": "7f649111ee7526fc0acf79fb26b875a8b426343d4cc9e54b539a038d71a46b56",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/trial.log",
+          "bytes": 1785,
+          "sha256": "606decfb79db1ab59af1209d805a71b3755945a6cddff2263194db6cb25b1787",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/biopython__biopython-5376-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "3eb0924f90745cecd982c4e8b95a3b3dd3c48ae302644e6b4d45ae089022fe8a",
+          "mode": "0o644"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/biopython-LICENSE.rst",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    }
+  ]
+}

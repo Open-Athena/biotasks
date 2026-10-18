@@ -1,0 +1,40 @@
+{
+  "stage": "posthoc_retained_trace_observations_no_new_execution",
+  "rows": [
+    {
+      "task": "biopython__biopython-5338",
+      "agent_episodes": 12,
+      "retained_structured_terminal_calls": 25,
+      "first_command_ends_in_newline": true,
+      "pane_contains_missing_numpy_message": false,
+      "pane_contains_failed_numpy_install": false,
+      "trajectory_sha256": "101804320a5a2835a536a100d12bd995aef9433d96caf3fb94627ec370e2c2d6",
+      "terminal_pane_sha256": "cff1424a4d1447faa3812652c3daf4d6b9abfcfabbbebebc46ab6f06dd6503a8"
+    },
+    {
+      "task": "biopython__biopython-5369",
+      "agent_episodes": 12,
+      "retained_structured_terminal_calls": 47,
+      "first_command_ends_in_newline": true,
+      "pane_contains_missing_numpy_message": true,
+      "pane_contains_failed_numpy_install": true,
+      "trajectory_sha256": "59fe2e610dcef3aefb5919b9030dcb59c4c4bc01c8797bba4d26595610a5d25a",
+      "terminal_pane_sha256": "691dc238e53147f73f7ae0fefa0fca29f68c9608d2f56c03b9af631c6680e621"
+    },
+    {
+      "task": "biopython__biopython-5376",
+      "agent_episodes": 12,
+      "retained_structured_terminal_calls": 40,
+      "first_command_ends_in_newline": true,
+      "pane_contains_missing_numpy_message": true,
+      "pane_contains_failed_numpy_install": false,
+      "trajectory_sha256": "f6b3e8f51eb48edff48cb473a43f90b1eebf14c1c98946a2d0cdd3be46a7d7c8",
+      "terminal_pane_sha256": "335ebbfe7db52d6cbb915115ecae9b6e60b5c86c418789e408e59055450c0f46"
+    }
+  ],
+  "finding": "Valid terminal calls were retained in all three zero-score attempts. Two traces show missing NumPy or an offline blocked install; these are source-only/offline environment limitations, not a blanket tool-format failure.",
+  "limits": [
+    "No rerun or extra model call. These observations do not establish a sole cause of zero scores or measure biological knowledge.",
+    "Native task did not declare a separate final source-tree/diff capture. Rewards and original trajectories/panes remain authoritative."
+  ]
+}
