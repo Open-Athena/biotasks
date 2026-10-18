@@ -41,7 +41,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, fourteen validation rows and seven solver rows to fifty-seven hashed source records, with three final rejections and two additional accepted-task reviews. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, fourteen validation rows and seven solver rows to fifty-eight hashed source records, with three final rejections and three additional accepted-task reviews. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -92,4 +92,4 @@ The [broader Biopython PR intake](evidence/biopython-broader-pr-intake/intake.js
 
 Esty and observed_features fresh provider controls passed 0/1 with matching checksums and all four sandboxes per probe independently absent. These runtime controls add no generated candidates or blind attempts.
 
-Esty is now independently accepted with its emitted bundle unchanged: the stated interval formula, native ten-vector/all-zero tests, alternative factored variance and two incorrect controls agree; fresh separate-context controls0/1 and all four sandbox deletions are verified. Its one blind attempt scored 1 in six agent episodes, passing all 34 tests; both solver sandboxes independently absent. This makes seven accepted tasks and seven completed blind attempts, including the R2E-Gym zero. observed_features fresh provider controls also passed0/1 with four independently absent sandboxes; final acceptance review remains pending. Estimates/holds are now$693/$1000.
+Esty is now independently accepted with its emitted bundle unchanged: the stated interval formula, native ten-vector/all-zero tests, alternative factored variance and two incorrect controls agree; fresh separate-context controls0/1 and all four sandbox deletions are verified. Its one blind attempt scored 1 in six agent episodes, passing all 34 tests; both solver sandboxes independently absent. This makes seven accepted tasks and seven completed blind attempts, including the R2E-Gym zero. observed_features is also accepted after final instruction review, meaningful incorrect/alternative controls and fresh0/1 runtime checks. Its single blind attempt is prepared but unsubmitted. Eight accepted tasks, seven scored attempts; estimates/holds$703/$1000.

@@ -189,7 +189,8 @@ def build():
                  'evidence/history-final-acceptance/swe-next-skbio-01/review.json',
                  'evidence/qcp-final-acceptance/review.json',
                  'evidence/r2e-gym-acceptance/acceptance.json',
-                 'evidence/esty-ci-acceptance/acceptance.json']:
+                 'evidence/esty-ci-acceptance/acceptance.json',
+                 'evidence/observed-features-acceptance/acceptance.json']:
         review=read(path)
         acceptance_reviews.append({'task':review['task'],'status':review['status'],
                                    'solver_eligible':review['solver_eligible'],'source':path})
