@@ -1,0 +1,40 @@
+{
+  "stage": "source_instruction_review_not_task_admission",
+  "records": [
+    {
+      "candidate_id": "7db7e3d6944862270e5c",
+      "scheduled_function": "lcc_simp",
+      "state": "original_instruction_rejected_malformed_example_rendering",
+      "source_facts": [
+        "Nonempty DNA entropy formula, one-argument signature, absent-base handling and numeric reference values agree with saved source/tests."
+      ],
+      "rejection_reasons": [
+        "Twenty literal u0022 quote placeholders appear inside purported Python examples, producing invalid expressions such as lcc_simp(u0022ACGATAGCu0022). Literal n separators also damage rendering. Preserve original and require an explicit authoring/rendering intervention before admission."
+      ],
+      "independently_admitted": false
+    },
+    {
+      "candidate_id": "adf8d052f836669d540f",
+      "state": "inference_timeout_no_final_instruction",
+      "independently_admitted": false,
+      "detail": "Docstring returned; specification request timed out with unknown token usage. No automatic replay."
+    },
+    {
+      "candidate_id": "840c13399b10c718f1e8",
+      "scheduled_functions": [
+        "seq3",
+        "seq1"
+      ],
+      "state": "original_instruction_rejected_incomplete_specification",
+      "rejection_reasons": [
+        "Markdown ends mid-signature after undef_code= and does not describe scheduled seq1 or most seq3 requirements.",
+        "Provider finish_reason=stop and valid JSON/schema did not establish prose completeness; no JSON repair is inferred."
+      ],
+      "independently_admitted": false
+    }
+  ],
+  "limits": [
+    "Original native per-stage request counters preserved; source review does not reset any authoring or candidate cap.",
+    "Two timed-out candidates are infrastructure outcomes, not scored scientific tasks."
+  ]
+}

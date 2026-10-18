@@ -1,7 +1,7 @@
 {
-  "as_of_utc": "2026-10-18T21:50:33.273195+00:00",
+  "as_of_utc": "2026-10-18T22:04:54.864823+00:00",
   "stage": "saved_contrast_authoring_queue_not_new_discovery_or_admission",
-  "scope": "Eight saved continuation contrast IDs, no new discovery charge. Full route/repository matrix remains separately tracked; original source-family overlap retained. Model authoring has run for three Smith IDs; two Flow author clients remain live with counts unconfirmed.",
+  "scope": "Eight saved continuation contrast IDs; original author clients all terminal. Full route/repository matrix tracked separately; original source-family overlap retained. Sixteen authoring dispatches, fourteen returned responses, two timeouts with unknown usage. No new discovery charge or admission from authoring.",
   "candidate_count": 8,
   "native_maximum_calls_if_all_repairs_fit": 36,
   "generation_adaptation": {
@@ -13,7 +13,7 @@
     "generation_run_timeout_sec": 7200,
     "paid_model_fallback": false
   },
-  "limits_note": "Original native per-ID authoring ceilings total36calls across8savedIDs. Five responses recovered:Robbins2/2,Michaelis2/2,BioLCC1/2. Robbins native source controls submitted; Michaelis rejected without repair allowance; BioLCC one final native review call prepared. Flow current request/response counts remain unconfirmed until original archives recovered; never infer unused allowance from absent local output.",
+  "limits_note": "Native ceilings remain36requests across8savedIDs. Exact per-stage Flow counters are in the preserved original receipt accounting. A timeout is a counted uncertain request, not automatically retried. Robbins2/2;Michaelis2/2;BioSmithLCC1/2. Final BioSmith review remains prepared. Flow original outcomes are recorded without rewriting text or resetting stages.",
   "admission_gates": [
     "Independent source/instruction agreement",
     "Reference and baseline controls",
@@ -87,9 +87,32 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "inference_client_submitted_outputs_pending",
+      "state": "inference_timeout_no_final_instruction",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-skbio-flow-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-skbio-flow-author-20261018-01",
+      "native_authoring_dispatched_requests": 3,
+      "native_authoring_completed_responses": 2,
+      "native_stage_accounting": [
+        {
+          "stage": "docstring",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        },
+        {
+          "stage": "specification",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 2,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 1,
+          "unused_stage_ceiling_upper_bound": 1,
+          "uncertain_requests_not_automatically_replayed": true
+        }
+      ],
+      "source_review_path": "skbio-flow-author-cw-01/independent-review.json"
     },
     {
       "repository": "scikit-bio/scikit-bio",
@@ -104,9 +127,32 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "inference_client_submitted_outputs_pending",
+      "state": "source_supported_ready_for_native_export_controls",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-skbio-flow-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-skbio-flow-author-20261018-01",
+      "native_authoring_dispatched_requests": 2,
+      "native_authoring_completed_responses": 2,
+      "native_stage_accounting": [
+        {
+          "stage": "docstring",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        },
+        {
+          "stage": "specification",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        }
+      ],
+      "source_review_path": "skbio-flow-author-cw-01/independent-review.json"
     },
     {
       "repository": "biopython/biopython",
@@ -121,9 +167,32 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "inference_client_submitted_outputs_pending",
+      "state": "original_instruction_rejected_malformed_example_rendering",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01",
+      "native_authoring_dispatched_requests": 2,
+      "native_authoring_completed_responses": 2,
+      "native_stage_accounting": [
+        {
+          "stage": "docstring",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        },
+        {
+          "stage": "specification",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        }
+      ],
+      "source_review_path": "biopython-flow-author-cw-01/independent-review.json"
     },
     {
       "repository": "biopython/biopython",
@@ -138,9 +207,32 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "inference_client_submitted_outputs_pending",
+      "state": "inference_timeout_no_final_instruction",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01",
+      "native_authoring_dispatched_requests": 2,
+      "native_authoring_completed_responses": 1,
+      "native_stage_accounting": [
+        {
+          "stage": "docstring",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        },
+        {
+          "stage": "specification",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 0,
+          "dispatched_without_completed_response": 1,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        }
+      ],
+      "source_review_path": "biopython-flow-author-cw-01/independent-review.json"
     },
     {
       "repository": "biopython/biopython",
@@ -156,9 +248,32 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "inference_client_submitted_outputs_pending",
+      "state": "original_instruction_rejected_incomplete_specification",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-biopython-flow-author-20261018-01",
+      "native_authoring_dispatched_requests": 2,
+      "native_authoring_completed_responses": 2,
+      "native_stage_accounting": [
+        {
+          "stage": "docstring",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        },
+        {
+          "stage": "specification",
+          "native_stage_attempt_ceiling": 3,
+          "dispatched_requests": 1,
+          "returned_completed_receipts": 1,
+          "dispatched_without_completed_response": 0,
+          "unused_stage_ceiling_upper_bound": 2,
+          "uncertain_requests_not_automatically_replayed": true
+        }
+      ],
+      "source_review_path": "biopython-flow-author-cw-01/independent-review.json"
     }
   ],
   "model_client_route": "allocated_free_CoreWeave_initial_author_job_completed_next_cohorts_prepared",
