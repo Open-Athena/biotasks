@@ -76,12 +76,13 @@ def audit(evidence, manifest, source_roots):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--manifest', type=Path, default=Path(__file__).parent / 'pr-correctness-input-manifest.json')
     parser.add_argument('--evidence-root', type=Path, required=True)
     parser.add_argument('--skbio-source', type=Path, required=True)
     parser.add_argument('--biopython-source', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    manifest = json.loads((Path(__file__).parent / 'pr-correctness-input-manifest.json').read_text())
+    manifest = json.loads(args.manifest.read_text())
     result = audit(args.evidence_root, manifest, {'skbio': args.skbio_source, 'biopython': args.biopython_source})
     args.output.write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({'stage': result['stage'], 'candidates': len(result['records']), 'controls': result['controls_executed']}))

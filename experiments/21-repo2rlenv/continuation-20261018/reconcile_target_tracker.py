@@ -77,6 +77,8 @@ def build():
                 next_action = 'PR2630 admitted after six portable graded controls; original PR2633 retained. Third task still needed: separate Numba PR2636 native export needs instruction/coverage review and independent controls. Two profiles of PR2636 count at most one source task. All new blind attempts await approved GLM connectivity.'
             elif unit['repository'] == 'biopython/biopython':
                 next_action = 'QCP5317 and SimpleLocation5308 admitted after six portable graded controls each. PR5310 original contract mismatch remains rejected. Saved eligible PR5316 remains available for first native materialization without a new selection charge; one additional new-input allowance remains. All new blind attempts await approved GLM connectivity.'
+        if route == 'pr_runtime/native' and unit['repository'] == 'biopython/biopython' and (ROOT / 'biopython-pr-saved-native-01/recovery.json').exists():
+            next_action = 'QCP5317 and SimpleLocation5308 admitted (2/3). Saved PR5316 first materialization completed with 4F2P/21P2P; independent portable controls prepared. Cap charge remains9/10, no new selection for materialization. Original PR5310 instruction mismatch remains rejected; new blind attempts await approved GLM connectivity.'
         if route == 'pr_diff/native':
             charge = 10
             cap_note = 'Ten considered PR inputs recorded per repository; selected three similarity tasks each admitted and scored.'

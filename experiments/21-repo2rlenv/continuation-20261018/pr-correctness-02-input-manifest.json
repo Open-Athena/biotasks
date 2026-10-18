@@ -1,0 +1,49 @@
+{
+  "stage": "frozen_control_inputs_not_executed",
+  "tasks": [
+    {
+      "pr": 2636,
+      "repository_key": "skbio",
+      "task_member": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636",
+      "baseline_member": "native/cohort/pr2636/frozen-inputs/Dockerfile",
+      "F2P": 5,
+      "P2P": 96,
+      "portable_asset_manifest_sha256": "f7303330f71e8a9229771045afe2419729b44214918d18d5d3734ffb528153f3"
+    },
+    {
+      "pr": 5316,
+      "repository_key": "biopython",
+      "task_member": "native/cohort/pr5316/tasks/biopython__biopython-5316",
+      "baseline_member": "native/cohort/pr5316/frozen-inputs/Dockerfile",
+      "F2P": 4,
+      "P2P": 21,
+      "portable_asset_manifest_sha256": "4d0a56ada207e7ccf8774bc6270e043ef37be570e58afd0a2cd81b8acd1f5989"
+    }
+  ],
+  "archives": [
+    {
+      "repository_key": "skbio",
+      "filename": "skbio-native-exports.tar.gz",
+      "sha256": "12610a304a56289248a95fe7289306038462192c76601773cba6a28ae24435b4",
+      "bytes": 56540
+    },
+    {
+      "repository_key": "biopython",
+      "filename": "biopython-native-exports.tar.gz",
+      "sha256": "67c4ab73e8d55f40ff2f90020c850a9d78aeb7172058552902138d1f83be35da",
+      "bytes": 32024
+    }
+  ],
+  "model_calls": 0,
+  "native_reward": "graded F2P pass rate times P2P pass rate",
+  "cases_per_task": 6,
+  "maximum_cases": 12,
+  "new_generation_candidates": 0,
+  "new_blind_attempts": 0,
+  "limitations": [
+    "PR2636 alternative derives from the reference patch but rewrites the memory-error classifier; partial disables that classifier; incorrect native-base helper always reports no GPU extension. This is weaker implementation independence than an independently written whole patch.",
+    "PR5316 shares location-hashing competency/issue5193 lineage with PR5308; low scientific complexity and PR-body implementation guidance remain explicit.",
+    "PR2636 uses CPU mock modules, no physical GPU coverage.",
+    "No task admission is inferred before actual controls and artifact verification."
+  ]
+}

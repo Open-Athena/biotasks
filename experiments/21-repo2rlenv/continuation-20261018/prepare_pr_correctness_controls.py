@@ -59,6 +59,25 @@ def source_program(pr, case):
         elif case != 'alternative':
             raise ValueError('Unknown QCP control')
         replacements = [(QCP_CALL, replacement)]
+    elif pr == 5316:
+        bodies = {'alternative': 'return hash((tuple(self.parts), self.operator))', 'partial': 'return hash((self.operator, tuple((int(p.start), int(p.end), p.strand, p.ref, p.ref_db) for p in self.parts)))', 'incorrect': 'return id(self)'}
+        if case not in bodies:
+            raise ValueError('Unknown compound-location control')
+        method = '    def __hash__(self):\n        ' + bodies[case] + '\n'
+        return "import ast\nfrom pathlib import Path\np=Path('/workspace/Bio/SeqFeature.py')\ns=p.read_text()\ntree=ast.parse(s)\ncls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='CompoundLocation')\nassert not any(isinstance(n,ast.FunctionDef) and n.name=='__hash__' for n in cls.body)\neq=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__eq__')\nlines=s.splitlines(keepends=True)\nlines.insert(eq.end_lineno," + repr('\n' + method) + ")\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\n"
+    elif pr == 2636:
+        if case == 'alternative':
+            name = '_out_of_memory'
+            replacement = 'def _out_of_memory(exc):\n    if isinstance(exc, MemoryError):\n        return True\n    normalized = "".join(c.casefold() for c in str(exc) if not c.isspace() and c != "_")\n    return "outofmemory" in normalized\n'
+        elif case == 'partial':
+            name = '_out_of_memory'
+            replacement = 'def _out_of_memory(exc):\n    return False\n'
+        elif case == 'incorrect':
+            name = '_available_module'
+            replacement = 'def _available_module(package, name):\n    return None\n'
+        else:
+            raise ValueError('Unknown tree-dispatch control')
+        return "import ast\nfrom pathlib import Path\np=Path('/workspace/skbio/tree/bp/_gpu.py')\ns=p.read_text()\ntree=ast.parse(s)\nnode=next(n for n in tree.body if isinstance(n,ast.FunctionDef) and n.name==" + repr(name) + ")\nassert not node.decorator_list\nlines=s.splitlines(keepends=True)\nlines[node.lineno-1:node.end_lineno]=[" + repr(replacement) + "]\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\n"
     elif pr == 5308:
         bodies = {'alternative': 'return hash((self.ref_db, self.ref, self._strand, self._end, self._start))', 'partial': 'return hash((int(self._start), int(self._end), self._strand, self.ref, self.ref_db))', 'incorrect': 'return id(self)'}
         if case not in bodies:
@@ -74,7 +93,7 @@ def source_program(pr, case):
 
 
 def portable(task, baseline, output, *, pr):
-    if pr not in (2630, 5317, 5308):
+    if pr not in (2630, 5317, 5308, 5316, 2636):
         raise ValueError('Unreviewed PR profile')
     task, baseline, output = Path(task), Path(baseline), Path(output)
     original = assets(task)
@@ -86,7 +105,7 @@ def portable(task, baseline, output, *, pr):
     parent = baseline.read_text()
     if native_docker.count(marker) != 1 or sum(line.startswith('FROM ') for line in parent.splitlines()) != 1:
         raise ValueError('Unexpected native/parent Dockerfile')
-    cache = 'skbio' if pr == 2630 else 'biopython'
+    cache = 'skbio' if pr in (2630, 2636) else 'biopython'
     dockerfile = native_docker.replace(marker, parent.rstrip() + '\n', 1)
     dockerfile += '\n# Restore unchanged parent extensions after the native checkout cleanup.\nRUN cp -a /opt/' + cache + '-baseline-extensions/. /workspace/\n'
     dockerfile += '# Terminal tooling is installed at build time; execution remains offline.\nRUN apt-get update && apt-get install -y --no-install-recommends tmux && rm -rf /var/lib/apt/lists/* && tmux -V > /opt/terminus-tool-version.txt\n'
@@ -124,6 +143,8 @@ def controls(task, output, *, pr):
         if name != 'native_reference':
             script = '#!/bin/sh\nset -eu\n'
             if name != 'baseline':
+                if pr == 2636 and name in ('alternative', 'alternative_repeat', 'partial'):
+                    script += 'git -C /workspace apply "$(dirname "$0")/patch.diff"\n'
                 program = source_program(pr, 'alternative' if name == 'alternative_repeat' else name)
                 ast.parse(program)
                 script += "python3 - <<'PYCONTROL'\n" + program + 'PYCONTROL\n'
