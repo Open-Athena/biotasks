@@ -1,6 +1,6 @@
 # Interim comparison: Repo2RLEnv biological repository pilot
 
-Status at 2026-10-18 04:05 UTC: eight accepted correctness/algorithmic tasks have eight completed blind attempts. Six additional bedtools/DESeq2 tasks are admitted only for native patch similarity; the three bedtools blind attempts have completed. DESeq2 blind attempts are pending, and Biopython/scikit-bio controls are staged. The experiment and final completion audit remain open.
+Status at 2026-10-18 04:05 UTC: eight accepted correctness/algorithmic tasks have eight completed blind attempts. Six additional bedtools/DESeq2 tasks are admitted only for native patch similarity; the three bedtools blind attempts have completed. DESeq2 blind attempts are pending, and Biopython/scikit-bio no-model controls are submitted, reserving four aggregate instances including controllers. The experiment and final completion audit remain open.
 
 The [route/cohort census](evidence/campaign-census-20261018/census.json) covers all 23 implemented methods through 68 repository/cohort scope entries; the planned Sec-bench recipe is excluded. Retained generation records map to 29 distinct execution units. Their retrospective target/candidate ceiling is 87/290, subject to applicability and operational budgets. A single total N frozen before launch is not demonstrated by the early manifests. These retrospective figures do not describe achieved tasks or an extension of candidate allowances.
 
@@ -112,7 +112,7 @@ At Marin pin 45a044387ccd95ab698b4a592056aadaff961540, [executed structure cover
 
 ## Current accounting and remaining work
 
-Estimates and holds are $848 of the approved $1,000 ceiling, with $152 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Both capacity claims are released after verified public archive publication. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
+Estimates and holds are $848 of the approved $1,000 ceiling, with $152 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Both capacity claims are released after verified public archive publication. The next Biopython/scikit-bio no-model cohorts now reserve four aggregate instances. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
 
 The local retention audit maps 63 manifests: 62 match verified public receipts; one failed mode-descriptor manifest is explicitly superseded by a verified correction with identical object/member bytes and hashes. This is a local publication-history audit, not a fresh remote availability or universal source-integrity assertion. All three new PR-diff snapshots have independent anonymous-download receipts.
 
