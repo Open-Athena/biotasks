@@ -1,0 +1,1045 @@
+{
+  "attempted": 133,
+  "candidates": [
+    {
+      "base": "bb295f15adb75d0296361a063e645eba35160ab0",
+      "context": {
+        "head": "e38c64daa2433ecf21f596f76287d41122a4a000"
+      },
+      "head": "e38c64daa2433ecf21f596f76287d41122a4a000",
+      "id": "8b42fddaa4c34399b9a1",
+      "message": "Accept CLUSTALW as a Clustal header word (#5358)\n\nSome tools write the header as a single word CLUSTALW rather than\nCLUSTAL W, which both the Bio.AlignIO and Bio.Align Clustal parsers\nrejected. Add it to the known programs in both parsers, with tests.\n\nCloses #5355\n\nI agree to dual licence this contribution under both the Biopython\nLicense Agreement and the BSD 3-Clause License.\n\nCo-authored-by: Mohit Arvind Khakharia <Mohit-Ak@users.noreply.github.com>\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/Align/clustal.py:AlignmentIterator",
+          "Bio/Align/clustal.py:AlignmentIterator._read_header",
+          "Bio/AlignIO/ClustalIO.py:ClustalIterator",
+          "Bio/AlignIO/ClustalIO.py:ClustalIterator.__next__"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_AlignIO_ClustalIO.py",
+            "name": "TestClustalIO"
+          },
+          {
+            "file": "Tests/test_AlignIO_ClustalIO.py",
+            "name": "TestClustalIO.test_clustalw_header"
+          },
+          {
+            "file": "Tests/test_Align_clustal.py",
+            "name": "TestClustalReadingWriting"
+          },
+          {
+            "file": "Tests/test_Align_clustal.py",
+            "name": "TestClustalReadingWriting.test_clustalw_header"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/Align/clustal.py b/Bio/Align/clustal.py\nindex 82e97d71b..a26c58f21 100644\n--- a/Bio/Align/clustal.py\n+++ b/Bio/Align/clustal.py\n@@ -107,6 +107,7 @@ class AlignmentIterator(interfaces.AlignmentIterator):\n         words = line.split()\n         known_programs = [\n             \"CLUSTAL\",\n+            \"CLUSTALW\",\n             \"PROBCONS\",\n             \"MUSCLE\",\n             \"MSAPROBS\",\ndiff --git a/Bio/AlignIO/ClustalIO.py b/Bio/AlignIO/ClustalIO.py\nindex 69499c7b1..1e28fe6aa 100644\n--- a/Bio/AlignIO/ClustalIO.py\n+++ b/Bio/AlignIO/ClustalIO.py\n@@ -113,6 +113,7 @@ class ClustalIterator(AlignmentIterator):\n         # Whitelisted headers we know about\n         known_headers = [\n             \"CLUSTAL\",\n+            \"CLUSTALW\",\n             \"PROBCONS\",\n             \"MUSCLE\",\n             \"MSAPROBS\",\n",
+      "source_files": [
+        "Bio/Align/clustal.py",
+        "Bio/AlignIO/ClustalIO.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_AlignIO_ClustalIO.py b/Tests/test_AlignIO_ClustalIO.py\nindex 9a74cc392..35040d4a0 100644\n--- a/Tests/test_AlignIO_ClustalIO.py\n+++ b/Tests/test_AlignIO_ClustalIO.py\n@@ -198,6 +198,14 @@ gi|671626|emb|CAA85685.1|           ------------------\n \n \"\"\"\n \n+aln_example6 = \"\"\"\\\n+CLUSTALW\n+\n+Test1seq             GCTGGGGATGGAGAGGGAACAGAGTT-\n+AT3G20900.1-SEQ      GCTGGGGATGGAGAGGGAACAGAGTAG\n+\n+\"\"\"\n+\n \n class TestClustalIO(unittest.TestCase):\n     def test_one(self):\n@@ -285,6 +293,11 @@ class TestClustalIO(unittest.TestCase):\n         self.assertEqual(2, len(alignment))\n         self.assertEqual(alignment._version, \"1.80.dev0\")\n \n+    def test_clustalw_header(self):\n+        \"\"\"Make sure we can parse a header using CLUSTALW as one word.\"\"\"\n+        alignment = next(ClustalIterator(StringIO(aln_example6)))\n+        self.assertEqual(2, len(alignment))\n+\n \n if __name__ == \"__main__\":\n     runner = unittest.TextTestRunner(verbosity=2)\ndiff --git a/Tests/test_Align_clustal.py b/Tests/test_Align_clustal.py\nindex dcc28d5c9..2ec41c4c7 100644\n--- a/Tests/test_Align_clustal.py\n+++ b/Tests/test_Align_clustal.py\n@@ -1076,6 +1076,23 @@ AlignmentCounts object with\n         with self.assertRaises(ValueError):\n             Align.parse(stream, \"clustal\")\n \n+    def test_clustalw_header(self):\n+        \"\"\"Make sure we can parse a header using CLUSTALW as one word.\"\"\"\n+        stream = StringIO(\n+            \"CLUSTALW\\n\"\n+            \"\\n\"\n+            \"Test1seq             GCTGGGGATGGAGAGGGAACAGAGTT-\\n\"\n+            \"AT3G20900.1-SEQ      GCTGGGGATGGAGAGGGAACAGAGTAG\\n\"\n+            \"\\n\"\n+        )\n+        alignments = Align.parse(stream, \"clustal\")\n+        self.assertEqual(alignments.metadata[\"Program\"], \"CLUSTALW\")\n+        self.assertNotIn(\"Version\", alignments.metadata)\n+        alignment = next(alignments)\n+        self.assertEqual(len(alignment), 2)\n+        self.assertEqual(alignment[0], \"GCTGGGGATGGAGAGGGAACAGAGTT-\")\n+        self.assertEqual(alignment[1], \"GCTGGGGATGGAGAGGGAACAGAGTAG\")\n+\n \n if __name__ == \"__main__\":\n     runner = unittest.TextTestRunner(verbosity=2)\n",
+      "test_files": [
+        "Tests/test_AlignIO_ClustalIO.py",
+        "Tests/test_Align_clustal.py"
+      ],
+      "title": "Accept CLUSTALW as a Clustal header word (#5358)"
+    },
+    {
+      "base": "bbc55712db23d048cdc2cebc643453418f66593c",
+      "context": {
+        "head": "5bbc6c12c505301f2d681f932c30fdb8fcbe9a6e"
+      },
+      "head": "5bbc6c12c505301f2d681f932c30fdb8fcbe9a6e",
+      "id": "06241c132dcad5ff0536",
+      "message": "Issue #5193 - Add __hash__ to CompoundLocation\n\nImplement __hash__ based on operator and parts, matching the\nattributes used by __eq__. Relies on SimpleLocation.__hash__ for\neach part, so the same ref/ref_db limitation applies here too. Add\ntests covering hash/eq consistency (including fuzzy and unknown\npositions) and set membership.\n\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [
+          "Bio/SeqFeature.py:CompoundLocation.__hash__"
+        ],
+        "deleted": [],
+        "edited": [
+          "Bio/SeqFeature.py:CompoundLocation"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestCompoundLocation"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestCompoundLocation.test_hash_consistent_with_eq"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestCompoundLocation.test_hash_in_set"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestCompoundLocation.test_hash_consistent_with_eq_fuzzy_positions"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestCompoundLocation.test_hash_unknown_position"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/SeqFeature.py b/Bio/SeqFeature.py\nindex 67ffad38c..58483c4bd 100644\n--- a/Bio/SeqFeature.py\n+++ b/Bio/SeqFeature.py\n@@ -1551,7 +1551,10 @@ class CompoundLocation(Location):\n             yield from loc\n \n     def __eq__(self, other):\n-        \"\"\"Check if all parts of CompoundLocation are equal to all parts of other CompoundLocation.\"\"\"\n+        \"\"\"Check if all parts of CompoundLocation are equal to all parts of other CompoundLocation.\n+\n+        See also __hash__, which is kept consistent with this method.\n+        \"\"\"\n         if not isinstance(other, CompoundLocation):\n             return False\n         if len(self.parts) != len(other.parts):\n@@ -1563,6 +1566,19 @@ class CompoundLocation(Location):\n                 return False\n         return True\n \n+    def __hash__(self):\n+        \"\"\"Implement hash with all the location attributes.\n+\n+        Based on operator and parts, matching the attributes used by\n+        __eq__. Note this reflects equality of operator and part sequence,\n+        not identity of the parent sequence: since each part's hash relies\n+        on SimpleLocation.__hash__, two CompoundLocation objects made up of\n+        parts with the same coordinates but no ref/ref_db will compare\n+        equal and hash equal even if their parts were created against\n+        different parent sequences.\n+        \"\"\"\n+        return hash((self.operator, tuple(self.parts)))\n+\n     def _shift(self, offset):\n         \"\"\"Return a copy of the CompoundLocation shifted by an offset (PRIVATE).\"\"\"\n         return CompoundLocation(\n",
+      "source_files": [
+        "Bio/SeqFeature.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_SeqFeature.py b/Tests/test_SeqFeature.py\nindex da0e1560d..84dc07d12 100644\n--- a/Tests/test_SeqFeature.py\n+++ b/Tests/test_SeqFeature.py\n@@ -247,6 +247,85 @@ class TestCompoundLocation(unittest.TestCase):\n         loc2 = 5\n         self.assertNotEqual(loc1, loc2)\n \n+    def test_hash_consistent_with_eq(self):\n+        \"\"\"Test equal locations hash equally, and can be used in a set.\"\"\"\n+        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)\n+        loc2 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)\n+        loc2 = CompoundLocation([SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)])\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = CompoundLocation([SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)])\n+        loc2 = CompoundLocation(\n+            [SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)], \"order\"\n+        )\n+        self.assertNotEqual(loc1, loc2)\n+        self.assertNotEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)\n+        loc2 = SimpleLocation(12, 17, -1) + SimpleLocation(23, 42, -1)\n+        self.assertNotEqual(loc1, loc2)\n+        self.assertNotEqual(hash(loc1), hash(loc2))\n+\n+    def test_hash_in_set(self):\n+        \"\"\"Test that equal locations collapse into one entry in a set.\"\"\"\n+        loc_a = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)\n+        loc_b = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)  # equal to loc_a\n+        loc_c = (\n+            SimpleLocation(12, 17, 1)\n+            + SimpleLocation(23, 42, 1)\n+            + SimpleLocation(50, 60, 1)\n+        )\n+\n+        locations1 = {loc_a, loc_b, loc_c}\n+        locations2 = {loc_c, loc_a, loc_b}\n+        self.assertEqual(locations1, locations2)\n+        self.assertEqual(hash(frozenset(locations1)), hash(frozenset(locations2)))\n+        self.assertEqual(len(locations1), 2)\n+        self.assertIn(loc_a, locations1)\n+        self.assertIn(loc_c, locations1)\n+\n+    def test_hash_consistent_with_eq_fuzzy_positions(self):\n+        \"\"\"Test fuzzy positions hash consistently with the equality they satisfy.\"\"\"\n+        # BeforePosition(23) compares equal to plain int 23, so a compound\n+        # location built from it should be equal, and hash equal, to one\n+        # built from 23.\n+        loc1 = SimpleLocation(BeforePosition(23), 42, 1) + SimpleLocation(50, 60, 1)\n+        loc2 = SimpleLocation(23, 42, 1) + SimpleLocation(50, 60, 1)\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+        # WithinPosition compares equal based on its integer value alone,\n+        # regardless of its left/right fuzziness bounds.\n+        loc1 = SimpleLocation(\n+            WithinPosition(10, left=10, right=13), 42, 1\n+        ) + SimpleLocation(50, 60, 1)\n+        loc2 = SimpleLocation(\n+            WithinPosition(10, left=8, right=10), 42, 1\n+        ) + SimpleLocation(50, 60, 1)\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+    def test_hash_unknown_position(self):\n+        \"\"\"Test UnknownPosition hashes as None, even though instances are not equal.\"\"\"\n+        loc1 = SimpleLocation(UnknownPosition(), 42, 1) + SimpleLocation(50, 60, 1)\n+        loc2 = SimpleLocation(UnknownPosition(), 42, 1) + SimpleLocation(50, 60, 1)\n+        # UnknownPosition does not define __eq__, so distinct instances\n+        # compare by identity, which makes the underlying SimpleLocation\n+        # parts (and therefore these CompoundLocation objects) not equal...\n+        self.assertNotEqual(loc1, loc2)\n+        # ...but UnknownPosition.__hash__ always returns hash(None), so\n+        # compound locations built from different UnknownPosition instances\n+        # still hash equal. This is a legitimate hash collision (equal\n+        # objects must hash equal, but the converse isn't required), so it\n+        # should not cause them to collapse in a set.\n+        self.assertEqual(hash(loc1), hash(loc2))\n+        self.assertEqual(len({loc1, loc2}), 2)\n+\n \n class TestSeqFeature(unittest.TestCase):\n     \"\"\"Tests for the SeqFeature.SeqFeature class.\"\"\"\n",
+      "test_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "title": "Issue #5193 - Add __hash__ to CompoundLocation"
+    },
+    {
+      "base": "fd0d9b8c41752a5acf12cf7d7b03db380b5da726",
+      "context": {
+        "head": "b32ba1ddf525e995630c2c00c6ec76c2bfe616e7"
+      },
+      "head": "b32ba1ddf525e995630c2c00c6ec76c2bfe616e7",
+      "id": "99558e6aba611b6710b1",
+      "message": "Raise ValueError for empty sequence in molecular_weight() (#5310)\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/SeqUtils/__init__.py:molecular_weight"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_SeqUtils.py",
+            "name": "SeqUtilsTests"
+          },
+          {
+            "file": "Tests/test_SeqUtils.py",
+            "name": "SeqUtilsTests.test_molecular_weight_empty_sequence"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/SeqUtils/__init__.py b/Bio/SeqUtils/__init__.py\nindex 304256926..11812490a 100644\n--- a/Bio/SeqUtils/__init__.py\n+++ b/Bio/SeqUtils/__init__.py\n@@ -447,6 +447,14 @@ def molecular_weight(\n     >>> print(\"%0.2f\" % molecular_weight(\"AGC\", \"protein\"))\n     249.29\n \n+    The molecular weight of an empty sequence is not defined, and raises\n+    a ValueError:\n+\n+    >>> molecular_weight(\"\", \"DNA\")\n+    Traceback (most recent call last):\n+        ...\n+    ValueError: molecular_weight requires a non-empty sequence\n+\n     \"\"\"\n     try:\n         seq = seq.seq\n@@ -454,6 +462,9 @@ def molecular_weight(\n         pass\n     seq = \"\".join(str(seq).split()).upper()  # Do the minimum formatting\n \n+    if not seq:\n+        raise ValueError(\"molecular_weight requires a non-empty sequence\")\n+\n     if seq_type == \"DNA\":\n         if monoisotopic:\n             weight_table = IUPACData.monoisotopic_unambiguous_dna_weights\n",
+      "source_files": [
+        "Bio/SeqUtils/__init__.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_SeqUtils.py b/Tests/test_SeqUtils.py\nindex effdbf0f9..b68cf1c26 100644\n--- a/Tests/test_SeqUtils.py\n+++ b/Tests/test_SeqUtils.py\n@@ -15,6 +15,7 @@ from Bio.SeqRecord import SeqRecord\n from Bio.SeqUtils import CodonAdaptationIndex\n from Bio.SeqUtils import gc_fraction\n from Bio.SeqUtils import GC_skew\n+from Bio.SeqUtils import molecular_weight\n from Bio.SeqUtils import seq1\n from Bio.SeqUtils import seq3\n from Bio.SeqUtils.CheckSum import crc32\n@@ -404,6 +405,12 @@ TTT\t0.886\n         self.assertEqual(seq1(seq3(s1)), s1)\n         self.assertEqual(seq3(seq1(s3)).upper(), s3.upper())\n \n+    def test_molecular_weight_empty_sequence(self):\n+        \"\"\"Test molecular_weight raises ValueError for an empty sequence.\"\"\"\n+        for seq_type in (\"DNA\", \"RNA\", \"protein\"):\n+            with self.assertRaises(ValueError):\n+                molecular_weight(\"\", seq_type)\n+\n     def test_lcc_simp(self):\n         s = \"ACGATAGC\"\n         seq = Seq(s)\n",
+      "test_files": [
+        "Tests/test_SeqUtils.py"
+      ],
+      "title": "Raise ValueError for empty sequence in molecular_weight() (#5310)"
+    },
+    {
+      "base": "dc262b5c437e07a8cc1cfb8a734c0d84a4434b23",
+      "context": {
+        "head": "7664104bdccf70bf5e5a8f2bd4d5481b7dd0137b"
+      },
+      "head": "7664104bdccf70bf5e5a8f2bd4d5481b7dd0137b",
+      "id": "da87d44f472f5297cc4a",
+      "message": "Issue #5193 - Add __hash__ to SimpleLocation\n\nImplement __hash__ based on start, end, strand, ref, and ref_db,\n\nmatching the attributes used by __eq__. Add tests covering\n\nhash/eq consistency and set membership.\n\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [
+          "Bio/SeqFeature.py:SimpleLocation.__hash__"
+        ],
+        "deleted": [],
+        "edited": [
+          "Bio/SeqFeature.py:SimpleLocation"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestSimpleLocation"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestSimpleLocation.test_hash_consistent_with_eq"
+          },
+          {
+            "file": "Tests/test_SeqFeature.py",
+            "name": "TestSimpleLocation.test_hash_in_set"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/SeqFeature.py b/Bio/SeqFeature.py\nindex 7ca867bd8..67ffad38c 100644\n--- a/Bio/SeqFeature.py\n+++ b/Bio/SeqFeature.py\n@@ -1195,7 +1195,10 @@ class SimpleLocation(Location):\n             yield from range(self._start, self._end)\n \n     def __eq__(self, other):\n-        \"\"\"Implement equality by comparing all the location attributes.\"\"\"\n+        \"\"\"Implement equality by comparing all the location attributes.\n+\n+        See also __hash__, which is kept consistent with this method.\n+        \"\"\"\n         if not isinstance(other, SimpleLocation):\n             return False\n         return (\n@@ -1206,6 +1209,18 @@ class SimpleLocation(Location):\n             and self.ref_db == other.ref_db\n         )\n \n+    def __hash__(self):\n+        \"\"\"Implement hash with all the location attributes.\n+\n+        Based on start, end, strand, ref and ref_db, matching the attributes\n+        used by __eq__. Note this reflects equality of coordinates (and,\n+        where set, an external reference), not identity of the parent\n+        sequence: two SimpleLocation objects with the same coordinates but\n+        no ref/ref_db will compare equal and hash equal even if they were\n+        created against different parent sequences.\n+        \"\"\"\n+        return hash((self._start, self._end, self._strand, self.ref, self.ref_db))\n+\n     def _shift(self, offset):\n         \"\"\"Return a copy of the SimpleLocation shifted by an offset (PRIVATE).\n \n",
+      "source_files": [
+        "Bio/SeqFeature.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_SeqFeature.py b/Tests/test_SeqFeature.py\nindex aacfef616..5b6b60010 100644\n--- a/Tests/test_SeqFeature.py\n+++ b/Tests/test_SeqFeature.py\n@@ -117,6 +117,42 @@ class TestSimpleLocation(unittest.TestCase):\n         loc2 = SimpleLocation(23, 42, 1, \"foo\", \"baz\")\n         self.assertNotEqual(loc1, loc2)\n \n+    def test_hash_consistent_with_eq(self):\n+        \"\"\"Test equal locations hash equally, and can be used in a set.\"\"\"\n+        loc1 = SimpleLocation(23, 42, 1)\n+        loc2 = SimpleLocation(23, 42, 1)\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = SimpleLocation(23, 42, 1, \"foo\", \"bar\")\n+        loc2 = SimpleLocation(23, 42, 1, \"foo\", \"bar\")\n+        self.assertEqual(loc1, loc2)\n+        self.assertEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = SimpleLocation(23, 42, 1, \"foo\")\n+        loc2 = SimpleLocation(23, 42, 1, \"bar\")\n+        self.assertNotEqual(loc1, loc2)\n+        self.assertNotEqual(hash(loc1), hash(loc2))\n+\n+        loc1 = SimpleLocation(23, 42, 1, \"foo\", \"bar\")\n+        loc2 = SimpleLocation(23, 42, 1, \"foo\", \"baz\")\n+        self.assertNotEqual(loc1, loc2)\n+        self.assertNotEqual(hash(loc1), hash(loc2))\n+\n+    def test_hash_in_set(self):\n+        \"\"\"Test that equal locations collapse into one entry in a set.\"\"\"\n+        loc_a = SimpleLocation(23, 42, 1, \"foo\", \"bar\")\n+        loc_b = SimpleLocation(23, 42, 1, \"foo\", \"bar\")  # equal to loc_a\n+        loc_c = SimpleLocation(23, 43, 1, \"foo\", \"bar\")  # different end\n+\n+        locations1 = {loc_a, loc_b, loc_c}\n+        locations2 = {loc_c, loc_a, loc_b}\n+        self.assertEqual(locations1, locations2)\n+        self.assertEqual(hash(frozenset(locations1)), hash(frozenset(locations2)))\n+        self.assertEqual(len(locations1), 2)\n+        self.assertIn(loc_a, locations1)\n+        self.assertIn(loc_c, locations1)\n+\n     def test_start_before_end(self):\n         expected = \"must be greater than or equal to start location\"\n         with self.assertRaises(ValueError) as err:\n",
+      "test_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "title": "Issue #5193 - Add __hash__ to SimpleLocation"
+    },
+    {
+      "base": "98059a63bf679bf9b04e04567c6e8a8c4881e23c",
+      "context": {
+        "head": "4bfd123fd26243dc03f04668374b2fa0d7b14083"
+      },
+      "head": "4bfd123fd26243dc03f04668374b2fa0d7b14083",
+      "id": "a8f369f1eb26dbb08ef7",
+      "message": "Fix GenBank Record serialization of WGS ranges (#5275)\n\nRecordParser stores WGS ranges as lists of endpoints, but Record.__str__\nattempted to concatenate those lists directly with strings, raising a\nTypeError.\n\nJoin WGS endpoints with hyphens, emit each WGS_SCAFLD range on its own\nline, and add regression coverage for one WGS range and multiple\nscaffold ranges.\n\nAdd Marcus Campbell to contributor lists\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/GenBank/Record.py:Record",
+          "Bio/GenBank/Record.py:Record._wgs_line",
+          "Bio/GenBank/Record.py:Record._wgs_scafld_line"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_GenBank.py",
+            "name": "TestRecordParser"
+          },
+          {
+            "file": "Tests/test_GenBank.py",
+            "name": "TestRecordParser.test_wgs_record_serialization"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/GenBank/Record.py b/Bio/GenBank/Record.py\nindex b96da8bef..ed3346e6a 100644\n--- a/Bio/GenBank/Record.py\n+++ b/Bio/GenBank/Record.py\n@@ -474,14 +474,14 @@ class Record:\n         output = \"\"\n         if self.wgs:\n             output += Record.BASE_FORMAT % \"WGS\"\n-            output += self.wgs\n+            output += \"-\".join(self.wgs) + \"\\n\"\n         return output\n \n     def _wgs_scafld_line(self):\n         output = \"\"\n-        if self.wgs_scafld:\n+        for scaffold in self.wgs_scafld:\n             output += Record.BASE_FORMAT % \"WGS_SCAFLD\"\n-            output += self.wgs_scafld\n+            output += \"-\".join(scaffold) + \"\\n\"\n         return output\n \n     def _contig_line(self):\n",
+      "source_files": [
+        "Bio/GenBank/Record.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_GenBank.py b/Tests/test_GenBank.py\nindex 8eb897917..6fa595d02 100644\n--- a/Tests/test_GenBank.py\n+++ b/Tests/test_GenBank.py\n@@ -230,6 +230,34 @@ class TestRecordParser(unittest.TestCase):\n             record, length, locus, definition, accession, titles, features\n         )\n \n+    def test_wgs_record_serialization(self):\n+        \"\"\"Test serializing WGS and WGS_SCAFLD ranges.\"\"\"\n+        path = \"GenBank/noref.gb\"\n+        with open(path) as handle:\n+            source = handle.read()\n+        source = source.replace(\n+            \"ORIGIN      \\n\",\n+            \"WGS         ABCD01000001-ABCD01000002\\n\"\n+            \"WGS_SCAFLD  ABCD01000003-ABCD01000004\\n\"\n+            \"WGS_SCAFLD  ABCD01000005-ABCD01000006\\n\"\n+            \"ORIGIN      \\n\",\n+        )\n+\n+        record = next(GenBank.Iterator(StringIO(source), self.rec_parser))\n+\n+        self.assertEqual(record.wgs, [\"ABCD01000001\", \"ABCD01000002\"])\n+        self.assertEqual(\n+            record.wgs_scafld,\n+            [\n+                [\"ABCD01000003\", \"ABCD01000004\"],\n+                [\"ABCD01000005\", \"ABCD01000006\"],\n+            ],\n+        )\n+        output = str(record)\n+        self.assertIn(\"WGS         ABCD01000001-ABCD01000002\\n\", output)\n+        self.assertIn(\"WGS_SCAFLD  ABCD01000003-ABCD01000004\\n\", output)\n+        self.assertIn(\"WGS_SCAFLD  ABCD01000005-ABCD01000006\\n\", output)\n+\n     def test_record_parser_02(self):\n         path = \"GenBank/cor6_6.gb\"\n         with open(path) as handle:\n",
+      "test_files": [
+        "Tests/test_GenBank.py"
+      ],
+      "title": "Fix GenBank Record serialization of WGS ranges (#5275)"
+    },
+    {
+      "base": "158b2f2acfa9a54196f4b37fcc743e859e919217",
+      "context": {
+        "head": "484c1c2950f081e6c4d4d1cfffa57fcc557fd785"
+      },
+      "head": "484c1c2950f081e6c4d4d1cfffa57fcc557fd785",
+      "id": "0a8ec807d6254a4f14ae",
+      "message": "Guard Tree.collapse() against children without branch lengths\n\nTree.collapse() added the removed node's branch length to each child with\nchild.branch_length += extra_length, which raised TypeError when a child\nhad branch_length None (cladograms / trees parsed without branch lengths).\nMirror the guard already used in the sibling prune() method.\n\nFixes #5245\n\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/Phylo/BaseTree.py:TreeMixin",
+          "Bio/Phylo/BaseTree.py:TreeMixin.collapse"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_Phylo.py",
+            "name": "MixinTests"
+          },
+          {
+            "file": "Tests/test_Phylo.py",
+            "name": "MixinTests.test_collapse_without_branch_lengths"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/Phylo/BaseTree.py b/Bio/Phylo/BaseTree.py\nindex 0459b153b..2691df1fe 100644\n--- a/Bio/Phylo/BaseTree.py\n+++ b/Bio/Phylo/BaseTree.py\n@@ -593,7 +593,8 @@ class TreeMixin:\n         popped = parent.clades.pop(parent.clades.index(path[-1]))\n         extra_length = popped.branch_length or 0\n         for child in popped:\n-            child.branch_length += extra_length\n+            if child.branch_length is not None:\n+                child.branch_length += extra_length\n         parent.clades.extend(popped.clades)\n         return parent\n \n",
+      "source_files": [
+        "Bio/Phylo/BaseTree.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_Phylo.py b/Tests/test_Phylo.py\nindex df5d0f7fc..f927c0c47 100644\n--- a/Tests/test_Phylo.py\n+++ b/Tests/test_Phylo.py\n@@ -481,6 +481,12 @@ class MixinTests(unittest.TestCase):\n         for clade in d2:\n             self.assertAlmostEqual(d1[clade], d2[clade])\n \n+    def test_collapse_without_branch_lengths(self):\n+        tree = Phylo.read(StringIO(\"(((A,B),C),D);\"), \"newick\")\n+        tree.collapse_all()\n+        self.assertEqual(len(tree.get_terminals()), 4)\n+        self.assertEqual(len(tree.get_nonterminals()), 1)\n+\n     def test_ladderize(self):\n         \"\"\"TreeMixin: ladderize() method.\"\"\"\n \n",
+      "test_files": [
+        "Tests/test_Phylo.py"
+      ],
+      "title": "Guard Tree.collapse() against children without branch lengths"
+    },
+    {
+      "base": "d00e53646bbcafa5111dab1b708044277cd3dcd6",
+      "context": {
+        "head": "e44706078092fa42d50da75d4ed25c880bab9932"
+      },
+      "head": "e44706078092fa42d50da75d4ed25c880bab9932",
+      "id": "8130bb745940f40751ac",
+      "message": "Cope with invalid strand in GenBank LOCUS line\n\nWhen the LOCUS line does not have a valid strand type at the expected position\n(e.g. files exported by SnapGene), instead of raising a ValueError, fall back to white\nspace based parsing and issue a BiopythonParserWarning . The fallback recovers\nlocus name and size only (everything else may be ambiguous).\n\nCloses #4846\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/GenBank/Scanner.py:GenBankScanner",
+          "Bio/GenBank/Scanner.py:GenBankScanner._feed_first_line"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_GenBank.py",
+            "name": "LineOneTests"
+          },
+          {
+            "file": "Tests/test_GenBank.py",
+            "name": "LineOneTests.test_topology_genbank"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/GenBank/Scanner.py b/Bio/GenBank/Scanner.py\nindex 1133386dd..0f495478d 100644\n--- a/Bio/GenBank/Scanner.py\n+++ b/Bio/GenBank/Scanner.py\n@@ -18,6 +18,7 @@ Feature Table Documentation:\n - http://www.ncbi.nlm.nih.gov/projects/collab/FT/index.html\n - ftp://ftp.ncbi.nih.gov/genbank/docs/\n \"\"\"\n+\n # 17-MAR-2009: added wgs, wgs_scafld for GenBank whole genome shotgun master records.\n # These are GenBank files that summarize the content of a project, and provide lists of\n # scaffold and contig files in the project. These will be in annotations['wgs'] and\n@@ -1404,9 +1405,20 @@ class GenBankScanner(InsdcScanner):\n                     \"expected position:\\n\" + line\n                 )\n             if line[44:47] not in [\"   \", \"ss-\", \"ds-\", \"ms-\"]:\n+                parts = line[self.GENBANK_INDENT :].split()\n+                if len(parts) >= 2:\n+                    warnings.warn(\n+                        \"LOCUS line does not have valid strand type \"\n+                        \"(Single stranded, ...) - falling back to minimal \"\n+                        \"parsing of name and size only:\\n\" + line,\n+                        BiopythonParserWarning,\n+                    )\n+                    consumer.locus(parts[0])\n+                    consumer.size(parts[1])\n+                    return\n                 raise ValueError(\n-                    \"LOCUS line does not have valid strand \"\n-                    \"type (Single stranded, ...):\\n\" + line\n+                    \"LOCUS line does not have valid strand type \"\n+                    \"and minimal fallback parsing failed:\\n\" + line\n                 )\n \n             if not (\n",
+      "source_files": [
+        "Bio/GenBank/Scanner.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_GenBank.py b/Tests/test_GenBank.py\nindex 0d1e69082..8eb897917 100644\n--- a/Tests/test_GenBank.py\n+++ b/Tests/test_GenBank.py\n@@ -8284,6 +8284,16 @@ class LineOneTests(unittest.TestCase):\n                 \"PRI\",\n                 None,\n             ),\n+            # SnapGene-style LOCUS line with invalid strand type spacing\n+            # (issue #4846). Only name and size are recovered, with a warning.\n+            (\n+                \"LOCUS       pAV-CAG-GFP-corr        2394 bp DNA\"\n+                \"                     01-JAN-1980\",\n+                None,\n+                None,\n+                None,\n+                [BiopythonParserWarning],\n+            ),\n         ]\n         for line, topo, mol_type, div, warning_list in tests:\n             with warnings.catch_warnings(record=True) as caught:\n",
+      "test_files": [
+        "Tests/test_GenBank.py"
+      ],
+      "title": "Cope with invalid strand in GenBank LOCUS line"
+    },
+    {
+      "base": "ead54d7b2cca66226681ee37e355f7aa783881f2",
+      "context": {
+        "head": "736c96f37b190732ecca9da80ad0cb9d4967214d"
+      },
+      "head": "736c96f37b190732ecca9da80ad0cb9d4967214d",
+      "id": "278217a7c125865973a9",
+      "message": "Fix `Entrez.Parser.DataHandler` URL security check continuity (related to #5109 and #5114) (#5148)\n\n* Bio/Entrez/Parser.py: Do not stop checking URLs after first success\n\nPreviously, one passed check from DataHandler.verify_security\nwould disabled checks for any consecutive requests to URLs,\nindependent of URL scheme and target host.\n\n* Bio/Entrez/Parser.py: Rename flag .secure to .bypass_url_security\n\n.. to better communicate what is doing\n\n* Bio/Entrez/Parser.py: Fix DataHandler.verify_security docstring\n\n* Bio/Entrez/Parser.py: Improve DataHandler.verify_security error message\n\n* Bio/Entrez/Parser.py: Add host jats.nlm.nih.gov to trusted URL hosts\n\nThis URL is used by two existing tests:\nhttps://jats.nlm.nih.gov/archiving/1.3/JATS-archivearticle1-3-mathml3.dtd\n\n* Tests/test_Entrez_parser.py: Cover DataHandler.verify_security continuity\n\n* CONTRIB.rst|NEWS.rst: Add myself as a contributor for Biopython 1.87\n\n* Bio/Entrez/Parser.py: Trust all *.nlm.nih.gov domains\n\n.. to allow changes on subdomain level in the future\n\nCo-authored-by: Peter Cock <p.j.a.cock@googlemail.com>\n\n* Bio/Entrez/Parser.py: Trust external references from NCBI files\n\nGeneral idea by Michiel de Hoon.\n\n* Bio/Entrez/Parser.py: Improve DataHandler.verify_security docstring\n\nCo-authored-by: Peter Cock <p.j.a.cock@googlemail.com>\n\n---------\n\nCo-authored-by: Peter Cock <p.j.a.cock@googlemail.com>\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/Entrez/Parser.py:DataHandler",
+          "Bio/Entrez/Parser.py:DataHandler.__init__",
+          "Bio/Entrez/Parser.py:DataHandler.externalEntityRefHandler",
+          "Bio/Entrez/Parser.py:DataHandler.verify_security"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_Entrez_parser.py",
+            "name": "UrlSecurityCheckTest"
+          },
+          {
+            "file": "Tests/test_Entrez_parser.py",
+            "name": "UrlSecurityCheckTest.test_continued_url_security_checking"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/Entrez/Parser.py b/Bio/Entrez/Parser.py\nindex baed1cc5d..4e7bab984 100644\n--- a/Bio/Entrez/Parser.py\n+++ b/Bio/Entrez/Parser.py\n@@ -354,7 +354,7 @@ class DataHandler(metaclass=DataHandlerMeta):\n         self.dtd_urls = []\n         self.element = None\n         self.level = 0\n-        self.secure = False\n+        self.bypass_url_security = False\n         self.data = []\n         self.attributes = None\n         self.allowed_tags = None\n@@ -1081,21 +1081,20 @@ class DataHandler(metaclass=DataHandlerMeta):\n             handle.write(text)\n             handle.close()\n \n-    def verify_security(self, url):\n-        \"\"\"Check if the url is from a trustable sournce.\"\"\"\n-        if not self.secure:\n+    def verify_security(self, url, verify_hostname=True):\n+        \"\"\"Check if the given URL is from a trustable source.\n+\n+        When ``self.bypass_url_security`` evaluates to ``True``,\n+        all URL security checks will be skipped.\n+        \"\"\"\n+        if not self.bypass_url_security:\n             parts = urlparse(url)\n             scheme = parts.scheme\n             hostname = parts.hostname\n-            hostnames = (\n-                \"www.ncbi.nlm.nih.gov\",\n-                \"dtd.nlm.nih.gov\",\n-                \"eutils.ncbi.nlm.nih.gov\",\n-            )\n-            if scheme != \"https\" or hostname not in hostnames:\n-                raise ValueError(f\"expected secure URL to NCBI, found {url}\")\n-            # Trust URLs linked from NCBI\n-            self.secure = True\n+            if scheme != \"https\" or (\n+                verify_hostname and not hostname.endswith(\".nlm.nih.gov\")\n+            ):\n+                raise ValueError(f\"Expected secure URL to NCBI, found {url!r}\")\n \n     def externalEntityRefHandler(self, context, base, systemId, publicId):\n         \"\"\"Handle external entity reference in order to cache DTD locally.\n@@ -1125,27 +1124,42 @@ class DataHandler(metaclass=DataHandlerMeta):\n             url = source.rstrip(\"/\") + \"/\" + systemId\n         else:\n             raise ValueError(\"Unexpected URL scheme %r\" % urlinfo.scheme)\n+\n+        # NOTE: This trusts any external references from a trusted parent,\n+        #       even if these external references go to unknown hosts,\n+        #       e.g. when NCBI starts referencing things on a new host\n+        #       from existing DTD files.\n+        #       Needs to be checked *prior* to appending to ``self.dtd_urls``.\n+        self.verify_security(url, verify_hostname=not self.dtd_urls)\n+\n+        # NOTE: Since ``self.dtd_urls`` being non-empty has security\n+        #       consequences with the check above, we use a ``finally`` wrap\n+        #       here, in order to guarantee that push and pop are matched.\n         self.dtd_urls.append(url)\n-        self.verify_security(url)\n-        # First, try to load the local version of the DTD file\n-        location, filename = os.path.split(systemId)\n-        handle = self.open_dtd_file(filename)\n-        if not handle:\n-            # DTD is not available as a local file. Try accessing it through\n-            # the internet instead.\n-            try:\n-                handle = urlopen(url)\n-            except OSError:\n-                raise RuntimeError(f\"Failed to access {filename} at {url}\") from None\n-            text = handle.read()\n+        try:\n+            # First, try to load the local version of the DTD file\n+            location, filename = os.path.split(systemId)\n+            handle = self.open_dtd_file(filename)\n+            if not handle:\n+                # DTD is not available as a local file. Try accessing it through\n+                # the internet instead.\n+                try:\n+                    handle = urlopen(url)\n+                except OSError:\n+                    raise RuntimeError(\n+                        f\"Failed to access {filename} at {url}\"\n+                    ) from None\n+                text = handle.read()\n+                handle.close()\n+                self.save_dtd_file(filename, text)\n+                handle = BytesIO(text)\n+\n+            parser = self.parser.ExternalEntityParserCreate(context)\n+            parser.ElementDeclHandler = self.elementDecl\n+            parser.ParseFile(handle)\n             handle.close()\n-            self.save_dtd_file(filename, text)\n-            handle = BytesIO(text)\n-\n-        parser = self.parser.ExternalEntityParserCreate(context)\n-        parser.ElementDeclHandler = self.elementDecl\n-        parser.ParseFile(handle)\n-        handle.close()\n-        self.dtd_urls.pop()\n+        finally:\n+            self.dtd_urls.pop()\n+\n         self.parser.StartElementHandler = self.startElementHandler\n         return 1\n",
+      "source_files": [
+        "Bio/Entrez/Parser.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_Entrez_parser.py b/Tests/test_Entrez_parser.py\nindex abd611b28..62636cc8b 100644\n--- a/Tests/test_Entrez_parser.py\n+++ b/Tests/test_Entrez_parser.py\n@@ -9,6 +9,8 @@ import os\n import pickle\n import unittest\n from io import BytesIO\n+from textwrap import dedent\n+from unittest.mock import call, Mock\n \n from Bio import Entrez\n from Bio import StreamModeError\n@@ -8867,6 +8869,48 @@ We designed and generated pulmonary imaging biomarker pipelines to facilitate hi\n         self.assertRaises(CorruptedXMLError, next, records)\n \n \n+class UrlSecurityCheckTest(unittest.TestCase):\n+    \"\"\"Test for DTD and XSL URL validation.\"\"\"\n+\n+    def test_continued_url_security_checking(self):\n+        content = dedent(\n+            \"\"\"\\\n+                <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n+                <!DOCTYPE BlastOutput PUBLIC \"-//NCBI//NCBI BlastOutput/EN\" \"https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd\">\n+                <IPGReportSet xmlns:xsi=\"https://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"https://host.invalid/404.dtd\" />\n+                <!--                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ -->\n+            \"\"\"\n+        ).encode(\"utf-8\")\n+\n+        handler = Entrez.Parser.DataHandler(\n+            validate=True, escape=False, ignore_errors=False\n+        )\n+        handler.verify_security = Mock(side_effect=handler.verify_security)\n+\n+        with self.assertRaises(ValueError) as caught:\n+            handler.read(BytesIO(content))\n+\n+        self.assertIn(\"Expected secure URL to NCBI\", caught.exception.args[0])\n+        self.assertEqual(\n+            handler.verify_security.call_args_list,\n+            [\n+                call(\n+                    \"https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.dtd\",\n+                    verify_hostname=True,\n+                ),\n+                call(\n+                    \"https://www.ncbi.nlm.nih.gov/dtd/NCBI_Entity.mod.dtd\",\n+                    verify_hostname=False,\n+                ),\n+                call(\n+                    \"https://www.ncbi.nlm.nih.gov/dtd/NCBI_BlastOutput.mod.dtd\",\n+                    verify_hostname=False,\n+                ),\n+                call(\"https://host.invalid/404.dtd\"),\n+            ],\n+        )\n+\n+\n if __name__ == \"__main__\":\n     runner = unittest.TextTestRunner(verbosity=2)\n     unittest.main(testRunner=runner)\n",
+      "test_files": [
+        "Tests/test_Entrez_parser.py"
+      ],
+      "title": "Fix `Entrez.Parser.DataHandler` URL security check continuity (related to #5109 and #5114) (#5148)"
+    },
+    {
+      "base": "90be93a3359d24e0ee559b8ac211cbce99679e0a",
+      "context": {
+        "head": "f4b277ee32135d60880b63e4f6021df1b28c7adc"
+      },
+      "head": "f4b277ee32135d60880b63e4f6021df1b28c7adc",
+      "id": "9c415269c8fc25289cd7",
+      "message": "Fix typo/bug in biopython.Bio.PDB.vectors vector_to_axis (#5045)\n\nAdd testing for vector_to_axis\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/PDB/vectors.py:vector_to_axis"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_PDB_vectors.py",
+            "name": "VectorTests"
+          },
+          {
+            "file": "Tests/test_PDB_vectors.py",
+            "name": "VectorTests.test_vector_to_axis"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/PDB/vectors.py b/Bio/PDB/vectors.py\nindex 2c5e5a3c5..68b853261 100644\n--- a/Bio/PDB/vectors.py\n+++ b/Bio/PDB/vectors.py\n@@ -93,9 +93,9 @@ def vector_to_axis(line, point):\n     :param point: vector defining the point\n     \"\"\"\n     line = line.normalized()\n-    np = point.norm()\n+    norm_point = point.norm()\n     angle = line.angle(point)\n-    return point - line ** (np * np.cos(angle))\n+    return point - line ** (norm_point * np.cos(angle))\n \n \n def rotaxis2m(theta, vector):\n",
+      "source_files": [
+        "Bio/PDB/vectors.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_PDB_vectors.py b/Tests/test_PDB_vectors.py\nindex b34c1d3d0..03de8b3b9 100644\n--- a/Tests/test_PDB_vectors.py\n+++ b/Tests/test_PDB_vectors.py\n@@ -18,17 +18,15 @@ except ImportError:\n         \"Install NumPy if you want to use Bio.PDB.\"\n     ) from None\n \n-from Bio.PDB import calc_angle\n-from Bio.PDB import calc_dihedral\n-from Bio.PDB import m2rotaxis\n-from Bio.PDB import refmat\n-from Bio.PDB import rotaxis\n-from Bio.PDB import rotmat\n-from Bio.PDB.vectors import coord_space\n-from Bio.PDB.vectors import get_spherical_coordinates\n-from Bio.PDB.vectors import homog_trans_mtx\n-from Bio.PDB.vectors import multi_coord_space\n-from Bio.PDB.vectors import Vector\n+from Bio.PDB import calc_angle, calc_dihedral, m2rotaxis, refmat, rotaxis, rotmat\n+from Bio.PDB.vectors import (\n+    Vector,\n+    coord_space,\n+    get_spherical_coordinates,\n+    homog_trans_mtx,\n+    multi_coord_space,\n+    vector_to_axis,\n+)\n \n \n class VectorTests(unittest.TestCase):\n@@ -278,6 +276,32 @@ class VectorTests(unittest.TestCase):\n                 rslt[i] = mtxs[1][m].dot(rslt[i])\n             self.assertTrue(np.array_equal(rslt, test_set[m]))\n \n+    def test_vector_to_axis(self):\n+        \"\"\"Test vector_to_axis function for correctness\"\"\"\n+        # Case 1: the line direction is along +x. The point (1,1,0) lies 1 unit above the line\n+        # the perpendicular vector from point to line is (0,1,0)\n+        line = Vector([1, 0, 0])\n+        point = Vector([1, 1, 0])\n+        expected_result = Vector([0, 1, 0])\n+        result = vector_to_axis(line, point)\n+        self.assertTrue(np.array_equal(result.get_array(), expected_result.get_array()))\n+\n+        # Case 2: the line direction is along -x. The point (-2,2,0) lies 2 units above the line\n+        # the perpendicular vector from point to line is (0,2,0)\n+        line = Vector([-2, 0, 0])\n+        point = Vector([-2, 2, 0])\n+        expected_result = Vector([0, 2, 0])\n+        result = vector_to_axis(line, point)\n+        self.assertTrue(np.array_equal(result.get_array(), expected_result.get_array()))\n+\n+        # Case 3: the line direction is along -x. The point (3,2,0) lies 2 units above the line\n+        # the perpendicular vector from point to line is (0,2,0)\n+        line = Vector([-2, 0, 0])\n+        point = Vector([3, 2, 0])\n+        expected_result = Vector([0, 2, 0])\n+        result = vector_to_axis(line, point)\n+        self.assertTrue(np.array_equal(result.get_array(), expected_result.get_array()))\n+\n \n if __name__ == \"__main__\":\n     runner = unittest.TextTestRunner(verbosity=2)\n",
+      "test_files": [
+        "Tests/test_PDB_vectors.py"
+      ],
+      "title": "Fix typo/bug in biopython.Bio.PDB.vectors vector_to_axis (#5045)"
+    },
+    {
+      "base": "fe756122a3048c050b008875ba051de3998eabcd",
+      "context": {
+        "head": "b2701d408d072417e66c1386ec07020d9b6a0d6c"
+      },
+      "head": "b2701d408d072417e66c1386ec07020d9b6a0d6c",
+      "id": "78a7400ca2478e2b124f",
+      "message": "fix error message raised when the target is not found in the tree\n\n",
+      "repo": "https://github.com/biopython/biopython",
+      "selection": {
+        "added": [],
+        "deleted": [],
+        "edited": [
+          "Bio/Phylo/BaseTree.py:TreeMixin",
+          "Bio/Phylo/BaseTree.py:TreeMixin.common_ancestor"
+        ],
+        "statement_changes": 0,
+        "test_entities": [
+          {
+            "file": "Tests/test_Phylo.py",
+            "name": "MixinTests"
+          },
+          {
+            "file": "Tests/test_Phylo.py",
+            "name": "MixinTests.test_missing_target_trace"
+          }
+        ],
+        "test_match": true
+      },
+      "source_diff": "diff --git a/Bio/Phylo/BaseTree.py b/Bio/Phylo/BaseTree.py\nindex 137dcbb22..0459b153b 100644\n--- a/Bio/Phylo/BaseTree.py\n+++ b/Bio/Phylo/BaseTree.py\n@@ -434,7 +434,7 @@ class TreeMixin:\n         \"\"\"\n         paths = [self.get_path(t) for t in _combine_args(targets, *more_targets)]\n         # Validation -- otherwise izip throws a spooky error below\n-        for p, t in zip(paths, targets):\n+        for p, t in zip(paths, _combine_args(targets, *more_targets)):\n             if p is None:\n                 raise ValueError(f\"target {t!r} is not in this tree\")\n         mrca = self.root\n",
+      "source_files": [
+        "Bio/Phylo/BaseTree.py"
+      ],
+      "test_diff": "diff --git a/Tests/test_Phylo.py b/Tests/test_Phylo.py\nindex d6a528fc9..8452396d9 100644\n--- a/Tests/test_Phylo.py\n+++ b/Tests/test_Phylo.py\n@@ -368,6 +368,13 @@ class MixinTests(unittest.TestCase):\n         self.assertAlmostEqual(path[2].branch_length, 0.4)\n         self.assertEqual(path[2].name, \"C\")\n \n+    def test_missing_target_trace(self):\n+        \"\"\"TreeMixin: trace() method with missing target.\"\"\"\n+        tree = self.phylogenies[1]\n+        with self.assertRaises(ValueError) as cm:\n+            tree.trace(\"Aaa\", \"C\")\n+        self.assertEqual(str(cm.exception), \"target 'Aaa' is not in this tree\")\n+\n     # Information methods\n \n     def test_common_ancestor(self):\n",
+      "test_files": [
+        "Tests/test_Phylo.py"
+      ],
+      "title": "fix error message raised when the target is not found in the tree"
+    }
+  ],
+  "rejected": [
+    {
+      "detail": "No added or modified test entity",
+      "head": "c911b1210e69df202834418ec43fba62a9d0b100",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Edited test does not name or call a changed source entity",
+      "head": "99d244c28692e58934746b0bd6b28fe9def29fca",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fc0c156786e86862112a05a720b6f4f47023f36a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fa5f1daee5ead8f44a5560f958c1aea63fc34353",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "eeb9881f3bb57f3b9c20ba83ae6a9c77ba2e8cac",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "cc547814cb5771a1708934ed2a10c5768f26c4eb",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "7e88c9719bb3e4b470c126e978f7f1c6141fc544",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "4ab3f1f68607335cd2cd6632c55cc904b7a436a2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "72c8443c01d50a550deee3250b71326787c5e2a0",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "5f37f44043eeb300435f7d485e615ea7360fd1ea",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Python changes outside the configured source/test profile",
+      "head": "bb295f15adb75d0296361a063e645eba35160ab0",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "07e59374eb09f4104d4efc96a815d253f1af3c3d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "072b11ff5250f23787dff4f1d393d1684dac5965",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "372c71069d9d0e7c86af4e318ce212241c2d10dd",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "e63c649a0c3ae4895d426c2a9e19f86df53853e8",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "590285be7eaed8a21e5fc14290a66e591ea70ed8",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "c44e3c8121e95cb95d8635b648aa2b9033812035",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "8d1dbe2ab594ee6ce358608933131418083869f6",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "0d51cefb25ddf23ba32b3c3086446b28e189c9b7",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "08fc09086afe0b57215d2515660e0c032b55c0dd",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "59853389c49d02de6aee14e0db8ef2f2604e280c",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "bbc55712db23d048cdc2cebc643453418f66593c",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fd0d9b8c41752a5acf12cf7d7b03db380b5da726",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "24e0b3fcea1882339b1753f5fe5f2d04fc282ecd",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "dc262b5c437e07a8cc1cfb8a734c0d84a4434b23",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "40f968d74e6a04da1985e90d620a0c3b908b97f2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "8b718d1cd017cca2d4d7c65bcc01316ce264c55a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fee5e7341c615c4785b9eefa3ed3f22d8c4af3be",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "cd561a3ece9c2a068729950cfbcf86ca291eb43e",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fd37319b4bd2ff87cc432d6813a3a1b604e74ecc",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Edited test does not name or call a changed source entity",
+      "head": "8b4d499f0e42567439e18a44986f342cc46e4faa",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "62f83712929985319662f45fca38329b156f44ea",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "607b24da81d48d313f9c47f2c213ef9fb9b3de61",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "3ad5f920bcd9502e736eca5d5328be19febbe9ba",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "98d5f570c186a9d0b09c33883ccc89644ca68df7",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "a9f0274beb1bb329a55207189b8fd7483618a3aa",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "c9489604d1d9607602ca9199a3852c1219ed330f",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d7e4b8b19399668b09442a5b35765d9186b5f665",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "3d79e1d4b9d98ba1c381779f048af2c5d17f973d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Python changes outside the configured source/test profile",
+      "head": "0e4b36f677ded43fb5dc7958d9d222639bde4010",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "234425434cc54a5c73026c5fb7e2cc25ffaec82a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "1d12536000fc90704e5da9d7b06f704fcadc161b",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "0fb1129fdc3c67922eae05b28d5ed333d924eaa2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "98d0b3cdb0d31206bf4efaa0fa68e91a397c682e",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "611b13dd57972177aa71aa72d0ef62124e350bd1",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "98059a63bf679bf9b04e04567c6e8a8c4881e23c",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "e136be720eaf7055277e0c0e3b30bca775a990ca",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "dafeffb15cab89913decb8f0b1ea541cd3fc74a7",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "80401d49f407b8303504733906352f6bcd9f9661",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "5d6fe8d221f2c6c27db97c0bd4002ce229537b6d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "456c569a6d9ebec44dd7040753e860a73b394bed",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "dcaa19bee9226f9dc3c95aa1c9be7b499799c39c",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "71ab98b8d2f5c1574ec4d3c90b432d300359d0d4",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b55488a0f83ab020a1259114b47efdabab2dd6bf",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "14550ed19806214d2646e3a48e7c63ceebd84646",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "c6244d02a043f3a4f25c9d7652336e905dbbdcc6",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Edited test does not name or call a changed source entity",
+      "head": "158b2f2acfa9a54196f4b37fcc743e859e919217",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "ffffe49f7cc9d81fb90937883f1cfadd6847722d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "47a6ebeb5c107e1a5f1e764821e82ace33ed3b67",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "8ef753085b11520207d5a8f6122e6fb53fddedba",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "175f1b2b4dcec30cfb76f5d9149744b7ead28d0a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d00e53646bbcafa5111dab1b708044277cd3dcd6",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "6fc0e8878d3f3d841efa24b21e549fb0d99af23d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "95ff2cbbc5f346cf70c3856532cb5113a4b14567",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "213e5ba832ad55bb68f779f60112f83b4f42da4b",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "0271a9fcdaf2eb60383354349abecb4e075c42af",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "1043c225579c4ac587d0a13a83acf172c3b53087",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "c7f2506091811312e086fa8fbfca356c0b876050",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "8dcaccb6b78a75b7eae940a69cea6e971ede3ca1",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "324a5ff3c88511fd74269962f58bcd661d7bf329",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Python changes outside the configured source/test profile",
+      "head": "ef35322837f92f9a82debc06118968b0bcd4988b",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "52054714fbdee44f03f1bb25f2f745769d0688e9",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "5b3faaf1ee9ddac925a237ed8ea1ca40a36def7d",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d59ab34b2483c7e58c18d13f66fdff5339a11a08",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "e0d5ef8254b5a8dec0d28d8854d5295c432a4f86",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "6f611a2de80814d4c0625863f7a0cdf19b0c54bf",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fc3e2ca22b15ba859f6fca262259fb498fdfb5e2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "1ab53fe9dedd6e3cb4c3f8f4dac932384f8c4207",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b1d8f3835ca021c1e463aa52357650f99254ecc4",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "cf6bafdaf52264f72a349b2c1cdfcf373408d9c1",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "2a899d942934e071fd69869fb9d2b8fa796b795e",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "aef1f21cf025d0e0e88b0596c75b05a1c1746c0c",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "817cf045e2194c6cfb24b6afbffcedc29ab8394f",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "94460272faccd28b8293426acc90b5793bd4abc0",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "7a9c76cce8c6a58db791be2b12a135af210cedf2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d76a5581ca3317ec850d72450c458ec4e34e2583",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "a25e8c780f1cf0f9171cca4cd88b1bfc57a5d710",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "a6000cd40615f073e3e8e6ced442b6011d9cb461",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Edited test does not name or call a changed source entity",
+      "head": "322cd902caf7e981744820f844ed08979cedc0cb",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "ead54d7b2cca66226681ee37e355f7aa783881f2",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "96188bc65f3ba22bdf6cd1b275979a68df5ee217",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "4a209ac26c57980bb99ebbe335ff49a2cf26d972",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "471a866f995e9cd4bad2502a8c587d9256f255fb",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "f4d8ae451e07f3f8c1567752b6e9937b99c9eac0",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "f0973f67f7650638f9a683eeafc61e51f2add0ec",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Python changes outside the configured source/test profile",
+      "head": "6807e7e06e965239ca58ee71d6ad5f67828c75a0",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "f948a55b4cafff65468180265859d72594289fdb",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "156e6b6c3e5783328d5facfa41ed6831fd0ea4ae",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b8627d618931ad35a7985046fdfec50fa4aa086e",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Change exceeds native size bounds",
+      "head": "6568a97654024494aecb327b42db852cd7c72c18",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b4a0d8116647e08cd8525d72af1e8e1f36cdd5a7",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Outside the native bug-edit entity bounds",
+      "head": "0d829a8d0018c0a83b1349f6f10ff7e013a70f71",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "e6ddb8589540a0e3d20ada44c63870ea63869803",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Python changes outside the configured source/test profile",
+      "head": "d9529227f806e6dbff508ed31eae3be4d54a5b20",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "c489daaf58a03b18c587c57050e38b9d518cc8f5",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b5bbbfc83fa6d377d18c76f5ba2d697751784357",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "22a672bf349ab325c503ecf9ea2072a62b494da3",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d7c0fe32553d677b82a374e6b1d92187fa000d65",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "07a09d0e1a1da75cfce4d348965bbea7a8d0a679",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "54a8eda898997b98ecdc0da77f26cf5e0b87ee9a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "22aa877fb7937c60bb2b743145f45248cd9847b1",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "fb2f3f0d3729c4a1d86a8a4a04509781d6ab178e",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "6242fcb0d1febeba82d7dcc7abbd5035a745a84f",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "19788bf997da33b60ed53eb10da5959c60903c26",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "845455ce40d642a5b5f24899177acbd23aaa0b41",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Edited test does not name or call a changed source entity",
+      "head": "10985991f6aea9fcce2e4bb0b6adf806e0b0b461",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "7f00d026059d6929fe3345978a46f7d55fc5ef4f",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "b936f628f354b1333cf89a436a3406a2042c40bb",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "Outside the native bug-edit entity bounds",
+      "head": "90be93a3359d24e0ee559b8ac211cbce99679e0a",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "59130e06d71f6f691b9ed26603c78d9e4cb3e1c6",
+      "reason": "source_filter"
+    },
+    {
+      "detail": "No bounded source-plus-test change",
+      "head": "d07dde90e0eacbc562d5ed011165890e69a7bb71",
+      "reason": "source_filter"
+    }
+  ],
+  "repo_revision": "c911b1210e69df202834418ec43fba62a9d0b100",
+  "repository_cache": "/work/history/414eec3a2a209a6e"
+}
