@@ -1,4 +1,4 @@
-"""One SCALER blind attempt after matching no-model provider controls."""
+"""One recorded blind attempt after matching no-model provider controls."""
 import json
 import os
 import subprocess
@@ -20,7 +20,10 @@ def resolve_endpoint():
     return endpoint if endpoint.endswith('/v1') else endpoint + '/v1'
 
 
-def main():
+def main(*, provider='scaler_provider_environment'):
+    if provider not in {'scaler_provider_environment', 'history_provider_environment',
+                        'alpha_provider_environment'}:
+        raise ValueError('Unreviewed blind provider')
     output = Path(os.environ['IRIS_OUTPUT_DIR'])
     output.mkdir(parents=True, exist_ok=True)
     state = {'stage': 'blind_solver_preparation', 'attempt_limit': 1}
@@ -30,10 +33,10 @@ def main():
         for name in ('baseline-result.json', 'reference-status.json', 'acceptance.json'):
             if not Path(name).is_file():
                 raise FileNotFoundError('Missing required provider-control evidence')
-        os.environ['BIOTASKS21_PROVIDER_MODULE'] = 'scaler_provider_environment'
+        os.environ['BIOTASKS21_PROVIDER_MODULE'] = provider
         root, env = prepare()
         env.update(REPO2RLENV_MODEL_WORKER='1',
-                   BIOTASKS21_PROVIDER_MODULE='scaler_provider_environment',
+                   BIOTASKS21_PROVIDER_MODULE=provider,
                    BIOTASKS21_GLM_ENDPOINT=resolve_endpoint())
         command = [str(root / '.venv/bin/python'), 'run_pr_blind_solver.py',
                    '--baseline', 'baseline-result.json',
