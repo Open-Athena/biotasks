@@ -171,12 +171,14 @@ def build():
                             'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                                 'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
                             'source':path})
-    for run, recipe in [('swegen-provider-01','swe_gen'),('swe-next-provider-01','swe_next'),
-                        ('r2e-gym-provider-01','r2e_gym')]:
+    for run, recipe, lineage in [('swegen-provider-01','swe_gen','scikit-bio-pr2633'),
+                                 ('swe-next-provider-01','swe_next','scikit-bio-pr2633'),
+                                 ('r2e-gym-provider-01','r2e_gym','scikit-bio-pr2633'),
+                                 ('esty-ci-provider-01','swe_smith','scikit-bio-esty-ci-reconstruction')]:
         path=f'evidence/{run}/status.json';provider=read(path)
         summary_path=f'evidence/{run}/summary.json';summary=read(summary_path)
         validations.append({'run':run,'recipe':recipe,'repository':'scikit-bio',
-                        'lineage_group':'scikit-bio-pr2633','outcome':summary['status'],
+                        'lineage_group':lineage,'outcome':summary['status'],
                         'model_calls':provider['model_calls'],
                         'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                             'task_checksum':x['result']['task_checksum']} for x in provider['cases']],

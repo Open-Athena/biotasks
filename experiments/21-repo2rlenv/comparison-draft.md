@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:51 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 02:01 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -41,7 +41,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, twelve validation rows and six solver rows to fifty-one hashed source records, with three final rejections and one additional accepted-task review. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, thirteen validation rows and six solver rows to fifty-three hashed source records, with three final rejections and one additional accepted-task review. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -89,3 +89,5 @@ Four added source-authoring rows join saved candidate records to native exports:
 R2E-Gym blind result: native binary reward0, no trial exception,12 agent episodes,185345 input/163776 cached-input/7703 combined output tokens. All per-episode reported completion counts are within2048. Source remained byte-identical to the defective input; only the underflow regression failed, with59/60 tests passing. Both sandboxes independently absent. This is a scored unsuccessful attempt, not a task-validity failure or an infrastructure-exception claim. The native commit-runtime profile for alternate scikit-bio fix71912 is prepared and tested at the input boundary, but remains unsubmitted.
 
 The [broader Biopython PR intake](evidence/biopython-broader-pr-intake/intake.json) preserves metadata and full diffs for PR5308/5316 (shared location-hashing issue5193) and PR5358 (Clustal header compatibility), selected through the existing bounded history intake. Test/assertion additions are visible, but native PR entity filters, packaging and runtime contrasts remain unexecuted. These are not new generation attempts or exported tasks.
+
+Esty fresh provider controls passed0/1 with matching task checksum and all four sandboxes independently absent ([summary](evidence/esty-ci-provider-01/summary.json)); final instruction/tolerance acceptance remains pending. The no-model observed_features probe is submitted. These runtime controls add no generated candidates or blind attempts.
