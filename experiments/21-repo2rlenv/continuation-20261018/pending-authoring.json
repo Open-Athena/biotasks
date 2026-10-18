@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-18T21:04:00.615851+00:00",
+  "as_of_utc": "2026-10-18T21:16:11.186923+00:00",
   "stage": "saved_contrast_authoring_queue_not_new_discovery_or_admission",
   "scope": "Four continuation route/repository units; full matrix remains tracked separately. Original source-family overlap retained. No model call has been made for these saved IDs.",
   "candidate_count": 8,
@@ -13,7 +13,7 @@
     "generation_run_timeout_sec": 7200,
     "paid_model_fallback": false
   },
-  "limits_note": "These per-candidate bounds derive from the frozen native authors. This is not a new campaign-wide call cap, promise all repairs fit a run deadline, or permission to reset previous candidate/repair allowances.",
+  "limits_note": "These per-candidate bounds derive from the frozen native authors. This is not a new campaign-wide call cap, promise all repairs fit a run deadline, or permission to reset previous candidate/repair allowances. The initial scikit-bio Smith job made3meteredcalls: Robbins1/2, Michaelis\u2013Menten2/2. One Robbins review repair remains; Michaelis instruction is rejected without further calls. Three other prepared cohorts cover six untouched saved IDs, all within original native bounds.",
   "admission_gates": [
     "Independent source/instruction agreement",
     "Reference and baseline controls",
@@ -30,13 +30,15 @@
       "generation_path": "skbio-contrast-01/generation.json",
       "generation_sha256": "9dccd223bcb1255f1c6917585274be23e387ff6c8974fd85c5f9ee00371c86e3",
       "competency_source": "robbins",
-      "prior_authoring_generation_calls": 0,
+      "prior_authoring_generation_calls": 1,
       "native_authoring_maximum_calls": 2,
       "authoring_stage_count": 1,
       "native_attempts_per_stage": 2,
-      "state": "in_authoring_client_live_actual_calls_and_outputs_unconfirmed",
+      "state": "one_remaining_native_review_repair_prepared",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-skbio-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-skbio-author-20261018-01",
+      "native_authoring_calls_observed": 1,
+      "remaining_native_authoring_calls": 1
     },
     {
       "repository": "scikit-bio/scikit-bio",
@@ -45,13 +47,15 @@
       "generation_path": "skbio-contrast-01/generation.json",
       "generation_sha256": "9dccd223bcb1255f1c6917585274be23e387ff6c8974fd85c5f9ee00371c86e3",
       "competency_source": "michaelis_menten_fit",
-      "prior_authoring_generation_calls": 0,
+      "prior_authoring_generation_calls": 2,
       "native_authoring_maximum_calls": 2,
       "authoring_stage_count": 1,
       "native_attempts_per_stage": 2,
-      "state": "in_authoring_client_live_actual_calls_and_outputs_unconfirmed",
+      "state": "rejected_instruction_overgeneralization_authoring_cap_exhausted",
       "independently_admitted": false,
-      "job_id": "/exedev/biotasks21-cw-skbio-author-20261018-01"
+      "job_id": "/exedev/biotasks21-cw-skbio-author-20261018-01",
+      "native_authoring_calls_observed": 2,
+      "remaining_native_authoring_calls": 0
     },
     {
       "repository": "biopython/biopython",
@@ -64,7 +68,7 @@
       "native_authoring_maximum_calls": 2,
       "authoring_stage_count": 1,
       "native_attempts_per_stage": 2,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     },
     {
@@ -80,7 +84,7 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     },
     {
@@ -96,7 +100,7 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     },
     {
@@ -112,7 +116,7 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     },
     {
@@ -128,7 +132,7 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     },
     {
@@ -145,11 +149,13 @@
       "native_authoring_maximum_calls": 6,
       "authoring_stage_count": 2,
       "native_attempts_per_stage": 3,
-      "state": "awaiting_free_CoreWeave_client_dispatch_and_connectivity_preflight",
+      "state": "inference_client_cohort_prepared_not_dispatched",
       "independently_admitted": false
     }
   ],
-  "model_client_route": "allocated_free_CoreWeave_inference_only_client_live",
+  "model_client_route": "allocated_free_CoreWeave_initial_author_job_completed_next_cohorts_prepared",
   "build_and_test_CPU_route": "existing_free_reserved_TRC",
-  "remaining_user_approval_required_for_this_route": false
+  "remaining_user_approval_required_for_this_route": false,
+  "initial_model_calls_observed": 3,
+  "remaining_native_call_allowance_for_saved_queue": 33
 }
