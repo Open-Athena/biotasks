@@ -12,13 +12,14 @@ import os
 import shutil
 import tarfile
 import tomllib
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 import tomli_w
 
 from export_verify_smith import export_flow
 from prepare_pr_correctness_controls import assets
 from repo2rlenv.execution.lifecycle import save_record
+from repo2rlenv.pipelines.recipes.repository.export import private_asset
 from repo2rlenv.pipelines.recipes.swe_smith.export import export_candidate
 from repo2rlenv.pipelines.recipes.swe_smith.options import SWESmithOptions
 from repo2rlenv.spec.recipe_options import ReconstructionOptions
@@ -85,6 +86,19 @@ def alternative_source(source, profile):
     changed = "".join(lines)
     ast.parse(changed)
     return changed
+
+
+def expected_submitted_files(base, options):
+    selected = set()
+    for relative in options.source_paths:
+        root = base / relative
+        if not root.exists():
+            raise ValueError("Missing configured native source path")
+        for file in ([root] if root.is_file() else root.rglob("*.py")):
+            path = PurePosixPath(file.relative_to(base).as_posix())
+            if file.is_file() and file.suffix == ".py" and not private_asset(path, options):
+                selected.add(str(path))
+    return sorted(selected)
 
 
 def prepare_cases(task, output, identifier, profile):
@@ -160,7 +174,8 @@ def main():
     else:
         task = export_flow(generation, candidate, options, authored, args.output / "native-task")
     contract = json.loads((task / "tests/contract.json").read_text())
-    assert contract["submitted_files"] == [profile["source"]]
+    assert sorted(contract["submitted_files"]) == expected_submitted_files(generation / "base", options)
+    assert profile["source"] in contract["submitted_files"]
     expected_tests = set(candidate["contrast"]["FAIL_TO_PASS"] + candidate["contrast"]["PASS_TO_PASS"])
     assert set(contract["expected_passes"]) == expected_tests
     cases, fixed = prepare_cases(task, args.output, identifier, profile)
