@@ -9,11 +9,38 @@ from pathlib import Path
 from capture_author_process import capture
 
 
+INPUT_SHA256 = {
+    'commit-71912.json': '38c7f4a7495a55b09f6ea1dd7367b162302ab1879ce860ef2bd99808b8ac1241',
+    'commit-71912.diff': '39752db1ddb4328dc6004cfc6599b3d07426dad061bcb4671757a338d9808a51',
+}
+
+
+def prepare_commit_inputs(directory):
+    """Reconstruct the controller's nested input paths from hash-pinned flat files."""
+    directory = Path(directory)
+    checked = {}
+    for name, expected in INPUT_SHA256.items():
+        data = (directory/name).read_bytes()
+        if hashlib.sha256(data).hexdigest() != expected:
+            raise ValueError('Frozen commit input changed: ' + name)
+        checked[name] = data
+    target = directory/'evidence/skbio-commit-intake'
+    for name, data in checked.items():
+        path = target/name
+        if path.exists() and path.read_bytes() != data:
+            raise ValueError('Existing controller input differs: ' + name)
+    target.mkdir(parents=True, exist_ok=True)
+    for name, data in checked.items():
+        (target/name).write_bytes(data)
+    return target
+
+
 def main():
     started=time.monotonic()
     output=Path(os.environ['IRIS_OUTPUT_DIR'])
     output.mkdir(parents=True,exist_ok=True)
     try:
+        prepare_commit_inputs(Path(__file__).resolve().parent)
         archive=Path('repo2rlenv-source.tar.gz')
         with archive.open('rb') as stream:
             assert hashlib.file_digest(stream,'sha256').hexdigest()=='7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755'

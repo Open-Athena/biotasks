@@ -1,0 +1,15 @@
+Traceback (most recent call last):
+  File "/app/run_smith_controls.py", line 367, in <module>
+    main()
+  File "/app/run_smith_controls.py", line 71, in main
+    check_inputs(Path(__file__).resolve().parent/'evidence/skbio-commit-intake')
+  File "/app/replay_skbio_commit.py", line 36, in check_inputs
+    record = json.loads((directory/'commit-71912.json').read_text())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/uv/cache/python/cpython-3.12.3-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1027, in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/uv/cache/python/cpython-3.12.3-linux-x86_64-gnu/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/app/evidence/skbio-commit-intake/commit-71912.json'

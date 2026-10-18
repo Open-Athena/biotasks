@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-18T02:39:17.863818+00:00",
+  "observed_utc": "2026-10-18T02:44:13.598993+00:00",
   "objective": "finish #21",
   "completion_proven": false,
   "scope": {
@@ -49,9 +49,17 @@
         {
           "path": "evidence/r2e-gym-biopython-seqfeature-02/submission.json",
           "sha256": "d176ca7bffc5eb36a92d7b276d06d2e3bf61fcc57c6292a27e05f712dcaf136d"
+        },
+        {
+          "path": "evidence/skbio-commit-01/summary.json",
+          "sha256": "d634d55cc6a84528a294cca59623eb4c137d2dadb81303d32cc49b5a15256e96"
+        },
+        {
+          "path": "evidence/skbio-commit-profile-preparation-02/dispatch-manifest.json",
+          "sha256": "340dbad15a77b7358d295667687fd87587b17b0bdbf3f36e0acbf04c19531517"
         }
       ],
-      "finding": "Both R2E authoring cohorts exhausted ten candidates with zero exports. Broader Biopython history generation and native scikit-bio commit-runtime calibration are submitted with two slots each; outcomes pending. Other supported cohort coverage remains partial. Broader Biopython PR metadata/diff intake found three PRs with added test/assert lines; no native eligibility, build or generation claim."
+      "finding": "Both R2E authoring cohorts exhausted ten candidates with zero exports. Broader Biopython history generation is live with two reserved slots. Native scikit-bio commit setup01 failed on missing nested metadata before allocation/candidates; independent cleanup verified. Corrected flat-input wrapper02 is tested/frozen/reserved and unsubmitted. Other supported cohort coverage remains partial. Broader Biopython PR metadata/diff intake found three PRs with added test/assert lines; no native eligibility, build or generation claim."
     },
     {
       "requirement": "candidate_targets_and_caps",
@@ -63,7 +71,7 @@
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "6bf9bf32dfa8fb471f6d2cde80f01e5813451f5208df215719472992ae8e6d5b"
+          "sha256": "d5acf288c7642a4fbdd60381e8ce8d66f12360d4f667d8f7ca86e80d94438ce9"
         }
       ],
       "finding": "Keep per-route/repository/cohort attempts distinct. History records are not generation attempts. Both ten-candidate R2E allowances and unknown Code-instruct allowances remain consumed; remaining searches require cap reconciliation."
@@ -289,7 +297,7 @@
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "6bf9bf32dfa8fb471f6d2cde80f01e5813451f5208df215719472992ae8e6d5b"
+          "sha256": "d5acf288c7642a4fbdd60381e8ce8d66f12360d4f667d8f7ca86e80d94438ce9"
         },
         {
           "path": "evidence/controller-timing-reconciliation-20261018/controller-times.json",
@@ -312,21 +320,16 @@
   ],
   "active_or_submitted_run": null,
   "next_priority": [
-    "Monitor the existing scikit-bio native commit and Biopython SeqFeature R2E-Gym jobs, recover outputs and independently verify cleanup.",
+    "Dispatch corrected no-model scikit-bio commit calibration after checkpoint; keep monitoring existing Biopython SeqFeature generation.",
     "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
     "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
     "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
     "Publish bounded conclusions only after requirements are actually resolved"
   ],
-  "prepared_next_runs": [],
+  "prepared_next_runs": [
+    "skbio-commit-02"
+  ],
   "active_or_submitted_runs": [
-    {
-      "run": "skbio-commit-01",
-      "job_id": "/exedev/biotasks21-skbio-commit-20261018-01",
-      "reserved_slots": 2,
-      "stage": "native_commit_calibration",
-      "live_state_requires_refresh": true
-    },
     {
       "run": "r2e-gym-biopython-seqfeature-02",
       "job_id": "/exedev/biotasks21-r2e-gym-seqfeature-20261018-02",
