@@ -1,0 +1,54 @@
+diff --git a/Bio/SeqUtils/__init__.py b/Bio/SeqUtils/__init__.py
+index 30425692616..11812490aa7 100644
+--- a/Bio/SeqUtils/__init__.py
++++ b/Bio/SeqUtils/__init__.py
+@@ -447,6 +447,14 @@ def molecular_weight(
+     >>> print("%0.2f" % molecular_weight("AGC", "protein"))
+     249.29
+ 
++    The molecular weight of an empty sequence is not defined, and raises
++    a ValueError:
++
++    >>> molecular_weight("", "DNA")
++    Traceback (most recent call last):
++        ...
++    ValueError: molecular_weight requires a non-empty sequence
++
+     """
+     try:
+         seq = seq.seq
+@@ -454,6 +462,9 @@ def molecular_weight(
+         pass
+     seq = "".join(str(seq).split()).upper()  # Do the minimum formatting
+ 
++    if not seq:
++        raise ValueError("molecular_weight requires a non-empty sequence")
++
+     if seq_type == "DNA":
+         if monoisotopic:
+             weight_table = IUPACData.monoisotopic_unambiguous_dna_weights
+diff --git a/Tests/test_SeqUtils.py b/Tests/test_SeqUtils.py
+index effdbf0f9b9..b68cf1c2629 100644
+--- a/Tests/test_SeqUtils.py
++++ b/Tests/test_SeqUtils.py
+@@ -15,6 +15,7 @@
+ from Bio.SeqUtils import CodonAdaptationIndex
+ from Bio.SeqUtils import gc_fraction
+ from Bio.SeqUtils import GC_skew
++from Bio.SeqUtils import molecular_weight
+ from Bio.SeqUtils import seq1
+ from Bio.SeqUtils import seq3
+ from Bio.SeqUtils.CheckSum import crc32
+@@ -404,6 +405,12 @@ def test_seq1_seq3(self):
+         self.assertEqual(seq1(seq3(s1)), s1)
+         self.assertEqual(seq3(seq1(s3)).upper(), s3.upper())
+ 
++    def test_molecular_weight_empty_sequence(self):
++        """Test molecular_weight raises ValueError for an empty sequence."""
++        for seq_type in ("DNA", "RNA", "protein"):
++            with self.assertRaises(ValueError):
++                molecular_weight("", seq_type)
++
+     def test_lcc_simp(self):
+         s = "ACGATAGC"
+         seq = Seq(s)

@@ -1,0 +1,26 @@
+[
+  {
+    "number": 5308,
+    "head": "24e0b3fcea1882339b1753f5fe5f2d04fc282ecd",
+    "title": "Issue #5193 - Add __hash__ to SimpleLocation",
+    "body": "Implemented ` __hash__` based on `start`, `end`, `strand`, `ref`, `ref_db` matching the attributes used by `__eq__` in `SeqFeature.py`. Add tests covering hash/eq consistency and set membership in `test_SeqFeature.py`.\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\nAddressed part of #5193\r\n",
+    "url": "https://github.com/biopython/biopython/pull/5308",
+    "merged_at": "2026-09-14T08:34:40Z"
+  },
+  {
+    "number": 5316,
+    "head": "5bbc6c12c505301f2d681f932c30fdb8fcbe9a6e",
+    "title": "Issue #5193 - Add __hash__ to CompoundLocation",
+    "body": "Adds `CompoundLocation.__hash__`, following on from `SimpleLocation.__hash__` earlier on this branch, so `Location` objects can be used in a `set` or as `dict` keys.\r\n\r\n`__hash__` is based on `operator` and `parts`, matching `__eq__`. Since it relies on each part's `SimpleLocation.__hash__`, the same `ref`/`ref_db` limitation applies here too. Tests cover hash/eq consistency (including fuzzy and unknown positions) and set membership.\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\nCloses # 5193",
+    "url": "https://github.com/biopython/biopython/pull/5316",
+    "merged_at": "2026-09-16T08:09:10Z"
+  },
+  {
+    "number": 5310,
+    "head": "b32ba1ddf525e995630c2c00c6ec76c2bfe616e7",
+    "title": "Raise ValueError for empty sequence in molecular_weight()",
+    "body": "<!--- Please read each of the following items and confirm by replacing\r\n !--the [ ] with a [X] --->\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\n<!--- Briefly describe the changes included in this pull request below\r\n !--- starting with 'Closes #...' if appropriate --->\r\n\r\nCloses #5305\r\n\r\nFollowing the discussion in #5305, leave the behaviour unchanged but add the examples to the docstring.\r\n\r\nThis PR is documentation-only: it adds a note plus doctests to `molecular_weight()`.\r\n",
+    "url": "https://github.com/biopython/biopython/pull/5310",
+    "merged_at": "2026-09-15T09:10:18Z"
+  }
+]

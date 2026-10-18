@@ -171,6 +171,14 @@ def build():
                  'model_calls':d['generation_model_calls'],'input_tokens':0,'combined_output_tokens':0,
                  'reasoning_tokens':0,'source':path,'acceptance_source':acceptance_path,
                  'scope':'Three generated instances from one synthetic family. Subsequent controls/identity-preserving runtime adaptations are not additional candidates; solver outcomes joined separately.'})
+    for run in ('skbio-commit-01','skbio-commit-02'):
+        path=f'evidence/{run}/summary.json';d=read(path)
+        rows.append({'run':run,'recipe':'commit_runtime/native','repository':'scikit-bio',
+                     'candidate_attempts':d['candidate_attempts'],'exports':d['exports'],
+                     'accepted':0,'blind_attempts':0,'model_calls':d['model_calls'],
+                     'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
+                     'outcome':d['stage'],'source':path,
+                     'scope':'Setup01 reached no candidate. Corrected02 exercised one unchanged selected commit; patched tests passed but baseline collection failure yielded no native test-level F2P. Not two independent sources.'})
     solvers=[]
     for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01','esty-ci-blind-solver-01','observed-features-blind-solver-01'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})

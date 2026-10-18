@@ -1,0 +1,236 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 4b11f397..2cfd9e1f 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -16,6 +16,7 @@
+ 
+ ### Bug Fixes
+ 
++* Fixed an unexpected behavior in differential abundance tests (`ancombc` and `dirmult_lme`) where string columns in the metadata that can be cast into numbers (e.g., `["1", "2", "3"]`) were treated as numerical. Now they are treated as categories ([#2539](https://github.com/scikit-bio/scikit-bio/pull/2539)).
+ * Fixed a subtle floating-point arithmetic issue in `pair_align` under a linear gap penalty. Previously it could be less tolerant than expected when `atol` was set smaller than the default (1e-5) and scores involved decimal numbers ([#2513](https://github.com/scikit-bio/scikit-bio/pull/2513)).
+ * Fixed a bug in `pair_align` which raised a `TypeError` when called with `atol=None`. This should be equivalent to `atol=0` ([#2504](https://github.com/scikit-bio/scikit-bio/pull/2504)).
+ * Patched `rclr` such that it won't raise a zero division warning ([#2526](https://github.com/scikit-bio/scikit-bio/pull/2526)).
+diff --git a/skbio/stats/composition/_ancombc.py b/skbio/stats/composition/_ancombc.py
+index 62ebf0da..b0cc12b9 100644
+--- a/skbio/stats/composition/_ancombc.py
++++ b/skbio/stats/composition/_ancombc.py
+@@ -21,11 +21,10 @@ import numpy as np
+ import pandas as pd
+ from scipy.stats import norm, chi2
+ from scipy.optimize import minimize
+-from patsy import dmatrix
+ 
+ from skbio.table._tabular import _ingest_table
+ from ._base import _check_composition
+-from ._utils import _check_metadata, _check_p_adjust, _type_cast_to_float
++from ._utils import _check_metadata, _check_p_adjust, _build_dmatrix
+ 
+ 
+ def ancombc(
+@@ -429,15 +428,14 @@ def ancombc(
+     # Log-transform count matrix.
+     matrix = np.log(matrix)
+ 
+-    # Validate metadata and cast to numbers where applicable.
++    # Validate metadata.
+     metadata = _check_metadata(metadata, matrix, samples)
+-    metadata = _type_cast_to_float(metadata)
+ 
+     if grouping is not None and len(metadata[grouping].unique()) < 3:
+         raise ValueError("Global test cannot be performed on less than three groups.")
+ 
+     # Create a design matrix based on metadata and formula.
+-    dmat = dmatrix(formula, metadata)
++    dmat = _build_dmatrix(formula, metadata)
+ 
+     # Obtain a list of covariates by selecting the relevant columns.
+     covars = dmat.design_info.column_names
+@@ -1021,7 +1019,6 @@ def struc_zero(table, metadata, grouping, neg_lb=False):
+     # Validate feature table and metadata
+     matrix, samples, features = _ingest_table(table)
+     metadata = _check_metadata(metadata, matrix, samples)
+-    metadata = _type_cast_to_float(metadata)
+ 
+     unique_groups, group_indices, group_counts = np.unique(
+         metadata[grouping], return_inverse=True, return_counts=True
+diff --git a/skbio/stats/composition/_dirmult.py b/skbio/stats/composition/_dirmult.py
+index a1e0265a..4a7b2337 100644
+--- a/skbio/stats/composition/_dirmult.py
++++ b/skbio/stats/composition/_dirmult.py
+@@ -19,7 +19,7 @@ from ._utils import (
+     _check_grouping,
+     _check_trt_ref_groups,
+     _check_p_adjust,
+-    _type_cast_to_float,
++    _build_dmatrix,
+ )
+ 
+ 
+@@ -512,7 +512,6 @@ def dirmult_lme(
+     3  0.440581   False
+ 
+     """
+-    from patsy import dmatrix
+     from scipy.optimize import OptimizeWarning
+     from statsmodels.regression.mixed_linear_model import MixedLM, VCSpec
+     from statsmodels.tools.sm_exceptions import ConvergenceWarning
+@@ -532,9 +531,6 @@ def dirmult_lme(
+     # validate metadata
+     metadata = _check_metadata(metadata, matrix, samples)
+ 
+-    # cast metadata to numbers where applicable
+-    metadata = _type_cast_to_float(metadata)
+-
+     # Instead of directly calling `MixedLM.from_formula` on merged table + metadata,
+     # the following code converts metadata into a design matrix based on the formula
+     # (as well as re_formula and vc_formula, if applicable), and calls `MixedLM`.
+@@ -543,7 +539,7 @@ def dirmult_lme(
+     # the design matrix can save conversion overheads.
+ 
+     # Create a design matrix based on metadata and formula.
+-    dmat = dmatrix(formula, metadata, return_type="matrix")
++    dmat = _build_dmatrix(formula, metadata)
+ 
+     # Obtain the list of covariates by selecting the relevant columns
+     covars = dmat.design_info.column_names
+@@ -574,7 +570,7 @@ def dirmult_lme(
+ 
+     # random effects matrix
+     if re_formula is not None:
+-        exog_re = np.asarray(dmatrix(re_formula, metadata, return_type="matrix"))
++        exog_re = np.asarray(_build_dmatrix(re_formula, metadata))
+     else:
+         exog_re = None
+ 
+@@ -586,7 +582,7 @@ def dirmult_lme(
+         names, cols, mats = [], [], []
+         for name, formula in vc_formula.items():
+             names.append(name)
+-            dmats = [dmatrix(formula, x, return_type="matrix") for x in metas]
++            dmats = [_build_dmatrix(formula, x) for x in metas]
+             cols.append([x.design_info.column_names for x in dmats])
+             mats.append([np.asarray(x) for x in dmats])
+         exog_vc = VCSpec(names, cols, mats)
+diff --git a/skbio/stats/composition/_utils.py b/skbio/stats/composition/_utils.py
+index 5ab43a93..6c98e7bb 100644
+--- a/skbio/stats/composition/_utils.py
++++ b/skbio/stats/composition/_utils.py
+@@ -285,25 +285,44 @@ def _check_trt_ref_groups(treatment, reference, groups, labels):
+     return trt_idx, ref_idx
+ 
+ 
+-def _type_cast_to_float(df):
+-    """Attempt to cast all of the values in dataframe to float.
++def _build_dmatrix(formula, metadata, dtype=None):
++    """Build a design matrix from sample metadata using Patsy.
+ 
+-    This will try to type cast all of the series within the dataframe into floats. If a
+-    column cannot be type casted, it will be kept as is.
++    Metadata values are passed to Patsy unchanged. Therefore, Patsy infers whether
++    factors are numerical or categorical from their existing data types and the
++    formula specification.
+ 
+     Parameters
+     ----------
+-    df : pd.DataFrame
++    formula : str or generic Formula object
++        Formula defining the model.
++    metadata : pd.DataFrame
++        Sample metadata containing factors referenced in `formula`.
++    dtype : dtype_like, optional
++        Data type of the resulting design matrix. If omitted, use Patsy's
++        default output data type.
+ 
+     Returns
+     -------
+-    pd.DataFrame
++    patsy.DesignMatrix
++        Design matrix generated from the formula and metadata.
++
++    Notes
++    -----
++    TODO: patsy has been superseded by formulaic. Consider a replacement.
+ 
+     """
+-    df = df.copy()
+-    for col in df.select_dtypes(exclude=["float64"]).columns:
+-        try:
+-            df[col] = df[col].astype("float64")
+-        except (ValueError, TypeError):
+-            continue
+-    return df
++    if dtype is None:
++        from patsy import dmatrix
++
++        return dmatrix(formula, metadata, eval_env=1, return_type="matrix")
++
++    from patsy import build_design_matrices, incr_dbuilder
++
++    def data_iter_maker():
++        return iter([metadata])
++
++    design_info = incr_dbuilder(formula, data_iter_maker, eval_env=1)
++    return build_design_matrices(
++        [design_info], metadata, return_type="matrix", dtype=dtype
++    )[0]
+diff --git a/skbio/stats/composition/tests/test_utils.py b/skbio/stats/composition/tests/test_utils.py
+index e234f372..3c1c26bc 100644
+--- a/skbio/stats/composition/tests/test_utils.py
++++ b/skbio/stats/composition/tests/test_utils.py
+@@ -17,7 +17,7 @@ from skbio.stats.composition._utils import (
+     _check_grouping,
+     _check_trt_ref_groups,
+     _check_metadata,
+-    _type_cast_to_float,
++    _build_dmatrix,
+     _check_sig_test,
+     _check_p_adjust,
+ )
+@@ -252,17 +252,36 @@ class UtilsTests(TestCase):
+             _check_metadata(df, mat)
+         self.assertEqual(str(cm.exception), msg)
+ 
+-    def test_type_cast_to_float(self):
+-        df = pd.DataFrame([("Alice", 20, 28.0),
+-                           ("Bob",   32, 33.0),
+-                           ("Carol", 25, 26.5)],
+-                          columns=["name", "age", "bmi"])
+-        obs = _type_cast_to_float(df)
+-        self.assertIsInstance(obs, pd.DataFrame)
+-        self.assertIsNot(obs, df)
+-        self.assertTrue(pd.api.types.is_string_dtype(obs["name"]))
+-        self.assertEqual(obs["age"].dtype, np.float64)
+-        self.assertEqual(obs["bmi"].dtype, np.float64)
++    def test_build_dmatrix(self):
++        meta = pd.DataFrame({
++            "num": [1, 2, 3],  # as continuous
++            "str": ["orange", "apple", "pear"],  # sorted alphabetically
++            "num_str": ["1", "2", "3"],  # categorical
++            "bool": [True, False, True],  # categorical
++            "cat": pd.Categorical(["red", "blue", "blue"], categories=[
++                "red", "blue"], ordered=True)})  # no sorting
++        obs = _build_dmatrix(
++            "num + str + num_str + bool + cat", meta)
++        exp_covars = [
++            "Intercept",
++            "str[T.orange]",
++            "str[T.pear]",
++            "num_str[T.2]",
++            "num_str[T.3]",
++            "bool[T.True]",
++            "cat[T.blue]",
++            "num"]  # continuous variable moves after categorical
++        exp_mat = np.array([
++            [1, 1, 0, 0, 0, 1, 0, 1],
++            [1, 0, 0, 1, 0, 0, 1, 2],
++            [1, 0, 1, 0, 1, 1, 1, 3]], dtype=float)
++        self.assertListEqual(obs.design_info.column_names, exp_covars)
++        npt.assert_array_equal(obs, exp_mat)
++
++        # specify data type
++        obs = _build_dmatrix("num", meta, dtype=np.float32)
++        self.assertEqual(obs.dtype, np.float32)
++        npt.assert_array_equal(obs, [[1, 1], [1, 2], [1, 3]])
+ 
+     def test_check_sig_test(self):
+         from scipy.stats import ttest_ind, mannwhitneyu, f_oneway, kruskal
