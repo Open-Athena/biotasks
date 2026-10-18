@@ -1,0 +1,47 @@
+diff --git a/Bio/PDB/qcprot.py b/Bio/PDB/qcprot.py
+index 0096a66c401..9d79e7b9fff 100644
+--- a/Bio/PDB/qcprot.py
++++ b/Bio/PDB/qcprot.py
+@@ -185,7 +185,11 @@ def qcp(coords1, coords2, natoms):
+                 qsqr = q1 * q1 + q2 * q2 + q3 * q3 + q4 * q4
+ 
+                 if qsqr < evecprec:
+-                    rot = np.eye(3)
++                    u, _s, vt = np.linalg.svd(A)
++                    rot = np.dot(u, vt)
++                    if np.linalg.det(rot) < 0.0:
++                        u[:, -1] *= -1.0
++                        rot = np.dot(u, vt)
+                     return rmsd, rot, [q1, q2, q3, q4]
+ 
+     normq = qsqr**0.5
+diff --git a/Tests/test_PDB_QCPSuperimposer.py b/Tests/test_PDB_QCPSuperimposer.py
+index 1292ca3b200..24a9c29ab71 100644
+--- a/Tests/test_PDB_QCPSuperimposer.py
++++ b/Tests/test_PDB_QCPSuperimposer.py
+@@ -117,6 +117,25 @@ def test_compare_to_svd_lines(self):
+             np.allclose(svd_sup.get_transformed(), sup.get_transformed(), atol=1e-3)
+         )
+ 
++    def test_collinear_reference_transformed_rmsd(self):
++        """Align a rotated copy of collinear points; do not return I."""
++        ref = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
++        theta = 0.9
++        ax = np.array([1.0, 2.0, 3.0])
++        ax = ax / np.linalg.norm(ax)
++        k = np.array([[0.0, -ax[2], ax[1]], [ax[2], 0.0, -ax[0]], [-ax[1], ax[0], 0.0]])
++        rot = np.eye(3) + np.sin(theta) * k + (1.0 - np.cos(theta)) * k @ k
++        mob = ref @ rot.T + np.array([5.0, -2.0, 7.0])
++
++        sup = QCPSuperimposer()
++        sup.set(ref, mob)
++        sup.run()
++        fitted = sup.get_transformed()
++        rms_fitted = np.sqrt(((ref - fitted) ** 2).sum() / ref.shape[0])
++        self.assertFalse(np.allclose(sup.rot, np.eye(3)))
++        self.assertAlmostEqual(rms_fitted, 0.0, places=12)
++        self.assertTrue(np.allclose(fitted, ref, atol=1e-12))
++
+     def test_get_transformed(self):
+         """Test transformation of coordinates after QCP."""
+         sup = QCPSuperimposer()

@@ -1,4 +1,4 @@
-"""Run a frozen two-PR native cohort in one authorized Daytona sandbox."""
+"""Run a frozen native PR cohort in one authorized Daytona sandbox."""
 import argparse
 import hashlib
 import json

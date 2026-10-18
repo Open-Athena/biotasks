@@ -1,0 +1,44 @@
+{
+  "observed_utc": "2026-10-18T19:42:52.636002+00:00",
+  "stage": "prepared_not_dispatched",
+  "route": "pr_runtime/native",
+  "repository": "biopython/biopython",
+  "target": 3,
+  "prior_admitted": 0,
+  "prior_native_candidate_lineages": 1,
+  "prior_conservative_allowance_charged": 4,
+  "new_frozen_considered_inputs": 5,
+  "conservative_allowance_after_selection": 9,
+  "candidate_cap": 10,
+  "native_eligible_inputs_in_new_selection": 4,
+  "eligible_saved_not_yet_materialized": [
+    5316
+  ],
+  "counts_policy": "Original PR5148 charged once, three newer similarity inputs filtered before allocation charged once each, five fixed older inputs charged once each including source-filter rejects. Saved eligible inputs are not charged again merely when materialized; no repair/reset or additional independent source lineage is inferred.",
+  "model_calls": 0,
+  "controller_backend": "existing_free_reserved_TRC_CPU_only",
+  "sandbox_backend": "daytona",
+  "max_aggregate_slots": 2,
+  "new_Daytona_hold_usd": 5,
+  "TRC_incremental_controller_budget_usd": 0,
+  "native_generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "biological_inputs": "QCP regression uses synthetic coordinate arrays with unchanged upstream PDB fixture; other inputs are location/sequence utility regression cases. Fixture observation provenance still requires independent review.",
+  "selection_rationale": "Prefer existing coordinate-alignment, molecular-weight and location-hash competencies; preserve filtered inputs and the remaining eligible source rather than silently replacing or resetting them.",
+  "candidates": [
+    {
+      "pr": 5317,
+      "profile": "pr5317/profile.json",
+      "profile_sha256": "4c8aaa0973b366e9a41ced105122b0c90adface0fa179d0eaf73664ce5a9eb52"
+    },
+    {
+      "pr": 5310,
+      "profile": "pr5310/profile.json",
+      "profile_sha256": "d14dd08f958a18575af5fb2e626b2c533ac0faa4ac78a6ee215e6659a498ea94"
+    },
+    {
+      "pr": 5308,
+      "profile": "pr5308/profile.json",
+      "profile_sha256": "1ed5ac7ce9d0360fa0cc643080f741242476a615fd731132f67a8d6dfdbba459"
+    }
+  ]
+}

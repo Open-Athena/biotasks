@@ -1,0 +1,5 @@
+{
+  "body": "The molecular weight of an empty sequence is not physically defined. But actual behavior is:\n\n```python\n>>> from Bio.SeqUtils import molecular_weight\n>>> molecular_weight(\"\", \"DNA\")\n18.0153\n>>> molecular_weight(\"\", \"RNA\")\n18.0153\n>>> molecular_weight(\"\", \"protein\")\n18.0153\n```\n\nSuggested fix:\n\n```python\nif not seq:\n    return 0.0\n```\n\nor raise `ValueError(\"sequence is empty\")` if a zero-length input should be treated as invalid.",
+  "number": 5305,
+  "title": "`SeqUtils.molecular_weight(\"\")` returns +18.0153 instead of 0 or an error"
+}

@@ -7,7 +7,7 @@ import tempfile
 from pathlib import Path
 from unittest.mock import patch
 
-from replay_pr_runtime_next import checked_profile, main
+from replay_pr_runtime_next import checked_profile, main, test_command_for
 from repo2rlenv.spec.options import PRRuntimeOptions
 
 
@@ -39,7 +39,13 @@ def main_check():
                 try: main()
                 except RuntimeError as exc: assert 'remote worker' in str(exc)
                 else: raise AssertionError('Local target execution was not rejected')
-    print(json.dumps({'valid_fixture': True, 'invalid_input_controls': 7, 'local_target_execution_rejected': True, 'target_processes': 0, 'model_calls': 0}))
+            assert 'cd /workspace &&' in test_command_for({'repository':'scikit-bio/scikit-bio','test_paths':['skbio/tests/test_math.py']})
+            bio_command = test_command_for({'repository':'biopython/biopython','test_paths':['Tests/test_math.py']})
+            assert 'cd /workspace/Tests &&' in bio_command and bio_command.endswith('./test_math.py')
+            try: test_command_for({'repository':'biopython/biopython','test_paths':['skbio/tests/test_math.py']})
+            except ValueError: pass
+            else: raise AssertionError('Wrong fixture working directory accepted')
+    print(json.dumps({'valid_fixture': True, 'invalid_input_controls': 7, 'repository_test_workdirs_checked': 2, 'wrong_test_root_rejected': True, 'local_target_execution_rejected': True, 'target_processes': 0, 'model_calls': 0}))
 
 
 if __name__ == '__main__':
