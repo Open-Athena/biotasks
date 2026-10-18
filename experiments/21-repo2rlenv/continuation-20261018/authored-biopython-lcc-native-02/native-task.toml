@@ -1,0 +1,66 @@
+schema_version = "1.3"
+artifacts = [
+    { source = "/workspace/Bio/SeqUtils/CheckSum.py" },
+    { source = "/workspace/Bio/SeqUtils/IsoelectricPoint.py" },
+    { source = "/workspace/Bio/SeqUtils/MeltingTemp.py" },
+    { source = "/workspace/Bio/SeqUtils/ProtParam.py" },
+    { source = "/workspace/Bio/SeqUtils/ProtParamData.py" },
+    { source = "/workspace/Bio/SeqUtils/__init__.py" },
+    { source = "/workspace/Bio/SeqUtils/lcc.py" },
+]
+
+[task]
+name = "open-athena/swe-smith-53ec5f51639d4053971f"
+
+[metadata.repo2env]
+recipe = "swe_smith"
+recipe_version = "2"
+pipeline = "repo_mutate"
+upstream_revision = "9b74ac08118a85c39c356802f7961893af73e07f"
+repository = "https://github.com/biopython/biopython"
+source_revision = "4eda92397bdedff82f04ac218a862ae25ebdc4a8"
+mutation_id = "53ec5f51639d4053971f"
+source_file = "Bio/SeqUtils/lcc.py"
+entity = "lcc_mult"
+operator = "flip_operator"
+reward_kinds = [
+    "test_execution",
+]
+quality_status = "exported"
+fail_to_pass_count = 4
+pass_to_pass_count = 8
+bundle_hash = "sha256:58fad894a1a0d98ef52ecff93a723012c1784d2009d3510f776c7c222604f77a"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+subject_bundle_hash = "sha256:58fad894a1a0d98ef52ecff93a723012c1784d2009d3510f776c7c222604f77a"
+evidence = []
+
+[environment]
+cpus = 1
+memory_mb = 2048
+build_timeout_sec = 600
+network_mode = "no-network"
+
+[agent]
+timeout_sec = 600
+user = "learner"
+network_mode = "no-network"
+
+[verifier]
+timeout_sec = 120
+user = "root"
+network_mode = "no-network"
+environment_mode = "separate"
+
+[verifier.environment]
+network_mode = "no-network"
+cpus = 1
+memory_mb = 2048
