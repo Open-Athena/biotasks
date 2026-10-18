@@ -61,13 +61,23 @@ def build():
         if route == 'repo_mutate/swe_smith':
             charge = 4 if unit['repository'] == 'biopython/biopython' else 3
             cap_note = 'Exact first-pass mutation attempts; authoring/revalidation of the same saved IDs is not new candidate discovery.'
-            if unit['repository'] == 'scikit-bio/scikit-bio':
-                current = ROOT / 'skbio-contrast-01/generation.json'
-                if current.exists():
-                    data = json.loads(current.read_text())
-                    charge += data['attempted']
-                    cap_note += ' Continuation native attempts included; contrasts are not admissions.'
+            prefix = 'biopython' if unit['repository'] == 'biopython/biopython' else 'skbio'
+            current = ROOT / (prefix + '-contrast-01/generation.json')
+            small_summary = ROOT / (prefix + '-smith-continuation-01-small-summary.json')
+            if current.exists():
+                data = json.loads(current.read_text())
+                charge += data['attempted']
+                cap_note += ' Continuation native generation attempts included; contrasts are not admissions.'
+            elif small_summary.exists():
+                data = json.loads(small_summary.read_text())
+                assert data['generation_available'] and data['model_calls'] == 0
+                charge += data['attempted']
+                cap_note += ' Continuation counters from captured controller summary; full archive recovery/public preservation pending. Contrasts are not admissions.'
+            assert charge <= 10
             next_action = 'Continue frozen remaining-allowance mutation cohort, then author/review/control/admit and one blind solve until three admissions or cap/budget stop.'
+            if charge == 10:
+                action = 'candidate_cap_exhausted_below_target'
+                next_action = 'No new candidate discovery. Preserve and independently assess pending saved contrast(s); cap remains ten and no new admission is inferred.'
         if route == 'repo_reconstruct/swe_flow':
             counters_path = ROOT / 'flow-candidate-counters.json'
             if counters_path.exists():
