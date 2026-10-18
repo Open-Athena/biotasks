@@ -1,0 +1,25 @@
+{
+  "stage": "independent_instruction_verifier_acceptance",
+  "observed_utc": "2026-10-18T01:13:25.921034+00:00",
+  "status": "rejected_unjustified_precision_contract",
+  "task": "swe-gen-d929391f2255c34c2485",
+  "native_bundle_modified": false,
+  "solver_eligible": false,
+  "model_calls": 0,
+  "finding": "The generated instruction requires ordinary-input agreement with SVD at roughly 1e-15, while native ordinary-input comparison checks use atol=1e-3 and RMSD decimal tolerances. The stricter ordinary-input precision contract is not justified by the verifier. The separate collinear transformed-RMSD regression does check twelve decimal places.",
+  "prior_review_sha256": "8ab61148630664a726284006f2d65179e1a652bcff52657354f95b1138926dd3",
+  "native_control_rewards": {
+    "baseline": 0.0,
+    "native_reference": 1.0,
+    "alternative_svd": 1.0,
+    "wrong_translation": 0.0,
+    "wrong_identity_rotation": 0.0,
+    "wrong_zero_reported_rms": 0.0
+  },
+  "limits": [
+    "Rejected at instruction/verifier review; no further provider runtime or blind attempt is required for this rejected task.",
+    "No new precision-offset submission was executed; no reward is claimed for such a submission.",
+    "Existing reference, alternative and incorrect-submission scores remain preserved unchanged.",
+    "A future narrowed instruction or additional precision tests would be a separately recorded adaptation."
+  ]
+}

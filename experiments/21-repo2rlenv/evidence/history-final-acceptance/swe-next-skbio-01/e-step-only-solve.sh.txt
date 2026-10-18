@@ -1,0 +1,10 @@
+#!/bin/bash
+set -eu
+python3 - <<'PYCONTROL'
+from pathlib import Path
+p=Path('/workspace/skbio/stats/composition/_ancombc.py')
+s=p.read_text()
+assert s.count('        resp /= np.sum(resp, axis=0, keepdims=True)') == 1
+s=s.replace('        resp /= np.sum(resp, axis=0, keepdims=True)','        totals = np.sum(resp, axis=0, keepdims=True)\n        resp[:] = np.divide(resp, totals, out=np.zeros_like(resp), where=totals != 0)',1)
+p.write_text(s)
+PYCONTROL

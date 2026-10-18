@@ -1,0 +1,36 @@
+{
+  "stage": "independent_instruction_verifier_acceptance",
+  "observed_utc": "2026-10-18T01:13:25.920687+00:00",
+  "status": "rejected_instruction_verifier_mismatch",
+  "task": "swe-next-bf5a63ab005130388e02",
+  "native_bundle_modified": false,
+  "solver_eligible": false,
+  "model_calls": 0,
+  "native_control_rewards": {
+    "baseline": 0.0,
+    "native_reference": 1.0,
+    "alternative_masked_division": 1.0,
+    "e_step_only": 1.0,
+    "wrong_uniform_responsibilities": 0.0,
+    "fixed_underflow_with_grouping_regression": 0.0
+  },
+  "finding": "The generated instruction adds an explicit zero-responsibility M-step requirement, but the full native reward is earned by the recorded E-step-only submission, which retains the unguarded component-mean division. The native regression suite does not distinguish this missing stated behavior.",
+  "instruction_requirement_excerpt": "the EM iteration should be kept NaN-free end to end",
+  "retained_m_step_statement": "l1, l2 = numer / denom",
+  "e_step_control_original_expected_reward": null,
+  "interpretation_correction": "The E-step-only run was correctly recorded as a coverage observation, not assumed incorrect before execution. Final instruction review now identifies a stated requirement it leaves unimplemented. Native results and original controls are unchanged.",
+  "asset_sha256": {
+    "instruction.md": "0e8ffe1cd71619e1283aaffa6c4753883a172a67a4a5bfe4f4d4b20ac02932ad",
+    "environment/source/skbio/stats/composition/_ancombc.py": "6f8639701171dd30b9e194938797397ed9c7e9cd5fe7b7bfec3a032920ca0eeb",
+    "e_step_only/solution/solve.sh": "8844efb97cd32d516d57d8bc6bfe7b829b8cd7bad2df971e974495363953de40"
+  },
+  "evidence_sha256": {
+    "evidence/swe-next-independent-01/summary.json": "a5a1c28776f53736d1e99317f2f337dca7ebefd101354e640f3ca181e689e138"
+  },
+  "limits": [
+    "No new task, model call, runtime control or solver attempt was run for this review.",
+    "This is a curation rejection of the generated instruction/verification contract, not a claim that the E-step-only patch fails the supplied reproducer.",
+    "The accepted portable PR-runtime instruction does not require this extra M-step behavior; its acceptance and solver result remain valid.",
+    "Native task remains retained unchanged; any future narrowed instruction or additional verifier coverage must be an explicitly separate adaptation."
+  ]
+}

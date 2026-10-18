@@ -512,7 +512,7 @@
       "recipe": "swe_gen",
       "repository": "scikit-bio",
       "lineage_group": "scikit-bio-pr2633",
-      "outcome": "passed_acceptance_pending",
+      "outcome": "passed_runtime_rejected_instruction_contract",
       "model_calls": 0,
       "native_controls": [
         {
@@ -528,6 +528,48 @@
       ],
       "source": "evidence/swegen-provider-01/status.json",
       "summary_source": "evidence/swegen-provider-01/summary.json"
+    },
+    {
+      "run": "swe-next-provider-01",
+      "recipe": "swe_next",
+      "repository": "scikit-bio",
+      "lineage_group": "scikit-bio-pr2633",
+      "outcome": "passed_runtime_rejected_instruction_contract",
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "nop",
+          "reward": 0.0,
+          "task_checksum": "83af12361ff2e998c9b39daf0688af891600ca36d16d79e121c33c78cafd06a9"
+        },
+        {
+          "case": "oracle",
+          "reward": 1.0,
+          "task_checksum": "83af12361ff2e998c9b39daf0688af891600ca36d16d79e121c33c78cafd06a9"
+        }
+      ],
+      "source": "evidence/swe-next-provider-01/status.json",
+      "summary_source": "evidence/swe-next-provider-01/summary.json"
+    }
+  ],
+  "acceptance_reviews": [
+    {
+      "task": "swe-gen-30ce0424b0dc2d06bf6b",
+      "status": "rejected_instruction_verifier_mismatch",
+      "solver_eligible": false,
+      "source": "evidence/history-final-acceptance/swe-gen-skbio-01/review.json"
+    },
+    {
+      "task": "swe-next-bf5a63ab005130388e02",
+      "status": "rejected_instruction_verifier_mismatch",
+      "solver_eligible": false,
+      "source": "evidence/history-final-acceptance/swe-next-skbio-01/review.json"
+    },
+    {
+      "task": "swe-gen-d929391f2255c34c2485",
+      "status": "rejected_unjustified_precision_contract",
+      "solver_eligible": false,
+      "source": "evidence/qcp-final-acceptance/review.json"
     }
   ],
   "source_sha256": {
@@ -563,7 +605,12 @@
     "evidence/scaler-provider-02/status.json": "89c1ff3595f78d185c980e5e2e87872d4fbfd53714334bc8c5f096c0f1d8cdb4",
     "evidence/scaler-provider-03/status.json": "5d670dc5bcc67d5991ae036e5cb08a3db3ab87119fb86897cbae4805c69c6961",
     "evidence/swegen-provider-01/status.json": "303b777f861424f76ccdbb0618b90c0ea4dfbd2aff86c0a43b71167846db53a2",
-    "evidence/swegen-provider-01/summary.json": "f7edef7349ede66e8dbe59c64f2172240e597d425c5b448a5f0453317d578e5f"
+    "evidence/swegen-provider-01/summary.json": "22c4f3f476ae39dbab61d0c35ccabef5fd2f8d1c55d276984e377d427d89c5a2",
+    "evidence/swe-next-provider-01/status.json": "b2bd588427970933778e86e73eac506359825272fa6571df1339a65af0c03b6e",
+    "evidence/swe-next-provider-01/summary.json": "2e3cdb53195a97c465c70649a243b2086f895454d0d53f84cdea53a9698e35ae",
+    "evidence/history-final-acceptance/swe-gen-skbio-01/review.json": "ee2d11b35e81ed769b3a84f935b83c1efcaab2c01940901c954720b6db76c56b",
+    "evidence/history-final-acceptance/swe-next-skbio-01/review.json": "659828a9526de8aaf7fb1d66105aef0b7571827fa806c760de719d37ae811122",
+    "evidence/qcp-final-acceptance/review.json": "4ce3e8ca3ecc1f3cd75394794e20ceebd999efe831f4e4dfd28cc9afd631e785"
   },
   "limitations": [
     "This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.",

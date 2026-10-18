@@ -5,7 +5,8 @@ import tomllib
 from pathlib import Path
 
 
-def check_task(task: Path, review: Path):
+def check_task(task: Path, review: Path, *,
+               allowed_recipes=('swe_gen', 'swe_next', 'r2e_gym')):
     record = json.loads(review.read_text())
     if record['status'] != 'runtime_probe_only_acceptance_pending':
         raise ValueError('Expected a pending runtime probe review')
@@ -26,8 +27,8 @@ def check_task(task: Path, review: Path):
     metadata = config['metadata']['repo2env']
     if metadata['bundle_hash'] != record['source_bundle_hash']:
         raise ValueError('Source bundle identity differs')
-    if metadata['recipe'] not in {'swe_gen', 'swe_next', 'r2e_gym'}:
-        raise ValueError('Unreviewed history recipe')
+    if metadata['recipe'] not in allowed_recipes:
+        raise ValueError('Unreviewed recipe')
     if metadata['repository'] != 'https://github.com/scikit-bio/scikit-bio':
         raise ValueError('Provider readiness is scoped to scikit-bio')
     if config['verifier']['environment_mode'] != 'separate':

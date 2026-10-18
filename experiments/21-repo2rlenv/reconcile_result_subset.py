@@ -143,16 +143,24 @@ def build():
                             'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                                 'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
                             'source':path})
-    path='evidence/swegen-provider-01/status.json';provider=read(path)
-    summary_path='evidence/swegen-provider-01/summary.json';summary=read(summary_path)
-    validations.append({'run':'swegen-provider-01','recipe':'swe_gen','repository':'scikit-bio',
+    for run, recipe in [('swegen-provider-01','swe_gen'),('swe-next-provider-01','swe_next')]:
+        path=f'evidence/{run}/status.json';provider=read(path)
+        summary_path=f'evidence/{run}/summary.json';summary=read(summary_path)
+        validations.append({'run':run,'recipe':recipe,'repository':'scikit-bio',
                         'lineage_group':'scikit-bio-pr2633','outcome':summary['status'],
                         'model_calls':provider['model_calls'],
                         'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                             'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
                         'source':path,'summary_source':summary_path})
+    acceptance_reviews=[]
+    for path in ['evidence/history-final-acceptance/swe-gen-skbio-01/review.json',
+                 'evidence/history-final-acceptance/swe-next-skbio-01/review.json',
+                 'evidence/qcp-final-acceptance/review.json']:
+        review=read(path)
+        acceptance_reviews.append({'task':review['task'],'status':review['status'],
+                                   'solver_eligible':review['solver_eligible'],'source':path})
     return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,'validation_rows':validations,
-            'source_sha256':sources,'limitations':[
+            'acceptance_reviews':acceptance_reviews,'source_sha256':sources,'limitations':[
                 'This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.',
                 'A null count or token value is unknown, never zero. Reserved candidate allowance is not an observed attempt count.',
                 'Preserved responses do not independently establish the number of dispatched requests when request capture is incomplete.',
