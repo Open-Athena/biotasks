@@ -24,6 +24,8 @@ The bedtools [control and admission evidence](evidence/prdiff-bedtools-provider-
 
 The [bedtools blind record](evidence/prdiff-bedtools-blind-01/summary.json) retains all three native similarity scores, 12 episodes per task and no trial exceptions. Input/output tokens were 139,693/9,104, 153,042/8,368 and 157,993/9,298 respectively; reasoning-token breakdown is unavailable. Per-response output stayed within 2,048 tokens. No separate final source-tree/diff artifact was declared by the native task; original trajectories, panes and verifier evidence are retained, with private API routing fields redacted only in public copies.
 
+The [bedtools blind archive](https://huggingface.co/buckets/open-athena/biotasks/tree/research/21-repo2rlenv/2026-10-18/983e13046006974b901e040832b45291b9e05a808e3946dda3734bbca0786af9) has25 anonymously verified objects/33 native members; the [DESeq2 control archive](https://huggingface.co/buckets/open-athena/biotasks/tree/research/21-repo2rlenv/2026-10-18/2f84ba34c490e5a56616c1e8153ff450e998032e6e0e8814e3c2f3c4c2a220ad) has31/54.
+
 ## Rejected, unresolved and zero-export outcomes
 
 | Route/profile | Evidence-based outcome | Scope of the finding |
@@ -110,9 +112,9 @@ At Marin pin 45a044387ccd95ab698b4a592056aadaff961540, [executed structure cover
 
 ## Current accounting and remaining work
 
-Estimates and holds are $818 of the approved $1,000 ceiling, with $182 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Their capacity claims remain retained until public archive verification. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
+Estimates and holds are $848 of the approved $1,000 ceiling, with $152 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Both capacity claims are released after verified public archive publication. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
 
-The local retention audit maps 60 older manifests: 59 match verified public receipts; one failed mode-descriptor manifest is explicitly superseded by a verified correction with identical object/member bytes and hashes. This is a local publication-history audit, not a fresh remote availability or universal source-integrity assertion. The newer bedtools snapshot has its own independent receipt.
+The local retention audit maps 63 manifests: 62 match verified public receipts; one failed mode-descriptor manifest is explicitly superseded by a verified correction with identical object/member bytes and hashes. This is a local publication-history audit, not a fresh remote availability or universal source-integrity assertion. All three new PR-diff snapshots have independent anonymous-download receipts.
 
 Complete the remaining selected PR-diff runtime controls and one blind attempt for each admitted task; preserve outputs and verify exact cleanup. Reconcile all terminal runs, model usage and controller/worker time, finish the full per-unit funnel and protocol deviations, and update the issue with conclusions and decisive immutable links. The present census and partial usage table do not close those requirements.
 
