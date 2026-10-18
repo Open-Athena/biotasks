@@ -5,7 +5,7 @@ Current admissions count independent validation, not raw exports. PR-diff admiss
 | Route / recipe | Biopython | scikit-bio | bedtools2 | DESeq2 |
 | --- | --- | --- | --- | --- |
 | pr_diff/native | 3/3 | 3/3 | 3/3 | 3/3 |
-| pr_runtime/native | 2/3 | 2/3 | 0/3 (blocked) | 0/3 (blocked) |
+| pr_runtime/native | 3/3 | 3/3 | 0/3 (blocked) | 0/3 (blocked) |
 | commit_runtime/native | 0/3 | 0/3 | 0/3 (blocked) | 0/3 (blocked) |
 | code_instruct/native | 0/3 (capture unknown; cap consumed) | 0/3 (capture unknown; cap consumed) | unsupported | unsupported |
 | equivalence_tests/native | 0/3 (blocked) | 0/3 (blocked) | unsupported | unsupported |
