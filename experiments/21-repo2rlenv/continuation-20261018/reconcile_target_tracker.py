@@ -61,14 +61,14 @@ def build():
                 planned = json.loads(selection.read_text())
                 charge = planned['conservative_allowance_after_selection']
                 cap_note = 'Conservative charge: two historical native execution profiles for one PR2633 lineage, plus frozen PR2630/2636 selected inputs. New selection counts even if a native filter/execution rejects it; no reset or new independent lineage inferred from repeat profiles.'
-                next_action = 'Run frozen model-free native PR cohort, review native instruction and CPU-only coverage, then portable reference/baseline/incorrect/alternative controls and one blind solve after approved model connectivity.'
+                next_action = 'Use retained native exports: PR2630 needs portable full/partial/incorrect/alternative graded controls; PR2636 original CPU profile is unaccepted, with separately planned optional Numba CPU coverage. Blind solving awaits approved model connectivity.' if (ROOT / 'skbio-pr-runtime-native-01/recovery.json').exists() else 'Run frozen model-free native PR cohort, then independent validation.'
         if route == 'pr_runtime/native' and unit['repository'] == 'biopython/biopython':
             selection = ROOT / 'pr-runtime-biopython-intake/additional-selection.json'
             if selection.exists():
                 considered = json.loads(selection.read_text())
                 charge = considered['cumulative_conservative_charge']
                 cap_note = 'One original PR5148 input, three newer matched similarity inputs rejected by native no-test-patch filter, then five fixed historical inputs; selection counts once including filter rejects. Saved eligible PR5316 is not a new charge if later materialized.'
-                next_action = 'Execute frozen PR5317/5310/5308 native cohort, then review portable controls and instructions; PR5316 remains selected/eligible/unmaterialized, and one additional new-input allowance remains.'
+                next_action = 'Native PR5317/5310/5308 exported. PR5310 instruction/oracle mismatch rejected; QCP5317 and hash5308 need portable graded controls. PR5316 remains selected/eligible/unmaterialized plus one additional new-input allowance; no cap reset.' if (ROOT / 'biopython-pr-runtime-native-01/recovery.json').exists() else 'Execute frozen PR5317/5310/5308 native cohort, then review portable controls and instructions.'
         if route == 'pr_diff/native':
             charge = 10
             cap_note = 'Ten considered PR inputs recorded per repository; selected three similarity tasks each admitted and scored.'
