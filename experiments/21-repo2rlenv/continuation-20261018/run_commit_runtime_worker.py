@@ -50,7 +50,12 @@ def main():
         record['setup_returncode'] = setup.returncode
         setup.checked('locked runtime install')
         run = worker.exec(['sh', '-c', 'export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; /work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/replay_skbio_case_commit.py --inputs /work/native/inputs --output /evidence/native/commit >/evidence/native/worker.log 2>&1; code=$?; printf "%s\\n" "$code" >/evidence/native/worker-exit.txt; exit "$code"'], timeout=min(6000, args.timeout_sec))
-        record.update(worker_returncode=run.returncode, status='cohort_process_completed' if run.returncode == 0 else 'cohort_process_failed')
+        marker = worker.exec(['cat', '/evidence/native/worker-exit.txt'], timeout=30)
+        marker.checked('read explicit worker exit marker')
+        actual_code = int(marker.stdout.strip())
+        record.update(worker_reported_returncode=run.returncode, worker_returncode=actual_code, status='cohort_process_completed' if actual_code == 0 else 'cohort_process_failed')
+        if actual_code != 0:
+            raise RuntimeError('Native worker exit marker reports failure; preserve partial evidence')
     except BaseException as exc:
         record.update(status='failed', error_type=type(exc).__name__)
         raise

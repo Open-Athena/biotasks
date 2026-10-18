@@ -1,0 +1,151 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 5c7893c6..de9dfd85 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -22,6 +22,7 @@
+ * Fixed a loophole in `Sequence` construction referring to an external array while flagging it as read-only, whereas one can still unflag the array and mutate its content. Construction now by default enforces immutability, and an external array is copied rather than referred ([#2614](https://github.com/scikit-bio/scikit-bio/pull/2614)).
+ * Corrected an inaccurate statement in the documentation of `Protein`, which should have 22 definite characters (including 'O' and 'U') instead of 20 ([#2621](https://github.com/scikit-bio/scikit-bio/pull/2621)).
+ * Fixed a broken link to `Sequence.iter_kmers` in the feature highlights on the documentation front page ([#2605](https://github.com/scikit-bio/scikit-bio/issues/2605)).
++* Fixed `Sequence` case conversion altering characters that are not letters. `Sequence.lowercase` (used by the `lowercase` option of the FASTA and FASTQ writers) flipped the case bit of every selected character. When a lowercase mask covered non-letter positions, gaps (`-`), dots (`.`) and stop codons (`*`) were turned into control characters (e.g., `\r` and `\n`), and lowercase letters were converted to uppercase. The `lowercase` parameter of `Sequence` treated every character after `Z` as lowercase, rewriting `[`, `\`, `]`, `^`, `_`, `` ` ``, `{`, `|`, `}` and `~`. Case conversion is now restricted to the letters A-Z and a-z.
+ 
+ 
+ ### Miscellaneous
+diff --git a/skbio/io/format/tests/test_fasta.py b/skbio/io/format/tests/test_fasta.py
+index 89184796..857358ef 100644
+--- a/skbio/io/format/tests/test_fasta.py
++++ b/skbio/io/format/tests/test_fasta.py
+@@ -1009,6 +1009,20 @@ class WriterTests(TestCase):
+         self.assertEqual(obs_fasta, exp_fasta)
+         self.assertEqual(obs_qual, exp_qual)
+ 
++    def test_lowercase_keeps_non_letters(self):
++        # Gaps, degenerate characters and stop codons covered by the lowercase
++        # mask are written unchanged instead of becoming control characters.
++        seq = DNA('ACGT-NNAC', metadata={'id': 's1'})
++        fh = io.StringIO()
++        seq.write(fh, format='fasta', lowercase=[
++            False, False, True, True, True, True, False, False, False])
++        self.assertEqual(fh.getvalue(), '>s1\nACgt-nNAC\n')
++
++        seq = Protein('MKV*', metadata={'id': 'p1'})
++        fh = io.StringIO()
++        seq.write(fh, format='fasta', lowercase=[False, True, True, True])
++        self.assertEqual(fh.getvalue(), '>p1\nMkv*\n')
++
+ 
+ class RoundtripTests(TestCase):
+     def test_roundtrip_generators(self):
+diff --git a/skbio/io/format/tests/test_fastq.py b/skbio/io/format/tests/test_fastq.py
+index 364fc74b..fb9d645a 100644
+--- a/skbio/io/format/tests/test_fastq.py
++++ b/skbio/io/format/tests/test_fastq.py
+@@ -540,6 +540,16 @@ class TestWriters(unittest.TestCase):
+         with self.assertRaisesRegex(ValueError, r'2nd.*quality scores'):
+             _generator_to_fastq(gen(), io.StringIO(), variant='illumina1.8')
+ 
++    def test_lowercase_keeps_non_letters(self):
++        # Gaps and degenerate characters covered by the lowercase mask are
++        # written unchanged instead of becoming control characters.
++        seq = DNA('ACGT-NNAC', metadata={'id': 's1'},
++                  positional_metadata={'quality': [30] * 9})
++        fh = io.StringIO()
++        seq.write(fh, format='fastq', variant='illumina1.8', lowercase=[
++            False, False, True, True, True, True, False, False, False])
++        self.assertEqual(fh.getvalue(), '@s1\nACgt-nNAC\n+\n?????????\n')
++
+ 
+ class TestConversions(unittest.TestCase):
+     def setUp(self):
+diff --git a/skbio/sequence/_sequence.py b/skbio/sequence/_sequence.py
+index b05be9a2..11eecc16 100644
+--- a/skbio/sequence/_sequence.py
++++ b/skbio/sequence/_sequence.py
+@@ -115,7 +115,8 @@ class Sequence(
+         If True, lowercase sequence characters will be converted to uppercase. If False
+         (default), characters will not be converted. If a string, in addition to the
+         uppercase conversion, a boolean array indicating which positions were originally
+-        lowercase will be stored in the positional metadata under this key.
++        lowercase will be stored in the positional metadata under this key. Only the
++        letters a-z are considered lowercase; other characters are kept as is.
+     validate : bool, optional
+         If True (default), byte or array input is validated to contain only ASCII code
+         points (0-127). If False, this validation is skipped, and the caller is
+@@ -550,7 +551,11 @@ class Sequence(
+     # ASCII is built such that the difference between uppercase and lowercase
+     # is the 6th bit.
+     _ascii_invert_case_bit_offset = 32
+-    _ascii_lowercase_boundary = 90
++    # ASCII code ranges of uppercase (A-Z) and lowercase (a-z) letters. Case
++    # conversion is restricted to these, so that other characters (e.g., gaps,
++    # stop codons, brackets) are never altered by flipping the case bit.
++    _ascii_uppercase_range = (65, 90)
++    _ascii_lowercase_range = (97, 122)
+     default_write_format = "fasta"
+     """Default write format for this object: ``fasta``."""
+     __hash__ = None  # type: ignore[assignment]
+@@ -931,7 +936,8 @@ class Sequence(
+         if lowercase is False:
+             pass
+         elif lowercase is True or isinstance(lowercase, str):
+-            lowercase_mask = self._bytes > self._ascii_lowercase_boundary
++            lo, hi = self._ascii_lowercase_range
++            lowercase_mask = (self._bytes >= lo) & (self._bytes <= hi)
+             if copy is False and np.any(lowercase_mask):
+                 raise ValueError(
+                     "`copy=False` was specified, but a copy is required "
+@@ -1562,6 +1568,8 @@ class Sequence(
+             is a str, it is treated like a key into the positional metadata,
+             pointing to a column which must be a boolean vector.
+             That boolean vector is then used as described previously.
++            Only the letters A-Z are converted; other characters at the
++            specified positions are kept as is.
+ 
+         Returns
+         -------
+@@ -1594,7 +1602,14 @@ class Sequence(
+         """
+         index = self._munge_to_index_array(lowercase)
+         outbytes = self._bytes.copy()
+-        outbytes[index] ^= self._ascii_invert_case_bit_offset
++        # Only uppercase letters are converted. Other characters, including those
++        # already in lowercase, are kept as is.
++        selected = outbytes[index]
++        lo, hi = self._ascii_uppercase_range
++        selected[(selected >= lo) & (selected <= hi)] |= (
++            self._ascii_invert_case_bit_offset
++        )
++        outbytes[index] = selected
+         return str(outbytes.tobytes().decode("ascii"))
+ 
+     def count(self, subsequence, start=None, end=None):
+diff --git a/skbio/sequence/tests/test_sequence.py b/skbio/sequence/tests/test_sequence.py
+index eb2bd9ed..82b4fc99 100644
+--- a/skbio/sequence/tests/test_sequence.py
++++ b/skbio/sequence/tests/test_sequence.py
+@@ -1458,6 +1458,26 @@ class TestSequence(TestSequenceBase, ReallyEqualMixin):
+         self.assertEqual('AaAAaAAA',
+                          self.lowercase_seq.lowercase([1, 4]))
+ 
++    def test_lowercase_non_letters(self):
++        # Only uppercase letters are converted. Characters that are not letters
++        # (such as gaps and stop codons) and lowercase letters are kept as is,
++        # rather than having their case bit flipped.
++        seq = Sequence('AC-GT.N*_[~]acgt')
++        obs = seq.lowercase([True] * len(seq))
++        self.assertEqual(obs, 'ac-gt.n*_[~]acgt')
++        obs = seq.lowercase([2, 3, 7, 12])
++        self.assertEqual(obs, 'AC-gT.N*_[~]acgt')
++
++    def test_init_lowercase_non_letters(self):
++        # Only lowercase letters are converted to uppercase and flagged.
++        seq = Sequence('ac_g[t]{n}~`^|\\', lowercase='lc')
++        self.assertEqual(str(seq), 'AC_G[T]{N}~`^|\\')
++        npt.assert_array_equal(
++            seq.positional_metadata['lc'].values,
++            [True, True, False, True, False, True, False, False, True, False,
++             False, False, False, False, False])
++        self.assertEqual(seq.lowercase('lc'), 'ac_g[t]{n}~`^|\\')
++
+     def test_matches(self):
+         tested = 0
+         for constructor in self.sequence_kinds:

@@ -1,0 +1,60 @@
+schema_version = "1.3"
+artifacts = [
+    { source = "/workspace/skbio/diversity/alpha/_base.py" },
+]
+
+[task]
+name = "open-athena/swe-smith-539b25a8eba699d3de89"
+
+[metadata.repo2env]
+recipe = "swe_smith"
+recipe_version = "2"
+pipeline = "repo_mutate"
+upstream_revision = "9b74ac08118a85c39c356802f7961893af73e07f"
+repository = "https://github.com/scikit-bio/scikit-bio"
+source_revision = "bd05e60efb0e6398aa6dc1485832c80a1104511b"
+mutation_id = "539b25a8eba699d3de89"
+source_file = "skbio/diversity/alpha/_base.py"
+entity = "robbins"
+operator = "flip_operator"
+reward_kinds = [
+    "test_execution",
+]
+quality_status = "exported"
+fail_to_pass_count = 1
+pass_to_pass_count = 33
+bundle_hash = "sha256:7c16ba3361e45bd04666f4daba959d7c18e9d9929436e5a0ea8f5e08e4616daa"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+subject_bundle_hash = "sha256:7c16ba3361e45bd04666f4daba959d7c18e9d9929436e5a0ea8f5e08e4616daa"
+evidence = []
+
+[environment]
+cpus = 1
+memory_mb = 2048
+build_timeout_sec = 600
+network_mode = "no-network"
+
+[agent]
+timeout_sec = 600
+user = "learner"
+network_mode = "no-network"
+
+[verifier]
+timeout_sec = 120
+user = "root"
+network_mode = "no-network"
+environment_mode = "separate"
+
+[verifier.environment]
+network_mode = "no-network"
+cpus = 1
+memory_mb = 2048

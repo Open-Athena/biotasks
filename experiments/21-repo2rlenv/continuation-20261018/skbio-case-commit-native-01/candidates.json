@@ -1,0 +1,14 @@
+[
+  {
+    "author_email": "aakarshitv7@gmail.com",
+    "author_name": "Aakarshit Verma",
+    "authored_at": "2026-10-03T15:48:15+05:30",
+    "body": "Sequence.lowercase() flipped the case bit (0x20) of every selected\ncharacter. When the mask covered non-letter positions, gaps, dots and\nstop codons became control characters ('-' -> '\\r', '.' -> '\\x0e',\n'*' -> '\\n'), and lowercase letters were uppercased. The FASTA and FASTQ\nwriters use this method for their `lowercase` option, so such masks\nsilently produced corrupted files.\n\nThe `lowercase` constructor parameter treated every byte above 'Z' (90)\nas lowercase, so '[', '\\\\', ']', '^', '_', '`', '{', '|', '}' and '~'\nwere rewritten in generic Sequence objects (e.g. '_' became DEL) and\nflagged as lowercase.\n\nOnly convert A-Z to lowercase and a-z to uppercase.",
+    "parent_sha": "566dbe73c62a13f790713245c24f883d7eb92983",
+    "parents": [
+      "566dbe73c62a13f790713245c24f883d7eb92983"
+    ],
+    "sha": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+    "subject": "BUG: restrict Sequence case conversion to ASCII letters"
+  }
+]

@@ -1,0 +1,88 @@
+{
+  "stage": "native_task_rejected_insufficient_grader_coverage",
+  "candidate_id": "539b25a8eba699d3de89",
+  "native_expected_test_count": 34,
+  "controls_executed": 6,
+  "records": [
+    {
+      "case": "baseline",
+      "native_reward": 0.0,
+      "expected_control_reward": 0,
+      "native_status_counts": {
+        "passed": 33,
+        "failed": 1
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    },
+    {
+      "case": "native_reference",
+      "native_reward": 1.0,
+      "expected_control_reward": 1,
+      "native_status_counts": {
+        "passed": 34
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    },
+    {
+      "case": "alternative",
+      "native_reward": 1.0,
+      "expected_control_reward": 1,
+      "native_status_counts": {
+        "passed": 34
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    },
+    {
+      "case": "alternative_repeat",
+      "native_reward": 1.0,
+      "expected_control_reward": 1,
+      "native_status_counts": {
+        "passed": 34
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    },
+    {
+      "case": "incorrect_zero",
+      "native_reward": 0.0,
+      "expected_control_reward": 0,
+      "native_status_counts": {
+        "passed": 33,
+        "failed": 1
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    },
+    {
+      "case": "incorrect_constant_example",
+      "native_reward": 1.0,
+      "expected_control_reward": 0,
+      "native_status_counts": {
+        "passed": 34
+      },
+      "actual_archived_grade_and_reward_match_summary": true
+    }
+  ],
+  "native_task_all_asset_hashes_and_modes_verified": true,
+  "independent_control_reconstructions": [
+    "alternative",
+    "incorrect_constant_example"
+  ],
+  "constant_answer_native_reward": 1.0,
+  "counterexample": {
+    "counts": [
+      1,
+      1
+    ],
+    "documented_F1_over_N": 1.0,
+    "constant_answer": 0.2857142857142857
+  },
+  "decision": "Reject original native task; constant nonempty answer passes native reward while violating the general public estimator contract.",
+  "new_independent_admissions": 0,
+  "new_solver_attempts": 0,
+  "model_calls": 0,
+  "deferred_end_to_end_integrity_diagnostic_executed": false,
+  "limits": [
+    "This is an ordinary library implementation control with unchanged native tests/grader, not a report-tampering diagnostic.",
+    "Earlier capture failures remain separate; only this recovered run supplies measured native rewards.",
+    "No additional authoring calls remain for this candidate."
+  ]
+}

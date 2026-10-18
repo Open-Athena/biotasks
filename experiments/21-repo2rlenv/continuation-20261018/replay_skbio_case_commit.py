@@ -9,6 +9,7 @@ import dataclasses
 import hashlib
 import json
 import os
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -28,6 +29,24 @@ TEST = "cp -a /opt/skbio-baseline-extensions/. /workspace/ && cd /workspace && p
 
 EXPECTED_FILES = {'CHANGELOG.md', 'skbio/sequence/_sequence.py', 'skbio/io/format/tests/test_fasta.py', 'skbio/io/format/tests/test_fastq.py', 'skbio/sequence/tests/test_sequence.py'}
 DIFF_SHA256 = '7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628'
+
+
+def comparable_diff(text):
+    """Ignore only Git's abbreviated blob IDs and display-only hunk labels.
+
+    Commit/parent IDs, file paths, modes, hunk ranges and every patch/context
+    line still have to match. The native diff itself is never rewritten.
+    """
+    lines = []
+    for line in text.splitlines(keepends=True):
+        index = re.fullmatch(r'index ([0-9a-f]{7,40})\.\.([0-9a-f]{7,40})([^\n]*)(\n?)', line)
+        hunk = re.fullmatch(r'(@@ -\d+(?:,\d+)? \+\d+(?:,\d+)? @@)[^\n]*(\n?)', line)
+        if index:
+            line = 'index ' + index[1][:7] + '..' + index[2][:7] + index[3] + index[4]
+        elif hunk:
+            line = hunk[1] + hunk[2]
+        lines.append(line)
+    return ''.join(lines)
 
 
 def check_inputs(directory):
@@ -155,8 +174,18 @@ def main():
     def diff(*args, **kwargs):
         value = original_diff(*args, **kwargs)
         (output / "commit.diff").write_text(value)
-        if hashlib.sha256(value.encode()).hexdigest() != DIFF_SHA256:
-            raise ValueError("Native git-show bytes differ from frozen public commit diff")
+        expected = (inputs / 'pr2630-head-commit.diff').read_text()
+        same = comparable_diff(value) == comparable_diff(expected)
+        save_record(output / 'commit-diff-equivalence.json', {
+            'native_diff_sha256': hashlib.sha256(value.encode()).hexdigest(),
+            'public_API_diff_sha256': hashlib.sha256(expected.encode()).hexdigest(),
+            'canonical_patch_sha256': hashlib.sha256(comparable_diff(value).encode()).hexdigest(),
+            'same_paths_modes_hunk_ranges_and_all_patch_lines': same,
+            'ignored_display_fields': ['blob-hash abbreviation length beyond seven characters', 'hunk function/class display label'],
+            'native_patch_rewritten': False,
+        })
+        if not same:
+            raise ValueError('Native/public commit patch content differs beyond display fields')
         return value
 
     with (
