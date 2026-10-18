@@ -1308,3 +1308,7 @@ Task scaler-5e341fa6b75229faea47 passed fresh native no-op/reference provider co
 ### 2026-10-18 Second SCALER blind attempt scored
 
 Accepted task scaler-5e341fa6b75229faea47 completed one blind GLM attempt with native reward+1, no exception, three agent episodes,4510 input/3072 cached-input/1476 output tokens. Limits remain900 seconds/12 turns/2048 output tokens with effort unset. Recovered12107-byte supported archive SHA256e7bc0c032bc0ffb3ba119e6bf886c069019d085be1907374b7fc459fdecb8098, verified14-file nested capture/modes, independently confirmed both sandboxes404, and released the three-slot claim. Third accepted SCALER provider probe reserved$10; total estimates/holds$613/$1000.
+
+### 2026-10-18 Native request-preservation correction
+
+Found all30 exact native metering request files and completed receipts in the recovered Biopython R2E campaign. The response-only public snapshot omitted these; they were retained by the original native runner before dispatch. Verified all30 canonical request hashes against completed native receipts and the131072-token request settings; no new model calls. Prepared a60-member append-only request/receipt appendix, linked to the original response snapshot, after exact credential/private-route scanning. This corrects the implication that exact requests were unavailable. Native metered content is preserved, not an HTTP-envelope byte capture.
