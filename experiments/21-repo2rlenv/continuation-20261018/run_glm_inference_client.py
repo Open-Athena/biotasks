@@ -40,6 +40,12 @@ def validate_solver_request(body):
     return payload
 
 
+def transport_check(body):
+    """Authenticate and check a native request body without calling a model."""
+    validate_solver_request(body)
+    return {'stage': 'authenticated_body_transport_check', 'request_sha256': hashlib.sha256(body).hexdigest(), 'request_bytes': len(body), 'model_calls': 0, 'repository_execution': False}
+
+
 class Server(ThreadingHTTPServer):
     daemon_threads = True
     request_queue_size = 4
@@ -89,7 +95,7 @@ def main():
             if not hmac.compare_digest(self.headers.get('Authorization', '').encode(), ('Bearer ' + token).encode()):
                 self.reply(401, b'{"error":"unauthorized"}')
                 return
-            allowed = (self.command, self.path) in {('GET', '/v1/models'), ('POST', '/v1/chat/completions')}
+            allowed = (self.command, self.path) in {('GET', '/v1/models'), ('POST', '/v1/chat/completions'), ('POST', '/v1/transport-check')}
             if not allowed:
                 self.reply(404, b'{"error":"unsupported_route"}')
                 return
@@ -108,6 +114,11 @@ def main():
                 except (ValueError, TypeError):
                     self.reply(400, b'{"error":"invalid_native_solver_request"}')
                     return
+            if self.path == '/v1/transport-check':
+                result = transport_check(raw)
+                append(result)
+                self.reply(200, json.dumps(result).encode())
+                return
             if not gate.acquire(blocking=False):
                 self.reply(429, b'{"error":"inference_client_busy"}')
                 return
