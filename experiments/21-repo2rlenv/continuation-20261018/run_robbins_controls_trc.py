@@ -48,6 +48,9 @@ def main():
             if result.exists():
                 row = json.loads(result.read_text())
                 summary['controller'] = {k: row[k] for k in ('status', 'worker_returncode', 'cleanup', 'execution_timeout_sec') if k in row}
+            small = Path('robbins-output/native-control-summary.json')
+            if small.exists():
+                summary.update(native_results_available=True, native_results=json.loads(small.read_text()), native_results_source='controller_downloaded_summary')
             summary['workers'] = [{k: data[k] for k in ('worker_id', 'state', 'started_at', 'ready_at', 'stopped_at') if k in data} for file in Path('robbins-output/workers').glob('*.json') for data in [json.loads(file.read_text())]]
             evidence = Path('robbins-output/native-evidence.tar.gz')
             if evidence.exists():

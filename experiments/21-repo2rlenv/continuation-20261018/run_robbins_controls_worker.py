@@ -61,9 +61,15 @@ def main():
         save_record(args.campaign / 'result.json', record)
         if worker is not None:
             try:
+                for remote, local in [('summary.json', 'native-control-summary.json'), ('control-manifest.json', 'native-control-manifest.json')]:
+                    source = '/evidence/native/robbins/' + remote
+                    if worker.exec(['test', '-f', source], timeout=30).returncode == 0:
+                        worker.download(source, args.campaign / local)
                 compact = worker.exec(['sh', '-c', 'if [ -f /evidence/native/robbins/control-manifest.json ]; then /work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/pack_robbins_evidence.py --root /evidence/native/robbins >/evidence/native/canonical-pack.log 2>&1; fi'], timeout=180)
                 record['canonical_storage_returncode'] = compact.returncode
                 save_record(args.campaign / 'result.json', record)
+                if worker.exec(['test', '-f', '/evidence/native/canonical-pack.log'], timeout=30).returncode == 0:
+                    worker.download('/evidence/native/canonical-pack.log', args.campaign / 'canonical-pack.log')
                 compact.checked('retain one complete task and verified control deltas')
                 for remote, local in [('summary.json', 'native-control-summary.json'), ('canonical-task-storage.json', 'canonical-task-storage.json')]:
                     source = '/evidence/native/robbins/' + remote

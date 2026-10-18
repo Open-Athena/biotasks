@@ -26,7 +26,9 @@ def inventory(root):
 
 def restore(root, output, case):
     record = json.loads((root / 'canonical-task-storage.json').read_text())
-    shutil.copytree(root / 'native-task', output)
+    if case not in record['control_solution_paths']:
+        raise ValueError('Unknown saved control')
+    shutil.copytree(root / record['complete_native_task'], output)
     for relative in record['profile_deleted_assets']:
         (output / relative).unlink()
     for relative in record['profile_changed_assets']:
@@ -40,7 +42,11 @@ def restore(root, output, case):
 
 def canonicalize(root):
     manifest = json.loads((root / 'control-manifest.json').read_text())
-    native = inventory(root / 'native-task')
+    native_relative = Path(manifest['native_task_relative_path'])
+    if not native_relative.parts or native_relative.is_absolute() or '..' in native_relative.parts or native_relative.parts[0] != 'native-task':
+        raise ValueError('Expected the recorded native exporter task path')
+    native_root = root / native_relative
+    native = inventory(native_root)
     profile = inventory(root / 'offline-task')
     assert native == manifest['native_assets']
     assert profile == manifest['profile_assets']
@@ -62,7 +68,7 @@ def canonicalize(root):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(directory / 'solution/solve.sh', destination)
         expected[name] = hashes
-    record = {'stage': 'lossless_control_storage_before_archive', 'complete_native_task': 'native-task', 'original_control_manifest': 'control-manifest.json', 'profile_changed_assets': changed, 'profile_deleted_assets': deleted, 'control_solution_paths': {name: 'control-deltas/' + name + '/solve.sh' for name in expected}, 'restored_control_hashes_and_permissions_verified': [], 'unique_task_source_or_grade_bytes_removed': False, 'model_calls': 0}
+    record = {'stage': 'lossless_control_storage_before_archive', 'complete_native_task': native_relative.as_posix(), 'original_control_manifest': 'control-manifest.json', 'profile_changed_assets': changed, 'profile_deleted_assets': deleted, 'control_solution_paths': {name: 'control-deltas/' + name + '/solve.sh' for name in expected}, 'restored_control_hashes_and_permissions_verified': [], 'unique_task_source_or_grade_bytes_removed': False, 'model_calls': 0}
     path = root / 'canonical-task-storage.json'
     path.write_text(json.dumps(record, indent=2) + '\n')
     # Exercise the restoration from retained bytes before deleting any copy.
@@ -75,7 +81,7 @@ def canonicalize(root):
     path.write_text(json.dumps(record, indent=2) + '\n')
     shutil.rmtree(root / 'offline-task')
     shutil.rmtree(root / 'cases')
-    assert inventory(root / 'native-task') == native
+    assert inventory(native_root) == native
     return record
 
 

@@ -86,7 +86,7 @@ def prepare_cases(task, output):
         path.chmod(0o755)
         assert assets(destination, exclude={'solution/solve.sh'}) == fixed
         rows.append({'case': name, 'bundle': str(destination), 'expected_reward': expected})
-    result = {'stage': 'prepared_not_executed', 'candidate_id': IDENTIFIER, 'native_assets': original, 'profile_assets': assets(profile), 'changed_profile_assets': sorted(excluded), 'case_unchanged_assets': fixed, 'cases': rows, 'model_calls': 0, 'reward_contract': 'binary all native expected tests pass; no fractional score'}
+    result = {'stage': 'prepared_not_executed', 'candidate_id': IDENTIFIER, 'native_task_relative_path': task.relative_to(output).as_posix(), 'native_assets': original, 'profile_assets': assets(profile), 'changed_profile_assets': sorted(excluded), 'case_unchanged_assets': fixed, 'cases': rows, 'model_calls': 0, 'reward_contract': 'binary all native expected tests pass; no fractional score'}
     save_record(output / 'control-manifest.json', result)
     return rows, fixed
 
