@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import logging
 import os
 from pathlib import Path
 
@@ -9,6 +10,8 @@ import httpx
 
 
 def main():
+    for name in ('httpx', 'httpcore'):
+        logging.getLogger(name).setLevel(logging.WARNING)
     output = Path(os.environ['IRIS_OUTPUT_DIR'])
     output.mkdir(parents=True, exist_ok=True)
     record = {'stage': 'zero_model_TRC_to_own_inference_client_preflight', 'model_calls': 0, 'repository_execution': False, 'sandbox_credentials_supplied': False, 'checks': []}
