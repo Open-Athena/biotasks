@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 23:15 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 00:00 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -11,6 +11,8 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 | SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison | One synthetic family, not three distinct competencies; blind attempts remain pending |
 | scikit-bio SWE-Next and fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Native exports and six independent correctness controls per export | Shared problem lineage; fresh solver runtime/final acceptance and blind attempts pending |
 | scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export and six independent correctness controls verified | Fresh solver-runtime validation, final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
+| scikit-bio Strong dominance, SWE-smith | Diversity-index function reconstruction | Baseline/reference/alternative/incorrect-constant/zero rewards 0,1,1,1,0 | Rejected: an incorrect constant passes all 34 native tests; no blind solve |
+| Biopython GC-skew, SWE-flow | Windowed nucleotide-composition calculation | Original export failed build; idempotent license-bootstrap adaptation scored native no-op 0/reference 1 | Independent controls pending; native target test covers only one all-A sequence |
 | Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | One SWE-gen export: native healthy 9/9, defective 8/9, nop 0/reference 1; corrected independent run02 preserved all six expected control rewards: 0,1,1,0,0,0 | Native export publicly preserved; independent controls recovered, fresh runtime/final acceptance and blind attempt pending |
 
 Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
@@ -20,7 +22,8 @@ The two completed blind attempts both earned reward 1. They are selected, indepe
 ## Generation and execution limitations
 
 - Biopython R2E-Gym scanned 2,000 first-parent history records under the narrow QCP profile, all source-filtered before model calls. This is not 2,000 generation attempts or a repository-wide incompatibility finding. Broader profile coverage remains pending.
-- Biopython GC-skew exported one saved candidate but baseline/reference Docker builds failed on a symlink-only LICENSE bootstrap assertion. No grader reward was produced. A separately frozen correction is prepared; original failure retained.
+- Biopython GC-skew original export failed native builds on a symlink-only LICENSE assertion. A separately recorded idempotent bootstrap adaptation completed native no-op/reference grading with rewards 0/1; independent acceptance remains pending. Original failure and corrected export are separately public. These are two export/build attempts for one saved candidate, not two generated problems.
+- Esty confidence-interval control run01 failed worker-name schema validation before sandbox allocation. No controls or model calls ran. The corrected run02 retains all frozen task inputs and uses a valid worker name; its result is pending.
 - Biopython SWE-Next rejected its first source candidate before model calls because the selected test change only reformats an existing expression. One of ten candidates is consumed; broader bounded source selection remains pending. See [source review](evidence/swe-next-biopython-01/source-filter-review.json).
 - Endless biological adaptation exhausted ten candidates with 34 model responses and zero exports: two design parse failures and eight exhausted initial-test repair sequences. No task build or solver trial started. See [Endless evidence](evidence/endless-biological-02).
 
@@ -35,7 +38,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links twelve generation/materialization rows and two solver rows to fifteen hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links twelve generation/materialization rows, four validation rows and two solver rows to twenty hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |

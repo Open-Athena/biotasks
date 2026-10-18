@@ -102,7 +102,36 @@ def build():
                         'cached_input_tokens':d.get('cached_input_tokens',u.get('n_cache_tokens')),
                         'output_tokens':d.get('output_tokens',u.get('n_output_tokens')),
                         'reasoning_tokens':None,'source':path})
-    return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,
+    validations=[]
+    path='evidence/strong-independent-01/review.json';review=read(path)
+    controls_path='evidence/strong-independent-01/native-summary.json';controls=read(controls_path)
+    validations.append({'run':'strong-independent-01','recipe':'swe_smith','repository':'scikit-bio',
+                        'lineage_group':'scikit-bio-strong-reconstruction',
+                        'outcome':review['acceptance'],'solver_eligible':review['solver_eligible'],
+                        'model_calls':review['model_calls'],
+                        'native_controls':[{'case':x['case'],'completed':x['completed'],'reward':x['reward'],
+                                            'expected_reward':x['expected_reward']} for x in controls['records']],
+                        'source':path,'control_source':controls_path})
+    path='evidence/biopython-flow-controls-01/summary.json';failed=read(path)
+    validations.append({'run':'biopython-flow-controls-01','recipe':'swe_flow','repository':'biopython',
+                        'lineage_group':'biopython-gc-skew-reconstruction','outcome':failed['stage'],
+                        'model_calls':failed['model_calls'],'native_trials_completed':failed['native_trials_completed'],
+                        'native_controls':failed['trials'],'source':path})
+    path='evidence/biopython-flow-controls-02/native-summary.json';corrected=read(path)
+    records=corrected['records'];assert len(records)==1
+    validations.append({'run':'biopython-flow-controls-02','recipe':'swe_flow','repository':'biopython',
+                        'lineage_group':'biopython-gc-skew-reconstruction',
+                        'outcome':'native_contrast_passed_independent_acceptance_pending',
+                        'model_calls':0,'native_controls':[{'case':x['agent'],'completed':x['completed'],
+                                                           'reward':x['reward']} for x in records[0]['trials']],
+                        'adaptation':'Idempotent LICENSE bootstrap assertion; unchanged instruction and tests',
+                        'source':path})
+    path='evidence/esty_ci-independent-01/summary.json';failed=read(path)
+    validations.append({'run':'esty_ci-independent-01','recipe':'swe_smith','repository':'scikit-bio',
+                        'lineage_group':'scikit-bio-esty-ci-reconstruction','outcome':failed['status'],
+                        'model_calls':failed['model_calls'],'native_trials_completed':failed['controls_executed'],
+                        'reward':failed['reward'],'source':path})
+    return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,'validation_rows':validations,
             'source_sha256':sources,'limitations':[
                 'This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.',
                 'A null count or token value is unknown, never zero. Reserved candidate allowance is not an observed attempt count.',
@@ -110,6 +139,7 @@ def build():
                 'Combined output tokens include reasoning. Missing reasoning breakdown remains null.',
                 'PR2633 exports share one problem lineage; do not sum them as independent biological problems.',
                 'Accepted and blind counts refer to these exports; the separate portable PR-runtime profile is represented only in solver_rows.',
+                'Validation rows are repeated controls or export adaptations, not additional generation candidates or independent problems.',
                 'No overall yield, cost-per-task or benchmark success rate is computed from this incomplete subset.']}
 
 
@@ -119,4 +149,4 @@ if __name__=='__main__':
     output.mkdir(exist_ok=True)
     (output/'reconciled-subset.json').write_text(json.dumps(result,indent=2)+'\n')
     print(json.dumps({'generation_rows':len(result['generation_rows']),'solver_rows':len(result['solver_rows']),
-                      'sources':len(result['source_sha256']),'status':result['status']}))
+                      'validation_rows':len(result['validation_rows']),'sources':len(result['source_sha256']),'status':result['status']}))
