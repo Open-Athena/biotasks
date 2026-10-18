@@ -1,0 +1,34 @@
+{
+  "stage": "native_numba_CPU_profile_verified_independent_controls_pending",
+  "pr": 2636,
+  "original_sparse_CPU_profile": {
+    "F2P": 2,
+    "P2P": 82,
+    "post_passed": 84,
+    "post_skipped": 24,
+    "admitted": false
+  },
+  "separate_numba_CPU_profile": {
+    "F2P": 5,
+    "P2P": 96,
+    "post_passed": 101,
+    "post_skipped": 7,
+    "subtests_passed": 103,
+    "admitted": false
+  },
+  "new_F2P_cases": [
+    "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_out_of_memory_keeps_the_gpu",
+    "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_out_of_memory_recognized",
+    "skbio/tree/tests/bp/test_bp.py::BPGPUFallbackTests::test_use_device"
+  ],
+  "source_and_skip_conditions_changed": false,
+  "GPU_hardware_used": false,
+  "model_calls": 0,
+  "same_source_lineage": true,
+  "limitations": [
+    "CPU fake-module tests exercise device selection and out-of-memory classification, not physical GPU execution.",
+    "Original PR-body instruction includes implementation guidance and a truncated performance section; preserved unchanged.",
+    "Native export success is not independent admission. Portable graded reference, alternative, partial and incorrect controls remain required.",
+    "Two profiles of the same upstream PR can contribute at most one independently admitted task to this repository/route unit."
+  ]
+}

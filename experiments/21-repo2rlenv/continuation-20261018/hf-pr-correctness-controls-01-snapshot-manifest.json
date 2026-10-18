@@ -1,0 +1,3013 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "graded_correctness_controls_not_yet_independent_admission",
+  "checkpoint_commit": "bfd09d6d86bbec67e778862b99b4733d12997b24",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "selected_prs": [
+    2630,
+    5317,
+    5308
+  ],
+  "native_candidates": 0,
+  "model_calls": 0,
+  "independent_admissions": 0,
+  "reward": "Native graded F2P pass rate multiplied by P2P pass rate; correctness, not patch similarity.",
+  "input_lineage": "Public historical software regression cases; original issue examples and upstream tests. No inference about biological outcomes.",
+  "public_eligibility": "Public upstream code, PR/issue metadata and execution evidence, source licenses retained; exact approved credential/private-route scan passes for decoded native/controller members and selected inputs. No private inference path used.",
+  "retention": "Retain while referenced; no automatic deletion.",
+  "files": [
+    {
+      "path": "audit/audit_pr_correctness_evidence.py",
+      "bytes": 6032,
+      "sha256": "a5b27e74f035ff40e39df8c0e0385691942d338bb7337a92139aee2da945f089"
+    },
+    {
+      "path": "continuation/authorization.json",
+      "bytes": 1301,
+      "sha256": "a6c073fd3a64e46a19588c09864ef39edd663cb00db2bbd5c936f9c000e2a2bb"
+    },
+    {
+      "path": "continuation/pr-correctness-controls-20261018-01-observation.json",
+      "bytes": 707,
+      "sha256": "64a03caac4a74de3d5acb527e425852df5169097b8db9d9cad47474e3b04952a"
+    },
+    {
+      "path": "continuation/pr-correctness-controls-20261018-01-submission.json",
+      "bytes": 635,
+      "sha256": "38245b38b316888515208b1af8a12679723031d449dfcbfbe07423880a9e536e"
+    },
+    {
+      "path": "continuation/pr-correctness-dispatch-manifest.json",
+      "bytes": 1809,
+      "sha256": "206aa033f8374cf989fcc7c61e7003b2e0026fefc1a837a3bc1f21064eb398b0"
+    },
+    {
+      "path": "continuation/pr-correctness-input-manifest.json",
+      "bytes": 1902,
+      "sha256": "6969040bc288a5e8d8a734e388750cdb113860ba42f2add4116e51d9e63dcc9f"
+    },
+    {
+      "path": "evidence/cleanup-verification.json",
+      "bytes": 196,
+      "sha256": "de58f30701d020dad0a65f91a70b5758cb7f2a18b367bbfa4902a46684cc50ce"
+    },
+    {
+      "path": "evidence/cohort-summary.json",
+      "bytes": 31421,
+      "sha256": "f45ad6a4dc8516751cac98d43a2b0020cd97fcfbd289dbc142a77cbcbc18fe4f"
+    },
+    {
+      "path": "evidence/controller-small-summary.json",
+      "bytes": 34002,
+      "sha256": "6e7c7430bb3ddd1c3684cc3df1dbf564353c43101ee3e23df17f37c97c734a33"
+    },
+    {
+      "path": "evidence/independent-audit.json",
+      "bytes": 6054,
+      "sha256": "d6cd9be5445684c9ebe48f23b70733e76357946c1b27e633f99c6e77a8c3a469"
+    },
+    {
+      "path": "evidence/recovery.json",
+      "bytes": 31927,
+      "sha256": "65f15367248130515c6d18c165bc67b85cbfc453fea0a388cdf1693a95267648"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 1809,
+      "sha256": "206aa033f8374cf989fcc7c61e7003b2e0026fefc1a837a3bc1f21064eb398b0"
+    },
+    {
+      "path": "frozen-inputs/pr-inputs.tar.gz",
+      "bytes": 173788,
+      "sha256": "247834c584978264a8f133a22b61a5693071efe41f4e5ad64dc784f14197f994"
+    },
+    {
+      "path": "frozen-inputs/prepare_pr_correctness_controls.py",
+      "bytes": 8259,
+      "sha256": "cfda9ba1a0c8fe064eddfa77c66a8bf4da96563648a04d725f04b6400505ae56"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_controls_trc.py",
+      "bytes": 4589,
+      "sha256": "80d04f22b4f82f2b2bf37538ff25c63190e60053170f88d8d5313ad88119534d"
+    },
+    {
+      "path": "frozen-inputs/run_pr_controls_worker.py",
+      "bytes": 4769,
+      "sha256": "b7f02d6a031d7ac1b9a99dbf1e4f883d5d5b3a867ce237fc52f24140ca388a56"
+    },
+    {
+      "path": "frozen-inputs/run_pr_correctness_controls.py",
+      "bytes": 6297,
+      "sha256": "f5535a794292ac204ffaedd0e05ce67ef0a97f585aecd2565dc973076e677104"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 422520,
+      "sha256": "a64fd5ee2754cdb993a8bf964f64c19d84d136f795190be0a66c36ed2091e359",
+      "archive_format": "tar.gz",
+      "members": [
+        {
+          "path": "native/setup.log",
+          "bytes": 2913,
+          "mode": "0o644",
+          "sha256": "b3b2b83b0984fab005ab0d2d4cf0bd00857a4b5fac2f002aa13b2ddda0d6deb6"
+        },
+        {
+          "path": "native/worker.log",
+          "bytes": 2138,
+          "mode": "0o644",
+          "sha256": "a8c84617a774dcff1807c9b92896a6d0d9cee54b21fc8c60ffdf837882814508"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/portable/task/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/portable/profile.json",
+          "bytes": 3346,
+          "mode": "0o644",
+          "sha256": "15b55f598489d7c81701682bde8e41c0aa41c7544fc71b6995a2b0317522a47f"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/solution/solve.sh",
+          "bytes": 18,
+          "mode": "0o755",
+          "sha256": "2ee57ec968598277a71f1d5231a25d7379689fb1f58c6e69aa9c4977fb0ad696"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/baseline/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/native_reference/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/solution/solve.sh",
+          "bytes": 754,
+          "mode": "0o755",
+          "sha256": "039076b68566fd917601efc67d622d69a8dc5a3f73104bef6b3df52daa2d58bc"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/solution/solve.sh",
+          "bytes": 455,
+          "mode": "0o755",
+          "sha256": "c28f56905786b5aaafc384c69780829afc5b189254ef2b86ce8c1efa6a29877f"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/partial/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/solution/solve.sh",
+          "bytes": 379,
+          "mode": "0o755",
+          "sha256": "d0454c6e7aace9a502bce6e83b47af0f2ff351c5c44ff3d9567aa6a8070aac9b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/incorrect/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/task.toml",
+          "bytes": 33642,
+          "mode": "0o644",
+          "sha256": "c85a60b34c3d60bcd17b2de5b4250a5aa0a715fac9907ad1be3ff38e5bcb914b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/instruction.md",
+          "bytes": 3084,
+          "mode": "0o644",
+          "sha256": "0109a3eb3c04c514f96daab189916c6b6e4629fdb075af1e77a598bb858f324c"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/solution/patch.diff",
+          "bytes": 4752,
+          "mode": "0o644",
+          "sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/solution/solve.sh",
+          "bytes": 754,
+          "mode": "0o755",
+          "sha256": "039076b68566fd917601efc67d622d69a8dc5a3f73104bef6b3df52daa2d58bc"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/environment/Dockerfile",
+          "bytes": 3616,
+          "mode": "0o644",
+          "sha256": "72de82659272d4afd851a5818aaaca3a18894ce061c2703296585cdf8456c5c5"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/tests/test.sh",
+          "bytes": 5425,
+          "mode": "0o755",
+          "sha256": "ae0c62af2ba34bef33b8395b06e0b9bc4f17702f5f0b6e25ab3ddd28b01d3552"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/tests/f2p.json",
+          "bytes": 353,
+          "mode": "0o644",
+          "sha256": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818"
+        },
+        {
+          "path": "native/controls/pr2630/controls/alternative_repeat/tests/p2p.json",
+          "bytes": 30764,
+          "mode": "0o644",
+          "sha256": "803ca345efbcf6fb4c67517edd32abe5fc1de13bdf9107ed5620f2225f6aa0fb"
+        },
+        {
+          "path": "native/controls/pr2630/controls/manifest.json",
+          "bytes": 2180,
+          "mode": "0o644",
+          "sha256": "d415aa46bea44c339c36f5db0c2b14f85f33f0fc13fa4d8a104abe4bdf2b63d2"
+        },
+        {
+          "path": "native/controls/pr2630/cases/baseline.log",
+          "bytes": 1172,
+          "mode": "0o644",
+          "sha256": "5c58a1c30f96fe25c2c2e7e790edbeffa8ddc4420436b578cfdb84569e52d4a5"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/config.json",
+          "bytes": 371,
+          "mode": "0o644",
+          "sha256": "d0bbe9727c7353c4bcd18682f37a171bb8b3b4d22514b62417ed1f3b9df76904"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/lock.json",
+          "bytes": 1991,
+          "mode": "0o644",
+          "sha256": "c5297a82604760da2213e19ce398af962ccc9feb878e2c5874026a88d799d678"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/result.json",
+          "bytes": 1099,
+          "mode": "0o644",
+          "sha256": "bcffc01fd21301079ebb5848df29ce3531802184ef4fe4463a2608a206fa4990"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/verifier/test-stdout.txt",
+          "bytes": 38288,
+          "mode": "0o644",
+          "sha256": "960a9133690e25b5004bb6757b966fd365ba1c2b5c7f1e039fbfec6030ff211e"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/verifier/test_output.log",
+          "bytes": 36573,
+          "mode": "0o644",
+          "sha256": "dba039a05d8c074ab0065ec3c5218e8f5f678dc89c9148f20d2cb16d7e1db62b"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/verifier/reward-details.json",
+          "bytes": 350,
+          "mode": "0o644",
+          "sha256": "f922ef9e4816c12483bee7b25ff02beb52a1152fa55342031ee5694de9aba9ba"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/lock.json",
+          "bytes": 989,
+          "mode": "0o644",
+          "sha256": "784476da06017e2c5e38e26949d5d818e09a17f739921c86ea62260c3924cc12"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "5b4923c1b969aa311d002e0297968e1bb1245712bec207b9080692bbaf6672b4"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/baseline/baseline__h2oT2k4/result.json",
+          "bytes": 3811,
+          "mode": "0o644",
+          "sha256": "e2f8317dc9489d922989e453b1c5988f89bd7bbec6ccf90699c6219023cfc076"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/config.json",
+          "bytes": 387,
+          "mode": "0o644",
+          "sha256": "6685f336638ec78660e38d7d4777662cb6258361d9d2c080578932562c96866c"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/lock.json",
+          "bytes": 2007,
+          "mode": "0o644",
+          "sha256": "4c88147541c1d6b61fd40e3d60d30cf3a1e024c1943c35a7a72f4f24dd1c49e6"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/result.json",
+          "bytes": 1107,
+          "mode": "0o644",
+          "sha256": "46657d4d0ace1fc3017974bc86dbc75273fa5242aeeeb58840d80cfe4f94abe9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/agent/oracle.txt",
+          "bytes": 345,
+          "mode": "0o644",
+          "sha256": "6af13b0dc84bcaac2261e8fb2e8ff1227c24a36aebfc90777b66225b3c9ae364"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/verifier/test-stdout.txt",
+          "bytes": 36415,
+          "mode": "0o644",
+          "sha256": "308b7ae0e537a53a7305d4c584bbc662d6ba27a442b84dedd29f9c9da6140be6"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/verifier/test_output.log",
+          "bytes": 34702,
+          "mode": "0o644",
+          "sha256": "167d4b73bcf119710f3e5e5ffc654ff2660066a0a7e5d2afff1a559e21f22624"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/verifier/reward-details.json",
+          "bytes": 348,
+          "mode": "0o644",
+          "sha256": "00935d8a6b1f743eef81e609cc4de8302559129bfdab226f78bc0ebdc6c081a9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/lock.json",
+          "bytes": 1005,
+          "mode": "0o644",
+          "sha256": "17eefd0719b6a0ee6fa194615e270561d2f7ece85c6d9e93a573299e8fd23927"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/config.json",
+          "bytes": 397,
+          "mode": "0o644",
+          "sha256": "13f83add03c2bc0b903d01faf9c438d6206ca6151a324e1372f180ea710a0e8a"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/native_reference/native_reference__LEBVcbA/result.json",
+          "bytes": 3867,
+          "mode": "0o644",
+          "sha256": "d44a6750e6a99d5084d9032e48ba6aafe701d28f25818d09f4028c975594f51a"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/config.json",
+          "bytes": 377,
+          "mode": "0o644",
+          "sha256": "831fbfc05754ec68154f43e78b18bfe87929285fb6c7ad16eabf56c0d2793085"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/lock.json",
+          "bytes": 1997,
+          "mode": "0o644",
+          "sha256": "850c91e891665e0ab885b6eba308883bd51dea1d76dc962201fcb9180ec45643"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/result.json",
+          "bytes": 1102,
+          "mode": "0o644",
+          "sha256": "521638eea3e1156a88a341420121e2849873fccc8985bc10248b308bbfda92da"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/verifier/test-stdout.txt",
+          "bytes": 36415,
+          "mode": "0o644",
+          "sha256": "871336f5ff57fe406adba470c8aa577cc92ea5eb9243720a7850c1e460a69beb"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/verifier/test_output.log",
+          "bytes": 34702,
+          "mode": "0o644",
+          "sha256": "68afb4f06e02efbbde5f7901430823dd72d441f10465a56de5bd055d22822b34"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/verifier/reward-details.json",
+          "bytes": 348,
+          "mode": "0o644",
+          "sha256": "00935d8a6b1f743eef81e609cc4de8302559129bfdab226f78bc0ebdc6c081a9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/lock.json",
+          "bytes": 995,
+          "mode": "0o644",
+          "sha256": "35aaf48a52ec0e11efd2e062531a1b90eb431990298c72684db22321444a2c03"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/config.json",
+          "bytes": 382,
+          "mode": "0o644",
+          "sha256": "409e0733f58d07c60f73e8c6f313eb3a853cadf8cb81f65bffd32666f1378ce2"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative/alternative__HciiPZs/result.json",
+          "bytes": 3832,
+          "mode": "0o644",
+          "sha256": "3f9fb379c0218d466ff930f9b409350604d571c820c88278702d6d7f42defa17"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/config.json",
+          "bytes": 369,
+          "mode": "0o644",
+          "sha256": "f1c48feb3b1f027186394e95f0b669f0431dddd28775b80ce5e49b1e46499979"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/lock.json",
+          "bytes": 1989,
+          "mode": "0o644",
+          "sha256": "5459419a0b400a0c730fb23678c35bdc3cedf6fa1a248ccf92c6a3eb0e63a506"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/result.json",
+          "bytes": 1100,
+          "mode": "0o644",
+          "sha256": "179c85863076fa88e86d298f7bb48e626198867b5285f5ebe3d1f3d1248c66fe"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/verifier/test-stdout.txt",
+          "bytes": 37879,
+          "mode": "0o644",
+          "sha256": "dba04e540525bbae784657568d21918ee8d8b1a28017a2fcfee27f6fa876080e"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/verifier/test_output.log",
+          "bytes": 36162,
+          "mode": "0o644",
+          "sha256": "bc16f262638f3fc8b186d51f390bfed8669d0c42a30a45ad8e21195c99668d00"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "b968ace93aa6b7b5fe8929b9f80535bbba4d2b09adb64ca22d3fdb0a1bbd1fbb"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/verifier/reward-details.json",
+          "bytes": 352,
+          "mode": "0o644",
+          "sha256": "e7828c2d1e1fd96ed3885df921e4abfb8d90a9960d8a8631544079119045bcf8"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/lock.json",
+          "bytes": 987,
+          "mode": "0o644",
+          "sha256": "e380b5097edf31befbd08a4b5db3997c5972ca8d1ee65c279d7e3618107da2db"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/config.json",
+          "bytes": 370,
+          "mode": "0o644",
+          "sha256": "65e4d4c6de84a825925a9eb41602c704e5282d288d6aa6a06126ad437e2dd798"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/partial/partial__GwpbwQD/result.json",
+          "bytes": 3805,
+          "mode": "0o644",
+          "sha256": "ea809d65a10dc54c0e75410bf7c776c81000c59361b7861e46354d4c15391214"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "0e9d205ebe0974eab3494a2d1132633b7eaababcea5899dda84fa0f2a0311b9f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/lock.json",
+          "bytes": 1993,
+          "mode": "0o644",
+          "sha256": "e89b362fe6a4ad62da5d201820da5b5b41c1bfb708332d5f1a5b259e99baeb83"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/result.json",
+          "bytes": 1100,
+          "mode": "0o644",
+          "sha256": "50e6acb950452426fcebecd1ce319d9bb829f722d26730f8ae2936dda9afd4f3"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/verifier/test-stdout.txt",
+          "bytes": 42869,
+          "mode": "0o644",
+          "sha256": "597d9f740d26afd06d9428be58647b9e28546fc5b7965625702578c0f2c5367c"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/verifier/test_output.log",
+          "bytes": 40419,
+          "mode": "0o644",
+          "sha256": "209d6852ebaea8c38cbcfac4e32b4cdbdb1b5d70aac96900987800c35fc552d2"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/verifier/reward-details.json",
+          "bytes": 1085,
+          "mode": "0o644",
+          "sha256": "7a311f1da72702b5e27a7e6ec0b17389a15869a427ca8bd78fa89d9dc7f0466b"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/lock.json",
+          "bytes": 991,
+          "mode": "0o644",
+          "sha256": "c2153ff9e97694baee15f984a87fbaf75d6ea1df66bd82409bb87ff07b30ad75"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/config.json",
+          "bytes": 376,
+          "mode": "0o644",
+          "sha256": "2df48b36dd72b40ced05cce3993154e656e94018be56336e41438678591018f2"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/incorrect/incorrect__yZrokSu/result.json",
+          "bytes": 3818,
+          "mode": "0o644",
+          "sha256": "10652e921a02afebc3f7e6027e763fd4f5ba455073b62ab2902fb0ef067205f9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/config.json",
+          "bytes": 391,
+          "mode": "0o644",
+          "sha256": "10326470551161c159bd8748f69d28420fda28d7b7f0134ec81934a1ed6718a4"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/lock.json",
+          "bytes": 2011,
+          "mode": "0o644",
+          "sha256": "2bf0679c3585005bc2020cfc53ca05c29a77e1e832380dfc07039f508fb572ea"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/result.json",
+          "bytes": 1109,
+          "mode": "0o644",
+          "sha256": "0f89f4f2ed2a5b586837c7a8b5b6e070309b0981f1a4b9a36179ae446a5790c9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/verifier/test-stdout.txt",
+          "bytes": 36415,
+          "mode": "0o644",
+          "sha256": "0632698dafe4b8f287db25c9f145c8bd718da1789361abee5739b1edec83489e"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/verifier/test_output.log",
+          "bytes": 34702,
+          "mode": "0o644",
+          "sha256": "e7ec96ff4505b064886c0874d89d227b5d95f1984be11dc5fa489ffcd56c4957"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/verifier/reward-details.json",
+          "bytes": 348,
+          "mode": "0o644",
+          "sha256": "00935d8a6b1f743eef81e609cc4de8302559129bfdab226f78bc0ebdc6c081a9"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/lock.json",
+          "bytes": 1009,
+          "mode": "0o644",
+          "sha256": "1885bbb5fca41aaec132fb69feece6f874378b37810adf9f0755de26cdeefa43"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "49c99b74a5b006443687aa126ac2ba840271bd6216dbcd45c43b5f487ad2da8f"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/config.json",
+          "bytes": 403,
+          "mode": "0o644",
+          "sha256": "7fc1f98429b4db0840e2bd37b92be752696200240fc97ee4361732d6400c8459"
+        },
+        {
+          "path": "native/controls/pr2630/cases/jobs/alternative_repeat/alternative_repeat__XeHYHJm/result.json",
+          "bytes": 3881,
+          "mode": "0o644",
+          "sha256": "c9b96368ae332d873ebafaf2c49dd488cf9cabc53b37ee241c82ba1739d4efb1"
+        },
+        {
+          "path": "native/controls/pr2630/cases/native_reference.log",
+          "bytes": 1063,
+          "mode": "0o644",
+          "sha256": "f6cbab9bd61c5cf1c47adf02847db0b92026c97c50980fcfd782f3b826abac96"
+        },
+        {
+          "path": "native/controls/pr2630/cases/alternative.log",
+          "bytes": 1053,
+          "mode": "0o644",
+          "sha256": "cc6b4f388f590ae4dbf33379d5510ac77e41aaa8ccd19e134ebfe486acc3210c"
+        },
+        {
+          "path": "native/controls/pr2630/cases/partial.log",
+          "bytes": 1045,
+          "mode": "0o644",
+          "sha256": "811ebfcdbb2c01b0a3a39c28de41315138f4a491db761e8cc3e1d712a225c41c"
+        },
+        {
+          "path": "native/controls/pr2630/cases/incorrect.log",
+          "bytes": 1049,
+          "mode": "0o644",
+          "sha256": "d4438c394226450d95ff1481edce7a5be6123fda7eb413f810ba5f06995ed14e"
+        },
+        {
+          "path": "native/controls/pr2630/cases/alternative_repeat.log",
+          "bytes": 1067,
+          "mode": "0o644",
+          "sha256": "792483b70f1bc10c9f744723d45ad29b0a9c987f862ec373e82ac3eaf15c793b"
+        },
+        {
+          "path": "native/controls/summary.json",
+          "bytes": 31421,
+          "mode": "0o600",
+          "sha256": "f45ad6a4dc8516751cac98d43a2b0020cd97fcfbd289dbc142a77cbcbc18fe4f"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/portable/task/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/portable/profile.json",
+          "bytes": 3346,
+          "mode": "0o644",
+          "sha256": "16d9b99abc5492aa07d9b50eda5d37edf25a9fd6989bb2dde9fe1bbf2ffe0f8d"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/solution/solve.sh",
+          "bytes": 18,
+          "mode": "0o755",
+          "sha256": "2ee57ec968598277a71f1d5231a25d7379689fb1f58c6e69aa9c4977fb0ad696"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/baseline/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/native_reference/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/solution/solve.sh",
+          "bytes": 682,
+          "mode": "0o755",
+          "sha256": "fb7798bbb308636b292fbf1df27522e86cf9168ea0043f991c6cfeb09cba019b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/solution/solve.sh",
+          "bytes": 706,
+          "mode": "0o755",
+          "sha256": "aaa4a313633d181c46c75d471bf02eab90f898ca491821a8c3da00ceedd6e1a0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/partial/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/solution/solve.sh",
+          "bytes": 712,
+          "mode": "0o755",
+          "sha256": "3bb42540cba249ec61c1847038790aaed0a942bfdb2295cbceb96dc7923ca8ae"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/incorrect/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/task.toml",
+          "bytes": 2592,
+          "mode": "0o644",
+          "sha256": "1847cdf4a6c19c09f9640c8297d0ea1d0f37b7caaf5528849f373eaae4b58c63"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/solution/solve.sh",
+          "bytes": 682,
+          "mode": "0o755",
+          "sha256": "fb7798bbb308636b292fbf1df27522e86cf9168ea0043f991c6cfeb09cba019b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "115269ea1452c7ed10e8a5632b7ae02c43155b8a922f40e03e923ca6e6aa4920"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/controls/pr5317/controls/alternative_repeat/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/controls/pr5317/controls/manifest.json",
+          "bytes": 2180,
+          "mode": "0o644",
+          "sha256": "4d054af3587abcde4ea1af4d47dd77ef4a3760f26a6246f259b22868d5055455"
+        },
+        {
+          "path": "native/controls/pr5317/cases/baseline.log",
+          "bytes": 1047,
+          "mode": "0o644",
+          "sha256": "c95061963d5d5c7941fd29e1123fe5ab50559bc69702b37c9acd4e545f8f7ec7"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/config.json",
+          "bytes": 371,
+          "mode": "0o644",
+          "sha256": "31ff7fe7e7daa6efdd1862de43cce92866046ed649e383b64c04244943565032"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/lock.json",
+          "bytes": 1991,
+          "mode": "0o644",
+          "sha256": "00f2c1c9e8230bfa0e799656d781b66ca434a15aeda0327d6f75f568bd95f91a"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/result.json",
+          "bytes": 1099,
+          "mode": "0o644",
+          "sha256": "2b5e42e9c59b3ae3903bc95878bea92fef5b642f6d026a35a1a6cd11d6f08edf"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/verifier/test-stdout.txt",
+          "bytes": 3692,
+          "mode": "0o644",
+          "sha256": "5f6733e3df3cbea99cb2f04d7032efd4c2c1880a3caaca012e3fc87654d870d5"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/verifier/test_output.log",
+          "bytes": 2439,
+          "mode": "0o644",
+          "sha256": "5fc72633f48ac9774c644fedede0492f61649d2a23613cc8b458b26985c7d2c2"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/verifier/reward-details.json",
+          "bytes": 344,
+          "mode": "0o644",
+          "sha256": "c7615dc9b029edb48b7d62dc0c5602e5bd753b33dfaf4227bda1230c98059b24"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/lock.json",
+          "bytes": 989,
+          "mode": "0o644",
+          "sha256": "a7e986ad9d3e32a50e0fa9d7af7c0f2132392a54d47aa86e5c522d91b97bcd33"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "27fafa725b745c38fc61644c4004fafa561cbb8d2c4991921845bcd8debc1616"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/baseline/baseline__Vu5QrNE/result.json",
+          "bytes": 3809,
+          "mode": "0o644",
+          "sha256": "2c417f380866c6b9b48b301a575a5077fd25e10f0d5c51a049371147cb5051fa"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/config.json",
+          "bytes": 387,
+          "mode": "0o644",
+          "sha256": "f1ecf5dddefe46cc909d9f945bff04cbd572ee141ef716af7d4c20f0bd76323d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/lock.json",
+          "bytes": 2007,
+          "mode": "0o644",
+          "sha256": "80f3d15f33a3548ba626a162c4ce8af2eac52f7a4c280ff51d28d57e582e2154"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/result.json",
+          "bytes": 1107,
+          "mode": "0o644",
+          "sha256": "da33ee760659c364f6ee748577c51329fe2359ff5c92633999261a30259c319d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/agent/oracle.txt",
+          "bytes": 258,
+          "mode": "0o644",
+          "sha256": "709b5f0c8387b5fc77f661004695a38f6cb36952b46cebd6b113a90e57ac3ac1"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/verifier/test-stdout.txt",
+          "bytes": 3178,
+          "mode": "0o644",
+          "sha256": "adfd76cb0e7cd9a65a48575c0d71369dc45152f871ab41d4184764023dc952c2"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/verifier/test_output.log",
+          "bytes": 1927,
+          "mode": "0o644",
+          "sha256": "445756dc69f957c39f7f9578ca1f4de88107889c29701e7ca5b9e36ee1320ba9"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/verifier/reward-details.json",
+          "bytes": 342,
+          "mode": "0o644",
+          "sha256": "fdf8ca13dcccf6931e262b2f06916d328d84eef19fabeee498907c7a7fc35138"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/lock.json",
+          "bytes": 1005,
+          "mode": "0o644",
+          "sha256": "dc725c9531e8dccff3da4817ec1189fb82f506a1960bae80b34a0b7ec9d5267e"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/config.json",
+          "bytes": 397,
+          "mode": "0o644",
+          "sha256": "72818150adc98bf3324cb77aa18ccc27fc0132f4eaddccf3ffccfb62b48f0bf9"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/native_reference/native_reference__hxMsQcp/result.json",
+          "bytes": 3865,
+          "mode": "0o644",
+          "sha256": "24fe69757c30e84ed5a77ec34a471126b24fa4c44d65733d56fb1ebf7a1eaff4"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/config.json",
+          "bytes": 377,
+          "mode": "0o644",
+          "sha256": "0a45e297393c0329e3898e2594009fe50a2f0cb8851644a54278abcaa01b67d2"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/lock.json",
+          "bytes": 1997,
+          "mode": "0o644",
+          "sha256": "5c7453aef42c8584c7ea923b4a37983c76378b9ed9fc3f42575403e969d1aac5"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/result.json",
+          "bytes": 1102,
+          "mode": "0o644",
+          "sha256": "88b37a24d95636f73243721af22dda69a93b82dd5f2a75589b1c30d8d3eaff0c"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/verifier/test-stdout.txt",
+          "bytes": 3178,
+          "mode": "0o644",
+          "sha256": "7a750a6796e6485bf098654fb3878bbb9e4626fe8b4a2b9618d5c547ae987185"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/verifier/test_output.log",
+          "bytes": 1927,
+          "mode": "0o644",
+          "sha256": "17e14872a68908ba8ab6ee14f19e0e6ec704d6ede470fb744e36bae30ad0ee79"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/verifier/reward-details.json",
+          "bytes": 342,
+          "mode": "0o644",
+          "sha256": "fdf8ca13dcccf6931e262b2f06916d328d84eef19fabeee498907c7a7fc35138"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/lock.json",
+          "bytes": 995,
+          "mode": "0o644",
+          "sha256": "3e3856b163a0a852198ece6ae11d4f05e1e2a11df3be1356dfc371c99cdd087c"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/config.json",
+          "bytes": 382,
+          "mode": "0o644",
+          "sha256": "cc3bf544a93b006ca567171d52e9b2410f941845473a6f521069e111648b415d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative/alternative__M6fbg9H/result.json",
+          "bytes": 3830,
+          "mode": "0o644",
+          "sha256": "817d511847b322f3f7540b9526e500ee9f906ab05357bf4054c652d14e2581af"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/config.json",
+          "bytes": 369,
+          "mode": "0o644",
+          "sha256": "6507f79fcb0176fcef6c855dddb186ea90f21ca22cb7a2373ed2c43a776cb0d5"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/lock.json",
+          "bytes": 1989,
+          "mode": "0o644",
+          "sha256": "47136b41e54d9850444d1e78c7aeec3534ca067af11f1825313398b33251d30b"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/result.json",
+          "bytes": 1098,
+          "mode": "0o644",
+          "sha256": "1d500d55ca2c0abb77a8aa11b43bc8427979c6c94433c7748a3e1f88e1338082"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/verifier/test-stdout.txt",
+          "bytes": 5208,
+          "mode": "0o644",
+          "sha256": "781eb50cc458df9e37a3a73030fe494aec665adc75a82ccd5b07f276356b680e"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/verifier/test_output.log",
+          "bytes": 3637,
+          "mode": "0o644",
+          "sha256": "64ab50c8467271235418621301b1f6c8d940c7636a888362443647009e90bd68"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "88f6ae20b2ab6ae142cf7942c4d600e7adb2a25f25ddbda79346654a4656598d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/verifier/reward-details.json",
+          "bytes": 662,
+          "mode": "0o644",
+          "sha256": "3f9e18d0f47428c30bfeb9485c86fe6a2d68ddb2ea0bc46b049bd37d4e622710"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/lock.json",
+          "bytes": 987,
+          "mode": "0o644",
+          "sha256": "84f2f2699062e102e36eecdfbb4bbddfcc626724c61a50c9302bd655fb9a62b3"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/config.json",
+          "bytes": 370,
+          "mode": "0o644",
+          "sha256": "e46b258bdbfa3e2dd54f42dfe1ced4b20eb915d56a7f8f5213636a2a66ed615a"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/partial/partial__NgA55D5/result.json",
+          "bytes": 3802,
+          "mode": "0o644",
+          "sha256": "5e63998457f4959a81aee97674bc89a24125b77c7fac6e4f5f21673ae7be6b66"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "739ae335ad2a38bf7e2bfa6f44815a2b2bb6b7b660ecf0ae4109ad54ba092d9f"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/lock.json",
+          "bytes": 1993,
+          "mode": "0o644",
+          "sha256": "6d302f9fcb690c8c41b5d696b7c30e9297c02cbcb5dfd2ff9d85858bb5dca1a4"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/result.json",
+          "bytes": 1100,
+          "mode": "0o644",
+          "sha256": "4f54aac22940fb826e917ca53ed54c7a542e1d4e4cced58aec6a3faf865cc099"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/verifier/test-stdout.txt",
+          "bytes": 5696,
+          "mode": "0o644",
+          "sha256": "23e94f8eefb92534bc7743b470642564d1447cca2d57fe1d03ebb4dbf1bf939b"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/verifier/test_output.log",
+          "bytes": 4045,
+          "mode": "0o644",
+          "sha256": "a6abd016e11a89c0122b07adec9b69cb5aa80289a3db7e134c4209c15013d43c"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/verifier/reward-details.json",
+          "bytes": 742,
+          "mode": "0o644",
+          "sha256": "b702f1d6ee9ba1f3fc1bc10ac78163eac58cc8519d3feb6b3045e444577a881a"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/lock.json",
+          "bytes": 991,
+          "mode": "0o644",
+          "sha256": "25c54677cc0a1942319d3b0270207cbc886898d6ab239f5e36db024f23c1314f"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/config.json",
+          "bytes": 376,
+          "mode": "0o644",
+          "sha256": "431e5498f82dc5e86a0c275d94b4ecfe9dcb50ada64bb34a2983c905f02bcd96"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/incorrect/incorrect__uxoxjUN/result.json",
+          "bytes": 3816,
+          "mode": "0o644",
+          "sha256": "7e1e463f01ca7b0f6f613be9ff0f38232b9862d609039143c1ca515ce2996512"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/config.json",
+          "bytes": 391,
+          "mode": "0o644",
+          "sha256": "2d744036d2814163535d15cfb17017e3e78ba0c9c676c9ba1022062965e3f42a"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/lock.json",
+          "bytes": 2011,
+          "mode": "0o644",
+          "sha256": "38b474f9bca562571ad7ed38eadc18f10d3e6446deb3879004ec7921ff8cc832"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/result.json",
+          "bytes": 1109,
+          "mode": "0o644",
+          "sha256": "e21a57ddcdec444bc01049e43394db3e880fbd36fdb60f6f004a69e0efc2f86a"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/verifier/test-stdout.txt",
+          "bytes": 3178,
+          "mode": "0o644",
+          "sha256": "7a750a6796e6485bf098654fb3878bbb9e4626fe8b4a2b9618d5c547ae987185"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/verifier/test_output.log",
+          "bytes": 1927,
+          "mode": "0o644",
+          "sha256": "17e14872a68908ba8ab6ee14f19e0e6ec704d6ede470fb744e36bae30ad0ee79"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/verifier/reward-details.json",
+          "bytes": 342,
+          "mode": "0o644",
+          "sha256": "fdf8ca13dcccf6931e262b2f06916d328d84eef19fabeee498907c7a7fc35138"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/lock.json",
+          "bytes": 1009,
+          "mode": "0o644",
+          "sha256": "fc71a7dafb74abbcf583e1552339327b906b2a1c259bd97bed8fad60d7c3d065"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "5996f9d3b47544e55bdb800d17d74f0436b94bd212f705005bb297d044522f36"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/config.json",
+          "bytes": 403,
+          "mode": "0o644",
+          "sha256": "99c2b45c571911809415d5228073af9884b12f8b3ce4f32224e735a83b41d20e"
+        },
+        {
+          "path": "native/controls/pr5317/cases/jobs/alternative_repeat/alternative_repeat__h6zp3QH/result.json",
+          "bytes": 3879,
+          "mode": "0o644",
+          "sha256": "34a952c41cd3e4549c1e98c326af4e79dfcccf3db9213f20ea71f89ac0f74394"
+        },
+        {
+          "path": "native/controls/pr5317/cases/native_reference.log",
+          "bytes": 1062,
+          "mode": "0o644",
+          "sha256": "b2c5fcb683b2dec358517cc8f1ef196e0ee2b422c5e0e2c7675a559d1e5dab61"
+        },
+        {
+          "path": "native/controls/pr5317/cases/alternative.log",
+          "bytes": 1052,
+          "mode": "0o644",
+          "sha256": "2c768b85e2a6374345bdc58a54725bdea4ce858fb54f986d915fe0ba07de0452"
+        },
+        {
+          "path": "native/controls/pr5317/cases/partial.log",
+          "bytes": 1044,
+          "mode": "0o644",
+          "sha256": "afc420cd170a6a68e0610bed3e2c142f55330a655e6c5102ad1e00a8489db74d"
+        },
+        {
+          "path": "native/controls/pr5317/cases/incorrect.log",
+          "bytes": 1048,
+          "mode": "0o644",
+          "sha256": "3f16973be4eed7e3420cc3f555b8bb2bf138b0923945b46502f08cfa481dcf72"
+        },
+        {
+          "path": "native/controls/pr5317/cases/alternative_repeat.log",
+          "bytes": 1066,
+          "mode": "0o644",
+          "sha256": "38939ac6476ee6321bdffa64030f20a14b4cf5b191f4566ec44a4a32f2bc9f2e"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/portable/task/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/portable/profile.json",
+          "bytes": 3346,
+          "mode": "0o644",
+          "sha256": "f21d9373e6a1ef02d8d26bbdae4551a55ebb97c72dd0bf40dff0697988d5c3a1"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/solution/solve.sh",
+          "bytes": 18,
+          "mode": "0o755",
+          "sha256": "2ee57ec968598277a71f1d5231a25d7379689fb1f58c6e69aa9c4977fb0ad696"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/baseline/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/native_reference/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/solution/solve.sh",
+          "bytes": 643,
+          "mode": "0o755",
+          "sha256": "d697e35672d5f373c9db40f242250bde5b64e8f84412b9a83767ac85e5a11e35"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/solution/solve.sh",
+          "bytes": 653,
+          "mode": "0o755",
+          "sha256": "1725051cb1d282283b260fefa3e97cf2acb42d1aa4e224390f4dfccb35cacfca"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/partial/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/solution/solve.sh",
+          "bytes": 584,
+          "mode": "0o755",
+          "sha256": "559a710005e4845259bf5e6405d166444cc8bf57bb8e7d80cfac1b5c8521c70b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/incorrect/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/task.toml",
+          "bytes": 3337,
+          "mode": "0o644",
+          "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/solution/solve.sh",
+          "bytes": 643,
+          "mode": "0o755",
+          "sha256": "d697e35672d5f373c9db40f242250bde5b64e8f84412b9a83767ac85e5a11e35"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/environment/Dockerfile",
+          "bytes": 3599,
+          "mode": "0o644",
+          "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/controls/pr5308/controls/alternative_repeat/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/controls/pr5308/controls/manifest.json",
+          "bytes": 2180,
+          "mode": "0o644",
+          "sha256": "5773766babe912f98ee923f69e3edcc7c878081402ef9a8a8bf52ce1b75fb817"
+        },
+        {
+          "path": "native/controls/pr5308/cases/baseline.log",
+          "bytes": 1047,
+          "mode": "0o644",
+          "sha256": "027545141d5d81e64890a760cfe3c1559848f41665cab61d1bdf80c92eb815a2"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/config.json",
+          "bytes": 371,
+          "mode": "0o644",
+          "sha256": "9de12eddbb4a669949f5fbaf66b88a08fdb1fe9a2f0ca7b4a15e818d76819a94"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/lock.json",
+          "bytes": 1991,
+          "mode": "0o644",
+          "sha256": "55051f406f1678c8892f07cfa8d9e8112a3737797a22eb51908c3f6b9901595e"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/result.json",
+          "bytes": 1099,
+          "mode": "0o644",
+          "sha256": "e4fcc3939769fe671162738eb943be485ceffce86d1ed055a521c6e74d62871d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/verifier/test-stdout.txt",
+          "bytes": 5622,
+          "mode": "0o644",
+          "sha256": "9f7e5bc50a3e242d3683b4661e807aa03bb937d4c68736f45fa7566a0c288654"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/verifier/test_output.log",
+          "bytes": 4411,
+          "mode": "0o644",
+          "sha256": "2fd6ee66740b541aff8f24ca69f0215ffbffaf5cf9158f2db8924080a38d91d0"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/verifier/reward-details.json",
+          "bytes": 347,
+          "mode": "0o644",
+          "sha256": "2ee0d0639aadc054f911ed0c7a289e36b7948c3f59ea52fc0af1bbc4f1633920"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/lock.json",
+          "bytes": 989,
+          "mode": "0o644",
+          "sha256": "986e758a4bfdf031f8fb1a7320f982c2a9f2688c97d4c6c0c8eb381a96ec4bda"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "ad683de207314b943134bc5acefda83e8fe3c8f1aaf4ada5e6a982b5af6590ce"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/baseline/baseline__kyFvyzT/result.json",
+          "bytes": 3809,
+          "mode": "0o644",
+          "sha256": "91cf2b961f83a2dd231475e7dbbc2c7cebc0e9be42683bff0bf145d9c84d0548"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/config.json",
+          "bytes": 387,
+          "mode": "0o644",
+          "sha256": "3f5d45e661983322fb04be1561d3f7e5a9edba677747df3c599bb6bcc74d92ca"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/lock.json",
+          "bytes": 2007,
+          "mode": "0o644",
+          "sha256": "32e8b0b3a8f6cf64e489c7a27dfa56507ed9c664728970e9f54021e89d93848c"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/result.json",
+          "bytes": 1107,
+          "mode": "0o644",
+          "sha256": "4f6ece7a5f40bfd0bd721ca76d9408f79574376a5ecbc54b64e8cca3bd63f2e4"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/agent/oracle.txt",
+          "bytes": 258,
+          "mode": "0o644",
+          "sha256": "6cb3ef46e760fb01b37fee2002e0ca2866b4d2e747a78a3eb3fc28f426d5d4e6"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/verifier/test-stdout.txt",
+          "bytes": 4073,
+          "mode": "0o644",
+          "sha256": "0f28368cbb209dfb33f5812e79258c4ff27d52e4024e94eea2cd87850fe53abc"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/verifier/test_output.log",
+          "bytes": 2864,
+          "mode": "0o644",
+          "sha256": "a5cdc3339bfe70a13764323615b70ee1fedcaaf10a115ab31837d8e69dc863b6"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/verifier/reward-details.json",
+          "bytes": 345,
+          "mode": "0o644",
+          "sha256": "e12db156be809a0a3ccf40b6439e3f53fb571c69d56c46e99edec24383233ee3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/lock.json",
+          "bytes": 1005,
+          "mode": "0o644",
+          "sha256": "ad98d7292facde0e4f779d10773cf587afec594e17e24d181485a195eb0b86af"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/config.json",
+          "bytes": 397,
+          "mode": "0o644",
+          "sha256": "8e729223b0d3fd3834b4c1b55767a3029d5b22028b8aa1c836b7e96cf7fce3e0"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/native_reference/native_reference__HbAwRkR/result.json",
+          "bytes": 3865,
+          "mode": "0o644",
+          "sha256": "25d007c6ec943506ab569368a542747ea8cc3da132e7a8e2f210a217dd5c811e"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/config.json",
+          "bytes": 377,
+          "mode": "0o644",
+          "sha256": "d59e27cc934bc73daca9b31a73831c9b10a118d5f4addbcbbc2427ea802a1ccb"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/lock.json",
+          "bytes": 1997,
+          "mode": "0o644",
+          "sha256": "ccd72f8fd2023efc7bb2a8c1225ba2c420c23a23391935a68267fbe9597477f5"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/result.json",
+          "bytes": 1102,
+          "mode": "0o644",
+          "sha256": "e010434942e43495f1f00058355074c022cc36b14681045874a6b4f047b61de7"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/verifier/test-stdout.txt",
+          "bytes": 4073,
+          "mode": "0o644",
+          "sha256": "1da826261915d66699f221a4ad3578b4380bd32d4302fc77587474d4b63872a7"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/verifier/test_output.log",
+          "bytes": 2864,
+          "mode": "0o644",
+          "sha256": "7385101852c8ef3ac4efd9e0dbd53d5ccd4f5fc6831284b7d70c80c2edc3329d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/verifier/reward-details.json",
+          "bytes": 345,
+          "mode": "0o644",
+          "sha256": "e12db156be809a0a3ccf40b6439e3f53fb571c69d56c46e99edec24383233ee3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/lock.json",
+          "bytes": 995,
+          "mode": "0o644",
+          "sha256": "ca9720798e36d72e4601793f4c6d80cfcedd6d9744caf7b139dbc4d01521ea86"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/config.json",
+          "bytes": 382,
+          "mode": "0o644",
+          "sha256": "42eaa1727b82e5badec59a85873315cbb493311b3c8d64cb285ef23bdaeb8ff5"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative/alternative__gaQdkWv/result.json",
+          "bytes": 3830,
+          "mode": "0o644",
+          "sha256": "4a67114d6b8dcc57e819ef141597e963b9f6b24b810adf94bd221677fcc4ee56"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/config.json",
+          "bytes": 369,
+          "mode": "0o644",
+          "sha256": "a8dedb5eea26a214bcdc96771fa952dfae4b2d149916756d0a80fde15ee9f316"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/lock.json",
+          "bytes": 1989,
+          "mode": "0o644",
+          "sha256": "cb14f55fadaeec30bf6eb108c5b36fc9c0d1078e3e6a9341e005c4179cb968ee"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/result.json",
+          "bytes": 1100,
+          "mode": "0o644",
+          "sha256": "bdf516f81191d830e1613dca048f7c1cd8d9dd9aabe54614aca1bc7bd1ba6b11"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/verifier/test-stdout.txt",
+          "bytes": 4802,
+          "mode": "0o644",
+          "sha256": "a325d9d446c8273d17c89241d83ef75f97cd7602bdf5416489f32ed815d9a3da"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/verifier/test_output.log",
+          "bytes": 3589,
+          "mode": "0o644",
+          "sha256": "300a930ae0b76a2f80c171b0418756e9384e52b30400bf678c39f2e911f44e33"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "9e82c519bcd9cb653d3a91460de08addeede397e30168d5b00e26d331e3c95f2"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/verifier/reward-details.json",
+          "bytes": 349,
+          "mode": "0o644",
+          "sha256": "3f8a14fb0ec942254164f1e43b8bfd5e128d90c44888b5f5f425e1659bf210cd"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/lock.json",
+          "bytes": 987,
+          "mode": "0o644",
+          "sha256": "aa3b1bd7c9d19066ca26dd07cb2622b5c504e11dc0dea3ac7643a0c88642fe33"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/config.json",
+          "bytes": 370,
+          "mode": "0o644",
+          "sha256": "668384b262c82984e97e9e61aa11d00c67f7957a303b4d175d88746db8b25b46"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/partial/partial__dsBPjYx/result.json",
+          "bytes": 3803,
+          "mode": "0o644",
+          "sha256": "58a802954d2d789363b0076a61dcb0e16f3aeaa9927c4b18188068ce7b3d5037"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/config.json",
+          "bytes": 373,
+          "mode": "0o644",
+          "sha256": "99559f43a5823f7e536e92b916ec208bc99b1b1190076a706f093057cff67be4"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/lock.json",
+          "bytes": 1993,
+          "mode": "0o644",
+          "sha256": "4d332650220959bcf1ee2c9464f1c37a05aa735335bb514781a6a549acd7a768"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/result.json",
+          "bytes": 1100,
+          "mode": "0o644",
+          "sha256": "966c114e6754471e08debfc145a91bec8db7fb97e592286ae07e4dceabc61465"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/verifier/test-stdout.txt",
+          "bytes": 5485,
+          "mode": "0o644",
+          "sha256": "149ee2b6ece86073977c82bf712ba35c5aaf5b500c21ca58dcbf495bfb8ce6ce"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/verifier/test_output.log",
+          "bytes": 4274,
+          "mode": "0o644",
+          "sha256": "d5531b0994eb3df5478157d97acffe8db388721a3926ecdd28ebeb69451a79ca"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/verifier/reward-details.json",
+          "bytes": 347,
+          "mode": "0o644",
+          "sha256": "2ee0d0639aadc054f911ed0c7a289e36b7948c3f59ea52fc0af1bbc4f1633920"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/lock.json",
+          "bytes": 991,
+          "mode": "0o644",
+          "sha256": "67a93aec51e7d72744167551a9a07620a5bb91fdf32412d3cd24ef5bb1e6e3ff"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/config.json",
+          "bytes": 376,
+          "mode": "0o644",
+          "sha256": "e3f863fb4ab9d26fe538f122422a9c4450d1eab0969506fb12515b7512d67d31"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/incorrect/incorrect__p3wpqHM/result.json",
+          "bytes": 3816,
+          "mode": "0o644",
+          "sha256": "85d42a781b608d904e62c0d55ccc92dec937ba80e022dd110f14ad97daec1132"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/job.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/config.json",
+          "bytes": 391,
+          "mode": "0o644",
+          "sha256": "b7614eca04790e5a8a58b3538ff7e40b139f65be0f5ece40928dcd5fc2abb6df"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/lock.json",
+          "bytes": 2011,
+          "mode": "0o644",
+          "sha256": "59ac2bcf6b29f1af29227aa406d668150494d85f6505490c77494752772b9831"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/result.json",
+          "bytes": 1109,
+          "mode": "0o644",
+          "sha256": "57d087674029e79e3ad049ecb94abe2e2ecf163c899f2065dc8ea93a0a8c6115"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/agent/oracle.txt",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/verifier/test-stdout.txt",
+          "bytes": 4073,
+          "mode": "0o644",
+          "sha256": "0f28368cbb209dfb33f5812e79258c4ff27d52e4024e94eea2cd87850fe53abc"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/verifier/test_output.log",
+          "bytes": 2864,
+          "mode": "0o644",
+          "sha256": "a5cdc3339bfe70a13764323615b70ee1fedcaaf10a115ab31837d8e69dc863b6"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/verifier/reward.txt",
+          "bytes": 9,
+          "mode": "0o644",
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/verifier/reward-details.json",
+          "bytes": 345,
+          "mode": "0o644",
+          "sha256": "e12db156be809a0a3ccf40b6439e3f53fb571c69d56c46e99edec24383233ee3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/artifacts/manifest.json",
+          "bytes": 159,
+          "mode": "0o644",
+          "sha256": "c1db653f487fb773c4f9247162ab3314e7f0584a486914b9874c4b3d6949e42d"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/lock.json",
+          "bytes": 1009,
+          "mode": "0o644",
+          "sha256": "4683fb66eb10dcd39d50b98e22acc42936c2cc4038467c844a9f88a9e14b7fa1"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/trial.log",
+          "bytes": 131,
+          "mode": "0o644",
+          "sha256": "f033b5d079f89e4bec95596a109b0cf4e8134b69cdf7a65d7dcd5c0ac2ad69d3"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/config.json",
+          "bytes": 403,
+          "mode": "0o644",
+          "sha256": "b9b63527d874b22f49ff524591ae2b03626372a9080ad12c70f7d11b96685733"
+        },
+        {
+          "path": "native/controls/pr5308/cases/jobs/alternative_repeat/alternative_repeat__BGgp9bF/result.json",
+          "bytes": 3879,
+          "mode": "0o644",
+          "sha256": "53148824325259a31accaa7b156e8197944d4cde1af7ed4fd43ed386d0fd179a"
+        },
+        {
+          "path": "native/controls/pr5308/cases/native_reference.log",
+          "bytes": 1062,
+          "mode": "0o644",
+          "sha256": "fec837fa6e50d81bf89379d708132651c74c967b4dfc3301ae297cf4a6a2de39"
+        },
+        {
+          "path": "native/controls/pr5308/cases/alternative.log",
+          "bytes": 1052,
+          "mode": "0o644",
+          "sha256": "9840f981d0b3ae57965232e3d58e1ef85b465ce3e166411fc3445991860a881f"
+        },
+        {
+          "path": "native/controls/pr5308/cases/partial.log",
+          "bytes": 1044,
+          "mode": "0o644",
+          "sha256": "009bd200e51ea75f75364400450db0f6b5fad9bf866e52aeffe73aaa584407ee"
+        },
+        {
+          "path": "native/controls/pr5308/cases/incorrect.log",
+          "bytes": 1048,
+          "mode": "0o644",
+          "sha256": "a24e36f58ad58a0111bf511a64301e24335b50e1fdb3b4c5041803e06ecb41a9"
+        },
+        {
+          "path": "native/controls/pr5308/cases/alternative_repeat.log",
+          "bytes": 1066,
+          "mode": "0o644",
+          "sha256": "82ee9c7a12166ec8e8d018e39eda71bef360f4bfe148f595e5d4d1a0534f5df1"
+        },
+        {
+          "path": "native/worker-exit.txt",
+          "bytes": 2,
+          "mode": "0o644",
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      ]
+    },
+    {
+      "path": "original-controller-output.tar.zst",
+      "bytes": 399110,
+      "sha256": "67cff7b836d4b6b2b561d2a33dd871e2108ca07e580a92f7977b21fc6481c23c",
+      "archive_format": "tar.zst",
+      "members": [
+        {
+          "path": "child/author-evidence-receipt.json",
+          "bytes": 232,
+          "mode": "0o644",
+          "sha256": "c00f178250e11e03bdc6d4422f58ac072d848d4c4c40a74c26e61440844c62e8"
+        },
+        {
+          "path": "child/author-evidence.tar.gz",
+          "bytes": 394002,
+          "mode": "0o644",
+          "sha256": "5fdf03fb2060a588df23db23d1c693fde261e37b9dcb1cadf384b53b793a9cea"
+        },
+        {
+          "path": "child/author-process-status.json",
+          "bytes": 289,
+          "mode": "0o644",
+          "sha256": "fda0db73e99ef6b84d5045eee2df49b182cd6aeb87fb802578eb2bb9c4606261"
+        },
+        {
+          "path": "child/author.stderr",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "child/author.stdout",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "pr-runtime-summary.json",
+          "bytes": 34002,
+          "mode": "0o644",
+          "sha256": "6e7c7430bb3ddd1c3684cc3df1dbf564353c43101ee3e23df17f37c97c734a33"
+        },
+        {
+          "path": "wrapper-status.json",
+          "bytes": 194,
+          "mode": "0o644",
+          "sha256": "fc36e0ac607ce73e4db2afcd2c460af10aeecd5f78881e783e6f0563ce010d5c"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/biopython-pr5308-LICENSE.txt",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    {
+      "path": "source-notices/biopython-pr5317-LICENSE.txt",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    {
+      "path": "source-notices/skbio-pr2630-LICENSE.txt",
+      "bytes": 1515,
+      "sha256": "bd113b93ac18e79ccf11a3f69eb3047d8af6a10bb9e9215c49af4b27301c0bd6"
+    }
+  ]
+}

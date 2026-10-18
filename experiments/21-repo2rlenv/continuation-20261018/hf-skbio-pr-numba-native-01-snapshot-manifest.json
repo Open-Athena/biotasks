@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "separate_numba_CPU_native_profile_not_independent_admission",
+  "checkpoint_commit": "6dd3b452bc469c5c1477795083ff91ddd503756f",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "selected_prs": [
+    2636
+  ],
+  "native_candidates": 1,
+  "model_calls": 0,
+  "independent_admissions": 0,
+  "reward": "Native graded F2P pass rate multiplied by P2P pass rate; correctness, not patch similarity.",
+  "input_lineage": "Public historical software regression cases; original issue examples and upstream tests. No inference about biological outcomes.",
+  "public_eligibility": "Public upstream code, PR/issue metadata and execution evidence, source licenses retained; exact approved credential/private-route scan passes for decoded native/controller members and selected inputs. No private inference path used.",
+  "retention": "Retain while referenced; no automatic deletion.",
+  "files": [
+    {
+      "path": "continuation/authorization.json",
+      "bytes": 1301,
+      "sha256": "a6c073fd3a64e46a19588c09864ef39edd663cb00db2bbd5c936f9c000e2a2bb"
+    },
+    {
+      "path": "continuation/pr-numba-dispatch-manifest.json",
+      "bytes": 1793,
+      "sha256": "21fe5a283c4861da61b0fbc2469fca70c0365b47277fcf464ed00025b7933e47"
+    },
+    {
+      "path": "continuation/skbio-pr-numba-continuation-01-observation.json",
+      "bytes": 706,
+      "sha256": "5981026f8e6503b0a8ad500d498c31b4a9d21553bbfac239f911a5ff8dc671b3"
+    },
+    {
+      "path": "continuation/skbio-pr-numba-continuation-01-submission.json",
+      "bytes": 739,
+      "sha256": "b5b3ec6e14c3dc9da2a10e40f34dcfa28ad34166789bb11f3514a24cda35d9ff"
+    },
+    {
+      "path": "evidence/cleanup-verification.json",
+      "bytes": 196,
+      "sha256": "4c6aac24fb7a89e7e6af073da2b2e8bb88c91973128fe832b3105d44bcb54dd9"
+    },
+    {
+      "path": "evidence/cohort-summary.json",
+      "bytes": 249,
+      "sha256": "1415c40a6ea57a1794812861989a7d4b0803087fb6d3a36e439346e3f1d5488f"
+    },
+    {
+      "path": "evidence/controller-small-summary.json",
+      "bytes": 982,
+      "sha256": "c113691bbb1e7af7dc0afbd5d7ad28d024df509827e6371464df0ca2bf5557f9"
+    },
+    {
+      "path": "evidence/pr2636/bootstrap.json",
+      "bytes": 1748,
+      "sha256": "d8f6eddd2e94608da8c3733e68f67a9608661500234f601a8f5bcdbb8bb521e6"
+    },
+    {
+      "path": "evidence/pr2636/rendered-instruction.md",
+      "bytes": 4349,
+      "sha256": "f0ec58661e1491512f2e405c5aa0ac1bdfda1776c634f2766529705b3550f7e8"
+    },
+    {
+      "path": "evidence/pr2636/result.json",
+      "bytes": 129,
+      "sha256": "0f6c8c8ce8fde717fae152086941b16763879fe47b5184be8f4e30645cc1e57a"
+    },
+    {
+      "path": "evidence/pr2636/validation.json",
+      "bytes": 34602,
+      "sha256": "9ecad0147def53a8891aad548c6679727856115ca931b3beb856065beefdb2a2"
+    },
+    {
+      "path": "evidence/quality-review.json",
+      "bytes": 1350,
+      "sha256": "73a949742f0e72d7822d3f127cdd63564c835b858c1c94c8d284254af67d9322"
+    },
+    {
+      "path": "evidence/recovery.json",
+      "bytes": 931,
+      "sha256": "cfcb705dbeb6806dc15a74b9e359def1e92ec16adc52f878b9bd0f940a472ac5"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 1793,
+      "sha256": "21fe5a283c4861da61b0fbc2469fca70c0365b47277fcf464ed00025b7933e47"
+    },
+    {
+      "path": "frozen-inputs/pr-inputs.tar.gz",
+      "bytes": 14416,
+      "sha256": "54d8726a18c31b699716f9910b01b85f195bb43dbdb3d187b7ce2755023c48af"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/replay_pr_runtime_next.py",
+      "bytes": 10202,
+      "sha256": "b0add53822c5582548c21b4503a1559bf3873a03343cd99bf81a375700f7a968"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_runtime_trc.py",
+      "bytes": 4585,
+      "sha256": "8222ddf9904d43d35f90c43dbcf59ba37c59dae1a7243dd826f309275ea80e07"
+    },
+    {
+      "path": "frozen-inputs/run_pr_runtime_worker.py",
+      "bytes": 4609,
+      "sha256": "020439fff0c3cea6fba5f312bce1dd7335009fb474b7fb4a9dee07b4b3050481"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 56540,
+      "sha256": "12610a304a56289248a95fe7289306038462192c76601773cba6a28ae24435b4",
+      "archive_format": "tar.gz",
+      "members": [
+        {
+          "path": "native/setup.log",
+          "bytes": 2913,
+          "mode": "0o644",
+          "sha256": "8a1dd8d0b04413b3643926ef1833e80654d892716b45526c29b4950cc2db7edf"
+        },
+        {
+          "path": "native/worker.log",
+          "bytes": 282,
+          "mode": "0o644",
+          "sha256": "3f9d60a825df4e8e7d0b4cf8dde3d7ecfb681905542fd795d143543d404fbae1"
+        },
+        {
+          "path": "native/cohort/cohort-summary.json",
+          "bytes": 249,
+          "mode": "0o600",
+          "sha256": "1415c40a6ea57a1794812861989a7d4b0803087fb6d3a36e439346e3f1d5488f"
+        },
+        {
+          "path": "native/cohort/pr2636/frozen-inputs/Dockerfile",
+          "bytes": 953,
+          "mode": "0o644",
+          "sha256": "7a023cb86b4b54ac8b59f41765a2fda770c7a6efacc53807d2293c81388d3adf"
+        },
+        {
+          "path": "native/cohort/pr2636/frozen-inputs/pr.diff",
+          "bytes": 26944,
+          "mode": "0o644",
+          "sha256": "e7bce0de6b4a6f778cb445d3dfe7efbfae488c9d8c36ad2b081acbe012893673"
+        },
+        {
+          "path": "native/cohort/pr2636/frozen-inputs/pr.json",
+          "bytes": 11812,
+          "mode": "0o644",
+          "sha256": "9fbec6688c32c036e4ae64ddbc907a0b4e6abc87446b21d361b9254b7016c733"
+        },
+        {
+          "path": "native/cohort/pr2636/frozen-inputs/profile.json",
+          "bytes": 2417,
+          "mode": "0o644",
+          "sha256": "a7fd3265943a6a6321c452c81e179743675c056d433e89685d16e364e65c7897"
+        },
+        {
+          "path": "native/cohort/pr2636/build.log",
+          "bytes": 59102,
+          "mode": "0o644",
+          "sha256": "c506a6f55cbf115c7bf09e0eba804267273aa4e934d41c0ab9dccca8b4c69c56"
+        },
+        {
+          "path": "native/cohort/pr2636/baseline-freeze.txt",
+          "bytes": 784,
+          "mode": "0o644",
+          "sha256": "18f12f8dfbe19c4ecd570bd5aaf3acbdfcc2917cda39416a7650e5606857783b"
+        },
+        {
+          "path": "native/cohort/pr2636/skbio-baseline-extension-sha256.txt",
+          "bytes": 1540,
+          "mode": "0o644",
+          "sha256": "64165d929019b1ed26ef0917e45d33390e657dd3aba8af9c8417c67b2c52d288"
+        },
+        {
+          "path": "native/cohort/pr2636/source-LICENSE.txt",
+          "bytes": 1515,
+          "mode": "0o644",
+          "sha256": "bd113b93ac18e79ccf11a3f69eb3047d8af6a10bb9e9215c49af4b27301c0bd6"
+        },
+        {
+          "path": "native/cohort/pr2636/bootstrap.json",
+          "bytes": 1748,
+          "mode": "0o600",
+          "sha256": "d8f6eddd2e94608da8c3733e68f67a9608661500234f601a8f5bcdbb8bb521e6"
+        },
+        {
+          "path": "native/cohort/pr2636/recipe-options.json",
+          "bytes": 431,
+          "mode": "0o600",
+          "sha256": "7b14aaacd782b96efea5e7515b408619b8c4de6c83975f896503757b22e21023"
+        },
+        {
+          "path": "native/cohort/pr2636/candidate.json",
+          "bytes": 11812,
+          "mode": "0o600",
+          "sha256": "ed39fd2cfdd998b5636bffe46bffcecfa9608109ca662ddfaed95b07506f8299"
+        },
+        {
+          "path": "native/cohort/pr2636/rendered-instruction.md",
+          "bytes": 4349,
+          "mode": "0o644",
+          "sha256": "f0ec58661e1491512f2e405c5aa0ac1bdfda1776c634f2766529705b3550f7e8"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/task.toml",
+          "bytes": 9524,
+          "mode": "0o644",
+          "sha256": "73627cd872928236e52be773bbdd18735906301234464ffff452c10fcadd1b79"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/instruction.md",
+          "bytes": 4349,
+          "mode": "0o644",
+          "sha256": "f0ec58661e1491512f2e405c5aa0ac1bdfda1776c634f2766529705b3550f7e8"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/solution/patch.diff",
+          "bytes": 18264,
+          "mode": "0o644",
+          "sha256": "bd8b7eac6fc5dae524215fea8c07161a9dc2f360e4bcc84ccad0bad89f561ae1"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/environment/Dockerfile",
+          "bytes": 2406,
+          "mode": "0o644",
+          "sha256": "d6b2c5671602731bb5226808f462952e2606df3f5e350482da024f3d1f9a4d3e"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/environment/docker-compose.yaml",
+          "bytes": 684,
+          "mode": "0o644",
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/tests/test.sh",
+          "bytes": 10143,
+          "mode": "0o755",
+          "sha256": "fbf1529909f7a74464814d047a796edce520070f142a480e52c9e0c7d0561fe9"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/tests/f2p.json",
+          "bytes": 428,
+          "mode": "0o644",
+          "sha256": "24987e378ff48780bea95ace412412241a6af809780ae1483d863ff2f35fdcad"
+        },
+        {
+          "path": "native/cohort/pr2636/tasks/scikit-bio__scikit-bio-2636/tests/p2p.json",
+          "bytes": 7178,
+          "mode": "0o644",
+          "sha256": "315ca41ccabe619f1b06cf8e3f71ad9993ae00764db56ab04a64443d6fee7291"
+        },
+        {
+          "path": "native/cohort/pr2636/validation.json",
+          "bytes": 34602,
+          "mode": "0o600",
+          "sha256": "9ecad0147def53a8891aad548c6679727856115ca931b3beb856065beefdb2a2"
+        },
+        {
+          "path": "native/cohort/pr2636/result.json",
+          "bytes": 129,
+          "mode": "0o600",
+          "sha256": "0f6c8c8ce8fde717fae152086941b16763879fe47b5184be8f4e30645cc1e57a"
+        },
+        {
+          "path": "native/worker-exit.txt",
+          "bytes": 2,
+          "mode": "0o644",
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      ]
+    },
+    {
+      "path": "original-controller-output.tar.zst",
+      "bytes": 59673,
+      "sha256": "451164a92824a01327bdd6eeaa1e761f66713ba01620cb7dda03dadc3e0f50c6",
+      "archive_format": "tar.zst",
+      "members": [
+        {
+          "path": "child/author-evidence-receipt.json",
+          "bytes": 230,
+          "mode": "0o644",
+          "sha256": "4b2842fbae876eeeb2f49b538a4bb219bba8a228a93e795152c935a271e44b44"
+        },
+        {
+          "path": "child/author-evidence.tar.gz",
+          "bytes": 58337,
+          "mode": "0o644",
+          "sha256": "4914a95d139d89ec255270902795270ab958a8483e906ae67fbcfdc2e4ebc55f"
+        },
+        {
+          "path": "child/author-process-status.json",
+          "bytes": 289,
+          "mode": "0o644",
+          "sha256": "0c422ac276cb158d7406acb302bc95af3f20232c9b895421319b594a29ae0377"
+        },
+        {
+          "path": "child/author.stderr",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "child/author.stdout",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "pr-runtime-summary.json",
+          "bytes": 982,
+          "mode": "0o644",
+          "sha256": "c113691bbb1e7af7dc0afbd5d7ad28d024df509827e6371464df0ca2bf5557f9"
+        },
+        {
+          "path": "wrapper-status.json",
+          "bytes": 188,
+          "mode": "0o644",
+          "sha256": "194a136619f308ffcf2bdd1e0210736b286adc6586550e3c143d6f4537086a23"
+        }
+      ]
+    },
+    {
+      "path": "selected-inputs/manifest.json",
+      "bytes": 1035,
+      "sha256": "f5e265cb76ffcf60371407dd8d806f421674d9e3b8b7cb7e263c1958109b105b"
+    },
+    {
+      "path": "selected-inputs/pr2636/Dockerfile",
+      "bytes": 953,
+      "sha256": "7a023cb86b4b54ac8b59f41765a2fda770c7a6efacc53807d2293c81388d3adf"
+    },
+    {
+      "path": "selected-inputs/pr2636/pr.diff",
+      "bytes": 26944,
+      "sha256": "e7bce0de6b4a6f778cb445d3dfe7efbfae488c9d8c36ad2b081acbe012893673"
+    },
+    {
+      "path": "selected-inputs/pr2636/pr.json",
+      "bytes": 11812,
+      "sha256": "9fbec6688c32c036e4ae64ddbc907a0b4e6abc87446b21d361b9254b7016c733"
+    },
+    {
+      "path": "selected-inputs/pr2636/profile.json",
+      "bytes": 2417,
+      "sha256": "a7fd3265943a6a6321c452c81e179743675c056d433e89685d16e364e65c7897"
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/scikit-bio-pr2636-LICENSE.txt",
+      "bytes": 1515,
+      "sha256": "bd113b93ac18e79ccf11a3f69eb3047d8af6a10bb9e9215c49af4b27301c0bd6"
+    }
+  ]
+}
