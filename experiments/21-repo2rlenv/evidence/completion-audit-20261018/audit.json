@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-18T03:09:59.341726+00:00",
+  "observed_utc": "2026-10-18T03:15:15.098334+00:00",
   "objective": "finish #21",
   "completion_proven": false,
   "scope": {
@@ -14,9 +14,13 @@
         {
           "path": "applicability.csv",
           "sha256": "5ef5b72cd7f73380c96abec17f5229920e8ee41afe560e13d87cfc4b5ffdf220"
+        },
+        {
+          "path": "evidence/native-equivalence-backend-preparation/dispatch-manifest.json",
+          "sha256": "c3e6540bcb18c0109fe3144f0519c0e59037b79ea32e9ed02971ef1c29aca0b4"
         }
       ],
-      "finding": "24 matrix rows cover executable/native/research and planned routes; final source/status reconciliation still needed."
+      "finding": "24 matrix rows cover executable/native/research and planned routes; final source/status reconciliation still needed. Native equivalence direct caller uses local Docker plus direct model completion; one no-model Iris backend preflight is prepared, not executed."
     },
     {
       "requirement": "applicable_repository_routes",
@@ -87,7 +91,7 @@
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "19971558c1467edc0b642775f1d6d87e1d945c07b06020ac0976c3aceef2d4ac"
+          "sha256": "119462066ba5fd7f51e34a014192767f9276348ea097907913e0a7a444849559"
         }
       ],
       "finding": "Keep per-route/repository/cohort attempts distinct. History records are not generation attempts. Both ten-candidate R2E allowances and unknown Code-instruct allowances remain consumed; remaining searches require cap reconciliation."
@@ -299,9 +303,17 @@
         {
           "path": "hf-observed-features-blind-solver-01-upload-receipt.json",
           "sha256": "cbc28866267484d7e57f5f968e0dd845aa29c03414a65bf4a3f7fd85e6ffab56"
+        },
+        {
+          "path": "hf-r2e-gym-biopython-seqfeature-02-upload-receipt.json",
+          "sha256": "60fe404070e04486096ef842c80f5b8375ac551c78734119a028f11ae24e5fc0"
+        },
+        {
+          "path": "hf-swe-next-biopython-broader-02-upload-receipt.json",
+          "sha256": "9e0807c09431569409736e5c77c1bfea883ab726818c9b691036bd9354cdc37e"
         }
       ],
-      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime and final rejection snapshot anonymously verified27 objects/28 members. Accepted R2E-Gym provider snapshot anonymously verified30 objects/28 members; blind result snapshot anonymously verified22 objects/13 members. Esty fresh runtime snapshot anonymously verified32 objects/28 members; later acceptance record is in Git. observed_features runtime recovered; public snapshot pending. observed_features runtime snapshot prepared for public upload at this checkpoint. observed_features runtime snapshot anonymously verified30 objects/28 members; Esty blind public snapshot anonymously verified24 objects/13 members. observed_features blind public snapshot anonymously verified24 objects/13 members. Native commit setup01 and all12 corrected native output files preserved in Git; no generated task. Both new Biopython zero-export native subsets prepared with exact credential/private-route checks; upload pending."
+      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime and final rejection snapshot anonymously verified27 objects/28 members. Accepted R2E-Gym provider snapshot anonymously verified30 objects/28 members; blind result snapshot anonymously verified22 objects/13 members. Esty fresh runtime snapshot anonymously verified32 objects/28 members; later acceptance record is in Git. observed_features runtime recovered; public snapshot pending. observed_features runtime snapshot prepared for public upload at this checkpoint. observed_features runtime snapshot anonymously verified30 objects/28 members; Esty blind public snapshot anonymously verified24 objects/13 members. observed_features blind public snapshot anonymously verified24 objects/13 members. Native commit setup01 and all12 corrected native output files preserved in Git; no generated task. Both Biopython zero-export snapshots anonymously verified: R2E-Gym25 objects/32 native members; SWE-Next26 objects/12 members."
     },
     {
       "requirement": "full_funnel_usage_and_worker_time",
@@ -313,7 +325,7 @@
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "19971558c1467edc0b642775f1d6d87e1d945c07b06020ac0976c3aceef2d4ac"
+          "sha256": "119462066ba5fd7f51e34a014192767f9276348ea097907913e0a7a444849559"
         },
         {
           "path": "evidence/controller-timing-reconciliation-20261018/controller-times.json",
@@ -336,13 +348,15 @@
   ],
   "active_or_submitted_run": null,
   "next_priority": [
-    "Publish/verify both prepared Biopython zero-export snapshots; reconcile native-route acceptance and remaining execution coverage.",
+    "Run the prepared native equivalence controller Docker preflight (zero model calls, one controller); complete remaining native-route/acceptance/retention reconciliation.",
     "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
     "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
     "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
     "Publish bounded conclusions only after requirements are actually resolved"
   ],
-  "prepared_next_runs": [],
+  "prepared_next_runs": [
+    "native-equivalence-backend-01"
+  ],
   "active_or_submitted_runs": [],
   "completed_output_recovery_pending": []
 }
