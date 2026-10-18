@@ -1,0 +1,23 @@
+{
+  "stage": "instruction_source_review_not_task_admission",
+  "candidate_id": "53ec5f51639d4053971f",
+  "entity": "lcc_mult",
+  "native_authoring_calls_used": 1,
+  "native_authoring_cap": 2,
+  "remaining_native_calls": 1,
+  "instruction_review_status": "rejected_original_instruction_one_native_review_repair_available",
+  "facts": [
+    "Observed lcc_mult outputs and quadratic scaling agree with exact original/mutation source and saved test evidence.",
+    "Normalized base4 composition-entropy contract and string/Seq/SeqRecord examples agree with source/tests."
+  ],
+  "rejection_reasons": [
+    "Final paragraph gives lcc_simp(\"ACGATAGC\",8), but source signature is lcc_simp(seq). This extra argument raises TypeError and is not part of the existing API.",
+    "It conditionally suggests lcc_simp is equally affected, while source mutation is confined to lcc_mult and saved PASS_TO_PASS includes test_lcc_simp. Retain lcc_simp regression behavior without claiming it is broken."
+  ],
+  "source_evidence": {
+    "Bio/SeqUtils/lcc.py": "5c16386511a8462504aa6cf9e5d8672e93cb8bd79b2a12146bb5442611ed31df",
+    "Tests/test_SeqUtils.py": "db85ec98332a646a1ef65c355e1015edcebeeaee17fd3c9194f2261381dc4b5d"
+  },
+  "independently_admitted": false,
+  "native_export_executed": false
+}
