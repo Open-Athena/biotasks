@@ -69,6 +69,14 @@ def build():
     legacy=read('evidence/legacy-biopython-admission-review/review.json')
     for decision in legacy['records']:
         key=decision['pipeline']+'/native@biopython/biopython';units[key]['limitations'].append({'source':'evidence/legacy-biopython-admission-review/review.json','original_bundle_decision':decision['decision'],'reason_codes':decision['reason_codes']})
+    traffic=read('evidence/usage-reconciliation-20261018/usage.json')
+    smith_key='repo_mutate/swe_smith@scikit-bio/scikit-bio'
+    units[smith_key]['additional_stage_records']=[
+        next(x for x in traffic['records'] if x['event']=='skbio-author-01-native4096'),traffic['additional_early_export']]
+    for design in traffic['seed_design_records']:
+        recipe='seta_seed2synth' if design['event']=='seta-design-01' else 'seta_evol'
+        key=PIPELINES[recipe]+'/'+recipe+'@'+SEEDS[recipe]
+        units[key]['seed_design_stage']=design
     coverage_path='evidence/marin-structure-coverage/coverage.json';coverage=read(coverage_path)
     assert coverage['atlas_admission_established'] is False
     conversions=[('pr_diff/native@scikit-bio/scikit-bio',0),('pr_runtime/native@scikit-bio/scikit-bio',1),
@@ -90,18 +98,36 @@ def build():
         unit['exact_current_admitted_runtime_conversion_count']=None if unit['current_admissions'] else 0
         unit['campaign_atlas_admissions']=0
         if unit['generation_records']:unit['limitations'].append('Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown.')
-    return {'stage':'retrospective_route_cohort_census_not_final_funnel','observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    return {'stage':'available_evidence_funnel_with_explicit_protocol_and_capture_limits','observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'implemented_methods':len(matrix)-len(planned),'scope_entries':len(units),'units_with_retained_generation_records':observed,
             'retrospective_target_for_those_units':3*observed,'retrospective_candidate_ceiling_for_those_units':10*observed,
             'units':list(units.values()),'planned_excluded':planned,'source_sha256':sources,
             'limitations':['This is a retrospective census, not evidence that a single total N was frozen before launch; that protocol requirement was not demonstrated by retained early manifests.',
-             'The 33 generation records are reconciled to all implemented methods and panel/cohort scope entries. Unsupported or blocked entries are not zero-yield generation outcomes.',
+             'The 33 canonical generation/materialization records plus separately identified early authoring/export and seed-design stages are reconciled to all implemented methods and panel/cohort entries. Unsupported or blocked entries are not zero-yield generation outcomes.',
              'Admission is a later stage than generation and is kept separate. Native versus adapted exports and shared problem lineage must remain distinct.',
              'No campaign-wide exported count, acceptance yield, success rate, token total, worker time or cost-per-task is inferred. Missing request/candidate capture remains inconclusive.',
-             'Active or prepared runs and later controls need their own evidence updates. This census is not a completion claim.']}
+             'This is the complete mapping of the identified available stage records, not proof of complete historical capture, protocol compliance or production readiness.']}
 
 
 if __name__=='__main__':
     result=build();folder=ROOT/'evidence/campaign-census-20261018';folder.mkdir(exist_ok=True)
     (folder/'census.json').write_text(json.dumps(result,indent=2)+'\n')
+    fields=['unit_id','applicability_status','generation_records','candidate_stage_counts','exports_by_profile','admitted_tasks','completed_blind_attempts','native_rewards','converted_source_examples_execution_checked','exact_current_runtime_conversion_count','campaign_atlas_admissions','target','candidate_cap']
+    with (folder/'funnel.csv').open('w',newline='') as stream:
+        writer=csv.DictWriter(stream,fieldnames=fields,lineterminator='\n');writer.writeheader()
+        for unit in result['units']:
+            candidates=[];exports=[]
+            for record in unit['generation_records']:
+                metrics={key:record[key] for key in ('candidates','candidate_attempts','authoring_candidates_attempted','mutation_candidates_attempted','eligible_candidates','materialization_attempts','history_records_considered') if key in record}
+                candidates.append({'record':record['run'],'counts':metrics or None});exports.append({'record':record['run'],'exports':record.get('exports')})
+            for record in unit.get('additional_stage_records',[]):
+                if 'candidate_count' in record:candidates.append({'record':record['event'],'counts':{'saved_mutation_candidates':record['candidate_count']}})
+                if 'exports_observed' in record:exports.append({'record':record['event'],'exports':record['exports_observed']})
+            writer.writerow({'unit_id':unit['unit_id'],'applicability_status':unit['applicability_status'],'generation_records':len(unit['generation_records']),
+                'candidate_stage_counts':json.dumps(candidates,separators=(',',':')),'exports_by_profile':json.dumps(exports,separators=(',',':')),
+                'admitted_tasks':unit['current_admitted_count'],'completed_blind_attempts':unit['completed_blind_count'],
+                'native_rewards':json.dumps([x.get('native_similarity_reward',x.get('reward')) for x in unit['blind_results']]),
+                'converted_source_examples_execution_checked':unit['converted_source_examples_execution_checked'],
+                'exact_current_runtime_conversion_count':unit['exact_current_admitted_runtime_conversion_count'],
+                'campaign_atlas_admissions':0,'target':3,'candidate_cap':10})
     print(json.dumps({name:result[name] for name in ('implemented_methods','scope_entries','units_with_retained_generation_records','retrospective_target_for_those_units','retrospective_candidate_ceiling_for_those_units')}))

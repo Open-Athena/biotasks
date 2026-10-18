@@ -1,6 +1,6 @@
 {
-  "stage": "retrospective_route_cohort_census_not_final_funnel",
-  "observed_utc": "2026-10-18T04:55:53.696307+00:00",
+  "stage": "available_evidence_funnel_with_explicit_protocol_and_capture_limits",
+  "observed_utc": "2026-10-18T05:17:06.943743+00:00",
   "implemented_methods": 23,
   "scope_entries": 68,
   "units_with_retained_generation_records": 29,
@@ -11,7 +11,7 @@
       "route": "pr_diff/native",
       "repository": "biopython/biopython",
       "cohort": null,
-      "applicability_status": "accepted_similarity_pilot_blind_prepared",
+      "applicability_status": "accepted_similarity_pilot_blind_scored",
       "generation_records": [
         {
           "run": "pr-diff-01/biopython/biopython",
@@ -189,7 +189,7 @@
       "route": "pr_diff/native",
       "repository": "scikit-bio/scikit-bio",
       "cohort": null,
-      "applicability_status": "accepted_similarity_pilot_blind_prepared",
+      "applicability_status": "accepted_similarity_pilot_blind_scored",
       "generation_records": [
         {
           "run": "pr-diff-01/scikit-bio/scikit-bio",
@@ -556,7 +556,7 @@
       "route": "pr_diff/native",
       "repository": "thelovelab/DESeq2",
       "cohort": null,
-      "applicability_status": "accepted_similarity_pilot_blind_prepared",
+      "applicability_status": "accepted_similarity_pilot_blind_scored",
       "generation_records": [
         {
           "run": "pr-diff-01/thelovelab/DESeq2",
@@ -1505,6 +1505,40 @@
       "limitations": [
         "Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown."
       ],
+      "additional_stage_records": [
+        {
+          "event": "skbio-author-01-native4096",
+          "stage": "native_authoring_limit_baseline",
+          "candidate_count": 3,
+          "requests_reported": 6,
+          "preserved_response_count": 6,
+          "schema_valid_authored": 0,
+          "input_tokens": 7450,
+          "combined_output_tokens": 24576,
+          "reasoning_tokens": 24576,
+          "source": "evidence/skbio-author-01/summary.json",
+          "limit": "4096 combined output tokens; native maximum two authoring attempts per saved candidate. Same candidate identities reused by explicitly adapted later stages, not new candidate discovery."
+        },
+        {
+          "event": "skbio-controls-01",
+          "stage": "diagnostic_derived_native_export_and_controls",
+          "recipe": "swe_smith",
+          "repository": "scikit-bio",
+          "candidate_id": "0e17fb52981f3f272561",
+          "exports_observed": 1,
+          "native_rewards": [
+            0,
+            1
+          ],
+          "model_calls_in_export_control_stage": 0,
+          "independent_admission": "rejected_instruction_diagnosis",
+          "solver_attempts": 0,
+          "source": "evidence/skbio-controls-01/summary.json",
+          "authoring_source": "evidence/glm-author-budget-03/glm-report.json",
+          "independent_review": "evidence/glm-author-budget-03/independent-review.md",
+          "limit": "Same saved mutation as later authoring; this is a distinct rejected early exported variant, not a new source candidate or accepted task."
+        }
+      ],
       "unit_id": "repo_mutate/swe_smith@scikit-bio/scikit-bio",
       "target": 3,
       "candidate_cap": 10,
@@ -2380,6 +2414,16 @@
       "limitations": [
         "Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown."
       ],
+      "seed_design_stage": {
+        "event": "seta-design-01",
+        "stage": "seed_or_parent_design",
+        "preserved_response_count": 3,
+        "input_tokens": 9337,
+        "combined_output_tokens": 128909,
+        "reasoning_tokens": 116640,
+        "source": "evidence/seta-design-01/summary.json",
+        "built_tasks_in_design_stage": 0
+      },
       "unit_id": "terminal_synth/seta_seed2synth@seta-genomic-intervals-v1",
       "target": 3,
       "candidate_cap": 10,
@@ -2419,6 +2463,16 @@
       "limitations": [
         "Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown."
       ],
+      "seed_design_stage": {
+        "event": "parent-evolution-design-01",
+        "stage": "seed_or_parent_design",
+        "preserved_response_count": 3,
+        "input_tokens": 52352,
+        "combined_output_tokens": 103077,
+        "reasoning_tokens": 102589,
+        "source": "evidence/parent-evolution-design-01/summary.json",
+        "built_tasks_in_design_stage": 0
+      },
       "unit_id": "task_evolve/seta_evol@pr2633-parent-v1",
       "target": 3,
       "candidate_cap": 10,
@@ -2558,7 +2612,7 @@
       "route": "reasoning_synth/scaler",
       "repository": null,
       "cohort": "synthetic-DNA-edit-distance-family",
-      "applicability_status": "Custom synthetic DNA edit-distance cohort: three exports independently accepted for native bounded pilot, one family lineage, zero generation model calls. All 24 native/Marin control rewards match, but Marin score bounds remain 0/1 for native -1/+1; full conversion not accepted. Native tasks and runtime evidence publicly archived. All three accepted tasks passed fresh provider controls -1/+1 and each single blind GLM attempt scored+1; all owned sandboxes independently confirmed absent. One synthetic family, not three independent competencies. Evidence: scaler-native-acceptance, marin-scaler-runtime-01, scaler-solver-preparation.",
+      "applicability_status": "Custom synthetic DNA edit-distance cohort: three exports independently accepted for native bounded pilot, one family lineage, zero generation model calls. All 12 native/Marin control case pairs match, but Marin score bounds remain 0/1 for native -1/+1; full conversion not accepted. Native tasks and runtime evidence publicly archived. All three accepted tasks passed fresh provider controls -1/+1 and each single blind GLM attempt scored+1; all owned sandboxes independently confirmed absent. One synthetic family, not three independent competencies. Evidence: scaler-native-acceptance, marin-scaler-runtime-01, scaler-solver-preparation.",
       "generation_records": [
         {
           "run": "scaler-dna-01",
@@ -2676,7 +2730,7 @@
     }
   ],
   "source_sha256": {
-    "applicability.csv": "f009c0ce9b1f0b1d6c0232259e86a09ef53c5a0fcd2117c6916efaa56f1b720a",
+    "applicability.csv": "8d099c43841f109063354103f1c1e5cf5ec1178e4a04312a46f1457a50c13004",
     "evidence/interim-results-20261017/reconciled-subset.json": "cd8abc4d2abe489b95ac27d7c7dfbad57116aefdbacb91dcc212e0e4aeb05f17",
     "evidence/pr2633-acceptance/acceptance.json": "856f4fdcbc3225ee0b64f8446bceed48fff3f9963a4f483c72e69ae759edc1c4",
     "evidence/lcc-acceptance-review/acceptance.json": "97977c255263409ef66211ffcbc3f4fdde9b1c4408fb7fccc06c8924c87dd787",
@@ -2693,13 +2747,14 @@
     "evidence/prdiff-skbio-provider-01/acceptance.json": "29f49d418865bc0224a71e0cb202fa817e2df4603be641a2afab680548bb7215",
     "evidence/prdiff-skbio-blind-01/summary.json": "a5cb1439fc1100878b5ff08813b8f009fc2c2a36ab7791d3b5e835eb314afcf6",
     "evidence/legacy-biopython-admission-review/review.json": "7481d27c0a75f917c36c46b85e3a29773065df6523295f30391f442b706b3ccd",
+    "evidence/usage-reconciliation-20261018/usage.json": "ab3bf9782e61a2506fb4b972cc2c3b580ee57b91d115887830483baec6c94232",
     "evidence/marin-structure-coverage/coverage.json": "81e9ee9af79555951d26419aa88a46b200d9cf19bc2f6d319e1bf838e9fdef39"
   },
   "limitations": [
     "This is a retrospective census, not evidence that a single total N was frozen before launch; that protocol requirement was not demonstrated by retained early manifests.",
-    "The 33 generation records are reconciled to all implemented methods and panel/cohort scope entries. Unsupported or blocked entries are not zero-yield generation outcomes.",
+    "The 33 canonical generation/materialization records plus separately identified early authoring/export and seed-design stages are reconciled to all implemented methods and panel/cohort entries. Unsupported or blocked entries are not zero-yield generation outcomes.",
     "Admission is a later stage than generation and is kept separate. Native versus adapted exports and shared problem lineage must remain distinct.",
     "No campaign-wide exported count, acceptance yield, success rate, token total, worker time or cost-per-task is inferred. Missing request/candidate capture remains inconclusive.",
-    "Active or prepared runs and later controls need their own evidence updates. This census is not a completion claim."
+    "This is the complete mapping of the identified available stage records, not proof of complete historical capture, protocol compliance or production readiness."
   ]
 }

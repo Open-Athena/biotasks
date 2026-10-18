@@ -1,368 +1,169 @@
 {
-  "observed_utc": "2026-10-18T03:20:53.682430+00:00",
+  "observed_utc": "2026-10-18T05:17:46.465290+00:00",
   "objective": "finish #21",
+  "research_findings_concluded": true,
   "completion_proven": false,
-  "scope": {
-    "path": "evidence/completion-audit-20261017/issue-scope.md",
-    "sha256": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6"
-  },
+  "full_original_protocol_compliance_proven": false,
+  "completion_basis": "Bounded feasibility experiment permits negative and inconclusive conclusions. Historical unmet protocol/capture conditions are explicit limitations, not retroactively satisfied requirements.",
   "requirements": [
     {
       "requirement": "route_inventory",
-      "status": "documented_final_reconciliation_pending",
-      "evidence": [
-        {
-          "path": "applicability.csv",
-          "sha256": "2ba7f73a51b10e0e14ada11f1e299983844fc3e7ee6d37c8c0c77b68b23caf50"
-        },
-        {
-          "path": "evidence/native-equivalence-backend-preparation/dispatch-manifest.json",
-          "sha256": "c3e6540bcb18c0109fe3144f0519c0e59037b79ea32e9ed02971ef1c29aca0b4"
-        },
-        {
-          "path": "evidence/native-equivalence-backend-01/native-equivalence-backend.json",
-          "sha256": "16e044b5b2183ab8e411afa183a0c86411fc7a4ca668a0e99f2df379a5139344"
-        }
-      ],
-      "finding": "24 matrix rows include23 implemented methods and one planned method. Native equivalence has a measured direct-controller Docker blocker in the current Iris launch profile, plus a separate learner-visible-reference limitation; no generation or global backend impossibility claimed. Final route/cohort execution reconciliation remains."
+      "status": "assessed",
+      "finding": "23 implemented methods, 68 panel/cohort entries; planned unimplemented method excluded."
     },
     {
       "requirement": "applicable_repository_routes",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "applicability.csv",
-          "sha256": "2ba7f73a51b10e0e14ada11f1e299983844fc3e7ee6d37c8c0c77b68b23caf50"
-        },
-        {
-          "path": "evidence/skbio-commit-intake/intake-summary.json",
-          "sha256": "9277dc7a7e502ab6c7b9f5fc9cc2b305a222f83ae1e34b8ebda3d86acd484d55"
-        },
-        {
-          "path": "evidence/biopython-seqfeature-profile/dispatch-manifest.json",
-          "sha256": "ec842a2ca44539df32b7eaddc04aef6f23c5558b0a1cb08b512121f27f6af079"
-        },
-        {
-          "path": "evidence/skbio-commit-profile-preparation/dispatch-manifest.json",
-          "sha256": "34840b0a6f69d4261bad251241729ef6098aab13136bfa5a96c295c6adc33985"
-        },
-        {
-          "path": "evidence/biopython-broader-pr-intake/intake.json",
-          "sha256": "d706d2306af83bbcd04bb1a4f561de51e127448a9a3d142fd8eec639be006663"
-        },
-        {
-          "path": "evidence/skbio-commit-01/submission.json",
-          "sha256": "8e25f300beb203f9b3ea6c8ce1b9ff4c7e5ac5d3e019436ffe9d7fd012c2ad35"
-        },
-        {
-          "path": "evidence/r2e-gym-biopython-seqfeature-02/submission.json",
-          "sha256": "d176ca7bffc5eb36a92d7b276d06d2e3bf61fcc57c6292a27e05f712dcaf136d"
-        },
-        {
-          "path": "evidence/skbio-commit-01/summary.json",
-          "sha256": "d634d55cc6a84528a294cca59623eb4c137d2dadb81303d32cc49b5a15256e96"
-        },
-        {
-          "path": "evidence/skbio-commit-profile-preparation-02/dispatch-manifest.json",
-          "sha256": "340dbad15a77b7358d295667687fd87587b17b0bdbf3f36e0acbf04c19531517"
-        },
-        {
-          "path": "evidence/skbio-commit-02/summary.json",
-          "sha256": "c39aef0b6c09ec39fe168f34cb16200bf204cac2a455c41a79f4ba2bdf1d7e3a"
-        },
-        {
-          "path": "evidence/biopython-broader-pr-preparation/dispatch-manifest.json",
-          "sha256": "5ffaad834d389e112abb41bc41670112427c2af3bbd18c2f3246019691fff87d"
-        },
-        {
-          "path": "evidence/r2e-gym-biopython-seqfeature-02/summary.json",
-          "sha256": "1a57977f43cbe5324963060f9ab9bd8ac0ae218a63dae55497e7f83035e7ee58"
-        },
-        {
-          "path": "evidence/swe-next-biopython-broader-02/summary.json",
-          "sha256": "0b14e0f1350f66f443a7dacd86225abddef6fe5624ccf45591dc2afb454a6ece"
-        }
-      ],
-      "finding": "Both broader Biopython history cohorts completed zero exports before authoring: R2E-Gym2000 records/7eligible, SWE-Next3 additional PRs/2eligible. Native snapshot policy blocked five/two candidates; two older R2E-Gym images failed bootstrap. Native scikit-bio commit completed one candidate/zero exports because baseline collection failure yielded no F2P. Exact worker IDs independently404. No model calls in these runs. Other supported route/source coverage and protocol-target reconciliation remain partial."
+      "status": "bounded_pass_concluded_with_partial_and_blocked_profiles",
+      "finding": "29 units with retained generation records; unsupported/model/backend/input blockers are distinct. No assertion that every supported route reached three tasks."
     },
     {
       "requirement": "candidate_targets_and_caps",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "applicability.csv",
-          "sha256": "2ba7f73a51b10e0e14ada11f1e299983844fc3e7ee6d37c8c0c77b68b23caf50"
-        },
-        {
-          "path": "budget-reconciliation-20261016.json",
-          "sha256": "119462066ba5fd7f51e34a014192767f9276348ea097907913e0a7a444849559"
-        }
-      ],
-      "finding": "Keep per-route/repository/cohort attempts distinct. History records are not generation attempts. Both ten-candidate R2E allowances and unknown Code-instruct allowances remain consumed; remaining searches require cap reconciliation."
+      "status": "historical_protocol_deviations_documented",
+      "finding": "Prelaunch total N is not demonstrated. Several searches are partial. CodeInstruct counts are unknown and each allowance conservatively consumed; no cap reset."
     },
     {
       "requirement": "independent_acceptance",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "evidence/strong-independent-01/review.json",
-          "sha256": "a1bc14b580ed1a153e5158fab2a17bd8927a73632979c95d1c4efaca9373c6f5"
-        },
-        {
-          "path": "evidence/gc-skew-independent-01/review.json",
-          "sha256": "cd83201b8c8e0b9f3a46ea139255b6534784178df7d4573402760548c91a476a"
-        },
-        {
-          "path": "evidence/esty_ci-independent-02/review.json",
-          "sha256": "1a4e9f1ed20d0b6ae38f615d5aef655ccd80b4cbb9b287406d1a7925c21976dc"
-        },
-        {
-          "path": "evidence/qcp-acceptance-review/review.json",
-          "sha256": "8ab61148630664a726284006f2d65179e1a652bcff52657354f95b1138926dd3"
-        },
-        {
-          "path": "evidence/history-final-acceptance/swe-gen-skbio-01/review.json",
-          "sha256": "ee2d11b35e81ed769b3a84f935b83c1efcaab2c01940901c954720b6db76c56b"
-        },
-        {
-          "path": "evidence/history-final-acceptance/swe-next-skbio-01/review.json",
-          "sha256": "659828a9526de8aaf7fb1d66105aef0b7571827fa806c760de719d37ae811122"
-        },
-        {
-          "path": "evidence/qcp-final-acceptance/review.json",
-          "sha256": "4ce3e8ca3ecc1f3cd75394794e20ceebd999efe831f4e4dfd28cc9afd631e785"
-        },
-        {
-          "path": "evidence/esty-ci-provider-preparation/dispatch-manifest.json",
-          "sha256": "0ea0530a0c21b9f8923aad1e6e7500dd1cb3b34bc3ed8e3e21cbfe7ab8c2064f"
-        },
-        {
-          "path": "evidence/observed-features-provider-preparation/dispatch-manifest.json",
-          "sha256": "ec6ca3fc7badd4aeab9b264bbfe827c03a7cff8e08c847b9f79e46239fbea421"
-        },
-        {
-          "path": "evidence/r2e-gym-acceptance/acceptance.json",
-          "sha256": "2d439b57663fee2f2f9aa6c19bc9f430db6857890cbb3e06d974f4e308c08d9d"
-        },
-        {
-          "path": "evidence/esty-ci-provider-01/summary.json",
-          "sha256": "0cf96b2e6bad21e557e3d2849e41fc55ed9505abbe19412c39a60007d74707c3"
-        },
-        {
-          "path": "evidence/esty-ci-acceptance/acceptance.json",
-          "sha256": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0"
-        },
-        {
-          "path": "evidence/observed-features-provider-01/summary.json",
-          "sha256": "4f8a1efeb684625f993e8598ceb854a4fd5c20793ccfbe77d1460a652c282987"
-        },
-        {
-          "path": "evidence/observed-features-acceptance/acceptance.json",
-          "sha256": "0c53d003fc6f697b861f0ef90a4ccb583e9471706290adf2c34c3844e2b6157c"
-        }
-      ],
-      "finding": "Strong and GC-skew rejected for native coverage holes; SWE-gen/SWE-Next rejected for added M-step requirements outside native regression coverage; QCP rejected for unjustified precision contract. Native tasks/rewards preserved. R2E-Gym fixture-adapted task accepted after fresh provider controls0/1 and independent cleanup. Esty accepted after instruction/tolerance review and fresh runtime controls with independent cleanup. observed_features accepted after final contract review, meaningful controls and fresh0/1 runtime with cleanup. Historical Biopython task acceptance remains pending. Rejected originals require no blind attempt."
+      "status": "decisions_recorded",
+      "finding": "20 tasks admitted under typed reward profiles; rejected, unportable and inconclusive exports excluded. Similarity admission is not correctness admission."
     },
     {
       "requirement": "every_accepted_task_one_blind_attempt",
-      "status": "all_current_eight_accepted_tasks_scored_remaining_acceptance_pending",
-      "evidence": [
-        {
-          "path": "evidence/pr-blind-solver-01/summary.json",
-          "sha256": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76"
-        },
-        {
-          "path": "evidence/lcc-blind-solver-01/summary.json",
-          "sha256": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80"
-        },
-        {
-          "path": "evidence/scaler-blind-solver-01/summary.json",
-          "sha256": "cdb30a191e5979ef8588624b71f6e34df8cfcd89f9b9ff8e18c2f02729d9fbf3"
-        },
-        {
-          "path": "evidence/scaler-blind-solver-02/summary.json",
-          "sha256": "862d0d3a1198e29a6959a6dbcce4712902d8ab58d060a1343956a102f996df10"
-        },
-        {
-          "path": "evidence/scaler-blind-solver-03/summary.json",
-          "sha256": "12e5821df920ee7d7864a30aeaedee4d868ab48cd9d37882a46c6fbdf325fe70"
-        },
-        {
-          "path": "evidence/r2e-gym-acceptance/acceptance.json",
-          "sha256": "2d439b57663fee2f2f9aa6c19bc9f430db6857890cbb3e06d974f4e308c08d9d"
-        },
-        {
-          "path": "evidence/r2e-gym-blind-solver-01/summary.json",
-          "sha256": "f1f49f75389829da814042bd367630294e7694458f5d1d708e2d4e86e51822f9"
-        },
-        {
-          "path": "evidence/esty-ci-acceptance/acceptance.json",
-          "sha256": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0"
-        },
-        {
-          "path": "evidence/esty-ci-blind-solver-01/summary.json",
-          "sha256": "e10f49a1ed09d2377fc398ec5b0accd47385e7e93b7f150e2938a6937dcf689b"
-        },
-        {
-          "path": "evidence/observed-features-blind-solver-01/summary.json",
-          "sha256": "5e9120d8b470b5a2040087f2c72738bc770b2852e29ac05afebabf2a065b7919"
-        }
-      ],
-      "finding": "Eight accepted tasks each completed one blind attempt: seven positive native rewards and the R2E-Gym zero. No trial exceptions in these attempts; different contracts/shared lineages prevent a representative benchmark-rate claim. Further acceptance decisions remain pending."
+      "status": "met",
+      "finding": "20 admitted / 20 single blind attempts; no trial exceptions."
     },
     {
       "requirement": "seed_routes",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "applicability.csv",
-          "sha256": "2ba7f73a51b10e0e14ada11f1e299983844fc3e7ee6d37c8c0c77b68b23caf50"
-        },
-        {
-          "path": "evidence/parent-evolution-build-01/result-summary.json",
-          "sha256": "5c7e9f65654ce4a21120c277a60039102020c3182a96637afd7260b56b3c1f70"
-        }
-      ],
-      "finding": "Endless and TMax negative outcomes preserved; other prepared designs/materialization and recording input/provenance limitations remain to reconcile. Keep missing input/model support separate from generation failures."
+      "status": "bounded_pass_concluded_with_failures_and_missing_inputs",
+      "finding": "SCALER admitted as one synthetic family; other designs, invalid answers, timeouts, unattempted seeds and missing recording terms retained separately."
     },
     {
       "requirement": "marin_reward_and_runtime_compatibility",
-      "status": "representative_controls_executed_final_assessment_pending",
-      "evidence": [
-        {
-          "path": "evidence/marin-structure-coverage/coverage.json",
-          "sha256": "81e9ee9af79555951d26419aa88a46b200d9cf19bc2f6d319e1bf838e9fdef39"
-        },
-        {
-          "path": "marin-contract-assessment.md",
-          "sha256": "e663cc7409ad914cf58d9025e4df2f2970900410a2e50bb415e470b5baf6f56f"
-        }
-      ],
-      "finding": "Four representative structures executed. SCALER raw rewards match but native -1/+1 conflicts with Marin 0/1 metadata. No Atlas admission or training readiness claimed; task runtime contexts still differ."
+      "status": "representative_comparison_complete_admission_not_established",
+      "finding": "Six source examples/four structures/27 case pairs. SCALER reward metadata unresolved; exact later runtimes/public images not certified. Zero Atlas admissions."
     },
     {
       "requirement": "artifact_retention",
-      "status": "recent_completed_runs_preserved_remaining_audit_pending",
-      "evidence": [
-        {
-          "path": "hf-r2e-biopython-author-01-upload-receipt.json",
-          "sha256": "2c8dd092b521922b1914ed8a296a17a30e3b4dd2aee370a877ac88bba116d752"
-        },
-        {
-          "path": "hf-r2e-biopython-request-appendix-01-permissions-corrected-upload-receipt.json",
-          "sha256": "7c4ffd0b2628e49882a00e0ebaabc2beb198ae6e8a2d3625281eaeb767c11203"
-        },
-        {
-          "path": "hf-gc-skew-independent-01-upload-receipt.json",
-          "sha256": "d6754db992c28f8f4a63894d1537310c1ef5984d1f1f09f673b32716dad26ba3"
-        },
-        {
-          "path": "hf-esty-ci-independent-02-upload-receipt.json",
-          "sha256": "969cfc83f73e999bbae53a51d651020fb9f5c6937963d0ad4a20f3eb4bc42ed7"
-        },
-        {
-          "path": "hf-scaler-blind-solver-01-upload-receipt.json",
-          "sha256": "4d8877716675773ab678ed66fc9e1cd980ac262c3049cdb45fb15bf7f2671a35"
-        },
-        {
-          "path": "hf-scaler-blind-solver-02-upload-receipt.json",
-          "sha256": "fa44dda72c51d4eaa756d41c65104733fcc50e292316befdac36f2a1e47f610c"
-        },
-        {
-          "path": "hf-scaler-blind-solver-03-upload-receipt.json",
-          "sha256": "1ea70cc5210bc15ca96c854b8a16cc767467cbb61e86f99a65f4aabcb76d4411"
-        },
-        {
-          "path": "hf-swegen-provider-01-upload-receipt.json",
-          "sha256": "5c24a1d261aea32998ac952a1a692cd72c2edb92ec0762e5ecb4f6e41f5d69a5"
-        },
-        {
-          "path": "hf-swe-next-provider-01-upload-receipt.json",
-          "sha256": "a7b7e20521c577991c6174fab3b46077a5b78774bf6591768af007c65e60603d"
-        },
-        {
-          "path": "hf-r2e-gym-provider-01-upload-receipt.json",
-          "sha256": "5e115f078a28538555308d32f0a19a81176e9bbee08d2431d9a646ca5b251561"
-        },
-        {
-          "path": "hf-r2e-gym-blind-solver-01-upload-receipt.json",
-          "sha256": "22c9d72bc53913113dde96f91354cfc26cb615f01d2e214b208a92a65d626bbb"
-        },
-        {
-          "path": "hf-esty-ci-provider-01-upload-receipt.json",
-          "sha256": "4232ec9171e9886fa2e3def51e42084a9add82e89d8a554ae45892f291143961"
-        },
-        {
-          "path": "hf-observed-features-provider-01-upload-receipt.json",
-          "sha256": "c5d345b4207687dcf0c089b3aab745a649536a5edb1c077efda7f32f25db2d90"
-        },
-        {
-          "path": "hf-esty-ci-blind-solver-01-snapshot-manifest.json",
-          "sha256": "c87027363cdab1a7e223076e262e41a9148678f054d7c6a0094398a93f3d358d"
-        },
-        {
-          "path": "hf-esty-ci-blind-solver-01-upload-receipt.json",
-          "sha256": "a9bb3ccde097764079cf2f5ad4d667b7b10b28596b4cc5f13a1efd26006e8b27"
-        },
-        {
-          "path": "hf-observed-features-blind-solver-01-upload-receipt.json",
-          "sha256": "cbc28866267484d7e57f5f968e0dd845aa29c03414a65bf4a3f7fd85e6ffab56"
-        },
-        {
-          "path": "hf-r2e-gym-biopython-seqfeature-02-upload-receipt.json",
-          "sha256": "60fe404070e04486096ef842c80f5b8375ac551c78734119a028f11ae24e5fc0"
-        },
-        {
-          "path": "hf-swe-next-biopython-broader-02-upload-receipt.json",
-          "sha256": "9e0807c09431569409736e5c77c1bfea883ab726818c9b691036bd9354cdc37e"
-        },
-        {
-          "path": "evidence/artifact-retention-reconciliation-20261018/local-manifest-receipt-audit.json",
-          "sha256": "2eb0134414bdb5087c925b45c2bd50c61907f774ba1bcd3e7ebd1ea2b2ce623a"
-        }
-      ],
-      "finding": "Local audit maps60 manifests:59 matching public anonymous-download receipts, plus one explicitly superseded permission-descriptor-error manifest. Verified replacement has identical object/member bytes and hashes with type bits removed from mode descriptors. Both new Biopython failure traces publicly archived and publication-verified. This is publication-history reconciliation, not a fresh remote availability check or task-admission claim. Original capture losses and unknowns remain explicit."
+      "status": "publication_history_reconciled_with_capture_limits",
+      "finding": "68 manifests/67 matching receipts/one explicit supersession; historical missing output remains missing."
     },
     {
       "requirement": "full_funnel_usage_and_worker_time",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "evidence/interim-results-20261017/reconciled-subset.json",
-          "sha256": "cd8abc4d2abe489b95ac27d7c7dfbad57116aefdbacb91dcc212e0e4aeb05f17"
-        },
-        {
-          "path": "budget-reconciliation-20261016.json",
-          "sha256": "119462066ba5fd7f51e34a014192767f9276348ea097907913e0a7a444849559"
-        },
-        {
-          "path": "evidence/controller-timing-reconciliation-20261018/controller-times.json",
-          "sha256": "dd842a79a113beb79a341d1c05f5f5dee0c72aacdbe49e052016dadf53f420fd"
-        }
-      ],
-      "finding": "Subset expanded to33 generation/materialization,14 validation,8 solver rows,three rejection/three accepted reviews and78 hashed sources. Native exports, later adaptations and materialization-only stages remain distinct. Missing outcomes/usage retained as unknown. Complete funnel/source/input cohort and manual-intervention/timing reconciliation remain incomplete."
+      "status": "available_evidence_reconciled_full_observability_not_met",
+      "finding": "Per-unit funnel and61 traffic stages retained; six capture gaps, incomplete worker lifetimes and unverified billing prohibit complete campaign totals."
     },
     {
       "requirement": "final_conclusions_and_issue_closure",
-      "status": "incomplete",
-      "evidence": [
-        {
-          "path": "comparison-draft.md",
-          "sha256": "011939d8eb93993e36d1c4353d8aa8a1a13dc9e9dc2ae71d10bb11f0e7f4cb1d"
-        }
-      ],
-      "finding": "Research branch remains permanent/unmerged. Remaining applicable execution, acceptance and final comparison prevent a conclusion or issue closure."
+      "status": "report_ready_publication_pending",
+      "finding": "Comparison gives expansion/adaptation/rejection conclusions. Permanent research branch remains unmerged. Closure receipt is recorded separately."
     }
   ],
-  "active_or_submitted_run": null,
-  "next_priority": [
-    "Reconcile complete original route/cohort coverage and candidate targets/caps; finish remaining acceptance and final usage/timing/curation assessment.",
-    "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
-    "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
-    "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
-    "Publish bounded conclusions only after requirements are actually resolved"
+  "admitted_tasks": 20,
+  "completed_single_blind_attempts": 20,
+  "recent_exact_sandboxes_independently_absent": 36,
+  "outer_archive_server_hash_checks": [
+    {
+      "job": "/exedev/biotasks21-prdiff-bedtools-provider-20261018-01",
+      "outer_archive_sha256": "84f3ecb36c39d622f18cc7ece4dced89a468cfdb3d065f0100980285aba69726",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-bedtools-blind-20261018-01",
+      "outer_archive_sha256": "9aacc03a6407a3222742ac91868921887eb34d5b9498d97851fa1aa423989f6c",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-deseq-provider-20261018-01",
+      "outer_archive_sha256": "a8f3b6d3777dbe20b6bf1e6e0de13c57974abd3bbd91695060cd4f9d49395c98",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-deseq-blind-20261018-01",
+      "outer_archive_sha256": "e308e4e5349383d9fdbf04013fb6673a324dfe5c9434cd7d138fa8db49e3c550",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-biopython-provider-20261018-01",
+      "outer_archive_sha256": "85e51c191ae21fbf51484bb842c62fca6a55b44e9927b39c19a9403669450c82",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-biopython-blind-20261018-01",
+      "outer_archive_sha256": "16f7b5f14260e124d60d76828bb0cac494b387f233aaebc2547ca0adc5184177",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-skbio-provider-20261018-01",
+      "outer_archive_sha256": "948bed7292ec67138c650f3145908e8b5c16df3a0a2a21d834a1586f6b10cc62",
+      "matches_retained_server_hash": true
+    },
+    {
+      "job": "/exedev/biotasks21-prdiff-skbio-blind-20261018-01",
+      "outer_archive_sha256": "53b0a5119cd0e4a9e03ae196859b850e2484677584b4cefd816c678e081cabea",
+      "matches_retained_server_hash": true
+    }
   ],
-  "prepared_next_runs": [],
+  "source_sha256": {
+    "evidence/campaign-census-20261018/census.json": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
+    "evidence/usage-reconciliation-20261018/usage.json": "ab3bf9782e61a2506fb4b972cc2c3b580ee57b91d115887830483baec6c94232",
+    "evidence/artifact-retention-reconciliation-20261018/local-manifest-receipt-audit.json": "b6269eab05aea2e70ad1b6336f90b1cee5c1975e024be151bdd0a35e9d9c8bb7",
+    "evidence/controller-timing-reconciliation-20261018/campaign-controller-times.json": "4dd53ac3bc7eb7a3fc71c1d98826d5df2ad620b9ca9b73c9654df5f68f048420",
+    "evidence/final-resource-observation-20261018/presence.json": "b605c6e37561b388fc045c136bcf5d696144c8cef4831d0b58cee680d7bac431",
+    "budget-reconciliation-20261016.json": "7fe4fd4d6a4f4aa906986d97cf781d322edb4ac23570a68c67d30599df08b746",
+    "evidence/prdiff-bedtools-provider-01/summary.json": "8a3dbd4cedd8cbc3456cbcc5d1e304feccc562fdcab7dbf8ab9fc1c323f6c531",
+    "evidence/prdiff-bedtools-provider-01/capacity-release.json": "f4f4973d424bfbf54310e357e367085ba30fca9a3ffb7f8ad917288f7f4552de",
+    "evidence/prdiff-bedtools-blind-01/summary.json": "d29df9d0c49afff2b19e4a4106545d989de46bef937a678c247edf54881f94a2",
+    "evidence/prdiff-bedtools-blind-01/capacity-release.json": "926a63c1df1633ee36c3589c5d271287aaf318ec95fb37308f4bbcc45bf70546",
+    "evidence/prdiff-deseq-provider-01/summary.json": "b12a181555d7a7f60cb1b5ad5fc44de3f4bf6113399abd856a42314c2ed9d47d",
+    "evidence/prdiff-deseq-provider-01/capacity-release.json": "373b8ecb9d84a887d9acb74995681de6ab978792a573cabdfcb2077986d40c98",
+    "evidence/prdiff-deseq-blind-01/summary.json": "a850a656cfde931539b10779ebff87dc3c9133cd0080ec6ef414f6f8d610bb85",
+    "evidence/prdiff-deseq-blind-01/capacity-release.json": "fa9838b1e77218be9dc337c71073510a6193f03a741d95adfce1379cc6bf956c",
+    "evidence/prdiff-biopython-provider-01/summary.json": "7f8e23750c5bb7063a3c64cbd056b315f0288d662460d14993423bdcdcb5bde9",
+    "evidence/prdiff-biopython-provider-01/capacity-release.json": "0a3ce7c1100b9299ab57c2993edb060afed78717e5218d45f1b06301c8383ee6",
+    "evidence/prdiff-biopython-blind-01/summary.json": "18f21888267c1088fd73976846d83eac886d8b4a8470b3d2b3b7ba72ff5c1be8",
+    "evidence/prdiff-biopython-blind-01/capacity-release.json": "3f014675257a2bbd5baf69d90dc6749285db1fc8221541312585a308b3fe095b",
+    "evidence/prdiff-skbio-provider-01/summary.json": "46dbeafb3ae9261bab3e1f07b7ba0f04a2fde95648a6e4926674dbe24fda9063",
+    "evidence/prdiff-skbio-provider-01/capacity-release.json": "c04135675d0341961354f7e7e7160c3cb827805c981d119e8554ad08c32bee51",
+    "evidence/prdiff-skbio-blind-01/summary.json": "a5cb1439fc1100878b5ff08813b8f009fc2c2a36ab7791d3b5e835eb314afcf6",
+    "evidence/prdiff-skbio-blind-01/capacity-release.json": "2399509e37ba21db80a0f3ea1916aa261b8c2491509e3b2dd4eb6979fb96f48d",
+    "evidence/completion-audit-20261017/issue-scope.md": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6",
+    "comparison-draft.md": "ecb00311feac8fe064c1cf3734ff6bdabc464b889042401ea848ff793b991ca8"
+  },
   "active_or_submitted_runs": [],
-  "completed_output_recovery_pending": []
+  "completed_output_recovery_pending": [],
+  "deferred_integrity_diagnostic": "unexecuted",
+  "new_compute_or_model_calls_required_for_closeout": false,
+  "unavailable_evidence": [
+    {
+      "event": "code-instruct-biopython",
+      "gap": "Request/candidate/export capture unavailable; ten-candidate allowance conservatively consumed."
+    },
+    {
+      "event": "code-instruct-scikit-bio",
+      "gap": "Request/candidate/export capture unavailable; ten-candidate allowance conservatively consumed."
+    },
+    {
+      "event": "glm-author-budget-01",
+      "gap": "One reported dispatched request; response and usage not retained by the failed reporter."
+    },
+    {
+      "event": "dataarc-build-01",
+      "gap": "Third request dispatched without a preserved response; only two completed responses have usage."
+    },
+    {
+      "event": "seta-build-01",
+      "gap": "Second candidate first request timed out without a saved response; third seed unattempted."
+    },
+    {
+      "event": "parent-evolution-build-01",
+      "gap": "First builder request timed out without a saved response; next prepared design unattempted."
+    },
+    {
+      "event": "execution_plan",
+      "gap": "Aggregate total N frozen before launch not demonstrated."
+    },
+    {
+      "event": "provider_accounting",
+      "gap": "Separate complete worker lifetimes, invoices and account credit balances unavailable."
+    }
+  ]
 }
