@@ -1,0 +1,75 @@
+{
+  "observed_utc": "2026-10-18T19:30:04.082145+00:00",
+  "stage": "prepared_not_dispatched",
+  "route": "pr_runtime/native",
+  "repository": "scikit-bio/scikit-bio",
+  "target": 3,
+  "prior_admitted": 1,
+  "prior_candidate_lineages": 1,
+  "prior_native_execution_profiles": 2,
+  "prior_conservative_allowance_charged": 2,
+  "new_frozen_considered_inputs": 2,
+  "conservative_allowance_after_selection": 4,
+  "candidate_cap": 10,
+  "cap_policy": "Charge both historical native runtime executions conservatively, although they share PR2633 lineage; charge each new selected PR input once including filter/failure outcomes. Do not reset prior allowances or count repeat profiles as independent source problems.",
+  "model_calls": 0,
+  "controller_backend": "existing_free_reserved_TRC_CPU_only",
+  "sandbox_backend": "daytona",
+  "max_aggregate_slots": 2,
+  "new_Daytona_hold_usd": 5,
+  "TRC_incremental_controller_budget_usd": 0,
+  "native_generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_terms": "Public scikit-bio BSD-3-Clause source, upstream PR/issue text; retain source license in original execution evidence.",
+  "lineage_note": "PR2630/2636 also appeared in similarity-only cohorts. New correctness validation is a distinct route, not new independent source diversity.",
+  "limitations": [
+    "Pinned native require_linked_issue option is not checked in the run-loop filters; preserve native behavior and flag PR-body fallback for independent prompt review.",
+    "CPU-only execution of PR2636 cannot establish real GPU-device correctness; record native skips and test coverage.",
+    "Native exports require fresh independent controls, portable profile and one blind solve before admission/scoring."
+  ],
+  "candidates": [
+    {
+      "pr": 2630,
+      "profile": "pr2630/profile.json",
+      "profile_sha256": "aaa384d9a29ed019ac4454bfbccc17a6773714f6b9a5783fa924635a2bc7562c",
+      "static_checks": {
+        "native_pre_filter": null,
+        "native_structural_filter": null,
+        "native_lite_filter": null,
+        "require_linked_issue_option": true,
+        "linked_issue": 2625,
+        "linked_issue_requirement_enforced_in_native_run": false,
+        "native_renderer_uses": "linked issue",
+        "pure_python_patch": true,
+        "changed_test_paths": [
+          "skbio/io/format/tests/test_fasta.py",
+          "skbio/io/format/tests/test_fastq.py",
+          "skbio/sequence/tests/test_sequence.py"
+        ],
+        "GPU_hardware_requested": false,
+        "GPU_only_cases": "not_applicable"
+      },
+      "original_api_metadata_sha256": "7064aa093969dd46a64b76467c8fcad94b730f93f943db2b7fdf39e39b94ff70"
+    },
+    {
+      "pr": 2636,
+      "profile": "pr2636/profile.json",
+      "profile_sha256": "a6108952c87eb38f828a848a6b3b44442cbd5c7fdace669f2cdcf73acfd47187",
+      "static_checks": {
+        "native_pre_filter": null,
+        "native_structural_filter": null,
+        "native_lite_filter": null,
+        "require_linked_issue_option": true,
+        "linked_issue": null,
+        "linked_issue_requirement_enforced_in_native_run": false,
+        "native_renderer_uses": "PR body fallback (independent answer-leak review pending)",
+        "pure_python_patch": true,
+        "changed_test_paths": [
+          "skbio/tree/tests/bp/test_bp.py"
+        ],
+        "GPU_hardware_requested": false,
+        "GPU_only_cases": "Native test skips remain observable; no accelerator or optional GPU package installation is added."
+      },
+      "original_api_metadata_sha256": "599ad1c0eba2d4e0377d2d01aa92b7b351e614e21b4b984fbb873fa6886dfa67"
+    }
+  ]
+}
