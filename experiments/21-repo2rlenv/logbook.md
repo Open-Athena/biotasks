@@ -1304,3 +1304,7 @@ Accepted task scaler-2e50c70b17100648e7a1 completed its one blind GLM attempt wi
 ### 2026-10-18 Second accepted SCALER provider controls passed
 
 Task scaler-5e341fa6b75229faea47 passed fresh native no-op/reference provider controls with rewards-1/+1 and matching task checksums. All four sequential sandboxes independently404, controller terminal and three-slot claim released. Recovered6804-byte supported archive SHA2564873f1f085eeb05e39411752473278caf2e10bf9f267fd3900b9fac05cb5e04d; nested22-file capture hash/modes verified. Seventeen-file blind dispatch prepared with one attempt,900 seconds/12 turns/2048 output tokens, effort unset. Reserved$10; total estimates/holds$603/$1000. No task2 solver attempt at this checkpoint. Task1 solver snapshot47c08d92805a951ff54d46d76ab7799803737d44481e5b68e69cc28d6a8a0d68 anonymously verified18 objects/10 archive members.
+
+### 2026-10-18 Second SCALER blind attempt scored
+
+Accepted task scaler-5e341fa6b75229faea47 completed one blind GLM attempt with native reward+1, no exception, three agent episodes,4510 input/3072 cached-input/1476 output tokens. Limits remain900 seconds/12 turns/2048 output tokens with effort unset. Recovered12107-byte supported archive SHA256e7bc0c032bc0ffb3ba119e6bf886c069019d085be1907374b7fc459fdecb8098, verified14-file nested capture/modes, independently confirmed both sandboxes404, and released the three-slot claim. Third accepted SCALER provider probe reserved$10; total estimates/holds$613/$1000.
