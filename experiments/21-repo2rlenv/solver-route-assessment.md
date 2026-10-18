@@ -1,4 +1,4 @@
-# Free GLM solver route: preparation status
+# Free GLM solver route: preparation and executed evidence
 
 The pinned Repo2RLEnv `execution.harbor.run_trial` rejects any `model.endpoint`
 before dispatch. This is a wrapper restriction. Inspection of the exact cached
@@ -27,4 +27,8 @@ Before the first solve, validate the exact agent settings with mocked transport
 and run no-model provider controls. Preserve all existing failed/rejected tasks
 separately. Capture solver transcripts and artifacts before teardown; public
 receipts must exclude credentials and private routing fields without altering
-answers, grades or model usage. No solver request has been made for #21 yet.
+answers, grades or model usage. That was the initial preparation state. Executed results are recorded below.
+
+## 2026-10-18 executed bounded pilot
+
+Eight independently accepted tasks each completed one blind attempt with the agreed900s/12turns/2048output limits and no trial exception. Native rewards were positive for portable PR2633, LCC, three SCALER instances, Esty interval and observed_features; fixture-adapted R2E-Gym PR2633 scored0 after12 turns without editing the source. All solver sandboxes independently confirmed absent; each trace is preserved in a public HF snapshot with anonymous object/member verification. See the case-linked [reconciliation](evidence/interim-results-20261017/reconciled-subset.json) and individual solver summary files. This establishes the owned provider/scaffold route for these profiles, not a supported native custom-endpoint path, general Harbor compatibility, representative benchmark rate or Atlas admission. Generation token/effort settings remain separate.

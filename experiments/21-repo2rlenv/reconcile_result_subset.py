@@ -179,6 +179,24 @@ def build():
                      'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
                      'outcome':d['stage'],'source':path,
                      'scope':'Setup01 reached no candidate. Corrected02 exercised one unchanged selected commit; patched tests passed but baseline collection failure yielded no native test-level F2P. Not two independent sources.'})
+    path='evidence/r2e-gym-biopython-seqfeature-02/summary.json';d=read(path)
+    rows.append({'run':'r2e-gym-biopython-seqfeature-02','recipe':'r2e_gym','repository':'biopython',
+                 'history_records_considered':d['history_records_considered'],'source_filtered_records':d['source_filtered_records'],
+                 'eligible_candidates':d['eligible_candidates'],'materialization_attempts':d['materialization_attempts'],
+                 'exports':d['exports'],'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
+                 'authoring_calls':d['authoring_calls'],'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
+                 'outcome':d['stage'],'failure_counts':d['failure_counts'],'source':path,
+                 'scope':'Same original first-pass allowance after zero-eligible QCP profile; history-pool exhaustion, seven pre-authoring materialization failures, no reset or GLM-quality claim.'})
+    path='evidence/swe-next-biopython-broader-02/summary.json';d=read(path)
+    rows.append({'run':'swe-next-biopython-broader-02','recipe':'swe_next','repository':'biopython',
+                 'selected_prs':d['selected_prs'],'additional_candidates_considered':d['additional_candidates_considered'],
+                 'prior_considered_candidates':d['prior_considered_candidates'],'first_pass_considered_candidates_total':d['first_pass_considered_candidates_total'],
+                 'source_filtered_records':d['source_filtered_records'],'eligible_candidates':d['eligible_candidates'],
+                 'materialization_attempts':d['materialization_attempts'],'exports':d['exports'],
+                 'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
+                 'authoring_calls':d['authoring_calls'],'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
+                 'outcome':d['stage'],'failure_counts':d['failure_counts'],'source':path,
+                 'scope':'Original PR5317 source-filter result retained; three additional fixed PR inputs, one filtered and two native path-policy failures before authoring. Not a GLM-quality result.'})
     solvers=[]
     for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01','esty-ci-blind-solver-01','observed-features-blind-solver-01'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})

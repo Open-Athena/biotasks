@@ -551,6 +551,58 @@
       "outcome": "native_candidate_validation_completed_zero_exports",
       "source": "evidence/skbio-commit-02/summary.json",
       "scope": "Setup01 reached no candidate. Corrected02 exercised one unchanged selected commit; patched tests passed but baseline collection failure yielded no native test-level F2P. Not two independent sources."
+    },
+    {
+      "run": "r2e-gym-biopython-seqfeature-02",
+      "recipe": "r2e_gym",
+      "repository": "biopython",
+      "history_records_considered": 2000,
+      "source_filtered_records": 1993,
+      "eligible_candidates": 7,
+      "materialization_attempts": 7,
+      "exports": 0,
+      "accepted": 0,
+      "blind_attempts": 0,
+      "authoring_calls": 0,
+      "input_tokens": 0,
+      "combined_output_tokens": 0,
+      "reasoning_tokens": 0,
+      "outcome": "history_materialization_completed_zero_exports",
+      "failure_counts": {
+        "unsupported_path_in_native_historical_snapshot": 5,
+        "docker_bootstrap_failure": 2
+      },
+      "source": "evidence/r2e-gym-biopython-seqfeature-02/summary.json",
+      "scope": "Same original first-pass allowance after zero-eligible QCP profile; history-pool exhaustion, seven pre-authoring materialization failures, no reset or GLM-quality claim."
+    },
+    {
+      "run": "swe-next-biopython-broader-02",
+      "recipe": "swe_next",
+      "repository": "biopython",
+      "selected_prs": [
+        5308,
+        5316,
+        5310
+      ],
+      "additional_candidates_considered": 3,
+      "prior_considered_candidates": 1,
+      "first_pass_considered_candidates_total": 4,
+      "source_filtered_records": 1,
+      "eligible_candidates": 2,
+      "materialization_attempts": 2,
+      "exports": 0,
+      "accepted": 0,
+      "blind_attempts": 0,
+      "authoring_calls": 0,
+      "input_tokens": 0,
+      "combined_output_tokens": 0,
+      "reasoning_tokens": 0,
+      "outcome": "history_materialization_completed_zero_exports",
+      "failure_counts": {
+        "unsupported_path_in_native_historical_snapshot": 2
+      },
+      "source": "evidence/swe-next-biopython-broader-02/summary.json",
+      "scope": "Original PR5317 source-filter result retained; three additional fixed PR inputs, one filtered and two native path-policy failures before authoring. Not a GLM-quality result."
     }
   ],
   "solver_rows": [
@@ -1076,6 +1128,8 @@
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",
     "evidence/skbio-commit-01/summary.json": "d634d55cc6a84528a294cca59623eb4c137d2dadb81303d32cc49b5a15256e96",
     "evidence/skbio-commit-02/summary.json": "c39aef0b6c09ec39fe168f34cb16200bf204cac2a455c41a79f4ba2bdf1d7e3a",
+    "evidence/r2e-gym-biopython-seqfeature-02/summary.json": "1a57977f43cbe5324963060f9ab9bd8ac0ae218a63dae55497e7f83035e7ee58",
+    "evidence/swe-next-biopython-broader-02/summary.json": "0b14e0f1350f66f443a7dacd86225abddef6fe5624ccf45591dc2afb454a6ece",
     "evidence/pr-blind-solver-01/summary.json": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76",
     "evidence/lcc-blind-solver-01/summary.json": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80",
     "evidence/scaler-blind-solver-01/summary.json": "cdb30a191e5979ef8588624b71f6e34df8cfcd89f9b9ff8e18c2f02729d9fbf3",

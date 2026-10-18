@@ -1,0 +1,149 @@
+{
+  "adaptation": {
+    "authorization_date": "2026-10-16",
+    "campaign_max_concurrent_requests": 4,
+    "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
+    "generation_run_timeout_sec": 7200,
+    "global_call_cap": null,
+    "global_token_cap": null,
+    "live_131072_token_request_verified": false,
+    "max_output_tokens": 131072,
+    "model": "glm-5.3",
+    "output_budget_includes_reasoning": true,
+    "paid_fallback": false,
+    "preserve_recipe_candidate_and_repair_limits": true,
+    "reasoning_effort": "medium",
+    "request_timeout_sec": 1200,
+    "solver_settings_changed": false,
+    "stage": "generation_only"
+  },
+  "blind_solver_attempts": 0,
+  "independently_accepted_tasks": 0,
+  "native_options": {
+    "base_image": "python:3.12.3-slim",
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "exclude_candidate_ids": [],
+    "freeze_git_version": false,
+    "history_limit": 2000,
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'exec(\"from pathlib import Path\\nimport hashlib\\nlicense_file=Path('\"'\"'LICENSE'\"'\"');license_source=Path('\"'\"'LICENSE.rst'\"'\"');data=license_source.read_bytes()\\nassert (license_file.is_symlink() and license_file.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (license_file.is_file() and license_file.read_bytes()==data)\\nif license_file.is_symlink():license_file.unlink()\\nlicense_file.write_bytes(data)\\nfixture=Path('\"'\"'Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'r2e_tests/Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'GenBank/origin_line.gb'\"'\"')\\nraw=fixture.read_bytes()\\nassert hashlib.sha256(raw).hexdigest()=='\"'\"'a188b26e7d7f9126e1ff4d6f3c4c5db1bd0788c3c5073c9727e9dc4ab504019e'\"'\"'\\nPath('\"'\"'GenBank'\"'\"').mkdir(exist_ok=True)\\nPath('\"'\"'GenBank/origin_line.gb'\"'\"').write_bytes(raw)\\n\")'",
+    "materialize_document_links": [],
+    "max_added_entities": 1,
+    "max_candidates": 10,
+    "max_edited_entities": 4,
+    "max_non_test_edited_lines": 200,
+    "max_non_test_files": 5,
+    "max_patch_length": 10000,
+    "max_prs": 300,
+    "max_statement_entities": 6,
+    "pr_numbers": [
+      5308,
+      5316,
+      5310
+    ],
+    "private_test_paths": [
+      "Tests/GenBank/origin_line.gb"
+    ],
+    "public_exclude": [],
+    "pytest_args": [],
+    "require_bug_edit": false,
+    "require_test_match": false,
+    "source_paths": [
+      "Bio/SeqFeature.py",
+      "Bio/SeqUtils/__init__.py"
+    ],
+    "target": 3,
+    "task_install_command": null,
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "test_paths": [
+      "Tests/test_SeqFeature.py",
+      "Tests/test_SeqUtils.py",
+      "Tests/GenBank/origin_line.gb"
+    ],
+    "test_selectors": [],
+    "test_timeout_sec": 90,
+    "use_system_site_packages": false
+  },
+  "profile": {
+    "limitations": [
+      "Preparation only: native test-entity filters, builds, contrasts, authoring, exports and acceptance have not run.",
+      "Including two source modules broadens context; it does not prove all selected tests are environment-complete.",
+      "Small selected source pool; shared hashing lineage must be retained in downstream splits."
+    ],
+    "model_calls": 0,
+    "options": {
+      "base_image": "python:3.12.3-slim",
+      "dependencies": [
+        "pytest==9.0.3",
+        "coverage==7.16.0"
+      ],
+      "exclude_candidate_ids": [],
+      "freeze_git_version": false,
+      "history_limit": 2000,
+      "hub_assets": [],
+      "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'exec(\"from pathlib import Path\\nimport hashlib\\nlicense_file=Path('\"'\"'LICENSE'\"'\"');license_source=Path('\"'\"'LICENSE.rst'\"'\"');data=license_source.read_bytes()\\nassert (license_file.is_symlink() and license_file.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (license_file.is_file() and license_file.read_bytes()==data)\\nif license_file.is_symlink():license_file.unlink()\\nlicense_file.write_bytes(data)\\nfixture=Path('\"'\"'Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'r2e_tests/Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'GenBank/origin_line.gb'\"'\"')\\nraw=fixture.read_bytes()\\nassert hashlib.sha256(raw).hexdigest()=='\"'\"'a188b26e7d7f9126e1ff4d6f3c4c5db1bd0788c3c5073c9727e9dc4ab504019e'\"'\"'\\nPath('\"'\"'GenBank'\"'\"').mkdir(exist_ok=True)\\nPath('\"'\"'GenBank/origin_line.gb'\"'\"').write_bytes(raw)\\n\")'",
+      "materialize_document_links": [],
+      "max_added_entities": 1,
+      "max_candidates": 10,
+      "max_edited_entities": 4,
+      "max_non_test_edited_lines": 200,
+      "max_non_test_files": 5,
+      "max_patch_length": 10000,
+      "max_prs": 300,
+      "max_statement_entities": 6,
+      "pr_numbers": [
+        5308,
+        5316,
+        5310
+      ],
+      "private_test_paths": [
+        "Tests/GenBank/origin_line.gb"
+      ],
+      "public_exclude": [],
+      "pytest_args": [],
+      "require_bug_edit": false,
+      "require_test_match": false,
+      "source_paths": [
+        "Bio/SeqFeature.py",
+        "Bio/SeqUtils/__init__.py"
+      ],
+      "target": 3,
+      "task_install_command": null,
+      "test_cpus": 1,
+      "test_memory_mb": 2048,
+      "test_paths": [
+        "Tests/test_SeqFeature.py",
+        "Tests/test_SeqUtils.py",
+        "Tests/GenBank/origin_line.gb"
+      ],
+      "test_selectors": [],
+      "test_timeout_sec": 90,
+      "use_system_site_packages": false
+    },
+    "prior_considered_candidates": 1,
+    "profile_decisions": [
+      "Source context covers sequence-location hashing and molecular-weight input validation.",
+      "Use unchanged upstream test modules plus the existing hash-pinned private GenBank fixture.",
+      "Reuse the reviewed idempotent LICENSE and fixture packaging program.",
+      "No native candidate/entity/repair limit changes; 3target/10max. Prior one considered PR leaves nine of original first-pass candidate allowance; three selected additional sources cannot exceed it.",
+      "PR5308 and5316 share issue5193 lineage; PR5310 is a different boundary-case competency."
+    ],
+    "provenance": "Three public PRs selected from the prior bounded native history intake. Native merged_pulls mapping uses merge_commit_sha; original PR branch heads and parents remain in preserved metadata. Original PR5317 source-filter result/candidate allowance is retained, not reset.",
+    "recipe": "swe_next",
+    "remaining_first_pass_ceiling_before_run": 9,
+    "repo": {
+      "access": "public",
+      "ref": "c911b1210e69df202834418ec43fba62a9d0b100",
+      "url": "https://github.com/biopython/biopython"
+    },
+    "run_id": "swe-next-biopython-broader-02",
+    "selected_additional_sources": 3,
+    "stage": "prepared_not_executed",
+    "workers": 0
+  },
+  "pulls_sha256": "43722fd91b93cdc5a065a3f4936caa86943eb5ecfc83a92bf0e804802b3a2fea"
+}
