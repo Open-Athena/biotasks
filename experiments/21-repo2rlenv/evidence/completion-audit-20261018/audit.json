@@ -1,0 +1,210 @@
+{
+  "observed_utc": "2026-10-18T01:01:39.554092+00:00",
+  "objective": "finish #21",
+  "completion_proven": false,
+  "scope": {
+    "path": "evidence/completion-audit-20261017/issue-scope.md",
+    "sha256": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6"
+  },
+  "requirements": [
+    {
+      "requirement": "route_inventory",
+      "status": "documented_final_reconciliation_pending",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "de7bbc1805a71381f37027c9b0ca0d20abe4ede4a676e8a90e32e04b268e3f6b"
+        }
+      ],
+      "finding": "24 matrix rows cover executable/native/research and planned routes; final source/status reconciliation still needed."
+    },
+    {
+      "requirement": "applicable_repository_routes",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "de7bbc1805a71381f37027c9b0ca0d20abe4ede4a676e8a90e32e04b268e3f6b"
+        },
+        {
+          "path": "evidence/skbio-commit-intake/intake-summary.json",
+          "sha256": "9277dc7a7e502ab6c7b9f5fc9cc2b305a222f83ae1e34b8ebda3d86acd484d55"
+        },
+        {
+          "path": "evidence/biopython-seqfeature-profile/dispatch-manifest.json",
+          "sha256": "ec842a2ca44539df32b7eaddc04aef6f23c5558b0a1cb08b512121f27f6af079"
+        }
+      ],
+      "finding": "Both R2E authoring cohorts exhausted ten candidates with zero exports. Broader Biopython history generation remains prepared; scikit-bio native commit runtime has only cheap-filter replay, not a full run. Other supported cohort coverage remains partial."
+    },
+    {
+      "requirement": "candidate_targets_and_caps",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "de7bbc1805a71381f37027c9b0ca0d20abe4ede4a676e8a90e32e04b268e3f6b"
+        },
+        {
+          "path": "budget-reconciliation-20261016.json",
+          "sha256": "aac959e65b11f11fa27978646be9f594a964037c4edee07862b7a8496b63bef4"
+        }
+      ],
+      "finding": "Keep per-route/repository/cohort attempts distinct. History records are not generation attempts. Both ten-candidate R2E allowances and unknown Code-instruct allowances remain consumed; remaining searches require cap reconciliation."
+    },
+    {
+      "requirement": "independent_acceptance",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "evidence/strong-independent-01/review.json",
+          "sha256": "a1bc14b580ed1a153e5158fab2a17bd8927a73632979c95d1c4efaca9373c6f5"
+        },
+        {
+          "path": "evidence/gc-skew-independent-01/review.json",
+          "sha256": "cd83201b8c8e0b9f3a46ea139255b6534784178df7d4573402760548c91a476a"
+        },
+        {
+          "path": "evidence/esty_ci-independent-02/review.json",
+          "sha256": "1a4e9f1ed20d0b6ae38f615d5aef655ccd80b4cbb9b287406d1a7925c21976dc"
+        },
+        {
+          "path": "evidence/qcp-acceptance-review/review.json",
+          "sha256": "8ab61148630664a726284006f2d65179e1a652bcff52657354f95b1138926dd3"
+        }
+      ],
+      "finding": "Strong and GC-skew rejected for native coverage holes. Esty controls pass; its fresh runtime/final review, observed_features, QCP tolerance/runtime, history task acceptance and historical Biopython task acceptance remain pending."
+    },
+    {
+      "requirement": "every_accepted_task_one_blind_attempt",
+      "status": "satisfied_for_current_five_task_set",
+      "evidence": [
+        {
+          "path": "evidence/pr-blind-solver-01/summary.json",
+          "sha256": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76"
+        },
+        {
+          "path": "evidence/lcc-blind-solver-01/summary.json",
+          "sha256": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80"
+        },
+        {
+          "path": "evidence/scaler-blind-solver-01/summary.json",
+          "sha256": "cdb30a191e5979ef8588624b71f6e34df8cfcd89f9b9ff8e18c2f02729d9fbf3"
+        },
+        {
+          "path": "evidence/scaler-blind-solver-02/summary.json",
+          "sha256": "862d0d3a1198e29a6959a6dbcce4712902d8ab58d060a1343956a102f996df10"
+        },
+        {
+          "path": "evidence/scaler-blind-solver-03/summary.json",
+          "sha256": "12e5821df920ee7d7864a30aeaedee4d868ab48cd9d37882a46c6fbdf325fe70"
+        }
+      ],
+      "finding": "Five initial accepted tasks each completed one blind GLM attempt with native reward+1. Three SCALER variants share one synthetic family. Newly accepted tasks still require attempts; no campaign-wide performance claim."
+    },
+    {
+      "requirement": "seed_routes",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "applicability.csv",
+          "sha256": "de7bbc1805a71381f37027c9b0ca0d20abe4ede4a676e8a90e32e04b268e3f6b"
+        },
+        {
+          "path": "evidence/parent-evolution-build-01/result-summary.json",
+          "sha256": "5c7e9f65654ce4a21120c277a60039102020c3182a96637afd7260b56b3c1f70"
+        }
+      ],
+      "finding": "Endless and TMax negative outcomes preserved; other prepared designs/materialization and recording input/provenance limitations remain to reconcile. Keep missing input/model support separate from generation failures."
+    },
+    {
+      "requirement": "marin_reward_and_runtime_compatibility",
+      "status": "representative_controls_executed_final_assessment_pending",
+      "evidence": [
+        {
+          "path": "evidence/marin-structure-coverage/coverage.json",
+          "sha256": "81e9ee9af79555951d26419aa88a46b200d9cf19bc2f6d319e1bf838e9fdef39"
+        },
+        {
+          "path": "marin-contract-assessment.md",
+          "sha256": "e663cc7409ad914cf58d9025e4df2f2970900410a2e50bb415e470b5baf6f56f"
+        }
+      ],
+      "finding": "Four representative structures executed. SCALER raw rewards match but native -1/+1 conflicts with Marin 0/1 metadata. No Atlas admission or training readiness claimed; task runtime contexts still differ."
+    },
+    {
+      "requirement": "artifact_retention",
+      "status": "recent_completed_runs_preserved_remaining_audit_pending",
+      "evidence": [
+        {
+          "path": "hf-r2e-biopython-author-01-upload-receipt.json",
+          "sha256": "2c8dd092b521922b1914ed8a296a17a30e3b4dd2aee370a877ac88bba116d752"
+        },
+        {
+          "path": "hf-r2e-biopython-request-appendix-01-permissions-corrected-upload-receipt.json",
+          "sha256": "7c4ffd0b2628e49882a00e0ebaabc2beb198ae6e8a2d3625281eaeb767c11203"
+        },
+        {
+          "path": "hf-gc-skew-independent-01-upload-receipt.json",
+          "sha256": "d6754db992c28f8f4a63894d1537310c1ef5984d1f1f09f673b32716dad26ba3"
+        },
+        {
+          "path": "hf-esty-ci-independent-02-upload-receipt.json",
+          "sha256": "969cfc83f73e999bbae53a51d651020fb9f5c6937963d0ad4a20f3eb4bc42ed7"
+        },
+        {
+          "path": "hf-scaler-blind-solver-01-upload-receipt.json",
+          "sha256": "4d8877716675773ab678ed66fc9e1cd980ac262c3049cdb45fb15bf7f2671a35"
+        },
+        {
+          "path": "hf-scaler-blind-solver-02-upload-receipt.json",
+          "sha256": "fa44dda72c51d4eaa756d41c65104733fcc50e292316befdac36f2a1e47f610c"
+        },
+        {
+          "path": "hf-scaler-blind-solver-03-upload-receipt.json",
+          "sha256": "1ea70cc5210bc15ca96c854b8a16cc767467cbb61e86f99a65f4aabcb76d4411"
+        }
+      ],
+      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns."
+    },
+    {
+      "requirement": "full_funnel_usage_and_worker_time",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "evidence/interim-results-20261017/reconciled-subset.json",
+          "sha256": "901322933ec510e428e13ca258ff6e917a19d64295d75679281ce6ba326a302e"
+        },
+        {
+          "path": "budget-reconciliation-20261016.json",
+          "sha256": "aac959e65b11f11fa27978646be9f594a964037c4edee07862b7a8496b63bef4"
+        }
+      ],
+      "finding": "Subset has13 generation/materialization,9 validation,5 solver rows and31 hashed sources. Full cohort funnel, worker timing, manual interventions and billing uncertainty are not yet reconciled."
+    },
+    {
+      "requirement": "final_conclusions_and_issue_closure",
+      "status": "incomplete",
+      "evidence": [
+        {
+          "path": "comparison-draft.md",
+          "sha256": "2cc71026bd9f77cc9883bc106c54a5afcbf66dc8b2635a56ecfcbd9e92dc6c53"
+        }
+      ],
+      "finding": "Research branch remains permanent/unmerged. Remaining applicable execution, acceptance and final comparison prevent a conclusion or issue closure."
+    }
+  ],
+  "active_or_submitted_run": {
+    "run": "swegen-provider-01",
+    "job_id": "/exedev/biotasks21-swegen-provider-20261017-01",
+    "stage": "no_model_provider_runtime_probe",
+    "live_state_requires_refresh": true
+  },
+  "next_priority": [
+    "Observe/recover the existing SWE-gen runtime probe and independently verify cleanup; do not duplicate it",
+    "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
+    "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
+    "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
+    "Publish bounded conclusions only after requirements are actually resolved"
+  ]
+}

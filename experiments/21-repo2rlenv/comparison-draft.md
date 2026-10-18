@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 00:30 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:00 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -8,7 +8,7 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 | --- | --- | --- | --- |
 | scikit-bio PR2633, portable PR-runtime profile | Numerical stability in a statistical biology implementation | Independently accepted; one blind GLM attempt scored 1 with 1/1 F2P and 59/59 P2P tests | Instruction includes expected values and a suggested numerical fix; one task is not a yield or general solver-performance estimate |
 | Biopython LCC, full-source SWE-smith adaptation | Sequence complexity / entropy implementation | Independently accepted; one blind GLM attempt scored 1 with 12/12 tests | Explicit source-packaging and solver-tooling adaptations; bounded library-function task rather than an end-to-end biological analysis |
-| SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison; first fresh provider check passed -1/+1 | One synthetic family, not three distinct competencies; first blind attempt scored native +1; remaining two attempts pending |
+| SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison; all three fresh provider checks passed -1/+1 | One synthetic family, not three distinct competencies; all three single blind attempts scored native +1 |
 | scikit-bio SWE-Next and fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Native exports and six independent correctness controls per export | Shared problem lineage; fresh solver runtime/final acceptance and blind attempts pending |
 | scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export and six independent correctness controls verified | Fresh solver-runtime validation, final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
 | scikit-bio Strong dominance, SWE-smith | Diversity-index function reconstruction | Baseline/reference/alternative/incorrect-constant/zero rewards 0,1,1,1,0 | Rejected: an incorrect constant passes all 34 native tests; no blind solve |
@@ -18,7 +18,7 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 
 Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
 
-The three completed blind attempts each earned native reward 1. They are selected, independently accepted tasks with different grading contracts, not a representative benchmark sample. Do not report a campaign-wide success rate or treat pending attempts as failures.
+The five completed blind attempts each earned native reward 1. They are selected, independently accepted tasks with different grading contracts; the three SCALER variants share one synthetic family. This is not a representative benchmark sample. Do not report a campaign-wide success rate or treat pending attempts as failures.
 
 ## Generation and execution limitations
 
@@ -40,7 +40,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirteen generation/materialization rows, seven validation rows and three solver rows to twenty-seven hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirteen generation/materialization rows, nine validation rows and five solver rows to thirty-one hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |

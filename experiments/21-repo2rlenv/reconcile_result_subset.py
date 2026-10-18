@@ -96,7 +96,7 @@ def build():
                      'candidate_allowance_consumed':cohort['candidate_allowance_conservatively_consumed'],
                      'source':path,'outcome':cohort['outcome']})
     solvers=[]
-    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01'):
+    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})
         solvers.append({'run':run,'attempts':d['attempts'],'reward':d['reward'],
                         'input_tokens':d.get('input_tokens',u.get('n_input_tokens')),
@@ -135,13 +135,14 @@ def build():
                         'lineage_group':'scikit-bio-esty-ci-reconstruction','outcome':failed['status'],
                         'model_calls':failed['model_calls'],'native_trials_completed':failed['controls_executed'],
                         'reward':failed['reward'],'source':path})
-    path='evidence/scaler-provider-01/status.json';provider=read(path)
-    validations.append({'run':'scaler-provider-01','recipe':'scaler','repository':None,
-                        'lineage_group':'synthetic-dna-edit-distance','outcome':provider['status'],
-                        'model_calls':provider['model_calls'],
-                        'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
-                                            'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
-                        'source':path})
+    for run in ('scaler-provider-01','scaler-provider-02','scaler-provider-03'):
+        path=f'evidence/{run}/status.json';provider=read(path)
+        validations.append({'run':run,'recipe':'scaler','repository':None,
+                            'lineage_group':'synthetic-dna-edit-distance','outcome':provider['status'],
+                            'model_calls':provider['model_calls'],
+                            'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
+                                                'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
+                            'source':path})
     return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,'validation_rows':validations,
             'source_sha256':sources,'limitations':[
                 'This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.',
