@@ -1,0 +1,16 @@
+{
+  "number": 5316,
+  "title": "Issue #5193 - Add __hash__ to CompoundLocation",
+  "body": "Adds `CompoundLocation.__hash__`, following on from `SimpleLocation.__hash__` earlier on this branch, so `Location` objects can be used in a `set` or as `dict` keys.\r\n\r\n`__hash__` is based on `operator` and `parts`, matching `__eq__`. Since it relies on each part's `SimpleLocation.__hash__`, the same `ref`/`ref_db` limitation applies here too. Tests cover hash/eq consistency (including fuzzy and unknown positions) and set membership.\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\nCloses # 5193",
+  "state": "closed",
+  "merged_at": "2026-09-16T08:09:10Z",
+  "base_ref": "master",
+  "base_sha": "bbc55712db23d048cdc2cebc643453418f66593c",
+  "head_sha": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+  "is_draft": false,
+  "url": "https://github.com/biopython/biopython/pull/5316",
+  "changed_files": [
+    "Bio/SeqFeature.py",
+    "Tests/test_SeqFeature.py"
+  ]
+}

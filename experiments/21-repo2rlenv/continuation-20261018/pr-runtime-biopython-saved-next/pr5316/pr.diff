@@ -1,0 +1,126 @@
+diff --git a/Bio/SeqFeature.py b/Bio/SeqFeature.py
+index 67ffad38c65..58483c4bdae 100644
+--- a/Bio/SeqFeature.py
++++ b/Bio/SeqFeature.py
+@@ -1551,7 +1551,10 @@ def __iter__(self):
+             yield from loc
+ 
+     def __eq__(self, other):
+-        """Check if all parts of CompoundLocation are equal to all parts of other CompoundLocation."""
++        """Check if all parts of CompoundLocation are equal to all parts of other CompoundLocation.
++
++        See also __hash__, which is kept consistent with this method.
++        """
+         if not isinstance(other, CompoundLocation):
+             return False
+         if len(self.parts) != len(other.parts):
+@@ -1563,6 +1566,19 @@ def __eq__(self, other):
+                 return False
+         return True
+ 
++    def __hash__(self):
++        """Implement hash with all the location attributes.
++
++        Based on operator and parts, matching the attributes used by
++        __eq__. Note this reflects equality of operator and part sequence,
++        not identity of the parent sequence: since each part's hash relies
++        on SimpleLocation.__hash__, two CompoundLocation objects made up of
++        parts with the same coordinates but no ref/ref_db will compare
++        equal and hash equal even if their parts were created against
++        different parent sequences.
++        """
++        return hash((self.operator, tuple(self.parts)))
++
+     def _shift(self, offset):
+         """Return a copy of the CompoundLocation shifted by an offset (PRIVATE)."""
+         return CompoundLocation(
+diff --git a/Tests/test_SeqFeature.py b/Tests/test_SeqFeature.py
+index da0e1560d2a..84dc07d12d7 100644
+--- a/Tests/test_SeqFeature.py
++++ b/Tests/test_SeqFeature.py
+@@ -247,6 +247,85 @@ def test_eq_not_identical(self):
+         loc2 = 5
+         self.assertNotEqual(loc1, loc2)
+ 
++    def test_hash_consistent_with_eq(self):
++        """Test equal locations hash equally, and can be used in a set."""
++        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)
++        loc2 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)
++        loc2 = CompoundLocation([SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)])
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        loc1 = CompoundLocation([SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)])
++        loc2 = CompoundLocation(
++            [SimpleLocation(12, 17, 1), SimpleLocation(23, 42, 1)], "order"
++        )
++        self.assertNotEqual(loc1, loc2)
++        self.assertNotEqual(hash(loc1), hash(loc2))
++
++        loc1 = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)
++        loc2 = SimpleLocation(12, 17, -1) + SimpleLocation(23, 42, -1)
++        self.assertNotEqual(loc1, loc2)
++        self.assertNotEqual(hash(loc1), hash(loc2))
++
++    def test_hash_in_set(self):
++        """Test that equal locations collapse into one entry in a set."""
++        loc_a = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)
++        loc_b = SimpleLocation(12, 17, 1) + SimpleLocation(23, 42, 1)  # equal to loc_a
++        loc_c = (
++            SimpleLocation(12, 17, 1)
++            + SimpleLocation(23, 42, 1)
++            + SimpleLocation(50, 60, 1)
++        )
++
++        locations1 = {loc_a, loc_b, loc_c}
++        locations2 = {loc_c, loc_a, loc_b}
++        self.assertEqual(locations1, locations2)
++        self.assertEqual(hash(frozenset(locations1)), hash(frozenset(locations2)))
++        self.assertEqual(len(locations1), 2)
++        self.assertIn(loc_a, locations1)
++        self.assertIn(loc_c, locations1)
++
++    def test_hash_consistent_with_eq_fuzzy_positions(self):
++        """Test fuzzy positions hash consistently with the equality they satisfy."""
++        # BeforePosition(23) compares equal to plain int 23, so a compound
++        # location built from it should be equal, and hash equal, to one
++        # built from 23.
++        loc1 = SimpleLocation(BeforePosition(23), 42, 1) + SimpleLocation(50, 60, 1)
++        loc2 = SimpleLocation(23, 42, 1) + SimpleLocation(50, 60, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++        # WithinPosition compares equal based on its integer value alone,
++        # regardless of its left/right fuzziness bounds.
++        loc1 = SimpleLocation(
++            WithinPosition(10, left=10, right=13), 42, 1
++        ) + SimpleLocation(50, 60, 1)
++        loc2 = SimpleLocation(
++            WithinPosition(10, left=8, right=10), 42, 1
++        ) + SimpleLocation(50, 60, 1)
++        self.assertEqual(loc1, loc2)
++        self.assertEqual(hash(loc1), hash(loc2))
++
++    def test_hash_unknown_position(self):
++        """Test UnknownPosition hashes as None, even though instances are not equal."""
++        loc1 = SimpleLocation(UnknownPosition(), 42, 1) + SimpleLocation(50, 60, 1)
++        loc2 = SimpleLocation(UnknownPosition(), 42, 1) + SimpleLocation(50, 60, 1)
++        # UnknownPosition does not define __eq__, so distinct instances
++        # compare by identity, which makes the underlying SimpleLocation
++        # parts (and therefore these CompoundLocation objects) not equal...
++        self.assertNotEqual(loc1, loc2)
++        # ...but UnknownPosition.__hash__ always returns hash(None), so
++        # compound locations built from different UnknownPosition instances
++        # still hash equal. This is a legitimate hash collision (equal
++        # objects must hash equal, but the converse isn't required), so it
++        # should not cause them to collapse in a set.
++        self.assertEqual(hash(loc1), hash(loc2))
++        self.assertEqual(len({loc1, loc2}), 2)
++
+ 
+ class TestSeqFeature(unittest.TestCase):
+     """Tests for the SeqFeature.SeqFeature class."""
