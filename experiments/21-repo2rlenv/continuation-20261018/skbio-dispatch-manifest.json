@@ -1,0 +1,53 @@
+{
+  "recorded_utc": "2026-10-18T18:25:57.004791+00:00",
+  "stage": "prepared_not_dispatched",
+  "cohort": "skbio-smith-continuation-01",
+  "files": {
+    "run_mutation_trc.py": {
+      "bytes": 2682,
+      "sha256": "622bb13d906b87591030cfa8183ed1ace85bac8fe8c5644738c4f443508defe3"
+    },
+    "run_swe_smith_worker.py": {
+      "bytes": 6173,
+      "sha256": "fb65c8d9726e31c53d4f5664732094bb33fab0a71074d963e04629bf15b84ab7"
+    },
+    "profile.json": {
+      "bytes": 896,
+      "sha256": "83b073e023cbe32ea2fdf587273a71ce7d14d178e2d42f59fba1372606bfac73"
+    },
+    "capture_author_process.py": {
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    "preserve_author_output.py": {
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    "repo2rlenv-source.tar.gz": {
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    }
+  },
+  "required_slots": 2,
+  "model_calls": 0,
+  "cpu_policy": "existing_reserved_TRC_only; required cluster/device/preemptible/existing-name constraints, no accelerator request",
+  "daytona_resources": {
+    "vcpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "prior_mutation_attempts": 3,
+  "new_candidate_ceiling": 7,
+  "target_executable_contrasts": 2,
+  "target_additional_admissions": 2,
+  "maximum_generation_seconds_including_setup": 7200,
+  "cleanup_allowed_afterward": true,
+  "conservative_new_daytona_hold_usd": 5,
+  "free_TRC_controller_incremental_budget_usd": 0,
+  "checks": [
+    "all Python inputs compile",
+    "native option validation",
+    "prior candidate exclusion count",
+    "invalid deadline rejects before allocation"
+  ]
+}

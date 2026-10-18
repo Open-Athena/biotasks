@@ -37,7 +37,10 @@ def main():
         type=Path,
         default=Path(__file__).with_name("swe-smith-skbio-worker.json"),
     )
+    parser.add_argument("--timeout-sec", type=int, default=7200)
     args = parser.parse_args()
+    if not 1 <= args.timeout_sec <= 7200:
+        parser.error("--timeout-sec must be between 1 and 7200")
     if args.flow_test_paths and args.recipe != "swe_flow":
         parser.error("--flow-test-paths requires --recipe swe_flow")
     if hashlib.sha256(args.source_archive.read_bytes()).hexdigest() != SOURCE_SHA256:
@@ -49,7 +52,7 @@ def main():
         cpus=2,
         memory_mb=4096,
         disk_gb=10,
-        timeout_sec=7200,
+        timeout_sec=args.timeout_sec,
         name=args.worker_name,
     )
     record = {
@@ -57,6 +60,7 @@ def main():
         "recipe": args.recipe,
         "model_calls": 0,
         "status": "starting",
+        "execution_timeout_sec": args.timeout_sec,
     }
     record["config_sha256"] = hashlib.sha256(args.config.read_bytes()).hexdigest()
     if args.recipe == "r2e":
@@ -70,7 +74,7 @@ def main():
     worker = None
     for sig in (signal.SIGTERM, signal.SIGINT, signal.SIGALRM):
         signal.signal(sig, deadline)
-    signal.alarm(7200)
+    signal.alarm(args.timeout_sec)
     try:
         worker, receipt = provision_worker(spec, args.campaign / "workers", ledger, reserve_usd="5")
         prepare_docker(worker)
@@ -109,7 +113,7 @@ def main():
                     "printf '%s\\n' \"$code\" >/evidence/native/worker-exit.txt; exit $code"
                 ),
             ],
-            timeout=6000,
+            timeout=min(6000, args.timeout_sec),
         )
         record.update(
             worker_returncode=result.returncode,

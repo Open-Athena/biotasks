@@ -1,0 +1,68 @@
+{
+  "recorded_utc": "2026-10-18T18:24:23.229758+00:00",
+  "stage": "prepared_continuation_not_dispatched",
+  "first_pass_commit": "8b4f2eeb6c8d2ae25b63060aff04b0dd33310186",
+  "units": [
+    {
+      "unit": "biopython-swe-smith",
+      "repository": "https://github.com/biopython/biopython",
+      "source_revision": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "prior_mutation_candidate_attempts": 4,
+      "prior_admitted_tasks": 1,
+      "prior_candidate_ids_excluded": [
+        "4902268da47d9dc37e81",
+        "a3e59b28160df6ea0d65",
+        "affa856111b757ea6a2a",
+        "e4027e396d2357882bc7"
+      ],
+      "maximum_new_candidate_attempts": 6,
+      "target_new_executable_contrasts": 2,
+      "maximum_new_admissions": 2,
+      "total_admitted_target": 3,
+      "total_candidate_ceiling": 10,
+      "profile": "biopython-smith-next.worker.json",
+      "profile_sha256": "269faac4c48107710b72250c0eba51a4f55698857de8fde8ee3478aa18c85cfb",
+      "profile_basis": "swe-smith-biopython-adapted-worker.json",
+      "source_generation_archive_sha256": "9b3a42bd4de9346cef3c8ad16ed553c6e26e90be64a1df083534d59ff5d80fae",
+      "new_candidate_attempts_observed": 0,
+      "generation_status": "prepared_not_dispatched"
+    },
+    {
+      "unit": "skbio-swe-smith",
+      "repository": "https://github.com/scikit-bio/scikit-bio",
+      "source_revision": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "prior_mutation_candidate_attempts": 3,
+      "prior_admitted_tasks": 1,
+      "prior_candidate_ids_excluded": [
+        "0e17fb52981f3f272561",
+        "3cd37b06ec9a972757c3",
+        "e3fc0018c5332295d4ab"
+      ],
+      "maximum_new_candidate_attempts": 7,
+      "target_new_executable_contrasts": 2,
+      "maximum_new_admissions": 2,
+      "total_admitted_target": 3,
+      "total_candidate_ceiling": 10,
+      "profile": "skbio-smith-next.worker.json",
+      "profile_sha256": "83b073e023cbe32ea2fdf587273a71ce7d14d178e2d42f59fba1372606bfac73",
+      "profile_basis": "swe-smith-skbio-worker.json",
+      "source_generation_archive_sha256": "3f51d0dd817b9d460103e5c77df1e0b70ed4581aaa9922c9a12a9068cffc71e3",
+      "new_candidate_attempts_observed": 0,
+      "generation_status": "prepared_not_dispatched"
+    }
+  ],
+  "planned_execution_units": 2,
+  "maximum_additional_independent_admissions": 4,
+  "maximum_new_mutation_attempts": 13,
+  "model_calls_in_contrast_stage": 0,
+  "cpu_backend": "existing_reserved_TRC_only",
+  "sandbox_backend": "daytona",
+  "required_slots_per_contrast_cohort": 2,
+  "max_aggregate_instances": 4,
+  "dispatch_sequence": "Start scikit-bio alone; validate TRC placement, preserved output and exact Daytona cleanup before additional work.",
+  "preservation": "Original source and generated answers remain unchanged; public append-only HF snapshot with verified hashes/modes before capacity release.",
+  "generation_deadline_seconds": 7200,
+  "solver_contract": "One blind attempt only after independent admission:900s/12turns/2048output; no retries.",
+  "baseline_intervention": "Continuation repeats the pinned native SWE-smith profile with its supported exclude_candidate_ids and remaining max_candidates; no generation logic or tests changed. Existing Biopython packaging adaptation retained.",
+  "first_pass_gaps_not_repaired": true
+}
