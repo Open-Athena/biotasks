@@ -174,7 +174,8 @@ def build():
     for run, recipe, lineage in [('swegen-provider-01','swe_gen','scikit-bio-pr2633'),
                                  ('swe-next-provider-01','swe_next','scikit-bio-pr2633'),
                                  ('r2e-gym-provider-01','r2e_gym','scikit-bio-pr2633'),
-                                 ('esty-ci-provider-01','swe_smith','scikit-bio-esty-ci-reconstruction')]:
+                                 ('esty-ci-provider-01','swe_smith','scikit-bio-esty-ci-reconstruction'),
+                                 ('observed-features-provider-01','swe_flow','scikit-bio-observed-features-reconstruction')]:
         path=f'evidence/{run}/status.json';provider=read(path)
         summary_path=f'evidence/{run}/summary.json';summary=read(summary_path)
         validations.append({'run':run,'recipe':recipe,'repository':'scikit-bio',
@@ -187,7 +188,8 @@ def build():
     for path in ['evidence/history-final-acceptance/swe-gen-skbio-01/review.json',
                  'evidence/history-final-acceptance/swe-next-skbio-01/review.json',
                  'evidence/qcp-final-acceptance/review.json',
-                 'evidence/r2e-gym-acceptance/acceptance.json']:
+                 'evidence/r2e-gym-acceptance/acceptance.json',
+                 'evidence/esty-ci-acceptance/acceptance.json']:
         review=read(path)
         acceptance_reviews.append({'task':review['task'],'status':review['status'],
                                    'solver_eligible':review['solver_eligible'],'source':path})

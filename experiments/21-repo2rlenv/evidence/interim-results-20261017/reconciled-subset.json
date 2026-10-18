@@ -693,7 +693,7 @@
       "recipe": "swe_smith",
       "repository": "scikit-bio",
       "lineage_group": "scikit-bio-esty-ci-reconstruction",
-      "outcome": "passed_acceptance_pending",
+      "outcome": "passed_runtime_independently_accepted",
       "model_calls": 0,
       "native_controls": [
         {
@@ -709,6 +709,28 @@
       ],
       "source": "evidence/esty-ci-provider-01/status.json",
       "summary_source": "evidence/esty-ci-provider-01/summary.json"
+    },
+    {
+      "run": "observed-features-provider-01",
+      "recipe": "swe_flow",
+      "repository": "scikit-bio",
+      "lineage_group": "scikit-bio-observed-features-reconstruction",
+      "outcome": "passed_acceptance_pending",
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "nop",
+          "reward": 0.0,
+          "task_checksum": "46c25707bd5793622f51979443d57a583d0a5b0b06302337d2d5c75c8055373f"
+        },
+        {
+          "case": "oracle",
+          "reward": 1.0,
+          "task_checksum": "46c25707bd5793622f51979443d57a583d0a5b0b06302337d2d5c75c8055373f"
+        }
+      ],
+      "source": "evidence/observed-features-provider-01/status.json",
+      "summary_source": "evidence/observed-features-provider-01/summary.json"
     }
   ],
   "acceptance_reviews": [
@@ -735,6 +757,12 @@
       "status": "accepted_for_bounded_pilot",
       "solver_eligible": true,
       "source": "evidence/r2e-gym-acceptance/acceptance.json"
+    },
+    {
+      "task": "swe-smith-e3fc0018c5332295d4ab",
+      "status": "accepted_for_bounded_pilot",
+      "solver_eligible": true,
+      "source": "evidence/esty-ci-acceptance/acceptance.json"
     }
   ],
   "source_sha256": {
@@ -786,11 +814,14 @@
     "evidence/r2e-gym-provider-01/status.json": "491e9c4a910f4ca573a02196af08380a8927f3afec69762c94baa626afea7e4f",
     "evidence/r2e-gym-provider-01/summary.json": "96f325cb43a0298e0c3ce94e32e0a8a14af0f3fda7607dc19e334d6d8e2016fa",
     "evidence/esty-ci-provider-01/status.json": "d8adbe7df07933b6bf99588d0b571acff626bedaaf3f639cd93ba7dc6f3e0308",
-    "evidence/esty-ci-provider-01/summary.json": "e8b6906886265e9bb1ae11e8ba5ecf48bbe58f7c14acce9c57205620cba5bb4b",
+    "evidence/esty-ci-provider-01/summary.json": "0cf96b2e6bad21e557e3d2849e41fc55ed9505abbe19412c39a60007d74707c3",
+    "evidence/observed-features-provider-01/status.json": "c7ef53429acbfe784f5e67a4bcc24ba9e643241f9e4d286308e064840fc2dbaa",
+    "evidence/observed-features-provider-01/summary.json": "4f8a1efeb684625f993e8598ceb854a4fd5c20793ccfbe77d1460a652c282987",
     "evidence/history-final-acceptance/swe-gen-skbio-01/review.json": "ee2d11b35e81ed769b3a84f935b83c1efcaab2c01940901c954720b6db76c56b",
     "evidence/history-final-acceptance/swe-next-skbio-01/review.json": "659828a9526de8aaf7fb1d66105aef0b7571827fa806c760de719d37ae811122",
     "evidence/qcp-final-acceptance/review.json": "4ce3e8ca3ecc1f3cd75394794e20ceebd999efe831f4e4dfd28cc9afd631e785",
-    "evidence/r2e-gym-acceptance/acceptance.json": "2d439b57663fee2f2f9aa6c19bc9f430db6857890cbb3e06d974f4e308c08d9d"
+    "evidence/r2e-gym-acceptance/acceptance.json": "2d439b57663fee2f2f9aa6c19bc9f430db6857890cbb3e06d974f4e308c08d9d",
+    "evidence/esty-ci-acceptance/acceptance.json": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0"
   },
   "limitations": [
     "This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.",

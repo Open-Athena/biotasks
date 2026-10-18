@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-18T02:02:53.960310+00:00",
+  "observed_utc": "2026-10-18T02:15:48.839615+00:00",
   "objective": "finish #21",
   "completion_proven": false,
   "scope": {
@@ -13,7 +13,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "99b03acfc4736494c337f71511f5c71ba80129261d4a769d5e51a0bb236bc35c"
+          "sha256": "645ab58d1bcfb3ef660e285c11f9a2b2a9b6f6477776a2655449c001102d6201"
         }
       ],
       "finding": "24 matrix rows cover executable/native/research and planned routes; final source/status reconciliation still needed."
@@ -24,7 +24,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "99b03acfc4736494c337f71511f5c71ba80129261d4a769d5e51a0bb236bc35c"
+          "sha256": "645ab58d1bcfb3ef660e285c11f9a2b2a9b6f6477776a2655449c001102d6201"
         },
         {
           "path": "evidence/skbio-commit-intake/intake-summary.json",
@@ -51,11 +51,11 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "99b03acfc4736494c337f71511f5c71ba80129261d4a769d5e51a0bb236bc35c"
+          "sha256": "645ab58d1bcfb3ef660e285c11f9a2b2a9b6f6477776a2655449c001102d6201"
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "c6e3eb3214a8a2e4e1e62432d40f33e4509c55dcf9af38204798108932ef800b"
+          "sha256": "069c2da46306242f9082e4f94cbd93177e3b5e1eb2f95e2c8aee2e52f48f43b3"
         }
       ],
       "finding": "Keep per-route/repository/cohort attempts distinct. History records are not generation attempts. Both ten-candidate R2E allowances and unknown Code-instruct allowances remain consumed; remaining searches require cap reconciliation."
@@ -106,14 +106,22 @@
         },
         {
           "path": "evidence/esty-ci-provider-01/summary.json",
-          "sha256": "e8b6906886265e9bb1ae11e8ba5ecf48bbe58f7c14acce9c57205620cba5bb4b"
+          "sha256": "0cf96b2e6bad21e557e3d2849e41fc55ed9505abbe19412c39a60007d74707c3"
+        },
+        {
+          "path": "evidence/esty-ci-acceptance/acceptance.json",
+          "sha256": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0"
+        },
+        {
+          "path": "evidence/observed-features-provider-01/summary.json",
+          "sha256": "4f8a1efeb684625f993e8598ceb854a4fd5c20793ccfbe77d1460a652c282987"
         }
       ],
-      "finding": "Strong and GC-skew rejected for native coverage holes; SWE-gen/SWE-Next rejected for added M-step requirements outside native regression coverage; QCP rejected for unjustified precision contract. Native tasks/rewards preserved. R2E-Gym fixture-adapted task accepted after fresh provider controls0/1 and independent cleanup. Esty fresh provider controls0/1 passed with independent cleanup; final instruction/tolerance review remains pending. observed_features probe is submitted; historical Biopython task acceptance remains pending. Rejected originals require no blind attempt."
+      "finding": "Strong and GC-skew rejected for native coverage holes; SWE-gen/SWE-Next rejected for added M-step requirements outside native regression coverage; QCP rejected for unjustified precision contract. Native tasks/rewards preserved. R2E-Gym fixture-adapted task accepted after fresh provider controls0/1 and independent cleanup. Esty accepted after instruction/tolerance review and fresh runtime controls with independent cleanup. observed_features fresh0/1 controls passed with independent cleanup; final acceptance and historical Biopython task acceptance remain pending. Rejected originals require no blind attempt."
     },
     {
       "requirement": "every_accepted_task_one_blind_attempt",
-      "status": "satisfied_for_current_six_task_set",
+      "status": "incomplete_seventh_accepted_task_pending",
       "evidence": [
         {
           "path": "evidence/pr-blind-solver-01/summary.json",
@@ -142,9 +150,13 @@
         {
           "path": "evidence/r2e-gym-blind-solver-01/summary.json",
           "sha256": "f1f49f75389829da814042bd367630294e7694458f5d1d708e2d4e86e51822f9"
+        },
+        {
+          "path": "evidence/esty-ci-acceptance/acceptance.json",
+          "sha256": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0"
         }
       ],
-      "finding": "All six currently accepted tasks completed one scored blind attempt. Newly accepted R2E-Gym scored0 with no trial exception; source remained unchanged and59/60 tests pass. Earlier five native rewards+1 retained. Shared problem/family lineages prevent benchmark-wide inference."
+      "finding": "Seven accepted tasks now exist. First six completed one scored attempt each; newly accepted Esty has one attempt prepared but unsubmitted. R2E-Gym scored0 with no infrastructure exception; other five native rewards+1. Shared lineages and selected cases prevent benchmark-wide inference."
     },
     {
       "requirement": "seed_routes",
@@ -152,7 +164,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "99b03acfc4736494c337f71511f5c71ba80129261d4a769d5e51a0bb236bc35c"
+          "sha256": "645ab58d1bcfb3ef660e285c11f9a2b2a9b6f6477776a2655449c001102d6201"
         },
         {
           "path": "evidence/parent-evolution-build-01/result-summary.json",
@@ -223,9 +235,13 @@
         {
           "path": "hf-r2e-gym-blind-solver-01-upload-receipt.json",
           "sha256": "22c9d72bc53913113dde96f91354cfc26cb615f01d2e214b208a92a65d626bbb"
+        },
+        {
+          "path": "hf-esty-ci-provider-01-upload-receipt.json",
+          "sha256": "4232ec9171e9886fa2e3def51e42084a9add82e89d8a554ae45892f291143961"
         }
       ],
-      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime and final rejection snapshot anonymously verified27 objects/28 members. Accepted R2E-Gym provider snapshot anonymously verified30 objects/28 members; blind result snapshot anonymously verified22 objects/13 members. Esty fresh runtime snapshot prepared; public upload still pending at this checkpoint."
+      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime and final rejection snapshot anonymously verified27 objects/28 members. Accepted R2E-Gym provider snapshot anonymously verified30 objects/28 members; blind result snapshot anonymously verified22 objects/13 members. Esty fresh runtime snapshot anonymously verified32 objects/28 members; later acceptance record is in Git. observed_features runtime recovered; public snapshot pending."
     },
     {
       "requirement": "full_funnel_usage_and_worker_time",
@@ -233,18 +249,18 @@
       "evidence": [
         {
           "path": "evidence/interim-results-20261017/reconciled-subset.json",
-          "sha256": "367ee1102cc33270eb88904b61f88be172b5db109a8505d2784057f6d06e4f07"
+          "sha256": "9e976469f3ea14b5ce1edba4edafa1c70db153af9f423ae57d6d78ad77e1be8b"
         },
         {
           "path": "budget-reconciliation-20261016.json",
-          "sha256": "c6e3eb3214a8a2e4e1e62432d40f33e4509c55dcf9af38204798108932ef800b"
+          "sha256": "069c2da46306242f9082e4f94cbd93177e3b5e1eb2f95e2c8aee2e52f48f43b3"
         },
         {
           "path": "evidence/controller-timing-reconciliation-20261018/controller-times.json",
           "sha256": "dd842a79a113beb79a341d1c05f5f5dee0c72aacdbe49e052016dadf53f420fd"
         }
       ],
-      "finding": "Subset expanded to17 generation/materialization,13 validation,6 solver rows,three rejection/one accepted reviews and53 hashed sources. Source authoring and subsequent native exports are joined explicitly. Twenty retained Iris controller timings exclude other historical controllers and Daytona lifetimes; complete funnel/manual intervention/billing reconciliation incomplete."
+      "finding": "Subset expanded to17 generation/materialization,14 validation,6 solver rows,three rejection/two accepted reviews and56 hashed sources. Source authoring and subsequent native exports are joined explicitly. Twenty retained Iris controller timings exclude other historical controllers and Daytona lifetimes; complete funnel/manual intervention/billing reconciliation incomplete."
     },
     {
       "requirement": "final_conclusions_and_issue_closure",
@@ -252,26 +268,22 @@
       "evidence": [
         {
           "path": "comparison-draft.md",
-          "sha256": "72133ec0cbfc31d501c93ea8b2111f22a2c5c4d38ada025093d6db68eb86f851"
+          "sha256": "94faea7aafdf229545ddf665efb5de2e16204656448e1d46db27e2937b7d977b"
         }
       ],
       "finding": "Research branch remains permanent/unmerged. Remaining applicable execution, acceptance and final comparison prevent a conclusion or issue closure."
     }
   ],
-  "active_or_submitted_run": {
-    "run": "observed-features-provider-01",
-    "job_id": "/exedev/biotasks21-observed-features-provider-20261017-01",
-    "stage": "no_model_provider_runtime_probe",
-    "live_state_requires_refresh": true
-  },
+  "active_or_submitted_run": null,
   "next_priority": [
-    "Observe/recover existing observed_features provider probe and verify cleanup; complete Esty and observed_features final acceptance reviews and score each newly accepted task once",
+    "Submit the reserved single blind attempt for newly accepted Esty after checkpoint; observed_features predecessor terminal and all four sandboxes independently absent; finish observed_features acceptance review",
     "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
     "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
     "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
     "Publish bounded conclusions only after requirements are actually resolved"
   ],
   "prepared_next_runs": [
+    "esty-ci-blind-solver-01",
     "skbio-commit-01",
     "r2e-gym-biopython-seqfeature-02"
   ]
