@@ -123,8 +123,56 @@ def build():
             row['pre_authoring_candidate_attempts']=None
             row['pre_authoring_attempt_limit']='Not inferred from the three selected authoring records'
         rows.append(row)
+    # Native exports and later adaptations remain distinct observations.
+    path='evidence/pr-diff-01/generation.json'
+    for d in read(path):
+        native=d['result'];assert d['config']['llm'] is None
+        rows.append({'run':'pr-diff-01/'+d['repository'],'recipe':'pr_diff/native',
+                     'repository':d['repository'],'candidates':native['candidates'],
+                     'exports':native['emitted'],'skipped':native['skipped'],
+                     'skip_reasons':native['skip_reasons'],'accepted':None,'blind_attempts':None,
+                     'preserved_model_responses':0,'input_tokens':0,'combined_output_tokens':0,
+                     'reasoning_tokens':0,'source':path,
+                     'scope':'Native patch-similarity exports; no functional-correctness acceptance inferred from export or similarity controls.'})
+    for run,recipe,repo in [('biopython-pr-01','pr_runtime/native','biopython'),
+                           ('biopython-commit-01','commit_runtime/native','biopython'),
+                           ('biopython-cve-01','cve_patches/native','biopython'),
+                           ('skbio-pr-runtime-01','pr_runtime/native','scikit-bio'),
+                           ('skbio-pr-runtime-02','pr_runtime/native_compiled_profile','scikit-bio')]:
+        path=f'evidence/{run}/'+('native/' if run=='biopython-cve-01' else '')+'result.json';d=read(path)
+        control_path=f'evidence/{run}/controller-result.json';control=read(control_path)
+        rows.append({'run':run,'recipe':recipe,'repository':repo,
+                     'candidates':d['candidates'],'exports':d['emitted'],'skipped':d['skipped'],
+                     'skip_reasons':d['skip_reasons'],'accepted':None,'blind_attempts':None,
+                     'model_calls':control['model_calls'],'source':path,'controller_source':control_path,
+                     'scope':'Native export observation only. Later portable runtime, acceptance and solver outcomes are separate profiles; not additional independent source problems.'})
+    path='evidence/seta-build-01/summary.json';d=read(path)
+    rows.append({'run':'seta-build-01','recipe':'seta_seed2synth','repository':None,
+                 'cohort':'seta-genomic-intervals-v1','seeds':d['seed_cohort_size'],
+                 'candidates':d['candidates_started'],'unattempted_seeds':d['candidates_not_started'],
+                 'exports':d['exported_tasks'],'accepted':d['independently_accepted_tasks'],
+                 'blind_attempts':d['solver_attempts'],'preserved_model_responses':d['completed_model_responses'],
+                 'dispatched_requests_without_response':d['additional_dispatched_request_without_response'],
+                 **tokens([x['usage'] for x in d['calls']]),'source':path,
+                 'scope':'Materialization only; excludes earlier seed/design generation. Usage covers preserved completed responses only.'})
+    path='evidence/dataarc-build-01/summary.json';d=read(path);u=d['completed_response_usage']
+    rows.append({'run':'dataarc-build-01','recipe':'dataarc','repository':None,
+                 'lineage_group':'scikit-bio-pr2633','candidates':d['candidate_directories'],
+                 'exports':None,'accepted':d['independently_validated_tasks'],
+                 'blind_attempts':d['blind_solver_attempts'],'preserved_model_responses':d['completed_model_responses'],
+                 'input_tokens':u['input_tokens'],'combined_output_tokens':u['output_tokens'],
+                 'reasoning_tokens':u['reasoning_tokens'],'outcome':d['status'],'source':path,
+                 'scope':'One parent-task materialization attempt; excludes earlier design calls and unfinished third request. Summary does not count raw exports; no accepted task.'})
+    path='evidence/scaler-dna-01/summary.json';d=read(path)
+    acceptance_path='evidence/scaler-native-acceptance/summary.json';a=read(acceptance_path)
+    rows.append({'run':'scaler-dna-01','recipe':'scaler','repository':None,
+                 'lineage_group':d['split_group'],'independent_families':d['independent_family_count'],
+                 'candidates':d['candidates'],'exports':d['exported'],'accepted':a['accepted_native_tasks'],
+                 'model_calls':d['generation_model_calls'],'input_tokens':0,'combined_output_tokens':0,
+                 'reasoning_tokens':0,'source':path,'acceptance_source':acceptance_path,
+                 'scope':'Three generated instances from one synthetic family. Subsequent controls/identity-preserving runtime adaptations are not additional candidates; solver outcomes joined separately.'})
     solvers=[]
-    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01','esty-ci-blind-solver-01'):
+    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01','esty-ci-blind-solver-01','observed-features-blind-solver-01'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})
         solvers.append({'run':run,'attempts':d['attempts'],'reward':d['reward'],
                         'input_tokens':d.get('input_tokens',u.get('n_input_tokens')),

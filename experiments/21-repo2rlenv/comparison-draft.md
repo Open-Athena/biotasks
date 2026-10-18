@@ -19,7 +19,7 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 
 Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
 
-Seven accepted tasks have completed one blind attempt each: six positive native rewards and one zero (R2E-Gym); grading contracts differ. They are selected, independently accepted tasks with different grading contracts; the three SCALER variants share one synthetic family. This is not a representative benchmark sample. Do not report a campaign-wide success rate or treat pending attempts as failures.
+Eight accepted tasks have completed one blind attempt each: seven positive native rewards and one zero (R2E-Gym); grading contracts differ. They are selected, independently accepted tasks with different grading contracts; the three SCALER variants share one synthetic family. This is not a representative benchmark sample. Do not report a campaign-wide success rate or treat pending attempts as failures.
 
 ## Generation and execution limitations
 
@@ -41,7 +41,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, fourteen validation rows and seven solver rows to fifty-eight hashed source records, with three final rejections and three additional accepted-task reviews. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links twenty-nine generation/materialization rows, fourteen validation rows and eight solver rows to seventy-four hashed source records, with three final rejections and three additional accepted-task reviews. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -92,4 +92,4 @@ The [broader Biopython PR intake](evidence/biopython-broader-pr-intake/intake.js
 
 Esty and observed_features fresh provider controls passed 0/1 with matching checksums and all four sandboxes per probe independently absent. These runtime controls add no generated candidates or blind attempts.
 
-Esty is now independently accepted with its emitted bundle unchanged: the stated interval formula, native ten-vector/all-zero tests, alternative factored variance and two incorrect controls agree; fresh separate-context controls0/1 and all four sandbox deletions are verified. Its one blind attempt scored 1 in six agent episodes, passing all 34 tests; both solver sandboxes independently absent. This makes seven accepted tasks and seven completed blind attempts, including the R2E-Gym zero. observed_features is also accepted after final instruction review, meaningful incorrect/alternative controls and fresh0/1 runtime checks. Its single blind attempt is prepared but unsubmitted. Eight accepted tasks, seven scored attempts; estimates/holds$703/$1000.
+Esty is now independently accepted with its emitted bundle unchanged: the stated interval formula, native ten-vector/all-zero tests, alternative factored variance and two incorrect controls agree; fresh separate-context controls0/1 and all four sandbox deletions are verified. Its one blind attempt scored 1 in six agent episodes, passing all 34 tests; both solver sandboxes independently absent. This makes seven accepted tasks and seven completed blind attempts, including the R2E-Gym zero. observed_features is also accepted after final instruction review, meaningful incorrect/alternative controls and fresh0/1 runtime checks. Its single blind attempt scored1 with34/34 tests in seven episodes; both sandboxes independently absent. Eight accepted tasks/eight scored attempts. Estimates/holds$723/$1000 include two prepared source-run reservations.
