@@ -1,0 +1,19 @@
+{
+  "observed_utc": "2026-10-18T18:30:25.154171+00:00",
+  "failures": [
+    {
+      "stage": "local_capacity_guard",
+      "reason": "Archived released claim receipts were incorrectly included; no credential read or allocation occurred.",
+      "correction": "Exclude archived released receipts while retaining every active claim."
+    },
+    {
+      "stage": "Iris_submission_validation",
+      "reason": "cluster=marin is not a configured federation peer; local cluster pins are not supported by this API.",
+      "correction": "Required TRC zone/device/preemptible/existing-slice-name constraints; no cluster pin.",
+      "verification": "Exact job-prefix query returned no jobs; previous local claim released before retry."
+    }
+  ],
+  "remote_allocations": 0,
+  "model_calls": 0,
+  "mutation_attempts": 0
+}

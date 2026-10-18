@@ -8,9 +8,9 @@ from trc_placement import existing_trc_constraints
 
 def main():
     constraints = existing_trc_constraints(['existing-reserved-a'])
-    good = {'cluster': 'marin', 'device-type': 'tpu', 'preemptible': 'false', 'tpu-name': 'existing-reserved-a'}
+    good = {'zone': 'us-central2-b', 'device-type': 'tpu', 'preemptible': 'false', 'tpu-name': 'existing-reserved-a'}
     cases = [(good, True)]
-    for key, value in [('cluster', 'cw-rno2a'), ('device-type', 'cpu'), ('preemptible', 'true'), ('tpu-name', 'unobserved-new-slice')]:
+    for key, value in [('zone', 'cw-rno2a'), ('device-type', 'cpu'), ('preemptible', 'true'), ('tpu-name', 'unobserved-new-slice')]:
         cases.append(({**good, key: value}, False))
     for attributes, expected in cases:
         assert all(evaluate_constraint(AttributeValue(attributes[c.key]), c) for c in constraints) is expected
