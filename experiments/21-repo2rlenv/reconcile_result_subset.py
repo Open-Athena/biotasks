@@ -171,7 +171,8 @@ def build():
                             'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                                 'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
                             'source':path})
-    for run, recipe in [('swegen-provider-01','swe_gen'),('swe-next-provider-01','swe_next')]:
+    for run, recipe in [('swegen-provider-01','swe_gen'),('swe-next-provider-01','swe_next'),
+                        ('r2e-gym-provider-01','r2e_gym')]:
         path=f'evidence/{run}/status.json';provider=read(path)
         summary_path=f'evidence/{run}/summary.json';summary=read(summary_path)
         validations.append({'run':run,'recipe':recipe,'repository':'scikit-bio',
@@ -183,7 +184,8 @@ def build():
     acceptance_reviews=[]
     for path in ['evidence/history-final-acceptance/swe-gen-skbio-01/review.json',
                  'evidence/history-final-acceptance/swe-next-skbio-01/review.json',
-                 'evidence/qcp-final-acceptance/review.json']:
+                 'evidence/qcp-final-acceptance/review.json',
+                 'evidence/r2e-gym-acceptance/acceptance.json']:
         review=read(path)
         acceptance_reviews.append({'task':review['task'],'status':review['status'],
                                    'solver_eligible':review['solver_eligible'],'source':path})
