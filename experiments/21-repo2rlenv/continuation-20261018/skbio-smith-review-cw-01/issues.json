@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "candidate_id": "539b25a8eba699d3de89",
+      "issue": "## `skbio.diversity.alpha.robbins` returns an integer instead of the Robbins estimator\n\n### Observed behavior\n\n`robbins(np.array([1, 2, 3, 0, 1]))` returns `np.int64(14)`.\n\n### Expected behavior\n\n`robbins` should compute Robbins' estimator of the probability that the next observation belongs to a feature not yet seen, defined as `F1 / N`, where:\n\n- `F1` is the number of singletons (features whose count is exactly 1), and\n- `N` is the total number of observations (the sum of all counts).\n\nFor the count vector `[1, 2, 3, 0, 1]` there are 2 singletons and 7 total observations, so the correct result is `2/7` (`0.2857142857142857`), returned as a floating-point value exactly equal to `2/7`.\n\nSince `F1 <= N` for any nonnegative count vector, the result must always lie in the closed interval `[0, 1]`. A return value of `14` is outside that range, and the integer return type (`np.int64` rather than a float) indicates the estimator is not being produced as a ratio.\n\n### Reproducer\n\n```python\nimport numpy as np\nfrom skbio.diversity.alpha import robbins\n\ncounts = np.array([1, 2, 3, 0, 1])\nresult = robbins(counts)\nprint(repr(result))     # observed: np.int64(14)\nprint(result == 2 / 7)  # expected: True, since 2/7 = 0.2857142857142857\n```\n\n### Boundary case\n\nFor a count vector containing no observations at all (e.g., `[0, 0]`), both `F1` and `N` are 0 and the estimator is undefined; `robbins` is expected to return `NaN` for such input. A correct fix must return `NaN` for a zero-total count vector.",
+      "maximum_new_calls": 1,
+      "native_authoring_calls_before": 1,
+      "native_authoring_cap": 2,
+      "observed_new_response_files": 1,
+      "reason": "The execution log records `robbins(np.array([1, 2, 3, 0, 1]))` returning `np.int64(14)` where `2/7` (`0.2857142857142857`) is expected, consistent with the documented F1/N Robbins estimator (2 singletons, 7 total observations). The test source additionally establishes `NaN` as the expected result for an all-zero count vector; since execution stopped at the first mismatch, that case is reported as expected behavior only, not as an observed result.",
+      "status": "authored"
+    }
+  ],
+  "stage": "one_remaining_native_review_repair"
+}

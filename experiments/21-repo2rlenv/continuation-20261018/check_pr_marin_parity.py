@@ -5,6 +5,7 @@ import base64
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 from dataclasses import asdict
 from pathlib import Path
@@ -94,11 +95,16 @@ async def controls(task, image, oracle, verifier, inputs, output):
             try:
                 await checked(learner, ['sh', '-c', PRIVATE_PATH_CHECK])
                 row[route + '_initial_private_paths_absent'] = True
-                probe = 'import numpy; import skbio' if inputs['pr'] == 2630 else 'import numpy; import Bio; from Bio.PDB.qcprot import QCPSuperimposer'
+                probe = 'import numpy; import skbio' if inputs['pr'] in (2630, 2636) else 'import numpy; import Bio; from Bio.PDB.qcprot import QCPSuperimposer'
                 await checked(learner, ['python', '-c', probe])
                 row[route + '_initial_imports_passed'] = True
-                if name == 'native_reference':
-                    await learner.upload(oracle, '/tmp/candidate-solution')
+                if case.get('requires_reference_patch', name == 'native_reference'):
+                    actor = output / (name + '-' + route + '-actor')
+                    actor.mkdir()
+                    shutil.copyfile(oracle / 'patch.diff', actor / 'patch.diff')
+                    (actor / 'solve.sh').write_text(case['solution_shell'])
+                    (actor / 'solve.sh').chmod(int(case['solution_mode'], 8))
+                    await learner.upload(actor, '/tmp/candidate-solution')
                     await checked(learner, ['bash', '/tmp/candidate-solution/solve.sh'])
                     await checked(learner, ['rm', '-rf', '/tmp/candidate-solution'])
                 else:
@@ -108,6 +114,9 @@ async def controls(task, image, oracle, verifier, inputs, output):
                     await checked(learner, ['bash', '/tmp/candidate.sh'])
                     await checked(learner, ['rm', '/tmp/candidate.sh'])
                 if route == 'native':
+                    if inputs.get('license_transport'):
+                        normalized = await checked(learner, ['python', '-c', inputs['license_transport']['normalization_program']])
+                        row['native_license_transport'] = json.loads(normalized.stdout)
                     await learner.upload(verifier, '/tests')
                     await checked(learner, ['mkdir', '-p', '/logs/verifier'])
                     result = await learner.run(Command(('bash', '/tests/test.sh'), timeout=300, output_limit_bytes=262144))
@@ -127,6 +136,9 @@ async def controls(task, image, oracle, verifier, inputs, output):
                     assert row['marin_details'] is not None, 'Grader detail evidence missing'
                     await checked(learner, ['sh', '-c', PRIVATE_PATH_CHECK])
                     row['marin_postgrade_private_paths_absent'] = True
+                    if inputs.get('license_transport'):
+                        materialized = await checked(learner, ['python', '-c', inputs['license_transport']['materialized_probe']])
+                        row['marin_license_transport_verified'] = json.loads(materialized.stdout)
             finally:
                 await learner.close()
                 (output / 'controls.json').write_text(json.dumps(rows, indent=2) + '\n')

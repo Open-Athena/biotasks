@@ -1,0 +1,162 @@
+{
+  "pr": 5308,
+  "cases": [
+    {
+      "case": "baseline",
+      "solution_shell": "#!/bin/sh\nset -eu\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.0,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": false,
+        "reward": 0.0,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "2ee57ec968598277a71f1d5231a25d7379689fb1f58c6e69aa9c4977fb0ad696"
+    },
+    {
+      "case": "native_reference",
+      "solution_shell": "#!/bin/bash\nset -euxo pipefail\ncd /workspace\ngit config --global --add safe.directory /workspace\nPATCH=\"$(dirname \"$0\")/patch.diff\"\ngit apply --verbose --reject \"$PATCH\"\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 4,
+        "f2p_rate": 1.0,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+    },
+    {
+      "case": "alternative",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/SeqFeature.py')\ns=p.read_text()\ntree=ast.parse(s)\ncls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='SimpleLocation')\nassert not any(isinstance(n,ast.FunctionDef) and n.name=='__hash__' for n in cls.body)\neq=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__eq__')\nlines=s.splitlines(keepends=True)\nlines.insert(eq.end_lineno,'\\n    def __hash__(self):\\n        return hash((self.ref_db, self.ref, self._strand, self._end, self._start))\\n')\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 4,
+        "f2p_rate": 1.0,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "d697e35672d5f373c9db40f242250bde5b64e8f84412b9a83767ac85e5a11e35"
+    },
+    {
+      "case": "partial",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/SeqFeature.py')\ns=p.read_text()\ntree=ast.parse(s)\ncls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='SimpleLocation')\nassert not any(isinstance(n,ast.FunctionDef) and n.name=='__hash__' for n in cls.body)\neq=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__eq__')\nlines=s.splitlines(keepends=True)\nlines.insert(eq.end_lineno,'\\n    def __hash__(self):\\n        return hash((int(self._start), int(self._end), self._strand, self.ref, self.ref_db))\\n')\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.75,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 3,
+        "f2p_rate": 0.75,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": false,
+        "reward": 0.75,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "1725051cb1d282283b260fefa3e97cf2acb42d1aa4e224390f4dfccb35cacfca"
+    },
+    {
+      "case": "incorrect",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/SeqFeature.py')\ns=p.read_text()\ntree=ast.parse(s)\ncls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='SimpleLocation')\nassert not any(isinstance(n,ast.FunctionDef) and n.name=='__hash__' for n in cls.body)\neq=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__eq__')\nlines=s.splitlines(keepends=True)\nlines.insert(eq.end_lineno,'\\n    def __hash__(self):\\n        return id(self)\\n')\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.0,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": false,
+        "reward": 0.0,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "559a710005e4845259bf5e6405d166444cc8bf57bb8e7d80cfac1b5c8521c70b"
+    },
+    {
+      "case": "alternative_repeat",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/SeqFeature.py')\ns=p.read_text()\ntree=ast.parse(s)\ncls=next(n for n in tree.body if isinstance(n,ast.ClassDef) and n.name=='SimpleLocation')\nassert not any(isinstance(n,ast.FunctionDef) and n.name=='__hash__' for n in cls.body)\neq=next(n for n in cls.body if isinstance(n,ast.FunctionDef) and n.name=='__eq__')\nlines=s.splitlines(keepends=True)\nlines.insert(eq.end_lineno,'\\n    def __hash__(self):\\n        return hash((self.ref_db, self.ref, self._strand, self._end, self._start))\\n')\ns=''.join(lines)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 4,
+        "f2p_rate": 1.0,
+        "f2p_total": 4,
+        "p2p_passed": 17,
+        "p2p_rate": 1.0,
+        "p2p_total": 17,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 21,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "d697e35672d5f373c9db40f242250bde5b64e8f84412b9a83767ac85e5a11e35"
+    }
+  ],
+  "license_transport": {
+    "normalization_program": "import hashlib,json,os\nfrom pathlib import Path\nroot=Path('/workspace')\npath=root/'LICENSE'\ntarget=root/'LICENSE.rst'\nassert target.is_file() and not target.is_symlink()\ndata=target.read_bytes()\nassert hashlib.sha256(data).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nmode=target.stat().st_mode & 0o777\nif path.is_symlink():\n    assert os.readlink(path)=='LICENSE.rst'\n    before='symlink:LICENSE.rst'\n    path.unlink()\n    path.write_bytes(data)\n    path.chmod(mode)\nelse:\n    assert path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\n    before='ordinary_file'\nassert not path.is_symlink() and hashlib.sha256(path.read_bytes()).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nprint(json.dumps({'before':before,'after':'ordinary_file','sha256':'11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453','bytes':len(data),'mode':oct(path.stat().st_mode & 0o777)}))\n",
+    "materialized_probe": "import hashlib,json\nfrom pathlib import Path\npath=Path('/workspace')/'LICENSE'\nassert path.is_file() and not path.is_symlink()\ndata=path.read_bytes()\nassert hashlib.sha256(data).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nprint(json.dumps({'kind':'ordinary_file','sha256':'11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453','bytes':len(data),'mode':oct(path.stat().st_mode & 0o777)}))\n",
+    "target_sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453",
+    "source_link": "LICENSE -> LICENSE.rst",
+    "scope": "This known license link only; other Marin link rejection unchanged."
+  }
+}

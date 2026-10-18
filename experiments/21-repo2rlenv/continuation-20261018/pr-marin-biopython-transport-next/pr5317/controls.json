@@ -1,0 +1,173 @@
+{
+  "pr": 5317,
+  "cases": [
+    {
+      "case": "baseline",
+      "solution_shell": "#!/bin/sh\nset -eu\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.0,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "f2p_total": 1,
+        "p2p_passed": 8,
+        "p2p_rate": 1.0,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": false,
+        "reward": 0.0,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "2ee57ec968598277a71f1d5231a25d7379689fb1f58c6e69aa9c4977fb0ad696"
+    },
+    {
+      "case": "native_reference",
+      "solution_shell": "#!/bin/bash\nset -euxo pipefail\ncd /workspace\ngit config --global --add safe.directory /workspace\nPATCH=\"$(dirname \"$0\")/patch.diff\"\ngit apply --verbose --reject \"$PATCH\"\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "f2p_total": 1,
+        "p2p_passed": 8,
+        "p2p_rate": 1.0,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+    },
+    {
+      "case": "alternative",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/PDB/qcprot.py')\ns=p.read_text()\nassert s.count('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)') == 1\ns=s.replace('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)','        u, singular_values, vt = np.linalg.svd(coords.T @ coords_ref)\\n        correction = np.eye(3)\\n        correction[-1, -1] = np.linalg.det(u @ vt)\\n        self.rot = u @ correction @ vt\\n        residual = coords @ self.rot - coords_ref\\n        self.rms = float(np.sqrt(np.sum(residual * residual) / self._natoms))',1)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "f2p_total": 1,
+        "p2p_passed": 8,
+        "p2p_rate": 1.0,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "fb7798bbb308636b292fbf1df27522e86cf9168ea0043f991c6cfeb09cba019b"
+    },
+    {
+      "case": "partial",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/PDB/qcprot.py')\ns=p.read_text()\nassert s.count('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)') == 1\ns=s.replace('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)','        u, singular_values, vt = np.linalg.svd(coords.T @ coords_ref)\\n        correction = np.eye(3)\\n        correction[-1, -1] = np.linalg.det(u @ vt)\\n        self.rot = u @ correction @ vt\\n        residual = coords @ self.rot - coords_ref\\n        self.rms = float(np.sqrt(np.sum(residual * residual) / self._natoms))\\n        self.rms = 0.0',1)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.5,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "f2p_total": 1,
+        "p2p_passed": 4,
+        "p2p_rate": 0.5,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_rmsd_to_transformed",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_to_svd",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_to_svd_lines",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_run"
+        ],
+        "resolved": false,
+        "reward": 0.5,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "aaa4a313633d181c46c75d471bf02eab90f898ca491821a8c3da00ceedd6e1a0"
+    },
+    {
+      "case": "incorrect",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/PDB/qcprot.py')\ns=p.read_text()\nassert s.count('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)') == 1\ns=s.replace('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)','        u, singular_values, vt = np.linalg.svd(coords.T @ coords_ref)\\n        correction = np.eye(3)\\n        correction[-1, -1] = np.linalg.det(u @ vt)\\n        self.rot = u @ correction @ vt\\n        residual = coords @ self.rot - coords_ref\\n        self.rms = float(np.sqrt(np.sum(residual * residual) / self._natoms))\\n        self.rot = np.eye(3)',1)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 0.0,
+      "native_details": {
+        "command_resolved": false,
+        "exit_code": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "f2p_total": 1,
+        "p2p_passed": 3,
+        "p2p_rate": 0.375,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_rmsd_to_transformed",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_to_svd",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_compare_to_svd_lines",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_get_transformed",
+          "test_PDB_QCPSuperimposer.py::QCPSuperimposerTest::test_run"
+        ],
+        "resolved": false,
+        "reward": 0.0,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "3bb42540cba249ec61c1847038790aaed0a942bfdb2295cbceb96dc7923ca8ae"
+    },
+    {
+      "case": "alternative_repeat",
+      "solution_shell": "#!/bin/sh\nset -eu\npython3 - <<'PYCONTROL'\nimport ast\nfrom pathlib import Path\np=Path('/workspace/Bio/PDB/qcprot.py')\ns=p.read_text()\nassert s.count('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)') == 1\ns=s.replace('        (self.rms, self.rot, _) = qcp(coords_ref, coords, self._natoms)','        u, singular_values, vt = np.linalg.svd(coords.T @ coords_ref)\\n        correction = np.eye(3)\\n        correction[-1, -1] = np.linalg.det(u @ vt)\\n        self.rot = u @ correction @ vt\\n        residual = coords @ self.rot - coords_ref\\n        self.rms = float(np.sqrt(np.sum(residual * residual) / self._natoms))',1)\nast.parse(s)\np.write_text(s)\nPYCONTROL\n",
+      "solution_mode": "0755",
+      "expected_reward": 1.0,
+      "native_details": {
+        "command_resolved": true,
+        "exit_code": 0,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "f2p_total": 1,
+        "p2p_passed": 8,
+        "p2p_rate": 1.0,
+        "p2p_total": 8,
+        "parse_status": "ok",
+        "regressions": [],
+        "resolved": true,
+        "reward": 1.0,
+        "runner": "pytest",
+        "tests_parsed": 9,
+        "untracked_failed": [],
+        "untracked_failed_count": 0
+      },
+      "solution_sha256": "fb7798bbb308636b292fbf1df27522e86cf9168ea0043f991c6cfeb09cba019b"
+    }
+  ],
+  "license_transport": {
+    "normalization_program": "import hashlib,json,os\nfrom pathlib import Path\nroot=Path('/workspace')\npath=root/'LICENSE'\ntarget=root/'LICENSE.rst'\nassert target.is_file() and not target.is_symlink()\ndata=target.read_bytes()\nassert hashlib.sha256(data).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nmode=target.stat().st_mode & 0o777\nif path.is_symlink():\n    assert os.readlink(path)=='LICENSE.rst'\n    before='symlink:LICENSE.rst'\n    path.unlink()\n    path.write_bytes(data)\n    path.chmod(mode)\nelse:\n    assert path.is_file() and hashlib.sha256(path.read_bytes()).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\n    before='ordinary_file'\nassert not path.is_symlink() and hashlib.sha256(path.read_bytes()).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nprint(json.dumps({'before':before,'after':'ordinary_file','sha256':'11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453','bytes':len(data),'mode':oct(path.stat().st_mode & 0o777)}))\n",
+    "materialized_probe": "import hashlib,json\nfrom pathlib import Path\npath=Path('/workspace')/'LICENSE'\nassert path.is_file() and not path.is_symlink()\ndata=path.read_bytes()\nassert hashlib.sha256(data).hexdigest()=='11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453'\nprint(json.dumps({'kind':'ordinary_file','sha256':'11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453','bytes':len(data),'mode':oct(path.stat().st_mode & 0o777)}))\n",
+    "target_sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453",
+    "source_link": "LICENSE -> LICENSE.rst",
+    "scope": "This known license link only; other Marin link rejection unchanged."
+  }
+}
