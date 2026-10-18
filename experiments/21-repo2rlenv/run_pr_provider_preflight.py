@@ -42,7 +42,7 @@ def check_task(task, acceptance):
 
 def config(task, output, agent):
     provider = os.environ.get('BIOTASKS21_PROVIDER_MODULE', 'pr_provider_environment')
-    if provider not in {'pr_provider_environment', 'lcc_provider_environment', 'scaler_provider_environment', 'history_provider_environment', 'alpha_provider_environment'}:
+    if provider not in {'pr_provider_environment', 'lcc_provider_environment', 'scaler_provider_environment', 'history_provider_environment', 'alpha_provider_environment', 'prdiff_provider_environment'}:
         raise ValueError('Unreviewed provider module')
     return TrialConfig.model_validate({
         'task': {'path': str(task.resolve())}, 'trial_name': agent,

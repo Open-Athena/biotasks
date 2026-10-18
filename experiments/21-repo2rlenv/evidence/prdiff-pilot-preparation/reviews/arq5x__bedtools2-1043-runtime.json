@@ -1,0 +1,20 @@
+{
+  "task_id": "repo2rlenv-pr-diff/9200bfce2ef88cd9d9f538e201b3a0a92c906c9e840344a3317e14b6be6a08ac",
+  "changed_assets": [
+    "environment/Dockerfile",
+    "task.toml"
+  ],
+  "asset_sha256": {
+    "task.toml": "434649852307e7d97d7d9e9ae3c104e1abce3d4fc9cf004929b4b9952d4173cb",
+    "instruction.md": "30ffa6670990b30615ff8203d1cc876563550700ba0b3f9c84cd51469979727c",
+    "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+    "solution/patch.diff": "bba467d939da139ed1f8d1845c1a4cf663af707da867b32183e702c6745566fb",
+    "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706",
+    "tests/test.sh": "7ecc7a19a4e4224e5cd98054915a3eada935a4ea7119af43ef0a4651f2dd59d2",
+    "tests/oracle.patch": "bba467d939da139ed1f8d1845c1a4cf663af707da867b32183e702c6745566fb",
+    "tests/instruction.md": "30ffa6670990b30615ff8203d1cc876563550700ba0b3f9c84cd51469979727c",
+    "environment/Dockerfile": "d37d6d249d1da66c09d51af32339ad259b66ae34c91741e3f4191751b9bc185f"
+  },
+  "dockerfile_append": "\n# Solver runtime tooling: installed at build time; learner remains offline.\nRUN apt-get update && apt-get install -y --no-install-recommends tmux && rm -rf /var/lib/apt/lists/* \\\n    && tmux -V > /opt/terminus-tool-version.txt\n",
+  "task_toml_append": "\n# Research runtime adaptation: both phases inherit this offline baseline.\n[environment]\nnetwork_mode = \"no-network\"\n"
+}

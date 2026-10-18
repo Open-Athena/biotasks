@@ -1,0 +1,103 @@
+{
+  "stage": "prepared_for_native_runtime_controls",
+  "status": "runtime_validation_pending",
+  "task": "arq5x__bedtools2-999",
+  "task_id": "repo2rlenv-pr-diff/3b23a1da6b10d59230f3ccdc9065551af1c903a873fde4e0a63ac81bb7d22b17",
+  "repository": "arq5x/bedtools2",
+  "base": "8c0d2cc3921ea15796205e80387983677cc6827f",
+  "source_reference": "https://github.com/arq5x/bedtools2/pull/999",
+  "native_reward_kind": "diff_similarity",
+  "reward": {
+    "kind": "native_patch_similarity",
+    "range": [
+      0,
+      1
+    ]
+  },
+  "asset_sha256": {
+    "environment/Dockerfile": "f72aebade83c5c23ce2d3d3928c9eb44ecf9fa141f607c2341184426da0f8d44",
+    "instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+    "solution/patch.diff": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+    "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+    "task.toml": "e753d18d198ccff35fcf5ad718c67b241c787484162caad5e8a6b43a09b35ac9",
+    "tests/instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+    "tests/oracle.patch": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+    "tests/test.sh": "82e4bb818a776146da2d6d5d8da15c90ba2017f4561b0c0a5539f971521ba532",
+    "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+  },
+  "runtime_asset_sha256": {
+    "task.toml": "0bd8ea6807b906c17b8d9e4cc01cd101964db3110ae4d2b64f425dfebcd9987b",
+    "instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+    "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+    "solution/patch.diff": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+    "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706",
+    "tests/test.sh": "82e4bb818a776146da2d6d5d8da15c90ba2017f4561b0c0a5539f971521ba532",
+    "tests/oracle.patch": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+    "tests/instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+    "environment/Dockerfile": "044b6be3fa8a7f0c5e548a11ea924f9330183d97c8e8dc342ec6d07ec6ca71cb"
+  },
+  "asset_modes": {
+    "environment/Dockerfile": 420,
+    "instruction.md": 420,
+    "solution/patch.diff": 420,
+    "solution/solve.sh": 493,
+    "task.toml": 420,
+    "tests/instruction.md": 420,
+    "tests/oracle.patch": 420,
+    "tests/test.sh": 493,
+    "tests/verifier.py": 420
+  },
+  "independent_pure_controls": {
+    "oracle": {
+      "reward": 1.0,
+      "components": {
+        "format_valid": 1.0,
+        "size_sanity": 1.0,
+        "file_targeting": 1.0,
+        "region_overlap": 1.0,
+        "similarity": 1.0,
+        "llm_judge": null
+      }
+    },
+    "empty": {
+      "reward": 0.0,
+      "components": {
+        "format_valid": 0.0,
+        "size_sanity": 0.0,
+        "file_targeting": 0.0,
+        "region_overlap": 0.0,
+        "similarity": 0.0,
+        "llm_judge": null
+      }
+    },
+    "unrelated": {
+      "reward": 0.035555555555555556,
+      "components": {
+        "format_valid": 1.0,
+        "size_sanity": 0.2222222222222222,
+        "file_targeting": 0.0,
+        "region_overlap": 0.0,
+        "similarity": 0.0,
+        "llm_judge": null
+      }
+    },
+    "reversed_changes": {
+      "reward": 0.88,
+      "components": {
+        "format_valid": 1.0,
+        "size_sanity": 1.0,
+        "file_targeting": 1.0,
+        "region_overlap": 1.0,
+        "similarity": 0.4,
+        "llm_judge": null
+      }
+    }
+  },
+  "patch_application": "patch_applies",
+  "limitations": [
+    "Native score measures oracle-patch similarity, not functional correctness or biological inference.",
+    "Reference patch application was checked on exact base text files; runtime controls remain pending.",
+    "Native weights can award substantial structural credit to reversed changes; no pass/fail interpretation.",
+    "Biopython selection includes documentation; scikit-bio GPU-dispatch task does not execute or validate a GPU."
+  ]
+}
