@@ -1,0 +1,21 @@
+{
+  "stage": "native_equivalence_controller_backend_preflight",
+  "status": "native_controller_docker_unavailable",
+  "native_module_sha256": {
+    "repo2rlenv.bootstrap.docker": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+    "repo2rlenv.pipelines.equivalence_tests": "59bda89c506326f3f754d5a2f0a03e0081fe4e4a3b0f65f337c0c9dfbc51badf"
+  },
+  "docker_binary_present": false,
+  "native_docker_availability_check": false,
+  "availability_exception_type": "FileNotFoundError",
+  "native_model_and_docker_calls_run_on_same_caller": true,
+  "model_calls": 0,
+  "worker_allocations": 0,
+  "task_generation_attempts": 0,
+  "scope": "Same pinned native pipeline/backend requirement for both Python panel repositories; not repository-specific build evidence.",
+  "limitations": [
+    "Does not test inference or move credentials to a tool sandbox.",
+    "Does not test any additional transport/proxy/colocation adaptation.",
+    "Learner-visible native reference remains a separate curation limitation even if backend becomes available."
+  ]
+}
