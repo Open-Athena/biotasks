@@ -46,6 +46,7 @@ def main():
             "code-instruct-validation",
             "biopython-cve",
             "biopython-commit",
+            "skbio-commit",
             "biopython-pr",
             "skbio-pr",
             "skbio-pr-compiled",
@@ -65,6 +66,9 @@ def main():
     parser.add_argument("--config", type=Path)
     parser.add_argument("--validation-repo", choices=("biopython", "scikit-bio"), default="biopython")
     args = parser.parse_args()
+    if args.stage == 'skbio-commit':
+        from replay_skbio_commit import check_inputs
+        check_inputs(Path(__file__).resolve().parent/'evidence/skbio-commit-intake')
     if args.stage in ("smith-controls", "flow-controls", "code-instruct-validation") and (
         args.generation_archive is None or args.issues is None
     ):
@@ -223,6 +227,14 @@ def main():
                 )
             unpack = ""
             entry = "/work/native/replay_biopython_pr.py "
+        elif args.stage == "skbio-commit":
+            worker.upload(root / "replay_skbio_commit.py", "/work/native/replay_skbio_commit.py")
+            worker.upload(root / "skbio-commit.Dockerfile", "/work/native/Dockerfile")
+            for filename in ("commit-71912.json", "commit-71912.diff"):
+                worker.upload(root / "evidence/skbio-commit-intake" / filename,
+                              "/work/native/" + filename)
+            unpack = ""
+            entry = "/work/native/replay_skbio_commit.py "
         elif args.stage == "biopython-commit":
             worker.upload(
                 root / "replay_biopython_commit.py", "/work/native/replay_biopython_commit.py"

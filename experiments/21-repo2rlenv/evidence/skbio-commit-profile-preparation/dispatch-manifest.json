@@ -1,0 +1,74 @@
+{
+  "stage": "prepared_not_submitted",
+  "run": "skbio-commit-01",
+  "recipe": "commit_runtime/native",
+  "repository": "scikit-bio",
+  "base": "2d071fdfa75037d6da24ca0a4f00eaa7c568cbf1",
+  "fix": "71912bf097087f23e97ae8f11d234d0d5286f6ae",
+  "required_slots": 2,
+  "model_calls": 0,
+  "selected_source_limit": 1,
+  "campaign_target": 3,
+  "campaign_candidate_ceiling": 10,
+  "prior_native_eligible_attempts": 0,
+  "timeout_sec": 7200,
+  "resource_profile": {
+    "cpus": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "budget_reserved": false,
+  "files": [
+    {
+      "name": "capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "name": "evidence/skbio-commit-intake/commit-71912.diff",
+      "bytes": 9798,
+      "sha256": "39752db1ddb4328dc6004cfc6599b3d07426dad061bcb4671757a338d9808a51"
+    },
+    {
+      "name": "evidence/skbio-commit-intake/commit-71912.json",
+      "bytes": 973,
+      "sha256": "38c7f4a7495a55b09f6ea1dd7367b162302ab1879ce860ef2bd99808b8ac1241"
+    },
+    {
+      "name": "glm_remote.py",
+      "bytes": 1953,
+      "sha256": "ae23516a3a724126a5de8be3b8b8cb9704794d4ee142511ae2bc439f0e4e0ee3"
+    },
+    {
+      "name": "preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "name": "replay_skbio_commit.py",
+      "bytes": 6607,
+      "sha256": "f65500bf52f15ee558afe73e1f26c56125face7e8a792005c679768c1593fac2"
+    },
+    {
+      "name": "repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "name": "run_smith_controls.py",
+      "bytes": 20475,
+      "sha256": "6ba16a61ab2d4f8d830ccfefbb73d0a05951539360b6ded4c3c443d55770e556"
+    },
+    {
+      "name": "skbio-commit.Dockerfile",
+      "bytes": 898,
+      "sha256": "f2bcb319bb2bf13c5710831a1c74a01d5f34bfb29481c17db7a5ebdca722f9de"
+    }
+  ],
+  "intervention": "Explicit baseline Docker profile; restore hash-recorded baseline compiled extensions only for the exact reviewed pure-Python patch. No native metadata/structural filter bypass, no test patch editing and no model synthesis.",
+  "limits": [
+    "Prepared source calibration only; no Docker build, native Git mining, functional test, export or acceptance yet",
+    "One selected source is not the full three-target/ten-candidate first pass",
+    "Credits/charges unverified; separate budget/capacity/checkpoint gate still required"
+  ]
+}
