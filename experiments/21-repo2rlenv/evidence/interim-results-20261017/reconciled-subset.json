@@ -203,6 +203,111 @@
       "candidate_allowance_consumed": 10,
       "source": "evidence/code-instruct-capture-diagnosis/candidate-budget-reconciliation.json",
       "outcome": "inconclusive_capture_failure"
+    },
+    {
+      "run": "biopython-author-02",
+      "recipe": "swe_smith",
+      "repository": "biopython",
+      "authoring_candidates_attempted": 3,
+      "schema_valid_authored": 1,
+      "authoring_candidate_ids": [
+        "4902268da47d9dc37e81",
+        "affa856111b757ea6a2a",
+        "e4027e396d2357882bc7"
+      ],
+      "exports": 1,
+      "exported_candidate_ids": [
+        "e4027e396d2357882bc7"
+      ],
+      "preserved_model_responses": 4,
+      "input_tokens": 6816,
+      "combined_output_tokens": 472935,
+      "reasoning_tokens": 471638,
+      "source": "evidence/biopython-author-02/summary.json",
+      "export_source": "evidence/biopython-smith-controls-02/summary.json",
+      "scope": "Joins saved candidate authoring to subsequent native exports; repeated validation/adaptations are not new generated candidates. Earlier token-limit diagnostic calls are excluded.",
+      "mutation_candidates_attempted": 4,
+      "executable_mutation_contrasts": 3,
+      "contrast_source": "evidence/biopython-smith-02/summary.json"
+    },
+    {
+      "run": "skbio-author-03",
+      "recipe": "swe_smith",
+      "repository": "scikit-bio",
+      "authoring_candidates_attempted": 3,
+      "schema_valid_authored": 2,
+      "authoring_candidate_ids": [
+        "0e17fb52981f3f272561",
+        "3cd37b06ec9a972757c3",
+        "e3fc0018c5332295d4ab"
+      ],
+      "exports": 2,
+      "exported_candidate_ids": [
+        "3cd37b06ec9a972757c3",
+        "e3fc0018c5332295d4ab"
+      ],
+      "preserved_model_responses": 4,
+      "input_tokens": 5145,
+      "combined_output_tokens": 321836,
+      "reasoning_tokens": 317647,
+      "source": "evidence/skbio-author-03/summary.json",
+      "export_source": "evidence/skbio-smith-controls-02/summary.json",
+      "scope": "Joins saved candidate authoring to subsequent native exports; repeated validation/adaptations are not new generated candidates. Earlier token-limit diagnostic calls are excluded.",
+      "mutation_candidates_attempted": 3,
+      "executable_mutation_contrasts": 3,
+      "contrast_source": "evidence/skbio-smith-02/summary.json"
+    },
+    {
+      "run": "biopython-flow-author-01",
+      "recipe": "swe_flow",
+      "repository": "biopython",
+      "authoring_candidates_attempted": 3,
+      "schema_valid_authored": 3,
+      "authoring_candidate_ids": [
+        "5a16004c2d7522727d44",
+        "4e4e60d7b36914ae432d",
+        "68531686a46a16006a58"
+      ],
+      "exports": 1,
+      "exported_candidate_ids": [
+        "5a16004c2d7522727d44"
+      ],
+      "preserved_model_responses": 6,
+      "input_tokens": 19370,
+      "combined_output_tokens": 17209,
+      "reasoning_tokens": 14873,
+      "source": "evidence/biopython-flow-author-01/summary.json",
+      "export_source": "evidence/biopython-flow-controls-01/summary.json",
+      "scope": "Joins saved candidate authoring to subsequent native exports; repeated validation/adaptations are not new generated candidates. Earlier token-limit diagnostic calls are excluded.",
+      "pre_authoring_candidate_attempts": null,
+      "pre_authoring_attempt_limit": "Not inferred from the three selected authoring records"
+    },
+    {
+      "run": "skbio-flow-author-01",
+      "recipe": "swe_flow",
+      "repository": "scikit-bio",
+      "authoring_candidates_attempted": 3,
+      "schema_valid_authored": 3,
+      "authoring_candidate_ids": [
+        "d86a2e7a9853ecd4b5eb",
+        "3708e0e3d5e89cd5ba4a",
+        "c80f6a9306c83c7db638"
+      ],
+      "exports": 3,
+      "exported_candidate_ids": [
+        "d86a2e7a9853ecd4b5eb",
+        "3708e0e3d5e89cd5ba4a",
+        "c80f6a9306c83c7db638"
+      ],
+      "preserved_model_responses": 6,
+      "input_tokens": 15933,
+      "combined_output_tokens": 39009,
+      "reasoning_tokens": 33651,
+      "source": "evidence/skbio-flow-author-01/summary.json",
+      "export_source": "evidence/skbio-flow-controls-01/summary.json",
+      "scope": "Joins saved candidate authoring to subsequent native exports; repeated validation/adaptations are not new generated candidates. Earlier token-limit diagnostic calls are excluded.",
+      "pre_authoring_candidate_attempts": null,
+      "pre_authoring_attempt_limit": "Not inferred from the three selected authoring records"
     }
   ],
   "solver_rows": [
@@ -587,6 +692,16 @@
     "evidence/endless-biological-02/model-usage.json": "02e9c6e9929b46e2da0474ee2ee86ffea34bba603593ead655be85e9f3d19d77",
     "evidence/parent-evolution-build-01/result-summary.json": "5c7e9f65654ce4a21120c277a60039102020c3182a96637afd7260b56b3c1f70",
     "evidence/code-instruct-capture-diagnosis/candidate-budget-reconciliation.json": "09b73bda8e58ebc92db17c3cb6ae284d2696b66a6999074e9f4a5b4c2fb16abc",
+    "evidence/biopython-author-02/summary.json": "503823f3b367880a3ade0f6e25c4d517cb2d86faaffca16705fd1cca47c20aef",
+    "evidence/biopython-smith-controls-02/summary.json": "6790a1504a0536e19bd6197fc89347788ad773b799b324f701b5a69974e975a3",
+    "evidence/biopython-smith-02/summary.json": "74a06f8f1000631d9520c854b7006822aab9ac10b96b671c463dc408aebc805c",
+    "evidence/skbio-author-03/summary.json": "b1541e47b984009210fef4074f99df693de18e7a98472d0a150d255e5f6da524",
+    "evidence/skbio-smith-controls-02/summary.json": "2f137063d87bfbb2098e30626e2852da185e1e31eb422dbb36dd1fca40c60a1a",
+    "evidence/skbio-smith-02/summary.json": "1f4add7363bd3015036c768f8cb6af17ad28e8d52722738ddaf7ce0c9f2cf348",
+    "evidence/biopython-flow-author-01/summary.json": "6ce825c23cc2ba88460dc142b3e4d43b4e291f16f45bda4487a5e2c337eb2045",
+    "evidence/biopython-flow-controls-01/summary.json": "c69d681aebea990013aab8b61bb94ac68f3c1316be82b2948f29bc020480cda8",
+    "evidence/skbio-flow-author-01/summary.json": "3200dda6c879fd59b93713d65911b4cc11eac20043c84f1ace400d06406de23f",
+    "evidence/skbio-flow-controls-01/summary.json": "88f2ac3e18e3d656d133a291ba078787dac10c19045feeccbe9362a337228163",
     "evidence/pr-blind-solver-01/summary.json": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76",
     "evidence/lcc-blind-solver-01/summary.json": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80",
     "evidence/scaler-blind-solver-01/summary.json": "cdb30a191e5979ef8588624b71f6e34df8cfcd89f9b9ff8e18c2f02729d9fbf3",
@@ -598,7 +713,6 @@
     "evidence/esty_ci-independent-02/native-summary.json": "dde18e5548ea91776d87facb808759da19d0a39d4ab912cee52f2ecc7c856c33",
     "evidence/gc-skew-independent-01/review.json": "cd83201b8c8e0b9f3a46ea139255b6534784178df7d4573402760548c91a476a",
     "evidence/gc-skew-independent-01/native-summary.json": "f5769525e4317e4323655a1d63739705365c76a485ff4917d9494422a31c2ed6",
-    "evidence/biopython-flow-controls-01/summary.json": "c69d681aebea990013aab8b61bb94ac68f3c1316be82b2948f29bc020480cda8",
     "evidence/biopython-flow-controls-02/native-summary.json": "bac215c4c823b90fd01c4d5af96fbdf95485984e10c6a82d6807981523024879",
     "evidence/esty_ci-independent-01/summary.json": "b9fb87d9a3394b1a0405b444e0dd1a15397e2fe7295360e5f268021ae37abe7a",
     "evidence/scaler-provider-01/status.json": "a9469394a6b4e321e00a2b5b8b76e23a1810cdaf5b9f0cd32163bdbb3d403ef6",

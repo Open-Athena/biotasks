@@ -95,6 +95,34 @@ def build():
                      'preserved_model_responses':None,'input_tokens':None,'combined_output_tokens':None,'reasoning_tokens':None,
                      'candidate_allowance_consumed':cohort['candidate_allowance_conservatively_consumed'],
                      'source':path,'outcome':cohort['outcome']})
+    for run,recipe,repo,export_run,contrast_run in [
+        ('biopython-author-02','swe_smith','biopython','biopython-smith-controls-02','biopython-smith-02'),
+        ('skbio-author-03','swe_smith','scikit-bio','skbio-smith-controls-02','skbio-smith-02'),
+        ('biopython-flow-author-01','swe_flow','biopython','biopython-flow-controls-01',None),
+        ('skbio-flow-author-01','swe_flow','scikit-bio','skbio-flow-controls-01',None)]:
+        path=f'evidence/{run}/summary.json';author=read(path)
+        export_path=f'evidence/{export_run}/summary.json';export=read(export_path)
+        outcomes=author['records'];calls=author['raw_calls']
+        exported_ids=([x['candidate_id'] for x in export['records']]
+                      if 'records' in export else [export['candidate_id']])
+        assert set(exported_ids)<=set(x['candidate_id'] for x in outcomes)
+        row={'run':run,'recipe':recipe,'repository':repo,
+             'authoring_candidates_attempted':len(outcomes),
+             'schema_valid_authored':sum(x['status']=='authored' for x in outcomes),
+             'authoring_candidate_ids':[x['candidate_id'] for x in outcomes],
+             'exports':len(exported_ids),'exported_candidate_ids':exported_ids,
+             'preserved_model_responses':len(calls),**tokens([x['usage'] for x in calls]),
+             'source':path,'export_source':export_path,
+             'scope':'Joins saved candidate authoring to subsequent native exports; repeated validation/adaptations are not new generated candidates. Earlier token-limit diagnostic calls are excluded.'}
+        if contrast_run:
+            contrast_path=f'evidence/{contrast_run}/summary.json';contrast=read(contrast_path)
+            row.update(mutation_candidates_attempted=contrast['attempted'],
+                       executable_mutation_contrasts=contrast['execution_passed'],
+                       contrast_source=contrast_path)
+        else:
+            row['pre_authoring_candidate_attempts']=None
+            row['pre_authoring_attempt_limit']='Not inferred from the three selected authoring records'
+        rows.append(row)
     solvers=[]
     for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})

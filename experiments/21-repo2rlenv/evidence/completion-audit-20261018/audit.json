@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-18T01:19:08.934896+00:00",
+  "observed_utc": "2026-10-18T01:22:42.606899+00:00",
   "objective": "finish #21",
   "completion_proven": false,
   "scope": {
@@ -13,7 +13,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "10122d193dec770b220435022db41fa9991ef182b928b68a9294d801df6f2c4b"
+          "sha256": "a4fca25284c41f050cb36d410d793297a8eacb41e07db4b8fe987464b40c4478"
         }
       ],
       "finding": "24 matrix rows cover executable/native/research and planned routes; final source/status reconciliation still needed."
@@ -24,7 +24,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "10122d193dec770b220435022db41fa9991ef182b928b68a9294d801df6f2c4b"
+          "sha256": "a4fca25284c41f050cb36d410d793297a8eacb41e07db4b8fe987464b40c4478"
         },
         {
           "path": "evidence/skbio-commit-intake/intake-summary.json",
@@ -43,7 +43,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "10122d193dec770b220435022db41fa9991ef182b928b68a9294d801df6f2c4b"
+          "sha256": "a4fca25284c41f050cb36d410d793297a8eacb41e07db4b8fe987464b40c4478"
         },
         {
           "path": "budget-reconciliation-20261016.json",
@@ -128,7 +128,7 @@
       "evidence": [
         {
           "path": "applicability.csv",
-          "sha256": "10122d193dec770b220435022db41fa9991ef182b928b68a9294d801df6f2c4b"
+          "sha256": "a4fca25284c41f050cb36d410d793297a8eacb41e07db4b8fe987464b40c4478"
         },
         {
           "path": "evidence/parent-evolution-build-01/result-summary.json",
@@ -187,9 +187,13 @@
         {
           "path": "hf-swegen-provider-01-upload-receipt.json",
           "sha256": "5c24a1d261aea32998ac952a1a692cd72c2edb92ec0762e5ecb4f6e41f5d69a5"
+        },
+        {
+          "path": "hf-swe-next-provider-01-upload-receipt.json",
+          "sha256": "a7b7e20521c577991c6174fab3b46077a5b78774bf6591768af007c65e60603d"
         }
       ],
-      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime snapshot prepared but not uploaded at this checkpoint."
+      "finding": "All three new SCALER solver snapshots and recent completed runs have verified public snapshots. All thirty native R2E requests/receipts are retained in a corrected append-only appendix. Active-run artifacts and historical retention/mode audit remain pending; historical capture losses remain explicit unknowns. SWE-gen fresh runtime snapshot anonymously verified; SWE-Next runtime and final rejection snapshot anonymously verified27 objects/28 members."
     },
     {
       "requirement": "full_funnel_usage_and_worker_time",
@@ -197,7 +201,7 @@
       "evidence": [
         {
           "path": "evidence/interim-results-20261017/reconciled-subset.json",
-          "sha256": "353f87d196ca0d9c8847eec0432de80cfefc332a33262fc4f3f0fd93c1f25325"
+          "sha256": "98a3e677cc9df6aaab8ffdd18adceea8cfb6b633b4f58ec7fc0bfc7aaf44f099"
         },
         {
           "path": "budget-reconciliation-20261016.json",
@@ -208,7 +212,7 @@
           "sha256": "dd842a79a113beb79a341d1c05f5f5dee0c72aacdbe49e052016dadf53f420fd"
         }
       ],
-      "finding": "Subset has13 generation/materialization,11 validation,5 solver rows,three acceptance rejections and38 hashed sources. Twenty retained Iris controller timings collected, excluding other historical controllers and Daytona worker lifetimes; full funnel/manual intervention/billing reconciliation incomplete."
+      "finding": "Subset expanded to17 generation/materialization,11 validation,5 solver rows,three acceptance rejections and47 hashed sources. Source authoring and subsequent native exports are joined explicitly. Twenty retained Iris controller timings exclude other historical controllers and Daytona lifetimes; complete funnel/manual intervention/billing reconciliation incomplete."
     },
     {
       "requirement": "final_conclusions_and_issue_closure",
@@ -216,22 +220,26 @@
       "evidence": [
         {
           "path": "comparison-draft.md",
-          "sha256": "582e693db783123269df807a11aff6aa0ea2572a86ffb6705f0af0e6cedaa60d"
+          "sha256": "3f3812722c0f208c9413225eac3765c766f0f882aa33841d924fb42e3a8aba07"
         }
       ],
       "finding": "Research branch remains permanent/unmerged. Remaining applicable execution, acceptance and final comparison prevent a conclusion or issue closure."
     }
   ],
-  "active_or_submitted_run": null,
+  "active_or_submitted_run": {
+    "run": "r2e-gym-provider-01",
+    "job_id": "/exedev/biotasks21-r2e-gym-provider-20261017-01",
+    "stage": "no_model_provider_runtime_probe",
+    "live_state_requires_refresh": true
+  },
   "next_priority": [
-    "Submit reserved R2E-Gym runtime probe after checkpoint; predecessor SWE-Next is terminal and all four sandboxes independently absent",
+    "Observe/recover the existing R2E-Gym provider probe and independently verify cleanup before successors; no duplicate submission",
     "Complete remaining task instruction/tolerance reviews and fresh runtime probes, then score any newly accepted tasks once",
     "Execute remaining applicable repository/cohort work within original caps; broader sequence-feature profile is prepared but unsubmitted",
     "Reconcile complete funnel, source terms, model/worker usage, manual interventions and artifact coverage",
     "Publish bounded conclusions only after requirements are actually resolved"
   ],
   "prepared_next_runs": [
-    "r2e-gym-provider-01",
     "esty-ci-provider-01",
     "observed-features-provider-01"
   ]

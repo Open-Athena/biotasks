@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:19 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:23 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -40,7 +40,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirteen generation/materialization rows, eleven validation rows and five solver rows to thirty-eight hashed source records, with three explicit final acceptance rejections. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links seventeen generation/materialization rows, eleven validation rows and five solver rows to forty-seven hashed source records, with three explicit final acceptance rejections. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -82,3 +82,5 @@ The three scikit-bio history exports share byte-identical grader and wrapper cod
 Controller timing observation: [twenty retained Iris task records](evidence/controller-timing-reconciliation-20261018/controller-times.json) total 3.6901667 controller wall hours, all terminal at capture. This excludes other historical jobs and separate Daytona workers, and is not verified billed usage. Fresh SWE-gen runtime evidence is [publicly verified](hf-swegen-provider-01-upload-receipt.json); SWE-Next runtime controls also passed 0/1 with cleanup verified, but final instruction acceptance is rejected. Campaign estimates/holds are $673 of the approved $1,000 ceiling; credits and actual charges remain unverified.
 
 Final acceptance review rejects the unchanged SWE-gen and SWE-Next scikit-bio instructions for expanding the M-step requirement beyond native regression coverage ([SWE-gen](evidence/history-final-acceptance/swe-gen-skbio-01/review.json), [SWE-Next](evidence/history-final-acceptance/swe-next-skbio-01/review.json)). The E-step-only case remains an observed full native reward, not a failure of the supplied reproducer. The portable PR-runtime task has a narrower instruction and remains accepted. [QCP review](evidence/qcp-final-acceptance/review.json) rejects an unjustified ordinary-input precision contract; no new offset-control score is claimed. These rejected originals need no blind solver attempt.
+
+Four added source-authoring rows join saved candidate records to native exports: Biopython SWE-smith authored1/3 and exported1 (four prior mutation attempts, three contrasts); scikit-bio SWE-smith authored2/3 and exported2; Biopython SWE-flow authored3/3 and exported1, with two incomplete instructions rejected before export; scikit-bio SWE-flow authored3/3 and exported3. These are stage counts, not four independent end-to-end yield estimates, and exclude earlier token-limit diagnostic calls. Source hashes and preserved response usage are in the linked subset.
