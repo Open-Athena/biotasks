@@ -47,6 +47,7 @@ def main():
         worker.upload(args.inputs_archive, '/work/native/inputs.tar.gz')
         worker.upload(Path('run_robbins_native_controls.py'), '/work/native/run_robbins_native_controls.py')
         worker.upload(Path('prepare_pr_correctness_controls.py'), '/work/native/prepare_pr_correctness_controls.py')
+        worker.upload(Path('pack_robbins_evidence.py'), '/work/native/pack_robbins_evidence.py')
         setup = worker.exec(['sh', '-c', 'set -eu; cd /work/native; tar -xzf source.tar.gz; mkdir inputs; tar -xzf inputs.tar.gz -C inputs; uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee >/evidence/native/setup.log 2>&1'], timeout=600)
         record['setup_returncode'] = setup.returncode
         setup.checked('locked runtime install')
@@ -60,9 +61,19 @@ def main():
         save_record(args.campaign / 'result.json', record)
         if worker is not None:
             try:
+                compact = worker.exec(['sh', '-c', 'if [ -f /evidence/native/robbins/control-manifest.json ]; then /work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/pack_robbins_evidence.py --root /evidence/native/robbins >/evidence/native/canonical-pack.log 2>&1; fi'], timeout=180)
+                record['canonical_storage_returncode'] = compact.returncode
+                save_record(args.campaign / 'result.json', record)
+                compact.checked('retain one complete task and verified control deltas')
+                for remote, local in [('summary.json', 'native-control-summary.json'), ('canonical-task-storage.json', 'canonical-task-storage.json')]:
+                    source = '/evidence/native/robbins/' + remote
+                    if worker.exec(['test', '-f', source], timeout=30).returncode == 0:
+                        worker.download(source, args.campaign / local)
                 packed = worker.exec(['sh', '-c', 'tar -czf /work/native-evidence.tar.gz -C /evidence native && stat -c %s /work/native-evidence.tar.gz'], timeout=120)
                 packed.checked('preserve partial native evidence')
                 size = int(packed.stdout.strip())
+                record['native_evidence_candidate_bytes'] = size
+                save_record(args.campaign / 'result.json', record)
                 if size > 128 * 1024**2:
                     raise ValueError('Native evidence exceeds frozen capture bound')
                 worker.download('/work/native-evidence.tar.gz', args.campaign / 'native-evidence.tar.gz')

@@ -1,0 +1,18 @@
+{
+  "stage": "evidence_capture_failure_not_scientific_outcome",
+  "native_worker_returncode_reported": 0,
+  "native_controls_durably_verified": false,
+  "native_export_count": null,
+  "native_control_rewards": null,
+  "archive_failure": "Native evidence exceeded the fixed128MiB capture bound. Original native archive was not downloaded before the finally-block cleanup.",
+  "exception_type": "ValueError",
+  "original_authoring_and_generation_inputs_preserved": true,
+  "new_model_calls": 0,
+  "new_candidate_charge": 0,
+  "finding": "Do not infer control outcomes or admission from worker returncode0. The runner creates redundant full task copies; retain one full task plus verified lossless control deltas before a separately labeled model-free validation repeat.",
+  "limits": [
+    "Exact oversize byte count was not journaled in run01 and is unavailable.",
+    "All native rewards remain unmeasured from durable evidence.",
+    "Repeat does not reset model or candidate allowances."
+  ]
+}
