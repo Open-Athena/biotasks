@@ -60,6 +60,9 @@ def build():
             if selection.exists():
                 planned = json.loads(selection.read_text())
                 charge = planned['conservative_allowance_after_selection']
+                numba_profile = ROOT / 'pr-runtime-skbio-numba-next/manifest.json'
+                if numba_profile.exists():
+                    charge = json.loads(numba_profile.read_text())['conservative_allowance_after_selection']
                 cap_note = 'Conservative charge: two historical native execution profiles for one PR2633 lineage, plus frozen PR2630/2636 selected inputs. New selection counts even if a native filter/execution rejects it; no reset or new independent lineage inferred from repeat profiles.'
                 next_action = 'Use retained native exports: PR2630 needs portable full/partial/incorrect/alternative graded controls; PR2636 original CPU profile is unaccepted, with separately planned optional Numba CPU coverage. Blind solving awaits approved model connectivity.' if (ROOT / 'skbio-pr-runtime-native-01/recovery.json').exists() else 'Run frozen model-free native PR cohort, then independent validation.'
         if route == 'pr_runtime/native' and unit['repository'] == 'biopython/biopython':

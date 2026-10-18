@@ -1,0 +1,531 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index bbcc2c6e5..a0d8430a7 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -109,6 +109,7 @@
+ * Sped up `BPTree` navigation by declaring its compiled kernel's methods `noexcept`, which removes a GIL acquisition whenever an internal search returns its "not found" value. `lca`, `rmq`, `rMq`, `height`, `level_ancestor` and `parent` are about 2× faster (1.5–3× across tree shapes and sizes), and `shear` is about 6× faster ([#2618](https://github.com/scikit-bio/scikit-bio/pull/2618)).
+ * On a GPU, `BPTree`'s batch operations are an order of magnitude faster than the multithreaded CPU engines on large batches, with the queries on the device: 8–21× on a million-tip tree, and `cophenet` about 24× on 20,000 tips when the matrix stays on the device. A GPU call has a fixed cost of a fraction of a millisecond, so batches of fewer than about 10<sup>4</sup>–10<sup>5</sup> queries remain faster on the CPU. A tree on a GPU uses about 40 bytes per node of device memory for its topology and navigation index, and no more host memory than a tree on the host ([#2628](https://github.com/scikit-bio/scikit-bio/pull/2628)).
+ * `BPTree.cophenet` with `endpoints` checks the names for duplicates in linear rather than quadratic time ([#2629](https://github.com/scikit-bio/scikit-bio/pull/2629)).
++* `BPTree`'s batch operations and `cophenet` work out their compute engine once per call, and probe for the Numba GPU extension once per process, rather than on every call; for a small batch on a GPU tree, this was a large part of the call ([#2636](https://github.com/scikit-bio/scikit-bio/pull/2636)).
+ 
+ ### Bug Fixes
+ 
+@@ -121,6 +122,8 @@
+ * Fixed `BPTree` failing to construct a single-node tree ([#2618](https://github.com/scikit-bio/scikit-bio/pull/2618)).
+ * Fixed `BPTree`'s forward search reading past the end of its range min-max tree when a search starting in the last block of parentheses found nothing, e.g. for `level_next` of the root. The results were correct, but the read is undefined, and in a GPU kernel it can fault ([#2632](https://github.com/scikit-bio/scikit-bio/pull/2632)).
+ * Fixed `BPTree.preorder_select` counting its ranks from 0, while `preorder_rank` counts from 1, so that it did not invert `preorder_rank` (given a node's rank, it returned the next node in preorder) and read past the end of the tree's index for the last node. Ranks now count from 1 for both, as for `postorder_rank` and `postorder_select`, and both selects return -1 for a rank outside 1 to the number of nodes rather than read outside the index. The asymmetry came from the layout of the select index inherited from improved-octo-waddle, which now holds the positions of each parenthesis with no leading entry ([#2632](https://github.com/scikit-bio/scikit-bio/pull/2632)).
++* Fixed `BPTree`'s batch operations and `cophenet` on a GPU turning the GPU off for the rest of the process after a call ran out of device memory. That call now runs on the CPU, with a warning, and later calls still use the GPU ([#2636](https://github.com/scikit-bio/scikit-bio/pull/2636)).
++* Fixed `BPTree`'s batch operations and `cophenet` running their GPU kernels on the current GPU rather than the GPU of the tree's data, e.g. for a tree moved with `to_device(cupy, 1)`. Queries on a GPU other than the tree's now raise `ValueError` ([#2636](https://github.com/scikit-bio/scikit-bio/pull/2636)).
+ * Fixed `BPTree`'s navigation methods recursing forever, or reading outside the tree's arrays, for a position outside the tree, such as the -1 that `parent` returns for the root (e.g. `first_child(parent(0))` hung). They now return -1 for such a position (`is_tip` and `is_ancestor` return False) ([#2635](https://github.com/scikit-bio/scikit-bio/pull/2635)).
+ * Fixed the Numba functions of `skbio.tree.bp.numba` reading outside the tree's arrays for a position outside the tree, such as the -1 that `parent` returns for the root. They now return -1 for it (`is_tip` and `is_ancestor` return False), as the `BPTree` methods do ([#2635](https://github.com/scikit-bio/scikit-bio/pull/2635)).
+ * Fixed `BPTree` accepting a topology array that is not a single tree, e.g. with bytes other than 0 and 1, a closing parenthesis before its opening one, or several trees in a row, which its navigation then read outside its arrays for. It now raises `ValueError`, naming the first position at fault ([#2635](https://github.com/scikit-bio/scikit-bio/pull/2635)).
+diff --git a/skbio/tree/bp/_bp.py b/skbio/tree/bp/_bp.py
+index 64309966b..e5b88bb18 100644
+--- a/skbio/tree/bp/_bp.py
++++ b/skbio/tree/bp/_bp.py
+@@ -19,14 +19,21 @@
+ import array_api_compat as aac
+ 
+ from skbio._base import SkbioObject
+-from skbio._config import _resolve_engine
++from skbio._config import _resolve_engine, get_config
+ from skbio.io.descriptors import Read, Write
+ from skbio.stats.distance import DistanceMatrix
+ from skbio.tree._exception import DuplicateNodeError, MissingNodeError
+ from skbio.util._array import _get_backend_name, _to_numpy
+ 
+ from . import _bp_cy, _bp_gpu, _bp_numba
+-from ._gpu import _mark_gpu_unavailable, _numba_gpu_module_for
++from ._gpu import (
++    _device_index,
++    _mark_gpu_unavailable,
++    _numba_gpu_module_for,
++    _out_of_memory,
++    _use_device,
++    _warn_out_of_memory,
++)
+ from ._bp_cy import _BPKernel
+ from ._bp_numba import NUMBA_AVAILABLE
+ 
+@@ -240,7 +247,10 @@ class BPTree(SkbioObject):
+       and a Numba GPU extension for it is installed (numba-cuda-mlir, or the
+       deprecated numba-cuda, on CUDA; numba-hip on ROCm). Otherwise, or if the GPU
+       kernel cannot be built on the system (which is warned about once), they
+-      run on the host.
++      run on the host. A call that runs out of device memory runs on the host,
++      with a warning, and later calls still run on the GPU.
++    - On a GPU, they run on the device of ``data``, whichever device is current;
++      queries on another GPU raise a :class:`ValueError`.
+     - The batch operations return their result in the array backend and on
+       the device of their queries, and :meth:`cophenet` a distance matrix in
+       those of ``data``.
+@@ -1330,9 +1340,18 @@ def height(self, i):
+     # Batch operations (computed by the selected engine)
+     # ------------------------------------------------------------------
+ 
++    def _engine(self, engine):
++        """The compute engine to run on: ``engine`` resolved, as by its callers.
++
++        What ``"fast"`` resolves to is worked out only when it is asked for.
++        """
++        if engine is None:
++            engine = get_config("compute_engine")
++        fast = self._fast_engine() if engine == "fast" else None
++        return _resolve_engine(engine, _ENGINES, fast=fast)
++
+     def _run(self, kernel, engine, *args):
+-        """Run a batch kernel of the selected compute engine on this tree."""
+-        engine = _resolve_engine(engine, _ENGINES, fast=self._fast_engine())
++        """Run a batch kernel of a resolved compute engine on this tree."""
+         if engine == "numba":
+             return getattr(_bp_numba, kernel)(_bp_numba.bp_arrays(self), *args)
+         return getattr(_bp_cy, kernel)(self._kernel, *args)
+@@ -1416,10 +1435,18 @@ def _batch(self, kernel, engine, positions, levels=None):
+         place and host queries are uploaded; otherwise the queries are computed
+         on the host, from a copy if they are on a device.
+         """
+-        engine = _resolve_engine(engine, _ENGINES, fast=self._fast_engine())
++        engine = self._engine(engine)
+         shape, args, xp, device = self._queries(positions, levels)
+         gpu = self._gpu_module(engine)
+         if gpu is not None:
++            # the kernel runs on the GPU of the tree, where queries on a GPU
++            # must be too
++            index = _device_index(self._array)
++            if xp is not None and _device_index(args[0]) not in (None, index):
++                raise ValueError(
++                    "The queries are on GPU %d, but the tree is on GPU %d."
++                    % (_device_index(args[0]), index)
++                )
+             # the result goes straight into an array of the queries' backend if
+             # that is on the device too
+             out = None
+@@ -1428,18 +1455,24 @@ def _batch(self, kernel, engine, positions, levels=None):
+                 if not hasattr(out, "__cuda_array_interface__"):
+                     out = None
+             try:
+-                res = _bp_gpu.run_batch(
+-                    gpu,
+-                    _get_backend_name(aac.array_namespace(self._array)),
+-                    _bp_gpu.tree_arrays(gpu, self),
+-                    kernel,
+-                    args,
+-                    out,
+-                )
+-            except Exception:
+-                # the kernel could not build or run on this stack: warn once
+-                # and compute this and later calls on the CPU
+-                _mark_gpu_unavailable(self._array)
++                with _use_device(gpu, index):
++                    res = _bp_gpu.run_batch(
++                        gpu,
++                        _get_backend_name(aac.array_namespace(self._array)),
++                        _bp_gpu.tree_arrays(gpu, self),
++                        kernel,
++                        args,
++                        out,
++                    )
++            except Exception as exc:
++                if _out_of_memory(exc):
++                    # this call does not fit on the device: compute it on the
++                    # CPU, and later calls still on the GPU
++                    _warn_out_of_memory(self._array)
++                else:
++                    # the kernel could not build or run on this stack: warn
++                    # once and compute this and later calls on the CPU
++                    _mark_gpu_unavailable(self._array)
+             else:
+                 if xp is None:
+                     return res.reshape(shape)
+@@ -1668,7 +1701,7 @@ def cophenet(self, endpoints=None, use_length=True, engine=None):
+         xp, device = self._xp, self._device
+         # resolved before the early return below, so an unsupported or
+         # unavailable engine is rejected whatever the number of tips
+-        engine = _resolve_engine(engine, _ENGINES, fast=self._fast_engine())
++        engine = self._engine(engine)
+         if tips.size < 2:
+             # no pairs; an empty condensed vector would expand to 1 x 1
+             matrix = np.zeros((tips.size, tips.size))
+@@ -1713,9 +1746,10 @@ def _tip_distances_gpu(self, gpu, tips, slot, parent, end, dist):
+         """The cophenetic matrix computed on the tree's device, or None.
+ 
+         None if the kernel cannot build or run, after which the caller (and
+-        every later call) computes on the CPU. The matrix is allocated by the
+-        tree's array backend; failing that (e.g. out of device memory) raises
+-        a :class:`MemoryError` rather than falling back.
++        every later call) computes on the CPU, or if the call runs out of
++        device memory, after which only this call does. The matrix is
++        allocated by the tree's array backend; failing that (e.g. out of
++        device memory) raises a :class:`MemoryError` rather than falling back.
+         """
+         n = tips.shape[0]
+         xp, device = self._xp, self._device
+@@ -1733,19 +1767,23 @@ def _tip_distances_gpu(self, gpu, tips, slot, parent, end, dist):
+         selected[tips] = 1
+         begin = np.cumsum(selected) - selected
+         try:
+-            matrix = _bp_gpu.tip_distances(
+-                gpu,
+-                _get_backend_name(aac.array_namespace(self._array)),
+-                tips,
+-                slot,
+-                parent,
+-                begin,
+-                end,
+-                dist,
+-                out,
+-            )
+-        except Exception:
+-            _mark_gpu_unavailable(self._array)
++            with _use_device(gpu, _device_index(self._array)):
++                matrix = _bp_gpu.tip_distances(
++                    gpu,
++                    _get_backend_name(aac.array_namespace(self._array)),
++                    tips,
++                    slot,
++                    parent,
++                    begin,
++                    end,
++                    dist,
++                    out,
++                )
++        except Exception as exc:
++            if _out_of_memory(exc):
++                _warn_out_of_memory(self._array)
++            else:
++                _mark_gpu_unavailable(self._array)
+             return None
+         if out is None and xp is not None:
+             matrix = xp.asarray(matrix, device=device)
+@@ -1860,8 +1898,9 @@ def numba_arrays(self, gpu=None):
+         ----------
+         gpu : module, optional
+             A Numba GPU module (``numba_cuda_mlir.cuda`` or ``numba.cuda`` on
+-            NVIDIA, ``numba.hip`` on AMD) to place the arrays on that module's
+-            current device. By default they stay on the host, for CPU code.
++            NVIDIA, ``numba.hip`` on AMD) to place the arrays on a GPU: that of
++            the tree's data if it is on one, else the module's current device.
++            By default they stay on the host, for CPU code.
+ 
+         Returns
+         -------
+diff --git a/skbio/tree/bp/_bp_gpu.py b/skbio/tree/bp/_bp_gpu.py
+index be37b129f..aaff31604 100644
+--- a/skbio/tree/bp/_bp_gpu.py
++++ b/skbio/tree/bp/_bp_gpu.py
+@@ -31,7 +31,7 @@
+ import numpy as np
+ 
+ from . import _bp_numba
+-from ._gpu import _TPB, _get_kernel, _sync_stream
++from ._gpu import _TPB, _device_index, _get_kernel, _sync_stream, _use_device
+ 
+ # Compiled kernels, by backend name (see ``_get_kernel``).
+ _kernels = {}
+@@ -152,12 +152,14 @@ def tree_arrays(gpu, tree):
+     """The :class:`._bp_numba.BPArrays` of a tree on the device.
+ 
+     Uploaded from the tree's host index, which the device index would equal,
+-    and cached on the tree per GPU module.
++    and cached on the tree per GPU module: to the GPU of the tree's data, or
++    the module's current device for a tree on the host.
+     """
+     cache = tree._gpu_arrays
+     name = gpu.__name__
+     if name not in cache:
+-        cache[name] = _bp_numba.bp_arrays(tree, asarray=gpu.to_device)
++        with _use_device(gpu, _device_index(tree._array)):
++            cache[name] = _bp_numba.bp_arrays(tree, asarray=gpu.to_device)
+     return cache[name]
+ 
+ 
+diff --git a/skbio/tree/bp/_gpu.py b/skbio/tree/bp/_gpu.py
+index f58928097..6e9b6636a 100644
+--- a/skbio/tree/bp/_gpu.py
++++ b/skbio/tree/bp/_gpu.py
+@@ -16,6 +16,8 @@
+ unavailable or fails to build on the running stack.
+ """
+ 
++from contextlib import contextmanager
++from functools import lru_cache
+ from warnings import warn
+ 
+ import array_api_compat as _aac
+@@ -79,8 +81,14 @@ def _numba_gpu_module_for(arr):
+     return _available_module("numba", want)
+ 
+ 
++@lru_cache(maxsize=None)
+ def _available_module(package, name):
+-    """Return ``package.name`` if it imports and reports a usable GPU, else None."""
++    """Return ``package.name`` if it imports and reports a usable GPU, else None.
++
++    Cached, as what is installed does not change within a process: an import
++    that fails, e.g. of a GPU extension that is not installed, is otherwise
++    attempted again on every batch call.
++    """
+     try:
+         mod = getattr(__import__(package, fromlist=[name]), name)
+     except Exception:
+@@ -124,6 +132,48 @@ def _sync_stream(arr):
+             cupy.cuda.get_current_stream().synchronize()
+ 
+ 
++def _device_index(arr):
++    """The index of the GPU holding ``arr``, or None if it is not on a GPU.
++
++    For a CuPy array or a PyTorch tensor on a CUDA or ROCm device. A PyTorch
++    tensor on ``"cuda"``, with no index, is on PyTorch's current device.
++    """
++    if arr is None or not hasattr(arr, "__cuda_array_interface__"):
++        return None
++    try:
++        name = _get_backend_name(_aac.array_namespace(arr))
++    except TypeError:
++        return None
++    if name == "cupy":
++        return arr.device.id
++    if name == "torch":
++        index = arr.device.index
++        if index is None:
++            import torch
++
++            index = torch.cuda.current_device()
++        return index
++    return None
++
++
++@contextmanager
++def _use_device(gpu, index):
++    """Make GPU ``index`` the current device of the Numba GPU module ``gpu``.
++
++    The module uploads arrays to, and launches kernels on, its current device:
++    device 0 unless selected. A tree's arrays and kernels must be on the GPU
++    of its data, and its queries on that GPU too. Nothing is selected for an
++    index of None (data on the host), or for a module without the ``gpus``
++    list of devices.
++    """
++    gpus = getattr(gpu, "gpus", None)
++    if index is None or gpus is None:
++        yield
++        return
++    with gpus[index]:
++        yield
++
++
+ def _mark_gpu_unavailable(arr):
+     """Record that ``arr``'s backend cannot run the BPTree kernels this process.
+ 
+@@ -142,6 +192,34 @@ def _mark_gpu_unavailable(arr):
+         )
+ 
+ 
++def _out_of_memory(exc):
++    """Whether ``exc`` reports that a GPU ran out of memory.
++
++    CuPy raises a ``MemoryError``, PyTorch a ``torch.OutOfMemoryError`` ("CUDA
++    out of memory"), and the Numba GPU modules a driver error naming
++    ``CUDA_ERROR_OUT_OF_MEMORY`` (``hipErrorOutOfMemory`` on ROCm). Matched by
++    message, as each library raises its own class.
++    """
++    if isinstance(exc, MemoryError):
++        return True
++    return "outofmemory" in "".join(str(exc).replace("_", " ").lower().split())
++
++
++def _warn_out_of_memory(arr):
++    """Warn that one call did not fit in the memory of ``arr``'s device.
++
++    Unlike a kernel that cannot run (see :func:`_mark_gpu_unavailable`), this
++    is a property of the call, e.g. a batch larger than the free memory: that
++    call is computed on the CPU, and later calls still use the GPU.
++    """
++    name = _get_backend_name(_aac.array_namespace(arr))
++    warn(
++        f"The GPU of the '{name}' backend ran out of memory for this BPTree "
++        "operation; computing it on the CPU instead.",
++        UserWarning,
++    )
++
++
+ def _get_kernel(cache, builder, gpu, backend_name):
+     """Return the compiled kernels for a Numba GPU module, building them once.
+ 
+diff --git a/skbio/tree/tests/bp/test_bp.py b/skbio/tree/tests/bp/test_bp.py
+index d58867c47..e838598eb 100644
+--- a/skbio/tree/tests/bp/test_bp.py
++++ b/skbio/tree/tests/bp/test_bp.py
+@@ -1301,6 +1301,69 @@ def test_to_device_invalid_backend(self):
+             with self.assertRaisesRegex(TypeError, 'not a supported array backend'):
+                 bp.to_device(xp)
+ 
++    @array_backends("numpy", "jax", "torch", "cupy")
++    def test_kernels_on_the_tree_gpu(self, xp, device):
++        # the index is uploaded to, and the kernels run on, the GPU of the
++        # tree's data, whichever device is current; queries on another GPU
++        # are rejected. With one GPU, the tree is made to report GPU 1, and
++        # the selection is recorded rather than made
++        name = _get_backend_name(xp)
++        if device in (None, "cpu") or name not in ("cupy", "torch"):
++            self.skipTest("needs a CuPy or PyTorch array on a GPU")
++        host = self.host[2]
++        bp = self.on(xp, device, host)
++        if bp._gpu_module("numba") is None:
++            self.skipTest("no Numba GPU module for this device")
++        self.assertEqual(_gpu._device_index(bp.data), 0)
++        real = _gpu._device_index
++        selected = []
++
++        @contextlib.contextmanager
++        def record(gpu, index):
++            selected.append(index)
++            yield
++
++        def index(arr):
++            return 1 if arr is bp._array else real(arr)
++
++        with mock.patch('skbio.tree.bp._bp._device_index', index), \
++                mock.patch.object(_bp_gpu, '_device_index', index), \
++                mock.patch('skbio.tree.bp._bp._use_device', record), \
++                mock.patch.object(_bp_gpu, '_use_device', record):
++            i = np.flatnonzero(host.data)
++            npt.assert_array_equal(
++                bp.lca_batch(i, i[::-1].copy(), engine='numba'),
++                host.lca_batch(i, i[::-1].copy()))
++            npt.assert_array_equal(_to_numpy(bp.cophenet(engine='numba').data),
++                                   host.cophenet().data)
++            # queries on GPU 0 for a tree on GPU 1
++            queries = self.make_array(xp, device, i, dtype=xp.int64)
++            with self.assertRaisesRegex(ValueError, 'on GPU 0, but the tree'):
++                bp.lca_batch(queries, queries, engine='numba')
++        # the upload (once), the batch, and cophenet's matrix
++        self.assertTrue(selected)
++        self.assertEqual(set(selected), {1})
++
++    @array_backends("numpy", "jax", "torch", "cupy")
++    def test_out_of_memory_recognized(self, xp, device):
++        # an allocation the device cannot hold, through the Numba GPU module
++        # and through the backend, raises an error told apart from a kernel
++        # that cannot run
++        name = _get_backend_name(xp)
++        if device in (None, "cpu") or name not in ("cupy", "torch"):
++            self.skipTest("needs a CuPy or PyTorch array on a GPU")
++        bp = self.on(xp, device, self.host[2])
++        gpu = bp._gpu_module("numba")
++        if gpu is None:
++            self.skipTest("no Numba GPU module for this device")
++        ns, dev = aac.array_namespace(bp.data), aac.device(bp.data)
++        huge = 1 << 42  # 4 TiB
++        for alloc in (lambda: gpu.device_array(huge, dtype=np.uint8),
++                      lambda: ns.empty(huge, dtype=ns.uint8, device=dev)):
++            with self.assertRaises(Exception) as cm:
++                alloc()
++            self.assertTrue(_gpu._out_of_memory(cm.exception), repr(cm.exception))
++
+     @array_backends("numpy", "jax", "torch", "cupy")
+     def test_non_default_stream(self, xp, device):
+         # queries made, cast and read on a stream of their own: PyTorch does
+@@ -1422,6 +1485,72 @@ def test_cophenet_fallback(self):
+             obs = self.bp.cophenet(engine='numba')
+         npt.assert_array_equal(obs.data, self.bp.cophenet(engine='cython').data)
+ 
++    def test_out_of_memory_keeps_the_gpu(self):
++        # a call that does not fit on the device is computed on the CPU, with a
++        # warning each time, and later calls still try the GPU
++        bp = self.bp
++        n = bp.data.size
++        i = np.arange(n)
++        j = i[::-1].copy()
++        exp = bp.lca_batch(i, j, engine='cython')
++        oom = Exception('[CUresult.CUDA_ERROR_OUT_OF_MEMORY: 2] Call to cuMemAlloc '
++                        'results in CUDA_ERROR_OUT_OF_MEMORY')
++        with mock.patch.object(_bp_gpu, 'tree_arrays'), \
++                mock.patch.object(_bp_gpu, 'run_batch', side_effect=oom) as run:
++            for _ in range(2):
++                with self.assertWarnsRegex(UserWarning, 'ran out of memory'):
++                    obs = bp.lca_batch(i, j, engine='numba')
++                npt.assert_array_equal(obs, exp)
++        self.assertEqual(run.call_count, 2)
++        self.assertNotIn(self.key, _gpu._unavailable)
++
++        exp = bp.cophenet(engine='cython').data
++        with mock.patch.object(_bp_gpu, 'tip_distances', side_effect=MemoryError):
++            with self.assertWarnsRegex(UserWarning, 'ran out of memory'):
++                obs = bp.cophenet(engine='numba')
++        npt.assert_array_equal(obs.data, exp)
++        self.assertNotIn(self.key, _gpu._unavailable)
++
++    def test_use_device(self):
++        # the tree's GPU is made current for the block; nothing for data on the
++        # host, or for a module without a list of devices
++        entered = []
++
++        class Device:
++            def __init__(self, k):
++                self.k = k
++
++            def __enter__(self):
++                entered.append(self.k)
++
++            def __exit__(self, *exc):
++                entered.append(-self.k - 1)
++
++        gpu = types.SimpleNamespace(gpus=[Device(0), Device(1)])
++        with _gpu._use_device(gpu, 1):
++            self.assertEqual(entered, [1])
++        self.assertEqual(entered, [1, -2])
++        for module, index in ((gpu, None), (types.SimpleNamespace(), 1)):
++            with _gpu._use_device(module, index):
++                pass
++        self.assertEqual(entered, [1, -2])
++        self.assertIsNone(_gpu._device_index(None))
++        self.assertIsNone(_gpu._device_index(np.zeros(2)))
++
++    def test_out_of_memory_recognized(self):
++        # as raised by CuPy, PyTorch, the Numba CUDA modules and HIP
++        for exc in (MemoryError('Out of memory allocating 40,000,000,000 bytes'),
++                    RuntimeError('CUDA out of memory. Tried to allocate 37.25 GiB.'),
++                    Exception('[CUresult.CUDA_ERROR_OUT_OF_MEMORY: 2] Call to '
++                              'cuMemAlloc results in CUDA_ERROR_OUT_OF_MEMORY'),
++                    Exception('hipErrorOutOfMemory')):
++            self.assertTrue(_gpu._out_of_memory(exc), exc)
++        # other failures disable the kernels, as before
++        for exc in (Exception('CUDA_ERROR_ILLEGAL_ADDRESS'),
++                    AttributeError("'broken' has no attribute 'jit'"),
++                    RuntimeError('CUDA_ERROR_NO_BINARY_FOR_GPU')):
++            self.assertFalse(_gpu._out_of_memory(exc), exc)
++
+     def test_other_engines_stay_on_host(self):
+         # the GPU is only reached for engine="numba"
+         with warnings.catch_warnings():
+@@ -1533,6 +1662,29 @@ def test_host_tree_reaches_no_gpu(self):
+         exp = 'cython' if _bp_cy.OPENMP or not NUMBA_AVAILABLE else 'numba'
+         self.assertEqual(self.bp._fast_engine(), exp)
+ 
++    def test_fast_resolved_only_when_asked(self):
++        # what "fast" resolves to is worked out only for engine="fast", once
++        # per call, however many kernels the call runs
++        bp = self.bp
++        with mock.patch.object(bp, '_fast_engine', return_value='cython') as fast:
++            bp.lca_batch([1, 2], [3, 4], engine='cython')
++            bp.cophenet(engine='cython')
++            self.assertEqual(fast.call_count, 0)
++            bp.lca_batch([1, 2], [3, 4], engine='fast')
++            self.assertEqual(fast.call_count, 1)
++            bp.cophenet(engine='fast')
++            self.assertEqual(fast.call_count, 2)
++
++    def test_gpu_module_probe_cached(self):
++        # an import that fails (a GPU extension that is not installed) is not
++        # attempted again on every call
++        probe = _gpu._available_module
++        probe.cache_clear()
++        with mock.patch('builtins.__import__', side_effect=ImportError) as imp:
++            self.assertIsNone(probe('skbio_no_such_gpu_package', 'cuda'))
++            self.assertIsNone(probe('skbio_no_such_gpu_package', 'cuda'))
++        self.assertEqual(imp.call_count, 1)
++
+     def test_fast_runs_the_chosen_engine(self):
+         bp = self.bp
+         exp = bp._fast_engine()

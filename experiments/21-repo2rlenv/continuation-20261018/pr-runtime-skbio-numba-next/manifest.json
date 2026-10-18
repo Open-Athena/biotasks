@@ -1,0 +1,28 @@
+{
+  "stage": "prepared_not_submitted",
+  "route": "pr_runtime/native",
+  "repository": "scikit-bio/scikit-bio",
+  "profile": "optional_numba_CPU_only",
+  "target": 3,
+  "prior_admitted": 1,
+  "candidate_cap": 10,
+  "conservative_allowance_after_selection": 5,
+  "prior_conservative_charge": 4,
+  "additional_execution_profile_charge": 1,
+  "new_independent_source_lineages": 0,
+  "model_calls": 0,
+  "original_rejected_profile_preserved": "skbio-pr-runtime-native-01",
+  "candidates": [
+    {
+      "pr": 2636,
+      "profile": "pr2636/profile.json",
+      "profile_sha256": "a7fd3265943a6a6321c452c81e179743675c056d433e89685d16e364e65c7897"
+    }
+  ],
+  "limits": [
+    "Runs intended CPU NumPy/mock fallback cases gated by optional Numba.",
+    "Real GPU-specific cases remain subject to original skips; do not infer physical GPU correctness.",
+    "No instruction/grader/skip/source patch changes; original outcome is a separate baseline.",
+    "At most one independently admitted instance for this PR lineage in this route."
+  ]
+}
