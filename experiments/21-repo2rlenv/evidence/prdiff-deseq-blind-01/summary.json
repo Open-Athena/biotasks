@@ -1,0 +1,150 @@
+{
+  "stage": "blind_native_similarity_scored",
+  "cohort": "deseq",
+  "tasks": [
+    {
+      "task": "thelovelab__DESeq2-118",
+      "attempts": 1,
+      "native_similarity_reward": 0.0,
+      "task_checksum": "07058e445484d7b24c6e0c7811f65ac390427cdfa8b87dca2eb057dc151fca8b",
+      "trial_exception": null,
+      "agent_episodes": 12,
+      "completion_tokens_by_episode": [
+        183,
+        276,
+        1353,
+        495,
+        165,
+        1136,
+        382,
+        528,
+        643,
+        781,
+        776,
+        1172
+      ],
+      "input_tokens": 145060,
+      "output_tokens": 7890,
+      "cached_input_tokens": 124032,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 134.0792,
+      "reward_components": {
+        "format_valid": 0.0,
+        "size_sanity": 0.0,
+        "file_targeting": 0.0,
+        "region_overlap": 0.0,
+        "similarity": 0.0,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/thelovelab__DESeq2-118-blind-01/result.json"
+    },
+    {
+      "task": "thelovelab__DESeq2-59",
+      "attempts": 1,
+      "native_similarity_reward": 1.0,
+      "task_checksum": "44e848e7424ef5be21971590ae07173bb5cd2aa16a9cc55c057bb5a085e88a8f",
+      "trial_exception": null,
+      "agent_episodes": 6,
+      "completion_tokens_by_episode": [
+        284,
+        243,
+        682,
+        622,
+        272,
+        184
+      ],
+      "input_tokens": 38993,
+      "output_tokens": 2287,
+      "cached_input_tokens": 29760,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 96.634463,
+      "reward_components": {
+        "format_valid": 1.0,
+        "size_sanity": 1.0,
+        "file_targeting": 1.0,
+        "region_overlap": 1.0,
+        "similarity": 1.0,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/thelovelab__DESeq2-59-blind-01/result.json"
+    },
+    {
+      "task": "thelovelab__DESeq2-64",
+      "attempts": 1,
+      "native_similarity_reward": 0.504236,
+      "task_checksum": "25e7b3b0c7675ef78a13f84ee7e37731f9ab578d57e3af6d0d6bd4a930e83e10",
+      "trial_exception": null,
+      "agent_episodes": 12,
+      "completion_tokens_by_episode": [
+        280,
+        333,
+        440,
+        1479,
+        1277,
+        1896,
+        377,
+        1211,
+        811,
+        988,
+        737,
+        1192
+      ],
+      "input_tokens": 154589,
+      "output_tokens": 11021,
+      "cached_input_tokens": 139136,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 217.254354,
+      "reward_components": {
+        "format_valid": 1.0,
+        "size_sanity": 0.642857,
+        "file_targeting": 0.666667,
+        "region_overlap": 0.5,
+        "similarity": 0.206897,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/thelovelab__DESeq2-64-blind-01/result.json"
+    }
+  ],
+  "attempts": 3,
+  "accepted_similarity_tasks": 3,
+  "trial_exceptions": 0,
+  "cleanup_confirmed": true,
+  "approved_limits": {
+    "seconds_per_attempt": 900,
+    "turns": 12,
+    "output_tokens_per_response": 2048,
+    "reasoning_effort": "unset"
+  },
+  "interpretation": "Native continuous oracle-patch similarity; not functional correctness, biological performance, pass@1 or a pooled benchmark score.",
+  "public_redactions": {
+    "field": "api_base",
+    "files": [
+      "solver-status.json",
+      "trials/thelovelab__DESeq2-118-blind-01/config.json",
+      "trials/thelovelab__DESeq2-118-blind-01/lock.json",
+      "trials/thelovelab__DESeq2-118-blind-01/result.json",
+      "trials/thelovelab__DESeq2-59-blind-01/config.json",
+      "trials/thelovelab__DESeq2-59-blind-01/lock.json",
+      "trials/thelovelab__DESeq2-59-blind-01/result.json",
+      "trials/thelovelab__DESeq2-64-blind-01/config.json",
+      "trials/thelovelab__DESeq2-64-blind-01/lock.json",
+      "trials/thelovelab__DESeq2-64-blind-01/result.json"
+    ],
+    "policy": "Only private service routing fields changed in public copies; original messages, trajectories, task edits and reward evidence preserved."
+  },
+  "original_outer_archive_sha256": "e308e4e5349383d9fdbf04013fb6673a324dfe5c9434cd7d138fa8db49e3c550",
+  "public_archive_sha256": "5fed1e1cf9533c9102584e7228cc4cd638f073d46525163ba54c2692fe468046",
+  "public_archive_bytes": 160273,
+  "limitations": [
+    "Per-task episode counts are retained; no retry or solver-limit adaptation.",
+    "Native task declares no final source-tree capture; verifier score and agent/pane evidence are retained, but a separate submitted tree/diff artifact was not exported.",
+    "Original private route-bearing logs are retained privately; public JSON routing fields are explicitly redacted.",
+    "Reasoning-token breakdown and actual billed charges are unavailable; existing free GLM used."
+  ]
+}

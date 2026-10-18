@@ -69,10 +69,26 @@ def build():
     legacy=read('evidence/legacy-biopython-admission-review/review.json')
     for decision in legacy['records']:
         key=decision['pipeline']+'/native@biopython/biopython';units[key]['limitations'].append({'source':'evidence/legacy-biopython-admission-review/review.json','original_bundle_decision':decision['decision'],'reason_codes':decision['reason_codes']})
+    coverage_path='evidence/marin-structure-coverage/coverage.json';coverage=read(coverage_path)
+    assert coverage['atlas_admission_established'] is False
+    conversions=[('pr_diff/native@scikit-bio/scikit-bio',0),('pr_runtime/native@scikit-bio/scikit-bio',1),
+                 ('repo_mutate/swe_smith@biopython/biopython',2),('reasoning_synth/scaler@'+SEEDS['scaler'],3)]
+    for key,index in conversions:
+        structure=coverage['structures'][index]
+        examples=structure.get('tasks',[structure]);cases=[case for example in examples for case in example.get('cases',[])]
+        assert cases and all(case['native_reward']==case['marin_reward'] for case in cases)
+        units[key]['representative_conversion']={'source':coverage_path,'marin_revision':coverage['marin_revision'],
+            'representative':structure['representative'],'status':structure['status'],
+            'source_examples_execution_checked':len(examples),'native_marin_case_pairs':len(cases),
+            'atlas_admitted':False,'scope':'Executed source-profile/structure examples. Later learner tooling/network adaptations are separately recorded; this does not certify every current admitted runtime or public training-image availability.',
+            'limitation':structure['limitation']}
     observed=sum(bool(x['generation_records']) for x in units.values())
     for key,unit in units.items():
         unit['unit_id']=key;unit['target']=3;unit['candidate_cap']=10
         unit['current_admitted_count']=len(unit['current_admissions']);unit['completed_blind_count']=len(unit['blind_results'])
+        unit['converted_source_examples_execution_checked']=unit.get('representative_conversion',{}).get('source_examples_execution_checked',0)
+        unit['exact_current_admitted_runtime_conversion_count']=None if unit['current_admissions'] else 0
+        unit['campaign_atlas_admissions']=0
         if unit['generation_records']:unit['limitations'].append('Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown.')
     return {'stage':'retrospective_route_cohort_census_not_final_funnel','observed_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'implemented_methods':len(matrix)-len(planned),'scope_entries':len(units),'units_with_retained_generation_records':observed,
