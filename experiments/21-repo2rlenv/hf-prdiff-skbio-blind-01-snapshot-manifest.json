@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "native_similarity_blind_scored",
+  "checkpoint_commit": "631d6694b1266820ddca2f2e49ca08200e6b9f46",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "cohort": "skbio",
+  "accepted_similarity_tasks": 3,
+  "blind_attempts": 3,
+  "native_similarity_rewards": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "source_control_snapshot": "research/21-repo2rlenv/2026-10-18/54472e5b1e064425a25915589713f769ab23e9104c57c2c5d772ae734719299a",
+  "reward_semantics": "Native continuous oracle-patch similarity; not functional correctness, biological performance, pass@1 or a pooled benchmark score.",
+  "public_redactions": {
+    "field": "api_base",
+    "files": [
+      "solver-status.json",
+      "trials/scikit-bio__scikit-bio-2630-blind-01/config.json",
+      "trials/scikit-bio__scikit-bio-2630-blind-01/lock.json",
+      "trials/scikit-bio__scikit-bio-2630-blind-01/result.json",
+      "trials/scikit-bio__scikit-bio-2633-blind-01/config.json",
+      "trials/scikit-bio__scikit-bio-2633-blind-01/lock.json",
+      "trials/scikit-bio__scikit-bio-2633-blind-01/result.json",
+      "trials/scikit-bio__scikit-bio-2636-blind-01/config.json",
+      "trials/scikit-bio__scikit-bio-2636-blind-01/lock.json",
+      "trials/scikit-bio__scikit-bio-2636-blind-01/result.json"
+    ],
+    "policy": "Only private service routing fields changed in public copies; original messages, trajectories, task edits and reward evidence preserved."
+  },
+  "retention": "Retain while referenced; no automatic deletion.",
+  "eligibility": "Public upstream-derived task inputs, complete copied runtime archive with private API routing fields redacted, original messages and reward evidence unchanged, exact credential/private-route scans passed. Original route-bearing archive retained privately. No actual billing or credential material.",
+  "files": [
+    {
+      "path": "evidence/prdiff-skbio-blind-01/cleanup-verification.json",
+      "bytes": 651,
+      "sha256": "9fa7b39926fe39e623ebe2a688ffecebd166fb3290efe04ca63ba954955c44ce"
+    },
+    {
+      "path": "evidence/prdiff-skbio-blind-01/submission.json",
+      "bytes": 434,
+      "sha256": "d81638108e09449b91a8fcb52146b23a9696fc7739eb2aec2c91138630eaa0ad"
+    },
+    {
+      "path": "evidence/prdiff-skbio-blind-01/summary.json",
+      "bytes": 5093,
+      "sha256": "a5cb1439fc1100878b5ff08813b8f009fc2c2a36ab7791d3b5e835eb314afcf6"
+    },
+    {
+      "path": "frozen-inputs/acceptance.json",
+      "bytes": 1211,
+      "sha256": "29f49d418865bc0224a71e0cb202fa817e2df4603be641a2afab680548bb7215"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/cohort-tasks.tar.gz",
+      "bytes": 60812,
+      "sha256": "24ebf6359dbc6e544d60e9cfe016c4e7ad80dc8f66dcaa5a4ebfc79e89cca3ab"
+    },
+    {
+      "path": "frozen-inputs/cohort-transfer.json",
+      "bytes": 101,
+      "sha256": "f46c0eae848ceade47dc6fa7cdfe7ffb60ee14126618a5db496f2deb3655a4d0"
+    },
+    {
+      "path": "frozen-inputs/cohort.json",
+      "bytes": 1313,
+      "sha256": "60c4e6d55d17af3abadaa769b23677c505cd6bc3095731a256d1646a9132b62a"
+    },
+    {
+      "path": "frozen-inputs/controls.json",
+      "bytes": 24777,
+      "sha256": "617841052266c7e9e6588c7ff66105fca0b39d58c707aa79d60e3ab2d7890fe6"
+    },
+    {
+      "path": "frozen-inputs/glm_remote.py",
+      "bytes": 192,
+      "sha256": "06e73e980689b79d5909683133e9f97fd37d0ed43595217624c04a1f7eab9850"
+    },
+    {
+      "path": "frozen-inputs/glm_solver_settings.py",
+      "bytes": 689,
+      "sha256": "40e08884bf7417647430824c7ca90808b13ac3d9c4f3d6f2346018921a307bb7"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 2701,
+      "sha256": "627cdf854a03a107e77a2e2a1e4bff30959e9fbec4c74d33c053b3c935dd0041"
+    },
+    {
+      "path": "frozen-inputs/pr_provider_environment.py",
+      "bytes": 3235,
+      "sha256": "9499c85a14d345eae2317ba562ee40b1688207872a404c6783c57bbaabc6b177"
+    },
+    {
+      "path": "frozen-inputs/prdiff_provider_environment.py",
+      "bytes": 746,
+      "sha256": "a1f07e550ccb94c4d19ac3e1c5d9b392ff12fac78f7f0666f88cbbd6eb4ced48"
+    },
+    {
+      "path": "frozen-inputs/prdiff_runtime_input.py",
+      "bytes": 2628,
+      "sha256": "690b7297983b900551ccdb9f8794ede0cb997c08a2e9636278634d02fbf70afc"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_blind_solver.py",
+      "bytes": 3642,
+      "sha256": "f5428d821b2647c2d6aba288b347724f02fcb24f48fcf0b5eaf803570be3e7ef"
+    },
+    {
+      "path": "frozen-inputs/run_pr_provider_preflight.py",
+      "bytes": 7175,
+      "sha256": "b5d37854a562f93f58e0d5b3f6835ce9dfd72c607fd1b19bdeac226e97dddb86"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_blind_solver.py",
+      "bytes": 4548,
+      "sha256": "0b250eaab2061c7ac0f33fccfd6405768e930120663ce73daf8cfc187dd3448c"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_provider_remote.py",
+      "bytes": 3822,
+      "sha256": "784fe2b3faf251986fdd050a48e653ec6f6b01fd03ee504ca59593e99159769e"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 190210,
+      "sha256": "2937aff231ed5a53e432d86835f575dc2c646d3686558810030e3c852c717762",
+      "members": [
+        {
+          "path": "native/cleanup.json",
+          "bytes": 465,
+          "sha256": "4a00641034b48181cb10772b60feb3dfe2ffc54e0ded5948b66d4ed63d0d8bfc",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/provider.jsonl",
+          "bytes": 1566,
+          "sha256": "7543f0e95e8df15d8e5ad7ad3602751f736c5b076c561c4b44d96a2f21bf06d7",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/solver-status.json",
+          "bytes": 15302,
+          "sha256": "a7e25a2c99fd27fded6b81e54812fd74dc920e61fc58bd2e28e3e00cb2a2045e",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/agent/terminus_2.pane",
+          "bytes": 163546,
+          "sha256": "37e5b27bf55109379b7f6d7ef705c667751059f9277cfe95a7557906ddbe2f07",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/agent/trajectory.json",
+          "bytes": 96177,
+          "sha256": "cfed2f20493b960f1fab69f0a7544fb2320b093a97e41501bafad7b399dcff22",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/config.json",
+          "bytes": 702,
+          "sha256": "4310a8d72aa29aa01325551435b1efc7c759dcb02ddfde44b3e94a36ca455361",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/lock.json",
+          "bytes": 1256,
+          "sha256": "aedb038507f5e375311cd715fc83ba482bf173869dacbca156b05ce60a457fff",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/result.json",
+          "bytes": 3978,
+          "sha256": "ee58098d2dd9ef73094141f1bd86625f1ff76066fc432f674b86a0b2259ea888",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/trial.log",
+          "bytes": 1651,
+          "sha256": "7e74d40929da8917eceba2dc02def305fbe4010154f5933c8ac2882fac8da901",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2630-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "77085032af7d5314fe6b9cdf92dc7e46319076b05b47d1a785788514d67587a8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/agent/terminus_2.pane",
+          "bytes": 170671,
+          "sha256": "9d2b1032b81556e2d7a1be6114ebb958834d1a86459dd46047e1be3800fb94da",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/agent/trajectory.json",
+          "bytes": 113300,
+          "sha256": "2f0dea5dbbcf5474c3cf854e823256bec5cd3fdba76eb13502c82f7bc3c48b77",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/config.json",
+          "bytes": 702,
+          "sha256": "a9bc506f6e739a54371e207bf3b26a7fba347200c596e334725749086aa231a9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/lock.json",
+          "bytes": 1256,
+          "sha256": "7a12f61316b6119ee70a8250767bcdade26719fac5695fb4e6a565e91dd1e98f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/result.json",
+          "bytes": 3981,
+          "sha256": "7e9b394461793113decc5ddba733a9e35e92dda127f49ad9fabad80eee00bfff",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/trial.log",
+          "bytes": 1786,
+          "sha256": "de44a494ebc79398577d670b728f3c6169d769521d91c3efc17dac47c022b49b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2633-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "1a524e0192a6bec66278ffe2a0bb9212127b91d076ac2ffd3b44810eba2f02fb",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/agent/terminus_2.pane",
+          "bytes": 177854,
+          "sha256": "e58fc64270763e982052ae17112d5472c6a6a4b55e7f8407e7dd2302884d5a1c",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/agent/trajectory.json",
+          "bytes": 71933,
+          "sha256": "68e9e5ce2339b70227b62f6ae2a7d491f3fbcc9156e99a32128d8909bbf3dc81",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/config.json",
+          "bytes": 702,
+          "sha256": "6040aeebfd5cc5cec452c0438d10b5609a35b63523f42aa836356d174aa97a4a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/lock.json",
+          "bytes": 1256,
+          "sha256": "3eeea7e5076b2833a26236c660ab720e1f73182a5dc72d1e9767dfad343488e3",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/result.json",
+          "bytes": 3979,
+          "sha256": "5ca183eabb945e4f2f61a8364e254a099eb2a7a153e1c9a99ecbe4558dfd4159",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/trial.log",
+          "bytes": 1813,
+          "sha256": "4bbd635dc79d90812e3236b1669a12ef54f2dfb643e009e994aac34ce30cfaef",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/scikit-bio__scikit-bio-2636-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "9681c770d62f4a352ecefc73a3ec9094a31e52ed101c3ee6cafa5536ba69d013",
+          "mode": "0o644"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/skbio-LICENSE.txt",
+      "bytes": 1515,
+      "sha256": "bd113b93ac18e79ccf11a3f69eb3047d8af6a10bb9e9215c49af4b27301c0bd6"
+    }
+  ]
+}
