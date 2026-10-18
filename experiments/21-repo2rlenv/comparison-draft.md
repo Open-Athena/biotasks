@@ -1,6 +1,6 @@
 # Interim comparison: Repo2RLEnv biological repository pilot
 
-Status at 2026-10-18 04:05 UTC: eight accepted correctness/algorithmic tasks have eight completed blind attempts. Six additional bedtools/DESeq2 tasks are admitted only for native patch similarity; the three bedtools blind attempts have completed. DESeq2 blind attempts are pending, and Biopython/scikit-bio no-model controls are submitted, reserving four aggregate instances including controllers. The experiment and final completion audit remain open.
+Status at 2026-10-18 04:19 UTC: eight accepted correctness/algorithmic tasks have eight completed blind attempts. Twelve additional PR-diff tasks across all four repositories are admitted only for native patch similarity; the three bedtools blind attempts have completed and nine remaining blind attempts are prepared. All24 native no-model controls passed0/1 and their24 exact sandboxes are independently absent. The experiment and final completion audit remain open.
 
 The [route/cohort census](evidence/campaign-census-20261018/census.json) covers all 23 implemented methods through 68 repository/cohort scope entries; the planned Sec-bench recipe is excluded. Retained generation records map to 29 distinct execution units. Their retrospective target/candidate ceiling is 87/290, subject to applicability and operational budgets. A single total N frozen before launch is not demonstrated by the early manifests. These retrospective figures do not describe achieved tasks or an extension of candidate allowances.
 
@@ -16,6 +16,8 @@ The [route/cohort census](evidence/campaign-census-20261018/census.json) covers 
 | Three SCALER DNA edit-distance tasks | One synthetic algorithmic family | Each +1 under native -1/+1 grading | Three task instances, one family; no observed biological measurement. |
 | Three bedtools PR-diff tasks | C++ source edits, formatting and platform behavior | 0, 0.784762, 0.380675; each reached 12 episodes | Six fresh runtime no-op/reference controls passed 0/1. Admission is only for continuous patch similarity: no compilation, functional correctness, biological-performance or pass@1 claim. |
 | Three DESeq2 PR-diff tasks | R source edits for historical statistical-library changes | Pending | Six native similarity controls passed 0/1, all exact sandboxes independently absent; no R functional execution. |
+| Three Biopython PR-diff tasks | Documentation and codon-alignment convenience API edits | Prepared | Six native similarity controls0/1; no functional or biological inference claim. |
+| Three scikit-bio PR-diff tasks | ASCII sequence conversion, PR2633 underflow and GPU-dispatch edits | Prepared | Six native similarity controls0/1; shared PR2633 lineage and no GPU execution. |
 
 [Acceptance and solver records](evidence/campaign-census-20261018/census.json) preserve individual task IDs and evidence links. The eight scored tasks are not eight independent biological problems: PR2633 is shared across profiles and SCALER instances share one family. Different reward contracts and repeated lineages prevent a meaningful pooled benchmark success rate.
 
@@ -96,7 +98,9 @@ This table reproduces the 33 evidence-linked generation/materialization records,
 | r2e-gym-biopython-seqfeature-02 | 7 | 0 | 0 | 0 | 0 | 0 |
 | swe-next-biopython-broader-02 | 2 | 0 | 0 | 0 | 0 | 0 |
 
-The [reconciliation](evidence/interim-results-20261017/reconciled-subset.json) links each value to its exact source and records stage-specific counters that this compact table cannot display. Later admission decisions are overlaid in the census rather than rewriting historical generation summaries. Whole-campaign API usage, worker time and final funnels still require reconciliation; no cost-per-task or overall production yield is inferred.
+The [reconciliation](evidence/interim-results-20261017/reconciled-subset.json) links each value to its exact source and records stage-specific counters that this compact table cannot display. Later admission decisions are overlaid in the census rather than rewriting historical generation summaries. Whole-campaign API usage, separate worker time and final funnels still require reconciliation; no cost-per-task or overall production yield is inferred.
+
+The [retained controller timing inventory](evidence/controller-timing-reconciliation-20261018/campaign-controller-times.json) covers all75 server-retained issue-prefix jobs and75 finished attempt spans, totaling54884.529 seconds (15.2457 controller-hours). These spans overlap and exclude separate Daytona lifetimes; they are not campaign elapsed time, CPU utilization or billed time. Differently named/expired work is outside the prefix inventory.
 
 ## Interventions and Marin compatibility
 
@@ -112,7 +116,7 @@ At Marin pin 45a044387ccd95ab698b4a592056aadaff961540, [executed structure cover
 
 ## Current accounting and remaining work
 
-Estimates and holds are $848 of the approved $1,000 ceiling, with $152 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Both capacity claims are released after verified public archive publication. The next Biopython/scikit-bio no-model cohorts now reserve four aggregate instances. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
+Estimates and holds are $908 of the approved $1,000 ceiling, with $92 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Both capacity claims are released after verified public archive publication. Biopython/scikit-bio controllers are also terminal; their capacity claims await public archive verification. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
 
 The local retention audit maps 63 manifests: 62 match verified public receipts; one failed mode-descriptor manifest is explicitly superseded by a verified correction with identical object/member bytes and hashes. This is a local publication-history audit, not a fresh remote availability or universal source-integrity assertion. All three new PR-diff snapshots have independent anonymous-download receipts.
 

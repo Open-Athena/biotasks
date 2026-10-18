@@ -1,0 +1,728 @@
+{
+  "stage": "native_prdiff_provider_controls",
+  "cohort": "skbio",
+  "status": "passed",
+  "model_calls": 0,
+  "cases": [
+    {
+      "task": "scikit-bio__scikit-bio-2630",
+      "agent": "nop",
+      "expected_reward": 0,
+      "result": {
+        "id": "e564df22-099e-4ea1-b7a2-ee8b3f1aa0fa",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2630",
+        "trial_name": "scikit-bio__scikit-bio-2630-nop",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2630-nop",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2630"
+        },
+        "source": null,
+        "task_checksum": "8510583f3aafc755104d63fbf958caeb67936b0e13014cab48e3bc51972ce6cc",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2630",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2630-nop",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "nop",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "nop",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 0.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:09:58.064593Z",
+        "finished_at": "2026-10-18T04:10:42.965713Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:09:58.080276Z",
+          "finished_at": "2026-10-18T04:10:34.809402Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:10:34.809488Z",
+          "finished_at": "2026-10-18T04:10:34.809551Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:10:34.809651Z",
+          "finished_at": "2026-10-18T04:10:34.809747Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:10:38.898244Z",
+          "finished_at": "2026-10-18T04:10:42.865300Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2630",
+      "agent": "oracle",
+      "expected_reward": 1,
+      "result": {
+        "id": "6d604304-8efd-4816-bbc9-ec5219c784e5",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2630",
+        "trial_name": "scikit-bio__scikit-bio-2630-oracle",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2630-oracle",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2630"
+        },
+        "source": null,
+        "task_checksum": "8510583f3aafc755104d63fbf958caeb67936b0e13014cab48e3bc51972ce6cc",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2630",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2630-oracle",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "oracle",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 1.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:10:53.456662Z",
+        "finished_at": "2026-10-18T04:11:06.847730Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:10:53.457330Z",
+          "finished_at": "2026-10-18T04:10:57.618019Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:10:57.618058Z",
+          "finished_at": "2026-10-18T04:10:57.618096Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:10:57.618153Z",
+          "finished_at": "2026-10-18T04:11:00.401023Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:11:03.065993Z",
+          "finished_at": "2026-10-18T04:11:06.735749Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2633",
+      "agent": "nop",
+      "expected_reward": 0,
+      "result": {
+        "id": "7cafef31-1238-4e6a-b53b-9e3f9463a259",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2633",
+        "trial_name": "scikit-bio__scikit-bio-2633-nop",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2633-nop",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2633"
+        },
+        "source": null,
+        "task_checksum": "0a6178417241c2b4ccfcdb087f311e08e69288e1a3291018653b8ae81635f890",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2633",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2633-nop",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "nop",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "nop",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 0.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:11:17.417390Z",
+        "finished_at": "2026-10-18T04:11:52.503060Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:11:17.417904Z",
+          "finished_at": "2026-10-18T04:11:46.329646Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:11:46.329669Z",
+          "finished_at": "2026-10-18T04:11:46.329710Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:11:46.329759Z",
+          "finished_at": "2026-10-18T04:11:46.329838Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:11:48.872139Z",
+          "finished_at": "2026-10-18T04:11:52.403725Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2633",
+      "agent": "oracle",
+      "expected_reward": 1,
+      "result": {
+        "id": "221595a7-0bd4-4fbd-8d3a-4435c145b52b",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2633",
+        "trial_name": "scikit-bio__scikit-bio-2633-oracle",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2633-oracle",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2633"
+        },
+        "source": null,
+        "task_checksum": "0a6178417241c2b4ccfcdb087f311e08e69288e1a3291018653b8ae81635f890",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2633",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2633-oracle",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "oracle",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 1.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:11:58.009123Z",
+        "finished_at": "2026-10-18T04:12:09.690586Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:11:58.009635Z",
+          "finished_at": "2026-10-18T04:12:01.626629Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:12:01.626650Z",
+          "finished_at": "2026-10-18T04:12:01.626686Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:12:01.626733Z",
+          "finished_at": "2026-10-18T04:12:03.320756Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:12:05.951365Z",
+          "finished_at": "2026-10-18T04:12:09.475073Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2636",
+      "agent": "nop",
+      "expected_reward": 0,
+      "result": {
+        "id": "1b1af563-1b5c-41e0-b010-dd993d99c0d1",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2636",
+        "trial_name": "scikit-bio__scikit-bio-2636-nop",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2636-nop",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2636"
+        },
+        "source": null,
+        "task_checksum": "c8ee243077c1d2d67917b0588787bc66bcc3dbc28acdd096fb6611e4e7b6dc08",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2636",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2636-nop",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "nop",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "nop",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 0.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:12:15.297922Z",
+        "finished_at": "2026-10-18T04:12:44.848150Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:12:15.298463Z",
+          "finished_at": "2026-10-18T04:12:38.533843Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:12:38.533867Z",
+          "finished_at": "2026-10-18T04:12:38.533898Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:12:38.533941Z",
+          "finished_at": "2026-10-18T04:12:38.534004Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:12:41.212355Z",
+          "finished_at": "2026-10-18T04:12:44.749552Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2636",
+      "agent": "oracle",
+      "expected_reward": 1,
+      "result": {
+        "id": "f768b17e-b014-460b-9ea5-c929d2f62373",
+        "task_name": "Open-Athena/scikit-bio__scikit-bio-2636",
+        "trial_name": "scikit-bio__scikit-bio-2636-oracle",
+        "trial_uri": "file:///app/provider-output/trials/scikit-bio__scikit-bio-2636-oracle",
+        "task_id": {
+          "path": "/app/tasks/scikit-bio__scikit-bio-2636"
+        },
+        "source": null,
+        "task_checksum": "c8ee243077c1d2d67917b0588787bc66bcc3dbc28acdd096fb6611e4e7b6dc08",
+        "config": {
+          "task": {
+            "path": "/app/tasks/scikit-bio__scikit-bio-2636",
+            "git_url": null,
+            "git_commit_id": null,
+            "name": null,
+            "ref": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+          },
+          "trial_name": "scikit-bio__scikit-bio-2636-oracle",
+          "trials_dir": "/app/provider-output/trials",
+          "install_only": false,
+          "timeout_multiplier": 1.0,
+          "agent_timeout_multiplier": null,
+          "verifier_timeout_multiplier": null,
+          "agent_setup_timeout_multiplier": null,
+          "environment_build_timeout_multiplier": null,
+          "agent": {
+            "name": "oracle",
+            "import_path": null,
+            "model_name": null,
+            "n_concurrent": null,
+            "concurrency_group": null,
+            "skills": [],
+            "override_timeout_sec": 900.0,
+            "override_setup_timeout_sec": null,
+            "max_timeout_sec": null,
+            "resume_trajectory": false,
+            "load_trajectory": null,
+            "extra_allowed_hosts": [],
+            "kwargs": {},
+            "mcp_servers": []
+          },
+          "user_agent": null,
+          "environment": {
+            "type": null,
+            "import_path": "prdiff_provider_environment:RecordedDaytonaEnvironment",
+            "force_build": false,
+            "delete": true,
+            "cpu_enforcement_policy": "auto",
+            "memory_enforcement_policy": "auto",
+            "override_cpus": 2,
+            "override_memory_mb": 4096,
+            "override_storage_mb": 10240,
+            "override_gpus": 0,
+            "override_tpu": null,
+            "mounts": null,
+            "extra_docker_compose": [],
+            "kwargs": {},
+            "extra_allowed_hosts": []
+          },
+          "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+          },
+          "artifacts": [],
+          "extra_instruction_paths": [],
+          "extra_instructions": [],
+          "job_id": null,
+          "source_trial": null
+        },
+        "agent_info": {
+          "name": "oracle",
+          "version": "1.0.0",
+          "model_info": null
+        },
+        "agent_result": {
+          "n_input_tokens": null,
+          "n_cache_tokens": null,
+          "n_output_tokens": null,
+          "cost_usd": null,
+          "rollout_details": null,
+          "metadata": null
+        },
+        "verifier_result": {
+          "rewards": {
+            "reward": 1.0
+          }
+        },
+        "verifier_environment_mode": "shared",
+        "exception_info": null,
+        "started_at": "2026-10-18T04:12:50.492953Z",
+        "finished_at": "2026-10-18T04:13:06.943876Z",
+        "environment_setup": {
+          "started_at": "2026-10-18T04:12:50.493530Z",
+          "finished_at": "2026-10-18T04:12:58.784193Z"
+        },
+        "agent_setup": {
+          "started_at": "2026-10-18T04:12:58.784218Z",
+          "finished_at": "2026-10-18T04:12:58.784253Z"
+        },
+        "agent_execution": {
+          "started_at": "2026-10-18T04:12:58.784299Z",
+          "finished_at": "2026-10-18T04:13:00.495706Z"
+        },
+        "verifier": {
+          "started_at": "2026-10-18T04:13:03.232159Z",
+          "finished_at": "2026-10-18T04:13:06.845251Z"
+        },
+        "step_results": null
+      },
+      "judge_disabled_verified": true
+    }
+  ]
+}
