@@ -71,7 +71,15 @@ def audit(evidence, manifest, source_roots):
             assert case['passed'] and row['all_controls_passed']
             cases.append({'case': name, 'reward': reward, 'parse_status': details['parse_status'], 'F2P_passed': details['f2p_passed'], 'F2P_total': item['F2P'], 'P2P_passed': details['p2p_passed'], 'P2P_total': item['P2P']})
         records.append({'pr': pr, 'repository_key': item['repository_key'], 'portable_asset_sha256': sha, 'native_instruction_grader_reference_unchanged': True, 'control_bundles_change_only_solution_script': True, 'separate_oracle_and_grading_assets': True, 'offline_runtime_and_terminal_tooling_configured': True, 'six_controls_passed': True, 'cases': cases})
-    return {'stage': 'independent_correctness_gates_passed_public_preservation_pending', 'records': records, 'controls_executed': sum(len(x['cases']) for x in records), 'model_calls': 0, 'blind_attempts': 0, 'Atlas_admissions': 0, 'limitations': ['Public durable readback and exact sandbox cleanup are separate gates.', 'Checks cover the native test contract, not exhaustive software correctness.', 'No end-to-end grader-integrity diagnostic is claimed.', 'Parent package/OS indexes and image tags remain rebuild dependencies.', 'The PR5308 instruction reveals the five-field hash implementation; this is low-complexity software maintenance.', 'Public historical PR lineages overlap other recipe cohorts and are not independent scientific domains.']}
+    limitations = ['Public durable readback and exact sandbox cleanup are separate gates.', 'Checks cover the native test contract, not exhaustive software correctness.', 'No end-to-end grader-integrity diagnostic is claimed.', 'Parent package/OS indexes and image tags remain rebuild dependencies.', 'Public historical PR lineages overlap other recipe cohorts and are not independent scientific domains.']
+    prs = {row['pr'] for row in records}
+    if 5308 in prs:
+        limitations.append('PR5308 instruction reveals the five-field hash implementation; low-complexity software maintenance.')
+    if 2636 in prs:
+        limitations.extend(['PR2636 uses CPU mock modules, not physical GPU hardware; original PR-body implementation guidance and truncated performance section remain.', 'PR2636 alternative retains reference-patch scaffolding and rewrites the memory-error classifier; not a wholly independent implementation.'])
+    if 5316 in prs:
+        limitations.append('PR5316 is low-complexity CompoundLocation hashing with implementation guidance and shares issue5193/competency with PR5308.')
+    return {'stage': 'independent_correctness_gates_passed_public_preservation_pending', 'records': records, 'controls_executed': sum(len(x['cases']) for x in records), 'model_calls': 0, 'blind_attempts': 0, 'Atlas_admissions': 0, 'limitations': limitations}
 
 
 if __name__ == '__main__':
