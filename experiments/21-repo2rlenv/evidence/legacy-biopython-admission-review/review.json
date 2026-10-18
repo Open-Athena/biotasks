@@ -1,0 +1,261 @@
+{
+  "stage": "legacy_native_export_admission_review",
+  "observed_utc": "2026-10-18T03:47:10.505256+00:00",
+  "accepted_tasks": 0,
+  "records": [
+    {
+      "run": "biopython-pr-01",
+      "pipeline": "pr_runtime",
+      "task_id": "pr_runtime/913cda3bf41142554f84cd0f95feefa33417b26eea5c8a371cb178e4b5aacffb",
+      "repository": "biopython/biopython",
+      "base": "ead54d7b2cca66226681ee37e355f7aa783881f2",
+      "reference": "https://github.com/biopython/biopython/pull/5148",
+      "archive_sha256": "76ac69847abeabf7eebdcce6dedd4b2dc52b76f396012153813456a704d9f899",
+      "native_validation": "verified",
+      "native_f2p_count": 1,
+      "native_p2p_count": 54,
+      "exported_f2p_count": 1,
+      "exported_p2p_count": 54,
+      "from_line": "FROM biotasks21-biopython-pr",
+      "reproducibility": {
+        "mode": "local_only",
+        "image_ref": "biotasks21-biopython-pr",
+        "image_tag": "biotasks21-biopython-pr",
+        "image_visibility": "private"
+      },
+      "asset_sha256_modes": {
+        "task.toml": {
+          "sha256": "95bb6def11999022dd7d5a52c2cd2366772aa7ca7363e954d98c05d71ff100ed",
+          "mode": "0o644",
+          "bytes": 4925
+        },
+        "instruction.md": {
+          "sha256": "45ef8e1b09c6562a1d554b1ff7eb031861dd2f0528e5a7be1724115ac73b94a1",
+          "mode": "0o644",
+          "bytes": 2109
+        },
+        "solution/patch.diff": {
+          "sha256": "95df96350bdef1b1de82a276353e2dad436392b010753e46f84b2f31039f4fa5",
+          "mode": "0o644",
+          "bytes": 5579
+        },
+        "solution/solve.sh": {
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+          "mode": "0o755",
+          "bytes": 170
+        },
+        "environment/Dockerfile": {
+          "sha256": "673e57f05ab07df832b438a8d02a96f3565dccff69b7c1a0d00ac58b4a89039c",
+          "mode": "0o644",
+          "bytes": 2399
+        },
+        "environment/docker-compose.yaml": {
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1",
+          "mode": "0o644",
+          "bytes": 684
+        },
+        "tests/test.sh": {
+          "sha256": "829743621b810a3467bed26462ae617558c1711cde2230e4158f8ceb6b3061f6",
+          "mode": "0o755",
+          "bytes": 3746
+        },
+        "tests/verifier.py": {
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+          "mode": "0o644",
+          "bytes": 25401
+        },
+        "tests/f2p.json": {
+          "sha256": "9a6186b521c5416f7ecf0172d38b7b9c2417978d8adb7a662c0896920aa282f1",
+          "mode": "0o644",
+          "bytes": 89
+        },
+        "tests/p2p.json": {
+          "sha256": "575b6cd60e98beeed2d2f418bb4e9ca803cb81be4bd9bcc1f57f0f2481c9f8cf",
+          "mode": "0o644",
+          "bytes": 3029
+        }
+      },
+      "decision": "not_accepted_for_bounded_pilot",
+      "reason_codes": [
+        "portable_native_runtime_controls_not_established",
+        "independent_valid_alternative_not_established"
+      ],
+      "limits": [
+        "Source inspection and retained native evidence; no new target execution, model call or end-to-end grader diagnostic.",
+        "Local image reconstruction is retained; a new portable adaptation is possible but has not been executed.",
+        "Missing-evidence verifier fallback is a contract limitation; it is not evidence of an executed solver submission."
+      ]
+    },
+    {
+      "run": "biopython-commit-01",
+      "pipeline": "commit_runtime",
+      "task_id": "commit_runtime/39db39e4d9cf227eed1411282b9b078f96e10b09360c620ada503b288c9d66c4",
+      "repository": "biopython/biopython",
+      "base": "ead54d7b2cca66226681ee37e355f7aa783881f2",
+      "reference": "https://github.com/biopython/biopython/commit/736c96f37b190732ecca9da80ad0cb9d4967214d",
+      "archive_sha256": "aafea844b52f215b3b7accf2b4f1d644b4925bfa6917c49445ee69c269667979",
+      "native_validation": "verified",
+      "native_f2p_count": 1,
+      "native_p2p_count": 54,
+      "exported_f2p_count": 1,
+      "exported_p2p_count": 50,
+      "from_line": "FROM biotasks21-biopython-commit",
+      "reproducibility": {
+        "mode": "local_only",
+        "image_ref": "biotasks21-biopython-commit",
+        "image_tag": "biotasks21-biopython-commit",
+        "image_visibility": "private"
+      },
+      "asset_sha256_modes": {
+        "task.toml": {
+          "sha256": "85e0d3b0edd1185eed67b9993676207da2bfdcc14accd9f8c74b57e13f7ae393",
+          "mode": "0o644",
+          "bytes": 4923
+        },
+        "instruction.md": {
+          "sha256": "258233516ce5be0dfd2847c9c3eaedf8e63554864f92fcb0337c6a9576bb0d53",
+          "mode": "0o644",
+          "bytes": 1621
+        },
+        "solution/patch.diff": {
+          "sha256": "6bab267ff3f35825af07b887107341deb10801407c7fcda4e8b1f8d4b2aa2ed1",
+          "mode": "0o644",
+          "bytes": 5540
+        },
+        "solution/solve.sh": {
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+          "mode": "0o755",
+          "bytes": 170
+        },
+        "environment/Dockerfile": {
+          "sha256": "bd761a20d40b137f0222fe48891c132200d2c0f74c6100ccc99fc830aa8bdd89",
+          "mode": "0o644",
+          "bytes": 2403
+        },
+        "environment/docker-compose.yaml": {
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1",
+          "mode": "0o644",
+          "bytes": 684
+        },
+        "tests/test.sh": {
+          "sha256": "d90f8ec87cff54571c69e1c77824a6fd11ccb7b3f70a8973f30b193098e18425",
+          "mode": "0o755",
+          "bytes": 3803
+        },
+        "tests/verifier.py": {
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+          "mode": "0o644",
+          "bytes": 25401
+        },
+        "tests/f2p.json": {
+          "sha256": "9a6186b521c5416f7ecf0172d38b7b9c2417978d8adb7a662c0896920aa282f1",
+          "mode": "0o644",
+          "bytes": 89
+        },
+        "tests/p2p.json": {
+          "sha256": "62824d0d7051d1fd8c08a8d75db24e7a9735069e097e471981be3cf07b1811c9",
+          "mode": "0o644",
+          "bytes": 2785
+        }
+      },
+      "decision": "not_accepted_for_bounded_pilot",
+      "reason_codes": [
+        "portable_native_runtime_controls_not_established",
+        "independent_valid_alternative_not_established"
+      ],
+      "limits": [
+        "Source inspection and retained native evidence; no new target execution, model call or end-to-end grader diagnostic.",
+        "Local image reconstruction is retained; a new portable adaptation is possible but has not been executed.",
+        "Missing-evidence verifier fallback is a contract limitation; it is not evidence of an executed solver submission."
+      ]
+    },
+    {
+      "run": "biopython-cve-01",
+      "pipeline": "cve_patches",
+      "task_id": "cve_patches/a6a8eae5d2fbdb53491c643f574db34111dce3e44926dd989f2743a664833ed5",
+      "repository": "biopython/biopython",
+      "base": "ead54d7b2cca66226681ee37e355f7aa783881f2",
+      "reference": "https://github.com/biopython/biopython/commit/736c96f37b190732ecca9da80ad0cb9d4967214d",
+      "archive_sha256": "d6b15a6524d69cb1bfa562871f0fdc04453033587231c3e10830923388fa47c7",
+      "native_validation": "verified",
+      "native_f2p_count": 1,
+      "native_p2p_count": 54,
+      "exported_f2p_count": 1,
+      "exported_p2p_count": 50,
+      "from_line": "FROM biotasks21-biopython-cve",
+      "reproducibility": {
+        "mode": "local_only",
+        "image_ref": "biotasks21-biopython-cve",
+        "image_tag": "biotasks21-biopython-cve",
+        "image_visibility": "private"
+      },
+      "asset_sha256_modes": {
+        "task.toml": {
+          "sha256": "557482752b405e489ec28df0dda6187db46c8dec619efa86e26d51ffdaddaa78",
+          "mode": "0o644",
+          "bytes": 4803
+        },
+        "instruction.md": {
+          "sha256": "c6774d7abb8be3a7315ab6e6fcf8916b360c350ca77369625feafd0d872991bf",
+          "mode": "0o644",
+          "bytes": 744
+        },
+        "solution/patch.diff": {
+          "sha256": "95df96350bdef1b1de82a276353e2dad436392b010753e46f84b2f31039f4fa5",
+          "mode": "0o644",
+          "bytes": 5579
+        },
+        "solution/solve.sh": {
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+          "mode": "0o755",
+          "bytes": 170
+        },
+        "environment/Dockerfile": {
+          "sha256": "e8f420507cbb4686d75ab638a2b34c79d56020c3b8a5334da225926db18de60c",
+          "mode": "0o644",
+          "bytes": 2400
+        },
+        "environment/docker-compose.yaml": {
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1",
+          "mode": "0o644",
+          "bytes": 684
+        },
+        "tests/test.sh": {
+          "sha256": "829743621b810a3467bed26462ae617558c1711cde2230e4158f8ceb6b3061f6",
+          "mode": "0o755",
+          "bytes": 3746
+        },
+        "tests/verifier.py": {
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+          "mode": "0o644",
+          "bytes": 25401
+        },
+        "tests/f2p.json": {
+          "sha256": "9a6186b521c5416f7ecf0172d38b7b9c2417978d8adb7a662c0896920aa282f1",
+          "mode": "0o644",
+          "bytes": 89
+        },
+        "tests/p2p.json": {
+          "sha256": "62824d0d7051d1fd8c08a8d75db24e7a9735069e097e471981be3cf07b1811c9",
+          "mode": "0o644",
+          "bytes": 2785
+        }
+      },
+      "decision": "not_accepted_for_bounded_pilot",
+      "reason_codes": [
+        "portable_native_runtime_controls_not_established",
+        "independent_valid_alternative_not_established"
+      ],
+      "limits": [
+        "Source inspection and retained native evidence; no new target execution, model call or end-to-end grader diagnostic.",
+        "Local image reconstruction is retained; a new portable adaptation is possible but has not been executed.",
+        "Missing-evidence verifier fallback is a contract limitation; it is not evidence of an executed solver submission."
+      ]
+    }
+  ],
+  "lineage": "One Biopython historical fix represented through PR5148, fixing commit736c96f37b190732ecca9da80ad0cb9d4967214d and its advisory; three route exports are not three independent problems.",
+  "retained_verifier_diagnostic": "evidence/biopython-cve-01/verifier-checks/summary.json",
+  "existing_review": "evidence/biopython-cve-01/independent-review.md",
+  "distinction": "Native historical test validation remains verified. Independent task admission is not established; this does not invalidate the historical result or prove that a future portable profile cannot pass.",
+  "consistency": "The fallback diagnostic alone is not used as an admission rejection: portable accepted PR2633 also retains native reward semantics. These original Biopython bundles have no fresh task-level controls or valid-alternative check."
+}

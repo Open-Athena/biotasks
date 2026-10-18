@@ -1,0 +1,25 @@
+{
+  "stage": "accepted_for_bounded_similarity_pilot",
+  "cohort": "bedtools",
+  "controls_sha256": "1c17479f002e382563ba98dc2e2e7fc3eee729229a0b9764b4dc2ff8cb4d9fcf",
+  "task_checksums": {
+    "arq5x__bedtools2-1030": "0cd2e0f4a0618658a212bc6deb9a7e3dff96dbdaf654c4ac17263e2dd8dece0f",
+    "arq5x__bedtools2-1043": "bd6c1c0665649151d3aa8f1ece8d633b8f4de1ba4efc2af1e900a5a10d7b21cf",
+    "arq5x__bedtools2-999": "d7ff12c0455b45ebec6890733f5542d63587e39aa35ef8616ef0b69cb9827a41"
+  },
+  "accepted_tasks": 3,
+  "profile": "Native deterministic patch-similarity reward with declared offline policy and tmux tooling adaptation. No model judge.",
+  "evidence": [
+    "evidence/prdiff-pilot-preparation/selection.json",
+    "evidence/pr-diff-01/patch-application.json",
+    "evidence/pr-diff-01/scorer-diagnostics.json",
+    "evidence/prdiff-bedtools-provider-01/status.json",
+    "evidence/prdiff-bedtools-provider-01/cleanup-verification.json"
+  ],
+  "limitations": [
+    "Admission is for continuous patch similarity only, not functional correctness, compilation, biological reasoning, pass@1, Atlas admission or training readiness.",
+    "Pure scorer assigns substantial structural credit to reversed changes and small credit to unrelated edits. Scores must retain this meaning.",
+    "Reference text patch application and exact native runtime 0/1 controls do not establish semantic equivalence of arbitrary alternate fixes.",
+    "Image recipe uses a mutable public base tag and build-time package resolution; built runtime provenance is retained, no public pinned training image claimed."
+  ]
+}
