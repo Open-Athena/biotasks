@@ -113,6 +113,20 @@
       "source": "evidence/r2e-skbio-author-01/summary.json"
     },
     {
+      "run": "r2e-biopython-author-01",
+      "recipe": "r2e",
+      "repository": "biopython",
+      "candidates": 10,
+      "exports": 0,
+      "accepted": 0,
+      "blind_attempts": 0,
+      "preserved_model_responses": 30,
+      "input_tokens": 117063,
+      "combined_output_tokens": 955546,
+      "reasoning_tokens": 871634,
+      "source": "evidence/r2e-biopython-author-01/summary.json"
+    },
+    {
       "run": "tmax-biological-02",
       "recipe": "tmax",
       "repository": null,
@@ -211,6 +225,16 @@
       "output_tokens": 3481,
       "reasoning_tokens": null,
       "source": "evidence/lcc-blind-solver-01/summary.json"
+    },
+    {
+      "run": "scaler-blind-solver-01",
+      "attempts": 1,
+      "reward": 1.0,
+      "input_tokens": 2598,
+      "cached_input_tokens": 1728,
+      "output_tokens": 594,
+      "reasoning_tokens": null,
+      "source": "evidence/scaler-blind-solver-01/summary.json"
     }
   ],
   "validation_rows": [
@@ -256,6 +280,92 @@
       ],
       "source": "evidence/strong-independent-01/review.json",
       "control_source": "evidence/strong-independent-01/native-summary.json"
+    },
+    {
+      "run": "esty_ci-independent-02",
+      "recipe": "swe_smith",
+      "repository": "scikit-bio",
+      "lineage_group": "scikit-bio-esty-ci-reconstruction",
+      "outcome": "independent_controls_passed_runtime_review_pending",
+      "solver_eligible": false,
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "baseline",
+          "completed": true,
+          "reward": 0.0,
+          "expected_reward": 0
+        },
+        {
+          "case": "native_reference",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": 1
+        },
+        {
+          "case": "alternative_factored_variance",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": 1
+        },
+        {
+          "case": "wrong_clipped_lower",
+          "completed": true,
+          "reward": 0.0,
+          "expected_reward": 0
+        },
+        {
+          "case": "wrong_omit_doubletons",
+          "completed": true,
+          "reward": 0.0,
+          "expected_reward": 0
+        }
+      ],
+      "source": "evidence/esty_ci-independent-02/review.json",
+      "control_source": "evidence/esty_ci-independent-02/native-summary.json"
+    },
+    {
+      "run": "gc-skew-independent-01",
+      "recipe": "swe_flow",
+      "repository": "biopython",
+      "lineage_group": "biopython-gc-skew-reconstruction",
+      "outcome": "rejected_native_test_coverage",
+      "solver_eligible": false,
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "baseline",
+          "completed": true,
+          "reward": 0.0,
+          "expected_reward": 0
+        },
+        {
+          "case": "native_reference",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": 1
+        },
+        {
+          "case": "alternative_character_loop",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": 1
+        },
+        {
+          "case": "wrong_single_zero",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": null
+        },
+        {
+          "case": "wrong_zero_per_window",
+          "completed": true,
+          "reward": 1.0,
+          "expected_reward": null
+        }
+      ],
+      "source": "evidence/gc-skew-independent-01/review.json",
+      "control_source": "evidence/gc-skew-independent-01/native-summary.json"
     },
     {
       "run": "biopython-flow-controls-01",
@@ -313,6 +423,27 @@
       "native_trials_completed": 0,
       "reward": null,
       "source": "evidence/esty_ci-independent-01/summary.json"
+    },
+    {
+      "run": "scaler-provider-01",
+      "recipe": "scaler",
+      "repository": null,
+      "lineage_group": "synthetic-dna-edit-distance",
+      "outcome": "passed",
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "nop",
+          "reward": -1.0,
+          "task_checksum": "8b3adc6ce20c7e495bed8b19c3c18a6b06061849c9045df1765bf0a83db2aec5"
+        },
+        {
+          "case": "oracle",
+          "reward": 1.0,
+          "task_checksum": "8b3adc6ce20c7e495bed8b19c3c18a6b06061849c9045df1765bf0a83db2aec5"
+        }
+      ],
+      "source": "evidence/scaler-provider-01/status.json"
     }
   ],
   "source_sha256": {
@@ -323,6 +454,7 @@
     "evidence/swe-next-biopython-01/summary.json": "6196a368ac7469b78d18019cbade613788e69cb90b6734d4e9cae0dcf0662f14",
     "evidence/r2e-gym-biopython-01/summary.json": "9a22edea66b1a31bb1d6869e8051bcdb7eee9525f9bb3b945581add6e4636b24",
     "evidence/r2e-skbio-author-01/summary.json": "1fdb326cd36b2bb50cac062bea10b31c525182e4ccdf193af19695c080e87837",
+    "evidence/r2e-biopython-author-01/summary.json": "87ad014ceeaf0a0525c349bc6de16364ef99322e3bd7bef71c66dd28e231b182",
     "evidence/tmax-biological-02/tmax-result.json": "b62879d86393c4994dafd0940991febc11261781c321443f036aa8caf7655700",
     "evidence/tmax-biological-02/model-usage.json": "60d13adbf7cca48f80f9743ed4f112a655c878ef810e19a93bcca1fa83d6a3a0",
     "evidence/endless-biological-02/summary.json": "3fe0e520f765f509592513ab6e9e717830537a4c03ecbb4f7e962f254c62def6",
@@ -331,11 +463,17 @@
     "evidence/code-instruct-capture-diagnosis/candidate-budget-reconciliation.json": "09b73bda8e58ebc92db17c3cb6ae284d2696b66a6999074e9f4a5b4c2fb16abc",
     "evidence/pr-blind-solver-01/summary.json": "3503b36603cd053bcba5e4de4145ceb252e0f1d9b0f24143997b0358dd7d7a76",
     "evidence/lcc-blind-solver-01/summary.json": "5678bd23b3691bbe890f2ff80d0310813614dae512803c1705f0c95c3e276c80",
+    "evidence/scaler-blind-solver-01/summary.json": "61784604e6b1bac84cbd7cd894ec610d60a26aa813f04318ba2c52a11d6cecdf",
     "evidence/strong-independent-01/review.json": "a1bc14b580ed1a153e5158fab2a17bd8927a73632979c95d1c4efaca9373c6f5",
     "evidence/strong-independent-01/native-summary.json": "ed5adcca12c6b66f29e8e2e8b0ed9a2152d890607136234045b34816005cd828",
+    "evidence/esty_ci-independent-02/review.json": "1a4e9f1ed20d0b6ae38f615d5aef655ccd80b4cbb9b287406d1a7925c21976dc",
+    "evidence/esty_ci-independent-02/native-summary.json": "dde18e5548ea91776d87facb808759da19d0a39d4ab912cee52f2ecc7c856c33",
+    "evidence/gc-skew-independent-01/review.json": "cd83201b8c8e0b9f3a46ea139255b6534784178df7d4573402760548c91a476a",
+    "evidence/gc-skew-independent-01/native-summary.json": "f5769525e4317e4323655a1d63739705365c76a485ff4917d9494422a31c2ed6",
     "evidence/biopython-flow-controls-01/summary.json": "c69d681aebea990013aab8b61bb94ac68f3c1316be82b2948f29bc020480cda8",
     "evidence/biopython-flow-controls-02/native-summary.json": "bac215c4c823b90fd01c4d5af96fbdf95485984e10c6a82d6807981523024879",
-    "evidence/esty_ci-independent-01/summary.json": "b9fb87d9a3394b1a0405b444e0dd1a15397e2fe7295360e5f268021ae37abe7a"
+    "evidence/esty_ci-independent-01/summary.json": "b9fb87d9a3394b1a0405b444e0dd1a15397e2fe7295360e5f268021ae37abe7a",
+    "evidence/scaler-provider-01/status.json": "a9469394a6b4e321e00a2b5b8b76e23a1810cdaf5b9f0cd32163bdbb3d403ef6"
   },
   "limitations": [
     "This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.",
@@ -343,7 +481,7 @@
     "Preserved responses do not independently establish the number of dispatched requests when request capture is incomplete.",
     "Combined output tokens include reasoning. Missing reasoning breakdown remains null.",
     "PR2633 exports share one problem lineage; do not sum them as independent biological problems.",
-    "Accepted and blind counts refer to these exports; the separate portable PR-runtime profile is represented only in solver_rows.",
+    "Generation and solver rows are not joined into a campaign-wide acceptance denominator; the accepted portable PR-runtime and LCC tasks appear only in solver_rows.",
     "Validation rows are repeated controls or export adaptations, not additional generation candidates or independent problems.",
     "No overall yield, cost-per-task or benchmark success rate is computed from this incomplete subset."
   ]

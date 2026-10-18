@@ -16,7 +16,7 @@ def build():
         def total(key):
             values = [item.get(key) for item in items]
             return sum(values) if values and all(isinstance(v,int) for v in values) else None
-        reasoning = [item.get('completion_tokens_details',{}).get('reasoning_tokens') for item in items]
+        reasoning = [(item.get('completion_tokens_details') or {}).get('reasoning_tokens',item.get('reasoning_tokens')) for item in items]
         return {'input_tokens':total('prompt_tokens'), 'combined_output_tokens':total('completion_tokens'),
                 'reasoning_tokens':sum(reasoning) if reasoning and all(isinstance(v,int) for v in reasoning) else None}
     rows = []
@@ -59,11 +59,12 @@ def build():
                  'input_tokens':0,'combined_output_tokens':0,'reasoning_tokens':0,
                  'scope':'Source-filtered history records are distinct from eligible generation candidates',
                  'outcome':d['stage'],'source':path})
-    path='evidence/r2e-skbio-author-01/summary.json';d=read(path)
-    rows.append({'run':'r2e-skbio-author-01','recipe':'r2e','repository':'scikit-bio',
-                 'candidates':d['candidate_result']['candidates'],'exports':d['candidate_result']['emitted'],
-                 'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
-                 'preserved_model_responses':d['model_responses'],**tokens([d['usage']]),'source':path})
+    for run,repo in [('r2e-skbio-author-01','scikit-bio'),('r2e-biopython-author-01','biopython')]:
+        path=f'evidence/{run}/summary.json';d=read(path)
+        rows.append({'run':run,'recipe':'r2e','repository':repo,
+                     'candidates':d['candidate_result']['candidates'],'exports':d['candidate_result']['emitted'],
+                     'accepted':d['independently_accepted_tasks'],'blind_attempts':d['blind_solver_attempts'],
+                     'preserved_model_responses':d['model_responses'],**tokens([d['usage']]),'source':path})
     path='evidence/tmax-biological-02/tmax-result.json';d=read(path)
     usage_path='evidence/tmax-biological-02/model-usage.json';u=read(usage_path)
     rows.append({'run':'tmax-biological-02','recipe':'tmax','repository':None,
@@ -95,7 +96,7 @@ def build():
                      'candidate_allowance_consumed':cohort['candidate_allowance_conservatively_consumed'],
                      'source':path,'outcome':cohort['outcome']})
     solvers=[]
-    for run in ('pr-blind-solver-01','lcc-blind-solver-01'):
+    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})
         solvers.append({'run':run,'attempts':d['attempts'],'reward':d['reward'],
                         'input_tokens':d.get('input_tokens',u.get('n_input_tokens')),
@@ -103,15 +104,18 @@ def build():
                         'output_tokens':d.get('output_tokens',u.get('n_output_tokens')),
                         'reasoning_tokens':None,'source':path})
     validations=[]
-    path='evidence/strong-independent-01/review.json';review=read(path)
-    controls_path='evidence/strong-independent-01/native-summary.json';controls=read(controls_path)
-    validations.append({'run':'strong-independent-01','recipe':'swe_smith','repository':'scikit-bio',
-                        'lineage_group':'scikit-bio-strong-reconstruction',
-                        'outcome':review['acceptance'],'solver_eligible':review['solver_eligible'],
-                        'model_calls':review['model_calls'],
-                        'native_controls':[{'case':x['case'],'completed':x['completed'],'reward':x['reward'],
-                                            'expected_reward':x['expected_reward']} for x in controls['records']],
-                        'source':path,'control_source':controls_path})
+    for run,recipe,repo,lineage in [
+        ('strong-independent-01','swe_smith','scikit-bio','scikit-bio-strong-reconstruction'),
+        ('esty_ci-independent-02','swe_smith','scikit-bio','scikit-bio-esty-ci-reconstruction'),
+        ('gc-skew-independent-01','swe_flow','biopython','biopython-gc-skew-reconstruction')]:
+        path=f'evidence/{run}/review.json';review=read(path)
+        controls_path=f'evidence/{run}/native-summary.json';controls=read(controls_path)
+        validations.append({'run':run,'recipe':recipe,'repository':repo,'lineage_group':lineage,
+                            'outcome':review['acceptance'],'solver_eligible':review['solver_eligible'],
+                            'model_calls':review['model_calls'],
+                            'native_controls':[{'case':x['case'],'completed':x['completed'],'reward':x['reward'],
+                                                'expected_reward':x['expected_reward']} for x in controls['records']],
+                            'source':path,'control_source':controls_path})
     path='evidence/biopython-flow-controls-01/summary.json';failed=read(path)
     validations.append({'run':'biopython-flow-controls-01','recipe':'swe_flow','repository':'biopython',
                         'lineage_group':'biopython-gc-skew-reconstruction','outcome':failed['stage'],
@@ -131,6 +135,13 @@ def build():
                         'lineage_group':'scikit-bio-esty-ci-reconstruction','outcome':failed['status'],
                         'model_calls':failed['model_calls'],'native_trials_completed':failed['controls_executed'],
                         'reward':failed['reward'],'source':path})
+    path='evidence/scaler-provider-01/status.json';provider=read(path)
+    validations.append({'run':'scaler-provider-01','recipe':'scaler','repository':None,
+                        'lineage_group':'synthetic-dna-edit-distance','outcome':provider['status'],
+                        'model_calls':provider['model_calls'],
+                        'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
+                                            'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
+                        'source':path})
     return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,'validation_rows':validations,
             'source_sha256':sources,'limitations':[
                 'This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.',
@@ -138,7 +149,7 @@ def build():
                 'Preserved responses do not independently establish the number of dispatched requests when request capture is incomplete.',
                 'Combined output tokens include reasoning. Missing reasoning breakdown remains null.',
                 'PR2633 exports share one problem lineage; do not sum them as independent biological problems.',
-                'Accepted and blind counts refer to these exports; the separate portable PR-runtime profile is represented only in solver_rows.',
+                'Generation and solver rows are not joined into a campaign-wide acceptance denominator; the accepted portable PR-runtime and LCC tasks appear only in solver_rows.',
                 'Validation rows are repeated controls or export adaptations, not additional generation candidates or independent problems.',
                 'No overall yield, cost-per-task or benchmark success rate is computed from this incomplete subset.']}
 
