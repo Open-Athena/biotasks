@@ -1,0 +1,53 @@
+{
+  "records": [
+    {
+      "pr": 5317,
+      "stage": "independent_static_review_before_controls",
+      "instruction_sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278",
+      "native_F2P": 1,
+      "native_P2P": 8,
+      "independently_admitted": false,
+      "new_control_executions": 0,
+      "model_calls": 0,
+      "decision": "proceed_to_portable_graded_controls",
+      "notes": [
+        "Linked issue specifies transformed-coordinate alignment, not just reported RMSD. Native F2P regression checks the reported inconsistency.",
+        "Use independent Kabsch/SVD alternative, meaningful rotation/translation/RMSD errors and graded reward checks. Existing binary SWE-gen controls do not establish this native graded profile."
+      ]
+    },
+    {
+      "pr": 5310,
+      "stage": "independent_static_review_before_controls",
+      "instruction_sha256": "c8da6a1d0b2134f5d301ae6bfabe25e7e0f850458fb952bd30d8b2a11624bf6e",
+      "native_F2P": 1,
+      "native_P2P": 11,
+      "independently_admitted": false,
+      "new_control_executions": 0,
+      "model_calls": 0,
+      "decision": "rejected_instruction_verifier_disagreement",
+      "reasons": [
+        "Linked issue instruction explicitly allows return 0.0 or ValueError for empty sequences. Merged regression requires ValueError.",
+        "Returning zero is permitted by the emitted instruction but unsupported by its native oracle. Preserve original; no silent instruction restriction or oracle change."
+      ],
+      "limitations": [
+        "Source/test comparison, not a newly executed zero-return submission or measured reward."
+      ]
+    },
+    {
+      "pr": 5308,
+      "stage": "independent_static_review_before_controls",
+      "instruction_sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334",
+      "native_F2P": 4,
+      "native_P2P": 17,
+      "independently_admitted": false,
+      "new_control_executions": 0,
+      "model_calls": 0,
+      "decision": "review_hash_contract_and_portable_controls",
+      "notes": [
+        "Native PR-body fallback states hashing based on start/end/strand/ref/ref_db and equality/set consistency; no linked issue was resolved by the pinned native regex.",
+        "Check valid alternative hashing and unknown-position semantics before accepting; implementation-specific hash assumptions must not be inferred from native reference success."
+      ]
+    }
+  ],
+  "new_admissions": 0
+}

@@ -1,0 +1,22 @@
+{
+  "build_time_sec": 1.1877080500125885,
+  "dockerfile_reconstruction": "FROM python:3.12.3-slim\nENV OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 POLARS_MAX_THREADS=1 RAYON_NUM_THREADS=1\nRUN apt-get update && apt-get install -y --no-install-recommends git build-essential && rm -rf /var/lib/apt/lists/*\nWORKDIR /workspace\nRUN git init && git remote add origin https://github.com/biopython/biopython.git && git fetch --depth=1 origin dc262b5c437e07a8cc1cfb8a734c0d84a4434b23 && git checkout --detach FETCH_HEAD\nRUN python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3'\nRUN python -m pip freeze --all > /opt/baseline-freeze.txt\nRUN mkdir -p /opt/biopython-baseline-extensions && find Bio BioSQL -type f -name \"*.so\" -exec cp --parents {} /opt/biopython-baseline-extensions/ \\; && find /opt/biopython-baseline-extensions -type f -exec sha256sum {} \\; > /opt/biopython-baseline-extension-sha256.txt\n",
+  "extra": {},
+  "image_digest": "sha256:f7f4e3ff2fda23abbb29982e73540b86631cf95124412476e8e0d5fa62b1ba2f",
+  "image_tag": "biotasks21-biopython-pr-5308",
+  "iterations": 0,
+  "language": "python",
+  "llm_cost_estimate_usd": 0.0,
+  "llm_provider": "none; explicit frozen Docker profile",
+  "pushed_to_registry": false,
+  "rebuild_cmds": [],
+  "ref": "dc262b5c437e07a8cc1cfb8a734c0d84a4434b23",
+  "repo": "biopython/biopython",
+  "smoke_passed": false,
+  "test_cmds": [
+    "cp -a /opt/biopython-baseline-extensions/. /workspace/ && cd /workspace/Tests && python -m pytest -o addopts= -v --tb=short ./test_SeqFeature.py"
+  ],
+  "transcript_path": null,
+  "verify_detail": "",
+  "verify_passed": false
+}

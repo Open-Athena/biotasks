@@ -1,0 +1,789 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "native_pr_runtime_exports_not_independent_admission",
+  "checkpoint_commit": "94ce0afd0856709802e4a5145ab83d35107cd95c",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "repository": "biopython/biopython",
+  "selected_prs": [
+    5317,
+    5310,
+    5308
+  ],
+  "native_candidates": 3,
+  "native_exports": 3,
+  "model_calls": 0,
+  "independent_admissions": 0,
+  "reward": "Native graded F2P pass rate multiplied by P2P pass rate; correctness, not patch similarity.",
+  "input_lineage": "Public historical software regression cases; original issue examples and upstream tests. No inference about biological outcomes.",
+  "public_eligibility": "Public upstream code, PR/issue metadata and execution evidence, source licenses retained; exact approved credential/private-route scan passes for original decoded native/controller members and selected inputs. No private inference path used.",
+  "retention": "Retain while referenced; no automatic deletion.",
+  "files": [
+    {
+      "path": "continuation/authorization.json",
+      "bytes": 1301,
+      "sha256": "a6c073fd3a64e46a19588c09864ef39edd663cb00db2bbd5c936f9c000e2a2bb"
+    },
+    {
+      "path": "continuation/biopython-pr-runtime-continuation-01-observation.json",
+      "bytes": 712,
+      "sha256": "5a659fb23d414cd1ae7381ea9af17470d005877a997ad56cbd91329b67626398"
+    },
+    {
+      "path": "continuation/biopython-pr-runtime-continuation-01-submission.json",
+      "bytes": 755,
+      "sha256": "ce029f9895d2543891924571e8bfcfc915b6f04506085944c1da9680af87c910"
+    },
+    {
+      "path": "continuation/biopython-pr-runtime-dispatch-manifest.json",
+      "bytes": 1901,
+      "sha256": "4053ef9d49ffd5edfc7f3740e31cc5c8f9162fbddc4bfbe10d87abbbc105c630"
+    },
+    {
+      "path": "evidence/cleanup-verification.json",
+      "bytes": 196,
+      "sha256": "21dfccd3ddc6ed13c75921f2dcf577f7a4738615d998ee194d8196c266187f03"
+    },
+    {
+      "path": "evidence/cohort-summary.json",
+      "bytes": 593,
+      "sha256": "822b6b8e91489e33da55c85c40c07a762006c8ee7c396521d409647ae4a300fd"
+    },
+    {
+      "path": "evidence/controller-small-summary.json",
+      "bytes": 1362,
+      "sha256": "ea8defdc8fa12d3d03305c39d68f4f0b33191182e6df782e74259d3a08ff2410"
+    },
+    {
+      "path": "evidence/independent-static-review.json",
+      "bytes": 2450,
+      "sha256": "938744a72b602008baccdf7350b50a52335cf6efe421586000fb5522ca0e381d"
+    },
+    {
+      "path": "evidence/pr5308/bootstrap.json",
+      "bytes": 1668,
+      "sha256": "40047d3afed158794592a0b152f124e3edbdafd1062b091e1c76cf9627348a91"
+    },
+    {
+      "path": "evidence/pr5308/rendered-instruction.md",
+      "bytes": 1145,
+      "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+    },
+    {
+      "path": "evidence/pr5308/result.json",
+      "bytes": 129,
+      "sha256": "8653aab015c314ed657ef303a6014dfbc3a8847de1949ce11211d01f076edd11"
+    },
+    {
+      "path": "evidence/pr5308/validation.json",
+      "bytes": 11750,
+      "sha256": "3170a40d63ebb0bcf924ab05f078e22f3bc70fdbfadb1578812af23485c0e443"
+    },
+    {
+      "path": "evidence/pr5310/bootstrap.json",
+      "bytes": 1666,
+      "sha256": "1d0a45a52e38f97e98349f07ccc265388ab2ae3a350fd586dc63b9cbd3965e1d"
+    },
+    {
+      "path": "evidence/pr5310/rendered-instruction.md",
+      "bytes": 752,
+      "sha256": "c8da6a1d0b2134f5d301ae6bfabe25e7e0f850458fb952bd30d8b2a11624bf6e"
+    },
+    {
+      "path": "evidence/pr5310/result.json",
+      "bytes": 129,
+      "sha256": "2790f2b20d75595bf920d651ae5fb85f27059d43a951724e57d382ae4818f1f8"
+    },
+    {
+      "path": "evidence/pr5310/validation.json",
+      "bytes": 8424,
+      "sha256": "5473a29e3dd92af87216ea4cc572ca6a9f584f02227d8389c64107a32212eca8"
+    },
+    {
+      "path": "evidence/pr5317/bootstrap.json",
+      "bytes": 1677,
+      "sha256": "e2ddde24c02e0304a0eda850e2366c5108f6205634b8e953e4001817f28a49df"
+    },
+    {
+      "path": "evidence/pr5317/rendered-instruction.md",
+      "bytes": 1683,
+      "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+    },
+    {
+      "path": "evidence/pr5317/result.json",
+      "bytes": 129,
+      "sha256": "90211a1e3441ae46dc7ae22ab6318a779152fafe782980ac208e3e3628d70aeb"
+    },
+    {
+      "path": "evidence/pr5317/validation.json",
+      "bytes": 7983,
+      "sha256": "dd8a4c48c0ad04dc037b7c985bd40d26f6284125ee10b9333bfc344c9b608ecf"
+    },
+    {
+      "path": "evidence/recovery.json",
+      "bytes": 1907,
+      "sha256": "c708a9ef3f8227eb319a4cc72f54e4c65a8b561556121ed66392f48d09bbe0d2"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 1901,
+      "sha256": "4053ef9d49ffd5edfc7f3740e31cc5c8f9162fbddc4bfbe10d87abbbc105c630"
+    },
+    {
+      "path": "frozen-inputs/pr-inputs.tar.gz",
+      "bytes": 8513,
+      "sha256": "e2866a3db518ffe2c9104e1f8327150ff63443c05b6a8c823f67460318e2f08c"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/replay_pr_runtime_next.py",
+      "bytes": 10202,
+      "sha256": "b0add53822c5582548c21b4503a1559bf3873a03343cd99bf81a375700f7a968"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_runtime_trc.py",
+      "bytes": 4585,
+      "sha256": "8222ddf9904d43d35f90c43dbcf59ba37c59dae1a7243dd826f309275ea80e07"
+    },
+    {
+      "path": "frozen-inputs/run_pr_runtime_worker.py",
+      "bytes": 4609,
+      "sha256": "020439fff0c3cea6fba5f312bce1dd7335009fb474b7fb4a9dee07b4b3050481"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 72711,
+      "sha256": "a56950d14bb4862ac990a5bc28be998f91ebf5ac06855050cc8ca0aa5e4660b0",
+      "archive_format": "tar.gz",
+      "members": [
+        {
+          "path": "native/setup.log",
+          "bytes": 2913,
+          "mode": "0o644",
+          "sha256": "741cbc5c5fab932ca95069b7d3d9530bd230549f68d538338cbcf7b9447c25aa"
+        },
+        {
+          "path": "native/worker.log",
+          "bytes": 652,
+          "mode": "0o644",
+          "sha256": "790245a4d613869e9717db3c4ae443afb79fbf2c729ff245297211d9128f73bd"
+        },
+        {
+          "path": "native/cohort/cohort-summary.json",
+          "bytes": 593,
+          "mode": "0o600",
+          "sha256": "822b6b8e91489e33da55c85c40c07a762006c8ee7c396521d409647ae4a300fd"
+        },
+        {
+          "path": "native/cohort/pr5317/frozen-inputs/Dockerfile",
+          "bytes": 877,
+          "mode": "0o644",
+          "sha256": "c012d44927695b1af18a2c3046fa1044c06d932bc1e8a0412d0a4a7de3aeaadd"
+        },
+        {
+          "path": "native/cohort/pr5317/frozen-inputs/issue.json",
+          "bytes": 1530,
+          "mode": "0o644",
+          "sha256": "0239e5094a3e8955cff0285cfe58d448d36bc64e9028c024dcf5d01e9439bd96"
+        },
+        {
+          "path": "native/cohort/pr5317/frozen-inputs/pr.diff",
+          "bytes": 2039,
+          "mode": "0o644",
+          "sha256": "b09941368663304a117d51456d0e4d100e0b5d52f1e01d35b804177b8179e189"
+        },
+        {
+          "path": "native/cohort/pr5317/frozen-inputs/pr.json",
+          "bytes": 2017,
+          "mode": "0o644",
+          "sha256": "3867b5618b09bc8668b17f9922bd2533b3536d1523adc4a1c53834dfb35769a3"
+        },
+        {
+          "path": "native/cohort/pr5317/frozen-inputs/profile.json",
+          "bytes": 1957,
+          "mode": "0o644",
+          "sha256": "4c8aaa0973b366e9a41ced105122b0c90adface0fa179d0eaf73664ce5a9eb52"
+        },
+        {
+          "path": "native/cohort/pr5317/build.log",
+          "bytes": 44588,
+          "mode": "0o644",
+          "sha256": "34d36f02d16fddfb2ace873aed8e6666674809c27645bf1563439203762018bf"
+        },
+        {
+          "path": "native/cohort/pr5317/baseline-freeze.txt",
+          "bytes": 239,
+          "mode": "0o644",
+          "sha256": "8ff72a1b816a0ed46ceed3d8b3c043cca3d409721fd4c37d141516473da633b6"
+        },
+        {
+          "path": "native/cohort/pr5317/biopython-baseline-extension-sha256.txt",
+          "bytes": 2014,
+          "mode": "0o644",
+          "sha256": "6e42f2271055411fdf0bdbd7817602af9ad18e007827c86e7fa65120b453cc6b"
+        },
+        {
+          "path": "native/cohort/pr5317/source-LICENSE.txt",
+          "bytes": 3267,
+          "mode": "0o644",
+          "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+        },
+        {
+          "path": "native/cohort/pr5317/bootstrap.json",
+          "bytes": 1677,
+          "mode": "0o600",
+          "sha256": "e2ddde24c02e0304a0eda850e2366c5108f6205634b8e953e4001817f28a49df"
+        },
+        {
+          "path": "native/cohort/pr5317/recipe-options.json",
+          "bytes": 431,
+          "mode": "0o600",
+          "sha256": "7b14aaacd782b96efea5e7515b408619b8c4de6c83975f896503757b22e21023"
+        },
+        {
+          "path": "native/cohort/pr5317/candidate.json",
+          "bytes": 2017,
+          "mode": "0o600",
+          "sha256": "a38cc3396ecbeb3dedd0afbe9c56f62dd5ee16fd9641b383344b518e65fd1f49"
+        },
+        {
+          "path": "native/cohort/pr5317/rendered-instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/task.toml",
+          "bytes": 2382,
+          "mode": "0o644",
+          "sha256": "14036113e3d97c1ec4f49fd9daaa190c7c3d1f2326a29e8299af2d7997d26708"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/instruction.md",
+          "bytes": 1683,
+          "mode": "0o644",
+          "sha256": "2443815fe4856ec33e41a8b6f97a48cefbec70c36afe7d5fc80a1bb2d220f278"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/solution/patch.diff",
+          "bytes": 640,
+          "mode": "0o644",
+          "sha256": "59ada64876abbb94053c333ed1bc462d9e43184eeac3d67d9a8dcdeec8f2a3b0"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/environment/Dockerfile",
+          "bytes": 2404,
+          "mode": "0o644",
+          "sha256": "c9b71b082d7e3b2de750d47e020dfdce792e2b2abc1238ab88e962549413d296"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/environment/docker-compose.yaml",
+          "bytes": 684,
+          "mode": "0o644",
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/tests/test.sh",
+          "bytes": 2886,
+          "mode": "0o755",
+          "sha256": "b8eff85a7de19e54c2bfb8e2c94c0ef2cb36241db8a5331e12ab3e92618132f0"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/tests/f2p.json",
+          "bytes": 99,
+          "mode": "0o644",
+          "sha256": "8991296f518b42031b085f77bf53b70320ba6145cbf2fd13fb823297300857c7"
+        },
+        {
+          "path": "native/cohort/pr5317/tasks/biopython__biopython-5317/tests/p2p.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "6a7f6dd01cb067dfac553efd29c6d7c275578c0ab3585f63b034d79ae361c4ba"
+        },
+        {
+          "path": "native/cohort/pr5317/validation.json",
+          "bytes": 7983,
+          "mode": "0o600",
+          "sha256": "dd8a4c48c0ad04dc037b7c985bd40d26f6284125ee10b9333bfc344c9b608ecf"
+        },
+        {
+          "path": "native/cohort/pr5317/result.json",
+          "bytes": 129,
+          "mode": "0o600",
+          "sha256": "90211a1e3441ae46dc7ae22ab6318a779152fafe782980ac208e3e3628d70aeb"
+        },
+        {
+          "path": "native/cohort/pr5310/frozen-inputs/Dockerfile",
+          "bytes": 877,
+          "mode": "0o644",
+          "sha256": "c0016f1e765b9fba24925856b55f84e7277bdef528aebe6b72abc841b7ca2d47"
+        },
+        {
+          "path": "native/cohort/pr5310/frozen-inputs/issue.json",
+          "bytes": 590,
+          "mode": "0o644",
+          "sha256": "3251356e5b93b17329670b1075d4e930e8fcd04893bd302058cf080d75a8ea95"
+        },
+        {
+          "path": "native/cohort/pr5310/frozen-inputs/pr.diff",
+          "bytes": 1886,
+          "mode": "0o644",
+          "sha256": "5e2de31917f39860093aaa6aa86688cce3b6cc6c36befc7afbd11725102ff6ea"
+        },
+        {
+          "path": "native/cohort/pr5310/frozen-inputs/pr.json",
+          "bytes": 1583,
+          "mode": "0o644",
+          "sha256": "7036ce7a911aff798edad3f9f8044833ca8f21e0515efdba1e9e58d3a0c6dceb"
+        },
+        {
+          "path": "native/cohort/pr5310/frozen-inputs/profile.json",
+          "bytes": 1945,
+          "mode": "0o644",
+          "sha256": "d14dd08f958a18575af5fb2e626b2c533ac0faa4ac78a6ee215e6659a498ea94"
+        },
+        {
+          "path": "native/cohort/pr5310/build.log",
+          "bytes": 6110,
+          "mode": "0o644",
+          "sha256": "47a92a78ea3c66d12d0c7107c85f6d9b0e0efc15a8ad1facdc794815c952e267"
+        },
+        {
+          "path": "native/cohort/pr5310/baseline-freeze.txt",
+          "bytes": 239,
+          "mode": "0o644",
+          "sha256": "7ebc4e642603694540e69ff77ab6c6d2e1eaf0605aa84ea025c623e0de0d99e8"
+        },
+        {
+          "path": "native/cohort/pr5310/biopython-baseline-extension-sha256.txt",
+          "bytes": 2014,
+          "mode": "0o644",
+          "sha256": "6e42f2271055411fdf0bdbd7817602af9ad18e007827c86e7fa65120b453cc6b"
+        },
+        {
+          "path": "native/cohort/pr5310/source-LICENSE.txt",
+          "bytes": 3267,
+          "mode": "0o644",
+          "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+        },
+        {
+          "path": "native/cohort/pr5310/bootstrap.json",
+          "bytes": 1666,
+          "mode": "0o600",
+          "sha256": "1d0a45a52e38f97e98349f07ccc265388ab2ae3a350fd586dc63b9cbd3965e1d"
+        },
+        {
+          "path": "native/cohort/pr5310/recipe-options.json",
+          "bytes": 431,
+          "mode": "0o600",
+          "sha256": "7b14aaacd782b96efea5e7515b408619b8c4de6c83975f896503757b22e21023"
+        },
+        {
+          "path": "native/cohort/pr5310/candidate.json",
+          "bytes": 1583,
+          "mode": "0o600",
+          "sha256": "15d2053a4a2a4f3c2b212b23a1373c7cafae9959cb142f6f8eef3cb60c035c65"
+        },
+        {
+          "path": "native/cohort/pr5310/rendered-instruction.md",
+          "bytes": 752,
+          "mode": "0o644",
+          "sha256": "c8da6a1d0b2134f5d301ae6bfabe25e7e0f850458fb952bd30d8b2a11624bf6e"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/task.toml",
+          "bytes": 2424,
+          "mode": "0o644",
+          "sha256": "577d5765a7f224ac9048b452382b7e56a55989301b93cbf5a0b82dcb284f4f54"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/instruction.md",
+          "bytes": 752,
+          "mode": "0o644",
+          "sha256": "c8da6a1d0b2134f5d301ae6bfabe25e7e0f850458fb952bd30d8b2a11624bf6e"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/solution/patch.diff",
+          "bytes": 931,
+          "mode": "0o644",
+          "sha256": "f2d8b9e571546c1ad201bbf72f4344d61fc36a343615653b721d67304679bde8"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/environment/Dockerfile",
+          "bytes": 2404,
+          "mode": "0o644",
+          "sha256": "2d00c441dd09d85c8a24fb9860308e3e181094a033dd5d42002ca893160b8780"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/environment/docker-compose.yaml",
+          "bytes": 684,
+          "mode": "0o644",
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/tests/test.sh",
+          "bytes": 2398,
+          "mode": "0o755",
+          "sha256": "1cf3ad383435e48a094d1f2cd83e04f2dc9fb0789f3b4ee2413c5c11ac115692"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/tests/f2p.json",
+          "bytes": 77,
+          "mode": "0o644",
+          "sha256": "b436542101eb562591807e24ab39379af330a426b9f7c1263864e7decc37879e"
+        },
+        {
+          "path": "native/cohort/pr5310/tasks/biopython__biopython-5310/tests/p2p.json",
+          "bytes": 649,
+          "mode": "0o644",
+          "sha256": "11746c0f3609a2cf1880210582f56cb2fa1acacb91e79419559594fa5227533e"
+        },
+        {
+          "path": "native/cohort/pr5310/validation.json",
+          "bytes": 8424,
+          "mode": "0o600",
+          "sha256": "5473a29e3dd92af87216ea4cc572ca6a9f584f02227d8389c64107a32212eca8"
+        },
+        {
+          "path": "native/cohort/pr5310/result.json",
+          "bytes": 129,
+          "mode": "0o600",
+          "sha256": "2790f2b20d75595bf920d651ae5fb85f27059d43a951724e57d382ae4818f1f8"
+        },
+        {
+          "path": "native/cohort/pr5308/frozen-inputs/Dockerfile",
+          "bytes": 877,
+          "mode": "0o644",
+          "sha256": "c0016f1e765b9fba24925856b55f84e7277bdef528aebe6b72abc841b7ca2d47"
+        },
+        {
+          "path": "native/cohort/pr5308/frozen-inputs/pr.diff",
+          "bytes": 5215,
+          "mode": "0o644",
+          "sha256": "4c8e9d5157845d338a3527a82b6547bc6ecbd7481a6ca87f0608aa78862d7f39"
+        },
+        {
+          "path": "native/cohort/pr5308/frozen-inputs/pr.json",
+          "bytes": 1355,
+          "mode": "0o644",
+          "sha256": "5a601bf44babb250917f0a7774155e74de5c03a7e5ac80a25af3cc02c4ed8996"
+        },
+        {
+          "path": "native/cohort/pr5308/frozen-inputs/profile.json",
+          "bytes": 1865,
+          "mode": "0o644",
+          "sha256": "1ed5ac7ce9d0360fa0cc643080f741242476a615fd731132f67a8d6dfdbba459"
+        },
+        {
+          "path": "native/cohort/pr5308/build.log",
+          "bytes": 1532,
+          "mode": "0o644",
+          "sha256": "6f7859afb9504b66da516a689bd3783a3f012a55095c8312a379cb1f511abea1"
+        },
+        {
+          "path": "native/cohort/pr5308/baseline-freeze.txt",
+          "bytes": 239,
+          "mode": "0o644",
+          "sha256": "7ebc4e642603694540e69ff77ab6c6d2e1eaf0605aa84ea025c623e0de0d99e8"
+        },
+        {
+          "path": "native/cohort/pr5308/biopython-baseline-extension-sha256.txt",
+          "bytes": 2014,
+          "mode": "0o644",
+          "sha256": "6e42f2271055411fdf0bdbd7817602af9ad18e007827c86e7fa65120b453cc6b"
+        },
+        {
+          "path": "native/cohort/pr5308/source-LICENSE.txt",
+          "bytes": 3267,
+          "mode": "0o644",
+          "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+        },
+        {
+          "path": "native/cohort/pr5308/bootstrap.json",
+          "bytes": 1668,
+          "mode": "0o600",
+          "sha256": "40047d3afed158794592a0b152f124e3edbdafd1062b091e1c76cf9627348a91"
+        },
+        {
+          "path": "native/cohort/pr5308/recipe-options.json",
+          "bytes": 431,
+          "mode": "0o600",
+          "sha256": "7b14aaacd782b96efea5e7515b408619b8c4de6c83975f896503757b22e21023"
+        },
+        {
+          "path": "native/cohort/pr5308/candidate.json",
+          "bytes": 1355,
+          "mode": "0o600",
+          "sha256": "1119e1159cdec16e4a66742a7b3047daf3e8ca2d668c7adc4c604ccd1f00e4af"
+        },
+        {
+          "path": "native/cohort/pr5308/rendered-instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/task.toml",
+          "bytes": 3127,
+          "mode": "0o644",
+          "sha256": "8e11d26855df8320576b4a927c7f81aaf6fc8c8469dc5e088c4b9a3e16e6cb22"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/instruction.md",
+          "bytes": 1145,
+          "mode": "0o644",
+          "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/solution/patch.diff",
+          "bytes": 1429,
+          "mode": "0o644",
+          "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/solution/solve.sh",
+          "bytes": 170,
+          "mode": "0o755",
+          "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/environment/Dockerfile",
+          "bytes": 2404,
+          "mode": "0o644",
+          "sha256": "d3fa2be5f4c2db5b49d088900d4d218810d9eb3d263bd369624a9098eb567e20"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/environment/docker-compose.yaml",
+          "bytes": 684,
+          "mode": "0o644",
+          "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/tests/test.sh",
+          "bytes": 5237,
+          "mode": "0o755",
+          "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/tests/verifier.py",
+          "bytes": 25401,
+          "mode": "0o644",
+          "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/tests/f2p.json",
+          "bytes": 300,
+          "mode": "0o644",
+          "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562"
+        },
+        {
+          "path": "native/cohort/pr5308/tasks/biopython__biopython-5308/tests/p2p.json",
+          "bytes": 1124,
+          "mode": "0o644",
+          "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704"
+        },
+        {
+          "path": "native/cohort/pr5308/validation.json",
+          "bytes": 11750,
+          "mode": "0o600",
+          "sha256": "3170a40d63ebb0bcf924ab05f078e22f3bc70fdbfadb1578812af23485c0e443"
+        },
+        {
+          "path": "native/cohort/pr5308/result.json",
+          "bytes": 129,
+          "mode": "0o600",
+          "sha256": "8653aab015c314ed657ef303a6014dfbc3a8847de1949ce11211d01f076edd11"
+        },
+        {
+          "path": "native/worker-exit.txt",
+          "bytes": 2,
+          "mode": "0o644",
+          "sha256": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa"
+        }
+      ]
+    },
+    {
+      "path": "original-controller-output.tar.zst",
+      "bytes": 75995,
+      "sha256": "15e127ff3b10a72698ca1f813853d99a4fd7f5cb2e459655fd3121fe8bc14670",
+      "archive_format": "tar.zst",
+      "members": [
+        {
+          "path": "child/author-evidence-receipt.json",
+          "bytes": 230,
+          "mode": "0o644",
+          "sha256": "4298f9834068217ff419472b6b972b09f649155130acfc508f7a1fdcbf238f3f"
+        },
+        {
+          "path": "child/author-evidence.tar.gz",
+          "bytes": 74664,
+          "mode": "0o644",
+          "sha256": "0be260fb61293466f82d193f674ef52bb6b903bfb72ccf3aa3f37362f13cf286"
+        },
+        {
+          "path": "child/author-process-status.json",
+          "bytes": 287,
+          "mode": "0o644",
+          "sha256": "c53062a9c5dc1cde2bb3fcaa22565044d8f04e2759e8b76264b285917c0b7df6"
+        },
+        {
+          "path": "child/author.stderr",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "child/author.stdout",
+          "bytes": 0,
+          "mode": "0o644",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": "pr-runtime-summary.json",
+          "bytes": 1362,
+          "mode": "0o644",
+          "sha256": "ea8defdc8fa12d3d03305c39d68f4f0b33191182e6df782e74259d3a08ff2410"
+        },
+        {
+          "path": "wrapper-status.json",
+          "bytes": 187,
+          "mode": "0o644",
+          "sha256": "68f803fe2c436d4698a62ebf5bb6d9a77eb6214a5e95d05bfffc808c31739b82"
+        }
+      ]
+    },
+    {
+      "path": "selected-inputs/manifest.json",
+      "bytes": 2107,
+      "sha256": "cc63709458e62b59d2fbd3a30429d0c273987a3eaf4a25b505ec59a4b22e0328"
+    },
+    {
+      "path": "selected-inputs/pr5308/Dockerfile",
+      "bytes": 877,
+      "sha256": "c0016f1e765b9fba24925856b55f84e7277bdef528aebe6b72abc841b7ca2d47"
+    },
+    {
+      "path": "selected-inputs/pr5308/pr.diff",
+      "bytes": 5215,
+      "sha256": "4c8e9d5157845d338a3527a82b6547bc6ecbd7481a6ca87f0608aa78862d7f39"
+    },
+    {
+      "path": "selected-inputs/pr5308/pr.json",
+      "bytes": 1355,
+      "sha256": "5a601bf44babb250917f0a7774155e74de5c03a7e5ac80a25af3cc02c4ed8996"
+    },
+    {
+      "path": "selected-inputs/pr5308/profile.json",
+      "bytes": 1865,
+      "sha256": "1ed5ac7ce9d0360fa0cc643080f741242476a615fd731132f67a8d6dfdbba459"
+    },
+    {
+      "path": "selected-inputs/pr5310/Dockerfile",
+      "bytes": 877,
+      "sha256": "c0016f1e765b9fba24925856b55f84e7277bdef528aebe6b72abc841b7ca2d47"
+    },
+    {
+      "path": "selected-inputs/pr5310/issue.json",
+      "bytes": 590,
+      "sha256": "3251356e5b93b17329670b1075d4e930e8fcd04893bd302058cf080d75a8ea95"
+    },
+    {
+      "path": "selected-inputs/pr5310/pr.diff",
+      "bytes": 1886,
+      "sha256": "5e2de31917f39860093aaa6aa86688cce3b6cc6c36befc7afbd11725102ff6ea"
+    },
+    {
+      "path": "selected-inputs/pr5310/pr.json",
+      "bytes": 1583,
+      "sha256": "7036ce7a911aff798edad3f9f8044833ca8f21e0515efdba1e9e58d3a0c6dceb"
+    },
+    {
+      "path": "selected-inputs/pr5310/profile.json",
+      "bytes": 1945,
+      "sha256": "d14dd08f958a18575af5fb2e626b2c533ac0faa4ac78a6ee215e6659a498ea94"
+    },
+    {
+      "path": "selected-inputs/pr5317/Dockerfile",
+      "bytes": 877,
+      "sha256": "c012d44927695b1af18a2c3046fa1044c06d932bc1e8a0412d0a4a7de3aeaadd"
+    },
+    {
+      "path": "selected-inputs/pr5317/issue.json",
+      "bytes": 1530,
+      "sha256": "0239e5094a3e8955cff0285cfe58d448d36bc64e9028c024dcf5d01e9439bd96"
+    },
+    {
+      "path": "selected-inputs/pr5317/pr.diff",
+      "bytes": 2039,
+      "sha256": "b09941368663304a117d51456d0e4d100e0b5d52f1e01d35b804177b8179e189"
+    },
+    {
+      "path": "selected-inputs/pr5317/pr.json",
+      "bytes": 2017,
+      "sha256": "3867b5618b09bc8668b17f9922bd2533b3536d1523adc4a1c53834dfb35769a3"
+    },
+    {
+      "path": "selected-inputs/pr5317/profile.json",
+      "bytes": 1957,
+      "sha256": "4c8aaa0973b366e9a41ced105122b0c90adface0fa179d0eaf73664ce5a9eb52"
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/biopython-pr5308-LICENSE.txt",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    {
+      "path": "source-notices/biopython-pr5310-LICENSE.txt",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    {
+      "path": "source-notices/biopython-pr5317-LICENSE.txt",
+      "bytes": 3267,
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    }
+  ]
+}
