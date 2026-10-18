@@ -41,6 +41,13 @@ def main():
         status.update(status='setup_or_controller_failed', error_type=type(exc).__name__)
         return 1
     finally:
+        if Path('contrast-output').is_dir():
+            try:
+                from contrast_summary import summarize
+                summary = summarize(Path('contrast-output'), output / 'contrast-summary.json')
+                print('BIOTASKS21_CONTRAST_SUMMARY ' + json.dumps(summary), flush=True)
+            except Exception as exc:
+                status['small_summary_error_type'] = type(exc).__name__
         status['elapsed_seconds'] = round(time.monotonic() - started, 3)
         (output / 'wrapper-status.json').write_text(json.dumps(status, indent=2) + '\n')
         if Path('contrast-output').is_dir() and not (output / 'child/author-evidence.tar.gz').exists():
