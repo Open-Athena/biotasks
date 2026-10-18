@@ -1,0 +1,242 @@
+{
+  "attempted": 2,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_hill",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_inv_simpson",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_renyi"
+        ],
+        "PASS_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_berger_parker_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_brillouin_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_dominance",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_doubles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_enspie",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_esty_ci",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_fisher_alpha",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_goods_coverage",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_heip_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_degenerate_intervals",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_invalid_quantiles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_quantiles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_single_taxon",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_margalef",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_mcintosh_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_mcintosh_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_menhinick",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_michaelis_menten_fit",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_observed_features",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_osd",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_pielou_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_robbins",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_shannon",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_singles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_sobs",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_strong",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_tsallis"
+        ]
+      },
+      "functions": {
+        "skbio/diversity/alpha/_base.py:661:inv_simpson": {
+          "line": 661,
+          "name": "inv_simpson",
+          "path": "skbio/diversity/alpha/_base.py",
+          "source": "def inv_simpson(counts, finite=False):\n    r\"\"\"Calculate inverse Simpson index.\n\n    The inverse Simpson index (:math:`1 / D`), a.k.a., Simpson's reciprocal\n    index, is defined as:\n\n    .. math::\n\n       1 / D = \\frac{1}{\\sum_{i=1}^S{p_i^2}}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling when calculating :math:`D`.\n\n    Returns\n    -------\n    float\n        Inverse Simpson index.\n\n    See Also\n    --------\n    dominance\n\n    Notes\n    -----\n    :math:`1 / D` is a measurement of the effective number of species (ENS).\n    It is equivalent to Hill number with order 2 (:math:`^2D`).\n\n    Inverse Simpson index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Simpson, E. H. (1949). Measurement of diversity. Nature, 163(4148),\n       688-688.\n\n    \"\"\"\n    return 1 / dominance(counts, finite=finite)"
+        }
+      },
+      "id": "a10076b48a0d2070eed3",
+      "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "repo": "https://github.com/scikit-bio/scikit-bio",
+      "schedule": {
+        "core_nodes": [
+          "skbio/diversity/alpha/_base.py:144:dominance",
+          "skbio/diversity/alpha/_base.py:661:inv_simpson"
+        ],
+        "dependent_nodes": [],
+        "edges": [
+          [
+            "skbio/diversity/alpha/_base.py:48:wrapper",
+            "skbio/diversity/alpha/_base.py:144:dominance"
+          ],
+          [
+            "skbio/diversity/alpha/_base.py:661:inv_simpson",
+            "skbio/diversity/alpha/_base.py:48:wrapper"
+          ]
+        ],
+        "nodes_to_develop": [
+          "skbio/diversity/alpha/_base.py:661:inv_simpson"
+        ],
+        "previous_tests": [
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_e",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_michaelis_menten_fit",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_observed_features"
+        ],
+        "step": 3,
+        "target_nodes": [
+          "skbio/diversity/alpha/_base.py:661:inv_simpson"
+        ],
+        "test_ids": [
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_inv_simpson"
+        ]
+      },
+      "source_files": [
+        "skbio/diversity/alpha/_base.py"
+      ],
+      "test_evidence": {
+        "skbio/diversity/alpha/tests/test_base.py": "from unittest import TestCase, main\n\nfrom io import StringIO\n\nimport warnings\n\nimport numpy as np\n\nimport numpy.testing as npt\n\nfrom skbio import TreeNode\n\nfrom skbio.diversity.alpha import (\n    berger_parker_d, brillouin_d, dominance, doubles, enspie, esty_ci, fisher_alpha,\n    goods_coverage, heip_e, hill, inv_simpson, kempton_taylor_q, margalef, mcintosh_d,\n    mcintosh_e, menhinick, michaelis_menten_fit, observed_features, osd, pielou_e,\n    renyi, robbins, shannon, simpson, simpson_d, simpson_e, singles, sobs, strong,\n    tsallis)\n\n    def test_hill(self):\n        orders = [0, 0.5, 1, 2, 10, np.inf]\n\n        # a regular case\n        arr = np.array([1, 2, 3, 4, 5])\n        obs = [hill(arr, order=x) for x in orders]\n        exp = [5, 4.68423304, 4.43598780, 4.09090909, 3.34923645, 3]\n        npt.assert_almost_equal(obs, exp)\n\n        # equivalent to observed species richness when q = 0\n        self.assertAlmostEqual(hill(arr, order=0), sobs(arr))\n\n        # equivalent to the exponential of Shannon index when q = 1\n        self.assertAlmostEqual(hill(arr, order=1), shannon(arr, exp=True))\n\n        # equivalent to inverse Simpson index when q = 2 (default)\n        self.assertAlmostEqual(hill(arr), inv_simpson(arr))\n\n        # equivalent to the inverse of Berger-Parker dominance index when q = inf\n        self.assertAlmostEqual(hill(arr, order=np.inf), 1 / berger_parker_d(arr))\n\n        # equally abundant taxa: qD = S\n        arr = np.array([5, 5, 5])\n        obs = [hill(arr, order=x) for x in orders]\n        exp = [arr.size] * 6\n        npt.assert_almost_equal(obs, exp)\n\n        # single taxon: qD = 1\n        self.assertEqual(hill([1]), 1)\n\n        # empty community\n        self.assertTrue(np.isnan(hill([0, 0])))\n\n    def test_inv_simpson(self):\n        # Totally even community should have 1 / D = number of taxa.\n        self.assertAlmostEqual(inv_simpson(np.array([1, 1, 1, 1, 1, 1])), 6)\n        self.assertAlmostEqual(inv_simpson(np.array([13, 13, 13, 13])), 4)\n\n        # Hand calculated.\n        arr = np.array([1, 41, 0, 0, 12, 13])\n        exp = 1 / ((arr / arr.sum()) ** 2).sum()\n        self.assertAlmostEqual(inv_simpson(arr), exp)\n\n        # Using dominance.\n        exp = 1 / dominance(arr)\n        self.assertAlmostEqual(inv_simpson(arr), exp)\n\n        arr = np.array([1, 0, 2, 5, 2])\n        exp = 1 / dominance(arr)\n        self.assertAlmostEqual(inv_simpson(arr), exp)\n\n        # Finite sample correction.\n        self.assertEqual(inv_simpson(\n            np.array([1, 0, 2, 5, 2]), finite=True), 3.75)\n        self.assertEqual(inv_simpson(np.array([3, 3, 3]), finite=True), 4)\n\n        self.assertTrue(np.isnan(inv_simpson([0, 0])))\n\n    def test_renyi(self):\n        orders = [0, 0.5, 1, 2, 10, np.inf]\n\n        # a regular case\n        arr = np.array([1, 2, 3, 4, 5])\n        obs = [renyi(arr, order=x) for x in orders]\n        exp = [1.60943791, 1.54420220, 1.48975032,\n               1.40876722, 1.20873239, 1.09861229]\n        npt.assert_almost_equal(obs, exp)\n\n        # equivalent to Shannon index when q = 1\n        self.assertAlmostEqual(renyi(arr, order=1), shannon(arr))\n\n        # equivalent to log(inverse Simpson index) when q = 2 (default)\n        self.assertAlmostEqual(renyi(arr), np.log(inv_simpson(arr)))\n\n        # default q, custom logarithm base\n        self.assertAlmostEqual(renyi(arr, base=2), 2.03242148)\n\n        # equally abundant taxa: qH = log(S)\n        arr = np.array([5, 5, 5])\n        obs = [renyi(arr, order=x) for x in orders]\n        exp = [np.log(arr.size)] * 6\n        npt.assert_almost_equal(obs, exp)\n\n        # single taxon: qH = 0\n        self.assertEqual(renyi([1]), 0)\n\n        # empty community\n        self.assertTrue(np.isnan(renyi([0, 0])))"
+      }
+    },
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_enspie"
+        ],
+        "PASS_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_berger_parker_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_brillouin_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_dominance",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_doubles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_esty_ci",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_fisher_alpha",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_goods_coverage",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_heip_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_hill",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_inv_simpson",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_degenerate_intervals",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_invalid_quantiles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_quantiles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_kempton_taylor_q_single_taxon",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_margalef",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_mcintosh_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_mcintosh_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_menhinick",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_michaelis_menten_fit",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_observed_features",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_osd",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_pielou_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_renyi",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_robbins",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_shannon",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson_d",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_simpson_e",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_singles",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_sobs",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_strong",
+          "skbio.diversity.alpha.tests.test_base.BaseTests::test_tsallis"
+        ]
+      },
+      "functions": {
+        "skbio/diversity/alpha/_base.py:236:enspie": {
+          "line": 236,
+          "name": "enspie",
+          "path": "skbio/diversity/alpha/_base.py",
+          "source": "def enspie(counts, finite=False):\n    r\"\"\"Calculate ENS_pie alpha diversity measure.\n\n    The effective number of species (ENS) derived from Hurlbert's probability\n    of interspecific encounter (PIE) ([1]_, [2]_) is defined as:\n\n    .. math::\n\n       ENS_{pie} = \\frac{1}{\\sum_{i=1}^S{p_i^2}}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion of\n    the sample represented by taxon :math:`i`.\n\n    Therefore, :math:`ENS_{pie}` is equivalent to the inverse Simpson index\n    (``1 / D``).\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling.\n\n    Returns\n    -------\n    float\n        ENS_pie alpha diversity measure.\n\n    See Also\n    --------\n    inv_simpson\n    dominance\n\n    Notes\n    -----\n    ``enspie`` is an alias for ``inv_simpson``.\n\n    References\n    ----------\n    .. [1] Chase, J. M., & Knight, T. M. (2013). Scale-dependent effect sizes\n       of ecological drivers on biodiversity: why standardised sampling is not\n       enough. Ecology letters, 16, 17-26.\n\n    .. [2] Hurlbert, S. H. (1971). The nonconcept of species diversity: a\n       critique and alternative parameters. Ecology, 52(4), 577-586.\n\n    \"\"\"\n    return inv_simpson(counts, finite=finite)"
+        }
+      },
+      "id": "3ad7ba60ca7686b2007b",
+      "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "repo": "https://github.com/scikit-bio/scikit-bio",
+      "schedule": {
+        "core_nodes": [
+          "skbio/diversity/alpha/_base.py:144:dominance",
+          "skbio/diversity/alpha/_base.py:236:enspie",
+          "skbio/diversity/alpha/_base.py:661:inv_simpson"
+        ],
+        "dependent_nodes": [],
+        "edges": [
+          [
+            "skbio/diversity/alpha/_base.py:236:enspie",
+            "skbio/diversity/alpha/_base.py:661:inv_simpson"
+          ],
+          [
+            "skbio/diversity/alpha/_base.py:48:wrapper",
+            "skbio/diversity/alpha/_base.py:144:dominance"
+          ],
+          [
+            "skbio/diversity/alpha/_base.py:661:inv_simpson",
+            "skbio/diversity/alpha/_base.py:48:wrapper"
+          ]
+        ],
+        "nodes_to_develop": [
+          "skbio/diversity/alpha/_base.py:236:enspie"
+        ],
+        "previous_tests": [
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_e",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_michaelis_menten_fit",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_observed_features",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_inv_simpson",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_pielou_e",
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_shannon"
+        ],
+        "step": 4,
+        "target_nodes": [
+          "skbio/diversity/alpha/_base.py:236:enspie"
+        ],
+        "test_ids": [
+          "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_enspie"
+        ]
+      },
+      "source_files": [
+        "skbio/diversity/alpha/_base.py"
+      ],
+      "test_evidence": {
+        "skbio/diversity/alpha/tests/test_base.py": "from unittest import TestCase, main\n\nfrom io import StringIO\n\nimport warnings\n\nimport numpy as np\n\nimport numpy.testing as npt\n\nfrom skbio import TreeNode\n\nfrom skbio.diversity.alpha import (\n    berger_parker_d, brillouin_d, dominance, doubles, enspie, esty_ci, fisher_alpha,\n    goods_coverage, heip_e, hill, inv_simpson, kempton_taylor_q, margalef, mcintosh_d,\n    mcintosh_e, menhinick, michaelis_menten_fit, observed_features, osd, pielou_e,\n    renyi, robbins, shannon, simpson, simpson_d, simpson_e, singles, sobs, strong,\n    tsallis)\n\n    def test_enspie(self):\n        for vec in (\n            np.array([1, 1, 1, 1, 1, 1]),\n            np.array([1, 41, 0, 0, 12, 13]),\n            np.array([1, 0, 2, 5, 2])\n        ):\n            self.assertEqual(enspie(vec), inv_simpson(vec))\n        vec = np.array([1, 2, 3, 4])\n        self.assertEqual(enspie(vec, finite=True),\n                         inv_simpson(vec, finite=True))"
+      }
+    }
+  ],
+  "rejected": []
+}

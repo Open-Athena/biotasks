@@ -85,6 +85,16 @@ def build():
                 prefix = 'biopython-flow-' if unit['repository'] == 'biopython/biopython' else 'skbio-flow-'
                 charge = sum(x['generation']['attempted'] for x in counters['runs'] if x['run'].startswith(prefix))
                 cap_note = 'Exact saved native generation counters agree with events: empty Biopython trace run 0, adapted Biopython 3, scikit-bio 3. Prior authoring/export reuses saved identities.'
+                prefix = 'biopython' if unit['repository'] == 'biopython/biopython' else 'skbio'
+                current = ROOT / (prefix + '-flow-contrast-01/generation.json')
+                small_summary = ROOT / (prefix + '-flow-continuation-01-small-summary.json')
+                if current.exists():
+                    charge += json.loads(current.read_text())['attempted']
+                    cap_note += ' Continuation original generation attempts included; no admission inferred.'
+                elif small_summary.exists():
+                    charge += json.loads(small_summary.read_text())['attempted']
+                    cap_note += ' Captured continuation controller summary included; full recovery/publication pending.'
+                assert charge <= 10
                 next_action = 'Use native exclusion IDs and remaining allowance for new development steps; independently review instructions and validate graders before admission.'
         if route == 'reasoning_synth/scaler':
             charge = 3
