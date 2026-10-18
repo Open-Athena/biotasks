@@ -1,6 +1,6 @@
 """One explicitly remaining native authoring call after independent review.
 
-The original one-call Robbins result remains preserved. This consumes its
+The original one-call result remains preserved. This consumes the candidate's
 second and final native authoring allowance and never runs repository code.
 """
 import argparse
