@@ -1,0 +1,195 @@
+{
+  "attempted": 3,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum1",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum2",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum3",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_simp"
+        ],
+        "PASS_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_GC_skew",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_calculation",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_initialization",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_crc_checksum_collision",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_gc_fraction",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_mult",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_seq1_seq3"
+        ]
+      },
+      "functions": {
+        "Bio/SeqUtils/lcc.py:120:lcc_simp": {
+          "line": 120,
+          "name": "lcc_simp",
+          "path": "Bio/SeqUtils/lcc.py",
+          "source": "def lcc_simp(seq):\n    \"\"\"Calculate Local Composition Complexity (LCC) for a sequence.\n\n    seq - an unambiguous DNA sequence (a string or Seq object)\n\n    Returns the Local Composition Complexity (LCC) value for the entire\n    sequence (as a float).\n\n    Reference:\n    Andrzej K Konopka (2005) Sequence Complexity and Composition\n    https://doi.org/10.1038/npg.els.0005260\n    \"\"\"\n    wsize = len(seq)\n    seq = seq.upper()\n    l4 = math.log(4)\n    # Check to avoid calculating the log of 0.\n    if \"A\" not in seq:\n        term_a = 0\n    else:\n        term_a = (seq.count(\"A\") / wsize) * math.log(seq.count(\"A\") / wsize) / l4\n    if \"C\" not in seq:\n        term_c = 0\n    else:\n        term_c = (seq.count(\"C\") / wsize) * math.log(seq.count(\"C\") / wsize) / l4\n    if \"T\" not in seq:\n        term_t = 0\n    else:\n        term_t = (seq.count(\"T\") / wsize) * math.log(seq.count(\"T\") / wsize) / l4\n    if \"G\" not in seq:\n        term_g = 0\n    else:\n        term_g = (seq.count(\"G\") / wsize) * math.log(seq.count(\"G\") / wsize) / l4\n    return -(term_a + term_c + term_t + term_g)"
+        }
+      },
+      "id": "7db7e3d6944862270e5c",
+      "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "repo": "https://github.com/biopython/biopython",
+      "schedule": {
+        "core_nodes": [
+          "Bio/SeqUtils/lcc.py:120:lcc_simp"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "Bio/SeqUtils/lcc.py:120:lcc_simp"
+        ],
+        "previous_tests": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction"
+        ],
+        "step": 3,
+        "target_nodes": [
+          "Bio/SeqUtils/lcc.py:120:lcc_simp"
+        ],
+        "test_ids": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp"
+        ]
+      },
+      "source_files": [
+        "Bio/SeqUtils/lcc.py"
+      ],
+      "test_evidence": {
+        "Tests/test_SeqUtils.py": "import os\n\nimport unittest\n\nfrom Bio import SeqIO\n\nfrom Bio.Seq import MutableSeq\n\nfrom Bio.Seq import Seq\n\nfrom Bio.SeqRecord import SeqRecord\n\nfrom Bio.SeqUtils import CodonAdaptationIndex\n\nfrom Bio.SeqUtils import gc_fraction\n\nfrom Bio.SeqUtils import GC_skew\n\nfrom Bio.SeqUtils import molecular_weight\n\nfrom Bio.SeqUtils import seq1\n\nfrom Bio.SeqUtils import seq3\n\nfrom Bio.SeqUtils.CheckSum import crc32\n\nfrom Bio.SeqUtils.CheckSum import crc64\n\nfrom Bio.SeqUtils.CheckSum import gcg\n\nfrom Bio.SeqUtils.CheckSum import seguid\n\nfrom Bio.SeqUtils.lcc import lcc_mult\n\nfrom Bio.SeqUtils.lcc import lcc_simp\n\n    def test_checksum1(self):\n        self.seq_checksums(\n            self.str_light_chain_one,\n            2994980265,\n            \"CRC-44CAAD88706CC153\",\n            9729,\n            \"BpBeDdcNUYNsdk46JoJdw7Pd3BI\",\n            0.5160,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum2(self):\n        self.seq_checksums(\n            self.str_light_chain_two,\n            802105214,\n            \"CRC-44CAAD88706CC153\",\n            9647,\n            \"X5XEaayob1nZLOc7eVT9qyczarY\",\n            0.5343,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum3(self):\n        self.seq_checksums(\n            \"ATGCGTATCGATCGCGATACGATTAGGCGGAT\",\n            817679856,\n            \"CRC-6234FF451DC6DFC6\",\n            7959,\n            \"8WCUbVjBgiRmM10gfR7XJNjbwnE\",\n            0.9886,\n            (\n                1.00,\n                0.9927,\n                0.9927,\n                1.00,\n                0.9927,\n                0.9854,\n                0.9927,\n                0.9927,\n                0.9927,\n                0.9794,\n                0.9794,\n                0.9794,\n                0.9794,\n            ),\n        )\n\n    def test_lcc_simp(self):\n        s = \"ACGATAGC\"\n        seq = Seq(s)\n        record = SeqRecord(seq)\n        self.assertAlmostEqual(lcc_simp(s), 0.9528, places=4)\n        self.assertAlmostEqual(lcc_simp(seq), 0.9528, places=4)\n        self.assertAlmostEqual(lcc_simp(record), 0.9528, places=4)"
+      }
+    },
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum1",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum2",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum3",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_mult"
+        ],
+        "PASS_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_GC_skew",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_calculation",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_initialization",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_crc_checksum_collision",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_gc_fraction",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_simp",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_seq1_seq3"
+        ]
+      },
+      "functions": {
+        "Bio/SeqUtils/lcc.py:13:lcc_mult": {
+          "line": 13,
+          "name": "lcc_mult",
+          "path": "Bio/SeqUtils/lcc.py",
+          "source": "def lcc_mult(seq, wsize):\n    \"\"\"Calculate Local Composition Complexity (LCC) values over sliding window.\n\n    Returns a list of floats, the LCC values for a sliding window over\n    the sequence.\n\n    seq - an unambiguous DNA sequence (a string or Seq object)\n    wsize - window size, integer\n\n    The result is the same as applying lcc_simp multiple times, but this\n    version is optimized for speed. The optimization works by using the\n    value of previous window as a base to compute the next one.\n    \"\"\"\n    l4 = math.log(4)\n    seq = seq.upper()\n    tamseq = len(seq)\n    compone = [0]\n    lccsal = []\n    for i in range(wsize):\n        compone.append(((i + 1) / wsize) * math.log((i + 1) / wsize) / l4)\n    window = seq[0:wsize]\n    cant_a = window.count(\"A\")\n    cant_c = window.count(\"C\")\n    cant_t = window.count(\"T\")\n    cant_g = window.count(\"G\")\n    term_a = compone[cant_a]\n    term_c = compone[cant_c]\n    term_t = compone[cant_t]\n    term_g = compone[cant_g]\n    lccsal.append(-(term_a + term_c + term_t + term_g))\n    tail = seq[0]\n    for x in range(tamseq - wsize):\n        window = seq[x + 1 : wsize + x + 1]\n        if tail == window[-1]:\n            lccsal.append(lccsal[-1])\n        elif tail == \"A\":\n            cant_a -= 1\n            if window.endswith(\"C\"):\n                cant_c += 1\n                term_a = compone[cant_a]\n                term_c = compone[cant_c]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_a = compone[cant_a]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_a = compone[cant_a]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"C\":\n            cant_c -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_c = compone[cant_c]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_c = compone[cant_c]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_c = compone[cant_c]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"T\":\n            cant_t -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"C\"):\n                cant_c += 1\n                term_c = compone[cant_c]\n                term_t = compone[cant_t]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"G\"):\n                cant_g += 1\n                term_t = compone[cant_t]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        elif tail == \"G\":\n            cant_g -= 1\n            if window.endswith(\"A\"):\n                cant_a += 1\n                term_a = compone[cant_a]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"C\"):\n                cant_c += 1\n                term_c = compone[cant_c]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n            elif window.endswith(\"T\"):\n                cant_t += 1\n                term_t = compone[cant_t]\n                term_g = compone[cant_g]\n                lccsal.append(-(term_a + term_c + term_t + term_g))\n        tail = window[0]\n    return lccsal"
+        }
+      },
+      "id": "adf8d052f836669d540f",
+      "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "repo": "https://github.com/biopython/biopython",
+      "schedule": {
+        "core_nodes": [
+          "Bio/SeqUtils/lcc.py:13:lcc_mult"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "Bio/SeqUtils/lcc.py:13:lcc_mult"
+        ],
+        "previous_tests": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp"
+        ],
+        "step": 4,
+        "target_nodes": [
+          "Bio/SeqUtils/lcc.py:13:lcc_mult"
+        ],
+        "test_ids": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult"
+        ]
+      },
+      "source_files": [
+        "Bio/SeqUtils/lcc.py"
+      ],
+      "test_evidence": {
+        "Tests/test_SeqUtils.py": "import os\n\nimport unittest\n\nfrom Bio import SeqIO\n\nfrom Bio.Seq import MutableSeq\n\nfrom Bio.Seq import Seq\n\nfrom Bio.SeqRecord import SeqRecord\n\nfrom Bio.SeqUtils import CodonAdaptationIndex\n\nfrom Bio.SeqUtils import gc_fraction\n\nfrom Bio.SeqUtils import GC_skew\n\nfrom Bio.SeqUtils import molecular_weight\n\nfrom Bio.SeqUtils import seq1\n\nfrom Bio.SeqUtils import seq3\n\nfrom Bio.SeqUtils.CheckSum import crc32\n\nfrom Bio.SeqUtils.CheckSum import crc64\n\nfrom Bio.SeqUtils.CheckSum import gcg\n\nfrom Bio.SeqUtils.CheckSum import seguid\n\nfrom Bio.SeqUtils.lcc import lcc_mult\n\nfrom Bio.SeqUtils.lcc import lcc_simp\n\n    def test_checksum1(self):\n        self.seq_checksums(\n            self.str_light_chain_one,\n            2994980265,\n            \"CRC-44CAAD88706CC153\",\n            9729,\n            \"BpBeDdcNUYNsdk46JoJdw7Pd3BI\",\n            0.5160,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum2(self):\n        self.seq_checksums(\n            self.str_light_chain_two,\n            802105214,\n            \"CRC-44CAAD88706CC153\",\n            9647,\n            \"X5XEaayob1nZLOc7eVT9qyczarY\",\n            0.5343,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum3(self):\n        self.seq_checksums(\n            \"ATGCGTATCGATCGCGATACGATTAGGCGGAT\",\n            817679856,\n            \"CRC-6234FF451DC6DFC6\",\n            7959,\n            \"8WCUbVjBgiRmM10gfR7XJNjbwnE\",\n            0.9886,\n            (\n                1.00,\n                0.9927,\n                0.9927,\n                1.00,\n                0.9927,\n                0.9854,\n                0.9927,\n                0.9927,\n                0.9927,\n                0.9794,\n                0.9794,\n                0.9794,\n                0.9794,\n            ),\n        )\n\n    def test_lcc_mult(self):\n        s = \"ACGATAGC\"\n        seq = Seq(s)\n        record = SeqRecord(seq)\n        llc_lst = lcc_mult(s, len(s))\n        self.assertEqual(len(llc_lst), 1)\n        self.assertAlmostEqual(llc_lst[0], 0.9528, places=4)\n        llc_lst = lcc_mult(seq, len(seq))\n        self.assertEqual(len(llc_lst), 1)\n        self.assertAlmostEqual(llc_lst[0], 0.9528, places=4)\n        llc_lst = lcc_mult(record, len(record))\n        self.assertEqual(len(llc_lst), 1)\n        self.assertAlmostEqual(llc_lst[0], 0.9528, places=4)"
+      }
+    },
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_seq1_seq3"
+        ],
+        "PASS_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_GC_skew",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum1",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum2",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum3",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_calculation",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_initialization",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_crc_checksum_collision",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_gc_fraction",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_mult",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_simp",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_molecular_weight_empty_sequence"
+        ]
+      },
+      "functions": {
+        "Bio/SeqUtils/__init__.py:309:seq3": {
+          "line": 309,
+          "name": "seq3",
+          "path": "Bio/SeqUtils/__init__.py",
+          "source": "def seq3(seq, custom_map=None, undef_code=\"Xaa\"):\n    \"\"\"Convert protein sequence from one-letter to three-letter code.\n\n    The single required input argument 'seq' should be a protein sequence using\n    single letter codes, either as a Python string or as a Seq or MutableSeq\n    object.\n\n    This function returns the amino acid sequence as a string using the three\n    letter amino acid codes. Output follows the IUPAC standard (including\n    ambiguous characters B for \"Asx\", J for \"Xle\" and X for \"Xaa\", and also U\n    for \"Sel\" and O for \"Pyl\") plus \"Ter\" for a terminator given as an\n    asterisk. Any unknown character (including possible gap characters),\n    is changed into 'Xaa' by default.\n\n    e.g.\n\n    >>> from Bio.SeqUtils import seq3\n    >>> seq3(\"MAIVMGRWKGAR*\")\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaArgTer'\n\n    You can set a custom translation of the codon termination code using the\n    dictionary \"custom_map\" argument (which defaults to {'*': 'Ter'}), e.g.\n\n    >>> seq3(\"MAIVMGRWKGAR*\", custom_map={\"*\": \"***\"})\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaArg***'\n\n    You can also set a custom translation for non-amino acid characters, such\n    as '-', using the \"undef_code\" argument, e.g.\n\n    >>> seq3(\"MAIVMGRWKGA--R*\", undef_code='---')\n    'MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer'\n\n    If not given, \"undef_code\" defaults to \"Xaa\", e.g.\n\n    >>> seq3(\"MAIVMGRWKGA--R*\")\n    'MetAlaIleValMetGlyArgTrpLysGlyAlaXaaXaaArgTer'\n\n    This function was inspired by BioPerl's seq3.\n    \"\"\"\n    if custom_map is None:\n        custom_map = {\"*\": \"Ter\"}\n    # not doing .update() on IUPACData dict with custom_map dict\n    # to preserve its initial state (may be imported in other modules)\n    threecode = dict(\n        list(IUPACData.protein_letters_1to3_extended.items()) + list(custom_map.items())\n    )\n    # We use a default of 'Xaa' for undefined letters\n    # Note this will map '-' to 'Xaa' which may be undesirable!\n    return \"\".join(threecode.get(aa, undef_code) for aa in seq)"
+        },
+        "Bio/SeqUtils/__init__.py:360:seq1": {
+          "line": 360,
+          "name": "seq1",
+          "path": "Bio/SeqUtils/__init__.py",
+          "source": "def seq1(seq, custom_map=None, undef_code=\"X\"):\n    \"\"\"Convert protein sequence from three-letter to one-letter code.\n\n    The single required input argument 'seq' should be a protein sequence\n    using three-letter codes, either as a Python string or as a Seq or\n    MutableSeq object.\n\n    This function returns the amino acid sequence as a string using the one\n    letter amino acid codes. Output follows the IUPAC standard (including\n    ambiguous characters \"B\" for \"Asx\", \"J\" for \"Xle\", \"X\" for \"Xaa\", \"U\" for\n    \"Sel\", and \"O\" for \"Pyl\") plus \"*\" for a terminator given the \"Ter\" code.\n    Any unknown character (including possible gap characters), is changed\n    into '-' by default.\n\n    e.g.\n\n    >>> from Bio.SeqUtils import seq1\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAlaArgTer\")\n    'MAIVMGRWKGAR*'\n\n    The input is case insensitive, e.g.\n\n    >>> from Bio.SeqUtils import seq1\n    >>> seq1(\"METalaIlEValMetGLYArgtRplysGlyAlaARGTer\")\n    'MAIVMGRWKGAR*'\n\n    You can set a custom translation of the codon termination code using the\n    dictionary \"custom_map\" argument (defaulting to {'Ter': '*'}), e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla***\", custom_map={\"***\": \"*\"})\n    'MAIVMGRWKGA*'\n\n    You can also set a custom translation for non-amino acid characters, such\n    as '-', using the \"undef_code\" argument, e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer\", undef_code='?')\n    'MAIVMGRWKGA??R*'\n\n    If not given, \"undef_code\" defaults to \"X\", e.g.\n\n    >>> seq1(\"MetAlaIleValMetGlyArgTrpLysGlyAla------ArgTer\")\n    'MAIVMGRWKGAXXR*'\n\n    \"\"\"\n    if custom_map is None:\n        custom_map = {\"Ter\": \"*\"}\n    # reverse map of threecode\n    # upper() on all keys to enable caps-insensitive input seq handling\n    onecode = {k.upper(): v for k, v in IUPACData.protein_letters_3to1_extended.items()}\n    # add the given termination codon code and custom maps\n    onecode.update((k.upper(), v) for k, v in custom_map.items())\n    seqlist = [seq[3 * i : 3 * (i + 1)] for i in range(len(seq) // 3)]\n    return \"\".join(onecode.get(aa.upper(), undef_code) for aa in seqlist)"
+        }
+      },
+      "id": "840c13399b10c718f1e8",
+      "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "repo": "https://github.com/biopython/biopython",
+      "schedule": {
+        "core_nodes": [
+          "Bio/SeqUtils/__init__.py:309:seq3",
+          "Bio/SeqUtils/__init__.py:360:seq1"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "Bio/SeqUtils/__init__.py:309:seq3",
+          "Bio/SeqUtils/__init__.py:360:seq1"
+        ],
+        "previous_tests": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult"
+        ],
+        "step": 5,
+        "target_nodes": [
+          "Bio/SeqUtils/__init__.py:309:seq3",
+          "Bio/SeqUtils/__init__.py:360:seq1"
+        ],
+        "test_ids": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_seq1_seq3"
+        ]
+      },
+      "source_files": [
+        "Bio/SeqUtils/__init__.py"
+      ],
+      "test_evidence": {
+        "Tests/test_SeqUtils.py": "import os\n\nimport unittest\n\nfrom Bio import SeqIO\n\nfrom Bio.Seq import MutableSeq\n\nfrom Bio.Seq import Seq\n\nfrom Bio.SeqRecord import SeqRecord\n\nfrom Bio.SeqUtils import CodonAdaptationIndex\n\nfrom Bio.SeqUtils import gc_fraction\n\nfrom Bio.SeqUtils import GC_skew\n\nfrom Bio.SeqUtils import molecular_weight\n\nfrom Bio.SeqUtils import seq1\n\nfrom Bio.SeqUtils import seq3\n\nfrom Bio.SeqUtils.CheckSum import crc32\n\nfrom Bio.SeqUtils.CheckSum import crc64\n\nfrom Bio.SeqUtils.CheckSum import gcg\n\nfrom Bio.SeqUtils.CheckSum import seguid\n\nfrom Bio.SeqUtils.lcc import lcc_mult\n\nfrom Bio.SeqUtils.lcc import lcc_simp\n\n    def test_seq1_seq3(self):\n        s3 = \"MetAlaTyrtrpcysthrLYSLEUILEGlYPrOGlNaSnaLapRoTyRLySSeRHisTrpLysThr\"\n        s1 = \"MAYWCTKLIGPQNAPYKSHWKT\"\n        self.assertEqual(seq1(s3), s1)\n        self.assertEqual(seq3(s1).upper(), s3.upper())\n        self.assertEqual(seq1(seq3(s1)), s1)\n        self.assertEqual(seq3(seq1(s3)).upper(), s3.upper())"
+      }
+    }
+  ],
+  "rejected": []
+}
