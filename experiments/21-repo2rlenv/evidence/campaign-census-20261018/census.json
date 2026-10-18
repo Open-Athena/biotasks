@@ -1,6 +1,6 @@
 {
   "stage": "retrospective_route_cohort_census_not_final_funnel",
-  "observed_utc": "2026-10-18T03:55:30.924822+00:00",
+  "observed_utc": "2026-10-18T04:04:49.255719+00:00",
   "implemented_methods": 23,
   "scope_entries": 68,
   "units_with_retained_generation_records": 29,
@@ -130,7 +130,125 @@
           "reward_semantics": "native_patch_similarity_not_functional_correctness"
         }
       ],
-      "blind_results": [],
+      "blind_results": [
+        {
+          "task": "arq5x__bedtools2-1030",
+          "attempts": 1,
+          "native_similarity_reward": 0.0,
+          "task_checksum": "0cd2e0f4a0618658a212bc6deb9a7e3dff96dbdaf654c4ac17263e2dd8dece0f",
+          "trial_exception": null,
+          "agent_episodes": 12,
+          "completion_tokens_by_episode": [
+            237,
+            306,
+            408,
+            847,
+            1087,
+            859,
+            1409,
+            556,
+            411,
+            562,
+            557,
+            1865
+          ],
+          "input_tokens": 139693,
+          "output_tokens": 9104,
+          "cached_input_tokens": 116800,
+          "reasoning_tokens": null,
+          "provider_reported_cost_usd": null,
+          "native_trial_elapsed_seconds": 166.007574,
+          "reward_components": {
+            "format_valid": 0.0,
+            "size_sanity": 0.0,
+            "file_targeting": 0.0,
+            "region_overlap": 0.0,
+            "similarity": 0.0,
+            "llm_judge": null
+          },
+          "reasoning_effort": "unset",
+          "source": "evidence/prdiff-bedtools-blind-01/summary.json",
+          "artifact_source": "trials/arq5x__bedtools2-1030-blind-01/result.json"
+        },
+        {
+          "task": "arq5x__bedtools2-1043",
+          "attempts": 1,
+          "native_similarity_reward": 0.784762,
+          "task_checksum": "bd6c1c0665649151d3aa8f1ece8d633b8f4de1ba4efc2af1e900a5a10d7b21cf",
+          "trial_exception": null,
+          "agent_episodes": 12,
+          "completion_tokens_by_episode": [
+            322,
+            515,
+            560,
+            807,
+            855,
+            883,
+            1419,
+            608,
+            1200,
+            405,
+            209,
+            585
+          ],
+          "input_tokens": 153042,
+          "output_tokens": 8368,
+          "cached_input_tokens": 127872,
+          "reasoning_tokens": null,
+          "provider_reported_cost_usd": null,
+          "native_trial_elapsed_seconds": 121.376055,
+          "reward_components": {
+            "format_valid": 1.0,
+            "size_sanity": 0.666667,
+            "file_targeting": 1.0,
+            "region_overlap": 0.666667,
+            "similarity": 0.857143,
+            "llm_judge": null
+          },
+          "reasoning_effort": "unset",
+          "source": "evidence/prdiff-bedtools-blind-01/summary.json",
+          "artifact_source": "trials/arq5x__bedtools2-1043-blind-01/result.json"
+        },
+        {
+          "task": "arq5x__bedtools2-999",
+          "attempts": 1,
+          "native_similarity_reward": 0.380675,
+          "task_checksum": "d7ff12c0455b45ebec6890733f5542d63587e39aa35ef8616ef0b69cb9827a41",
+          "trial_exception": null,
+          "agent_episodes": 12,
+          "completion_tokens_by_episode": [
+            328,
+            602,
+            709,
+            709,
+            1169,
+            287,
+            154,
+            1337,
+            421,
+            748,
+            1727,
+            1107
+          ],
+          "input_tokens": 157993,
+          "output_tokens": 9298,
+          "cached_input_tokens": 136256,
+          "reasoning_tokens": null,
+          "provider_reported_cost_usd": null,
+          "native_trial_elapsed_seconds": 168.167516,
+          "reward_components": {
+            "format_valid": 1.0,
+            "size_sanity": 0.642857,
+            "file_targeting": 0.4,
+            "region_overlap": 0.333333,
+            "similarity": 0.242424,
+            "llm_judge": null
+          },
+          "reasoning_effort": "unset",
+          "source": "evidence/prdiff-bedtools-blind-01/summary.json",
+          "artifact_source": "trials/arq5x__bedtools2-999-blind-01/result.json"
+        }
+      ],
       "limitations": [
         "Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown."
       ],
@@ -138,7 +256,7 @@
       "target": 3,
       "candidate_cap": 10,
       "current_admitted_count": 3,
-      "completed_blind_count": 0
+      "completed_blind_count": 3
     },
     {
       "route": "pr_diff/native",
@@ -168,7 +286,26 @@
           "scope": "Native patch-similarity exports; no functional-correctness acceptance inferred from export or similarity controls."
         }
       ],
-      "current_admissions": [],
+      "current_admissions": [
+        {
+          "source": "evidence/prdiff-deseq-provider-01/acceptance.json",
+          "task": "thelovelab__DESeq2-118",
+          "runtime_checksum": "07058e445484d7b24c6e0c7811f65ac390427cdfa8b87dca2eb057dc151fca8b",
+          "reward_semantics": "native_patch_similarity_not_functional_correctness"
+        },
+        {
+          "source": "evidence/prdiff-deseq-provider-01/acceptance.json",
+          "task": "thelovelab__DESeq2-59",
+          "runtime_checksum": "44e848e7424ef5be21971590ae07173bb5cd2aa16a9cc55c057bb5a085e88a8f",
+          "reward_semantics": "native_patch_similarity_not_functional_correctness"
+        },
+        {
+          "source": "evidence/prdiff-deseq-provider-01/acceptance.json",
+          "task": "thelovelab__DESeq2-64",
+          "runtime_checksum": "25e7b3b0c7675ef78a13f84ee7e37731f9ab578d57e3af6d0d6bd4a930e83e10",
+          "reward_semantics": "native_patch_similarity_not_functional_correctness"
+        }
+      ],
       "blind_results": [],
       "limitations": [
         "Counts belong to distinct recorded stages/profiles; do not sum repeated profiles or treat earlier admission counts as current. Unknown values stay unknown."
@@ -176,7 +313,7 @@
       "unit_id": "pr_diff/native@thelovelab/DESeq2",
       "target": 3,
       "candidate_cap": 10,
-      "current_admitted_count": 0,
+      "current_admitted_count": 3,
       "completed_blind_count": 0
     },
     {
@@ -1914,6 +2051,8 @@
     "evidence/r2e-gym-acceptance/acceptance.json": "2d439b57663fee2f2f9aa6c19bc9f430db6857890cbb3e06d974f4e308c08d9d",
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",
     "evidence/prdiff-bedtools-provider-01/acceptance.json": "fc817475dc434445c013e03ed073d2d6cac6d581c9df8d39a5898a5cd322f9ff",
+    "evidence/prdiff-bedtools-blind-01/summary.json": "d29df9d0c49afff2b19e4a4106545d989de46bef937a678c247edf54881f94a2",
+    "evidence/prdiff-deseq-provider-01/acceptance.json": "b2ace229420b4154c82f6a32978d3b0863d830f879756a087b9c5e5547f982c3",
     "evidence/legacy-biopython-admission-review/review.json": "7481d27c0a75f917c36c46b85e3a29773065df6523295f30391f442b706b3ccd"
   },
   "limitations": [

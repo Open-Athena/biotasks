@@ -1,0 +1,494 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "accepted_native_similarity_runtime_pilot",
+  "checkpoint_commit": "5ec353f20a96d1a85c9e3219c29ca07b2af928bb",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "cohort": "bedtools",
+  "accepted_similarity_tasks": 3,
+  "control_trials": 6,
+  "model_calls": 0,
+  "blind_attempts": 0,
+  "reward_semantics": "Continuous deterministic native patch similarity, not functional correctness/pass@1. Model judge disabled; native redistribution retained.",
+  "retention": "Retain while referenced; no automatic deletion.",
+  "source_notice_url": "https://raw.githubusercontent.com/thelovelab/DESeq2/6fdaf4bb71de424e6e87e99b8db9ef258ded9306/DESCRIPTION",
+  "eligibility": "Public upstream-derived task assets, source notices, owned runtime logs and controller inputs; exact credential and private-route scans passed. Original source and source revisions are frozen in transferred inputs. No credentials, service routes or account billing details.",
+  "files": [
+    {
+      "path": "evidence/prdiff-deseq-provider-01/acceptance.json",
+      "bytes": 1194,
+      "sha256": "b2ace229420b4154c82f6a32978d3b0863d830f879756a087b9c5e5547f982c3"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/author-evidence-receipt.json",
+      "bytes": 230,
+      "sha256": "ae919708810a433b97886dbb80be4d5a4306d76d2b00e2f34061e6d22074c700"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/author-process-status.json",
+      "bytes": 289,
+      "sha256": "02dbc6ffca06a6729feb301f9a79ca48eb2c2a2fef3d66a2fbfc7c30bce1e00d"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/cleanup-verification.json",
+      "bytes": 1299,
+      "sha256": "6035b0f1c15c040a7003712d85425d5b68b86707154709bdf865721830c90da8"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/cleanup.json",
+      "bytes": 927,
+      "sha256": "841d87f99993ecaf95e3f477be4a72cea8048bed361ba11b48f7bef16bb3bf49"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/provider.jsonl",
+      "bytes": 3064,
+      "sha256": "ba71d05d22bea8866178e59627cc04e9c80e8a6acc31cd2032d9509e504b64a6"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/status.json",
+      "bytes": 24539,
+      "sha256": "e10f880358bdabf8c129a75a2bc5f9a604551cd76d518485a695c45a69332971"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/submission.json",
+      "bytes": 295,
+      "sha256": "47b1728c7e2a6bff39e98c0c6389a89eeab6460170175fe8fdbcc92eb541d1bb"
+    },
+    {
+      "path": "evidence/prdiff-deseq-provider-01/summary.json",
+      "bytes": 689,
+      "sha256": "b12a181555d7a7f60cb1b5ad5fc44de3f4bf6113399abd856a42314c2ed9d47d"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/cohort-tasks.tar.gz",
+      "bytes": 32535,
+      "sha256": "9effa498f235d8fb99dcebc2febc8482c1e99dc741758f2045efe071770229ba"
+    },
+    {
+      "path": "frozen-inputs/cohort-transfer.json",
+      "bytes": 101,
+      "sha256": "b361440716c0542bcc147454c955fc05d46ee7ef496281ed503fa05d52726841"
+    },
+    {
+      "path": "frozen-inputs/cohort.json",
+      "bytes": 1245,
+      "sha256": "383d10055ee13f471a7aabd8edbad255d6a1a2a7370a7b72dcdb00afb28a364a"
+    },
+    {
+      "path": "frozen-inputs/glm_remote.py",
+      "bytes": 2659,
+      "sha256": "33a91cc89904ce162279bf15f83cbdfa463cae1196c72b425a8fc2f0fd6f7fc6"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 1873,
+      "sha256": "049c7b7da83df5d9653bf37e51600e68d6acca0de25f96c96e5a9af8edf29c32"
+    },
+    {
+      "path": "frozen-inputs/pr_provider_environment.py",
+      "bytes": 3235,
+      "sha256": "9499c85a14d345eae2317ba562ee40b1688207872a404c6783c57bbaabc6b177"
+    },
+    {
+      "path": "frozen-inputs/prdiff_provider_environment.py",
+      "bytes": 746,
+      "sha256": "a1f07e550ccb94c4d19ac3e1c5d9b392ff12fac78f7f0666f88cbbd6eb4ced48"
+    },
+    {
+      "path": "frozen-inputs/prdiff_runtime_input.py",
+      "bytes": 2628,
+      "sha256": "690b7297983b900551ccdb9f8794ede0cb997c08a2e9636278634d02fbf70afc"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_provider_preflight.py",
+      "bytes": 7175,
+      "sha256": "b5d37854a562f93f58e0d5b3f6835ce9dfd72c607fd1b19bdeac226e97dddb86"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_provider_controls.py",
+      "bytes": 3403,
+      "sha256": "8d26898aa6b91983104fd4de6ff89a566d6e5944438c36598755439712aca252"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 7704,
+      "sha256": "11c4a5b2b14448c5d254ca0a98eb80d665219dbaaf4cde6cbafd49e3f2692c58",
+      "members": [
+        {
+          "path": "author-output/cleanup.json",
+          "bytes": 927,
+          "sha256": "841d87f99993ecaf95e3f477be4a72cea8048bed361ba11b48f7bef16bb3bf49",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/provider.jsonl",
+          "bytes": 3064,
+          "sha256": "ba71d05d22bea8866178e59627cc04e9c80e8a6acc31cd2032d9509e504b64a6",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/status.json",
+          "bytes": 24539,
+          "sha256": "e10f880358bdabf8c129a75a2bc5f9a604551cd76d518485a695c45a69332971",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/config.json",
+          "bytes": 493,
+          "sha256": "72d8649f08dced2c8c5485e43342a42062332e6d0abaeb64a93040935d985b69",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/lock.json",
+          "bytes": 1146,
+          "sha256": "8906f9f5d005e05dd79eda923f1eb02142ea2d6c6527cbce94a6db8876717464",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/result.json",
+          "bytes": 3699,
+          "sha256": "4b756dcc6c20b88e1089f3cc274e77af96d20e5a39c3c16c86ee023662ef874f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/trial.log",
+          "bytes": 151,
+          "sha256": "d9b6c35eb02beaa0774444c0715ca46da77a9def5a0917d9787075291c78c8db",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-nop/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "8efa41db341d6a1a467cfa06ea9f2c78e97f2a32408a3843ab886392148a6dce",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/agent/oracle.txt",
+          "bytes": 246,
+          "sha256": "a696bda9cc9a86b3044e055468768ef75b125a152789f010160c4a776dc3b4ed",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/config.json",
+          "bytes": 499,
+          "sha256": "f871c4ff73f82d076f251331d5441feb340a9aeaedf579a3fff6304182e41f42",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/lock.json",
+          "bytes": 1149,
+          "sha256": "17593bc9ee14f14b94a68dcc328fa39b9fd8bba560a4289d089222cc82b69da5",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/result.json",
+          "bytes": 3714,
+          "sha256": "f5d1c3ab31ec1f985e6b6adfd8b6d589dbeed9400451f1f60e8d569896b574bc",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/trial.log",
+          "bytes": 151,
+          "sha256": "d9b6c35eb02beaa0774444c0715ca46da77a9def5a0917d9787075291c78c8db",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "ac8d7471709093feff1240e4b2495d32d60ab344f03759cbc44adaeeb0f0791e",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-118-oracle/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "fa2c0fa24034d038ea258c0ff14fb7184086b54b537d5fb8f255b13a5ac9a4f1",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/config.json",
+          "bytes": 491,
+          "sha256": "ecedc493a49b0c2cbbd1abb416e3c91d1f36609ca05944783341e38ccabc692d",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/lock.json",
+          "bytes": 1144,
+          "sha256": "6abd6a7fb52f64210e659a5ef94db4fce1a38c7d0fb91954f10a084cae453406",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/result.json",
+          "bytes": 3693,
+          "sha256": "99a83546e2ac13fae13b7c4abc04db35ed6f562ac66f5aaabd4ac16e7af2704a",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/trial.log",
+          "bytes": 150,
+          "sha256": "e64f6c3c71a1f277b1757c519a89229a1c168c387ec252dfd51d6482d0b4683c",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-nop/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "2dde8a458680b276eee29cfe591e3201ab276b495becc501b7adf9b4317d047f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/agent/oracle.txt",
+          "bytes": 258,
+          "sha256": "dccfba1fa31fc06bdd6e4c3cd90315c849073a8396c6edf99e6eb58e2ddbebc0",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/config.json",
+          "bytes": 497,
+          "sha256": "e752d9ab4e6629c46a43389db958ee0227ef48db8acd55f88524cf9e55e2f53f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/lock.json",
+          "bytes": 1147,
+          "sha256": "5586c66766bac2088adb1d5e7052ca185ed68cd6ea395f41273ef9161e7fd8e6",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/result.json",
+          "bytes": 3708,
+          "sha256": "724effc1acf54515810e5835761150415ab4c4f6bbbef954595d5fa3fe39a303",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/trial.log",
+          "bytes": 150,
+          "sha256": "e64f6c3c71a1f277b1757c519a89229a1c168c387ec252dfd51d6482d0b4683c",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "ac8d7471709093feff1240e4b2495d32d60ab344f03759cbc44adaeeb0f0791e",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-59-oracle/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "f35dabe04b3219a7052ce08825d1b6550f0fb92dd2da4cc7cfc6f534b193950e",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/config.json",
+          "bytes": 491,
+          "sha256": "2001207990fa636f5c0f1c7182f64737e86505d3986b4f08264b9a51d5cd64c1",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/lock.json",
+          "bytes": 1144,
+          "sha256": "ec58deafb59f27e973cf724bfcb7b1d7a86ad23148c270d854d94a519ffb0334",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/result.json",
+          "bytes": 3693,
+          "sha256": "86810ceee0492fb4ee9ebcd5dd1df6b8d1924893f1313b42ded91becdcbc9692",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/trial.log",
+          "bytes": 150,
+          "sha256": "7cefd2f50c5037acb88249d3a165db64938051568b5a169a9049bcc68a223423",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-nop/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "038074b4d2d319810664ed38330bc94dde8dd617e3381d72b10feb0d778917ef",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/agent/oracle.txt",
+          "bytes": 305,
+          "sha256": "0bc93a8ea36cf1af6511f7ece2b7ce83b3346857bcb1b758b3e7a1e74530e911",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/config.json",
+          "bytes": 497,
+          "sha256": "68386f9bfd7efdef00b75e82863a760a3c5d6fa1a9856bf82747437c3f11fd31",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/lock.json",
+          "bytes": 1147,
+          "sha256": "f4a5809fb16ce0dc44622ef7470b4a5e2c5c1e5a1dfe9d8bf63aea6c88c66e71",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/result.json",
+          "bytes": 3708,
+          "sha256": "539bfc63c05b3577c9c1bc6aa33a97f701a9aeb10b6cfb5fdb80c4517f7e450c",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/trial.log",
+          "bytes": 150,
+          "sha256": "7cefd2f50c5037acb88249d3a165db64938051568b5a169a9049bcc68a223423",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "ac8d7471709093feff1240e4b2495d32d60ab344f03759cbc44adaeeb0f0791e",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "50d3a69b930457282debea3d352ae49803a15f0843ae1699399ef4de2f4f7cdd",
+          "mode": "0o644"
+        },
+        {
+          "path": "author-output/trials/thelovelab__DESeq2-64-oracle/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "83f291fb7280cbee07ebca6a798b78d4772453e6eecfd402aa07f054ba6dc2fe",
+          "mode": "0o644"
+        }
+      ]
+    },
+    {
+      "path": "recovery/author-evidence-receipt.json",
+      "bytes": 230,
+      "sha256": "ae919708810a433b97886dbb80be4d5a4306d76d2b00e2f34061e6d22074c700"
+    },
+    {
+      "path": "recovery/author-process-status.json",
+      "bytes": 289,
+      "sha256": "02dbc6ffca06a6729feb301f9a79ca48eb2c2a2fef3d66a2fbfc7c30bce1e00d"
+    },
+    {
+      "path": "recovery/author.stderr",
+      "bytes": 2822,
+      "sha256": "6623694d29c126cc83e6af029a0e52fb31a0fd68d7dd0d7578cffc1faa34e2e9"
+    },
+    {
+      "path": "recovery/author.stdout",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "recovery/dependency-setup.log",
+      "bytes": 3206,
+      "sha256": "ee4a41098f0ba4ac35a4834ee58ca51f39bc2b84f1e9dacb0211dc34fd90e1a8"
+    },
+    {
+      "path": "source-notices/DESeq2-DESCRIPTION",
+      "bytes": 1604,
+      "sha256": "9e534584a153b452fa2a5cd1553f1f9b121ee06449531df1438079d01d249dc9"
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    }
+  ]
+}

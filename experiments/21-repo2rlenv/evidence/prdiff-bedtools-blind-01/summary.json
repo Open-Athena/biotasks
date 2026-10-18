@@ -1,0 +1,156 @@
+{
+  "stage": "blind_native_similarity_scored",
+  "cohort": "bedtools",
+  "tasks": [
+    {
+      "task": "arq5x__bedtools2-1030",
+      "attempts": 1,
+      "native_similarity_reward": 0.0,
+      "task_checksum": "0cd2e0f4a0618658a212bc6deb9a7e3dff96dbdaf654c4ac17263e2dd8dece0f",
+      "trial_exception": null,
+      "agent_episodes": 12,
+      "completion_tokens_by_episode": [
+        237,
+        306,
+        408,
+        847,
+        1087,
+        859,
+        1409,
+        556,
+        411,
+        562,
+        557,
+        1865
+      ],
+      "input_tokens": 139693,
+      "output_tokens": 9104,
+      "cached_input_tokens": 116800,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 166.007574,
+      "reward_components": {
+        "format_valid": 0.0,
+        "size_sanity": 0.0,
+        "file_targeting": 0.0,
+        "region_overlap": 0.0,
+        "similarity": 0.0,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/arq5x__bedtools2-1030-blind-01/result.json"
+    },
+    {
+      "task": "arq5x__bedtools2-1043",
+      "attempts": 1,
+      "native_similarity_reward": 0.784762,
+      "task_checksum": "bd6c1c0665649151d3aa8f1ece8d633b8f4de1ba4efc2af1e900a5a10d7b21cf",
+      "trial_exception": null,
+      "agent_episodes": 12,
+      "completion_tokens_by_episode": [
+        322,
+        515,
+        560,
+        807,
+        855,
+        883,
+        1419,
+        608,
+        1200,
+        405,
+        209,
+        585
+      ],
+      "input_tokens": 153042,
+      "output_tokens": 8368,
+      "cached_input_tokens": 127872,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 121.376055,
+      "reward_components": {
+        "format_valid": 1.0,
+        "size_sanity": 0.666667,
+        "file_targeting": 1.0,
+        "region_overlap": 0.666667,
+        "similarity": 0.857143,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/arq5x__bedtools2-1043-blind-01/result.json"
+    },
+    {
+      "task": "arq5x__bedtools2-999",
+      "attempts": 1,
+      "native_similarity_reward": 0.380675,
+      "task_checksum": "d7ff12c0455b45ebec6890733f5542d63587e39aa35ef8616ef0b69cb9827a41",
+      "trial_exception": null,
+      "agent_episodes": 12,
+      "completion_tokens_by_episode": [
+        328,
+        602,
+        709,
+        709,
+        1169,
+        287,
+        154,
+        1337,
+        421,
+        748,
+        1727,
+        1107
+      ],
+      "input_tokens": 157993,
+      "output_tokens": 9298,
+      "cached_input_tokens": 136256,
+      "reasoning_tokens": null,
+      "provider_reported_cost_usd": null,
+      "native_trial_elapsed_seconds": 168.167516,
+      "reward_components": {
+        "format_valid": 1.0,
+        "size_sanity": 0.642857,
+        "file_targeting": 0.4,
+        "region_overlap": 0.333333,
+        "similarity": 0.242424,
+        "llm_judge": null
+      },
+      "reasoning_effort": "unset",
+      "source": "trials/arq5x__bedtools2-999-blind-01/result.json"
+    }
+  ],
+  "attempts": 3,
+  "accepted_similarity_tasks": 3,
+  "trial_exceptions": 0,
+  "cleanup_confirmed": true,
+  "approved_limits": {
+    "seconds_per_attempt": 900,
+    "turns": 12,
+    "output_tokens_per_response": 2048,
+    "reasoning_effort": "unset"
+  },
+  "interpretation": "Native continuous oracle-patch similarity; not functional correctness, biological performance, pass@1 or a pooled benchmark score.",
+  "public_redactions": {
+    "field": "api_base",
+    "files": [
+      "solver-status.json",
+      "trials/arq5x__bedtools2-1030-blind-01/config.json",
+      "trials/arq5x__bedtools2-1030-blind-01/lock.json",
+      "trials/arq5x__bedtools2-1030-blind-01/result.json",
+      "trials/arq5x__bedtools2-1043-blind-01/config.json",
+      "trials/arq5x__bedtools2-1043-blind-01/lock.json",
+      "trials/arq5x__bedtools2-1043-blind-01/result.json",
+      "trials/arq5x__bedtools2-999-blind-01/config.json",
+      "trials/arq5x__bedtools2-999-blind-01/lock.json",
+      "trials/arq5x__bedtools2-999-blind-01/result.json"
+    ],
+    "policy": "Only private service routing fields changed in public copies; original messages, trajectories, task edits and reward evidence preserved."
+  },
+  "original_outer_archive_sha256": "9aacc03a6407a3222742ac91868921887eb34d5b9498d97851fa1aa423989f6c",
+  "public_archive_sha256": "e73011488649ead02e37c4b77357909779af7d9c78374e04b48e324d19496eda",
+  "public_archive_bytes": 294587,
+  "limitations": [
+    "All three attempts reached 12 agent episodes; no retry or solver-limit adaptation.",
+    "Native task declares no final source-tree capture; verifier score and agent/pane evidence are retained, but a separate submitted tree/diff artifact was not exported.",
+    "Original private route-bearing logs are retained privately; public JSON routing fields are explicitly redacted.",
+    "Reasoning-token breakdown and actual billed charges are unavailable; existing free GLM used."
+  ]
+}

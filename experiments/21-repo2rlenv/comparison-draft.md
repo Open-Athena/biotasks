@@ -1,56 +1,71 @@
-# Interim comparison — issue 21
+# Interim comparison: Repo2RLEnv biological repository pilot
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 02:14 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status at 2026-10-18 04:05 UTC: eight accepted correctness/algorithmic tasks have eight completed blind attempts. Six additional bedtools/DESeq2 tasks are admitted only for native patch similarity; the three bedtools blind attempts have completed. DESeq2 blind attempts are pending, and Biopython/scikit-bio controls are staged. The experiment and final completion audit remain open.
 
-## Competencies and independent outcomes
+The [route/cohort census](evidence/campaign-census-20261018/census.json) covers all 23 implemented methods through 68 repository/cohort scope entries; the planned Sec-bench recipe is excluded. Retained generation records map to 29 distinct execution units. Their retrospective target/candidate ceiling is 87/290, subject to applicability and operational budgets. A single total N frozen before launch is not demonstrated by the early manifests. These retrospective figures do not describe achieved tasks or an extension of candidate allowances.
 
-| Cohort | What the task exercises | Evidence available | Limit of the finding |
+## Accepted tasks and blind results
+
+| Task/profile | Competency and lineage | Native blind result | Interpretation and limit |
 | --- | --- | --- | --- |
-| scikit-bio PR2633, portable PR-runtime profile | Numerical stability in a statistical biology implementation | Independently accepted; one blind GLM attempt scored 1 with 1/1 F2P and 59/59 P2P tests | Instruction includes expected values and a suggested numerical fix; one task is not a yield or general solver-performance estimate |
-| Biopython LCC, full-source SWE-smith adaptation | Sequence complexity / entropy implementation | Independently accepted; one blind GLM attempt scored 1 with 12/12 tests | Explicit source-packaging and solver-tooling adaptations; bounded library-function task rather than an end-to-end biological analysis |
-| SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison; all three fresh provider checks passed -1/+1 | One synthetic family, not three distinct competencies; all three single blind attempts scored native +1 |
-| scikit-bio SWE-Next | PR2633 numerical-stability repair | Native export, six independent controls and fresh provider rewards 0/1 | Rejected generated instruction: extra M-step requirement is not distinguished by native coverage |
-| scikit-bio fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Independently accepted after six controls and fresh separate-context provider rewards 0/1 | One blind attempt scored 0: 59/60 tests pass, submitted source unchanged after 12 turns. Shared PR2633 lineage; not a new independent problem |
-| scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export, six independent correctness controls and fresh separate-context no-op/reference runtime rewards 0/1 verified | Rejected: instruction requires guarded M-step updates, while E-step-only patch retains unguarded division and passes all 60 tests |
-| scikit-bio Strong dominance, SWE-smith | Diversity-index function reconstruction | Baseline/reference/alternative/incorrect-constant/zero rewards 0,1,1,1,0 | Rejected: an incorrect constant passes all 34 native tests; no blind solve |
-| Biopython GC-skew, SWE-flow | Windowed nucleotide-composition calculation | Original export failed build; idempotent license-bootstrap adaptation scored native no-op 0/reference 1 | Rejected: both incorrect zero-only implementations pass all 12 tests; no blind attempt |
-| scikit-bio Esty confidence interval, SWE-smith | Singleton/doubleton variance formula | Baseline/reference/alternative/wrong-clipping/wrong-variance rewards 0,1,1,0,0 across 34 tests | Accepted; one blind attempt scored 1, all 34 tests passed, both solver sandboxes independently absent |
-| Biopython QCP PR5317 | Collinear three-dimensional coordinate alignment | One SWE-gen export: native healthy 9/9, defective 8/9, nop 0/reference 1; corrected independent run02 preserved all six expected control rewards: 0,1,1,0,0,0 | Rejected at instruction/verifier review: ordinary-input precision claim near 1e-15 is not justified by the native comparison tolerances; original export and control scores retained |
+| Portable scikit-bio PR2633 | Numerical stability in a scientific library | 1; 60/60 tests | Explicit compiled-runtime adaptation. Instruction supplies expected values and a numerical hint. |
+| Fixture-adapted scikit-bio R2E-Gym | Same PR2633 historical problem | 0; 59/60 tests after 12 turns | Submitted source remained unchanged; no trial exception or repeat. Different generated instruction/profile, shared problem lineage. |
+| Biopython LCC full-source adaptation | Local sequence-composition complexity/entropy | 1; 12/12 tests | A bounded library-function repair with synthetic mutation and supplied examples. |
+| scikit-bio Esty interval | Singleton/doubleton variance formula | 1; 34/34 tests | Independent alternative and two meaningful incorrect controls tested. |
+| scikit-bio observed_features | Count-vector richness alias | 1; 34/34 tests | Independent alternative and two meaningful incorrect controls tested; limited scientific complexity. |
+| Three SCALER DNA edit-distance tasks | One synthetic algorithmic family | Each +1 under native -1/+1 grading | Three task instances, one family; no observed biological measurement. |
+| Three bedtools PR-diff tasks | C++ source edits, formatting and platform behavior | 0, 0.784762, 0.380675; each reached 12 episodes | Six fresh runtime no-op/reference controls passed 0/1. Admission is only for continuous patch similarity: no compilation, functional correctness, biological-performance or pass@1 claim. |
+| Three DESeq2 PR-diff tasks | R source edits for historical statistical-library changes | Pending | Six native similarity controls passed 0/1, all exact sandboxes independently absent; no R functional execution. |
 
-Decisive evidence: [PR solver](evidence/pr-blind-solver-01/summary.json), [LCC solver](evidence/lcc-blind-solver-01/summary.json), [SCALER acceptance](evidence/scaler-native-acceptance/summary.json), [SWE-Next controls](evidence/swe-next-independent-01), [R2E-Gym controls](evidence/r2e-gym-independent-01), [SWE-gen review](evidence/history-export-review/swe-gen-skbio-01.json), [QCP submission](evidence/swe-gen-biopython-01/submission.json).
+[Acceptance and solver records](evidence/campaign-census-20261018/census.json) preserve individual task IDs and evidence links. The eight scored tasks are not eight independent biological problems: PR2633 is shared across profiles and SCALER instances share one family. Different reward contracts and repeated lineages prevent a meaningful pooled benchmark success rate.
 
-Eight accepted tasks have completed one blind attempt each: seven positive native rewards and one zero (R2E-Gym); grading contracts differ. They are selected, independently accepted tasks with different grading contracts; the three SCALER variants share one synthetic family. This is not a representative benchmark sample. Do not report a campaign-wide success rate or treat pending attempts as failures.
+The bedtools [control and admission evidence](evidence/prdiff-bedtools-provider-01/summary.json) is retained in [public snapshot 0572407a](https://huggingface.co/buckets/open-athena/biotasks/tree/research/21-repo2rlenv/2026-10-18/0572407a98fbfaa32ca28d6cdb5328ad37874fd341c258289cbc03b26a339c0e): 30 anonymously verified objects and 54 native archive members. All six exact sandbox IDs are independently absent. Its similarity scorer awards structural credit to reversed changes and some credit to unrelated edits; scores must retain their native meaning.
 
-## Generation and execution limitations
 
-- Biopython R2E-Gym scanned 2,000 first-parent history records under the narrow QCP profile, all source-filtered before model calls. This is not 2,000 generation attempts or a repository-wide incompatibility finding. A broader source-only scan found ten eligible commits after 133 records; this is source availability, with no builds or authoring. A sequence-feature profile is prepared within the unchanged first-pass allowance.
-- Biopython GC-skew original export failed native builds on a symlink-only LICENSE assertion. A separately recorded idempotent bootstrap adaptation completed native no-op/reference grading with rewards 0/1; independent controls reject the native task because both incorrect zero-only submissions pass all 12 tests. Original failure, corrected export and independent controls are separately public. These are two export/build attempts for one saved candidate, not two generated problems.
-- Esty confidence-interval control run01 failed worker-name schema validation before sandbox allocation. No controls or model calls ran. The corrected run02 retained all frozen inputs and passed five independent controls with rewards 0,1,1,0,0. Subsequent fresh runtime and final review accepted this task; its one blind attempt scored 1.
-- Biopython SWE-Next rejected its first source candidate before model calls because the selected test change only reformats an existing expression. One of ten candidates is consumed; broader bounded source selection remains pending. See [source review](evidence/swe-next-biopython-01/source-filter-review.json).
-- Endless biological adaptation exhausted ten candidates with 34 model responses and zero exports: two design parse failures and eight exhausted initial-test repair sequences. No task build or solver trial started. See [Endless evidence](evidence/endless-biological-02).
+The [bedtools blind record](evidence/prdiff-bedtools-blind-01/summary.json) retains all three native similarity scores, 12 episodes per task and no trial exceptions. Input/output tokens were 139,693/9,104, 153,042/8,368 and 157,993/9,298 respectively; reasoning-token breakdown is unavailable. Per-response output stayed within 2,048 tokens. No separate final source-tree/diff artifact was declared by the native task; original trajectories, panes and verifier evidence are retained, with private API routing fields redacted only in public copies.
 
-- TMax's selected biological cohort produced zero exports from three candidates and twelve model calls. All nine initial-test responses failed native test-shape validation. The preserved responses explain the validator outcome but do not establish whether the underlying formatting problem originated in the model or an earlier transport component. See [TMax evidence](evidence/tmax-biological-02).
-- Biopython R2E exhausted ten candidates with thirty responses and zero exports: one malformed structured response, 24 Python syntax failures and five parseable modules without explicit test definitions. Preserved usage includes 117,063 input and 955,546 combined output tokens (871,634 reasoning). [Native audit](evidence/r2e-biopython-author-01/summary.json).
-- Scikit-bio R2E exhausted its ten-candidate allowance with thirty authoring responses and zero exports. Preserve syntax and empty-comment failures rather than manually repairing the generated program and reporting it as native success. See [R2E audit](evidence/r2e-skbio-author-01).
-- SETA Evol materialization timed out on its first builder request. No response was preserved; usage is unknown, not zero. Its second schema-valid saved design was unattempted. See [result](evidence/parent-evolution-build-01/result-summary.json) and [public preservation receipt](hf-parent-evolution-build-01-upload-receipt.json).
-- The two Code-instruct cohorts have inconclusive capture failures. Actual attempted candidate counts and model usage are unknown. Their first-pass allowances are conservatively consumed; neither zero attempts nor ten observed attempts is justified. See [reconciliation](evidence/code-instruct-capture-diagnosis/candidate-budget-reconciliation.json).
-- Non-Python repository inclusion produced PR-diff artifacts, but patch similarity does not establish executable C++/R task correctness. Native test-report compatibility still limits functional routes. Preserve unsupported-language/profile cases outside generation-failure denominators.
-- TerminalWorld intake remains gated by recording reuse terms and missing fixtures. Model/backend constraints on Tasksmith, CodeMidas and FrontierSmith are separate from generation failures. The route matrix records these distinctions.
+## Rejected, unresolved and zero-export outcomes
 
-These observations support further evaluation of source-grounded software-repair tasks and careful investigation of structured authoring failures. They do not yet support ranking recipe productivity or a final expansion recommendation.
+| Route/profile | Evidence-based outcome | Scope of the finding |
+| --- | --- | --- |
+| scikit-bio Strong, SWE-smith | Incorrect constant passes all 34 native tests | Independent admission rejected; generator success is not verifier adequacy. |
+| Biopython GC-skew, SWE-flow | Two incorrect zero-only submissions pass all 12 tests | Independent admission rejected despite native no-op/reference 0/1. |
+| scikit-bio SWE-gen and SWE-Next | Native controls pass, but generated instruction adds an M-step requirement not distinguished by native tests | Original instructions are rejected; no blind attempt on either rejected task. |
+| Biopython QCP, SWE-gen | Reference 9/9 versus baseline 8/9 and independent controls pass; instruction demands unsupported ordinary-input precision near 1e-15 | Original instruction rejected; native test tolerances do not justify the stated requirement. |
+| Original Biopython PR/commit/CVE exports | Historical 1 F2P/54 P2P validation preserved; local-only base images, fresh task controls and valid-alternative acceptance unresolved | Three route exports share one historical fix. They remain outside pilot admission; this does not prove that a future portable adaptation cannot work. Exported P2P lists contain 54/50/50 tests respectively. |
+| Native scikit-bio commit | One selected source: patched 6 tests pass, defective checkout cannot collect the newly introduced import; no native test-level F2P | Zero exports without filter bypass or test rewriting. Single-source calibration falls below the three-task target. |
+| R2E authoring on each Python repository | Ten candidates and 30 responses per repository; zero exports | Native syntax/shape checks reject saved answers. Original outputs are retained without repairing generated code outside the protocol. |
+| Broader Biopython R2E-Gym history | 2,000 records, 1,993 filtered, 7 materialization attempts, zero exports/model calls | Five native snapshot path-policy errors and two bootstrap failures. Truncated bootstrap stderr leaves two root causes unavailable. |
+| Broader Biopython SWE-Next | Three additional PR inputs, two eligible; zero exports/model calls | One source filter and two snapshot path-policy errors. Prior PR5317 remains consumed; no allowance reset. |
+| CodeInstruct on both Python repositories | Terminal authoring jobs with empty supported archives | Candidate counts, outputs and usage remain unknown. Each ten-candidate allowance is conservatively consumed; no zero-yield claim or automatic rerun. |
+| SETA seed synthesis and evolution | Invalid/schema-incomplete responses and builder timeouts; zero exports | Some prepared inputs were never attempted. Saved designs, original responses and incomplete requests are distinct stages. |
+| DataArc | One candidate, two completed responses and a third request without retained response; no accepted task | Raw export count is unavailable; no validated task or solver result. |
+| TMax and Endless Terminals | Three/ten candidates and 12/34 responses respectively; zero exports | Native initial-test shape and repair checks reject the outputs. |
 
-## Preserved model usage (partial)
+The [applicability matrix](applicability.csv), [census](evidence/campaign-census-20261018/census.json) and original summaries identify route-specific evidence and unknown values. Initial setup/capture failures remain separate from corrected attempts. Candidate repairs and adaptations are not additional independent problems, and a partially executed input pool is not an exhausted ten-candidate search.
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirty-three generation/materialization rows, fourteen validation rows and eight solver rows to seventy-eight hashed source records, with three final rejections and three additional accepted-task reviews. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+## Backend, model and input limits
 
-| Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
+Tasksmith requires its native Anthropic author. CodeMidas accepts a literal proprietary-model allowlist and rejects a custom endpoint. FrontierSmith's native allowlist and direct Responses contract reject the GLM baseline before credential/API use. These are baseline model-client blockers; no paid fallback was used.
+
+Native equivalence generation directly couples local Docker execution and model completion on its caller. The selected Iris profile has no Docker binary; the no-model backend probe therefore fails native availability. This is a measured profile limitation, not a proof that a future transport/colocation adapter is impossible. Its learner-visible reference is a separate curation limitation.
+
+CliGym's native constructor requires test_paths exactly [tests], unlike the selected Biopython Tests/ and scikit-bio in-package profiles. C++/R shell/make/testthat dispatcher probes return empty maps; these synthetic parser probes do not establish repository-test execution. Only PR-diff has executed across all four repository languages. DESeq2 PR-diff controls do not execute R biological analyses.
+
+TerminalWorld screened three public recording candidates, with two passing native screening and one excluded. Recording reuse terms and fixture gates are unresolved; no recording-based authoring ran. Missing eligible inputs are recorded separately from generation failure.
+
+## Retained generation usage
+
+This table reproduces the 33 evidence-linked generation/materialization records, not all campaign API dispatches. Earlier diagnostic requests, uncaptured requests and later solver usage are separate. Unknown means unavailable; responses are not necessarily dispatched-call counts. Output includes reasoning, and missing reasoning breakdown remains unknown. Candidate numbers refer to each row's recorded stage; mutation screening, authoring, source filtering and materialization are not interchangeable.
+
+| Record | Recorded candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
 | swe-gen-skbio-01 | 1 | 1 | 1 | 4042 | 12034 | 11077 |
 | swe-next-skbio-01 | 1 | 1 | 1 | 6388 | 25000 | 23740 |
 | r2e-gym-skbio-fixtures-02 | 1 | 1 | 1 | 5661 | 7459 | 6508 |
 | swe-gen-biopython-01 | 1 | 1 | 1 | 3347 | 13623 | 12557 |
 | swe-next-biopython-01 | 1 | 0 | 0 | 0 | 0 | 0 |
-| r2e-gym-biopython-01 | 0 eligible (2000 history records filtered) | 0 | 0 | 0 | 0 | 0 |
+| r2e-gym-biopython-01 | 0 | 0 | 0 | 0 | 0 | 0 |
 | r2e-skbio-author-01 | 10 | 0 | 30 | 94162 | 1179584 | unknown |
 | r2e-biopython-author-01 | 10 | 0 | 30 | 117063 | 955546 | 871634 |
 | tmax-biological-02 | 3 | 0 | 12 | 54166 | 647644 | 601324 |
@@ -58,44 +73,47 @@ The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json
 | parent-evolution-build-01 | unknown | 0 | 0 | unknown | unknown | unknown |
 | code-instruct-biopython | unknown | unknown | unknown | unknown | unknown | unknown |
 | code-instruct-scikit-bio | unknown | unknown | unknown | unknown | unknown | unknown |
+| biopython-author-02 | 3 | 1 | 4 | 6816 | 472935 | 471638 |
+| skbio-author-03 | 3 | 2 | 4 | 5145 | 321836 | 317647 |
+| biopython-flow-author-01 | 3 | 1 | 6 | 19370 | 17209 | 14873 |
+| skbio-flow-author-01 | 3 | 3 | 6 | 15933 | 39009 | 33651 |
+| pr-diff-01/biopython/biopython | 10 | 4 | 0 | 0 | 0 | 0 |
+| pr-diff-01/scikit-bio/scikit-bio | 10 | 3 | 0 | 0 | 0 | 0 |
+| pr-diff-01/arq5x/bedtools2 | 10 | 6 | 0 | 0 | 0 | 0 |
+| pr-diff-01/thelovelab/DESeq2 | 10 | 6 | 0 | 0 | 0 | 0 |
+| biopython-pr-01 | 1 | 1 | 0 | unknown | unknown | unknown |
+| biopython-commit-01 | 1 | 1 | 0 | unknown | unknown | unknown |
+| biopython-cve-01 | 1 | 1 | 0 | unknown | unknown | unknown |
+| skbio-pr-runtime-01 | 1 | 0 | 0 | unknown | unknown | unknown |
+| skbio-pr-runtime-02 | 1 | 1 | 0 | unknown | unknown | unknown |
+| seta-build-01 | 2 | 0 | 3 | 44016 | 266483 | 244540 |
+| dataarc-build-01 | 1 | unknown | 2 | 15502 | 227667 | 217852 |
+| scaler-dna-01 | 3 | 3 | 0 | 0 | 0 | 0 |
+| skbio-commit-01 | 0 | 0 | 0 | 0 | 0 | 0 |
+| skbio-commit-02 | 1 | 0 | 0 | 0 | 0 | 0 |
+| r2e-gym-biopython-seqfeature-02 | 7 | 0 | 0 | 0 | 0 | 0 |
+| swe-next-biopython-broader-02 | 2 | 0 | 0 | 0 | 0 | 0 |
 
-SETA Evol's row covers materialization only: one builder request was dispatched, no completed response was preserved, and the second saved design was unattempted. Its candidate-build count is not comparable to generator candidate counts. Both Code-instruct allowances are conservatively consumed, but actual attempts and exports remain unknown. Reasoning tokens are included in combined output totals; unavailable breakdowns remain unknown. These rows do not justify cost-per-task or whole-campaign yield estimates.
+The [reconciliation](evidence/interim-results-20261017/reconciled-subset.json) links each value to its exact source and records stage-specific counters that this compact table cannot display. Later admission decisions are overlaid in the census rather than rewriting historical generation summaries. Whole-campaign API usage, worker time and final funnels still require reconciliation; no cost-per-task or overall production yield is inferred.
 
-## Harbor and Marin compatibility
+## Interventions and Marin compatibility
 
-Harbor is the preserved native task format for executed exports. Marin conversion is a separate, evidence-backed assessment; export, conversion, runtime agreement and Atlas admission are distinct states.
+| Intervention | What changed | Comparison boundary |
+| --- | --- | --- |
+| Free GLM compatibility | Adapted authoring ceiling 131,072 combined output tokens, explicit medium effort, 1,200-second request timeout | Native-limit failures retained. Solver remains one 900-second/12-turn/2,048-token attempt, native/unset effort. |
+| Source/environment packaging | Full-source contexts, compiled-extension restoration, fixture roots and regular license bytes where recorded | Native source profiles and explicit adaptations remain distinct; none of these establishes general repository support. |
+| Provider transport/tooling | Owned Iris/Daytona bridge, build-time tmux, explicit offline policy, recorded sandbox IDs | Runtime changes and original asset hashes retained; direct native Docker routes remain blocked where unadapted. |
+| Evidence capture | Supported temporary archive recovery, original executable modes, append-only HF snapshots and anonymous hash/mode verification | Capture failures and superseded manifests remain preserved rather than relabeled successful. |
+| Marin conversion | Explicit source-specific converters, pinned TaskSpec/runtime and native reward controls | No silent reward normalization or Atlas admission. |
 
-SCALER demonstrates why numeric reward agreement is insufficient: its native -1/+1 values survive the converted runtime, but the pinned Marin result metadata still reports 0/1 bounds. [The range diagnosis](evidence/marin-scaler-runtime-01/score-range-diagnosis.json) records the exact pinned source and runtime evidence. This is an unresolved compatibility finding; silently normalizing the rewards would change the task contract.
+At Marin pin 45a044387ccd95ab698b4a592056aadaff961540, [executed structure coverage](evidence/marin-structure-coverage/coverage.json) includes native/converted reward comparisons for PR-diff (3 cases), fractional PR-runtime (6), separate binary learner/verifier contexts (6), and three SCALER variants (12). These represent four structures, not all candidates. SCALER numeric parity passes, but pinned GradeResult range metadata remains 0/1 despite native -1/+1; conversion is not admitted without an explicit range-contract resolution. Temporary registry images do not establish public training-image availability. No Atlas admission or training readiness is claimed.
 
-The [structure reconciliation](evidence/marin-structure-coverage/coverage.json) confirms four representative structures were executed: PR-diff patch similarity (three matching controls), portable PR-runtime fractional F2P/P2P grading (six), LCC separate-context binary grading (six), and SCALER numeric grading (twelve across three tasks). The corrected PR-diff runtime already passed; the earlier harness failure is preserved separately. Its similarity reward is not functional correctness, and its temporary image is not a published training image.
+## Current accounting and remaining work
 
-The three scikit-bio history exports share byte-identical grader and wrapper code with the tested LCC structure. This reduces duplicate structure-level work but does not establish candidate runtime readiness, acceptance or Atlas admission: source images, fixtures, allowed files and task contracts differ. Fresh candidate runtime probes are prepared and await capacity. Any subsequently exported task with a distinct structure still requires representative conversion and execution.
+Estimates and holds are $818 of the approved $1,000 ceiling, with $182 remaining allowance. They retain conservative failed/controller reservations and are not verified invoices or credit balances. Both most recent controllers are terminal, and all three/six exact blind/control sandboxes are independently absent. Their capacity claims remain retained until public archive verification. Existing free GLM is the only inference service used, without new GPUs or paid-model fallback.
 
-## Still required for the final report
+The local retention audit maps 60 older manifests: 59 match verified public receipts; one failed mode-descriptor manifest is explicitly superseded by a verified correction with identical object/member bytes and hashes. This is a local publication-history audit, not a fresh remote availability or universal source-integrity assertion. The newer bedtools snapshot has its own independent receipt.
 
-1. Finish or record bounded outcomes for remaining applicable repository/cohort routes, retaining exact source/profile revisions and shared lineage.
-2. Complete independent acceptance and fresh solver-runtime checks for candidate exports; run one blind attempt on every accepted task.
-3. Reconcile the full per-repository and per-cohort funnel, preserving unknown counts, candidate caps, adaptations and incomplete attempts.
-4. Consolidate model usage, worker time, cost uncertainty, manual interventions and public artifact references.
-5. Assess each distinct environment/verifier structure against the pinned Marin conversion/runtime; distinguish unsupported metadata from executed reward parity and Atlas admission.
-6. Publish conclusions and expansion/adaptation recommendations only after the preceding evidence is reconciled. Negative and inconclusive outcomes are valid; unexecuted applicable work remains incomplete.
+Complete the remaining selected PR-diff runtime controls and one blind attempt for each admitted task; preserve outputs and verify exact cleanup. Reconcile all terminal runs, model usage and controller/worker time, finish the full per-unit funnel and protocol deviations, and update the issue with conclusions and decisive immutable links. The present census and partial usage table do not close those requirements.
 
-Controller timing observation: [twenty retained Iris task records](evidence/controller-timing-reconciliation-20261018/controller-times.json) total 3.6901667 controller wall hours, all terminal at capture. This excludes other historical jobs and separate Daytona workers, and is not verified billed usage. Fresh SWE-gen runtime evidence is [publicly verified](hf-swegen-provider-01-upload-receipt.json); SWE-Next runtime controls also passed 0/1 with cleanup verified, but final instruction acceptance is rejected. Campaign estimates/holds are $683 of the approved $1,000 ceiling; credits and actual charges remain unverified.
-
-Final acceptance review rejects the unchanged SWE-gen and SWE-Next scikit-bio instructions for expanding the M-step requirement beyond native regression coverage ([SWE-gen](evidence/history-final-acceptance/swe-gen-skbio-01/review.json), [SWE-Next](evidence/history-final-acceptance/swe-next-skbio-01/review.json)). The E-step-only case remains an observed full native reward, not a failure of the supplied reproducer. The portable PR-runtime task has a narrower instruction and remains accepted. [QCP review](evidence/qcp-final-acceptance/review.json) rejects an unjustified ordinary-input precision contract; no new offset-control score is claimed. These rejected originals need no blind solver attempt.
-
-Four added source-authoring rows join saved candidate records to native exports: Biopython SWE-smith authored1/3 and exported1 (four prior mutation attempts, three contrasts); scikit-bio SWE-smith authored2/3 and exported2; Biopython SWE-flow authored3/3 and exported1, with two incomplete instructions rejected before export; scikit-bio SWE-flow authored3/3 and exported3. These are stage counts, not four independent end-to-end yield estimates, and exclude earlier token-limit diagnostic calls. Source hashes and preserved response usage are in the linked subset.
-
-R2E-Gym blind result: native binary reward0, no trial exception,12 agent episodes,185345 input/163776 cached-input/7703 combined output tokens. All per-episode reported completion counts are within2048. Source remained byte-identical to the defective input; only the underflow regression failed, with59/60 tests passing. Both sandboxes independently absent. This is a scored unsuccessful attempt, not a task-validity failure or an infrastructure-exception claim. The native commit-runtime profile for alternate scikit-bio fix71912 is prepared and tested at the input boundary, but remains unsubmitted.
-
-The [broader Biopython PR intake](evidence/biopython-broader-pr-intake/intake.json) preserves metadata and full diffs for PR5308/5316 (shared location-hashing issue5193) and PR5358 (Clustal header compatibility), selected through the existing bounded history intake. Test/assertion additions are visible, but native PR entity filters, packaging and runtime contrasts remain unexecuted. These are not new generation attempts or exported tasks.
-
-Esty and observed_features fresh provider controls passed 0/1 with matching checksums and all four sandboxes per probe independently absent. These runtime controls add no generated candidates or blind attempts.
-
-Esty is now independently accepted with its emitted bundle unchanged: the stated interval formula, native ten-vector/all-zero tests, alternative factored variance and two incorrect controls agree; fresh separate-context controls0/1 and all four sandbox deletions are verified. Its one blind attempt scored 1 in six agent episodes, passing all 34 tests; both solver sandboxes independently absent. This makes seven accepted tasks and seven completed blind attempts, including the R2E-Gym zero. observed_features is also accepted after final instruction review, meaningful incorrect/alternative controls and fresh0/1 runtime checks. Its single blind attempt scored1 with34/34 tests in seven episodes; both sandboxes independently absent. Eight accepted tasks/eight scored attempts. Estimates/holds$723/$1000 include two prepared source-run reservations.
-
-Native scikit-bio commit calibration71912 completed after a transport-only launcher correction: one candidate, zero exports, native skip no_fail_to_pass. Patched checkout passed six tests; defective checkout failed collection on the newly imported _build_dmatrix helper, so no test-level F2P identities were extracted. No filter bypass or source/test rewrite; exact worker ID independently absent. Source profile remains a single-source calibration below the three-task target. Broader Biopython SWE-Next input preparation now selects three additional public PRs (5308/5316 hashing share issue5193 lineage;5310 molecular-weight empty-input validation is separate). Exact native merge metadata mapping and unchanged fixture bytes verified; native builds/contrasts/authoring have not run. Previous PR5317 source-filter outcome remains consumed. Estimates/holds$743/$1000.
-
-Broader Biopython history runs completed with zero exports before any GLM authoring. SeqFeature R2E-Gym screened2000 records:1993 filtered,seven materialization attempts, five native historical-snapshot path-policy failures and two Docker bootstrap failures. Broad SWE-Next considered three PRs:PR5308 native-source-filtered, two eligible contrasts failed the same historical path policy. Original PR5317 considered allowance retained (four total SWE-Next PR inputs), no resets or automatic reruns. The image LICENSE/fixture packaging fix does not alter the older Git-archive snapshot policy; exact offending member is not logged. Both exact worker IDs independently404. Separate remote catch-all capture failed, but supported controller captures retain original contrast config/stdout/stderr and source history. Public bounded native-evidence snapshots are prepared, with source checkouts reconstructable from pins and private/duplicate bulk captures excluded. These are materialization-compatibility findings, not GLM-quality results.
-
-Native equivalence direct execution is blocked in the current Iris launch profile: a pinned no-model runtime probe found no Docker executable/native daemon availability, while the native class requires local DockerSandbox.start and direct model completion on the caller. No additional transport/colocation adapter was tested, and the learner-visible native reference remains a separate curation limitation. No generation/model-call outcome is claimed for this readiness probe. Retention reconciliation accounts for60 manifests:59 matching publication receipts and one explicitly superseded mode-descriptor failure with a verified byte-identical corrected replacement.
+The strongest current expansion candidates are narrowly scoped correctness profiles that survive independent alternatives and incorrect submissions. PR-diff remains useful as a software-edit similarity exercise across languages, with its score meaning intact. Raw export volume provides little evidence of curation quality: several generated tasks fail independent contract checks, and multiple GLM routes return no native-valid exports. Broader expansion requires evidence appropriate to the intended reward and scientific competency.

@@ -60,6 +60,12 @@ def build():
         decision=read(path);assert decision['stage']=='accepted_for_bounded_similarity_pilot'
         key='pr_diff/native@'+repo
         for task,checksum in decision['task_checksums'].items():units[key]['current_admissions'].append({'source':path,'task':task,'runtime_checksum':checksum,'reward_semantics':'native_patch_similarity_not_functional_correctness'})
+        blind_path='evidence/prdiff-'+cohort+'-blind-01/summary.json'
+        if (ROOT/blind_path).exists():
+            completed=read(blind_path);assert completed['stage']=='blind_native_similarity_scored'
+            for record in completed['tasks']:
+                assert record['attempts']==1 and record['trial_exception'] is None
+                units[key]['blind_results'].append({**record,'artifact_source':record['source'],'source':blind_path})
     legacy=read('evidence/legacy-biopython-admission-review/review.json')
     for decision in legacy['records']:
         key=decision['pipeline']+'/native@biopython/biopython';units[key]['limitations'].append({'source':'evidence/legacy-biopython-admission-review/review.json','original_bundle_decision':decision['decision'],'reason_codes':decision['reason_codes']})

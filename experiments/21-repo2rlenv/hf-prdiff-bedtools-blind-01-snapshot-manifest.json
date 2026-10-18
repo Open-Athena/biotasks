@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "issue": 21,
+  "stage": "native_similarity_blind_scored",
+  "checkpoint_commit": "5ec353f20a96d1a85c9e3219c29ca07b2af928bb",
+  "generator_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "cohort": "bedtools",
+  "accepted_similarity_tasks": 3,
+  "blind_attempts": 3,
+  "native_similarity_rewards": [
+    0.0,
+    0.784762,
+    0.380675
+  ],
+  "source_control_snapshot": "research/21-repo2rlenv/2026-10-18/0572407a98fbfaa32ca28d6cdb5328ad37874fd341c258289cbc03b26a339c0e",
+  "reward_semantics": "Native continuous oracle-patch similarity; not functional correctness, biological performance, pass@1 or a pooled benchmark score.",
+  "public_redactions": {
+    "field": "api_base",
+    "files": [
+      "solver-status.json",
+      "trials/arq5x__bedtools2-1030-blind-01/config.json",
+      "trials/arq5x__bedtools2-1030-blind-01/lock.json",
+      "trials/arq5x__bedtools2-1030-blind-01/result.json",
+      "trials/arq5x__bedtools2-1043-blind-01/config.json",
+      "trials/arq5x__bedtools2-1043-blind-01/lock.json",
+      "trials/arq5x__bedtools2-1043-blind-01/result.json",
+      "trials/arq5x__bedtools2-999-blind-01/config.json",
+      "trials/arq5x__bedtools2-999-blind-01/lock.json",
+      "trials/arq5x__bedtools2-999-blind-01/result.json"
+    ],
+    "policy": "Only private service routing fields changed in public copies; original messages, trajectories, task edits and reward evidence preserved."
+  },
+  "retention": "Retain while referenced; no automatic deletion.",
+  "eligibility": "Public upstream-derived task inputs, complete copied runtime archive with private API routing fields redacted, original messages and reward evidence unchanged, exact credential/private-route scans passed. Original route-bearing archive retained privately. No actual billing or credential material.",
+  "files": [
+    {
+      "path": "evidence/prdiff-bedtools-blind-01/cleanup-verification.json",
+      "bytes": 651,
+      "sha256": "56631e2a981d1be5b92a4ab6b3ea67889fc9833524de6591cd3c336f8ef1f02f"
+    },
+    {
+      "path": "evidence/prdiff-bedtools-blind-01/submission.json",
+      "bytes": 437,
+      "sha256": "53e639bd3a5f4b2727ae2559b2f92d4b8fc01a7d8224c6006ca9a77e64e46ecd"
+    },
+    {
+      "path": "evidence/prdiff-bedtools-blind-01/summary.json",
+      "bytes": 5057,
+      "sha256": "d29df9d0c49afff2b19e4a4106545d989de46bef937a678c247edf54881f94a2"
+    },
+    {
+      "path": "frozen-inputs/acceptance.json",
+      "bytes": 1594,
+      "sha256": "fc817475dc434445c013e03ed073d2d6cac6d581c9df8d39a5898a5cd322f9ff"
+    },
+    {
+      "path": "frozen-inputs/capture_author_process.py",
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    {
+      "path": "frozen-inputs/cohort-tasks.tar.gz",
+      "bytes": 33645,
+      "sha256": "30b4ceba4dff65700a56c845a8761a331dfcf750ad7f3cb94314388e5e53f8c5"
+    },
+    {
+      "path": "frozen-inputs/cohort-transfer.json",
+      "bytes": 101,
+      "sha256": "fb1839b5ffde7fd712f027900bf3d178dbaa3385aac1cc26b60d138b54f2ae86"
+    },
+    {
+      "path": "frozen-inputs/cohort.json",
+      "bytes": 1240,
+      "sha256": "200915c8049c88d59a325f0bcae3ae35eadde60d6db20230b514120a2d0aa6ca"
+    },
+    {
+      "path": "frozen-inputs/controls.json",
+      "bytes": 24514,
+      "sha256": "1c17479f002e382563ba98dc2e2e7fc3eee729229a0b9764b4dc2ff8cb4d9fcf"
+    },
+    {
+      "path": "frozen-inputs/glm_remote.py",
+      "bytes": 192,
+      "sha256": "06e73e980689b79d5909683133e9f97fd37d0ed43595217624c04a1f7eab9850"
+    },
+    {
+      "path": "frozen-inputs/glm_solver_settings.py",
+      "bytes": 689,
+      "sha256": "40e08884bf7417647430824c7ca90808b13ac3d9c4f3d6f2346018921a307bb7"
+    },
+    {
+      "path": "frozen-inputs/manifest.json",
+      "bytes": 2704,
+      "sha256": "5e6d0c39161dc3c6f297deeda9a482757d4106d4bf7daeb97e66ef3fe08a39e2"
+    },
+    {
+      "path": "frozen-inputs/pr_provider_environment.py",
+      "bytes": 3235,
+      "sha256": "9499c85a14d345eae2317ba562ee40b1688207872a404c6783c57bbaabc6b177"
+    },
+    {
+      "path": "frozen-inputs/prdiff_provider_environment.py",
+      "bytes": 746,
+      "sha256": "a1f07e550ccb94c4d19ac3e1c5d9b392ff12fac78f7f0666f88cbbd6eb4ced48"
+    },
+    {
+      "path": "frozen-inputs/prdiff_runtime_input.py",
+      "bytes": 2628,
+      "sha256": "690b7297983b900551ccdb9f8794ede0cb997c08a2e9636278634d02fbf70afc"
+    },
+    {
+      "path": "frozen-inputs/preserve_author_output.py",
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    {
+      "path": "frozen-inputs/repo2rlenv-source.tar.gz",
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    {
+      "path": "frozen-inputs/run_pr_blind_solver.py",
+      "bytes": 3642,
+      "sha256": "f5428d821b2647c2d6aba288b347724f02fcb24f48fcf0b5eaf803570be3e7ef"
+    },
+    {
+      "path": "frozen-inputs/run_pr_provider_preflight.py",
+      "bytes": 7175,
+      "sha256": "b5d37854a562f93f58e0d5b3f6835ce9dfd72c607fd1b19bdeac226e97dddb86"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_blind_solver.py",
+      "bytes": 4548,
+      "sha256": "0b250eaab2061c7ac0f33fccfd6405768e930120663ce73daf8cfc187dd3448c"
+    },
+    {
+      "path": "frozen-inputs/run_prdiff_provider_remote.py",
+      "bytes": 3822,
+      "sha256": "784fe2b3faf251986fdd050a48e653ec6f6b01fd03ee504ca59593e99159769e"
+    },
+    {
+      "path": "native-evidence.tar.gz",
+      "bytes": 294587,
+      "sha256": "e73011488649ead02e37c4b77357909779af7d9c78374e04b48e324d19496eda",
+      "members": [
+        {
+          "path": "native/cleanup.json",
+          "bytes": 465,
+          "sha256": "9ff70e990386708903f5eccebceeb76be92e9a8c1adbcf2b3d5ef9e36f5d8eb5",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/provider.jsonl",
+          "bytes": 1528,
+          "sha256": "b2cb7c68c28ec572cbca16df3396cb0b41999babae157fbfb4c56ebda3502d07",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/solver-status.json",
+          "bytes": 15173,
+          "sha256": "9f554751e75c6ac7aade796128403b2d2cc17a3abc975692e4cbea7c5560807c",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/agent/terminus_2.pane",
+          "bytes": 124540,
+          "sha256": "3dd5803f240e9bf5a5769a10903031e07460fbc0534c430722227924896b4c61",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/agent/trajectory.json",
+          "bytes": 107600,
+          "sha256": "0eda8513d8edb78dc3bf15d95dc811e399a5a0575cf50156a75d390d2e30e5c4",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/config.json",
+          "bytes": 690,
+          "sha256": "3b33c4c7464e99c2a0d2818d4f576c71022aa396d7fbc155aaf73d2e3b713107",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/lock.json",
+          "bytes": 1244,
+          "sha256": "388e996f3b0cfac6c27d6883ccccb27d77515ecbecdc3c32e0be7e09cb6ef615",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/result.json",
+          "bytes": 3941,
+          "sha256": "364d8ad9d3df650009234769fa8cdcaaa07e32d463eae97fb363fa454f37d025",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/trial.log",
+          "bytes": 1874,
+          "sha256": "41e3e476063bee211771c8e2b3677741d2cea8ff66b805ccbb45c8126f45b2a0",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/verifier/reward-details.json",
+          "bytes": 446,
+          "sha256": "c598ee79262688e7f28b24a6816aa4f681affaf85403a334011d7db774e46f79",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "65e8fe344f770e52ea7f3f8fc8633959361bb78e6ad3a178b7d3b1f16b6e2e9f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1030-blind-01/verifier/test-stdout.txt",
+          "bytes": 927,
+          "sha256": "6bea422e2dd000c10117eb03a63e35ee68dc15a38947d988d97463e958fb5bc7",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/agent/terminus_2.pane",
+          "bytes": 356264,
+          "sha256": "fcc786e48f17fcb45a22b81d8101b04adafa0344ce2aacdca328a8a5584cb093",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/agent/trajectory.json",
+          "bytes": 106077,
+          "sha256": "5634080a6708e76ed37ae0aeaaedf2eb813fe4f1974f25237390bf424463ae82",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/config.json",
+          "bytes": 690,
+          "sha256": "72424143452c87e57a074e866d0e09208b6e634d53fe3251b6471372c41e2c8a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/lock.json",
+          "bytes": 1244,
+          "sha256": "393fad404d7bf0519f96d49a00ecffe9f3a0f451e9537e86137a32a1222b8a16",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/result.json",
+          "bytes": 3947,
+          "sha256": "4dd18484bd2e984d2793e43ec5b8762912c2e6948bc90d1e52c9d7557bd4995a",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/trial.log",
+          "bytes": 1729,
+          "sha256": "c0ee274f9ab9cfb35f8cf754ae32c980350a2d7e132f3c5219c69a1c3a64fa12",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/verifier/reward-details.json",
+          "bytes": 466,
+          "sha256": "91488a4a0654cb4f18b9ab7d361316dda3e3331b951d36455cfcc91feb42fd1f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "cb17a07f8727ea2000e1ccacbb153a21c20ca5c8c2fee54bd0327d1e4c7d8b32",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-1043-blind-01/verifier/test-stdout.txt",
+          "bytes": 947,
+          "sha256": "8297eac6df1c1d16ddaae386f4011ecc05c03f5cfeff44837fcee271acb7ee24",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/agent/terminus_2.pane",
+          "bytes": 117813,
+          "sha256": "2b78f7200d704912831306ad52b572ad4b7e01ac5e8ac11d9a6f3d99b87e70f8",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/agent/trajectory.json",
+          "bytes": 112509,
+          "sha256": "a1448c34500cd0fd6f9a452d9a2df3f556a48c8ae01ab24c03880a73db1e498d",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/artifacts/manifest.json",
+          "bytes": 156,
+          "sha256": "8d0a02e9c17d62af6176024f463c041ed30ff29d3a7b66dadbeab1d762b0cbd9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/config.json",
+          "bytes": 688,
+          "sha256": "bcb1c8adbba7a784c1ee3433e58e67a0007894f1ae31413d41b388779f8a853b",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/lock.json",
+          "bytes": 1242,
+          "sha256": "0a4d559d23e6bbfb6b30f7743674ae2ef2740c92177b01c93933f0b488c8a8ec",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/result.json",
+          "bytes": 3937,
+          "sha256": "8ca62fbf6bdc7e7e8537677b24e66d144fb7d0ee7303c588ee69ad9979e6362f",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/trial.log",
+          "bytes": 1823,
+          "sha256": "c79745b3549217b97ae76099364a9af7fe71a4a4f7fb488e4628c33308f011b3",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/verifier/reward-details.json",
+          "bytes": 466,
+          "sha256": "fddc1829d18e62e96067ff46d372109b12f7b81e0a755c15bd24b2f9b7f460bf",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/verifier/reward.txt",
+          "bytes": 9,
+          "sha256": "b7fdc7ed4b99b3cc0de97113d3c38b5a683d04223b7cb38409e2d3612b82a3d9",
+          "mode": "0o644"
+        },
+        {
+          "path": "native/trials/arq5x__bedtools2-999-blind-01/verifier/test-stdout.txt",
+          "bytes": 947,
+          "sha256": "42701224b55e8360c241a8155b129e4e103cf11bb5870534decdc3ed659ec2ec",
+          "mode": "0o644"
+        }
+      ]
+    },
+    {
+      "path": "source-notices/Repo2RLEnv-LICENSE",
+      "bytes": 11357,
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+    },
+    {
+      "path": "source-notices/bedtools2-LICENSE",
+      "bytes": 1082,
+      "sha256": "0e44360fb7c5f08f49575e8de98606a10a9bc3e785e2c65cbef63e676190c86d"
+    }
+  ]
+}
