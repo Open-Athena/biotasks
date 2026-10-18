@@ -1,4 +1,4 @@
-"""Run a no-model mutation contrast controller on pinned existing TRC CPU capacity."""
+"""Run a no-model repository contrast controller on existing TRC CPU capacity."""
 import hashlib
 import json
 import os
@@ -11,12 +11,24 @@ from capture_author_process import capture
 from preserve_author_output import preserve
 
 
+def recipe_arguments(environ):
+    recipe = environ.get('BIOTASKS21_RECIPE', 'swe_smith')
+    if recipe not in ('swe_smith', 'swe_flow'):
+        raise ValueError('Unsupported frozen contrast recipe')
+    adapted_paths = environ.get('BIOTASKS21_FLOW_TEST_PATHS', '0')
+    if adapted_paths not in ('0', '1') or adapted_paths == '1' and recipe != 'swe_flow':
+        raise ValueError('Configured test-path adaptation requires SWE-flow')
+    return ['--recipe', recipe] + (['--flow-test-paths'] if adapted_paths == '1' else [])
+
+
 def main():
     started = time.monotonic()
     output = Path(os.environ['IRIS_OUTPUT_DIR'])
     output.mkdir(parents=True, exist_ok=True)
     status = {'stage': 'trc_mutation_contrast', 'model_calls': 0, 'status': 'setup'}
     try:
+        recipe_args = recipe_arguments(os.environ)
+        status['recipe'] = recipe_args[1]
         source = Path('repo2rlenv-source.tar.gz')
         assert hashlib.sha256(source.read_bytes()).hexdigest() == '7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755'
         with tarfile.open(source) as archive:
@@ -32,6 +44,7 @@ def main():
         if remaining < 900:
             raise TimeoutError('Insufficient remaining contrast window')
         command = [str(root / '.venv/bin/python'), 'run_swe_smith_worker.py', '--campaign', 'contrast-output', '--worker-name', os.environ['BIOTASKS21_WORKER_NAME'], '--source-archive', str(source), '--config', 'profile.json', '--timeout-sec', str(remaining)]
+        command.extend(recipe_args)
         status.update(status='contrast_running', child_execution_timeout_seconds=remaining)
         (output / 'wrapper-status.json').write_text(json.dumps(status, indent=2) + '\n')
         code = capture(command, source=Path('contrast-output'), output=output / 'child', timeout=remaining + 240, env=env, maximum_bytes=256 * 1024**2)
