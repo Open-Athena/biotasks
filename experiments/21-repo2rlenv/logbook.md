@@ -1312,3 +1312,11 @@ Accepted task scaler-5e341fa6b75229faea47 completed one blind GLM attempt with n
 ### 2026-10-18 Native request-preservation correction
 
 Found all30 exact native metering request files and completed receipts in the recovered Biopython R2E campaign. The response-only public snapshot omitted these; they were retained by the original native runner before dispatch. Verified all30 canonical request hashes against completed native receipts and the131072-token request settings; no new model calls. Prepared a60-member append-only request/receipt appendix, linked to the original response snapshot, after exact credential/private-route scanning. This corrects the implication that exact requests were unavailable. Native metered content is preserved, not an HTTP-envelope byte capture.
+
+### 2026-10-18 Third accepted SCALER provider controls passed
+
+Task scaler-f41f832f3de994640a39 passed fresh native no-op/reference provider controls with rewards-1/+1. Matching task checksums and all four sequential sandboxes independently404. Recovered6772-byte supported archive SHA2568fe652a5e9cb9003f8ea38ba306f04733ae46af0f5ddebc549568653530aaa48; verified22-file nested capture with modes. Controller terminal and three-slot claim released. Seventeen-file blind dispatch prepared, one attempt at900 seconds/12 turns/2048 output tokens with effort unset. Reserved$10; total estimates/holds$623/$1000.
+
+### 2026-10-18 Request appendix mode-metadata correction
+
+Initial request-appendix upload4e2b12b7051b461a6cea31b0de21136248a9accfe37678852c9593e6db60b72c failed exact mode verification: descriptors retained regular-file type bits from gettarinfo, while the archive correctly stored644 permissions. Verified all three downloaded objects and all60 member byte hashes; canonical permission bits also match. Prepared a separately named corrected manifest stripping type bits, linking the initial snapshot. Archive bytes and actual modes unchanged; initial snapshot retained; corrected anonymous verification pending.
