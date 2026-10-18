@@ -1,33 +1,45 @@
 {
-  "observed_utc": "2026-10-18T21:49:28.446268+00:00",
+  "observed_utc": "2026-10-18T21:57:22.796214+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 4,
+      "remaining_allowance": 6,
       "receipts": [
         {
           "source": "evidence/biopython-commit-01/result.json",
           "sha256": "77a4e33dcf0c9ec4617312c40c088ad5f7fe715a0b45bb4153077d62879568e3",
           "counter_key": "candidates",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/commit-runtime-intake-next/biopython-selection.json",
+          "sha256": "acf9e2a54d6240ccb8034792a88662758629111465f595196b49c97c7ab1ebea",
+          "counter_key": "selected_input_charge",
+          "charged": 3
         }
       ],
-      "definition": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates.",
+      "definition": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads.",
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/native@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 3,
+      "remaining_allowance": 7,
       "receipts": [
         {
           "source": "evidence/skbio-commit-02/summary.json",
           "sha256": "c39aef0b6c09ec39fe168f34cb16200bf204cac2a455c41a79f4ba2bdf1d7e3a",
           "counter_key": "candidate_attempts",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/commit-runtime-intake-next/skbio-selection.json",
+          "sha256": "f61eb922590f8f5bd1c7d342939439dd5e8d96184f799ba55fd84b02ad503887",
+          "counter_key": "selected_input_charge",
+          "charged": 2
         }
       ],
-      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure.",
+      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_to_env/swe_gen@biopython/biopython": {

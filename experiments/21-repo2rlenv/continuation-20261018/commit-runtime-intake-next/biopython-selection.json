@@ -1,0 +1,97 @@
+{
+  "stage": "fixed_commit_route_inputs_selected_native_static_filters_screened",
+  "repository": "biopython/biopython",
+  "route": "commit_runtime/native",
+  "selected_input_charge": 3,
+  "previous_route_charge": 1,
+  "cumulative_conservative_charge": 4,
+  "remaining_candidate_allowance": 6,
+  "candidate_cap": 10,
+  "selection_definition": "Every fixed head commit considered is charged once, including metadata rejects. The charge is independent of PR-route charges and never counts the same source problem as new biological diversity.",
+  "native_metadata_eligible": 0,
+  "records": [
+    {
+      "input_file": "pr5308-head-commit.json",
+      "sha": "fe0a671bbc02b6a6a8ca4651e38e4774654ebab2",
+      "parent": "3b6530aacd3cebb8e4d796a20c7c7d99580204ed",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "native_commit_info": {
+        "sha": "fe0a671bbc02b6a6a8ca4651e38e4774654ebab2",
+        "parent_sha": "3b6530aacd3cebb8e4d796a20c7c7d99580204ed",
+        "parents": [
+          "3b6530aacd3cebb8e4d796a20c7c7d99580204ed"
+        ],
+        "author_name": "Saiyma Sarmin",
+        "author_email": "saiyma.sarmin@gmail.com",
+        "authored_at": "2026-09-11T15:41:22Z",
+        "subject": "Issue #5193 - Added fuzzy locations to Test/test_SeqFeature.py",
+        "body": ""
+      }
+    },
+    {
+      "input_file": "pr5316-head-commit.json",
+      "sha": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+      "parent": "bbc55712db23d048cdc2cebc643453418f66593c",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/SeqFeature.py",
+        "Tests/test_SeqFeature.py"
+      ],
+      "native_commit_info": {
+        "sha": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+        "parent_sha": "bbc55712db23d048cdc2cebc643453418f66593c",
+        "parents": [
+          "bbc55712db23d048cdc2cebc643453418f66593c"
+        ],
+        "author_name": "Saiyma Sarmin",
+        "author_email": "saiyma.sarmin@gmail.com",
+        "authored_at": "2026-09-14T20:21:05Z",
+        "subject": "Issue #5193 - Add __hash__ to CompoundLocation",
+        "body": "Implement __hash__ based on operator and parts, matching the\nattributes used by __eq__. Relies on SimpleLocation.__hash__ for\neach part, so the same ref/ref_db limitation applies here too. Add\ntests covering hash/eq consistency (including fuzzy and unknown\npositions) and set membership."
+      }
+    },
+    {
+      "input_file": "pr5317-head-commit.json",
+      "sha": "6fc6bf358986666f8282c393c16d5f1f945c0016",
+      "parent": "d699f66a909e1647249e726b5480be650893821c",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/PDB/qcprot.py",
+        "Tests/test_PDB_QCPSuperimposer.py"
+      ],
+      "native_commit_info": {
+        "sha": "6fc6bf358986666f8282c393c16d5f1f945c0016",
+        "parent_sha": "d699f66a909e1647249e726b5480be650893821c",
+        "parents": [
+          "d699f66a909e1647249e726b5480be650893821c"
+        ],
+        "author_name": "shan yu",
+        "author_email": "santohyunolfsssigneb@gmail.com",
+        "authored_at": "2026-09-16T09:43:36Z",
+        "subject": "QCP: drop unnecessary U copy on Kabsch det flip",
+        "body": "numpy.linalg.svd already returns a new writable U, so the special-orthogonal\ncolumn flip mutates that factor in place. black 24.10.0 on the touched files."
+      }
+    }
+  ],
+  "files": {
+    "metadata-screen.json": {
+      "sha256": "12e51675fade6ffe40df306563d1a322403ad684014996106b21b92e761361b1",
+      "bytes": 6657
+    },
+    "pr5308-head-commit.json": {
+      "sha256": "81c39dcd34a36d890867ead55ca470459457294f2ca91448ddff794f02bbb329",
+      "bytes": 5981
+    },
+    "pr5316-head-commit.json": {
+      "sha256": "39dc0b033f46dcdcaa236e52cf442af1457f10d20983520bbd55b798370fa6f3",
+      "bytes": 10489
+    },
+    "pr5317-head-commit.json": {
+      "sha256": "3e9511b49adefaff424f5c18127de7d3ab94d595885558bdcdc2bdd93564f37b",
+      "bytes": 5595
+    }
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "stage": "fixed_commit_route_inputs_selected_native_static_filters_screened",
+  "repository": "scikit-bio/scikit-bio",
+  "route": "commit_runtime/native",
+  "selected_input_charge": 2,
+  "previous_route_charge": 1,
+  "cumulative_conservative_charge": 3,
+  "remaining_candidate_allowance": 7,
+  "candidate_cap": 10,
+  "selection_definition": "Every fixed head commit considered is charged once, including metadata rejects. The charge is independent of PR-route charges and never counts the same source problem as new biological diversity.",
+  "native_metadata_eligible": 1,
+  "records": [
+    {
+      "input_file": "pr2630-head-commit.json",
+      "sha": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+      "parent": "566dbe73c62a13f790713245c24f883d7eb92983",
+      "native_metadata_filter": null,
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/io/format/tests/test_fasta.py",
+        "skbio/io/format/tests/test_fastq.py",
+        "skbio/sequence/_sequence.py",
+        "skbio/sequence/tests/test_sequence.py"
+      ],
+      "native_commit_info": {
+        "sha": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+        "parent_sha": "566dbe73c62a13f790713245c24f883d7eb92983",
+        "parents": [
+          "566dbe73c62a13f790713245c24f883d7eb92983"
+        ],
+        "author_name": "Aakarshit Verma",
+        "author_email": "aakarshitv7@gmail.com",
+        "authored_at": "2026-10-03T10:18:15Z",
+        "subject": "BUG: restrict Sequence case conversion to ASCII letters",
+        "body": "Sequence.lowercase() flipped the case bit (0x20) of every selected\ncharacter. When the mask covered non-letter positions, gaps, dots and\nstop codons became control characters ('-' -> '\\r', '.' -> '\\x0e',\n'*' -> '\\n'), and lowercase letters were uppercased. The FASTA and FASTQ\nwriters use this method for their `lowercase` option, so such masks\nsilently produced corrupted files.\n\nThe `lowercase` constructor parameter treated every byte above 'Z' (90)\nas lowercase, so '[', '\\\\', ']', '^', '_', '`', '{', '|', '}' and '~'\nwere rewritten in generic Sequence objects (e.g. '_' became DEL) and\nflagged as lowercase.\n\nOnly convert A-Z to lowercase and a-z to uppercase."
+      }
+    },
+    {
+      "input_file": "pr2636-head-commit.json",
+      "sha": "b9b66848f1c560da26894acd93118389050eb9f9",
+      "parent": "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+      "native_metadata_filter": "merge_commit",
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/io/format/tests/test_newick.py",
+        "skbio/tree/bp/_bp.py",
+        "skbio/tree/bp/_bp_cy.pyx",
+        "skbio/tree/bp/_bp_io.pyx",
+        "skbio/tree/bp/_bp_numba.py",
+        "skbio/tree/bp/numba.py",
+        "skbio/tree/tests/bp/test_bp.py",
+        "skbio/tree/tests/bp/test_bp_io.py",
+        "skbio/tree/tests/bp/test_bp_numba.py",
+        "skbio/tree/tests/bp/test_bp_numba_public.py"
+      ],
+      "native_commit_info": {
+        "sha": "b9b66848f1c560da26894acd93118389050eb9f9",
+        "parent_sha": "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+        "parents": [
+          "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+          "e6f51b1ef6de5fba07cb184fa5152ee8920abd87"
+        ],
+        "author_name": "Qiyun Zhu",
+        "author_email": "qiyunzhu@gmail.com",
+        "authored_at": "2026-10-14T18:52:42Z",
+        "subject": "Merge branch 'bp_tree' into bptree-gpu-dispatch",
+        "body": ""
+      }
+    }
+  ],
+  "files": {
+    "metadata-screen.json": {
+      "sha256": "12e51675fade6ffe40df306563d1a322403ad684014996106b21b92e761361b1",
+      "bytes": 6657
+    },
+    "pr2630-head-commit.json": {
+      "sha256": "8e638f00bd3ab4402f64379648a4433430c12954e5f65842c72fe2797c96103f",
+      "bytes": 14713
+    },
+    "pr2636-head-commit.json": {
+      "sha256": "29dfba693d35d13b8ec732b0da0068dd765e3819408ed8d30c0a24f391cfe391",
+      "bytes": 65213
+    }
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "stage": "native_static_metadata_filters_only_no_build_or_model_calls",
+  "options": {
+    "limit": 1,
+    "since": null,
+    "until": null,
+    "branch": "HEAD",
+    "clone_depth": 2,
+    "skip_merge_commits": true,
+    "min_message_words": 5,
+    "max_source_files_per_commit": 10,
+    "exclude_authors": [],
+    "require_new_test_funcs": true,
+    "skip_ci_only": true,
+    "require_fail_to_pass": true,
+    "min_fail_to_pass": 1,
+    "validation_timeout_sec": 600,
+    "skip_validation": false,
+    "max_pass_to_pass": 50,
+    "synthesize_with_llm": true,
+    "min_problem_statement_words": 8,
+    "llm_temperature": 0.3,
+    "max_llm_tokens": 1024
+  },
+  "records": [
+    {
+      "input_file": "pr2630-head-commit.json",
+      "sha": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+      "parent": "566dbe73c62a13f790713245c24f883d7eb92983",
+      "native_metadata_filter": null,
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/io/format/tests/test_fasta.py",
+        "skbio/io/format/tests/test_fastq.py",
+        "skbio/sequence/_sequence.py",
+        "skbio/sequence/tests/test_sequence.py"
+      ],
+      "native_commit_info": {
+        "sha": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+        "parent_sha": "566dbe73c62a13f790713245c24f883d7eb92983",
+        "parents": [
+          "566dbe73c62a13f790713245c24f883d7eb92983"
+        ],
+        "author_name": "Aakarshit Verma",
+        "author_email": "aakarshitv7@gmail.com",
+        "authored_at": "2026-10-03T10:18:15Z",
+        "subject": "BUG: restrict Sequence case conversion to ASCII letters",
+        "body": "Sequence.lowercase() flipped the case bit (0x20) of every selected\ncharacter. When the mask covered non-letter positions, gaps, dots and\nstop codons became control characters ('-' -> '\\r', '.' -> '\\x0e',\n'*' -> '\\n'), and lowercase letters were uppercased. The FASTA and FASTQ\nwriters use this method for their `lowercase` option, so such masks\nsilently produced corrupted files.\n\nThe `lowercase` constructor parameter treated every byte above 'Z' (90)\nas lowercase, so '[', '\\\\', ']', '^', '_', '`', '{', '|', '}' and '~'\nwere rewritten in generic Sequence objects (e.g. '_' became DEL) and\nflagged as lowercase.\n\nOnly convert A-Z to lowercase and a-z to uppercase."
+      }
+    },
+    {
+      "input_file": "pr2636-head-commit.json",
+      "sha": "b9b66848f1c560da26894acd93118389050eb9f9",
+      "parent": "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+      "native_metadata_filter": "merge_commit",
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/io/format/tests/test_newick.py",
+        "skbio/tree/bp/_bp.py",
+        "skbio/tree/bp/_bp_cy.pyx",
+        "skbio/tree/bp/_bp_io.pyx",
+        "skbio/tree/bp/_bp_numba.py",
+        "skbio/tree/bp/numba.py",
+        "skbio/tree/tests/bp/test_bp.py",
+        "skbio/tree/tests/bp/test_bp_io.py",
+        "skbio/tree/tests/bp/test_bp_numba.py",
+        "skbio/tree/tests/bp/test_bp_numba_public.py"
+      ],
+      "native_commit_info": {
+        "sha": "b9b66848f1c560da26894acd93118389050eb9f9",
+        "parent_sha": "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+        "parents": [
+          "ec1de0a854aeb79bb0bfda976311ace017e7cdf2",
+          "e6f51b1ef6de5fba07cb184fa5152ee8920abd87"
+        ],
+        "author_name": "Qiyun Zhu",
+        "author_email": "qiyunzhu@gmail.com",
+        "authored_at": "2026-10-14T18:52:42Z",
+        "subject": "Merge branch 'bp_tree' into bptree-gpu-dispatch",
+        "body": ""
+      }
+    },
+    {
+      "input_file": "pr5308-head-commit.json",
+      "sha": "fe0a671bbc02b6a6a8ca4651e38e4774654ebab2",
+      "parent": "3b6530aacd3cebb8e4d796a20c7c7d99580204ed",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Tests/test_SeqFeature.py"
+      ],
+      "native_commit_info": {
+        "sha": "fe0a671bbc02b6a6a8ca4651e38e4774654ebab2",
+        "parent_sha": "3b6530aacd3cebb8e4d796a20c7c7d99580204ed",
+        "parents": [
+          "3b6530aacd3cebb8e4d796a20c7c7d99580204ed"
+        ],
+        "author_name": "Saiyma Sarmin",
+        "author_email": "saiyma.sarmin@gmail.com",
+        "authored_at": "2026-09-11T15:41:22Z",
+        "subject": "Issue #5193 - Added fuzzy locations to Test/test_SeqFeature.py",
+        "body": ""
+      }
+    },
+    {
+      "input_file": "pr5316-head-commit.json",
+      "sha": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+      "parent": "bbc55712db23d048cdc2cebc643453418f66593c",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/SeqFeature.py",
+        "Tests/test_SeqFeature.py"
+      ],
+      "native_commit_info": {
+        "sha": "74acdf78947f9ef7a006c8d2183c72ae1fe15b24",
+        "parent_sha": "bbc55712db23d048cdc2cebc643453418f66593c",
+        "parents": [
+          "bbc55712db23d048cdc2cebc643453418f66593c"
+        ],
+        "author_name": "Saiyma Sarmin",
+        "author_email": "saiyma.sarmin@gmail.com",
+        "authored_at": "2026-09-14T20:21:05Z",
+        "subject": "Issue #5193 - Add __hash__ to CompoundLocation",
+        "body": "Implement __hash__ based on operator and parts, matching the\nattributes used by __eq__. Relies on SimpleLocation.__hash__ for\neach part, so the same ref/ref_db limitation applies here too. Add\ntests covering hash/eq consistency (including fuzzy and unknown\npositions) and set membership."
+      }
+    },
+    {
+      "input_file": "pr5317-head-commit.json",
+      "sha": "6fc6bf358986666f8282c393c16d5f1f945c0016",
+      "parent": "d699f66a909e1647249e726b5480be650893821c",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/PDB/qcprot.py",
+        "Tests/test_PDB_QCPSuperimposer.py"
+      ],
+      "native_commit_info": {
+        "sha": "6fc6bf358986666f8282c393c16d5f1f945c0016",
+        "parent_sha": "d699f66a909e1647249e726b5480be650893821c",
+        "parents": [
+          "d699f66a909e1647249e726b5480be650893821c"
+        ],
+        "author_name": "shan yu",
+        "author_email": "santohyunolfsssigneb@gmail.com",
+        "authored_at": "2026-09-16T09:43:36Z",
+        "subject": "QCP: drop unnecessary U copy on Kabsch det flip",
+        "body": "numpy.linalg.svd already returns a new writable U, so the special-orthogonal\ncolumn flip mutates that factor in place. black 24.10.0 on the touched files."
+      }
+    }
+  ],
+  "selected_inputs_considered": 5,
+  "native_metadata_eligible": 1,
+  "lineage": "Fixed PR heads are inspected as commit-route inputs. Native commit parent/merge semantics differ from PR base/head; no PR patch is substituted for the commit diff.",
+  "target_execution": false,
+  "model_calls": 0
+}
