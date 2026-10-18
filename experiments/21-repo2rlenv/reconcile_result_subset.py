@@ -124,7 +124,7 @@ def build():
             row['pre_authoring_attempt_limit']='Not inferred from the three selected authoring records'
         rows.append(row)
     solvers=[]
-    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01'):
+    for run in ('pr-blind-solver-01','lcc-blind-solver-01','scaler-blind-solver-01','scaler-blind-solver-02','scaler-blind-solver-03','r2e-gym-blind-solver-01','esty-ci-blind-solver-01'):
         path=f'evidence/{run}/summary.json';d=read(path);u=d.get('agent_result',{})
         solvers.append({'run':run,'attempts':d['attempts'],'reward':d['reward'],
                         'input_tokens':d.get('input_tokens',u.get('n_input_tokens')),
