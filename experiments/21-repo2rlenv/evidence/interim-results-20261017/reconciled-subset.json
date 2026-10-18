@@ -506,6 +506,28 @@
         }
       ],
       "source": "evidence/scaler-provider-03/status.json"
+    },
+    {
+      "run": "swegen-provider-01",
+      "recipe": "swe_gen",
+      "repository": "scikit-bio",
+      "lineage_group": "scikit-bio-pr2633",
+      "outcome": "passed_acceptance_pending",
+      "model_calls": 0,
+      "native_controls": [
+        {
+          "case": "nop",
+          "reward": 0.0,
+          "task_checksum": "e94f39808ed90a06a8f221575599ba683238e96527411c7182a9b9eed3471c18"
+        },
+        {
+          "case": "oracle",
+          "reward": 1.0,
+          "task_checksum": "e94f39808ed90a06a8f221575599ba683238e96527411c7182a9b9eed3471c18"
+        }
+      ],
+      "source": "evidence/swegen-provider-01/status.json",
+      "summary_source": "evidence/swegen-provider-01/summary.json"
     }
   ],
   "source_sha256": {
@@ -539,7 +561,9 @@
     "evidence/esty_ci-independent-01/summary.json": "b9fb87d9a3394b1a0405b444e0dd1a15397e2fe7295360e5f268021ae37abe7a",
     "evidence/scaler-provider-01/status.json": "a9469394a6b4e321e00a2b5b8b76e23a1810cdaf5b9f0cd32163bdbb3d403ef6",
     "evidence/scaler-provider-02/status.json": "89c1ff3595f78d185c980e5e2e87872d4fbfd53714334bc8c5f096c0f1d8cdb4",
-    "evidence/scaler-provider-03/status.json": "5d670dc5bcc67d5991ae036e5cb08a3db3ab87119fb86897cbae4805c69c6961"
+    "evidence/scaler-provider-03/status.json": "5d670dc5bcc67d5991ae036e5cb08a3db3ab87119fb86897cbae4805c69c6961",
+    "evidence/swegen-provider-01/status.json": "303b777f861424f76ccdbb0618b90c0ea4dfbd2aff86c0a43b71167846db53a2",
+    "evidence/swegen-provider-01/summary.json": "f7edef7349ede66e8dbe59c64f2172240e597d425c5b448a5f0453317d578e5f"
   },
   "limitations": [
     "This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.",

@@ -143,6 +143,14 @@ def build():
                             'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
                                                 'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
                             'source':path})
+    path='evidence/swegen-provider-01/status.json';provider=read(path)
+    summary_path='evidence/swegen-provider-01/summary.json';summary=read(summary_path)
+    validations.append({'run':'swegen-provider-01','recipe':'swe_gen','repository':'scikit-bio',
+                        'lineage_group':'scikit-bio-pr2633','outcome':summary['status'],
+                        'model_calls':provider['model_calls'],
+                        'native_controls':[{'case':x['agent'],'reward':x['result']['verifier_result']['rewards']['reward'],
+                                            'task_checksum':x['result']['task_checksum']} for x in provider['cases']],
+                        'source':path,'summary_source':summary_path})
     return {'status':'interim_incomplete_subset','generation_rows':rows,'solver_rows':solvers,'validation_rows':validations,
             'source_sha256':sources,'limitations':[
                 'This is not the full campaign funnel. Other generation routes, diagnostic calls, repairs outside these records and active runs are not aggregated.',

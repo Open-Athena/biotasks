@@ -1,6 +1,6 @@
 # Interim comparison — issue 21
 
-Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:00 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
+Status: incomplete, 2026-10-17. This document organizes verified findings; it is not the final campaign funnel or a completion claim. Updated through the 2026-10-18 01:11 UTC result reconciliation; running jobs are not counted as completed outcomes. The [route matrix](applicability.csv) records route-specific applicability. Runs, candidate caps, failures and repeated lineages must be reconciled before calculating yield.
 
 ## Competencies and independent outcomes
 
@@ -10,7 +10,7 @@ Status: incomplete, 2026-10-17. This document organizes verified findings; it is
 | Biopython LCC, full-source SWE-smith adaptation | Sequence complexity / entropy implementation | Independently accepted; one blind GLM attempt scored 1 with 12/12 tests | Explicit source-packaging and solver-tooling adaptations; bounded library-function task rather than an end-to-end biological analysis |
 | SCALER synthetic DNA edit distance | Algorithmic sequence-distance reasoning | Three native tasks accepted; independent family oracle and native/Marin control comparison; all three fresh provider checks passed -1/+1 | One synthetic family, not three distinct competencies; all three single blind attempts scored native +1 |
 | scikit-bio SWE-Next and fixture-adapted R2E-Gym | The same PR2633 numerical-stability repair | Native exports and six independent correctness controls per export | Shared problem lineage; fresh solver runtime/final acceptance and blind attempts pending |
-| scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export and six independent correctness controls verified | Fresh solver-runtime validation, final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
+| scikit-bio SWE-gen | The same PR2633 repair at its exact PR head | Native export, six independent correctness controls and fresh separate-context no-op/reference runtime rewards 0/1 verified | Final acceptance and blind attempt pending; E-step-only partial fix passes all 60 tests |
 | scikit-bio Strong dominance, SWE-smith | Diversity-index function reconstruction | Baseline/reference/alternative/incorrect-constant/zero rewards 0,1,1,1,0 | Rejected: an incorrect constant passes all 34 native tests; no blind solve |
 | Biopython GC-skew, SWE-flow | Windowed nucleotide-composition calculation | Original export failed build; idempotent license-bootstrap adaptation scored native no-op 0/reference 1 | Rejected: both incorrect zero-only implementations pass all 12 tests; no blind attempt |
 | scikit-bio Esty confidence interval, SWE-smith | Singleton/doubleton variance formula | Baseline/reference/alternative/wrong-clipping/wrong-variance rewards 0,1,1,0,0 across 34 tests | Fresh provider runtime, final instruction/tolerance review and acceptance pending |
@@ -40,7 +40,7 @@ These observations support further evaluation of source-grounded software-repair
 
 ## Preserved model usage (partial)
 
-The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirteen generation/materialization rows, nine validation rows and five solver rows to thirty-one hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
+The [reconciled subset](evidence/interim-results-20261017/reconciled-subset.json) links thirteen generation/materialization rows, ten validation rows and five solver rows to thirty-three hashed source records. It is not the complete campaign funnel: earlier diagnostics and other routes still need reconciliation. Response counts are preserved responses, not inferred request counts.
 
 | Generation run | Candidates | Exports | Preserved responses | Input tokens | Combined output tokens | Reasoning tokens |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
@@ -78,3 +78,5 @@ The three scikit-bio history exports share byte-identical grader and wrapper cod
 4. Consolidate model usage, worker time, cost uncertainty, manual interventions and public artifact references.
 5. Assess each distinct environment/verifier structure against the pinned Marin conversion/runtime; distinguish unsupported metadata from executed reward parity and Atlas admission.
 6. Publish conclusions and expansion/adaptation recommendations only after the preceding evidence is reconciled. Negative and inconclusive outcomes are valid; unexecuted applicable work remains incomplete.
+
+Controller timing observation: [twenty retained Iris task records](evidence/controller-timing-reconciliation-20261018/controller-times.json) total 3.6901667 controller wall hours, all terminal at capture. This excludes other historical jobs and separate Daytona workers, and is not verified billed usage. Fresh SWE-gen runtime evidence is [publicly verified](hf-swegen-provider-01-upload-receipt.json); SWE-Next is submitted, not counted as a completed validation. Campaign estimates/holds are $643 of the approved $1,000 ceiling; credits and actual charges remain unverified.
