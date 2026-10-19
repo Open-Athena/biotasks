@@ -2220,3 +2220,39 @@ still set `tool_output_chars=None` pending the user's clarification. Twenty-two
 adapter tests and its type check pass, including full-result retention and unchanged
 unbounded generation settings. The diagnostic is submitted but awaiting reserved
 Iris capacity; no diagnostic model call or Daytona sandbox has run yet.
+
+### 2026-10-19 — Rejected-request replay confirms context overflow
+
+The diagnostic completed with one completion request and a read-only metadata
+query, no task tools and no Daytona credential or sandbox. The original request's
+SHA-256/bytes were verified first. The endpoint reproduced HTTP 400 and reported
+its 262,144-token context window versus at least 262,145 prompt tokens. This is
+an input-context rejection; the provider's zero-output allowance is a consequence
+of the oversized prompt, not an output-token cap supplied by the client. Preserve
+the stated lower bound rather than reporting an exact token count.
+
+The diagnostic host is terminal and its archive passed full download verification.
+Small original records are retained in `transfer/bioframe/request-rejection-runs/001`.
+Its archived execution timestamps show that it had already run while the earlier
+client observation still said PENDING; the prior inference that no call had run
+was stale. Use the durable request ledger and archive for execution claims.
+
+### 2026-10-19 — Reuse recorded worker code and keep diagnostics concise
+
+With the preview-policy clarification unanswered, retain the existing unbounded
+setting; do not infer approval for a new limit. Add general printing guidance to
+tool-worker prompts: aggregate checks/representative examples, full listings in
+scratch files, targeted inspection. Construction also distinguishes scientific
+content from incidental ordering/serialization when the public question frees
+those choices, and prioritizes reuse of supplied prior worker work over rebuilding
+an independent implementation in the authoring stage.
+
+Prepare construction 003 through the factory's existing `prior_author_files`
+input. Its draft consists of unchanged original GLM-authored scripts/instructions and
+the original controller execution record from construction 001; hashes and provenance are
+recorded, and the generic loader verified both. The earlier oracle matched the
+recorded reference, but its public contract still needs GLM review/repair. No
+scientific code or annotation-selection rule was manually changed or supplied as
+new task-specific feedback. Scientific validation remains a separate later stage.
+The native configuration selects 003 plus a future fresh grading 002; neither is
+validated or launched yet. Printing guidance is advisory, not a byte/token cap.

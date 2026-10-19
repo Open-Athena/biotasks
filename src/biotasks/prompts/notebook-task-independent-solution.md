@@ -27,6 +27,10 @@ than building your own grader or mutation suite. If blocked, return
 
 ## Shell execution
 
+Keep diagnostics concise: print aggregate checks and representative examples.
+Save complete listings to scratch files and inspect selected sections instead of
+streaming all rows, arrays or mismatches into the conversation.
+
 Run commands in the foreground. Each shell call terminates its remaining child
 processes when it returns; background/nohup work cannot continue between calls.
 For longer computations, explicitly set `timeout_sec` up to the supplied

@@ -23,6 +23,10 @@ observations. The model client and service credentials stay outside this sandbox
 
 ## Your tools
 
+Keep diagnostics concise: print aggregate checks and representative examples.
+Save complete listings to scratch files and inspect selected sections instead of
+streaming all rows, arrays or mismatches into the conversation.
+
 - `shell`: inspect files, package documentation and the disposable environment;
   write setup files and perform focused installation/import/input checks. Network
   access is available during setup. Tool output and failures are recorded.
