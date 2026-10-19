@@ -1,0 +1,15 @@
+{
+  "stage": "source_profile_contrast_failed_after_successful_build",
+  "candidate_id": "3b2def7bb1cab14cd3c0",
+  "candidate_charge": 1,
+  "charged_total_after": 3,
+  "model_calls": 0,
+  "build_smoke_passed": true,
+  "native_image_digest": "sha256:64410a67c969d01b5bfbc0ccfb1111f2bef167595acc3cfb118e90e49b99ebba",
+  "failure_evidence": "Native root generation reports native_contrast_failed/ValueError. Candidate build bootstrap is successful. Old source and partially created r2e_tests are retained, but no healthy/defective test execution files exist.",
+  "profile_problem": "Configured test root skbio/sequence/tests/data is absent in the retained head snapshot. Native stage_tests raises ValueError for absent configured roots; this is the identified profile defect, with original exception text unavailable.",
+  "diagnostic_limit": "No exact error message retained by run02 wrapper; source/retained-file inference, not a reproduced stack trace. Subsequent runs retain bounded exception trace evidence.",
+  "next_profile": "Use existing complete skbio/sequence/tests and skbio/io/format/tests directories, while native pytest selection still names only the changed modules.",
+  "instruction_or_grader_changes": false,
+  "candidate_cap_reset": false
+}

@@ -9,6 +9,7 @@ import hashlib
 import json
 import os
 import subprocess
+import traceback
 from pathlib import Path
 
 
@@ -92,6 +93,9 @@ def run_batch(config, output, prepare, evaluate):
                 }, output / 'candidates' / identity)
             except (ValueError, RuntimeError, subprocess.CalledProcessError,
                     subprocess.TimeoutExpired) as exc:
+                failure = output / 'candidates' / identity / 'contrast-error.txt'
+                failure.parent.mkdir(parents=True, exist_ok=True)
+                failure.write_text(traceback.format_exc()[-65536:])
                 result['rejected'].append({
                     'id': identity, 'head': candidate['head'],
                     'stage': 'native_contrast_failed', 'error_type': type(exc).__name__,
