@@ -1980,3 +1980,7 @@ Finite generation client01 runs on allocated free CoreWeave CPU without reposito
 ### 2026-10-19 19:18 UTC — declared seed inventory check
 
 Preliminary input audit finds3 declared Seed2Synth records,3 SETA Evol parent variants and12 DataArc records. The shared native terminal runner keys candidates by seed SHA, excludes configured seeds, truncates to max_candidates and skips completed/rejected keys on identical resume. Therefore cap-minus-attempts is budget capacity, not proof of new eligible inputs. No cohort is marked exhausted or complete by this preliminary check. Before further dispatch, reconcile consumed seed hashes and unused native stages/repair slots; DataArc has a larger declared source pool to audit. Any additional input versions must preserve lineage and existing aggregate candidate bounds rather than silently resetting consumed work.
+
+### 2026-10-19 19:28 UTC — actual synchronous SDK zero-generation probe frozen
+
+Pinned LiteLLM1.100.0/OpenAI2.24.0/httpx0.28.1 serialized one native metered request under local interception with no network. It preserved131072/medium, JSON schema and application header; direct completion destinations were rejected before forwarding. Frozen the remote TRC counterpart using the identical SDK lock and a transport-check trap base URL; its hook rewrites only to the zero-model endpoint and exits before model-response parsing. One transport request maximum, zero generation/model responses/candidate attempts. Remote proof remains pending.
