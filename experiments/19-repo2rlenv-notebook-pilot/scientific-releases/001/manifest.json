@@ -1,0 +1,151 @@
+{
+  "citations": [
+    "https://github.com/Open-Athena/biotasks/issues/19",
+    "https://github.com/huggingface/Repo2RLEnv/tree/55554430cd724efded1f5ad0ff98ebca5d88c0a6",
+    "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+    "https://doi.org/10.6084/m9.figshare.22716739.v1"
+  ],
+  "code_revision": "e78283997682639cdb2d8433f0be04999f5f61e1",
+  "created_at": "2026-10-19T17:14:30.885224+00:00",
+  "economics": {
+    "actual_daytona_invoice_usd": null,
+    "aggregate_authorized_usd": "100.00",
+    "cpu": 4,
+    "disk_gib": 10,
+    "memory_gib": 8,
+    "model": "glm-5.3",
+    "solver_seconds_limit": 600
+  },
+  "limitations": [
+    "One task and one final blind attempt do not establish benchmark performance or universal software portability.",
+    "The upstream advisory evaluation label remains unverified because its standard quality-loop profile was not run. The separate, executed BioTasks scientific-content and native-control evidence is provided explicitly.",
+    "All authoring, validation implementation and solver workers used GLM-5.3; separation of inputs does not imply independence of model families.",
+    "The frozen reference and inputs ground this computational reproduction task; successful execution and numerical agreement do not establish biological validity.",
+    "The Python dependency lock is preserved. Base-image tags and system-package repositories are not immutable rebuild guarantees.",
+    "The source notebook and reference-derived answers are public, so this is not a hidden contamination-free benchmark."
+  ],
+  "quality_counts": {
+    "unverified": 1
+  },
+  "recipe": "notebook-artifact-reproduction",
+  "repo_id": "gonzalobenegas/biotasks-notebook-pilot-issue-19",
+  "schema_version": 1,
+  "task_count": 1,
+  "tasks": [
+    {
+      "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312",
+      "diagnostics": [],
+      "evaluation_label_normalized": false,
+      "evidence": {
+        "native_trials": [
+          {
+            "agent": "oracle",
+            "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312",
+            "exception_type": null,
+            "result_sha256": "9b71f43a4e42a7157ed91599e8ec3bc7cf97de3aa879b6590ef4507bc28014c1",
+            "reward": 1.0
+          },
+          {
+            "agent": "nop",
+            "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312",
+            "exception_type": null,
+            "result_sha256": "0efab8044f5e97676b641702585313dcce81e790372df1e69e0fc941c62dbe58",
+            "reward": 0.0
+          },
+          {
+            "agent": "terminus-2",
+            "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312",
+            "exception_type": null,
+            "result_sha256": "73773d4d0e62558eeeab11d60145d90e73b8c7964de537820599ef507a2ccd9d",
+            "reward": 1.0
+          }
+        ],
+        "scientific_content_controls_passed": true,
+        "standard_upstream_quality_loop_run": false
+      },
+      "evidence_documents": {
+        "grading-controls.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/grading-controls.json",
+          "sha256": "e39898e0427c61d6b9f4ec4d8d105106818c6ccaddc6ce729dad308611043cab"
+        },
+        "grading-rationale.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/grading-rationale.json",
+          "sha256": "be1707d511d9e89d750264234282dfbfb673599f36a89c09924c2dd71aa4b008"
+        },
+        "grading-result.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/grading-result.json",
+          "sha256": "44be7837c2ed28fe6159d899eca84be6e116b5265b0a2afc89294e8af5114f86"
+        },
+        "grading-review.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/grading-review.json",
+          "sha256": "ee20a06da133e18c1de57aab0ca3fe13e0ad8a03f23b14349935596757fd2cb7"
+        },
+        "independent-execution.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/independent-execution.json",
+          "sha256": "9a7ce864a626bc1e1cc78bcd7f7eae4a4d8e4c2fa3c324702286e6ebdd65d1b6"
+        },
+        "independent-solution.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/independent-solution.json",
+          "sha256": "22b9beb6ce64e05591e579d3c89716053283e7edb6ac3c86ed2ad70b8d53a33b"
+        },
+        "materialization-manifest.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/materialization-manifest.json",
+          "sha256": "6dfcaf8615a3c7a9b9de151c92449395b9faba8297505a81d2c74a3db326b2bf"
+        },
+        "materialization-rationale.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/materialization-rationale.json",
+          "sha256": "c7c9a5c5ed93a82e9bbe5b9e58fb53759d5759d47c453a7ea7976a248998eb8f"
+        },
+        "scientific-probes.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/scientific-probes.json",
+          "sha256": "3cb496d1a5641a6bb6fca6b0433988629b185daa7fbedd7b03dad0a50c5dab02"
+        },
+        "solver-trajectory.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/solver-trajectory.json",
+          "sha256": "45e3dc808771a66616dedd86721ae4f5b0388c67b7f505d8119165291e1d311b"
+        },
+        "source-intake-provenance.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/source-intake-provenance.json",
+          "sha256": "5cb9fd549b8d3308c50d90555ae0b9ffae2cb2109784024d9d6c8b085f9980e9"
+        },
+        "source-licenses.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/source-licenses.json",
+          "sha256": "7937bb64de3ce0b4188467edfbbbd88ac6284f48231fee289155a1b5e6f96a4b"
+        },
+        "validation-summary.json": {
+          "path": "evidence/bmmc-marker-genes-fixed-groups/validation-summary.json",
+          "sha256": "b211ac0de16210af99795ae678cccaecd98506cfefdc439ee754b2dcc2ac119d"
+        }
+      },
+      "generation_status": "unknown",
+      "metadata": {
+        "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312",
+        "evaluation": {
+          "checked_at": "2026-10-19T17:14:29.998091Z",
+          "detail": "BioTasks scientific-content controls and native Harbor controls passed; a blind GLM attempt was recorded. These checks use the BioTasks artifact workflow, not the standard upstream quality-loop acceptance profile. See the release validation evidence.",
+          "evidence": [],
+          "profile": "biotasks-scientific-content-v1",
+          "provenance": "assisted",
+          "reason_codes": [
+            "upstream_quality_loop_not_run"
+          ],
+          "schema_version": "1",
+          "source_task_path": "/tmp/biotasks19-native003-package/bmmc-marker-genes-fixed-groups",
+          "source_task_toml_sha256": "0aae29e1e8e35191a60cddcb4f337cfbcd62f20fa5d3be5f1204e87f2b9674a5",
+          "stage": "complete",
+          "status": "unverified",
+          "subject_bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312"
+        },
+        "recipe": "notebook-artifact-reproduction",
+        "recipe_version": "e78283997682639cdb2d8433f0be04999f5f61e1",
+        "reward_kinds": [
+          "binary"
+        ],
+        "scope": "scientific task with explicit supplied intermediates"
+      },
+      "path": "tasks/bmmc-marker-genes-fixed-groups",
+      "quality_status": "unverified",
+      "task_id": "bmmc-marker-genes-fixed-groups"
+    }
+  ]
+}
