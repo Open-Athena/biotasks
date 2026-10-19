@@ -1,0 +1,33 @@
+{
+  "checked_utc": "2026-10-19T19:12:28.214113+00:00",
+  "stage": "native_metering_generation_header_mock_fixtures_passed",
+  "mock_cases": 4,
+  "targets": [
+    "history",
+    "swe_gen"
+  ],
+  "transport_profiles": [
+    "direct",
+    "dedicated_generation_client_header"
+  ],
+  "live_model_calls": 0,
+  "actual_remote_SDK_HTTP_proved": false,
+  "execution": {
+    "start_utc": "2026-10-19T19:09:32.085358+00:00",
+    "peak_working_set_estimate_bytes": 268435456,
+    "end_utc": "2026-10-19T19:09:35.512849+00:00",
+    "exit_status": 0,
+    "elapsed_seconds": 3.428
+  },
+  "files": {
+    "glm_authoring_adapter.py": "5f4576b87baad03f43cee1208e5a4e403142555413da6ee74f41154118784e1f",
+    "check_history_glm_transport.py": "5eb75565a3e609c0b237988b1f880cf2c968fb6768ba596c0417cc0869a4e36c"
+  },
+  "verified": [
+    "Dedicated generation credential is carried through extra_headers, outside messages.",
+    "Direct calls retain the prior header behavior.",
+    "Approved token/effort/timeout and native zero retries preserved.",
+    "Native metering, schema parsing and raw-response capture still work under fixtures."
+  ],
+  "remaining_gate": "Verify actual synchronous native SDK serialization over the authenticated route before interpreting any integrated recipe outcome."
+}

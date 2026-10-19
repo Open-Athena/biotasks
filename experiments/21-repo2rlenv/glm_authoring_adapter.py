@@ -1,6 +1,7 @@
 """Explicit generation-only GLM adaptation; preserve upstream authoring logic."""
 
 from contextlib import ExitStack, contextmanager
+import os
 from unittest.mock import patch
 
 import litellm
@@ -54,6 +55,14 @@ def adapted_authoring(settings, output, *, metering_target="swe_smith"):
     def completion(*args, **kwargs):
         nonlocal calls
         calls += 1
+        transport_token = os.environ.get("BIOTASKS21_GENERATION_CLIENT_TOKEN")
+        if transport_token:
+            headers = dict(kwargs.get("extra_headers") or {})
+            name = "X-Biotasks21-Inference-Token"
+            if name in headers and headers[name] != transport_token:
+                raise ValueError("Conflicting generation transport authentication")
+            headers[name] = transport_token
+            kwargs["extra_headers"] = headers
         extra = dict(kwargs.get("extra_body") or {})
         template = dict(extra.get("chat_template_kwargs") or {})
         template["reasoning_effort"] = settings["reasoning_effort"]
