@@ -32,6 +32,7 @@ def test_native_gates_and_blind_attempt(tmp_path, monkeypatch, oracle_reward, ex
 
     def trial(*args, agent, **kwargs):
         agents.append(agent)
+        assert kwargs["python"] == native.sys.executable
         assert kwargs["max_turns"] is None and kwargs["max_tokens"] is None
         return SimpleNamespace(
             completed=True,

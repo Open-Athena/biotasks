@@ -2,6 +2,7 @@
 
 import json
 import os
+import sys
 import tarfile
 import time
 from datetime import UTC, datetime
@@ -104,6 +105,7 @@ def run(config, *, root=Path("/evidence/native")):
                 root / agent,
                 trial_id=config["campaign"] + "-" + agent,
                 agent=agent,
+                python=sys.executable,
                 ledger=model_budget,
                 reservation_usd="1",
                 max_turns=None,
