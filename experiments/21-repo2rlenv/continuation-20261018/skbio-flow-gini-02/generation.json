@@ -1,0 +1,55 @@
+{
+  "attempted": 1,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator"
+        ],
+        "PASS_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve"
+        ]
+      },
+      "functions": {
+        "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator": {
+          "line": 96,
+          "name": "_lorenz_curve_integrator",
+          "path": "skbio/diversity/alpha/_gini.py",
+          "source": "def _lorenz_curve_integrator(lc_pts, method):\n    \"\"\"Calculate the area under a Lorenz curve.\n\n    Notes\n    -----\n    Could be utilized for integrating other simple, non-pathological\n    \"functions\" where width of the trapezoids is constant.\n\n    \"\"\"\n    x, y = lc_pts\n\n    # each point differs by 1/n\n    dx = 1 / x.shape[0]\n\n    if method == \"trapezoids\":\n        # 0 percent of the population has zero percent of the goods\n        h_0 = 0.0\n        h_n = y[-1]\n        # the 0th entry is at x=1/n\n        sum_hs = y[:-1].sum()\n        return dx * ((h_0 + h_n) / 2 + sum_hs)\n    elif method == \"rectangles\":\n        return dx * y.sum()\n    else:\n        raise ValueError(\n            \"Method '%s' not implemented. Available methods: \"\n            \"'rectangles', 'trapezoids'.\" % method\n        )"
+        }
+      },
+      "id": "3f11586ce61f704796ee",
+      "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "repo": "https://github.com/scikit-bio/scikit-bio",
+      "schedule": {
+        "core_nodes": [
+          "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator"
+        ],
+        "previous_tests": [
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_lorenz_curve"
+        ],
+        "step": 1,
+        "target_nodes": [
+          "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator"
+        ],
+        "test_ids": [
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_lorenz_curve_integrator"
+        ]
+      },
+      "source_files": [
+        "skbio/diversity/alpha/_gini.py"
+      ],
+      "test_evidence": {
+        "skbio/diversity/alpha/tests/test_gini.py": "from unittest import TestCase, main\n\nimport numpy as np\n\nimport numpy.testing as npt\n\nfrom skbio.diversity.alpha import gini_index\n\nfrom skbio.diversity.alpha._gini import (\n    _lorenz_curve, _lorenz_curve_integrator)\n\n    def test_gini_index_bug_1844(self):\n        exp = 0.0\n        obs = gini_index([2, 2, 2, 2, 2])\n        self.assertAlmostEqual(obs, exp)\n\n    def test_gini_index(self):\n        exp = 0.32771210013908214\n        obs = gini_index(self.data, 'trapezoids')\n        self.assertAlmostEqual(obs, exp)\n\n        exp = 0.20271210013908214\n        obs = gini_index(self.data, 'rectangles')\n        self.assertAlmostEqual(obs, exp)\n\n        # Raises error on negative data.\n        with self.assertRaises(ValueError):\n            gini_index([1.0, -3.1, 4.5])\n\n    def test_lorenz_curve_integrator(self):\n        exp = 0.33614394993045893\n        obs = _lorenz_curve_integrator(self.lorenz_curve_points, 'trapezoids')\n        self.assertAlmostEqual(obs, exp)\n\n        exp = 0.39864394993045893\n        obs = _lorenz_curve_integrator(self.lorenz_curve_points, 'rectangles')\n        self.assertAlmostEqual(obs, exp)\n\n        # Raises error on invalid method.\n        with self.assertRaises(ValueError):\n            _lorenz_curve_integrator(self.lorenz_curve_points, 'brofist')"
+      }
+    }
+  ],
+  "rejected": []
+}
