@@ -36,7 +36,9 @@ def main():
             subprocess.run(['uv', 'sync', '--frozen', '--no-dev', '--extra', 'harbor', '--extra', 'daytona',
                             '--python', '3.12.3', '--project', str(root)], env=env,
                            stdout=log, stderr=log, check=True, timeout=600)
-        python = str((root / '.venv/bin/python').resolve())
+        # Keep the venv executable path: resolving its symlink would select
+        # the base interpreter and lose the locked environment's site-packages.
+        python = str(root.absolute() / '.venv/bin/python')
         state['status'] = 'running'
         for item in cohort['units']:
             row = {'task_id': item['task_id'], 'unit': item['unit'], 'status': 'not_started'}
