@@ -2127,3 +2127,8 @@ The internal flag is renamed from `alternative_validated` to
 scientific method or expected answer is embedded in these changes. Twenty existing
 grading tests pass; these advisory prompt changes have not yet been tested by a
 new model run and do not alter the active campaign.
+
+Before the next construction run, the same general guidance also requires checking
+claimed input formats/headers against the staged bytes, rather than treating the
+source's reader arguments or a proposal's description as evidence of the file
+layout. No data-format claim about this seed is changed by the operator.

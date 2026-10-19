@@ -42,8 +42,9 @@ explicit composite keys for supplied metadata; avoid making the solver reconstru
 an incidental package-specific naming convention when a transparent key can be
 supplied without changing the science. Supplied intermediate results are
 reference-derived inputs, not biological ground truth. Retain sufficient identity
-information without exposing downstream answers. Inspect the actual input keys and
-output grain, rather than assuming one source row is one scientific entity. When
+information without exposing downstream answers. Check claimed input formats and
+headers against the actual staged files. Inspect the actual input keys and output
+grain, rather than assuming one source row is one scientific entity. When
 several source rows share an entity key, check whether their annotations agree.
 State the intended multiplicity and any rule for selecting or combining conflicting
 annotations in the public question, supported by the source analysis. Do not leave
