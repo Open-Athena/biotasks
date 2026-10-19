@@ -1,0 +1,111 @@
+{
+  "chat_template_kwargs": {
+    "reasoning_effort": "medium"
+  },
+  "messages": [
+    {
+      "content": "You prepare endpoint exports for an existing scientific notebook.\nReturn one complete ReferencePlan JSON object matching the supplied response\nschema. This stage selects terminal scientific results and adds code to save\nthose existing results to disk after the original script finishes. Return only\nthe export code, not an edited or recopied source script. The controller appends\nit to the untouched baseline. This stage does not manage or execute the environment.\nThere is one preparation call and no automatic repair. Keep explanations brief and nonduplicated.\n\n## Inputs\n\nThe user message supplies:\n\n- `baseline_script`: the complete, unmodified Python script from deterministic\n  notebook conversion, with the original Markdown narrative retained as comments.\n- `source`: notebook identity and provenance.\n- `conversion`: the conversion receipt and source/script identities.\n- `limits`: the intended execution environment and resource/time limits.\n\nYou do not receive saved notebook outputs, embedded images, scientific data\ncontents or tool access. A path or URL is not evidence that a resource has been\ninspected. Runtime, dependency availability and output properties remain\nunverified. Do not infer that a source has never run from a documentation setting.\n\n## Select terminal scientific results\n\nFirst identify the scientific conclusions or end products the source aims to\nproduce. Use its narrative and how results are interpreted, not a list of its\nsections, functions or stored variables. Include the independent scientific\noutcomes of all analysis branches in one task. Preparatory and diagnostic steps\nsupporting those outcomes are not additional branches that need an export.\n\nFor each candidate result, distinguish its role:\n\n- An endpoint reports a scientific finding or final representation that the\n  source interprets in its own right.\n- An intermediate prepares data or supplies another analysis step.\n- A diagnostic checks data quality, model fit or parameter choices in support\n  of the analysis. Its being displayed, discussed or retained does not by itself\n  make it a scientific endpoint.\n\nSelect the endpoints. A value used downstream can still qualify when the source\nalso interprets it as an independent result; a value with no downstream consumer\ncan still be only a diagnostic. Do not equate endpoints with either literal\nexecution-graph leaves or objects surviving to the end. If the source does not\nestablish an independent endpoint role, explain the exclusion or uncertainty\nrather than adding an export just for completeness.\n\nThen locate the selected results in existing named variables or fields in the\nORIGINAL script. They must still hold the intended values at script completion.\nIf a result has been overwritten, deleted or is out of scope, explain its\nexclusion; do not insert earlier captures or rerun computation to recover it.\nA result displayed in a plot can qualify if its values already exist outside\nthe plotting function. Values computed only inside plotting functions cannot.\n\nSelect fields by their scientific role before choosing a file format. This rule\napplies recursively: a table inside a mixed analysis object can itself mix final\nresults with inputs, preprocessing statistics and diagnostics. Export only the\nselected endpoint fields and the identifiers/context needed to interpret them;\ndo not copy all columns or dump a whole object because it is convenient. A\nstandalone result table or embedding may be exported whole when its contents\nmeet this rule. Preserve its meaningful result fields and identifiers, explaining\nany omissions. Selecting stored fields is allowed; changing the analyzed\npopulation or adding scientific computation is not. Output size alone does not\ndetermine eligibility.\n\nExplain meaningful exclusions and any independent outcome without an eligible\nstored result in `excluded_outputs`. Do not enumerate every processing step.\nIf no eligible terminal result can be exported, return disposition=reject.\nExcluding an output never permits skipping its original computation.\n\n## Save existing values only\n\nSerialization means writing existing values and their identifiers to files.\nUse native writers or straightforward file-format conversion. Preserve values,\nidentifiers, labels and ordering of the selected final-state results. A later\nfiltered or overwritten object does not preserve an earlier result merely because\nit has the same variable name.\n\nDo not add scientific computation for exports: no new filtering, ranking,\naggregation, normalization, scaling, statistical tests or reconstruction of\nvalues computed inside plotting functions. Do not capture a previously unnamed\nstandalone expression by assigning it to a new variable. Values inside an already\nnamed source object are eligible; a result held only inside a plotting function\nis not. Do not change plotting calls or add figure capture. Explain excluded\nplot-only results instead of claiming their numerical content was exported.\n\nFile-writing code may introduce output paths and serialization helpers, but not\nnew scientific results. Put any needed imports in the appended export code,\nusing names that do not overwrite source results. Do not recompute an analysis\nor call it again to obtain an export. Do not change the original inputs, methods, parameters, randomness,\nfiltering, annotations, error handling or execution order. Keep the original\nanalysis and comments intact, including branches whose outputs are excluded.\nPreserve source-level reductions; add none. Do not suppress analysis errors.\n\n## Required response\n\n- `disposition`: `prepare` or `reject`.\n- `explanation`: a brief reason and account of the added export code.\n- `export_code`: only the Python code to append at the end of the baseline,\n  including any imports needed for saving files. Do not include the baseline,\n  patches, insertion instructions, Markdown fences or future imports. Write\n  endpoint files under `/work/outputs`, creating that directory if needed. Use\n  only eligible original results still accessible at completion. For\n  disposition=reject, this field may be empty.\n- `artifacts`: one inventory of endpoint files. Each entry has a `path`\n  relative to `/work/outputs` (for example `result.csv` for\n  `/work/outputs/result.csv`), a brief `description` of the terminal result, and\n  `source_evidence` explaining why this is an endpoint based on the source\n  analysis goals, and identifying the existing variable or object field and\n  where the original script produces it. Cite the source narrative or use that\n  establishes its endpoint role; mere persistence or a function name is not\n  evidence of that role. Prefer interoperable formats. Several\n  existing endpoint values may share a file if their identities remain explicit.\n- `excluded_outputs`: meaningful non-target outputs and branches with no eligible\n  terminal result, with a brief reason. Do not enumerate every intermediate.\n- `unresolved_assumptions`: specific questions for subsequent inspection or\n  execution; do not invent observed dimensions, values, timing or resource use.\n\nThe controller preserves the returned export code and constructs the reference\nscript as the original baseline, two newlines, then the export code. It checks\nresponse structure and combined Python syntax without executing code, and\ncomputes the source diff, file sizes and hashes. Do not generate those records.\nThese checks do not prove terminal-result selection, scientific fidelity or\nsuccessful execution.\n\n## Boundary with execution\n\nThe execution stage owns dependency discovery and installation, the Python\nproject and uv lockfile, system packages, input downloads, caches and offline\npath adaptation. It can use an LLM with tools to inspect and diagnose concrete\nfailures. Ordinary script execution is programmatic. Preparation must not return\nan environment manifest or staging script, install packages, rewrite retrieval\ncode, choose package versions or claim an environment works. Leave original\ninput-loading code unchanged for execution-stage adaptation and review.\n\nThe later scientific run remains CPU-only and offline, with original inputs\nstaged during network-enabled setup. The supplied limits apply; uncertainty\nabout fit is an execution question, not permission to simplify the analysis.\nValidation failures are preserved for inspection; no repair call follows\nautomatically. Source analysis defects must not be repaired by changing the\nscience. Distinguish a known defect from an untested assumption and explain rejection precisely.\n",
+      "role": "system"
+    },
+    {
+      "content": "{\"source\": {\"id\": \"bioframe-motifs-to-peaks\", \"title\": \"Bioframe: assign TF motifs to ChIP-seq peaks\", \"url\": \"https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb\", \"source_revision\": \"95007ed6fc03b01005d75f95cac511b2df286854\", \"source_sha256\": \"4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b\", \"license\": \"MIT\", \"provenance\": {\"notebook\": {\"url\": \"https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb\", \"sha256\": \"4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b\", \"revision\": \"95007ed6fc03b01005d75f95cac511b2df286854\", \"license\": \"MIT\"}, \"data_sources\": [{\"accession\": \"ENCFF401MQL\", \"url\": \"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\", \"assembly\": \"GRCh38\", \"bytes\": 649474, \"provider_md5\": \"9dabac96e36309ed65dc1cb289c51079\", \"terms_url\": \"https://www.encodeproject.org/about/data-use-policy/\"}, {\"accession\": \"ENCFF356LFX\", \"url\": \"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\", \"assembly\": \"GRCh38\", \"bytes\": 8211, \"provider_md5\": \"393688b4f06c9ce26165d47433dd8c37\", \"terms_url\": \"https://www.encodeproject.org/about/data-use-policy/\"}, {\"url\": \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz\", \"bytes\": 7698065, \"license\": \"CC-BY-4.0\", \"terms_url\": \"https://jaspar.elixir.no/about/\", \"release\": \"2022\", \"assembly\": \"hg38\", \"profile\": \"MA0139.1\"}]}}, \"baseline_script\": \"# ---\\n# jupyter:\\n#   jupytext:\\n#     text_representation:\\n#       extension: .py\\n#       format_name: nomarker\\n#       format_version: '1.0'\\n#       jupytext_version: 1.19.6\\n#   kernelspec:\\n#     display_name: Python 3.10\\n#     language: python\\n#     name: python3\\n# ---\\n\\n# # How to: assign TF Motifs to ChIP-seq peaks\\n#\\n# This tutorial demonstrates one way to assign CTCF motifs to CTCF ChIP-seq peaks using bioframe.\\n#\\n\\nimport matplotlib.pyplot as plt\\nimport numpy as np\\nimport pandas as pd\\n\\nimport bioframe\\n\\nbase_dir = \\\"/tmp/bioframe_tutorial_data/\\\"\\nassembly = \\\"GRCh38\\\"\\n\\n# ## Load CTCF ChIP-seq peaks for HFF from ENCODE\\n#\\n# This approach makes use of the `narrowPeak` schema for bioframe.read_table . \\n\\nctcf_peaks = bioframe.read_table(\\n    \\\"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\\\",\\n    schema=\\\"narrowPeak\\\",\\n)\\nctcf_peaks[0:5]\\n\\n# ## Get CTCF motifs from JASPAR\\n\\n### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/\\njaspar_url = \\\"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\\\"\\njaspar_motif_file = \\\"MA0139.1.tsv.gz\\\"\\nctcf_motifs = bioframe.read_table(\\n    jaspar_url + jaspar_motif_file, schema=\\\"jaspar\\\", skiprows=1\\n)\\nctcf_motifs[0:4]\\n\\n# ## Overlap peaks & motifs\\n\\ndf_peaks_motifs = bioframe.overlap(\\n    ctcf_peaks, ctcf_motifs, suffixes=(\\\"_1\\\", \\\"_2\\\"), return_index=True\\n)\\n\\n# There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs:\\n\\n# note that counting motifs per peak can also be handled directly with\\n# bioframe.count_overlaps but since we re-use df_peaks_motifs below we\\n# instead use the pandas operations directly\\nmotifs_per_peak = df_peaks_motifs.groupby([\\\"index_1\\\"])[\\\"index_2\\\"].count().values\\n\\nplt.hist(motifs_per_peak, np.arange(0, np.max(motifs_per_peak)))\\nplt.xlabel(\\\"number of overlapping motifs per peak\\\")\\nplt.ylabel(\\\"number of peaks\\\")\\nplt.semilogy()\\n\\nprint(\\n    f\\\"fraction of peaks without motifs \\\"\\n    f\\\"{np.round(np.sum(motifs_per_peak == 0) / len(motifs_per_peak), 2)}\\\"\\n)\\n\\n# ### Assign the strongest motif to each peak\\n\\n# since idxmax does not currently take NA, fill with -1\\ndf_peaks_motifs[\\\"pval_2\\\"] = df_peaks_motifs[\\\"pval_2\\\"].fillna(-1)\\nidxmax_peaks_motifs = (\\n    df_peaks_motifs.groupby([\\\"chrom_1\\\", \\\"start_1\\\", \\\"end_1\\\"])[\\\"pval_2\\\"].idxmax().values\\n)\\ndf_peaks_maxmotif = df_peaks_motifs.loc[idxmax_peaks_motifs]\\ndf_peaks_maxmotif[\\\"pval_2\\\"].replace(-1, np.nan, inplace=True)\\n\\n# stronger peaks tend to have stronger motifs:\\n\\nplt.rcParams[\\\"font.size\\\"] = 12\\ndf_peaks_maxmotif[\\\"fc_1\\\"] = df_peaks_maxmotif[\\\"fc_1\\\"].values.astype(\\\"float\\\")\\nplt.scatter(\\n    df_peaks_maxmotif[\\\"fc_1\\\"].values,\\n    df_peaks_maxmotif[\\\"pval_2\\\"].values,\\n    5,\\n    alpha=0.5,\\n    lw=0,\\n)\\nplt.xlabel(\\\"ENCODE CTCF peak strength, fc\\\")\\nplt.ylabel(\\\"JASPAR CTCF motif strength \\\\n (-log10 pval *100)\\\")\\nplt.title(\\n    \\\"corr: \\\"\\n    + str(np.round(df_peaks_maxmotif[\\\"fc_1\\\"].corr(df_peaks_maxmotif[\\\"pval_2\\\"]), 2))\\n);\\n\\n# We can also ask the reverse question: how many motifs overlap a ChIP-seq peak?\\n\\ndf_motifs_peaks = bioframe.overlap(\\n    ctcf_motifs, ctcf_peaks, how=\\\"left\\\", suffixes=(\\\"_1\\\", \\\"_2\\\")\\n)\\n\\nm = df_motifs_peaks.sort_values(\\\"pval_1\\\")\\nplt.plot(\\n    m[\\\"pval_1\\\"].values[::-1],\\n    np.cumsum(pd.isnull(m[\\\"chrom_2\\\"].values[::-1]) == 0) / np.arange(1, len(m) + 1),\\n)\\nplt.xlabel(\\\"pval\\\")\\nplt.ylabel(\\\"probability motif overlaps a peak\\\");\\n\\n# ### filter peaks overlapping blacklisted regions\\n#\\n# do any of our peaks overlap blacklisted genomic regions?\\n\\nblacklist = bioframe.read_table(\\n    \\\"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\\\",\\n    schema=\\\"bed3\\\",\\n)\\nblacklist[0:3]\\n\\n# there appears to be a small spike in the number of peaks close to blacklist regions\\n\\nclosest_to_blacklist = bioframe.closest(ctcf_peaks, blacklist)\\nplt.hist(\\n    closest_to_blacklist[\\\"distance\\\"].astype(\\\"Float64\\\").astype(\\\"float\\\"),\\n    np.arange(0, 1e4, 100),\\n);\\n\\n# to be safe, let's remove anything +/- 1kb from a blacklisted region\\n\\n# first let's select the columns we want for our final dataframe of peaks\\n# with motifs\\ndf_peaks_maxmotif = df_peaks_maxmotif[\\n    [\\n        \\\"chrom_1\\\",\\n        \\\"start_1\\\",\\n        \\\"end_1\\\",\\n        \\\"fc_1\\\",\\n        \\\"chrom_2\\\",\\n        \\\"start_2\\\",\\n        \\\"end_2\\\",\\n        \\\"pval_2\\\",\\n        \\\"strand_2\\\",\\n    ]\\n]\\n#  then rename columns for convenience when subtracting\\nfor i in df_peaks_maxmotif.keys():\\n    if \\\"_1\\\" in i:\\n        df_peaks_maxmotif.rename(columns={i: i.split(\\\"_\\\")[0]}, inplace=True)\\n\\n# now subtract, expanding the blacklist by 1kb\\ndf_peaks_maxmotif_clean = bioframe.subtract(\\n    df_peaks_maxmotif, bioframe.expand(blacklist, 1000)\\n)\\n\\n# there it is! we now have a dataframe containing positions of CTCF ChIP peaks, \\n# including the strongest motif underlying that peak, and after conservative\\n# filtering for proximity to blacklisted regions\\n\\ndf_peaks_maxmotif_clean.iloc[7:15]\\n\", \"conversion\": {\"profile\": \"python-narrative-v2\", \"converter\": \"jupytext\", \"converter_version\": \"1.19.6\", \"format\": \"py:nomarker\", \"source_sha256\": \"4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b\", \"script_sha256\": \"aa6ed21d92a4d0a295c904d6d00c39a2cc7dad864e53f60e83ba187572569753\", \"executable_ast_sha256\": \"3aa565acf6168df93153b06ee07eb737df97bae94aa9766af604d28e4f62bcc1\", \"code_cells\": 14, \"markdown_cells\": 12, \"markdown_representation\": \"line_comments\", \"ordered_code_equivalence\": true, \"documentation_execution_policy\": {}, \"stored_outputs_used_as_evidence\": false, \"executed\": false, \"source_pairing_metadata\": {\"formats\": \"ipynb,md:myst\"}}, \"limits\": {\"base_image\": \"python:3.13.13-slim-bookworm\", \"gpu\": false, \"network\": \"Available during future setup only; reference execution is offline.\", \"reference_seconds\": 600, \"setup_seconds\": 1800, \"task_cpus\": 4, \"task_disk_gib\": 10, \"task_memory_gib\": 8}}",
+      "role": "user"
+    }
+  ],
+  "model": "glm-5.3",
+  "response_format": {
+    "json_schema": {
+      "name": "artifact",
+      "schema": {
+        "$defs": {
+          "Artifact": {
+            "additionalProperties": false,
+            "properties": {
+              "description": {
+                "minLength": 1,
+                "title": "Description",
+                "type": "string"
+              },
+              "path": {
+                "description": "Path relative to /work/outputs.",
+                "title": "Path",
+                "type": "string"
+              },
+              "source_evidence": {
+                "description": "Why this is a scientific endpoint according to the source goals, and which existing variable or field stores it.",
+                "minLength": 1,
+                "title": "Source Evidence",
+                "type": "string"
+              }
+            },
+            "required": [
+              "path",
+              "description",
+              "source_evidence"
+            ],
+            "title": "Artifact",
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "artifacts": {
+            "items": {
+              "$ref": "#/$defs/Artifact"
+            },
+            "title": "Artifacts",
+            "type": "array"
+          },
+          "disposition": {
+            "description": "Required admission decision: prepare a faithful reference, or reject with a reason.",
+            "enum": [
+              "prepare",
+              "reject"
+            ],
+            "title": "Disposition",
+            "type": "string"
+          },
+          "excluded_outputs": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Excluded Outputs",
+            "type": "array"
+          },
+          "explanation": {
+            "minLength": 1,
+            "title": "Explanation",
+            "type": "string"
+          },
+          "export_code": {
+            "description": "Only Python code to append after the unchanged baseline, saving existing terminal results. Empty only when rejecting.",
+            "title": "Export Code",
+            "type": "string"
+          },
+          "unresolved_assumptions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Unresolved Assumptions",
+            "type": "array"
+          }
+        },
+        "required": [
+          "disposition",
+          "explanation",
+          "export_code",
+          "artifacts",
+          "excluded_outputs",
+          "unresolved_assumptions"
+        ],
+        "title": "ReferencePlan",
+        "type": "object"
+      },
+      "strict": true
+    },
+    "type": "json_schema"
+  },
+  "stream": false,
+  "temperature": 1.0,
+  "top_p": 1.0
+}

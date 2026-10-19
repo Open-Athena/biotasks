@@ -1987,3 +1987,19 @@ JASPAR's official About page explicitly states CC BY 4.0. Preparation is
 configured for one GLM-5.3 medium call, using the unchanged packaged prompt and
 existing CPU/memory/disk/time settings. The seed supplies provenance only;
 scientific task design and exports remain the worker's responsibility.
+
+### 2026-10-19 — Bioframe preparation 001
+
+The existing preparation worker completed one GLM-5.3 medium call in 39.79
+seconds; all 21 canonical prompt hashes still match the frozen baseline.
+Recovered artifacts were verified against the remote export hashes. Its
+append-only code serializes `df_peaks_maxmotif_clean` to CSV and introduces no
+scientific computation. The original analysis remains an exact prefix.
+
+Inspection flags two generated prose claims for later validation: subtracting
+blacklist intervals can trim/split peaks, despite the response's wording about
+removing entire peaks; the added HFF attribution was not established by the
+supplied intake metadata. Original worker output is preserved without edits.
+No scientific execution has occurred. The next setup session uses the existing
+prompt, two reference-test allowances, a 600-second offline reference limit and
+$5 Daytona reservation ceiling; only campaign/input paths differ from setup 001.

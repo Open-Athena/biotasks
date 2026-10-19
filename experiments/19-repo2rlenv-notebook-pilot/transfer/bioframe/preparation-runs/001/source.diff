@@ -1,0 +1,21 @@
+--- baseline.py
++++ reference.py
+@@ -161,3 +161,18 @@
+ # filtering for proximity to blacklisted regions
+ 
+ df_peaks_maxmotif_clean.iloc[7:15]
++
++
++# --- Endpoint export: terminal scientific results ---
++
++import os
++
++os.makedirs("/work/outputs", exist_ok=True)
++
++# Final result of the tutorial: CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL)
++# each assigned the strongest overlapping JASPAR CTCF motif (MA0139.1), with
++# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.
++# Written as-is from the dataframe produced by bioframe.subtract above.
++df_peaks_maxmotif_clean.to_csv(
++    "/work/outputs/ctcf_peaks_maxmotif_clean.csv", index=False
++)
