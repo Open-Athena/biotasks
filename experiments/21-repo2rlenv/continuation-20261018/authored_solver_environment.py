@@ -5,6 +5,7 @@ import os
 from pr_provider_environment import RecordedDaytonaEnvironment as RecordedBase
 
 PROFILES = {
+    'swe-smith-2b1ed7afc9535c5c23fb': ('skbio', 'skbio/diversity/alpha/tests/test_base.py'),
     'swe-smith-f39ded25ef48a6575366': ('skbio', 'skbio/diversity/alpha/tests/test_base.py'),
     'swe-flow-3ad7ba60ca7686b2007b': ('skbio', 'skbio/diversity/alpha/tests/test_base.py'),
     'swe-smith-53ec5f51639d4053971f': ('Bio', 'Tests/test_SeqUtils.py'),

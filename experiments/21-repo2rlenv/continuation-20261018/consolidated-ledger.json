@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-19T17:02:59.879224+00:00",
+  "as_of_utc": "2026-10-19T17:14:49.831846+00:00",
   "stage": "consolidated_verified_results_so_far_not_final_completion",
   "tasks": [
     {
@@ -454,6 +454,23 @@
       "solver_source": "continuation-20261018/authored-tsallis-blind-03/independent-audit.json",
       "admission_artifact_prefix": "research/21-repo2rlenv/2026-10-18/400ad83b2f09a43d788563e6c2efea1c436bbbc9d47ef0285d3d3c8775249956",
       "solver_artifact_prefix": "research/21-repo2rlenv/2026-10-18/9eac51fccdbaa161be9fd867edf0ddfcd2b8cc7c518177f1d947f5bd93983647"
+    },
+    {
+      "unit_id": "repo_mutate/swe_smith@scikit-bio/scikit-bio",
+      "route": "repo_mutate/swe_smith",
+      "repository": "scikit-bio/scikit-bio",
+      "cohort": null,
+      "task_id": "swe-smith-2b1ed7afc9535c5c23fb",
+      "native_task": "swe-smith-2b1ed7afc9535c5c23fb",
+      "phase": "continuation",
+      "reward_semantics": "native binary: all 34 expected tests pass; range [0,1]",
+      "blind_attempts": 0,
+      "native_reward": null,
+      "solver_state": "pending",
+      "admission_source": "continuation-20261018/new-admissions.json",
+      "solver_source": null,
+      "admission_artifact_prefix": "research/21-repo2rlenv/2026-10-18/43753a38febf7c0b55a5a5a0df41399470c6569b7d9064a8b13298751df5df3d",
+      "solver_artifact_prefix": null
     }
   ],
   "units": [
@@ -1111,16 +1128,16 @@
       "input_cohort": null,
       "target": 3,
       "first_pass_admitted": 1,
-      "new_admitted": 1,
-      "total_admitted": 2,
-      "shortfall": 1,
+      "new_admitted": 2,
+      "total_admitted": 3,
+      "shortfall": 0,
       "first_pass_blind_attempts": 1,
       "candidate_cap": 10,
       "charged_candidate_attempts": 9,
       "remaining_candidate_allowance": 1,
       "candidate_charge_note": "Five previously charged mutation attempts plus two new native seed25 candidates. Both are executable contrasts, not independently admitted tasks. Authoring saved IDs is not new candidate discovery; at most two native author calls per selected ID. Continuation02 adds one new inner errfn mutation, with one executable contrast and zero model calls; target contrast stop leaves two discovery attempts. Continuation03 healthy bootstrap followed by zero new scheduled candidates consumes zero attempts; next integer seed26 preserves the remaining two-attempt cap and all exclusions. Seed26 continuation04 adds one new pielou_e contrast, one attempted candidate and zero model calls; one discovery attempt remains. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
-      "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "state": "target_met_for_declared_native_reward",
+      "next_action": "Three-task target met for the declared native reward. No further candidate discovery for this unit; retain lineage and complete only pending single blind attempts or declared integration gates.",
       "native_reward_semantics": [
         "native_correctness"
       ],
@@ -1978,15 +1995,15 @@
       "pending": 0
     },
     "correctness_and_algorithmic": {
-      "admitted": 17,
+      "admitted": 18,
       "scored": 17,
       "maximum_reward": 14,
       "partial_reward": 1,
       "zero_reward": 2,
-      "pending": 0
+      "pending": 1
     }
   },
-  "total_admitted": 29,
+  "total_admitted": 30,
   "total_scored": 29,
   "budget": {
     "ceiling_usd": 2000,
@@ -1999,8 +2016,8 @@
   },
   "source_sha256": {
     "evidence/campaign-census-20261018/census.json": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
-    "continuation-20261018/target-tracker.json": "bcbea23cfc6d8e8f337f8a2642a3feab0e84af0b3e3f203c328144155a3f0a5b",
-    "continuation-20261018/new-admissions.json": "1cfcbecd56bedd03f6d892add9b05e0bb65965c12c7e3c68fb60ecd5233e15ba",
+    "continuation-20261018/target-tracker.json": "2a5bbe663fe7fbcf12365ceb5f1a45eebe1b97fdefc3a69433ea95c180f67d5a",
+    "continuation-20261018/new-admissions.json": "4c8793b9e58b0af58ada6ee72320543817da2a310ee70ec65ac68baaef54d243",
     "continuation-20261018/budget.json": "9fe4a42b7431316e716890f734f954920435dae59e2dd675cc7e4daa705054e7",
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",
     "evidence/prdiff-biopython-provider-01/acceptance.json": "abde01f3461c0570ff65b7ce75c980395022c153a6df68b7a9d1c718fd30ac5a",

@@ -54,6 +54,7 @@ async def run():
     authored = manifest['route'] in {'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith'}
     if authored:
         assert (manifest['route'], manifest['task_id']) in {
+            ('repo_mutate/swe_smith', 'swe-smith-2b1ed7afc9535c5c23fb'),
             ('repo_reconstruct/swe_flow', 'swe-flow-3ad7ba60ca7686b2007b'),
             ('repo_mutate/swe_smith', 'swe-smith-53ec5f51639d4053971f'),
             ('repo_mutate/swe_smith', 'swe-smith-f39ded25ef48a6575366')}
