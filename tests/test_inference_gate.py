@@ -96,6 +96,9 @@ def test_gate_forwards_once_then_blocks_retries_and_bad_payloads(tmp_path, setti
         output_format = {"type": "json_schema", "json_schema": {"schema": schema}}
         assert request(key="wrong") == 401
         assert request(tokens=129) == 400
+        assert request(tokens=None) == 400
+        assert request(tokens=True) == 400
+        assert request(tokens=0) == 400
         if settings:
             assert request(chat_template_kwargs={"reasoning_effort": "high"}) == 400
         assert request(response_format=output_format) == 503

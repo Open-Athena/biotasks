@@ -140,10 +140,10 @@ class InferenceGate:
                     tokens = payload.get("max_tokens")
                     if (
                         payload.get("model") != gate.model
-                        or type(tokens) is not int
-                        or tokens < 1
+                        or (tokens is not None and (type(tokens) is not int or tokens < 1))
                         or (
-                            allowance.output_tokens is not None and tokens > allowance.output_tokens
+                            allowance.output_tokens is not None
+                            and (tokens is None or tokens > allowance.output_tokens)
                         )
                     ):
                         raise ValueError
