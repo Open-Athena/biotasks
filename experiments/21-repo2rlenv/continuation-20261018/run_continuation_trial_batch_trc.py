@@ -13,18 +13,24 @@ def main():
     output = Path(os.environ['IRIS_OUTPUT_DIR']).resolve()
     output.mkdir(parents=True, exist_ok=True)
     dispatch = Path.cwd()
-    started = time.monotonic()
+    started = float(os.environ.get('BIOTASKS21_BATCH_STARTED_MONOTONIC', time.monotonic()))
     state = {'stage': 'sequential_admitted_history_task_trials', 'status': 'setup', 'units': []}
     try:
-        for filename, expected in [('repo2rlenv-source.tar.gz', '7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755'),
-                                   ('cohort-inputs.tar.gz', os.environ['BIOTASKS21_TASK_ARCHIVE_SHA256'])]:
+        canonical_restore = os.environ.get('BIOTASKS21_CANONICAL_RESTORE') == 'verified'
+        archives = [('repo2rlenv-source.tar.gz', '7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755')]
+        if not canonical_restore:
+            archives.append(('cohort-inputs.tar.gz', os.environ['BIOTASKS21_TASK_ARCHIVE_SHA256']))
+        for filename, expected in archives:
             with Path(filename).open('rb') as stream:
                 assert hashlib.file_digest(stream, 'sha256').hexdigest() == expected
         with tarfile.open('repo2rlenv-source.tar.gz') as archive:
             archive.extractall('native-runtime', filter='data')
-        with tarfile.open('cohort-inputs.tar.gz') as archive:
-            archive.extractall('cohort', filter='data')
+        if not canonical_restore:
+            with tarfile.open('cohort-inputs.tar.gz') as archive:
+                archive.extractall('cohort', filter='data')
         cohort = json.loads(Path('cohort/manifest.json').read_text())
+        minimum_client_window = cohort.get('minimum_inference_lifetime_before_unit_seconds', 3600)
+        assert minimum_client_window in (930, 3600)
         assert 1 <= len(cohort['units']) <= 5
         assert len({u['task_id'] for u in cohort['units']}) == len(cohort['units'])
         root, = Path('native-runtime').iterdir()
@@ -46,7 +52,7 @@ def main():
             # Keep the original two-hour run deadline. A task not started for
             # lack of time remains pending, without creating a blind attempt.
             remaining = 6900 - (time.monotonic() - started)
-            if remaining < 3600 or float(env['BIOTASKS21_INFERENCE_EXPIRES_EPOCH']) - time.time() < 3600:
+            if remaining < 3600 or float(env['BIOTASKS21_INFERENCE_EXPIRES_EPOCH']) - time.time() < minimum_client_window:
                 row['status'] = 'not_started_insufficient_remaining_window'
                 print('BIOTASKS21_BATCH_UNIT ' + json.dumps({'evidence': 'controller_report_only', **row}), flush=True)
                 continue
