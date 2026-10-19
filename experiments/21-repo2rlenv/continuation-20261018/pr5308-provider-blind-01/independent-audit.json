@@ -1,0 +1,70 @@
+{
+  "stage": "native_provider_controls_and_single_blind_reward_audited",
+  "task_id": "biopython__biopython-5308",
+  "task_checksum": "336ce4196d101d2c26d330477e7bf9a5e10c76e2f5e69ceade3e512ff4ae3e6e",
+  "admitted_asset_manifest_sha256": "6c16135e81ecc04c2fc6dda2cc4d96c74f8cc155ddd80ab55003de7f61defc8c",
+  "blind_attempts": 1,
+  "blind_reward": 1,
+  "native_cases": [
+    {
+      "case": "nop",
+      "reward": 0.0,
+      "F2P_passed": 0,
+      "F2P_total": 4,
+      "P2P_passed": 17,
+      "P2P_total": 17,
+      "actual_test_statuses_parsed": 21,
+      "result_sha256": "9137f67a05f756b9f31a404cc18277aff2c08a72ab5cd94ca43965dbf3c82c19",
+      "native_grade_sha256": "2ee0d0639aadc054f911ed0c7a289e36b7948c3f59ea52fc0af1bbc4f1633920"
+    },
+    {
+      "case": "oracle",
+      "reward": 1.0,
+      "F2P_passed": 4,
+      "F2P_total": 4,
+      "P2P_passed": 17,
+      "P2P_total": 17,
+      "actual_test_statuses_parsed": 21,
+      "result_sha256": "e8d8991618c4ec63bf0dc076a8814545ba0ad64beaef08edfa093e995d03d4ac",
+      "native_grade_sha256": "e12db156be809a0a3ccf40b6439e3f53fb571c69d56c46e99edec24383233ee3"
+    },
+    {
+      "case": "glm-blind-01",
+      "reward": 1.0,
+      "F2P_passed": 4,
+      "F2P_total": 4,
+      "P2P_passed": 17,
+      "P2P_total": 17,
+      "actual_test_statuses_parsed": 21,
+      "result_sha256": "1ff13b586d5fa57651c1aa861bc98d4e444666eac97cdba7f8012c83d33365cb",
+      "native_grade_sha256": "e12db156be809a0a3ccf40b6439e3f53fb571c69d56c46e99edec24383233ee3"
+    }
+  ],
+  "completed_agent_episodes": 8,
+  "forwarded_solver_requests": 10,
+  "usage_including_native_length_retries": {
+    "input_tokens": 91387,
+    "combined_output_tokens": 10497,
+    "reported_reasoning_tokens": 7485
+  },
+  "native_agent_reported_usage": {
+    "n_input_tokens": 65210,
+    "n_cache_tokens": 53248,
+    "n_output_tokens": 6401,
+    "cost_usd": null
+  },
+  "limits_verified": {
+    "output_tokens_per_request": 2048,
+    "agent_turn_limit": 12,
+    "attempt_timeout_sec": 900,
+    "effort": "unset_native"
+  },
+  "exact_sandboxes_independently_absent": 3,
+  "limitations": [
+    "PR5308 instruction discloses the five-field hash implementation; low-complexity software maintenance.",
+    "Native agent token totals omit two length-truncated responses. Forwarding usage includes both retries in this same blind attempt.",
+    "A single first-attempt reward is not a production success-rate estimate.",
+    "This audits native test correctness, not the deferred end-to-end grader-integrity diagnostic.",
+    "Public credential/route review and durable preservation are separate gates."
+  ]
+}
