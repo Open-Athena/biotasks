@@ -1766,3 +1766,7 @@ Gini-profile generation completed with one new contrast ea039e585353325e82c3 for
 ### 2026-10-19 — exact Tsallis blind-dispatch preparation
 
 Prepared small public-snapshot restore inputs for the single Tsallis blind solve, preserving the admitted asset manifest. Extended the existing restore helper to the explicit Tsallis unit and added a fresh zero-model transport preflight in a subprocess without the Daytona credential. Existing task instruction/grader/model settings are unchanged; separate baseline/reference provider controls still precede the one blind attempt. Prepared finite client04 with the exact previously verified inference-only code and free endpoint policy. No new model call or solve has occurred at this checkpoint.
+
+### 2026-10-19 — Tsallis blind evaluation dispatched
+
+Finite inference-only client04 submitted at 15:36 UTC on user-allocated free CoreWeave with exact verified code. Tsallis single-attempt controller submitted at 15:37 UTC on reserved free TRC, then confirmed running with placement verified. Controller plus two learner/verifier sandboxes and the inference client occupy the approved four-slot ceiling. Fresh zero-model transport and exact-asset restore success markers are visible in retained logs; final archive verification and baseline/reference/solver outcomes are pending. Reserved $30 for this run, increasing conservative holds to $1,223 with $777 remaining, not verified spend. Lorenz-curve native Flow author inputs are frozen for its saved candidate (maximum six native calls, no feedback); dispatch waits for capacity.
