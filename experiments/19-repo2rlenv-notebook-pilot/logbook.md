@@ -2277,3 +2277,33 @@ Cancellation 003 converged to KILLED. No recovery manifest was available. The
 remaining owned Daytona sandbox was explicitly deleted; a fresh provider query
 at 23:03:13 UTC confirmed zero. Model-request count is unavailable; do not count
 this as an unexecuted campaign merely because the parent mirror was PENDING.
+
+### 2026-10-19 — Stop exploratory reimplementation; prepare shell-free handoff
+
+The live construction 004 trace confirmed the intended construction prompt and
+prior-file context, but after 22 successful model responses it still had no
+submission and had repeatedly launched complete alternative implementations.
+Diagnostic output stayed below 10 KB per result rather than overflowing context,
+but concise-output guidance did not prevent unnecessary recomputation. Sent
+SIGINT only to the verified stage process in this campaign, allowing its existing
+archive and cleanup finalizers to run. This is an operator stop, not a scientific
+rejection or an exhausted campaign budget. Original scientific files are unchanged.
+Provider readback at 23:31:17 UTC confirmed zero campaign sandboxes; final archive
+recovery/host termination still needs confirmation.
+
+Update the existing shell-free finalization prompt generically: prior code may
+be exploratory or executed, scientific entity/multiplicity/conflict rules must be
+explicit, input format claims need parsing/evidence support, and unfinished
+inspection commands prove no findings. A proposed next pass reuses the original
+GLM code and complete recorded inspection trace rather than adding hand-authored
+scientific corrections. Controlled execution and separate blind comparison remain
+required; this changes tool availability, not model/context/output limits.
+
+Archive recovery confirmed terminal FAILED with the stage's original incomplete /
+CancelledError result, cleanup true, and 22 successful responses over 1,464.28 s.
+The full archive passed download verification. Retain the complete unedited
+92,232-byte inspection trace as handoff evidence alongside unchanged prior code;
+completed inspections did establish useful findings, while the last computation
+was interrupted. Earlier completed computations did not time out; distinguish
+those results from the final unfinished command. Do not characterize all
+exploration as unsuccessful or claim a validated candidate.
