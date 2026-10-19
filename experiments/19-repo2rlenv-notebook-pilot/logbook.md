@@ -2103,3 +2103,27 @@ for existing managed releases. It refuses private or unrelated destinations and
 only removes obsolete paths listed in the previous release manifest. Seven
 focused metadata/publication checks pass. No upload has been performed for the
 Bioframe transfer; independent grading remains active.
+
+### 2026-10-19 — Identity semantics and independent-output failures
+
+The first Bioframe quality campaign is still frozen at `4b03cba`. Its blind
+program executed but produced 40,572 rows, against 40,557 reference rows. The
+GLM grader's live inspection attributed the difference to 15 duplicate input
+coordinate keys with conflicting fold-change annotations. The shared rows agree
+numerically. The first submitted grader rejected the extra rows and therefore
+failed the controller's mandatory independent-output control. The worker then
+changed its local comparator to accept multiple fold-change records per key;
+that change still requires probes/review and is not accepted for publication.
+Original scientific artifacts remain untouched.
+
+Prepare a general next-version change: materialization must inspect actual entity
+keys and state multiplicity/conflicting-annotation rules in the public question.
+Grader guidance and failed-control feedback now distinguish independently executed
+code from independently established correctness. They explicitly allow a blocker
+instead of weakening the scientific question to force the comparison attempt to
+pass, and reject unsupported supersets as a claimed representation equivalence.
+The internal flag is renamed from `alternative_validated` to
+`alternative_executed` to describe its actual evidence. No notebook, field name,
+scientific method or expected answer is embedded in these changes. Twenty existing
+grading tests pass; these advisory prompt changes have not yet been tested by a
+new model run and do not alter the active campaign.

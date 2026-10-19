@@ -44,6 +44,19 @@ and numeric comparisons. Every acceptance rule must appear in the public text.
 Explain cross-file consistency without confusing tables with different row units.
 Distinguish potentially missing annotations from mandatory identifiers/assignments.
 
+Independently executed outputs are a comparison attempt, not a second oracle.
+Successful execution proves neither scientific correctness nor agreement with the
+public question. Diagnose disagreements against the stated task, source evidence
+and inspected data. Do not broaden acceptance or change entity identity merely to
+make that control pass. If the independent program or the public contract needs
+repair beyond this grader stage, return `disposition: blocked` with the specific
+reason. The controller cannot repair those scientific artifacts for you.
+
+An equivalence rule must account for every accepted record and value. Retaining
+correct answers while appending unsupported values is not a valid alternative.
+Check coverage and multiplicity as well as membership; do not replace the requested
+output grain with a coarser set comparison to conceal a disagreement.
+
 Use the measured repeatability evidence. Byte-identical reference runs do not
 make file hashes an appropriate grader or establish cross-stack portability.
 Compare parsed scientific content, retaining precision and identity. Establish

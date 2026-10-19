@@ -60,7 +60,7 @@ class GradingSession:
         self.last_controls = []
         self.frozen_probes = None
         self.frozen_checks = None
-        self.alternative_validated = False
+        self.alternative_executed = False
         self.root.mkdir(parents=True, exist_ok=False)
 
     async def command(self, argv, seconds, label):
@@ -287,7 +287,7 @@ class GradingSession:
         ]
         if "materialization" in self.snapshot:
             controls.append(await self.case(candidate, kind="recomputed"))
-        if self.alternative_validated:
+        if self.alternative_executed:
             controls.append(await self.case(candidate, kind="alternative"))
         for name in self.paths:
             controls.append(await self.case(candidate, kind="missing", omit=name))
@@ -298,7 +298,15 @@ class GradingSession:
         self.last_controls = controls
         failures = [r for r in controls if not r["passed_control"]]
         if failures:
-            raise ValueError("Executable control failures: " + json.dumps(failures))
+            explanation = "Executable control failures: " + json.dumps(failures)
+            if any(record["kind"] == "alternative" for record in failures):
+                explanation += (
+                    " Independent execution is not proof of scientific correctness."
+                    " Do not weaken the public question or accept unsupported records to fit it."
+                    " If the independent solution or public contract needs repair, submit"
+                    " disposition: blocked and explain the conflict."
+                )
+            raise ValueError(explanation)
 
 
 async def run_grading(
@@ -488,7 +496,7 @@ async def run_grading(
                     if sha256(path) != item["sha256"] or path.stat().st_size != item["bytes"]:
                         raise ValueError("Independent output download identity mismatch")
                 save_record(root / "independent-result.json", result["execution"])
-                session.alternative_validated = True
+                session.alternative_executed = True
 
             hidden = await session.command(
                 ["chmod", "700", "/work/reference", "/work/recomputed"],
