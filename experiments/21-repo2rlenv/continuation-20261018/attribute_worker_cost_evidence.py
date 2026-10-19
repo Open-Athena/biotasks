@@ -14,10 +14,15 @@ def main():
     ledger = json.loads((HERE / 'consolidated-ledger.json').read_text())
     routes_by_cohort = collections.defaultdict(set)
     for unit in census['units']:
-        for record in unit['generation_records']:
-            source = record.get('source', '')
-            if source.startswith('evidence/'):
-                routes_by_cohort[source.split('/')[1]].add(unit['route'])
+        records = [*unit['generation_records'], *unit.get('additional_stage_records', [])]
+        for record in records:
+            # These are explicit census provenance fields, not inferred name matches.
+            # Saved authoring records point separately to native contrasts and exports.
+            for key in ('source', 'contrast_source', 'export_source'):
+                source = record.get(key, '')
+                if source.startswith('evidence/'):
+                    assert (HERE.parent / source).is_file(), source
+                    routes_by_cohort[source.split('/')[1]].add(unit['route'])
     exact = {}
     for row in samples['rows']:
         for worker in row['workers']:
@@ -64,7 +69,7 @@ def main():
               'workers': rows, 'unattributed_workers': sum(r['route'] is None for r in rows),
               'unattributed_sandbox_hours': sum(r['sandbox_hours'] for r in rows if r['route'] is None),
               'pricing_basis_source': 'compute-cost-samples.json',
-              'source_sha256': {name: hashlib.sha256((HERE / name).read_bytes()).hexdigest() for name in ['worker-cost-evidence-inventory.json', 'compute-cost-samples.json', 'consolidated-ledger.json']},
+              'source_sha256': {name: hashlib.sha256((HERE / name).read_bytes()).hexdigest() for name in ['worker-cost-evidence-inventory.json', 'compute-cost-samples.json', 'consolidated-ledger.json', '../evidence/campaign-census-20261018/census.json']},
               'limitations': ['Generation cohort attribution is based on retained archive provenance, not provider invoice metadata.',
                              'Shared setup, ambiguous controls, and Marin integration remain unassigned rather than distributed arbitrarily.',
                              'Provider-direct solver/validation sandbox lifetimes are not all represented by worker lifecycle records.',

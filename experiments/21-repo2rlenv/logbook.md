@@ -1774,3 +1774,7 @@ Finite inference-only client04 submitted at 15:36 UTC on user-allocated free Cor
 ### 2026-10-19 — Tsallis setup allowlist failure, no solve consumed
 
 The first Tsallis controller reached successful zero-model transport and exact-asset restore, then failed at the runner task-ID allowlist before provider construction or blind-trial creation. Recovered all five original files from the 2,897-byte checksum-verified archive. No sandbox or model-generation call was reached; this is an infrastructure setup failure, not a failed solver score. Added only the admitted Tsallis ID to the runner allowlist and its scikit-bio/private-test readiness profile, verified the corrected frozen input assets remain byte-identical, and prepared a separate corrected dispatch. Preserve original failure evidence and transfer its unused $30 reservation; no attempt replay or extra budget is implied.
+
+### 2026-10-19 — historical cost provenance expanded
+
+The route-cost reconciliation now follows explicit contrast_source/export_source fields and additional recorded stage sources from the frozen first-pass census. This attributes seven more retained workers (47/88; 41 remain unassigned) without guessing from worker names. Referenced files are checked for existence, route conflicts remain assertions, and the census content hash is included in output provenance. Accepted-task denominators are refreshed to 29 admissions, but the 88-worker inventory coverage remains incomplete; no full production price is inferred.

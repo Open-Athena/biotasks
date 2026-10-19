@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-19T15:38:38.417395+00:00",
+  "as_of_utc": "2026-10-19T15:42:39.248649+00:00",
   "ceiling_usd": 2000,
   "historical_first_pass_estimates_and_holds_usd": 908,
   "first_pass_budget_evidence": "../budget-reconciliation-20261016.json",
@@ -409,10 +409,11 @@
     },
     {
       "run": "authored-tsallis-blind-20261019-02",
-      "daytona_hold_usd": 30,
+      "daytona_hold_usd": 0,
       "trc_controller_incremental_budget_usd": 0,
-      "status": "dispatch_claimed_no_completed_attempt_yet",
-      "maximum_sequential_sandboxes": 6
+      "status": "terminal_allowlist_failure_before_provider_or_model_calls_unused_hold_transferred",
+      "maximum_sequential_sandboxes": 6,
+      "reservation_transferred_to": "authored-tsallis-blind-20261019-03"
     },
     {
       "run": "glm-inference-client-20261019-04",
@@ -426,6 +427,13 @@
         "memory_gib": 2,
         "disk_gib": 5
       }
+    },
+    {
+      "run": "authored-tsallis-blind-20261019-03",
+      "daytona_hold_usd": 30,
+      "trc_controller_incremental_budget_usd": 0,
+      "status": "dispatch_claimed_no_completed_attempt_yet",
+      "maximum_sequential_sandboxes": 6
     }
   ],
   "continuation_estimates_and_holds_usd": 315,
