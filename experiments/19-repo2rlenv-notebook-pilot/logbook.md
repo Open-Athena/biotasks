@@ -1947,3 +1947,18 @@ Native 002 passed Harbor oracle (1) and no-op (0), but the first solver request 
 Native 003 succeeded: oracle 1, no-op 0, blind GLM solver 1, no exceptions. The blind trial took about 523 seconds overall, used 18 successful model requests and passed all nine checks. Trajectory review found computation from supplied inputs/package sources, without private-answer access or network retrieval. Native and scientific evidence bind to bundle sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312. Archive/package downloads and all three provider cleanup labels are verified. The release gate passes. Staging corrections wrap the controls list in the upstream dictionary schema and retain the stable task basename; neither changes scientific content.
 
 Scientific release 001 was published publicly at immutable HF commit 9eeabefd3761655a5f01ac3f46df1b060610355a. A forced fresh download verified all release files and matched the exact native bundle hash. Publication used optimistic parent guards and removed only obsolete prior-manifest paths. Final evidence: 19 scientific controls pass; Harbor oracle 1, no-op 0, blind GLM 1 without exceptions. Provider queries confirm zero remaining trial sandboxes and Iris is terminal. No further runs or viewer changes are scheduled; issue 19 stays open for user review.
+
+### 2026-10-19 — Current published-task explorer
+
+Replaced the legacy campaign explorer with the current notebook, exact published
+solver question, successful native-003 trajectory, and nine pipeline stages.
+Recorded prompts, inputs and outputs are separated; raw documents are collapsed
+and code is highlighted. The viewer now builds entirely from versioned small
+artifacts, including recovered specification/materialization inputs and the
+setup worker's initial message/tool payload. Large data remains in the release.
+
+Validation: all five views and nine stage links work in Chromium; the solver
+commands expand correctly, no JavaScript errors or 390-pixel layout overflow.
+All 69 repository links resolve locally; the displayed instruction matches the
+freshly downloaded published file byte-for-byte. Ruff passed for the two viewer
+scripts. No new scientific, model or sandbox execution was performed.
