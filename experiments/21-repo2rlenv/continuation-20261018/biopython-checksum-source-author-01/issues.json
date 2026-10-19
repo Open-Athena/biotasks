@@ -1,0 +1,16 @@
+{
+  "records": [
+    {
+      "candidate_id": "0e2bcaee05dcaca0d8bc",
+      "docstrings": {
+        "Bio/SeqUtils/CheckSum.py:108:seguid": "Returns the SEGUID (SEquence Globally Unique IDentifier) for a sequence (string or Seq object).",
+        "Bio/SeqUtils/CheckSum.py:16:crc32": "Returns the crc32 checksum for a sequence (string or Seq object).",
+        "Bio/SeqUtils/CheckSum.py:57:crc64": "Returns the crc64 checksum for a sequence (string or Seq object).",
+        "Bio/SeqUtils/CheckSum.py:81:gcg": "Returns the GCG checksum (int) for a sequence (string or Seq object)."
+      },
+      "instruction": "# Development Requirements Documentn n---n n## **Background**n nBiological sequences (nucleotide or amino-acid) are routinely stored, exchanged, and compared across tools and databases. To support integrity verification and compact, reproducible identification of sequence data, sequence-analysis libraries provide checksum utilities that map a sequence to a fixed-size integer or identifier string. Different checksum algorithms intentionally differ in their properties: some are case-sensitive while others normalize case; some return integers while others return formatted strings; and they differ in collision behavior. This document specifies the requirements for four sequence checksum functions \u2014 `crc32`, `crc64`, `gcg`, and `seguid` \u2014 each of which must accept both plain Python strings and `Seq` objects. Only these four functions are in scope; other sequence utilities are out of scope for this document.n n---n n## **Development Requirements**n n### **Goal 1: CRC-32 Checksum Function**n n#### **Feature Description**n `crc32(seq)` returns the CRC-32 checksum for a sequence (string or `Seq` object) as an integer. Case is important: changing the case of the input changes the checksum.n n#### **Required Functionality**n 1. **Public API:** `crc32(seq)`, importable from `Bio.SeqUtils.CheckSum`.n 2. **Input handling:** Accept a plain string or a `Seq` object. Convert the input to bytes by first attempting `bytes(seq)` (succeeds for `Seq` objects); if this raises `TypeError`, fall back to `seq.encode()` (plain strings).n 3. **Computation:** Return the standard `binascii.crc32` value of the byte representation as an integer.n 4. **Case sensitivity (reference outputs):**n    - `crc32(",
+      "status": "authored"
+    }
+  ],
+  "stage": "flow_authoring"
+}
