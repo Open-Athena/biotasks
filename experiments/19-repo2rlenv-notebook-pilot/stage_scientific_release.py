@@ -40,7 +40,7 @@ exp = Path("experiments/19-repo2rlenv-notebook-pilot")
 # Preserve that distinction rather than fabricating compatible trial records.
 labeled = write_labeled_copy(
     task,
-    Path(config["labeled"]),
+    Path(config["labeled"]) / task.name,
     EvaluationLabel(
         status="unverified",
         stage="complete",
@@ -59,7 +59,7 @@ assert trajectory.is_file()
 documents = {
     "validation-summary.json": validation,
     "grading-result.json": read(grading / "result.json"),
-    "grading-controls.json": read(grading / "final-controls.json"),
+    "grading-controls.json": {"controls": read(grading / "final-controls.json")},
     "grading-rationale.json": {"rationale": read(grading / "final-candidate.json")["rationale"]},
     "grading-review.json": read(
         grading
