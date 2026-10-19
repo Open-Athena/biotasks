@@ -36,7 +36,10 @@ async def probe(output):
         assert record['requests_dispatched'] == 0, 'Only one diagnostic request is authorized'
         assert kwargs['model'] == MODEL and kwargs['max_tokens'] == 2048
         assert kwargs['extra_headers']['X-Biotasks21-Inference-Token'] == token
-        assert not any(key in kwargs for key in ('reasoning_effort', 'thinking', 'chat_template_kwargs'))
+        # Harbor explicitly supplies reasoning_effort=None for native/unset.
+        # This is not an explicit model-effort setting; retain it unchanged.
+        assert kwargs.get('reasoning_effort') is None
+        assert not any(key in kwargs for key in ('thinking', 'chat_template_kwargs'))
         assert token not in json.dumps(kwargs['messages'])
         record.update(requests_dispatched=1, native_settings_verified=True,
                       custom_auth_header_present=True, token_absent_from_messages=True)

@@ -1664,3 +1664,5 @@ NativeSDKlocalmockdiagnosticsinconclusive:fullLiteLLMfixturestopped195s/SIGTERM1
 ### 2026-10-19: native SDK preflight checkpoint
 
 The zero-model HTTP preflight is preserved and passes; native SDK execution remains unproven. Prepare exactly one synthetic Harbor 0.22.0 request from reserved TRC through the existing own inference client, with unchanged 2,048 output tokens and unset effort. Disable retries for this diagnostic only, enforce the 900-second request deadline, and retain raw diagnostics privately until route/credential review. It consumes no task blind attempt. The previous local mock fixtures remain inconclusive.
+
+The first native SDK probe failed its own observer before dispatch: Harbor explicitly supplies `reasoning_effort=None`, which the probe incorrectly rejected by key presence. Original probe/zero-dispatch evidence preserved. The corrected observer accepts only None and forwards native kwargs unchanged; token/effort settings and task attempt accounting do not change.

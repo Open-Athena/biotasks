@@ -1,0 +1,10 @@
+{
+  "stage": "diagnostic_observer_failed_before_any_model_dispatch",
+  "model_requests": 0,
+  "blind_attempts": 0,
+  "original_profile_unchanged": true,
+  "cause": "Probe observer incorrectly rejected the presence of reasoning_effort=None; pinned Harbor always supplies that key even when effort is unset.",
+  "correction": "Accept only None for reasoning_effort, retain kwargs unchanged; no explicit effort or token-limit change.",
+  "authoritative_source": "Harbor 0.22.0 harbor/llms/lite_llm.py call completion_kwargs reasoning_effort self._reasoning_effort",
+  "next_gate": "Checkpoint corrected probe, run at most one synthetic request; native SDK compatibility remains unproven."
+}
