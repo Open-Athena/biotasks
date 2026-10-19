@@ -407,3 +407,33 @@ def test_uncapped_session_still_stops_at_deadline(tmp_path):
                 )
             )
         )
+
+
+def test_received_provider_rejection_is_classified_without_private_body_or_retry(tmp_path):
+    class ProviderRejected(Exception):
+        status_code = 400
+        body = {
+            "error": {"message": "maximum context length exceeded PRIVATE_ENDPOINT_AND_CREDENTIAL"}
+        }
+
+    calls = []
+
+    async def complete(_payload):
+        calls.append(1)
+        raise ProviderRejected("PRIVATE_EXCEPTION")
+
+    author, ledger = make_author(tmp_path, complete, requests=1)
+    args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+    with pytest.raises(RuntimeError, match="provider rejected"):
+        asyncio.run(author(**args))
+    assert calls == [1]
+    receipt = json.loads((tmp_path / "trace/1/failure.json").read_text())
+    assert receipt["http_status"] == 400
+    assert receipt["failure_category"] == "provider_context_length"
+    assert receipt["request_slot_retained"]
+    assert "PRIVATE" not in json.dumps(receipt)
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls").fetchall() == [("http_error_received",)]
+    with pytest.raises(RuntimeError, match="allowance exhausted"):
+        asyncio.run(author(**args))
+    assert calls == [1]

@@ -2187,3 +2187,25 @@ traces remain in the configured archive. Unsubmitted workspace files are gone,
 so do not claim a completed repair artifact. Provider absence was independently
 verified and the Iris job is terminal. Construction replacement 002 can now be
 submitted using the checkpointed general guidance and unchanged earlier evidence.
+
+### 2026-10-19 — Construction 002 provider rejection and diagnosis plan
+
+The replacement ran from `095a3f1` and independently inspected the duplicate entity
+keys before generating a candidate. It ended incomplete after 460.90 stage seconds:
+12 responses and a thirteenth `BadRequestError`, before any submission. A debugging
+command emitted 1,235,651 log bytes and the next saved request is 1,594,921 bytes.
+This suggests context overflow; the discarded error body prevents confirmation.
+Preserve the original failure/uncertain receipt, not a retroactive diagnosis.
+Cleanup and independent provider absence are verified; no model/sandbox worker
+from this campaign remains active.
+
+Add general safe rejection metadata to the Chat adapter: definite HTTP errors get
+an explicit status/category and retained `http_error_received` request state,
+without logging private endpoint/error text or retrying. Twenty-one adapter tests,
+Ruff and its type check pass. Prepare one hash-verified recorded-request diagnostic
+through the existing schema-probe launcher. It executes no returned tools, receives
+no Daytona credential, and makes at most one completion request with a two-minute
+client timeout. Nine diagnostic/schema tests pass, including private-value
+redaction and exact request forwarding. Tool-output preview restoration is an
+unresolved user preference because earlier extra size limits were removed; no
+preview/token/input/response cap has been re-enabled.

@@ -1,0 +1,61 @@
+cd /work/author/cmp
+/work/venv/bin/python - <<'PY'
+import pandas as pd, csv, bisect, gzip
+ref = pd.read_csv("/work/reference/ctcf_peaks_maxmotif_clean.csv", dtype=str, keep_default_na=False)
+# hypothesis: reference order equals original peak file order (after removing fully-subtracted peaks)
+peaks=[]
+with gzip.open("/inputs/ENCFF401MQL.bed.gz","rt") as fh:
+    for line in fh:
+        p=line.rstrip("\n").split("\t")
+        peaks.append((p[0],int(p[1]),int(p[2])))
+# distinct in file order
+seen=set(); order=[]
+for k in peaks:
+    if k not in seen:
+        seen.add(k); order.append(k)
+print("distinct peaks in file order:", len(order))
+# reference rows keyed by (chrom,start,end) of the retained subinterval - note trimming changes coords
+refkeys = list(zip(ref.chrom, ref.start.astype(int), ref.end.astype(int)))
+print("ref rows:", len(refkeys))
+# Compare: is ref subsequence of order? map original interval -> retained subintervals
+# build map original-> list of retained rows (in ref order)
+from collections import defaultdict
+#[ simpler: check if ref rows in file order of ORIGINAL peaks (since no splits occurred) ] 
+# Since no peak was split (verified: n_split=0), each ref row corresponds to a trimmed original peak.
+# Reconstruct: for each original peak, find matching ref row by chrom and contained interval
+bl=[]
+with gzip.open("/inputs/ENCFF356LFX.bed.gz","rt") as fh:
+    for line in fh:
+        p=line.rstrip("\n").split("\t"); bl.append((p[0], max(0,int(p[1])-1000), int(p[2])+1000))
+exp=defaultdict(list)
+for c,s,e in bl: exp[c].append((s,e))
+for c in exp: exp[c].sort()
+def trim(c,ps,pe):
+    pieces=[];cur=ps
+    for s,e in exp.get(c,[]):
+        if e<=cur: continue
+        if s>=pe: break
+        if s>cur: pieces.append((cur,min(s,pe)))
+        cur=max(cur,e)
+        if cur>=pe: break
+    if cur<pe: pieces.append((cur,pe))
+    return pieces
+refset = defaultdict(list)
+for i,(c,s,e) in enumerate(refkeys): refset[(c,s,e)].append(i)
+matched_order=[]
+consumed=defaultdict(int)
+ok=True
+for (c,ps,pe) in order:
+    pieces=trim(c,ps,pe)
+    for pc in pieces:
+        lst = refset.get(pc)
+        if not lst: ok=False; print("missing", pc); break
+        j = consumed[pc]; consumed[pc]+=1
+        matched_order.append(lst[j] if j<len(lst) else None)
+print("all pieces found:", ok)
+idxs=[x for x in matched_order if x is not None]
+mono = all(b>a for a,b in zip(idxs,idxs[1:]))
+print("reference order == original file order (monotonic index):", mono, "count", len(idxs))
+print("first 10 ref idx:", idxs[:10])
+print("is ref sorted by (chrom,start)?", ref.sort_values(["chrom","start"], key=lambda s: s).equals(ref))
+PY

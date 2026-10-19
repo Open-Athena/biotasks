@@ -1,4 +1,4 @@
-"""Two synthetic schema probes; no notebook generation, tools or sandboxes execute."""
+"""Small model-interface probes; no task tools or sandboxes execute."""
 
 import asyncio
 import json
@@ -150,6 +150,10 @@ def inspect_response(mode, response, *, delivery=False):
 
 
 async def run(root, config):
+    if config.get("profile") == "recorded_request_rejection":
+        from request_rejection_probe import run as replay_rejection
+
+        return await replay_rejection(root, config)
     if config.get("entrypoint") != "run_schema_probe.py" or config.get("max_requests") != 2:
         raise ValueError("Only the two-case synthetic probe is allowed")
     profile = config.get("profile", "schema_enforcement")

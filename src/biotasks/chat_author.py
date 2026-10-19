@@ -35,6 +35,46 @@ class OutputTokenLimit(IncompleteCompletion):
     """A received and accounted response stopped at the provider's token limit."""
 
 
+def provider_failure(error: BaseException) -> dict[str, Any]:
+    """Keep useful rejection categories without copying private response text."""
+    record: dict[str, Any] = {
+        "error_type": type(error).__name__,
+        "request_slot_retained": True,
+        "failure_category": "transport_uncertain",
+    }
+    status = getattr(error, "status_code", None)
+    if type(status) is not int or not 400 <= status <= 599:
+        return record
+    record["http_status"] = status
+    record["failure_category"] = "provider_http_error"
+    body = getattr(error, "body", None)
+    try:
+        text = json.dumps(body, ensure_ascii=False).lower()
+    except (TypeError, ValueError):
+        text = ""
+    if any(
+        term in text
+        for term in (
+            "context_length_exceeded",
+            "maximum context length",
+            "max_model_len",
+            "context window",
+            "too many tokens",
+            "prompt is too long",
+        )
+    ):
+        record["failure_category"] = "provider_context_length"
+    elif status == 400 and any(
+        term in text for term in ("tool_call_id", "tool_calls", "tool call")
+    ):
+        record["failure_category"] = "provider_tool_protocol"
+    elif status in {401, 403}:
+        record["failure_category"] = "provider_authentication"
+    elif status == 429:
+        record["failure_category"] = "provider_rate_limit"
+    return record
+
+
 @dataclass(frozen=True)
 class ChatLimits:
     max_output_tokens: int | None = 16000
@@ -191,11 +231,15 @@ class GLMChatAuthor:
                     timeout=min(remaining, self.limits.request_timeout_sec),
                 )
             except (Exception, asyncio.CancelledError) as exc:
-                self.save_record(
-                    request_root / "failure.json",
-                    {"error_type": type(exc).__name__, "request_slot_retained": True},
-                )
-                # Exception text can contain the private endpoint or response body.
+                failure = provider_failure(exc)
+                self.save_record(request_root / "failure.json", failure)
+                # A received rejection is definite; the attempted slot is retained.
+                # Never log raw SDK exception text, endpoints or response bodies.
+                if "http_status" in failure:
+                    self.ledger.finish(call_id, "http_error_received")
+                    raise RuntimeError(
+                        "Model provider rejected the request; inspect the retained receipt"
+                    ) from None
                 if isinstance(exc, asyncio.CancelledError):
                     raise
                 raise RuntimeError("Model transport failed; inspect the retained receipt") from None
