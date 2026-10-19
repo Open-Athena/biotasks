@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-18T21:57:22.796214+00:00",
+  "observed_utc": "2026-10-19T14:21:54.368269+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -136,6 +136,74 @@
         }
       ],
       "definition": "Conservatively charge both native execution profiles for the same PR2633 lineage. Only one source task/admission; charging repeated profiles does not create a second independent task or solver attempt.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "terminal_synth/seta_seed2synth@seta-genomic-intervals-v1": {
+      "charged_candidate_attempts": 3,
+      "remaining_allowance": 7,
+      "receipts": [
+        {
+          "source": "evidence/seta-design-01/summary.json",
+          "sha256": "97abd62fdde9f11bf9f074c5854ecbcfb560e3462806e123f5f8cde81617f235",
+          "counter_key": "candidates",
+          "charged": 3
+        }
+      ],
+      "definition": "Charge each of the three selected seeds at its first native design attempt. Later materialization of those saved designs is the same candidate, including the second candidate timeout and third unbuilt design. Native repair attempts do not reset.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "task_evolve/seta_evol@pr2633-parent-v1": {
+      "charged_candidate_attempts": 3,
+      "remaining_allowance": 7,
+      "receipts": [
+        {
+          "source": "evidence/parent-evolution-design-01/summary.json",
+          "sha256": "743eee027c77adfea6bc2775629f3bb19fcfbf96df213fc6b05aa195a71f0a5b",
+          "counter_key": "schema_valid_designs",
+          "charged": 2
+        },
+        {
+          "source": "evidence/parent-evolution-design-01/summary.json",
+          "sha256": "743eee027c77adfea6bc2775629f3bb19fcfbf96df213fc6b05aa195a71f0a5b",
+          "counter_key": "failed_designs",
+          "charged": 1
+        }
+      ],
+      "definition": "Charge all three design candidates: two schema-valid headings and one failed design. Building a saved design does not add or reset a candidate; the first build timeout remains an attempted request.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "terminal_synth/dataarc@pr2633-parent-v1": {
+      "charged_candidate_attempts": 1,
+      "remaining_allowance": 9,
+      "receipts": [
+        {
+          "source": "evidence/dataarc-build-01/summary.json",
+          "sha256": "1746ba35288d595c2d94223f78e71cee6a9605dde618a8062dd16b7e0318bd57",
+          "counter_key": "candidate_directories",
+          "charged": 1
+        }
+      ],
+      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "terminal_synth/tmax@tmax-biological-v1": {
+      "charged_candidate_attempts": 3,
+      "remaining_allowance": 7,
+      "receipts": [
+        {
+          "source": "evidence/tmax-biological-01/summary.json",
+          "sha256": "a9c10d0a7c6dfa9b696166f486c5407ca11caa193e7a9dff47369d1d19b169c3",
+          "counter_key": "native_candidates_attempted",
+          "charged": 0
+        },
+        {
+          "source": "evidence/tmax-biological-02/tmax-result.json",
+          "sha256": "b62879d86393c4994dafd0940991febc11261781c321443f036aa8caf7655700",
+          "counter_key": "candidates",
+          "charged": 3
+        }
+      ],
+      "definition": "Initial controller startup reached zero candidates; corrected selected biological seed cohort reached three candidates. Ten sampled taxonomy records are not ten attempted designs. Remaining seven candidates need eligible frozen input selection; no retry of exhausted candidates is implied.",
       "new_dispatch_authorized_by_this_file": false
     }
   },
