@@ -141,7 +141,21 @@ def build():
             cap_note = counter['definition'] + ' Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.'
             next_action = 'Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.'
         if route == 'terminal_synth/dataarc' and (ROOT / 'dataarc-automatic-02/assessment.json').exists():
-            next_action = 'Original automatic attempt failed at gateway120s with one uncertain builder request; preserve consumed seed and do not replay it. Verify generic endpoint proxy timeout before any fresh seed. No task-specific fixes or author feedback.'
+            next_action = 'Original automatic attempt failed at gateway120s with one uncertain builder request; preserve consumed seed and do not replay it. The real130s zero-model proxy gate passed. Recover the exact automatic03 job when terminal; assess unchanged native output, verify cleanup and charge only observed new seed consumption. No task-specific fixes or author feedback.'
+        if route == 'terminal_synth/dataarc' and (ROOT / 'dataarc-automatic-03/assessment.json').exists():
+            next_action = 'Automatic03 hit the approved1200s request timeout despite the verified long-proxy profile, with zero received responses/exports. Preserve all three consumed seed IDs and uncertain usage. Continue only fresh original-pool seeds within the seven remaining candidate slots; no timeout increase, task edits or external author feedback.'
+        stage_proof_path = ROOT / 'saved-terminal-stage-reconciliation.json'
+        if stage_proof_path.exists() and route in ('terminal_synth/seta_seed2synth', 'task_evolve/seta_evol', 'terminal_synth/tmax'):
+            stage_proof = json.loads(stage_proof_path.read_text())
+            stage_row = next(row for row in stage_proof['rows'] if row['recipe'] == route.split('/')[1])
+            assert charge == stage_row['already_charged_candidates']
+            if route == 'terminal_synth/tmax':
+                assert stage_row['fresh_declared_inputs_remaining'] == 0
+                action = 'declared_input_pool_exhausted_below_target'
+                next_action = stage_row['action']
+            else:
+                assert len(stage_row['pending_first_build_seed_sha256']) == 1
+                next_action = stage_row['action'] + ' The three source candidates are already charged; this is an unfinished native stage, not another design attempt. Do not replay either consumed or uncertain builder seed.'
         if action == 'target_not_met_work_remaining' and charge == 10 and target is not None and admitted < target:
             action = 'candidate_cap_exhausted_below_target'
             next_action = 'No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.'

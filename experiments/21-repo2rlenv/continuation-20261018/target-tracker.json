@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T20:35:22.719909+00:00",
+  "observed_utc": "2026-10-19T21:16:18.797864+00:00",
   "stage": "full_original_target_tracking_not_a_completion_claim",
   "admission_scope": "Legacy mixed automatic and assisted admissions; manual final assessment is allowed. Primary automatic-output eligibility remains a separate provenance audit.",
   "target_policy": "Three independently validated tasks per applicable route/repository; seed routes have named input cohorts. Maximum ten candidate attempts per unit, with original operational budget stops. Unsupported native language/profile cells have no native target; blocked cells retain explicit shortfall.",
@@ -1349,7 +1349,7 @@
       "remaining_candidate_allowance": 7,
       "candidate_charge_note": "Charge each of the three selected seeds at its first native design attempt. Later materialization of those saved designs is the same candidate, including the second candidate timeout and third unbuilt design. Native repair attempts do not reset. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
       "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "next_action": "Continue only the never-built saved design through native build/repair/trial/export; no design regeneration or external feedback. The three source candidates are already charged; this is an unfinished native stage, not another design attempt. Do not replay either consumed or uncertain builder seed.",
       "native_reward_semantics": [],
       "original_status": "Named seta-genomic-intervals-v1 cohort: three original synthetic interval seeds; three GLM native-schema design drafts recovered and hash verified. Native materialization ended on attempt 0: first candidate exhausted three responses with schema/syntax failures; second first request timed out; third unattempted. Zero exports and native trials. Original outputs recovered and cleanup confirmed. Draft specs retain apparent n separators from raw answers; native builder consumes original designs. Public snapshot uploaded and all 29 objects anonymously verified.",
       "first_pass_sources": [
@@ -1372,7 +1372,7 @@
       "remaining_candidate_allowance": 7,
       "candidate_charge_note": "Charge all three design candidates: two schema-valid headings and one failed design. Building a saved design does not add or reset a candidate; the first build timeout remains an attempted request. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
       "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "next_action": "Continue only the never-built saved design through native build/repair/trial/export; no design regeneration or external feedback. The three source candidates are already charged; this is an unfinished native stage, not another design attempt. Do not replay either consumed or uncertain builder seed.",
       "native_reward_semantics": [],
       "original_status": "Accepted PR2633 parent; three saved design calls yielded two schema-valid heading-only specifications and one failure. Native materialization run01 failed on its first builder request at the 1200s API timeout, with no response preserved; second valid design unattempted. Zero exports or solves. Original output recovered and checksum verified; worker absence independently confirmed. Materialization evidence and saved design archives publicly preserved and anonymously verified.",
       "first_pass_sources": [
@@ -1391,11 +1391,11 @@
       "shortfall": 3,
       "first_pass_blind_attempts": 0,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 2,
-      "remaining_candidate_allowance": 8,
-      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
+      "charged_candidate_attempts": 3,
+      "remaining_candidate_allowance": 7,
+      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
       "state": "target_not_met_work_remaining",
-      "next_action": "Original automatic attempt failed at gateway120s with one uncertain builder request; preserve consumed seed and do not replay it. Verify generic endpoint proxy timeout before any fresh seed. No task-specific fixes or author feedback.",
+      "next_action": "Automatic03 hit the approved1200s request timeout despite the verified long-proxy profile, with zero received responses/exports. Preserve all three consumed seed IDs and uncertain usage. Continue only fresh original-pool seeds within the seven remaining candidate slots; no timeout increase, task edits or external author feedback.",
       "native_reward_semantics": [],
       "original_status": "Accepted PR2633 parent; build attempt timed out with one candidate, two completed GLM responses and a third request without preserved response. First response had zero test definitions; second contained invalid Python. No validated exports or solves. Original responses publicly archived and cleanup independently verified. Evidence: dataarc-build-01 and hf-dataarc-build-01-upload-receipt.json.",
       "first_pass_sources": [
@@ -1417,8 +1417,8 @@
       "charged_candidate_attempts": 3,
       "remaining_candidate_allowance": 7,
       "candidate_charge_note": "Initial controller startup reached zero candidates; corrected selected biological seed cohort reached three candidates. Ten sampled taxonomy records are not ten attempted designs. Remaining seven candidates need eligible frozen input selection; no retry of exhausted candidates is implied. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
-      "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "state": "declared_input_pool_exhausted_below_target",
+      "next_action": "Report the bounded automatic negative result; do not regenerate consumed inputs, reset repairs or manually normalize failed code.",
       "native_reward_semantics": [],
       "original_status": "Selected native biological cohort completed: 3 candidates, 12 GLM calls, zero exports; all nine initial-test responses rejected by native test-shape validation. Worker cleanup confirmed. No task builds or solver outcomes.",
       "first_pass_sources": [

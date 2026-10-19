@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T20:34:38.357618+00:00",
+  "observed_utc": "2026-10-19T21:15:07.082008+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -209,8 +209,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/dataarc@pr2633-parent-v1": {
-      "charged_candidate_attempts": 2,
-      "remaining_allowance": 8,
+      "charged_candidate_attempts": 3,
+      "remaining_allowance": 7,
       "receipts": [
         {
           "source": "evidence/dataarc-build-01/summary.json",
@@ -223,9 +223,15 @@
           "sha256": "84ab4afa7b1800bdb633739531dd658828e6eb6c512ee9d117f02caac8285328",
           "counter_key": "candidate_directories",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/dataarc-automatic-03/assessment.json",
+          "sha256": "fd6721f0a968985526544ee9d608f5ad0bcbbf56d95fc03b7a450d871a33c93d",
+          "counter_key": "candidate_directories",
+          "charged": 1
         }
       ],
-      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it.",
+      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed.",
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/tmax@tmax-biological-v1": {
