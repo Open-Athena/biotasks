@@ -1,0 +1,64 @@
+{
+  "cohort": "skbio-flow-gini-20261019-02",
+  "stage": "prepared_not_dispatched",
+  "required_slots": 2,
+  "model_calls": 0,
+  "prior_candidate_charge": 6,
+  "maximum_new_candidate_attempts": 4,
+  "target_executable_contrasts": 1,
+  "executable_contrasts_are_not_admissions": true,
+  "native_seed": 25,
+  "excluded_candidate_ids": [
+    "3708e0e3d5e89cd5ba4a",
+    "3ad7ba60ca7686b2007b",
+    "a10076b48a0d2070eed3",
+    "c80f6a9306c83c7db638",
+    "d86a2e7a9853ecd4b5eb",
+    "ea039e585353325e82c3"
+  ],
+  "cpu_backend": "existing_free_reserved_TRC_CPU",
+  "new_daytona_hold_usd": 5,
+  "task_specific_Codex_repairs": false,
+  "files": {
+    "capture_author_process.py": {
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    "preserve_author_output.py": {
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    "repo2rlenv-source.tar.gz": {
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    "run_mutation_trc.py": {
+      "bytes": 3742,
+      "sha256": "1c9b0d719868338b8011c86a1a951897e46f87deb2d9facb396a7cc169ed4e7c"
+    },
+    "contrast_summary.py": {
+      "bytes": 2264,
+      "sha256": "ba0a1829785d6b3767ba2cc2aaa00d9f1dbb7206329097abd6aacea413921177"
+    },
+    "run_swe_smith_worker.py": {
+      "bytes": 6546,
+      "sha256": "959ed641da22abb90130608dc2cd825605de442a3eaae139f858a7cafca3b8c5"
+    },
+    "profile.json": {
+      "bytes": 995,
+      "sha256": "5fffc8f0a37b6d3c44ff07d6311ad8b271ddd03fd8d7dde459c74b48593fcd19"
+    }
+  },
+  "recipe": "swe_flow",
+  "flow_test_paths_adaptation": false,
+  "profile_extension": {
+    "previous_source": "skbio/diversity/alpha/_base.py",
+    "new_source": "skbio/diversity/alpha/_gini.py",
+    "reason": "Previous five schedules all consumed; Gini and Lorenz-curve functions have separate native tests at the same pinned revision.",
+    "candidate_allowance_reset": false,
+    "manual_instruction_or_grader_changes": false
+  },
+  "profile_change": "Same Gini source/test profile and trace seed, four remaining attempts with all six charged IDs excluded",
+  "candidate_count_source": "skbio-flow-gini-01/generation.json",
+  "candidate_count_source_sha256": "0668818d05c792042a54f0e1fbaae5e4184a3eb8d2c6935a6e4322e7baf99d2f"
+}
