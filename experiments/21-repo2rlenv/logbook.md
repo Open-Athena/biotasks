@@ -1838,3 +1838,9 @@ The errfn controller completed at 16:30:42 UTC. Original 28,623,540-byte output 
 Prepared six native Stockholm controls, preserving the original instruction/grader/reference. Equivalent constructor forwarding is compared with accepting-but-discarding options and a deliberately incomplete lowercase-only implementation. Since there is one F2P test, the discard control expects zero rather than an artificial fractional reward. Static parsing and exact-parent source-scope checks pass; runtime is pending. A $5 reservation brings conservative holds to $1,243, leaving $757, not billed spend.
 
 Errfn snapshot 2dac89183a6e4c40bf46ffa0869564477d469a12ebfc90d0c0fa8a3fe618711a passed anonymous verification of 30 objects and 2,165 archive members; both slots released. Stockholm controls submitted at 16:34:42 UTC and confirmed RUNNING at 16:35:00 on reserved TRC, zero model calls. Accepted/scored totals remain 29/29.
+
+### 2026-10-19 — Stockholm acceptance rejects incomplete forwarding; Smith final allowance prepared
+
+All six Stockholm controls executed with parsed native grades. Independent raw-test audit confirms rewards 0, 1, 1, 0, 1, 1; the deliberately incomplete lowercase-only implementation unexpectedly earns full reward despite the general keyword-forwarding instruction. The task is not admitted. This is a grader-coverage finding, not an infrastructure failure. Original task assets remain unchanged and no blind attempt was made. The enhanced audit also passed the prior six-control commit cohort as a regression check.
+
+Prepared the remaining scikit-bio Smith allowance of at most two new candidates, excluding all eight charged IDs, preserving the pinned profile/seed, and stopping after one executable contrast. Preparation is not a dispatch or candidate charge.
