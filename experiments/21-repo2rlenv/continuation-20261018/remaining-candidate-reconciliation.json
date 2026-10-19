@@ -1,10 +1,10 @@
 {
-  "observed_utc": "2026-10-19T14:53:10.895878+00:00",
+  "observed_utc": "2026-10-19T16:10:14.811804+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
-      "charged_candidate_attempts": 4,
-      "remaining_allowance": 6,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/biopython-commit-01/result.json",
@@ -17,9 +17,15 @@
           "sha256": "acf9e2a54d6240ccb8034792a88662758629111465f595196b49c97c7ab1ebea",
           "counter_key": "selected_input_charge",
           "charged": 3
+        },
+        {
+          "source": "continuation-20261018/biopython-commit-final-intake/selection.json",
+          "sha256": "feb4f902e2563f3fd14912c191db83d3abb0e177db2b0469a2a1fc88cbe9f613",
+          "counter_key": "selected_input_charge",
+          "charged": 6
         }
       ],
-      "definition": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads.",
+      "definition": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Final fixed six recent fix-search inputs all rejected unchanged native metadata filters (five no_bugfix_signal, one short_message); charge includes selection/filter rejection, not six runtime executions.",
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/native@scikit-bio/scikit-bio": {
@@ -207,8 +213,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "repo_mutate/swe_smith@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 7,
-      "remaining_allowance": 3,
+      "charged_candidate_attempts": 8,
+      "remaining_allowance": 2,
       "receipts": [
         {
           "source": "continuation-20261018/skbio-smith-remaining-20261019-01-dispatch-manifest.json",
@@ -221,9 +227,15 @@
           "sha256": "d97334077010a88d48c25b0b5212b2a32a858815f9c952caebac3e33cd85d9a2",
           "counter_key": "attempted",
           "charged": 2
+        },
+        {
+          "source": "continuation-20261018/skbio-smith-remaining-02/generation.json",
+          "sha256": "5457b594a11d8c5b6e6dd17fb126348cb13d1ee0d0b82e7e9f2990838d9b4bfb",
+          "counter_key": "attempted",
+          "charged": 1
         }
       ],
-      "definition": "Five previously charged mutation attempts plus two new native seed25 candidates. Both are executable contrasts, not independently admitted tasks. Authoring saved IDs is not new candidate discovery; at most two native author calls per selected ID.",
+      "definition": "Five previously charged mutation attempts plus two new native seed25 candidates. Both are executable contrasts, not independently admitted tasks. Authoring saved IDs is not new candidate discovery; at most two native author calls per selected ID. Continuation02 adds one new inner errfn mutation, with one executable contrast and zero model calls; target contrast stop leaves two discovery attempts.",
       "new_dispatch_authorized_by_this_file": false
     },
     "repo_reconstruct/swe_flow@scikit-bio/scikit-bio": {

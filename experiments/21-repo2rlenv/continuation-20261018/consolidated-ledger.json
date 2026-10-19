@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-19T16:05:18.177279+00:00",
+  "as_of_utc": "2026-10-19T16:10:22.542167+00:00",
   "stage": "consolidated_verified_results_so_far_not_final_completion",
   "tasks": [
     {
@@ -660,11 +660,11 @@
       "shortfall": 3,
       "first_pass_blind_attempts": 0,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 4,
-      "remaining_candidate_allowance": 6,
-      "candidate_charge_note": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
-      "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "charged_candidate_attempts": 10,
+      "remaining_candidate_allowance": 0,
+      "candidate_charge_note": "One selected commit reached native materialization. Portable validation profiles of the same retained task are not new source candidates. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Final fixed six recent fix-search inputs all rejected unchanged native metadata filters (five no_bugfix_signal, one short_message); charge includes selection/filter rejection, not six runtime executions. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
+      "state": "candidate_cap_exhausted_below_target",
+      "next_action": "No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.",
       "native_reward_semantics": [],
       "original_status": "native_export_not_independently_accepted",
       "first_pass_sources": [
@@ -1116,9 +1116,9 @@
       "shortfall": 1,
       "first_pass_blind_attempts": 1,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 7,
-      "remaining_candidate_allowance": 3,
-      "candidate_charge_note": "Five previously charged mutation attempts plus two new native seed25 candidates. Both are executable contrasts, not independently admitted tasks. Authoring saved IDs is not new candidate discovery; at most two native author calls per selected ID. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
+      "charged_candidate_attempts": 8,
+      "remaining_candidate_allowance": 2,
+      "candidate_charge_note": "Five previously charged mutation attempts plus two new native seed25 candidates. Both are executable contrasts, not independently admitted tasks. Authoring saved IDs is not new candidate discovery; at most two native author calls per selected ID. Continuation02 adds one new inner errfn mutation, with one executable contrast and zero model calls; target contrast stop leaves two discovery attempts. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
       "state": "target_not_met_work_remaining",
       "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
       "native_reward_semantics": [
@@ -1999,7 +1999,7 @@
   },
   "source_sha256": {
     "evidence/campaign-census-20261018/census.json": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
-    "continuation-20261018/target-tracker.json": "ed025e881e77e7a16dadbf53bf9982b0eaf1f63e72e013a333bacff3564ae7bd",
+    "continuation-20261018/target-tracker.json": "d815c59493c3ffed24ed83388e319c21805e8a46e09ecd9a2fa3f3e9fee43aaf",
     "continuation-20261018/new-admissions.json": "1cfcbecd56bedd03f6d892add9b05e0bb65965c12c7e3c68fb60ecd5233e15ba",
     "continuation-20261018/budget.json": "d8a60d48f5501f79447e90ed139465b351c1c5f3f2103f269551a72de22af683",
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",

@@ -140,6 +140,9 @@ def build():
             charge = counter['charged_candidate_attempts']
             cap_note = counter['definition'] + ' Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.'
             next_action = 'Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.'
+        if action == 'target_not_met_work_remaining' and charge == 10 and target is not None and admitted < target:
+            action = 'candidate_cap_exhausted_below_target'
+            next_action = 'No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.'
         if target is not None and admitted >= target:
             next_action = 'Three-task target met for the declared native reward. No further candidate discovery for this unit; retain lineage and complete only pending single blind attempts or declared integration gates.'
         rewards = sorted({x['reward_semantics'] for x in unit['current_admissions']})

@@ -15,12 +15,12 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | --- | ---: | ---: | ---: | ---: |
 | pr_diff/native | 3 / 10 | 3 / 10 | 3 / 10 | 3 / 10 |
 | pr_runtime/native | 3 / 9 | 3 / 5 | 0 / ? B | 0 / ? B |
-| commit_runtime/native | 0 / 4 | 1 / 3 | 0 / ? B | 0 / ? B |
+| commit_runtime/native | 0 / 10 | 1 / 3 | 0 / ? B | 0 / ? B |
 | code_instruct/native | 0 / 10 | 0 / 10 | — | — |
 | equivalence_tests/native | 0 / ? B | 0 / ? B | — | — |
 | cve_patches/native | 0 / ? | 0 / ? B | 0 / ? B | 0 / ? B |
 | tasksmith/tasksmith | 0 / ? B | 0 / ? B | — | — |
-| repo_mutate/swe_smith | 2 / 10 | 2 / 7 | — | — |
+| repo_mutate/swe_smith | 2 / 10 | 2 / 8 | — | — |
 | pr_to_env/swe_gen | 0 / 1 | 0 / 1 | — | — |
 | repo_reconstruct/swe_flow | 0 / 6 | 2 / 6 | — | — |
 | equivalence_tests/r2e | 0 / 10 | 0 / 10 | — | — |

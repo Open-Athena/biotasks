@@ -1,0 +1,216 @@
+{
+  "stage": "native_static_metadata_filters_only_no_build_or_model_calls",
+  "options": {
+    "limit": 1,
+    "since": null,
+    "until": null,
+    "branch": "HEAD",
+    "clone_depth": 2,
+    "skip_merge_commits": true,
+    "min_message_words": 5,
+    "max_source_files_per_commit": 10,
+    "exclude_authors": [],
+    "require_new_test_funcs": true,
+    "skip_ci_only": true,
+    "require_fail_to_pass": true,
+    "min_fail_to_pass": 1,
+    "validation_timeout_sec": 600,
+    "skip_validation": false,
+    "max_pass_to_pass": 50,
+    "synthesize_with_llm": true,
+    "min_problem_statement_words": 8,
+    "llm_temperature": 0.3,
+    "max_llm_tokens": 1024
+  },
+  "records": [
+    {
+      "input_file": "4ab3f1f68607335cd2cd6632c55cc904b7a436a2-head-commit.json",
+      "sha": "4ab3f1f68607335cd2cd6632c55cc904b7a436a2",
+      "parent": "72c8443c01d50a550deee3250b71326787c5e2a0",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/Align/__init__.py",
+        "Bio/Align/bigbed.py",
+        "Bio/Align/clustal.py",
+        "Bio/Align/substitution_matrices/__init__.py",
+        "Bio/Graphics/Comparative.py",
+        "Bio/Graphics/Distribution.py",
+        "Bio/Graphics/GenomeDiagram/_CircularDrawer.py",
+        "Bio/Graphics/GenomeDiagram/_LinearDrawer.py",
+        "Bio/NMR/xpktools.py",
+        "Bio/Nexus/Trees.py",
+        "Bio/PDB/DSSP.py",
+        "Bio/PDB/mmcifio.py",
+        "Tests/test_Align_mauve.py"
+      ],
+      "native_commit_info": {
+        "sha": "4ab3f1f68607335cd2cd6632c55cc904b7a436a2",
+        "parent_sha": "72c8443c01d50a550deee3250b71326787c5e2a0",
+        "parents": [
+          "72c8443c01d50a550deee3250b71326787c5e2a0"
+        ],
+        "author_name": "Peter J. A. Cock",
+        "author_email": "p.j.a.cock@googlemail.com",
+        "authored_at": "2026-10-07T16:01:24Z",
+        "subject": "ruff PLR1730 (if-stmt-min-max)",
+        "body": "$ ruff check --fix-only --select PLR1730\nFixed 31 errors.\n\n(And then had to run black on one file)"
+      }
+    },
+    {
+      "input_file": "5f37f44043eeb300435f7d485e615ea7360fd1ea-head-commit.json",
+      "sha": "5f37f44043eeb300435f7d485e615ea7360fd1ea",
+      "parent": "e38c64daa2433ecf21f596f76287d41122a4a000",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/AlignIO/MsfIO.py",
+        "Bio/SearchIO/BlatIO.py",
+        "Bio/SeqIO/InsdcIO.py"
+      ],
+      "native_commit_info": {
+        "sha": "5f37f44043eeb300435f7d485e615ea7360fd1ea",
+        "parent_sha": "e38c64daa2433ecf21f596f76287d41122a4a000",
+        "parents": [
+          "e38c64daa2433ecf21f596f76287d41122a4a000"
+        ],
+        "author_name": "Peter J. A. Cock",
+        "author_email": "p.j.a.cock@googlemail.com",
+        "authored_at": "2026-10-07T15:43:12Z",
+        "subject": "ruff FURB136 (if-expr-min-max)",
+        "body": "$ ruff check --fix-only --select FURB136\nHEAD is now at 072b11ff5 Fix d105 docstrings (#5338)\nFixed 4 errors.\n\nThen tweaked for the older version of black."
+      }
+    },
+    {
+      "input_file": "72c8443c01d50a550deee3250b71326787c5e2a0-head-commit.json",
+      "sha": "72c8443c01d50a550deee3250b71326787c5e2a0",
+      "parent": "5f37f44043eeb300435f7d485e615ea7360fd1ea",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/Graphics/GenomeDiagram/_LinearDrawer.py",
+        "Bio/SearchIO/FastaIO.py",
+        "Bio/Seq.py"
+      ],
+      "native_commit_info": {
+        "sha": "72c8443c01d50a550deee3250b71326787c5e2a0",
+        "parent_sha": "5f37f44043eeb300435f7d485e615ea7360fd1ea",
+        "parents": [
+          "5f37f44043eeb300435f7d485e615ea7360fd1ea"
+        ],
+        "author_name": "Peter J. A. Cock",
+        "author_email": "p.j.a.cock@googlemail.com",
+        "authored_at": "2026-10-07T15:49:08Z",
+        "subject": "ruff PLR1716 (boolean-chained-comparison)",
+        "body": "$ ruff check --fix-only --select PLR1716\nFixed 4 errors."
+      }
+    },
+    {
+      "input_file": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159-head-commit.json",
+      "sha": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+      "parent": "07e59374eb09f4104d4efc96a815d253f1af3c3d",
+      "native_metadata_filter": "short_message",
+      "source_files": [
+        "Bio/ExPASy/cellosaurus.py"
+      ],
+      "native_commit_info": {
+        "sha": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+        "parent_sha": "07e59374eb09f4104d4efc96a815d253f1af3c3d",
+        "parents": [
+          "07e59374eb09f4104d4efc96a815d253f1af3c3d"
+        ],
+        "author_name": "Peter J. A. Cock",
+        "author_email": "p.j.a.cock@googlemail.com",
+        "authored_at": "2026-10-06T09:37:50Z",
+        "subject": "Fix online cellosaurus doctest",
+        "body": ""
+      }
+    },
+    {
+      "input_file": "bb295f15adb75d0296361a063e645eba35160ab0-head-commit.json",
+      "sha": "bb295f15adb75d0296361a063e645eba35160ab0",
+      "parent": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/Align/__init__.py",
+        "Bio/Align/substitution_matrices/__init__.py",
+        "Bio/AlignIO/NexusIO.py",
+        "Bio/Blast/NCBIXML.py",
+        "Bio/Blast/_parser.py",
+        "Bio/PDB/Atom.py",
+        "Bio/PDB/PDBIO.py",
+        "Bio/PDB/PSEA.py",
+        "Bio/PDB/StructureAlignment.py",
+        "Bio/PDB/alphafold_db.py",
+        "Bio/SearchIO/InfernalIO/__init__.py",
+        "Bio/SearchIO/InfernalIO/infernal_tab.py",
+        "Bio/Seq.py",
+        "Bio/SeqIO/FastaIO.py",
+        "Bio/SeqIO/GfaIO.py",
+        "Bio/SeqIO/InsdcIO.py",
+        "Bio/SeqIO/QualityIO.py",
+        "Bio/SeqIO/TabIO.py",
+        "Bio/SeqIO/UniprotIO.py",
+        "Bio/SeqIO/__init__.py",
+        "Bio/SeqRecord.py",
+        "Bio/_utils.py",
+        "Tests/pairwise2_testCases.py",
+        "Tests/test_Align_codonalign.py",
+        "Tests/test_Align_format_matrix.py",
+        "Tests/test_Align_msf.py",
+        "Tests/test_Align_psl.py",
+        "Tests/test_Align_tabular.py",
+        "Tests/test_Entrez_parser.py",
+        "Tests/test_PDB_StructureAlignment.py",
+        "Tests/test_PDB_vectors.py",
+        "Tests/test_Restriction.py",
+        "Tests/test_SearchIO_infernal_tab.py",
+        "Tests/test_SearchIO_infernal_text.py",
+        "Tests/test_SeqFeature.py",
+        "Tests/test_SeqIO.py",
+        "Tests/test_align.py",
+        "Tests/test_align_substitution_matrices.py",
+        "Tests/test_pairwise_aligner.py",
+        "setup.py"
+      ],
+      "native_commit_info": {
+        "sha": "bb295f15adb75d0296361a063e645eba35160ab0",
+        "parent_sha": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+        "parents": [
+          "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159"
+        ],
+        "author_name": "Peter J. A. Cock",
+        "author_email": "p.j.a.cock@googlemail.com",
+        "authored_at": "2026-10-07T15:24:26Z",
+        "subject": "Apply import sorting via ruff.",
+        "body": "$ ruff --version\nruff 0.16.10\n\n$ ruff check --fix --select=I \\\n      --config=lint.isort.force-single-line=true \\\n      --config=lint.isort.order-by-type=false \\\n      BioSQL/ Bio/ Tests/ Scripts/ Doc/ setup.py\n\nThis is a repeat of #4662."
+      }
+    },
+    {
+      "input_file": "fc0c156786e86862112a05a720b6f4f47023f36a-head-commit.json",
+      "sha": "fc0c156786e86862112a05a720b6f4f47023f36a",
+      "parent": "fa5f1daee5ead8f44a5560f958c1aea63fc34353",
+      "native_metadata_filter": "no_bugfix_signal",
+      "source_files": [
+        "Bio/Align/__init__.py",
+        "Bio/Align/_codonaligner.c",
+        "Bio/codonalign/__init__.py",
+        "Doc/Tutorial/chapter_pairwise.rst"
+      ],
+      "native_commit_info": {
+        "sha": "fc0c156786e86862112a05a720b6f4f47023f36a",
+        "parent_sha": "fa5f1daee5ead8f44a5560f958c1aea63fc34353",
+        "parents": [
+          "fa5f1daee5ead8f44a5560f958c1aea63fc34353"
+        ],
+        "author_name": "mdehoon",
+        "author_email": "mjldehoon@yahoo.com",
+        "authored_at": "2026-10-11T16:03:50Z",
+        "subject": "Codon align convenience function part 2 (#5369)",
+        "body": "* update\n\n* update\n\n* debug\n\n* update\n\n* update\n\n* update\n\n* update\n\n* typo\n\n* update\n\n* update\n\n* documentation\n\n* silly stuff\n\n* [pre-commit.ci] auto fixes from pre-commit.com hooks\n\nfor more information, see https://pre-commit.ci\n\n---------\n\nCo-authored-by: Michiel Jan Laurens de Hoon <mdehoon@Michiels-MacBook-Air.local>\nCo-authored-by: pre-commit-ci[bot] <66853113+pre-commit-ci[bot]@users.noreply.github.com>"
+      }
+    }
+  ],
+  "selected_inputs_considered": 6,
+  "native_metadata_eligible": 0,
+  "lineage": "Six search-selected commit inputs; unchanged native metadata filters. No post-hoc replacements and no runtime acceptance inferred.",
+  "target_execution": false,
+  "model_calls": 0
+}
