@@ -2168,3 +2168,22 @@ unaltered candidate preservation and early stops on all orchestration paths. New
 model behavior remains untested. Native configuration selects the prepared 002
 replacement artifacts, which do not exist yet, so the known 001 candidate is not a
 publication target even if its old review profile later accepts it.
+
+### 2026-10-19 — Original Bioframe quality run ended incomplete
+
+Grading 001 timed out in repair after 6,889.51 recorded stage seconds and 244
+requests (82 independent, 32 grader, 124 probes, 1 review, 5 repair). No final
+candidate/review, native attempt or release exists. Nineteen probes passed the
+broadened candidate, but the contract conflict remains; review excused rather
+than resolved the unsupported additions. This is a factory/control-assumption
+failure, not a broken-notebook result. Preserve the original statuses and the
+operator hold separately.
+
+The full 1,316-file archive passed download verification; selected evidence and
+hashes are retained under `transfer/bioframe/grading-runs/001`. Three omitted
+input payloads were reconstructed losslessly from recorded components and matched
+their original archive hashes exactly. The diagnostic transfer was partial; full
+traces remain in the configured archive. Unsubmitted workspace files are gone,
+so do not claim a completed repair artifact. Provider absence was independently
+verified and the Iris job is terminal. Construction replacement 002 can now be
+submitted using the checkpointed general guidance and unchanged earlier evidence.

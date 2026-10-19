@@ -1,0 +1,82 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' was delivered, but its rows are not valid: 200 row(s): the five motif fields are only partially blank",
+          "passed": false
+        },
+        {
+          "id": "field_value_validity",
+          "message": "invalid values in the output table -- 200 row(s): the five motif fields are only partially blank",
+          "passed": false
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "not evaluated: the output table contains invalid values: 200 row(s): the five motif fields are only partially blank",
+          "passed": false
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "not evaluated: the output table contains invalid values: 200 row(s): the five motif fields are only partially blank",
+          "passed": false
+        },
+        {
+          "id": "motif_assignment",
+          "message": "not evaluated: the output table contains invalid values: 200 row(s): the five motif fields are only partially blank",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "dc27d25e645a4ac8ed67087dfb3526b6c273071b27377e545a5516518d2cfa5a"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "dc27d25e645a4ac8ed67087dfb3526b6c273071b27377e545a5516518d2cfa5a"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "field_value_validity",
+      "motif_assignment"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,108877017,108877387,5.12519,chr1,108877020,108877039,500.0,+"
+      }
+    ],
+    "focus": "lazy_output",
+    "kind": "wrong_solution",
+    "name": "struct-partial-motif-block",
+    "rationale": "Partially blank motif block: 200 assigned rows keep motif_chrom, motif_start, motif_end and motif_strand but have motif_pval emptied. The contract states that such a row is neither a valid assignment nor a valid no-motif answer, is never treated as missing data, and never compares equal; it is also exactly the pattern produced by a dropped join key or a NaN round-trip.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Partially blank motif block: neither an assignment nor a no-motif answer.\n\nFor 200 rows carrying an assigned motif, motif_pval is emptied while\nmotif_chrom, motif_start, motif_end and motif_strand stay (for instance\nchr1,108877017,108877387,5.12519,chr1,108877020,108877039,,+). The contract\nsays such a row is never treated as missing data and never compared equal:\nit must fail. This also checks that field_value_validity is not the only line\nof defence, since the blank-pval pattern is exactly what pandas-style\nfloat('NaN') round-tripping or a dropped join key produces.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 200:\n            break\n        if r[4] != '' and r[7] != '':\n            r[7] = ''\n            changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+  }
+}

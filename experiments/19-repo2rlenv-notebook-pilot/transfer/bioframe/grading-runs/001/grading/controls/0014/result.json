@@ -1,0 +1,81 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40557 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40557 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "the set of retained (chrom, start, end) peak sub-intervals matches the reference exactly: 40557 row(s) over 40557 interval(s), 0 interval(s) reported in more than one row, no repeated identical rows, row order not evaluated",
+          "passed": true
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "300 reference fold-change value(s) are not reported for their retained interval (missing interval, wrong peak record, or a value that differs in any digit); fc is compared as the exact parsed number, so only its decimal rendering may differ",
+          "passed": false
+        },
+        {
+          "id": "motif_assignment",
+          "message": "every reported interval carries the reference motif assignment (blank block, or motif_chrom, motif_start, motif_end, exact parsed motif_pval and motif_strand); 5765 row(s) report blank motif fields (peak sub-intervals with no assigned motif)",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "38f80b048e3e37abff2c0a659c4be777cb52f419193ecfecf9aaa8fd9bf278f2"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "38f80b048e3e37abff2c0a659c4be777cb52f419193ecfecf9aaa8fd9bf278f2"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "peak_fold_change"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924,,,,,"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,200622507,200622877,5.05489,,,,,"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "wrong_solution",
+    "name": "fc-lastdigit-rounding",
+    "rationale": "Fold-change tolerance boundary: one unit in the last decimal place is added to 300 fc values, keeping the plain-decimal rendering and the digit count (5.04924 -> 5.04925). The check is declared exact with no tolerance, so the smallest possible perturbation must fail; rounding or relative tolerance would wrongly accept it.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"One unit in the last place on the peak fold change.\n\nAdds one unit in the last decimal place to the fc of the first 300 rows,\nkeeping the plain-decimal rendering and the digit count (5.04924 -> 5.04925,\n62.32413 -> 62.32414). peak_fold_change is declared exact with no tolerance,\nso a last-digit difference must fail; a grader comparing with rounding or a\nrelative tolerance would wrongly accept it. Intervals and motif blocks are\nuntouched.\n\"\"\"\nfrom decimal import Decimal\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        s = r[3]\n        if '.' not in s:\n            continue\n        frac = len(s.split('.')[1])\n        r[3] = str(Decimal(s) + Decimal(1).scaleb(-frac))\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "header line is 'chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit'; expected exactly 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand'",
+          "passed": false
+        },
+        {
+          "id": "field_value_validity",
+          "message": "not evaluated: header line is 'chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit'; expected exactly 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand'",
+          "passed": false
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "not evaluated: header line is 'chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit'; expected exactly 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand'",
+          "passed": false
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "not evaluated: header line is 'chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit'; expected exactly 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand'",
+          "passed": false
+        },
+        {
+          "id": "motif_assignment",
+          "message": "not evaluated: header line is 'chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit'; expected exactly 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand'",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "a0905e5df1ca5e2d2a0cc776587bf4ff103ec44dc6666ff6151f0b1fd7c34c41"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "a0905e5df1ca5e2d2a0cc776587bf4ff103ec44dc6666ff6151f0b1fd7c34c41"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "output_file_schema"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "struct-header-column-order",
+    "rationale": "Header violation: data values are correct but the header reads chrom,start,stop,fc,...,relSummit with a tenth column, violating the exact nine-name header and the nine-field row rule, which no lenient parser should silently repair.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Header violation: renamed column and an extra trailing column.\n\nThe data rows are byte-identical to the reference, but the header line reads\n`chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit`\n(end renamed to stop, a tenth column appended). The contract requires the\nheader to read exactly the nine agreed names in the agreed order and forbids\nadditional columns, so output_file_schema must fail even though every value in\nthe body is correct. field_value_validity is also implicated, since rows no\nlonger carry exactly nine fields.\n\"\"\"\n\ndef main():\n    path, data = load()\n    out = [r + ['0'] for r in data]\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8') as fh:\n            fh.write('chrom,start,stop,fc,motif_chrom,motif_start,'\n                     'motif_end,motif_pval,motif_strand,relSummit\\n')\n            w = csv.writer(fh, lineterminator='\\n')\n            w.writerows(out)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='', encoding='utf-8') as fh:\n            fh.write('chrom,start,stop,fc,motif_chrom,motif_start,'\n                     'motif_end,motif_pval,motif_strand,relSummit\\n')\n            w = csv.writer(fh, lineterminator='\\n')\n            w.writerows(out)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\nmain()\n"
+  }
+}

@@ -1,0 +1,86 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' was delivered, but its rows are not valid: 150 row(s): start or end is not a plain non-negative integer; 125 row(s): fc is not a decimal number; 25 row(s): fc is not finite (NaN or infinity)",
+          "passed": false
+        },
+        {
+          "id": "field_value_validity",
+          "message": "invalid values in the output table -- 150 row(s): start or end is not a plain non-negative integer; 125 row(s): fc is not a decimal number; 25 row(s): fc is not finite (NaN or infinity)",
+          "passed": false
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "not evaluated: the output table contains invalid values: 150 row(s): start or end is not a plain non-negative integer; 125 row(s): fc is not a decimal number; 25 row(s): fc is not finite (NaN or infinity)",
+          "passed": false
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "not evaluated: the output table contains invalid values: 150 row(s): start or end is not a plain non-negative integer; 125 row(s): fc is not a decimal number; 25 row(s): fc is not finite (NaN or infinity)",
+          "passed": false
+        },
+        {
+          "id": "motif_assignment",
+          "message": "not evaluated: the output table contains invalid values: 150 row(s): start or end is not a plain non-negative integer; 125 row(s): fc is not a decimal number; 25 row(s): fc is not finite (NaN or infinity)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "68dc5580c6eb848cb10dbf4ebe8d22133290be032554d771ad69399b99aab9af"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "68dc5580c6eb848cb10dbf4ebe8d22133290be032554d771ad69399b99aab9af"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "field_value_validity",
+      "peak_fold_change"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924,,,,,"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr3,66816327,66816697,5.08233,chr3,66816332,66816351,741.0,-"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150972098,150972468,5.8881,chr1,150972255,150972274,429.0,-"
+      }
+    ],
+    "focus": "compiled_execution",
+    "kind": "wrong_solution",
+    "name": "struct-nonfinite-fc-and-float-ints",
+    "rationale": "Nonfinite and non-integer numeric renderings: the first 150 rows get fc values NaN/nan/inf/-inf/Inf/1e999 (which must always fail rather than compare equal), and the next 150 get start rendered as a float (48309541.0) and end in scientific notation (4.830991e+07), the exact renderings the field rules reject. A lenient pandas-style parser that never re-validates would hide both.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Nonfinite fc and non-integer coordinate renderings.\n\nTwo structural provocations on explicit rows: the first 150 rows get fc values\nNaN / nan / inf / -inf / Inf / 1e999, which the contract says must always fail\nrather than compare equal; the next 150 rows get start rendered as a float\n(48309541.0) and end as scientific notation (4.830991e+07), the exact\nnon-integer renderings the field rules reject. The header, the row count and\nall other fields are untouched, so any grader that parses leniently with\npandas and never re-validates the renderings would hide these.\n\"\"\"\n\ndef main():\n    path, data = load()\n    bogus = ['NaN', 'nan', 'inf', '-inf', 'Inf', '1e999']\n    n_fc = 0\n    n_int = 0\n    for i, r in enumerate(data):\n        if i < 150:\n            r[3] = bogus[i % len(bogus)]\n            n_fc += 1\n        elif i < 300:\n            r[1] = '%.1f' % float(r[1])\n            r[2] = '%e' % float(r[2])\n            n_int += 1\n        else:\n            break\n    if n_fc == 0 or n_int == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+  }
+}

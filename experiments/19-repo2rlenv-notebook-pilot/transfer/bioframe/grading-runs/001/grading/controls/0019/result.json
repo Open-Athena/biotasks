@@ -1,0 +1,85 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40557 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40557 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "the set of retained (chrom, start, end) peak sub-intervals matches the reference exactly: 40557 row(s) over 40557 interval(s), 0 interval(s) reported in more than one row, no repeated identical rows, row order not evaluated",
+          "passed": true
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "each of the 40557 reference fold-change value(s) is reported for its retained interval, compared as the exact parsed number (decimal rendering alone is not evaluated); 0 interval(s) additionally report further fold-change values",
+          "passed": true
+        },
+        {
+          "id": "motif_assignment",
+          "message": "300 retained interval(s) do not carry the reference motif assignment: the five motif fields must be blank exactly for the peaks with no assigned motif, and otherwise report the reference motif_chrom, motif_start, motif_end, exact parsed motif_pval and motif_strand",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "870f22b959de7fd2a1ebf7559bb7a5fc7b2d0c83c2e48135eaaed2f66bd7af77"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "870f22b959de7fd2a1ebf7559bb7a5fc7b2d0c83c2e48135eaaed2f66bd7af77"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "motif_assignment"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,200622507,200622877,5.05489,,,,,"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,67701045,67701415,5.06708,,,,,"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr7,151350486,151350856,5.29647,,,,,"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "motif-fabricated-on-blank",
+    "rationale": "Fabricated assignments: 300 rows whose reference motif block is blank receive a complete, valid motif block taken from another row of the same chromosome. The row is well formed in every field, so only the reference comparison can reject annotating a peak that has no overlapping motif (or only undefined-pval motifs).",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Annotate peaks whose correct motif block is blank.\n\nThe mirror image of the dropped assignment: 300 rows whose reference motif\nblock is blank (for instance line 4, chr1,200622507,200622877,5.05489) receive\na full, structurally valid motif block taken from another row on the same\nchromosome. motif_chrom equals chrom, coordinates satisfy\nmotif_start < motif_end, the strand is +/- and the pval is a finite decimal,\nso the row is well formed and only the comparison against the reference\nassignment can reject it. Intervals and fc are untouched.\n\"\"\"\n\ndef main():\n    path, data = load()\n    typed = [{'i': i, 'chrom': r[0], 'start': int(r[1]), 'motif': tuple(r[4:9])}\n             for i, r in enumerate(data)]\n    typed.sort(key=lambda t: (t['chrom'], t['start']))\n    changed = 0\n    for rec in typed:\n        if changed >= 300:\n            break\n        if rec['motif'][0] != '':\n            continue\n        donor = None\n        for other in typed:\n            if other is rec or other['chrom'] != rec['chrom']:\n                continue\n            om = other['motif']\n            if om[0] == '' or om[3] == '':\n                continue\n            if donor is None or abs(other['start'] - rec['start']) < \\\n                    abs(donor['start'] - rec['start']):\n                donor = other\n        if donor is None:\n            continue\n        data[rec['i']][4:9] = ['%s' % x for x in donor['motif']]\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+  }
+}

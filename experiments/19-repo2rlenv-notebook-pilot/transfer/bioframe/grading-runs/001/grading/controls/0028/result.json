@@ -1,0 +1,89 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40572 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40572 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "the set of retained (chrom, start, end) peak sub-intervals matches the reference exactly: 40572 row(s) over 40557 interval(s), 15 interval(s) reported in more than one row, no repeated identical rows, row order not evaluated",
+          "passed": true
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "each of the 40557 reference fold-change value(s) is reported for its retained interval, compared as the exact parsed number (decimal rendering alone is not evaluated); 15 interval(s) additionally report further fold-change values",
+          "passed": true
+        },
+        {
+          "id": "motif_assignment",
+          "message": "every reported interval carries the reference motif assignment (blank block, or motif_chrom, motif_start, motif_end, exact parsed motif_pval and motif_strand); 5765 row(s) report blank motif fields (peak sub-intervals with no assigned motif)",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "d627438865d800b947c225dc738c01d2e0abd95d85ddb628c91fdd487ec93863"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "d627438865d800b947c225dc738c01d2e0abd95d85ddb628c91fdd487ec93863"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "output_file_schema",
+      "field_value_validity",
+      "retained_interval_rows",
+      "peak_fold_change",
+      "motif_assignment"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr12,53746631,53747014,13.09923,chr12,53746839,53746858,618.0,-"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,145891868,145892248,19.17982,chr1,145892125,145892144,455.0,+"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,41431677,41432047,5.1106,chr19,41431802,41431821,477.0,+"
+      }
+    ],
+    "focus": "general",
+    "kind": "valid_alternative",
+    "name": "valid-multirow-repeated-peak",
+    "rationale": "Permitted multiplicity freedom: the contract allows a peak appearing more than once in the peak file to be reported in several rows for the same interval and does not penalize the additional fold changes. This control reproduces exactly the 15 intervals the reference alternative implementation reports twice (e.g. chr12,53746631,53747014 with fc 13.09923 and 460.50830, both carrying motif chr12,53746839,53746858,618,-), preserving every reference interval, reference fc and motif block, with no exact duplicate rows.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Control: one row per repeated peak record for the same interval.\n\nThe contract allows a peak that appears more than once in the peak file to be\nreported in several rows for the same interval, and explicitly does not\npenalize the additional fold changes. This control reproduces exactly the 15\nintervals the reference alternative implementation reports twice \u2014 for example\nchr12,53746631,53747014 is reported with fc 13.09923 and with fc 460.50830,\nboth rows carrying the same motif block chr12,53746839,53746858,618,- \u2014 and\nchanges nothing else. The reference interval set, every reference fc value and\nevery motif block are preserved, and no two rows are exact duplicates, so all\nchecks must pass.\n\"\"\"\n\nMULTI = {\n    ('chr12', '53746631', '53747014'): '460.50830',\n    ('chr1', '145891868', '145892248'): '284.26093',\n    ('chr11', '65888373', '65888759'): '169.56376',\n    ('chr16', '85420694', '85421095'): '348.37597',\n    ('chr13', '52450528', '52450937'): '298.75301',\n    ('chr22', '30255874', '30256373'): '260.73652',\n    ('chr11', '72434092', '72434503'): '389.71789',\n    ('chr20', '32031331', '32031759'): '220.63007',\n    ('chr10', '97407214', '97407720'): '177.01250',\n    ('chr17', '60421291', '60421798'): '255.27557',\n    ('chr17', '50200524', '50201000'): '228.01776',\n    ('chr9', '124852842', '124853375'): '191.02370',\n    ('chr22', '36065916', '36066447'): '357.61748',\n    ('chr5', '139765488', '139766006'): '214.17030',\n    ('chr5', '142713111', '142713708'): '281.26099',\n}\n\ndef main():\n    path, data = load()\n    out = []\n    added = 0\n    for r in data:\n        out.append(list(r))\n        key = (r[0], r[1], r[2])\n        if key in MULTI:\n            nr = list(r)\n            nr[3] = MULTI[key]\n            out.append(nr)\n            added += 1\n    if added == 0:\n        sys.exit('no rows modified')\n    write_csv(path, out)\n\nmain()\n"
+  }
+}

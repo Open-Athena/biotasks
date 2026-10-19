@@ -1,0 +1,442 @@
+{
+  "concerns": [
+    "The reference alternative implementation (/work/alternative) reports 15 of the 40557 intervals twice, each with two different fc values; these are duplicated peak records in the input, so a solution may legitimately emit one row or several rows per interval. Acceptance depends on the rule that additional fold-change values for an interval belonging to more than one peak record are not penalized, which I treated as correct and exercised in valid-multirow-repeated-peak (that control reproduces exactly those 15 multi-row intervals with the alternative implementation's second fc values).",
+    "No reference row is a strict sub-interval of another row on the same chromosome beyond ordinary overlapping peaks, so a genuinely split peak (one peak contributing several trimmed sub-interval rows) could not be identified unambiguously from the reference deliverable alone; the multiplicity controls therefore rely on the repeated-peak-record freedom rather than a confirmed blacklist-split case. If the reference does contain split peaks, distinguishing them from overlapping distinct peaks requires the raw inputs, which were not available.",
+    "The contract does not specify a canonical rendering for integral motif_pval or fc values (450 vs 450.0); the acceptance text only says 'a finite decimal number' and that renderings parsing to the same number are accepted. I treated both renderings as valid (see valid-numeric-rendering), and the tolerance probes perturb the value by one unit in the last rendered decimal place rather than by a value-relative epsilon, because the check is stated to be exact with no tolerance.",
+    "The contract says CRLF line endings 'are read as newlines' but does not say a CRLF-terminated file is accepted or merely tolerated; valid-row-order-and-crlf assumes a uniformly CRLF-terminated file is fully acceptable. If the intent was that only LF is written and CRLF is merely not penalized when read, that control should be reclassified.",
+    "Row order is free, so the reference and a submission may legitimately differ in ordering; a grader that compares row-by-row after grouping rather than by sets would conflate ordering with scientific disagreement. Relatedly, the interaction between 'no row may be an exact duplicate of another' and the 'several rows for the same interval' allowance is only unambiguous because the added rows differ in fc; a submission that repeated an identical row for a repeated identical peak record would sit exactly on the boundary of those two rules."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "retained_interval_rows",
+        "peak_fold_change"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr4,130563716,130564086,5.05052,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,200622507,200622877,5.05489,,,,,"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "retain-offbyone-blacklist",
+      "rationale": "Blacklist expansion or boundary-comparison errors shift the retained sub-interval coordinates: 300 explicit reference intervals are moved 2 bp downstream with their width preserved and every annotation byte-identical, so only the retained-interval comparison can detect the wrongly trimmed coordinates.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Off-by-one blacklist trimming: wrong retained sub-interval coordinates.\n\nThe first 300 reference intervals (each keeping its fc and motif untouched) are\nmoved 2 bp downstream, keeping their width. A pipeline that expands the ENCODE\nblacklist by 1002 instead of 1000 bp, or that compares interval edges with >=\ninstead of >, shifts the surviving sub-interval exactly this way. Every\nannotation stays byte-identical, so only the retained-interval comparison can\ndetect it: this is the trimmed-coordinates contract, not a format question.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data[:300]:\n        s, e = int(r[1]), int(r[2])\n        if e - s <= 2:\n            continue\n        r[1], r[2] = str(s + 2), str(e + 2)\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "retained_interval_rows",
+        "peak_fold_change"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,200622507,200622877,5.05489,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "retain-missing-and-extra",
+      "rationale": "Both directions of the retained-interval set comparison: 300 reference intervals are removed (a peak wrongly judged fully covered by the expanded blacklist) and 300 plausible rows shifted by +3 bp are inserted, with all surviving rows keeping the correct fc and motif block so only the interval set is wrong.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Both directions of the retained-interval set comparison.\n\nThe first 300 reference rows are removed entirely (a peak wrongly judged fully\ncovered by the expanded blacklist), and 300 extra plausible rows are inserted\nwith the same chromosome, fc and motif but coordinates shifted by +3 bp, which\nis what expanding the blacklist by 1003 instead of 1000 bp yields for the same\npeak. Annotations of the surviving rows are untouched, so fc and motif checks\nstay clean while the interval set is wrong in both directions.\n\"\"\"\n\ndef main():\n    path, data = load()\n    out = []\n    dropped = 0\n    added = 0\n    for i, r in enumerate(data):\n        if i < 300:\n            dropped += 1\n            continue\n        out.append(list(r))\n        if added < 300 and i < 600:\n            nr = list(r)\n            nr[1], nr[2] = str(int(r[1]) + 3), str(int(r[2]) + 3)\n            out.append(nr)\n            added += 1\n    if dropped == 0 or added == 0:\n        sys.exit('no rows modified')\n    write_csv(path, out)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "retained_interval_rows"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr4,130563716,130564086,5.05052,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "retain-duplicate-rows",
+      "rationale": "Exact duplicate rows: 100 rows are repeated identically in all nine fields, so the reference interval set is fully present and every value well formed, but the rule that no row may duplicate another is violated.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Exact duplicate rows: every distinct row must appear exactly once.\n\nAppends 100 byte-identical copies of existing rows (for instance the first row,\nchr19,48309541,48309911,5.04924 with its blank motif block, appears twice).\nThe reference interval set is still fully present and every value is well\nformed, but the contract forbids a row that duplicates another in all nine\nfields, so the retained-set check must fail on multiplicity without dropping\ndata.\n\"\"\"\n\ndef main():\n    path, data = load()\n    out = [list(r) for r in data]\n    for r in data[:100]:\n        out.append(list(r))\n    write_csv(path, out)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "peak_fold_change"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,200622507,200622877,5.05489,,,,,"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "fc-lastdigit-rounding",
+      "rationale": "Fold-change tolerance boundary: one unit in the last decimal place is added to 300 fc values, keeping the plain-decimal rendering and the digit count (5.04924 -> 5.04925). The check is declared exact with no tolerance, so the smallest possible perturbation must fail; rounding or relative tolerance would wrongly accept it.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"One unit in the last place on the peak fold change.\n\nAdds one unit in the last decimal place to the fc of the first 300 rows,\nkeeping the plain-decimal rendering and the digit count (5.04924 -> 5.04925,\n62.32413 -> 62.32414). peak_fold_change is declared exact with no tolerance,\nso a last-digit difference must fail; a grader comparing with rounding or a\nrelative tolerance would wrongly accept it. Intervals and motif blocks are\nuntouched.\n\"\"\"\nfrom decimal import Decimal\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        s = r[3]\n        if '.' not in s:\n            continue\n        frac = len(s.split('.')[1])\n        r[3] = str(Decimal(s) + Decimal(1).scaleb(-frac))\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "peak_fold_change"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr4,130563716,130564086,5.05052,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "fc-swapped-between-peaks",
+      "rationale": "Cross-peak association error: the fold changes of 300 pairs of adjacent intervals are swapped, so every reported value is a genuine fc of the peak set but attached to the wrong interval; only the per-interval exact comparison can catch the mis-association.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Cross-peak association error: fold changes on the wrong intervals.\n\nSwaps the fc field between 300 pairs of adjacent rows (for instance\nchr19,48309541,48309911 and chr4,130563716,130564086 exchange their values).\nBoth numbers are genuine fc values from the same peak set, so the file stays\nplausible, but each interval now reports another peak's fold change. Only the\nper-interval exact comparison of peak_fold_change can detect the\nmis-association; intervals and motif blocks are untouched.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    i = 0\n    while i + 1 < len(data) and changed < 300:\n        a, b = data[i], data[i + 1]\n        if a[3] != b[3]:\n            a[3], b[3] = b[3], a[3]\n            changed += 2\n        i += 2\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,51313533,51313903,22.60364,chr1,51313578,51313597,384.0,-"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,182143214,182143478,237.26592,chr1,182143341,182143360,1032.0,+"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-weaker-overlap",
+      "rationale": "Strongest-motif rule: 300 assigned rows receive a strictly weaker (lower pval) motif record of the same chromosome. The replacement block is structurally valid, and observed assignments in the table run from 384.0 up to 1032.0, so only the reference comparison can reject the second-best (or lower-pval) overlapping motif.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Assign a weaker overlapping CTCF motif instead of the strongest.\n\nFor a deterministic subset of rows carrying an assignment, the motif block is\nreplaced by a strictly weaker motif record of the same chromosome (chr1\nassignments observed in this table run from 384.0 up to 1032.0). This\nreproduces reporting the second-strongest, or any lower-pval, overlapping\nmotif. The replacement block is structurally valid (motif_chrom == chrom,\nmotif_start < motif_end, +/- strand, finite pval), so only the motif\nassignment comparison can see the difference; intervals and fc are untouched.\n\"\"\"\n\ndef main():\n    path, data = load()\n    typed = [{'i': i, 'chrom': r[0], 'start': int(r[1]), 'motif': tuple(r[4:9])}\n             for i, r in enumerate(data)]\n    typed.sort(key=lambda t: (t['chrom'], t['start']))\n    changed = 0\n    for rec in typed:\n        if changed >= 300:\n            break\n        bg = rec['motif']\n        if bg[0] == '' or bg[3] == '':\n            continue\n        donor = None\n        for other in typed:\n            if other is rec or other['chrom'] != rec['chrom']:\n                continue\n            om = other['motif']\n            if om[0] == '' or om[3] == '':\n                continue\n            if float(om[3]) < float(bg[3]):\n                if donor is None or float(om[3]) < float(donor['motif'][3]):\n                    donor = other\n        if donor is None:\n            continue\n        data[rec['i']][4:9] = ['%s' % x for x in donor['motif']]\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr7,149838996,149839366,5.29231,chr7,149838984,149839003,408.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr7,151350486,151350856,5.29647,,,,,"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "motif-other-record-tie",
+      "rationale": "Tie-breaking and ordering: 300 assigned rows receive a different valid motif record of the same chromosome (differing in coordinates, strand or pval), emulating a solution that breaks pval ties with the wrong rule, or never selects by pval at all, while still emitting a plausible block.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Ties and track order: a different motif record for the same peak.\n\nReplaces the motif block of 300 assigned rows with the block of another row on\nthe same chromosome, still a valid JASPAR MA0139.1 record with motif_chrom ==\nchrom. This emulates a solution that breaks pval ties by the wrong rule (or\nnever sorts by pval at all), so the reported motif differs in coordinates,\nstrand or pval while remaining plausible. Intervals and fc are untouched, so\nonly the motif-assignment comparison can fail.\n\"\"\"\n\ndef main():\n    path, data = load()\n    typed = [{'i': i, 'chrom': r[0], 'start': int(r[1]), 'motif': tuple(r[4:9])}\n             for i, r in enumerate(data)]\n    typed.sort(key=lambda t: (t['chrom'], t['start']))\n    changed = 0\n    for rec in typed:\n        if changed >= 300:\n            break\n        bg = rec['motif']\n        if bg[0] == '' or bg[3] == '':\n            continue\n        donor = None\n        for other in typed:\n            if other is rec or other['chrom'] != rec['chrom']:\n                continue\n            om = other['motif']\n            if om[0] == '' or om[3] == '':\n                continue\n            if om != bg:\n                if donor is None or abs(other['start'] - rec['start']) < \\\n                        abs(donor['start'] - rec['start']):\n                    donor = other\n        if donor is None:\n            continue\n        data[rec['i']][4:9] = ['%s' % x for x in donor['motif']]\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,200622507,200622877,5.05489,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,145960616,145960986,5.05955,,,,,"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "motif-dropped-assignment",
+      "rationale": "Dropped assignments: 300 rows that the reference annotates have all five motif fields blanked. The blank block is a consistent, contract-valid answer shape, so no structural rule can reject it; only the comparison against the reference assignment can detect \"no motif found\".",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Lose the assignment of peaks that do have a strongest overlapping motif.\n\nBlanks all five motif fields of 300 rows the reference annotates (for instance\nline 9, chr9,124777413,124777783 with motif chr9,124777400,124777419,450.0,+\nbecomes blank). The blank block is a consistent, contract-valid *answer*, so\nno structural rule can reject it: the \"no motif found\" failure can only be\ncaught by comparing against the reference assignment. Intervals and fc are\nuntouched.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        if r[4] != '':\n            r[4:9] = ['', '', '', '', '']\n            changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,200622507,200622877,5.05489,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,67701045,67701415,5.06708,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr7,151350486,151350856,5.29647,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-fabricated-on-blank",
+      "rationale": "Fabricated assignments: 300 rows whose reference motif block is blank receive a complete, valid motif block taken from another row of the same chromosome. The row is well formed in every field, so only the reference comparison can reject annotating a peak that has no overlapping motif (or only undefined-pval motifs).",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Annotate peaks whose correct motif block is blank.\n\nThe mirror image of the dropped assignment: 300 rows whose reference motif\nblock is blank (for instance line 4, chr1,200622507,200622877,5.05489) receive\na full, structurally valid motif block taken from another row on the same\nchromosome. motif_chrom equals chrom, coordinates satisfy\nmotif_start < motif_end, the strand is +/- and the pval is a finite decimal,\nso the row is well formed and only the comparison against the reference\nassignment can reject it. Intervals and fc are untouched.\n\"\"\"\n\ndef main():\n    path, data = load()\n    typed = [{'i': i, 'chrom': r[0], 'start': int(r[1]), 'motif': tuple(r[4:9])}\n             for i, r in enumerate(data)]\n    typed.sort(key=lambda t: (t['chrom'], t['start']))\n    changed = 0\n    for rec in typed:\n        if changed >= 300:\n            break\n        if rec['motif'][0] != '':\n            continue\n        donor = None\n        for other in typed:\n            if other is rec or other['chrom'] != rec['chrom']:\n                continue\n            om = other['motif']\n            if om[0] == '' or om[3] == '':\n                continue\n            if donor is None or abs(other['start'] - rec['start']) < \\\n                    abs(donor['start'] - rec['start']):\n                donor = other\n        if donor is None:\n            continue\n        data[rec['i']][4:9] = ['%s' % x for x in donor['motif']]\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,51313533,51313903,22.60364,chr1,51313578,51313597,384.0,-"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-strand-flipped",
+      "rationale": "Strand identity: motif_strand is flipped (+ to -, - to +) on 300 assigned rows while the other eight fields stay byte-identical. The flipped value is still a legal \"+\"/\"-\" so the file is structurally clean; the assignment comparison must require strand identity because the JASPAR track holds motifs on both strands.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Report the complement strand of the assigned motif.\n\nFlips motif_strand (+ <-> -) on 300 rows carrying an assignment. The flipped\nfield is still exactly '+' or '-', so the file is structurally clean and all\nother eight fields are byte-identical to the reference. Only the\nmotif-assignment comparison \u2014 which requires strand identity, as it must since\nthe JASPAR track contains motifs on both strands \u2014 can detect it.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        if r[8] == '+':\n            r[8] = '-'\n            changed += 1\n        elif r[8] == '-':\n            r[8] = '+'\n            changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr10,119859586,119859956,5.08015,chr10,119859591,119859610,611.0,-"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "motif-pval-lastdigit",
+      "rationale": "Motif score tolerance boundary: one unit in the last decimal place is added to the motif_pval of 300 assigned rows (450.0 -> 450.1, 611.0 -> 611.1), the smallest perturbation of the score. The contract compares the exact parsed decimal number, so a last-digit change must fail; checking only coordinates and strand would let it through.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"One unit in the last place on the assigned motif's pval.\n\nAdds one unit in the last decimal place to the motif_pval of 300 assigned rows,\nkeeping the plain-decimal style (450.0 -> 450.1, 611.0 -> 611.1). The contract\ncompares motif_pval as the exact parsed decimal number with no tolerance, so a\nlast-digit change must fail; a grader that checks only coordinates and strand,\nor that rounds, would let it through. All other fields are untouched.\n\"\"\"\nfrom decimal import Decimal\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        if r[7] == '':\n            continue\n        frac = len(r[7].split('.')[1]) if '.' in r[7] else 0\n        r[7] = str(Decimal(r[7]) + Decimal(1).scaleb(-frac))\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "field_value_validity",
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr10,119859586,119859956,5.08015,chr10,119859591,119859610,611.0,-"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-wrong-chromosome",
+      "rationale": "Cross-file association error: 300 assigned rows receive a well-formed motif block recorded on a different chromosome, so motif_chrom no longer equals the peak chrom. The field rules require motif_chrom to be the peak's own chromosome (motifs are matched by exact chromosome name), and no correct assignment can produce this.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Motif drawn from another chromosome: a cross-file association error.\n\nFor 300 assigned rows the whole motif block is replaced by the block of a row\non a different chromosome (for instance the chr9 row at 124777413 receives a\nmotif recorded on chr10). The block is well formed except that motif_chrom no\nlonger equals the peak's own chrom, which the field rules forbid and which no\ncorrect assignment can produce, since motifs are matched to peaks on the same\nchromosome by exact name string. Intervals and fc are untouched; this is a\nwrong association rather than a container defect, so it must fail the field\nrules and the motifs comparison simultaneously.\n\"\"\"\n\ndef main():\n    path, data = load()\n    donors = [r for r in data if r[4] != '']\n    if not donors:\n        sys.exit('no rows modified')\n    changed = 0\n    for r in data:\n        if changed >= 300:\n            break\n        if r[4] == '':\n            continue\n        src = None\n        for d in donors:\n            if d[0] != r[0]:\n                src = d\n                break\n        if src is None:\n            continue\n        r[4:9] = list(src[4:9])\n        changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "field_value_validity",
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,108877017,108877387,5.12519,chr1,108877020,108877039,500.0,+"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "struct-partial-motif-block",
+      "rationale": "Partially blank motif block: 200 assigned rows keep motif_chrom, motif_start, motif_end and motif_strand but have motif_pval emptied. The contract states that such a row is neither a valid assignment nor a valid no-motif answer, is never treated as missing data, and never compares equal; it is also exactly the pattern produced by a dropped join key or a NaN round-trip.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Partially blank motif block: neither an assignment nor a no-motif answer.\n\nFor 200 rows carrying an assigned motif, motif_pval is emptied while\nmotif_chrom, motif_start, motif_end and motif_strand stay (for instance\nchr1,108877017,108877387,5.12519,chr1,108877020,108877039,,+). The contract\nsays such a row is never treated as missing data and never compared equal:\nit must fail. This also checks that field_value_validity is not the only line\nof defence, since the blank-pval pattern is exactly what pandas-style\nfloat('NaN') round-tripping or a dropped join key produces.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if changed >= 200:\n            break\n        if r[4] != '' and r[7] != '':\n            r[7] = ''\n            changed += 1\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "field_value_validity",
+        "peak_fold_change"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr3,66816327,66816697,5.08233,chr3,66816332,66816351,741.0,-"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,150972098,150972468,5.8881,chr1,150972255,150972274,429.0,-"
+        }
+      ],
+      "focus": "compiled_execution",
+      "kind": "wrong_solution",
+      "name": "struct-nonfinite-fc-and-float-ints",
+      "rationale": "Nonfinite and non-integer numeric renderings: the first 150 rows get fc values NaN/nan/inf/-inf/Inf/1e999 (which must always fail rather than compare equal), and the next 150 get start rendered as a float (48309541.0) and end in scientific notation (4.830991e+07), the exact renderings the field rules reject. A lenient pandas-style parser that never re-validates would hide both.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Nonfinite fc and non-integer coordinate renderings.\n\nTwo structural provocations on explicit rows: the first 150 rows get fc values\nNaN / nan / inf / -inf / Inf / 1e999, which the contract says must always fail\nrather than compare equal; the next 150 rows get start rendered as a float\n(48309541.0) and end as scientific notation (4.830991e+07), the exact\nnon-integer renderings the field rules reject. The header, the row count and\nall other fields are untouched, so any grader that parses leniently with\npandas and never re-validates the renderings would hide these.\n\"\"\"\n\ndef main():\n    path, data = load()\n    bogus = ['NaN', 'nan', 'inf', '-inf', 'Inf', '1e999']\n    n_fc = 0\n    n_int = 0\n    for i, r in enumerate(data):\n        if i < 150:\n            r[3] = bogus[i % len(bogus)]\n            n_fc += 1\n        elif i < 300:\n            r[1] = '%.1f' % float(r[1])\n            r[2] = '%e' % float(r[2])\n            n_int += 1\n        else:\n            break\n    if n_fc == 0 or n_int == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "output_file_schema",
+        "field_value_validity"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "struct-bom-delimiter-blank-lines",
+      "rationale": "Container violations: the header text and every value are correct, but the file carries a UTF-8 byte-order mark, 100 data rows delimited by semicolons instead of commas, a blank line in the middle and a trailing blank line. A grader that parses rows leniently and never validates the container would accept this file.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Container violations: BOM, wrong delimiter, blank lines.\n\nThe header text and every value are correct, but the file is rewritten with a\nUTF-8 byte-order mark in front of the header, 100 data rows delimited by\nsemicolons instead of commas, one empty line in the middle of the data and a\ntrailing blank line after the last row. A grader that parses the scientific\ncontent leniently and never validates the container would accept this file,\nalthough the contract requires no BOM, comma delimiters throughout and no\nblank lines anywhere including the last line.\n\"\"\"\n\ndef main():\n    path, data = load()\n    lines = [','.join(HDR)]\n    for i, r in enumerate(data):\n        if 100 <= i < 200:\n            lines.append('%s;%s;%s;%s;%s;%s;%s;%s;%s' % tuple(r))\n        else:\n            lines.append(','.join(r))\n        if i == 250:\n            lines.append('')\n    text = '\\n'.join(lines) + '\\n\\n'\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', encoding='utf-8-sig', newline='') as fh:\n            fh.write(text)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', encoding='utf-8-sig', newline='') as fh:\n            fh.write(text)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "output_file_schema"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "struct-header-column-order",
+      "rationale": "Header violation: data values are correct but the header reads chrom,start,stop,fc,...,relSummit with a tenth column, violating the exact nine-name header and the nine-field row rule, which no lenient parser should silently repair.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Header violation: renamed column and an extra trailing column.\n\nThe data rows are byte-identical to the reference, but the header line reads\n`chrom,start,stop,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand,relSummit`\n(end renamed to stop, a tenth column appended). The contract requires the\nheader to read exactly the nine agreed names in the agreed order and forbids\nadditional columns, so output_file_schema must fail even though every value in\nthe body is correct. field_value_validity is also implicated, since rows no\nlonger carry exactly nine fields.\n\"\"\"\n\ndef main():\n    path, data = load()\n    out = [r + ['0'] for r in data]\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8') as fh:\n            fh.write('chrom,start,stop,fc,motif_chrom,motif_start,'\n                     'motif_end,motif_pval,motif_strand,relSummit\\n')\n            w = csv.writer(fh, lineterminator='\\n')\n            w.writerows(out)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='', encoding='utf-8') as fh:\n            fh.write('chrom,start,stop,fc,motif_chrom,motif_start,'\n                     'motif_end,motif_pval,motif_strand,relSummit\\n')\n            w = csv.writer(fh, lineterminator='\\n')\n            w.writerows(out)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "output_file_schema",
+        "field_value_validity",
+        "retained_interval_rows",
+        "peak_fold_change",
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr12,53746631,53747014,13.09923,chr12,53746839,53746858,618.0,-"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "valid_alternative",
+      "name": "valid-numeric-rendering",
+      "rationale": "Permitted rendering freedom: every motif_pval is rewritten as an integer literal (450.0 -> 450) and every fc gains one trailing zero (5.04924 -> 5.049240). Both renderings parse to exactly the same numbers and both occur in the reference alternative implementation of this analysis, so all checks must pass while the byte rendering differs.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Control: equal numbers under a permitted alternative rendering.\n\nThe contract states that renderings parsing to the same number are accepted\n(5.208, 5.20800, 5.208e0) and that only the decimal rendering of an equal\nvalue is normalized away. This control rewrites every motif_pval as an integer\nliteral (450.0 -> 450) and appends one trailing zero to every fc\n(5.04924 -> 5.049240); both patterns occur in the reference alternative\nimplementation of this same analysis. Intervals, motif identities and strands\nare byte-identical, so all checks must pass.\n\"\"\"\n\ndef main():\n    path, data = load()\n    changed = 0\n    for r in data:\n        if r[7] != '':\n            v = float(r[7])\n            if v == int(v):\n                r[7] = '%d' % int(v)\n            changed += 1\n        if '.' in r[3]:\n            r[3] = r[3] + '0'\n    if changed == 0:\n        sys.exit('no rows modified')\n    write_csv(path, data)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "output_file_schema",
+        "field_value_validity",
+        "retained_interval_rows",
+        "peak_fold_change",
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr12,53746631,53747014,13.09923,chr12,53746839,53746858,618.0,-"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr1,145891868,145892248,19.17982,chr1,145892125,145892144,455.0,+"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,41431677,41432047,5.1106,chr19,41431802,41431821,477.0,+"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "valid-multirow-repeated-peak",
+      "rationale": "Permitted multiplicity freedom: the contract allows a peak appearing more than once in the peak file to be reported in several rows for the same interval and does not penalize the additional fold changes. This control reproduces exactly the 15 intervals the reference alternative implementation reports twice (e.g. chr12,53746631,53747014 with fc 13.09923 and 460.50830, both carrying motif chr12,53746839,53746858,618,-), preserving every reference interval, reference fc and motif block, with no exact duplicate rows.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Control: one row per repeated peak record for the same interval.\n\nThe contract allows a peak that appears more than once in the peak file to be\nreported in several rows for the same interval, and explicitly does not\npenalize the additional fold changes. This control reproduces exactly the 15\nintervals the reference alternative implementation reports twice \u2014 for example\nchr12,53746631,53747014 is reported with fc 13.09923 and with fc 460.50830,\nboth rows carrying the same motif block chr12,53746839,53746858,618,- \u2014 and\nchanges nothing else. The reference interval set, every reference fc value and\nevery motif block are preserved, and no two rows are exact duplicates, so all\nchecks must pass.\n\"\"\"\n\nMULTI = {\n    ('chr12', '53746631', '53747014'): '460.50830',\n    ('chr1', '145891868', '145892248'): '284.26093',\n    ('chr11', '65888373', '65888759'): '169.56376',\n    ('chr16', '85420694', '85421095'): '348.37597',\n    ('chr13', '52450528', '52450937'): '298.75301',\n    ('chr22', '30255874', '30256373'): '260.73652',\n    ('chr11', '72434092', '72434503'): '389.71789',\n    ('chr20', '32031331', '32031759'): '220.63007',\n    ('chr10', '97407214', '97407720'): '177.01250',\n    ('chr17', '60421291', '60421798'): '255.27557',\n    ('chr17', '50200524', '50201000'): '228.01776',\n    ('chr9', '124852842', '124853375'): '191.02370',\n    ('chr22', '36065916', '36066447'): '357.61748',\n    ('chr5', '139765488', '139766006'): '214.17030',\n    ('chr5', '142713111', '142713708'): '281.26099',\n}\n\ndef main():\n    path, data = load()\n    out = []\n    added = 0\n    for r in data:\n        out.append(list(r))\n        key = (r[0], r[1], r[2])\n        if key in MULTI:\n            nr = list(r)\n            nr[3] = MULTI[key]\n            out.append(nr)\n            added += 1\n    if added == 0:\n        sys.exit('no rows modified')\n    write_csv(path, out)\n\nmain()\n"
+    },
+    {
+      "check_ids": [
+        "output_file_schema",
+        "field_value_validity",
+        "retained_interval_rows",
+        "peak_fold_change",
+        "motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr12,54379625,54380042,627.60723,chr12,54379835,54379854,564.0,-"
+        },
+        {
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,,"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "valid-row-order-and-crlf",
+      "rationale": "Permitted order and line-ending freedom: row order is explicitly not evaluated and CRLF is read as a newline, so this control reverses the data row order and writes CRLF line endings. Every interval, fc, motif block and strand is byte-identical to the reference, so all checks must pass.",
+      "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Control: row order is free, and CRLF is read as a newline.\n\nThe contract states that row order is not evaluated and that CRLF line endings\nare read as newlines. This control reverses the order of all data rows\n(chromosome-grouped descending rather than the reference's fc-ascending order)\nand writes the file with CRLF line endings. Every interval, fc value, motif\nblock and strand is byte-identical to the reference, so all checks must pass.\n\"\"\"\n\ndef main():\n    path, data = load()\n    write_csv(path, list(reversed([list(r) for r in data])),\n              lineterminator='\\r\\n')\n\nmain()\n"
+    }
+  ]
+}

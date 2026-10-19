@@ -1,0 +1,52 @@
+{
+  "candidate_sha256": "133d490ebd6b32cd2b88c892eb89dde7964b372a8c36932d6bb03e30ebafd400",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40557 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40557 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "peak_interval_rows",
+          "message": "the multiset of retained (chrom, start, end) intervals matches the reference exactly: 40557 rows, 40557 distinct intervals, 0 interval(s) reported in more than one row (row order is not evaluated)",
+          "passed": true
+        },
+        {
+          "id": "fold_change_values",
+          "message": "every one of the 40557 rows carries the reference fold-change value for its retained interval, compared as the exact parsed number (decimal rendering alone is not evaluated)",
+          "passed": true
+        },
+        {
+          "id": "motif_assignment",
+          "message": "every one of the 40557 rows carries the reference motif assignment (motif_chrom, motif_start, motif_end, exact parsed motif_pval, motif_strand) for its retained interval; 5765 row(s) report blank motif fields (peak sub-intervals with no assigned motif)",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    }
+  },
+  "kind": "recomputed",
+  "omitted": null,
+  "passed_control": true,
+  "probe": null
+}

@@ -1,0 +1,82 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "the output file starts with a UTF-8 byte-order mark",
+          "passed": false
+        },
+        {
+          "id": "field_value_validity",
+          "message": "not evaluated: the output file starts with a UTF-8 byte-order mark",
+          "passed": false
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "not evaluated: the output file starts with a UTF-8 byte-order mark",
+          "passed": false
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "not evaluated: the output file starts with a UTF-8 byte-order mark",
+          "passed": false
+        },
+        {
+          "id": "motif_assignment",
+          "message": "not evaluated: the output file starts with a UTF-8 byte-order mark",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "286943d13ab05ceb63d20bbaec47e49827d2e06335b8167c3ae9c587e705d581"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "286943d13ab05ceb63d20bbaec47e49827d2e06335b8167c3ae9c587e705d581"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "output_file_schema",
+      "field_value_validity"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924,,,,,"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "struct-bom-delimiter-blank-lines",
+    "rationale": "Container violations: the header text and every value are correct, but the file carries a UTF-8 byte-order mark, 100 data rows delimited by semicolons instead of commas, a blank line in the middle and a trailing blank line. A grader that parses rows leniently and never validates the container would accept this file.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Container violations: BOM, wrong delimiter, blank lines.\n\nThe header text and every value are correct, but the file is rewritten with a\nUTF-8 byte-order mark in front of the header, 100 data rows delimited by\nsemicolons instead of commas, one empty line in the middle of the data and a\ntrailing blank line after the last row. A grader that parses the scientific\ncontent leniently and never validates the container would accept this file,\nalthough the contract requires no BOM, comma delimiters throughout and no\nblank lines anywhere including the last line.\n\"\"\"\n\ndef main():\n    path, data = load()\n    lines = [','.join(HDR)]\n    for i, r in enumerate(data):\n        if 100 <= i < 200:\n            lines.append('%s;%s;%s;%s;%s;%s;%s;%s;%s' % tuple(r))\n        else:\n            lines.append(','.join(r))\n        if i == 250:\n            lines.append('')\n    text = '\\n'.join(lines) + '\\n\\n'\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', encoding='utf-8-sig', newline='') as fh:\n            fh.write(text)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', encoding='utf-8-sig', newline='') as fh:\n            fh.write(text)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\nmain()\n"
+  }
+}

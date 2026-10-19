@@ -1,0 +1,81 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40657 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40657 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "the retained peak sub-intervals do not match the reference: 100 row(s) repeat an earlier row identically in all nine fields; each distinct row must be reported once",
+          "passed": false
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "each of the 40557 reference fold-change value(s) is reported for its retained interval, compared as the exact parsed number (decimal rendering alone is not evaluated); 0 interval(s) additionally report further fold-change values",
+          "passed": true
+        },
+        {
+          "id": "motif_assignment",
+          "message": "every reported interval carries the reference motif assignment (blank block, or motif_chrom, motif_start, motif_end, exact parsed motif_pval and motif_strand); 5822 row(s) report blank motif fields (peak sub-intervals with no assigned motif)",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "d52b1e3e9adcb7f770211d50f9814455083c2a066f9d7ad4f6c770378ec5213b"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "d52b1e3e9adcb7f770211d50f9814455083c2a066f9d7ad4f6c770378ec5213b"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "retained_interval_rows"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924,,,,,"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr4,130563716,130564086,5.05052,,,,,"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "retain-duplicate-rows",
+    "rationale": "Exact duplicate rows: 100 rows are repeated identically in all nine fields, so the reference interval set is fully present and every value well formed, but the rule that no row may duplicate another is violated.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Exact duplicate rows: every distinct row must appear exactly once.\n\nAppends 100 byte-identical copies of existing rows (for instance the first row,\nchr19,48309541,48309911,5.04924 with its blank motif block, appears twice).\nThe reference interval set is still fully present and every value is well\nformed, but the contract forbids a row that duplicates another in all nine\nfields, so the retained-set check must fail on multiplicity without dropping\ndata.\n\"\"\"\n\ndef main():\n    path, data = load()\n    out = [list(r) for r in data]\n    for r in data[:100]:\n        out.append(list(r))\n    write_csv(path, out)\n\nmain()\n"
+  }
+}

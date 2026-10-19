@@ -1,0 +1,89 @@
+{
+  "candidate_sha256": "213732dd3a8839b19bbc4616ba7fd09969ae53bc43e8ee1e57ce9b2031f92847",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "output_file_schema",
+          "message": "a single output file 'ctcf_peaks_maxmotif_clean.csv' with the required header 'chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand' and 40557 comma-separated data rows",
+          "passed": true
+        },
+        {
+          "id": "field_value_validity",
+          "message": "all 40557 data rows carry a non-empty chrom, a non-negative integer interval with start < end, a finite decimal fc, and a motif block that is blank in all five fields or complete with a finite decimal motif_pval and strand '+' or '-' on the peak's own chromosome",
+          "passed": true
+        },
+        {
+          "id": "retained_interval_rows",
+          "message": "the set of retained (chrom, start, end) peak sub-intervals matches the reference exactly: 40557 row(s) over 40557 interval(s), 0 interval(s) reported in more than one row, no repeated identical rows, row order not evaluated",
+          "passed": true
+        },
+        {
+          "id": "peak_fold_change",
+          "message": "each of the 40557 reference fold-change value(s) is reported for its retained interval, compared as the exact parsed number (decimal rendering alone is not evaluated); 0 interval(s) additionally report further fold-change values",
+          "passed": true
+        },
+        {
+          "id": "motif_assignment",
+          "message": "every reported interval carries the reference motif assignment (blank block, or motif_chrom, motif_start, motif_end, exact parsed motif_pval and motif_strand); 5765 row(s) report blank motif fields (peak sub-intervals with no assigned motif)",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "f8ad5763ad5ae88aac39e312c304ce39a5d41449e6b640bc3ea19d5cdb74a9d5"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "f8ad5763ad5ae88aac39e312c304ce39a5d41449e6b640bc3ea19d5cdb74a9d5"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "output_file_schema",
+      "field_value_validity",
+      "retained_interval_rows",
+      "peak_fold_change",
+      "motif_assignment"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr12,54379625,54380042,627.60723,chr12,54379835,54379854,564.0,-"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924,,,,,"
+      }
+    ],
+    "focus": "general",
+    "kind": "valid_alternative",
+    "name": "valid-row-order-and-crlf",
+    "rationale": "Permitted order and line-ending freedom: row order is explicitly not evaluated and CRLF is read as a newline, so this control reverses the data row order and writes CRLF line endings. Every interval, fc, motif block and strand is byte-identical to the reference, so all checks must pass.",
+    "script": "import csv, os, sys, tempfile\n\nFN = 'ctcf_peaks_maxmotif_clean.csv'\nHDR = ['chrom', 'start', 'end', 'fc',\n       'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']\n\ndef find_file():\n    for p in (FN, os.path.join('outputs', FN), os.path.join('output', FN)):\n        if os.path.isfile(p):\n            return p\n    sys.exit('reference output not found: ' + FN)\n\ndef load():\n    path = find_file()\n    with open(path, newline='', encoding='utf-8') as fh:\n        rows = [r for r in csv.reader(fh) if r]\n    if len(rows) < 2 or rows[0] != HDR:\n        sys.exit('unexpected reference layout')\n    return path, rows[1:]\n\ndef write_csv(path, data, lineterminator='\\n', bom=False):\n    def emit(fh):\n        w = csv.writer(fh, lineterminator=lineterminator)\n        w.writerow(HDR)\n        w.writerows(data)\n    try:\n        os.chmod(path, 0o644)\n        with open(path, 'w', newline='', encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        return\n    except OSError:\n        pass\n    d = os.path.dirname(os.path.abspath(path)) or '.'\n    fd, tmp = tempfile.mkstemp(dir=d, prefix='.probe_', suffix='.csv')\n    try:\n        with os.fdopen(fd, 'w', newline='',\n                      encoding='utf-8-sig' if bom else 'utf-8') as fh:\n            emit(fh)\n        os.chmod(tmp, 0o644)\n        os.replace(tmp, path)\n    finally:\n        try:\n            os.unlink(tmp)\n        except OSError:\n            pass\n\n\"\"\"Control: row order is free, and CRLF is read as a newline.\n\nThe contract states that row order is not evaluated and that CRLF line endings\nare read as newlines. This control reverses the order of all data rows\n(chromosome-grouped descending rather than the reference's fc-ascending order)\nand writes the file with CRLF line endings. Every interval, fc value, motif\nblock and strand is byte-identical to the reference, so all checks must pass.\n\"\"\"\n\ndef main():\n    path, data = load()\n    write_csv(path, list(reversed([list(r) for r in data])),\n              lineterminator='\\r\\n')\n\nmain()\n"
+  }
+}
