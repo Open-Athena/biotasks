@@ -1,0 +1,370 @@
+{
+  "stage": "post_run_read_only_original_export_provenance_assessment",
+  "task_count": 12,
+  "original_asset_count": 108,
+  "automatic_content_unchanged_tasks": 12,
+  "task_specific_content_fixes_found": 0,
+  "shared_runtime_suffix_adaptations_per_task": 2,
+  "primary_interpretation": "Automatic PR-diff content is proven unchanged for all 12 selected legacy tasks. Their recorded runtime results use a separately declared shared tmux/offline profile, not the original unadapted export runtime. No new task admission or solver result is created.",
+  "original_asset_manifest": "evidence/pr-diff-01/bundle-files-sha256.json",
+  "original_asset_manifest_sha256": "2650244c658d069a3025916ae86e0fb7b384ed8dd9888afbbf81c21b3eff84da",
+  "source_inputs": [
+    {
+      "manifest": "hf-prdiff-biopython-provider-01-snapshot-manifest.json",
+      "manifest_sha256": "66eb7038e01d9f9b54cac753fc9234b52961dcffa0362e195cca555f4a30e8c1",
+      "verified_input_sha256": {
+        "cohort-tasks.tar.gz": "f4bc3dc30ef8d1430fae2c0d78089ac393468444710038458c2f6d1125795325",
+        "cohort.json": "88331e1ab2aaa09a08edfe97f772059662d32533a363c9a24572327f4baa9c33"
+      }
+    },
+    {
+      "manifest": "hf-prdiff-skbio-provider-01-snapshot-manifest.json",
+      "manifest_sha256": "54472e5b1e064425a25915589713f769ab23e9104c57c2c5d772ae734719299a",
+      "verified_input_sha256": {
+        "cohort-tasks.tar.gz": "24ebf6359dbc6e544d60e9cfe016c4e7ad80dc8f66dcaa5a4ebfc79e89cca3ab",
+        "cohort.json": "60c4e6d55d17af3abadaa769b23677c505cd6bc3095731a256d1646a9132b62a"
+      }
+    },
+    {
+      "manifest": "hf-prdiff-bedtools-provider-01-snapshot-manifest.json",
+      "manifest_sha256": "0572407a98fbfaa32ca28d6cdb5328ad37874fd341c258289cbc03b26a339c0e",
+      "verified_input_sha256": {
+        "cohort-tasks.tar.gz": "30b4ceba4dff65700a56c845a8761a331dfcf750ad7f3cb94314388e5e53f8c5",
+        "cohort.json": "200915c8049c88d59a325f0bcae3ae35eadde60d6db20230b514120a2d0aa6ca"
+      }
+    },
+    {
+      "manifest": "hf-prdiff-deseq-provider-01-snapshot-manifest.json",
+      "manifest_sha256": "2f84ba34c490e5a56616c1e8153ff450e998032e6e0e8814e3c2f3c4c2a220ad",
+      "verified_input_sha256": {
+        "cohort-tasks.tar.gz": "9effa498f235d8fb99dcebc2febc8482c1e99dc741758f2045efe071770229ba",
+        "cohort.json": "383d10055ee13f471a7aabd8edbad255d6a1a2a7370a7b72dcdb00afb28a364a"
+      }
+    }
+  ],
+  "rows": [
+    {
+      "task": "biopython__biopython-5338",
+      "repository": "biopython/biopython",
+      "base": "8d1dbe2ab594ee6ce358608933131418083869f6",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "2ebdede4e33b9d8d274546eb7896cb82028bd6332bccb51d6e1e738d9febc807",
+        "instruction.md": "ee405ba48e95fb28830dbcadb238ae2dc1ef22eaf1c943759ad82a80e73acebe",
+        "solution/patch.diff": "77656802fb82844cf30e845d77fa619d1b2a124d6170bab76484bafc2527e832",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "f3b1995c643db4ba7bb876ba6bc01cb70f27f150c570af2caf75fc11d29678d5",
+        "tests/instruction.md": "ee405ba48e95fb28830dbcadb238ae2dc1ef22eaf1c943759ad82a80e73acebe",
+        "tests/oracle.patch": "77656802fb82844cf30e845d77fa619d1b2a124d6170bab76484bafc2527e832",
+        "tests/test.sh": "b89911bdbf830f302bde9411dd23409481346a11b9518386da1ec0dd53f9d605",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "biopython__biopython-5369",
+      "repository": "biopython/biopython",
+      "base": "fa5f1daee5ead8f44a5560f958c1aea63fc34353",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "418a152760780e5b53a6868bec4b5881400d88418774f51ce6fea5ae916bf06f",
+        "instruction.md": "a27f2e12b2311926798e5e87fbb6cf6040a0ce60f0328e4c2969583f8dcfbfd7",
+        "solution/patch.diff": "85a5f1218666b9b2f4f0a19cb4c7cdc5816fce2940b3d42b7480a73d8f4816ac",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "41676071e22c3397c28648e9b33fa2148b2aee24745f2078e022699ebb774893",
+        "tests/instruction.md": "a27f2e12b2311926798e5e87fbb6cf6040a0ce60f0328e4c2969583f8dcfbfd7",
+        "tests/oracle.patch": "85a5f1218666b9b2f4f0a19cb4c7cdc5816fce2940b3d42b7480a73d8f4816ac",
+        "tests/test.sh": "bdd1caff7053c866195d8f21477e266563a95ad7ff7c215ac23e3eb4586545f1",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "biopython__biopython-5376",
+      "repository": "biopython/biopython",
+      "base": "fc0c156786e86862112a05a720b6f4f47023f36a",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "ef77d1c779ccced71ff58bec050d92b2326904b261b52e0fd5d69e4157485ae7",
+        "instruction.md": "43700e5ee340758e61a181f67dcef9071aa04aa68af914df25f2c28df05e632c",
+        "solution/patch.diff": "fab5c997e8ea39ebc1ffbdc6e9a0e9e30e1f7a4653f92ba50fe917d56ceed956",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "1fdf04c7866229577a7af52de72e6377699fc9699797f9e7725c78e2a1875c54",
+        "tests/instruction.md": "43700e5ee340758e61a181f67dcef9071aa04aa68af914df25f2c28df05e632c",
+        "tests/oracle.patch": "fab5c997e8ea39ebc1ffbdc6e9a0e9e30e1f7a4653f92ba50fe917d56ceed956",
+        "tests/test.sh": "050bac6c7647a6b66f27304d158c77597abfd21e3a768df83ccf7f80e9a998ce",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2630",
+      "repository": "scikit-bio/scikit-bio",
+      "base": "566dbe73c62a13f790713245c24f883d7eb92983",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "cbce40e60a48ace5665af5ecae64b743504356293fdd23e2b7817eeda37fe77f",
+        "instruction.md": "37d250563757fdbfbdb665d279538dd79061d5617b893e53299b1c43785735d1",
+        "solution/patch.diff": "7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "8dab648ed7abaabcac5a40e93237efe1b4dde1adb464854c03dd69a2880fcde6",
+        "tests/instruction.md": "37d250563757fdbfbdb665d279538dd79061d5617b893e53299b1c43785735d1",
+        "tests/oracle.patch": "7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628",
+        "tests/test.sh": "a109e23c2c009a701ccf01bbff238d84c713c223b31891dda44e613e02122242",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2633",
+      "repository": "scikit-bio/scikit-bio",
+      "base": "71286a24bddff66c82cb25a7ca13441aa13c2f2c",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "f5d4231899bdbe3c5c038dc7680260bf087b0f5d9ad901ccb49855f9beb430e7",
+        "instruction.md": "d9965b31493c8aa02defd90a482a5c7c90e8520a67c87568df1abf23353d32b4",
+        "solution/patch.diff": "826e9fc82ee48e9f740aaa6152dd5c126a6ddbac40bce824d369893d90ce5caf",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "3c649d7d890a5dca543ce5093bac2d9b1baa1c72650aff519178f9b1e280f789",
+        "tests/instruction.md": "d9965b31493c8aa02defd90a482a5c7c90e8520a67c87568df1abf23353d32b4",
+        "tests/oracle.patch": "826e9fc82ee48e9f740aaa6152dd5c126a6ddbac40bce824d369893d90ce5caf",
+        "tests/test.sh": "843d56d23171e86cffc5a24ad032b3a122127c9a0c94bea40a15030ae4b77a33",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "scikit-bio__scikit-bio-2636",
+      "repository": "scikit-bio/scikit-bio",
+      "base": "e6f51b1ef6de5fba07cb184fa5152ee8920abd87",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "2f88610bce1e84e86a6d827de4513a72274adcd016aa05038aee6399ff7278ad",
+        "instruction.md": "bfc98cdbb089695ae8e66cfc7c4cf5ae56cd858e601a8b919d37dca0d279be50",
+        "solution/patch.diff": "e7bce0de6b4a6f778cb445d3dfe7efbfae488c9d8c36ad2b081acbe012893673",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "07963e35d9a62147e9a44a25b9aeef216fabf105e7616d399978a98be2877cde",
+        "tests/instruction.md": "bfc98cdbb089695ae8e66cfc7c4cf5ae56cd858e601a8b919d37dca0d279be50",
+        "tests/oracle.patch": "e7bce0de6b4a6f778cb445d3dfe7efbfae488c9d8c36ad2b081acbe012893673",
+        "tests/test.sh": "54f34964a6f07d5ce8afefc9da5e1d8ef766da24511cd84318a904d2396c6dce",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "arq5x__bedtools2-1030",
+      "repository": "arq5x/bedtools2",
+      "base": "a6fc2ea158fbea3b9a332b0148bf3e6b1a90bc59",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "a73cce94bc061bff059a346caec1f05cfade7d515af5ea45451dc5dad0726d88",
+        "instruction.md": "53e29a6008379697a35dd278962198db450c5987f64ed5dff9fac72b9e595ffc",
+        "solution/patch.diff": "2beb1b873db759deabcfb9dd72405193a78ec52e83895d2370373c6ca60a1911",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "16d911f08a66505dbb7fb9ba665adc077a5c4cf403691bc0028e47d9534d0152",
+        "tests/instruction.md": "53e29a6008379697a35dd278962198db450c5987f64ed5dff9fac72b9e595ffc",
+        "tests/oracle.patch": "2beb1b873db759deabcfb9dd72405193a78ec52e83895d2370373c6ca60a1911",
+        "tests/test.sh": "6b096b03b10b6045458f2b7f11f8c699bcccbfa19b51c36bb3bb9347fea48aee",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "arq5x__bedtools2-1043",
+      "repository": "arq5x/bedtools2",
+      "base": "b891a0b6b2c62b673e23cf77ee40881b7da5221c",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "ceb6ffcb161f375aaa6c5edaf12158334445293a97aa54b4a3cee503371031e1",
+        "instruction.md": "30ffa6670990b30615ff8203d1cc876563550700ba0b3f9c84cd51469979727c",
+        "solution/patch.diff": "bba467d939da139ed1f8d1845c1a4cf663af707da867b32183e702c6745566fb",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "bdd15fd0ec7f5dcd3f8a1ba7bace099c8fe0a999c01b0bea9e971134cf53f7cd",
+        "tests/instruction.md": "30ffa6670990b30615ff8203d1cc876563550700ba0b3f9c84cd51469979727c",
+        "tests/oracle.patch": "bba467d939da139ed1f8d1845c1a4cf663af707da867b32183e702c6745566fb",
+        "tests/test.sh": "7ecc7a19a4e4224e5cd98054915a3eada935a4ea7119af43ef0a4651f2dd59d2",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "arq5x__bedtools2-999",
+      "repository": "arq5x/bedtools2",
+      "base": "8c0d2cc3921ea15796205e80387983677cc6827f",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "f72aebade83c5c23ce2d3d3928c9eb44ecf9fa141f607c2341184426da0f8d44",
+        "instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+        "solution/patch.diff": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "e753d18d198ccff35fcf5ad718c67b241c787484162caad5e8a6b43a09b35ac9",
+        "tests/instruction.md": "d5982a6dde28f3b96f409c92e82c3200c9d92d5ceff0a473cd193850d5ff392b",
+        "tests/oracle.patch": "a2c98446b5d049f3f3e81e8882541b9949a2d51d2227b1294909e6113cc7d4f0",
+        "tests/test.sh": "82e4bb818a776146da2d6d5d8da15c90ba2017f4561b0c0a5539f971521ba532",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "thelovelab__DESeq2-118",
+      "repository": "thelovelab/DESeq2",
+      "base": "6fdaf4bb71de424e6e87e99b8db9ef258ded9306",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "f62332fff393d0de25d29d9755868c5b315283767250be7c38a788a79c0d75ab",
+        "instruction.md": "782f591ed675c33330ed824a2ca9aef91d16d609bbd512d41e14c85a8e3e1b48",
+        "solution/patch.diff": "f935a37e4aaa4e18fce003eece55a386d8ee942abba9029ddc331008f896cdfe",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "58b8f075581fb7e74981648deb7b4f33a39652f63943c28179cfbc3c5e2bb2b9",
+        "tests/instruction.md": "782f591ed675c33330ed824a2ca9aef91d16d609bbd512d41e14c85a8e3e1b48",
+        "tests/oracle.patch": "f935a37e4aaa4e18fce003eece55a386d8ee942abba9029ddc331008f896cdfe",
+        "tests/test.sh": "93fdad8d472d42dba03b4b6b1385270d2fe0885bc00699698cc5421551f61322",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "thelovelab__DESeq2-59",
+      "repository": "thelovelab/DESeq2",
+      "base": "b34a0f6e2e437eb8f91136729d639b659c68ee72",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "ee6bf538d1b4e0b4e3dba31369b36a28132971168a4d985c468df09a0933a039",
+        "instruction.md": "ea1ef84c1d9b3fd9dee05dc970aa546c4bf77fd15838ede7e238ef1f11ba91e6",
+        "solution/patch.diff": "d35355dfdddcb01865039a3a4d4e4c188b7fc40d46c2f30ccfdaf1fbf6792cdf",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "f48cb9cd3efb8245f1510181b505f28c154edfd24d2d2437960d6e4e2d52a5d9",
+        "tests/instruction.md": "ea1ef84c1d9b3fd9dee05dc970aa546c4bf77fd15838ede7e238ef1f11ba91e6",
+        "tests/oracle.patch": "d35355dfdddcb01865039a3a4d4e4c188b7fc40d46c2f30ccfdaf1fbf6792cdf",
+        "tests/test.sh": "92eb8fee1c48f735e422d34534c096ad06612100b371b8b36ce08f18cfb7f670",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    },
+    {
+      "task": "thelovelab__DESeq2-64",
+      "repository": "thelovelab/DESeq2",
+      "base": "fce01352c7595b469b8949e8479426c3be534cb5",
+      "original_export_assets_verified": 9,
+      "original_instruction_reference_and_grader_unchanged": true,
+      "runtime_changed_assets": [
+        "environment/Dockerfile",
+        "task.toml"
+      ],
+      "runtime_changes": "Only identical fixed tmux-install and no-network suffixes; no other asset changes.",
+      "original_asset_sha256": {
+        "environment/Dockerfile": "575e5a99941a4e5e5c155ab002fa2e643f7528fa00086d0e57c5e996dc2ef26d",
+        "instruction.md": "b16437b737536c0af73cb3a7475803a940f35f7b77d0f5945a2e6ea051d047e6",
+        "solution/patch.diff": "5345e3f6d27c20efd640a3298bcd6f601c42612100917b17e156fcd0585ba3e5",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "task.toml": "fd3a189a9d7a0ac3dcedc71c00d14d45f8889e889716a95561d500dc7b145fcc",
+        "tests/instruction.md": "b16437b737536c0af73cb3a7475803a940f35f7b77d0f5945a2e6ea051d047e6",
+        "tests/oracle.patch": "5345e3f6d27c20efd640a3298bcd6f601c42612100917b17e156fcd0585ba3e5",
+        "tests/test.sh": "8ab2ad297014a076f0b026eb25c1d5529d482c19f044fc0ed0995f1e7bbbac25",
+        "tests/verifier.py": "fda53009fdc83b13a6ce5f19bb624f088d31005b530976f9f67f5c534aed4706"
+      },
+      "stock_runtime_success_established_by_this_audit": false,
+      "audit_executes_task_code": false
+    }
+  ],
+  "historical_metadata_caveats": [
+    {
+      "manifest": "hf-prdiff-biopython-provider-01-snapshot-manifest.json",
+      "declared_cohort": "bedtools",
+      "actual_inputs": "biopython"
+    },
+    {
+      "manifest": "hf-prdiff-skbio-provider-01-snapshot-manifest.json",
+      "declared_cohort": "bedtools",
+      "actual_inputs": "skbio"
+    },
+    {
+      "manifest": "hf-prdiff-deseq-provider-01-snapshot-manifest.json",
+      "declared_cohort": "bedtools",
+      "actual_inputs": "deseq"
+    }
+  ],
+  "limits": [
+    "Byte provenance is not a functional-correctness proof.",
+    "This audit does not establish unattended input selection or original stock-runtime success.",
+    "Historical cohort-label metadata errors remain preserved; inputs are identified by verified archive and task hashes.",
+    "No task assets were edited or executed, and no author feedback was supplied."
+  ]
+}
