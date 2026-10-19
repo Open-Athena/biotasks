@@ -1,0 +1,145 @@
+{
+  "stage": "unchanged_native_metadata_and_structural_filters_only",
+  "options": {
+    "limit": 1,
+    "since": null,
+    "until": null,
+    "branch": "HEAD",
+    "clone_depth": 2,
+    "skip_merge_commits": true,
+    "min_message_words": 5,
+    "max_source_files_per_commit": 10,
+    "exclude_authors": [],
+    "require_new_test_funcs": true,
+    "skip_ci_only": true,
+    "require_fail_to_pass": true,
+    "min_fail_to_pass": 1,
+    "validation_timeout_sec": 600,
+    "skip_validation": false,
+    "max_pass_to_pass": 50,
+    "synthesize_with_llm": true,
+    "min_problem_statement_words": 8,
+    "llm_temperature": 0.3,
+    "max_llm_tokens": 1024
+  },
+  "records": [
+    {
+      "sha": "f919ffd12668ed712c1e3f5c6e5ab0805a9b3936",
+      "parent": "9bbf05b530a9fe08ab200e9c073a118e60096d3c",
+      "metadata_filter": null,
+      "structural_filter": null,
+      "native_commit_info": {
+        "sha": "f919ffd12668ed712c1e3f5c6e5ab0805a9b3936",
+        "parent_sha": "9bbf05b530a9fe08ab200e9c073a118e60096d3c",
+        "parents": [
+          "9bbf05b530a9fe08ab200e9c073a118e60096d3c"
+        ],
+        "author_name": "Arthur",
+        "author_email": "levi74108520963@gmail.com",
+        "authored_at": "2026-10-14T02:19:28Z",
+        "subject": "BUG: return nan from kempton_taylor_q for a single-taxon sample (#2619)",
+        "body": "* BUG: return nan from kempton_taylor_q for a single-taxon sample\n\n* BUG: calculate Kempton-Taylor quantiles with linear interpolation\n\nUse the interquantile fraction of observed taxa for the numerator and\nvalidate ordered quantile probabilities. Return nan for a single observed\ntaxon and cover narrow ranges, endpoints and tied abundances. Preserve\nBoolean count inputs when calculating quantiles.\n\n* DOC: avoid overlapping upstream changelog additions\n\nPlace the singleton fix first in Bug Fixes and the quantile change after\nMiscellaneous. Keep both entries within the current development release.\n\n* BUG: preserve the Kempton-Taylor calculation when guarding inputs\n\nRestore the inward-rounded indices, numerator and scientific documentation.\nReturn nan for fewer than two observed taxa and reject invalid probabilities\nor reversed or out-of-bounds rounded indices.\n\n* BUG: handle undefined Kempton-Taylor intervals\n\nCo-authored-by: Qiyun Zhu <4396343+qiyunzhu@users.noreply.github.com>\n\n* TST: keep alpha metric tests focused on individual vectors\n\n* DOC: resolve changelog conflict with main\n\n* Refactor ValueError message for quantile validation\n\nRefactor error message formatting and improve readability in quantile validation.\n\n---------\n\nCo-authored-by: Qiyun Zhu <4396343+qiyunzhu@users.noreply.github.com>\nCo-authored-by: Qiyun Zhu <qiyunzhu@gmail.com>"
+      },
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/diversity/alpha/_base.py",
+        "skbio/diversity/alpha/tests/test_base.py"
+      ],
+      "metadata_sha256": "aa191841460b45777a302e725586689c7167e47b15fa9ae15f036fb31bf2b72a",
+      "runtime_executed": false,
+      "diff_sha256": "a2bb04fcebbb7d31af80df4c151ad39a362a4317fe1892f82dea9c4c5cf72093",
+      "source_patch_sha256": "d332309ca38d2a37428de0c1bbfab8f6847891865f25c5e47117b1449e0cccba",
+      "test_patch_sha256": "8e1d246e0be2b25dded9ded0ce94d1c844b076a0012f38d634aebec814a69402"
+    },
+    {
+      "sha": "71286a24bddff66c82cb25a7ca13441aa13c2f2c",
+      "parent": "566dbe73c62a13f790713245c24f883d7eb92983",
+      "metadata_filter": null,
+      "structural_filter": null,
+      "native_commit_info": {
+        "sha": "71286a24bddff66c82cb25a7ca13441aa13c2f2c",
+        "parent_sha": "566dbe73c62a13f790713245c24f883d7eb92983",
+        "parents": [
+          "566dbe73c62a13f790713245c24f883d7eb92983"
+        ],
+        "author_name": "Aakarshit Verma",
+        "author_email": "86927487+aakarshitv@users.noreply.github.com",
+        "authored_at": "2026-10-10T06:50:08Z",
+        "subject": "BUG: restrict Sequence case conversion to ASCII letters (#2630)",
+        "body": "Sequence.lowercase() flipped the case bit (0x20) of every selected\ncharacter. When the mask covered non-letter positions, gaps, dots and\nstop codons became control characters ('-' -> '\\r', '.' -> '\\x0e',\n'*' -> '\\n'), and lowercase letters were uppercased. The FASTA and FASTQ\nwriters use this method for their `lowercase` option, so such masks\nsilently produced corrupted files.\n\nThe `lowercase` constructor parameter treated every byte above 'Z' (90)\nas lowercase, so '[', '\\\\', ']', '^', '_', '`', '{', '|', '}' and '~'\nwere rewritten in generic Sequence objects (e.g. '_' became DEL) and\nflagged as lowercase.\n\nOnly convert A-Z to lowercase and a-z to uppercase."
+      },
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/io/format/tests/test_fasta.py",
+        "skbio/io/format/tests/test_fastq.py",
+        "skbio/sequence/_sequence.py",
+        "skbio/sequence/tests/test_sequence.py"
+      ],
+      "metadata_sha256": "6e9bfec7698ca0f73010a2b40bdfbc1afe1e27544fcb3bd75c4498d9285a3262",
+      "runtime_executed": false,
+      "diff_sha256": "7c3d4247dc50296cefcc5a338ca5e673d2d211c1ee928d84c4555ad3bcb12628",
+      "source_patch_sha256": "fa6d192ff51d395fc18f8fe031d0558cdd29291470899524d9b060992f784446",
+      "test_patch_sha256": "12f96c56cea5e8588ae0012992acb91e256d69efca4fe4f9cb0478218cd4355c"
+    },
+    {
+      "sha": "c48a7b5c5ad9a8b9434b5bfb02debab63633a843",
+      "parent": "5ee5e2228a21a99442a0e1939e4e7ffa1affa51a",
+      "metadata_filter": null,
+      "structural_filter": "no_test_patch",
+      "native_commit_info": {
+        "sha": "c48a7b5c5ad9a8b9434b5bfb02debab63633a843",
+        "parent_sha": "5ee5e2228a21a99442a0e1939e4e7ffa1affa51a",
+        "parents": [
+          "5ee5e2228a21a99442a0e1939e4e7ffa1affa51a"
+        ],
+        "author_name": "ANIRUDDHA ADAK",
+        "author_email": "aniruddhaadak80@gmail.com",
+        "authored_at": "2026-09-30T20:22:36Z",
+        "subject": "DOC: fix broken k-mers link on documentation front page (#2609)",
+        "body": "* DOC: fix broken k-mers link on documentation front page\n\nThe \"k-mers\" link in the Biological sequences feature highlight pointed at\nskbio.sequence.GrammaredSequence.iter_kmers, which is not a generated API\npage and therefore returns 404.\n\niter_kmers is defined on Sequence, and only a class's own methods get a\nstandalone generated page: in the autosummary class template, own methods\nuse :toctree: while inherited ones use autoinherit:: and get no page of\ntheir own. GrammaredSequence only inherits the method, so the target has to\nbe Sequence.iter_kmers, which resolves correctly.\n\nVerified against the published dev intersphinx inventory: the old target is\nabsent, the new one resolves to\ngenerated/skbio.sequence.Sequence.iter_kmers.html. Rebuilt the website to\nconfirm the rendered href changed, and confirmed the new URL returns HTTP\n200.\n\nFixes #2605\n\n* DOC: record the changelog entry under Bug Fixes\n\nThe entry is a bug fix, and the contributing guidelines say to describe a\nbug fix under the \"Bug fixes\" section. Renamed the heading from\n\"Miscellaneous\" to \"Bug Fixes\" to match the sections used by the releases\nbelow (Features / Performance enhancements / Bug Fixes / Miscellaneous).\n\n---------\n\nCo-authored-by: Aniruddha Adak <aniruddhaadak80@users.noreply.github.com>\nCo-authored-by: Qiyun Zhu <qiyunzhu@gmail.com>"
+      },
+      "source_files": [
+        "CHANGELOG.md",
+        "web/index.rst"
+      ],
+      "metadata_sha256": "246975e9bc924d6a29adbeea6ff5963babd965f684df253cf14955bbc1c74023",
+      "runtime_executed": false,
+      "diff_sha256": "5d1efd81859c34d32241ad3ab88fbf112fd339da7ce9329584ac78cc70cb83ea",
+      "source_patch_sha256": "5d1efd81859c34d32241ad3ab88fbf112fd339da7ce9329584ac78cc70cb83ea",
+      "test_patch_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "sha": "465ac883ae8ad966078c9db09202f1f9ec49c797",
+      "parent": "9494b7de6f465d7ab4e5a0bb84ed0ce2d2d023f1",
+      "metadata_filter": "short_message",
+      "structural_filter": "not_reached",
+      "native_commit_info": {
+        "sha": "465ac883ae8ad966078c9db09202f1f9ec49c797",
+        "parent_sha": "9494b7de6f465d7ab4e5a0bb84ed0ce2d2d023f1",
+        "parents": [
+          "9494b7de6f465d7ab4e5a0bb84ed0ce2d2d023f1"
+        ],
+        "author_name": "Qiyun Zhu",
+        "author_email": "qiyunzhu@gmail.com",
+        "authored_at": "2026-09-19T07:57:15Z",
+        "subject": "addressed rda bug (#2585)",
+        "body": ""
+      },
+      "source_files": [
+        "CHANGELOG.md",
+        "skbio/stats/ordination/_redundancy_analysis.py",
+        "skbio/stats/ordination/tests/test_redundancy_analysis.py"
+      ],
+      "metadata_sha256": "927343ab51ffc49bcc47852d03258351d2e9f6a34ed7646dacb993aed8b81ec8",
+      "runtime_executed": false
+    }
+  ],
+  "eligible_for_native_runtime": [
+    "f919ffd12668ed712c1e3f5c6e5ab0805a9b3936",
+    "71286a24bddff66c82cb25a7ca13441aa13c2f2c"
+  ],
+  "selected_inputs_considered": 4,
+  "model_calls": 0,
+  "runtime_executed": false,
+  "task_specific_fixes": 0
+}

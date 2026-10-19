@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T21:15:07.082008+00:00",
+  "observed_utc": "2026-10-19T21:42:54.477758+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -29,8 +29,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/native@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 6,
-      "remaining_allowance": 4,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/skbio-commit-02/summary.json",
@@ -49,9 +49,15 @@
           "sha256": "51cf66cc7d795a6600465bb9d84c6f88195f6a70f40905390017c54e6abbabec",
           "counter_key": "selected_input_charge",
           "charged": 3
+        },
+        {
+          "source": "continuation-20261018/skbio-commit-final-intake/selection.json",
+          "sha256": "2febc1061f26f0176837e42c1eca93584770d7187aa332e21dade98b1ca38ed2",
+          "counter_key": "selected_input_charge",
+          "charged": 4
         }
       ],
-      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Three subsequent fixed BUG-search inputs add one metadata rejection, one no-test-patch rejection and one eligible Stockholm-reader commit awaiting native runtime; no source count reset when materializing it.",
+      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Three subsequent fixed BUG-search inputs add one metadata rejection, one no-test-patch rejection and one eligible Stockholm-reader commit awaiting native runtime; no source count reset when materializing it. Final four unseen BUG-search inputs were frozen before filtering and charged once, including one metadata rejection and one structural rejection. Two selected heads remain eligible for first native runtime, without any new source charge. No input replacement or cap reset.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_to_env/swe_gen@biopython/biopython": {
@@ -322,6 +328,40 @@
         }
       ],
       "definition": "Five earlier candidates under the alpha-base profile plus one new Gini-profile contrast. Original-profile zero-new-attempt run does not recharge candidates. Saved-ID authoring does not reset native repair caps. Gini continuation02 adds one distinct Lorenz-curve-integrator contrast, with zero model calls; three candidate attempts remain. Gini continuation03 adds one distinct gini_index contrast with zero model calls; two candidate attempts remain.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "cve_patches/native@biopython/biopython": {
+      "charged_candidate_attempts": 1,
+      "remaining_allowance": 9,
+      "receipts": [
+        {
+          "source": "evidence/biopython-cve-01/native/result.json",
+          "sha256": "77a4e33dcf0c9ec4617312c40c088ad5f7fe715a0b45bb4153077d62879568e3",
+          "counter_key": "candidates",
+          "charged": 1
+        }
+      ],
+      "definition": "One native candidate/export from the only eligible advisory in the frozen two-advisory intake. The original unaccepted runtime/acceptance profile is preserved; no manually repaired task is promoted.",
+      "new_dispatch_authorized_by_this_file": false
+    },
+    "repo_reconstruct/swe_flow@biopython/biopython": {
+      "charged_candidate_attempts": 6,
+      "remaining_allowance": 4,
+      "receipts": [
+        {
+          "source": "continuation-20261018/biopython-flow-dispatch-manifest.json",
+          "sha256": "18868b9f0052861dc531e88c5c494c0c475d069d5fbfd080fb7d314f4592aa5f",
+          "counter_key": "prior_native_candidate_attempts",
+          "charged": 3
+        },
+        {
+          "source": "continuation-20261018/biopython-flow-contrast-01/contrast-summary.json",
+          "sha256": "76d5bb32d36805f5394b2edad7951c3ef5fb971eda6bc29b4c08fdde59e818c4",
+          "counter_key": "attempted",
+          "charged": 3
+        }
+      ],
+      "definition": "Three original and three continuation steps were attempted under the existing declared profile, with distinct IDs and schedule steps0-5. The identical frozen schedule has seven steps; only step6 remains fresh. Authoring and separate task controls do not recharge source candidates.",
       "new_dispatch_authorized_by_this_file": false
     }
   },

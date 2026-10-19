@@ -145,6 +145,8 @@ def build():
         if route == 'terminal_synth/dataarc' and (ROOT / 'dataarc-automatic-03/assessment.json').exists():
             next_action = 'Automatic03 hit the approved1200s request timeout despite the verified long-proxy profile, with zero received responses/exports. Preserve all three consumed seed IDs and uncertain usage. Continue only fresh original-pool seeds within the seven remaining candidate slots; no timeout increase, task edits or external author feedback.'
         stage_proof_path = ROOT / 'saved-terminal-stage-reconciliation.json'
+        if (ROOT / 'saved-terminal-stage-reconciliation-after-seta01.json').exists():
+            stage_proof_path = ROOT / 'saved-terminal-stage-reconciliation-after-seta01.json'
         if stage_proof_path.exists() and route in ('terminal_synth/seta_seed2synth', 'task_evolve/seta_evol', 'terminal_synth/tmax'):
             stage_proof = json.loads(stage_proof_path.read_text())
             stage_row = next(row for row in stage_proof['rows'] if row['recipe'] == route.split('/')[1])
@@ -154,8 +156,29 @@ def build():
                 action = 'declared_input_pool_exhausted_below_target'
                 next_action = stage_row['action']
             else:
-                assert len(stage_row['pending_first_build_seed_sha256']) == 1
-                next_action = stage_row['action'] + ' The three source candidates are already charged; this is an unfinished native stage, not another design attempt. Do not replay either consumed or uncertain builder seed.'
+                pending = stage_row['pending_first_build_seed_sha256']
+                assert len(pending) in (0, 1)
+                if pending:
+                    next_action = stage_row['action'] + ' The three source candidates are already charged; this is an unfinished native stage, not another design attempt. Do not replay either consumed or uncertain builder seed.'
+                else:
+                    assert stage_row['fresh_declared_inputs_remaining'] == 0
+                    action = 'declared_input_pool_exhausted_below_target'
+                    next_action = stage_row['action']
+        pool_proof_path = ROOT / 'declared-source-pool-reconciliation.json'
+        if pool_proof_path.exists():
+            pool_rows = json.loads(pool_proof_path.read_text())['rows']
+            pool = next((row for row in pool_rows if row['unit_id'] == key), None)
+            if pool is not None:
+                assert charge == pool['charged_candidates']
+                action = pool['state']
+                next_action = pool['next_action']
+        final_commit_screen = ROOT / 'skbio-commit-final-intake/structural-screen.json'
+        if key == 'commit_runtime/native@scikit-bio/scikit-bio' and final_commit_screen.exists():
+            selected = json.loads(final_commit_screen.read_text())['eligible_for_native_runtime']
+            if selected:
+                assert charge == 10
+                action = 'candidate_cap_exhausted_native_runtime_remaining'
+                next_action = 'Execute only the two already selected static-eligible final commit inputs through the unchanged native stages. No additional discovery charge, replacement, task fixes or candidate-cap reset. Preserve source-filter rejections separately from execution outcomes.'
         if action == 'target_not_met_work_remaining' and charge == 10 and target is not None and admitted < target:
             action = 'candidate_cap_exhausted_below_target'
             next_action = 'No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.'

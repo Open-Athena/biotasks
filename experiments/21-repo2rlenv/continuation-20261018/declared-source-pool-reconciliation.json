@@ -1,0 +1,117 @@
+{
+  "stage": "fixed_source_pool_and_remaining_native_stage_reconciliation",
+  "rows": [
+    {
+      "unit_id": "cve_patches/native@biopython/biopython",
+      "charged_candidates": 1,
+      "declared_advisory_records": 2,
+      "eligible_native_default_advisories": 1,
+      "fresh_declared_candidates_remaining": 0,
+      "native_exports": 1,
+      "accepted_tasks": 0,
+      "original_admission_decision": "not_accepted_for_bounded_pilot",
+      "original_admission_reason_codes": [
+        "portable_native_runtime_controls_not_established",
+        "independent_valid_alternative_not_established"
+      ],
+      "pending_native_export_stages": 0,
+      "state": "declared_input_pool_exhausted_below_target",
+      "next_action": "Report the only eligible frozen advisory's native export and unaccepted original runtime profile. Retain the original acceptance limits; no task-specific runtime/grader repair or refreshed intake is inferred."
+    },
+    {
+      "unit_id": "commit_runtime/r2e_gym@biopython/biopython",
+      "charged_candidates": 7,
+      "declared_history_records": 2000,
+      "source_filtered_records": 1993,
+      "fresh_declared_candidates_remaining": 0,
+      "native_exports": 0,
+      "author_calls": 0,
+      "materialization_failures": {
+        "unsupported_path_in_native_historical_snapshot": 5,
+        "docker_bootstrap_failure": 2
+      },
+      "pending_native_export_stages": 0,
+      "state": "declared_input_pool_exhausted_below_target",
+      "next_action": "Report the exhausted fixed2000-record history pool: seven materialization failures and no author call/export. Three numeric candidate slots do not authorize inventing a new declared history pool or repairing these tasks."
+    },
+    {
+      "unit_id": "repo_reconstruct/swe_flow@biopython/biopython",
+      "charged_candidates": 6,
+      "declared_schedule_steps": 7,
+      "consumed_candidate_ids": [
+        "5a16004c2d7522727d44",
+        "4e4e60d7b36914ae432d",
+        "68531686a46a16006a58",
+        "7db7e3d6944862270e5c",
+        "adf8d052f836669d540f",
+        "840c13399b10c718f1e8"
+      ],
+      "consumed_steps": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "fresh_declared_candidates_remaining": 1,
+      "pending_schedule_step": 6,
+      "pending_nodes": [
+        "Bio/SeqUtils/CheckSum.py:108:seguid",
+        "Bio/SeqUtils/CheckSum.py:16:crc32",
+        "Bio/SeqUtils/CheckSum.py:57:crc64",
+        "Bio/SeqUtils/CheckSum.py:81:gcg"
+      ],
+      "pending_native_export_stages": null,
+      "state": "target_not_met_work_remaining",
+      "next_action": "Run only original schedule step6 with all six consumed IDs excluded, under the existing frozen profile and original target/cap. No source expansion or task-specific fix; complete native author/export stages before final unchanged-output assessment."
+    },
+    {
+      "unit_id": "repo_reconstruct/swe_flow@scikit-bio/scikit-bio",
+      "charged_candidates": 8,
+      "alpha_profile_schedule_steps": 5,
+      "gini_profile_schedule_steps": 3,
+      "consumed_alpha_ids": [
+        "3708e0e3d5e89cd5ba4a",
+        "3ad7ba60ca7686b2007b",
+        "a10076b48a0d2070eed3",
+        "c80f6a9306c83c7db638",
+        "d86a2e7a9853ecd4b5eb"
+      ],
+      "consumed_gini_ids": [
+        "ea039e585353325e82c3",
+        "3f11586ce61f704796ee",
+        "808efa9c59c6f356358f"
+      ],
+      "fresh_declared_candidates_remaining": 0,
+      "pending_native_export_stages": 3,
+      "state": "source_pool_exhausted_native_stages_remaining",
+      "next_action": "Complete native exporter and baseline/reference controls on the three saved original Gini author outputs without edits, to measure full native-stage outcomes. Retain their quality rejections; no new author calls or candidate charges. All eight declared profile steps are already consumed."
+    }
+  ],
+  "source_record_sha256": {
+    "evidence/osv-intake/biopython.json": "5585d806c523d6ec40b3a15e9f47e71a75f8ab02bf8b3b4b81cfaff7f7aeab04",
+    "evidence/biopython-cve-01/native/result.json": "77a4e33dcf0c9ec4617312c40c088ad5f7fe715a0b45bb4153077d62879568e3",
+    "evidence/legacy-biopython-admission-review/review.json": "7481d27c0a75f917c36c46b85e3a29773065df6523295f30391f442b706b3ccd",
+    "evidence/r2e-gym-biopython-seqfeature-02/summary.json": "1a57977f43cbe5324963060f9ab9bd8ac0ae218a63dae55497e7f83035e7ee58",
+    "evidence/skbio-flow-author-01/issues.json": "1a14fe6fc694722189729da8f5235bfcaeaef199c6f9d7845c3fe23eb4b4d4f6",
+    "continuation-20261018/skbio-flow-contrast-01/contrast-summary.json": "975cb6beff9c32a3e47a9ac5701a189430267d95b7c76fe964027c61d8362abd",
+    "continuation-20261018/skbio-flow-remaining-20261019-01-dispatch-manifest.json": "da501e113ef8e961376ef98fd2ce8eeb90b30e3d542cc26e4ceaf785dce1d917",
+    "continuation-20261018/skbio-flow-gini-01/generation.json": "0668818d05c792042a54f0e1fbaae5e4184a3eb8d2c6935a6e4322e7baf99d2f",
+    "continuation-20261018/skbio-flow-gini-author-01/instruction-review.json": "013565977adae473a0c8cad71ca7dcd4a4e8b2ba0dcfbfd2bf58f8db99d03661",
+    "continuation-20261018/skbio-flow-gini-02/generation.json": "a4770bd35a0a337e58ba336cb39ab30a51a9c642618d237861e506171ccd93e0",
+    "continuation-20261018/skbio-flow-gini-author-02/instruction-review.json": "4044529e86423d1a43c0bc0487f421868321a1943ac4aa6361e8c44f1296be39",
+    "continuation-20261018/skbio-flow-gini-03/generation.json": "c07c9b3c0573221bc76a9f0da5ce27de885075b0f89d089a1b56462f203c6a51",
+    "continuation-20261018/skbio-flow-gini-author-03/instruction-review.json": "027c5ce96c0435cb12d1eeaeb18e38b7a78636b070015c19f980c9905f120feb"
+  },
+  "extraction_receipt_sha256": "63fd7814c7a4dde384309f3f88d499d93e777d55e003c611d965f88b4239a25f",
+  "new_model_calls": 0,
+  "target_repository_code_executed": false,
+  "task_assets_modified": false,
+  "limits": [
+    "Pool exhaustion is scoped to recorded fixed inputs/profiles, not every possible repository input.",
+    "No source allowance or native repair limit is reset.",
+    "A remaining native export stage is not counted as executed, exported, admitted or scored.",
+    "Original acceptance decisions and native rewards remain unchanged."
+  ]
+}

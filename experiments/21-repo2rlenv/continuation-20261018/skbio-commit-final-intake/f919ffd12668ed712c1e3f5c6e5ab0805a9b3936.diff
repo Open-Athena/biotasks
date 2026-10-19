@@ -1,0 +1,144 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index ba12701da8..c3af8ad49a 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -18,6 +18,7 @@
+ 
+ * Fixed `ancombc2` producing NaN results when Gaussian mixture densities underflow to zero during bias estimation ([#2631](https://github.com/scikit-bio/scikit-bio/issues/2631)).
+ * Fixed `GrammaredSequence` subclasses with extended alphabets incorrectly inheriting cached character masks from their parent class ([#2620](https://github.com/scikit-bio/scikit-bio/pull/2620)).
++* Fixed `kempton_taylor_q` raising `IndexError` on a sample containing a single taxon, which aborted `alpha_diversity` for the whole table. It now returns `nan` if the interquantile range is empty or constant, and accepts `upper_quantile=1`. Quantiles that do not satisfy `0 <= lower_quantile < upper_quantile <= 1` raise `ValueError` ([#2619](https://github.com/scikit-bio/scikit-bio/pull/2619)).
+ * Fixed `GrammaredSequence` grammar definitions with multi-character symbols so they fail upon class creation rather than later during sequence operations ([#2620](https://github.com/scikit-bio/scikit-bio/pull/2620)).
+ * Fixed a loophole in `Sequence` construction admitting extended ASCII codes (128-255) if supplied as bytes or a uint8 array. Construction now by default validates ASCII codes (0-127) ([#2614](https://github.com/scikit-bio/scikit-bio/pull/2614)).
+ * Fixed a loophole in `Sequence` construction referring to an external array while flagging it as read-only, whereas one can still unflag the array and mutate its content. Construction now by default enforces immutability, and an external array is copied rather than referred ([#2614](https://github.com/scikit-bio/scikit-bio/pull/2614)).
+@@ -25,12 +26,14 @@
+ * Fixed a broken link to `Sequence.iter_kmers` in the feature highlights on the documentation front page ([#2605](https://github.com/scikit-bio/scikit-bio/issues/2605)).
+ * Fixed `Sequence` case conversion altering characters that are not letters. `Sequence.lowercase` (used by the `lowercase` option of the FASTA and FASTQ writers) flipped the case bit of every selected character. When a lowercase mask covered non-letter positions, gaps (`-`), dots (`.`) and stop codons (`*`) were turned into control characters (e.g., `\r` and `\n`), and lowercase letters were converted to uppercase. The `lowercase` parameter of `Sequence` treated every character after `Z` as lowercase, rewriting `[`, `\`, `]`, `^`, `_`, `` ` ``, `{`, `|`, `}` and `~`. Case conversion is now restricted to the letters A-Z and a-z.
+ 
+-
+ ### Miscellaneous
+ 
+ * `GrammaredSequence` subclasses may define only `definite_chars`, without defining gap or degenerate characters. When a subclass defines `gap_chars` but not `default_gap_char`, its first sorted gap character is used as the default.
+ 
+ 
++### Backward-incompatible changes
++
++
+ ## Version 0.7.4
+ 
+ ### Features
+diff --git a/skbio/diversity/alpha/_base.py b/skbio/diversity/alpha/_base.py
+index 1b204bf0c7..3c005d9704 100644
+--- a/skbio/diversity/alpha/_base.py
++++ b/skbio/diversity/alpha/_base.py
+@@ -572,7 +572,7 @@ def hill(counts, order=2):
+         return (probs**order).sum() ** (1 / (1 - order))
+ 
+ 
+-@_validate_alpha(empty=np.nan)
++@_validate_alpha()
+ def kempton_taylor_q(counts, lower_quantile=0.25, upper_quantile=0.75):
+     r"""Calculate Kempton-Taylor Q index of alpha diversity.
+ 
+@@ -601,17 +601,28 @@ def kempton_taylor_q(counts, lower_quantile=0.25, upper_quantile=0.75):
+     counts : 1-D array_like, int
+         Vector of counts.
+     lower_quantile : float, optional
+-        Lower bound of the interquantile range. Defaults to lower quartile.
++        Lower bound of the interquantile range. Must be greater than or equal
++        to 0, and smaller than 1. Defaults to lower quartile (0.25).
+     upper_quantile : float, optional
+-        Upper bound of the interquantile range. Defaults to upper quartile.
++        Upper bound of the interquantile range. Must be greater than
++        ``lower_quantile``, and smaller than or equal to 1. Defaults to upper
++        quartile (0.75).
+ 
+     Returns
+     -------
+     float
+         Kempton-Taylor Q index of alpha diversity.
+ 
++    Raises
++    ------
++    ValueError
++        If the quantiles do not satisfy
++        ``0 <= lower_quantile < upper_quantile <= 1``.
++
+     Notes
+     -----
++    This function returns NaN if the interquantile range is empty or constant.
++
+     The index is defined in [1]_. The implementation here is based on the
+     description given in the SDR-IV online manual [2]_.
+ 
+@@ -631,11 +642,20 @@ def kempton_taylor_q(counts, lower_quantile=0.25, upper_quantile=0.75):
+     .. [2] http://www.pisces-conservation.com/sdrhelp/index.html
+ 
+     """
++    if not 0 <= lower_quantile < upper_quantile <= 1:
++        raise ValueError(
++            "Quantiles must satisfy 0 <= lower_quantile < upper_quantile <= 1."
++        )
+     S = counts.size
+     lower = int(np.ceil(S * lower_quantile))
+-    upper = int(S * upper_quantile)
++    upper = min(S - 1, int(S * upper_quantile))
++    if lower >= upper:
++        return np.nan
+     sorted_counts = np.sort(counts)
+-    return (upper - lower) / np.log(sorted_counts[upper] / sorted_counts[lower])
++    denom = np.log(sorted_counts[upper] / sorted_counts[lower])
++    if denom == 0:
++        return np.nan
++    return (upper - lower) / denom
+ 
+ 
+ def inv_simpson(counts, finite=False):
+diff --git a/skbio/diversity/alpha/tests/test_base.py b/skbio/diversity/alpha/tests/test_base.py
+index 7e75c6cb75..ef2c46628f 100644
+--- a/skbio/diversity/alpha/tests/test_base.py
++++ b/skbio/diversity/alpha/tests/test_base.py
+@@ -239,6 +239,44 @@ def test_kempton_taylor_q(self):
+ 
+         self.assertTrue(np.isnan(kempton_taylor_q([0, 0])))
+ 
++    def test_kempton_taylor_q_single_taxon(self):
++        self.assertTrue(np.isnan(kempton_taylor_q([])))
++        self.assertTrue(np.isnan(kempton_taylor_q([5])))
++        self.assertTrue(np.isnan(kempton_taylor_q([0, 5, 0])))
++        self.assertTrue(np.isnan(kempton_taylor_q([False, True, False])))
++        self.assertTrue(np.isnan(kempton_taylor_q([5], 0, 1)))
++
++    def test_kempton_taylor_q_quantiles(self):
++        counts = np.arange(1, 11)
++        self.assertAlmostEqual(kempton_taylor_q(counts, 0.1, 0.9),
++                               8 / np.log(10 / 2))
++        self.assertAlmostEqual(kempton_taylor_q(counts, 0, 0.9),
++                               9 / np.log(10))
++        self.assertAlmostEqual(kempton_taylor_q(counts, 0, np.nextafter(1., 0.)),
++                               9 / np.log(10))
++        self.assertAlmostEqual(kempton_taylor_q(counts, 0, 1), 9 / np.log(10))
++        self.assertAlmostEqual(kempton_taylor_q([1, 2], 0, 1), 1 / np.log(2))
++
++    def test_kempton_taylor_q_degenerate_intervals(self):
++        with np.errstate(divide="raise", invalid="raise"):
++            self.assertTrue(np.isnan(kempton_taylor_q([1, 2])))
++            self.assertTrue(np.isnan(kempton_taylor_q([5, 5])))
++            self.assertTrue(np.isnan(kempton_taylor_q([5, 5, 5, 5])))
++            self.assertTrue(np.isnan(kempton_taylor_q([True, True, True])))
++            self.assertTrue(np.isnan(kempton_taylor_q([1, 2, 3], 0.5, 0.6)))
++            self.assertTrue(np.isnan(kempton_taylor_q([1, 2, 3], 0.8, 0.9)))
++
++    def test_kempton_taylor_q_invalid_quantiles(self):
++        with self.assertRaises(ValueError):
++            kempton_taylor_q([], 0.5, 0.5)
++        for lower, upper in [(-0.1, 0.75), (0.25, 1.1),
++                             (0.75, 0.25), (0.5, 0.5),
++                             (np.nan, 0.75), (0.25, np.nan),
++                             (-np.inf, 0.75), (0.25, np.inf)]:
++            with self.subTest(lower=lower, upper=upper):
++                with self.assertRaisesRegex(ValueError, "Quantiles must satisfy"):
++                    kempton_taylor_q([1, 2, 3], lower, upper)
++
+     def test_margalef(self):
+         self.assertEqual(margalef(self.counts), 8 / np.log(22))
+         self.assertTrue(np.isnan(margalef([1])))

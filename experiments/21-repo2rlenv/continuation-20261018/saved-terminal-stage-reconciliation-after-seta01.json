@@ -1,0 +1,258 @@
+{
+  "stage": "native_receipt_based_stage_reconciliation_after_seta_first_build",
+  "rows": [
+    {
+      "recipe": "seta_seed2synth",
+      "cohort": "seta-genomic-intervals-v1",
+      "declared_input_count": 3,
+      "already_charged_candidates": 3,
+      "new_candidate_charge_for_pending_build": 0,
+      "design_source": "evidence/seta-design-01/designs.json",
+      "design_source_sha256": "f9c0b3c7b2c99ec3c6dcfa847509aee235c97b37282aabbedc771ecf09e15b2d",
+      "design_snapshot_manifest": "hf-seta-design-snapshot-manifest.json",
+      "design_snapshot_manifest_sha256": "325d21d907b909b65db5f2b3d78694b3c399b18b835c13ebbce6c5307e4be9b3",
+      "build_snapshot_manifest": "hf-seta-build-01-snapshot-manifest.json",
+      "build_snapshot_manifest_sha256": "c24492bc90365fbb04aa3749f8d733dbb600c692ef5af21eb920875f01f498c7",
+      "build_run_state": "running",
+      "build_run_state_sha256": "2ca8c80817b17ffb7283bdf3b0e2f8ae2b2d09334431cee617f2858e60688b87",
+      "prior_native_candidate_receipts": [
+        {
+          "seed_sha256": "6821b2f001e2c016ad9e580d2520dabb712d66ad94b2f000f31765f4e194faae",
+          "seed_file_sha256": "aea1dd0acfe4862fe3370ca26022a8f59fbf159fe62b6fdcc24f8a2e58dd757a",
+          "models": [
+            {
+              "file": "builder-0.json",
+              "sha256": "6570d874020c01965ac446a1a194c9fa02d89664778aac7221d894e9c3b9417d",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "83f83d12a46a39d91a98b8197d3fb393d485fe8f9af050a07189d08af5f00476"
+            },
+            {
+              "file": "builder-1.json",
+              "sha256": "bb39e67e5255d40870b5a71f4a74bf9fb55402d8c263699a2c17a80b7f88f1cd",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "f3adac64482726ca1fb1f39e407fd470b8358b280ac18037c1d68b6b9a7aaa47"
+            },
+            {
+              "file": "builder-2.json",
+              "sha256": "b7f2bc82f66875e915792fbe241b48a693de9bf4e0aafc030c54a4eaae46b583",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "879d6cc3928899460d941bdad0196b0628fe4bf64b61982156f4b3c187244a67"
+            }
+          ]
+        },
+        {
+          "seed_sha256": "eb9f0424243fd97192dbe48c7bcd2770b3a7cfc028882cb3be7bf6a807675e9f",
+          "seed_file_sha256": "e27c76d55950ebd51bdac179572182b251f1ea13565b68791aa9e3dbb2bd87d8",
+          "models": [
+            {
+              "file": "builder-0.json",
+              "sha256": "ac59081ba91ca327414bb8b7eb315057e05532554550da2cdf8456b967681816",
+              "status": "dispatched",
+              "has_response": false,
+              "request_sha256": "ccefe34ea5b64f1f3a9bae99f6bd4479e6132c276ab9fa8d148ecf76a7fd3bd0"
+            }
+          ]
+        }
+      ],
+      "pending_first_build_seed_sha256": [],
+      "do_not_replay_seed_sha256": [
+        "25aff17d910b595964786d1634661fc3f960425c00b6b936b6db76fc43c4cb4e",
+        "6821b2f001e2c016ad9e580d2520dabb712d66ad94b2f000f31765f4e194faae",
+        "eb9f0424243fd97192dbe48c7bcd2770b3a7cfc028882cb3be7bf6a807675e9f"
+      ],
+      "failed_design_seed_sha256": [],
+      "completed_builder_responses": 3,
+      "uncertain_builder_requests": 2,
+      "action": "All three declared seeds have reached their first build; one exhausted native schema repairs and two have uncertain timed-out requests. Preserve zero exports, do not replay either uncertain seed, and do not regenerate designs or manually repair output.",
+      "first_builds_attempted_in_declared_pool": 3,
+      "unchanged_exports": 0,
+      "fresh_declared_inputs_remaining": 0,
+      "state": "declared_input_pool_exhausted_below_target",
+      "latest_native_stage_assessment": "seta-saved-stage-01/assessment.json",
+      "latest_native_stage_assessment_sha256": "c75c280acccf77846cabb0ad2b77143556966a466aabb5e9f843f29c0f730613"
+    },
+    {
+      "recipe": "seta_evol",
+      "cohort": "pr2633-parent-v1",
+      "declared_input_count": 3,
+      "already_charged_candidates": 3,
+      "new_candidate_charge_for_pending_build": 0,
+      "design_source": "evidence/parent-evolution-design-01/designs.json",
+      "design_source_sha256": "31f6a464514836d4b4ff3d4fdaeca9bc3db3bd105c7c3e3d94dfb2cccc041971",
+      "design_snapshot_manifest": "hf-parent-evolution-design-01-snapshot-manifest.json",
+      "design_snapshot_manifest_sha256": "9aa13245c4d16446870237814bb1a840de120b1ea9b5c87c56b88ac44fa672fc",
+      "build_snapshot_manifest": "hf-parent-evolution-build-01-snapshot-manifest.json",
+      "build_snapshot_manifest_sha256": "544207812765acc2a94e1f1a77736f1f2f9ce23adda811fd18769950327ccfe5",
+      "build_run_state": "running",
+      "build_run_state_sha256": "76633af1ae766b12b055239502c9c8d02fadfef3552af99ece67a6fe2e90b877",
+      "prior_native_candidate_receipts": [
+        {
+          "seed_sha256": "5b01c0e2a0d19f726cd63d45a3a5d756660db9cfe766f71a6c205ad3c9705a0c",
+          "seed_file_sha256": "08165f50cd25f60c5777a3a0a3956120353b5a8c54e03c9b782458e58e22725e",
+          "models": [
+            {
+              "file": "builder-0.json",
+              "sha256": "4713f1651efdfe80c6822519ef19da987a799f31e6284a086348ca58cc1d1d5d",
+              "status": "dispatched",
+              "has_response": false,
+              "request_sha256": "dd6ad72bcdc610216e0e71b06752f4920b57552cc397264a8f251dcc8ce0116b"
+            }
+          ]
+        }
+      ],
+      "pending_first_build_seed_sha256": [
+        "4a5cb9923e133301c75dacd0d9fc4846a7dee31e7e4acb9e3da7e626453f65cb"
+      ],
+      "do_not_replay_seed_sha256": [
+        "5b01c0e2a0d19f726cd63d45a3a5d756660db9cfe766f71a6c205ad3c9705a0c"
+      ],
+      "failed_design_seed_sha256": [
+        "d0654a9f1b948b803eb5f85d5e393dcb3ded0f0360f38e68ccef67bfb0a90ce4"
+      ],
+      "completed_builder_responses": 0,
+      "uncertain_builder_requests": 1,
+      "action": "Continue only the never-built saved design through native build/repair/trial/export; no design regeneration or external feedback."
+    },
+    {
+      "recipe": "tmax",
+      "cohort": "tmax-biological-v1",
+      "declared_input_count": 3,
+      "already_charged_candidates": 3,
+      "remaining_numeric_candidate_allowance": 7,
+      "pending_first_build_seed_sha256": [],
+      "fresh_declared_inputs_remaining": 0,
+      "native_run_state": "completed",
+      "exported_tasks": 0,
+      "native_rejection_reasons": {
+        "1346eea2818201d6": "design_schema",
+        "b015f6bf06e8112e": "design_schema",
+        "bc97b04774f4a3ff": "design_schema"
+      },
+      "native_run_state_sha256": "35fb807da5d391abdfab32703aafd5339a6d9796c8c857c477400df6a8d226e0",
+      "selected_inputs": "seeds/tmax-biological-v1/selected-inputs.json",
+      "selected_inputs_sha256": "247291f344ead98daacb0e0448512471a55d3a41ed9d8e0e8b2071740f1d654e",
+      "completed_model_responses": 12,
+      "uncertain_model_requests": 0,
+      "prior_native_candidate_receipts": [
+        {
+          "seed_sha256": "1346eea2818201d6cc7b5fee2821fa4a1ac34222f9e44cdef19f79e746c3043b",
+          "seed_file_sha256": "85db0ba95422d74451edbda2cd22746213b1a399d6d0377f1c58c9c145a31839",
+          "models": [
+            {
+              "file": "design-model.json",
+              "sha256": "8235c76c9e46ea1efa20135abec7e977c92ca49cea5be4a65028313919dc3786",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "09d9068cb5027ef18c941a638d02a447253a167075a2f6b1b514219b8e56562d"
+            },
+            {
+              "file": "initial-model-repair-1.json",
+              "sha256": "0b040876f5c11359bc8db27ba509d33e742e6ff45762d51b7dd18cab8556a5cf",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "6984133a3984347c4a981c9cafe52174d1fba2182504143d419df39a2cbe4841"
+            },
+            {
+              "file": "initial-model-repair-2.json",
+              "sha256": "a4c4fe7a1710f6f1387965d769552fbfe6fd09c05ff82bfc497a032239e310c9",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "398d4443e1bb9d7ee331139ca912e92e51ddf1819df8dab88d1f5a4c683982c1"
+            },
+            {
+              "file": "initial-model.json",
+              "sha256": "8a3be7da4944fa79f9994b0738444f0b85a234acb715deb008e030437a9f2aa7",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "aefb5a2418814eaf3311b70e2f190724b9d3a7d688c75a991289a054f16c9e9d"
+            }
+          ]
+        },
+        {
+          "seed_sha256": "b015f6bf06e8112efe05345ca3663f0300445d4289073257002f9dde425cf727",
+          "seed_file_sha256": "9c3039ca28f75ee411c41b72e6e7905ab4f86f7b4b344c4ce6563eb0cff28de8",
+          "models": [
+            {
+              "file": "design-model.json",
+              "sha256": "d911c378aae35514e48ce4059297a7883ffee96fffad723971774d0622cd8c22",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "ce47a0d1d782da267bebb459ff0c99bdb26a5ef488d3311759bb7daafe10e0fc"
+            },
+            {
+              "file": "initial-model-repair-1.json",
+              "sha256": "ba910170eaa1ed2ef299feed38e689f7c12a16b2c049851f2fa905629c750ac2",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "ab96e2271c18d4095adeb5a5410e101e6aac8fbeea043b65b1f4d90315972b93"
+            },
+            {
+              "file": "initial-model-repair-2.json",
+              "sha256": "d85e5e10c52bee62934e97dd773f3f8277c8085c99583a58eb6dc3de67b23e7d",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "0bad1ff339012845e8b0b5fc44b0c075b27bb9e8a2d417decf99daaac136e579"
+            },
+            {
+              "file": "initial-model.json",
+              "sha256": "a7c5c75451e5397e3afd545602354e0d280f0475673ed6e1918a41554b673801",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "525fc276a761a2ba04fbda85b1d6b1684fddb527de4e8d276c38a2d4a1c6ea98"
+            }
+          ]
+        },
+        {
+          "seed_sha256": "bc97b04774f4a3fff9ad2d269cbe0601d5cf3485caa00e845a192c1b5d1566c9",
+          "seed_file_sha256": "0dd4d1f47a43ea15063f8006426ea2794cd92fd5a47150505aaa932aae8bffd6",
+          "models": [
+            {
+              "file": "design-model.json",
+              "sha256": "2a57f9437f2a4fa80f3e72c4b6597be68d22506f3a374c16b144b894ea59cccc",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "16583e2fac60104f8ce0f7b3f274e50116d3d8400020cd2ed6d48c5dec2ee731"
+            },
+            {
+              "file": "initial-model-repair-1.json",
+              "sha256": "a6ef007402b9c01a1f74e3e881b15e2e1e698434213ca6b7f8454abf5fa90f71",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "4ea8fca49659f15cfd56228fd879c6a700f6b46102d05809becaa160b4a13fb0"
+            },
+            {
+              "file": "initial-model-repair-2.json",
+              "sha256": "eea8c78e59eac99bb111ecfeaf6ef335ed6d857aea1f3a0b74195e7297286267",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "4e828edede22193e05c4ab85118e105aed24c5714fe3d0f3e8e8176c345d2eb1"
+            },
+            {
+              "file": "initial-model.json",
+              "sha256": "937e63731cc851e2b9fc10f82b7082388c502789ac9d92c7dc019579008107f5",
+              "status": "completed",
+              "has_response": true,
+              "request_sha256": "a2077ced85ce54a93b8beb0256e5742da2231a657329b666abe607c2ae02124e"
+            }
+          ]
+        }
+      ],
+      "snapshot_manifest": "hf-tmax-biological-02-snapshot-manifest.json",
+      "snapshot_manifest_sha256": "6fda079179e8f274d99555fcbf8827bdc66165e2951c84a25081b61f23e17e32",
+      "state": "declared_input_pool_exhausted_below_target",
+      "action": "Report the bounded automatic negative result; do not regenerate consumed inputs, reset repairs or manually normalize failed code."
+    }
+  ],
+  "manual_task_fixes": 0,
+  "new_model_calls": 0,
+  "new_trials": 0,
+  "limits": [
+    "Original private receipts remain private; these are hashes, states and counters only.",
+    "A pending build is an unfinished stage of an already charged candidate, not a new source input.",
+    "Dispatched requests without responses remain uncertain and must not be replayed.",
+    "This audit does not authorize expanding any original input pool or repair limit."
+  ]
+}

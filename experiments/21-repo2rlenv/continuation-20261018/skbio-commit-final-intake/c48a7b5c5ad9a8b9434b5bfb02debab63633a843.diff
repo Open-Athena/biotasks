@@ -1,0 +1,25 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index a16d67b42..2b03738be 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -4,6 +4,7 @@
+ 
+ ### Bug Fixes
+ 
++* Fixed a broken link to `Sequence.iter_kmers` in the feature highlights on the documentation front page ([#2605](https://github.com/scikit-bio/scikit-bio/issues/2605)).
+ * Fixed a loophole in `Sequence` construction admitting extended ASCII codes (128-255) if supplied as bytes or a uint8 array, despite `Sequence` and downstream operations being built under the assumption of ASCII codes (0-127). By default, construction now validates 7-bit ASCII and copies mutable external storage so later upstream mutation cannot violate this invariant. Added `validate` and NumPy-style tri-state `copy` parameters to let expert callers explicitly skip validation and/or require zero-copy construction. `copy=False` raises if a copy would be required ([#2614](https://github.com/scikit-bio/scikit-bio/pull/2614)).
+ 
+ 
+diff --git a/web/index.rst b/web/index.rst
+index 0ffdeee90..b2a38ecfa 100644
+--- a/web/index.rst
++++ b/web/index.rst
+@@ -319,7 +319,7 @@
+ 
+       :fa:`dna;fa-2x sd-text-success`
+ 
+-      **Biological sequences**: Efficient data structure with a :docs:`flexible grammar <sequence.GrammaredSequence>` for easy manipulation, :docs:`annotation <sequence.GrammaredSequence.has_positional_metadata>`, :docs:`alignment <alignment.global_pairwise_align>`, and conversion into :docs:`motifs <sequence.GrammaredSequence.find_motifs>` or :docs:`k-mers <sequence.GrammaredSequence.iter_kmers>` for in-depth analysis.
++      **Biological sequences**: Efficient data structure with a :docs:`flexible grammar <sequence.GrammaredSequence>` for easy manipulation, :docs:`annotation <sequence.GrammaredSequence.has_positional_metadata>`, :docs:`alignment <alignment.global_pairwise_align>`, and conversion into :docs:`motifs <sequence.GrammaredSequence.find_motifs>` or :docs:`k-mers <sequence.Sequence.iter_kmers>` for in-depth analysis.
+ 
+    .. grid-item-card::
+ 
