@@ -181,6 +181,14 @@ def build():
                 if key == 'repo_reconstruct/swe_flow@biopython/biopython' and last_bio_flow.exists():
                     action = 'declared_source_pool_exhausted_saved_author_stage_remaining'
                     next_action = 'Original final step6 produced one new checksum contrast (4F2P/8P2P), zero model calls. All seven fixed steps are now consumed. Finish native author/export/control stages for the unchanged saved candidate without feedback or repairs; no new admission or source expansion is inferred.'
+                    author_summary = ROOT / 'biopython-checksum-source-author-01/stage-summary.json'
+                    if author_summary.exists():
+                        authored = json.loads(author_summary.read_text())
+                        assert authored['candidate_id'] == final_generation['candidates'][0]['id']
+                        assert authored['author_records'] == 1 and authored['actual_author_model_calls'] == 2
+                        assert authored['task_specific_fixes'] == 0 and not authored['external_task_feedback']
+                        action = 'declared_source_pool_exhausted_saved_native_export_stage_remaining'
+                        next_action = 'Final checksum author stage completed unchanged in two free-GLM calls. Source and author archives have verified public readback. Finish the saved native export/nop/oracle stage, then assess the final task without editing it or feeding findings back. The inherited repository setup adaptation remains separate from stock automatic-pipeline success; no new admission is inferred.'
         final_commit_screen = ROOT / 'skbio-commit-final-intake/structural-screen.json'
         if key == 'commit_runtime/native@scikit-bio/scikit-bio' and final_commit_screen.exists():
             selected = json.loads(final_commit_screen.read_text())['eligible_for_native_runtime']
