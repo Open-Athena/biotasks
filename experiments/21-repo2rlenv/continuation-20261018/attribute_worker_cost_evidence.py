@@ -28,6 +28,21 @@ def main():
         for worker in row['workers']:
             assert worker['sandbox_id'] not in exact
             exact[worker['sandbox_id']] = row['route']
+    continuation_sources = {
+        'skbio-smith-remaining-01/contrast-summary.json': 'repo_mutate/swe_smith',
+        'skbio-flow-remaining-01/contrast-summary.json': 'repo_reconstruct/swe_flow',
+        'skbio-flow-gini-01/contrast-summary.json': 'repo_reconstruct/swe_flow',
+        'authored-skbio-mm-native-01/controller-small-summary.json': 'repo_mutate/swe_smith',
+        'authored-skbio-tsallis-native-01/controller-small-summary.json': 'repo_mutate/swe_smith',
+    }
+    source_hashes = {}
+    for source, route in continuation_sources.items():
+        raw = (HERE / source).read_bytes()
+        source_hashes[source] = hashlib.sha256(raw).hexdigest()
+        for worker in json.loads(raw)['workers']:
+            identity = worker['worker_id']
+            assert identity not in exact or exact[identity] == route
+            exact[identity] = route
     rows = []
     for worker in inventory['workers']:
         identity = worker['worker_id']
@@ -40,7 +55,7 @@ def main():
                 matches.update(routes_by_cohort[cohort])
                 sources.append(cohort)
         route = exact.get(identity)
-        basis = 'exact_sandbox_id_in_reviewed_continuation_cost_sample' if route else None
+        basis = 'exact_sandbox_id_in_reviewed_continuation_receipt' if route else None
         if not route and len(matches) == 1:
             route = next(iter(matches))
             basis = 'retained_archive_cohort_matches_first_pass_generation_provenance'
@@ -69,6 +84,7 @@ def main():
               'workers': rows, 'unattributed_workers': sum(r['route'] is None for r in rows),
               'unattributed_sandbox_hours': sum(r['sandbox_hours'] for r in rows if r['route'] is None),
               'pricing_basis_source': 'compute-cost-samples.json',
+              'continuation_receipt_sha256': source_hashes,
               'source_sha256': {name: hashlib.sha256((HERE / name).read_bytes()).hexdigest() for name in ['worker-cost-evidence-inventory.json', 'compute-cost-samples.json', 'consolidated-ledger.json', '../evidence/campaign-census-20261018/census.json']},
               'limitations': ['Generation cohort attribution is based on retained archive provenance, not provider invoice metadata.',
                              'Shared setup, ambiguous controls, and Marin integration remain unassigned rather than distributed arbitrarily.',

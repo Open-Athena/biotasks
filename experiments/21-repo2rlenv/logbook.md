@@ -1778,3 +1778,7 @@ The first Tsallis controller reached successful zero-model transport and exact-a
 ### 2026-10-19 — historical cost provenance expanded
 
 The route-cost reconciliation now follows explicit contrast_source/export_source fields and additional recorded stage sources from the frozen first-pass census. This attributes seven more retained workers (47/88; 41 remain unassigned) without guessing from worker names. Referenced files are checked for existence, route conflicts remain assertions, and the census content hash is included in output provenance. Accepted-task denominators are refreshed to 29 admissions, but the 88-worker inventory coverage remains incomplete; no full production price is inferred.
+
+### 2026-10-19 — recent completed lifetimes reconciled
+
+Refreshed the bounded retained-worker inventory: 93 unique terminated sandboxes, 13.4177 hours, no conflicting duplicate projections. Added exact receipt-ID attribution for Smith remaining contrasts, Flow original-profile exhaustion and Gini contrast, and MM/Tsallis native controls. Route attribution is now 52/93; 41 remain unassigned. Explicit receipt hashes preserve the source basis. Verified unique IDs, subtotal arithmetic and null per-task costs when admissions are zero. This still omits some provider-direct solver lifetimes and does not establish full production prices or cash charges.
