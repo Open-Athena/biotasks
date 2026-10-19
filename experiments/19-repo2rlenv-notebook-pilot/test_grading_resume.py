@@ -97,3 +97,59 @@ def test_partial_probe_recovery_binds_bytes_contract_and_cleanup(tmp_path):
     (tmp_path / "grading/probes.json").write_text("{}")
     with pytest.raises(ValueError, match="identity mismatch"):
         load_saved_probes(tmp_path, c)
+
+
+def test_contract_text_cannot_change_executable_fields():
+    from grading_protocol import ContractText, apply_contract_text
+
+    c = candidate()
+    revised = apply_contract_text(
+        c, ContractText(disposition="ready", instruction="Clear rules", rationale="Corrected prose")
+    )
+    assert revised.grader_code == c.grader_code and revised.checks == c.checks
+    assert revised.instruction == "Clear rules"
+    with pytest.raises(ValueError, match="blocked"):
+        apply_contract_text(
+            c,
+            ContractText(
+                disposition="blocked", instruction="", rationale="Needs scientific change"
+            ),
+        )
+
+
+def test_contract_base_binds_verified_revision_to_originals(tmp_path):
+    from grading_protocol import Probes
+    from grading_resume import load_contract_base
+    from test_grading import probe
+
+    original = candidate()
+    final = original.model_copy(update={"grader_code": "pass # repaired"})
+    probes = Probes(
+        disposition="ready",
+        probes=[probe(), probe(name="format", kind="valid_alternative")],
+        concerns=[],
+    )
+    final_bytes = json.dumps(final.model_dump()).encode()
+    values = {
+        "candidate.json": original.model_dump(),
+        "probes.json": probes.model_dump(),
+        "final-candidate.json": final.model_dump(),
+        "result.json": {"cleanup_verified": True, "final_controls_passed": True},
+        "final-controls.json": [
+            {"passed_control": True, "candidate_sha256": hashlib.sha256(final_bytes).hexdigest()}
+        ],
+    }
+    records = []
+    for name, value in values.items():
+        data = json.dumps(value).encode()
+        (tmp_path / name).write_bytes(data)
+        records.append(dict(path=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest()))
+    (tmp_path / "artifact-manifest.json").write_text(
+        json.dumps({"download_checked": True, "original_small_files": records})
+    )
+    assert load_contract_base(tmp_path, original, probes) == final
+    with pytest.raises(ValueError, match="different original"):
+        load_contract_base(tmp_path, original.model_copy(update={"instruction": "changed"}), probes)
+    (tmp_path / "final-candidate.json").write_text("{}")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_contract_base(tmp_path, original, probes)

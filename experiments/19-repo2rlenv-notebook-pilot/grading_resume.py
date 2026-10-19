@@ -77,3 +77,48 @@ def load_saved_probes(directory, candidate):
         raise ValueError("Recovery requires a submitted ready probe suite")
     check_probes(suite, candidate)
     return suite
+
+
+def load_contract_base(directory, original, probes):
+    """Bind a validated revision to the already context-verified original artifacts."""
+    directory = Path(directory)
+    manifest = json.loads((directory / "artifact-manifest.json").read_text())
+    if manifest.get("download_checked") is not True:
+        raise ValueError("Contract recovery requires a download-verified archive")
+    records = {row["path"]: row for row in manifest["original_small_files"]}
+
+    def read(name):
+        path = directory / name
+        row = records[name]
+        if (
+            path.is_symlink()
+            or path.stat().st_size != row["bytes"]
+            or sha256(path) != row["sha256"]
+        ):
+            raise ValueError("Contract recovery identity mismatch: " + name)
+        return json.loads(path.read_text())
+
+    if (
+        read("candidate.json") != original.model_dump()
+        or read("probes.json") != probes.model_dump()
+    ):
+        raise ValueError("Contract recovery belongs to different original artifacts")
+    result = read("result.json")
+    if (
+        result.get("cleanup_verified") is not True
+        or result.get("final_controls_passed") is not True
+    ):
+        raise ValueError("Contract recovery requires passed controls and cleanup")
+    final = Grader.model_validate(read("final-candidate.json"))
+    controls = read("final-controls.json")
+    if (
+        final.checks != original.checks
+        or not controls
+        or not all(
+            c["passed_control"]
+            and c["candidate_sha256"] == records["final-candidate.json"]["sha256"]
+            for c in controls
+        )
+    ):
+        raise ValueError("Contract recovery controls do not bind to the final candidate")
+    return final

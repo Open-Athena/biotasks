@@ -140,3 +140,24 @@ class AlternativeSolution(StrictModel):
             except SyntaxError as error:
                 raise ValueError(str(error)) from error
         return self
+
+
+class ContractText(StrictModel):
+    disposition: Literal["ready", "blocked"]
+    instruction: str
+    rationale: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def ready_text(self):
+        if self.disposition == "ready" and not self.instruction.strip():
+            raise ValueError("Ready contract text cannot be empty")
+        return self
+
+
+def apply_contract_text(candidate, text):
+    """The worker can change prose only; executable code/checks stay identical."""
+    if text.disposition != "ready":
+        raise ValueError("Cannot apply blocked contract text")
+    return candidate.model_copy(
+        update={"instruction": text.instruction, "rationale": text.rationale}
+    )

@@ -70,6 +70,8 @@ def check_config(config):
         "materialization_directory",
         "resume_grading_directory",
         "resume_probes_directory",
+        "resume_contract_directory",
+        "contract_feedback_file",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts

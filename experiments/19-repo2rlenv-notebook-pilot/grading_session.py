@@ -9,9 +9,11 @@ import httpx
 from design_stage import completion_transport
 from grading_protocol import (
     AlternativeSolution,
+    ContractText,
     Grader,
     Probes,
     Review,
+    apply_contract_text,
     check_coverage,
     check_probes,
     parse_report,
@@ -387,7 +389,16 @@ async def run_grading(
                 "prior_acceptance_reused": False,
             },
         )
-    scopes = ("independent", "grader", "probes", "review", "repair", "review-repair")
+    contract_base = None
+    if config.get("resume_contract_directory"):
+        from grading_resume import load_contract_base
+
+        if not resumed or saved_probes is None:
+            raise ValueError("Contract recovery requires verified original grader and saved probes")
+        contract_base = load_contract_base(
+            HERE / config["resume_contract_directory"], resumed[1], saved_probes
+        )
+    scopes = ("independent", "grader", "probes", "review", "repair", "review-repair", "contract")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
     limits = ChatLimits(
@@ -552,7 +563,23 @@ async def run_grading(
                 (root / "independent-result.json").read_text()
             )
             context["paths"]["independent_outputs"] = "/work/alternative"
-        if resumed:
+        if contract_base is not None:
+            text = await call(
+                ContractText,
+                "contract",
+                "notebook-grader-contract-repair",
+                {
+                    **context,
+                    "candidate": contract_base.model_dump(),
+                    "feedback": (HERE / config["contract_feedback_file"]).read_text(),
+                },
+            )
+            if text.disposition == "blocked":
+                save_record(root / "contract-blocker.json", text.model_dump())
+                return {"status": "contract_revision_blocked"}
+            candidate = apply_contract_text(contract_base, text)
+            await session.validate_candidate(candidate)
+        elif resumed:
             candidate = resumed[1]
             await session.validate_candidate(candidate)
         else:
@@ -672,7 +699,7 @@ async def run_grading(
 
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
-        if assessment.decision == "revise":
+        if assessment.decision == "revise" and contract_base is None:
             candidate = await call(
                 Grader,
                 "repair",

@@ -190,17 +190,25 @@ def test_probe_blocker_is_representable():
 
 @pytest.mark.parametrize("repair", [False, True])
 @pytest.mark.parametrize(
-    "derived,resume,reuse_probes",
-    [(False, False, False), (True, False, False), (True, True, False), (True, True, True)],
+    "derived,resume,reuse_probes,contract_only",
+    [
+        (False, False, False, False),
+        (True, False, False, False),
+        (True, True, False, False),
+        (True, True, True, False),
+        (True, True, True, True),
+    ],
 )
 def test_orchestration_separates_probe_author_and_gates_acceptance(
-    tmp_path, monkeypatch, repair, derived, resume, reuse_probes
+    tmp_path, monkeypatch, repair, derived, resume, reuse_probes, contract_only
 ):
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
     config.pop("resume_grading_directory", None)
     config.pop("resume_probes_directory", None)
+    config.pop("resume_contract_directory", None)
+    config.pop("contract_feedback_file", None)
     if resume:
         import grading_resume
 
@@ -225,6 +233,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if reuse_probes:
         config["resume_probes_directory"] = "saved-probes"
         monkeypatch.setattr(grading_resume, "load_saved_probes", lambda directory, candidate: suite)
+
+    if contract_only:
+        config["resume_contract_directory"] = "saved-contract"
+        feedback = tmp_path / "feedback.md"
+        feedback.write_text("Explain limits accurately")
+        config["contract_feedback_file"] = str(feedback)
+        monkeypatch.setattr(grading_resume, "load_contract_base", lambda *args: c)
 
     class Session:
         def __init__(self, **kwargs):
@@ -285,7 +300,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert inputs["specification"] == {"task_brief": "Scientific question"}
             assert "operator_handoff" not in inputs
             assert "repeatability" in inputs and "source_evidence" in inputs
-        if name == "independent":
+        if name == "contract":
+            assert kwargs["shell"] is None
+            assert inputs["candidate"] == c.model_dump()
+            value = module.ContractText(
+                disposition="ready", instruction=c.instruction, rationale=c.rationale
+            )
+        elif name == "independent":
             assert "private-original-oracle" not in json.dumps(inputs)
             assert "source_evidence" not in inputs and "materialization" not in inputs
             assert inputs["public_instruction"] == "Scientific question"
@@ -360,10 +381,16 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
-    assert calls == ([] if resume else (["independent"] if derived else []) + ["grader"]) + (
-        [] if reuse_probes else ["probes"]
-    ) + ["review"] + (["repair", "review-repair"] if repair else [])
-    assert result["status"] == "grader_candidate_validated"
+    assert calls == (
+        ["contract"]
+        if contract_only
+        else ([] if resume else (["independent"] if derived else []) + ["grader"])
+    ) + ([] if reuse_probes else ["probes"]) + ["review"] + (
+        ["repair", "review-repair"] if repair and not contract_only else []
+    )
+    assert result["status"] == (
+        "grader_requires_further_work" if contract_only and repair else "grader_candidate_validated"
+    )
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()
 
