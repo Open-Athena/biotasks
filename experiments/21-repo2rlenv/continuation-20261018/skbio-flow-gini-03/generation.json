@@ -1,0 +1,68 @@
+{
+  "attempted": 1,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844"
+        ],
+        "PASS_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator"
+        ]
+      },
+      "functions": {
+        "skbio/diversity/alpha/_gini.py:14:gini_index": {
+          "line": 14,
+          "name": "gini_index",
+          "path": "skbio/diversity/alpha/_gini.py",
+          "source": "def gini_index(data, method=\"rectangles\"):\n    r\"\"\"Calculate the Gini index.\n\n    The Gini index is defined as:\n\n    .. math::\n\n       G=\\frac{A}{A+B}\n\n    where :math:`A` is the area between :math:`y=x` and the Lorenz curve and\n    :math:`B` is the area under the Lorenz curve. Simplifies to :math:`1-2B`\n    since :math:`A+B=0.5`.\n\n    Parameters\n    ----------\n    data : 1-D array_like\n        Vector of counts, abundances, proportions, etc. All entries must be\n        non-negative.\n    method : {'rectangles', 'trapezoids'}\n        Method for calculating the area under the Lorenz curve. If\n        ``'rectangles'``, connects the Lorenz curve points by lines parallel to\n        the x axis. This is the correct method (in our opinion) though\n        ``'trapezoids'`` might be desirable in some circumstances. If\n        ``'trapezoids'``, connects the Lorenz curve points by linear segments\n        between them. Basically assumes that the given sampling is accurate and\n        that more features of given data would fall on linear gradients between\n        the values of this data.\n\n    Returns\n    -------\n    float\n        Gini index.\n\n    Raises\n    ------\n    ValueError\n        If ``method`` isn't one of the supported methods for calculating the\n        area under the curve.\n\n    Notes\n    -----\n    The Gini index was introduced in [1]_. The formula for\n    ``method='rectangles'`` is:\n\n    .. math::\n\n       dx\\sum_{i=1}^n h_i\n\n    The formula for ``method='trapezoids'`` is:\n\n    .. math::\n\n       dx(\\frac{h_0+h_n}{2}+\\sum_{i=1}^{n-1} h_i)\n\n    References\n    ----------\n    .. [1] Gini, C. (1912). \"Variability and Mutability\", C. Cuppini, Bologna,\n       156 pages. Reprinted in Memorie di metodologica statistica (Ed. Pizetti\n       E, Salvemini, T). Rome: Libreria Eredi Virgilio Veschi (1955).\n\n    \"\"\"\n    # Suppress casting to int because this metric supports ints and floats.\n    data = _validate_counts_vector(data, cast_int=False)\n    lorenz_points = _lorenz_curve(data)\n    B = _lorenz_curve_integrator(lorenz_points, method)\n    return max(0.0, 1 - 2 * B)"
+        }
+      },
+      "id": "808efa9c59c6f356358f",
+      "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "repo": "https://github.com/scikit-bio/scikit-bio",
+      "schedule": {
+        "core_nodes": [
+          "skbio/diversity/alpha/_gini.py:14:gini_index",
+          "skbio/diversity/alpha/_gini.py:82:_lorenz_curve",
+          "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator"
+        ],
+        "dependent_nodes": [],
+        "edges": [
+          [
+            "skbio/diversity/alpha/_gini.py:14:gini_index",
+            "skbio/diversity/alpha/_gini.py:82:_lorenz_curve"
+          ],
+          [
+            "skbio/diversity/alpha/_gini.py:14:gini_index",
+            "skbio/diversity/alpha/_gini.py:96:_lorenz_curve_integrator"
+          ]
+        ],
+        "nodes_to_develop": [
+          "skbio/diversity/alpha/_gini.py:14:gini_index"
+        ],
+        "previous_tests": [
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_lorenz_curve",
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_lorenz_curve_integrator"
+        ],
+        "step": 2,
+        "target_nodes": [
+          "skbio/diversity/alpha/_gini.py:14:gini_index"
+        ],
+        "test_ids": [
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_gini_index",
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_gini_index_bug_1844"
+        ]
+      },
+      "source_files": [
+        "skbio/diversity/alpha/_gini.py"
+      ],
+      "test_evidence": {
+        "skbio/diversity/alpha/tests/test_gini.py": "from unittest import TestCase, main\n\nimport numpy as np\n\nimport numpy.testing as npt\n\nfrom skbio.diversity.alpha import gini_index\n\nfrom skbio.diversity.alpha._gini import (\n    _lorenz_curve, _lorenz_curve_integrator)\n\n    def test_gini_index_bug_1844(self):\n        exp = 0.0\n        obs = gini_index([2, 2, 2, 2, 2])\n        self.assertAlmostEqual(obs, exp)\n\n    def test_gini_index(self):\n        exp = 0.32771210013908214\n        obs = gini_index(self.data, 'trapezoids')\n        self.assertAlmostEqual(obs, exp)\n\n        exp = 0.20271210013908214\n        obs = gini_index(self.data, 'rectangles')\n        self.assertAlmostEqual(obs, exp)\n\n        # Raises error on negative data.\n        with self.assertRaises(ValueError):\n            gini_index([1.0, -3.1, 4.5])"
+      }
+    }
+  ],
+  "rejected": []
+}
