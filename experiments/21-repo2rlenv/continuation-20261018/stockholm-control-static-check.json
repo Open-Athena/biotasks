@@ -1,0 +1,30 @@
+{
+  "stage": "static_control_preparation_not_runtime_validation",
+  "source_commit": "f919ffd12668ed712c1e3f5c6e5ab0805a9b3936",
+  "source_sha256": "4168b7f8423594250d01989b971e51d2037eacc67f67617cd1a0365ec6ed41ab",
+  "controls": [
+    {
+      "case": "alternative",
+      "modified_source_sha256": "f94c432b9a0011245a8fc0c1fdaebc05ed718ff32b198d22f56a6a30c598abf6",
+      "only_reader_function_changed": true,
+      "syntax_valid": true
+    },
+    {
+      "case": "partial",
+      "modified_source_sha256": "51f38961b586c4ec9018d004ab7168047a303af8d93294af839d3888e729ea38",
+      "only_reader_function_changed": true,
+      "syntax_valid": true
+    },
+    {
+      "case": "incorrect",
+      "modified_source_sha256": "dceb1e3151a9c0738ab6805bf16a0f41f97692ed5fe9d8acb29051019c3495c8",
+      "only_reader_function_changed": true,
+      "syntax_valid": true
+    }
+  ],
+  "native_assets_unchanged_except_portable_environment_and_solution_controls": true,
+  "local_target_execution": false,
+  "coverage_question": "Does the native general keyword-forwarding task reject a lowercase-only implementation?",
+  "expected_partial_reward": 0,
+  "reason": "One F2P test; accepting but dropping kwargs should fail it, so fractional reward is not required."
+}

@@ -60,7 +60,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
     manifest = json.loads((args.inputs / 'manifest.json').read_text())
-    if not 1 <= len(manifest['tasks']) <= 3 or not {item['pr'] for item in manifest['tasks']} <= {2630, 5317, 5308, 5316, 2636} or len({item['pr'] for item in manifest['tasks']}) != len(manifest['tasks']) or manifest['model_calls'] != 0:
+    if not 1 <= len(manifest['tasks']) <= 3 or not {item['pr'] for item in manifest['tasks']} <= {2624, 2630, 5317, 5308, 5316, 2636} or len({item['pr'] for item in manifest['tasks']}) != len(manifest['tasks']) or manifest['model_calls'] != 0:
         raise ValueError('Unexpected frozen control cohort')
     args.output.mkdir(parents=True, exist_ok=False)
     extracted = Path('/work/native/control-sources')

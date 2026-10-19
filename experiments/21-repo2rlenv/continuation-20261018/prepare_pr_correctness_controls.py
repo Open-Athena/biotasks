@@ -38,7 +38,25 @@ def assets(task, *, exclude=()):
 
 
 def source_program(pr, case):
-    if pr == 2630:
+    if pr == 2624:
+        path = '/workspace/skbio/io/format/stockholm.py'
+        signature = 'def _stockholm_to_tabular_msa(fh, cls=None, constructor=None):'
+        replacements = [(signature, signature[:-2] + ', **kwargs):')]
+        call = '    return msa_data.build_tabular_msa(constructor)'
+        if case == 'alternative':
+            replacement = '    def forwarded_constructor(*args, **sequence_kwargs):\n        return constructor(*args, **sequence_kwargs, **kwargs)\n    return msa_data.build_tabular_msa(forwarded_constructor)'
+            replacements.append((call, replacement))
+        elif case == 'partial':
+            # Accepting but discarding the options must not fix the regression.
+            pass
+        elif case == 'incorrect':
+            # Deliberately incomplete: only lowercase is forwarded, contrary to
+            # the instruction's general extra-keyword-argument requirement.
+            replacement = '    def lowercase_only(*args, **sequence_kwargs):\n        if "lowercase" in kwargs:\n            sequence_kwargs["lowercase"] = kwargs["lowercase"]\n        return constructor(*args, **sequence_kwargs)\n    return msa_data.build_tabular_msa(lowercase_only)'
+            replacements.append((call, replacement))
+        else:
+            raise ValueError('Unknown Stockholm control')
+    elif pr == 2630:
         path = '/workspace/skbio/sequence/_sequence.py'
         replacements = [(SEQ_CONSTRUCTOR, SEQ_CONSTRUCTOR_ALT)]
         if case == 'alternative':
@@ -93,7 +111,7 @@ def source_program(pr, case):
 
 
 def portable(task, baseline, output, *, pr):
-    if pr not in (2630, 5317, 5308, 5316, 2636):
+    if pr not in (2624, 2630, 5317, 5308, 5316, 2636):
         raise ValueError('Unreviewed PR profile')
     task, baseline, output = Path(task), Path(baseline), Path(output)
     original = assets(task)
@@ -105,7 +123,7 @@ def portable(task, baseline, output, *, pr):
     parent = baseline.read_text()
     if native_docker.count(marker) != 1 or sum(line.startswith('FROM ') for line in parent.splitlines()) != 1:
         raise ValueError('Unexpected native/parent Dockerfile')
-    cache = 'skbio' if pr in (2630, 2636) else 'biopython'
+    cache = 'skbio' if pr in (2624, 2630, 2636) else 'biopython'
     dockerfile = native_docker.replace(marker, parent.rstrip() + '\n', 1)
     dockerfile += '\n# Restore unchanged parent extensions after the native checkout cleanup.\nRUN cp -a /opt/' + cache + '-baseline-extensions/. /workspace/\n'
     dockerfile += '# Terminal tooling is installed at build time; execution remains offline.\nRUN apt-get update && apt-get install -y --no-install-recommends tmux && rm -rf /var/lib/apt/lists/* && tmux -V > /opt/terminus-tool-version.txt\n'
@@ -138,6 +156,8 @@ def controls(task, output, *, pr):
     fixed = assets(task, exclude={'solution/solve.sh'})
     records = []
     for name, expected in [('baseline', 0), ('native_reference', 1), ('alternative', 1), ('partial', 'fractional'), ('incorrect', 0), ('alternative_repeat', 1)]:
+        if pr == 2624 and name == 'partial':
+            expected = 0
         destination = output / name
         shutil.copytree(task, destination)
         if name != 'native_reference':

@@ -1,0 +1,23 @@
+{
+  "candidate_id": "f4c2d9ca15940793cc88",
+  "stage": "instruction_contract_review_not_admitted",
+  "independently_admitted": false,
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "instruction_sha256": "a19e240f3c4d8a670a1dc1b3cc3ae8815594e5e1b630c419b1a2b01785fdbbcd",
+  "runtime_controls_passed": true,
+  "findings": [
+    {
+      "claim": "The estimate must not depend on starting parameters or num_repeats for a vector with exactly one taxon.",
+      "evidence": "The native reference uses unconstrained scipy fmin_powell with the supplied initial guess and ftol=1e-5. Its documentation describes nonlinear least-squares estimation; it does not promise global convergence independent of initial parameters. The retained test covers three single-taxon examples and one explicit initial guess, not the universal claim.",
+      "assessment": "Unsupported universal instruction guarantee; passing six source controls does not establish it."
+    }
+  ],
+  "decision": "Do not admit unchanged instruction on current evidence. Preserve successful native controls separately. Any bounded author repair must retain the original and count as task-specific assisted authoring.",
+  "native_author_calls_consumed": 1,
+  "native_author_call_ceiling": 2,
+  "remaining_author_calls": 1,
+  "limitations": [
+    "No exhaustive optimizer counterexample search was executed. This decision records insufficient support for the stated contract, not proof that every parameterization fails."
+  ]
+}
