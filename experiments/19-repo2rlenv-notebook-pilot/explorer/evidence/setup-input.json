@@ -1,0 +1,117 @@
+{
+  "messages": [
+    {
+      "content": "You prepare and test the execution environment for a reviewed scientific reference.\nUse the supplied tools to inspect dependencies and original data sources, make a\nreproducible setup recipe, and test the reference offline. This stage does not\nchoose a new task, rerun preparation, change endpoints or construct a grader.\n\n## Inputs\n\nThe controller supplies `preparation`: the original source identity/narrative,\nconversion receipt, reviewed export inventory, exclusions and uncertainties.\n`paths` identifies the files already in the disposable sandbox:\n\n- `original.py`: the untouched converted source, including narrative comments.\n- `exports.py`: the reviewed append-only export code.\n- `plan.json`: the reviewed preparation response.\n- `setup/analysis.py`: an editable copy of original.py for strictly necessary\n  input-path/cache adaptations. It must not contain the appended exports.\n\nYou also receive the actual base image, CPU/RAM/disk limits and explicit session,\nsetup and reference-test allowances. There is no model-request-count cap;\nthe supplied time and spending limits still apply. There are no scientific data files\nunless you stage them. Prior preparation was text-only; its assumptions are not\nobservations. The model client and service credentials stay outside this sandbox.\n\n## Your tools\n\n- `shell`: inspect files, package documentation and the disposable environment;\n  write setup files and perform focused installation/import/input checks. Network\n  access is available during setup. Tool output and failures are recorded.\n- `test_reference`: submit the current setup files to the controller. It validates\n  the declarations, creates the uv environment, runs the input-staging recipe,\n  records resolved dependencies and input hashes, then runs the full reference\n  offline from a fresh working/output directory. It appends the frozen exports\n  itself. Each invocation consumes one test allowance, even if declaration\n  validation, dependency installation or input staging fails before computation\n  starts. Use inexpensive file, manifest and import checks with `shell` first.\n  Read the returned logs and receipts to diagnose setup failures.\n- `submit_artifact`: finish with a brief result and explanation. A successful\n  report is accepted only when the current files match a successful controller\n  test. Report a blocked outcome honestly when you cannot complete within scope.\n\nRun full scientific computation only through `test_reference`, not through the\nsetup shell. Do not put scientific computation or endpoint files in a setup\nrecipe. Shell experiments do not replace a recorded recipe and controlled test.\n\n## Working directories\n\nThe setup shell starts in `/work/setup`; `stage-inputs.sh` runs in `/work`;\nthe scientific script runs in `/work/run`. After staging, the controller deletes\nand recreates `/work/run` and `/work/outputs`. Do not stage inputs or symlinks\nthere: they would be removed. Keep staged inputs in `/inputs` or `/work/cache`\nand use necessary input-path adaptations to refer to those persistent paths.\n\n## Files to produce\n\nKeep one small setup directory with these files:\n\n- `pyproject.toml`: a dependency-only Python project with name, version,\n  requires-python and dependencies. Use uv; do not invent a lockfile. Choose\n  versions from source requirements and observed compatibility, not guesses.\n  Inspect the base image's Python first: uv uses that interpreter and automatic\n  Python downloads are disabled. `requires-python` does not install another\n  interpreter. Do not add a build backend or dynamic project fields.\n- `system-packages.json`: an array of Debian package names (empty if unnecessary).\n- `stage-inputs.sh`: a POSIX shell recipe that stages the original inputs and\n  needed caches. It runs with the resolved Python environment on PATH. It must\n  not rewrite the submitted setup files. An empty\n  recipe is allowed for a source with no external inputs.\n- `inputs.json`: an inventory with a `files` array. Each entry has `local_path`\n  and `source` (the original URL/provenance). Stage data under `/inputs` or\n  `/work/cache`. Include input and cache files needed for offline execution;\n  do not list environment packages as scientific data. The controller hashes\n  and verifies the listed files; they must remain byte-identical through the\n  reference run. These are supplied inputs, not scratch files or new caches\n  created by the analysis. Your claims do not substitute for that check.\n- `analysis.py`: the original source with only necessary input/cache/path\n  adaptations. Prefer staging the expected paths/caches to changing source.\n  Preserve comments and all scientific computation. Keep the frozen export code\n  separate; the controller adds it after the analysis.\n\nThe controller creates the uv lockfile and environment, records the actual\ninstalled packages, and computes the source diff and file hashes. Do not\nhandcraft those evidence records. Every dependency required after exploratory\nshell work must appear in the recipe; the controlled test recreates the virtual\nenvironment rather than trusting your shell's installed state.\n\n## Preserve the scientific contract\n\nUse the notebook's original data, population, algorithms, parameters, seeds,\nfiltering, annotations and branches. No smaller or synthetic substitute, silent\nfallback, new precomputed answer, skipped expensive step or edited result to make\nexecution succeed. Retain plotting calls; headless rendering is an environment\nsetting. Do not change or rewrite the reviewed exports or endpoint inventory.\n\nA necessary offline-path/cache adaptation must preserve which bytes the analysis\nreads and be explained in `source_adaptations`. Do not describe an algorithm,\nthreshold, grouping or statistical change as an environment fix. If source code\nis scientifically broken, an export needs correction, data cannot be obtained,\nor the full analysis does not fit the supplied limits, report the specific\nblocker. A rejection is an acceptable outcome. Do not modify package code or\ninstall a replacement package that changes the scientific analysis to rescue it.\n\nDistinguish a missing dependency or cache from a failure of the original\nanalysis. Inspect actual errors before changing requirements. Preserve failed\ntrials. An interrupted or uncertain tool result is not permission to launch a\nduplicate operation. Stop when the controller reports exhausted allowances.\n\n## Final response\n\nSubmit `disposition` (`tested` or `blocked`), a brief `explanation`, a list of\n`source_adaptations` explaining necessary offline changes (empty if none), and\n`unresolved_assumptions`. Cite observed evidence rather than claiming numerical\ncorrectness from a zero exit code. A passing test means the script completed and\ndeclared files were produced; it does not prove scientific fidelity, valid\ngrading, software equivalence or suitability as a benchmark.\n",
+      "role": "system"
+    },
+    {
+      "content": "{\"preparation\": {\"source\": {\"license\": \"BSD-3-Clause\", \"provenance\": {\"data_source\": {\"doi\": \"10.6084/m9.figshare.22716739.v1\", \"files\": [{\"bytes\": 22848647, \"name\": \"s1d1_filtered_feature_bc_matrix.h5\", \"provider_md5\": \"a99285913ea3f3d22600d3d2f8a88e34\", \"url\": \"https://ndownloader.figshare.com/files/40347877\"}, {\"bytes\": 20432298, \"name\": \"s1d3_filtered_feature_bc_matrix.h5\", \"provider_md5\": \"825f7f7578e3dc0b8955f5a97a402338\", \"url\": \"https://ndownloader.figshare.com/files/40347880\"}], \"license\": {\"name\": \"CC BY 4.0\", \"url\": \"https://creativecommons.org/licenses/by/4.0/\", \"value\": 1}, \"metadata_url\": \"https://api.figshare.com/v2/articles/22716739/versions/1\", \"title\": \"NeurIPS 2021 Benchmark dataset\"}, \"notebook\": {\"license\": \"BSD-3-Clause\", \"source_revision\": \"8c1463d5d97272d5811ad3f4efb57483e23b4c7e\", \"source_sha256\": \"9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6\", \"url\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\"}, \"verification\": {\"data_files_downloaded\": false, \"notebook_downloaded_and_hashed\": true, \"provider_checksums_verified_against_download\": false}}, \"source\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\", \"source_revision\": \"8c1463d5d97272d5811ad3f4efb57483e23b4c7e\", \"source_sha256\": \"9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6\", \"title\": \"Scanpy: Preprocessing and clustering\", \"url\": \"https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb\"}, \"conversion\": {\"code_cells\": 35, \"converter\": \"jupytext\", \"converter_version\": \"1.19.6\", \"documentation_execution_policy\": {\"execution_mode\": \"off\"}, \"executable_ast_sha256\": \"64cb316cdb477c828d922907d8145f38c148ea449f06c113faac107e65a01323\", \"executed\": false, \"format\": \"py:nomarker\", \"markdown_cells\": 40, \"markdown_representation\": \"line_comments\", \"ordered_code_equivalence\": true, \"profile\": \"python-narrative-v2\", \"script_sha256\": \"ea678a3584d7b3e18214f8c032dd4fcaa107083ca681a0d044c2eecfbcb71d71\", \"source_sha256\": \"9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6\", \"stored_outputs_used_as_evidence\": false}, \"plan\": {\"disposition\": \"prepare\", \"explanation\": \"The notebook's terminal scientific outcomes are (i) the Leiden clustering solutions, the UMAP embedding they are interpreted on, and the manual broad-lineage cell-type annotation derived from the coarsest solution, and (ii) the per-cluster differentially expressed genes (Wilcoxon) used to annotate the 0.50-resolution clusters. The appended code only serializes values that exist at completion: selected adata.obs columns plus adata.obsm['X_umap'] in one per-cell CSV, and the stored adata.uns['rank_genes_groups'] rankings flattened group-by-group into a CSV, with the stored DE run parameters written as context. No values are recomputed, filtered, re-ranked or plotted; the source analysis is untouched.\", \"export_code\": \"# ---------------------------------------------------------------------------\\n# Endpoint exports (appended stage): serialize existing terminal results only.\\n# No new scientific computation, filtering, ranking or plotting is added.\\n# ---------------------------------------------------------------------------\\n\\nimport json\\nimport os\\n\\nimport pandas as pd\\n\\n_export_dir = \\\"/work/outputs\\\"\\nos.makedirs(_export_dir, exist_ok=True)\\n\\n# Endpoint 1 -- per-cell terminal results: Leiden cluster assignments\\n# (default resolution and the three annotation resolutions), the manual\\n# cell-type annotation, the sample identifier and the UMAP embedding.\\n_per_cell_obs = adata.obs[\\n    [\\n        \\\"sample\\\",\\n        \\\"leiden\\\",\\n        \\\"leiden_res_0.02\\\",\\n        \\\"leiden_res_0.50\\\",\\n        \\\"leiden_res_2.00\\\",\\n        \\\"cell_type_lvl1\\\",\\n    ]\\n].copy()\\n_umap_table = pd.DataFrame(adata.obsm[\\\"X_umap\\\"])\\n_umap_table.columns = [\\\"umap_1\\\", \\\"umap_2\\\"]\\n_umap_table.index = adata.obs_names\\n_per_cell = pd.concat([_per_cell_obs, _umap_table], axis=1)\\n_per_cell.index.name = \\\"cell_id\\\"\\n_per_cell.to_csv(os.path.join(_export_dir, \\\"cell_clusters_umap.csv\\\"), index=True)\\n\\n# Endpoint 2 -- differentially expressed genes per cluster of the\\n# leiden_res_0.50 solution, flattened from the stored rankings in\\n# adata.uns[\\\"rank_genes_groups\\\"]; stored group order and rank order are kept.\\n_rgg = adata.uns[\\\"rank_genes_groups\\\"]\\n_de_fields = [\\n    _f\\n    for _f in (\\\"names\\\", \\\"scores\\\", \\\"pvals_adj\\\", \\\"pvals\\\", \\\"logfoldchanges\\\")\\n    if _f in _rgg\\n]\\n_de_parts = []\\nfor _grp in _rgg[\\\"names\\\"].dtype.names:\\n    _part = {\\\"group\\\": _grp}\\n    for _f in _de_fields:\\n        _part[_f] = _rgg[_f][_grp]\\n    _de_parts.append(pd.DataFrame(_part))\\n_rank_genes_groups_table = pd.concat(_de_parts, ignore_index=True)\\n_rank_genes_groups_table.to_csv(\\n    os.path.join(_export_dir, \\\"rank_genes_groups_leiden_res_0.50.csv\\\"),\\n    index=False,\\n)\\n\\n# Context for endpoint 2: the stored run parameters of the DE test.\\nwith open(\\n    os.path.join(_export_dir, \\\"rank_genes_groups_params.json\\\"), \\\"w\\\"\\n) as _params_fh:\\n    json.dump(dict(_rgg[\\\"params\\\"]), _params_fh, indent=2, default=str)\", \"artifacts\": [{\"path\": \"cell_clusters_umap.csv\", \"description\": \"Per-cell terminal results: cell barcode index; originating sample; Leiden cluster assignment at the default resolution and at resolutions 0.02/0.50/2.00; the manual broad-lineage cell-type annotation (cell_type_lvl1); and the 2-D UMAP coordinates (umap_1, umap_2).\", \"source_evidence\": \"The clustering/annotation branch is the notebook's stated end product: 'we recommend the Leiden graph-clustering method' (sc.tl.leiden(adata, flavor='igraph', n_iterations=2) fills adata.obs['leiden']); 'let's generate a set of clustering solutions which we can then use to annotate our cell types' (the resolution loop writes adata.obs['leiden_res_0.02'/'leiden_res_0.50'/'leiden_res_2.00'] via key_added); the marker patterns are used 'to label our coarsest clustering with broad lineages' (adata.obs['cell_type_lvl1'] mapped from leiden_res_0.02); the UMAP embedding is interpreted in its own right ('we only observe a minor batch effect', and it is the surface for cluster, QC and marker visualization) and is stored by sc.tl.umap(adata) in adata.obsm['X_umap']. adata.obs['sample'] (from ad.concat(adatas, label='sample')) is the per-cell sample identifier needed to read the embedding. All keys are fixed and survive to script completion.\"}, {\"path\": \"rank_genes_groups_leiden_res_0.50.csv\", \"description\": \"Differentially expressed genes per cluster of the leiden_res_0.50 solution (Wilcoxon vs rest): one row per ranked gene per cluster with group, names, scores, pvals_adj, pvals and logfoldchanges, in the stored group and rank order.\", \"source_evidence\": \"The marker-gene/DE branch yields an independent interpreted outcome: 'one can also calculate marker genes per cluster and then look up whether we can link those marker genes to any known biology, such as cell types and/or states', and the result is directly read as a finding ('Cluster 7 is expressing NKG7 and GNLY, suggesting these are NK cells'). It is produced by sc.tl.rank_genes_groups(adata, groupby='leiden_res_0.50', method='wilcoxon') and stored in adata.uns['rank_genes_groups']; the notebook itself notes the results 'can be extracted in a convenient format with scanpy.get.rank_genes_groups_df' (called with group='7'), confirming this stored object is the readable result table. The export flattens those same stored recarrays (all stored fields, groups and ranking order preserved) without recomputation.\"}, {\"path\": \"rank_genes_groups_params.json\", \"description\": \"Run parameters stored with the DE result (groupby, method, reference, correction method), identifying which clustering and test produced the exported DE table.\", \"source_evidence\": \"Written from adata.uns['rank_genes_groups']['params'], populated by the sc.tl.rank_genes_groups(groupby='leiden_res_0.50', method='wilcoxon') call in the baseline; these identifiers are the context needed to interpret the endpoint table.\"}], \"excluded_outputs\": [\"QC metrics and QC figures (adata.obs n_genes_by_counts, total_counts, pct_counts_{mt,ribo,hb} and log1p variants; violin and scatter plots): diagnostics used to motivate the deliberately permissive filtering and re-assessed on the UMAP; no thresholds beyond min_genes/min_cells are derived from them.\", \"Scrublet doublet results (adata.obs['doublet_score'], adata.obs['predicted_doublet']): diagnostic QC supporting cluster assessment; the notebook only inspects them alongside the clusters and explicitly leaves doublet-based filtering as an unexecuted option.\", \"Highly variable gene annotations (adata.var highly_variable, dispersions/means columns): feature-selection intermediate feeding PCA; the HVG set is not itself interpreted as an independent result.\", \"PCA results (adata.obsm['X_pca'], variance ratio): intermediate consumed by the neighbor graph; the variance-ratio and PCA plots are checks on parameter choice and batch effects.\", \"Count layer adata.layers['counts'] and the normalized/log1p matrix adata.X: intermediates consumed by HVG, PCA, dotplots and the DE test; excluded on role, not size.\", \"dc_cluster_genes and the unnamed sc.get.rank_genes_groups_df(adata, group='7').head(5) display: a top-5 display subset of the cluster-7 ranking fully contained in the exported DE table; the follow-up UMAP coloring of those genes is computed inside sc.pl.umap and is not exported.\", \"marker_genes dictionary and the marker-gene dotplots: the dictionary is prior-knowledge input, and dotplot values are computed inside the plotting function; neither is a stored computed result eligible for export.\"], \"unresolved_assumptions\": [\"The export assumes the baseline completes and the fixed keys it reads exist at append time ('leiden', 'leiden_res_0.02'/'leiden_res_0.50'/'leiden_res_2.00', 'cell_type_lvl1' in adata.obs; 'X_umap' in adata.obsm with 2 components; 'rank_genes_groups' in adata.uns). cell_type_lvl1 is defined only for leiden_res_0.02 clusters 0-4, matching the notebook's hardcoded map; whether the clustering yields exactly those clusters is untested.\", \"Staging of the two 10x .h5 inputs via pupper/pooch and figshare plus headless behavior of the scanpy plotting calls are execution-stage concerns that determine whether the baseline reaches completion; this preparation does not assume observed runtimes.\", \"Whether the full two-sample workflow (scrublet, PCA, neighbors, UMAP, Wilcoxon DE) fits the 600-second CPU-only, 8 GiB limit is untested; the size of the DE table (number of leiden_res_0.50 clusters x stored genes) is likewise unobserved and not assumed.\"]}}, \"paths\": {\"original.py\": \"/work/frozen/original.py\", \"exports.py\": \"/work/frozen/exports.py\", \"plan.json\": \"/work/frozen/plan.json\", \"setup\": \"/work/setup\"}, \"limits\": {\"base_image\": \"python:3.13.13-slim-bookworm\", \"gpu\": false, \"network\": \"Available during future setup only; reference execution is offline.\", \"reference_seconds\": 600, \"setup_seconds\": 1800, \"task_cpus\": 4, \"task_disk_gib\": 10, \"task_memory_gib\": 8, \"max_requests\": null, \"max_tests\": 2, \"campaign_seconds\": 7200, \"request_timeout_seconds\": 600}}",
+      "role": "user"
+    }
+  ],
+  "tools": [
+    {
+      "function": {
+        "description": "Submit a complete replacement artifact for validation and durable commit. After rejection, use revise_artifact to send only changed fields instead of repeating this full object.",
+        "name": "submit_artifact",
+        "parameters": {
+          "additionalProperties": false,
+          "properties": {
+            "disposition": {
+              "enum": [
+                "tested",
+                "blocked"
+              ],
+              "title": "Disposition",
+              "type": "string"
+            },
+            "explanation": {
+              "minLength": 1,
+              "title": "Explanation",
+              "type": "string"
+            },
+            "source_adaptations": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Source Adaptations",
+              "type": "array"
+            },
+            "unresolved_assumptions": {
+              "items": {
+                "type": "string"
+              },
+              "title": "Unresolved Assumptions",
+              "type": "array"
+            }
+          },
+          "required": [
+            "disposition",
+            "explanation",
+            "source_adaptations",
+            "unresolved_assumptions"
+          ],
+          "title": "SetupOutcome",
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "description": "Correct the most recent rejected draft using a JSON merge patch (up to 64000 UTF-8 bytes, 32 nesting levels). Omit unchanged fields. Objects merge recursively; null deletes a dictionary key; arrays replace entirely. All schema and operator validation runs again. A rejected revision becomes the next unvalidated draft. Use submit_artifact for a complete replacement or to assign a literal null value.",
+        "name": "revise_artifact",
+        "parameters": {
+          "additionalProperties": false,
+          "properties": {
+            "patch": {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          },
+          "required": [
+            "patch"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "description": "Run a bounded command in the remote builder sandbox. Never runs on the controller. Inspect repository files and existing tests; do not modify the pinned checkout.",
+        "name": "shell",
+        "parameters": {
+          "additionalProperties": false,
+          "properties": {
+            "command": {
+              "type": "string"
+            },
+            "timeout_sec": {
+              "maximum": 120,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          "required": [
+            "command"
+          ],
+          "type": "object"
+        }
+      },
+      "type": "function"
+    },
+    {
+      "function": {
+        "description": "Build the current recipe, stage original inputs, then test frozen exports plus analysis offline. Consumes one reference-test allowance even if setup fails.",
+        "name": "test_reference",
+        "parameters": {
+          "additionalProperties": false,
+          "properties": {},
+          "type": "object"
+        }
+      },
+      "type": "function"
+    }
+  ]
+}

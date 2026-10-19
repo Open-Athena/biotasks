@@ -1,5 +1,6 @@
+"""Check the current standalone explorer's routes, documents and mobile layout."""
+
 import json
-import sys
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -12,41 +13,31 @@ with sync_playwright() as p:
     )
     page = browser.new_page()
     errors = []
-    page.on("pageerror", lambda e: errors.append(str(e)))
-    page.goto(
-        sys.argv[1]
-        if len(sys.argv) > 1
-        else Path(__file__).with_name("index.html").resolve().as_uri()
-    )
-    page.get_by_role("button", name="Approaches", exact=True).click()
-    for index in range(5):
-        page.locator(".approach-flow button").nth(index).click()
-        for select in page.locator(".approach-step-panel select").all():
-            for option in range(select.locator("option").count()):
-                select.select_option(str(option))
-    page.get_by_role("button", name="Notebooks", exact=True).click()
-    for tab in ["Notebook", "Task", "Attempt", "Review"]:
-        page.get_by_role("button", name=tab, exact=True).click()
-        assert page.locator(".panel h2").count() > 0
-        if tab == "Attempt":
-            select = page.locator(".panel select")
-            for i in range(select.locator("option").count()):
-                select.select_option(str(i))
+    page.on("pageerror", lambda error: errors.append(str(error)))
+    page.goto(Path(__file__).with_name("index.html").resolve().as_uri())
+    for label, key in [
+        ("Notebook", "notebook"),
+        ("Task", "task"),
+        ("Attempt", "attempt"),
+        ("Pipeline", "pipeline"),
+        ("Validation", "review"),
+    ]:
+        page.get_by_role("link", name=label, exact=True).click()
+        page.locator("#" + key).wait_for(state="visible")
+    page.get_by_role("link", name="Pipeline", exact=True).click()
+    for anchor in page.locator(".stage-nav a").all():
+        anchor.click()
+        assert page.locator(anchor.get_attribute("href")).is_visible()
+    page.get_by_role("link", name="Attempt", exact=True).click()
+    assert page.locator("#attempt details").count() == 21
+    page.locator("#attempt details summary").nth(1).click()
+    assert page.get_by_role("heading", name="Tool calls", exact=True).first.is_visible()
     page.set_viewport_size({"width": 390, "height": 844})
-    for tab in ["Notebook", "Task", "Attempt", "Review"]:
-        page.get_by_role("button", name=tab, exact=True).click()
-        assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
-    page.get_by_role("button", name="Approaches", exact=True).click()
-    assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth")
+    for label in ["Notebook", "Task", "Attempt", "Pipeline", "Validation"]:
+        page.get_by_role("link", name=label, exact=True).click()
+        assert page.evaluate("document.documentElement.scrollWidth <= window.innerWidth"), label
     assert not errors, errors
     browser.close()
     print(
-        json.dumps(
-            {
-                "tabs": 5,
-                "all_selectors_checked": True,
-                "mobile_overflow": False,
-                "javascript_errors": errors,
-            }
-        )
+        json.dumps({"views": 5, "stages": 9, "mobile_overflow": False, "javascript_errors": errors})
     )

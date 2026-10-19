@@ -1,37 +1,58 @@
 {
-  "summary": "Validation evidence for the published PBMC3k task.",
-  "campaign": 22,
-  "release_url": "https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19/tree/353e8a296c4101d3c0647e4c50e2b0ed7214d5de",
-  "release_commit": "353e8a296c4101d3c0647e4c50e2b0ed7214d5de",
-  "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be",
-  "solver_seconds": 70.241023,
-  "findings": [
-    "GLM now checks detected-gene metadata is integral before converting it; fractional values cannot be silently truncated.",
-    "GLM replaced unrestricted Boolean coercion with validation accepting Boolean or numeric 0/1 flags; arbitrary truthy values and strings are rejected. Strict Boolean dtype is not required.",
-    "Fresh native controls: empty baseline 0, reference 1, omitted-gene-filter probe 0, alternative implementation 1. Fresh blind GLM solver reward 1 in 70.2 seconds.",
-    "Independent static re-review found no new blocking regression. The two coercion mutations were assessed from source, not run as dedicated mutation trials.",
-    "Release staging, fresh-download hashes, task bundle identity and executable modes passed. The original release remains preserved at its immutable revision."
-  ],
-  "download_verification": {
-    "repo_id": "gonzalobenegas/biotasks-notebook-pilot-issue-19",
-    "revision": "353e8a296c4101d3c0647e4c50e2b0ed7214d5de",
-    "verified": true,
-    "tasks": [
-      {
-        "task_id": "seta-seed2synth-edda9ab1b6342001",
-        "bundle_hash": "sha256:be244320301182840a1e8a9b453b363a9fd227ac6e1c7ece39aea17ce00761be"
-      }
-    ]
-  },
-  "publication": {
+  "release": {
     "collection_slug": null,
-    "commit_sha": "353e8a296c4101d3c0647e4c50e2b0ed7214d5de",
-    "created_at": "2026-10-13T18:16:16.585095+00:00",
-    "finished_at": "2026-10-13T18:16:19.089356+00:00",
-    "release_sha256": "ca74e578264da5e44db44711583d4f85a6e5dd5e98f2eafea8e8209eccb8dcf0",
+    "commit_sha": "9eeabefd3761655a5f01ac3f46df1b060610355a",
+    "created_at": "2026-10-19T17:15:13.831819+00:00",
+    "finished_at": "2026-10-19T17:15:26.009355+00:00",
+    "release_sha256": "28383fb6a95686ba90cafdeaa9bed1dd23c7101572c8dbb8a49641d1437ce54d",
     "repo_id": "gonzalobenegas/biotasks-notebook-pilot-issue-19",
     "state": "completed",
     "task_count": 1,
     "url": "https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19"
-  }
+  },
+  "download_verification": {
+    "repo_id": "gonzalobenegas/biotasks-notebook-pilot-issue-19",
+    "revision": "9eeabefd3761655a5f01ac3f46df1b060610355a",
+    "verified": true,
+    "tasks": [
+      {
+        "task_id": "bmmc-marker-genes-fixed-groups",
+        "bundle_hash": "sha256:e016fae75540a542a8395d9acb137953dcea4454a372f5c93dd83c9e5e481312"
+      }
+    ]
+  },
+  "native": {
+    "controls": [
+      {
+        "agent": "oracle",
+        "cleanup_verified": true,
+        "exception_type": null,
+        "expected_reward": 1,
+        "passed": true,
+        "result_path": "oracle/artifact-native-003-oracle/bmmc-marker-genes-fixed-groups__HaTSPWw/result.json",
+        "reward": 1.0
+      },
+      {
+        "agent": "nop",
+        "cleanup_verified": true,
+        "exception_type": null,
+        "expected_reward": 0,
+        "passed": true,
+        "result_path": "nop/artifact-native-003-nop/bmmc-marker-genes-fixed-groups__fQhy6hT/result.json",
+        "reward": 0.0
+      }
+    ],
+    "finished": 1792429724.267092,
+    "publication_ready": true,
+    "solver": {
+      "agent": "terminus-2",
+      "cleanup_verified": true,
+      "exception_type": null,
+      "result_path": "terminus-2/artifact-native-003-terminus-2/bmmc-marker-genes-fixed-groups__yUAcCKp/result.json",
+      "reward": 1.0
+    },
+    "status": "native_validated_solver_attempt_recorded"
+  },
+  "grading_run": "006",
+  "native_run": "003"
 }
