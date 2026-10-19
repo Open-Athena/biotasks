@@ -63,7 +63,7 @@ def main():
         assert selected <= ids and len(ids) <= constraints['maximum_candidates_in_archive'] <= 3
         assert selected == ids or constraints['recipe'] == 'swe_smith_review_repair'
         assert constraints['prior_calls_for_selected_ids'] + constraints['maximum_new_model_calls'] <= constraints['combined_native_call_ceiling']
-        scripts = {'swe_smith': 'author_swe_smith_issues.py', 'swe_flow': 'author_swe_flow.py', 'swe_smith_review_repair': 'repair_swe_smith_issue.py'}
+        scripts = {'swe_smith': 'author_swe_smith_issues.py', 'swe_flow': 'author_swe_flow.py', 'swe_smith_review_repair': 'repair_swe_smith_issue.py', 'r2e_gym': 'author_history_issue.py'}
         script = scripts[constraints['recipe']]
         remaining = int(6900 - (time.monotonic() - started))
         if remaining < 900:
