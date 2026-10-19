@@ -40,7 +40,8 @@ def native_grade(root, f2p, p2p):
             'original_trial_result_sha256': file_sha(root / 'result.json')}
 
 
-def audit(recovered, input_root, manifest, checksum_function):
+def audit(recovered, input_root, manifest, checksum_function, grade_function=None, expected_sandboxes=3):
+    grade_function = grade_function or native_grade
     batch = json.loads((recovered / 'batch-status.json').read_text())
     assert len({x['task_id'] for x in manifest['units']}) == len(manifest['units'])
     observed = {x['task_id']: x for x in batch['units']}
@@ -69,8 +70,8 @@ def audit(recovered, input_root, manifest, checksum_function):
         assert state['blind_attempts_started'] in (0, 1)
         row.update(blind_attempts=state['blind_attempts_started'], task_checksum=checksum,
                    admitted_asset_manifest_sha256=identity, native_stage=state['status'])
-        f2p = json.loads((task / 'tests/f2p.json').read_text())
-        p2p = json.loads((task / 'tests/p2p.json').read_text())
+        f2p = json.loads((task / 'tests/f2p.json').read_text()) if grade_function is native_grade else []
+        p2p = json.loads((task / 'tests/p2p.json').read_text()) if grade_function is native_grade else []
         controls = []
         for control in state['provider_controls']:
             name = control['agent']
@@ -79,7 +80,7 @@ def audit(recovered, input_root, manifest, checksum_function):
             if control['result']['exception_info'] is not None:
                 controls.append({'agent': name, 'infrastructure_exception': True})
                 continue
-            grade = native_grade(root / 'trials' / name, f2p, p2p)
+            grade = grade_function(root / 'trials' / name, f2p, p2p)
             assert grade['reward'] == control['expected_reward'] == (0 if name == 'nop' else 1)
             controls.append({'agent': name, **grade})
         row['provider_controls'] = controls
@@ -99,7 +100,7 @@ def audit(recovered, input_root, manifest, checksum_function):
         assert agent['model_name'] == 'openai/glm-5.3' and agent['override_timeout_sec'] == 900
         assert agent['kwargs']['max_turns'] == 12 and agent['kwargs']['llm_call_kwargs']['max_tokens'] == 2048
         assert not any(k in agent['kwargs']['llm_call_kwargs'] for k in ('thinking', 'reasoning_effort', 'chat_template_kwargs'))
-        grade = native_grade(trial, f2p, p2p)
+        grade = grade_function(trial, f2p, p2p)
         original = json.loads((trial / 'result.json').read_text())
         assert original == result
         usage = original['agent_result']
@@ -110,10 +111,10 @@ def audit(recovered, input_root, manifest, checksum_function):
             assert sum(s['metrics'][metric] for s in steps) == usage[key]
         provider = [json.loads(line) for line in (root / 'provider.jsonl').read_text().splitlines()]
         ready = [x for x in provider if x['stage'] == 'learner_preflight']
-        assert len(ready) == 3 and all(x['network_block_all'] and x['private_paths_and_import_returncode'] == 0 for x in ready)
+        assert len(ready) == expected_sandboxes and all(x['network_block_all'] and x['private_paths_and_import_returncode'] == 0 for x in ready)
         owned = {x['sandbox_id'] for x in provider if x['stage'] == 'created'}
         cleanup = json.loads((root / 'cleanup.json').read_text())
-        assert len(owned) == 3 and {x['sandbox_id'] for x in cleanup} == owned
+        assert len(owned) == expected_sandboxes and {x['sandbox_id'] for x in cleanup} == owned
         assert all(x['confirmed_absent'] and x['lookup_http_status'] == 404 for x in cleanup)
         row.update(scientific_state='single_blind_attempt_native_reward_audited', blind_grade=grade,
                    completed_agent_episodes=len(steps), native_agent_reported_usage={
