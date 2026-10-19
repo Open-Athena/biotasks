@@ -1,0 +1,25 @@
+{
+  "stage": "original_instruction_not_admitted_despite_passing_native_controls",
+  "candidate_id": "2bc29fe20c34fbca2661",
+  "native_controls_passed": true,
+  "independently_admitted": false,
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "findings": [
+    {
+      "kind": "incorrect_actual_signature",
+      "evidence": "Instruction describes actual failing call as default num_repeats=1, but supplied mutant signature is num_repeats=0. This obscures the actual mutation; the instruction was not corrected."
+    },
+    {
+      "kind": "unsupported_universal_optional_argument_claim",
+      "evidence": "Instruction requires any positive single-feature input to return 1.0 within seven places independent of optional arguments. Native tests cover [22], [42], and [34] with repeats=3 and guess=(13,13), not universal optional values. The native reference restores default repeats=1 but still builds an empty ymtx when explicitly passed num_repeats=0; no new execution of that counterexample is claimed."
+    }
+  ],
+  "decision": "Reject this unchanged instruction under instruction-grader agreement criterion. Six native control successes remain valid evidence for the narrower native contract, not acceptance of the generated universal specification.",
+  "source_sha256": {
+    "instruction.md": "bbfe68636e151f6c6a08b377dcbabc94c52aa94a66615aee0587812d9f80e917",
+    "learner_source.py": "8a303bbd8f58be7af7459c29f52c39b1eccc7a94783e53d12d5ea33fa81851e1",
+    "native_test_source.py": "f5ca7e89104f04052e654ea895db1ccf0191b0e0e16063145f20fd65aee93604"
+  },
+  "future_repair": "Any model-driven repair must be a separately recorded intervention within remaining native call allowance; no silent manual prose repair."
+}

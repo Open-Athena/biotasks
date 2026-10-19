@@ -1748,3 +1748,9 @@ Client03 completed and its 6,278-byte original archive matched its recorded SHA-
 ### 2026-10-19 — Tsallis controls dispatched and Flow exhaustion archived
 
 Submitted the frozen Tsallis six-control validation at 15:19 UTC on existing reserved TRC, with no model calls, candidate recharges or blind attempts. Original GLM instruction and native grader remain unchanged. The prior Flow profile-exhaustion evidence is now public: snapshot f849594da79b5ff8522a573f288692cf889620433963a707819d3ddfb390e49d passed anonymous readback of 29 objects and 1,039 archive members. No new candidate was attempted; the five remaining attempts require a separately recorded source/test profile extension.
+
+### 2026-10-19 — Michaelis–Menten native controls pass, instruction rejected
+
+Recovered and hash-verified the completed 28,627,261-byte controller archive. The independent audit reconstructs asset hashes/modes and recomputes all six rewards from JUnit: 0, 1, 1, 1, 0, 0. The exact sandbox returned an independent 404. Nevertheless, the unchanged instruction misstates the mutant default and makes a universal optional-argument guarantee unsupported by the native contract. It is not admitted; no task-specific prose repair or author feedback was supplied. Native runtime success and instruction rejection are separate results.
+
+Prepared a separately recorded SWE-Flow profile extension from `_base.py` to `_gini.py` and its native test file at the same pinned source revision. Read-only inspection found three Gini/Lorenz-curve functions and corresponding native tests. Generation logic, seed, dependencies and prior exclusion IDs remain unchanged; cumulative charge remains 5/10, with at most five new attempts and target one contrast. No new model calls or task admission are implied.
