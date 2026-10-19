@@ -1744,3 +1744,7 @@ Remaining Flow completed with zero new attempts, zero rejected/retained candidat
 ### 2026-10-19 — finite solver-client usage preserved
 
 Client03 completed and its 6,278-byte original archive matched its recorded SHA-256. Public anonymous readback verified all six snapshot objects. The complete journal contains 85 successful requests (76 stop, nine length), 940,059 input tokens and 71,200 output tokens, including 42,285 reported reasoning tokens. All requests retained the 2,048-output-token solver limit and unset effort. Per-task reconciliation is pending; no solver attempt was repeated. Own endpoint absence and terminal state permitted release of its one resource slot. Michaelis–Menten controls remain running; reserved $5 for the already frozen Tsallis controls, bringing conservative holds to $1,188, not verified spend.
+
+### 2026-10-19 — Tsallis controls dispatched and Flow exhaustion archived
+
+Submitted the frozen Tsallis six-control validation at 15:19 UTC on existing reserved TRC, with no model calls, candidate recharges or blind attempts. Original GLM instruction and native grader remain unchanged. The prior Flow profile-exhaustion evidence is now public: snapshot f849594da79b5ff8522a573f288692cf889620433963a707819d3ddfb390e49d passed anonymous readback of 29 objects and 1,039 archive members. No new candidate was attempted; the five remaining attempts require a separately recorded source/test profile extension.
