@@ -1,0 +1,108 @@
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index c3af8ad49..9a88fc2d7 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -24,6 +24,7 @@
+ * Fixed a loophole in `Sequence` construction referring to an external array while flagging it as read-only, whereas one can still unflag the array and mutate its content. Construction now by default enforces immutability, and an external array is copied rather than referred ([#2614](https://github.com/scikit-bio/scikit-bio/pull/2614)).
+ * Corrected an inaccurate statement in the documentation of `Protein`, which should have 22 definite characters (including 'O' and 'U') instead of 20 ([#2621](https://github.com/scikit-bio/scikit-bio/pull/2621)).
+ * Fixed a broken link to `Sequence.iter_kmers` in the feature highlights on the documentation front page ([#2605](https://github.com/scikit-bio/scikit-bio/issues/2605)).
++* Fixed the Stockholm reader to forward extra keyword arguments, such as `lowercase`, to the sequence constructor, so that Stockholm files with lowercase characters can be read ([#1543](https://github.com/scikit-bio/scikit-bio/issues/1543)).
+ * Fixed `Sequence` case conversion altering characters that are not letters. `Sequence.lowercase` (used by the `lowercase` option of the FASTA and FASTQ writers) flipped the case bit of every selected character. When a lowercase mask covered non-letter positions, gaps (`-`), dots (`.`) and stop codons (`*`) were turned into control characters (e.g., `\r` and `\n`), and lowercase letters were converted to uppercase. The `lowercase` parameter of `Sequence` treated every character after `Z` as lowercase, rewriting `[`, `\`, `]`, `^`, `_`, `` ` ``, `{`, `|`, `}` and `~`. Case conversion is now restricted to the letters A-Z and a-z.
+ 
+ ### Miscellaneous
+diff --git a/skbio/io/format/stockholm.py b/skbio/io/format/stockholm.py
+index 9d610a3a3..4e4dda927 100644
+--- a/skbio/io/format/stockholm.py
++++ b/skbio/io/format/stockholm.py
+@@ -258,13 +258,19 @@
+ 
+ Format Parameters
+ -----------------
+-The only supported format parameter is ``constructor``, which specifies the
++The main format parameter is ``constructor``, which specifies the
+ type of in-memory sequence object to read each aligned sequence into. This must
+ be a subclass of ``GrammaredSequence`` (e.g., ``DNA``, ``RNA``, ``Protein``)
+ and is a required format parameter. For example, if you know that the Stockholm
+ file you're reading contains DNA sequences, you would pass ``constructor=DNA``
+ to the reader call.
+ 
++Any additional keyword arguments, such as ``lowercase``, are passed to the
++sequence constructor. For example, ``lowercase=True`` allows a file containing
++lowercase sequence characters to be read. If ``lowercase`` is a string, the
++resulting boolean positional metadata column cannot be written back to
++Stockholm format.
++
+ Examples
+ --------
+ Suppose we have a Stockholm file containing an MSA of protein sequences
+@@ -427,7 +433,7 @@ def _stockholm_sniffer(fh):
+ 
+ 
+ @stockholm.reader(TabularMSA)
+-def _stockholm_to_tabular_msa(fh, cls=None, constructor=None):
++def _stockholm_to_tabular_msa(fh, cls=None, constructor=None, **kwargs):
+     # Checks that user has passed required constructor parameter
+     if constructor is None:
+         raise ValueError(
+@@ -480,7 +486,7 @@ def _stockholm_to_tabular_msa(fh, cls=None, constructor=None):
+             'Final line does not conform to Stockholm format. Must contain only "//".'
+         )
+ 
+-    return msa_data.build_tabular_msa(constructor)
++    return msa_data.build_tabular_msa(constructor, **kwargs)
+ 
+ 
+ # For storing intermediate data used to construct a Sequence object.
+@@ -558,7 +564,7 @@ def add_gr_metadata(self, seq_name, feature_name, feature_data):
+             self._seqs[seq_name] = _SeqData(seq_name)
+         self._seqs[seq_name].add_positional_metadata_feature(feature_name, feature_data)
+ 
+-    def build_tabular_msa(self, constructor):
++    def build_tabular_msa(self, constructor, **kwargs):
+         if len(self._seqs) != len(self._seq_order):
+             invalid_seq_names = set(self._seqs) - set(self._seq_order)
+             raise StockholmFormatError(
+@@ -568,7 +574,7 @@ def build_tabular_msa(self, constructor):
+ 
+         seqs = []
+         for seq_name in self._seq_order:
+-            seqs.append(self._seqs[seq_name].build_sequence(constructor))
++            seqs.append(self._seqs[seq_name].build_sequence(constructor, **kwargs))
+ 
+         positional_metadata = self._positional_metadata
+         if not positional_metadata:
+@@ -625,11 +631,12 @@ def add_positional_metadata_feature(self, feature_name, feature_data):
+         else:
+             self.positional_metadata[feature_name] = feature_data
+ 
+-    def build_sequence(self, constructor):
++    def build_sequence(self, constructor, **kwargs):
+         return constructor(
+             self.seq,
+             metadata=self.metadata,
+             positional_metadata=(self.positional_metadata),
++            **kwargs,
+         )
+ 
+ 
+diff --git a/skbio/io/format/tests/test_stockholm.py b/skbio/io/format/tests/test_stockholm.py
+index da3bb3810..dc4c7a5e5 100644
+--- a/skbio/io/format/tests/test_stockholm.py
++++ b/skbio/io/format/tests/test_stockholm.py
+@@ -516,6 +516,16 @@ def test_unsupported_constructor_error(self):
+                                     r'`constructor`.*`GrammaredSequence`.'):
+             _stockholm_to_tabular_msa(fp, constructor=TabularMSA)
+ 
++    def test_lowercase_kwarg_forwarded_to_constructor(self):
++        fh = io.StringIO('# STOCKHOLM 1.0\nseq1 acdksv\nseq2 acdksv\n//\n')
++        obs = TabularMSA.read(fh, constructor=Protein, lowercase=True)
++        self.assertEqual([str(seq) for seq in obs], ['ACDKSV', 'ACDKSV'])
++
++    def test_lowercase_without_kwarg_error(self):
++        fh = io.StringIO('# STOCKHOLM 1.0\nseq1 acdksv\nseq2 acdksv\n//\n')
++        with self.assertRaisesRegex(ValueError, r'Invalid characters'):
++            TabularMSA.read(fh, constructor=Protein)
++
+ 
+ class TestStockholmWriter(unittest.TestCase):
+     def test_msa_to_stockholm_extensive(self):

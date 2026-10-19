@@ -15,7 +15,7 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | --- | ---: | ---: | ---: | ---: |
 | pr_diff/native | 3 / 10 | 3 / 10 | 3 / 10 | 3 / 10 |
 | pr_runtime/native | 3 / 9 | 3 / 5 | 0 / ? B | 0 / ? B |
-| commit_runtime/native | 0 / 10 | 1 / 3 | 0 / ? B | 0 / ? B |
+| commit_runtime/native | 0 / 10 | 1 / 6 | 0 / ? B | 0 / ? B |
 | code_instruct/native | 0 / 10 | 0 / 10 | — | — |
 | equivalence_tests/native | 0 / ? B | 0 / ? B | — | — |
 | cve_patches/native | 0 / ? | 0 / ? B | 0 / ? B | 0 / ? B |

@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T16:10:14.811804+00:00",
+  "observed_utc": "2026-10-19T16:15:30.422332+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -29,8 +29,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/native@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 3,
-      "remaining_allowance": 7,
+      "charged_candidate_attempts": 6,
+      "remaining_allowance": 4,
       "receipts": [
         {
           "source": "evidence/skbio-commit-02/summary.json",
@@ -43,9 +43,15 @@
           "sha256": "f61eb922590f8f5bd1c7d342939439dd5e8d96184f799ba55fd84b02ad503887",
           "counter_key": "selected_input_charge",
           "charged": 2
+        },
+        {
+          "source": "continuation-20261018/skbio-commit-bug-intake/selection.json",
+          "sha256": "51cf66cc7d795a6600465bb9d84c6f88195f6a70f40905390017c54e6abbabec",
+          "counter_key": "selected_input_charge",
+          "charged": 3
         }
       ],
-      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads.",
+      "definition": "One unchanged selected commit reached corrected native validation; setup01 reached no candidate. No export because native test-level contrast rejects collection failure. Continuation fixed-head selection counts every considered input including unchanged native metadata rejections; five inputs produce one eligible scikit-bio commit and no eligible Biopython heads. Three subsequent fixed BUG-search inputs add one metadata rejection, one no-test-patch rejection and one eligible Stockholm-reader commit awaiting native runtime; no source count reset when materializing it.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_to_env/swe_gen@biopython/biopython": {
