@@ -2081,3 +2081,15 @@ controller-owned runtime note. This preserves authored scientific text and
 supports both conventions for every task. The existing bundle test passes;
 the forthcoming native trials will exercise the resulting image. The current
 grading job remains bound to its original checkpoint and scientific artifacts.
+
+### 2026-10-19 — Explicit release provenance
+
+The operator release stager still had the first task's dataset ID, description,
+methodology, source-license path and seed path embedded in code. Replace those
+with required `release_metadata` configuration. Missing metadata cannot silently
+fall back to the prior task. The selected seed must be unambiguous, license
+text hashes are checked, and release attribution must equal the native bundle's
+record. Optional bundled source provenance must match the selected seed too.
+Seven focused release/packaging tests pass, including cross-wired source and
+license failures. This changes publication metadata handling, not task science.
+Bioframe source/data attribution is recorded separately from the Scanpy case.

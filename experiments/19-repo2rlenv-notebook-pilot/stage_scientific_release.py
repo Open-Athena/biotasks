@@ -5,12 +5,14 @@ import subprocess
 import sys
 from pathlib import Path
 
+from release_metadata import load_release_metadata, verify_bundle_licenses
 from repo2rlenv.campaigns.release import ReleasePlan, ReleaseTask, stage_release, verify_release
 from repo2rlenv.emitter.evaluation import EvaluationLabel, evaluation_time
 from repo2rlenv.quality.labels import write_labeled_copy
 
 config_path = Path(sys.argv[1])
 config = json.loads(config_path.read_text())
+metadata, licenses, provenance = load_release_metadata(config)
 native, task, grading, stage = map(
     Path, [config[k] for k in ("native", "task", "grading", "stage")]
 )
@@ -29,13 +31,13 @@ checked = subprocess.run(
 )
 validation = json.loads(checked.stdout)
 assert validation["accepted"] is True
+verify_bundle_licenses(task, licenses)
 
 
 def read(path):
     return json.loads(Path(path).read_text())
 
 
-exp = Path("experiments/19-repo2rlenv-notebook-pilot")
 # Upstream's verified label specifically requires its standard quality-loop proof.
 # Preserve that distinction rather than fabricating compatible trial records.
 labeled = write_labeled_copy(
@@ -69,19 +71,19 @@ documents = {
     "independent-execution.json": read(grading / "independent-result.json"),
     "scientific-probes.json": read(grading / "probes.json"),
     "solver-trajectory.json": read(trajectory),
-    "source-licenses.json": read(exp / "source-license-evidence.json"),
-    "source-intake-provenance.json": read(exp / "seeds/current.json")[0]["provenance"],
+    "source-licenses.json": licenses,
+    "source-intake-provenance.json": provenance,
     "materialization-manifest.json": read(Path(config["materialization"]) / "manifest.json"),
     "materialization-rationale.json": {
         "rationale": read(Path(config["materialization"]) / "candidate.json")["rationale"]
     },
 }
 plan = ReleasePlan(
-    repo_id="gonzalobenegas/biotasks-notebook-pilot-issue-19",
+    repo_id=metadata["repo_id"],
     recipe="notebook-artifact-reproduction",
-    title="BioTasks notebook pilot: marker genes for supplied cell groups",
-    description="One notebook-grounded computational biology task: analyze the observed bone-marrow expression matrices using supplied reference-derived cell groups and produce marker-gene statistics. GLM-5.3 authored the task, solution, grader and scientific probes through version-controlled prompts.",
-    methodology="BioTasks adapts pinned Repo2RLEnv Tasksmith execution, Harbor packaging and release helpers. The original notebook was executed and replayed. GLM derived identity/group inputs, projected its marker endpoint and wrote an isolated oracle. A fresh worker implemented the public question without answer access. The deterministic grader was tested against original, recomputed and independent outputs, empty/missing submissions and scientific counterexamples. Native Harbor oracle/no-op controls and one blind GLM-5.3 Terminus-2 attempt used CPU-only offline Daytona sandboxes. Reward is binary. Supplied groups are computational reference assignments, not biological ground truth.",
+    title=metadata["title"],
+    description=metadata["description"],
+    methodology=metadata["methodology"],
     code_revision=config["revision"],
     tasks=[
         ReleaseTask(
@@ -104,12 +106,7 @@ plan = ReleasePlan(
         "actual_daytona_invoice_usd": None,
         "aggregate_authorized_usd": "100.00",
     },
-    citations=[
-        "https://github.com/Open-Athena/biotasks/issues/19",
-        "https://github.com/huggingface/Repo2RLEnv/tree/55554430cd724efded1f5ad0ff98ebca5d88c0a6",
-        "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
-        "https://doi.org/10.6084/m9.figshare.22716739.v1",
-    ],
+    citations=metadata["citations"],
     limitations=[
         "One task and one final blind attempt do not establish benchmark performance or universal software portability.",
         "The upstream advisory evaluation label remains unverified because its standard quality-loop profile was not run. The separate, executed BioTasks scientific-content and native-control evidence is provided explicitly.",
