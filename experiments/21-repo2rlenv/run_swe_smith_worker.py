@@ -115,10 +115,16 @@ def main():
             ],
             timeout=min(6000, args.timeout_sec),
         )
+        marker = worker.exec(["cat", "/evidence/native/worker-exit.txt"], timeout=30)
+        marker.checked("read explicit mutation worker exit marker")
+        native_exit = int(marker.stdout.strip())
         record.update(
-            worker_returncode=result.returncode,
-            status="worker_completed" if result.returncode == 0 else "worker_failed",
+            transport_reported_returncode=result.returncode,
+            worker_returncode=native_exit,
+            status="worker_completed" if native_exit == 0 else "worker_failed",
         )
+        if native_exit != 0:
+            raise RuntimeError("Native mutation worker failed; preserve original evidence")
     except BaseException as exc:
         record.update(status="failed", error_type=type(exc).__name__)
         raise
