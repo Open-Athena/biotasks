@@ -16,6 +16,11 @@ def audit(summary, inputs):
     for record in rows:
         pr = record['pr']
         frozen = expected[pr]
+        task_file = inputs / frozen['task_spec']
+        task_raw = task_file.read_bytes()
+        assert hashlib.sha256(task_raw).hexdigest() == manifest['files'][frozen['task_spec']]['sha256']
+        assert json.loads(task_raw)['id'] == frozen['stable_task_id']
+        assert frozen['route'] == 'commit_runtime/native'
         controls_file = inputs / frozen['control_inputs']
         raw = controls_file.read_bytes()
         assert hashlib.sha256(raw).hexdigest() == manifest['files'][frozen['control_inputs']]['sha256']
@@ -42,7 +47,7 @@ def audit(summary, inputs):
                 assert case['marin_reward'] == expected_reward
             assert all(case[k] is True for k in ('native_initial_private_paths_absent', 'native_initial_imports_passed', 'marin_initial_private_paths_absent', 'marin_initial_imports_passed', 'marin_postgrade_private_paths_absent', 'passed'))
             case_rows.append({'case': case['case'], 'native_reward': case['native_reward'], 'Marin_reward': case['marin_reward'], 'native_grade_details_identical': True})
-        results.append({'pr': pr, 'pairs_passed': len(case_rows), 'cases': case_rows, 'profile_task_id': frozen.get('transport_profile_task_id', frozen.get('task_id'))})
+        results.append({'pr': pr, 'pairs_passed': len(case_rows), 'cases': case_rows, 'profile_task_id': frozen['stable_task_id']})
     return {'stage': 'exact_profile_native_Marin_parity_independently_reconciled', 'marin_revision': manifest['marin_revision'], 'profiles': len(results), 'pairs_passed': sum(x['pairs_passed'] for x in results), 'native_and_Marin_grade_executions': 2 * sum(x['pairs_passed'] for x in results), 'records': results, 'model_calls': 0, 'new_task_admissions': 0, 'Atlas_admissions': 0, 'limitations': ['Commit storage alias pr2630 is not the PR-runtime task identity.', 'Validation covers these exact Docker builds and commit TaskSpec, not arbitrary symlinks or generic converter compatibility.', 'Functional private-path absence checks are not the deferred end-to-end integrity diagnostic.', 'Native correctness admissions and blind solver attempts are separate gates.']}
 
 
