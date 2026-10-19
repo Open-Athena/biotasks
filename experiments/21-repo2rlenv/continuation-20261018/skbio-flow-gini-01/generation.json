@@ -1,0 +1,53 @@
+{
+  "attempted": 1,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844",
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve"
+        ],
+        "PASS_TO_PASS": [
+          "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator"
+        ]
+      },
+      "functions": {
+        "skbio/diversity/alpha/_gini.py:82:_lorenz_curve": {
+          "line": 82,
+          "name": "_lorenz_curve",
+          "path": "skbio/diversity/alpha/_gini.py",
+          "source": "def _lorenz_curve(data):\n    \"\"\"Calculate the Lorenz curve for input data.\n\n    Notes\n    -----\n    Formula available on wikipedia.\n\n    \"\"\"\n    sorted_data = np.sort(data)\n    Sn = sorted_data.sum()\n    n = sorted_data.shape[0]\n    return np.arange(1, n + 1) / n, sorted_data.cumsum() / Sn"
+        }
+      },
+      "id": "ea039e585353325e82c3",
+      "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "repo": "https://github.com/scikit-bio/scikit-bio",
+      "schedule": {
+        "core_nodes": [
+          "skbio/diversity/alpha/_gini.py:82:_lorenz_curve"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "skbio/diversity/alpha/_gini.py:82:_lorenz_curve"
+        ],
+        "previous_tests": [],
+        "step": 0,
+        "target_nodes": [
+          "skbio/diversity/alpha/_gini.py:82:_lorenz_curve"
+        ],
+        "test_ids": [
+          "skbio/diversity/alpha/tests/test_gini.py::GiniTests::test_lorenz_curve"
+        ]
+      },
+      "source_files": [
+        "skbio/diversity/alpha/_gini.py"
+      ],
+      "test_evidence": {
+        "skbio/diversity/alpha/tests/test_gini.py": "from unittest import TestCase, main\n\nimport numpy as np\n\nimport numpy.testing as npt\n\nfrom skbio.diversity.alpha import gini_index\n\nfrom skbio.diversity.alpha._gini import (\n    _lorenz_curve, _lorenz_curve_integrator)\n\n    def test_gini_index_bug_1844(self):\n        exp = 0.0\n        obs = gini_index([2, 2, 2, 2, 2])\n        self.assertAlmostEqual(obs, exp)\n\n    def test_gini_index(self):\n        exp = 0.32771210013908214\n        obs = gini_index(self.data, 'trapezoids')\n        self.assertAlmostEqual(obs, exp)\n\n        exp = 0.20271210013908214\n        obs = gini_index(self.data, 'rectangles')\n        self.assertAlmostEqual(obs, exp)\n\n        # Raises error on negative data.\n        with self.assertRaises(ValueError):\n            gini_index([1.0, -3.1, 4.5])\n\n    def test_lorenz_curve(self):\n        npt.assert_allclose(_lorenz_curve(self.data),\n                                      self.lorenz_curve_points)"
+      }
+    }
+  ],
+  "rejected": []
+}

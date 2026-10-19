@@ -144,7 +144,7 @@ if __name__ == '__main__':
     (HERE / 'consolidated-ledger.json').write_text(json.dumps(data, indent=2) + '\n')
     (HERE / 'consolidated-ledger.md').write_text(markdown(data))
     with (HERE / 'consolidated-task-ledger.csv').open('w', newline='') as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(dict.fromkeys(k for t in data['tasks'] for k in t)))
+        writer = csv.DictWriter(stream, fieldnames=list(dict.fromkeys(k for t in data['tasks'] for k in t)), lineterminator='\n')
         writer.writeheader()
         writer.writerows(data['tasks'])
     print(json.dumps({'accepted': data['total_admitted'], 'scored': data['total_scored'], 'groups': data['reward_groups']}))

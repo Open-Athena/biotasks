@@ -22,7 +22,7 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | tasksmith/tasksmith | 0 / ? B | 0 / ? B | — | — |
 | repo_mutate/swe_smith | 2 / 10 | 2 / 7 | — | — |
 | pr_to_env/swe_gen | 0 / 1 | 0 / 1 | — | — |
-| repo_reconstruct/swe_flow | 0 / 6 | 2 / 5 | — | — |
+| repo_reconstruct/swe_flow | 0 / 6 | 2 / 6 | — | — |
 | equivalence_tests/r2e | 0 / 10 | 0 / 10 | — | — |
 | pr_runtime/swe_next | 0 / 4 | 0 / 1 | — | — |
 | commit_runtime/r2e_gym | 0 / 7 | 1 / 2 | — | — |
