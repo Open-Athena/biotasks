@@ -1,0 +1,39 @@
+{
+  "candidate_id": "ea039e585353325e82c3",
+  "stage": "independent_static_instruction_and_native_test_review_rejected_before_additional_runtime",
+  "independently_admitted": false,
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "instruction_sha256": "b4459021cc9bc08cc006d90fb6432a2943238d7eb1206c8cf1d1a6e5f07036e2",
+  "actual_newline_characters": 0,
+  "generation_archive_sha256": "661db4b41685cfdc8381594d7646fb9a797640e66a99fc28dd16f285c1fcee9e",
+  "source_members": {
+    "native/generation/base/skbio/diversity/alpha/_gini.py": {
+      "sha256": "0bab73d87caca5b08d4f074257894fb76fbb1091ea801c73fd2cc1b45f32a9f2",
+      "bytes": 3614
+    },
+    "native/generation/base/skbio/diversity/alpha/tests/test_gini.py": {
+      "sha256": "2dcadc0c06608abc5888013ca3da82bc2e4c68d80a2b487b69f7609dd0118424",
+      "bytes": 2304
+    }
+  },
+  "findings": [
+    {
+      "kind": "malformed_document_format",
+      "evidence": "Generated requirements contain literal n and nn separators in place of newlines, including Development Requirements Documentn n---n. Original text is retained unchanged."
+    },
+    {
+      "kind": "instruction_grader_coverage_gap",
+      "evidence": "Instruction mandates empty input, zero-total input, direct list input and non-mutation. Native test_gini.py directly checks _lorenz_curve only on one positive NumPy array; gini_index cases exercise a positive equal-count array and reject negatives upstream. There are no direct empty/zero-total/input-preservation assertions.",
+      "consequence": "The existing native tests do not establish the added mandatory boundary contracts; accepted reference behavior alone would not establish an adequate grader."
+    }
+  ],
+  "source_behavior_note": "Reference sorts with np.sort, computes arange/n and cumsum/total. This review does not assert the basic Lorenz formula is wrong.",
+  "runtime_controls_for_this_authored_instruction": "not_dispatched_after_static_rejection",
+  "author_calls_consumed": 2,
+  "native_author_call_ceiling": 6,
+  "remaining_calls_not_reset": 4,
+  "candidate_charge_unchanged": 6,
+  "automatic_model_repair_dispatched": false,
+  "next_step": "Preserve original rejection. Any later author repair or verifier change is a separate recorded intervention; do not silently repair the instruction or count an admission."
+}
