@@ -1,0 +1,37 @@
+{
+  "stage": "post_run_usage_reconciliation_not_task_recovery",
+  "original_archive_bytes": 802,
+  "original_archive_sha256": "67a58796a307b29ecd44cbb8cd8dbbcea7c2ef3ebe151690f2ab761f5081ce8d",
+  "retention_days": 7,
+  "original_hash_and_size_verified": true,
+  "inference_calls_recorded": 1,
+  "upstream_status": 200,
+  "finish_reasons": [
+    "stop"
+  ],
+  "upstream_elapsed_seconds": 525.593,
+  "usage": {
+    "prompt_tokens": 4966,
+    "total_tokens": 79000,
+    "completion_tokens": 74034,
+    "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "created_cache_tokens": 4928,
+      "multimodal_tokens": null
+    },
+    "completion_tokens_details": {
+      "reasoning_tokens": 69555
+    }
+  },
+  "wire_request_sha256": "58ab6b446719fc9bf2a5a42ce4d8424a9ea03403413abb7e5bd308660bdb0292",
+  "requested_max_tokens": 131072,
+  "requested_effort": "medium",
+  "finite_client_elapsed_seconds": 7201.623,
+  "native_caller_responses": 0,
+  "native_exports": 0,
+  "task_edits": 0,
+  "source_charge_change": 0,
+  "conclusion": "The finite client recorded one upstream completion after the previously observed gateway timeout. Original native failure and consumed candidate stay unchanged.",
+  "attribution_limit": "This finite client served the failed DataArc02 interval and contains one actual call. Wire-body SHA differs from the native adapter request-record SHA; byte-identical request correlation is not established. Do not add these tokens again if already counted elsewhere.",
+  "response_retention_limit": "This older client retained usage but not raw model response bytes. Do not invent a recovered task or resubmit the consumed request."
+}
