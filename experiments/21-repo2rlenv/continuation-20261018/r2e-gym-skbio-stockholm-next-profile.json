@@ -1,0 +1,48 @@
+{
+  "recipe": "r2e_gym",
+  "repo": {
+    "url": "https://github.com/scikit-bio/scikit-bio",
+    "ref": "02fe0c9d47e43ce3a5ce581b66904cd7529db2e2",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "skbio/io/format/stockholm.py"
+    ],
+    "test_paths": [
+      "skbio/io/format/tests"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [
+      "--import-mode=importlib"
+    ],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3' && python -m pip install --no-cache-dir 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 1,
+    "max_candidates": 1,
+    "history_limit": 1,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": true,
+    "require_test_match": true,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6
+  }
+}
