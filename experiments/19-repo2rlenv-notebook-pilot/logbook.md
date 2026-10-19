@@ -2307,3 +2307,27 @@ completed inspections did establish useful findings, while the last computation
 was interrupted. Earlier completed computations did not time out; distinguish
 those results from the final unfinished command. Do not characterize all
 exploration as unsuccessful or claim a validated candidate.
+
+### 2026-10-19 — Shell-free finalization 005 executes in one response
+
+The finalizer returned one complete candidate and passed its first controlled
+derivation/isolated-oracle submission. Stage elapsed 391.43 s; the controller
+process took 2.12 s. Three inputs remain byte-unchanged and the 2,484,423-byte
+oracle output matches the projected reference hash. GLM clarified multiplicity
+and the retained input annotation, corrected the unsupported input-header claim,
+and revised only the oracle documentation. Executable oracle/derivation logic
+is unchanged; no generated science was
+manually patched. The full unedited transcript handoff retained both successful
+observations and failed/unfinished commands rather than operator-written rules.
+
+The response used 48,726 prompt tokens and 52,277 completion tokens, including
+45,800 reasoning tokens, at medium effort with token/context/output caps unset.
+This is a single observed recovery pass, not a fresh end-to-end timing estimate.
+Archive/download and provider cleanup are verified. The archived bootstrap
+completed, but terminal scheduler state still needs confirmation before fresh
+grading 002. Scientific acceptance, native controls, blind solving and publication
+remain pending.
+
+Scheduler readback at 23:48 UTC confirmed finalization 005 and its task SUCCEEDED.
+Proceed to fresh grading 002 with no resumed grader/probes/independent code from
+the earlier inconsistent campaign.
