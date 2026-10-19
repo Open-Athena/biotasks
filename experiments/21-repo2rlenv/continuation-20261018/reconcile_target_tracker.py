@@ -179,6 +179,18 @@ def build():
                 assert charge == 10
                 action = 'candidate_cap_exhausted_native_runtime_remaining'
                 next_action = 'Execute only the two already selected static-eligible final commit inputs through the unchanged native stages. No additional discovery charge, replacement, task fixes or candidate-cap reset. Preserve source-filter rejections separately from execution outcomes.'
+        final_commit_assessment = ROOT / 'skbio-final-commit-native-01/assessment.json'
+        if key == 'commit_runtime/native@scikit-bio/scikit-bio' and final_commit_assessment.exists():
+            assessed = json.loads(final_commit_assessment.read_text())
+            assert assessed['native_exports'] == 2 and assessed['new_admissions'] == 0
+            action = 'candidate_cap_exhausted_below_target'
+            next_action = 'All final retained native stages completed: two exports, zero new admissions. One statement retains conflicting development history; the other duplicates the previously accepted PR2630 reference and grader. No manual rewrite, duplicate admission, repeated solver or new source selection.'
+        final_flow = ROOT / 'skbio-flow-saved-exports-02/assessment.json'
+        if key == 'repo_reconstruct/swe_flow@scikit-bio/scikit-bio' and final_flow.exists():
+            assessed = json.loads(final_flow.read_text())
+            assert assessed['native_exports'] == 3 and assessed['native_nop_oracle_trials'] == 6
+            action = 'declared_source_pool_exhausted_final_quality_assessment_remaining'
+            next_action = 'All three saved native exports and six nop/oracle controls completed unchanged and passed. Retain the first two coverage concerns; resolve the third formatting-only concern with a consistent final criterion. No new admission, task repair, author feedback or source expansion is inferred.'
         final_swe_gen = ROOT / 'swe-gen-final-intake/resolution.json'
         if route == 'pr_to_env/swe_gen' and key in reconciled and final_swe_gen.exists():
             resolved = json.loads(final_swe_gen.read_text())

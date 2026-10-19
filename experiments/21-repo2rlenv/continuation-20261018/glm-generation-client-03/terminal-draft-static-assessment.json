@@ -1,0 +1,76 @@
+{
+  "stage": "post_run_static_assessment_of_original_retained_completions",
+  "native_validator_sha256": "a19142603226ffb8132439c7e3657850f0c39efddaa3412d3b050d30f47c6492",
+  "native_validator_matches_pinned_source_archive": true,
+  "rows": [
+    {
+      "response_file": "1a325c1ea86b42a0b6a425055ba75f71.json",
+      "response_sha256": "c91ab7d0d7c7058e0f6fe065f3e2311bf20d1d90d135a555eb964b8054f5d0ba",
+      "answer_json_object": true,
+      "generated_code_executed": false,
+      "task_edited": false,
+      "new_model_calls": 0,
+      "text_fields": {
+        "instruction": {
+          "characters": 41,
+          "actual_newlines": 0
+        },
+        "tests_python": {
+          "characters": 78,
+          "actual_newlines": 0
+        },
+        "solution_shell": {
+          "characters": 82,
+          "actual_newlines": 0
+        }
+      },
+      "tests_python_AST_parse": "passed",
+      "native_TerminalDraft_schema": "failed",
+      "native_error_type": "ValidationError",
+      "native_errors": [
+        {
+          "loc": [],
+          "type": "value_error",
+          "message": "Value error, Weights must name each top-level pytest test exactly once"
+        }
+      ]
+    },
+    {
+      "response_file": "b8e1d4c27d364983a7d7d46d0720d2d3.json",
+      "response_sha256": "54949b7ecce91d7c88cc7b539f756bdaacd0e4e24429e51bede83650df634fd1",
+      "answer_json_object": true,
+      "generated_code_executed": false,
+      "task_edited": false,
+      "new_model_calls": 0,
+      "text_fields": {
+        "instruction": {
+          "characters": 111,
+          "actual_newlines": 0
+        },
+        "tests_python": {
+          "characters": 41,
+          "actual_newlines": 0
+        },
+        "solution_shell": {
+          "characters": 43,
+          "actual_newlines": 0
+        }
+      },
+      "tests_python_AST_parse": "failed",
+      "syntax_error_message": "invalid decimal literal",
+      "syntax_error_line": 1,
+      "native_TerminalDraft_schema": "failed",
+      "native_error_type": "SyntaxError",
+      "native_syntax_error_message": "invalid decimal literal",
+      "native_syntax_error_line": 1
+    }
+  ],
+  "new_model_calls": 0,
+  "task_fixes": 0,
+  "generated_code_executed": false,
+  "limits": [
+    "Schema/AST checks do not establish task correctness, a native export, or a completed repair loop.",
+    "Original callers timed out; these retained responses are assessed separately and never replayed into generation.",
+    "An invalid first answer does not establish what unexecuted native automatic repairs would have produced."
+  ]
+}

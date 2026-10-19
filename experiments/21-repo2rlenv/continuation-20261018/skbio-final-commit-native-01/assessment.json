@@ -1,0 +1,103 @@
+{
+  "stage": "manual_final_assessment_of_unchanged_native_commit_outputs",
+  "native_exports": 2,
+  "new_admissions": 0,
+  "duplicate_family_exports": 1,
+  "ambiguous_statement_rejections": 1,
+  "new_model_calls": 0,
+  "task_specific_fixes": 0,
+  "new_candidate_charge": 0,
+  "source_unit_total_charge": 10,
+  "remaining_new_input_allowance": 0,
+  "rows": [
+    {
+      "task": "scikit-bio__scikit-bio-f919ffd12668",
+      "fix": "f919ffd12668ed712c1e3f5c6e5ab0805a9b3936",
+      "native_export_completed": true,
+      "native_raw_contrast_recomputed": true,
+      "raw_pre_test_count": 34,
+      "raw_post_test_count": 34,
+      "raw_fail_to_pass": 4,
+      "raw_pass_to_pass": 30,
+      "exported_F2P": 4,
+      "exported_P2P": 30,
+      "asset_sha256": {
+        "task.toml": "86b7254932f8b159cbfe3531ce9facf8a5a49eded9394dde5d4d114619a71772",
+        "instruction.md": "93100bc7e441e6b99f4eba299c0cb4a84742a9ccaba2aa8f4e374901b08cd2fb",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "solution/patch.diff": "0444527154570c5ed5247cbe83e0229f4b2e2619c8d840568f35355edd20b7e3",
+        "tests/p2p.json": "cf350136c248ae0ad16b71418a4dfd0248399b6047a5de44e449a56cc1461a4d",
+        "tests/f2p.json": "0a55b6f4d292b52c9199b04a49e82c0731298d6b85cb4e0d0e2638ddebb398f0",
+        "tests/verifier.py": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+        "tests/test.sh": "5711b3eae75ca66bbadf1646f278b155eb1687e599468e11455b60c10c5456c4",
+        "environment/Dockerfile": "13d9138c99887ffa03b700f81348102594fbf73191c2baa45170f604c313c937",
+        "environment/docker-compose.yaml": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+      },
+      "model_calls": 0,
+      "task_fixes": 0,
+      "external_task_feedback": false,
+      "new_admission": false,
+      "native_elapsed_seconds": 119.195,
+      "assessment": "rejected_ambiguous_raw_commit_history_statement",
+      "findings": [
+        "Instruction retains both the abandoned linear-interpolation change and the later instruction to restore inward-rounded indices. It also retains changelog editing/history requirements. A unique final requirement is not cleanly separated from development history.",
+        "Native before/after contrast passed; this is an instruction-quality rejection, not a build failure or a claim that the reference fails.",
+        "The profile explicitly disables LLM statement synthesis. No manual rewrite or post-review synthesis is applied."
+      ],
+      "independent_controls": "Not run after final statement rejection; no new blind attempt."
+    },
+    {
+      "task": "scikit-bio__scikit-bio-71286a24bddf",
+      "fix": "71286a24bddff66c82cb25a7ca13441aa13c2f2c",
+      "native_export_completed": true,
+      "native_raw_contrast_recomputed": true,
+      "raw_pre_test_count": 320,
+      "raw_post_test_count": 320,
+      "raw_fail_to_pass": 4,
+      "raw_pass_to_pass": 316,
+      "exported_F2P": 4,
+      "exported_P2P": 50,
+      "asset_sha256": {
+        "task.toml": "a805d0254bdaaf7e10065fa5cef08d2c0bc788f20e5d917fda778c76024b1317",
+        "instruction.md": "b433df3bf75415571bdaf8b51ba655d9320f1861fd9e1136a2baa6f9dac49032",
+        "solution/solve.sh": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+        "solution/patch.diff": "ccd81a1e6389c663c03e83e51f5ee449137e4f5334cdb5271d0b27ab3064cc5d",
+        "tests/p2p.json": "2f2c59d159ec9f635baef349fed31f0f17486995bc3409ef7f813e813db153d0",
+        "tests/f2p.json": "c0f691f7db31bfc7b1f0a86c2b5aa51b14f46afd179fa339b802f79052590818",
+        "tests/verifier.py": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+        "tests/test.sh": "ab836f78bd58a5e8b704bb5199cf276630777813a4fa103591b3e25b3996cdf3",
+        "environment/Dockerfile": "8a172f79b9ff9d1c55fc09a3d7077e6eb3d6c4e142ae7e3644a9e830bbb05cc1",
+        "environment/docker-compose.yaml": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+      },
+      "model_calls": 0,
+      "task_fixes": 0,
+      "external_task_feedback": false,
+      "new_admission": false,
+      "native_elapsed_seconds": 116.136,
+      "assessment": "duplicate_existing_PR2630_fix_family_not_new_admission",
+      "duplicate_of": "scikit-bio__scikit-bio-d25f305cea3a",
+      "same_base_commit": "566dbe73c62a13f790713245c24f883d7eb92983",
+      "identical_reference_and_grading_assets": [
+        "solution/patch.diff",
+        "tests/f2p.json",
+        "tests/p2p.json",
+        "tests/test.sh",
+        "tests/verifier.py"
+      ],
+      "original_public_member_manifest_sha256": "76b8c1f3ed71f9acc098cb12648b45f7694060d42cc4d76cc8335f835f0c6a6b",
+      "findings": [
+        "Different commit SHA/task ID; reference source patch, four F2P tests, fifty P2P tests and verifier scripts exactly match the previously accepted task under the same base.",
+        "Do not count another independent task or repeat the already consumed solver attempt."
+      ],
+      "independent_controls": "Earlier accepted family has six independent graded controls; do not invent a new control execution for this export."
+    }
+  ],
+  "timing_scope": "Native materialization phase only; earlier selection and later assessment not included.",
+  "native_seconds_per_export": 117.6655,
+  "per_accepted_task_time": null,
+  "limits": [
+    "Frozen shared repository bootstrap is a declared profile, not stock automatic bootstrap.",
+    "Full native source candidate cap remains consumed; no replacement or cap reset.",
+    "Native export, independent acceptance and a new independent source family remain distinct."
+  ]
+}
