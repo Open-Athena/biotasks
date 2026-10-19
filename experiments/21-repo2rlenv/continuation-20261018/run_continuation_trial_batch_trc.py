@@ -48,12 +48,14 @@ def main():
             remaining = 6900 - (time.monotonic() - started)
             if remaining < 3600 or float(env['BIOTASKS21_INFERENCE_EXPIRES_EPOCH']) - time.time() < 3600:
                 row['status'] = 'not_started_insufficient_remaining_window'
+                print('BIOTASKS21_BATCH_UNIT ' + json.dumps({'evidence': 'controller_report_only', **row}), flush=True)
                 continue
             unit_output = output / item['unit']
             unit_output.mkdir(exist_ok=False)
             child_env = dict(env, IRIS_OUTPUT_DIR=str(unit_output), REPO2RLENV_MODEL_WORKER='1')
             row['status'] = 'provider_controls_running'
             (output / 'batch-status.json').write_text(json.dumps(state, indent=2) + '\n')
+            print('BIOTASKS21_BATCH_UNIT ' + json.dumps({'evidence': 'controller_report_only', **row}), flush=True)
             with (unit_output / 'private-controller.log').open('w') as log:
                 result = subprocess.run([python, str(dispatch / 'run_continuation_blind_trial.py')],
                                         cwd=dispatch / 'cohort' / item['unit'], env=child_env,
@@ -69,6 +71,7 @@ def main():
             if cleanup.exists():
                 rows = json.loads(cleanup.read_text())
                 row['owned_sandboxes_confirmed_absent'] = bool(rows) and all(x['confirmed_absent'] for x in rows)
+            print('BIOTASKS21_BATCH_UNIT ' + json.dumps({'evidence': 'controller_report_only', **row}), flush=True)
             # A failed child may have an uncertain sandbox allocation. Preserve
             # it and stop rather than overlapping another unit before recovery.
             if result.returncode != 0 or not row.get('owned_sandboxes_confirmed_absent'):
