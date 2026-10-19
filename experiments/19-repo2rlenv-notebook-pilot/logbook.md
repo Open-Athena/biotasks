@@ -2071,3 +2071,13 @@ the source library. Same-author self-testing does not replace the separate blind
 implementation/controls still required. No scientific output was manually
 repaired. The next existing grading profile starts fresh, with no historical
 grader/probes or task-specific feedback from the first notebook.
+
+### 2026-10-19 — Generic native directory aliases
+
+The fresh task instruction uses the conventional absolute `/inputs` role path,
+while native packaging mounts files under `/workspace/inputs`. Add generic
+`/inputs` and `/outputs` symlinks to the native image and describe them in the
+controller-owned runtime note. This preserves authored scientific text and
+supports both conventions for every task. The existing bundle test passes;
+the forthcoming native trials will exercise the resulting image. The current
+grading job remains bound to its original checkpoint and scientific artifacts.

@@ -50,7 +50,8 @@ def runtime_instruction(instruction):
         + "Read the supplied inputs from `/workspace/inputs/`. "
         + "Write all required output files under `/workspace/outputs/`, "
         + "using the relative filenames specified above. "
-        + "The working directory is `/workspace`.\n"
+        + "The working directory is `/workspace`. "
+        + "Aliases `/inputs/` and `/outputs/` refer to these same directories.\n"
     )
 
 
@@ -111,7 +112,8 @@ def package(
         'ENV PATH="/opt/venv/bin:$PATH"',
         "ENV OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 MKL_NUM_THREADS=4 NUMEXPR_NUM_THREADS=4",
         "COPY inputs/ /workspace/inputs/",
-        "RUN chmod -R a-w /workspace/inputs && mkdir -p /workspace/outputs",
+        "RUN chmod -R a-w /workspace/inputs && mkdir -p /workspace/outputs"
+        " && ln -s /workspace/inputs /inputs && ln -s /workspace/outputs /outputs",
         "WORKDIR /workspace",
     ]
     assets = {
