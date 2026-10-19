@@ -1,0 +1,13 @@
+Traceback (most recent call last):
+  File "/work/native/history_contrast_batch.py", line 89, in run_batch
+    evaluated = evaluate({
+                ^^^^^^^^^^
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/pipelines/recipes/history/worker.py", line 215, in evaluate
+    healthy = test_image(
+              ^^^^^^^^^^^
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/execution/python_repository.py", line 135, in test_image
+    parsed = parse_junit((output / "results.xml").read_text(), returncode=state["ExitCode"])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/native/huggingface-Repo2RLEnv-27d04ee/src/repo2rlenv/quality/test_results.py", line 24, in parse_junit
+    raise ValueError(f"Test runner did not complete normally: exit {returncode}")
+ValueError: Test runner did not complete normally: exit 2

@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T18:13:32.639272+00:00",
+  "observed_utc": "2026-10-19T18:19:54.321352+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -131,8 +131,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/r2e_gym@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 3,
-      "remaining_allowance": 7,
+      "charged_candidate_attempts": 4,
+      "remaining_allowance": 6,
       "receipts": [
         {
           "source": "evidence/r2e-gym-skbio-01/summary.json",
@@ -151,9 +151,15 @@
           "sha256": "751da45e645605b84dfc5962fa81dc421c437464d06c87f5edcf4914efd4b8f2",
           "counter_key": "attempted",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/skbio-r2egym-ascii-03/generation.json",
+          "sha256": "751da45e645605b84dfc5962fa81dc421c437464d06c87f5edcf4914efd4b8f2",
+          "counter_key": "attempted",
+          "charged": 1
         }
       ],
-      "definition": "Conservatively charge both native execution profiles for the same PR2633 lineage. Only one source task/admission; charging repeated profiles does not create a second independent task or solver attempt. Continuation ASCII02 examined one selected candidate but failed after Docker build during fixture staging; conservatively charged once. Initial ASCII01 setup failed before enumeration, native counter remains null and independent stack inspection establishes zero examined candidates. Same source lineage repeated under profiles is not independent diversity.",
+      "definition": "Conservatively charge both native execution profiles for the same PR2633 lineage. Only one source task/admission; charging repeated profiles does not create a second independent task or solver attempt. Continuation ASCII02 examined one selected candidate but failed after Docker build during fixture staging; conservatively charged once. Initial ASCII01 setup failed before enumeration, native counter remains null and independent stack inspection establishes zero examined candidates. Same source lineage repeated under profiles is not independent diversity. ASCII03 examined the same historical input under existing test-directory roots; healthy pytest collection failed due tests-package collision. Conservatively charged once despite shared source lineage; no author call.",
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/seta_seed2synth@seta-genomic-intervals-v1": {
