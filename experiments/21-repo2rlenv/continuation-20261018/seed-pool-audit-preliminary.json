@@ -1,0 +1,76 @@
+{
+  "observed_utc": "2026-10-19T19:16:55.069025+00:00",
+  "stage": "preliminary_declared_seed_pool_audit_not_exhaustion_or_completion_claim",
+  "rows": [
+    {
+      "cohort": "seta-genomic-intervals-v1",
+      "source": "seeds/seta-genomic-intervals/manifest.json",
+      "sha256": "186e4368838f4e584c5f1afc93fa091d614e30288df470e9df4198d2885c5bed",
+      "declared_available_seed_candidates": 3,
+      "native_identity_basis": "seed digest in terminal.run_synthesis",
+      "status": "pool_count_verified; unused candidate budget is not an inventory of distinct inputs"
+    },
+    {
+      "recipe": "seta_evol",
+      "cohort": "pr2633-parent-v1",
+      "source": "seeds/pr2633-parent-v1/manifest.json",
+      "sha256": "6c23974e93860fc06a6819960d3d86e3ae8a9dd6cdac4febe073cc89642c393f",
+      "declared_records": 3,
+      "native_options": {
+        "target": 3,
+        "max_candidates": 10,
+        "max_repairs": 2,
+        "seed": 24,
+        "max_tokens": 10000,
+        "test_timeout_sec": 120,
+        "review_drafts": false,
+        "exclude_seed_sha256": [],
+        "strategies": [
+          "increase_difficulty",
+          "change_context",
+          "decrease_difficulty"
+        ],
+        "variants_per_parent": 3
+      },
+      "status": "manifest record count verified; compare recipe loader and completed seed IDs before further dispatch"
+    },
+    {
+      "recipe": "dataarc",
+      "cohort": "pr2633-parent-v1",
+      "source": "seeds/pr2633-parent-v1/manifest.json",
+      "sha256": "6c23974e93860fc06a6819960d3d86e3ae8a9dd6cdac4febe073cc89642c393f",
+      "declared_records": 12,
+      "native_options": {
+        "target": 3,
+        "max_candidates": 10,
+        "max_repairs": 2,
+        "seed": 24,
+        "max_tokens": 10000,
+        "test_timeout_sec": 120,
+        "review_drafts": false,
+        "exclude_seed_sha256": [],
+        "strategies": [
+          "few_shot",
+          "self_instruct",
+          "evol_instruct"
+        ],
+        "evol_directions": [
+          "in_depth",
+          "in_breadth"
+        ],
+        "samples_per_strategy": 3
+      },
+      "status": "manifest record count verified; compare recipe loader and completed seed IDs before further dispatch"
+    }
+  ],
+  "native_runner_evidence": [
+    "run_synthesis loads declared inputs, excludes declared seed hashes, shuffles then truncates to max_candidates.",
+    "Candidate/task key is the first16characters of the seed JSON SHA256.",
+    "An identical resumed run skips keys already exported or rejected."
+  ],
+  "implication": "Reconcile distinct remaining seed inputs and unused native stages/repairs before dispatch. Arithmetic cap minus charged attempts alone does not prove additional eligible candidates exist.",
+  "limits": [
+    "This preliminary check does not declare any cohort complete, blocked or exhausted.",
+    "Additional inputs must be explicitly versioned with lineage and retain existing campaign/candidate bounds; consumed seeds or repair limits must not be silently reset."
+  ]
+}
