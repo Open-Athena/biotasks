@@ -1,0 +1,24 @@
+{
+  "stage": "original_instruction_agrees_with_native_contract_with_documented_domain",
+  "candidate_id": "f39ded25ef48a6575366",
+  "decision": "Eligible for native admission after public readback and cleanup; blind solve remains pending.",
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "native_controls_passed": true,
+  "findings": [
+    "Instruction identifies the actual plus/minus mutation and supplies the native Tsallis entropy formula.",
+    "Numerical examples and special-case expectations correspond to test_tsallis: orders 0, 0.5, 1, 2, 10 and infinity; singleton zero and empty-community NaN.",
+    "Read finite-order statements within the retained public API domain 0 <= order <= infinity; negative orders are not newly required. Empty and singleton exceptions are stated separately.",
+    "Native baseline fails while reference and a distinct algebraic implementation pass twice; zero and order-ignoring controls fail."
+  ],
+  "limitations": [
+    "Formula and concrete expected examples make this a guided source repair, not independent biological discovery.",
+    "Finite native controls do not establish exhaustive real-order numerical accuracy.",
+    "Manual independent review/control construction remains an intervention; authoring used only the free GLM endpoint with no task-specific feedback."
+  ],
+  "source_sha256": {
+    "instruction.md": "7740a53daef62bbca79d69187cadd644c95ac4e249beb1874372c74475e8b06e",
+    "learner_source.py": "b42cfc390f91750fd7ad3dd673ffa8d793a0f2fd21a2a0942a32795b08730e87",
+    "native_test_source.py": "f5ca7e89104f04052e654ea895db1ccf0191b0e0e16063145f20fd65aee93604"
+  }
+}
