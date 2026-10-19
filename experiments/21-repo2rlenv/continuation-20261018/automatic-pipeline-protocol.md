@@ -12,7 +12,7 @@ The 30 previously accepted/scored tasks combine automatic outputs with assisted 
 
 | Existing evidence | Implication for the automatic comparison |
 | --- | --- |
-| Esty and observed-features acceptance receipts explicitly retain the emitted instruction/source/reference/grader bundle unchanged | These are evidence of unchanged pipeline outputs with final manual assessment. Review alone is allowed. Full run configuration/feedback lineage still needs to accompany the primary accounting. |
+| Esty and observed-features: native prompts, model text plus native exporter suffix, and all 4072 original asset hashes verified | Positive evidence of two unchanged authored outputs under declared repository profiles. Final assessment is allowed. Unattended orchestration and repository discovery are separate unproven claims. |
 | Tsallis, Pielou and Enspie retained original GLM instructions without task-specific author feedback | Positive authorship evidence. Check the complete exported/runtime bundle before claiming unchanged end-to-end output; unchanged prose alone does not establish that. |
 | New LCC instruction was revised by GLM using task-specific feedback written by Codex | Excluded from primary automatic-output success; retain the original failure and label the revised task assisted. |
 | First LCC, R2E-Gym and portable historical profiles required explicit build/fixture/runtime work | Report the original pipeline outcome and adapted-profile evidence separately. Do not use a rescued runtime as proof that the original configuration worked. |

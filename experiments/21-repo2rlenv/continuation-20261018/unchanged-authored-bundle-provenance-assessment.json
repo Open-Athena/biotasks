@@ -1,0 +1,82 @@
+{
+  "stage": "post_run_original_authored_content_and_bundle_provenance_assessment",
+  "rows": [
+    {
+      "task": "swe-smith-e3fc0018c5332295d4ab",
+      "acceptance_source": "evidence/esty-ci-acceptance/acceptance.json",
+      "acceptance_sha256": "598b8c089ad70ba8aa0f869af2c98ef5106ecba95e7bcbd2bc3ce7640c0bcfd0",
+      "original_export_asset_count": 2036,
+      "accepted_asset_set_and_hashes_match_original": true,
+      "original_archive_sha256": "a756da00f268f75e9d5a7d628927657038825e43e70381979916becef06bb33a",
+      "response_source": "evidence/skbio-author-03/models/e3fc0018c5332295d4ab.json",
+      "response_sha256": "e4e8299414665645cb19be5bf04bfffbf159e6fa071d354e2694793e9192627d",
+      "author_output_equals_saved_model_content": true,
+      "instruction_change_is_only_native_standard_suffix": true,
+      "requests": [
+        {
+          "stage": "issue",
+          "source": "evidence/skbio-author-03/models/e3fc0018c5332295d4ab.request.json",
+          "sha256": "14390b9fce0ae6d61c1cc94242e88e6a55c83939fb2da0a0a1297362dd82b48f",
+          "system_prompt_matches_frozen_native": true,
+          "whole_user_payload_is_json_without_review_feedback_keys": true
+        }
+      ],
+      "task_specific_downstream_asset_changes_found": 0,
+      "profile": "swe-smith-skbio-worker.json",
+      "profile_sha256": "e547a68a696198b1c8a79f566122010934e04420787354252ad02a11b6eb0058",
+      "unattended_full_pipeline_established_by_this_audit": false
+    },
+    {
+      "task": "swe-flow-c80f6a9306c83c7db638",
+      "acceptance_source": "evidence/observed-features-acceptance/acceptance.json",
+      "acceptance_sha256": "0c53d003fc6f697b861f0ef90a4ccb583e9471706290adf2c34c3844e2b6157c",
+      "original_export_asset_count": 2036,
+      "accepted_asset_set_and_hashes_match_original": true,
+      "original_archive_sha256": "a3d918e4ade3f231149dfd23fc4813b3691c1d64c00d965bddf212b5bd191964",
+      "response_source": "evidence/skbio-flow-author-01/models/c80f6a9306c83c7db638/specification.json",
+      "response_sha256": "dd6d1a5574bfc1e46737276775e7491bdc2c890baa956030f4878b237e31739d",
+      "author_output_equals_saved_model_content": true,
+      "instruction_change_is_only_native_standard_suffix": true,
+      "requests": [
+        {
+          "stage": "docstring",
+          "source": "evidence/skbio-flow-author-01/models/c80f6a9306c83c7db638/docstring.request.json",
+          "sha256": "d0c962a162da9888e13ccb668b5f64265b11756ea6a8931b9c7419215c4d3b3b",
+          "system_prompt_matches_frozen_native": true,
+          "whole_user_payload_is_json_without_review_feedback_keys": true
+        },
+        {
+          "stage": "specification",
+          "source": "evidence/skbio-flow-author-01/models/c80f6a9306c83c7db638/specification.request.json",
+          "sha256": "7406f61179ed55f5a4ac165d072224fda0f1707037fba501d794a446e5270c70",
+          "system_prompt_matches_frozen_native": true,
+          "whole_user_payload_is_json_without_review_feedback_keys": true
+        }
+      ],
+      "task_specific_downstream_asset_changes_found": 0,
+      "profile": "swe-flow-skbio-worker.json",
+      "profile_sha256": "1d86739c01c1a17dcb1019743350606eaf1b60c3e00a4f5741dbb19e9e8c922f",
+      "unattended_full_pipeline_established_by_this_audit": false
+    }
+  ],
+  "verified_native_source_assets": {
+    "repository/export.py": "dc84f2cab0e18fc76df2acaa1a19f454c7c2804b214ebf552be4f444b6a0ce1a",
+    "swe_flow/author.py": "e918ff242a2f084f2041d348ffe19cc2b71ff47572f39afc622ec6d8ce1a252c",
+    "swe_flow/docstring_demonstrations.json": "a8e4e2f009c6572c44e4115ae615decc4bc5d0decd409cfb88746b3d226912c0",
+    "swe_flow/docstring_prompt.md": "81f8c7d0e78ce0ad5e833b56f2f91edebf50eb588bb59bd65cf4d59ddae43248",
+    "swe_flow/specification_demonstrations.json": "7a406323a0d4f343b02678e318ec464dd9f589c3013f81cd89a064069e29edac",
+    "swe_flow/specification_prompt.md": "cd2a85fb7b7668000d6d4cc8704a35d31125f75922da42e3d27d9d53d76bf294",
+    "swe_smith/issue.py": "a3a3d5233b184b7ee2c795bafc566eace2356cc257ea002ac3b4d5699bcc20ae",
+    "swe_smith/issue_prompt.md": "1b178634c9b2fd99727396ff7b26aa0d3f61fa3323980a1a177e27b86af02352"
+  },
+  "source_snapshot_manifest_sha256": "9f4b6c401be15e34643c5a9c834084c0a3344d787c0af8df179b10a74d259686",
+  "original_export_assets_matched": 4072,
+  "new_model_calls": 0,
+  "target_repository_code_executed": false,
+  "task_assets_changed": 0,
+  "limits": [
+    "Asset matching uses the archived original member index and acceptance hashes; this is not a new byte download or runtime trial.",
+    "Verified automatic content and an unchanged accepted bundle do not prove unattended orchestration or generic repository discovery.",
+    "Prompt/suffix reconstruction evaluates only frozen pipeline formatting expressions; no target or generated program is executed."
+  ]
+}
