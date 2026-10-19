@@ -1,0 +1,46 @@
+{
+  "stage": "read_only_source_triage_runtime_validation_pending",
+  "original_instructions_modified": false,
+  "task_specific_feedback_sent_to_GLM": false,
+  "native_author_requests": 2,
+  "additional_author_requests": 0,
+  "independent_admissions": 0,
+  "candidates": [
+    {
+      "candidate_id": "2bc29fe20c34fbca2661",
+      "entity": "michaelis_menten_fit",
+      "native_mutation": "default num_repeats changed from1 to0",
+      "review_notes": [
+        "Instruction reproducer targets the observed default-argument failure.",
+        "The generated description says default num_repeats=1 although the mutated signature is0; preserve this inconsistency, do not silently fix prose.",
+        "Broad optional-argument and seven-decimal claims need native source/test and repeatability validation; no acceptance inferred."
+      ],
+      "required_checks": [
+        "baseline and native reference",
+        "independent valid repair",
+        "constant and one-example negative submissions",
+        "repeatability of stochastic rarefaction fit"
+      ]
+    },
+    {
+      "candidate_id": "f39ded25ef48a6575366",
+      "entity": "tsallis",
+      "native_mutation": "probability-power sum subtracted from1 changed to addition",
+      "review_notes": [
+        "Formula and special branches agree with retained original source.",
+        "Instruction supplies the target formula; score reflects guided software repair rather than discovery.",
+        "All finite order wording should be assessed against documented order domain0..infinity and explicit special cases."
+      ],
+      "required_checks": [
+        "baseline and native reference",
+        "independent equivalent entropy expression",
+        "constant and one-example negative submissions",
+        "preservation of special-order and zero-count behavior"
+      ]
+    }
+  ],
+  "limits": [
+    "Read-only Codex triage is recorded assistance in validation, not proof of fully autonomous acceptance.",
+    "Native authoring output remains byte-identical and original remaining repair allowances are not reset."
+  ]
+}
