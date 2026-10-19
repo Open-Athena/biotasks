@@ -1,0 +1,95 @@
+{
+  "attempted": 1,
+  "candidates": [
+    {
+      "contrast": {
+        "FAIL_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum1",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum2",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_checksum3",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_crc_checksum_collision"
+        ],
+        "PASS_TO_PASS": [
+          "Tests.test_SeqUtils.SeqUtilsTests::test_GC_skew",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_calculation",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_codon_adaptation_index_initialization",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_gc_fraction",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_mult",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_lcc_simp",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests.test_SeqUtils.SeqUtilsTests::test_seq1_seq3"
+        ]
+      },
+      "functions": {
+        "Bio/SeqUtils/CheckSum.py:108:seguid": {
+          "line": 108,
+          "name": "seguid",
+          "path": "Bio/SeqUtils/CheckSum.py",
+          "source": "def seguid(seq):\n    \"\"\"Return the SEGUID (string) for a sequence (string or Seq object).\n\n    Given a nucleotide or amino-acid sequence (or any string),\n    returns the SEGUID string (A SEquence Globally Unique IDentifier).\n    seq type = str.\n\n    Note that the case is not important:\n\n    >>> seguid(\"ACGTACGTACGT\")\n    'If6HIvcnRSQDVNiAoefAzySc6i4'\n    >>> seguid(\"acgtACGTacgt\")\n    'If6HIvcnRSQDVNiAoefAzySc6i4'\n\n    For more information about SEGUID, see:\n    http://bioinformatics.anl.gov/seguid/\n    https://doi.org/10.1002/pmic.200600032\n    \"\"\"\n    import base64\n    import hashlib\n\n    m = hashlib.sha1()\n    try:\n        # Assume it's a Seq object\n        seq = bytes(seq)\n    except TypeError:\n        # Assume it's a string\n        seq = seq.encode()\n    m.update(seq.upper())\n    tmp = base64.encodebytes(m.digest())\n    return tmp.decode().replace(\"\\n\", \"\").rstrip(\"=\")"
+        },
+        "Bio/SeqUtils/CheckSum.py:16:crc32": {
+          "line": 16,
+          "name": "crc32",
+          "path": "Bio/SeqUtils/CheckSum.py",
+          "source": "def crc32(seq):\n    \"\"\"Return the crc32 checksum for a sequence (string or Seq object).\n\n    Note that the case is important:\n\n    >>> crc32(\"ACGTACGTACGT\")\n    20049947\n    >>> crc32(\"acgtACGTacgt\")\n    1688586483\n\n    \"\"\"\n    try:\n        # Assume it's a Seq object\n        s = bytes(seq)\n    except TypeError:\n        # Assume it's a string\n        s = seq.encode()\n    return binascii.crc32(s)"
+        },
+        "Bio/SeqUtils/CheckSum.py:57:crc64": {
+          "line": 57,
+          "name": "crc64",
+          "path": "Bio/SeqUtils/CheckSum.py",
+          "source": "def crc64(s):\n    \"\"\"Return the crc64 checksum for a sequence (string or Seq object).\n\n    Note that the case is important:\n\n    >>> crc64(\"ACGTACGTACGT\")\n    'CRC-C4FBB762C4A87EBD'\n    >>> crc64(\"acgtACGTacgt\")\n    'CRC-DA4509DC64A87EBD'\n\n    \"\"\"\n    crcl = 0\n    crch = 0\n    for c in s:\n        shr = (crch & 0xFF) << 24\n        temp1h = crch >> 8\n        temp1l = (crcl >> 8) | shr\n        idx = (crcl ^ ord(c)) & 0xFF\n        crch = temp1h ^ _table_h[idx]\n        crcl = temp1l\n\n    return f\"CRC-{crch:08X}{crcl:08X}\""
+        },
+        "Bio/SeqUtils/CheckSum.py:81:gcg": {
+          "line": 81,
+          "name": "gcg",
+          "path": "Bio/SeqUtils/CheckSum.py",
+          "source": "def gcg(seq):\n    \"\"\"Return the GCG checksum (int) for a sequence (string or Seq object).\n\n    Given a nucleotide or amino-acid sequence (or any string),\n    returns the GCG checksum (int). Checksum used by GCG program.\n    seq type = str.\n\n    Based on BioPerl GCG_checksum. Adapted by Sebastian Bassi\n    with the help of John Lenton, Pablo Ziliani, and Gabriel Genellina.\n\n    All sequences are converted to uppercase.\n\n    >>> gcg(\"ACGTACGTACGT\")\n    5688\n    >>> gcg(\"acgtACGTacgt\")\n    5688\n\n    \"\"\"\n    index = checksum = 0\n    for char in seq:\n        index += 1\n        checksum += index * ord(char.upper())\n        if index == 57:\n            index = 0\n    return checksum % 10000"
+        }
+      },
+      "id": "0e2bcaee05dcaca0d8bc",
+      "ref": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "repo": "https://github.com/biopython/biopython",
+      "schedule": {
+        "core_nodes": [
+          "Bio/SeqUtils/CheckSum.py:108:seguid",
+          "Bio/SeqUtils/CheckSum.py:16:crc32",
+          "Bio/SeqUtils/CheckSum.py:57:crc64",
+          "Bio/SeqUtils/CheckSum.py:81:gcg"
+        ],
+        "dependent_nodes": [],
+        "edges": [],
+        "nodes_to_develop": [
+          "Bio/SeqUtils/CheckSum.py:108:seguid",
+          "Bio/SeqUtils/CheckSum.py:16:crc32",
+          "Bio/SeqUtils/CheckSum.py:57:crc64",
+          "Bio/SeqUtils/CheckSum.py:81:gcg"
+        ],
+        "previous_tests": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_GC_skew",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_molecular_weight_empty_sequence",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_gc_fraction",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_simp",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_lcc_mult",
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_seq1_seq3"
+        ],
+        "step": 6,
+        "target_nodes": [
+          "Bio/SeqUtils/CheckSum.py:108:seguid",
+          "Bio/SeqUtils/CheckSum.py:16:crc32",
+          "Bio/SeqUtils/CheckSum.py:57:crc64",
+          "Bio/SeqUtils/CheckSum.py:81:gcg"
+        ],
+        "test_ids": [
+          "Tests/test_SeqUtils.py::SeqUtilsTests::test_crc_checksum_collision"
+        ]
+      },
+      "source_files": [
+        "Bio/SeqUtils/CheckSum.py"
+      ],
+      "test_evidence": {
+        "Tests/test_SeqUtils.py": "import os\n\nimport unittest\n\nfrom Bio import SeqIO\n\nfrom Bio.Seq import MutableSeq\n\nfrom Bio.Seq import Seq\n\nfrom Bio.SeqRecord import SeqRecord\n\nfrom Bio.SeqUtils import CodonAdaptationIndex\n\nfrom Bio.SeqUtils import gc_fraction\n\nfrom Bio.SeqUtils import GC_skew\n\nfrom Bio.SeqUtils import molecular_weight\n\nfrom Bio.SeqUtils import seq1\n\nfrom Bio.SeqUtils import seq3\n\nfrom Bio.SeqUtils.CheckSum import crc32\n\nfrom Bio.SeqUtils.CheckSum import crc64\n\nfrom Bio.SeqUtils.CheckSum import gcg\n\nfrom Bio.SeqUtils.CheckSum import seguid\n\nfrom Bio.SeqUtils.lcc import lcc_mult\n\nfrom Bio.SeqUtils.lcc import lcc_simp\n\n    def test_crc_checksum_collision(self):\n        # Explicit testing of crc64 collision:\n        self.assertNotEqual(self.str_light_chain_one, self.str_light_chain_two)\n        self.assertNotEqual(\n            crc32(self.str_light_chain_one), crc32(self.str_light_chain_two)\n        )\n        self.assertEqual(\n            crc64(self.str_light_chain_one), crc64(self.str_light_chain_two)\n        )\n        self.assertNotEqual(\n            gcg(self.str_light_chain_one), gcg(self.str_light_chain_two)\n        )\n        self.assertNotEqual(\n            seguid(self.str_light_chain_one), seguid(self.str_light_chain_two)\n        )\n\n    def test_checksum1(self):\n        self.seq_checksums(\n            self.str_light_chain_one,\n            2994980265,\n            \"CRC-44CAAD88706CC153\",\n            9729,\n            \"BpBeDdcNUYNsdk46JoJdw7Pd3BI\",\n            0.5160,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum2(self):\n        self.seq_checksums(\n            self.str_light_chain_two,\n            802105214,\n            \"CRC-44CAAD88706CC153\",\n            9647,\n            \"X5XEaayob1nZLOc7eVT9qyczarY\",\n            0.5343,\n            (\n                0.4982,\n                0.4794,\n                0.4794,\n                0.4794,\n                0.3241,\n                0.2160,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.1764,\n                0.2657,\n                0.2948,\n                0.1287,\n            ),\n        )\n\n    def test_checksum3(self):\n        self.seq_checksums(\n            \"ATGCGTATCGATCGCGATACGATTAGGCGGAT\",\n            817679856,\n            \"CRC-6234FF451DC6DFC6\",\n            7959,\n            \"8WCUbVjBgiRmM10gfR7XJNjbwnE\",\n            0.9886,\n            (\n                1.00,\n                0.9927,\n                0.9927,\n                1.00,\n                0.9927,\n                0.9854,\n                0.9927,\n                0.9927,\n                0.9927,\n                0.9794,\n                0.9794,\n                0.9794,\n                0.9794,\n            ),\n        )"
+      }
+    }
+  ],
+  "rejected": []
+}

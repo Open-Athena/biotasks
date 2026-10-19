@@ -169,9 +169,18 @@ def build():
             pool_rows = json.loads(pool_proof_path.read_text())['rows']
             pool = next((row for row in pool_rows if row['unit_id'] == key), None)
             if pool is not None:
-                assert charge == pool['charged_candidates']
+                last_bio_flow = ROOT / 'biopython-flow-final-01/generation.json'
+                if key == 'repo_reconstruct/swe_flow@biopython/biopython' and last_bio_flow.exists():
+                    final_generation = json.loads(last_bio_flow.read_text())
+                    assert charge == pool['charged_candidates'] + final_generation['attempted'] == 7
+                    assert len(final_generation['candidates']) == 1 and final_generation['candidates'][0]['schedule']['step'] == 6
+                else:
+                    assert charge == pool['charged_candidates']
                 action = pool['state']
                 next_action = pool['next_action']
+                if key == 'repo_reconstruct/swe_flow@biopython/biopython' and last_bio_flow.exists():
+                    action = 'declared_source_pool_exhausted_saved_author_stage_remaining'
+                    next_action = 'Original final step6 produced one new checksum contrast (4F2P/8P2P), zero model calls. All seven fixed steps are now consumed. Finish native author/export/control stages for the unchanged saved candidate without feedback or repairs; no new admission or source expansion is inferred.'
         final_commit_screen = ROOT / 'skbio-commit-final-intake/structural-screen.json'
         if key == 'commit_runtime/native@scikit-bio/scikit-bio' and final_commit_screen.exists():
             selected = json.loads(final_commit_screen.read_text())['eligible_for_native_runtime']
