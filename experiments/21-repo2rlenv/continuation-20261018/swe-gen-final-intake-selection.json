@@ -1,0 +1,55 @@
+{
+  "stage": "frozen_before_GitHub_source_resolution",
+  "source_record": "evidence/pr-diff-01/generation.json",
+  "source_sha256": "eaf16a7b29e18e0f091030d8aa4660046caaedddf63522295261eb8741716193",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "units": [
+    {
+      "repository": "biopython/biopython",
+      "label": "biopython",
+      "previous_profile": "swe-gen-biopython-profile.json",
+      "previously_consumed_pull_request": 5317,
+      "pull_requests": [
+        5376,
+        5369,
+        5361,
+        5360,
+        5359,
+        5358,
+        5344,
+        5343,
+        5338
+      ],
+      "additional_candidates_charged": 9,
+      "prior_charged": 1,
+      "cumulative_charge": 10,
+      "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0'",
+      "selection": "First nine original PR-diff considered PRs in recorded order, excluding the already consumed SWE-gen PR. No replacement after metadata/native-filter rejection. Test/source filenames derived by native classifier; no fixture additions."
+    },
+    {
+      "repository": "scikit-bio/scikit-bio",
+      "label": "skbio",
+      "previous_profile": "swe-gen-skbio-profile.json",
+      "previously_consumed_pull_request": 2633,
+      "pull_requests": [
+        2638,
+        2637,
+        2636,
+        2635,
+        2634,
+        2632,
+        2630,
+        2629,
+        2628
+      ],
+      "additional_candidates_charged": 9,
+      "prior_charged": 1,
+      "cumulative_charge": 10,
+      "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3' && python -m pip install --no-cache-dir 'coverage==7.16.0'",
+      "selection": "First nine original PR-diff considered PRs in recorded order, excluding the already consumed SWE-gen PR. No replacement after metadata/native-filter rejection. Test/source filenames derived by native classifier; no fixture additions."
+    }
+  ],
+  "model_calls": 0,
+  "workers": 0,
+  "limits": "Selection is charged conservatively, not a claim that native materialization/authoring executed. Source rejection is retained. Any runtime or task-content failure stays unchanged; no fixes or feedback."
+}
