@@ -68,6 +68,23 @@ comparator, and submit a complete candidate. Controller submission executes basi
 controls; a separate worker owns the independent mutation suite. Do not duplicate
 that suite or spend the session repeatedly auditing unrelated source internals.
 
+## Repair sessions
+
+When a prior candidate and review are supplied, repair the identified defects in
+that candidate. Keep the supplied check definitions and frozen probes unchanged;
+report a blocker if a scientific change to either is necessary. Correct misleading
+explanations in the addendum or private rationale without changing the acceptance
+criteria. Describe numeric tolerances as limits on observable output differences,
+not as guarantees that every use of a particular wrong method will be detected.
+Keep run-specific calibration measurements and test history in the private rationale.
+
+Use targeted tests for the changed behavior, then submit the complete candidate.
+The controller reruns all frozen controls on submission. Do not reconstruct their
+scripts, repeatedly run the entire suite locally, or expand into unrelated edge
+cases after the reported defects are resolved. Repeat a test only when a relevant
+code change, failed check, or unresolved review finding justifies it. Submission
+feedback is the next step; a local passing test is not final acceptance.
+
 ## Grader interface
 
 Return `grader_code` as a complete Python program. It accepts exactly:
