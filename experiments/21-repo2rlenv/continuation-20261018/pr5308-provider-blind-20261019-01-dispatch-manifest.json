@@ -1,0 +1,119 @@
+{
+  "stage": "prepared_exact_admitted_task_provider_controls_then_one_blind_attempt",
+  "cohort": "pr5308-provider-blind-20261019-01",
+  "task_id": "biopython__biopython-5308",
+  "repository": "biopython/biopython",
+  "required_slots": 2,
+  "CPU_backend": "existing_free_reserved_TRC_CPU",
+  "sandbox_backend": "daytona",
+  "per_sandbox": {
+    "cpu": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "daytona_conservative_hold_usd": 15,
+  "maximum_sequential_sandboxes": 3,
+  "maximum_simultaneous_sandboxes": 1,
+  "one_blind_attempt_after_passed_controls": true,
+  "blind_timeout_seconds": 900,
+  "turns": 12,
+  "max_output_tokens": 2048,
+  "effort": "unset_native",
+  "generation_run_deadline_seconds": 7200,
+  "files": {
+    "native_solver_transport.py": {
+      "bytes": 664,
+      "sha256": "2aef532339ae4b70e9ee3774818f6bed519f2ad13632f55565a09ae7f4dca8ae"
+    },
+    "pr_provider_environment.py": {
+      "bytes": 3235,
+      "sha256": "9499c85a14d345eae2317ba562ee40b1688207872a404c6783c57bbaabc6b177"
+    },
+    "repo2rlenv-source.tar.gz": {
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    "continuation_provider_environment.py": {
+      "bytes": 757,
+      "sha256": "89665f3dada9f8fe0aa2c100be08b4ffa08a93345c5d585b43828ee7cb0e99d1"
+    },
+    "run_pr_provider_preflight.py": {
+      "bytes": 7175,
+      "sha256": "b5d37854a562f93f58e0d5b3f6835ce9dfd72c607fd1b19bdeac226e97dddb86"
+    },
+    "run_continuation_trial_trc.py": {
+      "bytes": 2629,
+      "sha256": "1490e4f34644ea3811bb493fd8dc8a5fdb7360af74e1d16069dc842817d3839d"
+    },
+    "run_continuation_blind_trial.py": {
+      "bytes": 5464,
+      "sha256": "ee751935bd87f82d9b613f978521c009fa37e5869ae42da80611bbdd7bcdd2c9"
+    },
+    "trial-inputs.json": {
+      "bytes": 1872,
+      "sha256": "b5f8c110bfb8cea780ec1cc92e0183132647a2381945a624098d69c073aac1fd"
+    },
+    "native-sdk-preflight.json": {
+      "bytes": 1087,
+      "sha256": "c832aa2a3a0e237ec280379dc5a0c3af58cb74489b50d9cf3a64ff8e5d668e8e"
+    },
+    "glm_solver_settings.py": {
+      "bytes": 689,
+      "sha256": "40e08884bf7417647430824c7ca90808b13ac3d9c4f3d6f2346018921a307bb7"
+    },
+    "preserve_author_output.py": {
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    "task-bundle.tar.gz": {
+      "bytes": 13631,
+      "sha256": "b892ca1a7bff21aa82df61843a6c3976917ab3186a8655a520e5327deb981b67"
+    }
+  },
+  "task_archive_sha256": "b892ca1a7bff21aa82df61843a6c3976917ab3186a8655a520e5327deb981b67",
+  "task_assets": {
+    "environment/Dockerfile": {
+      "sha256": "33f8a3938f9abab6cec397d2bde33b76d3a52d43f54fe91fd03f0df8993382d8",
+      "mode": "0o644"
+    },
+    "instruction.md": {
+      "sha256": "3a84f46d1ac3f2f994747cc854ec63cdfd9bdc8a1c9a78da70c177faefc93334",
+      "mode": "0o644"
+    },
+    "solution/patch.diff": {
+      "sha256": "f385e25bc4196181c6e32f998a959f3335f724f69819ca441c1e2187560b9a96",
+      "mode": "0o644"
+    },
+    "solution/solve.sh": {
+      "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893",
+      "mode": "0o755"
+    },
+    "task.toml": {
+      "sha256": "7459baf20cda5e4a65ec028e072fb102791bbed125b749a7ecfc3ca1671f0ca8",
+      "mode": "0o644"
+    },
+    "tests/f2p.json": {
+      "sha256": "3a57f915abcae74b008ef4d4a32f2ddf584ab5c8bffc7c7ce6574c7630c5d562",
+      "mode": "0o644"
+    },
+    "tests/p2p.json": {
+      "sha256": "9dfe0d001d997542e528c86069a78671bb321102b48e4cb44e3ac08f86f32704",
+      "mode": "0o644"
+    },
+    "tests/test.sh": {
+      "sha256": "b22a8b4b013d16ae0acb1eba7e1ef0c05029512156881a821ef541b8b12d1645",
+      "mode": "0o755"
+    },
+    "tests/verifier.py": {
+      "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+      "mode": "0o644"
+    }
+  },
+  "admission_artifact_prefix": "research/21-repo2rlenv/2026-10-18/16e3a04a7fc1007a00bc8801fdac5c48a2b8b06be7e07c5a4ef213fd8c5d0337",
+  "admitted_asset_manifest_sha256": "6c16135e81ecc04c2fc6dda2cc4d96c74f8cc155ddd80ab55003de7f61defc8c",
+  "no_prior_blind_attempt": true,
+  "runtime_task_assets_changed": false,
+  "upstream_model_service": "existing_free_GLM-5.3",
+  "inference_client_cohort": "glm-inference-client-20261018-02",
+  "publication": "Full original SDK/provider/solver output retained privately; public derivatives only after exact credential and route review, preserving originals separately."
+}
