@@ -1,0 +1,15 @@
+e strongest overlapping JASPAR CTCF motif (MA0139.1), with
+# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.
+# Written as-is from the dataframe produced by bioframe.subtract above.
+df_peaks_maxmotif_clean.to_csv(
+    "/work/outputs/ctcf_peaks_maxmotif_clean.csv", index=False
+)
+---grep export lines---
+168:os.makedirs("/work/outputs", exist_ok=True)
+174:df_peaks_maxmotif_clean.to_csv(
+175:    "/work/outputs/ctcf_peaks_maxmotif_clean.csv", index=False
+---rerun with explicit listing---
+fraction of peaks without motifs 0.14
+EXIT=0
+/tmp/runsim/full.py
+/work/outputs/ctcf_peaks_maxmotif_clean.csv
