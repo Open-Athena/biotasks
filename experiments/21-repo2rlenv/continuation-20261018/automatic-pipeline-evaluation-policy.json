@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "stage": "automatic_pipeline_evaluation_with_post_run_manual_assessment",
+  "user_rule": "The goal is to assess the automatic pipeline, not pipeline plus Codex. Manual assessment after completion is allowed; manual fixing is not.",
+  "generation_allowed": [
+    "Existing pipeline implementation at a pinned revision",
+    "Frozen declared input collection, repository configuration and free-GLM settings",
+    "Pipeline-owned bounded automatic repair loops without task-specific external feedback",
+    "Generic authenticated transport, deadlines, accounting, preservation and cleanup"
+  ],
+  "generation_disallowed": [
+    "Task-specific Codex edits to instructions, learner source, reference solution, tests, verifier or runtime assets",
+    "Task-specific Codex feedback to the model, including native repair calls seeded with that feedback",
+    "Post-failure task-specific build/fixture/dependency fixes",
+    "Replacing a failed automatic output with an assisted repaired version in the primary yield"
+  ],
+  "assessment_allowed": [
+    "Read original final pipeline outputs and compare them with source/test contracts",
+    "Report quality, errors, limitations and accept/reject judgments after completion",
+    "Run read-only or separate-copy diagnostic controls without changing the published task or feeding outcomes back into generation"
+  ],
+  "primary_measurements": [
+    "attempted inputs",
+    "unchanged automatic exports",
+    "exports that pass post-run assessment",
+    "pipeline failures and rejection reasons",
+    "native blind solver rewards",
+    "generation/runtime time and model usage"
+  ],
+  "historical_policy": "Preserve the 30 previously accepted/scored records as legacy mixed-provenance evidence. Manual review alone is allowed and is not an exclusion. Primary automatic-output eligibility requires provenance checks; an assisted recovery never overwrites the original failure or resets the original candidate cap.",
+  "candidate_limits": "Retain original target 3 and cap10 per declared cell/cohort; consumed and uncertain candidates stay consumed.",
+  "execution_authorization": "User resumed within existing free-GLM/CPU resource and $2000 campaign limits; no budget expansion."
+}
