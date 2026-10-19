@@ -2140,3 +2140,31 @@ in its configuration. Do not launch it until the original grading campaign has
 terminated and provider absence is independently verified. Its status is prepared,
 not submitted. The original transfer campaign still supplies the unchanged-prompt
 baseline, including its unsuccessful and broadened grader candidates.
+
+### 2026-10-19 — Stop unresolved independent comparisons before grader repair
+
+The frozen campaign's review requested cosmetic/schema-attribution changes, but
+its rationale explicitly excused unverifiable extra annotations as an accommodation
+forced by the mandatory independent-output control. That accommodation is not an
+acceptable reason to publish. The current generated artifacts remain unchanged;
+passing this suite would not resolve the known public-question conflict.
+
+Add a mechanical next-version boundary: when reference/oracle and other basic
+controls pass but only the independent comparison fails, preserve the original
+candidate and controls and return `independent_comparison_unresolved`. Stop before
+probes, review or further grader repair can turn that output into a required answer.
+Apply the boundary to fresh, resumed, contract and post-review-repair paths. Other
+basic grader failures remain repairable. This classifies an unresolved comparison;
+it does not decide whether the reference, question or independent program is wrong.
+No generated scientific artifact is rewritten and no reward is supplied by this
+controller decision. Existing native packaging requires validated grading and thus
+cannot package this status.
+
+Generic reviewer/probe guidance now also says that disclosing an unsupported
+superset is not evidence of validity, and asks for plausible unsupported additions
+when a claimed equivalence accepts multiple values per entity. No source-specific
+field or method is encoded. Thirty-three offline grading tests pass, including
+unaltered candidate preservation and early stops on all orchestration paths. New
+model behavior remains untested. Native configuration selects the prepared 002
+replacement artifacts, which do not exist yet, so the known 001 candidate is not a
+publication target even if its old review profile later accepts it.

@@ -22,6 +22,13 @@ result. Include valid representation controls for the freedoms the public
 contract permits. Test numerical tolerance boundaries and nonfinite inputs where
 applicable. Identify ambiguity or an unjustified acceptance rule in `concerns`.
 
+When a claimed equivalence permits multiple records or values for one entity,
+challenge it by retaining correct answers and adding a plausible but unsupported
+value, not only by inserting exact duplicates. Every accepted addition must have a
+justification that can actually be checked with the available evidence. If that
+cannot be tested, report the evidence gap; do not treat a known limitation in the
+contract as proof that arbitrary additions are scientifically valid.
+
 The controller starts each probe from a fresh copy of the reference outputs at
 `/case/submission`. Your script is Python, executed offline in that directory
 with the pinned environment. Modify only these copied output files. Do not touch

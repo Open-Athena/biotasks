@@ -61,6 +61,7 @@ class GradingSession:
         self.frozen_probes = None
         self.frozen_checks = None
         self.alternative_executed = False
+        self.independent_conflict = None
         self.root.mkdir(parents=True, exist_ok=False)
 
     async def command(self, argv, seconds, label):
@@ -297,6 +298,17 @@ class GradingSession:
         save_record(folder / "controls.json", controls)
         self.last_controls = controls
         failures = [r for r in controls if not r["passed_control"]]
+        if failures and all(record["kind"] == "alternative" for record in failures):
+            # Execution did not establish that this independently generated output
+            # was correct. Stop before feeding a mandatory-pass target back to the
+            # grader author; do not incentivize weakening a correct comparator.
+            if self.independent_conflict is None:
+                self.independent_conflict = {
+                    "candidate_sha256": sha256(folder / "candidate.json"),
+                    "failed_controls": failures,
+                    "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved",
+                }
+            return
         if failures:
             explanation = "Executable control failures: " + json.dumps(failures)
             if any(record["kind"] == "alternative" for record in failures):
@@ -313,6 +325,21 @@ async def run_grading(
     *, remote, snapshot, root, config, endpoint, credential, deadline, complete=None
 ):
     session = GradingSession(remote=remote, snapshot=snapshot, root=root / "grading", config=config)
+
+    def comparison_blocker():
+        if session.independent_conflict is None:
+            return None
+        save_record(root / "independent-comparison-conflict.json", session.independent_conflict)
+        return {
+            "status": "independent_comparison_unresolved",
+            "grader_construction_run": True,
+            "control_cases": session.case_number,
+            "final_controls_passed": False,
+            "comparison_conflict_file": "independent-comparison-conflict.json",
+            "harbor_packaging_validated": False,
+            "software_portability_validated": False,
+        }
+
     await session.initialize()
     reference = snapshot["directory"]
     spec = HERE / config["specification_directory"]
@@ -602,6 +629,8 @@ async def run_grading(
         save_record(root / "candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":
             return {"status": "grader_blocked", "grader_construction_run": True}
+        if blocker := comparison_blocker():
+            return blocker
         # Remove author test remnants before the separate probe worker gets a shell.
         cleared = await session.command(
             ["rm", "-rf", "/case"], 30, "clear-grader-before-probe-author"
@@ -725,6 +754,8 @@ async def run_grading(
             save_record(root / "repaired-candidate.json", candidate.model_dump())
             if candidate.disposition == "blocked":
                 return {"status": "repair_blocked", "grader_construction_run": True}
+            if blocker := comparison_blocker():
+                return blocker
             assessment = await review("review-repair")
             save_record(root / "review-repair.json", assessment.model_dump())
         save_record(root / "final-controls.json", session.last_controls)

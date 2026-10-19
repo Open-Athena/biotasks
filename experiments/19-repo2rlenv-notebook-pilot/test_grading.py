@@ -188,6 +188,7 @@ def test_probe_blocker_is_representable():
     assert result.disposition == "blocked"
 
 
+@pytest.mark.parametrize("comparison_conflict", [False, True])
 @pytest.mark.parametrize("repair", [False, True])
 @pytest.mark.parametrize(
     "derived,resume,reuse_probes,contract_only",
@@ -200,7 +201,7 @@ def test_probe_blocker_is_representable():
     ],
 )
 def test_orchestration_separates_probe_author_and_gates_acceptance(
-    tmp_path, monkeypatch, repair, derived, resume, reuse_probes, contract_only
+    tmp_path, monkeypatch, repair, derived, resume, reuse_probes, contract_only, comparison_conflict
 ):
     import grading_session as module
 
@@ -241,8 +242,12 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         config["contract_feedback_file"] = str(feedback)
         monkeypatch.setattr(grading_resume, "load_contract_base", lambda *args: c)
 
+    conflict_on = (2 if repair and not contract_only else 1) if comparison_conflict else None
+
     class Session:
         def __init__(self, **kwargs):
+            self.independent_conflict = None
+            self.validation_count = 0
             self.last_controls = []
             self.case_number = 0
             self.frozen_probes = None
@@ -285,6 +290,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]
             self.case_number += 1
+            self.validation_count += 1
+            if self.validation_count == conflict_on:
+                self.independent_conflict = {"fixture": "unresolved independent output"}
 
         async def case(self, *args, **kwargs):
             self.case_number += 1
@@ -381,6 +389,23 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
+    if comparison_conflict:
+        initial = (
+            ["contract"]
+            if contract_only
+            else ([] if resume else (["independent"] if derived else []) + ["grader"])
+        )
+        expected = initial
+        if conflict_on == 2:
+            expected += ([] if reuse_probes else ["probes"]) + ["review", "repair"]
+        assert calls == expected
+        assert result["status"] == "independent_comparison_unresolved"
+        assert not result["final_controls_passed"] and not result["harbor_packaging_validated"]
+        assert not (tmp_path / "final-candidate.json").exists()
+        assert json.loads((tmp_path / "independent-comparison-conflict.json").read_text()) == {
+            "fixture": "unresolved independent output"
+        }
+        return
     assert calls == (
         ["contract"]
         if contract_only
@@ -445,3 +470,43 @@ except TimeoutError:
                 os.killpg(child_pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
+
+
+@pytest.mark.parametrize("failed_kinds", [set(), {"alternative"}, {"reference", "alternative"}])
+def test_independent_mismatch_halts_without_rewriting_grader(tmp_path, failed_kinds):
+    from grading_session import GradingSession
+
+    class Remote:
+        async def upload(self, *args):
+            pass
+
+    session = GradingSession(
+        remote=Remote(),
+        snapshot={"outputs": [{"path": "value.txt"}]},
+        root=tmp_path / "session",
+        config={},
+    )
+    session.alternative_executed = True
+
+    async def case(value, *, kind, **kwargs):
+        return {"kind": kind, "passed_control": kind not in failed_kinds}
+
+    session.case = case
+    original = candidate().model_dump()
+    if "reference" in failed_kinds:
+        with pytest.raises(ValueError, match="Executable control failures"):
+            asyncio.run(session.validate_candidate(candidate()))
+        assert session.independent_conflict is None
+    else:
+        asyncio.run(session.validate_candidate(candidate()))
+        if "alternative" in failed_kinds:
+            assert session.independent_conflict is not None
+            assert [r["kind"] for r in session.independent_conflict["failed_controls"]] == [
+                "alternative"
+            ]
+        else:
+            assert session.independent_conflict is None
+    # Controller classification must preserve the actual submitted science/code.
+    saved = session.root / "candidates/1/candidate.json"
+    assert json.loads(saved.read_text()) == original
+    assert (saved.parent / "grade.py").read_text() == original["grader_code"] + "\n"

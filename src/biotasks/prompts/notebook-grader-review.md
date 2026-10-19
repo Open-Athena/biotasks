@@ -35,6 +35,13 @@ without checking their provenance. Public rules should explain what is accepted;
 keep run-specific calibration measurements and validation history in the private
 rationale. Flag contradictions between the original question and the addendum.
 
+An independently executed program is not an oracle merely because the controller
+runs it as a comparison control. A requirement to make that control pass cannot
+justify changing the scientific question. Disclosing acceptance of unverifiable
+extra records or values does not make that acceptance sound. If reconciliation
+would require a different question, reference or independent solution, block the
+candidate rather than excuse the mismatch as a limitation.
+
 Acceptance here means this grader candidate is suitable for subsequent Harbor
 packaging and its own isolation/oracle checks. It does not validate those later
 checks, a blind solver, or a release. If revised, affected controls and review
