@@ -51,7 +51,14 @@ def main():
         record['setup_returncode'] = setup.returncode
         setup.checked('locked runtime install')
         run = worker.exec(['sh', '-c', 'export REPO2RLENV_REMOTE_WORKER=1 OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 NUMEXPR_NUM_THREADS=1 RAYON_NUM_THREADS=1 POLARS_MAX_THREADS=1; /work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/python /work/native/run_pr_marin_parity.py --inputs /work/native/inputs --output /evidence/native/marin-parity >/evidence/native/worker.log 2>&1; code=$?; printf "%s\\n" "$code" >/evidence/native/worker-exit.txt; exit "$code"'], timeout=min(6000, args.timeout_sec))
-        record.update(worker_returncode=run.returncode, status='cohort_process_completed' if run.returncode == 0 else 'cohort_process_failed')
+        marker = worker.exec(['cat', '/evidence/native/worker-exit.txt'], timeout=30)
+        marker.checked('read explicit parity worker exit marker')
+        native_exit = int(marker.stdout.strip())
+        record.update(transport_reported_returncode=run.returncode,
+                      worker_returncode=native_exit,
+                      status='cohort_process_completed' if native_exit == 0 else 'cohort_process_failed')
+        if native_exit != 0:
+            raise RuntimeError('Native Marin parity worker failed; preserve original evidence')
     except BaseException as exc:
         record.update(status='failed', error_type=type(exc).__name__)
         raise
