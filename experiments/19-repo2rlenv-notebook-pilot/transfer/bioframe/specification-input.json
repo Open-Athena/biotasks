@@ -1,0 +1,557 @@
+{
+  "files": {
+    "provenance.json": {
+      "id": "bioframe-motifs-to-peaks",
+      "license": "MIT",
+      "provenance": {
+        "data_sources": [
+          {
+            "accession": "ENCFF401MQL",
+            "assembly": "GRCh38",
+            "bytes": 649474,
+            "provider_md5": "9dabac96e36309ed65dc1cb289c51079",
+            "terms_url": "https://www.encodeproject.org/about/data-use-policy/",
+            "url": "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz"
+          },
+          {
+            "accession": "ENCFF356LFX",
+            "assembly": "GRCh38",
+            "bytes": 8211,
+            "provider_md5": "393688b4f06c9ce26165d47433dd8c37",
+            "terms_url": "https://www.encodeproject.org/about/data-use-policy/",
+            "url": "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz"
+          },
+          {
+            "assembly": "hg38",
+            "bytes": 7698065,
+            "license": "CC-BY-4.0",
+            "profile": "MA0139.1",
+            "release": "2022",
+            "terms_url": "https://jaspar.elixir.no/about/",
+            "url": "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz"
+          }
+        ],
+        "notebook": {
+          "license": "MIT",
+          "revision": "95007ed6fc03b01005d75f95cac511b2df286854",
+          "sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+          "url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb"
+        }
+      },
+      "source_revision": "95007ed6fc03b01005d75f95cac511b2df286854",
+      "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+      "title": "Bioframe: assign TF motifs to ChIP-seq peaks",
+      "url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb"
+    },
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3.10\n#     language: python\n#     name: python3\n# ---\n\n# # How to: assign TF Motifs to ChIP-seq peaks\n#\n# This tutorial demonstrates one way to assign CTCF motifs to CTCF ChIP-seq peaks using bioframe.\n#\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\nimport bioframe\n\nbase_dir = \"/tmp/bioframe_tutorial_data/\"\nassembly = \"GRCh38\"\n\n# ## Load CTCF ChIP-seq peaks for HFF from ENCODE\n#\n# This approach makes use of the `narrowPeak` schema for bioframe.read_table . \n\nctcf_peaks = bioframe.read_table(\n    \"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\",\n    schema=\"narrowPeak\",\n)\nctcf_peaks[0:5]\n\n# ## Get CTCF motifs from JASPAR\n\n### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/\njaspar_url = \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\"\njaspar_motif_file = \"MA0139.1.tsv.gz\"\nctcf_motifs = bioframe.read_table(\n    jaspar_url + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n)\nctcf_motifs[0:4]\n\n# ## Overlap peaks & motifs\n\ndf_peaks_motifs = bioframe.overlap(\n    ctcf_peaks, ctcf_motifs, suffixes=(\"_1\", \"_2\"), return_index=True\n)\n\n# There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs:\n\n# note that counting motifs per peak can also be handled directly with\n# bioframe.count_overlaps but since we re-use df_peaks_motifs below we\n# instead use the pandas operations directly\nmotifs_per_peak = df_peaks_motifs.groupby([\"index_1\"])[\"index_2\"].count().values\n\nplt.hist(motifs_per_peak, np.arange(0, np.max(motifs_per_peak)))\nplt.xlabel(\"number of overlapping motifs per peak\")\nplt.ylabel(\"number of peaks\")\nplt.semilogy()\n\nprint(\n    f\"fraction of peaks without motifs \"\n    f\"{np.round(np.sum(motifs_per_peak == 0) / len(motifs_per_peak), 2)}\"\n)\n\n# ### Assign the strongest motif to each peak\n\n# since idxmax does not currently take NA, fill with -1\ndf_peaks_motifs[\"pval_2\"] = df_peaks_motifs[\"pval_2\"].fillna(-1)\nidxmax_peaks_motifs = (\n    df_peaks_motifs.groupby([\"chrom_1\", \"start_1\", \"end_1\"])[\"pval_2\"].idxmax().values\n)\ndf_peaks_maxmotif = df_peaks_motifs.loc[idxmax_peaks_motifs]\ndf_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\n\n# stronger peaks tend to have stronger motifs:\n\nplt.rcParams[\"font.size\"] = 12\ndf_peaks_maxmotif[\"fc_1\"] = df_peaks_maxmotif[\"fc_1\"].values.astype(\"float\")\nplt.scatter(\n    df_peaks_maxmotif[\"fc_1\"].values,\n    df_peaks_maxmotif[\"pval_2\"].values,\n    5,\n    alpha=0.5,\n    lw=0,\n)\nplt.xlabel(\"ENCODE CTCF peak strength, fc\")\nplt.ylabel(\"JASPAR CTCF motif strength \\n (-log10 pval *100)\")\nplt.title(\n    \"corr: \"\n    + str(np.round(df_peaks_maxmotif[\"fc_1\"].corr(df_peaks_maxmotif[\"pval_2\"]), 2))\n);\n\n# We can also ask the reverse question: how many motifs overlap a ChIP-seq peak?\n\ndf_motifs_peaks = bioframe.overlap(\n    ctcf_motifs, ctcf_peaks, how=\"left\", suffixes=(\"_1\", \"_2\")\n)\n\nm = df_motifs_peaks.sort_values(\"pval_1\")\nplt.plot(\n    m[\"pval_1\"].values[::-1],\n    np.cumsum(pd.isnull(m[\"chrom_2\"].values[::-1]) == 0) / np.arange(1, len(m) + 1),\n)\nplt.xlabel(\"pval\")\nplt.ylabel(\"probability motif overlaps a peak\");\n\n# ### filter peaks overlapping blacklisted regions\n#\n# do any of our peaks overlap blacklisted genomic regions?\n\nblacklist = bioframe.read_table(\n    \"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\",\n    schema=\"bed3\",\n)\nblacklist[0:3]\n\n# there appears to be a small spike in the number of peaks close to blacklist regions\n\nclosest_to_blacklist = bioframe.closest(ctcf_peaks, blacklist)\nplt.hist(\n    closest_to_blacklist[\"distance\"].astype(\"Float64\").astype(\"float\"),\n    np.arange(0, 1e4, 100),\n);\n\n# to be safe, let's remove anything +/- 1kb from a blacklisted region\n\n# first let's select the columns we want for our final dataframe of peaks\n# with motifs\ndf_peaks_maxmotif = df_peaks_maxmotif[\n    [\n        \"chrom_1\",\n        \"start_1\",\n        \"end_1\",\n        \"fc_1\",\n        \"chrom_2\",\n        \"start_2\",\n        \"end_2\",\n        \"pval_2\",\n        \"strand_2\",\n    ]\n]\n#  then rename columns for convenience when subtracting\nfor i in df_peaks_maxmotif.keys():\n    if \"_1\" in i:\n        df_peaks_maxmotif.rename(columns={i: i.split(\"_\")[0]}, inplace=True)\n\n# now subtract, expanding the blacklist by 1kb\ndf_peaks_maxmotif_clean = bioframe.subtract(\n    df_peaks_maxmotif, bioframe.expand(blacklist, 1000)\n)\n\n# there it is! we now have a dataframe containing positions of CTCF ChIP peaks, \n# including the strongest motif underlying that peak, and after conservative\n# filtering for proximity to blacklisted regions\n\ndf_peaks_maxmotif_clean.iloc[7:15]\n",
+    "inputs/exports.py": "# --- Endpoint export: terminal scientific results ---\n\nimport os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\n# Final result of the tutorial: CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL)\n# each assigned the strongest overlapping JASPAR CTCF motif (MA0139.1), with\n# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.\n# Written as-is from the dataframe produced by bioframe.subtract above.\ndf_peaks_maxmotif_clean.to_csv(\n    \"/work/outputs/ctcf_peaks_maxmotif_clean.csv\", index=False\n)",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "Final table of CTCF ChIP-seq peaks, each with its strongest overlapping JASPAR CTCF motif (motif coordinates, -log10 p-value x100, strand) and the peak's fold change, after removal of peaks within 1 kb of expanded ENCODE blacklist regions; rows identified by peak and motif coordinates.",
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "source_evidence": "The notebook's stated goal is 'one way to assign CTCF motifs to CTCF ChIP-seq peaks', and the closing narrative declares the end product: 'there it is! we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering for proximity to blacklisted regions'. The corresponding existing variable df_peaks_maxmotif_clean is produced in the original script by df_peaks_maxmotif_clean = bioframe.subtract(df_peaks_maxmotif, bioframe.expand(blacklist, 1000)), where df_peaks_maxmotif holds the per-peak strongest motif selected via idxmax over overlap p-values; the script ends by displaying df_peaks_maxmotif_clean.iloc[7:15]. The variable is intact at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Motifs-per-peak distribution and 'fraction of peaks without motifs' (motifs_per_peak, plt.hist, printed fraction): a diagnostic characterizing overlap multiplicity and unannotated peaks that motivates the strongest-motif assignment step, not an independent endpoint; the stored count array also carries no peak identifiers.",
+        "Peak strength vs motif strength relationship (scatter and correlation): the correlation coefficient is computed only inside the plt.title call, so these plot-only values cannot be exported without adding computation.",
+        "Reverse-question branch ('how many motifs overlap a ChIP-seq peak?'): its interpreted result, the cumulative probability curve versus motif p-value, is computed entirely inside plt.plot from the sorted table m; the underlying df_motifs_peaks table is an intermediate feeding that plot rather than the interpreted result.",
+        "Distance of peaks to blacklist regions (closest_to_blacklist histogram): a diagnostic supporting the decision to filter +/-1kb around blacklisted regions; also displayed only as a histogram.",
+        "df_peaks_maxmotif in its pre-blacklist-filter state: an intermediate toward df_peaks_maxmotif_clean; the variable is subsequently overwritten by column selection/rename, so the earlier full-column version is no longer recoverable and was not an endpoint in itself."
+      ],
+      "explanation": "The notebook's terminal scientific product, stated in its own narrative ('there it is! we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering for proximity to blacklisted regions'), is df_peaks_maxmotif_clean. The appended code only creates /work/outputs and writes that existing dataframe to CSV with its final columns and row order unchanged; no recomputation, filtering or analysis is added. Every remaining column is an endpoint field (peak coordinates and fold change, strongest motif coordinates, p-value and strand), so the table is exported whole; the pandas index is dropped because rows are identified by peak/motif coordinates and the index carries no narrative meaning. All plots and printed diagnostics are left untouched.",
+      "export_code": "# --- Endpoint export: terminal scientific results ---\n\nimport os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\n# Final result of the tutorial: CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL)\n# each assigned the strongest overlapping JASPAR CTCF motif (MA0139.1), with\n# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.\n# Written as-is from the dataframe produced by bioframe.subtract above.\ndf_peaks_maxmotif_clean.to_csv(\n    \"/work/outputs/ctcf_peaks_maxmotif_clean.csv\", index=False\n)",
+      "unresolved_assumptions": [
+        "The final column set/order of df_peaks_maxmotif_clean is assumed to be chrom, start, end, fc, chrom_2, start_2, end_2, pval_2, strand_2 after the rename and subtract steps; confirm at execution.",
+        "Peaks with no overlapping motif retain NaN in pval_2 and empty motif coordinates; in CSV these appear as empty fields.",
+        "The inplace replace/rename chained-assignment patterns in the original script may warn or behave differently under the execution environment's pandas version; fidelity of the final-state table is a validation question, not something the export changes.",
+        "Remote retrieval of the ENCODE peaks, ENCODE blacklist and JASPAR motif files must succeed during the network-enabled setup stage; the offline reference run assumes those inputs are staged unchanged."
+      ]
+    },
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3.10\n#     language: python\n#     name: python3\n# ---\n\n# # How to: assign TF Motifs to ChIP-seq peaks\n#\n# This tutorial demonstrates one way to assign CTCF motifs to CTCF ChIP-seq peaks using bioframe.\n#\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\nimport bioframe\n\nbase_dir = \"/tmp/bioframe_tutorial_data/\"\nassembly = \"GRCh38\"\n\n# ## Load CTCF ChIP-seq peaks for HFF from ENCODE\n#\n# This approach makes use of the `narrowPeak` schema for bioframe.read_table . \n\nctcf_peaks = bioframe.read_table(\n    \"/inputs/ENCFF401MQL.bed.gz\",\n    schema=\"narrowPeak\",\n)\nctcf_peaks[0:5]\n\n# ## Get CTCF motifs from JASPAR\n\n### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/\njaspar_url = \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\"\njaspar_motif_file = \"MA0139.1.tsv.gz\"\nctcf_motifs = bioframe.read_table(\n    \"/inputs/\" + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n)\nctcf_motifs[0:4]\n\n# ## Overlap peaks & motifs\n\ndf_peaks_motifs = bioframe.overlap(\n    ctcf_peaks, ctcf_motifs, suffixes=(\"_1\", \"_2\"), return_index=True\n)\n\n# There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs:\n\n# note that counting motifs per peak can also be handled directly with\n# bioframe.count_overlaps but since we re-use df_peaks_motifs below we\n# instead use the pandas operations directly\nmotifs_per_peak = df_peaks_motifs.groupby([\"index_1\"])[\"index_2\"].count().values\n\nplt.hist(motifs_per_peak, np.arange(0, np.max(motifs_per_peak)))\nplt.xlabel(\"number of overlapping motifs per peak\")\nplt.ylabel(\"number of peaks\")\nplt.semilogy()\n\nprint(\n    f\"fraction of peaks without motifs \"\n    f\"{np.round(np.sum(motifs_per_peak == 0) / len(motifs_per_peak), 2)}\"\n)\n\n# ### Assign the strongest motif to each peak\n\n# since idxmax does not currently take NA, fill with -1\ndf_peaks_motifs[\"pval_2\"] = df_peaks_motifs[\"pval_2\"].fillna(-1)\nidxmax_peaks_motifs = (\n    df_peaks_motifs.groupby([\"chrom_1\", \"start_1\", \"end_1\"])[\"pval_2\"].idxmax().values\n)\ndf_peaks_maxmotif = df_peaks_motifs.loc[idxmax_peaks_motifs]\ndf_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\n\n# stronger peaks tend to have stronger motifs:\n\nplt.rcParams[\"font.size\"] = 12\ndf_peaks_maxmotif[\"fc_1\"] = df_peaks_maxmotif[\"fc_1\"].values.astype(\"float\")\nplt.scatter(\n    df_peaks_maxmotif[\"fc_1\"].values,\n    df_peaks_maxmotif[\"pval_2\"].values,\n    5,\n    alpha=0.5,\n    lw=0,\n)\nplt.xlabel(\"ENCODE CTCF peak strength, fc\")\nplt.ylabel(\"JASPAR CTCF motif strength \\n (-log10 pval *100)\")\nplt.title(\n    \"corr: \"\n    + str(np.round(df_peaks_maxmotif[\"fc_1\"].corr(df_peaks_maxmotif[\"pval_2\"]), 2))\n);\n\n# We can also ask the reverse question: how many motifs overlap a ChIP-seq peak?\n\ndf_motifs_peaks = bioframe.overlap(\n    ctcf_motifs, ctcf_peaks, how=\"left\", suffixes=(\"_1\", \"_2\")\n)\n\nm = df_motifs_peaks.sort_values(\"pval_1\")\nplt.plot(\n    m[\"pval_1\"].values[::-1],\n    np.cumsum(pd.isnull(m[\"chrom_2\"].values[::-1]) == 0) / np.arange(1, len(m) + 1),\n)\nplt.xlabel(\"pval\")\nplt.ylabel(\"probability motif overlaps a peak\");\n\n# ### filter peaks overlapping blacklisted regions\n#\n# do any of our peaks overlap blacklisted genomic regions?\n\nblacklist = bioframe.read_table(\n    \"/inputs/ENCFF356LFX.bed.gz\",\n    schema=\"bed3\",\n)\nblacklist[0:3]\n\n# there appears to be a small spike in the number of peaks close to blacklist regions\n\nclosest_to_blacklist = bioframe.closest(ctcf_peaks, blacklist)\nplt.hist(\n    closest_to_blacklist[\"distance\"].astype(\"Float64\").astype(\"float\"),\n    np.arange(0, 1e4, 100),\n);\n\n# to be safe, let's remove anything +/- 1kb from a blacklisted region\n\n# first let's select the columns we want for our final dataframe of peaks\n# with motifs\ndf_peaks_maxmotif = df_peaks_maxmotif[\n    [\n        \"chrom_1\",\n        \"start_1\",\n        \"end_1\",\n        \"fc_1\",\n        \"chrom_2\",\n        \"start_2\",\n        \"end_2\",\n        \"pval_2\",\n        \"strand_2\",\n    ]\n]\n#  then rename columns for convenience when subtracting\nfor i in df_peaks_maxmotif.keys():\n    if \"_1\" in i:\n        df_peaks_maxmotif.rename(columns={i: i.split(\"_\")[0]}, inplace=True)\n\n# now subtract, expanding the blacklist by 1kb\ndf_peaks_maxmotif_clean = bioframe.subtract(\n    df_peaks_maxmotif, bioframe.expand(blacklist, 1000)\n)\n\n# there it is! we now have a dataframe containing positions of CTCF ChIP peaks, \n# including the strongest motif underlying that peak, and after conservative\n# filtering for proximity to blacklisted regions\n\ndf_peaks_maxmotif_clean.iloc[7:15]\n",
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3.10\n#     language: python\n#     name: python3\n# ---\n\n# # How to: assign TF Motifs to ChIP-seq peaks\n#\n# This tutorial demonstrates one way to assign CTCF motifs to CTCF ChIP-seq peaks using bioframe.\n#\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\nimport bioframe\n\nbase_dir = \"/tmp/bioframe_tutorial_data/\"\nassembly = \"GRCh38\"\n\n# ## Load CTCF ChIP-seq peaks for HFF from ENCODE\n#\n# This approach makes use of the `narrowPeak` schema for bioframe.read_table . \n\nctcf_peaks = bioframe.read_table(\n    \"/inputs/ENCFF401MQL.bed.gz\",\n    schema=\"narrowPeak\",\n)\nctcf_peaks[0:5]\n\n# ## Get CTCF motifs from JASPAR\n\n### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/\njaspar_url = \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\"\njaspar_motif_file = \"MA0139.1.tsv.gz\"\nctcf_motifs = bioframe.read_table(\n    \"/inputs/\" + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n)\nctcf_motifs[0:4]\n\n# ## Overlap peaks & motifs\n\ndf_peaks_motifs = bioframe.overlap(\n    ctcf_peaks, ctcf_motifs, suffixes=(\"_1\", \"_2\"), return_index=True\n)\n\n# There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs:\n\n# note that counting motifs per peak can also be handled directly with\n# bioframe.count_overlaps but since we re-use df_peaks_motifs below we\n# instead use the pandas operations directly\nmotifs_per_peak = df_peaks_motifs.groupby([\"index_1\"])[\"index_2\"].count().values\n\nplt.hist(motifs_per_peak, np.arange(0, np.max(motifs_per_peak)))\nplt.xlabel(\"number of overlapping motifs per peak\")\nplt.ylabel(\"number of peaks\")\nplt.semilogy()\n\nprint(\n    f\"fraction of peaks without motifs \"\n    f\"{np.round(np.sum(motifs_per_peak == 0) / len(motifs_per_peak), 2)}\"\n)\n\n# ### Assign the strongest motif to each peak\n\n# since idxmax does not currently take NA, fill with -1\ndf_peaks_motifs[\"pval_2\"] = df_peaks_motifs[\"pval_2\"].fillna(-1)\nidxmax_peaks_motifs = (\n    df_peaks_motifs.groupby([\"chrom_1\", \"start_1\", \"end_1\"])[\"pval_2\"].idxmax().values\n)\ndf_peaks_maxmotif = df_peaks_motifs.loc[idxmax_peaks_motifs]\ndf_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\n\n# stronger peaks tend to have stronger motifs:\n\nplt.rcParams[\"font.size\"] = 12\ndf_peaks_maxmotif[\"fc_1\"] = df_peaks_maxmotif[\"fc_1\"].values.astype(\"float\")\nplt.scatter(\n    df_peaks_maxmotif[\"fc_1\"].values,\n    df_peaks_maxmotif[\"pval_2\"].values,\n    5,\n    alpha=0.5,\n    lw=0,\n)\nplt.xlabel(\"ENCODE CTCF peak strength, fc\")\nplt.ylabel(\"JASPAR CTCF motif strength \\n (-log10 pval *100)\")\nplt.title(\n    \"corr: \"\n    + str(np.round(df_peaks_maxmotif[\"fc_1\"].corr(df_peaks_maxmotif[\"pval_2\"]), 2))\n);\n\n# We can also ask the reverse question: how many motifs overlap a ChIP-seq peak?\n\ndf_motifs_peaks = bioframe.overlap(\n    ctcf_motifs, ctcf_peaks, how=\"left\", suffixes=(\"_1\", \"_2\")\n)\n\nm = df_motifs_peaks.sort_values(\"pval_1\")\nplt.plot(\n    m[\"pval_1\"].values[::-1],\n    np.cumsum(pd.isnull(m[\"chrom_2\"].values[::-1]) == 0) / np.arange(1, len(m) + 1),\n)\nplt.xlabel(\"pval\")\nplt.ylabel(\"probability motif overlaps a peak\");\n\n# ### filter peaks overlapping blacklisted regions\n#\n# do any of our peaks overlap blacklisted genomic regions?\n\nblacklist = bioframe.read_table(\n    \"/inputs/ENCFF356LFX.bed.gz\",\n    schema=\"bed3\",\n)\nblacklist[0:3]\n\n# there appears to be a small spike in the number of peaks close to blacklist regions\n\nclosest_to_blacklist = bioframe.closest(ctcf_peaks, blacklist)\nplt.hist(\n    closest_to_blacklist[\"distance\"].astype(\"Float64\").astype(\"float\"),\n    np.arange(0, 1e4, 100),\n);\n\n# to be safe, let's remove anything +/- 1kb from a blacklisted region\n\n# first let's select the columns we want for our final dataframe of peaks\n# with motifs\ndf_peaks_maxmotif = df_peaks_maxmotif[\n    [\n        \"chrom_1\",\n        \"start_1\",\n        \"end_1\",\n        \"fc_1\",\n        \"chrom_2\",\n        \"start_2\",\n        \"end_2\",\n        \"pval_2\",\n        \"strand_2\",\n    ]\n]\n#  then rename columns for convenience when subtracting\nfor i in df_peaks_maxmotif.keys():\n    if \"_1\" in i:\n        df_peaks_maxmotif.rename(columns={i: i.split(\"_\")[0]}, inplace=True)\n\n# now subtract, expanding the blacklist by 1kb\ndf_peaks_maxmotif_clean = bioframe.subtract(\n    df_peaks_maxmotif, bioframe.expand(blacklist, 1000)\n)\n\n# there it is! we now have a dataframe containing positions of CTCF ChIP peaks, \n# including the strongest motif underlying that peak, and after conservative\n# filtering for proximity to blacklisted regions\n\ndf_peaks_maxmotif_clean.iloc[7:15]\n\n\n# --- Endpoint export: terminal scientific results ---\n\nimport os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\n# Final result of the tutorial: CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL)\n# each assigned the strongest overlapping JASPAR CTCF motif (MA0139.1), with\n# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.\n# Written as-is from the dataframe produced by bioframe.subtract above.\ndf_peaks_maxmotif_clean.to_csv(\n    \"/work/outputs/ctcf_peaks_maxmotif_clean.csv\", index=False\n)",
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -31,7 +31,7 @@\n # This approach makes use of the `narrowPeak` schema for bioframe.read_table . \n \n ctcf_peaks = bioframe.read_table(\n-    \"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\",\n+    \"/inputs/ENCFF401MQL.bed.gz\",\n     schema=\"narrowPeak\",\n )\n ctcf_peaks[0:5]\n@@ -42,7 +42,7 @@\n jaspar_url = \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\"\n jaspar_motif_file = \"MA0139.1.tsv.gz\"\n ctcf_motifs = bioframe.read_table(\n-    jaspar_url + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n+    \"/inputs/\" + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n )\n ctcf_motifs[0:4]\n \n@@ -116,7 +116,7 @@\n # do any of our peaks overlap blacklisted genomic regions?\n \n blacklist = bioframe.read_table(\n-    \"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\",\n+    \"/inputs/ENCFF356LFX.bed.gz\",\n     schema=\"bed3\",\n )\n blacklist[0:3]\n",
+    "candidate/inputs.json": {
+      "files": [
+        {
+          "local_path": "/inputs/ENCFF401MQL.bed.gz",
+          "source": "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz"
+        },
+        {
+          "local_path": "/inputs/ENCFF356LFX.bed.gz",
+          "source": "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz"
+        },
+        {
+          "local_path": "/inputs/MA0139.1.tsv.gz",
+          "source": "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz"
+        }
+      ]
+    },
+    "trial/inputs-before.json": {
+      "files": [
+        {
+          "local_path": "/inputs/ENCFF401MQL.bed.gz",
+          "source": "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz",
+          "bytes": 649474,
+          "sha256": "c0bfc8ded835fdc1f1a06884ffb08f5347a0546c11757f7cc18185b49b9ffcd5"
+        },
+        {
+          "local_path": "/inputs/ENCFF356LFX.bed.gz",
+          "source": "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz",
+          "bytes": 8211,
+          "sha256": "a9d086ce90ca67f933b29adfbff56ea768bbce2ec4b0d51e2d405e5a1d61bb56"
+        },
+        {
+          "local_path": "/inputs/MA0139.1.tsv.gz",
+          "source": "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz",
+          "bytes": 7698065,
+          "sha256": "b1bbdac330cfc78c9ac9a826d1ca2bfdb22ec2cc21c789404adc0c11acbd4510"
+        }
+      ]
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"bioframe-motifs-to-peaks\"\nversion = \"0.1.0\"\ndescription = \"Dependency environment for the bioframe 'assign TF motifs to ChIP-seq peaks' tutorial reference run\"\nrequires-python = \">=3.10\"\ndependencies = [\n    \"bioframe==0.8.0\",\n    \"matplotlib>=3.8\",\n    \"numpy>=2,<3\",\n    \"pandas==2.3.3\",\n    \"pyyaml\",\n    \"requests\",\n]\n",
+    "trial/environment.txt": "bioframe==0.8.0\ncertifi==2026.10.18\ncharset-normalizer==3.5.2\ncontourpy==1.4.0\ncycler==0.12.1\nfonttools==4.67.0\nidna==3.20\nkiwisolver==1.5.1\nmatplotlib==3.11.2\nnumpy==2.5.4\npackaging==26.3\npandas==2.3.3\npillow==13.0.0\npyparsing==3.3.3\npython-dateutil==2.9.0.post0\npytz==2026.5\npyyaml==6.0.3\nrequests==2.34.2\nsix==1.17.0\ntzdata==2026.5\nurllib3==2.8.0\n",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 2484403,
+            "exists": true,
+            "path": "ctcf_peaks_maxmotif_clean.csv",
+            "sha256": "8ba2ca5c0ea4b1a4b4bae9d788d45a267c393a1b2de00789408034d7f360447d"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "c976b0788957343a49648c27db6a0ec1d2b9ddc0c6fed89569aa50e7456e942b",
+        "inputs.json": "978327535747ee740395ce90f13fbf2de9fde7eaa86a059ce079a5fb05f2b1af",
+        "pyproject.toml": "abf2e7e5aad2c52c67f1d6edf58165ef1a33c578b5f8d87227657ded59e632aa",
+        "stage-inputs.sh": "9977818ebdaa4e3b1fbd8bb01aaa4e90017a48f9a4ab926b943fcd2e20703f41",
+        "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "elapsed_seconds": 4.796082258224487,
+        "exit_code": 0,
+        "finished": 1792437123.0481782,
+        "log": "/work/reference.py:80: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\nThe behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n\nFor example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n\n\n  df_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\nfraction of peaks without motifs 0.14\n",
+        "peak_child_rss_kib": 563088,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792437118.252096,
+        "timed_out": false
+      },
+      "inputs_after": {
+        "files": 3,
+        "staged_inputs_verified": true
+      },
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "elapsed_seconds": 8.534698963165283,
+        "exit_code": 0,
+        "finished": 1792437097.3599844,
+        "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 302.0 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 29 packages in 139ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 29 packages in 1ms\nDownloading fonttools (5.1MiB)\nDownloading pandas (11.7MiB)\nDownloading numpy (15.9MiB)\nDownloading pillow (6.8MiB)\nDownloading matplotlib (9.4MiB)\nDownloading kiwisolver (1.4MiB)\n Downloaded kiwisolver\n Downloaded pillow\n Downloaded fonttools\n Downloaded matplotlib\n Downloaded numpy\n Downloaded pandas\nPrepared 21 packages in 322ms\nInstalled 21 packages in 367ms\n + bioframe==0.8.0\n + certifi==2026.10.18\n + charset-normalizer==3.5.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + numpy==2.5.4\n + packaging==26.3\n + pandas==2.3.3\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==2.9.0.post0\n + pytz==2026.5\n + pyyaml==6.0.3\n + requests==2.34.2\n + six==1.17.0\n + tzdata==2026.5\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged ENCFF401MQL.bed.gz: 649474 bytes, md5 9dabac96e36309ed65dc1cb289c51079\nstaged ENCFF356LFX.bed.gz: 8211 bytes, md5 393688b4f06c9ce26165d47433dd8c37\nstaged MA0139.1.tsv.gz: 7698065 bytes, md5 0ebb58260d8ef79496390bec7266b503\n",
+        "peak_child_rss_kib": 80008,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792437088.8252854,
+        "timed_out": false
+      },
+      "status": "reference_executed",
+      "test": 1
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "finished": 1792437177.6917608,
+      "last_passing_test": {
+        "hashes": {
+          "analysis.py": "c976b0788957343a49648c27db6a0ec1d2b9ddc0c6fed89569aa50e7456e942b",
+          "inputs.json": "978327535747ee740395ce90f13fbf2de9fde7eaa86a059ce079a5fb05f2b1af",
+          "pyproject.toml": "abf2e7e5aad2c52c67f1d6edf58165ef1a33c578b5f8d87227657ded59e632aa",
+          "stage-inputs.sh": "9977818ebdaa4e3b1fbd8bb01aaa4e90017a48f9a4ab926b943fcd2e20703f41",
+          "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "source_changed": true,
+        "test": 1
+      },
+      "reference_tests": 1,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1714.3334048409015,
+      "solver_run": false,
+      "started": 1792436865.3030112,
+      "status": "reference_executed_requires_review"
+    },
+    "output-audit.json": {
+      "scope": "Archived file integrity and structural/numeric-range inspection only; not independent scientific reproduction",
+      "outputs": [
+        {
+          "file": "ctcf_peaks_maxmotif_clean.csv",
+          "bytes": 2484403,
+          "sha256": "8ba2ca5c0ea4b1a4b4bae9d788d45a267c393a1b2de00789408034d7f360447d",
+          "download_hash_verified": true,
+          "columns": [
+            "chrom",
+            "start",
+            "end",
+            "fc",
+            "chrom_2",
+            "start_2",
+            "end_2",
+            "pval_2",
+            "strand_2"
+          ],
+          "rows": 40557,
+          "first_rows": [
+            {
+              "chrom": "chr19",
+              "start": "48309541",
+              "end": "48309911",
+              "fc": "5.04924",
+              "chrom_2": "",
+              "start_2": "",
+              "end_2": "",
+              "pval_2": "",
+              "strand_2": ""
+            },
+            {
+              "chrom": "chr4",
+              "start": "130563716",
+              "end": "130564086",
+              "fc": "5.05052",
+              "chrom_2": "",
+              "start_2": "",
+              "end_2": "",
+              "pval_2": "",
+              "strand_2": ""
+            },
+            {
+              "chrom": "chr1",
+              "start": "200622507",
+              "end": "200622877",
+              "fc": "5.05489",
+              "chrom_2": "",
+              "start_2": "",
+              "end_2": "",
+              "pval_2": "",
+              "strand_2": ""
+            }
+          ],
+          "column_stats": {
+            "chrom": {
+              "blank": 0,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "start": {
+              "blank": 0,
+              "numeric": 40557,
+              "nonfinite": 0,
+              "min": 48.0,
+              "max": 248924729.0
+            },
+            "end": {
+              "blank": 0,
+              "numeric": 40557,
+              "nonfinite": 0,
+              "min": 418.0,
+              "max": 248925099.0
+            },
+            "fc": {
+              "blank": 0,
+              "numeric": 40557,
+              "nonfinite": 0,
+              "min": 5.04924,
+              "max": 627.60723
+            },
+            "chrom_2": {
+              "blank": 5765,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            },
+            "start_2": {
+              "blank": 5765,
+              "numeric": 34792,
+              "nonfinite": 0,
+              "min": 1258.0,
+              "max": 248924897.0
+            },
+            "end_2": {
+              "blank": 5765,
+              "numeric": 34792,
+              "nonfinite": 0,
+              "min": 1277.0,
+              "max": 248924916.0
+            },
+            "pval_2": {
+              "blank": 5765,
+              "numeric": 34792,
+              "nonfinite": 0,
+              "min": 384.0,
+              "max": 1035.0
+            },
+            "strand_2": {
+              "blank": 5765,
+              "numeric": 0,
+              "nonfinite": 0,
+              "min": null,
+              "max": null
+            }
+          }
+        }
+      ]
+    }
+  },
+  "file_sha256": {
+    "provenance.json": "6ff029d600978a7a59ac155f1cece82ada31508fa81e061586768c4e2516341d",
+    "inputs/original.py": "aa6ed21d92a4d0a295c904d6d00c39a2cc7dad864e53f60e83ba187572569753",
+    "inputs/exports.py": "decece3f8fe9d0b19274883bfc9bce616d2bb46a25c68b04279fd270931686c6",
+    "inputs/plan.json": "867b596d06ed0370bd1bd3a7ff647327f6b4ce28adf023bc2e7c33bda128f79b",
+    "candidate/analysis.py": "c976b0788957343a49648c27db6a0ec1d2b9ddc0c6fed89569aa50e7456e942b",
+    "trial/reference.py": "273d5b4073f13cd68bc9b06a18aacdb0437af3a3567ff83733fc8091c650ad87",
+    "trial/source.diff": "03a0ef7317a50de88e57f1a6cc5148ce2c518494d48feb5a91123d8a7d64f81d",
+    "candidate/inputs.json": "978327535747ee740395ce90f13fbf2de9fde7eaa86a059ce079a5fb05f2b1af",
+    "trial/inputs-before.json": "d9a21c3e92f8154c8d7eff8ccc7d39a67d615dc6d0d3329a0c2e6de73c0742d8",
+    "candidate/pyproject.toml": "abf2e7e5aad2c52c67f1d6edf58165ef1a33c578b5f8d87227657ded59e632aa",
+    "trial/uv.lock": "5d613b7f9e7453a7fc26b7d331f305b831220d20a88981206358015b3457e2e2",
+    "trial/environment.txt": "646252647d64a87921d783a9ea4398a97702e17181574a481f17356380550d2c",
+    "trial/result.json": "ae0e94a95da90973bddd983540734442c4a846cea0f756a98b871c55df1f0882",
+    "result.json": "360fec8cb0f99a81c2b8d9d3c4691f136d2fd4c4bf4cfdaf29dbf85d3369b62d",
+    "output-audit.json": "1b5d6d46eb797f0864ef6bcbbd7eb89bc2019b4c531967c23ba47a089db7ea30"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "sha256": "5d613b7f9e7453a7fc26b7d331f305b831220d20a88981206358015b3457e2e2",
+      "bytes": 401181,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context."
+    }
+  },
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving."
+  },
+  "evidence_boundary": "One passing reference test and structural output audit. No full data tables in this context, no independent scientific reproduction, repeatability measurement, calibrated grader or solver evidence. Read-only package-source tools are available.",
+  "package_inspection": {
+    "packages": {
+      "bioframe": {
+        "version": "0.8.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/d4/66/41b2bce9de683b3bcac510b6e97682946f403e0553ae5cf8dfc267bb26b8/bioframe-0.8.0-py3-none-any.whl",
+          "hash": "sha256:5db243f74cd2deafbf3b664e0cfd6e9d5e736e01143747aa52d99409c8315574",
+          "size": 153335
+        },
+        "kind": "universal_wheel"
+      },
+      "certifi": {
+        "version": "2026.10.18",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/08/ba/95dd616042484f7c83a06974388b37b837732740ee70bc5dc715b5fcd55a/certifi-2026.10.18-py3-none-any.whl",
+          "hash": "sha256:73191c47aaa79da394e8fee2dbc2ec827432cab56311122c9e47abf79e390f62",
+          "size": 134093
+        },
+        "kind": "universal_wheel"
+      },
+      "charset-normalizer": {
+        "version": "3.5.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/fc/ad/d07d7862a62ffa6d79d68074d14823243dd235a77c45262acbf6adeb28bf/charset_normalizer-3.5.2-py3-none-any.whl",
+          "hash": "sha256:b6b751274acb69d77b3323d6b7dbaa3c7fdfc1eb829b7eb61d262f32e1af9685",
+          "size": 68872
+        },
+        "kind": "universal_wheel"
+      },
+      "contourpy": {
+        "version": "1.4.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/83/5a/a55177dd22553a277388e8a1b3220e92de91bacb28356cdc73caa240121d/contourpy-1.4.0.tar.gz",
+          "hash": "sha256:20156f5a1ac4f8ce02656e39a61e82164a3d359796dc8026f75b062783d500e1",
+          "size": 13323726
+        },
+        "kind": "sdist"
+      },
+      "cycler": {
+        "version": "0.12.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl",
+          "hash": "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+          "size": 8321
+        },
+        "kind": "universal_wheel"
+      },
+      "fonttools": {
+        "version": "4.67.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/3d/61/4161946319472aaa9b897bd18ad5108a5b10f5ebaa503d921a001ac4fff9/fonttools-4.67.0-py3-none-any.whl",
+          "hash": "sha256:4304f03ed7f4ba000a8dcc941ad854bfa52e2f3b6112b8f099b6f431cf98e701",
+          "size": 1213142
+        },
+        "kind": "universal_wheel"
+      },
+      "idna": {
+        "version": "3.20",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+          "hash": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+          "size": 69583
+        },
+        "kind": "universal_wheel"
+      },
+      "kiwisolver": {
+        "version": "1.5.1",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz",
+          "hash": "sha256:f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+          "size": 104395
+        },
+        "kind": "sdist"
+      },
+      "matplotlib": {
+        "version": "3.11.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/e7/c8/9aa712a0afb882649424dd8de8ad9aa6235e796e84c6052e8f6dc1598d0d/matplotlib-3.11.2.tar.gz",
+          "hash": "sha256:cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4",
+          "size": 32660610
+        },
+        "kind": "sdist"
+      },
+      "numpy": {
+        "version": "2.5.4",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz",
+          "hash": "sha256:9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "size": 20866315
+        },
+        "kind": "sdist"
+      },
+      "packaging": {
+        "version": "26.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+          "hash": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+          "size": 129956
+        },
+        "kind": "universal_wheel"
+      },
+      "pandas": {
+        "version": "2.3.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/33/01/d40b85317f86cf08d853a4f495195c73815fdf205eef3993821720274518/pandas-2.3.3.tar.gz",
+          "hash": "sha256:e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b",
+          "size": 4495223
+        },
+        "kind": "sdist"
+      },
+      "pillow": {
+        "version": "13.0.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz",
+          "hash": "sha256:cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "size": 47058631
+        },
+        "kind": "sdist"
+      },
+      "pyparsing": {
+        "version": "3.3.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/38/bb/d215ee7c73b61497b28a5503f9f53523f294fcc936762b7caf90e0c1c2b5/pyparsing-3.3.3-py3-none-any.whl",
+          "hash": "sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+          "size": 126420
+        },
+        "kind": "universal_wheel"
+      },
+      "python-dateutil": {
+        "version": "2.9.0.post0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/ec/57/56b9bcc3c9c6a792fcbaf139543cee77261f3651ca9da0c93f5c1221264b/python_dateutil-2.9.0.post0-py2.py3-none-any.whl",
+          "hash": "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427",
+          "size": 229892
+        },
+        "kind": "universal_wheel"
+      },
+      "pytz": {
+        "version": "2026.5",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/4f/ef/c66110d46fb800dda0bf33164182dfadabe26a90e4476844d502a23dca8e/pytz-2026.5-py2.py3-none-any.whl",
+          "hash": "sha256:e658af3757f9e26a9d25dd2aff38335acd92bc9104f890a894b2c1ba28311b03",
+          "size": 506342
+        },
+        "kind": "universal_wheel"
+      },
+      "pyyaml": {
+        "version": "6.0.3",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/05/8e/961c0007c59b8dd7729d542c61a4d537767a59645b82a0b521206e1e25c2/pyyaml-6.0.3.tar.gz",
+          "hash": "sha256:d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f",
+          "size": 130960
+        },
+        "kind": "sdist"
+      },
+      "requests": {
+        "version": "2.34.2",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+          "hash": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+          "size": 73075
+        },
+        "kind": "universal_wheel"
+      },
+      "six": {
+        "version": "1.17.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl",
+          "hash": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+          "size": 11050
+        },
+        "kind": "universal_wheel"
+      },
+      "tzdata": {
+        "version": "2026.5",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl",
+          "hash": "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+          "size": 347996
+        },
+        "kind": "universal_wheel"
+      },
+      "urllib3": {
+        "version": "2.8.0",
+        "distribution": {
+          "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+          "hash": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+          "size": 135717
+        },
+        "kind": "universal_wheel"
+      }
+    },
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Unavailable source remains an evidence gap."
+  }
+}
