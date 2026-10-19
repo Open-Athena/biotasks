@@ -2272,3 +2272,8 @@ shell while admitting hash-verified prior GLM work. Legacy configurations retain
 their finalizer behavior. Thirteen focused materialization checks pass, covering
 fresh construction, legacy finalization, and construction with prior files.
 Prepare 004 using this mode; no manual scientific artifact changes or new caps.
+
+Cancellation 003 converged to KILLED. No recovery manifest was available. The
+remaining owned Daytona sandbox was explicitly deleted; a fresh provider query
+at 23:03:13 UTC confirmed zero. Model-request count is unavailable; do not count
+this as an unexecuted campaign merely because the parent mirror was PENDING.
