@@ -1,0 +1,94 @@
+{
+  "stage": "retrospective_original_automatic_exports_and_post_run_text_assessment",
+  "pipeline": "pr_diff/native",
+  "rows": [
+    {
+      "repository": "biopython/biopython",
+      "considered_inputs": 10,
+      "automatic_exports": 4,
+      "generation_wall_seconds": 12.147852,
+      "generation_wall_seconds_per_input": 1.2147852000000001,
+      "generation_wall_seconds_per_export": 3.036963,
+      "model_author_calls": 0,
+      "generation_configuration_source": "../evidence/pr-diff-01/generation.json"
+    },
+    {
+      "repository": "scikit-bio/scikit-bio",
+      "considered_inputs": 10,
+      "automatic_exports": 3,
+      "generation_wall_seconds": 10.701432,
+      "generation_wall_seconds_per_input": 1.0701432,
+      "generation_wall_seconds_per_export": 3.5671440000000003,
+      "model_author_calls": 0,
+      "generation_configuration_source": "../evidence/pr-diff-01/generation.json"
+    },
+    {
+      "repository": "arq5x/bedtools2",
+      "considered_inputs": 10,
+      "automatic_exports": 6,
+      "generation_wall_seconds": 15.42671,
+      "generation_wall_seconds_per_input": 1.542671,
+      "generation_wall_seconds_per_export": 2.571118333333333,
+      "model_author_calls": 0,
+      "generation_configuration_source": "../evidence/pr-diff-01/generation.json"
+    },
+    {
+      "repository": "thelovelab/DESeq2",
+      "considered_inputs": 10,
+      "automatic_exports": 6,
+      "generation_wall_seconds": 14.947079,
+      "generation_wall_seconds_per_input": 1.4947079,
+      "generation_wall_seconds_per_export": 2.4911798333333333,
+      "model_author_calls": 0,
+      "generation_configuration_source": "../evidence/pr-diff-01/generation.json"
+    }
+  ],
+  "considered_inputs": 40,
+  "automatic_exports": 19,
+  "generation_wall_seconds": 53.223073,
+  "post_run_patch_application_statuses": {
+    "patch_applies": 17,
+    "patch_does_not_apply": 2
+  },
+  "reversed_string_probe_reward_range": [
+    0.8063492063492064,
+    0.9
+  ],
+  "newline_diagnoses": [
+    {
+      "pr": 1067,
+      "raw_diff_sha256": "b8a0adc780643007c64989e59e3e4b7e1696b625ab48e16c3fff886c7872f860",
+      "raw_crlf_count": 13,
+      "exported_crlf_count": 0,
+      "normalizing_raw_crlf_matches_export": true,
+      "raw_patch_apply_exit_code": 0,
+      "diagnostic": ""
+    },
+    {
+      "pr": 1083,
+      "raw_diff_sha256": "326130f6815a7cc11bdbfd33959f994d8338d0bc0011db5cccd308c5fce41cde",
+      "raw_crlf_count": 8,
+      "exported_crlf_count": 0,
+      "normalizing_raw_crlf_matches_export": true,
+      "raw_patch_apply_exit_code": 0,
+      "diagnostic": ""
+    }
+  ],
+  "manual_task_fixes": 0,
+  "assessment_changes_original_exports": false,
+  "original_bundle_runtime_success": null,
+  "full_time_per_accepted_task_seconds": null,
+  "limitations": [
+    "Generation intervals include API/extraction/export but exclude repository bootstrap, later patch-application checks, manual assessment and blind solver evaluation.",
+    "A patch applying to pinned text files does not establish functional correctness or original bundle execution.",
+    "Reversed-change scorer probes are string-level examples; they do not prove executable incorrect repairs, but show overall native reward is not a semantic-equivalence test.",
+    "Two exported LF-normalized patches failed to apply although raw CRLF PR patches applied; originals were retained without repair.",
+    "Do not promote all exports or patch-application successes to the30-task legacy acceptance ledger."
+  ],
+  "source_sha256": {
+    "evidence/pr-diff-01/generation.json": "eaf16a7b29e18e0f091030d8aa4660046caaedddf63522295261eb8741716193",
+    "evidence/pr-diff-01/patch-application.json": "ad3fdb8b73b9f3bc58f31a7713b09204e7092f020493005130b7c950aa4ea060",
+    "evidence/pr-diff-01/scorer-diagnostics.json": "16afa04f753bc6f2ff8ae0c2cc49a05f1e9662b02927e1c1c35b12c4a4117e01",
+    "evidence/pr-diff-01/newline-diagnosis.json": "29618ea983ac07ec80be053ae28049a7e9ca2e1807f599b9f76a1c588b343a4e"
+  }
+}
