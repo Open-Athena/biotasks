@@ -2093,3 +2093,13 @@ record. Optional bundled source provenance must match the selected seed too.
 Seven focused release/packaging tests pass, including cross-wired source and
 license failures. This changes publication metadata handling, not task science.
 Bioframe source/data attribution is recorded separately from the Scanpy case.
+
+### 2026-10-19 — Owned release destinations
+
+The publication wrapper also assumed the original dataset already existed.
+It now accepts the explicit staged destination in the authenticated personal
+namespace, supports a new public repository, and retains optimistic concurrency
+for existing managed releases. It refuses private or unrelated destinations and
+only removes obsolete paths listed in the previous release manifest. Seven
+focused metadata/publication checks pass. No upload has been performed for the
+Bioframe transfer; independent grading remains active.
