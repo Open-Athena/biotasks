@@ -2057,3 +2057,17 @@ validation. Original output is preserved; no manual scientific repair was made.
 The next existing materialization stage receives this fresh proposal, with no
 historical Scanpy author draft or revision feedback. All canonical prompt hashes
 remain those of the transfer baseline.
+
+### 2026-10-19 — Bioframe materialization 001
+
+Construction completed in 763.07 seconds (67 model requests); the first
+controlled submission passed. It copies the three original inputs byte-for-byte
+and projects the reference's header to the public schema. The separately
+executed oracle passed answer-access isolation and its output SHA-256 equals
+the projected reference's SHA-256. The controller call took 2.07 seconds.
+
+The worker authored a plain-Python interval implementation rather than calling
+the source library. Same-author self-testing does not replace the separate blind
+implementation/controls still required. No scientific output was manually
+repaired. The next existing grading profile starts fresh, with no historical
+grader/probes or task-specific feedback from the first notebook.
