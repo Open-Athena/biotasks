@@ -1962,3 +1962,12 @@ commands expand correctly, no JavaScript errors or 390-pixel layout overflow.
 All 69 repository links resolve locally; the displayed instruction matches the
 freshly downloaded published file byte-for-byte. Ruff passed for the two viewer
 scripts. No new scientific, model or sandbox execution was performed.
+
+### 2026-10-19 — Bioframe transfer candidate selected
+
+Hold pipeline PR extraction pending a second-notebook transfer check. The user
+selected bioframe's motifs-to-peaks tutorial after excluding IL6 and single-cell
+analysis. Pinned source and initial access evidence are in `transfer/bioframe/`.
+Existing prompts remain unchanged. Syntax parses; ENCODE metadata confirms two
+released GRCh38 files. Conversion was not started because the shared heavy-work
+lock was held. No model or paid execution was launched.
