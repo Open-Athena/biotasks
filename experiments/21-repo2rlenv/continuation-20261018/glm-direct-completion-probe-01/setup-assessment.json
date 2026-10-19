@@ -1,0 +1,18 @@
+{
+  "stage": "provider_setup_failed_before_task_entrypoint",
+  "native_job_state": "FAILED",
+  "exit_code": 2,
+  "setup_step": 1,
+  "failure": "SDK requirement pins were passed as workspace package names to default_setup_script(packages=...); uv sync rejects the name before the probe entrypoint can run.",
+  "model_calls": 0,
+  "model_call_evidence": "Worker setup abort shown by original first-step error; probe code/HTTP client not entered. Not inferred merely from FAILED status.",
+  "source_candidates_charged": 0,
+  "task_entrypoint_started": false,
+  "provider_output_archive_state": "empty",
+  "provider_output_archive_bytes": 0,
+  "setup_error_sha256": "372a838685588ecbe20e6eee7e8d803afb6720e820343a300a661f3d14074f2d",
+  "no_task_or_response_artifact_existed": true,
+  "remaining_live_diagnostic_call_allowance": 1,
+  "shared_service_modified": false,
+  "correction": "Keep workspace packages=[marin-iris]; pass OpenAI/httpx pins through documented pip_packages. Probe code, prompt and limits unchanged."
+}

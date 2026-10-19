@@ -1,0 +1,51 @@
+{
+  "stage": "frozen_setup_corrected_single_remaining_live_completion_call_not_dispatched",
+  "reason": "Two integrated native builder requests timed out without responses after the long-proxy gate passed. Test basic completion availability separately from task complexity and forwarding.",
+  "maximum_model_calls": 1,
+  "source_candidates_charged": 0,
+  "repository_execution": false,
+  "sandbox_credentials_supplied": false,
+  "shared_service_modified": false,
+  "resources": {
+    "cpu": 1,
+    "memory_gib": 2,
+    "disk_gib": 5
+  },
+  "CPU_backend": "existing_user_allocated_free_CoreWeave_inference_only",
+  "required_client_slots": 1,
+  "model": "glm-5.3",
+  "max_tokens": 131072,
+  "requested_effort": "medium",
+  "request_timeout_sec": 1200,
+  "job_timeout_sec": 1800,
+  "paid_model_fallback": false,
+  "SDK_pins": {
+    "openai": "2.24.0",
+    "httpx": "0.28.1"
+  },
+  "files": {
+    "run_glm_direct_completion_probe.py": {
+      "bytes": 5032,
+      "sha256": "4dec87cb8569b3157716615bb40faa82815b9e7fe027ee56d8466857b18b597e"
+    }
+  },
+  "limits": "A tiny diagnostic response does not establish task quality, native recipe success or healthy long-request forwarding. No consumed task request is replayed.",
+  "offline_checks": "glm-direct-completion-probe-offline-checks.json",
+  "prior_diagnostic_actual_calls": 0,
+  "remaining_live_call_allowance": 1,
+  "prior_setup_failure": "glm-direct-completion-probe-01/setup-assessment.json",
+  "setup": {
+    "workspace_packages": [
+      "marin-iris"
+    ],
+    "pip_packages": [
+      "openai==2.24.0",
+      "httpx==0.28.1"
+    ],
+    "python_version": "3.12",
+    "rendered_script": "glm-direct-completion-probe-02-setup.sh",
+    "rendered_script_sha256": "d77585ad92906bc3fcb7f3419da9a30006f3e0815b9c59e3214deb255d03da72",
+    "Iris_setup_source_sha256": "b4c312d7f890a4ec14544f2762a346edc125727f149bc94adc53bce85110eb35"
+  },
+  "iris_workspace_revision": "8165420df36c6363d5cf174328b37f9421069f95"
+}
