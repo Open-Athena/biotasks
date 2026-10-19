@@ -1,0 +1,138 @@
+{
+  "stage": "post_run_assessment_of_unchanged_saved_native_stages",
+  "native_exports": 3,
+  "native_nop_oracle_trials": 6,
+  "all_native_controls_passed": true,
+  "model_calls_in_this_stage": 0,
+  "source_candidate_charge_change": 0,
+  "new_admissions": 0,
+  "task_specific_fixes": 0,
+  "external_task_feedback": false,
+  "wrapper_elapsed_seconds": 1027.288,
+  "recorded_sandbox_minutes": 16.932104,
+  "recorded_sandbox_minutes_per_native_export": 5.644035,
+  "per_accepted_task_time": null,
+  "rows": [
+    {
+      "candidate_id": "ea039e585353325e82c3",
+      "native_export_completed": true,
+      "native_controls_passed": true,
+      "raw_reward_files_verified": [
+        {
+          "agent": "nop",
+          "reward": 0.0,
+          "raw_reward_path": "native/validation/jobs/flow-ea039e585353325e82c3-nop/swe-flow-ea039e585353325e82c3__nABPKo7/verifier/reward.txt"
+        },
+        {
+          "agent": "oracle",
+          "reward": 1.0,
+          "raw_reward_path": "native/validation/jobs/flow-ea039e585353325e82c3-oracle/swe-flow-ea039e585353325e82c3__tkNwJsR/verifier/reward.txt"
+        }
+      ],
+      "instruction_equals_original_model_text_plus_native_suffix": true,
+      "instruction_sha256": "e411833189ab13d881c046735d0b808355e9c395c005da14af2ad6e9b1822510",
+      "native_archive_sha256": "7b2c504e10d843ab798ce61c348ee8da8f6eaa9bbddc2e594f3d8aa6c97f2cfd",
+      "native_archive_members": 2075,
+      "manual_task_fixes": 0,
+      "external_task_feedback": false,
+      "earlier_quality_review": "continuation-20261018/skbio-flow-gini-author-01/instruction-review.json",
+      "earlier_quality_review_sha256": "013565977adae473a0c8cad71ca7dcd4a4e8b2ba0dcfbfd2bf58f8db99d03661",
+      "prior_quality_findings": [
+        {
+          "kind": "malformed_document_format",
+          "evidence": "Generated requirements contain literal n and nn separators in place of newlines, including Development Requirements Documentn n---n. Original text is retained unchanged."
+        },
+        {
+          "kind": "instruction_grader_coverage_gap",
+          "evidence": "Instruction mandates empty input, zero-total input, direct list input and non-mutation. Native test_gini.py directly checks _lorenz_curve only on one positive NumPy array; gini_index cases exercise a positive equal-count array and reject negatives upstream. There are no direct empty/zero-total/input-preservation assertions.",
+          "consequence": "The existing native tests do not establish the added mandatory boundary contracts; accepted reference behavior alone would not establish an adequate grader."
+        }
+      ],
+      "new_admission": false,
+      "acceptance_status": "Prior coverage concerns retained; no new admission.",
+      "recorded_started_to_stopped_seconds": 349.557613
+    },
+    {
+      "candidate_id": "3f11586ce61f704796ee",
+      "native_export_completed": true,
+      "native_controls_passed": true,
+      "raw_reward_files_verified": [
+        {
+          "agent": "nop",
+          "reward": 0.0,
+          "raw_reward_path": "native/validation/jobs/flow-3f11586ce61f704796ee-nop/swe-flow-3f11586ce61f704796ee__jeGyAj8/verifier/reward.txt"
+        },
+        {
+          "agent": "oracle",
+          "reward": 1.0,
+          "raw_reward_path": "native/validation/jobs/flow-3f11586ce61f704796ee-oracle/swe-flow-3f11586ce61f704796ee__dpD5Qjj/verifier/reward.txt"
+        }
+      ],
+      "instruction_equals_original_model_text_plus_native_suffix": true,
+      "instruction_sha256": "d098f0d6eff7d24852c70dec27701ab624629212cfff7ed97593ff5f4eab711f",
+      "native_archive_sha256": "e6fc2a3490bb893acfaec654b458ae50b4e7788badf8603d619c909775b66a4d",
+      "native_archive_members": 2075,
+      "manual_task_fixes": 0,
+      "external_task_feedback": false,
+      "earlier_quality_review": "continuation-20261018/skbio-flow-gini-author-02/instruction-review.json",
+      "earlier_quality_review_sha256": "4044529e86423d1a43c0bc0487f421868321a1943ac4aa6361e8c44f1296be39",
+      "prior_quality_findings": [
+        {
+          "kind": "malformed_document_format",
+          "evidence": "Raw GLM answer and parsed saved instruction both contain literal n/nn separators and zero actual newline characters; wrapper did not introduce these separators."
+        },
+        {
+          "kind": "instruction_grader_coverage_gap",
+          "evidence": "Instruction requires an exact ValueError message including method names. Native test_lorenz_curve_integrator checks only the exception class using assertRaises(ValueError), not message content. No runtime message-coverage control was executed.",
+          "consequence": "Mandatory error-message requirement is not assessed by retained native assertions."
+        }
+      ],
+      "new_admission": false,
+      "acceptance_status": "Prior coverage concerns retained; no new admission.",
+      "recorded_started_to_stopped_seconds": 336.332671
+    },
+    {
+      "candidate_id": "808efa9c59c6f356358f",
+      "native_export_completed": true,
+      "native_controls_passed": true,
+      "raw_reward_files_verified": [
+        {
+          "agent": "nop",
+          "reward": 0.0,
+          "raw_reward_path": "native/validation/jobs/flow-808efa9c59c6f356358f-nop/swe-flow-808efa9c59c6f356358f__n8pvRs7/verifier/reward.txt"
+        },
+        {
+          "agent": "oracle",
+          "reward": 1.0,
+          "raw_reward_path": "native/validation/jobs/flow-808efa9c59c6f356358f-oracle/swe-flow-808efa9c59c6f356358f__ekms6QM/verifier/reward.txt"
+        }
+      ],
+      "instruction_equals_original_model_text_plus_native_suffix": true,
+      "instruction_sha256": "da14820d586d1b9b4c32915df2e8c1711aaca6b586d83c6070a2588e7c99086a",
+      "native_archive_sha256": "c0b10c275084747cd6df84d3461946331d7c1e98278e7666134c901634798f23",
+      "native_archive_members": 2075,
+      "manual_task_fixes": 0,
+      "external_task_feedback": false,
+      "earlier_quality_review": "continuation-20261018/skbio-flow-gini-author-03/instruction-review.json",
+      "earlier_quality_review_sha256": "027c5ce96c0435cb12d1eeaeb18e38b7a78636b070015c19f980c9905f120feb",
+      "prior_quality_findings": [
+        {
+          "kind": "malformed_document_format",
+          "evidence": "Raw model JSON markdown equals saved instruction, contains zero actual newlines and literal n separators throughout headings, lists and table; no wrapper-introduced formatting change."
+        }
+      ],
+      "new_admission": false,
+      "acceptance_status": "Final consistent quality assessment pending; prior concern was formatting only, not a demonstrated formula mismatch.",
+      "recorded_started_to_stopped_seconds": 330.035943
+    }
+  ],
+  "original_controller_archive_sha256": "8ab622f8b9591777b2e5eb6ac3c8952312f1f4aa313d7f1c6469e5321827019b",
+  "original_controller_archive_bytes": 83806403,
+  "limits": [
+    "Native nop/oracle success is not independent task correctness or admission.",
+    "Instructions and profiles are unchanged; original quality concerns are not repaired or sent back to authors.",
+    "Existing malformed-separator concerns require a consistent final standard, including earlier accepted outputs with similar presentation. No format-only rejection is silently promoted or used to force the target.",
+    "These timings cover this remaining export/control stage only, excluding original contrast generation, authoring and final assessment.",
+    "This generic orchestration of saved stages is not proof of stock end-to-end entrypoint operation or unattended source discovery."
+  ]
+}
