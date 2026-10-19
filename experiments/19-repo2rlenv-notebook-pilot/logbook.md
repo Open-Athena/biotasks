@@ -2003,3 +2003,29 @@ supplied intake metadata. Original worker output is preserved without edits.
 No scientific execution has occurred. The next setup session uses the existing
 prompt, two reference-test allowances, a 600-second offline reference limit and
 $5 Daytona reservation ceiling; only campaign/input paths differ from setup 001.
+
+### 2026-10-19 — Bioframe setup 001 and archive verification
+
+The existing setup worker completed in 312.39 seconds (40 GLM requests). Its
+one controlled reference test passed offline in 4.796 seconds, with 0.537 GiB
+maximum child RSS. The source changes are only three input-path substitutions;
+the worker selected pandas 2.3.3 after observing pandas 3 copy-on-write behavior.
+Independent download verified the 2.48 MB endpoint CSV: 40,557 rows, nine columns.
+Provider lookup found zero owned sandboxes; the setup/audit/recovery hosts are
+terminal. No source science or generated outputs were manually repaired.
+
+The trace exposes a general compliance gap: the worker ran full analyses through
+its setup shell despite the prompt's `test_reference` rule. Thus the controller's
+one test is not a count of all scientific computation. Original operation
+records are retained. Same-worker exploratory agreement is not independent
+scientific reproduction. Also, the earlier operator HFF concern was mistaken:
+the original source narrative explicitly identifies HFF. The inspection was
+corrected; the worker output remains unchanged.
+
+Archive recovery skipped the 401 KB uv lockfile under its former 256 KB
+per-file diagnostic threshold. A general fix prioritizes reference replay
+prerequisites and permits reference lockfiles within the existing 4 MB total
+transport bound. Three regression tests passed. A read-only recovery job
+retrieved the original hash-verified bytes without models or sandboxes.
+The next programmatic replay uses the same two-repeat profile as the first
+notebook, with only seed/campaign/evidence paths changed.

@@ -1,0 +1,59 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 2484403,
+        "exists": true,
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "sha256": "8ba2ca5c0ea4b1a4b4bae9d788d45a267c393a1b2de00789408034d7f360447d"
+      }
+    ],
+    "declared_artifacts_present": true,
+    "semantic_fidelity_validated": false
+  },
+  "candidate_sha256": {
+    "analysis.py": "c976b0788957343a49648c27db6a0ec1d2b9ddc0c6fed89569aa50e7456e942b",
+    "inputs.json": "978327535747ee740395ce90f13fbf2de9fde7eaa86a059ce079a5fb05f2b1af",
+    "pyproject.toml": "abf2e7e5aad2c52c67f1d6edf58165ef1a33c578b5f8d87227657ded59e632aa",
+    "stage-inputs.sh": "9977818ebdaa4e3b1fbd8bb01aaa4e90017a48f9a4ab926b943fcd2e20703f41",
+    "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "elapsed_seconds": 4.796082258224487,
+    "exit_code": 0,
+    "finished": 1792437123.0481782,
+    "log": "/work/reference.py:80: FutureWarning: A value is trying to be set on a copy of a DataFrame or Series through chained assignment using an inplace method.\nThe behavior will change in pandas 3.0. This inplace method will never work because the intermediate object on which we are setting values always behaves as a copy.\n\nFor example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' or df[col] = df[col].method(value) instead, to perform the operation inplace on the original object.\n\n\n  df_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\nfraction of peaks without motifs 0.14\n",
+    "peak_child_rss_kib": 563088,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792437118.252096,
+    "timed_out": false
+  },
+  "inputs_after": {
+    "files": 3,
+    "staged_inputs_verified": true
+  },
+  "semantic_fidelity_validated": false,
+  "setup": {
+    "argv": [
+      "sh",
+      "-eu",
+      "/work/setup.sh"
+    ],
+    "elapsed_seconds": 8.534698963165283,
+    "exit_code": 0,
+    "finished": 1792437097.3599844,
+    "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 302.0 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 29 packages in 139ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 29 packages in 1ms\nDownloading fonttools (5.1MiB)\nDownloading pandas (11.7MiB)\nDownloading numpy (15.9MiB)\nDownloading pillow (6.8MiB)\nDownloading matplotlib (9.4MiB)\nDownloading kiwisolver (1.4MiB)\n Downloaded kiwisolver\n Downloaded pillow\n Downloaded fonttools\n Downloaded matplotlib\n Downloaded numpy\n Downloaded pandas\nPrepared 21 packages in 322ms\nInstalled 21 packages in 367ms\n + bioframe==0.8.0\n + certifi==2026.10.18\n + charset-normalizer==3.5.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + numpy==2.5.4\n + packaging==26.3\n + pandas==2.3.3\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==2.9.0.post0\n + pytz==2026.5\n + pyyaml==6.0.3\n + requests==2.34.2\n + six==1.17.0\n + tzdata==2026.5\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged ENCFF401MQL.bed.gz: 649474 bytes, md5 9dabac96e36309ed65dc1cb289c51079\nstaged ENCFF356LFX.bed.gz: 8211 bytes, md5 393688b4f06c9ce26165d47433dd8c37\nstaged MA0139.1.tsv.gz: 7698065 bytes, md5 0ebb58260d8ef79496390bec7266b503\n",
+    "peak_child_rss_kib": 80008,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792437088.8252854,
+    "timed_out": false
+  },
+  "status": "reference_executed",
+  "test": 1
+}

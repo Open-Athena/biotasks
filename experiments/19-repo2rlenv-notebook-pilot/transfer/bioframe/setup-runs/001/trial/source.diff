@@ -1,0 +1,29 @@
+--- original.py
++++ analysis.py
+@@ -31,7 +31,7 @@
+ # This approach makes use of the `narrowPeak` schema for bioframe.read_table . 
+ 
+ ctcf_peaks = bioframe.read_table(
+-    "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz",
++    "/inputs/ENCFF401MQL.bed.gz",
+     schema="narrowPeak",
+ )
+ ctcf_peaks[0:5]
+@@ -42,7 +42,7 @@
+ jaspar_url = "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/"
+ jaspar_motif_file = "MA0139.1.tsv.gz"
+ ctcf_motifs = bioframe.read_table(
+-    jaspar_url + jaspar_motif_file, schema="jaspar", skiprows=1
++    "/inputs/" + jaspar_motif_file, schema="jaspar", skiprows=1
+ )
+ ctcf_motifs[0:4]
+ 
+@@ -116,7 +116,7 @@
+ # do any of our peaks overlap blacklisted genomic regions?
+ 
+ blacklist = bioframe.read_table(
+-    "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz",
++    "/inputs/ENCFF356LFX.bed.gz",
+     schema="bed3",
+ )
+ blacklist[0:3]

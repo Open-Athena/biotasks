@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "sh",
+    "-c",
+    "cd /work/setup && cd /tmp && MPLBACKEND=Agg ./t2/bin/python - <<'EOF' 2>&1 | tail -40\nimport matplotlib\nmatplotlib.use(\"Agg\")\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport bioframe\nimport warnings\n\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")\n    exec(open(\"/work/frozen/original.py\").read()\n         .replace(\"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\", \"/work/cache/ENCFF401MQL.bed.gz\")\n         .replace(\"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\", \"/work/cache/ENCFF356LFX.bed.gz\")\n         .replace('jaspar_url + jaspar_motif_file', '\"/work/cache/MA0139.1.tsv.gz\"'))\n\nprint(\"=== FINAL ===\")\nprint(df_peaks_maxmotif_clean.shape)\nprint(df_peaks_maxmotif_clean.columns.tolist())\nprint(df_peaks_maxmotif_clean.dtypes)\nprint(df_peaks_maxmotif_clean.head(10).to_string())\nprint(\"NaN counts:\", df_peaks_maxmotif_clean.isna().sum().to_dict())\nprint(\"index equals range:\", (df_peaks_maxmotif_clean.index == pd.RangeIndex(len(df_peaks_maxmotif_clean))).all())\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")\n    df_peaks_maxmotif_clean.to_csv(\"/tmp/out.csv\", index=False)\nimport os\nprint(\"csv bytes:\", os.path.getsize(\"/tmp/out.csv\"))\nprint(open(\"/tmp/out.csv\").read()[:400])\nEOF"
+  ],
+  "finished": 1792436997.7400334,
+  "label": "shell-15",
+  "process": {
+    "argv": [
+      "sh",
+      "-c",
+      "cd /work/setup && cd /tmp && MPLBACKEND=Agg ./t2/bin/python - <<'EOF' 2>&1 | tail -40\nimport matplotlib\nmatplotlib.use(\"Agg\")\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\nimport bioframe\nimport warnings\n\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")\n    exec(open(\"/work/frozen/original.py\").read()\n         .replace(\"https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\", \"/work/cache/ENCFF401MQL.bed.gz\")\n         .replace(\"https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz\", \"/work/cache/ENCFF356LFX.bed.gz\")\n         .replace('jaspar_url + jaspar_motif_file', '\"/work/cache/MA0139.1.tsv.gz\"'))\n\nprint(\"=== FINAL ===\")\nprint(df_peaks_maxmotif_clean.shape)\nprint(df_peaks_maxmotif_clean.columns.tolist())\nprint(df_peaks_maxmotif_clean.dtypes)\nprint(df_peaks_maxmotif_clean.head(10).to_string())\nprint(\"NaN counts:\", df_peaks_maxmotif_clean.isna().sum().to_dict())\nprint(\"index equals range:\", (df_peaks_maxmotif_clean.index == pd.RangeIndex(len(df_peaks_maxmotif_clean))).all())\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")\n    df_peaks_maxmotif_clean.to_csv(\"/tmp/out.csv\", index=False)\nimport os\nprint(\"csv bytes:\", os.path.getsize(\"/tmp/out.csv\"))\nprint(open(\"/tmp/out.csv\").read()[:400])\nEOF"
+    ],
+    "elapsed_seconds": 2.3189711570739746,
+    "exit_code": 0,
+    "finished": 1792436997.5911567,
+    "peak_child_rss_kib": 564576,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792436995.2721856,
+    "timed_out": false
+  },
+  "seconds": 120,
+  "started": 1792436995.0188987,
+  "state": "returned"
+}

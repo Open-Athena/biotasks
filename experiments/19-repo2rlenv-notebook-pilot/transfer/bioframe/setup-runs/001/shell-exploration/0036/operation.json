@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "sh",
+    "-c",
+    "cd /work/setup && cd /tmp/runsim && tail -c 300 full.py; echo; echo \"---grep export lines---\"; grep -n \"to_csv\\|outputs\" full.py | head; echo \"---rerun with explicit listing---\"; cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python full.py; echo \"EXIT=$?\"; find /tmp/runsim /work/outputs -type f 2>/dev/null | head"
+  ],
+  "finished": 1792437084.2628834,
+  "label": "shell-34",
+  "process": {
+    "argv": [
+      "sh",
+      "-c",
+      "cd /work/setup && cd /tmp/runsim && tail -c 300 full.py; echo; echo \"---grep export lines---\"; grep -n \"to_csv\\|outputs\" full.py | head; echo \"---rerun with explicit listing---\"; cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python full.py; echo \"EXIT=$?\"; find /tmp/runsim /work/outputs -type f 2>/dev/null | head"
+    ],
+    "elapsed_seconds": 2.2724413871765137,
+    "exit_code": 0,
+    "finished": 1792437084.1166184,
+    "peak_child_rss_kib": 562040,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792437081.844177,
+    "timed_out": false
+  },
+  "seconds": 120,
+  "started": 1792437081.6271718,
+  "state": "returned"
+}

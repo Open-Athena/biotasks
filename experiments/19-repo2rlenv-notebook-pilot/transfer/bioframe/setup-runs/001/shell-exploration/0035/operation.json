@@ -1,0 +1,26 @@
+{
+  "argv": [
+    "sh",
+    "-c",
+    "cd /work/setup && rm -rf /tmp/runsim && mkdir -p /tmp/runsim/outputs && cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python /work/setup/analysis.py 2>&1 | tail -10; echo \"EXIT=$?\"; ls -la /tmp/runsim/outputs 2>/dev/null; echo \"--- now with exports appended ---\"; cat /work/setup/analysis.py /work/frozen/exports.py > /tmp/runsim/full.py && cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python full.py 2>&1 | tail -6; echo \"EXIT=$?\"; ls -la /tmp/runsim/outputs; head -2 /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv; wc -l /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv; cmp /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv /tmp/out.csv && echo \"IDENTICAL to exploratory run CSV\""
+  ],
+  "finished": 1792437080.7748873,
+  "label": "shell-33",
+  "process": {
+    "argv": [
+      "sh",
+      "-c",
+      "cd /work/setup && rm -rf /tmp/runsim && mkdir -p /tmp/runsim/outputs && cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python /work/setup/analysis.py 2>&1 | tail -10; echo \"EXIT=$?\"; ls -la /tmp/runsim/outputs 2>/dev/null; echo \"--- now with exports appended ---\"; cat /work/setup/analysis.py /work/frozen/exports.py > /tmp/runsim/full.py && cd /tmp/runsim && PYTHONWARNINGS=ignore /tmp/uvproj/.venv/bin/python full.py 2>&1 | tail -6; echo \"EXIT=$?\"; ls -la /tmp/runsim/outputs; head -2 /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv; wc -l /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv; cmp /tmp/runsim/outputs/ctcf_peaks_maxmotif_clean.csv /tmp/out.csv && echo \"IDENTICAL to exploratory run CSV\""
+    ],
+    "elapsed_seconds": 4.930818319320679,
+    "exit_code": 2,
+    "finished": 1792437080.5042756,
+    "peak_child_rss_kib": 567288,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792437075.5734572,
+    "timed_out": false
+  },
+  "seconds": 120,
+  "started": 1792437075.3458548,
+  "state": "returned"
+}
