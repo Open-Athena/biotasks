@@ -29,6 +29,9 @@ def main():
             assert worker['sandbox_id'] not in exact
             exact[worker['sandbox_id']] = row['route']
     continuation_sources = {
+        'skbio-smith-remaining-03/contrast-summary.json': 'repo_mutate/swe_smith',
+        'skbio-smith-remaining-04/contrast-summary.json': 'repo_mutate/swe_smith',
+        'authored-skbio-pielou-native-01/controller-small-summary.json': 'repo_mutate/swe_smith',
         'skbio-smith-remaining-02/contrast-summary.json': 'repo_mutate/swe_smith',
         'authored-skbio-mmerr-native-01/controller-small-summary.json': 'repo_mutate/swe_smith',
         'skbio-stockholm-commit-native-01/controller-small-summary.json': 'commit_runtime/native',
