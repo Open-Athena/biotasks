@@ -1,6 +1,10 @@
-# Scale-up assessment: current evidence, not final campaign conclusions
+# Scale-up assessment: paused for methods clarification
 
-As of 2026-10-19 19:34 UTC. Accepted/scored totals: 30/30. This assessment consolidates the first pass and continuation; the campaign remains open.
+## Living results and decisions — 2026-10-19 19:41 UTC
+
+**Execution is paused at the user’s request while the methods and results are clarified. No new recipe, validation or solver runs will be started.** The experiment remains open. Consolidating the first pass and continuation: **30 task instances accepted after pipeline execution and Codex-assisted review, 30 verified single-attempt GLM scores, and 8 units meeting the three-task target.** These are 18 correctness/algorithmic and 12 patch-similarity tasks; related source families are not independent biological competencies. The complete ledger is below, including failures, unsupported cells and pending work. These are interim results; further execution is paused pending discussion.
+
+**Current scale-up judgment:** native PR-runtime extraction is the strongest candidate for a computational-biology software corpus because it reuses real historical changes/tests without needing an LLM author. Native commit-runtime is promising with less evidence; its upstream default uses an LLM statement rewrite, whereas our accepted replay disabled synthesis. GLM-authored routes have useful examples, but none has yet demonstrated an unattended end-to-end authoring/acceptance pipeline without task-specific Codex assistance.
 
 ## Answers for a scale-up decision
 
@@ -10,10 +14,26 @@ As of 2026-10-19 19:34 UTC. Accepted/scored totals: 30/30. This assessment conso
 | --- | --- | --- |
 | Which pipelines should we scale? | Native PR-runtime has the strongest correctness evidence (6 accepted); native commit-runtime is promising (1 accepted). PR-diff works across languages (12 accepted) for similarity rewards only. Smith (5), Flow (2), R2E-Gym (1) and Scaler (3 within one family) have useful examples with material limitations. | A held-out batch using frozen reusable profiles and acceptance gates, with rejected candidates and duplicate source families included in the accounting. |
 | Which repositories work? | Biopython: 5 correctness + 3 similarity tasks. scikit-bio: 10 correctness + 3 similarity. bedtools2 and DESeq2: 3 similarity tasks each, no accepted executable correctness tasks under the tested profiles. | Reusable C++/R build and test-parser support; broader Python source coverage. Unsupported profiles are not proof of unsuitable repositories. |
-| Can free GLM be the author without per-task Codex fixes? | Sometimes at the instruction level: Tsallis retained its original GLM instruction without task-specific feedback. **No authored route has demonstrated unattended authoring plus acceptance.** Manual source review and control construction remain dependencies even when prose is unchanged. Historical extraction avoids author-model dependence altogether. | An unseen batch with no task-specific Codex edits, feedback, test writing or acceptance decisions; bounded free-GLM author/reviewer calls and frozen deterministic gates. Reusable setup is recorded separately; assisted cases cannot count as autonomous successes. |
-| What does each approach cost per accepted task? | **Complete recurring costs remain unknown.** The cost ledger below gives attributable Daytona list-rate subtotals and separate solver bounds. GLM and allocated TRC/CoreWeave have zero incremental service charge under our arrangement. Missing lifetimes, review effort and credit/invoice data prevent production-price claims. | Complete phase-level attribution of generation, repairs, failed candidates, validation and storage, divided by accepted tasks. Report one-time engineering and solver evaluation separately, plus tokens, elapsed time and intervention rate. Zero admissions mean undefined cost per accepted task, not $0. |
+| Can free GLM be the author without per-task Codex fixes? | Sometimes at the instruction level: Tsallis retained its original GLM instruction without task-specific feedback. **No authored route has demonstrated unattended authoring plus acceptance.** Manual source review and control construction remain dependencies even when prose is unchanged. Native PR-runtime reuses historical issue/PR text rather than an LLM author per task; repository bootstrap still needs an explicit profile or a cached model-built environment. | An unseen batch with no task-specific Codex edits, feedback, test writing or acceptance decisions; bounded free-GLM author/reviewer calls and frozen deterministic gates. Reusable setup is recorded separately; assisted cases cannot count as autonomous successes. |
+| What does each approach cost per accepted task? | **Complete recurring costs remain unknown.** The time ledger below gives partial recorded sandbox-minutes per accepted task and separate solver bounds. GLM and allocated TRC/CoreWeave have zero incremental service charge under our arrangement. Missing lifetimes, review effort and credit/invoice data prevent production-price claims. | Complete phase-level attribution of generation, repairs, failed candidates, validation and storage, divided by accepted tasks. Report one-time engineering and solver evaluation separately, plus tokens, elapsed time and intervention rate. Zero admissions mean undefined cost per accepted task, not $0. |
 
 **Scaling requirement:** the intended production workflow must run with the free GLM endpoint and reusable code, without Codex making task-specific repairs or admission decisions. Current assisted successes are evidence about feasibility, not proof that this requirement has been met. A high solver reward does not establish authoring quality, diversity or autonomous scalability.
+
+## How the PR-related pipelines differ
+
+**Yes: mining historical PRs with existing regression tests is the most promising first expansion from this sample.** The narrower recommendation is native `pr_runtime`, not every pipeline that takes a PR. It reuses an existing problem, fix and tests, so it asks the model to invent less. This is a prioritization judgment from six accepted cases, not proof of unattended throughput or broad biological reasoning.
+
+| Approach / documentation | Starting point and generated task | Author-model dependence | Our result |
+| --- | --- | --- | --- |
+| [pr_diff](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_diff/) | PR description plus pre-change repository; compare the submitted patch to the merged patch | No author model; optional judge disabled here | 12 similarity tasks; does not prove functional correctness |
+| [pr_runtime](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_runtime/) | PR with source and regression-test changes; run the same hidden tests before/after the fix | No per-task author; upstream bootstrap can use an LLM and cache the environment | 6 correctness tasks; Codex supplied runtime profiles and additional acceptance checks |
+| [SWE-gen / pr_to_env](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_to_env/) | Explicit PR URLs; reverse implementation edits from the healthy PR head, retain its tests | Model judges substantiality and writes the instruction | 0 accepted; generated instructions and grader contract did not agree |
+| [SWE-Next](https://huggingface.github.io/Repo2RLEnv/pipelines/swe_next/) | Mine merged PRs; compare merge commit to its first parent with post-change tests at original paths | Model writes an issue from the measured contrast and private diff | 0 accepted; instruction/coverage and source-profile failures |
+| [Tasksmith](https://huggingface.github.io/Repo2RLEnv/pipelines/tasksmith/) | Agent investigates a PR, constructs its environment and private verifier, then reviews/repairs | Agentic authoring throughout, more engineering freedom than fixed mining | Blocked by the tested native provider/model support; no free-GLM success established |
+| [commit_runtime](https://huggingface.github.io/Repo2RLEnv/pipelines/commit_runtime/) | Related route: mine commits rather than PRs; hidden regression tests and historical reference | Upstream default rewrites the statement with an LLM; our accepted replay explicitly disabled synthesis | 1 accepted; same source family as a PR-runtime case |
+| [R2E-Gym](https://huggingface.github.io/Repo2RLEnv/pipelines/r2e_gym/) | Related route: mine first-parent commits with bounded edits and privately packaged tests/fixtures | One issue-author call after a successful execution contrast | 1 accepted with fixture-profile adaptation; not native PR-runtime |
+
+SWE-Smith is a different source of tasks: it plants synthetic defects in a working repository rather than mining a historical PR. SWE-Flow removes functionality and asks for reconstruction. Neither should be counted as additional historical PR-mining evidence. Pipeline names and CLI recipe names differ; the links above identify the exact implementations tested at the pinned experiment revision, while the documentation site can evolve.
 
 ## Which pipelines worked, which did not, and why
 
@@ -21,22 +41,22 @@ Here, **worked** means at least one independently accepted task under its declar
 
 | Approach | Consolidated outcome | Scale-up judgment and main limitation |
 | --- | --- | --- |
-| Native PR-runtime | 6 accepted tasks across both Python repositories | Strongest current candidate for expansion after codifying reusable build/fixture profiles and automatic acceptance gates. No LLM author required. Historical source selection was curated and one instruction/oracle mismatch was rejected, so unattended discovery yield remains unmeasured. |
-| Native commit-runtime | 1 accepted scikit-bio task; no accepted Biopython task | Promising historical extraction, weaker evidence than PR-runtime. Biopython exhausted ten selected inputs, with recent search inputs rejected by unchanged metadata filters; this is selection failure rather than universal repository failure. Collection failures and legacy nonportable images also reduced yield. Accepted case overlaps the PR2630 fix family. A further Stockholm export failed acceptance because a lowercase-only implementation earned full reward under a general keyword-forwarding instruction. |
-| Native PR-diff | 12 accepted patch-similarity tasks across all four repositories | Scales across languages with no author model, but rewards similarity to a reference patch rather than executable correctness. Use only where that objective is intended; no C++/R functional-task success is inferred. |
-| SWE-Smith | 5 accepted tasks: Biopython 2, scikit-bio 3 | Usable source-grounded mutations, but source-contract hallucinations and weak graders are material problems. Strong and Robbins constant-answer controls passed native graders and were rejected. New LCC needed task-specific feedback; Tsallis and Pielou were accepted with their original GLM instructions and no task-specific author feedback, but manually prepared acceptance controls. Biopython's candidate cap is exhausted at 2/3. Not ready for unattended expansion. |
-| SWE-Flow | 2 accepted scikit-bio tasks, none in Biopython | Native instructions can work, but current successes are small aliases. Other outputs had malformed examples, incomplete specifications, timeouts or insufficient grader coverage. No evidence yet for reliable autonomous task authorship across repositories. |
-| R2E-Gym | 1 accepted scikit-bio task, none in Biopython | Historical extraction works with explicit fixture and import-mode profiles, but new ASCII contrast (4 F2P / 316 P2P) produced an unadmitted GLM instruction that incorrectly extends metadata-mask behavior to boolean `lowercase=True`. Stockholm was rejected by native entity bounds. Existing accepted PR2633 lineage scored 0 on its single solve. Profile engineering, source-contract agreement and acceptance automation remain scale-up limits. |
-| Scaler | 3 accepted synthetic DNA edit-distance instances | Programmatic generation can scale instances within this hand-prepared family without author calls. It does not demonstrate automatic invention of new scientific families. Native −1/+1 rewards still conflict with Marin's recorded 0/1 score bounds. |
-| SWE-Gen and SWE-Next | Exports and runtime controls, but 0 independent admissions | GLM-authored instructions added unsupported precision or M-step requirements not covered by native tests; Biopython SWE-Next also hit native source/path filters. Passing reference/baseline checks alone did not establish instruction–grader agreement. |
-| R2E | 0 accepted after 10 candidates per Python repository | Sixty author responses across both cohorts failed through syntax errors, malformed content or missing test definitions. Candidate caps exhausted. Unreliable with the tested free-GLM configuration. |
-| SETA Seed2Synth, SETA Evol, DataArc, TMAX, Endless Terminals | 0 accepted | Design/build attempts produced heading-only specifications, missing real newlines, invalid Python, missing tests and request timeouts. Endless exhausted 10 candidates; other named cohorts retain bounded work. These experiments do not support unattended expansion under the tested configuration. |
-| Native code-instruct | Inconclusive | Supported output archives were empty despite completed jobs; candidate counts/content/usage remain unknown. Consume the original allowance conservatively rather than report a scientific zero-yield result. |
-| Native equivalence-tests | Not admitted | Native caller requires a Docker backend unavailable in the tested TRC caller profile; the reference implementation is also visible to the learner. A separate adapter would be required. |
-| Native CVE-patches | Biopython export, 0 admitted | Legacy local-only bootstrap images and missing fresh acceptance evidence; overlaps another historical fix. No scikit-bio advisory input; native C++/R test-parser support absent. |
-| Tasksmith, Codemidas, FrontierSmith | Blocked under free-GLM baseline | Native model/provider allowlists do not support the approved endpoint. A separately evaluated provider adaptation would be required. No paid fallback was used. |
-| CLI-Gym | Blocked for selected profiles | Native constructor requires a specific tests layout not matched by the selected Biopython/scikit-bio profiles. This is a profile limitation, not proof the repositories cannot work. |
-| TerminalWorld | Input/terms gate unresolved | Recording reuse terms and fixtures remain unresolved; no generated-task outcome. Planned Sec-bench is unimplemented and excluded from executable methods. |
+| [Native PR-runtime](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_runtime/) | 6 accepted tasks across both Python repositories | Strongest current candidate for expansion after codifying reusable build/fixture profiles and automatic acceptance gates. No LLM author required. Historical source selection was curated and one instruction/oracle mismatch was rejected, so unattended discovery yield remains unmeasured. |
+| [Native commit-runtime](https://huggingface.github.io/Repo2RLEnv/pipelines/commit_runtime/) | 1 accepted scikit-bio task; no accepted Biopython task | Promising historical extraction, weaker evidence than PR-runtime. Biopython exhausted ten selected inputs, with recent search inputs rejected by unchanged metadata filters; this is selection failure rather than universal repository failure. Collection failures and legacy nonportable images also reduced yield. Accepted replay disabled instruction synthesis; upstream default uses an LLM rewrite. It overlaps the PR2630 fix family. A further Stockholm export failed acceptance because a lowercase-only implementation earned full reward under a general keyword-forwarding instruction. |
+| [Native PR-diff](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_diff/) | 12 accepted patch-similarity tasks across all four repositories | Scales across languages with no author model, but rewards similarity to a reference patch rather than executable correctness. Use only where that objective is intended; no C++/R functional-task success is inferred. |
+| [SWE-Smith](https://huggingface.github.io/Repo2RLEnv/pipelines/repo_mutate/) | 5 accepted tasks: Biopython 2, scikit-bio 3 | Usable source-grounded mutations, but source-contract hallucinations and weak graders are material problems. Strong and Robbins constant-answer controls passed native graders and were rejected. New LCC needed task-specific feedback; Tsallis and Pielou were accepted with their original GLM instructions and no task-specific author feedback, but manually prepared acceptance controls. Biopython's candidate cap is exhausted at 2/3. Not ready for unattended expansion. |
+| [SWE-Flow](https://huggingface.github.io/Repo2RLEnv/pipelines/repo_reconstruct/) | 2 accepted scikit-bio tasks, none in Biopython | Native instructions can work, but current successes are small aliases. Other outputs had malformed examples, incomplete specifications, timeouts or insufficient grader coverage. No evidence yet for reliable autonomous task authorship across repositories. |
+| [R2E-Gym](https://huggingface.github.io/Repo2RLEnv/pipelines/r2e_gym/) | 1 accepted scikit-bio task, none in Biopython | Historical extraction works with explicit fixture and import-mode profiles, but new ASCII contrast (4 F2P / 316 P2P) produced an unadmitted GLM instruction that incorrectly extends metadata-mask behavior to boolean `lowercase=True`. Stockholm was rejected by native entity bounds. Existing accepted PR2633 lineage scored 0 on its single solve. Profile engineering, source-contract agreement and acceptance automation remain scale-up limits. |
+| [Scaler](https://huggingface.github.io/Repo2RLEnv/pipelines/scaler/) | 3 accepted synthetic DNA edit-distance instances | Programmatic generation can scale instances within this hand-prepared family without author calls. It does not demonstrate automatic invention of new scientific families. Native −1/+1 rewards still conflict with Marin's recorded 0/1 score bounds. |
+| [SWE-Gen](https://huggingface.github.io/Repo2RLEnv/pipelines/pr_to_env/) and [SWE-Next](https://huggingface.github.io/Repo2RLEnv/pipelines/swe_next/) | Exports and runtime controls, but 0 independent admissions | GLM-authored instructions added unsupported precision or M-step requirements not covered by native tests; Biopython SWE-Next also hit native source/path filters. Passing reference/baseline checks alone did not establish instruction–grader agreement. |
+| [R2E](https://huggingface.github.io/Repo2RLEnv/pipelines/r2e/) | 0 accepted after 10 candidates per Python repository | Sixty author responses across both cohorts failed through syntax errors, malformed content or missing test definitions. Candidate caps exhausted. Unreliable with the tested free-GLM configuration. |
+| [SETA Seed2Synth](https://huggingface.github.io/Repo2RLEnv/pipelines/terminal_synth/), [SETA Evol](https://huggingface.github.io/Repo2RLEnv/pipelines/task_evolve/), [DataArc](https://huggingface.github.io/Repo2RLEnv/pipelines/dataarc/), [TMAX](https://huggingface.github.io/Repo2RLEnv/pipelines/tmax/), [Endless Terminals](https://huggingface.github.io/Repo2RLEnv/pipelines/endless_terminals/) | 0 accepted | Design/build attempts produced heading-only specifications, missing real newlines, invalid Python, missing tests and request timeouts. Endless exhausted 10 candidates; other named cohorts retain bounded work. These experiments do not support unattended expansion under the tested configuration. |
+| [Native code-instruct](https://huggingface.github.io/Repo2RLEnv/pipelines/code_instruct/) | Inconclusive | Supported output archives were empty despite completed jobs; candidate counts/content/usage remain unknown. Consume the original allowance conservatively rather than report a scientific zero-yield result. |
+| [Native equivalence-tests](https://huggingface.github.io/Repo2RLEnv/pipelines/equivalence_tests/) | Not admitted | Native caller requires a Docker backend unavailable in the tested TRC caller profile; the reference implementation is also visible to the learner. A separate adapter would be required. |
+| [Native CVE-patches](https://huggingface.github.io/Repo2RLEnv/pipelines/cve_patches/) | Biopython export, 0 admitted | Legacy local-only bootstrap images and missing fresh acceptance evidence; overlaps another historical fix. No scikit-bio advisory input; native C++/R test-parser support absent. |
+| [Tasksmith](https://huggingface.github.io/Repo2RLEnv/pipelines/tasksmith/), [Codemidas](https://huggingface.github.io/Repo2RLEnv/pipelines/codemidas/), [FrontierSmith](https://huggingface.github.io/Repo2RLEnv/pipelines/frontiersmith/) | Blocked under free-GLM baseline | Native model/provider allowlists do not support the approved endpoint. A separately evaluated provider adaptation would be required. No paid fallback was used. |
+| [CLI-Gym](https://huggingface.github.io/Repo2RLEnv/pipelines/env_repair/) | Blocked for selected profiles | Native constructor requires a specific tests layout not matched by the selected Biopython/scikit-bio profiles. This is a profile limitation, not proof the repositories cannot work. |
+| [TerminalWorld](https://huggingface.github.io/Repo2RLEnv/pipelines/terminalworld/) | Input/terms gate unresolved | Recording reuse terms and fixtures remain unresolved; no generated-task outcome. Planned Sec-bench is unimplemented and excluded from executable methods. |
 
 
 ## Which repositories worked, and why
@@ -62,76 +82,89 @@ The latest unchanged R2E-Gym author instruction was a valid single paragraph, bu
 Treat absence of task-specific Codex edits or feedback as a separate acceptance criterion for scale-up. Preserve the current assisted results rather than relabel them. A qualifying new batch must use frozen repository profiles and code, the free GLM endpoint for any author/reviewer calls, native bounded repair loops, and deterministic automated acceptance checks. Invalid instructions, broken environments and inadequate graders should be rejected with reasons; manually repaired cases belong in a separate assisted cohort. Measure attempted inputs, accepted tasks, duplicate families, task-specific interventions, latency, all failed-candidate resource use, and native solver scores on an unseen input batch. This gate is not yet passed by any complete end-to-end authored route in this experiment.
 
 
-### Where Codex is still in the loop
+### Task production versus Codex assistance
 
-The relevant scale-up test is whether reusable code plus the free endpoint can produce **accepted tasks without task-specific Codex intervention**. An unchanged GLM instruction is a narrower success; it does not automate source review or establish that the grader measures the instruction.
+The accepted-task table labels provenance explicitly. **All 30 admissions involved Codex review/orchestration; none is evidence of an audited, unattended end-to-end pipeline.** This is not a measured 0% autonomous yield: a frozen unassisted cohort has not been completed.
 
-| Route / family | Current accepted instances | Remaining manual dependence in this experiment | Autonomous scale-up established? |
-| --- | ---: | --- | --- |
-| Native PR-runtime / commit-runtime | 6 / 1 | Curated historical inputs, repository/build profiles, instruction review and acceptance controls | No; strongest candidates to automate, with no author-model requirement |
-| PR-diff | 12 | Input selection and reward-contract review | No unattended discovery yield measured; similarity objective only |
-| SWE-Smith | 5 | Source-contract review and task-specific incorrect/alternative controls; the new LCC also required feedback to GLM | No; unchanged Tsallis/Pielou authorship is useful but narrower evidence |
-| SWE-Flow | 2 | Source review and acceptance controls; small alias tasks limit diversity | No |
-| R2E-Gym | 1 | Fixture/import profiles and instruction–source agreement review; later ASCII author output was rejected | No |
-| Scaler | 3 | Hand-prepared scientific family and grading contract | Repeatable instances within that family; automatic family creation not shown |
-| Remaining authored routes | 0 | No accepted output from which to establish a production workflow | Not demonstrated; distinguish exhausted candidates, pending work and provider/profile blockers below |
+- **H:** historical pipeline task, with a Codex-prepared portable/runtime profile and case-specific acceptance checks. The upstream fix/tests supply the task; this is an assisted deployment, not an unchanged stock export.
+- **D:** native patch-similarity export; Codex performed controls/review. No author model is required.
+- **U:** unchanged emitted bundle explicitly confirmed by its acceptance receipt (Esty and observed-features); Codex still designed acceptance controls.
+- **G:** original GLM instruction retained with no task-specific author feedback (Enspie, Tsallis, Pielou); export/review/control work remains assisted.
+- **F:** GLM revised the new LCC instruction using task-specific feedback written by Codex. This is assisted authoring, even though Codex did not directly rewrite its prose.
+- **A:** explicit runtime/build/fixture adaptation by Codex (first LCC and R2E-Gym); original native bundle was not the admitted profile.
+- **S:** programmatic Scaler instances from a hand-prepared family; Codex setup/review, not automatic scientific-family discovery.
 
-Do not interpret this as a measured 0% autonomous yield: a held-out, frozen, unassisted end-to-end cohort has not yet been completed. Reusable engineering can be amortized; task-specific Codex decisions must be counted as interventions and kept outside claims of a free-GLM-only pipeline.
+These labels distinguish task-content feedback, runtime fixes and evaluation work; they should not be collapsed into either “all manual” or “fully automatic.” Unchanged instruction bytes alone do not establish unchanged packaging or automated acceptance.
+
+## What “validated” means here—and who did it
+
+**“Independently accepted” means checked separately from generation in this experiment, with Codex involvement. It does not mean externally audited, Codex-free, or exhaustively scientifically correct.** The reward is computed by code; deciding whether that code tests the right contract has involved Codex.
+
+| Stage | Evidence / checks | Codex’s role | What it does not establish |
+| --- | --- | --- | --- |
+| Pipeline execution checks | Build succeeds; relevant test identities are collected; broken/reference behavior differs | Wrote or adapted repository/build/fixture profiles and orchestrated execution | Correct prose, adequate coverage or acceptance of every export |
+| Instruction/source review | Compare the instruction’s claims/examples with pinned source and tests | Read source and made task-specific accept/reject decisions; sometimes supplied repair feedback | Automated acceptance; exhaustive specification coverage |
+| Additional acceptance controls | Run baseline/reference and recorded alternative, partial or deliberately incorrect implementations; repeats where recorded | Wrote case-specific control implementations, selected cases and inspected raw results | A proof that all wrong submissions fail; all tasks do not have identical controls |
+| Grading | Execute a deterministic test verifier or patch-similarity calculation | Set up runs and audited retained results; GLM/Codex judgment does not directly supply numerical reward | Similarity becoming correctness; unit tests proving general biological validity |
+| Blind solve | One GLM attempt per admitted task, using the fixed solver limits, scored by that verifier | Orchestrated and checked artifact/grade identity; no task-specific solver repair | General model difficulty from one sample or an independent author-quality verdict |
+| Marin compatibility | Schema checks, and paired native/Marin execution for explicitly listed profiles | Built/adapted conversion profiles and checked parity | Atlas admission or runtime validation of every task |
+| Preservation | Hashes, archive readback, permissions and exact sandbox cleanup receipts | Implemented and checked the record keeping | Scientific correctness |
+
+Example: the Stockholm reference passed, but a partial lowercase-only implementation also earned full reward despite a broader instruction. That candidate was rejected by additional Codex-designed checks. Conversely, unchanged Tsallis/Pielou GLM instructions were accepted after such checks; those are authoring successes with assisted acceptance. The deferred end-to-end grader-integrity diagnostic remains unexecuted.
 
 
-## Cost per task and budget ledger
 
-The $2,000 campaign ceiling and current $1,323 estimates/reservations are an execution ledger, **not money known to have been spent**. The $908 historical component retains conservative holds, including earlier controller reservations; $415 is continuation reservations, leaving $677. Actual invoices and Daytona credit balance are unverified. Existing GLM and the user's allocated TRC/CoreWeave CPU have zero incremental charge under the approved access, but author latency, token throughput and development/review effort still matter.
 
-The measured continuation samples in `compute-cost-samples.json` use exact retained sandbox start/stop timestamps and the [Daytona list rates](https://www.daytona.io/pricing) checked October 19: $0.0504/vCPU-hour, $0.0162/GiB RAM-hour and $0.000108/GiB storage-hour. Charging all 10 GiB conservatively gives $0.16668/hour for 2 vCPU / 4 GiB / 10 GiB. Credits and the advertised free storage are not deducted. The four sample subtotals are **partial generation/independent-validation compute costs**, including listed failed/rejected runs and capture retries, but excluding first-pass allocations, blind solves, Marin integration, storage outside those lifetimes and Codex/human labor. They are not full per-task production prices.
+## Time per task, cost and budget ledger
 
-| Approach | Newly accepted tasks in measured continuation sample | Recorded sandbox hours | Partial compute subtotal / accepted task |
+**Time is clearer than dollars under our free allocations, but two clocks must stay separate.** Wall time measures latency from candidate start to decision. Sandbox-minutes sum active sandbox lifetimes and measure a resource cost; four sandboxes for ten minutes consume forty sandbox-minutes. Neither measures Codex/human effort.
+
+For a fully observed cohort, report `total generation + bounded repairs + acceptance wall time / candidates attempted`, and the same numerator divided by accepted tasks. Include failed candidates; with zero admissions the per-accepted value is undefined. Keep one-time repository setup and blind-solver evaluation separate. Complete end-to-end candidate/acceptance timings are **not yet reconstructed** for this campaign; replacing dollars with minutes cannot fill those missing phases.
+
+**Direct matched example:** the Biopython native PR-runtime batch considered/emitted PR5317, PR5310 and PR5308 in one recorded 84.703-second sandbox lifetime. Two of these sources were later accepted (5317/5308). This is **28.2 sandbox-seconds per generated candidate** or **42.4 sandbox-seconds per ultimately accepted candidate for this generation stage only**. It excludes subsequent acceptance controls, profile engineering and solver evaluation, and is not a complete time-to-accepted-task estimate. The rejected PR5310 stays in the denominator. [Exact cohort/timestamps](https://github.com/Open-Athena/biotasks/blob/7f8e289/experiments/21-repo2rlenv/continuation-20261018/biopython-pr-runtime-native-01/controller-small-summary.json).
+
+**Author latency example:** one R2E-Gym ASCII instruction job took **354.878 seconds (5.9 minutes)** including setup and archival, made one completed GLM call, and was rejected on source-contract review. Its per-attempt job time is known; time per accepted task is undefined because it produced zero admissions. This observation does not include the earlier historical contrast or manual review. [Performance receipt](https://github.com/Open-Athena/biotasks/blob/079b823ff699051511d8ff49082a89fd1a3ce394/experiments/21-repo2rlenv/continuation-20261018/skbio-r2egym-ascii-author-01/performance-summary.json).
+
+### Partial resource-time ledger by approach
+
+Converted directly from the existing exact-lifecycle attribution: 68 attributed workers out of 104 recorded terminated workers; 36 remain unassigned. These are **incomplete recorded sandbox-minutes divided by the full current admission count**, not isolated runtime, wall latency or fair throughput rankings. Missing model/acceptance phases and manual effort are not zero. Rows with no attributed lifetimes remain unknown. The smaller earlier selected-cohort dollar samples use different coverage and are superseded here as the headline comparison; their immutable receipts remain linked evidence.
+
+| Approach | Accepted | Recorded sandbox-minutes | Partial sandbox-minutes / accepted |
 | --- | ---: | ---: | ---: |
-| Native PR-runtime | 5 | 0.3834 | $0.0128 |
-| SWE-Smith | 1 | 0.4769 | $0.0795 |
-| SWE-Flow | 1 | 0.1790 | $0.0298 |
-| Native commit-runtime | 1 | 0.1227 | $0.0205 |
+| `code_instruct/native` | 0 | Unknown | Undefined: 0 accepted |
+| `commit_runtime/native` | 1 | 21.94 | 21.94 (incomplete) |
+| `commit_runtime/r2e_gym` | 1 | 19.45 | 19.45 (incomplete) |
+| `cve_patches/native` | 0 | 1.30 | Undefined: 0 accepted |
+| `env_repair/cli_gym` | 0 | Unknown | Undefined: 0 accepted |
+| `equivalence_tests/native` | 0 | Unknown | Undefined: 0 accepted |
+| `equivalence_tests/r2e` | 0 | 204.27 | Undefined: 0 accepted |
+| `optimization_synth/frontiersmith` | 0 | Unknown | Undefined: 0 accepted |
+| `pr_diff/native` | 12 | Unknown | Unknown |
+| `pr_runtime/native` | 6 | 28.06 | 4.68 (incomplete) |
+| `pr_runtime/swe_next` | 0 | 16.02 | Undefined: 0 accepted |
+| `pr_to_env/swe_gen` | 0 | 15.71 | Undefined: 0 accepted |
+| `reasoning_synth/scaler` | 3 | 2.09 | 0.70 (incomplete) |
+| `repo_mutate/swe_smith` | 5 | 90.38 | 18.08 (incomplete) |
+| `repo_reconstruct/codemidas` | 0 | Unknown | Undefined: 0 accepted |
+| `repo_reconstruct/swe_flow` | 2 | 47.82 | 23.91 (incomplete) |
+| `task_evolve/seta_evol` | 0 | 20.16 | Undefined: 0 accepted |
+| `tasksmith/tasksmith` | 0 | Unknown | Undefined: 0 accepted |
+| `terminal_reconstruct/terminalworld` | 0 | Unknown | Undefined: 0 accepted |
+| `terminal_synth/dataarc` | 0 | 54.04 | Undefined: 0 accepted |
+| `terminal_synth/endless_terminals` | 0 | 73.14 | Undefined: 0 accepted |
+| `terminal_synth/seta_seed2synth` | 0 | Unknown | Undefined: 0 accepted |
+| `terminal_synth/tmax` | 0 | 72.82 | Undefined: 0 accepted |
 
-A [deduplicated historical lifecycle inventory](https://github.com/Open-Athena/biotasks/blob/f0f86b04d8e7fda2f8e49f970a173a32d454f013/experiments/21-repo2rlenv/continuation-20261018/worker-cost-evidence-inventory.json) now contains 104 terminated Daytona sandboxes with complete timestamps, totaling 14.00 recorded sandbox-hours. Route/phase attribution and provider-direct solver lifetimes remain to be reconciled; this is not a complete billing export.
-
-The [partial route-cost reconciliation](https://github.com/Open-Athena/biotasks/blob/f0f86b04d8e7fda2f8e49f970a173a32d454f013/experiments/21-repo2rlenv/continuation-20261018/route-compute-attribution.json) attributes 68 of those 104 workers to 14 routes using exact sandbox IDs and explicit generation, contrast, export and additional-stage provenance; 36 remain unassigned. It includes failures within attributed runs and preserves null per-task costs for routes with no admissions. These expanded historical subtotals still omit some generation/validation lifetimes and must not be read as production prices.
-
-For the final comparison, report **generation and acceptance cost per accepted task = all attributable candidate generation, repair and validation costs, including rejected candidates, divided by independently accepted tasks**. Report blind solver evaluation and Marin conversion/validation separately, then an all-in subtotal where coverage is complete. Also report author tokens, elapsed time and task-specific interventions per accepted task: a free endpoint removes its monetary charge, not its capacity cost. With zero admissions, report spend and zero yield; a finite cost per accepted task is undefined. Unrecorded labor or missing provider lifetimes remain explicitly unknown rather than zero.
-
-### Per-approach cost ledger (partial evidence)
-
-**Full cost per accepted task is not yet established for any route.** The table exposes what is attributable today rather than treating missing records as free execution. Dollar amounts are Daytona list-rate equivalents, not verified charges. The denominator is the current 30-task admission ledger; the retained 104-worker cost inventory includes the latest Pielou validation and Smith continuation lifetimes but still omits some provider-direct solver lifetimes; the numerator covers only attributed lifetimes, so these ratios must not be used as production quotes or to rank approaches. The smaller continuation-only samples above use different coverage and denominators.
-
-| Approach | Accepted tasks | Attributed sandbox compute subtotal | Partial subtotal / accepted task |
-| --- | ---: | ---: | ---: |
-| `code_instruct/native` | 0 | Not attributed | Not estimable: 0 accepted |
-| `commit_runtime/native` | 1 | $0.0609 | $0.0609 (incomplete) |
-| `commit_runtime/r2e_gym` | 1 | $0.0540 | $0.0540 (incomplete) |
-| `cve_patches/native` | 0 | $0.0036 | Not estimable: 0 accepted |
-| `env_repair/cli_gym` | 0 | Not attributed | Not estimable: 0 accepted |
-| `equivalence_tests/native` | 0 | Not attributed | Not estimable: 0 accepted |
-| `equivalence_tests/r2e` | 0 | $0.5675 | Not estimable: 0 accepted |
-| `optimization_synth/frontiersmith` | 0 | Not attributed | Not estimable: 0 accepted |
-| `pr_diff/native` | 12 | Not attributed | Not established |
-| `pr_runtime/native` | 6 | $0.0779 | $0.0130 (incomplete) |
-| `pr_runtime/swe_next` | 0 | $0.0445 | Not estimable: 0 accepted |
-| `pr_to_env/swe_gen` | 0 | $0.0436 | Not estimable: 0 accepted |
-| `reasoning_synth/scaler` | 3 | $0.0058 | $0.0019 (incomplete) |
-| `repo_mutate/swe_smith` | 5 | $0.2511 | $0.0502 (incomplete) |
-| `repo_reconstruct/codemidas` | 0 | Not attributed | Not estimable: 0 accepted |
-| `repo_reconstruct/swe_flow` | 2 | $0.1328 | $0.0664 (incomplete) |
-| `task_evolve/seta_evol` | 0 | $0.0560 | Not estimable: 0 accepted |
-| `tasksmith/tasksmith` | 0 | Not attributed | Not estimable: 0 accepted |
-| `terminal_reconstruct/terminalworld` | 0 | Not attributed | Not estimable: 0 accepted |
-| `terminal_synth/dataarc` | 0 | $0.1501 | Not estimable: 0 accepted |
-| `terminal_synth/endless_terminals` | 0 | $0.2032 | Not estimable: 0 accepted |
-| `terminal_synth/seta_seed2synth` | 0 | Not attributed | Not estimable: 0 accepted |
-| `terminal_synth/tmax` | 0 | $0.2023 | Not estimable: 0 accepted |
-
-For a scalable free-GLM workflow, report three separate quantities: recurring cost per automatically accepted task (including rejected candidates and bounded repairs), one-time engineering/profile setup, and blind-solver evaluation cost. Task-specific Codex repair is an intervention and disqualifies a case from the autonomous cohort; it cannot be hidden as free authoring. The remaining accounting work must attach complete model usage and execution lifetimes to those phases, or explicitly mark unrecoverable gaps.
-
-Full per-accepted-task costs for these routes remain unestablished; the small direct-compute subtotals do not price the assistance needed to reach acceptance. PR-diff, R2E-Gym and Scaler require equivalent full lifecycle attribution before quoting a measured end-to-end cost per accepted task. For routes with zero admissions, cost per accepted task is not estimable from this run, rather than $0. Unsupported/unexecuted routes have no runtime cost estimate. The required scalable metric is `(generation + all rejected candidates + automated validation + storage + required review) / independently accepted tasks`, reporting solver-evaluation cost and one-time engineering separately. Free-model token/latency usage should accompany that metric.
+Dollar interpretation: existing free GLM and allocated TRC/CoreWeave have zero incremental service charge under our arrangement. Daytona credits/invoices remain unverified; the recorded 2-vCPU/4-GiB/10-GiB list-rate equivalent is $0.16668/hour, not confirmed spend. The $2,000 ceiling and $1,323 conservative estimates/holds leave $677 of reservation headroom; this is not a billing total. Full recurring cost per accepted task, including all failures and required review, remains unknown. [Budget](https://github.com/Open-Athena/biotasks/blob/7e17c1124c7dc91cea29a87c0fd1925447090e47/experiments/21-repo2rlenv/continuation-20261018/budget.json), [source lifecycle attribution](https://github.com/Open-Athena/biotasks/blob/f0f86b04d8e7fda2f8e49f970a173a32d454f013/experiments/21-repo2rlenv/continuation-20261018/route-compute-attribution.json).
 
 
+## Proposed next design: PR mining plus a GLM performance filter
 
-Evidence basis: [task ledger](consolidated-ledger.json), [candidate ledger](target-tracker.json), [partial route cost attribution](route-compute-attribution.json), [measured continuation costs](compute-cost-samples.json), [solver compute upper bounds](solver-compute-upper-bounds.json), [budget reservations](budget.json), and the per-run source and acceptance links above. These are bounded experimental observations, not production yield or price guarantees.
+**Planning only; execution remains paused.** Two distinct products are possible:
+
+1. **Similarity corpus:** `pr_diff` → structural/reference checks → one blind GLM solve → retain selected reward bands and lineage. This is cheap and avoids per-task authoring, but rewards patch similarity. Low similarity can reflect a valid alternative implementation; it is not proof of difficulty or functional failure.
+2. **Correctness corpus:** cheap PR discovery and source/test eligibility → `pr_runtime` before/after contrast → blind GLM solve → retain useful difficulty bands under executable test rewards. Where GLM is used earlier to prioritize candidates, its diff score is a screening signal only; functional verification remains necessary before admission.
+
+The first screening metric should be both **yield of runnable tasks** and **GLM reward at fixed solver settings**, not simply “keep every task GLM fails.” Inspect execution failures separately, deduplicate historical fixes before splitting, and retain a small distribution of easy/medium/unsolved tasks if the goal is an RL curriculum. One attempt gives noisy, model-specific evidence: our 2,048-output-token/12-turn/15-minute solver measures this constrained GLM setup, not intrinsic task difficulty. More attempts or a larger solver allowance would be a new decision, not an automatic continuation.
+
+The scalable part should be fixed code and deterministic filters, with the free endpoint supplying only the model stages. A GLM review stage could propose specification/coverage concerns, but it should not directly supply reward or substitute for executable controls. Count task-specific Codex repairs and admission decisions explicitly; a proposed filter does not retrospectively make the current 30 tasks autonomous outputs.
