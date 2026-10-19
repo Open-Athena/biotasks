@@ -29,13 +29,14 @@ def assets(task):
     return result
 
 
-def config(task, output, name):
+def config(task, output, name, provider='continuation_provider_environment'):
+    assert provider in {'continuation_provider_environment', 'authored_solver_environment'}
     return TrialConfig.model_validate({
         'task': {'path': str(task.resolve())}, 'trial_name': name,
         'trials_dir': str((output / 'trials').resolve()),
         'agent': {'name': name, 'override_timeout_sec': 900},
         'environment': {
-            'import_path': 'continuation_provider_environment:RecordedDaytonaEnvironment',
+            'import_path': provider + ':RecordedDaytonaEnvironment',
             'delete': True, 'override_cpus': 2, 'override_memory_mb': 4096,
             'override_storage_mb': 10240, 'override_gpus': 0},
     })
@@ -48,7 +49,14 @@ async def run():
     manifest = json.loads(Path('trial-inputs.json').read_text())
     sdk = json.loads(Path('native-sdk-preflight.json').read_text())
     assert sdk['native_SDK_passed'] and sdk['requests_dispatched'] == sdk['responses_received'] == 1
-    assert manifest['route'] in {'pr_runtime/native', 'commit_runtime/native'}
+    assert manifest['route'] in {'pr_runtime/native', 'commit_runtime/native',
+                                'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith'}
+    authored = manifest['route'] in {'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith'}
+    if authored:
+        assert (manifest['route'], manifest['task_id']) in {
+            ('repo_reconstruct/swe_flow', 'swe-flow-3ad7ba60ca7686b2007b'),
+            ('repo_mutate/swe_smith', 'swe-smith-53ec5f51639d4053971f')}
+    provider = 'authored_solver_environment' if authored else 'continuation_provider_environment'
     assert manifest['blind_attempt_limit'] == 1
     assert manifest['independently_admitted'] is True
     assert assets(task) == manifest['task_assets']
@@ -60,6 +68,7 @@ async def run():
     output.mkdir(exist_ok=False)
     os.environ['BIOTASKS21_PROVIDER_RECEIPTS'] = str((output / 'provider.jsonl').resolve())
     os.environ['BIOTASKS21_TASK_REPOSITORY'] = manifest['repository']
+    os.environ['BIOTASKS21_TASK_ID'] = manifest['task_id']
     state = {'stage': 'new_admission_provider_controls_then_single_blind',
              'task_id': manifest['task_id'], 'task_checksum': checksum,
              'admitted_asset_manifest_sha256': asset_sha,
@@ -75,7 +84,7 @@ async def run():
     try:
         for agent, expected in [('nop', 0), ('oracle', 1)]:
             assert assets(task) == manifest['task_assets']
-            spec = config(task, output, agent)
+            spec = config(task, output, agent, provider)
             trial = await Trial.create(spec)
             result = await asyncio.wait_for(trial.run(), timeout=900)
             row = {'agent': agent, 'expected_reward': expected,
@@ -93,7 +102,7 @@ async def run():
         save()
         token = os.environ['BIOTASKS21_INFERENCE_CLIENT_TOKEN']
         os.environ['OPENAI_API_KEY'] = token
-        spec = config(task, output, 'terminus-2')
+        spec = config(task, output, 'terminus-2', provider)
         spec.trial_name = 'glm-blind-01'
         spec.agent.model_name = MODEL
         spec.agent.kwargs = solver_transport_kwargs(
