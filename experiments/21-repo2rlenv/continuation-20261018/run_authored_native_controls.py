@@ -27,6 +27,16 @@ from run_robbins_native_controls import run_case
 
 
 PROFILES = {
+    "f4c2d9ca15940793cc88": {
+        "recipe": "swe_smith",
+        "source": "skbio/diversity/alpha/_base.py",
+        "function": "michaelis_menten_fit",
+        "alternative_kind": "squared_residual_division",
+        "negative_bodies": {
+            "incorrect_constant_one": "return 1.0",
+            "incorrect_observed_richness": "return float(np.count_nonzero(counts))",
+        },
+    },
     "2bc29fe20c34fbca2661": {
         "recipe": "swe_smith",
         "source": "skbio/diversity/alpha/_base.py",
@@ -87,6 +97,12 @@ def replace_body(source, name, body):
 
 
 def alternative_source(source, profile):
+    if profile.get("alternative_kind") == "squared_residual_division":
+        old = "return (((p[0] * n * (p[1] + n)) - y) ** 2).sum()"
+        assert source.count(old) == 1
+        changed = source.replace(old, "return np.square(p[0] * n / (p[1] + n) - y).sum()")
+        ast.parse(changed)
+        return changed
     if profile["function"] == "michaelis_menten_fit":
         old = "def michaelis_menten_fit(counts, num_repeats=0, params_guess=None):"
         assert source.count(old) == 1 and source.count("yvals = ymtx.mean(0)") == 1
