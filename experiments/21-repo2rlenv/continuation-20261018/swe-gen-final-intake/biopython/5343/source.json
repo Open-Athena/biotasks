@@ -1,0 +1,35 @@
+{
+  "url": "https://github.com/biopython/biopython/pull/5343",
+  "head": "188ae7b0206e2d30fcfa13b3d0066879762854fd",
+  "source_diff": "diff --git a/Bio/Align/interfaces.py b/Bio/Align/interfaces.py\nindex 6ee310fa0b4..79387eb51c9 100644\n--- a/Bio/Align/interfaces.py\n+++ b/Bio/Align/interfaces.py\n@@ -49,7 +49,7 @@ def __init__(self, source):\n         \"\"\"\n         self.source = source\n         try:\n-            self._stream = open(source, \"r\" + self.mode)\n+            stream = open(source, \"r\" + self.mode)\n         except TypeError:  # not a path, assume we received a stream\n             if self.mode == \"t\":\n                 if source.read(0) != \"\":\n@@ -63,9 +63,15 @@ def __init__(self, source):\n                     ) from None\n             else:\n                 raise ValueError(f\"Unknown mode '{self.mode}'\") from None\n-            self._stream = source\n+            stream = source\n+        self._stream = stream\n         self._index = 0\n-        self._read_header(self._stream)\n+        try:\n+            self._read_header(stream)\n+        except Exception as exc:\n+            if stream is not source:\n+                stream.close()\n+            raise exc from None\n \n     def __next__(self):\n         \"\"\"Return the next alignment.\"\"\"\n",
+  "id": "fc7db940f069dbf973d9",
+  "repo": "https://github.com/biopython/biopython",
+  "base": "8d1dbe2ab594ee6ce358608933131418083869f6",
+  "title": "Fix some resource warnings",
+  "body": "Mainly in the tests.\r\n\r\n- [X] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [X] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n",
+  "linked_issue": null,
+  "source_files": [
+    "Bio/Align/interfaces.py"
+  ],
+  "test_files": [
+    "Tests/test_AlignIO_MauveIO.py",
+    "Tests/test_Align_bed.py",
+    "Tests/test_Align_bigmaf.py",
+    "Tests/test_Align_clustal.py",
+    "Tests/test_Align_emboss.py",
+    "Tests/test_Align_exonerate.py",
+    "Tests/test_Align_fasta.py",
+    "Tests/test_Align_hhr.py",
+    "Tests/test_Align_maf.py",
+    "Tests/test_Align_mauve.py",
+    "Tests/test_Align_msf.py",
+    "Tests/test_Align_nexus.py",
+    "Tests/test_Align_phylip.py",
+    "Tests/test_Align_psl.py",
+    "Tests/test_Align_sam.py",
+    "Tests/test_Align_stockholm.py",
+    "Tests/test_SeqIO_TwoBitIO.py",
+    "Tests/test_Seq_objs.py",
+    "Tests/test_align_substitution_matrices.py"
+  ]
+}

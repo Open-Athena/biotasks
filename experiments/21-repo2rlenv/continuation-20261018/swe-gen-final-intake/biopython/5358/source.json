@@ -1,0 +1,22 @@
+{
+  "url": "https://github.com/biopython/biopython/pull/5358",
+  "head": "66663b71f1d6be95babc6a38cbdc66b0af295d07",
+  "source_diff": "diff --git a/Bio/Align/clustal.py b/Bio/Align/clustal.py\nindex 82e97d71b5c..a26c58f21d5 100644\n--- a/Bio/Align/clustal.py\n+++ b/Bio/Align/clustal.py\n@@ -107,6 +107,7 @@ def _read_header(self, stream):\n         words = line.split()\n         known_programs = [\n             \"CLUSTAL\",\n+            \"CLUSTALW\",\n             \"PROBCONS\",\n             \"MUSCLE\",\n             \"MSAPROBS\",\ndiff --git a/Bio/AlignIO/ClustalIO.py b/Bio/AlignIO/ClustalIO.py\nindex 69499c7b10e..1e28fe6aa1e 100644\n--- a/Bio/AlignIO/ClustalIO.py\n+++ b/Bio/AlignIO/ClustalIO.py\n@@ -113,6 +113,7 @@ def __next__(self):\n         # Whitelisted headers we know about\n         known_headers = [\n             \"CLUSTAL\",\n+            \"CLUSTALW\",\n             \"PROBCONS\",\n             \"MUSCLE\",\n             \"MSAPROBS\",\n",
+  "id": "bb21e12cd978d26738de",
+  "repo": "https://github.com/biopython/biopython",
+  "base": "372c71069d9d0e7c86af4e318ce212241c2d10dd",
+  "title": "Accept CLUSTALW as a Clustal header word",
+  "body": "Closes #5355\n\n- [X] I hereby agree to dual licence this and any previous contributions under both\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\nlocally, and understand that continuous integration checks will be used to\nconfirm the Biopython unit tests and style checks pass with these changes.\n\n- [X] I have added my name to the alphabetical contributors listings in the files\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\n\nSome tools (Benchling, per the issue) write the Clustal header as a single word, `CLUSTALW`, rather than `CLUSTAL W`. Both the `Bio.AlignIO` and `Bio.Align` Clustal parsers reject that with `ValueError: CLUSTALW is not a known CLUSTAL header`.\n\nThis adds `CLUSTALW` to the known-program list in both parsers, as suggested in the issue discussion, with a test for each.\n\nTested: the two new tests fail on master and pass with the change; `test_AlignIO_ClustalIO`, `test_Align_clustal`, `test_AlignIO`, `test_SeqIO` pass; `pre-commit` is clean.\n",
+  "linked_issue": {
+    "title": "AlignIO.read fails with ClustalW header",
+    "body": "Some programs/software use `CLUSTALW` in the header of a clustal file (e.g. Benchling), as opposed to the more common `CLUSTAL W`. `CLUSTALW` is not recognized as a valid clustal header by `AlignIO.read(format='clustal')`.\n\nThe following file `test.clustal` raises a value error\n```\nCLUSTALW\n\nSeq1   A 1\nSeq2   A 1\n```\n\n```\nfrom Bio import AlignIO\nAlignIO.read('test.clustal', format='clustal')\n```\n```\nValueError: CLUSTALW is not a known CLUSTAL header: CLUSTAL, PROBCONS, MUSCLE, MSAPROBS, Kalign, Biopython\n```\n\nThis could possibly be fixed by checking whether the header begins with `\"CLUSTAL\"`\n```\ndiff --git a/Bio/AlignIO/ClustalIO.py b/Bio/AlignIO/ClustalIO.py\nindex 69499c7b1..0eb6b0e39 100644\n--- a/Bio/AlignIO/ClustalIO.py\n+++ b/Bio/AlignIO/ClustalIO.py\n@@ -119,7 +119,7 @@ class ClustalIterator(AlignmentIterator):\n             \"Kalign\",\n             \"Biopython\",\n         ]\n-        if line.strip().split()[0] not in known_headers:\n+        if line.strip().split()[0] not in known_headers and line.strip().split()[0][0:7] != 'CLUSTAL':\n             raise ValueError(\n                 \"%s is not a known CLUSTAL header: %s\"\n                 % (line.strip().split()[0], \", \".join(known_headers))\n\n```"
+  },
+  "source_files": [
+    "Bio/Align/clustal.py",
+    "Bio/AlignIO/ClustalIO.py"
+  ],
+  "test_files": [
+    "Tests/test_AlignIO_ClustalIO.py",
+    "Tests/test_Align_clustal.py"
+  ]
+}

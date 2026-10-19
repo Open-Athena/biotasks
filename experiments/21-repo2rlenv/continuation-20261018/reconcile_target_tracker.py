@@ -179,6 +179,13 @@ def build():
                 assert charge == 10
                 action = 'candidate_cap_exhausted_native_runtime_remaining'
                 next_action = 'Execute only the two already selected static-eligible final commit inputs through the unchanged native stages. No additional discovery charge, replacement, task fixes or candidate-cap reset. Preserve source-filter rejections separately from execution outcomes.'
+        final_swe_gen = ROOT / 'swe-gen-final-intake/resolution.json'
+        if route == 'pr_to_env/swe_gen' and key in reconciled and final_swe_gen.exists():
+            resolved = json.loads(final_swe_gen.read_text())
+            assert charge == 10
+            pending = [r for r in resolved['rows'] if r['repository'] == unit['repository'] and r['status'] == 'native_source_resolved_runtime_pending']
+            action = 'candidate_cap_exhausted_native_runtime_remaining' if pending else 'candidate_cap_exhausted_below_target'
+            next_action = f'Complete only the {len(pending)} retained source-resolved fixed PR inputs through native materialization/author/export stages under the frozen profile; source resolution is not generation success. Preserve all native schema/source rejections, no replacement, task-specific fixes or cap reset.'
         if action == 'target_not_met_work_remaining' and charge == 10 and target is not None and admitted < target:
             action = 'candidate_cap_exhausted_below_target'
             next_action = 'No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.'

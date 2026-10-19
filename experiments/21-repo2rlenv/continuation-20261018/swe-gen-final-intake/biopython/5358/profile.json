@@ -1,0 +1,45 @@
+{
+  "stage": "native_source_resolved_execution_pending",
+  "recipe": "swe_gen",
+  "source": {
+    "kind": "pr",
+    "urls": [
+      "https://github.com/biopython/biopython/pull/5358"
+    ]
+  },
+  "options": {
+    "source_paths": [
+      "Bio/Align/clustal.py",
+      "Bio/AlignIO/ClustalIO.py"
+    ],
+    "test_paths": [
+      "Tests/test_AlignIO_ClustalIO.py",
+      "Tests/test_Align_clustal.py"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "force_generate_instruction": false
+  },
+  "source_sha256": "bf35ce713ec10a73244b7840cf5f4fee1e07b203d52a26e6e01193bc38a049d0",
+  "run_id": "swe-gen-biopython-pr5358",
+  "selection_rule": "Frozen before any API outcome; native source filtering and native test-file classifier, no manual fixture additions or post-failure fixes."
+}

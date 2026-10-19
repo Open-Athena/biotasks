@@ -1,0 +1,80 @@
+{
+  "stage": "native_source_resolved_execution_pending",
+  "recipe": "swe_gen",
+  "source": {
+    "kind": "pr",
+    "urls": [
+      "https://github.com/biopython/biopython/pull/5360"
+    ]
+  },
+  "options": {
+    "source_paths": [
+      "Bio/Align/__init__.py",
+      "Bio/Align/substitution_matrices/__init__.py",
+      "Bio/AlignIO/NexusIO.py",
+      "Bio/Blast/NCBIXML.py",
+      "Bio/Blast/_parser.py",
+      "Bio/PDB/Atom.py",
+      "Bio/PDB/PDBIO.py",
+      "Bio/PDB/PSEA.py",
+      "Bio/PDB/StructureAlignment.py",
+      "Bio/PDB/alphafold_db.py",
+      "Bio/SearchIO/InfernalIO/__init__.py",
+      "Bio/SearchIO/InfernalIO/infernal_tab.py",
+      "Bio/Seq.py",
+      "Bio/SeqIO/FastaIO.py",
+      "Bio/SeqIO/GfaIO.py",
+      "Bio/SeqIO/InsdcIO.py",
+      "Bio/SeqIO/QualityIO.py",
+      "Bio/SeqIO/TabIO.py",
+      "Bio/SeqIO/UniprotIO.py",
+      "Bio/SeqIO/__init__.py",
+      "Bio/SeqRecord.py",
+      "Bio/_utils.py"
+    ],
+    "test_paths": [
+      "Tests/pairwise2_testCases.py",
+      "Tests/test_Align_codonalign.py",
+      "Tests/test_Align_format_matrix.py",
+      "Tests/test_Align_msf.py",
+      "Tests/test_Align_psl.py",
+      "Tests/test_Align_tabular.py",
+      "Tests/test_Entrez_parser.py",
+      "Tests/test_PDB_StructureAlignment.py",
+      "Tests/test_PDB_vectors.py",
+      "Tests/test_Restriction.py",
+      "Tests/test_SearchIO_infernal_tab.py",
+      "Tests/test_SearchIO_infernal_text.py",
+      "Tests/test_SeqFeature.py",
+      "Tests/test_SeqIO.py",
+      "Tests/test_align.py",
+      "Tests/test_align_substitution_matrices.py",
+      "Tests/test_pairwise_aligner.py"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "force_generate_instruction": false
+  },
+  "source_sha256": "8beb5bcc33fc9a95296e9bf9a1905bdf89a9c20a76c50148a027b03fd3eeee1c",
+  "run_id": "swe-gen-biopython-pr5360",
+  "selection_rule": "Frozen before any API outcome; native source filtering and native test-file classifier, no manual fixture additions or post-failure fixes."
+}

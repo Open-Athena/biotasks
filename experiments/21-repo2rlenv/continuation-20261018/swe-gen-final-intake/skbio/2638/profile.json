@@ -1,0 +1,46 @@
+{
+  "stage": "native_source_resolved_execution_pending",
+  "recipe": "swe_gen",
+  "source": {
+    "kind": "pr",
+    "urls": [
+      "https://github.com/scikit-bio/scikit-bio/pull/2638"
+    ]
+  },
+  "options": {
+    "source_paths": [
+      "skbio/tree/bp/_bp.py",
+      "skbio/tree/bp/numba.py"
+    ],
+    "test_paths": [
+      "skbio/tree/tests/bp/test_bp.py",
+      "skbio/tree/tests/bp/test_bp_numba.py",
+      "skbio/tree/tests/bp/test_bp_numba_public.py"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3' && python -m pip install --no-cache-dir 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "force_generate_instruction": false
+  },
+  "source_sha256": "a55c0a8981a9bd8946183bef33f494fce1c2c20115cc063ed34d3dc17dfe3d39",
+  "run_id": "swe-gen-skbio-pr2638",
+  "selection_rule": "Frozen before any API outcome; native source filtering and native test-file classifier, no manual fixture additions or post-failure fixes."
+}

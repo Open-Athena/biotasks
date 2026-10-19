@@ -1,0 +1,61 @@
+{
+  "stage": "native_source_resolved_execution_pending",
+  "recipe": "swe_gen",
+  "source": {
+    "kind": "pr",
+    "urls": [
+      "https://github.com/biopython/biopython/pull/5343"
+    ]
+  },
+  "options": {
+    "source_paths": [
+      "Bio/Align/interfaces.py"
+    ],
+    "test_paths": [
+      "Tests/test_AlignIO_MauveIO.py",
+      "Tests/test_Align_bed.py",
+      "Tests/test_Align_bigmaf.py",
+      "Tests/test_Align_clustal.py",
+      "Tests/test_Align_emboss.py",
+      "Tests/test_Align_exonerate.py",
+      "Tests/test_Align_fasta.py",
+      "Tests/test_Align_hhr.py",
+      "Tests/test_Align_maf.py",
+      "Tests/test_Align_mauve.py",
+      "Tests/test_Align_msf.py",
+      "Tests/test_Align_nexus.py",
+      "Tests/test_Align_phylip.py",
+      "Tests/test_Align_psl.py",
+      "Tests/test_Align_sam.py",
+      "Tests/test_Align_stockholm.py",
+      "Tests/test_SeqIO_TwoBitIO.py",
+      "Tests/test_Seq_objs.py",
+      "Tests/test_align_substitution_matrices.py"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "force_generate_instruction": false
+  },
+  "source_sha256": "4662037b6777e109dbb01a6e55db49813d6c5d20c02180dd0d20a4625ac2663c",
+  "run_id": "swe-gen-biopython-pr5343",
+  "selection_rule": "Frozen before any API outcome; native source filtering and native test-file classifier, no manual fixture additions or post-failure fixes."
+}

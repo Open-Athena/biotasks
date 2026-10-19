@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T21:42:54.477758+00:00",
+  "observed_utc": "2026-10-19T22:45:31.674773+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -61,31 +61,43 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_to_env/swe_gen@biopython/biopython": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/swe-gen-biopython-01/summary.json",
           "sha256": "e1d8da46360cc11c32e1f1fa7d804f9ae07158cde4d3bd5a1718e90a6118824c",
           "counter_key": "candidates",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/swe-gen-final-intake/biopython/selection-receipt.json",
+          "sha256": "3daf7db6dc1a858106857ddce42cf79d6f1726cb7bd07de940216758e88c331d",
+          "counter_key": "new_candidates_charged",
+          "charged": 9
         }
       ],
-      "definition": "One selected PR reached native recipe materialization and authoring. Rejected instruction stays rejected; source reuse does not reset its original repair bounds.",
+      "definition": "One selected PR reached native recipe materialization and authoring. Rejected instruction stays rejected; source reuse does not reset its original repair bounds. Nine additional inputs fixed from the original PR-diff considered list, excluding the consumed PR, are conservatively charged at selection including native source/schema rejects. Retained source-resolved inputs still require native runtime/author/export stages; no new discovery or replay.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_to_env/swe_gen@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/swe-gen-skbio-01/summary.json",
           "sha256": "06c638fc895113235be94dbb0576d3a28350c9b4369a2f2bf3c8af682cdfe33b",
           "counter_key": "candidates",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/swe-gen-final-intake/skbio/selection-receipt.json",
+          "sha256": "91f6df093771d00fd20ffae58c60fc37649e1db0a327e96bba1b47d70ea6bf77",
+          "counter_key": "new_candidates_charged",
+          "charged": 9
         }
       ],
-      "definition": "One selected PR reached native recipe materialization and authoring. Rejected instruction stays rejected; source reuse does not reset its original repair bounds.",
+      "definition": "One selected PR reached native recipe materialization and authoring. Rejected instruction stays rejected; source reuse does not reset its original repair bounds. Nine additional inputs fixed from the original PR-diff considered list, excluding the consumed PR, are conservatively charged at selection including native source/schema rejects. Retained source-resolved inputs still require native runtime/author/export stages; no new discovery or replay.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_runtime/swe_next@biopython/biopython": {
