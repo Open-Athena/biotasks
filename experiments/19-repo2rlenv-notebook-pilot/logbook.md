@@ -2132,3 +2132,11 @@ Before the next construction run, the same general guidance also requires checki
 claimed input formats/headers against the staged bytes, rather than treating the
 source's reader arguments or a proposal's description as evidence of the file
 layout. No data-format claim about this seed is changed by the operator.
+
+Construction replacement 002 is prepared with the same seed, specification,
+reference, replay and resource settings as 001. It will exercise the general
+next-version materialization prompt; there is no task-specific scientific repair
+in its configuration. Do not launch it until the original grading campaign has
+terminated and provider absence is independently verified. Its status is prepared,
+not submitted. The original transfer campaign still supplies the unchanged-prompt
+baseline, including its unsuccessful and broadened grader candidates.
