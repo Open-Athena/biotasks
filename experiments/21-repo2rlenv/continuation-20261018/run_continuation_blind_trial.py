@@ -55,7 +55,8 @@ async def run():
     if authored:
         assert (manifest['route'], manifest['task_id']) in {
             ('repo_reconstruct/swe_flow', 'swe-flow-3ad7ba60ca7686b2007b'),
-            ('repo_mutate/swe_smith', 'swe-smith-53ec5f51639d4053971f')}
+            ('repo_mutate/swe_smith', 'swe-smith-53ec5f51639d4053971f'),
+            ('repo_mutate/swe_smith', 'swe-smith-f39ded25ef48a6575366')}
     provider = 'authored_solver_environment' if authored else 'continuation_provider_environment'
     assert manifest['blind_attempt_limit'] == 1
     assert manifest['independently_admitted'] is True

@@ -1,10 +1,11 @@
-"""Readiness checks for the two admitted authored learner/private-grader pairs."""
+"""Readiness checks for explicitly admitted authored learner/private-grader pairs."""
 
 import os
 
 from pr_provider_environment import RecordedDaytonaEnvironment as RecordedBase
 
 PROFILES = {
+    'swe-smith-f39ded25ef48a6575366': ('skbio', 'skbio/diversity/alpha/tests/test_base.py'),
     'swe-flow-3ad7ba60ca7686b2007b': ('skbio', 'skbio/diversity/alpha/tests/test_base.py'),
     'swe-smith-53ec5f51639d4053971f': ('Bio', 'Tests/test_SeqUtils.py'),
 }
