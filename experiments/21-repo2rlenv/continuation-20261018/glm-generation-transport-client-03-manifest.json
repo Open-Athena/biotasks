@@ -1,0 +1,47 @@
+{
+  "stage": "prepared_same_generation_semantics_with_explicit_own_proxy_timeout",
+  "cohort": "glm-generation-client-20261019-03",
+  "required_client_slots": 1,
+  "resources": {
+    "cpu": 1,
+    "memory_gib": 2,
+    "disk_gib": 5
+  },
+  "CPU_cost_basis": "user allocated free CoreWeave",
+  "lifetime_seconds": 7200,
+  "model": "existing free GLM-5.3",
+  "repository_execution": false,
+  "sandbox_credentials_supplied": false,
+  "upstream_service_modified": false,
+  "own_endpoint_access": "documented Iris LINK capability plus separate opaque application token in X-Biotasks21-Inference-Token",
+  "maximum_concurrent_forwarded_requests": 1,
+  "generation_max_output_tokens": 131072,
+  "requested_generation_effort": "medium",
+  "upstream_request_timeout_sec": 1200,
+  "client_files": {
+    "run_glm_authoring_client_long_proxy.py": {
+      "bytes": 11120,
+      "sha256": "fa9f7895d5e1e0d61f0d010e771e05fbf91d2e2f6e3b2e74fa36dd83b09029b5"
+    }
+  },
+  "probe_files": {
+    "run_glm_generation_transport_probe.py": {
+      "bytes": 4066,
+      "sha256": "1d826b92bda6ecffc232f717ae921a487b3015b23e3d60917bf825b52b6edadb"
+    }
+  },
+  "zero_model_preflight": [
+    "reject missing application authentication",
+    "reject tokens above131072",
+    "reject missing or conflicting medium effort",
+    "verify payload SHA256 and byte length through actual TRC connection",
+    "authenticated existing GLM model discovery without generation"
+  ],
+  "solver_source_unchanged_sha256": "6c705ab98bcfea84fac0520605bedcc58d9fecce4b47590480b6ca051053525f",
+  "publication": "Raw credential-bearing routes/originals stay protected; publish reviewed sanitized evidence with hashes and readback.",
+  "dispatch_gate": "Checkpoint; verify own endpoint timeout metadata and authenticated >120s zero-model response before any recipe generation.",
+  "prior_profile": "glm-generation-transport-client-02-manifest.json",
+  "own_endpoint_proxy_timeout_seconds": 1320,
+  "per_response_capture": "Persist exact upstream response before forwarding, including uncertain caller outcomes.",
+  "zero_model_delayed_probe_seconds": 130
+}
