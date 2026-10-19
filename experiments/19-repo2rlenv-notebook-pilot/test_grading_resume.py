@@ -60,3 +60,40 @@ def test_resume_requires_verified_download(tmp_path):
     p.write_text(json.dumps(value))
     with pytest.raises(ValueError, match="download-verified"):
         load_resume(tmp_path, context)
+
+
+def test_partial_probe_recovery_binds_bytes_contract_and_cleanup(tmp_path):
+    from grading_protocol import Probes
+    from grading_resume import load_saved_probes
+    from test_grading import probe
+
+    c = candidate()
+    suite = Probes(
+        disposition="ready",
+        probes=[probe(), probe(name="format", kind="valid_alternative")],
+        concerns=[],
+    )
+    records = []
+    for name, value in {
+        "grading/candidate.json": c.model_dump(),
+        "grading/probes.json": suite.model_dump(),
+    }.items():
+        p = tmp_path / name
+        p.parent.mkdir(exist_ok=True)
+        data = json.dumps(value).encode()
+        p.write_bytes(data)
+        records.append(dict(path=name, bytes=len(data), sha256=hashlib.sha256(data).hexdigest()))
+    (tmp_path / "manifest.json").write_text(json.dumps(records))
+    (tmp_path / "host-stop.json").write_text(json.dumps({"state": "KILLED"}))
+    cleanup = tmp_path / "provider-cleanup.json"
+    cleanup.write_text(json.dumps({"complete": True, "sandboxes": []}))
+    assert load_saved_probes(tmp_path, c) == suite
+    with pytest.raises(ValueError, match="different grader"):
+        load_saved_probes(tmp_path, c.model_copy(update={"instruction": "changed"}))
+    cleanup.write_text(json.dumps({"complete": True, "sandboxes": ["live"]}))
+    with pytest.raises(ValueError, match="teardown"):
+        load_saved_probes(tmp_path, c)
+    cleanup.write_text(json.dumps({"complete": True, "sandboxes": []}))
+    (tmp_path / "grading/probes.json").write_text("{}")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_saved_probes(tmp_path, c)

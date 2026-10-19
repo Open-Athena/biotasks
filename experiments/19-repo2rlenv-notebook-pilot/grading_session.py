@@ -371,6 +371,22 @@ async def run_grading(
                 "prior_acceptance_reused": False,
             },
         )
+    saved_probes = None
+    if config.get("resume_probes_directory"):
+        from grading_resume import load_saved_probes
+
+        if not resumed:
+            raise ValueError("Probe recovery requires scientific-context-verified grader recovery")
+        saved_probes = load_saved_probes(HERE / config["resume_probes_directory"], resumed[1])
+        save_record(
+            root / "probe-resume.json",
+            {
+                "source": config["resume_probes_directory"],
+                "partial_snapshot": True,
+                "reexecute_all_probes": True,
+                "prior_acceptance_reused": False,
+            },
+        )
     scopes = ("independent", "grader", "probes", "review", "repair", "review-repair")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
@@ -606,14 +622,18 @@ async def run_grading(
                 checked = json.loads(isolated)
                 if checked["exit_code"] or checked["stdout"].strip() != "isolated":
                     raise RuntimeError("Probe raw-input isolation check failed")
-            probes = await call(
-                Probes,
-                "probes",
-                "notebook-grader-probes",
-                probe_context,
-                validate_probes,
-                probe_shell,
-            )
+            if saved_probes is not None:
+                probes = saved_probes
+                await validate_probes(probes)
+            else:
+                probes = await call(
+                    Probes,
+                    "probes",
+                    "notebook-grader-probes",
+                    probe_context,
+                    validate_probes,
+                    probe_shell,
+                )
         finally:
             if hide_inputs:
                 reply = await session.command(

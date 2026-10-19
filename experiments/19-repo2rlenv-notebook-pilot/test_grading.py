@@ -189,14 +189,18 @@ def test_probe_blocker_is_representable():
 
 
 @pytest.mark.parametrize("repair", [False, True])
-@pytest.mark.parametrize("derived,resume", [(False, False), (True, False), (True, True)])
+@pytest.mark.parametrize(
+    "derived,resume,reuse_probes",
+    [(False, False, False), (True, False, False), (True, True, False), (True, True, True)],
+)
 def test_orchestration_separates_probe_author_and_gates_acceptance(
-    tmp_path, monkeypatch, repair, derived, resume
+    tmp_path, monkeypatch, repair, derived, resume, reuse_probes
 ):
     import grading_session as module
 
     config = json.loads((HERE / "grading-config.json").read_text())
     config.pop("resume_grading_directory", None)
+    config.pop("resume_probes_directory", None)
     if resume:
         import grading_resume
 
@@ -217,6 +221,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         probes=[probe(), probe(name="format", kind="valid_alternative")],
         concerns=[],
     )
+
+    if reuse_probes:
+        config["resume_probes_directory"] = "saved-probes"
+        monkeypatch.setattr(grading_resume, "load_saved_probes", lambda directory, candidate: suite)
 
     class Session:
         def __init__(self, **kwargs):
@@ -352,10 +360,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
-    assert calls == ([] if resume else (["independent"] if derived else []) + ["grader"]) + [
-        "probes",
-        "review",
-    ] + (["repair", "review-repair"] if repair else [])
+    assert calls == ([] if resume else (["independent"] if derived else []) + ["grader"]) + (
+        [] if reuse_probes else ["probes"]
+    ) + ["review"] + (["repair", "review-repair"] if repair else [])
     assert result["status"] == "grader_candidate_validated"
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()

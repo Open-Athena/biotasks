@@ -3,7 +3,7 @@
 import json
 from pathlib import Path
 
-from grading_protocol import AlternativeSolution, Grader
+from grading_protocol import AlternativeSolution, Grader, Probes, check_probes
 from reference_replay import sha256
 
 
@@ -43,3 +43,37 @@ def load_resume(directory, context):
     if independent.disposition != "ready" or candidate.disposition != "ready":
         raise ValueError("Resume requires submitted ready artifacts")
     return independent, candidate
+
+
+def load_saved_probes(directory, candidate):
+    """Recover submitted probes from a hash-bound partial snapshot, not acceptance."""
+    directory = Path(directory)
+    records = {row["path"]: row for row in json.loads((directory / "manifest.json").read_text())}
+
+    def read(name):
+        path = directory / name
+        record = records[name]
+        if (
+            path.is_symlink()
+            or path.stat().st_size != record["bytes"]
+            or sha256(path) != record["sha256"]
+        ):
+            raise ValueError("Probe recovery evidence identity mismatch: " + name)
+        return json.loads(path.read_text())
+
+    prior = Grader.model_validate(read("grading/candidate.json"))
+    if prior != candidate:
+        raise ValueError("Saved probes belong to a different grader contract")
+    host = json.loads((directory / "host-stop.json").read_text())
+    cleanup = json.loads((directory / "provider-cleanup.json").read_text())
+    if (
+        host.get("state") not in {"KILLED", "FAILED", "SUCCEEDED", "CANCELLED"}
+        or cleanup.get("complete") is not True
+        or cleanup.get("sandboxes") != []
+    ):
+        raise ValueError("Saved probe campaign requires verified resource teardown")
+    suite = Probes.model_validate(read("grading/probes.json"))
+    if suite.disposition != "ready":
+        raise ValueError("Recovery requires a submitted ready probe suite")
+    check_probes(suite, candidate)
+    return suite
