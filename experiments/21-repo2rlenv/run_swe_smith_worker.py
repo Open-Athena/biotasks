@@ -30,7 +30,7 @@ def main():
     parser.add_argument("--campaign", type=Path, required=True)
     parser.add_argument("--worker-name", required=True)
     parser.add_argument("--source-archive", type=Path, required=True)
-    parser.add_argument("--recipe", choices=("swe_smith", "swe_flow", "r2e"), default="swe_smith")
+    parser.add_argument("--recipe", choices=("swe_smith", "swe_flow", "r2e", "r2e_gym"), default="swe_smith")
     parser.add_argument("--flow-test-paths", action="store_true")
     parser.add_argument(
         "--config",
@@ -66,6 +66,13 @@ def main():
     if args.recipe == "r2e":
         record["stage"] = "native_function_candidate_preparation"
     entrypoint = f"-m repo2rlenv.pipelines.recipes.{args.recipe}.worker"
+    if args.recipe == "r2e_gym":
+        adaptation = Path(__file__).with_name("history_contrast_batch.py")
+        if not adaptation.is_file():
+            adaptation = Path(__file__).parent / "continuation-20261018/history_contrast_batch.py"
+        record["adaptation_sha256"] = hashlib.sha256(adaptation.read_bytes()).hexdigest()
+        record["stage"] = "bounded_native_history_contrasts"
+        entrypoint = "/work/native/history_contrast_batch.py"
     if args.flow_test_paths:
         adaptation = Path(__file__).with_name("swe_flow_test_paths.py")
         record["adaptation_sha256"] = hashlib.sha256(adaptation.read_bytes()).hexdigest()
@@ -83,6 +90,8 @@ def main():
         )
         worker.upload(args.source_archive, "/work/native/source.tar.gz")
         worker.upload(args.config, "/work/native/config.json")
+        if args.recipe == "r2e_gym":
+            worker.upload(adaptation, "/work/native/history_contrast_batch.py")
         if args.flow_test_paths:
             worker.upload(adaptation, "/work/native/swe_flow_test_paths.py")
         setup = worker.exec(

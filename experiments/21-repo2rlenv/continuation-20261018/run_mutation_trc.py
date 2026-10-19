@@ -13,7 +13,7 @@ from preserve_author_output import preserve
 
 def recipe_arguments(environ):
     recipe = environ.get('BIOTASKS21_RECIPE', 'swe_smith')
-    if recipe not in ('swe_smith', 'swe_flow'):
+    if recipe not in ('swe_smith', 'swe_flow', 'r2e_gym'):
         raise ValueError('Unsupported frozen contrast recipe')
     adapted_paths = environ.get('BIOTASKS21_FLOW_TEST_PATHS', '0')
     if adapted_paths not in ('0', '1') or adapted_paths == '1' and recipe != 'swe_flow':
