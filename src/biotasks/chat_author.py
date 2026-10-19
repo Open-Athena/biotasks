@@ -370,12 +370,29 @@ class GLMChatAuthor:
                 event("tool_request", call_id=call["id"], name=name, arguments=arguments)
                 result = await handlers[name](**arguments)
             result = str(result)
-            if (
+            raw_result = request_root / "tool-result.json"
+            self.save_record(raw_result, {"call_id": call["id"], "name": name, "output": result})
+            truncated = (
                 self.limits.tool_output_chars is not None
                 and len(result) > self.limits.tool_output_chars
-            ):
-                result = result[: self.limits.tool_output_chars] + "\n[tool output truncated]"
-            event("tool_result", call_id=call["id"], name=name, output=result)
+            )
+            if truncated:
+                assert self.limits.tool_output_chars is not None
+                head = self.limits.tool_output_chars // 3
+                tail = self.limits.tool_output_chars - head
+                result = (
+                    result[:head]
+                    + "\n[tool output truncated; full output retained in execution artifacts]\n"
+                    + result[-tail:]
+                )
+            event(
+                "tool_result",
+                call_id=call["id"],
+                name=name,
+                output=result,
+                truncated=truncated,
+                raw_result_record=str(raw_result.relative_to(trace.parent)),
+            )
             messages.append({"role": "tool", "tool_call_id": call["id"], "content": result})
             if name in {"submit_artifact", "revise_artifact"} and result.startswith(
                 "Artifact committed."

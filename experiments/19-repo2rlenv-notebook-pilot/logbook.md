@@ -2209,3 +2209,14 @@ client timeout. Nine diagnostic/schema tests pass, including private-value
 redaction and exact request forwarding. Tool-output preview restoration is an
 unresolved user preference because earlier extra size limits were removed; no
 preview/token/input/response cap has been re-enabled.
+
+Prepare the existing optional tool-preview path without enabling it in the active
+scientific profiles: preserve the full tool result in a separate original trace
+record before applying a configured preview, and use the upstream one-third-head /
+two-thirds-tail presentation (8,000 + 16,000 characters at its 24,000 default).
+The preview has an explicit truncation marker and a linkable full-result record;
+model token/input/response settings are unaffected. All active scientific profiles
+still set `tool_output_chars=None` pending the user's clarification. Twenty-two
+adapter tests and its type check pass, including full-result retention and unchanged
+unbounded generation settings. The diagnostic is submitted but awaiting reserved
+Iris capacity; no diagnostic model call or Daytona sandbox has run yet.

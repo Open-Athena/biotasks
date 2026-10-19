@@ -437,3 +437,49 @@ def test_received_provider_rejection_is_classified_without_private_body_or_retry
     with pytest.raises(RuntimeError, match="allowance exhausted"):
         asyncio.run(author(**args))
     assert calls == [1]
+
+
+def test_explicit_tool_preview_keeps_full_output_and_does_not_cap_generation(tmp_path):
+    payloads = []
+    full = "A" * 8000 + "middle" * 10000 + "Z" * 16000
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        return (
+            reply("shell", {"command": "inspect"}) if len(payloads) == 1 else reply(call_id="done")
+        )
+
+    async def shell(**kwargs):
+        return full
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        token_allowance=None,
+        max_output_tokens=None,
+        max_input_bytes=None,
+        max_response_bytes=None,
+        tool_output_chars=24000,
+    )
+    asyncio.run(
+        author(
+            **options(
+                tmp_path,
+                {
+                    "shell": shell,
+                    "submit_artifact": committed,
+                    "revise_artifact": committed,
+                },
+            )
+        )
+    )
+    preview = payloads[1]["messages"][-1]["content"]
+    assert preview.startswith("A" * 8000) and preview.endswith("Z" * 16000)
+    assert "truncated" in preview and len(preview) < 24100
+    assert "max_tokens" not in payloads[1]
+    recorded = json.loads((tmp_path / "trace/1/tool-result.json").read_text())
+    assert recorded["output"] == full
+    events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
+    event = next(event for event in events if event["kind"] == "tool_result")
+    assert event["truncated"] is True and event["output"] == preview
+    assert event["raw_result_record"] == "trace/1/tool-result.json"
