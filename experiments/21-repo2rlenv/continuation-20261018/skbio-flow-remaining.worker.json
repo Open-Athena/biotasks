@@ -1,0 +1,34 @@
+{
+  "repo": {
+    "url": "https://github.com/scikit-bio/scikit-bio",
+    "ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "skbio/diversity/alpha/_base.py"
+    ],
+    "test_paths": [
+      "skbio/diversity/alpha/tests/test_base.py"
+    ],
+    "base_image": "python:3.12.3-slim",
+    "dependencies": [
+      "pytest==9.0.3"
+    ],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3'",
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "test_timeout_sec": 90,
+    "max_candidates": 5,
+    "target": 1,
+    "trace_max_tests": 128,
+    "trace_seed": 25,
+    "exclude_candidate_ids": [
+      "3708e0e3d5e89cd5ba4a",
+      "3ad7ba60ca7686b2007b",
+      "a10076b48a0d2070eed3",
+      "c80f6a9306c83c7db638",
+      "d86a2e7a9853ecd4b5eb"
+    ]
+  }
+}

@@ -1,0 +1,91 @@
+{
+  "stage": "receipt_backed_remaining_allowances_prepared_no_remote_dispatch",
+  "units": [
+    {
+      "unit_id": "repo_mutate/swe_smith@scikit-bio/scikit-bio",
+      "repository": "scikit-bio/scikit-bio",
+      "source_ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "prior_candidate_charge": 5,
+      "remaining_maximum_attempts": 5,
+      "target_executable_contrasts": 2,
+      "executable_contrasts_are_not_admissions": true,
+      "prior_ids_excluded": [
+        "0e17fb52981f3f272561",
+        "3cd37b06ec9a972757c3",
+        "539b25a8eba699d3de89",
+        "e3fc0018c5332295d4ab",
+        "e9646d963541cea082d0"
+      ],
+      "profile": "skbio-smith-remaining.worker.json",
+      "profile_sha256": "7b49aba362b30fc90625643b5301efbc1fe8f3386523a12639812fa62599094d",
+      "receipt_sources": [
+        {
+          "source": "skbio-smith-next.worker.json",
+          "sha256": "83b073e023cbe32ea2fdf587273a71ce7d14d178e2d42f59fba1372606bfac73"
+        },
+        {
+          "source": "skbio-contrast-01/generation.json",
+          "sha256": "9dccd223bcb1255f1c6917585274be23e387ff6c8974fd85c5f9ee00371c86e3"
+        }
+      ],
+      "new_model_calls": 0,
+      "new_candidate_attempts": 0,
+      "stage": "prepared_not_dispatched",
+      "seed_change": {
+        "field": "seed",
+        "previous": 24,
+        "next": 25,
+        "reason": "A new bounded native sampling seed after preserving/excluding all five prior identities. SWE-Smith limits planned mutations before exclusion filtering; reusing the first five plans could otherwise return only excluded candidates.",
+        "native_generation_logic_changed": false
+      }
+    },
+    {
+      "unit_id": "repo_reconstruct/swe_flow@scikit-bio/scikit-bio",
+      "repository": "scikit-bio/scikit-bio",
+      "source_ref": "bd05e60efb0e6398aa6dc1485832c80a1104511b",
+      "prior_candidate_charge": 5,
+      "remaining_maximum_attempts": 5,
+      "target_executable_contrasts": 1,
+      "executable_contrasts_are_not_admissions": true,
+      "prior_ids_excluded": [
+        "3708e0e3d5e89cd5ba4a",
+        "3ad7ba60ca7686b2007b",
+        "a10076b48a0d2070eed3",
+        "c80f6a9306c83c7db638",
+        "d86a2e7a9853ecd4b5eb"
+      ],
+      "profile": "skbio-flow-remaining.worker.json",
+      "profile_sha256": "b3d353a0251646ba3a93b606bd5cdb8d5a5fc30d6b90b0c3d6840b27f6d67de8",
+      "receipt_sources": [
+        {
+          "source": "skbio-flow-next.worker.json",
+          "sha256": "0a85e3b4294268c944e898b3ef446151e179ab9aeb9fd6789f6bcd3d7e8599ba"
+        },
+        {
+          "source": "skbio-flow-contrast-01/generation.json",
+          "sha256": "ac12d2a1ed1bc9e9c495d862ec9a9616618895380cbda4160f4ab434dad1cc4b"
+        }
+      ],
+      "new_model_calls": 0,
+      "new_candidate_attempts": 0,
+      "stage": "prepared_not_dispatched",
+      "seed_change": {
+        "field": "trace_seed",
+        "previous": 24,
+        "next": 25,
+        "reason": "A new bounded native sampling seed after preserving/excluding all five prior identities. SWE-Smith limits planned mutations before exclusion filtering; reusing the first five plans could otherwise return only excluded candidates.",
+        "native_generation_logic_changed": false
+      }
+    }
+  ],
+  "new_Daytona_reservations_usd": 0,
+  "new_model_calls": 0,
+  "new_candidate_attempts": 0,
+  "dispatch_gate": "Current blind cohorts and preservation take priority; checkpoint complete inputs and enforce aggregate slot and total budget constraints before any later native contrast run. Original native authoring/repair caps for excluded identities stay exhausted; no prior blind attempt is repeated.",
+  "native_worker_contract": {
+    "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+    "swe_smith_worker": "candidate_mutations limit=max_candidates before exclude_candidate_ids; attempted counter bounded separately",
+    "swe_flow_worker": "exclusions checked before incrementing attempted; max_candidates bounds new attempted steps",
+    "candidate_caps_reset": false
+  }
+}
