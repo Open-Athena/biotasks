@@ -1,0 +1,95 @@
+{
+  "stage": "original_upstream_completion_reconciliation_not_task_success",
+  "original_archive_bytes": 177443,
+  "original_archive_sha256": "2a8ebeaef7800bc17d9041e196e38929167cefa56fee143b1d3df85b4b079cd6",
+  "original_hash_and_size_verified": true,
+  "retention_days": 7,
+  "actual_model_POST_calls": 2,
+  "model_registry_GET_calls": 1,
+  "model_calls_from_registry_GET": 0,
+  "calls": [
+    {
+      "request_sha256": "504a68e602de576054a021b19ed97102d6cb7942452a92ab1190456038d8db81",
+      "response_file": "responses/b8e1d4c27d364983a7d7d46d0720d2d3.json",
+      "response_sha256": "54949b7ecce91d7c88cc7b539f756bdaacd0e4e24429e51bede83650df634fd1",
+      "response_bytes": 305756,
+      "upstream_status": 200,
+      "elapsed_seconds": 640.201,
+      "usage": {
+        "prompt_tokens": 4965,
+        "total_tokens": 81667,
+        "completion_tokens": 76702,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 4928,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 76382
+        }
+      },
+      "finish_reasons": [
+        "stop"
+      ],
+      "answer_characters": 1030,
+      "answer_is_plain_json_object": true,
+      "answer_keys": [
+        "environment_setup",
+        "environment_files",
+        "instruction",
+        "tests_python",
+        "solution_shell",
+        "weights",
+        "self_review"
+      ]
+    },
+    {
+      "request_sha256": "c0cb2abebc77aa8f7996300f6ce7e6523ee7fd554c96ee8a057c7adeb2dde650",
+      "response_file": "responses/1a325c1ea86b42a0b6a425055ba75f71.json",
+      "response_sha256": "c91ab7d0d7c7058e0f6fe065f3e2311bf20d1d90d135a555eb964b8054f5d0ba",
+      "response_bytes": 328332,
+      "upstream_status": 200,
+      "elapsed_seconds": 667.515,
+      "usage": {
+        "prompt_tokens": 9620,
+        "total_tokens": 98598,
+        "completion_tokens": 88978,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 9600,
+          "multimodal_tokens": null
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 86352
+        }
+      },
+      "finish_reasons": [
+        "stop"
+      ],
+      "answer_characters": 9064,
+      "answer_is_plain_json_object": true,
+      "answer_keys": [
+        "environment_setup",
+        "environment_files",
+        "instruction",
+        "tests_python",
+        "solution_shell",
+        "weights",
+        "self_review"
+      ]
+    }
+  ],
+  "aggregate_prompt_tokens": 14585,
+  "aggregate_completion_tokens": 165680,
+  "aggregate_reported_reasoning_tokens": 162734,
+  "native_exports": 0,
+  "source_candidate_charge_change": 0,
+  "task_fixes": 0,
+  "limits": [
+    "Both caller pipelines recorded1200-second timeouts and zero received responses/exports; preserve those original failures.",
+    "Upstream completions took640.201/667.515seconds; the end-to-end discrepancy is unresolved, not a proven model-quality failure.",
+    "Wire request hashes differ from native adapter record hashes; full byte-identical per-task correlation remains unestablished.",
+    "Original response JSON objects are preserved for assessment, never rewritten or replayed into generation.",
+    "A completed raw TerminalDraft-shaped JSON response is not a validated or exported task."
+  ]
+}
