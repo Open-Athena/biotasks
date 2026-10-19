@@ -29,6 +29,12 @@ def summarize(source, output):
                         raise ValueError('Unexpected generation summary member')
                     raw = handle.extractfile(member).read()
                     data = json.loads(raw)
+                    if data.get('attempted') is None:
+                        record.update(generation_available=True,
+                                      generation_json_sha256=hashlib.sha256(raw).hexdigest(),
+                                      attempted=None, counter_state='native_selection_not_completed',
+                                      generation_stage=data.get('stage'))
+                        break
                     unevaluated = data.get('selected_not_evaluated', [])
                     if not 0 <= data['attempted'] <= 10 or len(data['candidates']) + len(data['rejected']) + len(unevaluated) != data['attempted']:
                         raise ValueError('Incomplete or inconsistent candidate counters')

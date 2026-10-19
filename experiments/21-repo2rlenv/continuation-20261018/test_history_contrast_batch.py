@@ -4,6 +4,8 @@ import json
 import io
 import tarfile
 import sys
+import subprocess
+import hashlib
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,7 +13,7 @@ from unittest.mock import Mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from history_contrast_batch import run_batch
+from history_contrast_batch import run_batch, prepare_with_revision_fetch
 from contrast_summary import summarize
 from run_mutation_trc import recipe_arguments
 
@@ -115,6 +117,43 @@ class HistoryContrastBatchTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             recipe_arguments({'BIOTASKS21_RECIPE': 'r2e_gym',
                               'BIOTASKS21_FLOW_TEST_PATHS': '1'})
+
+    def test_incomplete_native_selection_preserves_unknown_counter(self):
+        self.output.mkdir()
+        raw = json.dumps({'attempted': None, 'stage': 'selection_started',
+                          'candidates': [], 'rejected': []}).encode()
+        with tarfile.open(self.output / 'native-evidence.tar.gz', 'w:gz') as archive:
+            member = tarfile.TarInfo('native/generation/generation.json')
+            member.size = len(raw)
+            archive.addfile(member, io.BytesIO(raw))
+        result = summarize(self.output, self.output / 'summary.json')
+        self.assertIsNone(result['attempted'])
+        self.assertEqual(result['counter_state'], 'native_selection_not_completed')
+
+    def test_absent_pinned_revision_fetches_exact_commit_before_selection(self):
+        self.config['repo'] = {'url': 'https://example.invalid/public', 'ref': 'b' * 40}
+        cache = '/work/history/' + hashlib.sha256(self.config['repo']['url'].encode()).hexdigest()[:16]
+        cmd = ['git', '-C', cache, 'rev-list', '--first-parent', '--max-count=1', 'b' * 40]
+        destination = self.output / 'selection'
+        destination.mkdir(parents=True)
+        native = Mock(side_effect=[subprocess.CalledProcessError(128, cmd), {'attempted': 1}])
+        fetch = Mock(return_value=Mock(returncode=0))
+        result = prepare_with_revision_fetch(self.config, destination, native, fetch)
+        self.assertEqual(result, {'attempted': 1})
+        self.assertEqual(native.call_count, 2)
+        self.assertEqual(fetch.call_args.args[0],
+                         ['git', '-C', cache, 'fetch', '--no-tags', 'origin', 'b' * 40])
+        evidence = json.loads((self.output / 'revision-fetch.json').read_text())
+        self.assertEqual(evidence['candidate_attempts_before_fetch'], 0)
+
+    def test_unrelated_prepare_error_does_not_fetch_or_retry(self):
+        self.config['repo'] = {'url': 'https://example.invalid/public', 'ref': 'b' * 40}
+        native = Mock(side_effect=subprocess.CalledProcessError(128, ['git', 'clone']))
+        fetch = Mock()
+        with self.assertRaises(subprocess.CalledProcessError):
+            prepare_with_revision_fetch(self.config, self.output, native, fetch)
+        native.assert_called_once()
+        fetch.assert_not_called()
 
 
 if __name__ == '__main__':

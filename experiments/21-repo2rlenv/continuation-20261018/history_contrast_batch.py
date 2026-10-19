@@ -5,10 +5,41 @@ The root generation record is a derived summary for separate saved-input authori
 """
 
 import argparse
+import hashlib
 import json
 import os
 import subprocess
 from pathlib import Path
+
+
+def prepare_with_revision_fetch(config, destination, prepare, fetch=subprocess.run):
+    """Recover a pinned commit absent from the native default-branch clone.
+
+    Retry only the pre-enumeration git failure, before any candidate is examined.
+    Native filters and their history bound still run unchanged afterward.
+    """
+    try:
+        return prepare(config, destination)
+    except subprocess.CalledProcessError as exc:
+        revision = config['repo']['ref']
+        cache = '/work/history/' + hashlib.sha256(config['repo']['url'].encode()).hexdigest()[:16]
+        expected = ['git', '-C', cache, 'rev-list', '--first-parent',
+                    '--max-count=' + str(config['options']['history_limit']), revision]
+        if (exc.cmd != expected or exc.returncode != 128 or len(revision) != 40
+                or any(c not in '0123456789abcdef' for c in revision)):
+            raise
+        # Native prepare creates this empty directory before enumerating history.
+        # rmdir fails closed if any evidence/candidate output already exists.
+        destination.rmdir()
+        record = {'stage': 'exact_revision_fetch_started', 'revision': revision,
+                  'candidate_attempts_before_fetch': 0, 'model_calls': 0}
+        evidence = destination.parent / 'revision-fetch.json'
+        evidence.write_text(json.dumps(record, indent=2) + '\n')
+        result = fetch(['git', '-C', cache, 'fetch', '--no-tags', 'origin', revision],
+                       capture_output=True, timeout=300, check=True)
+        record.update(stage='exact_revision_fetch_completed', exit_code=result.returncode)
+        evidence.write_text(json.dumps(record, indent=2) + '\n')
+        return prepare(config, destination)
 
 
 def run_batch(config, output, prepare, evaluate):
@@ -86,7 +117,10 @@ def main():
     parser.add_argument('config', type=Path)
     parser.add_argument('output', type=Path)
     args = parser.parse_args()
-    result = run_batch(json.loads(args.config.read_text()), args.output, prepare, evaluate)
+    def prepare_pinned(config, destination):
+        return prepare_with_revision_fetch(config, destination, prepare)
+
+    result = run_batch(json.loads(args.config.read_text()), args.output, prepare_pinned, evaluate)
     print(json.dumps({k: result[k] for k in ('stage', 'attempted', 'model_calls')}))
 
 
