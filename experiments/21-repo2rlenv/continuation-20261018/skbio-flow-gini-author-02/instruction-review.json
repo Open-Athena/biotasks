@@ -1,0 +1,41 @@
+{
+  "candidate_id": "3f11586ce61f704796ee",
+  "stage": "independent_static_instruction_and_native_test_review_rejected_before_additional_runtime",
+  "independently_admitted": false,
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "instruction_sha256": "25b5d9fa40f999e1be22f9a899f44aa3633dafb292810452b91ace0ba76fb00a",
+  "actual_newline_characters": 0,
+  "generation_archive_sha256": "3acfcdb3dacfc06a80e256e5d56e7fdb6ad4c09eea3408e6e54183d826e2d47d",
+  "source_members": {
+    "native/generation/base/skbio/diversity/alpha/_gini.py": {
+      "sha256": "0bab73d87caca5b08d4f074257894fb76fbb1091ea801c73fd2cc1b45f32a9f2",
+      "bytes": 3614
+    },
+    "native/generation/base/skbio/diversity/alpha/tests/test_gini.py": {
+      "sha256": "2dcadc0c06608abc5888013ca3da82bc2e4c68d80a2b487b69f7609dd0118424",
+      "bytes": 2304
+    }
+  },
+  "raw_model_answer_sha256": "36043fddf2b1490d52b1ec63b64f4f2ca6939cf8d960298ebe601637561551f6",
+  "parsed_raw_markdown_equals_saved_instruction": true,
+  "findings": [
+    {
+      "kind": "malformed_document_format",
+      "evidence": "Raw GLM answer and parsed saved instruction both contain literal n/nn separators and zero actual newline characters; wrapper did not introduce these separators."
+    },
+    {
+      "kind": "instruction_grader_coverage_gap",
+      "evidence": "Instruction requires an exact ValueError message including method names. Native test_lorenz_curve_integrator checks only the exception class using assertRaises(ValueError), not message content. No runtime message-coverage control was executed.",
+      "consequence": "Mandatory error-message requirement is not assessed by retained native assertions."
+    }
+  ],
+  "source_behavior_note": "The numerical integration formulas and supported method names agree with the original source; no claim that those formulas are wrong.",
+  "runtime_controls_for_this_authored_instruction": "not_dispatched_after_static_rejection",
+  "author_calls_consumed": 2,
+  "native_author_call_ceiling": 6,
+  "remaining_calls_not_reset": 4,
+  "candidate_charge_unchanged": 7,
+  "automatic_model_repair_dispatched": false,
+  "next_step": "Preserve original rejection; continue remaining distinct candidates without manual prose/grader repair."
+}

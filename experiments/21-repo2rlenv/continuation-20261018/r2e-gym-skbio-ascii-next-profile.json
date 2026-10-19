@@ -1,0 +1,71 @@
+{
+  "stage": "prepared_unexecuted_bounded_native_history_selection",
+  "recipe": "r2e_gym",
+  "repo": {
+    "url": "https://github.com/scikit-bio/scikit-bio",
+    "ref": "d25f305cea3a6cc200b0fe10806151132b395bcf",
+    "access": "public"
+  },
+  "options": {
+    "source_paths": [
+      "skbio/sequence/_sequence.py"
+    ],
+    "test_paths": [
+      "skbio/sequence/tests/test_sequence.py",
+      "skbio/sequence/tests/data",
+      "skbio/io/format/tests/test_fasta.py",
+      "skbio/io/format/tests/test_fastq.py",
+      "skbio/io/format/tests/data"
+    ],
+    "private_test_paths": [],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e '.[test]' 'pytest==9.0.3' && python -m pip install --no-cache-dir 'coverage==7.16.0'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 1,
+    "max_candidates": 1,
+    "history_limit": 1,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": true,
+    "require_test_match": true,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6
+  },
+  "provenance": "Next bounded R2E-Gym cohort at the retained PR2630 ASCII-case fix, using native history selection/evaluation and the established fixture-directory staging pattern; no task instruction or grader edits.",
+  "limitations": [
+    "Prepared only: native R2E-Gym source/statement filters and historical snapshot contrast not yet executed.",
+    "history_limit=1 bounds all examined commits including rejected candidates, because native max_candidates bounds accepted selections only.",
+    "The route retains target3 total and cap10; this one-input batch does not reset either.",
+    "Source fix is shared with already accepted native PR and commit routes; preserve lineage grouping, not additional scientific diversity.",
+    "Repository execution must use TRC controllers and Daytona; authoring must be separated onto the existing free GLM inference client, with no repository execution there."
+  ],
+  "model_calls": 0,
+  "worker_created": false,
+  "campaign_accounting": {
+    "route": "commit_runtime/r2e_gym",
+    "repository": "scikit-bio/scikit-bio",
+    "accepted_before": 1,
+    "charged_candidates_before": 2,
+    "maximum_new_candidate_attempts": 1,
+    "new_candidate_charge_before_dispatch": 0,
+    "route_target": 3,
+    "route_candidate_cap": 10
+  }
+}
