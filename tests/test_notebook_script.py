@@ -109,3 +109,21 @@ def test_markdown_stays_in_order_as_comments_without_changing_execution(tmp_path
 def test_unsupported_language_is_not_misclassified_as_broken_source(tmp_path):
     with pytest.raises(UnsupportedNotebook, match="Python language"):
         export_python(source(tmp_path, ["x <- 1"], language_info={"name": "R"}))
+
+
+def test_pairing_formats_are_recorded_without_controlling_conversion(tmp_path):
+    pairing = {"formats": "ipynb,md:myst,py:percent"}
+    path = source(tmp_path, ["raise RuntimeError('do not execute')"], jupytext=pairing)
+    script, receipt = export_python(path)
+    assert ast.dump(ast.parse(script)) == ast.dump(
+        ast.parse("raise RuntimeError('do not execute')")
+    )
+    assert receipt["source_pairing_metadata"] == pairing
+    assert receipt["format"] == "py:nomarker"
+    assert "# %%" not in script
+
+
+@pytest.mark.parametrize("pairing", [{"formats": []}, {"unknown_option": True}, "py"])
+def test_unknown_or_malformed_pairing_options_are_rejected(tmp_path, pairing):
+    with pytest.raises(UnsupportedNotebook, match="Jupytext metadata"):
+        export_python(source(tmp_path, ["x=1"], jupytext=pairing))

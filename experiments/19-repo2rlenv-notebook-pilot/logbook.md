@@ -1971,3 +1971,19 @@ analysis. Pinned source and initial access evidence are in `transfer/bioframe/`.
 Existing prompts remain unchanged. Syntax parses; ENCODE metadata confirms two
 released GRCh38 files. Conversion was not started because the shared heavy-work
 lock was held. No model or paid execution was launched.
+
+### 2026-10-19 — Bioframe conversion and frozen preparation inputs
+
+The user explicitly authorized proceeding without the shared lock for this
+lightweight work. Load was below 0.1 and available memory above 4 GiB.
+Unchanged conversion first rejected Jupytext's file-pairing `formats` metadata.
+A general converter change admits and records that string while retaining
+explicit exporter options and rejecting other unknown/malformed Jupytext
+metadata. Fourteen conversion tests passed. The pinned notebook now converts
+with all 14 code cells and 12 Markdown cells preserved; its source is unchanged.
+The failure record is retained beside the conversion receipt.
+
+JASPAR's official About page explicitly states CC BY 4.0. Preparation is
+configured for one GLM-5.3 medium call, using the unchanged packaged prompt and
+existing CPU/memory/disk/time settings. The seed supplies provenance only;
+scientific task design and exports remain the worker's responsibility.

@@ -69,9 +69,19 @@ def export_python(path: Path) -> tuple[str, dict]:
     }
     if languages != {"python"}:
         raise UnsupportedNotebook("This profile requires an unambiguous Python language")
-    allowed_metadata = {"kernelspec", "language_info", "widgets", "mystnb", "toc"}
+    allowed_metadata = {"kernelspec", "language_info", "widgets", "mystnb", "toc", "jupytext"}
     if set(metadata) - allowed_metadata:
         raise UnsupportedNotebook("Notebook metadata needs a supported conversion profile")
+    # File-pairing formats describe documentation synchronization, not code.
+    # Do not pass source Jupytext options to the exporter: its conversion
+    # policy remains explicit below, and unknown options still fail closed.
+    pairing = metadata.get("jupytext", {})
+    if (
+        not isinstance(pairing, dict)
+        or set(pairing) - {"formats"}
+        or ("formats" in pairing and not isinstance(pairing["formats"], str))
+    ):
+        raise UnsupportedNotebook("Jupytext metadata needs a supported conversion profile")
     # MyST's build-time execution switch does not change the notebook program.
     # Preserve and explicitly record it, rather than adopting it as a skip rule.
     myst = metadata.get("mystnb", {})
@@ -157,4 +167,6 @@ def export_python(path: Path) -> tuple[str, dict]:
         "stored_outputs_used_as_evidence": False,
         "executed": False,
     }
+    if pairing:
+        receipt["source_pairing_metadata"] = pairing
     return converted, receipt
