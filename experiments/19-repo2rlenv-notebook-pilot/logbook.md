@@ -2045,3 +2045,15 @@ scientific scope is supplied. The existing read-only package-inspection option
 is enabled so the worker can check current tool semantics/defaults. Canonical
 prompts remain unchanged, and task instructions/comparison proposals remain GLM
 output. This input/configuration selection is recorded as operator orchestration.
+
+### 2026-10-19 — Bioframe specification 001
+
+GLM returned a draft in 548.25 seconds across 20 read-only inspection/submission
+requests. The question contains two scientific analysis steps, not an API-call
+recipe. It correctly describes blacklist trimming/splitting, assignment before
+subtraction, and motif-score ties. Its private handoff explicitly leaves
+precision, duplicate keys, missing scores and negative controls to executable
+validation. Original output is preserved; no manual scientific repair was made.
+The next existing materialization stage receives this fresh proposal, with no
+historical Scanpy author draft or revision feedback. All canonical prompt hashes
+remain those of the transfer baseline.

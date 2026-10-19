@@ -19,7 +19,14 @@ compressed sizes 649,474 and 8,211 bytes. No biological input was downloaded.
 records the exact JASPAR URL check. JASPAR's official About page states CC BY 4.0; its URL is recorded in
 `intake.json`. This permission is independent of bioframe's MIT license.
 
-Next: run preparation using the unchanged canonical prompt, then assess setup
-and reference execution. `preparation-config.json` selects the notebook without
-preselecting scientific methods or output schemas. Preserve actual failures;
-do not predesign the resulting task or silently change notebook semantics.
+Current progress: [preparation 001](preparation-runs/001/plan.md),
+[setup/reference 001](setup-runs/001/README.md), and
+[deterministic replay 001](replay-runs/001/README.md) are complete. Specification
+001 is submitted with the existing read-only package tools. No constructed,
+graded or solved task exists for this notebook yet. Original worker outputs are
+preserved; no task-specific scientific repairs were made by the operator.
+
+The setup trace exposed a factory limitation: the worker ran additional full
+analyses through its shell despite the prompt, outside the controller's test
+count. See the setup record for the exact evidence and limits. The original
+notebook and all canonical prompts remain unchanged.
