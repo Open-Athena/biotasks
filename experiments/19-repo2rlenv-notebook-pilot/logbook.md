@@ -2256,3 +2256,19 @@ scientific code or annotation-selection rule was manually changed or supplied as
 new task-specific feedback. Scientific validation remains a separate later stage.
 The native configuration selects 003 plus a future fresh grading 002; neither is
 validated or launched yet. Printing guidance is advisory, not a byte/token cap.
+
+### 2026-10-19 — Explicit construction mode for reused worker drafts
+
+Construction 003 was submitted at `dad9f99`, then cancellation was requested after
+checking the routing: `prior_author_files` automatically selects the legacy
+shell-free finalization prompt, so the updated construction prompt was bypassed.
+The parent reported PENDING with no tasks while Daytona already showed one owned
+sandbox. Do not infer no execution from that mirror. Reconcile cancellation and
+cleanup before launching another worker; preserve any available original outputs.
+
+Separate the choice of prior input from the authoring mode: explicit
+`authoring_mode: construct` keeps the current construction prompt and inspection
+shell while admitting hash-verified prior GLM work. Legacy configurations retain
+their finalizer behavior. Thirteen focused materialization checks pass, covering
+fresh construction, legacy finalization, and construction with prior files.
+Prepare 004 using this mode; no manual scientific artifact changes or new caps.

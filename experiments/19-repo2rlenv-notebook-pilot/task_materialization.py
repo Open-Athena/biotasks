@@ -57,9 +57,13 @@ async def run_materialization(
 ):
     source = session.snapshot["directory"]
     context = materialization_context(context, source, config["reference_seconds"])
-    finalize = config.get("prior_author_files")
-    if finalize:
-        context["prior_worker_draft"] = recovered_author_files(HERE / finalize)
+    prior_files = config.get("prior_author_files")
+    mode = config.get("authoring_mode", "finalize" if prior_files else "construct")
+    if mode not in {"construct", "finalize"} or (mode == "finalize" and not prior_files):
+        raise ValueError("Invalid materialization authoring mode or missing prior draft")
+    finalize = mode == "finalize"
+    if prior_files:
+        context["prior_worker_draft"] = recovered_author_files(HERE / prior_files)
     ledger = RequestLedger(root / "requests.sqlite", {"materialize": Allowance(None, None)})
     budget = RunBudget(
         BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "materialize", "1"

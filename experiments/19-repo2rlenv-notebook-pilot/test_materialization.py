@@ -66,8 +66,8 @@ def test_source_corruption_and_unsafe_output_links_fail(tmp_path):
         inventory(out)
 
 
-@pytest.mark.parametrize("finalize", [False, True])
-def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp_path, finalize):
+@pytest.mark.parametrize("mode", ["fresh", "finalize", "construct_with_prior"])
+def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp_path, mode):
     import asyncio
     import json
     import time
@@ -123,11 +123,15 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         raise AssertionError("Synthetic author needs no shell")
 
     async def complete(payload):
-        if finalize:
-            assert {t["function"]["name"] for t in payload["tools"]} == {
-                "submit_artifact", "revise_artifact"
-            }
-            assert "response_format" not in payload
+        tool_names = {t["function"]["name"] for t in payload["tools"]}
+        expected_tools = {"submit_artifact", "revise_artifact"}
+        if mode != "finalize":
+            expected_tools.add("shell")
+        assert tool_names == expected_tools
+        assert "response_format" not in payload
+        if mode == "construct_with_prior":
+            assert "Inspect the actual input keys" in payload["messages"][0]["content"]
+            assert "prior_worker_draft" in payload["messages"][1]["content"]
         return {
             "choices": [
                 {
@@ -171,7 +175,8 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
             },
             root=root,
             config={"reference_seconds": 600, "request_timeout_seconds": 600,
-                    **({"prior_author_files": str(prior)} if finalize else {})},
+                    **({"prior_author_files": str(prior)} if mode != "fresh" else {}),
+                    **({"authoring_mode": "construct"} if mode == "construct_with_prior" else {})},
             endpoint="unused",
             credential="unused",
             deadline=time.time() + 60,
