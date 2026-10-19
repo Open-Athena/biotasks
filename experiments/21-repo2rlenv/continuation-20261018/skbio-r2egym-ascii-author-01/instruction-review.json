@@ -1,0 +1,35 @@
+{
+  "stage": "independent_static_instruction_source_contract_mismatch_not_admitted",
+  "candidate_id": "3b2def7bb1cab14cd3c0",
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "independently_admitted": false,
+  "raw_model_instruction_equals_saved_instruction": true,
+  "instruction_sha256": "7240a7b57bfcd2deccd51be792153088b2346b43152fdc9dfe2eb078ff813def",
+  "instruction_format": "valid_single_paragraph; zero newlines alone is not a format failure",
+  "findings": [
+    {
+      "kind": "reference_instruction_contract_mismatch",
+      "instruction_claim": "The lowercase constructor parameter (True or a metadata key) ... those characters are uppercased and flagged in the positional metadata",
+      "reference_behavior": "Constructor uppercases for True or string, but writes self.positional_metadata[lowercase] only under `if lowercase is not True`. Boolean True has no named mask column.",
+      "evidence_member": "native/generation/candidates/3b2def7bb1cab14cd3c0/base/skbio/sequence/_sequence.py",
+      "evidence_member_sha256": "7de693e760cfa63118a1f08dae9c2d55005cfcba0db120bd5d18cea5201a7fcc",
+      "source_lines": [
+        938,
+        949,
+        950
+      ],
+      "consequence": "The authored statement extends mask-metadata behavior to the boolean case beyond reference behavior."
+    }
+  ],
+  "limits": [
+    "Source review only; no extra runtime controls dispatched for this authored instruction.",
+    "Native4F2P/316P2P contrast is preserved independently; it does not prove instruction-reference agreement.",
+    "Other ambiguity, including degenerate-character wording, is not treated as a separately proved failure."
+  ],
+  "model_calls_consumed": 1,
+  "native_author_call_ceiling": 1,
+  "remaining_calls": 0,
+  "native_caps_reset": false,
+  "automatic_repair_dispatched": false
+}
