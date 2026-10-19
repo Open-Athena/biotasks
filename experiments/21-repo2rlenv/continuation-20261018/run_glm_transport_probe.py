@@ -9,6 +9,19 @@ from pathlib import Path
 import httpx
 
 
+def application_denial(response):
+    try:
+        data = response.json()
+    except ValueError:
+        return False
+    if not isinstance(data, dict):
+        return False
+    # Iris's native proxy deliberately maps an upstream 401 to this exact
+    # tagged 502. A generic 502, including the original port-zero connection
+    # failure, does not establish application authentication and is rejected.
+    return (response.status_code == 401 and data.get('error') == 'unauthorized') or (response.status_code == 502 and data.get('error') == 'upstream refused the controller (401)')
+
+
 def main():
     for name in ('httpx', 'httpcore'):
         logging.getLogger(name).setLevel(logging.WARNING)
@@ -24,7 +37,7 @@ def main():
         headers = {'X-Biotasks21-Inference-Token': token, 'Content-Type': 'application/json'}
         with httpx.Client(timeout=45, follow_redirects=False) as client:
             missing = client.post(base + '/v1/transport-check', content=raw)
-            record['checks'].append({'case': 'missing_application_bearer', 'status': missing.status_code, 'passed': missing.status_code == 401})
+            record['checks'].append({'case': 'missing_application_bearer', 'status': missing.status_code, 'passed': application_denial(missing), 'denial_contract': 'direct application401 or exact Iris upstream401 translation; generic502 rejected'})
             invalid = client.post(base + '/v1/transport-check', json={**payload, 'max_tokens': 131072}, headers=headers)
             record['checks'].append({'case': 'authoring_allowance_rejected', 'status': invalid.status_code, 'passed': invalid.status_code == 400})
             valid = client.post(base + '/v1/transport-check', content=raw, headers=headers)
