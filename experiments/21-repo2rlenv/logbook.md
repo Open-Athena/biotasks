@@ -1846,3 +1846,9 @@ All six Stockholm controls executed with parsed native grades. Independent raw-t
 Prepared the remaining scikit-bio Smith allowance of at most two new candidates, excluding all eight charged IDs, preserving the pinned profile/seed, and stopping after one executable contrast. Preparation is not a dispatch or candidate charge.
 
 Stockholm snapshot 9f26e3a7b6d96bded2b5181f6e747c0e9c03a19f16a39ed3c578eeb1b3513f0d passed anonymous verification of 25 objects and 166 archive members. Exact sandbox 35a77edc-1ae4-479d-8726-028d99ebcc13 returns 404; both slots released. Smith continuation03 submitted at 16:40:19 UTC and confirmed running on reserved TRC at 16:40:34, with at most two new candidates and zero model calls. Conservative reservations are $1,248/$2,000, not invoices.
+
+### 2026-10-19 — Smith resumed schedule yields zero attempts; cost attribution expanded
+
+Smith continuation03 completed healthy bootstrap (34 tests), then zero attempted mutations. The native worker enumerates only max_candidates before filtering excluded IDs; the shrinking two-candidate limit plus retained seed25 produced no new work. This is not universal source-pool exhaustion and charges zero candidates. Static source inspection records the ordering; optional local enumeration replay was unavailable because libcst is not installed. Prepared the next integer seed26 with unchanged source/test profile, all eight exclusions and at most two new attempts; no outcome-based seed search.
+
+Refreshed retained lifecycle evidence: 97 unique terminated sandboxes, 13.6585 recorded sandbox-hours, no conflicts. Exact cohort evidence attributes 56 to routes and leaves 41 unassigned. Partial native-commit compute is $0.060945/accepted task and Smith $0.054029/accepted task, including the latest attributable failures; neither is a full production cost. These cost records precede continuation03 recovery.
