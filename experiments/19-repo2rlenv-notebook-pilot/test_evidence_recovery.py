@@ -5,7 +5,7 @@ import hashlib
 import json
 
 import pytest
-from recover_evidence import main
+from recover_evidence import main, priority
 
 
 def prepare(tmp_path, monkeypatch):
@@ -49,3 +49,24 @@ def test_recovery_rejects_changed_evidence(tmp_path, monkeypatch, capsys):
     with pytest.raises(ValueError, match="original export hash"):
         main()
     assert "RECOVERY_COMPLETE " not in capsys.readouterr().out
+
+
+def test_reference_lock_is_recovered_before_tool_traces(tmp_path, monkeypatch, capsys):
+    records = prepare(tmp_path, monkeypatch)
+    name = "reference-setup/setup/trials/1/uv.lock"
+    data = b"# resolved dependencies\n" + b" " * 400_000
+    path = tmp_path / name
+    path.parent.mkdir(parents=True)
+    path.write_bytes(data)
+    lock = {"path": name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+    records.append(lock)
+    (tmp_path / "export-manifest.json").write_text(json.dumps({"files": records}))
+    assert priority(lock) < priority({"path": "reference-setup/worker/trace.jsonl"})
+    main()
+    parts = []
+    for line in capsys.readouterr().out.splitlines():
+        if line.startswith("RECOVERY_CHUNK "):
+            chunk = json.loads(line.removeprefix("RECOVERY_CHUNK "))
+            if chunk["path"] == name:
+                parts.append(chunk["data"])
+    assert base64.b64decode("".join(parts)) == data

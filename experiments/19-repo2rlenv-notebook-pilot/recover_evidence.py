@@ -33,6 +33,14 @@ SELECTED = {
 
 def priority(entry):
     name = entry["path"]
+    if name.startswith(("reference-setup/", "reference-replay/")) and (
+        name.rsplit("/", 1)[-1]
+        in {"configuration.json", "result.json", "outcome.json", "cleanup.json", "uv.lock", "system-prompt.md"}
+        or "/candidate/" in name
+        or "/frozen/" in name
+    ):
+        # Preserve replay prerequisites before verbose accumulated tool traces.
+        return (0, name)
     if name.startswith(("grading/", "native/")) and name.rsplit("/", 1)[-1] in {
         "materialization-candidate.json",
         "manifest.json",
@@ -115,10 +123,12 @@ def main():
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.
         native_trajectory = relative.startswith("native/") and relative.endswith("/agent/trajectory.json")
+        reference_lock = relative.startswith(("reference-setup/", "reference-replay/")) and relative.endswith("/uv.lock")
         if (
             entry["bytes"] > 256_000
             and not relative.startswith(("preparation/", "schema-probe/", "specification/"))
             and not native_trajectory
+            and not reference_lock
         ) or total + entry["bytes"] > 4_000_000:
             skipped.append(relative)
             print("RECOVERY_SKIPPED " + json.dumps(entry), flush=True)
