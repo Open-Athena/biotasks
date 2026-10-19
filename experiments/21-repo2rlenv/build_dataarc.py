@@ -22,13 +22,31 @@ from repo2rlenv.spec.recipe_options import DataArcOptions
 
 def prepare(spec, manifest, settings):
     options = DataArcOptions.model_validate(manifest['recipes']['dataarc']['options'])
-    if (options.target, options.max_candidates, options.max_repairs) != (3, 10, 2):
-        raise ValueError('Unexpected candidate or repair bounds')
+    bounds = manifest.get('continuation_bounds')
+    if bounds is None:
+        if (options.target, options.max_candidates, options.max_repairs) != (3, 10, 2):
+            raise ValueError('Unexpected candidate or repair bounds')
+    else:
+        prior, admitted, batch = (bounds[key] for key in (
+            'prior_charged_candidates', 'prior_independent_admissions', 'this_run_max_candidates'))
+        consumed = bounds['consumed_seed_sha256']
+        if (bounds['campaign_candidate_cap'] != 10 or bounds['campaign_target'] != 3
+                or any(type(value) is not int for value in (prior, admitted, batch))
+                or not 0 <= admitted <= prior < 10 or admitted >= 3
+                or not 1 <= batch <= 10 - prior
+                or len(consumed) != len(set(consumed)) or len(consumed) > prior
+                or options.max_candidates != batch
+                or options.target != min(3 - admitted, batch)
+                or options.max_repairs != 2
+                or set(options.exclude_seed_sha256) != set(consumed)):
+            raise ValueError('Continuation would reset or exceed native campaign bounds')
     pipeline = DataArcPipeline(spec, options)
     seeds = recipe.load_seeds(spec.source.path, options)
     hashes = [hashlib.sha256(json.dumps(x, sort_keys=True).encode()).hexdigest() for x in seeds]
     if hashes != [x['sha256'] for x in manifest['recipes']['dataarc']['records']]:
         raise ValueError('Parent-derived seed records changed')
+    if bounds is not None and not set(bounds['consumed_seed_sha256']) <= set(hashes):
+        raise ValueError('Consumed seeds must belong to the frozen parent collection')
     if settings['stage'] != 'generation_only' or settings['paid_fallback']:
         raise ValueError('Expected approved generation adaptation')
     if (spec.llm.model != 'glm-5.3' or spec.llm.fallback is not None

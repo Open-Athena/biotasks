@@ -37,4 +37,35 @@ for change in ('hash', 'repairs', 'concurrency', 'timeout'):
         pass
     else:
         raise AssertionError('Accepted changed ' + change)
+
+continued = copy.deepcopy(manifest)
+consumed = [manifest['recipes']['dataarc']['records'][0]['sha256']]
+continued['continuation_bounds'] = {
+    'campaign_candidate_cap': 10, 'campaign_target': 3,
+    'prior_charged_candidates': 1, 'prior_independent_admissions': 0,
+    'this_run_max_candidates': 1, 'consumed_seed_sha256': consumed,
+}
+continued['recipes']['dataarc']['options'].update(
+    target=1, max_candidates=1, exclude_seed_sha256=consumed)
+_, options = prepare(spec, continued, settings)
+assert options.max_candidates + continued['continuation_bounds']['prior_charged_candidates'] <= 10
+for change in ('recharge_consumed', 'overrun', 'reset_prior', 'unknown_seed'):
+    altered = copy.deepcopy(continued)
+    if change == 'recharge_consumed':
+        altered['recipes']['dataarc']['options']['exclude_seed_sha256'] = []
+    elif change == 'overrun':
+        altered['continuation_bounds']['this_run_max_candidates'] = 10
+        altered['recipes']['dataarc']['options']['max_candidates'] = 10
+    elif change == 'reset_prior':
+        altered['continuation_bounds']['prior_charged_candidates'] = 0
+    else:
+        altered['continuation_bounds']['consumed_seed_sha256'] = ['0' * 64]
+        altered['recipes']['dataarc']['options']['exclude_seed_sha256'] = ['0' * 64]
+    try:
+        prepare(spec, altered, settings)
+    except ValueError:
+        pass
+    else:
+        raise AssertionError('Accepted invalid continuation ' + change)
 print('PASS: actual native parent loader identities and rejection of changed seeds, repair bounds, concurrency and deadline; zero live calls.')
+print('PASS: bounded continuation accepts existing pool, excludes consumed IDs and rejects recharging, cap overruns and counter resets.')
