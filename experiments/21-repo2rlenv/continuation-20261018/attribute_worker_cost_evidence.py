@@ -40,6 +40,17 @@ def main():
         'authored-skbio-tsallis-native-01/controller-small-summary.json': 'repo_mutate/swe_smith',
     }
     source_hashes = {}
+    additional = HERE / 'additional-worker-route-provenance.json'
+    raw = additional.read_bytes()
+    source_hashes[additional.name] = hashlib.sha256(raw).hexdigest()
+    inventory_by_id = {w['worker_id']: w for w in inventory['workers']}
+    for projection in json.loads(raw)['workers']:
+        identity, route = projection['worker_id'], projection['route']
+        assert projection['original_worker_sha256'] in {
+            source['original_sha256'] for source in inventory_by_id[identity]['sources']
+        }
+        assert identity not in exact or exact[identity] == route
+        exact[identity] = route
     for source, route in continuation_sources.items():
         raw = (HERE / source).read_bytes()
         source_hashes[source] = hashlib.sha256(raw).hexdigest()
@@ -59,7 +70,7 @@ def main():
                 matches.update(routes_by_cohort[cohort])
                 sources.append(cohort)
         route = exact.get(identity)
-        basis = 'exact_sandbox_id_in_reviewed_continuation_receipt' if route else None
+        basis = 'exact_sandbox_id_in_reviewed_route_receipt' if route else None
         if not route and len(matches) == 1:
             route = next(iter(matches))
             basis = 'retained_archive_cohort_matches_first_pass_generation_provenance'

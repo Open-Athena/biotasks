@@ -1854,3 +1854,11 @@ Smith continuation03 completed healthy bootstrap (34 tests), then zero attempted
 Refreshed retained lifecycle evidence: 97 unique terminated sandboxes, 13.6585 recorded sandbox-hours, no conflicts. Exact cohort evidence attributes 56 to routes and leaves 41 unassigned. Partial native-commit compute is $0.060945/accepted task and Smith $0.054029/accepted task, including the latest attributable failures; neither is a full production cost. These cost records precede continuation03 recovery.
 
 Continuation03 snapshot 9a10e56004e302de921e790bcb094b4a3ee5963cb97fdba8219bdf35d76a300d passed anonymous verification of 27 objects and 1,032 archive members; exact sandbox absent and both slots released. Continuation04 with fixed seed26 was submitted at 16:47:41 UTC and confirmed running at 16:47:50. Conservative estimates/reservations now $1,253, leaving $747; charges and credits remain unverified.
+
+### 2026-10-19 — Early failed-worker cost provenance recovered
+
+Five previously unassigned workers have explicit recipe fields in their preserved controller results: three SWE-Flow and two R2E. Added minimal public projections with original worker/result hashes, without credential/configuration payloads. Route attribution now covers 61/97 retained terminated sandboxes, leaving 36 unassigned. Partial Flow compute totals $0.117495 ($0.058748/accepted task); R2E totals $0.567475 with zero admissions and undefined per-accepted-task cost. Exact-ID uniqueness, source hashes and route arithmetic verified. These remain incomplete list-rate estimates, not invoices or production prices.
+
+### 2026-10-19 — Seed26 yields a new Pielou evenness mutation
+
+Smith continuation04 completed one new attempt and one executable pielou_e contrast (2b1ed7afc9535c5c23fb), with zero model calls. Original archive recovered with matching server SHA256; exact sandbox independently absent. Cumulative scikit-bio Smith charge is 9/10 with two accepted tasks and one discovery attempt remaining. Prepared unchanged native authoring for this new ID on the free endpoint, maximum two native author calls, 131072 combined output tokens, requested medium effort, 1200-second request timeout. No task-specific Codex instruction or feedback was added. This is a contrast, not task admission.
