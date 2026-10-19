@@ -1,6 +1,7 @@
 {
-  "observed_utc": "2026-10-19T18:41:55.178890+00:00",
+  "observed_utc": "2026-10-19T20:35:22.719909+00:00",
   "stage": "full_original_target_tracking_not_a_completion_claim",
+  "admission_scope": "Legacy mixed automatic and assisted admissions; manual final assessment is allowed. Primary automatic-output eligibility remains a separate provenance audit.",
   "target_policy": "Three independently validated tasks per applicable route/repository; seed routes have named input cohorts. Maximum ten candidate attempts per unit, with original operational budget stops. Unsupported native language/profile cells have no native target; blocked cells retain explicit shortfall.",
   "first_pass_census_sha256": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
   "rows": [
@@ -1390,11 +1391,11 @@
       "shortfall": 3,
       "first_pass_blind_attempts": 0,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 1,
-      "remaining_candidate_allowance": 9,
-      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
+      "charged_candidate_attempts": 2,
+      "remaining_candidate_allowance": 8,
+      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
       "state": "target_not_met_work_remaining",
-      "next_action": "Continue from reconciled remaining candidate allowance with new frozen eligible inputs; assess retained exports first. Preserve rejected originals and native repair limits, then independently validate and run one blind attempt per admission.",
+      "next_action": "Original automatic attempt failed at gateway120s with one uncertain builder request; preserve consumed seed and do not replay it. Verify generic endpoint proxy timeout before any fresh seed. No task-specific fixes or author feedback.",
       "native_reward_semantics": [],
       "original_status": "Accepted PR2633 parent; build attempt timed out with one candidate, two completed GLM responses and a third request without preserved response. First response had zero test definitions; second contained invalid Python. No validated exports or solves. Original responses publicly archived and cleanup independently verified. Evidence: dataarc-build-01 and hf-dataarc-build-01-upload-receipt.json.",
       "first_pass_sources": [

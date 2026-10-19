@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T18:41:46.878341+00:00",
+  "observed_utc": "2026-10-19T20:34:38.357618+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -209,17 +209,23 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/dataarc@pr2633-parent-v1": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 2,
+      "remaining_allowance": 8,
       "receipts": [
         {
           "source": "evidence/dataarc-build-01/summary.json",
           "sha256": "1746ba35288d595c2d94223f78e71cee6a9605dde618a8062dd16b7e0318bd57",
           "counter_key": "candidate_directories",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/dataarc-automatic-02/assessment.json",
+          "sha256": "84ab4afa7b1800bdb633739531dd658828e6eb6c512ee9d117f02caac8285328",
+          "counter_key": "candidate_directories",
+          "charged": 1
         }
       ],
-      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance.",
+      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it.",
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/tmax@tmax-biological-v1": {

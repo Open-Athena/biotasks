@@ -1,17 +1,23 @@
 {
-  "observed_utc": "2026-10-19T20:24:31.214652+00:00",
+  "observed_utc": "2026-10-19T20:26:36.388051+00:00",
   "job_id": "/exedev/biotasks21-trc-dataarc-automatic-20261019-02",
-  "state": "RUNNING",
+  "state": "FAILED",
   "tasks": [
     {
-      "state": "RUNNING",
-      "exit_code": 0,
+      "state": "FAILED",
+      "exit_code": 1,
       "started_utc": "Timestamp(2026-10-19T20:23:52.069000+00:00)",
-      "finished_utc": null,
-      "has_error": false,
+      "finished_utc": "Timestamp(2026-10-19T20:26:25.728000+00:00)",
+      "has_error": true,
       "placement_verified": true,
-      "controller_backend": "existing_reserved_TRC_CPU"
+      "controller_backend": "existing_reserved_TRC_CPU",
+      "output_archive": {
+        "state": "uploaded",
+        "size_bytes": 36492,
+        "sha256": "4605f5ac24f59018a9d749300f2ce12bfcb8d3372523cb02b69bfac0366b28b3",
+        "retention_days": 7
+      }
     }
   ],
-  "model_calls": "Not inferable from job state; inspect native archive and inference receipts after completion."
+  "model_calls": "inspect_recovered_native_sdk_probe_and_client_usage"
 }
