@@ -27,6 +27,15 @@ from run_robbins_native_controls import run_case
 
 
 PROFILES = {
+    "2b1ed7afc9535c5c23fb": {
+        "recipe": "swe_smith",
+        "source": "skbio/diversity/alpha/_base.py",
+        "function": "pielou_e",
+        "negative_bodies": {
+            "incorrect_constant_one": "return 1.0",
+            "incorrect_observed_richness": "return float(np.count_nonzero(counts))",
+        },
+    },
     "f4c2d9ca15940793cc88": {
         "recipe": "swe_smith",
         "source": "skbio/diversity/alpha/_base.py",
@@ -97,6 +106,8 @@ def replace_body(source, name, body):
 
 
 def alternative_source(source, profile):
+    if profile["function"] == "pielou_e":
+        return replace_body(source, "pielou_e", "S = counts.size\nif S == 0:\n    return np.nan\nif S < 2:\n    return 1.0\nentropy = shannon(counts, base=base)\ndenominator = np.log(S)\nif base is not None:\n    denominator = denominator / np.log(base)\nreturn entropy / denominator")
     if profile.get("alternative_kind") == "squared_residual_division":
         old = "return (((p[0] * n * (p[1] + n)) - y) ** 2).sum()"
         assert source.count(old) == 1

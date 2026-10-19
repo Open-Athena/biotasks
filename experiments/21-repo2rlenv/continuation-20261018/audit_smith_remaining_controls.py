@@ -10,6 +10,7 @@ from audit_authored_native_evidence import source_from_script
 from audit_robbins_evidence import inventory
 
 PROFILES = {
+    '2b1ed7afc9535c5c23fb': ('pielou_e', ('incorrect_constant_one', 'incorrect_observed_richness')),
     'f4c2d9ca15940793cc88': ('michaelis_menten_fit', ('incorrect_constant_one', 'incorrect_observed_richness')),
     '2bc29fe20c34fbca2661': ('michaelis_menten_fit', ('incorrect_constant_one', 'incorrect_observed_richness')),
     'f39ded25ef48a6575366': ('tsallis', ('incorrect_zero', 'incorrect_ignore_order')),
