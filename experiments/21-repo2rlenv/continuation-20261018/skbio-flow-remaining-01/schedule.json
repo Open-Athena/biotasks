@@ -1,0 +1,477 @@
+{
+  "function_catalog": {
+    "skbio/diversity/alpha/_base.py:1022:pielou_e": {
+      "line": 1023,
+      "name": "pielou_e",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def pielou_e(counts, base=None):\n    r\"\"\"Calculate Pielou's evenness index.\n\n    Pielou's evenness index (:math:`J'`), a.k.a., Shannon's equitability index\n    (:math:`E_H`), is defined as:\n\n    .. math::\n\n       J' = \\frac{(H)}{\\log(S)}\n\n    where :math:`H` is the Shannon index of the sample and :math:`S` is the\n    number of taxa in the sample.\n\n    That is, :math:`J'` is the ratio of the actual Shannon index of the sample\n    versus the maximum-possible Shannon index when all taxa have the same\n    number of individuals. :math:`J'` ranges between 0 and 1.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    base : int or float, optional\n        Logarithm base to use in the calculation. Default is ``e``.\n\n    Returns\n    -------\n    float\n        Pielou's evenness index.\n\n    See Also\n    --------\n    shannon\n    heip_e\n\n    Notes\n    -----\n    Pielou's evenness index was originally described in [1]_.\n\n    When there is only one taxon, the return value is 1.0.\n\n    References\n    ----------\n    .. [1] Pielou, E. C., 1966. The measurement of diversity in different types\n       of biological collections. Journal of Theoretical Biology, 13, 131-44.\n\n    \"\"\"\n    if (S := counts.size) == 0:\n        return np.nan\n    elif S == 1:\n        return 1.0\n    H = shannon(counts, base=base)\n    H_max = np.log(S)\n    if base is not None:\n        H_max /= np.log(base)\n    return H / H_max"
+    },
+    "skbio/diversity/alpha/_base.py:107:brillouin_d": {
+      "line": 108,
+      "name": "brillouin_d",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def brillouin_d(counts):\n    r\"\"\"Calculate Brillouin's diversity index.\n\n    Brillouin's diversity index (:math:`H_B`) is defined as:\n\n    .. math::\n\n       H_B = \\frac{\\ln N!-\\sum_{i=1}^S{\\ln n_i!}}{N}\n\n    where :math:`N` is the total number of individuals in the sample, :math:`S`\n    is the number of taxa, and :math:`n_i` is the number of individuals in the\n    :math:`i^{\\text{th}}` taxon.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Brillouin's diversity index.\n\n    Notes\n    -----\n    Brillouin's diversity index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Brillouin, L. (1956). Science and Information Theory. Academic\n       Press. New York.\n\n    \"\"\"\n    return (gammaln((N := counts.sum()) + 1) - gammaln(counts + 1).sum()) / N"
+    },
+    "skbio/diversity/alpha/_base.py:1080:renyi": {
+      "line": 1081,
+      "name": "renyi",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def renyi(counts, order=2, base=None):\n    r\"\"\"Calculate Renyi entropy.\n\n    Renyi entropy (:math:`^qH`) is a generalization of Shannon index, with an\n    exponent (order) :math:`q` instead of 1. It is defined as:\n\n    .. math::\n\n       ^qH = \\frac{1}{1-q}\\log_b{(\\sum_{i=1}^S p_i^q)}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    order : int or float, optional\n        Order (:math:`q`). Ranges between 0 and infinity. Default is 2.\n    base : int or float, optional\n        Logarithm base to use in the calculation. Default is ``e``.\n\n    Returns\n    -------\n    float\n        Renyi entropy.\n\n    See Also\n    --------\n    hill\n    inv_simpson\n    shannon\n    tsallis\n\n    Notes\n    -----\n    Renyi entropy was originally defined in [1]_. It is a generalization of\n    multiple entropy notions, as determined by the order (:math:`q`). Special\n    cases of Renyi entropy include:\n\n    - :math:`q=0`: Max-entropy (:math:`\\log{S}`).\n    - :math:`q \\to 1`: Shannon entropy (index).\n    - :math:`q=2`: Collision entropy, a.k.a, Renyi's quadratic entropy, or\n      \"Renyi entropy\". Equivalent to the logarithm of inverse Simpson index.\n    - :math:`q \\to \\infty`: Min-entropy (:math:`-\\log{\\max{p}}`).\n\n    Renyi entropy is equivalent to the logarithm of Hill number.\n\n    References\n    ----------\n    .. [1] R\u00e9nyi, A. (1961, January). On measures of entropy and information.\n       In Proceedings of the fourth Berkeley symposium on mathematical\n       statistics and probability, volume 1: contributions to the theory of\n       statistics (Vol. 4, pp. 547-562). University of California Press.\n\n    \"\"\"\n    if (S := counts.size) == 0:\n        return np.nan\n    elif S == 1:\n        return 0.0\n\n    probs = counts / counts.sum()\n\n    # max-entropy\n    if order == 0:\n        qH = np.log(S)\n    # Shannon entropy\n    elif order == 1:\n        qH = _entropy(probs)\n    # min-entropy\n    elif np.isposinf(order):\n        qH = -np.log(probs.max())\n    else:\n        qH = np.log((probs**order).sum()) / (1 - order)\n\n    if base is not None:\n        qH /= np.log(base)\n    return qH"
+    },
+    "skbio/diversity/alpha/_base.py:1161:robbins": {
+      "line": 1162,
+      "name": "robbins",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def robbins(counts):\n    r\"\"\"Calculate Robbins' estimator for probability of unobserved outcomes.\n\n    Robbins' estimator is defined as:\n\n    .. math::\n\n       \\frac{F_1}{N}\n\n    where :math:`F_1` is the number of singleton taxa and and :math:`N` is the\n    total number of individuals in the sample.\n\n    The result can be interpreted as the probability of discovering a new taxon\n    at the :math:`N`-th individual given the current :math:`N - 1` individuals.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Robbins' estimator.\n\n    See Also\n    --------\n    goods_coverage\n\n    Notes\n    -----\n    Robbins' estimator is defined in [1]_.\n\n    References\n    ----------\n    .. [1] Robbins, H. E. (1968). Estimating the total probability of the\n       unobserved outcomes of an experiment. Ann. Math. Statist., 39(6),\n       256-257.\n\n    \"\"\"\n    return (counts == 1).sum() / counts.sum()"
+    },
+    "skbio/diversity/alpha/_base.py:1205:_entropy": {
+      "line": 1205,
+      "name": "_entropy",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def _entropy(probs):\n    \"\"\"Calculate entropy.\"\"\"\n    return (-probs * np.log(probs)).sum()"
+    },
+    "skbio/diversity/alpha/_base.py:1210:_perplexity": {
+      "line": 1210,
+      "name": "_perplexity",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def _perplexity(probs):\n    \"\"\"Calculate perplexity.\"\"\"\n    return (probs**-probs).prod()"
+    },
+    "skbio/diversity/alpha/_base.py:1215:shannon": {
+      "line": 1216,
+      "name": "shannon",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def shannon(counts, base=None, exp=False):\n    r\"\"\"Calculate Shannon's diversity index.\n\n    Shannon's diversity index, :math:`H'`, a.k.a., Shannon index, or Shannon-\n    Wiener index, is equivalent to entropy in information theory. It is defined\n    as:\n\n    .. math::\n\n       H' = -\\sum_{i=1}^S\\left(p_i\\log_b(p_i)\\right)\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    The logarithm base :math:`b` defaults to ``e``, but may be 2, 10 or other\n    custom values.\n\n    The exponential of Shannon index, :math:`exp(H')`, measures the effective\n    number of species (a.k.a., true diversity). It is equivalent to perplexity\n    in information theory, or Hill number with order 1 (:math:`^1D`). The value\n    is independent from the base:\n\n    .. math::\n\n       exp(H') = b ^ {-\\sum_{i=1}^S\\left(p_i\\log_b(p_i)\\right)} = \\prod_{i=1}\n       ^{S}p_i^{-p_i}\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    base : int or float, optional\n        Logarithm base to use in the calculation. Default is ``e``.\n\n        .. versionchanged:: 0.6.1\n\n            The default logarithm base was changed from 2 to :math:`e` for\n            consistency with the majority of literature.\n\n    exp : bool, optional\n        If True, return the exponential of Shannon index.\n\n    Returns\n    -------\n    float\n        Shannon's diversity index.\n\n    Notes\n    -----\n    Shannon index (i.e., entropy) was originally proposed in [1]_. The\n    exponential of Shannon index (i.e., perplexity) was discussed in [2]_ in\n    the context of community diversity.\n\n    References\n    ----------\n    .. [1] Shannon, C. E. (1948). A mathematical theory of communication. The\n       Bell system technical journal, 27(3), 379-423.\n\n    .. [2] Jost, L. (2006). Entropy and diversity. Oikos, 113(2), 363-375.\n\n    \"\"\"\n    probs = counts / counts.sum()\n\n    # perplexity\n    if exp is True:\n        return _perplexity(probs)\n\n    # entropy\n    else:\n        H = _entropy(probs)\n        if base is not None:\n            H /= np.log(base)\n        return H"
+    },
+    "skbio/diversity/alpha/_base.py:1291:simpson": {
+      "line": 1291,
+      "name": "simpson",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def simpson(counts, finite=False):\n    r\"\"\"Calculate Simpson's diversity index.\n\n    Simpson's diversity index, a.k.a., Gini-Simpson index, or Gini impurity,\n    is defined as:\n\n    .. math::\n\n       1 - \\sum_{i=1}^S{p_i^2}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Therefore, Simpson's diversity index is also denoted as :math:`1 - D`, in\n    which :math:`D` is the Simpson's dominance index.\n\n    Simpson's diversity index can be interpreted as the probability that two\n    randomly selected individuals belong to different taxa. It is also known\n    as Hurlbert's probability of interspecific encounter (PIE).\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling when calculating :math:`D`.\n\n    Returns\n    -------\n    float\n        Simpson's diversity index.\n\n    See Also\n    --------\n    dominance\n\n    Notes\n    -----\n    Simpson's diversity index was originally described in [1]_.\n\n    Hurlbert's probability of interspecific encounter was described in [2]_.\n\n    References\n    ----------\n    .. [1] Simpson, E. H. (1949). Measurement of diversity. Nature, 163(4148),\n       688-688.\n\n    .. [2] Hurlbert, S. H. (1971). The nonconcept of species diversity: a\n       critique and alternative parameters. Ecology, 52(4), 577-586.\n\n    \"\"\"\n    return 1 - dominance(counts, finite=finite)"
+    },
+    "skbio/diversity/alpha/_base.py:1345:simpson_d": {
+      "line": 1345,
+      "name": "simpson_d",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def simpson_d(counts, finite=False):\n    \"\"\"Calculate Simpson's dominance index, a.k.a. Simpson's D.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling.\n\n    Returns\n    -------\n    int\n        Simpson's dominance index.\n\n    See Also\n    --------\n    dominance\n    simpson\n    simpson_e\n\n    Notes\n    -----\n    ``simpson_d`` is an alias for ``dominance``.\n\n    \"\"\"\n    return dominance(counts, finite=finite)"
+    },
+    "skbio/diversity/alpha/_base.py:1374:simpson_e": {
+      "line": 1375,
+      "name": "simpson_e",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def simpson_e(counts):\n    r\"\"\"Calculate Simpson's evenness index.\n\n    Simpson's evenness (a.k.a., equitability) index :math:`E_D` is defined as:\n\n    .. math::\n\n       E_D = \\frac{1}{D \\times S}\n\n    where :math:`D` is the Simpson's dominance index and :math:`S` is the\n    number of taxa in the sample.\n\n    That is, :math:`E_D` is the ratio of the minimum-possible Simpson's\n    dominance index when all taxa have the same number of individuals:\n    :math:`D_{min} = 1 / S`, versus the actual Simpson's dominance index of the\n    sample.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Simpson's evenness index.\n\n    See Also\n    --------\n    dominance\n    simpson\n\n    Notes\n    -----\n    The implementation here is based on the description given in [1]_ and [2]_.\n\n    References\n    ----------\n    .. [1] Simpson, E. H. (1949). Measurement of diversity. nature, 163(4148),\n       688-688.\n\n    .. [2] Pielou, E. C. (1966). The measurement of diversity in different\n       types of biological collections. Journal of theoretical biology, 13,\n       131-144.\n\n    \"\"\"\n    # Note: the finite version of simpson_e might be: 1 / (D(S + 1)), because\n    # S + 1 is the maximum possible finite D given S. Otherwise, the result can\n    # be greater than 1 for small samples. However, I didn't find literature\n    # stating this. Therefore, the `finite` parameter is not used here.\n    return 1 / (counts.size * dominance(counts))"
+    },
+    "skbio/diversity/alpha/_base.py:1428:singles": {
+      "line": 1429,
+      "name": "singles",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def singles(counts):\n    \"\"\"Calculate number of single-occurrence taxa (singletons).\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    int\n        Singleton count.\n\n    \"\"\"\n    return (counts == 1).sum()"
+    },
+    "skbio/diversity/alpha/_base.py:1446:sobs": {
+      "line": 1448,
+      "name": "sobs",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def sobs(counts):\n    \"\"\"Calculate the observed species richness of a sample.\n\n    Observed species richness, usually denoted as :math:`S_{obs}` or simply\n    :math:`S`, is the number of distinct species (i.e., taxa), or any discrete\n    groups of biological entities found in a sample.\n\n    It should be noted that observed species richness is smaller than or equal\n    to the true species richness of a population from which the sample is\n    collected.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    int\n        Observed species richness.\n\n    See Also\n    --------\n    observed_features\n\n    \"\"\"\n    return counts.size"
+    },
+    "skbio/diversity/alpha/_base.py:144:dominance": {
+      "line": 145,
+      "name": "dominance",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def dominance(counts, finite=False):\n    r\"\"\"Calculate Simpson's dominance index.\n\n    Simpson's dominance index, a.k.a. Simpson's :math:`D`, measures the degree\n    of concentration of taxon composition of a sample. It is defined as:\n\n    .. math::\n\n       D = \\sum_{i=1}^S{p_i^2}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Simpson's :math:`D` ranges from 0 (infinite diversity; no dominance) to 1\n    (complete dominance, no diversity).\n\n    Simpson's :math:`D` can be interpreted as the probability that two randomly\n    selected individuals belong to the same taxon.\n\n    Simpson's :math:`D` may be corrected for finite samples to account for the\n    effect of sampling without replacement. This more accurately represents the\n    above probability when the sample is small. It is calculated as:\n\n    .. math::\n\n       D = \\frac{\\sum_{i=1}^s{n_i(n_i - 1))}}{N(N - 1)}\n\n    where :math:`n_i` is the number of individuals in the :math:`i^{\\text{th}}`\n    taxon and :math:`N` is the total number of individuals in the sample.\n\n    Simpson's :math:`D` is sometimes referred to as \"Simpson's index\". It\n    should be noted that :math:`D` is not a measure of community diversity. It\n    is also important to distinguish :math:`D` from Simpson's diversity index\n    (:math:`1 - D`) and inverse Simpson index (:math:`1 / D`), both of which\n    are measures of community diversity.\n\n    Discrepancy exists among literature in using the term \"Simpson index\" and\n    the denotion :math:`D`. It is therefore important to distinguish these\n    metrics according to their mathematic definition.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling.\n\n    Returns\n    -------\n    float\n        Simpson's dominance index.\n\n    See Also\n    --------\n    simpson\n\n    Notes\n    -----\n    Simpson's dominance index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Simpson, E. H. (1949). Measurement of diversity. Nature, 163(4148),\n       688-688.\n\n    \"\"\"\n    if finite:\n        D = (counts * (counts - 1)).sum() / ((N := counts.sum()) * (N - 1))\n    else:\n        D = ((counts / counts.sum()) ** 2).sum()\n    return D"
+    },
+    "skbio/diversity/alpha/_base.py:1477:strong": {
+      "line": 1478,
+      "name": "strong",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def strong(counts):\n    r\"\"\"Calculate Strong's dominance index.\n\n    Strong's dominance index (:math:`D_w`) is defined as\n\n    .. math::\n\n       D_w = max_i[(\\frac{b_i}{N})-\\frac{i}{S}]\n\n    where :math:`b_i` is the sequential cumulative totaling of the\n    :math:`i^{\\text{th}}` taxon abundance values ranked from largest to\n    smallest, :math:`N` is the total number of individuals in the sample, and\n    :math:`S` is the number of taxa in the sample. The expression in\n    brackets is computed for all taxa, and :math:`max_i` denotes the maximum\n    value in brackets for any taxa.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Strong's dominance index.\n\n    Notes\n    -----\n    Strong's dominance index is defined in [1]_.\n\n    References\n    ----------\n    .. [1] Strong, W. L., 2002 Assessing species abundance unevenness within\n       and between plant communities. Community Ecology, 3, 237-246.\n\n    \"\"\"\n    S = counts.size\n    sorted_sum = np.sort(counts)[::-1].cumsum()\n    i = np.arange(1, S + 1)\n    return (sorted_sum / counts.sum() - (i / S)).max()"
+    },
+    "skbio/diversity/alpha/_base.py:1520:tsallis": {
+      "line": 1521,
+      "name": "tsallis",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def tsallis(counts, order=2):\n    r\"\"\"Calculate Tsallis entropy.\n\n    Tsallis entropy (:math:`^qH`), a.k.a. HCDT entropy, is a generalization of\n    Boltzmann-Gibbs entropy with an exponent (order) :math:`q`. It is defined\n    as:\n\n    .. math::\n\n       ^qH = \\frac{1}{q - 1}(1 - \\sum_{i=1}^S p_i^q)\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    order : int or float, optional\n        Order (:math:`q`). Ranges between 0 and infinity. Default is 2.\n\n    Returns\n    -------\n    float\n        Tsallis entropy.\n\n    See Also\n    --------\n    renyi\n    shannon\n    simpson\n    sobs\n\n    Notes\n    -----\n    Tsallis entropy was originally defined in [1]_. Special cases of Tsallis\n    entropy given order :math:`q` include:\n\n    - :math:`q=0`: Observed species richness (:math:`S_{obs}`) minus 1.\n    - :math:`q \\to 1`: Shannon index :math:`H'`.\n    - :math:`q=2`: Simpson diversity index (:math:`1 - D`).\n    - :math:`q \\to \\infty`: 0.\n\n    References\n    ----------\n    .. [1] Tsallis, C. (1988). Possible generalization of Boltzmann-Gibbs\n       statistics. Journal of statistical physics, 52, 479-487.\n\n    \"\"\"\n    if (S := counts.size) == 0:\n        return np.nan\n    elif S == 1:\n        return 0.0\n    probs = counts / counts.sum()\n    if order == 1:\n        return _entropy(probs)\n    elif np.isposinf(order):\n        return 0.0\n    else:\n        return (1 - (probs**order).sum()) / (order - 1)"
+    },
+    "skbio/diversity/alpha/_base.py:20:_validate_alpha": {
+      "line": 20,
+      "name": "_validate_alpha",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def _validate_alpha(empty=None, cast_int=False):\n    \"\"\"Validate counts vector for an alpha diversity metric.\n\n    Parameters\n    ----------\n    func : callable\n        Function that calculates an alpha diversity metric.\n    empty : any, optional\n        Return this value if set instead of calling the function when an input\n        community is empty (i.e., no taxon, or all taxa have zero counts).\n    cast_int : bool, optional\n        Whether cast values into integers, if not already. Default is False.\n\n    Returns\n    -------\n    callable\n        Decorated function.\n\n    Notes\n    -----\n    This function serves as a decorator for individual functions that calculate\n    alpha diversity metrics. The first positional argument of a decorated\n    function must be a 1-D vector of counts/abundances of taxa in a community.\n    Additional arguments may follow.\n\n    \"\"\"\n\n    def decorator(func):\n        @functools.wraps(func)\n        def wrapper(counts, *args, **kwargs):\n            counts = _validate_counts_vector(counts, cast_int)\n\n            # drop zero values, as these represent taxa that are absent from\n            # the community\n            if not (nonzero := counts != 0).all():\n                counts = counts[nonzero]\n\n            # return a value if community is empty (after dropping zeros)\n            if empty is not None and counts.size == 0:\n                return empty\n\n            # call function to calculate alpha diversity metric\n            return func(counts, *args, **kwargs)\n\n        return wrapper\n\n    return decorator"
+    },
+    "skbio/diversity/alpha/_base.py:218:doubles": {
+      "line": 219,
+      "name": "doubles",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def doubles(counts):\n    \"\"\"Calculate number of double-occurrence taxa (doubletons).\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    int\n        Doubleton count.\n\n    \"\"\"\n    return (counts == 2).sum()"
+    },
+    "skbio/diversity/alpha/_base.py:236:enspie": {
+      "line": 236,
+      "name": "enspie",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def enspie(counts, finite=False):\n    r\"\"\"Calculate ENS_pie alpha diversity measure.\n\n    The effective number of species (ENS) derived from Hurlbert's probability\n    of interspecific encounter (PIE) ([1]_, [2]_) is defined as:\n\n    .. math::\n\n       ENS_{pie} = \\frac{1}{\\sum_{i=1}^S{p_i^2}}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion of\n    the sample represented by taxon :math:`i`.\n\n    Therefore, :math:`ENS_{pie}` is equivalent to the inverse Simpson index\n    (``1 / D``).\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling.\n\n    Returns\n    -------\n    float\n        ENS_pie alpha diversity measure.\n\n    See Also\n    --------\n    inv_simpson\n    dominance\n\n    Notes\n    -----\n    ``enspie`` is an alias for ``inv_simpson``.\n\n    References\n    ----------\n    .. [1] Chase, J. M., & Knight, T. M. (2013). Scale-dependent effect sizes\n       of ecological drivers on biodiversity: why standardised sampling is not\n       enough. Ecology letters, 16, 17-26.\n\n    .. [2] Hurlbert, S. H. (1971). The nonconcept of species diversity: a\n       critique and alternative parameters. Ecology, 52(4), 577-586.\n\n    \"\"\"\n    return inv_simpson(counts, finite=finite)"
+    },
+    "skbio/diversity/alpha/_base.py:286:esty_ci": {
+      "line": 287,
+      "name": "esty_ci",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def esty_ci(counts):\n    r\"\"\"Calculate Esty's confidence interval of Good's coverage estimator.\n\n    Esty's confidence interval is defined as:\n\n    .. math::\n\n       F_1/N \\pm z\\sqrt{W}\n\n    where :math:`F_1` is the number of singleton taxa, :math:`N` is the\n    total number of individuals, and :math:`z` is a constant that depends on\n    the targeted confidence and based on the normal distribution.\n\n    :math:`W` is defined as:\n\n    .. math::\n\n       \\frac{F_1(N-F_1)+2NF_2}{N^3}\n\n    where :math:`F_2` is the number of doubleton taxa.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    tuple\n        Esty's confidence interval as ``(lower_bound, upper_bound)``.\n\n    See Also\n    --------\n    goods_coverage\n\n    Notes\n    -----\n    Esty's confidence interval was originally described in [1]_.\n\n    :math:`z` is hardcoded for a 95% confidence interval.\n\n    References\n    ----------\n    .. [1] Esty, W. W. (1983). \"A normal limit law for a nonparametric\n       estimator of the coverage of a random sample\". Ann Statist 11: 905-912.\n\n    \"\"\"\n    N = counts.sum()\n    f1 = (counts == 1).sum()\n    f2 = (counts == 2).sum()\n    z = 1.959963985\n    W = (f1 * (N - f1) + 2 * N * f2) / (N**3)\n    return f1 / N - z * np.sqrt(W), f1 / N + z * np.sqrt(W)"
+    },
+    "skbio/diversity/alpha/_base.py:342:fisher_alpha": {
+      "line": 343,
+      "name": "fisher_alpha",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def fisher_alpha(counts):\n    r\"\"\"Calculate Fisher's alpha, a metric of diversity.\n\n    Fisher's alpha is estimated by solving the following equation for\n    :math:`\\alpha`:\n\n    .. math::\n\n       S=\\alpha\\ln(1+\\frac{N}{\\alpha})\n\n    where :math:`S` is the number of taxa and :math:`N` is the total number\n    of individuals in the sample.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Fisher's alpha.\n\n    Raises\n    ------\n    RuntimeError\n        If the optimizer fails to solve for Fisher's alpha.\n\n    Notes\n    -----\n    Fisher's alpha is defined in [1]_.\n\n    There is no analytical solution to Fisher's alpha. However, one can use\n    optimization techniques to obtain a numeric solution. This function calls\n    SciPy's ``minimize_scalar`` to find alpha. It is deterministic. The result\n    should be reasonably close to the true alpha.\n\n    Alpha can become large when most taxa are singletons. Alpha = +inf when\n    all taxa are singletons.\n\n    When the sample is empty (i.e., all counts are zero), alpha = 0.\n\n    References\n    ----------\n    .. [1] Fisher, R.A., Corbet, A.S. and Williams, C.B., 1943. The relation\n       between the number of taxa and the number of individuals in a random\n       sample of an animal population. The Journal of Animal Ecology, pp.42-58.\n\n    \"\"\"\n    # alpha = +inf when all taxa are singletons\n    if (N := counts.sum()) == (S := counts.size):\n        return np.inf\n\n    # objective function to minimize:\n    # S = alpha * ln (1 + N / alpha), where alpha > 0\n    def f(x):\n        return (x * np.log(1 + (N / x)) - S) ** 2 if x > 0 else np.inf\n\n    # minimize the function using the default method (Brent's algorithm)\n    with np.errstate(invalid=\"ignore\"):\n        res = minimize_scalar(f)\n\n    # there is a chance optimization could fail\n    if res.success is False:\n        raise RuntimeError(\"Optimizer failed to solve for Fisher's alpha.\")\n\n    return res.x"
+    },
+    "skbio/diversity/alpha/_base.py:412:goods_coverage": {
+      "line": 413,
+      "name": "goods_coverage",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def goods_coverage(counts):\n    r\"\"\"Calculate Good's coverage estimator.\n\n    Good's coverage estimator :math:`C`, a.k.a. Turing estimator or Good-\n    Turing (GT) estimator, is an estimation of the proportion of the\n    population represented in the sample. It is defined as:\n\n    .. math::\n\n       C = 1 - \\frac{F_1}{N}\n\n    where :math:`F_1` is the number of taxa observed only once (i.e.,\n    singletons) and :math:`N` is the total number of individuals.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Good's coverage estimator.\n\n    See Also\n    --------\n    esty_ci\n    robbins\n\n    Notes\n    -----\n    Good's coverage estimator was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Good, I. J. (1953). The population frequencies of species and the\n       estimation of population parameters. Biometrika, 40(3-4), 237-264.\n\n    \"\"\"\n    return 1 - ((counts == 1).sum() / counts.sum())"
+    },
+    "skbio/diversity/alpha/_base.py:455:heip_e": {
+      "line": 456,
+      "name": "heip_e",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def heip_e(counts):\n    r\"\"\"Calculate Heip's evenness measure.\n\n    Heip's evenness is defined as:\n\n    .. math::\n\n       \\frac{(e^H-1)}{(S-1)}\n\n    where :math:`H` is Shannon's diversity index and :math:`S` is the number\n    of taxa in the sample.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Heip's evenness measure.\n\n    See Also\n    --------\n    shannon\n    pielou_e\n\n    Notes\n    -----\n    Heip's evenness measure was originally described in [1]_.\n\n    When there is only one taxon, the return value is 1.0.\n\n    References\n    ----------\n    .. [1] Heip, C. 1974. A new index measuring evenness. J. Mar. Biol. Ass.\n       UK., 54, 555-557.\n\n    \"\"\"\n    if (S := counts.size) == 0:\n        return np.nan\n    elif S == 1:\n        return 1.0\n    return (shannon(counts, exp=True) - 1) / (S - 1)"
+    },
+    "skbio/diversity/alpha/_base.py:502:hill": {
+      "line": 503,
+      "name": "hill",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def hill(counts, order=2):\n    r\"\"\"Calculate Hill number.\n\n    Hill number (:math:`^qD`) is a generalized measure of the effective number\n    of species. It is defined as:\n\n    .. math::\n\n       ^qD = (\\sum_{i=1}^S p_i^q)^{\\frac{1}{1-q}}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    order : int or float, optional\n        Order (:math:`q`). Ranges between 0 and infinity. Default is 2.\n\n    Returns\n    -------\n    float\n        Hill number.\n\n    See Also\n    --------\n    inv_simpson\n    renyi\n    shannon\n    sobs\n\n    Notes\n    -----\n    Hill number was originally defined in [1]_. It is a measurement of \"true\n    diversity\", or the effective number of species (ENS) ([2]_), which is\n    defined as the number of equally abundant taxa that would make the same\n    diversity measurement given the observed total abundance of the community.\n\n    Hill number is a generalization of multiple diversity metrics. Depending on\n    the order :math:`q`, it is equivalent to:\n\n    - :math:`q=0`: Observed species richness (:math:`S_{obs}`).\n    - :math:`q \\to 1`: The exponential of Shannon index (:math:`\\exp{H'}`),\n      i.e., perplexity.\n    - :math:`q=2`: Inverse Simpson index (:math:`1 / D`).\n    - :math:`q \\to \\infty`: :math:`1/\\max{p}`, i.e., the inverse of\n      Berger-Parker dominance index.\n\n    The order :math:`q` determines the influence of taxon abundance on the\n    metric. A larger (or smaller) :math:`q` puts more weight on the abundant\n    (or rare) taxa.\n\n    Hill number is equivalent to the exponential of Renyi entropy.\n\n    References\n    ----------\n    .. [1] Hill, M. O. (1973). Diversity and evenness: a unifying notation and\n       its consequences. Ecology, 54(2), 427-432.\n\n    .. [2] Jost, L. (2006). Entropy and diversity. Oikos, 113(2), 363-375.\n\n    \"\"\"\n    probs = counts / counts.sum()\n    if order == 1:\n        return _perplexity(probs)\n    elif np.isposinf(order):\n        return 1 / probs.max()\n    else:\n        return (probs**order).sum() ** (1 / (1 - order))"
+    },
+    "skbio/diversity/alpha/_base.py:575:kempton_taylor_q": {
+      "line": 576,
+      "name": "kempton_taylor_q",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def kempton_taylor_q(counts, lower_quantile=0.25, upper_quantile=0.75):\n    r\"\"\"Calculate Kempton-Taylor Q index of alpha diversity.\n\n    Kempton-Taylor Q index measures diversity based on the middle-ranking taxa\n    in the abundance distribution. Specifically, it estimates the slope of the\n    cumulative abundance curve in the interquantile range. It is defined as:\n\n    .. math::\n\n       Q = \\frac{S_{lower..upper}}{\\ln n_{lower} - \\ln n_{upper}}\n\n    where \"lower\" and \"upper\" are the taxa at the lower and upper quantiles of\n    the abundance distribution, :math:`S` is the number of taxa, and :math:`n`\n    is the number of individuals.\n\n    By default, the lower and upper quartiles are used. Therefore:\n\n    .. math::\n\n       Q = \\frac{S}{2(\\ln n_{0.25} - \\ln n_{0.75})}\n\n    The quantiles are rounded inwards in this implementation.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    lower_quantile : float, optional\n        Lower bound of the interquantile range. Must be greater than or equal\n        to 0, and smaller than 1. Defaults to lower quartile (0.25).\n    upper_quantile : float, optional\n        Upper bound of the interquantile range. Must be greater than\n        ``lower_quantile``, and smaller than or equal to 1. Defaults to upper\n        quartile (0.75).\n\n    Returns\n    -------\n    float\n        Kempton-Taylor Q index of alpha diversity.\n\n    Raises\n    ------\n    ValueError\n        If the quantiles do not satisfy\n        ``0 <= lower_quantile < upper_quantile <= 1``.\n\n    Notes\n    -----\n    This function returns NaN if the interquantile range is empty or constant.\n\n    The index is defined in [1]_. The implementation here is based on the\n    description given in the SDR-IV online manual [2]_.\n\n    The implementation provided here differs slightly from the results given in\n    Magurran 1998. Specifically, we have 14 in the numerator rather than 15.\n    Magurran recommends counting half of the taxa with the same # counts as the\n    point where the UQ falls and the point where the LQ falls, but the\n    justification for this is unclear (e.g. if there were a very large # taxa\n    that just overlapped one of the quantiles, the results would be\n    considerably off). Leaving the calculation as-is for now, but consider\n    changing.\n\n    References\n    ----------\n    .. [1] Kempton, R. A. and Taylor, L. R. (1976) Models and statistics for\n       species diversity. Nature, 262, 818-820.\n    .. [2] http://www.pisces-conservation.com/sdrhelp/index.html\n\n    \"\"\"\n    if not 0 <= lower_quantile < upper_quantile <= 1:\n        raise ValueError(\n            \"Quantiles must satisfy 0 <= lower_quantile < upper_quantile <= 1.\"\n        )\n    S = counts.size\n    lower = int(np.ceil(S * lower_quantile))\n    upper = min(S - 1, int(S * upper_quantile))\n    if lower >= upper:\n        return np.nan\n    sorted_counts = np.sort(counts)\n    denom = np.log(sorted_counts[upper] / sorted_counts[lower])\n    if denom == 0:\n        return np.nan\n    return (upper - lower) / denom"
+    },
+    "skbio/diversity/alpha/_base.py:661:inv_simpson": {
+      "line": 661,
+      "name": "inv_simpson",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def inv_simpson(counts, finite=False):\n    r\"\"\"Calculate inverse Simpson index.\n\n    The inverse Simpson index (:math:`1 / D`), a.k.a., Simpson's reciprocal\n    index, is defined as:\n\n    .. math::\n\n       1 / D = \\frac{1}{\\sum_{i=1}^S{p_i^2}}\n\n    where :math:`S` is the number of taxa and :math:`p_i` is the proportion\n    of the sample represented by taxon :math:`i`.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    finite : bool, optional\n        If True, correct for finite sampling when calculating :math:`D`.\n\n    Returns\n    -------\n    float\n        Inverse Simpson index.\n\n    See Also\n    --------\n    dominance\n\n    Notes\n    -----\n    :math:`1 / D` is a measurement of the effective number of species (ENS).\n    It is equivalent to Hill number with order 2 (:math:`^2D`).\n\n    Inverse Simpson index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Simpson, E. H. (1949). Measurement of diversity. Nature, 163(4148),\n       688-688.\n\n    \"\"\"\n    return 1 / dominance(counts, finite=finite)"
+    },
+    "skbio/diversity/alpha/_base.py:69:berger_parker_d": {
+      "line": 70,
+      "name": "berger_parker_d",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def berger_parker_d(counts):\n    r\"\"\"Calculate Berger-Parker dominance index.\n\n    Berger-Parker dominance index :math:`d` is defined as the fraction of the\n    sample that belongs to the most abundant taxon:\n\n    .. math::\n\n       d = \\frac{n_{max}}{N}\n\n    where :math:`n_{max}` is the number of individuals in the most abundant\n    taxon (or any of the most abundant taxa in the case of ties), and :math:`N`\n    is the total number of individuals in the sample.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Berger-Parker dominance index.\n\n    Notes\n    -----\n    Berger-Parker dominance index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Berger, W. H., & Parker, F. L. (1970). Diversity of planktonic\n       foraminifera in deep-sea sediments. Science, 168(3937), 1345-1347.\n\n    \"\"\"\n    return counts.max() / counts.sum()"
+    },
+    "skbio/diversity/alpha/_base.py:706:margalef": {
+      "line": 707,
+      "name": "margalef",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def margalef(counts):\n    r\"\"\"Calculate Margalef's richness index.\n\n    Margalef's richness index :math:`D` is defined as:\n\n    .. math::\n\n       D = \\frac{(S - 1)}{\\ln N}\n\n    where :math:`S` is the number of taxa and :math:`N` is the total number\n    of individuals in the sample.\n\n    Margalef's richness index assumes log accumulation.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Margalef's richness index.\n\n    See Also\n    --------\n    menhinick\n\n    Notes\n    -----\n    Margalef's richness index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Margalef, R. (1958) Information Theory in Ecology. General Systems,\n       3, 36-71.\n\n    \"\"\"\n    if (N := counts.sum()) == 1:\n        return np.nan\n    return (counts.size - 1) / np.log(N)"
+    },
+    "skbio/diversity/alpha/_base.py:750:mcintosh_d": {
+      "line": 751,
+      "name": "mcintosh_d",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def mcintosh_d(counts):\n    r\"\"\"Calculate McIntosh dominance index.\n\n    McIntosh dominance index :math:`D` is defined as:\n\n    .. math::\n\n       D = \\frac{N - U}{N - \\sqrt{N}}\n\n    where :math:`N` is the total number of individuals in the sample and\n    :math:`U` is defined as:\n\n    .. math::\n\n       U = \\sqrt{\\sum{{n_i}^2}}\n\n    where :math:`n_i` is the number of individuals in the :math:`i^{\\text{th}}`\n    taxon.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        McIntosh dominance index.\n\n    See Also\n    --------\n    mcintosh_e\n\n    Notes\n    -----\n    McIntosh dominance index was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] McIntosh, R. P. 1967 An index of diversity and the relation of\n       certain concepts to diversity. Ecology 48, 1115-1126.\n\n    \"\"\"\n    if (N := counts.sum()) == 1:\n        return np.nan\n    u = np.sqrt((counts**2).sum())\n    return (N - u) / (N - np.sqrt(N))"
+    },
+    "skbio/diversity/alpha/_base.py:800:mcintosh_e": {
+      "line": 801,
+      "name": "mcintosh_e",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def mcintosh_e(counts):\n    r\"\"\"Calculate McIntosh's evenness measure.\n\n    McIntosh's evenness measure :math:`E` is defined as:\n\n    .. math::\n\n       E = \\frac{\\sqrt{\\sum{n_i^2}}}{\\sqrt{((N-S+1)^2 + S -1}}\n\n    where :math:`n_i` is the number of individuals in the :math:`i^{\\text{th}}`\n    taxon, :math:`N` is the total number of individuals, and :math:`S` is the\n    number of taxa in the sample.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        McIntosh evenness measure.\n\n    See Also\n    --------\n    mcintosh_d\n\n    Notes\n    -----\n    McIntosh's evenness measure was originally described in [1]_.\n\n    References\n    ----------\n    .. [1] Heip & Engels (1974) Comparing Species Diversity and Evenness\n       Indices. p 560.\n\n    \"\"\"\n    S = counts.size\n    N = counts.sum()\n    numerator = np.sqrt((counts * counts).sum())\n    denominator = np.sqrt((N - S + 1) ** 2 + S - 1)\n    return numerator / denominator"
+    },
+    "skbio/diversity/alpha/_base.py:845:menhinick": {
+      "line": 846,
+      "name": "menhinick",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def menhinick(counts):\n    r\"\"\"Calculate Menhinick's richness index.\n\n    Menhinick's richness index is defined as:\n\n    .. math::\n\n       D_{Mn} = \\frac{S}{\\sqrt{N}}\n\n    where :math:`S` is the number of taxa and :math:`N` is the total number\n    of individuals in the sample.\n\n    Menhinick's richness index assumes square-root accumulation.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    float\n        Menhinick's richness index.\n\n    See Also\n    --------\n    margalef\n\n    Notes\n    -----\n    Based on the description in [1]_.\n\n    References\n    ----------\n    .. [1] Magurran, A E 2004. Measuring biological diversity. Blackwell. pp.\n       76-77.\n\n    \"\"\"\n    return counts.size / np.sqrt(counts.sum())"
+    },
+    "skbio/diversity/alpha/_base.py:887:michaelis_menten_fit": {
+      "line": 888,
+      "name": "michaelis_menten_fit",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def michaelis_menten_fit(counts, num_repeats=1, params_guess=None):\n    r\"\"\"Calculate Michaelis-Menten fit to rarefaction curve of observed taxa.\n\n    The Michaelis-Menten equation estimates the asymptote of the rarefaction\n    curve. It is an estimator of the true richness of a community given the\n    observation. It is defined as:\n\n    .. math::\n\n       S = \\frac{nS_{max}}{n+B}\n\n    where :math:`n` is the number of individuals and :math:`S` is the number of\n    taxa. This function estimates the :math:`S_{max}` parameter.\n\n    The fit is made to datapoints for :math:`n=1,2,...,N`, where :math:`N` is\n    the total number of individuals (sum of abundances for all taxa).\n    :math:`S` is the number of taxa represented in a random sample of\n    :math:`n` individuals.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n    num_repeats : int, optional\n        The number of times to perform rarefaction (subsampling without\n        replacement) at each value of :math:`n`.\n    params_guess : tuple, optional\n        Initial guess of :math:`S_{max}` and :math:`B`. If ``None``, default\n        guess for :math:`S_{max}` is :math:`S` (as :math:`S_{max}` should\n        be >= :math:`S`) and default guess for :math:`B` is ``round(N / 2)``.\n\n    Returns\n    -------\n    float\n        Estimate of the :math:`S_{max}` parameter in the Michaelis-Menten\n        equation.\n\n    See Also\n    --------\n    skbio.stats.subsample_counts\n\n    Notes\n    -----\n    There is some controversy about how to do the fitting. The ML model given\n    in [1]_ is based on the assumption that error is roughly proportional to\n    magnitude of observation, reasonable for enzyme kinetics but not reasonable\n    for rarefaction data. Here we just do a nonlinear curve fit for the\n    parameters using least-squares.\n\n    References\n    ----------\n    .. [1] Raaijmakers, J. G. W. 1987 Statistical analysis of the\n       Michaelis-Menten equation. Biometrics 43, 793-803.\n\n    \"\"\"\n    n_indiv = counts.sum()\n    if params_guess is None:\n        S_max_guess = sobs(counts)\n        B_guess = int(round(n_indiv / 2))\n        params_guess = (S_max_guess, B_guess)\n\n    # observed # of taxa vs # of individuals sampled, S vs n\n    xvals = np.arange(1, n_indiv + 1)\n    ymtx = np.empty((num_repeats, len(xvals)), dtype=int)\n    for i in range(num_repeats):\n        ymtx[i] = np.asarray(\n            [sobs(subsample_counts(counts, n)) for n in xvals], dtype=int\n        )\n    yvals = ymtx.mean(0)\n\n    # Vectors of actual vals y and number of individuals n.\n    def errfn(p, n, y):\n        return (((p[0] * n / (p[1] + n)) - y) ** 2).sum()\n\n    # Return S_max.\n    return fmin_powell(errfn, params_guess, ftol=1e-5, args=(xvals, yvals), disp=False)[\n        0\n    ]"
+    },
+    "skbio/diversity/alpha/_base.py:968:observed_features": {
+      "line": 968,
+      "name": "observed_features",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def observed_features(counts):\n    \"\"\"Calculate the number of distinct features.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    int\n        Distinct feature count.\n\n    See Also\n    --------\n    sobs\n\n    Notes\n    -----\n    ``observed_features`` is an alias for ``sobs``.\n\n    \"\"\"\n    return sobs(counts)"
+    },
+    "skbio/diversity/alpha/_base.py:993:osd": {
+      "line": 994,
+      "name": "osd",
+      "path": "skbio/diversity/alpha/_base.py",
+      "source": "def osd(counts):\n    \"\"\"Calculate observed taxa, singletons, and doubletons.\n\n    Parameters\n    ----------\n    counts : 1-D array_like, int\n        Vector of counts.\n\n    Returns\n    -------\n    osd : tuple\n        Numbers of observed taxa, singletons, and doubletons.\n\n    See Also\n    --------\n    sobs\n    singles\n    doubles\n\n    Notes\n    -----\n    This is a convenience function used by many of the other measures that rely\n    on these three measures.\n\n    \"\"\"\n    return counts.size, (counts == 1).sum(), (counts == 2).sum()"
+    }
+  },
+  "steps": [
+    {
+      "core_nodes": [
+        "skbio/diversity/alpha/_base.py:1291:simpson",
+        "skbio/diversity/alpha/_base.py:144:dominance"
+      ],
+      "dependent_nodes": [],
+      "edges": [
+        [
+          "skbio/diversity/alpha/_base.py:1291:simpson",
+          "skbio/diversity/alpha/_base.py:48:wrapper"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:48:wrapper",
+          "skbio/diversity/alpha/_base.py:144:dominance"
+        ]
+      ],
+      "nodes_to_develop": [
+        "skbio/diversity/alpha/_base.py:1291:simpson"
+      ],
+      "previous_tests": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd"
+      ],
+      "step": 0,
+      "target_nodes": [
+        "skbio/diversity/alpha/_base.py:1291:simpson"
+      ],
+      "test_ids": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson"
+      ]
+    },
+    {
+      "core_nodes": [
+        "skbio/diversity/alpha/_base.py:1345:simpson_d",
+        "skbio/diversity/alpha/_base.py:144:dominance"
+      ],
+      "dependent_nodes": [],
+      "edges": [
+        [
+          "skbio/diversity/alpha/_base.py:1345:simpson_d",
+          "skbio/diversity/alpha/_base.py:48:wrapper"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:48:wrapper",
+          "skbio/diversity/alpha/_base.py:144:dominance"
+        ]
+      ],
+      "nodes_to_develop": [
+        "skbio/diversity/alpha/_base.py:1345:simpson_d"
+      ],
+      "previous_tests": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson"
+      ],
+      "step": 1,
+      "target_nodes": [
+        "skbio/diversity/alpha/_base.py:1345:simpson_d"
+      ],
+      "test_ids": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d"
+      ]
+    },
+    {
+      "core_nodes": [
+        "skbio/diversity/alpha/_base.py:1446:sobs",
+        "skbio/diversity/alpha/_base.py:968:observed_features"
+      ],
+      "dependent_nodes": [],
+      "edges": [
+        [
+          "skbio/diversity/alpha/_base.py:48:wrapper",
+          "skbio/diversity/alpha/_base.py:1446:sobs"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:968:observed_features",
+          "skbio/diversity/alpha/_base.py:48:wrapper"
+        ]
+      ],
+      "nodes_to_develop": [
+        "skbio/diversity/alpha/_base.py:968:observed_features"
+      ],
+      "previous_tests": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_michaelis_menten_fit"
+      ],
+      "step": 2,
+      "target_nodes": [
+        "skbio/diversity/alpha/_base.py:968:observed_features"
+      ],
+      "test_ids": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_observed_features"
+      ]
+    },
+    {
+      "core_nodes": [
+        "skbio/diversity/alpha/_base.py:144:dominance",
+        "skbio/diversity/alpha/_base.py:661:inv_simpson"
+      ],
+      "dependent_nodes": [],
+      "edges": [
+        [
+          "skbio/diversity/alpha/_base.py:48:wrapper",
+          "skbio/diversity/alpha/_base.py:144:dominance"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:661:inv_simpson",
+          "skbio/diversity/alpha/_base.py:48:wrapper"
+        ]
+      ],
+      "nodes_to_develop": [
+        "skbio/diversity/alpha/_base.py:661:inv_simpson"
+      ],
+      "previous_tests": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_michaelis_menten_fit",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_observed_features"
+      ],
+      "step": 3,
+      "target_nodes": [
+        "skbio/diversity/alpha/_base.py:661:inv_simpson"
+      ],
+      "test_ids": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_inv_simpson"
+      ]
+    },
+    {
+      "core_nodes": [
+        "skbio/diversity/alpha/_base.py:144:dominance",
+        "skbio/diversity/alpha/_base.py:236:enspie",
+        "skbio/diversity/alpha/_base.py:661:inv_simpson"
+      ],
+      "dependent_nodes": [],
+      "edges": [
+        [
+          "skbio/diversity/alpha/_base.py:236:enspie",
+          "skbio/diversity/alpha/_base.py:661:inv_simpson"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:48:wrapper",
+          "skbio/diversity/alpha/_base.py:144:dominance"
+        ],
+        [
+          "skbio/diversity/alpha/_base.py:661:inv_simpson",
+          "skbio/diversity/alpha/_base.py:48:wrapper"
+        ]
+      ],
+      "nodes_to_develop": [
+        "skbio/diversity/alpha/_base.py:236:enspie"
+      ],
+      "previous_tests": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_brillouin_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_robbins",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_singles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_sobs",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_dominance",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_strong",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_doubles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_esty_ci",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_fisher_alpha",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_goods_coverage",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_degenerate_intervals",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_invalid_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_quantiles",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_kempton_taylor_q_single_taxon",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_berger_parker_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_margalef",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_mcintosh_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_menhinick",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_osd",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_d",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_simpson_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_michaelis_menten_fit",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_observed_features",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_inv_simpson",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_pielou_e",
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_shannon"
+      ],
+      "step": 4,
+      "target_nodes": [
+        "skbio/diversity/alpha/_base.py:236:enspie"
+      ],
+      "test_ids": [
+        "skbio/diversity/alpha/tests/test_base.py::BaseTests::test_enspie"
+      ]
+    }
+  ]
+}

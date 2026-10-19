@@ -27,6 +27,24 @@ from run_robbins_native_controls import run_case
 
 
 PROFILES = {
+    "2bc29fe20c34fbca2661": {
+        "recipe": "swe_smith",
+        "source": "skbio/diversity/alpha/_base.py",
+        "function": "michaelis_menten_fit",
+        "negative_bodies": {
+            "incorrect_constant_one": "return 1.0",
+            "incorrect_observed_richness": "return float(np.count_nonzero(counts))",
+        },
+    },
+    "f39ded25ef48a6575366": {
+        "recipe": "swe_smith",
+        "source": "skbio/diversity/alpha/_base.py",
+        "function": "tsallis",
+        "negative_bodies": {
+            "incorrect_zero": "return 0.0",
+            "incorrect_ignore_order": "return 1.0 - ((counts / counts.sum()) ** 2).sum()",
+        },
+    },
     "53ec5f51639d4053971f": {
         "recipe": "swe_smith",
         "source": "Bio/SeqUtils/lcc.py",
@@ -69,6 +87,21 @@ def replace_body(source, name, body):
 
 
 def alternative_source(source, profile):
+    if profile["function"] == "michaelis_menten_fit":
+        old = "def michaelis_menten_fit(counts, num_repeats=0, params_guess=None):"
+        assert source.count(old) == 1 and source.count("yvals = ymtx.mean(0)") == 1
+        changed = source.replace(old, old.replace("num_repeats=0", "num_repeats=1"))
+        changed = changed.replace("yvals = ymtx.mean(0)", "yvals = ymtx.sum(axis=0) / num_repeats")
+        ast.parse(changed)
+        return changed
+    if profile["function"] == "tsallis":
+        old = "return (1 + (probs**order).sum()) / (order - 1)"
+        assert source.count(old) == 1
+        # Equivalent power-sum identity for the validated positive frequencies;
+        # retain the native empty/singleton/Shannon/infinite-order branches.
+        changed = source.replace(old, "return (probs * (1 - probs ** (order - 1))).sum() / (order - 1)")
+        ast.parse(changed)
+        return changed
     if profile["function"] == "enspie":
         return replace_body(source, "enspie", "return 1.0 / dominance(counts, finite=finite)")
     node = function_node(source, "lcc_mult")
