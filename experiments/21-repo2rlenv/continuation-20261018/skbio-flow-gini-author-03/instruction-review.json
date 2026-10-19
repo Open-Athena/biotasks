@@ -1,0 +1,35 @@
+{
+  "candidate_id": "808efa9c59c6f356358f",
+  "stage": "independent_static_instruction_review_not_admitted",
+  "independently_admitted": false,
+  "instruction_edited": false,
+  "task_specific_author_feedback_supplied": false,
+  "instruction_sha256": "69508e7af61d4e703f5fc6d1233d66076670ae84fbdc5183509bb9061168b45a",
+  "actual_newline_characters": 0,
+  "raw_model_answer_sha256": "7f07ddbfc6e4f09820817634541ee630d78a8cbf85fa7dfe2fac52d5b8fa82c0",
+  "parsed_raw_markdown_equals_saved_instruction": true,
+  "source_members": {
+    "native/generation/base/skbio/diversity/alpha/_gini.py": {
+      "sha256": "0bab73d87caca5b08d4f074257894fb76fbb1091ea801c73fd2cc1b45f32a9f2",
+      "bytes": 3614
+    },
+    "native/generation/base/skbio/diversity/alpha/tests/test_gini.py": {
+      "sha256": "2dcadc0c06608abc5888013ca3da82bc2e4c68d80a2b487b69f7609dd0118424",
+      "bytes": 2304
+    }
+  },
+  "findings": [
+    {
+      "kind": "malformed_document_format",
+      "evidence": "Raw model JSON markdown equals saved instruction, contains zero actual newlines and literal n separators throughout headings, lists and table; no wrapper-introduced formatting change."
+    }
+  ],
+  "source_behavior_note": "Stated integration formulas, validation without integer casting, nonnegative clamp and public function signature agree with pinned source. No numerical formula mismatch established.",
+  "runtime_controls_for_this_authored_instruction": "not_dispatched; static format failure retained separately from functional correctness",
+  "author_calls_consumed": 2,
+  "native_author_call_ceiling": 6,
+  "remaining_calls_not_reset": 4,
+  "candidate_charge_unchanged": 8,
+  "automatic_model_repair_dispatched": false,
+  "next_step": "Preserve original malformed output; any reusable format-repair adaptation must be separate from native baseline and retain the existing six-call allowance."
+}
