@@ -1,7 +1,9 @@
 """Approved generation profile and unchanged solver profile, with zero live calls."""
 
 import json
+import ast
 import unittest
+from pathlib import Path
 
 from run_glm_authoring_client import validate_author_request, transport_check
 from run_glm_inference_client import validate_solver_request
@@ -23,6 +25,18 @@ class AuthoringTransportTests(unittest.TestCase):
                         tool_choice='auto')
         self.assertEqual(validate_author_request(raw), json.loads(raw))
         self.assertEqual(transport_check(raw)['model_calls'], 0)
+
+    def test_frozen_remote_probe_uses_approved_generation_payload(self):
+        source = Path(__file__).with_name('run_glm_generation_transport_probe.py')
+        tree = ast.parse(source.read_text())
+        value = next(node.value for node in ast.walk(tree)
+                     if isinstance(node, ast.Assign) and any(
+                         isinstance(target, ast.Name) and target.id == 'payload'
+                         for target in node.targets))
+        payload = eval(compile(ast.Expression(value), '<owned-probe-payload>', 'eval'),
+                       {'__builtins__': {}})
+        self.assertEqual(payload['max_tokens'], 131072)
+        self.assertEqual(validate_author_request(json.dumps(payload).encode()), payload)
 
     def test_both_output_limit_fields_must_fit_approved_ceiling(self):
         for bad in [131073, 0, -1, True, '131072']:
