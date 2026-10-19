@@ -1762,3 +1762,7 @@ Recovered and hash-verified Tsallis native execution. Independent JUnit/asset au
 ### 2026-10-19 — new Flow Lorenz-curve contrast preserved
 
 Gini-profile generation completed with one new contrast ea039e585353325e82c3 for `_lorenz_curve`: three fail-to-pass tests and one pass-to-pass test, from one candidate attempt and zero model calls. Cumulative scikit-bio Flow charge is now 6/10. Original archive SHA verified; public snapshot 76b4989ba0600256c27b0e4de820f9c59f0adc56a6414127651f809b7a32a346 passed anonymous readback of 27 objects and 1,046 archive members. Exact sandbox returned 404; its slot claim is released. Recovery had a local log-name collision then a reporting-only schema-key error; originals were recovered before the latter, no remote generation was repeated, and metadata was recovered directly. Authoring and independent validation remain pending.
+
+### 2026-10-19 — exact Tsallis blind-dispatch preparation
+
+Prepared small public-snapshot restore inputs for the single Tsallis blind solve, preserving the admitted asset manifest. Extended the existing restore helper to the explicit Tsallis unit and added a fresh zero-model transport preflight in a subprocess without the Daytona credential. Existing task instruction/grader/model settings are unchanged; separate baseline/reference provider controls still precede the one blind attempt. Prepared finite client04 with the exact previously verified inference-only code and free endpoint policy. No new model call or solve has occurred at this checkpoint.

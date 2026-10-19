@@ -5,6 +5,8 @@ import importlib.metadata
 import json
 import os
 import shutil
+import subprocess
+import sys
 import tarfile
 import time
 from pathlib import Path
@@ -21,6 +23,14 @@ def main():
     try:
         from huggingface_hub import HfApi
 
+        if Path('run_glm_transport_probe.py').is_file():
+            preflight_env = {k: v for k, v in os.environ.items() if k != 'DAYTONA_API_KEY'}
+            subprocess.run([sys.executable, 'run_glm_transport_probe.py'],
+                           env=preflight_env, check=True, timeout=240)
+            preflight = json.loads((output / 'transport-probe.json').read_text())
+            assert preflight['passed'] and preflight['model_calls'] == 0
+            state['zero_model_transport_preflight_passed'] = True
+
         assert importlib.metadata.version('huggingface-hub') == '1.33.0'
         raw = Path('authored-source-inputs.json').read_bytes()
         assert hashlib.sha256(raw).hexdigest() == os.environ['BIOTASKS21_SOURCE_INPUTS_SHA256']
@@ -30,7 +40,7 @@ def main():
         cohort.mkdir(exist_ok=False)
         units = []
         for item in inputs['units']:
-            assert item['unit'] in {'enspie', 'lcc'}
+            assert item['unit'] in {'enspie', 'lcc', 'tsallis'}
             assert item['bucket'] == 'open-athena/biotasks'
             assert item['archive_path'].startswith('research/21-repo2rlenv/')
             archive = Path(item['unit'] + '-native.tar.gz')
@@ -67,7 +77,9 @@ def main():
             units.append(record)
             state['units'].append({**record, 'archive_sha256_verified': item['archive_sha256'],
                                    'restored_bytes': total})
-        assert {item['unit'] for item in units} == {'enspie', 'lcc'}
+        assert 1 <= len(units) <= 3
+        assert len({item['unit'] for item in units}) == len(units)
+        assert {item['unit'] for item in units} == {item['unit'] for item in inputs['units']}
         manifest = {'units': units, 'sequential': True, 'maximum_simultaneous_sandboxes': 2,
                     'one_blind_attempt_after_provider_controls': True,
                     'minimum_inference_lifetime_before_unit_seconds': 930}
