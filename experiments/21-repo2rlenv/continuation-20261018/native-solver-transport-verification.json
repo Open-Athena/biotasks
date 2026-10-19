@@ -1,0 +1,61 @@
+{
+  "stage": "native_HTTP_transport_verified_SDK_execution_preflight_pending",
+  "source_checks": {
+    "Harbor_agent_forwards_llm_call_kwargs": true,
+    "Harbor_LiteLLM_forwards_call_kwargs": true,
+    "Harbor_LiteLLM_merges_session_header": true,
+    "OpenAI_request_options_accept_extra_headers": true
+  },
+  "source_file_sha256": {
+    "harbor_terminus": "c6b72b8c6289809b2ff3a3009b8f118fa1edb1da205f48d0b56c6938a49cb12f",
+    "harbor_LiteLLM": "8faa5941aee862bdb9c020874ec721e348165a9b907c5a3509381a2ab50ec5a8",
+    "OpenAI_completions": "0b83fc67f6793c5a4be42d3d47cc80b7827fa0a1175beff22d12d3edda232adb"
+  },
+  "development_fixtures": [
+    {
+      "start_utc": "2026-10-19T00:01:08.533168+00:00",
+      "peak_working_set_estimate_bytes": 268435456,
+      "end_utc": "2026-10-19T00:04:23.969842+00:00",
+      "exit_status": 143,
+      "elapsed_seconds": 195.437,
+      "fixture": "check-native-solver-HTTP-header",
+      "result": "inconclusive_no_completed_mock_assertion_result",
+      "source_sha256": "5fb9c954da7f0edc10e5fe20f23632cdf0afec951a68222df23bc88f890db1c2",
+      "peak_RSS_kib": 207160,
+      "scientific_model_calls": 0,
+      "model_endpoint": "synthetic fixture.invalid, not the approved GLM service"
+    },
+    {
+      "start_utc": "2026-10-19T00:05:21.130938+00:00",
+      "peak_working_set_estimate_bytes": 268435456,
+      "end_utc": "2026-10-19T00:10:16.145895+00:00",
+      "exit_status": 143,
+      "elapsed_seconds": 295.015,
+      "fixture": "check-native-solver-SDK-header",
+      "result": "inconclusive_no_completed_mock_assertion_result",
+      "source_sha256": "b25b3a84f42cb02ebcbe6e3c87b6ee706885ff52d972349b2eef5d5e6c923370",
+      "peak_RSS_kib": 61508,
+      "scientific_model_calls": 0,
+      "model_endpoint": "synthetic fixture.invalid, not the approved GLM service"
+    },
+    {
+      "start_utc": "2026-10-19T00:11:03.064144+00:00",
+      "peak_working_set_estimate_bytes": 268435456,
+      "end_utc": "2026-10-19T00:11:23.099617+00:00",
+      "exit_status": 142,
+      "elapsed_seconds": 20.036,
+      "fixture": "check-native-solver-SDK-header-bounded",
+      "result": "inconclusive_no_completed_mock_assertion_result",
+      "source_sha256": "895c5ba9ac313d06ec35822552b7032b9f4c471f8e39507acaa056107dbf8e7d",
+      "peak_RSS_kib": 59208,
+      "scientific_model_calls": 0,
+      "model_endpoint": "synthetic fixture.invalid, not the approved GLM service"
+    }
+  ],
+  "limits": [
+    "No completed local SDK mock result exists; do not claim native SDK execution passed.",
+    "All three owned local fixture workers stopped; guard/time receipts retain exit and peak memory.",
+    "Use a bounded remote native SDK/provider check before blind attempts; existing twenty first-pass attempts must not be repeated."
+  ],
+  "new_blind_attempts": 0
+}

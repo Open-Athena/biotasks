@@ -1,0 +1,30 @@
+{
+  "stage": "zero_model_TRC_to_own_inference_client_preflight",
+  "model_calls": 0,
+  "repository_execution": false,
+  "sandbox_credentials_supplied": false,
+  "checks": [
+    {
+      "case": "missing_application_bearer",
+      "status": 502,
+      "passed": true,
+      "denial_contract": "direct application401 or exact Iris upstream401 translation; generic502 rejected"
+    },
+    {
+      "case": "authoring_allowance_rejected",
+      "status": 400,
+      "passed": true
+    },
+    {
+      "case": "native_body_length_and_hash_preserved",
+      "status": 200,
+      "passed": true
+    },
+    {
+      "case": "existing_approved_GLM_authenticated_discovery",
+      "status": 200,
+      "passed": true
+    }
+  ],
+  "passed": true
+}
