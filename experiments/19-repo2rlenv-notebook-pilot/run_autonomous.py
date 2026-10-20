@@ -135,7 +135,16 @@ def copy_diagnostics(root):
         "specification/specification.json",
         "specification/result.json",
         "materialization-raw/result.json",
+        "materialization-raw/cleanup.json",
+        "materialization-raw/materialization-candidate.json",
+        "materialization-raw/materialized/instruction.md",
+        "materialization-raw/materialized/rationale.md",
         "grading/result.json",
+        "grading/cleanup.json",
+        "grading/final-candidate.json",
+        "grading/final-controls.json",
+        "grading/independent-result.json",
+        "grading/review.json",
         "native/result.json",
     ):
         source = root / relative

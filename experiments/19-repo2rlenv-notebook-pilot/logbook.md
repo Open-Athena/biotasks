@@ -2685,3 +2685,9 @@ support for asserted input properties, and permit transparent clarification of
 unsupported incidental conventions without changing the scientific target.
 Fourteen materialization/controller tests pass. Live impact is not established
 by these offline tests; the next full run must test it.
+
+Added controller regressions for explicit construction rejection, scientific
+validation rejection, and native infrastructure failure: eight offline control-flow
+and handoff tests pass. These fake-worker tests do not establish live autonomy.
+Small final candidate/cleanup diagnostics are now retained alongside the final
+receipt, so terminal decisions can be inspected without unpacking large data.

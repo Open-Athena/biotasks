@@ -26,7 +26,9 @@ def test_worker_rejection_requires_explicit_disposition(tmp_path):
         m.require_worker(path, "prepare", stage="preparation")
 
 
-@pytest.mark.parametrize("failure", [None, "blocked", "infrastructure"])
+@pytest.mark.parametrize(
+    "failure", [None, "blocked", "infrastructure", "construction", "grading", "native"]
+)
 def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, failure):
     monkeypatch.setattr(m, "HERE", tmp_path)
     monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "private://fixture")
@@ -47,7 +49,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         called.append("prepare")
         if failure == "infrastructure":
             raise ConnectionError("transport")
-        m.write(root / "plan.json", {"disposition": "blocked" if failure else "prepare"})
+        m.write(
+            root / "plan.json", {"disposition": "blocked" if failure == "blocked" else "prepare"}
+        )
 
     async def remote(config, *, root, **kwargs):
         called.append(config["entrypoint"])
@@ -63,8 +67,15 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             m.write(root / "result.json", result)
             return result
         if config.get("materialize_task"):
+            if failure == "construction":
+                m.write(root / "materialization-candidate.json", {"disposition": "blocked"})
+                return {"status": "materialization_blocked"}
             (root / "materialized").mkdir(parents=True)
             return {"status": "materialized_requires_scientific_validation"}
+        if failure == "grading":
+            result = {"status": "independent_solution_blocked", "final_controls_passed": False}
+            m.write(root / "result.json", result)
+            return result
         return {"status": "grader_candidate_validated", "final_controls_passed": True}
 
     async def specify(config, *, root, **kwargs):
@@ -73,7 +84,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
 
     def native(config, *, root):
         called.append("native")
-        return {"publication_ready": True}
+        return {"publication_ready": failure != "native"}
 
     for name, attrs in {
         "run_preparation": {"run": prepare},
@@ -121,22 +132,27 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         endpoint="unused",
         credential="unused",
     )
-    if failure == "infrastructure":
-        with pytest.raises(ConnectionError):
+    if failure in {"infrastructure", "native"}:
+        with pytest.raises(ConnectionError if failure == "infrastructure" else RuntimeError):
             asyncio.run(pipeline.execute())
     else:
         asyncio.run(pipeline.execute())
     receipt = m.read(tmp_path / "run/pipeline.json")
     assert (
         receipt["status"]
-        == {None: "validated", "blocked": "rejected", "infrastructure": "infrastructure_failed"}[
-            failure
-        ]
+        == {
+            None: "validated",
+            "blocked": "rejected",
+            "infrastructure": "infrastructure_failed",
+            "construction": "rejected",
+            "grading": "rejected",
+            "native": "infrastructure_failed",
+        }[failure]
     )
-    if failure:
+    if failure in {"blocked", "infrastructure"}:
         assert called == ["prepare"]
     else:
-        assert called == [
+        expected = [
             "prepare",
             "run_reference_setup.py",
             "run_reference_replay.py",
@@ -145,7 +161,12 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "run_notebook_grader.py",
             "native",
         ]
-        assert receipt["daytona_reserved_usd"] == 5
+        stop = {"construction": 5, "grading": 6}.get(failure, 7)
+        assert called == expected[:stop]
+        assert receipt["daytona_reserved_usd"] == stop - 2
+    if failure in {"construction", "grading"}:
+        assert receipt["rejection"]["stage"] == failure
+        assert receipt["stages"][-1]["status"] == "rejected"
     assert receipt["operator_interventions"] == 0
 
 
