@@ -12,7 +12,7 @@ Current admissions count independent validation, not raw exports. PR-diff admiss
 | cve_patches/native | 0/3 | 0/3 (blocked) | 0/3 (blocked) | 0/3 (blocked) |
 | tasksmith/tasksmith | 0/3 (blocked) | 0/3 (blocked) | unsupported | unsupported |
 | repo_mutate/swe_smith | 2/3 (cap reached) | 3/3 | unsupported | unsupported |
-| pr_to_env/swe_gen | 0/3 | 0/3 | unsupported | unsupported |
+| pr_to_env/swe_gen | 0/3 (cap reached) | 0/3 | unsupported | unsupported |
 | repo_reconstruct/swe_flow | 0/3 | 2/3 | unsupported | unsupported |
 | equivalence_tests/r2e | 0/3 (cap reached) | 0/3 (cap reached) | unsupported | unsupported |
 | pr_runtime/swe_next | 0/3 | 0/3 | unsupported | unsupported |
