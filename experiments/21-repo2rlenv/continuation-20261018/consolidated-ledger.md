@@ -49,7 +49,7 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | --- | ---: | ---: | --- |
 | terminal_synth/seta_seed2synth / seta-genomic-intervals-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
 | task_evolve/seta_evol / pr2633-parent-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
-| terminal_synth/dataarc / pr2633-parent-v1 | 0/3 | 3/10 | original fresh inputs automatic run submitted |
+| terminal_synth/dataarc / pr2633-parent-v1 | 0/3 | 4/10 | bounded native abort at agreed request limit |
 | terminal_synth/tmax / tmax-biological-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
 | terminal_synth/endless_terminals / retained-native-draws-biological-context | 0/3 | 10/10 | candidate cap exhausted below target |
 | terminal_reconstruct/terminalworld / bioinfo-notebook-v1 | 0/3 | ?/10 | blocked eligible input or terms |

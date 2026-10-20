@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-20T05:58:58.886428+00:00",
+  "observed_utc": "2026-10-20T06:25:58.881680+00:00",
   "stage": "full_original_target_tracking_not_a_completion_claim",
   "admission_scope": "Legacy mixed automatic and assisted admissions; manual final assessment is allowed. Primary automatic-output eligibility remains a separate provenance audit.",
   "target_policy": "Three independently validated tasks per applicable route/repository; seed routes have named input cohorts. Maximum ten candidate attempts per unit, with original operational budget stops. Unsupported native language/profile cells have no native target; blocked cells retain explicit shortfall.",
@@ -1405,17 +1405,19 @@
       "shortfall": 3,
       "first_pass_blind_attempts": 0,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 3,
-      "remaining_candidate_allowance": 7,
-      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
-      "state": "original_fresh_inputs_automatic_run_submitted",
-      "next_action": "Original frozen batch04 submitted on free TRC CPU with one Daytona sandbox and existing free GLM. Up to seven unused original seeds, target three, native two repairs, no manual output fixes or external author feedback. Prior three consumed seeds excluded; actual new attempts/exports/usage pending native receipts, not inferred from job state.",
+      "charged_candidate_attempts": 4,
+      "remaining_candidate_allowance": 6,
+      "candidate_charge_note": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed. Automatic04 consumed one more distinct original seed; its single author request reached the approved1200s limit without a response, and native control aborted. Four original seeds are consumed; six queued selections were not reached. Native request-limit failure is retained, not retried or converted to cap exhaustion.",
+      "state": "bounded_native_abort_at_agreed_request_limit",
+      "next_action": "Original automatic batch stopped natively at its1200s per-request execution limit:1of7fresh selections attempted,0responses/exports/admissions; six queued inputs not reached. Fixed-budget generation failure is an allowed original outcome. Preserve unused allowance and uncertain seed; no task repair, replay, model-limit increase or automatic search extension. Final assessment/public preservation/cleanup only.",
       "native_reward_semantics": [],
       "original_status": "Accepted PR2633 parent; build attempt timed out with one candidate, two completed GLM responses and a third request without preserved response. First response had zero test definitions; second contained invalid Python. No validated exports or solves. Original responses publicly archived and cleanup independently verified. Evidence: dataarc-build-01 and hf-dataarc-build-01-upload-receipt.json.",
       "first_pass_sources": [
         "evidence/dataarc-build-01/summary.json"
       ],
-      "active_job_id": "/exedev/biotasks21-trc-dataarc-automatic-20261020-04"
+      "selected_original_inputs_unreached": 6,
+      "original_pool_unused_records": 8,
+      "completion_basis": "Original scope accepts fixed-budget setup/generation failure and stops on any execution-budget limit; this is not candidate-cap or source-pool exhaustion."
     },
     {
       "unit_id": "terminal_synth/tmax@tmax-biological-v1",

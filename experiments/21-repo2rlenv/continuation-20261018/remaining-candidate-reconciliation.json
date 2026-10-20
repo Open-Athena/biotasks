@@ -239,8 +239,8 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/dataarc@pr2633-parent-v1": {
-      "charged_candidate_attempts": 3,
-      "remaining_allowance": 7,
+      "charged_candidate_attempts": 4,
+      "remaining_allowance": 6,
       "receipts": [
         {
           "source": "evidence/dataarc-build-01/summary.json",
@@ -259,9 +259,15 @@
           "sha256": "fd6721f0a968985526544ee9d608f5ad0bcbbf56d95fc03b7a450d871a33c93d",
           "counter_key": "candidate_directories",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/dataarc-automatic-04/assessment.json",
+          "sha256": "86df5d0f3b239744caed427fb65c60776b487ee36d418443c5e5b4e0a3733e75",
+          "counter_key": "candidate_directories",
+          "charged": 1
         }
       ],
-      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed.",
+      "definition": "One parent-derived candidate reached native materialization. Two completed and one timed-out repair request belong to that same candidate and retain their consumed native repair allowance. One distinct fresh seed in the full automatic continuation dispatched its first builder request, which returned gateway504; preserve its uncertain outcome and never replay it. Automatic03 consumed one additional distinct seed; its first builder request timed out at the approved1200s despite the verified long-proxy profile, with no response/export. Its uncertain seed remains consumed and cannot be replayed. Automatic04 consumed one more distinct original seed; its single author request reached the approved1200s limit without a response, and native control aborted. Four original seeds are consumed; six queued selections were not reached. Native request-limit failure is retained, not retried or converted to cap exhaustion.",
       "new_dispatch_authorized_by_this_file": false
     },
     "terminal_synth/tmax@tmax-biological-v1": {

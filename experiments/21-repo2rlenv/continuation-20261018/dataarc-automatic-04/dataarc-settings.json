@@ -1,0 +1,62 @@
+{
+  "adaptation": {
+    "authorization_date": "2026-10-16",
+    "campaign_max_concurrent_requests": 4,
+    "effort_wire_parameter": "chat_template_kwargs.reasoning_effort",
+    "generation_run_timeout_sec": 7200,
+    "global_call_cap": null,
+    "global_token_cap": null,
+    "live_131072_token_request_verified": false,
+    "max_output_tokens": 131072,
+    "model": "glm-5.3",
+    "output_budget_includes_reasoning": true,
+    "paid_fallback": false,
+    "preserve_recipe_candidate_and_repair_limits": true,
+    "reasoning_effort": "medium",
+    "request_timeout_sec": 1200,
+    "solver_settings_changed": false,
+    "stage": "generation_only"
+  },
+  "context_limits": {
+    "f2p_p2p_lists_omitted": true,
+    "interpretation": "Native loader loses referenced oracle/grader assets and truncates seed-file excerpts over 3500 characters; this parent test script is below that limit. Preserve this limitation in any baseline run; a fuller context would be a separate intervention.",
+    "reference_patch_omitted": true,
+    "test_script_retained_characters": 3076,
+    "test_script_source_characters": 3077,
+    "truncated_seed_files": [
+      "task.toml"
+    ],
+    "verifier_module_omitted": true
+  },
+  "implementation": "pinned Repo2RLEnv experimental DataArc implementation",
+  "independent_acceptance": false,
+  "native_options": {
+    "evol_directions": [
+      "in_depth",
+      "in_breadth"
+    ],
+    "exclude_seed_sha256": [
+      "141e3755e1c393308432aa8a465b63806fe262a5b1714e0979a25a4b9fc3e79a",
+      "9f4e4686184a9ac0e48ece31cb9c0279c07eae5112883d47372bca8a0b2e1841",
+      "ac6d2cfb831541773723a2aa4a818afbcfce4cace75be6ced704bd0595d09c03"
+    ],
+    "max_candidates": 7,
+    "max_repairs": 2,
+    "max_tokens": 10000,
+    "review_drafts": false,
+    "samples_per_strategy": 3,
+    "seed": 24,
+    "strategies": [
+      "few_shot",
+      "self_instruct",
+      "evol_instruct"
+    ],
+    "target": 3,
+    "test_timeout_sec": 120
+  },
+  "native_supported": false,
+  "parent_manifest_sha256": "66310fa04d50555a3e04788c15e2c43989fbe82e2330ac80ca6e6bac6418813e",
+  "parent_task_id": "repo2rlenv-pr-runtime/818edf065df952df43f80f897de021e3ce9bc91c2957298060cddedd72487140",
+  "related_variant_policy": "All children retain the same parent lineage and must share any train/evaluation split; variants are not independent source problems.",
+  "stage": "native_materialization_build_repair_trial_export"
+}

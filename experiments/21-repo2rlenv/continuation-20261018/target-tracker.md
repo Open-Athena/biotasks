@@ -24,7 +24,7 @@ Current admissions count independent validation, not raw exports. PR-diff admiss
 | --- | --- | --- | --- |
 | terminal_synth/seta_seed2synth | seta-genomic-intervals-v1 | 0/3 | declared_input_pool_exhausted_below_target |
 | task_evolve/seta_evol | pr2633-parent-v1 | 0/3 | declared_input_pool_exhausted_below_target |
-| terminal_synth/dataarc | pr2633-parent-v1 | 0/3 | original_fresh_inputs_automatic_run_submitted |
+| terminal_synth/dataarc | pr2633-parent-v1 | 0/4 | bounded_native_abort_at_agreed_request_limit |
 | terminal_synth/tmax | tmax-biological-v1 | 0/3 | declared_input_pool_exhausted_below_target |
 | terminal_synth/endless_terminals | retained-native-draws-biological-context | 0/3 | candidate_cap_exhausted_below_target |
 | terminal_reconstruct/terminalworld | bioinfo-notebook-v1 | 0/3 | blocked_eligible_input_or_terms |
