@@ -2575,3 +2575,14 @@ the actual first solver message is an exact field extraction from its original
 trajectory, with provenance and hashes recorded. The HTML is an evidence reading
 view, not a campaign log. Rendering/browser checks remain to be performed before
 publishing the updated index. Issue 19 stays open for user review.
+
+The final Bioframe HTML renders 72 source files into a 3.51 MB standalone page,
+with nine pipeline stages and the actual eight-step solver trajectory. All five
+views and nine stage routes passed the existing browser checks; 390px layout
+has no horizontal overflow and no JavaScript errors. One browser was used with
+a single renderer; measured maximum child RSS was 106,640 KiB. Notebook,
+validation-pipeline and attempt screenshots were inspected: code uses legible
+light text on the matching dark syntax background, and Prompt/Input/Output
+sections are distinct with raw artifacts collapsed by default. No campaign-log
+banner or historical run selector was added. The source manifest pins the exact
+public release and all embedded inputs.
