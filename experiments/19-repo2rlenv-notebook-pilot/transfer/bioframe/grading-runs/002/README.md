@@ -21,7 +21,9 @@ response. These timings include this incomplete campaign, not earlier task
 construction or later recovery.
 
 The complete 1,150-file archive passed download verification. Selected original
-small files are preserved against their export hashes; larger traces remain in
+small files are preserved against their export hashes; four stage input documents
+were reconstructed losslessly from verified components and matched to the original
+archive hashes/byte counts. These are original inputs, not replacement prompts; larger traces remain in
 the configured private archive. Diagnostic transport restored only a bounded
 subset, and is not itself the complete archive. Cleanup passed, independent
 provider readback found zero owned sandboxes, and Iris confirmed the host and
