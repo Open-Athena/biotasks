@@ -212,7 +212,10 @@ def main():
         for row in manifest["prs"]:
             patch, tests = split_patch_and_test_patch(row["diff"])
             test_cmds = targeted_test_cmds_for_pr(
-                normalize_test_cmds_for_runtime(["python -m pytest -vv"]), _files_in_patch(tests),
+                normalize_test_cmds_for_runtime([
+                    "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+                    "python -m pytest -vv",
+                ]), _files_in_patch(tests),
             )
             outcome = validate_pr(
                 sandbox=sandbox, base_commit=row["base_sha"], patch=patch,

@@ -1,0 +1,165 @@
+{
+  "stage": "development_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "nipy/nipype",
+  "run_id": "biotasks24-dev-nipype-003",
+  "bootstrap_ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "results": [
+    {
+      "number": 3745,
+      "test_cmds": [
+        "python -m pytest -vv nipype/pipeline/plugins/tests/test_multiproc.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nImportError while loading conftest '/workspace/nipype/conftest.py'.\nnipype/__init__.py:71: in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/__init__.py:9: in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/engine/__init__.py:10: in <module>\n    from .workflows import Workflow\nnipype/pipeline/engine/workflows.py:23: in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\nnipype/interfaces/__init__.py:11: in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\nnipype/interfaces/io.py:37: in <module>\n    from .base import (\nnipype/interfaces/base/__init__.py:15: in <module>\n    from .core import (\nnipype/interfaces/base/core.py:37: in <module>\n    from .specs import (\nnipype/interfaces/base/specs.py:35: in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.11/site-packages/packaging/version.py:452: in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\nE   packaging.version.InvalidVersion: Invalid version: 'unknown'\nException ignored in atexit callback: <function free_display at 0x7f240ff0e200>\nTraceback (most recent call last):\n  File \"/workspace/nipype/utils/config.py\", line 371, in free_display\n    from .. import config\n  File \"/workspace/nipype/__init__.py\", line 71, in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/__init__.py\", line 9, in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/engine/__init__.py\", line 10, in <module>\n    from .workflows import Workflow\n  File \"/workspace/nipype/pipeline/engine/workflows.py\", line 23, in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\n  File \"/workspace/nipype/interfaces/__init__.py\", line 11, in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\n  File \"/workspace/nipype/interfaces/io.py\", line 37, in <module>\n    from .base import (\n  File \"/workspace/nipype/interfaces/base/__init__.py\", line 15, in <module>\n    from .core import (\n  File \"/workspace/nipype/interfaces/base/core.py\", line 37, in <module>\n    from .specs import (\n  File \"/workspace/nipype/interfaces/base/specs.py\", line 35, in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/packaging/version.py\", line 452, in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\npackaging.version.InvalidVersion: Invalid version: 'unknown'\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nR2E_START_TEST_OUTPUT\nImportError while loading conftest '/workspace/nipype/conftest.py'.\nnipype/__init__.py:71: in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/__init__.py:9: in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/engine/__init__.py:10: in <module>\n    from .workflows import Workflow\nnipype/pipeline/engine/workflows.py:23: in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\nnipype/interfaces/__init__.py:11: in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\nnipype/interfaces/io.py:37: in <module>\n    from .base import (\nnipype/interfaces/base/__init__.py:15: in <module>\n    from .core import (\nnipype/interfaces/base/core.py:37: in <module>\n    from .specs import (\nnipype/interfaces/base/specs.py:35: in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.11/site-packages/packaging/version.py:452: in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\nE   packaging.version.InvalidVersion: Invalid version: 'unknown'\nException ignored in atexit callback: <function free_display at 0x7f78b9ee7c40>\nTraceback (most recent call last):\n  File \"/workspace/nipype/utils/config.py\", line 371, in free_display\n    from .. import config\n  File \"/workspace/nipype/__init__.py\", line 71, in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/__init__.py\", line 9, in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/engine/__init__.py\", line 10, in <module>\n    from .workflows import Workflow\n  File \"/workspace/nipype/pipeline/engine/workflows.py\", line 23, in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\n  File \"/workspace/nipype/interfaces/__init__.py\", line 11, in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\n  File \"/workspace/nipype/interfaces/io.py\", line 37, in <module>\n    from .base import (\n  File \"/workspace/nipype/interfaces/base/__init__.py\", line 15, in <module>\n    from .core import (\n  File \"/workspace/nipype/interfaces/base/core.py\", line 37, in <module>\n    from .specs import (\n  File \"/workspace/nipype/interfaces/base/specs.py\", line 35, in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/packaging/version.py\", line 452, in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\npackaging.version.InvalidVersion: Invalid version: 'unknown'\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/base.py...\nChecking patch nipype/pipeline/plugins/legacymultiproc.py...\nChecking patch nipype/pipeline/plugins/multiproc.py...\nApplied patch nipype/pipeline/plugins/base.py cleanly.\nApplied patch nipype/pipeline/plugins/legacymultiproc.py cleanly.\nApplied patch nipype/pipeline/plugins/multiproc.py cleanly.\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    },
+    {
+      "number": 3766,
+      "test_cmds": [
+        "python -m pytest -vv nipype/pipeline/engine/tests/test_workflows.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at b4c671f Merge remote-tracking branch 'upstream/maint/1.12.x'\nR2E_START_TEST_OUTPUT\nImportError while loading conftest '/workspace/nipype/conftest.py'.\nnipype/__init__.py:71: in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/__init__.py:9: in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/engine/__init__.py:10: in <module>\n    from .workflows import Workflow\nnipype/pipeline/engine/workflows.py:23: in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\nnipype/interfaces/__init__.py:11: in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\nnipype/interfaces/io.py:37: in <module>\n    from .base import (\nnipype/interfaces/base/__init__.py:15: in <module>\n    from .core import (\nnipype/interfaces/base/core.py:37: in <module>\n    from .specs import (\nnipype/interfaces/base/specs.py:35: in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.11/site-packages/packaging/version.py:452: in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\nE   packaging.version.InvalidVersion: Invalid version: 'unknown'\nException ignored in atexit callback: <function free_display at 0x7f1e0e8e3c40>\nTraceback (most recent call last):\n  File \"/workspace/nipype/utils/config.py\", line 371, in free_display\n    from .. import config\n  File \"/workspace/nipype/__init__.py\", line 71, in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/__init__.py\", line 9, in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/engine/__init__.py\", line 10, in <module>\n    from .workflows import Workflow\n  File \"/workspace/nipype/pipeline/engine/workflows.py\", line 23, in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\n  File \"/workspace/nipype/interfaces/__init__.py\", line 11, in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\n  File \"/workspace/nipype/interfaces/io.py\", line 37, in <module>\n    from .base import (\n  File \"/workspace/nipype/interfaces/base/__init__.py\", line 15, in <module>\n    from .core import (\n  File \"/workspace/nipype/interfaces/base/core.py\", line 37, in <module>\n    from .specs import (\n  File \"/workspace/nipype/interfaces/base/specs.py\", line 35, in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/packaging/version.py\", line 452, in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\npackaging.version.InvalidVersion: Invalid version: 'unknown'\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard b4c671fe5581534bcfd64224db17fd4dc1d9464c\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/tests/test_workflows.py...\nApplied patch nipype/pipeline/engine/tests/test_workflows.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at b4c671f Merge remote-tracking branch 'upstream/maint/1.12.x'\nR2E_START_TEST_OUTPUT\nImportError while loading conftest '/workspace/nipype/conftest.py'.\nnipype/__init__.py:71: in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/__init__.py:9: in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\nnipype/pipeline/engine/__init__.py:10: in <module>\n    from .workflows import Workflow\nnipype/pipeline/engine/workflows.py:23: in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\nnipype/interfaces/__init__.py:11: in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\nnipype/interfaces/io.py:37: in <module>\n    from .base import (\nnipype/interfaces/base/__init__.py:15: in <module>\n    from .core import (\nnipype/interfaces/base/core.py:37: in <module>\n    from .specs import (\nnipype/interfaces/base/specs.py:35: in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n/usr/local/lib/python3.11/site-packages/packaging/version.py:452: in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\nE   packaging.version.InvalidVersion: Invalid version: 'unknown'\nException ignored in atexit callback: <function free_display at 0x7f3e6dce3c40>\nTraceback (most recent call last):\n  File \"/workspace/nipype/utils/config.py\", line 371, in free_display\n    from .. import config\n  File \"/workspace/nipype/__init__.py\", line 71, in <module>\n    from .pipeline import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/__init__.py\", line 9, in <module>\n    from .engine import Node, MapNode, JoinNode, Workflow\n  File \"/workspace/nipype/pipeline/engine/__init__.py\", line 10, in <module>\n    from .workflows import Workflow\n  File \"/workspace/nipype/pipeline/engine/workflows.py\", line 23, in <module>\n    from ...interfaces.base import traits, TraitedSpec, TraitDictObject, TraitListObject\n  File \"/workspace/nipype/interfaces/__init__.py\", line 11, in <module>\n    from .io import DataGrabber, DataSink, SelectFiles, BIDSDataGrabber\n  File \"/workspace/nipype/interfaces/io.py\", line 37, in <module>\n    from .base import (\n  File \"/workspace/nipype/interfaces/base/__init__.py\", line 15, in <module>\n    from .core import (\n  File \"/workspace/nipype/interfaces/base/core.py\", line 37, in <module>\n    from .specs import (\n  File \"/workspace/nipype/interfaces/base/specs.py\", line 35, in <module>\n    nipype_version = Version(__version__)\n                     ^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/site-packages/packaging/version.py\", line 452, in __init__\n    raise InvalidVersion(f\"Invalid version: {version!r}\")\npackaging.version.InvalidVersion: Invalid version: 'unknown'\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard b4c671fe5581534bcfd64224db17fd4dc1d9464c\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/workflows.py...\nApplied patch nipype/pipeline/engine/workflows.py cleanly.\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/tests/test_workflows.py...\nApplied patch nipype/pipeline/engine/tests/test_workflows.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    }
+  ],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No held-out execution, final task export/build or solver run.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "base_image_repo_digests": [
+    "python@sha256:0a310eeecf4e1f5a0743f9a6520c90c88d089c903ca5fd283f501e3a805f5f89"
+  ],
+  "bootstrap_exit_code": 0,
+  "empty_test_commands_control": {
+    "status": "failed",
+    "fail_to_pass": [],
+    "pass_to_pass": [],
+    "pre_log": "",
+    "post_log": "",
+    "reason": "bootstrap did not record any test_cmds"
+  },
+  "disposition": "development_validation_completed",
+  "cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.029544741002609953
+    },
+    {
+      "operation": "image",
+      "exit_code": 1,
+      "duration_sec": 0.01997057099652011
+    },
+    {
+      "operation": "pull",
+      "exit_code": 0,
+      "duration_sec": 2.994755064995843
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 7.09411181100586
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09187974199448945
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.10848926300241146
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 49.24922560999403
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.5807672270020703
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.08317177199933212
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.06726827200327534
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09813935300189769
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 1.057886270005838
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8516241640027147
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12102358300035121
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10913533300481504
+    },
+    {
+      "operation": "exec",
+      "exit_code": 1,
+      "duration_sec": 0.11669399400125258
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 1.0825189699971816
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8823657949978951
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8747332150014699
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 6.066230281001481
+    }
+  ],
+  "elapsed_seconds": 71.658
+}

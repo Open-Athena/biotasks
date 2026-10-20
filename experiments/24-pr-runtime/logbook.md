@@ -483,3 +483,30 @@ mount options, and checks the Docker client executable before package setup.
 This tests the scratch-mount executability explanation rather than altering
 target PR code. Attempt `nipype-003` retains the same inputs, resource ceilings
 and validator, with both prior setup failures included in cost accounting.
+
+Attempt `nipype-003` completed native validation and verified owned-container
+cleanup. Its archived filesystem report confirms `/tmp` is mounted `noexec`;
+moving tools to `/opt` resolved runner installation. The generic target setup
+exited zero. The total attempt lasted 119.581 seconds (0.09965 allocated
+CPU-hours); the driver measured 71.658 seconds after runner installation.
+
+Both PRs received the native disposition `failed`, with zero F2P and zero P2P.
+The preserved pre-fix log explicitly shows `Removing nipype/_version.py` during
+native `git clean -fdx`. Both stages then failed importing Nipype because its
+version was `unknown`, before collecting tests. These are setup/collection
+failures, not evidence that the source fixes lack a regression signal.
+No tasks were accepted or exported. Full report and package versions are in
+`evidence/development/nipype-003/`, with hashes for all original archive files.
+The archive and emitted result hashes were independently verified.
+
+Prepared profile version 2: install declared build-system requirements once and
+run an editable rebuild with `--no-deps --no-build-isolation --no-index` before
+each pytest invocation. This generically regenerates build metadata after
+native reset/clean, without patching Nipype or its tests. Native command
+normalization preserves the rebuild command and targets only the pytest command.
+This is a declared setup improvement; retain version 1's zero-yield result.
+
+Inputs `nipype-004` and `scfp-001` contain only the original development PRs.
+They can run on two bounded reserved CPU workers under the existing execution
+plan. Both use the same generic profile version 2, no per-PR repairs, no model
+calls, and unchanged native validation code. Held-out execution remains untouched.
