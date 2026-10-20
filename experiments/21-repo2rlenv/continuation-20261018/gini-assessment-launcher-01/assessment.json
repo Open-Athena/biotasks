@@ -1,0 +1,13 @@
+{
+  "stage": "generic_assessment_launcher_preflight_failure_not_task_or_grader_failure",
+  "error_type": "KeyError",
+  "diagnosed_missing_explicit_environment_key": "BIOTASKS21_PR_INPUTS_SHA256",
+  "basis": "The frozen TRC wrapper reads this key before archive validation, runtime installation or child allocation; the submitted launcher omitted it. The captured wrapper reports KeyError at elapsed0.0s, with no workers.",
+  "allocated_sandboxes": 0,
+  "model_calls": 0,
+  "native_controls_executed": 0,
+  "target_code_executed": false,
+  "task_specific_fixes": 0,
+  "new_admissions": 0,
+  "orchestration_correction": "Provide the omitted archive checksum in the separate retry environment, retain all12payload file hashes and the original failure, and check required keys before submission."
+}
