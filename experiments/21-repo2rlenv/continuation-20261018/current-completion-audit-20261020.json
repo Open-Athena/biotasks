@@ -1,6 +1,6 @@
 {
   "stage": "current_requirement_audit_completion_not_established",
-  "as_of_utc": "2026-10-20T03:10:59.071611+00:00",
+  "as_of_utc": "2026-10-20T03:22:46.646010+00:00",
   "goal": "finish #21",
   "goal_complete": false,
   "requirements": [
@@ -16,10 +16,11 @@
     },
     {
       "requirement": "Run applicable repository routes; retain bounded failures, unsupported combinations and missing evidence",
-      "status": "bounded_results_recorded_backend_check_pending",
-      "finding": "Native equivalence TRC-Docker availability check is live. Code-instruct capture gaps remain inconclusive and consumed; no replay.",
+      "status": "bounded_results_and_native_backend_blocker_recorded",
+      "finding": "TRCcallerhasnoDockerCLI/server, independently observed in zero-model probe02. Native equivalence remains blocked, with original learner-visible reference limitation. Code-instruct capture gaps stay inconclusive and consumed; no replay.",
       "sources": [
-        "continuation-20261018/target-tracker.json"
+        "continuation-20261018/target-tracker.json",
+        "continuation-20261018/glm-long-proxy-probe-02/docker-capability.json"
       ]
     },
     {
@@ -60,10 +61,13 @@
     {
       "requirement": "Public eligibility, durable hash/mode readback, complete usage and owned-resource cleanup",
       "status": "incomplete_active_finite_clients_and_probe",
-      "finding": "90verified continuation snapshots; old solver-client finalusage and650sdiagnostic archive/endpoint cleanup remain pending.",
+      "finding": "91verified continuation snapshots; old finite solver-client finalusage pending. Silent650sdiagnostic failed without model calls and its two claims/endpoints are released; separate zero-model keepalive comparison is dispatched.",
       "sources": [
         "continuation-20261018/glm-inference-client-20261020-01-observation.json",
-        "continuation-20261018/glm-long-proxy-probe-20261020-02-observation.json"
+        "continuation-20261018/glm-long-proxy-probe-20261020-02-observation.json",
+        "continuation-20261018/glm-long-proxy-probe-02/assessment.json",
+        "continuation-20261018/glm-long-proxy-probe-02/capacity-release.json",
+        "continuation-20261018/glm-long-proxy-probe-20261020-03-submission.json"
       ]
     },
     {
@@ -92,7 +96,7 @@
     "candidate_cap_exhausted_below_target": 9,
     "capture_inconclusive_allowance_consumed": 2,
     "unsupported_native_language_or_profile": 22,
-    "blocked_backend_and_reference_isolation": 2,
+    "blocked_native_caller_Docker_and_reference_isolation": 2,
     "declared_input_pool_exhausted_below_target": 4,
     "blocked_eligible_input_or_terms": 2,
     "blocked_native_model_support": 5,
@@ -137,20 +141,24 @@
     "continuation-20261018/swe-gen-pr2630-blind-01/independent-audit.json": "72baf68202ae842ff3171b2c55516e94adc2053ebeba58f4eecfa6ece384b284",
     "upstream-recipe-catalog.json": "21af770661c575cbace347fc0f6b13e30d48237c259973e375bd70c9fcbb6477",
     "applicability.csv": "8d099c43841f109063354103f1c1e5cf5ec1178e4a04312a46f1457a50c13004",
-    "continuation-20261018/target-tracker.json": "e3767acd7990a7ddeaa9116bcec8e9f5efa515ec52ab5270451aff95d3691f50",
+    "continuation-20261018/target-tracker.json": "715ed6792d849755a6eb15905f8052671e8a1afde37c0af532e12c1dd59c3f6b",
     "continuation-20261018/accepted-instance-provenance-summary.json": "1e358496572b21d2352e07f01a4fdc57b4290d4ba9d1c4926d74d0f38ab1dab9",
     "continuation-20261018/automatic-pipeline-evaluation-policy.json": "5d9b63bb5bd44e75bfc83e3fd870ca13d7d9354471c64f6b9e63ffcad6874f1d",
     "continuation-20261018/saved-terminal-stage-reconciliation-after-seta01.json": "f03379383d2a3064aec17e10e2c6be67a02d381e91b1e76f9b32364450c08d44",
     "continuation-20261018/dataarc-automatic-04-selection-preview.json": "fefae82548be848015c37a80523555c31b4360d6838b84c096fdf14c705573a3",
-    "continuation-20261018/consolidated-ledger.json": "cf9d3f7844a5c98796de3f05202d18e08d9eb930973f93b8fa66d91b78f7a50f",
+    "continuation-20261018/consolidated-ledger.json": "8508320e511a0b334b71f7d732be6e79caaba8df2135e2e663ec78d57f6a4397",
     "evidence/marin-structure-coverage/coverage.json": "81e9ee9af79555951d26419aa88a46b200d9cf19bc2f6d319e1bf838e9fdef39",
     "continuation-20261018/marin-continuation-coverage.json": "66951c19ec8112c0e7ff7a35f7609fd2e0fe8b25b11c24b25785c1e8ca5d030a",
-    "continuation-20261018/glm-inference-client-20261020-01-observation.json": "09213b20c5b0fed19da2b2cb4469a22f9e4ec93d02033f0fbd52d092ee39e583",
-    "continuation-20261018/glm-long-proxy-probe-20261020-02-observation.json": "e8b95e0ec837d644693c17605fd8bb67888f4e10849f8b18c322bf4da751e976",
+    "continuation-20261018/glm-inference-client-20261020-01-observation.json": "bea368b6a653b3b215ad9992dea7978059163feeece9a997574b9f2b19626ba6",
+    "continuation-20261018/glm-long-proxy-probe-20261020-02-observation.json": "4297baa39c9c2ce6cd3e11065bf92794fdad86a4ca762a3b5bc490761a90f463",
     "continuation-20261018/issue-body-schema-attribution-20261020-publication.json": "220c6ec08e194a711314fa58dc3ca41ed8a2256d58c6bdda5c4d005aa6427cd8",
     "continuation-20261018/authorization.json": "d151f369a410e1d72f9ab77f40f6363a589e089a16e9e81cf6e4873633c20521",
     "continuation-20261018/budget.json": "31f643edd359f419956b702308f1fa75554d4bc9836456341906f932af5bd41e",
-    "evidence/completion-audit-20261017/issue-scope.md": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6"
+    "evidence/completion-audit-20261017/issue-scope.md": "b935d96f51d82be5391680d9a2612270bb2a12790ed205547eab80e142a8dcd6",
+    "continuation-20261018/glm-long-proxy-probe-02/docker-capability.json": "2a1bbbc1b6e65a7a1523968b54fd5ba1611dae38f57c06e8142a0025ddaa095d",
+    "continuation-20261018/glm-long-proxy-probe-02/assessment.json": "154d0a014ee1c804e5809d8dd4ae33690a274db258e76d7ee6670ea3ca73c283",
+    "continuation-20261018/glm-long-proxy-probe-02/capacity-release.json": "b3f6aa718f9f77034e694f9434ffb042c2e1578832a33c28c26e0aad7f53ab81",
+    "continuation-20261018/glm-long-proxy-probe-20261020-03-submission.json": "1c6e882464907bf3b9fd1b697aaf8f70a518b360f0f38d2790c508c4498a2e9f"
   },
   "next_required": [
     "Recover zero-model650s delivery/Docker diagnostic and clean up its endpoint.",
