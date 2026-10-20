@@ -1,5 +1,6 @@
 """Join preserved first-pass and continuation admissions without merging rewards."""
 import csv
+from collections import Counter
 import datetime
 import hashlib
 import json
@@ -104,6 +105,21 @@ def build():
                 task['blind_task_checksum'] = proof['task_checksum']
             tasks.append(task)
     assert len({(x['unit_id'], x['task_id']) for x in tasks}) == len(tasks)
+    provenance = read('continuation-20261018/accepted-instance-provenance-summary.json')
+    matched_provenance = set()
+    for task in tasks:
+        matches = [(index, row) for index, row in enumerate(provenance['rows'])
+                   if row['route'] == task['route']
+                   and row['task_id'] in (task['task_id'], task['native_task'])]
+        assert len(matches) == 1, (task['route'], task['task_id'])
+        index, record = matches[0]
+        assert index not in matched_provenance
+        matched_provenance.add(index)
+        task['provenance_category'] = record['category']
+        task['unchanged_output_evidence_eligible'] = record['category'] == 'authored_output_unchanged'
+    assert len(matched_provenance) == len(provenance['rows'])
+    provenance_counts = dict(Counter(task['provenance_category'] for task in tasks))
+    assert provenance_counts == provenance['categories']
     for unit in tracker['rows']:
         assert unit['total_admitted'] == sum(t['unit_id'] == unit['unit_id'] for t in tasks)
     groups = {}
@@ -130,6 +146,11 @@ def build():
     return {'as_of_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'stage': 'consolidated_verified_results_so_far_not_final_completion',
             'tasks': tasks, 'units': tracker['rows'], 'reward_groups': groups,
+            'automatic_output_accounting': {
+                'categories': provenance_counts,
+                'unchanged_accepted_outputs': sum(task['unchanged_output_evidence_eligible'] for task in tasks),
+                'unattended_end_to_end_yield_established': False,
+                'interpretation': 'Accepted instances and blind scores below include legacy assisted evidence. Only unchanged accepted outputs support the primary output comparison. Curated setup, manual orchestration and final assessment remain disclosed; these counts are not production acceptance rates.'},
             'total_admitted': len(tasks), 'total_scored': sum(t['native_reward'] is not None for t in tasks),
             'budget': {k: budget[k] for k in ['ceiling_usd', 'historical_first_pass_estimates_and_holds_usd', 'continuation_estimates_and_holds_usd', 'accounted_estimates_and_holds_usd', 'remaining_conservative_allowance_usd', 'provider_invoice_verified', 'credit_balance_verified']},
             'budget_hold_accounting': {'explicit_transfer_rows': [row['run'] for row in transferred],
@@ -145,7 +166,13 @@ def build():
 
 def markdown(data):
     lines = ['## Consolidated result ledger', '',
-             'First pass and continuation combined. Every accepted task below has independent validation; a scored attempt is separate from acceptance. Pending outcomes are not zero scores.', '',
+             'First pass and continuation combined, including legacy assisted evidence. Acceptance below includes allowed final Codex assessment; it does not mean an unchanged automatic output. A scored attempt is separate from acceptance. Pending outcomes are not zero scores.', '',
+             '### Automatic-output provenance', '',
+             'The comparison assesses the automatic pipeline. Task-specific repairs and feedback cannot contribute primary successes. Unchanged accepted outputs still do not establish unattended setup, orchestration or production yield.', '',
+             '| Accepted-instance provenance | Instances |', '| --- | ---: |']
+    for category, count in data['automatic_output_accounting']['categories'].items():
+        lines.append(f"| {category.replace('_', ' ')} | {count} |")
+    lines += ['', '### Native reward results for all accepted evidence', '',
              '| Reward family | Accepted | Scored once | Maximum reward | Partial | Zero | Pending |',
              '| --- | ---: | ---: | ---: | ---: | ---: | ---: |']
     for label, key in [('Correctness / algorithmic', 'correctness_and_algorithmic'), ('Patch similarity', 'patch_similarity')]:

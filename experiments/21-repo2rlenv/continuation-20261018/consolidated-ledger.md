@@ -1,6 +1,20 @@
 ## Consolidated result ledger
 
-First pass and continuation combined. Every accepted task below has independent validation; a scored attempt is separate from acceptance. Pending outcomes are not zero scores.
+First pass and continuation combined, including legacy assisted evidence. Acceptance below includes allowed final Codex assessment; it does not mean an unchanged automatic output. A scored attempt is separate from acceptance. Pending outcomes are not zero scores.
+
+### Automatic-output provenance
+
+The comparison assesses the automatic pipeline. Task-specific repairs and feedback cannot contribute primary successes. Unchanged accepted outputs still do not establish unattended setup, orchestration or production yield.
+
+| Accepted-instance provenance | Instances |
+| --- | ---: |
+| content unchanged shared runtime modified | 12 |
+| adapted runtime evidence only | 9 |
+| authored output unchanged | 6 |
+| unresolved hand prepared family | 3 |
+| excluded task specific author feedback | 1 |
+
+### Native reward results for all accepted evidence
 
 | Reward family | Accepted | Scored once | Maximum reward | Partial | Zero | Pending |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
