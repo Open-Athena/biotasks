@@ -1,5 +1,6 @@
 """Build the latest standalone explorer using only versioned, selected evidence."""
 
+import argparse
 import hashlib
 import html
 import json
@@ -9,22 +10,40 @@ from pathlib import Path
 from markdown_it import MarkdownIt
 from pygments import highlight
 from pygments.formatters import HtmlFormatter
-from pygments.lexers import get_lexer_by_name
+from pygments.lexers import TextLexer, get_lexer_by_name
+from pygments.util import ClassNotFound
 
 HERE = Path(__file__).resolve().parent
 EXP = HERE.parent
 ROOT = EXP.parents[1]
 REV = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
 BASE = f"https://github.com/Open-Athena/biotasks/blob/{REV}/"
-HF = "https://huggingface.co/datasets/gonzalobenegas/biotasks-notebook-pilot-issue-19"
-RELEASE = json.loads((EXP / "scientific-releases/001/publication.json").read_text())["commit_sha"]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--profile", type=Path, default=HERE / "current.json")
+parser.add_argument("--output", type=Path, default=HERE)
+args = parser.parse_args()
+profile_path = args.profile.resolve()
+profile_path.relative_to(ROOT)
+profile = json.loads(profile_path.read_text())
+OUTPUT = args.output.resolve()
+OUTPUT.mkdir(parents=True, exist_ok=True)
+release = profile.get("release")
+RELEASE = None
 md = MarkdownIt("commonmark", {"html": False}).enable("table")
 formatter = HtmlFormatter(style="monokai", noclasses=True)
-sources = {}
+sources = {
+    "repo:" + str(profile_path.relative_to(ROOT)): hashlib.sha256(
+        profile_path.read_bytes()
+    ).hexdigest()
+}
 
 
 def code(text, language="text"):
-    return highlight(text, get_lexer_by_name(language), formatter)
+    try:
+        lexer = get_lexer_by_name(language)
+    except ClassNotFound:
+        lexer = TextLexer()
+    return highlight(text, lexer, formatter)
 
 
 def content(text, suffix):
@@ -34,6 +53,9 @@ def content(text, suffix):
         ".py": "python",
         ".json": "json",
         ".ipynb": "json",
+        ".jsonl": "json",
+        ".r": "r",
+        ".R": "r",
         ".toml": "toml",
         ".sh": "bash",
         ".diff": "diff",
@@ -42,7 +64,8 @@ def content(text, suffix):
 
 
 def artifact(relative, label=None, opened=False):
-    path = EXP / relative
+    path = ((ROOT / relative[5:]) if relative.startswith("repo:") else (EXP / relative)).resolve()
+    path.relative_to(ROOT)
     text = path.read_text()
     sources[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
     title = html.escape(label or path.name)
@@ -55,8 +78,8 @@ def artifact(relative, label=None, opened=False):
 
 
 def stage(key, title, kind, description, program, groups):
-    body = f'<article class="panel stage" id="{key}"><span class="pill">{kind}</span><h2>{title}</h2><p>{description}</p>'
-    body += f'<p>Program: <a href="{BASE}{program if program.startswith("src/") else "experiments/19-repo2rlenv-notebook-pilot/" + program}">{program}</a></p>'
+    body = f'<article class="panel stage" id="{html.escape(key)}"><span class="pill">{html.escape(kind)}</span><h2>{html.escape(title)}</h2><p>{html.escape(description)}</p>'
+    body += f'<p>Program: <a href="{BASE}{program if program.startswith("src/") else str(EXP.relative_to(ROOT)) + "/" + program}">{program}</a></p>'
     for heading, files in groups:
         body += f"<h3>{heading}</h3>" + "".join(artifact(path, label) for path, label in files)
     return body + "</article>"
@@ -66,221 +89,88 @@ def files(prefix, *names):
     return [(prefix + "/" + name, name) for name in names]
 
 
-stages = [
-    (
-        "convert",
-        "01 · Convert notebook",
-        "Programmatic",
-        "Pinned notebook JSON → Jupytext py:nomarker script. Markdown cells become comments. Stored notebook outputs are not execution evidence.",
-        "src/biotasks/notebook_script.py",
-        [
-            ("Input", files("reference-inputs/scanpy", "clustering.ipynb")),
-            ("Output", files("reference-inputs/scanpy", "baseline.py", "conversion.json")),
-        ],
-    ),
-    (
-        "prepare",
-        "02 · Select and export terminal results",
-        "GLM-5.3",
-        "Preparation 010 appends export code to the original analysis. It does not install dependencies or stage data.",
-        "run_preparation.py",
-        [
-            ("Recorded prompt", files("preparation-runs/010/prepare", "system-prompt.md")),
-            ("Input", files("preparation-runs/010/prepare", "input.json")),
-            (
-                "Output",
-                files(
-                    "preparation-runs/010", "exports.py", "plan.md", "reference.py", "source.diff"
-                ),
-            ),
-        ],
-    ),
-    (
-        "setup",
-        "03 · Set up and test reference",
-        "GLM-5.3 + execution",
-        "Setup 001 uses tools to prepare dependencies and real inputs, then tests the reference offline. The controller executes the script; GLM diagnoses setup issues.",
-        "run_reference_setup.py",
-        [
-            ("Recorded prompt", files("setup-runs/001", "system-prompt.md")),
-            (
-                "Input",
-                [("explorer/evidence/setup-input.json", "Initial messages and available tools")],
-            ),
-            (
-                "Output",
-                files(
-                    "setup-runs/001/candidate",
-                    "pyproject.toml",
-                    "system-packages.json",
-                    "stage-inputs.sh",
-                    "analysis.py",
-                )
-                + files("setup-runs/001/trial", "reference.py", "result.json", "reference.log")
-                + files("setup-runs/001", "output-audit.json"),
-            ),
-        ],
-    ),
-    (
-        "replay",
-        "04 · Replay reference",
-        "Programmatic",
-        "Replay 001 checks the prepared reference against frozen inputs. No new model prompt.",
-        "run_reference_replay.py",
-        [
-            ("Input", files("replay-runs/001/replay", "frozen-inputs.json", "setup.sh")),
-            (
-                "Output",
-                files("replay-runs/001/replay", "comparison.json")
-                + files("replay-runs/001", "result.json"),
-            ),
-        ],
-    ),
-    (
-        "specify",
-        "05 · Specify scientific task",
-        "GLM-5.3",
-        "Specification 016 selects marker statistics with supplied group labels and stable gene identities. The solver need not reproduce clustering or UMAP.",
-        "run_specification.py",
-        [
-            ("Recorded prompt", files("specification-runs/016/specify", "system-prompt.md")),
-            (
-                "Input",
-                [("explorer/evidence/specification-input.json", "Exact recorded worker input")],
-            ),
-            (
-                "Output",
-                files(
-                    "specification-runs/016",
-                    "task-brief.md",
-                    "validation-handoff.md",
-                    "specification.json",
-                ),
-            ),
-        ],
-    ),
-    (
-        "materialize",
-        "06 · Materialize inputs and oracle",
-        "GLM-5.3 + execution",
-        "Materialization 006 produces four public inputs and a private reference. The original matrices are observed data; fixed labels and identities are derived inputs.",
-        "task_materialization.py",
-        [
-            ("Recorded prompt", files("materialization-runs/006", "system-prompt.md")),
-            (
-                "Input",
-                [("explorer/evidence/materialization-input.json", "Exact recorded worker input")],
-            ),
-            (
-                "Output",
-                files(
-                    "materialization-runs/006",
-                    "derive.py",
-                    "oracle.py",
-                    "manifest.json",
-                    "final-execution.json",
-                ),
-            ),
-        ],
-    ),
-    (
-        "grade",
-        "07 · Build and validate grading",
-        "GLM-5.3 + deterministic controls",
-        "Accepted grading 006 combines the independently authored solution and frozen probes with the repaired grader. All 19 controls were reexecuted. Below are the component prompts, not a claim that this was one model call.",
-        "grading_session.py",
-        [
-            (
-                "Recorded prompts",
-                files("grading-runs/002/grader", "system-prompt.md")
-                + files("grading-runs/005/repair", "system-prompt.md")
-                + files("grading-runs/006/contract", "system-prompt.md")
-                + files("grading-runs/006/review", "system-prompt.md"),
-            ),
-            (
-                "Inputs",
-                files("grading-runs/002/grader", "input.json")
-                + files("grading-runs/006/contract", "input.json")
-                + files("grading-runs/006", "inputs.json"),
-            ),
-            (
-                "Outputs",
-                files(
-                    "grading-runs/006",
-                    "grade.py",
-                    "acceptance-contract.md",
-                    "independent-solution.json",
-                    "probes.json",
-                    "final-controls.json",
-                    "review.json",
-                ),
-            ),
-        ],
-    ),
-    (
-        "native",
-        "08 · Run Harbor controls and solver",
-        "Programmatic + GLM-5.3 solver",
-        "Native 003: oracle reward 1, empty baseline reward 0, blind Terminus-2 / GLM-5.3 reward 1. The Attempt tab shows the actual question, tool calls and observations.",
-        "run_scientific_native.py",
-        [
-            (
-                "Input",
-                files("native-runs/003", "inputs.json")
-                + [("explorer/evidence/task.toml", "Published Harbor configuration")],
-            ),
-            (
-                "Output",
-                files("native-runs/003/native", "result.json")
-                + files("native-runs/003", "operator-review.json"),
-            ),
-        ],
-    ),
-    (
-        "release",
-        "09 · Publish and download-check",
-        "Programmatic",
-        "The release was published publicly and independently downloaded and verified. No new LLM call.",
-        "stage_scientific_release.py",
-        [
-            ("Input", files("scientific-releases/001", "manifest.json", "release-files.json")),
-            (
-                "Output",
-                files("scientific-releases/001", "publication.json", "download-verification.json"),
-            ),
-        ],
-    ),
-]
+stages = profile["stages"]
 
-seed = json.loads((EXP / "seeds/current.json").read_text())[0]
-notebook = json.loads((EXP / "reference-inputs/scanpy/clustering.ipynb").read_text())
+
+def evidence_json(relative):
+    path = EXP / relative
+    sources[relative] = hashlib.sha256(path.read_bytes()).hexdigest()
+    return json.loads(path.read_text())
+
+
+seeds = evidence_json(profile["seed"])
+if len(seeds) != 1:
+    raise ValueError("Select one explicit notebook seed for this explorer")
+seed = seeds[0]
+notebook = evidence_json(profile["notebook"])
+if release:
+    RELEASE = evidence_json(release["publication"])["commit_sha"]
+    release_url = "https://huggingface.co/datasets/" + release["repository"] + "/tree/" + RELEASE
+    release_label = "Published dataset ↗"
+else:
+    release_url, release_label = seed["url"], "Source notebook ↗"
+language = profile.get(
+    "notebook_language",
+    notebook.get("metadata", {}).get("kernelspec", {}).get("language", "python"),
+)
 cells = []
 for i, cell in enumerate(notebook["cells"]):
     text = "".join(cell["source"])
+    rendered = content(text, ".md") if cell["cell_type"] == "markdown" else code(text, language)
     cells.append(
-        f'<div class="cell"><small>Cell {i + 1} · {cell["cell_type"]}</small>'
-        + content(text, ".md" if cell["cell_type"] == "markdown" else ".py")
+        f'<div class="cell"><small>Cell {i + 1} · {html.escape(cell["cell_type"])}</small>'
+        + rendered
         + "</div>"
     )
-notebook_html = f'<h2>Scanpy · Clustering and marker genes</h2><p>NeurIPS BMMC samples s1d1 and s1d3. <a href="{html.escape(seed["url"])}">Pinned source notebook</a> · BSD-3-Clause; input data CC BY 4.0.</p><p>Source cells below; saved notebook outputs are not shown as fresh results.</p>'
+notebook_html = (
+    "<h2>"
+    + html.escape(profile["notebook_title"])
+    + "</h2><p>"
+    + html.escape(profile["notebook_description"])
+    + f' <a href="{html.escape(seed["url"])}">Pinned source notebook</a>.</p><p>Source cells below; saved notebook outputs are not shown as fresh results.</p>'
+)
 notebook_html += (
-    artifact("reference-inputs/scanpy/clustering.ipynb", "Actual notebook JSON")
-    + artifact("reference-inputs/scanpy/baseline.py", "Converted Python script")
+    artifact(profile["notebook"], "Actual notebook JSON")
+    + artifact(profile["converted"], "Converted script")
     + "".join(cells)
 )
-task_html = "<h2>Marker genes for fixed cell groups</h2><p>The exact published solver question is below. Reference answers and grading code are separate from solver inputs.</p>"
-task_html += artifact("explorer/evidence/instruction.md", "Solver question", True)
-task_html += artifact(
-    "materialization-runs/006/manifest.json", "Input and reference artifact manifest"
-) + artifact("explorer/evidence/task.toml", "Harbor environment and limits")
-task_html += (
-    "<h3>Private grading assets (inspection only)</h3>"
-    + artifact("grading-runs/006/grade.py", "Deterministic grader")
-    + artifact("materialization-runs/006/oracle.py", "Reference solution")
+question_state = (
+    "published solver question"
+    if release
+    else "generated question; scientific validation is not yet complete"
 )
-trajectory_path = next((EXP / "native-runs/003/native/terminus-2").rglob("trajectory.json"))
-trajectory = json.loads(trajectory_path.read_text())
-attempt_html = "<h2>Blind solver attempt</h2><p>Terminus-2 · GLM-5.3 · reward <strong>1</strong> · 18 model requests · 8m 43s total trial. Tools ran in an offline CPU sandbox. All nine grading checks passed.</p>"
+task_html = (
+    "<h2>"
+    + html.escape(profile["task_title"])
+    + "</h2><p>The "
+    + question_state
+    + " is below. Reference answers and grading code are separate from solver inputs.</p>"
+)
+task_html += artifact(profile["instruction"], "Solver question", True)
+for key, label in [
+    ("task_manifest", "Input and reference artifact manifest"),
+    ("task_config", "Harbor environment and limits"),
+]:
+    if profile.get(key):
+        task_html += artifact(profile[key], label)
+task_html += "<h3>Private grading assets (inspection only)</h3>"
+for key, label in [("grader", "Deterministic grader"), ("oracle", "Reference solution")]:
+    if profile.get(key):
+        task_html += artifact(profile[key], label)
+trajectory_path, trajectory = None, {"steps": []}
+native_summary = evidence_json(profile["native_summary"]) if profile.get("native_summary") else None
+if profile.get("trajectory_glob"):
+    matches = list(EXP.glob(profile["trajectory_glob"]))
+    if len(matches) != 1:
+        raise ValueError("Select exactly one solver trajectory")
+    trajectory_path = matches[0]
+    trajectory = evidence_json(str(trajectory_path.relative_to(EXP)))
+attempt_html = "<h2>Blind solver attempt</h2>"
+if native_summary:
+    solver = native_summary["solver"]
+    attempt_html += f"<p>{html.escape(solver['agent'])} · {html.escape(profile.get('solver_model', 'GLM-5.3'))} · reward <strong>{html.escape(str(solver['reward']))}</strong>. The task environment was an offline CPU sandbox; the complete trial result is below.</p>"
+else:
+    attempt_html += "<p>No blind solver attempt is recorded for this selected task yet.</p>"
 for step in trajectory["steps"]:
     title = "Solver input" if step["source"] == "user" else f"Turn {step['step_id'] - 1}"
     attempt_html += f"<details><summary>{title}</summary>"
@@ -302,22 +192,33 @@ for step in trajectory["steps"]:
                 '<div class="document">' + code(str(result.get("content", ""))) + "</div>"
             )
     attempt_html += "</details>"
-# Deliberately omit model reasoning from the reading view; retain the original linked record.
-attempt_html += (
-    f'<p><a href="{BASE}{trajectory_path.relative_to(ROOT)}">Full recorded trajectory</a></p>'
-)
-for name in ["result.json", "verifier/report.json"]:
-    attempt_html += artifact(str((trajectory_path.parent.parent / name).relative_to(EXP)), name)
-review_html = "<h2>Validation and release</h2><p>19 scientific controls passed, followed by fresh Harbor oracle, empty-baseline and blind-solver trials. This is one notebook pilot, not evidence of universal software portability. Authoring and solving used the same model family. The upstream advisory label remains unverified because its standard quality-loop profile was not run; the separate scientific and native checks are recorded below.</p>"
-for path in [
-    "grading-runs/006/final-controls.json",
-    "grading-runs/006/review.json",
-    "native-runs/003/native/result.json",
-    "scientific-releases/001/download-verification.json",
-    "source-license-evidence.json",
-]:
+# Omit model reasoning from the reading view; retain the original linked record.
+if trajectory_path:
+    attempt_html += (
+        f'<p><a href="{BASE}{trajectory_path.relative_to(ROOT)}">Full recorded trajectory</a></p>'
+    )
+    for name in ["result.json", "verifier/report.json"]:
+        attempt_html += artifact(str((trajectory_path.parent.parent / name).relative_to(EXP)), name)
+review_html = "<h2>Validation and release</h2>"
+if profile.get("grading_controls"):
+    controls = evidence_json(profile["grading_controls"])
+    passed = sum(item["passed_control"] is True for item in controls)
+    review_html += f"<p>{passed} of {len(controls)} scientific controls passed.</p>"
+else:
+    review_html += "<p>Scientific validation is not yet complete.</p>"
+if native_summary:
+    review_html += (
+        "<p>Native controls: "
+        + ", ".join(
+            html.escape(str(c["agent"])) + " reward " + html.escape(str(c["reward"]))
+            for c in native_summary["controls"]
+        )
+        + ".</p>"
+    )
+review_html += "<p>" + html.escape(profile["review_description"]) + "</p>"
+for path in profile["review_files"]:
     review_html += artifact(path)
-pipeline_html = '<h2>Notebook → task → attempt</h2><p>Recorded prompts and artifacts used for this published task. Model output is separate from prompt text. Expand a document to inspect it; large biological files are represented by manifests and available in the release.</p><div class="stage-nav">'
+pipeline_html = '<h2>Notebook → task → attempt</h2><p>Prompts, inputs and outputs selected for this task. Model output is separate from prompt text. Expand a document to inspect it; large biological files are represented by manifests and available in the release.</p><div class="stage-nav">'
 pipeline_html += "".join(f'<a href="#{s[0]}">{s[1]}</a>' for s in stages) + "</div>"
 pipeline_html += "".join(stage(*s) for s in stages)
 sections = "".join(
@@ -335,11 +236,26 @@ page = (
     .read_text()
     .replace("__STYLE__", (HERE / "style.css").read_text())
     .replace("__SECTIONS__", sections)
-    .replace("__RELEASE__", HF + "/tree/" + RELEASE)
+    .replace("__RELEASE__", html.escape(release_url))
+    .replace("__RELEASE_LABEL__", html.escape(release_label))
+    .replace("__SUBTITLE__", html.escape(profile["subtitle"]))
+    .replace("__FOOTER__", html.escape(profile["footer"]))
 )
-(HERE / "index.html").write_text(page)
-(HERE / "source-manifest.json").write_text(
-    json.dumps({"evidence_revision": REV, "release_revision": RELEASE, "files": sources}, indent=2)
+(OUTPUT / "index.html").write_text(page)
+(OUTPUT / "source-manifest.json").write_text(
+    json.dumps(
+        {
+            "evidence_revision": REV,
+            "release_revision": RELEASE,
+            "profile": str(profile_path.relative_to(ROOT)),
+            "stage_ids": [s[0] for s in stages],
+            "has_solver_trajectory": trajectory_path is not None,
+            "solver_steps": len(trajectory["steps"]),
+            "solver_tool_steps": sum(bool(s.get("tool_calls")) for s in trajectory["steps"]),
+            "files": sources,
+        },
+        indent=2,
+    )
     + "\n"
 )
 print(

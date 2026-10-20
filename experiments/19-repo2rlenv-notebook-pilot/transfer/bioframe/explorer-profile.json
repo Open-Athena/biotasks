@@ -1,0 +1,409 @@
+{
+  "subtitle": "Bioframe analysis · CTCF motifs assigned to ChIP-seq peaks",
+  "footer": "Recorded evidence; no live model calls. Bioframe notebook MIT; ENCODE source accessions and JASPAR CC BY 4.0 attribution are retained.",
+  "seed": "transfer/bioframe/seed.json",
+  "notebook": "transfer/bioframe/source.ipynb",
+  "converted": "transfer/bioframe/baseline.py",
+  "notebook_title": "Bioframe · Assign motifs to peaks",
+  "notebook_description": "A tool-repository tutorial using observed ENCODE ChIP-seq peaks and predicted JASPAR motif annotations.",
+  "task_title": "Assign CTCF motifs and remove blacklisted intervals",
+  "instruction": "transfer/bioframe/materialization-runs/005/instruction.md",
+  "task_manifest": "transfer/bioframe/materialization-runs/005/manifest.json",
+  "oracle": "transfer/bioframe/materialization-runs/005/oracle.py",
+  "review_description": "Scientific comparison is in progress. Construction/reference agreement alone is insufficient for acceptance. No native blind solver attempt or publication is recorded for this selected candidate.",
+  "review_files": [
+    "transfer/bioframe/materialization-runs/005/controller-result.json",
+    "transfer/bioframe/source-license-evidence.json"
+  ],
+  "stages": [
+    [
+      "convert",
+      "01 · Convert notebook",
+      "Programmatic",
+      "Convert pinned notebook JSON to a plain script while retaining Markdown as comments. Saved notebook outputs are not fresh execution evidence.",
+      "src/biotasks/notebook_script.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/source.ipynb",
+              "Original notebook JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/baseline.py",
+              "Converted script"
+            ],
+            [
+              "transfer/bioframe/conversion.json",
+              "Conversion record"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "prepare",
+      "02 · Select and save terminal results",
+      "GLM-5.3",
+      "Append exports of existing terminal results. Dependency installation and input staging belong to execution.",
+      "run_preparation.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/preparation-runs/001/prepare/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/preparation-runs/001/prepare/input.json",
+              "input.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/preparation-runs/001/exports.py",
+              "exports.py"
+            ],
+            [
+              "transfer/bioframe/preparation-runs/001/plan.md",
+              "plan.md"
+            ],
+            [
+              "transfer/bioframe/preparation-runs/001/reference.py",
+              "reference.py"
+            ],
+            [
+              "transfer/bioframe/preparation-runs/001/source.diff",
+              "source.diff"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "setup",
+      "03 · Prepare and test reference",
+      "GLM-5.3 + execution",
+      "Prepare dependencies and stage original inputs; execute the reference offline using the controller.",
+      "run_reference_setup.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/setup-runs/001/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/explorer/evidence/setup-input.json",
+              "setup-input.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/setup-runs/001/candidate/pyproject.toml",
+              "pyproject.toml"
+            ],
+            [
+              "transfer/bioframe/setup-runs/001/candidate/system-packages.json",
+              "system-packages.json"
+            ],
+            [
+              "transfer/bioframe/setup-runs/001/candidate/stage-inputs.sh",
+              "stage-inputs.sh"
+            ],
+            [
+              "transfer/bioframe/setup-runs/001/candidate/analysis.py",
+              "analysis.py"
+            ],
+            [
+              "transfer/bioframe/setup-runs/001/trial/result.json",
+              "result.json"
+            ],
+            [
+              "transfer/bioframe/setup-runs/001/output-audit.json",
+              "output-audit.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "replay",
+      "04 · Replay reference",
+      "Programmatic",
+      "Repeat the reference with frozen inputs and record output identities. No LLM call.",
+      "run_reference_replay.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/replay-runs/001/replay/frozen-inputs.json",
+              "frozen-inputs.json"
+            ],
+            [
+              "transfer/bioframe/replay-runs/001/replay/setup.sh",
+              "setup.sh"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/replay-runs/001/replay/comparison.json",
+              "comparison.json"
+            ],
+            [
+              "transfer/bioframe/replay-runs/001/result.json",
+              "result.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "specify",
+      "05 · Propose scientific task",
+      "GLM-5.3",
+      "Draft an analysis question from notebook methods and observed outputs. This proposal is an input to construction, not the final solver question.",
+      "run_specification.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/specification-runs/001/specify/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/explorer/evidence/specification-request.json",
+              "Complete initial model request"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/specification-runs/001/task-brief.md",
+              "task-brief.md"
+            ],
+            [
+              "transfer/bioframe/specification-runs/001/specification.json",
+              "specification.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "draft",
+      "06 · Author executable draft",
+      "GLM-5.3 + execution",
+      "Author task inputs, a projected private reference and an isolated oracle. The later finalizer receives these worker-authored files with execution provenance.",
+      "task_materialization.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/materialization-runs/001/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/explorer/evidence/draft-request.json",
+              "Complete initial model request"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/materialization-runs/001/instruction.md",
+              "instruction.md"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/001/derive.py",
+              "derive.py"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/001/oracle.py",
+              "oracle.py"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/001/manifest.json",
+              "manifest.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "inspect",
+      "07 · Inspect inputs and source",
+      "GLM-5.3 with tools",
+      "Inspect actual formats, entity identities and source semantics. The complete recorded observations are supplied to finalization; an unfinished command does not establish a finding.",
+      "task_materialization.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/materialization-runs/004/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/materialization-runs/004/worker-input.json",
+              "worker-input.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/materialization-runs/004/inspection-trace.jsonl",
+              "inspection-trace.jsonl"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/004/result.json",
+              "result.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "materialize",
+      "08 · Finalize and execute task",
+      "GLM-5.3 + controlled execution",
+      "Use prior worker code and recorded inspections to submit a complete candidate without an exploratory shell. The controller derives inputs/reference and executes the isolated oracle.",
+      "task_materialization.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/materialization-runs/005/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/materialization-runs/005/worker-input.json",
+              "worker-input.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "transfer/bioframe/materialization-runs/005/instruction.md",
+              "instruction.md"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/005/derive.py",
+              "derive.py"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/005/oracle.py",
+              "oracle.py"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/005/manifest.json",
+              "manifest.json"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/005/controller-result.json",
+              "controller-result.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "validate",
+      "09 · Validate scientific comparison",
+      "GLM-5.3 + deterministic checks",
+      "A fresh answer-isolated implementation precedes grader controls, probes and review. This campaign has no completed scientific acceptance record yet.",
+      "grading_session.py",
+      [
+        [
+          "Current prompts",
+          [
+            [
+              "repo:src/biotasks/prompts/notebook-task-independent-solution.md",
+              "Independent implementation prompt"
+            ],
+            [
+              "repo:src/biotasks/prompts/notebook-grader-author.md",
+              "Grader prompt"
+            ],
+            [
+              "repo:src/biotasks/prompts/notebook-grader-probes.md",
+              "Probe prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/materialization-runs/005/instruction.md",
+              "instruction.md"
+            ],
+            [
+              "transfer/bioframe/grading-config-002.json",
+              "Execution configuration"
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+}

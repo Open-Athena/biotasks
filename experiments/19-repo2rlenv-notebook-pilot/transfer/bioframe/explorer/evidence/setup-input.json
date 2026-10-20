@@ -1,0 +1,111 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Available during future setup only; reference execution is offline.",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 14,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "documentation_execution_policy": {},
+      "executable_ast_sha256": "3aa565acf6168df93153b06ee07eb737df97bae94aa9766af604d28e4f62bcc1",
+      "executed": false,
+      "format": "py:nomarker",
+      "markdown_cells": 12,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "profile": "python-narrative-v2",
+      "script_sha256": "aa6ed21d92a4d0a295c904d6d00c39a2cc7dad864e53f60e83ba187572569753",
+      "source_pairing_metadata": {
+        "formats": "ipynb,md:myst"
+      },
+      "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Final table of CTCF ChIP-seq peaks, each with its strongest overlapping JASPAR CTCF motif (motif coordinates, -log10 p-value x100, strand) and the peak's fold change, after removal of peaks within 1 kb of expanded ENCODE blacklist regions; rows identified by peak and motif coordinates.",
+          "path": "ctcf_peaks_maxmotif_clean.csv",
+          "source_evidence": "The notebook's stated goal is 'one way to assign CTCF motifs to CTCF ChIP-seq peaks', and the closing narrative declares the end product: 'there it is! we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering for proximity to blacklisted regions'. The corresponding existing variable df_peaks_maxmotif_clean is produced in the original script by df_peaks_maxmotif_clean = bioframe.subtract(df_peaks_maxmotif, bioframe.expand(blacklist, 1000)), where df_peaks_maxmotif holds the per-peak strongest motif selected via idxmax over overlap p-values; the script ends by displaying df_peaks_maxmotif_clean.iloc[7:15]. The variable is intact at completion."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Motifs-per-peak distribution and 'fraction of peaks without motifs' (motifs_per_peak, plt.hist, printed fraction): a diagnostic characterizing overlap multiplicity and unannotated peaks that motivates the strongest-motif assignment step, not an independent endpoint; the stored count array also carries no peak identifiers.",
+        "Peak strength vs motif strength relationship (scatter and correlation): the correlation coefficient is computed only inside the plt.title call, so these plot-only values cannot be exported without adding computation.",
+        "Reverse-question branch ('how many motifs overlap a ChIP-seq peak?'): its interpreted result, the cumulative probability curve versus motif p-value, is computed entirely inside plt.plot from the sorted table m; the underlying df_motifs_peaks table is an intermediate feeding that plot rather than the interpreted result.",
+        "Distance of peaks to blacklist regions (closest_to_blacklist histogram): a diagnostic supporting the decision to filter +/-1kb around blacklisted regions; also displayed only as a histogram.",
+        "df_peaks_maxmotif in its pre-blacklist-filter state: an intermediate toward df_peaks_maxmotif_clean; the variable is subsequently overwritten by column selection/rename, so the earlier full-column version is no longer recoverable and was not an endpoint in itself."
+      ],
+      "explanation": "The notebook's terminal scientific product, stated in its own narrative ('there it is! we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering for proximity to blacklisted regions'), is df_peaks_maxmotif_clean. The appended code only creates /work/outputs and writes that existing dataframe to CSV with its final columns and row order unchanged; no recomputation, filtering or analysis is added. Every remaining column is an endpoint field (peak coordinates and fold change, strongest motif coordinates, p-value and strand), so the table is exported whole; the pandas index is dropped because rows are identified by peak/motif coordinates and the index carries no narrative meaning. All plots and printed diagnostics are left untouched.",
+      "export_code": "# --- Endpoint export: terminal scientific results ---\n\nimport os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\n# Final result of the tutorial: CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL)\n# each assigned the strongest overlapping JASPAR CTCF motif (MA0139.1), with\n# peaks within +/-1kb of ENCODE blacklist regions (ENCFF356LFX) removed.\n# Written as-is from the dataframe produced by bioframe.subtract above.\ndf_peaks_maxmotif_clean.to_csv(\n    \"/work/outputs/ctcf_peaks_maxmotif_clean.csv\", index=False\n)",
+      "unresolved_assumptions": [
+        "The final column set/order of df_peaks_maxmotif_clean is assumed to be chrom, start, end, fc, chrom_2, start_2, end_2, pval_2, strand_2 after the rename and subtract steps; confirm at execution.",
+        "Peaks with no overlapping motif retain NaN in pval_2 and empty motif coordinates; in CSV these appear as empty fields.",
+        "The inplace replace/rename chained-assignment patterns in the original script may warn or behave differently under the execution environment's pandas version; fidelity of the final-state table is a validation question, not something the export changes.",
+        "Remote retrieval of the ENCODE peaks, ENCODE blacklist and JASPAR motif files must succeed during the network-enabled setup stage; the offline reference run assumes those inputs are staged unchanged."
+      ]
+    },
+    "source": {
+      "id": "bioframe-motifs-to-peaks",
+      "license": "MIT",
+      "provenance": {
+        "data_sources": [
+          {
+            "accession": "ENCFF401MQL",
+            "assembly": "GRCh38",
+            "bytes": 649474,
+            "provider_md5": "9dabac96e36309ed65dc1cb289c51079",
+            "terms_url": "https://www.encodeproject.org/about/data-use-policy/",
+            "url": "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz"
+          },
+          {
+            "accession": "ENCFF356LFX",
+            "assembly": "GRCh38",
+            "bytes": 8211,
+            "provider_md5": "393688b4f06c9ce26165d47433dd8c37",
+            "terms_url": "https://www.encodeproject.org/about/data-use-policy/",
+            "url": "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz"
+          },
+          {
+            "assembly": "hg38",
+            "bytes": 7698065,
+            "license": "CC-BY-4.0",
+            "profile": "MA0139.1",
+            "release": "2022",
+            "terms_url": "https://jaspar.elixir.no/about/",
+            "url": "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz"
+          }
+        ],
+        "notebook": {
+          "license": "MIT",
+          "revision": "95007ed6fc03b01005d75f95cac511b2df286854",
+          "sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+          "url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb"
+        }
+      },
+      "source_revision": "95007ed6fc03b01005d75f95cac511b2df286854",
+      "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+      "title": "Bioframe: assign TF motifs to ChIP-seq peaks",
+      "url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb"
+    }
+  }
+}

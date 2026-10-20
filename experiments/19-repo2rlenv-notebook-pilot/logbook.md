@@ -2331,3 +2331,19 @@ remain pending.
 Scheduler readback at 23:48 UTC confirmed finalization 005 and its task SUCCEEDED.
 Proceed to fresh grading 002 with no resumed grader/probes/independent code from
 the earlier inconsistent campaign.
+
+### 2026-10-20 — Prepare source-driven explorer profiles
+
+Separate notebook/task/run selections and narrative metadata from the shared
+HTML renderer so the same layout can show the transfer case. The currently
+published index remains unchanged while the new renderer is checked against
+the existing release and the pending Bioframe profile. Grading 002 remains
+frozen at `7fd3398`; viewer work changes no active scientific artifact or prompt.
+
+Preserve three additional original model-input records for the viewer against
+their original archive hashes, including the exact setup input and initial
+specification/draft requests. Do not substitute a description or hand-assembled
+subset for the recorded input. The reading view distinguishes prompts, inputs
+and outputs, keeps raw documents collapsed, and derives control/reward displays
+from selected evidence rather than hardcoded case outcomes. Browser checks use
+the selected trajectory's metadata rather than a fixed turn count.
