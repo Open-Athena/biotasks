@@ -77,6 +77,9 @@ def main():
     if len(token) < 32:
         raise ValueError('Protected client credential required')
     transport_only = os.environ.get('BIOTASKS21_TRANSPORT_ONLY') == '1'
+    diagnostic_keepalive = os.environ.get('BIOTASKS21_DIAGNOSTIC_KEEPALIVE') == '1'
+    if diagnostic_keepalive and not transport_only:
+        raise ValueError('Keepalive experiment is restricted to zero-model diagnostics')
     delay_seconds = int(os.environ.get('BIOTASKS21_DIAGNOSTIC_DELAY_SECONDS', '130'))
     lifetime_seconds = int(os.environ.get('BIOTASKS21_CLIENT_LIFETIME_SECONDS', '7200'))
     if delay_seconds not in (130, 650) or not 900 <= lifetime_seconds <= 7200:
@@ -161,10 +164,29 @@ def main():
                         self.reply(429, b'{"error":"inference_client_busy"}')
                         return
                     try:
-                        time.sleep(delay_seconds)
                         result['diagnostic_delay_seconds'] = delay_seconds
-                        append(result)
-                        self.reply(200, json.dumps(result).encode())
+                        if diagnostic_keepalive:
+                            # Leading JSON whitespace is outside every model
+                            # response field. Test delivery only, with no model
+                            # credential or native task request in this mode.
+                            count = (delay_seconds + 29) // 30
+                            result.update(diagnostic_keepalive=True, padding_bytes=count * 4096)
+                            content = json.dumps(result).encode()
+                            self.send_response(200)
+                            self.send_header('Content-Type', 'application/json')
+                            self.send_header('Content-Length', str(len(content) + count * 4096))
+                            self.end_headers()
+                            for index in range(count):
+                                self.wfile.write(b' ' * 4096)
+                                self.wfile.flush()
+                                time.sleep(min(30, delay_seconds - index * 30))
+                            append(result)
+                            self.wfile.write(content)
+                            self.wfile.flush()
+                        else:
+                            time.sleep(delay_seconds)
+                            append(result)
+                            self.reply(200, json.dumps(result).encode())
                     finally:
                         gate.release()
                     return
@@ -235,7 +257,7 @@ def main():
             status['status'] = 'serving'
             status['registered_bound_port_nonzero'] = True
             status.update(transport_diagnostic_only=transport_only, diagnostic_delay_seconds=delay_seconds,
-                          lifetime_sec=lifetime_seconds)
+                          lifetime_sec=lifetime_seconds, diagnostic_keepalive=diagnostic_keepalive)
             (output / 'client-status.json').write_text(json.dumps(status, indent=2) + '\n')
             while not stop.is_set() and time.monotonic() - started < lifetime_seconds:
                 server.handle_request()

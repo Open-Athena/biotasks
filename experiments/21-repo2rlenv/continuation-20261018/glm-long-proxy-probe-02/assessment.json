@@ -1,0 +1,24 @@
+{
+  "stage": "zero_model_long_response_delivery_failure_reproduced",
+  "caller_delay_request_seconds": 650,
+  "caller_timeout_seconds": 780,
+  "caller_elapsed_seconds": 780.141,
+  "server_delay_receipt_recorded": true,
+  "exact_request_hash_correlated": true,
+  "caller_received_response": false,
+  "error_type": "TimeoutError",
+  "model_calls": 0,
+  "task_attempts": 0,
+  "task_fixes": 0,
+  "new_sandboxes": 0,
+  "diagnostic_endpoint_gracefully_finished": true,
+  "owned_diagnostic_endpoints_remaining": 0,
+  "TRC_Docker_cli_available": false,
+  "native_equivalence_backend_unblocked": false,
+  "conclusion": "Long response delivery fails without a model call. This supports a transport-layer failure rather than attributing the lost response to GLM generation. The precise timeout layer/threshold is not established.",
+  "limits": [
+    "130-second prior probe passed;650-second silent response was not delivered within780seconds.",
+    "No native task result is repaired or replayed.",
+    "A separate leading-whitespace keepalive diagnostic may test whether connection inactivity is involved; not yet executed."
+  ]
+}
