@@ -197,3 +197,14 @@ provide a billing bound. There were 49 agent iterations, 17 INVALID actions, and
 Retained invalid prefixes demonstrate newline/format mismatches; no extra model
 call or corrective rerun was made. See results.md for the configuration-specific
 negative conclusion and reproducibility limits.
+
+Final publication audit downloaded the public Git snapshot at
+`d6a1725c41efe15ae506e91e34ee7afc40bf1d53` anonymously and verified all 26
+manifest-listed evidence/license files plus the manifest, results and two analysis
+scripts (30 files total). The original archive and extracted records agree byte
+for byte. Authored changes passed whitespace checks; native logs and license
+notices deliberately retain original whitespace. No package/runtime changes were
+made, so validation was the live installation/native experiment, bounded artifact
+integrity audit, Python syntax checks and shell syntax checks rather than a claim
+that the full project CI suite ran. The completed negative experiment is ready
+for its issue conclusion; no production PR is proposed.
