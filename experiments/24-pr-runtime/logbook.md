@@ -211,3 +211,45 @@ Next runtime step: check a supported isolated execution route on TRC. Do not
 silently mount host Docker access or reuse #21's paid Daytona allowance. If a
 generic Iris adaptation is needed, record it as a declared pipeline variant
 with separate baseline results.
+
+## 2026-10-20 — Complete window counts and freeze runtime cohorts
+
+The annual merged-PR census covers all 951 resolved live repositories: 48,196
+PRs in 2025-10-20 through 2026-10-19. Of these, 47,107 are in the 871 primary
+source repositories, of which 509 have at least one PR in the window.
+`summarize_opportunity.py` joins these counts to the sampled panel and reports
+within-repository static eligibility estimates only. There is no inventory-wide
+executable-task yield estimate. The unresolved historical repository and 143
+source identities without primary GitHub mappings remain outside these counts.
+
+The initial summary ran at 15:04:07 UTC, exit 0, peak RSS 19,696 KiB against a
+64 MiB estimate, under the shared lock and thread/priority/resource guards.
+The summary preserves the distinction between the primary inventory and linked
+repositories. A follow-up invariant checks panel counts against the full census.
+
+`prepare_execution_cohorts.py` froze four development PRs (scikit-fingerprints
+652 and 649; nipype 3745 and 3766) and twelve held-out PRs. Two held-out PRs are
+from PsychoPy, a repository absent from development. Inputs include exact
+base/head/merge revisions and cached diff hashes. No candidate code has run.
+The membership preparation completed at 14:57:46 UTC, exit 0, peak RSS
+16,780 KiB against a 64 MiB estimate. Runtime configuration is not yet frozen.
+
+The Iris SANDBOX probe succeeded in one attempt, exit 0, and its archive and
+report hashes were verified after download. It had public PyPI access, git and
+pip, and could create a user namespace. It had no host Docker socket, controller
+address, or enumerated inherited credential variables. Sanitized evidence is
+in `evidence/trc-isolation-probe/`. Namespace creation alone does not establish
+nested Docker compatibility. The job is terminal.
+
+Automatic approval review rejected submission of the prepared read-only
+DOCKER_ACCESS probe because the profile is host-root-equivalent. No such job
+was created. The user's response requested an explanation of the compute
+requirements and did not grant access. Explained repository-image reuse,
+deterministic PR selection, before/after validation, final export/build
+distinction, and why builds/tests dominate CPU use. Also clarified that no
+Daytona backend had been prepared or launched. Keep that authorization boundary.
+
+`execution-plan.md` records the native baseline, development boundary, proposed
+numeric decision gates and resource ceilings, and remaining operational
+requirements. Runtime validation, final task builds, quality audit and
+repeatability remain unproven.
