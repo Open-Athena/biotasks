@@ -69,12 +69,15 @@ def build():
                     'blind_attempts': row['blind_solver_attempts'],
                     'native_reward': row.get('blind_native_reward'),
                     'solver_state': ('scored' if 'blind_native_reward' in row else
+                                     'active_counter_unobserved' if row['blind_solver_attempts'] is None else
                                      'attempted_unscored' if row['blind_solver_attempts'] else 'pending'),
                     'admission_source': 'continuation-20261018/new-admissions.json',
                     'solver_source': row.get('blind_audit_source'),
                     'admission_artifact_prefix': row['artifact_prefix'],
                     'solver_artifact_prefix': row.get('blind_artifact_prefix')}
-            assert task['blind_attempts'] in (0, 1)
+            assert task['blind_attempts'] in (None, 0, 1)
+            if task['blind_attempts'] is None:
+                assert row.get('active_blind_job_id') and task['native_reward'] is None
             if task['native_reward'] is not None:
                 assert task['blind_attempts'] == 1
             tasks.append(task)
