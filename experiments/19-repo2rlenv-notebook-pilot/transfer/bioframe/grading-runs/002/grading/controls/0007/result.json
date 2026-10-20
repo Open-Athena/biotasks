@@ -1,0 +1,41 @@
+{
+  "candidate_sha256": "628fef1f3f417736b90678d795306854a50402d848f4e7ac793e9bf15bedea10",
+  "execution": {
+    "probe": {
+      "exit_code": 1,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "Traceback (most recent call last):\n  File \"/case/probe.py\", line 31, in <module>\n    assert int(donor[5]) < int(new_end) and int(new_start) < int(donor[6])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+      "stdout": ""
+    },
+    "probe_valid_execution": false,
+    "status": "incomplete",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": false,
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "extra-fabricated-peak-row",
+    "rationale": "Tests that extra rows are rejected, standing in for a peak set with a spurious interval: an additional nine-field data row is appended for a fabricated peak chr1:150980000-150980370 carrying the fc (580.28482) and motif annotation (chr1:150979668-150979687, pval 678, -) of the real retained peak chr1:150979463-150979845 in the same neighbourhood. All values are internally consistent and plausible (same chromosome, coordinates that do not collide with any existing row, a real motif record, valid strand), but the row is not part of the reference result, so the peak-row multiset, the per-sub-interval motif grouping and the full-row multiset must all fail.",
+    "script": "\"\"\"Wrong-result control: a fabricated extra peak row is added.\n\nAn extra retained peak is invented in the neighbourhood of a real one: the new\nrow chr1:150980000-150980370 borrows its fc (580.28482) and its assigned motif\n(chr1:150979668-150979687, pval 678, -) from the genuine retained peak\nchr1:150979463-150979845. The row is well-formed and internally consistent with\nthe reported motif lying inside the reported peak span, but no such peak is part\nof the reference result, so the extra-row rule must fail every content check.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\",\"start\",\"end\",\"fc\",\"motif_chrom\",\"motif_start\",\"motif_end\",\"motif_pval\",\"motif_strand\"]\nNEAR = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nhits = [r for r in rows if (r[0], r[1], r[2]) == NEAR]\nassert len(hits) == 1, len(hits)\ndonor = hits[0]\nassert donor[4] != \"\" and donor[7] != \"\" and donor[8] in (\"+\", \"-\"), donor\nnew_start, new_end = \"150980000\", \"150980370\"\nassert not any(r[0] == \"chr1\" and r[1] == new_start and r[2] == new_end for r in rows)\nassert int(donor[5]) < int(new_end) and int(new_start) < int(donor[6])\nextra = [\"chr1\", new_start, new_end, donor[3], donor[4], donor[5], donor[6], donor[7], donor[8]]\nrows.append(extra)\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"appended the fabricated peak row\", extra[:4], \"with donor motif\", extra[4:])\n"
+  },
+  "problem": "Verifier or probe did not complete successfully"
+}
