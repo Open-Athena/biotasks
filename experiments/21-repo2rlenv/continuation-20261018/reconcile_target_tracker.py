@@ -223,6 +223,21 @@ def build():
             pending = [r for r in resolved['rows'] if r['repository'] == unit['repository'] and r['status'] == 'native_source_resolved_runtime_pending']
             action = 'candidate_cap_exhausted_native_runtime_remaining' if pending else 'candidate_cap_exhausted_below_target'
             next_action = f'Complete only the {len(pending)} retained source-resolved fixed PR inputs through native materialization/author/export stages under the frozen profile; source resolution is not generation success. Preserve all native schema/source rejections, no replacement, task-specific fixes or cap reset.'
+            repo_name = 'biopython' if unit['repository'] == 'biopython/biopython' else 'skbio'
+            materialization = ROOT / f'{repo_name}-swe-gen-contrasts-01/assessment.json'
+            if materialization.exists():
+                assessed = json.loads(materialization.read_text())
+                assert assessed['repository'] == unit['repository']
+                assert assessed['native_materialization_attempts'] == len(pending)
+                assert assessed['task_specific_fixes'] == assessed['model_calls'] == 0
+                authored_ids = assessed['pending_original_author_candidate_ids']
+                if authored_ids:
+                    action = 'candidate_cap_exhausted_saved_author_stages_remaining'
+                    next_action = f'Native materialization finished for all {len(pending)} retained inputs. Continue only the {len(authored_ids)} unchanged successful native contexts through author/export stages, with native repair limits and no external feedback. Preserve failed contexts; do not replace candidates or reset the cap.'
+                else:
+                    assert assessed['native_materialization_succeeded'] == 0
+                    action = 'candidate_cap_exhausted_below_target'
+                    next_action = f'All {len(pending)} final retained native materializations failed without repair; no author/export stage is pending for them. Preserve the exact native errors under the frozen repository profile. The original ten-input source allowance is exhausted; no source replacement, task-specific runtime fix, author feedback or cap reset.'
         if action == 'target_not_met_work_remaining' and charge == 10 and target is not None and admitted < target:
             action = 'candidate_cap_exhausted_below_target'
             next_action = 'No new source candidates: the reconciled allowance is exhausted. Review any retained eligible exports without resetting candidate or repair counts; preserve filter rejections separately from runtime failures.'
