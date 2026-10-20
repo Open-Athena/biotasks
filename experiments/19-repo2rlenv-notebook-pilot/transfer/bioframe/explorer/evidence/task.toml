@@ -1,0 +1,43 @@
+schema_version = "1.3"
+artifacts = []
+
+[task]
+name = "biotasks/bioframe-motifs-to-peaks"
+
+[metadata.repo2env]
+recipe = "notebook-artifact-reproduction"
+recipe_version = "de7c881b585380b2a415e4fc1ea9b24e4877a540"
+reward_kinds = [
+    "binary",
+]
+scope = "scientific task with explicit supplied intermediates"
+bundle_hash = "sha256:44e68b961e2d5dee6b0ea445f34f5803eabb6198c6aa09d0d6a3420673ad0fa6"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "complete"
+reason_codes = [
+    "upstream_quality_loop_not_run",
+]
+detail = "BioTasks scientific-content controls and native Harbor controls passed; a blind GLM attempt was recorded. These checks use the BioTasks artifact workflow, not the standard upstream quality-loop acceptance profile. See the release validation evidence."
+checked_at = "2026-10-20T02:30:23.846217Z"
+provenance = "assisted"
+subject_bundle_hash = "sha256:44e68b961e2d5dee6b0ea445f34f5803eabb6198c6aa09d0d6a3420673ad0fa6"
+profile = "biotasks-scientific-content-v1"
+evidence = []
+source_task_path = "/tmp/biotasks19-bioframe-native001-package/bioframe-motifs-to-peaks"
+source_task_toml_sha256 = "0d20900dc13912b7516f2949bdfd82d352c3d1da3eab8b3de878eb231a591b41"
+
+[environment]
+cpus = 4
+memory_mb = 8192
+build_timeout_sec = 600
+network_mode = "no-network"
+storage_mb = 10240
+
+[agent]
+timeout_sec = 600
+
+[verifier]
+timeout_sec = 120

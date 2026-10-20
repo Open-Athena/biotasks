@@ -1,8 +1,8 @@
 # Bioframe transfer candidate
 
-Selected with the user as the second notebook before pipeline promotion. Keep
-factory prompts frozen at the revision in `intake.json`; record any general
-infrastructure changes separately. Task-specific exports, instructions and
+Selected with the user as the second notebook before pipeline promotion. The initial baseline
+uses the prompt revision in `intake.json`; subsequent general factory changes
+and each run's exact prompts/inputs are recorded separately. Task-specific exports, instructions and
 repairs remain worker-owned.
 
 The pinned notebook is bioframe's motifs-to-CTCF-peaks tutorial. Its 14 code
@@ -19,20 +19,23 @@ compressed sizes 649,474 and 8,211 bytes. The intake checks preceded biological 
 records the exact JASPAR URL check. JASPAR's official About page states CC BY 4.0; its URL is recorded in
 `intake.json`. This permission is independent of bioframe's MIT license.
 
+The [current task is published and fresh-download verified](scientific-releases/001/README.md).
+[Final grading 004](grading-runs/004/README.md) passed all 15 scientific controls.
+[Native Harbor 001](native-runs/001/README.md) returned oracle 1, no-op 0 and blind
+GLM-5.3 solver 1, without exceptions. The solver took about 3 minutes 30 seconds
+and seven successful model requests. All owned sandboxes are absent and the host
+is terminal. The shared HTML explorer now selects this case.
+
 [Preparation 001](preparation-runs/001/plan.md),
 [setup/reference 001](setup-runs/001/README.md),
-[deterministic replay 001](replay-runs/001/README.md), and
-[specification 001](specification-runs/001/README.md) are complete.
-[Materialization 005](materialization-runs/005/README.md) produced an executed
-candidate whose oracle matches the projected reference. Fresh scientific
-validation 002 passed its independent implementation and five initial controls,
-but its sole wrong-answer probe crashed before changing the output. The review
-requested repair; that campaign was interrupted and archived with verified
-cleanup. [Recovery 003](grading-config-003.json) is running with the general
-probe-execution preflight and a shell-free GLM probe repair. Native Harbor
-controls, a blind solver attempt and publication have not run for this case.
-Original worker outputs remain unchanged; no task-specific scientific repairs
-were made by the operator.
+[replay 001](replay-runs/001/README.md),
+[specification 001](specification-runs/001/README.md) and
+[executed construction 005](materialization-runs/005/README.md) preserve the
+selected inputs to validation. All generated scientific content and repairs came
+from versioned GLM workers; no task-specific scientific artifact was manually
+patched. General defects required operator recovery, so this is not evidence of
+a fresh unattended end-to-end run. See the logbook and run records for failures,
+reused prerequisites and timing limits.
 
 The setup trace exposed a factory limitation: the worker ran additional full
 analyses through its shell despite the prompt, outside the controller's test

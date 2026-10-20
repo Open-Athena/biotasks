@@ -2549,3 +2549,29 @@ Permit an owned public repository containing only initial `.gitattributes`, whil
 continuing to reject unrelated data without a managed manifest and retaining
 parent-commit guards. Six focused offline checks pass. The next upload uses a new
 receipt, preserving the failed attempt and the explicit zero-upload readback.
+
+### 2026-10-20 — Bioframe release published and independently downloaded
+
+Publication completed at immutable Hub commit
+`1dd40a82a3bfc8741162ff37c4726ea84dd58405` in
+`gonzalobenegas/biotasks-notebook-pilot-issue-19-bioframe`.
+A forced fresh download verified every file/mode and native-tested bundle hash
+`sha256:44e68b961e2d5dee6b0ea445f34f5803eabb6198c6aa09d0d6a3420673ad0fa6`.
+Keep the first failed upload receipt and explicit empty-repository readback;
+the successful retry uses its own receipt. No prior result was overwritten.
+
+Preserve 26 original native records against their archive hashes, including all
+three trial/result/cleanup receipts, the solver trajectory and verifier reports.
+The blind trial took 210.205947 seconds overall and passed all five checks in
+seven successful model requests. Separate eligibility scans cover the exact
+small public evidence; no credentials/private service endpoint values are found.
+All three native ownership labels are absent and host/task SUCCEEDED.
+
+The explorer's canonical selection now points at Bioframe. Its nine reading
+stages fold construction/validation subworkers into their actual pipeline steps,
+with separate recorded prompts, inputs and outputs. Presentation copies of the
+question/config/oracle come from the freshly downloaded immutable release;
+the actual first solver message is an exact field extraction from its original
+trajectory, with provenance and hashes recorded. The HTML is an evidence reading
+view, not a campaign log. Rendering/browser checks remain to be performed before
+publishing the updated index. Issue 19 stays open for user review.

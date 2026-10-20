@@ -7,12 +7,15 @@
   "notebook_title": "Bioframe · Assign motifs to peaks",
   "notebook_description": "A tool-repository tutorial using observed ENCODE ChIP-seq peaks and predicted JASPAR motif annotations.",
   "task_title": "Assign CTCF motifs and remove blacklisted intervals",
-  "instruction": "transfer/bioframe/materialization-runs/005/instruction.md",
+  "instruction": "transfer/bioframe/explorer/evidence/instruction.md",
   "task_manifest": "transfer/bioframe/materialization-runs/005/manifest.json",
-  "oracle": "transfer/bioframe/materialization-runs/005/oracle.py",
-  "review_description": "Scientific comparison is in progress. Construction/reference agreement alone is insufficient for acceptance. No native blind solver attempt or publication is recorded for this selected candidate.",
+  "oracle": "transfer/bioframe/explorer/evidence/oracle.py",
+  "review_description": "This is one transfer task and one solver attempt. Authoring, review and solving used the same model family. Finite controls do not prove universal portability or arbitrary-input oracle correctness. The upstream advisory label remains unverified because its standard quality-loop profile was not run; separate scientific and native validation are recorded.",
   "review_files": [
-    "transfer/bioframe/materialization-runs/005/controller-result.json",
+    "transfer/bioframe/grading-runs/004/final-controls.json",
+    "transfer/bioframe/grading-runs/004/review.json",
+    "transfer/bioframe/native-runs/001/native/result.json",
+    "transfer/bioframe/scientific-releases/001/download-verification.json",
     "transfer/bioframe/source-license-evidence.json"
   ],
   "stages": [
@@ -227,140 +230,72 @@
       ]
     ],
     [
-      "draft",
-      "06 · Author executable draft",
-      "GLM-5.3 + execution",
-      "Author task inputs, a projected private reference and an isolated oracle. The later finalizer receives these worker-authored files with execution provenance.",
+      "materialize",
+      "06 · Construct and execute task",
+      "GLM-5.3 + controlled execution",
+      "Worker-authored code and recorded input inspections feed a finalizer. The controller derives the task inputs/reference and executes an answer-isolated oracle; task science is not manually edited.",
       "task_materialization.py",
       [
         [
-          "Prompt",
+          "Prompts",
           [
             [
               "transfer/bioframe/materialization-runs/001/system-prompt.md",
-              "system-prompt.md"
+              "Draft author prompt"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/004/system-prompt.md",
+              "Input-inspection prompt"
+            ],
+            [
+              "transfer/bioframe/materialization-runs/005/system-prompt.md",
+              "Finalization prompt"
             ]
           ]
         ],
         [
-          "Input",
+          "Inputs",
           [
             [
               "transfer/bioframe/explorer/evidence/draft-request.json",
-              "Complete initial model request"
-            ]
-          ]
-        ],
-        [
-          "Output",
-          [
-            [
-              "transfer/bioframe/materialization-runs/001/instruction.md",
-              "instruction.md"
+              "Initial draft request"
             ],
-            [
-              "transfer/bioframe/materialization-runs/001/derive.py",
-              "derive.py"
-            ],
-            [
-              "transfer/bioframe/materialization-runs/001/oracle.py",
-              "oracle.py"
-            ],
-            [
-              "transfer/bioframe/materialization-runs/001/manifest.json",
-              "manifest.json"
-            ]
-          ]
-        ]
-      ]
-    ],
-    [
-      "inspect",
-      "07 · Inspect inputs and source",
-      "GLM-5.3 with tools",
-      "Inspect actual formats, entity identities and source semantics. The complete recorded observations are supplied to finalization; an unfinished command does not establish a finding.",
-      "task_materialization.py",
-      [
-        [
-          "Prompt",
-          [
-            [
-              "transfer/bioframe/materialization-runs/004/system-prompt.md",
-              "system-prompt.md"
-            ]
-          ]
-        ],
-        [
-          "Input",
-          [
             [
               "transfer/bioframe/materialization-runs/004/worker-input.json",
-              "worker-input.json"
-            ]
-          ]
-        ],
-        [
-          "Output",
-          [
-            [
-              "transfer/bioframe/materialization-runs/004/inspection-trace.jsonl",
-              "inspection-trace.jsonl"
+              "Inspection worker input"
             ],
             [
-              "transfer/bioframe/materialization-runs/004/result.json",
-              "result.json"
-            ]
-          ]
-        ]
-      ]
-    ],
-    [
-      "materialize",
-      "08 · Finalize and execute task",
-      "GLM-5.3 + controlled execution",
-      "Use prior worker code and recorded inspections to submit a complete candidate without an exploratory shell. The controller derives inputs/reference and executes the isolated oracle.",
-      "task_materialization.py",
-      [
-        [
-          "Prompt",
-          [
-            [
-              "transfer/bioframe/materialization-runs/005/system-prompt.md",
-              "system-prompt.md"
-            ]
-          ]
-        ],
-        [
-          "Input",
-          [
+              "transfer/bioframe/materialization-runs/004/inspection-trace.jsonl",
+              "Recorded inspections supplied to finalization"
+            ],
             [
               "transfer/bioframe/materialization-runs/005/worker-input.json",
-              "worker-input.json"
+              "Finalizer input"
             ]
           ]
         ],
         [
-          "Output",
+          "Outputs",
           [
             [
               "transfer/bioframe/materialization-runs/005/instruction.md",
-              "instruction.md"
+              "Constructed scientific question"
             ],
             [
               "transfer/bioframe/materialization-runs/005/derive.py",
-              "derive.py"
+              "Input/reference derivation"
             ],
             [
               "transfer/bioframe/materialization-runs/005/oracle.py",
-              "oracle.py"
+              "Worker-authored oracle"
             ],
             [
               "transfer/bioframe/materialization-runs/005/manifest.json",
-              "manifest.json"
+              "Input and reference identities"
             ],
             [
               "transfer/bioframe/materialization-runs/005/controller-result.json",
-              "controller-result.json"
+              "Controlled execution result"
             ]
           ]
         ]
@@ -368,42 +303,191 @@
     ],
     [
       "validate",
-      "09 · Validate scientific comparison",
-      "GLM-5.3 + deterministic checks",
-      "A fresh answer-isolated implementation precedes grader controls, probes and review. This campaign has no completed scientific acceptance record yet.",
+      "07 · Validate scientific comparison",
+      "GLM-5.3 + deterministic controls",
+      "Reexecute an answer-blind implementation, author the grader and probes, check mutation execution before freezing probes, and validate the final acceptance wording against executed controls. Recorded prompts and role inputs are shown separately.",
       "grading_session.py",
       [
         [
-          "Current prompts",
+          "Prompts",
           [
             [
-              "repo:src/biotasks/prompts/notebook-task-independent-solution.md",
+              "transfer/bioframe/grading-runs/002/independent/system-prompt.md",
               "Independent implementation prompt"
             ],
             [
-              "repo:src/biotasks/prompts/notebook-grader-author.md",
-              "Grader prompt"
+              "transfer/bioframe/grading-runs/002/grader/system-prompt.md",
+              "Grader author prompt"
             ],
             [
-              "repo:src/biotasks/prompts/notebook-grader-probes.md",
-              "Probe prompt"
+              "transfer/bioframe/grading-runs/003/probes/system-prompt.md",
+              "Probe repair prompt"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/contract/system-prompt.md",
+              "Acceptance-text prompt"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/review/system-prompt.md",
+              "Final review prompt"
             ]
           ]
         ],
         [
-          "Input",
+          "Inputs",
           [
             [
-              "transfer/bioframe/materialization-runs/005/instruction.md",
-              "instruction.md"
+              "transfer/bioframe/grading-runs/002/independent/input.json",
+              "Independent implementation input"
             ],
             [
-              "transfer/bioframe/grading-config-002.json",
-              "Execution configuration"
+              "transfer/bioframe/grading-runs/002/grader/input.json",
+              "Grader author input"
+            ],
+            [
+              "transfer/bioframe/grading-runs/003/probes/input.json",
+              "Probe repair input"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/contract/input.json",
+              "Acceptance-text input"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/review/input.json",
+              "Final review input"
+            ]
+          ]
+        ],
+        [
+          "Outputs",
+          [
+            [
+              "transfer/bioframe/grading-runs/004/independent-solution.json",
+              "Independent worker program"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/independent-result.json",
+              "Answer-blind execution result"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/grade.py",
+              "Validated grader"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/instruction.md",
+              "Validated question and acceptance rules"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/probes.json",
+              "Frozen scientific probes"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/final-controls.json",
+              "Fresh control results"
+            ],
+            [
+              "transfer/bioframe/grading-runs/004/review.json",
+              "Final review"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "native",
+      "08 · Run Harbor controls and solver",
+      "Programmatic + GLM-5.3 solver",
+      "Run native oracle/no-op controls and a fresh blind solver attempt using the validated task. The Attempt tab shows its actual prompt, commands and observations.",
+      "run_scientific_native.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "transfer/bioframe/explorer/evidence/solver-prompt.md",
+              "Actual first solver message, extracted unchanged from the trajectory"
+            ]
+          ]
+        ],
+        [
+          "Inputs",
+          [
+            [
+              "transfer/bioframe/explorer/evidence/instruction.md",
+              "Published solver question"
+            ],
+            [
+              "transfer/bioframe/explorer/evidence/task.toml",
+              "Published Harbor configuration"
+            ],
+            [
+              "transfer/bioframe/native-runs/001/inputs.json",
+              "Frozen execution input identities"
+            ]
+          ]
+        ],
+        [
+          "Outputs",
+          [
+            [
+              "transfer/bioframe/native-runs/001/native/result.json",
+              "Native trial summary"
+            ],
+            [
+              "transfer/bioframe/native-runs/001/README.md",
+              "Execution evidence and scope"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "release",
+      "09 · Publish and download-check",
+      "Programmatic",
+      "Publish the validated bundle to the approved public destination. Force-download the immutable publication commit and verify every release file and task identity; no new model call.",
+      "stage_scientific_release.py",
+      [
+        [
+          "Inputs",
+          [
+            [
+              "transfer/bioframe/scientific-releases/001/configuration.json",
+              "Release configuration"
+            ],
+            [
+              "transfer/bioframe/scientific-releases/001/manifest.json",
+              "Release manifest"
+            ],
+            [
+              "transfer/bioframe/scientific-releases/001/release-files.json",
+              "File identities"
+            ]
+          ]
+        ],
+        [
+          "Outputs",
+          [
+            [
+              "transfer/bioframe/scientific-releases/001/publication.json",
+              "Completed publication receipt"
+            ],
+            [
+              "transfer/bioframe/scientific-releases/001/download-verification.json",
+              "Fresh immutable download verification"
             ]
           ]
         ]
       ]
     ]
-  ]
+  ],
+  "task_config": "transfer/bioframe/explorer/evidence/task.toml",
+  "grader": "transfer/bioframe/grading-runs/004/grade.py",
+  "trajectory_glob": "transfer/bioframe/native-runs/001/native/terminus-2/**/trajectory.json",
+  "native_summary": "transfer/bioframe/native-runs/001/native/result.json",
+  "grading_controls": "transfer/bioframe/grading-runs/004/final-controls.json",
+  "release": {
+    "repository": "gonzalobenegas/biotasks-notebook-pilot-issue-19-bioframe",
+    "publication": "transfer/bioframe/scientific-releases/001/publication.json"
+  }
 }
