@@ -395,3 +395,27 @@ configuration is unavailable in the current unprivileged profile. This does not
 prove every possible nested runtime is impossible, and is not evidence that
 PR-runtime task yield is zero. An authorized Docker-compatible backend is still
 needed for the native execution baseline.
+
+## 2026-10-20 — Explicitly authorized read-only Docker probe
+
+The user answered “Authorize the read-only probe” to the specific host Docker
+capability question. This supersedes the earlier missing authorization for that
+probe only; it does not authorize builds or container mutations.
+
+Executed checkpointed `probe_docker_access.py` from `6229059b` on an existing
+reserved TRC host: one CPU, 512 MB RAM, 1 GB disk, two-minute execution ceiling,
+zero retries, DOCKER_ACCESS profile and NONE network egress. The script made
+only `GET /version` against the Unix socket. It executed no target code or model
+calls and performed no Docker mutations.
+
+The job succeeded in one attempt and returned HTTP 200, Docker 23.0.5 and API
+1.42. The downloaded archive's size and SHA-256 matched the worker receipt;
+the report SHA-256 matched the emitted digest
+`9ce21a812b7fe177b7ac00e54acf23c4c4277e2fb580fb9a1c06c035432f9010`.
+Sanitized evidence is in `evidence/trc-docker-probe/`; exact job identity and
+storage URI remain in private receipts. The job is terminal.
+
+This resolves the daemon-reachability question. Native environment construction,
+PR validation, task verification and quality/cost measurement remain unperformed.
+The next executable build/run step must be concretely prepared and separately
+authorized for host Docker use; this probe's approval is not broader permission.

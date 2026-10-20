@@ -122,11 +122,14 @@ compatibility has not been demonstrated. A subsequent sandbox-only Docker 27.5.1
 rootless probe installed its guest prerequisites but failed at subordinate UID
 mapping (`newuidmap: Operation not permitted`) before daemon startup. No image
 was built or run. Its report and archive were verified, the job is terminal, and
-the observed reserved host has no remaining allocation for it. The prepared DOCKER_ACCESS probe was
-rejected by automatic approval review because the profile grants
-host-root-equivalent access. The user's follow-up asked for an explanation,
-not authorization. Do not submit that probe or an equivalent host-access route
-without authorization. Do not alter shared hosts or cluster configuration.
+the observed reserved host has no remaining allocation for it.
+
+After the initial automatic-review rejection, the user explicitly authorized the
+read-only DOCKER_ACCESS probe. It completed with network egress disabled and
+returned HTTP 200 for `GET /version`: Docker 23.0.5, API 1.42. The archive and
+report hashes were verified. This establishes daemon reachability only; no
+image build or container launch was attempted. The authorization covers this
+probe, not builds, container mutations, or host/cluster configuration changes.
 
 Daytona has not been prepared or launched for this experiment, and previous
 experiments' paid allowances do not apply.
