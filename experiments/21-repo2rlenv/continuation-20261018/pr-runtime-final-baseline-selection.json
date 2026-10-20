@@ -1,0 +1,97 @@
+{
+  "stage": "frozen_before_final_native_PR_runtime_intake",
+  "created_utc": "2026-10-20T03:35:58.349829+00:00",
+  "selection_rule": "Original recorded PR-diff order, excluding already-consumed native PR-runtime inputs; take only remaining original numeric allowance. No outcome-based replacement.",
+  "reason": "Legacy adapted admissions must not terminate the automatic-pipeline comparison.",
+  "units": [
+    {
+      "repository": "biopython/biopython",
+      "label": "biopython",
+      "prior_charged": 9,
+      "already_consumed_prs": [
+        5148,
+        5338,
+        5369,
+        5376,
+        5317,
+        5308,
+        5316,
+        5310,
+        5359
+      ],
+      "selected_prs": [
+        5361
+      ],
+      "existing_baseline_profile": "biopython-baseline.Dockerfile",
+      "native_options": {
+        "limit": 1,
+        "since": null,
+        "until": null,
+        "state": "merged",
+        "skip_drafts": true,
+        "require_linked_issue": true,
+        "languages": [
+          "python"
+        ],
+        "require_fail_to_pass": true,
+        "min_fail_to_pass": 1,
+        "validation_timeout_sec": 600,
+        "skip_validation": false,
+        "lite_filter": false,
+        "max_source_files_per_pr": 50,
+        "min_problem_statement_words": 0,
+        "require_new_test_funcs": true,
+        "skip_ci_only": true
+      },
+      "existing_baseline_profile_sha256": "b74ea199e41f93f4c914c071844e0189ba77ac4b2658bbe65afd722535d3299b"
+    },
+    {
+      "repository": "scikit-bio/scikit-bio",
+      "label": "skbio",
+      "prior_charged": 5,
+      "already_consumed_prs": [
+        2633,
+        2630,
+        2636
+      ],
+      "selected_prs": [
+        2638,
+        2637,
+        2635,
+        2634,
+        2632
+      ],
+      "existing_baseline_profile": "skbio-pr.Dockerfile",
+      "native_options": {
+        "limit": 1,
+        "since": null,
+        "until": null,
+        "state": "merged",
+        "skip_drafts": true,
+        "require_linked_issue": true,
+        "languages": [
+          "python"
+        ],
+        "require_fail_to_pass": true,
+        "min_fail_to_pass": 1,
+        "validation_timeout_sec": 600,
+        "skip_validation": false,
+        "lite_filter": false,
+        "max_source_files_per_pr": 50,
+        "min_problem_statement_words": 0,
+        "require_new_test_funcs": true,
+        "skip_ci_only": true
+      },
+      "existing_baseline_profile_sha256": "03719bad5380d394e8baf6fa2c61f35f583302fbc990d47977c8218883de0661"
+    }
+  ],
+  "reference_selection": "swe-gen-final-intake-selection.json",
+  "reference_selection_sha256": "cfc30d6578eedb58d483715cf9e24f5b94ba04b35358afe976a7a58e3bc31b80",
+  "candidate_cap": 10,
+  "target": 3,
+  "new_selected_inputs": 6,
+  "charge_policy": "Charge each frozen selected input once, including native metadata/filter or API failure; not six runtime executions.",
+  "model_calls": 0,
+  "task_fixes": 0,
+  "runtime_profile_policy": "Reuse the existing frozen baseline repository Dockerfile if native filters admit an input; disclose configuration. No parent compiled-extension restoration or per-task dependency/fixture changes."
+}
