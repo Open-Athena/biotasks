@@ -15,6 +15,8 @@ import time
 from pathlib import Path
 from unittest.mock import patch
 
+from source_fetch_isolation import isolated_native_fetch
+
 from repo2rlenv.bootstrap.spec import BootstrapResult, LanguageHint
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.github import PullRequestSummary
@@ -43,6 +45,9 @@ def run(inputs, output):
         subprocess.run(["docker", "build", "--progress=plain", "-t", manifest["image_tag"], str(inputs)],
                        stdout=log, stderr=log, check=True, timeout=1800)
     digest = subprocess.check_output(["docker", "image", "inspect", manifest["image_tag"], "--format", "{{.Id}}"], text=True).strip()
+    freeze = subprocess.check_output(["docker", "run", "--rm", "--network", "none", "--cpus", "0.1", "--memory", "128m",
+                                      digest, "cat", "/opt/baseline-freeze.txt"], timeout=30)
+    (output / "baseline-freeze.txt").write_bytes(freeze)
     dockerfile = (inputs / "Dockerfile").read_text()
     assert hashlib.sha256(dockerfile.encode()).hexdigest() == manifest["baseline_Dockerfile_sha256"]
     bootstrap = BootstrapResult(image_digest=digest, image_tag=manifest["image_tag"],
@@ -94,6 +99,15 @@ def run(inputs, output):
             return data["title"], data["body"]
 
     original_validate = pr_runtime_validate.validate_pr
+    source_events = []
+
+    def source_event(event):
+        source_events.append(event)
+        save_record(output / "source-fetch-isolation.json", {"events": source_events,
+            "scope": "Native Git acquisition only; tests remain offline; no task/runtime asset repair"})
+
+    fetch = isolated_native_fetch(pr_runtime_validate._fetch_base_commit,
+                                 [pr.base_sha for pr in prs], source_event)
     validations = 0
 
     def validate(**kwargs):
@@ -106,6 +120,7 @@ def run(inputs, output):
 
     with patch.object(pr_runtime, "provider_for", return_value=FrozenProvider()), \
          patch.object(pipeline, "_start_validation_sandbox", new=offline_sandbox), \
+         patch.object(pr_runtime_validate, "_fetch_base_commit", new=fetch), \
          patch.object(pr_runtime_validate, "validate_pr", new=validate):
         result = dataclasses.asdict(pipeline.run(output / "tasks"))
     result["out_dir"] = str(result["out_dir"])

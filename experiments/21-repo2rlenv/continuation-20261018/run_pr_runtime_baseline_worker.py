@@ -46,6 +46,7 @@ def main():
         worker.upload(args.source_archive, '/work/native/source.tar.gz')
         worker.upload(args.inputs_archive, '/work/native/inputs.tar.gz')
         worker.upload(Path('replay_pr_runtime_baseline_batch.py'), '/work/native/replay_pr_runtime_baseline_batch.py')
+        worker.upload(Path('source_fetch_isolation.py'), '/work/native/source_fetch_isolation.py')
         setup = worker.exec(['sh', '-c', 'set -eu; cd /work/native; tar -xzf source.tar.gz; mkdir inputs; tar -xzf inputs.tar.gz -C inputs; uv sync --frozen --no-dev --extra mutation --extra harbor --python 3.12.3 --project huggingface-Repo2RLEnv-27d04ee >/evidence/native/setup.log 2>&1'], timeout=600)
         record['setup_returncode'] = setup.returncode
         setup.checked('locked runtime install')
