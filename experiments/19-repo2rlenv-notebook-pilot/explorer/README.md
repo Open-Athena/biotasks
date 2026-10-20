@@ -8,7 +8,8 @@ outputs as fresh results. Model reasoning is omitted from the reading view;
 original trajectories remain linked. This is an evidence explorer, not a campaign
 log.
 
-`current.json` selects the default evidence. Other profiles select the same layout
+`current.json` links to the selected default profile; each case has one canonical
+profile. Other profiles select the same layout
 without changing the renderer. Control counts and solver rewards come from the
 selected records. A profile without validation or an attempt displays that absence;
 it does not borrow results from another task. Missing declared evidence is an

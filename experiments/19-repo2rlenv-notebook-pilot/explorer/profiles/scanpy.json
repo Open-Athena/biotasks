@@ -1,0 +1,448 @@
+{
+  "subtitle": "Scanpy BMMC analysis · fixed cell groups → marker-gene statistics",
+  "footer": "Recorded evidence; no live model calls. Large inputs and reference tables are linked through the published dataset. Notebook BSD-3-Clause · data CC BY 4.0.",
+  "seed": "seeds/current.json",
+  "notebook": "reference-inputs/scanpy/clustering.ipynb",
+  "converted": "reference-inputs/scanpy/baseline.py",
+  "notebook_title": "Scanpy · Clustering and marker genes",
+  "notebook_description": "NeurIPS BMMC samples s1d1 and s1d3. Notebook BSD-3-Clause; input data CC BY 4.0.",
+  "task_title": "Marker genes for fixed cell groups",
+  "instruction": "explorer/evidence/instruction.md",
+  "task_manifest": "materialization-runs/006/manifest.json",
+  "task_config": "explorer/evidence/task.toml",
+  "grader": "grading-runs/006/grade.py",
+  "oracle": "materialization-runs/006/oracle.py",
+  "trajectory_glob": "native-runs/003/native/terminus-2/**/trajectory.json",
+  "native_summary": "native-runs/003/native/result.json",
+  "grading_controls": "grading-runs/006/final-controls.json",
+  "release": {
+    "repository": "gonzalobenegas/biotasks-notebook-pilot-issue-19",
+    "publication": "scientific-releases/001/publication.json"
+  },
+  "review_description": "Authoring and solving used the same model family. This is one task, without broad software-portability evidence. The upstream advisory label remains unverified because the standard quality-loop profile was not run; scientific and native checks are recorded separately.",
+  "review_files": [
+    "grading-runs/006/final-controls.json",
+    "grading-runs/006/review.json",
+    "native-runs/003/native/result.json",
+    "scientific-releases/001/download-verification.json",
+    "source-license-evidence.json"
+  ],
+  "stages": [
+    [
+      "convert",
+      "01 · Convert notebook",
+      "Programmatic",
+      "Pinned notebook JSON → Jupytext py:nomarker script. Markdown cells become comments. Stored notebook outputs are not execution evidence.",
+      "src/biotasks/notebook_script.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "reference-inputs/scanpy/clustering.ipynb",
+              "clustering.ipynb"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "reference-inputs/scanpy/baseline.py",
+              "baseline.py"
+            ],
+            [
+              "reference-inputs/scanpy/conversion.json",
+              "conversion.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "prepare",
+      "02 · Select and export terminal results",
+      "GLM-5.3",
+      "Preparation 010 appends export code to the original analysis. It does not install dependencies or stage data.",
+      "run_preparation.py",
+      [
+        [
+          "Recorded prompt",
+          [
+            [
+              "preparation-runs/010/prepare/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "preparation-runs/010/prepare/input.json",
+              "input.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "preparation-runs/010/exports.py",
+              "exports.py"
+            ],
+            [
+              "preparation-runs/010/plan.md",
+              "plan.md"
+            ],
+            [
+              "preparation-runs/010/reference.py",
+              "reference.py"
+            ],
+            [
+              "preparation-runs/010/source.diff",
+              "source.diff"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "setup",
+      "03 · Set up and test reference",
+      "GLM-5.3 + execution",
+      "Setup 001 uses tools to prepare dependencies and real inputs, then tests the reference offline. The controller executes the script; GLM diagnoses setup issues.",
+      "run_reference_setup.py",
+      [
+        [
+          "Recorded prompt",
+          [
+            [
+              "setup-runs/001/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "explorer/evidence/setup-input.json",
+              "Initial messages and available tools"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "setup-runs/001/candidate/pyproject.toml",
+              "pyproject.toml"
+            ],
+            [
+              "setup-runs/001/candidate/system-packages.json",
+              "system-packages.json"
+            ],
+            [
+              "setup-runs/001/candidate/stage-inputs.sh",
+              "stage-inputs.sh"
+            ],
+            [
+              "setup-runs/001/candidate/analysis.py",
+              "analysis.py"
+            ],
+            [
+              "setup-runs/001/trial/reference.py",
+              "reference.py"
+            ],
+            [
+              "setup-runs/001/trial/result.json",
+              "result.json"
+            ],
+            [
+              "setup-runs/001/trial/reference.log",
+              "reference.log"
+            ],
+            [
+              "setup-runs/001/output-audit.json",
+              "output-audit.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "replay",
+      "04 · Replay reference",
+      "Programmatic",
+      "Replay 001 checks the prepared reference against frozen inputs. No new model prompt.",
+      "run_reference_replay.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "replay-runs/001/replay/frozen-inputs.json",
+              "frozen-inputs.json"
+            ],
+            [
+              "replay-runs/001/replay/setup.sh",
+              "setup.sh"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "replay-runs/001/replay/comparison.json",
+              "comparison.json"
+            ],
+            [
+              "replay-runs/001/result.json",
+              "result.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "specify",
+      "05 · Specify scientific task",
+      "GLM-5.3",
+      "Specification 016 selects marker statistics with supplied group labels and stable gene identities. The solver need not reproduce clustering or UMAP.",
+      "run_specification.py",
+      [
+        [
+          "Recorded prompt",
+          [
+            [
+              "specification-runs/016/specify/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "explorer/evidence/specification-input.json",
+              "Exact recorded worker input"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "specification-runs/016/task-brief.md",
+              "task-brief.md"
+            ],
+            [
+              "specification-runs/016/validation-handoff.md",
+              "validation-handoff.md"
+            ],
+            [
+              "specification-runs/016/specification.json",
+              "specification.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "materialize",
+      "06 · Materialize inputs and oracle",
+      "GLM-5.3 + execution",
+      "Materialization 006 produces four public inputs and a private reference. The original matrices are observed data; fixed labels and identities are derived inputs.",
+      "task_materialization.py",
+      [
+        [
+          "Recorded prompt",
+          [
+            [
+              "materialization-runs/006/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "explorer/evidence/materialization-input.json",
+              "Exact recorded worker input"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "materialization-runs/006/derive.py",
+              "derive.py"
+            ],
+            [
+              "materialization-runs/006/oracle.py",
+              "oracle.py"
+            ],
+            [
+              "materialization-runs/006/manifest.json",
+              "manifest.json"
+            ],
+            [
+              "materialization-runs/006/final-execution.json",
+              "final-execution.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "grade",
+      "07 · Build and validate grading",
+      "GLM-5.3 + deterministic controls",
+      "Accepted grading 006 combines the independently authored solution and frozen probes with the repaired grader. All 19 controls were reexecuted. Below are the component prompts, not a claim that this was one model call.",
+      "grading_session.py",
+      [
+        [
+          "Recorded prompts",
+          [
+            [
+              "grading-runs/002/grader/system-prompt.md",
+              "system-prompt.md"
+            ],
+            [
+              "grading-runs/005/repair/system-prompt.md",
+              "system-prompt.md"
+            ],
+            [
+              "grading-runs/006/contract/system-prompt.md",
+              "system-prompt.md"
+            ],
+            [
+              "grading-runs/006/review/system-prompt.md",
+              "system-prompt.md"
+            ]
+          ]
+        ],
+        [
+          "Inputs",
+          [
+            [
+              "grading-runs/002/grader/input.json",
+              "input.json"
+            ],
+            [
+              "grading-runs/006/contract/input.json",
+              "input.json"
+            ],
+            [
+              "grading-runs/006/inputs.json",
+              "inputs.json"
+            ]
+          ]
+        ],
+        [
+          "Outputs",
+          [
+            [
+              "grading-runs/006/grade.py",
+              "grade.py"
+            ],
+            [
+              "grading-runs/006/acceptance-contract.md",
+              "acceptance-contract.md"
+            ],
+            [
+              "grading-runs/006/independent-solution.json",
+              "independent-solution.json"
+            ],
+            [
+              "grading-runs/006/probes.json",
+              "probes.json"
+            ],
+            [
+              "grading-runs/006/final-controls.json",
+              "final-controls.json"
+            ],
+            [
+              "grading-runs/006/review.json",
+              "review.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "native",
+      "08 · Run Harbor controls and solver",
+      "Programmatic + GLM-5.3 solver",
+      "Native 003: oracle reward 1, empty baseline reward 0, blind Terminus-2 / GLM-5.3 reward 1. The Attempt tab shows the actual question, tool calls and observations.",
+      "run_scientific_native.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "native-runs/003/inputs.json",
+              "inputs.json"
+            ],
+            [
+              "explorer/evidence/task.toml",
+              "Published Harbor configuration"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "native-runs/003/native/result.json",
+              "result.json"
+            ],
+            [
+              "native-runs/003/operator-review.json",
+              "operator-review.json"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "release",
+      "09 · Publish and download-check",
+      "Programmatic",
+      "The release was published publicly and independently downloaded and verified. No new LLM call.",
+      "stage_scientific_release.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "scientific-releases/001/manifest.json",
+              "manifest.json"
+            ],
+            [
+              "scientific-releases/001/release-files.json",
+              "release-files.json"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "scientific-releases/001/publication.json",
+              "publication.json"
+            ],
+            [
+              "scientific-releases/001/download-verification.json",
+              "download-verification.json"
+            ]
+          ]
+        ]
+      ]
+    ]
+  ]
+}
