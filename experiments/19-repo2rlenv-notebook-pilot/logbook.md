@@ -2691,3 +2691,15 @@ validation rejection, and native infrastructure failure: eight offline control-f
 and handoff tests pass. These fake-worker tests do not establish live autonomy.
 Small final candidate/cleanup diagnostics are now retained alongside the final
 receipt, so terminal decisions can be inspected without unpacking large data.
+
+## 2026-10-20 — candidate-first construction
+
+Read-only observation of campaign 004 showed that preserving the private review
+alone did not prevent construction from attempting a full independent
+implementation before submission. That duplicates the later validation stage.
+Prepared a general tool-ordering change: construction must submit a complete
+reference-based candidate before exploratory shell access; a failed controlled
+execution unlocks shell-assisted repair. An unsupported candidate can instead be
+explicitly blocked. This changes no scientific method or seed-specific behavior,
+adds no model request cap, and does not modify the running frozen campaign.
+Fifteen focused materialization tests pass. Live effectiveness is unproven.

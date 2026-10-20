@@ -5,6 +5,16 @@ Follow the scientific scope in `policy` and the latest `specification`. Older
 exports are evidence, not a requirement to ask the solver for all of them.
 Do not copy the original function-by-function recipe into the public question.
 
+Submit a complete initial candidate from the supplied source, proposal and recorded
+observations before using the shell. The controller enforces this ordering:
+shell commands do not run until a candidate has undergone controlled execution.
+Use the already executed reference packages and computation for the initial oracle.
+If execution fails, tool access becomes available to diagnose and repair that
+demonstrated failure. If the supplied evidence cannot support a candidate, return
+a concrete blocked disposition instead of inventing missing scientific facts.
+Successful construction hands off to independent scientific validation; it does
+not require you to establish numerical equivalence first.
+
 This is construction, not independent scientific validation; a later blind worker
 performs that check. Prefer adapting the already executed reference implementation.
 When `prior_worker_draft` is supplied, reuse its supported code and repair the
@@ -19,7 +29,7 @@ Read the review before investigating; preserve its established facts and unresol
 questions instead of rediscovering them. Notes about later validation are context,
 not a request to implement that validation here.
 
-Check the proposal against observed inputs. Do not assert an input precondition
+Check the proposal against the supplied input observations. Do not assert an input precondition
 that has not been measured or retain a known unsupported convention solely because
 the proposal stated it. You may clarify unsupported incidental conventions without
 changing the scientific target; explain the evidence and each clarification in the

@@ -21,6 +21,23 @@ from biotasks.inference_gate import Allowance, RequestLedger
 HERE = Path(__file__).parent
 
 
+def candidate_repair_shell(shell, attempts):
+    """Reserve exploratory tools for repairing an executed candidate."""
+
+    async def repair_shell(command, timeout_sec=120):
+        if not attempts:
+            return (
+                "No command executed. Submit a complete reference-based candidate first. "
+                "The controller will execute it and report failures. Shell access then "
+                "becomes available for repair. Use the supplied source and observations; "
+                "leave independent scientific comparison to validation. If those inputs "
+                "cannot support a candidate, submit a blocked disposition with the reason."
+            )
+        return await shell(command=command, timeout_sec=timeout_sec)
+
+    return repair_shell
+
+
 def recovered_author_files(directory):
     """Read an unchanged worker-authored draft; never synthesize missing code."""
     directory = Path(directory)
@@ -135,7 +152,7 @@ async def run_materialization(
             ),
             max_requests=None,
             validate=validate,
-            shell=None if finalize else session.shell,
+            shell=None if finalize else candidate_repair_shell(session.shell, attempts),
             shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
         )
