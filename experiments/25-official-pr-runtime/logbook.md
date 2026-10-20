@@ -117,3 +117,14 @@ container slots plus rejection of a third. It makes no model calls and performs
 no target-repository bootstrap or repairs. The check uses Docker CLI 23.0.6,
 uv 0.11.31, GitHub CLI 2.97.0, and records the resolved Python controller image.
 Native generation remains unlaunched until this infrastructure gate passes.
+
+Installation check submission succeeded at 2026-10-20 19:47:21 UTC. The local
+launcher used 218,328 KiB peak RSS and exited zero; Iris client checkout was
+`24aa43cea9a508449d4c9094cb3877e6e43e0f67`. A first observation reported
+`PENDING`. The later observation attempt at approximately 19:50 UTC could not
+acquire the shared VM heavy-work lock and did not start. No resubmission was
+made. Terminal state, archived outputs and remote cleanup remain unverified;
+inspect the existing job before any further execution. Its scheduling timeout
+is 180 seconds and execution timeout is 1,800 seconds. It carries no credentials
+and cannot make model calls. Local launcher and observation processes exited;
+no local worker remains owned by this task.

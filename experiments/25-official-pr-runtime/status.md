@@ -11,7 +11,7 @@ occurred. No upstream source has been modified.
 - Recorded the five comparison inputs and their revisions.
 - Verified official date-window selection covers those inputs and 11 other
   same-day PRs, before native filters. No selector bypass is proposed.
-- Selected the user-authorized existing GLM-5.3 service, with no paid fallback,
+- Selected user-authorized GLM-5.3 through OpenRouter, with no fallback,
   at most 20 bootstrap turns per repository and three repository bootstraps.
 - Recorded source hashes and a provisional launch plan. This plan is not an
   executable, fully frozen protocol.
@@ -33,11 +33,13 @@ occurred. No upstream source has been modified.
    callers inside its serving cluster. A supported route reachable from TRC,
    or an explicitly agreed execution-location change, is required. Do not
    bypass the relay, change access controls or start another service silently.
-3. **Docker resource containment.** Upstream creates sibling containers on
+3. **Docker resource containment (adaptation approved; check pending).** Upstream creates sibling containers on
    the Docker daemon without CPU or memory arguments. The outer Iris
    allocation does not bound those siblings. Before launch, establish a
-   dedicated bounded Docker execution arrangement or present an exact
-   resource-only adaptation for user agreement. None has been applied.
+   dedicated bounded Docker execution arrangement. The user approved the
+   resource-only wrapper on 2026-10-20. Inputs were checkpointed in `5293c751`;
+   the credential-free reserved-TRC installation and wrapper check was
+   submitted as `/exedev/biotasks25-install-001`. No native generation started.
 
 The user subsequently selected GLM-5.3 through OpenRouter. Private GLM
 connectivity is no longer a launch prerequisite; remote GitHub authentication
