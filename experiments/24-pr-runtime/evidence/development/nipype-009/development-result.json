@@ -1,0 +1,706 @@
+{
+  "stage": "development_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "nipy/nipype",
+  "run_id": "biotasks24-dev-nipype-009",
+  "bootstrap_ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "results": [
+    {
+      "number": 3745,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv nipype/pipeline/plugins/tests/test_multiproc.py"
+      ],
+      "status": "verified",
+      "fail_to_pass": [
+        "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]",
+        "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]"
+      ],
+      "pass_to_pass": [
+        "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified",
+        "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified",
+        "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified"
+      ],
+      "pre_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: nipype\n  Building editable for nipype (pyproject.toml): started\n  Building editable for nipype (pyproject.toml): finished with status 'done'\n  Created wheel for nipype: filename=nipype-0.1.dev1+g2b671ab9f.d20261020-py3-none-any.whl size=5218 sha256=f2faf4dc51e019249f92e68023d4596a4d614fe672862b071be3c1b87c082530\n  Stored in directory: /tmp/pip-ephem-wheel-cache-2ta9f625/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built nipype\nInstalling collected packages: nipype\n  Attempting uninstall: nipype\n    Found existing installation: nipype 0.1.dev1+g2b671ab9f\n    Uninstalling nipype-0.1.dev1+g2b671ab9f:\n      Successfully uninstalled nipype-0.1.dev1+g2b671ab9f\nSuccessfully installed nipype-0.1.dev1+g2b671ab9f.d20261020\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace/nipype\nconfigfile: pytest.ini\nplugins: doctestplus-1.7.1, cov-7.1.0, env-1.8.1, timeout-2.4.0, xdist-3.8.0\ncollecting ... collected 7 items\n\nnipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc SKIPPED [ 14%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified PASSED [ 28%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified PASSED [ 42%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified PASSED [ 57%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available SKIPPED [ 71%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc] FAILED [ 85%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc] FAILED [100%]\n\n=================================== FAILURES ===================================\n_________________ test_error_run_without_submitting[MultiProc] _________________\n\ntmp_path = PosixPath('/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0')\nplugin = 'MultiProc'\n\n    @pytest.mark.parametrize(\"plugin\", [\"MultiProc\", \"LegacyMultiProc\"])\n    def test_error_run_without_submitting(tmp_path, plugin):\n        wf = pe.Workflow(name='rws', base_dir=str(tmp_path))\n        n1 = pe.Node(SingleNodeTestInterface(), name='n1')\n        n1.inputs.input1 = 1\n        n2 = pe.Node(ErrorInterface(), name='n2', run_without_submitting=True)\n        n3 = pe.Node(SingleNodeTestInterface(), name='n3')\n    \n        wf.connect(\n            [\n                (n1, n2, [('output1', 'input1')]),\n                (n2, n3, [('output1', 'input1')]),\n            ]\n        ),\n    \n>       with pytest.raises(RuntimeError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE RuntimeError\n\n/workspace/nipype/pipeline/plugins/tests/test_multiproc.py:182: Failed\n----------------------------- Captured stdout call -----------------------------\n261020-16:26:41,57 nipype.workflow INFO:\n\t Workflow rws settings: ['check', 'execution', 'logging', 'monitoring']\n261020-16:26:41,60 nipype.workflow INFO:\n\t Running in parallel.\n261020-16:26:41,64 nipype.workflow INFO:\n\t [MultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240, Free GPU slot:0/0.\n261020-16:26:41,635 nipype.workflow INFO:\n\t [Node] Setting-up \"rws.n1\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0/rws/n1\".\n261020-16:26:41,638 nipype.workflow INFO:\n\t [Node] Executing \"n1\" <nipype.pipeline.plugins.tests.test_multiproc.SingleNodeTestInterface>\n261020-16:26:41,642 nipype.workflow INFO:\n\t [Node] Finished \"n1\", elapsed time 0.000397s.\n261020-16:26:43,63 nipype.workflow INFO:\n\t [Job 0] Completed (rws.n1).\n261020-16:26:43,65 nipype.workflow INFO:\n\t [MultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240, Free GPU slot:0/0.\n261020-16:26:43,126 nipype.workflow INFO:\n\t [Node] Setting-up \"rws.n2\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0/rws/n2\".\n261020-16:26:43,129 nipype.workflow INFO:\n\t [Node] Executing \"n2\" <nipype.pipeline.plugins.tests.test_multiproc.ErrorInterface>\n261020-16:26:43,133 nipype.workflow INFO:\n\t [Node] Finished \"n2\", elapsed time 0.00013s.\n261020-16:26:43,134 nipype.workflow WARNING:\n\t Storing result file without outputs\n261020-16:26:43,134 nipype.workflow WARNING:\n\t [Node] Error on \"rws.n2\" (/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0/rws/n2)\n261020-16:26:43,136 nipype.workflow ERROR:\n\t Node n2 failed to run on host 9410f0b52a33.\n261020-16:26:43,136 nipype.workflow ERROR:\n\t Saving crash info to /workspace/crash-20261020-162643-root-n2-33a5911b-0c18-4543-bcfc-e9d28e48f020.pklz\nTraceback (most recent call last):\n  File \"/workspace/nipype/pipeline/plugins/multiproc.py\", line 389, in _send_procs_to_workers\n    self.procs[jobid].run(updatehash=updatehash)\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 546, in run\n    result = self._run_interface(execute=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 661, in _run_interface\n    return self._run_command(execute)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 787, in _run_command\n    raise NodeExecutionError(msg)\nnipype.pipeline.engine.nodes.NodeExecutionError: Exception raised while executing Node n2.\n\nTraceback:\n\tTraceback (most recent call last):\n\t  File \"/workspace/nipype/interfaces/base/core.py\", line 402, in run\n\t    runtime = self._run_interface(runtime)\n\t              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\t  File \"/workspace/nipype/pipeline/plugins/tests/test_multiproc.py\", line 83, in _run_interface\n\t    raise RuntimeError(\"This is an error\")\n\tRuntimeError: This is an error\n\n\n261020-16:26:43,138 nipype.workflow INFO:\n\t [Job 1] Completed (rws.n2).\n------------------------------ Captured log call -------------------------------\nINFO     nipype.workflow:workflows.py:611 Workflow rws settings: ['check', 'execution', 'logging', 'monitoring']\nINFO     nipype.workflow:base.py:128 Running in parallel.\nINFO     nipype.workflow:multiproc.py:287 [MultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240, Free GPU slot:0/0.\nINFO     nipype.workflow:base.py:429 [Job 0] Completed (rws.n1).\nINFO     nipype.workflow:multiproc.py:287 [MultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240, Free GPU slot:0/0.\nINFO     nipype.workflow:nodes.py:472 [Node] Setting-up \"rws.n2\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0/rws/n2\".\nINFO     nipype.workflow:nodes.py:732 [Node] Executing \"n2\" <nipype.pipeline.plugins.tests.test_multiproc.ErrorInterface>\nINFO     nipype.workflow:nodes.py:739 [Node] Finished \"n2\", elapsed time 0.00013s.\nWARNING  nipype.workflow:utils.py:237 Storing result file without outputs\nWARNING  nipype.workflow:nodes.py:548 [Node] Error on \"rws.n2\" (/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt0/rws/n2)\nERROR    nipype.workflow:tools.py:46 Node n2 failed to run on host 9410f0b52a33.\nERROR    nipype.workflow:tools.py:63 Saving crash info to /workspace/crash-20261020-162643-root-n2-33a5911b-0c18-4543-bcfc-e9d28e48f020.pklz\nTraceback (most recent call last):\n  File \"/workspace/nipype/pipeline/plugins/multiproc.py\", line 389, in _send_procs_to_workers\n    self.procs[jobid].run(updatehash=updatehash)\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 546, in run\n    result = self._run_interface(execute=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 661, in _run_interface\n    return self._run_command(execute)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 787, in _run_command\n    raise NodeExecutionError(msg)\nnipype.pipeline.engine.nodes.NodeExecutionError: Exception raised while executing Node n2.\n\nTraceback:\n\tTraceback (most recent call last):\n\t  File \"/workspace/nipype/interfaces/base/core.py\", line 402, in run\n\t    runtime = self._run_interface(runtime)\n\t              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\t  File \"/workspace/nipype/pipeline/plugins/tests/test_multiproc.py\", line 83, in _run_interface\n\t    raise RuntimeError(\"This is an error\")\n\tRuntimeError: This is an error\n\n\nINFO     nipype.workflow:base.py:429 [Job 1] Completed (rws.n2).\n______________ test_error_run_without_submitting[LegacyMultiProc] ______________\n\ntmp_path = PosixPath('/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1')\nplugin = 'LegacyMultiProc'\n\n    @pytest.mark.parametrize(\"plugin\", [\"MultiProc\", \"LegacyMultiProc\"])\n    def test_error_run_without_submitting(tmp_path, plugin):\n        wf = pe.Workflow(name='rws', base_dir=str(tmp_path))\n        n1 = pe.Node(SingleNodeTestInterface(), name='n1')\n        n1.inputs.input1 = 1\n        n2 = pe.Node(ErrorInterface(), name='n2', run_without_submitting=True)\n        n3 = pe.Node(SingleNodeTestInterface(), name='n3')\n    \n        wf.connect(\n            [\n                (n1, n2, [('output1', 'input1')]),\n                (n2, n3, [('output1', 'input1')]),\n            ]\n        ),\n    \n>       with pytest.raises(RuntimeError):\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nE       Failed: DID NOT RAISE RuntimeError\n\n/workspace/nipype/pipeline/plugins/tests/test_multiproc.py:182: Failed\n----------------------------- Captured stdout call -----------------------------\n261020-16:26:47,587 nipype.workflow INFO:\n\t Workflow rws settings: ['check', 'execution', 'logging', 'monitoring']\n261020-16:26:47,592 nipype.workflow INFO:\n\t Running in parallel.\n261020-16:26:47,594 nipype.workflow INFO:\n\t [LegacyMultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240.\n261020-16:26:47,652 nipype.workflow INFO:\n\t [Node] Setting-up \"rws.n1\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1/rws/n1\".\n261020-16:26:47,654 nipype.workflow INFO:\n\t [Node] Executing \"n1\" <nipype.pipeline.plugins.tests.test_multiproc.SingleNodeTestInterface>\n261020-16:26:47,656 nipype.workflow INFO:\n\t [Node] Finished \"n1\", elapsed time 0.000266s.\n261020-16:26:49,594 nipype.workflow INFO:\n\t [Job 0] Completed (rws.n1).\n261020-16:26:49,595 nipype.workflow INFO:\n\t [LegacyMultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240.\n261020-16:26:49,639 nipype.workflow INFO:\n\t [Node] Setting-up \"rws.n2\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1/rws/n2\".\n261020-16:26:49,641 nipype.workflow INFO:\n\t [Node] Executing \"n2\" <nipype.pipeline.plugins.tests.test_multiproc.ErrorInterface>\n261020-16:26:49,643 nipype.workflow INFO:\n\t [Node] Finished \"n2\", elapsed time 5.9e-05s.\n261020-16:26:49,643 nipype.workflow WARNING:\n\t Storing result file without outputs\n261020-16:26:49,643 nipype.workflow WARNING:\n\t [Node] Error on \"rws.n2\" (/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1/rws/n2)\n261020-16:26:49,645 nipype.workflow ERROR:\n\t Node n2 failed to run on host 9410f0b52a33.\n261020-16:26:49,645 nipype.workflow ERROR:\n\t Saving crash info to /workspace/crash-20261020-162649-root-n2-72b81d81-b63a-4fc8-86ef-7ae32c91e8d5.pklz\nTraceback (most recent call last):\n  File \"/workspace/nipype/pipeline/plugins/legacymultiproc.py\", line 430, in _send_procs_to_workers\n    self.procs[jobid].run(updatehash=updatehash)\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 546, in run\n    result = self._run_interface(execute=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 661, in _run_interface\n    return self._run_command(execute)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 787, in _run_command\n    raise NodeExecutionError(msg)\nnipype.pipeline.engine.nodes.NodeExecutionError: Exception raised while executing Node n2.\n\nTraceback:\n\tTraceback (most recent call last):\n\t  File \"/workspace/nipype/interfaces/base/core.py\", line 402, in run\n\t    runtime = self._run_interface(runtime)\n\t              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\t  File \"/workspace/nipype/pipeline/plugins/tests/test_multiproc.py\", line 83, in _run_interface\n\t    raise RuntimeError(\"This is an error\")\n\tRuntimeError: This is an error\n\n\n261020-16:26:49,646 nipype.workflow INFO:\n\t [Job 1] Completed (rws.n2).\n------------------------------ Captured log call -------------------------------\nINFO     nipype.workflow:workflows.py:611 Workflow rws settings: ['check', 'execution', 'logging', 'monitoring']\nINFO     nipype.workflow:base.py:128 Running in parallel.\nINFO     nipype.workflow:legacymultiproc.py:344 [LegacyMultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240.\nINFO     nipype.workflow:base.py:429 [Job 0] Completed (rws.n1).\nINFO     nipype.workflow:legacymultiproc.py:344 [LegacyMultiProc] Running 0 tasks, and 1 jobs ready. Free memory (GB): 360.43/360.43, Free processors: 240/240.\nINFO     nipype.workflow:nodes.py:472 [Node] Setting-up \"rws.n2\" in \"/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1/rws/n2\".\nINFO     nipype.workflow:nodes.py:732 [Node] Executing \"n2\" <nipype.pipeline.plugins.tests.test_multiproc.ErrorInterface>\nINFO     nipype.workflow:nodes.py:739 [Node] Finished \"n2\", elapsed time 5.9e-05s.\nWARNING  nipype.workflow:utils.py:237 Storing result file without outputs\nWARNING  nipype.workflow:nodes.py:548 [Node] Error on \"rws.n2\" (/tmp/nipype tmp/pytest-of-root/pytest-0/test_error_run_without_submitt1/rws/n2)\nERROR    nipype.workflow:tools.py:46 Node n2 failed to run on host 9410f0b52a33.\nERROR    nipype.workflow:tools.py:63 Saving crash info to /workspace/crash-20261020-162649-root-n2-72b81d81-b63a-4fc8-86ef-7ae32c91e8d5.pklz\nTraceback (most recent call last):\n  File \"/workspace/nipype/pipeline/plugins/legacymultiproc.py\", line 430, in _send_procs_to_workers\n    self.procs[jobid].run(updatehash=updatehash)\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 546, in run\n    result = self._run_interface(execute=True)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 661, in _run_interface\n    return self._run_command(execute)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/nipype/pipeline/engine/nodes.py\", line 787, in _run_command\n    raise NodeExecutionError(msg)\nnipype.pipeline.engine.nodes.NodeExecutionError: Exception raised while executing Node n2.\n\nTraceback:\n\tTraceback (most recent call last):\n\t  File \"/workspace/nipype/interfaces/base/core.py\", line 402, in run\n\t    runtime = self._run_interface(runtime)\n\t              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n\t  File \"/workspace/nipype/pipeline/plugins/tests/test_multiproc.py\", line 83, in _run_interface\n\t    raise RuntimeError(\"This is an error\")\n\tRuntimeError: This is an error\n\n\nINFO     nipype.workflow:base.py:429 [Job 1] Completed (rws.n2).\n=========================== short test summary info ============================\nFAILED nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc] - Failed: DID NOT RAISE RuntimeError\nFAILED nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc] - Failed: DID NOT RAISE RuntimeError\n=================== 2 failed, 3 passed, 2 skipped in 12.57s ====================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nRemoving crash-20261020-162643-root-n2-33a5911b-0c18-4543-bcfc-e9d28e48f020.pklz\nRemoving crash-20261020-162649-root-n2-72b81d81-b63a-4fc8-86ef-7ae32c91e8d5.pklz\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: nipype\n  Building editable for nipype (pyproject.toml): started\n  Building editable for nipype (pyproject.toml): finished with status 'done'\n  Created wheel for nipype: filename=nipype-0.1.dev1+g2b671ab9f.d20261020-py3-none-any.whl size=5218 sha256=f2faf4dc51e019249f92e68023d4596a4d614fe672862b071be3c1b87c082530\n  Stored in directory: /tmp/pip-ephem-wheel-cache-b0gafete/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built nipype\nInstalling collected packages: nipype\n  Attempting uninstall: nipype\n    Found existing installation: nipype 0.1.dev1+g2b671ab9f.d20261020\n    Uninstalling nipype-0.1.dev1+g2b671ab9f.d20261020:\n      Successfully uninstalled nipype-0.1.dev1+g2b671ab9f.d20261020\nSuccessfully installed nipype-0.1.dev1+g2b671ab9f.d20261020\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace/nipype\nconfigfile: pytest.ini\nplugins: doctestplus-1.7.1, cov-7.1.0, env-1.8.1, timeout-2.4.0, xdist-3.8.0\ncollecting ... collected 7 items\n\nnipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc SKIPPED [ 14%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified PASSED [ 28%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified PASSED [ 42%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified PASSED [ 57%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available SKIPPED [ 71%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc] PASSED [ 85%]\nnipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc] PASSED [100%]\n\n======================== 5 passed, 2 skipped in 10.01s =========================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/base.py...\nChecking patch nipype/pipeline/plugins/legacymultiproc.py...\nChecking patch nipype/pipeline/plugins/multiproc.py...\nApplied patch nipype/pipeline/plugins/base.py cleanly.\nApplied patch nipype/pipeline/plugins/legacymultiproc.py cleanly.\nApplied patch nipype/pipeline/plugins/multiproc.py cleanly.\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "",
+      "export": {
+        "controls": [
+          {
+            "name": "base",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 0.0,
+              "resolved": false,
+              "f2p_total": 2,
+              "f2p_passed": 0,
+              "f2p_rate": 0.0,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 10,
+              "exit_code": 1,
+              "command_resolved": false
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "FAILED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "FAILED"
+            },
+            "strict_reference_pass": false,
+            "disposition": "graded"
+          },
+          {
+            "name": "reference",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "candidate_apply_exit_code": 0,
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 1.0,
+              "resolved": true,
+              "f2p_total": 2,
+              "f2p_passed": 2,
+              "f2p_rate": 1.0,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 7,
+              "exit_code": 0,
+              "command_resolved": true
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "PASSED"
+            },
+            "strict_reference_pass": true,
+            "disposition": "graded"
+          },
+          {
+            "name": "omit-source-1",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "candidate_apply_exit_code": 0,
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 0.5,
+              "resolved": false,
+              "f2p_total": 2,
+              "f2p_passed": 1,
+              "f2p_rate": 0.5,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 9,
+              "exit_code": 1,
+              "command_resolved": false
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "FAILED"
+            },
+            "strict_reference_pass": false,
+            "disposition": "graded"
+          },
+          {
+            "name": "omit-source-0",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "candidate_apply_exit_code": 0,
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 0.0,
+              "resolved": false,
+              "f2p_total": 2,
+              "f2p_passed": 0,
+              "f2p_rate": 0.0,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 7,
+              "exit_code": 1,
+              "command_resolved": false
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "FAILED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "FAILED"
+            },
+            "strict_reference_pass": false,
+            "disposition": "graded"
+          },
+          {
+            "name": "omit-source-2",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "candidate_apply_exit_code": 0,
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 0.5,
+              "resolved": false,
+              "f2p_total": 2,
+              "f2p_passed": 1,
+              "f2p_rate": 0.5,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 9,
+              "exit_code": 1,
+              "command_resolved": false
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "FAILED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "PASSED"
+            },
+            "strict_reference_pass": false,
+            "disposition": "graded"
+          },
+          {
+            "name": "base-with-tests-deleted",
+            "isolation_exit_code": 0,
+            "history_and_status": "1\n",
+            "grader_exit_code": 0,
+            "details": {
+              "reward": 0.0,
+              "resolved": false,
+              "f2p_total": 2,
+              "f2p_passed": 0,
+              "f2p_rate": 0.0,
+              "p2p_total": 3,
+              "p2p_passed": 3,
+              "p2p_rate": 1.0,
+              "regressions": [],
+              "untracked_failed_count": 0,
+              "untracked_failed": [],
+              "parse_status": "ok",
+              "runner": "pytest",
+              "tests_parsed": 10,
+              "exit_code": 1,
+              "command_resolved": false
+            },
+            "statuses": {
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_run_multiproc": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_memory_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_no_more_gpu_threads_than_specified": "PASSED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_hold_job_until_procs_available": "SKIPPED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[MultiProc]": "FAILED",
+              "nipype/pipeline/plugins/tests/test_multiproc.py::test_error_run_without_submitting[LegacyMultiProc]": "FAILED"
+            },
+            "strict_reference_pass": false,
+            "disposition": "graded"
+          }
+        ],
+        "accepted": false,
+        "instruction": "# Issue\n\n**Title:** FIX: Propagate errors from `run_without_submitting`\n\n## Description\n\nCame up in  , \n\nThis adds a  `_run_errors` attribute to `DistributedPluginBase` which is only utilized during the `run()` lifecycle, to ensure any encountered errors are properly reported.\n\nEach distributed plugin may need to be updated, this only touches on `MultiProc` and `LegacyMultiProc`.\n\n## Task\n\nModify the repository so that the issue described above is resolved. The task's test suite verifies your patch by applying it on top of the base commit `2b671ab9f5f4` and running the modified tests.",
+        "build_exit_code": 0,
+        "image_id": "sha256:5775f448e8766d3666bbb87eacca4d113425ef09caaba6ecba02dc865a30431d",
+        "baseline_assertion_gate": true,
+        "controls_passed": true,
+        "reason": "pending_independent_audit",
+        "image_tag_removed": true,
+        "elapsed_seconds": 93.209
+      }
+    }
+  ],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No solver model run; exported task checks are separate fields when enabled.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "base_image_repo_digests": [
+    "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258"
+  ],
+  "bootstrap_exit_code": 0,
+  "bootstrap_image_id": "sha256:2e7e3d39f9f76ee106cfc0ce5686a7bb4be3e162883160e6eb207d408fd7bd79",
+  "empty_test_commands_control": {
+    "status": "failed",
+    "fail_to_pass": [],
+    "pass_to_pass": [],
+    "pre_log": "",
+    "post_log": "",
+    "reason": "bootstrap did not record any test_cmds"
+  },
+  "disposition": "development_validation_completed",
+  "cleanup_verified": true,
+  "bootstrap_tag_removed": true,
+  "owned_image_cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.0295966169978783
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.02247390900083701
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 4.090873344001011
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.08924714299791958
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11232500099868048
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 48.53603730999748
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.4663897950013052
+    },
+    {
+      "operation": "commit",
+      "exit_code": 0,
+      "duration_sec": 7.6580257980022
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.021151769000425702
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.1071892520012625
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.06887631499921554
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10711934199935058
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 16.39293393400294
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 13.874203351999313
+    },
+    {
+      "operation": "build",
+      "exit_code": 0,
+      "duration_sec": 7.755888589999813
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.02372555800320697
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.028524388999358052
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.019117757998174056
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.3371360450000793
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10035229200002505
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11504703999889898
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.1305953609989956
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.12209443100073258
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 14.051417619000858
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.11891540099895792
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.12600630100132548
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.028771238001354504
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.02182184800039977
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.3205702659979579
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09942521199991461
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.10752207199766417
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10351715199794853
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09490196299884701
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11209507099920302
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 13.411760336999578
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10546789300133241
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.12991871000122046
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.029274067001097137
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.02246260899846675
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.3482132339995587
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09989556200162042
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11135346199807827
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12553187999947113
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10707428199748392
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11181108199889422
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 13.930808588000218
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09884656199938036
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.14309087000219733
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.028153107999969507
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.02119328800108633
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.32938627600015025
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10689592199923936
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11152434200266725
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.14051159999871743
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.06730669500029762
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11436271099955775
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 9.579889103999449
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09777021300033084
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.121520821001468
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.027600427998550003
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.019672408001497388
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.3277299459987262
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10734510199836222
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.10481934299968998
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.11232117100007599
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.06944214499890222
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11173160199905396
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 13.724625513001229
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.1554923180010519
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.1429026090008847
+    },
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.02911050799957593
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.021409578999737278
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 0.48310682400187943
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.09689734199855593
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11366258199996082
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.11411595100071281
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.1126516320000519
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11653550100163557
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 13.475221663000411
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10519987299994682
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 0.20196192499861354
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.07349213500128826
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 1.414974985000299
+    }
+  ],
+  "elapsed_seconds": 187.073
+}

@@ -1,0 +1,87 @@
+diff --git a/psychopy/tests/test_visual/test_movies.py b/psychopy/tests/test_visual/test_movies.py
+new file mode 100644
+index 0000000000..2a70d06e54
+--- /dev/null
++++ b/psychopy/tests/test_visual/test_movies.py
+@@ -0,0 +1,29 @@
++import os
++import pytest
++from psychopy import visual
++from psychopy.tests import utils
++
++
++def test_moviestim_stop_and_unload():
++    """Test that MovieStim.stop() and unload() cleanly manage player resources without AttributeError (#7793)."""
++    movie_path = os.path.join(utils.TESTS_DATA_PATH, 'testMovie.mp4')
++    if not os.path.exists(movie_path):
++        pytest.skip(f"Test movie {movie_path} not found")
++
++    win = visual.Window([128, 128], pos=[50, 50], allowGUI=False, autoLog=False)
++    try:
++        stim = visual.MovieStim(win, movie_path, noAudio=True)
++        assert stim._isLoaded
++        stim.play()
++        assert stim.isPlaying
++
++        # stop() reloads the movie after fully unloading the player
++        stim.stop()
++        assert stim._isLoaded
++        assert not stim.isPlaying
++
++        # unload() explicitly tears down the player and texture buffers
++        stim.unload()
++        assert not stim._isLoaded
++    finally:
++        win.close()
+diff --git a/psychopy/visual/movies/__init__.py b/psychopy/visual/movies/__init__.py
+index deed79fd90..4f24450026 100644
+--- a/psychopy/visual/movies/__init__.py
++++ b/psychopy/visual/movies/__init__.py
+@@ -1229,6 +1229,9 @@ def __init__(self,
+         self._initParams = dir()
+         self._initParams.remove('self')
+ 
++        self._player = None
++        self._isLoaded = False
++
+         super(MovieStim, self).__init__(
+             win, units=units, name=name, autoLog=False)
+ 
+@@ -1665,6 +1668,15 @@ def load(self, filename):
+         """
+         self.setMovie(filename)
+ 
++    def _freePlayer(self):
++        """Free the player interface and associated resources.
++
++        This function closes the player and clears the player object.
++        """
++        if hasattr(self, '_player') and self._player is not None:
++            self._player.close()
++            self._player = None
++
+     def unload(self, log=True):
+         """Stop and unload the movie.
+ 
+@@ -1674,9 +1686,10 @@ def unload(self, log=True):
+             Log this event.
+ 
+         """
+-        if self._isLoaded:
++        if getattr(self, '_isLoaded', False):
+             self._freePlayer()  # free the player if it is already open
+             self._freeTextureBuffers()  # free buffer before creating a new one
++            self._cleanupAudioTrack()
+             self._isLoaded = False
+ 
+     # --------------------------------------------------------------------------
+@@ -2182,8 +2195,7 @@ def stop(self, log=True):
+         if log:
+             logging.debug("Stopping movie: {}".format(self._filename))
+ 
+-        self._player.close()  # close the player
+-        self._cleanupAudioTrack()  # clean up the audio track
++        self.unload()
+ 
+         self.loadMovie(self._filename)  # reload the movie
+         

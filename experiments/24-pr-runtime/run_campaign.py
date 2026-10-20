@@ -63,6 +63,8 @@ def main():
     parser.add_argument("--gcloud", required=True)
     args = parser.parse_args()
     campaign = json.loads(args.campaign.read_text())
+    if "launcher_sha256" in campaign:
+        assert hashlib.sha256(Path(__file__).read_bytes()).hexdigest() == campaign["launcher_sha256"]
     assert campaign["max_concurrent_workers"] in (1, 2)
     assert campaign["model_calls"] == 0
     files = {name: (ROOT / name).read_bytes() for name in campaign["code_sha256"]}

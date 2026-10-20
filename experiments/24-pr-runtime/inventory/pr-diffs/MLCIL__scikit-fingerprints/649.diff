@@ -1,0 +1,101 @@
+diff --git a/skfp/fingerprints/_new_mordred/calculator.py b/skfp/fingerprints/_new_mordred/calculator.py
+index f21baaa51..a2ab11ffb 100644
+--- a/skfp/fingerprints/_new_mordred/calculator.py
++++ b/skfp/fingerprints/_new_mordred/calculator.py
+@@ -13,6 +13,7 @@
+     carbon_types,
+     cpsa,
+     extended_topochemical_atom,
++    geometric_index,
+     morse,
+     polarizability,
+     rdkit_descriptors,
+@@ -139,6 +140,7 @@ def compute(mol: Mol, use_3D: bool) -> np.ndarray:
+             morse.calc(mol_hydrogens_conformer, distance_matrix_3d),
+             rdkit_descriptors.calc_rdkit_3d(mol_hydrogens_conformer),
+             cpsa.calc_3d(mol_hydrogens_conformer, cpsa_2d, gasteiger_charges_hydrogens),
++            geometric_index.calc(distance_matrix_3d),
+         ]
+ 
+         for values, feature_names in descriptors_3d:
+diff --git a/skfp/fingerprints/_new_mordred/descriptors/geometric_index.py b/skfp/fingerprints/_new_mordred/descriptors/geometric_index.py
+new file mode 100644
+index 000000000..c68e81cce
+--- /dev/null
++++ b/skfp/fingerprints/_new_mordred/descriptors/geometric_index.py
+@@ -0,0 +1,33 @@
++import numpy as np
++
++from skfp.fingerprints._new_mordred.utils.graph_matrix import DistanceMatrix3D
++
++"""
++This code has been adapted from the BSD-licensed mordred-community library.
++https://github.com/JacksonBurns/mordred-community
++
++See skfp/fingerprints/data/mordred-community_bsd_license.txt for the license text.
++"""
++
++FEATURE_NAMES = [
++    "GeomDiameter",
++    "GeomRadius",
++    "GeomShapeIndex",
++    "GeomPetitjeanIndex",
++]
++
++
++@np.errstate(divide="ignore", invalid="ignore")
++def calc(distance_matrix_3d: DistanceMatrix3D) -> tuple[np.ndarray, list[str]]:
++    """
++    Compute Mordred geometrical index descriptors from 3D coordinates.
++    """
++    radius = distance_matrix_3d.radius
++    diameter = distance_matrix_3d.diameter
++
++    shape_index = np.nan if radius == 0.0 else (diameter - radius) / radius
++    petitjean_index = np.nan if diameter == 0.0 else (diameter - radius) / diameter
++    values = np.asarray(
++        [diameter, radius, shape_index, petitjean_index], dtype=np.float32
++    )
++    return values, FEATURE_NAMES
+diff --git a/tests/fingerprints/_new_mordred/geometric_index.py b/tests/fingerprints/_new_mordred/geometric_index.py
+new file mode 100644
+index 000000000..2391a68d0
+--- /dev/null
++++ b/tests/fingerprints/_new_mordred/geometric_index.py
+@@ -0,0 +1,36 @@
++import pytest
++from numpy.testing import assert_allclose
++
++from skfp.fingerprints._new_mordred.descriptors.geometric_index import (
++    FEATURE_NAMES,
++    calc,
++)
++from skfp.fingerprints._new_mordred.utils.graph_matrix import DistanceMatrix3D
++
++"""
++This code has been adapted from the BSD-licensed mordred-community library.
++https://github.com/JacksonBurns/mordred-community
++
++See skfp/fingerprints/data/mordred-community_bsd_license.txt for the license text.
++"""
++
++
++@pytest.mark.parametrize(
++    "name, expected_values",
++    [
++        ("Hexane", [6.541237774, 3.885272976, 0.68359799, 0.406033979]),
++        ("Benzene", [4.963197199, 3.876368801, 0.280372806, 0.218977476]),
++        ("EllagicAcid", [10.346072306, 5.914824414, 0.749176574, 0.428302428]),
++    ],
++)
++def test_geometric_index_reference_values(
++    name, expected_values, mordred_test_mols_hydrogens_3d
++):
++    mol = mordred_test_mols_hydrogens_3d[name]
++    dists = DistanceMatrix3D(mol)
++
++    values, feature_names = calc(dists)
++    values = dict(zip(feature_names, values, strict=True))
++    values = [values[name] for name in FEATURE_NAMES]
++
++    assert_allclose(values, expected_values, atol=1e-3)

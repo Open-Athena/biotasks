@@ -1,0 +1,3042 @@
+diff --git a/.zenodo.json b/.zenodo.json
+index dc4e2d68ad..5f0ffa1b26 100644
+--- a/.zenodo.json
++++ b/.zenodo.json
+@@ -925,6 +925,11 @@
+       "name": "Mihai, Paul Glad",
+       "orcid": "0000-0001-5715-6442"
+     },
++    {
++      "affiliation": "Jena University Hospital, Germany",
++      "name": "Gaser, Christian",
++      "orcid": "0000-0002-9940-099X"
++    },
+     {
+       "affiliation": "Department of Psychology, Stanford University",
+       "name": "Gorgolewski, Krzysztof J.",
+diff --git a/doc/changelog/1.X.X-changelog.rst b/doc/changelog/1.X.X-changelog.rst
+index 554de497d4..5eb16f00d5 100644
+--- a/doc/changelog/1.X.X-changelog.rst
++++ b/doc/changelog/1.X.X-changelog.rst
+@@ -1,3 +1,11 @@
++Upcoming release
++================
++
++  * ENH: T1Prep interface (``nipype.interfaces.t1prep``) wrapping the
++    full pipeline, segmentation, surface-estimation, longitudinal realignment
++    and the ``cat_surf`` Python API
++
++
+ 1.11.0 (March 02, 2026)
+ =======================
+ Start of the 1.11.x series.
+diff --git a/doc/interfaces.rst b/doc/interfaces.rst
+index c617fddcb6..b405fa6f1a 100644
+--- a/doc/interfaces.rst
++++ b/doc/interfaces.rst
+@@ -121,6 +121,10 @@ Nipype provides interfaces for the following **third-party** tools:
+   * `SPM <api/generated/nipype.interfaces.spm.html>`__
+     (Statistical Parametric Mapping) is a software package for the analysis of brain
+     imaging data sequences.
++  * `T1Prep <api/generated/nipype.interfaces.t1prep.html>`__
++    is a T1-weighted MRI preprocessing pipeline that performs skull-stripping,
++    tissue segmentation (GM / WM / CSF), and cortical surface reconstruction using
++    deep-learning-based models (DeepMriPrep) and the CAT-Surface (cat-surf) library.
+   * `VistaSoft <api/generated/nipype.interfaces.vista.html>`__
+     contains Matlab code to perform a variety of analysis on MRI data, including
+     functional MRI and diffusion MRI.
+diff --git a/nipype/interfaces/t1prep/__init__.py b/nipype/interfaces/t1prep/__init__.py
+new file mode 100644
+index 0000000000..4ac0ddb3f3
+--- /dev/null
++++ b/nipype/interfaces/t1prep/__init__.py
+@@ -0,0 +1,69 @@
++"""Interfaces for T1Prep – T1-weighted MRI preprocessing pipeline (PyCAT).
++
++T1Prep performs skull-stripping, tissue segmentation, and cortical surface
++reconstruction using DeepMriPrep and the CAT-Surface library (via cat-surf).
++
++Sub-module interfaces
++---------------------
++:class:`T1Prep`
++    Full pipeline: skull-strip → segment → surface estimate.  Wraps
++    ``python -m t1prep.t1prep``.
++
++:class:`T1PrepSegment`
++    Segmentation stage only.  Wraps ``python -m t1prep.segment``.
++
++:class:`T1PrepSurfaceEstimation`
++    Surface-estimation stage for one hemisphere.  Wraps
++    ``python -m t1prep.surface_estimation``.
++
++:class:`T1PrepRealignLongitudinal`
++    Rigid realignment of longitudinal T1w time-points.  Wraps
++    ``python -m t1prep.realign_longitudinal``.
++
++Base classes
++------------
++:class:`Info`
++    T1Prep package version detection.
++
++:class:`T1PrepCommand`
++    Base ``CommandLine`` for ``python -m t1prep.<module>`` invocations.
++
++A focused subset of the ``cat_surf`` API — the volume-denoising and volume/
++boundary registration interfaces needed to replace FreeSurfer / FSL (bbreg) /
++ANTs in an fMRIPrep-style pipeline — is exported directly from this package
++(:class:`CatSurfVolSanlm`, :class:`CatSurfBbreg`, :class:`CatSurfBbregDetectContrast`,
++:class:`CatSurfVolumeRegisterNmi`, :class:`CatSurfVolumeRegisterRobust`).  The
++full per-function interface set is archived for reference in the CAT-Surface
++repository under ``cat_surface_cython/examples/nipype/``.
++
++"""
++
++from .base import Info, T1PrepCommand
++from .preprocess import T1Prep, T1PrepSegment
++from .surface import T1PrepSurfaceEstimation
++from .longitudinal import T1PrepRealignLongitudinal
++from .cat_surf import (
++    # Volume operations
++    CatSurfVolSanlm,
++    # Registration
++    CatSurfBbreg,
++    CatSurfBbregDetectContrast,
++    CatSurfVolumeRegisterNmi,
++    CatSurfVolumeRegisterRobust,
++)
++
++__all__ = [
++    "Info",
++    "T1PrepCommand",
++    "T1Prep",
++    "T1PrepSegment",
++    "T1PrepSurfaceEstimation",
++    "T1PrepRealignLongitudinal",
++    # Volume operations
++    "CatSurfVolSanlm",
++    # Registration
++    "CatSurfBbreg",
++    "CatSurfBbregDetectContrast",
++    "CatSurfVolumeRegisterNmi",
++    "CatSurfVolumeRegisterRobust",
++]
+diff --git a/nipype/interfaces/t1prep/base.py b/nipype/interfaces/t1prep/base.py
+new file mode 100644
+index 0000000000..40daba50cc
+--- /dev/null
++++ b/nipype/interfaces/t1prep/base.py
+@@ -0,0 +1,78 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Base classes and shared helpers for the T1Prep interface family.
++
++* :class:`Info`           – T1Prep version detection.
++* :class:`T1PrepCommand`  – :class:`CommandLine` base that invokes T1Prep
++  sub-modules via ``python -m t1prep.<module>`` using the current Python
++  interpreter (resolved lazily, so workflows that switch interpreters keep
++  working).
++* :func:`import_cat_surf` – import the ``cat_surf`` Python API, preferring
++  the ``t1prep.cat_surf`` re-export.
++"""
++
++import sys
++
++from ..base import CommandLine, PackageInfo
++
++__docformat__ = "restructuredtext"
++
++
++class Info(PackageInfo):
++    """T1Prep package information.
++
++    Examples
++    --------
++
++    >>> from nipype.interfaces.t1prep import Info
++    >>> Info.version()  # doctest: +SKIP
++
++    """
++
++    @classmethod
++    def version(cls):
++        if cls._version is None:
++            try:
++                import t1prep  # type: ignore
++            except ImportError:
++                return None
++            cls._version = getattr(t1prep, "__version__", None)
++        return cls._version
++
++    @staticmethod
++    def parse_version(raw_info):
++        return raw_info
++
++
++def import_cat_surf():
++    """Import ``cat_surf``, preferring the ``t1prep.cat_surf`` re-export."""
++    try:
++        from t1prep import cat_surf  # type: ignore
++    except ImportError:
++        import cat_surf  # type: ignore
++    return cat_surf
++
++
++class T1PrepCommand(CommandLine):
++    """Base class for T1Prep command-line interfaces.
++
++    Sub-classes set :attr:`_module` to the dotted name of the T1Prep
++    sub-module to invoke (e.g. ``"t1prep.segment"``).  The full command is
++    assembled lazily from :data:`sys.executable` so the active interpreter
++    is always used, even if it changes after import.
++    """
++
++    _module = None
++    _cmd = "python"  # placeholder; the real command comes from the cmd property
++
++    @property
++    def cmd(self):
++        if self._module is None:
++            raise NotImplementedError(
++                f"{type(self).__name__} must set the _module class attribute."
++            )
++        return f"{sys.executable} -m {self._module}"
++
++    @property
++    def version(self):
++        return Info.version()
+diff --git a/nipype/interfaces/t1prep/cat_surf.py b/nipype/interfaces/t1prep/cat_surf.py
+new file mode 100644
+index 0000000000..024e02a41c
+--- /dev/null
++++ b/nipype/interfaces/t1prep/cat_surf.py
+@@ -0,0 +1,408 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Nipype interfaces for the ``cat_surf`` volume denoising and registration API.
++
++These wrap the small subset of the CAT-Surface (``cat-surf``) Python API needed
++to stand in for FreeSurfer / FSL (``bbregister``) / ANTs affine registration in
++an fMRIPrep-style workflow:
++
++**Volume operations**
++
++* :class:`CatSurfVolSanlm`  – ``cat_surf.cli.vol_sanlm`` (SANLM denoising)
++
++**Registration**
++
++* :class:`CatSurfBbreg`                 – ``cat_surf.bbreg``
++  (boundary-based registration, replaces FSL ``bbregister`` / ``flirt -bbr``)
++* :class:`CatSurfBbregDetectContrast`   – ``cat_surf.bbreg_detect_contrast``
++* :class:`CatSurfVolumeRegisterNmi`     – ``cat_surf.volume_register_nmi``
++  (cross-modal affine, replaces ANTs NMI registration)
++* :class:`CatSurfVolumeRegisterRobust`  – ``cat_surf.volume_register_robust``
++  (same-modality robust affine)
++
++Each interface is file-based: it reads its inputs from disk, calls the
++``cat_surf`` wrapper, and writes its outputs (denoised volume / affine matrix)
++to disk, so nodes pass file paths rather than pickled numpy arrays.
++
++The full set of per-function ``cat_surf`` interfaces (surface I/O, geometry,
++smoothing, resampling, DARTEL / Spherical Demons registration) is kept as an
++archived reference in the CAT-Surface repository under
++``cat_surface_cython/examples/nipype/cat_surf_interfaces_full.py``.
++
++References
++----------
++https://github.com/ChristianGaser/CAT-Surface
++https://github.com/ChristianGaser/T1Prep
++"""
++
++import os
++
++import numpy as np
++
++from ..base import (
++    SimpleInterface,
++    TraitedSpec,
++    File,
++    traits,
++    isdefined,
++)
++from ...utils.filemanip import fname_presuffix
++from .base import import_cat_surf as _import_cat_surf
++
++__docformat__ = "restructuredtext"
++
++
++def _cat_surf_cli():
++    """Return the file-based ``cat_surf.cli`` mirror of the ``CAT_*`` binaries.
++
++    File-based interfaces wrap ``cat_surf.cli.*`` (read files → call the
++    in-memory wrapper → write files) rather than the low-level array API, so
++    each node stays self-contained and passes file paths — not pickled numpy
++    arrays — between workflow nodes.
++    """
++    cs = _import_cat_surf()
++    cli = getattr(cs, "cli", None)
++    if cli is None:  # plain cat_surf without the sub-module pre-imported
++        import cat_surf.cli as cli  # noqa: F401
++    return cli
++
++
++# ===========================================================================
++# Volume operations
++# ===========================================================================
++
++
++class CatSurfVolSanlmInputSpec(TraitedSpec):
++    in_file = File(exists=True, mandatory=True, desc="Input NIfTI volume to denoise.")
++    out_file = File(desc="Output denoised NIfTI path.")
++    is_rician = traits.Bool(
++        False, usedefault=True, desc="Assume Rician (rather than Gaussian) noise."
++    )
++    strength = traits.Float(
++        1.0, usedefault=True, desc="Denoising strength (default 1.0)."
++    )
++
++
++class CatSurfVolSanlmOutputSpec(TraitedSpec):
++    out_file = File(desc="Denoised NIfTI volume.")
++
++
++class CatSurfVolSanlm(SimpleInterface):
++    """Apply SANLM (Spatially Adaptive Non-Local Means) denoising to a volume.
++
++    Wraps the file-based ``cat_surf.cli.vol_sanlm(in_file, out_file,
++    is_rician=…, strength=…)`` (``CAT_VolSanlm``).  T1Prep applies SANLM
++    denoising as the first preprocessing step on the raw T1w data.
++
++    Examples
++    --------
++    >>> node = CatSurfVolSanlm()
++    >>> node.inputs.in_file = 'sub-01_T1w.nii.gz'  # doctest: +SKIP
++    >>> res = node.run()                # doctest: +SKIP
++    >>> res.outputs.out_file            # denoised volume  # doctest: +SKIP
++    """
++
++    input_spec = CatSurfVolSanlmInputSpec
++    output_spec = CatSurfVolSanlmOutputSpec
++
++    def _run_interface(self, runtime):
++        cli = _cat_surf_cli()
++        if isdefined(self.inputs.out_file):
++            out_file = os.path.abspath(self.inputs.out_file)
++        else:
++            out_file = fname_presuffix(
++                self.inputs.in_file, prefix="sanlm_", newpath=runtime.cwd
++            )
++        cli.vol_sanlm(
++            self.inputs.in_file,
++            out_file,
++            is_rician=self.inputs.is_rician,
++            strength=self.inputs.strength,
++        )
++        self._results["out_file"] = out_file
++        return runtime
++
++
++# ===========================================================================
++# Registration
++# ===========================================================================
++
++
++class CatSurfBbregInputSpec(TraitedSpec):
++    in_file = File(
++        exists=True,
++        mandatory=True,
++        desc="Moving/functional NIfTI image to register (e.g. BOLD reference).",
++    )
++    lh_surface = File(
++        exists=True, desc="Left white-matter surface used for the BBR cost."
++    )
++    rh_surface = File(
++        exists=True, desc="Right white-matter surface used for the BBR cost."
++    )
++    ref_file = File(
++        exists=True,
++        desc="Reference T1w NIfTI used for NMI initialisation before BBR.",
++    )
++    out_matrix_file = File(
++        desc="Output affine transform path (moving RAS → fixed RAS)."
++    )
++    invert_contrast = traits.Int(
++        -1,
++        usedefault=True,
++        desc="Contrast: 0 = T1/FLAIR, 1 = T2/BOLD, -1 = auto-detect.",
++    )
++    fwhm = traits.Float(
++        0.0, usedefault=True, desc="Pre-smoothing FWHM applied for BBR (mm)."
++    )
++    verbose = traits.Bool(False, usedefault=True, desc="Print diagnostic output.")
++
++
++class CatSurfBbregOutputSpec(TraitedSpec):
++    out_matrix_file = File(desc="4×4 affine transform (moving RAS → fixed RAS).")
++    cost = traits.Float(desc="Final BBR cost (lower is better).")
++
++
++class CatSurfBbreg(SimpleInterface):
++    """Boundary-based registration of a volume to an anatomical reference.
++
++    Wraps ``cat_surf.bbreg(in_file, lh_surface=…, rh_surface=…, ref_file=…,
++    invert_contrast=…, fwhm=…, verbose=…) → (matrix, cost)`` and writes the 4×4
++    affine to ``out_matrix_file``.  This replaces FSL ``bbregister`` /
++    ``flirt -bbr`` in an fMRIPrep-style pipeline.
++
++    The white-matter surfaces are read from disk and passed as ``(vertices,
++    faces)`` arrays to ``cat_surf.bbreg``.
++
++    Examples
++    --------
++    >>> node = CatSurfBbreg()
++    >>> node.inputs.in_file = 'bold_ref.nii.gz'          # doctest: +SKIP
++    >>> node.inputs.ref_file = 'sub-01_T1w.nii.gz'       # doctest: +SKIP
++    >>> node.inputs.lh_surface = 'lh.white.sub-01.gii'   # doctest: +SKIP
++    >>> node.inputs.rh_surface = 'rh.white.sub-01.gii'   # doctest: +SKIP
++    >>> res = node.run()                                 # doctest: +SKIP
++    """
++
++    input_spec = CatSurfBbregInputSpec
++    output_spec = CatSurfBbregOutputSpec
++
++    def _run_interface(self, runtime):
++        cs = _import_cat_surf()
++        kwargs = dict(
++            invert_contrast=self.inputs.invert_contrast,
++            fwhm=self.inputs.fwhm,
++            verbose=self.inputs.verbose,
++        )
++        if isdefined(self.inputs.lh_surface):
++            kwargs["lh_surface"] = cs.read_surface(self.inputs.lh_surface)
++        if isdefined(self.inputs.rh_surface):
++            kwargs["rh_surface"] = cs.read_surface(self.inputs.rh_surface)
++        if isdefined(self.inputs.ref_file):
++            kwargs["ref_file"] = self.inputs.ref_file
++
++        matrix, cost = cs.bbreg(self.inputs.in_file, **kwargs)
++
++        if isdefined(self.inputs.out_matrix_file):
++            out_matrix_file = os.path.abspath(self.inputs.out_matrix_file)
++        else:
++            out_matrix_file = fname_presuffix(
++                self.inputs.in_file,
++                suffix="_bbreg.mat",
++                newpath=runtime.cwd,
++                use_ext=False,
++            )
++        np.savetxt(out_matrix_file, np.asarray(matrix, dtype=float))
++        self._results["out_matrix_file"] = out_matrix_file
++        self._results["cost"] = float(cost)
++        return runtime
++
++
++class CatSurfBbregDetectContrastInputSpec(TraitedSpec):
++    in_file = File(
++        exists=True, mandatory=True, desc="NIfTI volume whose contrast to detect."
++    )
++    lh_surface = File(
++        exists=True, desc="Optional left white-matter surface for sampling."
++    )
++    rh_surface = File(
++        exists=True, desc="Optional right white-matter surface for sampling."
++    )
++
++
++class CatSurfBbregDetectContrastOutputSpec(TraitedSpec):
++    contrast = traits.Int(
++        desc="0 = T1/FLAIR (WM brighter), 1 = T2/BOLD (WM darker), "
++        "-1 = undetermined."
++    )
++
++
++class CatSurfBbregDetectContrast(SimpleInterface):
++    """Detect the image contrast (WM vs GM polarity) for BBR.
++
++    Wraps ``cat_surf.bbreg_detect_contrast(in_file, lh_surface=…,
++    rh_surface=…) → int``.  The integer feeds :attr:`CatSurfBbreg.invert_contrast`.
++
++    Examples
++    --------
++    >>> node = CatSurfBbregDetectContrast()
++    >>> node.inputs.in_file = 'bold_ref.nii.gz'  # doctest: +SKIP
++    >>> res = node.run()                         # doctest: +SKIP
++    >>> res.outputs.contrast                     # 0, 1, or -1  # doctest: +SKIP
++    """
++
++    input_spec = CatSurfBbregDetectContrastInputSpec
++    output_spec = CatSurfBbregDetectContrastOutputSpec
++
++    def _run_interface(self, runtime):
++        cs = _import_cat_surf()
++        kwargs = {}
++        if isdefined(self.inputs.lh_surface):
++            kwargs["lh_surface"] = cs.read_surface(self.inputs.lh_surface)
++        if isdefined(self.inputs.rh_surface):
++            kwargs["rh_surface"] = cs.read_surface(self.inputs.rh_surface)
++        self._results["contrast"] = int(
++            cs.bbreg_detect_contrast(self.inputs.in_file, **kwargs)
++        )
++        return runtime
++
++
++class CatSurfVolumeRegisterNmiInputSpec(TraitedSpec):
++    moving_file = File(exists=True, mandatory=True, desc="Moving (source) NIfTI image.")
++    fixed_file = File(
++        exists=True, mandatory=True, desc="Fixed (reference) NIfTI image."
++    )
++    out_matrix_file = File(
++        desc="Output affine transform path (moving RAS → fixed RAS)."
++    )
++    n_levels = traits.Int(
++        4, usedefault=True, desc="Multi-resolution pyramid levels (default 4)."
++    )
++    n_bins = traits.Int(
++        64, usedefault=True, desc="Joint-histogram bins for NMI (default 64)."
++    )
++    max_iter = traits.Int(
++        30, usedefault=True, desc="Maximum optimiser iterations per level."
++    )
++    verbose = traits.Bool(False, usedefault=True, desc="Print diagnostic output.")
++
++
++class CatSurfVolumeRegisterNmiOutputSpec(TraitedSpec):
++    out_matrix_file = File(desc="4×4 affine transform (moving RAS → fixed RAS).")
++    nmi = traits.Float(desc="Final NMI value (higher is better).")
++
++
++class CatSurfVolumeRegisterNmi(SimpleInterface):
++    """Cross-modal rigid registration by Normalised Mutual Information.
++
++    Wraps ``cat_surf.volume_register_nmi(fixed_file, moving_file, n_levels=…,
++    n_bins=…, max_iter=…, verbose=…) → (matrix, nmi)`` and writes the 4×4
++    affine to ``out_matrix_file`` — an in-process replacement for an ANTs
++    cross-modal affine step.
++
++    Examples
++    --------
++    >>> node = CatSurfVolumeRegisterNmi()
++    >>> node.inputs.moving_file = 'sub-01_T1w.nii.gz'  # doctest: +SKIP
++    >>> node.inputs.fixed_file = 'template_T1.nii.gz'  # doctest: +SKIP
++    >>> res = node.run()                               # doctest: +SKIP
++    """
++
++    input_spec = CatSurfVolumeRegisterNmiInputSpec
++    output_spec = CatSurfVolumeRegisterNmiOutputSpec
++
++    def _run_interface(self, runtime):
++        cs = _import_cat_surf()
++        matrix, nmi = cs.volume_register_nmi(
++            self.inputs.fixed_file,
++            self.inputs.moving_file,
++            n_levels=self.inputs.n_levels,
++            n_bins=self.inputs.n_bins,
++            max_iter=self.inputs.max_iter,
++            verbose=self.inputs.verbose,
++        )
++        if isdefined(self.inputs.out_matrix_file):
++            out_matrix_file = os.path.abspath(self.inputs.out_matrix_file)
++        else:
++            out_matrix_file = fname_presuffix(
++                self.inputs.moving_file,
++                suffix="_nmi.mat",
++                newpath=runtime.cwd,
++                use_ext=False,
++            )
++        np.savetxt(out_matrix_file, np.asarray(matrix, dtype=float))
++        self._results["out_matrix_file"] = out_matrix_file
++        self._results["nmi"] = float(nmi)
++        return runtime
++
++
++class CatSurfVolumeRegisterRobustInputSpec(TraitedSpec):
++    moving_file = File(exists=True, mandatory=True, desc="Moving (source) NIfTI image.")
++    fixed_file = File(
++        exists=True, mandatory=True, desc="Fixed (reference) NIfTI image."
++    )
++    out_matrix_file = File(
++        desc="Output affine transform path (moving RAS → fixed RAS)."
++    )
++    n_levels = traits.Int(
++        4, usedefault=True, desc="Multi-resolution pyramid levels (default 4)."
++    )
++    sat_k = traits.Float(
++        4.685,
++        usedefault=True,
++        desc="Tukey biweight saturation constant (default 4.685).",
++    )
++    max_iter = traits.Int(
++        20, usedefault=True, desc="Maximum optimiser iterations per level."
++    )
++    verbose = traits.Bool(False, usedefault=True, desc="Print diagnostic output.")
++
++
++class CatSurfVolumeRegisterRobustOutputSpec(TraitedSpec):
++    out_matrix_file = File(desc="4×4 affine transform (moving RAS → fixed RAS).")
++    residual = traits.Float(desc="Final normalised residual (lower is better).")
++
++
++class CatSurfVolumeRegisterRobust(SimpleInterface):
++    """Same-modality rigid registration via robust (Tukey biweight) M-estimation.
++
++    Wraps ``cat_surf.volume_register_robust(fixed_file, moving_file, n_levels=…,
++    sat_k=…, max_iter=…, verbose=…) → (matrix, residual)`` and writes the 4×4
++    affine to ``out_matrix_file``.  Less sensitive to intensity outliers
++    (e.g. lesions) than the NMI variant; an in-process replacement for an ANTs
++    same-modality affine step.
++
++    Examples
++    --------
++    >>> node = CatSurfVolumeRegisterRobust()
++    >>> node.inputs.moving_file = 'sub-01_T1w.nii.gz'         # doctest: +SKIP
++    >>> node.inputs.fixed_file = 'sub-01_T1w_ref.nii.gz'      # doctest: +SKIP
++    >>> res = node.run()                                      # doctest: +SKIP
++    """
++
++    input_spec = CatSurfVolumeRegisterRobustInputSpec
++    output_spec = CatSurfVolumeRegisterRobustOutputSpec
++
++    def _run_interface(self, runtime):
++        cs = _import_cat_surf()
++        matrix, residual = cs.volume_register_robust(
++            self.inputs.fixed_file,
++            self.inputs.moving_file,
++            n_levels=self.inputs.n_levels,
++            sat_k=self.inputs.sat_k,
++            max_iter=self.inputs.max_iter,
++            verbose=self.inputs.verbose,
++        )
++        if isdefined(self.inputs.out_matrix_file):
++            out_matrix_file = os.path.abspath(self.inputs.out_matrix_file)
++        else:
++            out_matrix_file = fname_presuffix(
++                self.inputs.moving_file,
++                suffix="_robust.mat",
++                newpath=runtime.cwd,
++                use_ext=False,
++            )
++        np.savetxt(out_matrix_file, np.asarray(matrix, dtype=float))
++        self._results["out_matrix_file"] = out_matrix_file
++        self._results["residual"] = float(residual)
++        return runtime
+diff --git a/nipype/interfaces/t1prep/longitudinal.py b/nipype/interfaces/t1prep/longitudinal.py
+new file mode 100644
+index 0000000000..5072720bd8
+--- /dev/null
++++ b/nipype/interfaces/t1prep/longitudinal.py
+@@ -0,0 +1,163 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Nipype interfaces for T1Prep longitudinal processing.
++
++:class:`T1PrepRealignLongitudinal`
++    Rigid realignment of a series of 3D NIfTI volumes acquired from the
++    same subject (longitudinal time-points), mirroring SPM's realign module.
++    Wraps ``python -m t1prep.realign_longitudinal``.
++"""
++
++import os
++
++from ..base import (
++    CommandLineInputSpec,
++    TraitedSpec,
++    File,
++    Directory,
++    InputMultiPath,
++    traits,
++)
++from .base import T1PrepCommand
++
++__docformat__ = "restructuredtext"
++
++
++class T1PrepRealignLongitudinalInputSpec(CommandLineInputSpec):
++    """Input specification for :class:`T1PrepRealignLongitudinal`."""
++
++    in_files = InputMultiPath(
++        File(exists=True),
++        argstr="--inputs %s",
++        mandatory=True,
++        desc="Input NIfTI images (one per longitudinal time-point).",
++    )
++    out_dir = Directory(
++        argstr="--out-dir %s",
++        mandatory=True,
++        desc="Output directory for realigned volumes and transforms.",
++    )
++    out_subfolders = traits.List(
++        traits.Str,
++        argstr="--out-subfolders %s",
++        desc=("Per-input output subfolder names (must match the number of " "inputs)."),
++    )
++
++    iterations = traits.Int(
++        argstr="--iterations %d",
++        desc="Number of multi-scale alignment passes (default 3).",
++    )
++    max_fwhm_mm = traits.Float(
++        argstr="--max-fwhm-mm %g",
++        desc="Maximum smoothing FWHM in mm for the multi-scale pyramid (default 6.0).",
++    )
++    no_intensity_scale = traits.Bool(
++        argstr="--no-intensity-scale",
++        desc="Disable SPM-like per-volume intensity scaling.",
++    )
++    overlap_penalty_weight = traits.Float(
++        argstr="--overlap-penalty-weight %g",
++        desc="Weight of the overlap penalty term (default 0.0).",
++    )
++    sample_strategy = traits.Enum(
++        "grid",
++        "gradient",
++        argstr="--sample-strategy %s",
++        desc="Sample-point selection: 'grid' (default) or 'gradient'.",
++    )
++    grad_quantile = traits.Float(
++        argstr="--grad-quantile %g",
++        desc=(
++            "Quantile threshold for the gradient sampler "
++            "(only used when sample_strategy='gradient'; default 0.80)."
++        ),
++    )
++    device = traits.Str(
++        argstr="--device %s",
++        desc="Compute device (currently reserved; default 'cpu').",
++    )
++
++    save_template = traits.Bool(
++        argstr="--save-template",
++        desc="Save the reference volume used as the alignment target.",
++    )
++    save_resampled = traits.Bool(
++        argstr="--save-resampled",
++        desc="Write resampled copies of the inputs in reference space.",
++    )
++    update_headers = traits.Bool(
++        argstr="--update-headers",
++        desc=(
++            "Only update the NIfTI headers with the estimated affines; "
++            "do not write resampled volumes."
++        ),
++    )
++    set_zooms_from_sform = traits.Bool(
++        argstr="--set-zooms-from-sform",
++        desc="Copy pixdim/zooms from the sform when updating headers.",
++    )
++    force_template_zooms = traits.Bool(
++        argstr="--force-template-zooms",
++        desc="Force the reference (template) zooms on all outputs.",
++    )
++    inverse_consistent = traits.Bool(
++        argstr="--inverse-consistent",
++        desc="Re-center rigid transforms around their SE(3) barycenter.",
++    )
++    register_to_first = traits.Bool(
++        argstr="--register-to-first",
++        desc="Register all volumes to the first input (skip mean-template refinement).",
++    )
++    output_naming = traits.Enum(
++        "bids",
++        "legacy",
++        argstr="--output-naming %s",
++        desc="Output naming convention: 'bids' (default) or 'legacy'.",
++    )
++    use_skullstrip = traits.Bool(
++        argstr="--use-skullstrip",
++        desc="Estimate transforms on skull-stripped copies of the inputs.",
++    )
++    verbose = traits.Bool(
++        argstr="--verbose",
++        desc="Print optimizer diagnostics.",
++    )
++
++
++class T1PrepRealignLongitudinalOutputSpec(TraitedSpec):
++    """Output specification for :class:`T1PrepRealignLongitudinal`."""
++
++    out_dir = Directory(desc="Top-level output directory.")
++
++
++class T1PrepRealignLongitudinal(T1PrepCommand):
++    """Nipype interface for the T1Prep longitudinal realignment module.
++
++    Estimates per-timepoint rigid (6-DoF) transforms and optionally refines
++    them against a mean template, then writes resampled volumes and/or
++    updates NIfTI headers in place.  Mirrors SPM's realign module.
++
++    Invoked as ``python -m t1prep.realign_longitudinal``.
++
++    Examples
++    --------
++    >>> ra = T1PrepRealignLongitudinal()
++    >>> ra.inputs.in_files = ['sub-01_ses-01_T1w.nii.gz', 'sub-01_ses-02_T1w.nii.gz']  # doctest: +SKIP
++    >>> ra.inputs.out_dir = 'derivatives/realign'
++    >>> ra.inputs.save_resampled = True
++    >>> ra.cmdline  # doctest: +SKIP
++    'python -m t1prep.realign_longitudinal --inputs sub-01_ses-01_T1w.nii.gz sub-01_ses-02_T1w.nii.gz --out-dir derivatives/realign --save-resampled'
++
++    References
++    ----------
++    https://github.com/ChristianGaser/T1Prep
++    """
++
++    _module = "t1prep.realign_longitudinal"
++    input_spec = T1PrepRealignLongitudinalInputSpec
++    output_spec = T1PrepRealignLongitudinalOutputSpec
++
++    def _list_outputs(self):
++        outputs = self.output_spec().get()
++        outputs["out_dir"] = os.path.abspath(self.inputs.out_dir)
++        return outputs
+diff --git a/nipype/interfaces/t1prep/preprocess.py b/nipype/interfaces/t1prep/preprocess.py
+new file mode 100644
+index 0000000000..f07c4cfb23
+--- /dev/null
++++ b/nipype/interfaces/t1prep/preprocess.py
+@@ -0,0 +1,524 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Nipype interfaces for the T1Prep segmentation pipeline.
++
++:class:`T1Prep`        – full pipeline (skull-strip → segment → surface).
++:class:`T1PrepSegment` – segmentation stage (``python -m t1prep.segment``).
++"""
++
++import os
++
++from ..base import (
++    CommandLineInputSpec,
++    TraitedSpec,
++    File,
++    Directory,
++    InputMultiPath,
++    traits,
++    isdefined,
++)
++from .base import T1PrepCommand
++
++__docformat__ = "restructuredtext"
++
++
++# ---------------------------------------------------------------------------
++# T1Prep – full pipeline
++# ---------------------------------------------------------------------------
++
++
++class T1PrepInputSpec(CommandLineInputSpec):
++    """Input specification for :class:`T1Prep`."""
++
++    in_files = InputMultiPath(
++        File(exists=True),
++        argstr="%s",
++        position=-1,
++        mandatory=True,
++        desc="Input T1-weighted NIfTI file(s) (.nii or .nii.gz).",
++    )
++
++    # --- Save options -------------------------------------------------------
++
++    out_dir = Directory(
++        argstr="--out-dir %s",
++        desc=(
++            "Base output directory.  If unset, results are placed in "
++            "subfolders of the input file's directory."
++        ),
++    )
++    bids = traits.Bool(
++        argstr="--bids",
++        desc="Use BIDS derivatives naming conventions for output files.",
++    )
++    gz = traits.Bool(
++        argstr="--gz",
++        desc="Write compressed (.nii.gz) NIfTI outputs.",
++    )
++    no_overwrite = traits.Str(
++        argstr="--no-overwrite %s",
++        desc=(
++            "Skip a subject when files matching this glob pattern already "
++            "exist (e.g. 'surf/lh.thickness.')."
++        ),
++    )
++
++    # --- Processing flags ---------------------------------------------------
++
++    no_surf = traits.Bool(
++        argstr="--no-surf",
++        desc="Skip cortical surface and thickness estimation.",
++    )
++    no_seg = traits.Bool(
++        argstr="--no-seg",
++        desc="Skip tissue segmentation (surface processing only).",
++    )
++    skullstrip_only = traits.Bool(
++        argstr="--skullstrip-only",
++        xor=["skip_skullstrip"],
++        desc=(
++            "Run skull-stripping only, write skull-stripped image and brain "
++            "mask to the MRI output folder, then exit."
++        ),
++    )
++    skip_skullstrip = traits.Bool(
++        argstr="--skip-skullstrip",
++        xor=["skullstrip_only"],
++        desc=(
++            "Skip skull-stripping (assumes the input is already "
++            "skull-stripped with background close to zero)."
++        ),
++    )
++    no_sphere_reg = traits.Bool(
++        argstr="--no-sphere-reg",
++        desc="Skip spherical surface registration and atlas resampling.",
++    )
++    pial_white = traits.Bool(
++        argstr="--pial-white",
++        desc="Estimate and save pial and white matter surfaces.",
++    )
++    no_correct_folding = traits.Bool(
++        argstr="--no-correct-folding",
++        desc="Disable cortical thickness correction for folding effects.",
++    )
++    no_mwp = traits.Bool(
++        argstr="--no-mwp",
++        desc=(
++            "Disable saving of modulated warped (MNI-space) segmentations "
++            "(they are saved by default)."
++        ),
++    )
++    no_atlas = traits.Bool(
++        argstr="--no-atlas",
++        desc="Disable atlas labelling and ROI volume export.",
++    )
++
++    # --- Additional save flags ----------------------------------------------
++
++    wp = traits.Bool(
++        argstr="--wp",
++        desc="Additionally save non-modulated warped (MNI-space) segmentations.",
++    )
++    rp = traits.Bool(
++        argstr="--rp",
++        desc="Additionally save affine-registered segmentations.",
++    )
++    p = traits.Bool(
++        argstr="--p",
++        desc="Additionally save native-space segmentation maps.",
++    )
++    csf = traits.Bool(
++        argstr="--csf",
++        desc=(
++            "Additionally save CSF segmentation (GM and WM are always saved "
++            "when --p or --rp are set)."
++        ),
++    )
++    lesions = traits.Bool(
++        argstr="--lesions",
++        desc=(
++            "Additionally save white-matter hyperintensity (WMH) lesion "
++            "segmentation in native and/or affine space."
++        ),
++    )
++    fmriprep = traits.Bool(
++        argstr="--fmriprep",
++        desc=(
++            "Save fMRIPrep-compatible outputs: ANTs/ITK .h5 deformation "
++            "fields, dseg files, cortex mask, inflated surfaces, and "
++            "spatially registered data at 2 mm resolution."
++        ),
++    )
++    amap = traits.Bool(
++        argstr="--amap",
++        desc=(
++            "Use AMAP segmentation for a refined tissue classification after "
++            "the initial DeepMriPrep estimate."
++        ),
++    )
++
++    # --- Atlas options ------------------------------------------------------
++
++    atlas = traits.Str(
++        argstr="--atlas %s",
++        desc=(
++            "Comma-separated volumetric atlas list for ROI estimation, "
++            "e.g. \"'neuromorphometrics','suit'\".  "
++            "Default: \"'neuromorphometrics', 'cobra'\"."
++        ),
++    )
++    atlas_surf = traits.Str(
++        argstr="--atlas-surf %s",
++        desc=(
++            "Comma-separated surface atlas list, "
++            "e.g. \"'aparc_DK40.freesurfer','aparc_a2009s.freesurfer'\"."
++        ),
++    )
++
++    # --- Longitudinal / advanced flags --------------------------------------
++
++    long_data = Directory(
++        argstr="--long-data %s",
++        desc=(
++            "Longitudinal mode: process the volume at PATH but keep output "
++            "naming and folder structure based on the primary input file."
++        ),
++    )
++    initial_surf = File(
++        argstr="--initial-surf %s",
++        desc="Pre-existing central surface file for longitudinal processing.",
++    )
++
++    # --- Expert options -----------------------------------------------------
++
++    pre_fwhm = traits.Float(
++        argstr="--pre-fwhm %g",
++        desc="Pre-smoothing FWHM (mm) applied before marching cubes surface extraction.",
++    )
++    downsample = traits.Float(
++        argstr="--downsample %g",
++        desc="Mesh downsampling factor for the initial surface extraction step.",
++    )
++    median_filter = traits.Int(
++        argstr="--median-filter %d",
++        desc="Number of median filter passes applied before surface extraction.",
++    )
++    vessel = traits.Float(
++        argstr="--vessel %g",
++        desc="Blood-vessel correction strength (0 = disabled; default 1.0).",
++    )
++    thickness_method = traits.Enum(
++        1,
++        2,
++        3,
++        argstr="--thickness-method %d",
++        desc=(
++            "Cortical thickness estimation method: "
++            "1 = Tfs-distance (FreeSurfer-like, PBT-based); "
++            "2 = pial-to-white surface distance; "
++            "3 = pure projection-based thickness (PBT)."
++        ),
++    )
++    seed = traits.Int(
++        argstr="--seed %d",
++        desc="Random seed for deterministic processing.",
++    )
++    debug = traits.Bool(
++        argstr="--debug",
++        desc="Enable verbose output and retain all intermediate files.",
++    )
++    no_retry = traits.Bool(
++        argstr="--no-retry",
++        desc=(
++            "Disable automatic retry of failed processing steps "
++            "(by default a failed step is retried once)."
++        ),
++    )
++    quiet = traits.Bool(
++        argstr="--quiet",
++        desc="Suppress progress messages (overrides the default verbose mode).",
++    )
++
++
++class T1PrepOutputSpec(TraitedSpec):
++    """Output specification for :class:`T1Prep`."""
++
++    out_dir = Directory(desc="Top-level output directory.")
++    mri_dir = Directory(desc="MRI sub-directory (segmentations, brain mask, etc.).")
++    surf_dir = Directory(desc="Surface sub-directory (central, pial, white surfaces).")
++    report_dir = Directory(desc="Report sub-directory (logs, QC JSON).")
++    label_dir = Directory(desc="Label sub-directory (atlas ROI JSON).")
++
++
++class T1Prep(T1PrepCommand):
++    """Nipype interface for the T1Prep T1-weighted MRI preprocessing pipeline.
++
++    T1Prep preprocesses T1-weighted MRI data through three stages:
++
++    1. **Skull-stripping** – deep-learning-based brain extraction via
++       DeepMriPrep / deepbet.
++    2. **Tissue segmentation** – GM / WM / CSF probability maps and optional
++       nonlinear warp to MNI space via DeepMriPrep; optionally refined with
++       AMAP.
++    3. **Cortical surface estimation** – central, pial and white matter
++       surfaces, thickness, area, sulcal depth, and optional spherical
++       atlas-based parcellation via CAT-Surface (``cat-surf``).
++
++    Output naming follows CAT12 conventions by default; BIDS derivatives
++    naming is selected with ``bids=True``.
++
++    This interface invokes ``python -m t1prep.t1prep`` (the pure-Python
++    pipeline entry point).  For multi-subject parallelism prefer running
++    multiple nodes in a nipype workflow rather than using ``--multi``.
++
++    Examples
++    --------
++    Full pipeline with BIDS naming:
++
++    >>> t1 = T1Prep()
++    >>> t1.inputs.in_files = ['sub-01_T1w.nii.gz']  # doctest: +SKIP
++    >>> t1.inputs.out_dir = 'derivatives'
++    >>> t1.inputs.bids = True
++    >>> t1.cmdline  # doctest: +SKIP
++    'python -m t1prep.t1prep --bids --out-dir derivatives sub-01_T1w.nii.gz'
++
++    Segmentation only (skip surface estimation):
++
++    >>> t1 = T1Prep()
++    >>> t1.inputs.in_files = ['sub-01_T1w.nii.gz']  # doctest: +SKIP
++    >>> t1.inputs.no_surf = True
++    >>> t1.inputs.p = True
++    >>> t1.cmdline  # doctest: +SKIP
++    'python -m t1prep.t1prep --no-surf --p sub-01_T1w.nii.gz'
++
++    References
++    ----------
++    https://github.com/ChristianGaser/T1Prep
++    """
++
++    _module = "t1prep.t1prep"
++    input_spec = T1PrepInputSpec
++    output_spec = T1PrepOutputSpec
++
++    def _list_outputs(self):
++        outputs = self.output_spec().get()
++        if isdefined(self.inputs.out_dir):
++            base = os.path.abspath(self.inputs.out_dir)
++        else:
++            # Default: results go into sub-directories of the input file's parent
++            base = os.path.dirname(os.path.abspath(self.inputs.in_files[0]))
++        outputs["out_dir"] = base
++        outputs["mri_dir"] = os.path.join(base, "mri")
++        outputs["surf_dir"] = os.path.join(base, "surf")
++        outputs["report_dir"] = os.path.join(base, "report")
++        outputs["label_dir"] = os.path.join(base, "label")
++        return outputs
++
++
++# ---------------------------------------------------------------------------
++# T1PrepSegment – segmentation stage
++# ---------------------------------------------------------------------------
++
++
++class T1PrepSegmentInputSpec(CommandLineInputSpec):
++    """Input specification for :class:`T1PrepSegment`."""
++
++    in_file = File(
++        exists=True,
++        argstr="--input %s",
++        mandatory=True,
++        desc="Input T1-weighted NIfTI image (.nii or .nii.gz).",
++    )
++    mri_dir = Directory(
++        argstr="--mri-dir %s",
++        mandatory=True,
++        desc="Output directory for MRI volumes (segmentations, brain mask, deformations).",
++    )
++    report_dir = Directory(
++        argstr="--report-dir %s",
++        mandatory=True,
++        desc="Output directory for report log files.",
++    )
++    label_dir = Directory(
++        argstr="--label-dir %s",
++        mandatory=True,
++        desc="Output directory for label and atlas-ROI JSON outputs.",
++    )
++
++    # --- Atlas options ------------------------------------------------------
++
++    atlas = traits.Str(
++        argstr="--atlas %s",
++        desc=(
++            "Comma-separated atlas list for ROI estimation, "
++            "e.g. \"Neuromorphometrics,SUIT\".  "
++            "Leave empty to disable ROI export."
++        ),
++    )
++
++    # --- Output content flags -----------------------------------------------
++
++    surf = traits.Bool(
++        argstr="--surf",
++        desc=(
++            "Save partitioned hemisphere segmentation maps (p0 left/right) "
++            "required for the subsequent surface estimation stage."
++        ),
++    )
++    csf = traits.Bool(
++        argstr="--csf",
++        desc="Save CSF segmentation probability map in addition to GM and WM.",
++    )
++    mwp = traits.Bool(
++        argstr="--mwp",
++        desc="Save modulated warped (MNI-space) GM and WM segmentation maps.",
++    )
++    wp = traits.Bool(
++        argstr="--wp",
++        desc="Save non-modulated warped (MNI-space) segmentation maps.",
++    )
++    p = traits.Bool(
++        argstr="--p",
++        desc="Save native-space probability segmentation maps.",
++    )
++    rp = traits.Bool(
++        argstr="--rp",
++        desc="Save affine-registered segmentation maps.",
++    )
++    lesions = traits.Bool(
++        argstr="--lesions",
++        desc=(
++            "Save white-matter hyperintensity (WMH) lesion segmentation in "
++            "native and/or affine space."
++        ),
++    )
++    save_fmriprep = traits.Bool(
++        argstr="--save-fmriprep",
++        desc=(
++            "Save ANTs/ITK-compatible HDF5 (.h5) deformation fields, discrete "
++            "segmentation (dseg), and brain mask for fMRIPrep compatibility."
++        ),
++    )
++
++    # --- Naming / format flags ----------------------------------------------
++
++    bids = traits.Bool(
++        argstr="--bids",
++        desc="Use BIDS derivatives naming conventions for output files.",
++    )
++    gz = traits.Bool(
++        argstr="--gz",
++        desc="Save compressed NIfTI outputs (.nii.gz).",
++    )
++
++    # --- Segmentation options -----------------------------------------------
++
++    amap = traits.Bool(
++        argstr="--amap",
++        desc=(
++            "Refine the initial DeepMriPrep segmentation using AMAP "
++            "(Adaptive Maximum A Posteriori) tissue classification."
++        ),
++    )
++    vessel = traits.Float(
++        argstr="--vessel %g",
++        desc=(
++            "Blood-vessel correction strength (0 = disabled; default 1.0).  "
++            "Reduces vessel-related intensity artefacts before segmentation."
++        ),
++    )
++    skullstrip_only = traits.Bool(
++        argstr="--skullstrip-only",
++        xor=["skip_skullstrip"],
++        desc="Run skull-stripping only, save outputs, then exit.",
++    )
++    skip_skullstrip = traits.Bool(
++        argstr="--skip-skullstrip",
++        xor=["skullstrip_only"],
++        desc="Skip skull-stripping (input is already skull-stripped).",
++    )
++    seed = traits.Int(
++        argstr="--seed %d",
++        desc="Random seed for reproducibility.",
++    )
++
++    # --- Verbosity / debugging ----------------------------------------------
++
++    verbose = traits.Bool(
++        argstr="--verbose",
++        desc="Print progress output.",
++    )
++    debug = traits.Bool(
++        argstr="--debug",
++        desc="Enable verbose output and retain all temporary files.",
++    )
++
++    # --- Internal / pipeline flags ------------------------------------------
++
++    count = traits.Int(
++        argstr="--count %d",
++        desc=(
++            "Total number of pipeline steps for the progress bar "
++            "(used when called from the T1Prep orchestration script)."
++        ),
++    )
++
++
++class T1PrepSegmentOutputSpec(TraitedSpec):
++    """Output specification for :class:`T1PrepSegment`."""
++
++    mri_dir = Directory(desc="MRI output directory with segmentation volumes.")
++    report_dir = Directory(desc="Report output directory with log files.")
++    label_dir = Directory(desc="Label output directory with atlas ROI JSON files.")
++
++
++class T1PrepSegment(T1PrepCommand):
++    """Nipype interface for the T1Prep segmentation module (``t1prep.segment``).
++
++    Performs skull-stripping, bias field correction, and tissue segmentation
++    (GM / WM / CSF) on a single T1-weighted NIfTI image using DeepMriPrep.
++    Optionally applies AMAP refinement, blood-vessel correction, WMH lesion
++    detection, nonlinear warping to MNI space, and atlas-based ROI volume
++    export.
++
++    This is the segmentation stage of the T1Prep pipeline and can be run
++    independently of surface estimation.  Pass ``surf=True`` to also emit the
++    hemisphere partition maps (p0 left/right) needed for the surface stage.
++
++    Invoked as ``python -m t1prep.segment``.
++
++    Examples
++    --------
++    >>> seg = T1PrepSegment()
++    >>> seg.inputs.in_file = 'sub-01_T1w.nii.gz'  # doctest: +SKIP
++    >>> seg.inputs.mri_dir = 'out/mri'
++    >>> seg.inputs.report_dir = 'out/report'
++    >>> seg.inputs.label_dir = 'out/label'
++    >>> seg.inputs.surf = True
++    >>> seg.inputs.gz = True
++    >>> seg.cmdline  # doctest: +SKIP
++    'python -m t1prep.segment --gz --surf --input sub-01_T1w.nii.gz --label-dir out/label --mri-dir out/mri --report-dir out/report'
++
++    Save native-space GM and WM maps plus CSF:
++
++    >>> seg = T1PrepSegment()
++    >>> seg.inputs.in_file = 'sub-01_T1w.nii.gz'  # doctest: +SKIP
++    >>> seg.inputs.mri_dir = 'out/mri'
++    >>> seg.inputs.report_dir = 'out/report'
++    >>> seg.inputs.label_dir = 'out/label'
++    >>> seg.inputs.p = True
++    >>> seg.inputs.csf = True
++    >>> seg.cmdline  # doctest: +SKIP
++    'python -m t1prep.segment --csf --p --input sub-01_T1w.nii.gz --label-dir out/label --mri-dir out/mri --report-dir out/report'
++    """
++
++    _module = "t1prep.segment"
++    input_spec = T1PrepSegmentInputSpec
++    output_spec = T1PrepSegmentOutputSpec
++
++    def _list_outputs(self):
++        outputs = self.output_spec().get()
++        outputs["mri_dir"] = os.path.abspath(self.inputs.mri_dir)
++        outputs["report_dir"] = os.path.abspath(self.inputs.report_dir)
++        outputs["label_dir"] = os.path.abspath(self.inputs.label_dir)
++        return outputs
+diff --git a/nipype/interfaces/t1prep/surface.py b/nipype/interfaces/t1prep/surface.py
+new file mode 100644
+index 0000000000..229c6eba57
+--- /dev/null
++++ b/nipype/interfaces/t1prep/surface.py
+@@ -0,0 +1,348 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Nipype interfaces for T1Prep surface processing.
++
++:class:`T1PrepSurfaceEstimation`
++    Cortical surface reconstruction for one hemisphere.
++    Wraps ``python -m t1prep.surface_estimation``.
++
++"""
++
++import os
++
++from ..base import (
++    BaseInterface,
++    BaseInterfaceInputSpec,
++    CommandLineInputSpec,
++    TraitedSpec,
++    File,
++    Directory,
++    traits,
++    isdefined,
++)
++from .base import T1PrepCommand, import_cat_surf
++
++__docformat__ = "restructuredtext"
++
++
++# ---------------------------------------------------------------------------
++# T1PrepSurfaceEstimation – surface reconstruction for one hemisphere
++# ---------------------------------------------------------------------------
++
++
++class T1PrepSurfaceEstimationInputSpec(CommandLineInputSpec):
++    """Input specification for :class:`T1PrepSurfaceEstimation`."""
++
++    # --- Required arguments -------------------------------------------------
++
++    bname = traits.Str(
++        argstr="--bname %s",
++        mandatory=True,
++        desc=(
++            "Subject basename – the filename stem of the T1w NIfTI without "
++            "path or extension (e.g. 'sub-01_T1w')."
++        ),
++    )
++    side = traits.Enum(
++        "left",
++        "right",
++        argstr="--side %s",
++        mandatory=True,
++        desc="Hemisphere to process ('left' or 'right').",
++    )
++    mri_dir = Directory(
++        argstr="--mri-dir %s",
++        mandatory=True,
++        desc=(
++            "Directory containing the MRI volumes produced by "
++            "``t1prep.segment`` (e.g. hemisphere partition maps p0 left/right)."
++        ),
++    )
++    surf_dir = Directory(
++        argstr="--surf-dir %s",
++        mandatory=True,
++        desc="Output directory for surface files.",
++    )
++    names_tsv = File(
++        exists=True,
++        argstr="--names-tsv %s",
++        mandatory=True,
++        desc=(
++            "Path to the Names.tsv file that defines the mapping between "
++            "internal pipeline codes and output filenames for both CAT12 and "
++            "BIDS naming conventions."
++        ),
++    )
++    surf_templates_dir = Directory(
++        argstr="--surf-templates-dir %s",
++        mandatory=True,
++        desc=(
++            "Directory containing the FreeSurfer-average surface template "
++            "files used for spherical registration "
++            "(e.g. ``templates_surfaces_32k``)."
++        ),
++    )
++    atlas_templates_dir = Directory(
++        argstr="--atlas-templates-dir %s",
++        mandatory=True,
++        desc=(
++            "Directory containing surface atlas annotation files used for "
++            "atlas-based parcellation "
++            "(e.g. ``atlases_surfaces_32k``)."
++        ),
++    )
++
++    # --- Processing parameters (all have defaults) -------------------------
++
++    estimate_spherereg = traits.Int(
++        1,
++        argstr="--estimate-spherereg %d",
++        usedefault=True,
++        desc=(
++            "Perform spherical inflation + DARTEL registration + atlas "
++            "resampling (0 = skip, 1 = run; default 1)."
++        ),
++    )
++    thickness_method = traits.Enum(
++        3,
++        1,
++        2,
++        argstr="--thickness-method %d",
++        usedefault=True,
++        desc=(
++            "Cortical thickness estimation method: "
++            "1 = Tfs-distance (FreeSurfer-like, PBT-based); "
++            "2 = pial-to-white surface distance; "
++            "3 = pure projection-based thickness (PBT; default)."
++        ),
++    )
++    save_pial_white = traits.Int(
++        1,
++        argstr="--save-pial-white %d",
++        usedefault=True,
++        desc="Estimate and save pial and white matter surfaces (0 = no, 1 = yes; default 1).",
++    )
++    pre_fwhm = traits.Float(
++        1.0,
++        argstr="--pre-fwhm %g",
++        usedefault=True,
++        desc="Pre-smoothing FWHM (mm) applied to the hemisphere volume before marching cubes (default 1.0).",
++    )
++    median_filter = traits.Int(
++        2,
++        argstr="--median-filter %d",
++        usedefault=True,
++        desc="Number of median filter passes applied before surface extraction (default 2).",
++    )
++    downsample = traits.Float(
++        0.0,
++        argstr="--downsample %g",
++        usedefault=True,
++        desc=(
++            "Target mesh downsampling factor.  0 = apply a fixed 4:1 "
++            "quadric-based reduction after marching cubes; "
++            ">0 = keep the mesh at native resolution (default 0)."
++        ),
++    )
++    vessel = traits.Int(
++        1,
++        argstr="--vessel %d",
++        usedefault=True,
++        desc="Apply blood-vessel intensity correction to the thickness volume (0 = no, 1 = yes; default 1).",
++    )
++    correct_folding = traits.Int(
++        0,
++        argstr="--correct-folding %d",
++        usedefault=True,
++        desc="Apply folding-based cortical thickness correction (0 = no, 1 = yes; default 0).",
++    )
++    debug = traits.Int(
++        0,
++        argstr="--debug %d",
++        usedefault=True,
++        desc="Retain intermediate files and write extra debug outputs (0 = no, 1 = yes; default 0).",
++    )
++    multi = traits.Int(
++        -1,
++        argstr="--multi %d",
++        usedefault=True,
++        desc=(
++            "Number of parallel worker threads for CAT-Surface operations "
++            "(-1 = auto-detect available CPUs; default -1)."
++        ),
++    )
++    nii_ext = traits.Str(
++        "nii.gz",
++        argstr="--nii-ext %s",
++        usedefault=True,
++        desc="File extension for NIfTI volume outputs (default 'nii.gz').",
++    )
++    bids_naming = traits.Int(
++        0,
++        argstr="--bids-naming %d",
++        usedefault=True,
++        desc="Use BIDS derivatives naming conventions (0 = CAT12-style, 1 = BIDS; default 0).",
++    )
++    fmriprep = traits.Int(
++        0,
++        argstr="--fmriprep %d",
++        usedefault=True,
++        desc=(
++            "Generate additional fMRIPrep-compatible surface outputs: "
++            "curvature (sulcal depth), cortex mask, and mid-surface inflated "
++            "sphere (0 = no, 1 = yes; default 0)."
++        ),
++    )
++
++    # --- Optional arguments -------------------------------------------------
++
++    report_log = File(
++        argstr="--report-log %s",
++        desc="Path to the subject's log file for timing and step information.",
++    )
++    atlas_surf = traits.Str(
++        argstr="--atlas-surf %s",
++        desc=(
++            "Comma-separated surface atlas list for annotation resampling, "
++            "e.g. 'aparc_DK40.freesurfer,aparc_a2009s.freesurfer'."
++        ),
++    )
++    initial_surface = File(
++        argstr="--initial-surface %s",
++        desc=(
++            "Path to a pre-existing central surface file.  When provided the "
++            "marching-cubes step is skipped and this surface is used as the "
++            "starting point (longitudinal processing)."
++        ),
++    )
++
++    # --- Progress-bar plumbing (used by the T1Prep orchestration script) ----
++
++    progress_bar_script = File(
++        argstr="--progress-bar %s",
++        desc="Path to the progress_bar_multi.sh script.",
++    )
++    progress_count_file = File(
++        argstr="--progress-count-file %s",
++        desc="Path to the shared progress counter file (updated by all hemisphere processes).",
++    )
++    progress_end_count = traits.Int(
++        argstr="--progress-end-count %d",
++        desc="Total number of pipeline steps shown by the progress bar.",
++    )
++    progress_start_count = traits.Int(
++        argstr="--progress-start-count %d",
++        desc="Initial count offset for the progress bar (used when resuming).",
++    )
++
++
++class T1PrepSurfaceEstimationOutputSpec(TraitedSpec):
++    """Output specification for :class:`T1PrepSurfaceEstimation`."""
++
++    surf_dir = Directory(desc="Surface output directory.")
++    central_surface_lh = File(
++        desc="Left-hemisphere central surface (GIFTI .gii, CAT12 naming)."
++    )
++    central_surface_rh = File(
++        desc="Right-hemisphere central surface (GIFTI .gii, CAT12 naming)."
++    )
++    pial_surface_lh = File(
++        desc="Left-hemisphere pial surface (saved when save_pial_white=1)."
++    )
++    pial_surface_rh = File(
++        desc="Right-hemisphere pial surface (saved when save_pial_white=1)."
++    )
++    white_surface_lh = File(
++        desc="Left-hemisphere white matter surface (saved when save_pial_white=1)."
++    )
++    white_surface_rh = File(
++        desc="Right-hemisphere white matter surface (saved when save_pial_white=1)."
++    )
++    thickness_lh = File(desc="Left-hemisphere cortical thickness per-vertex file.")
++    thickness_rh = File(desc="Right-hemisphere cortical thickness per-vertex file.")
++    area_lh = File(desc="Left-hemisphere surface area per-vertex file.")
++    area_rh = File(desc="Right-hemisphere surface area per-vertex file.")
++    sphere_lh = File(
++        desc="Left-hemisphere inflated sphere surface (saved when estimate_spherereg=1)."
++    )
++    sphere_rh = File(
++        desc="Right-hemisphere inflated sphere surface (saved when estimate_spherereg=1)."
++    )
++    spherereg_lh = File(
++        desc="Left-hemisphere DARTEL-registered sphere (saved when estimate_spherereg=1)."
++    )
++    spherereg_rh = File(
++        desc="Right-hemisphere DARTEL-registered sphere (saved when estimate_spherereg=1)."
++    )
++
++
++class T1PrepSurfaceEstimation(T1PrepCommand):
++    """Nipype interface for the T1Prep surface estimation module.
++
++    Reconstructs the cortical central surface from hemisphere partition
++    maps (produced by :class:`T1PrepSegment`) and computes per-vertex
++    cortical thickness, surface area, and optionally pial/white surfaces,
++    spherical inflation, and DARTEL-based atlas registration.
++
++    The module mirrors the ``surface_estimation()`` bash function in
++    ``scripts/T1Prep`` but runs entirely in-process via the ``cat_surf``
++    Python bindings.  Run it separately for each hemisphere (``side='left'``
++    and ``side='right'``).
++
++    Invoked as ``python -m t1prep.surface_estimation``.
++
++    Examples
++    --------
++    Left hemisphere with default settings:
++
++    >>> surf = T1PrepSurfaceEstimation()
++    >>> surf.inputs.bname = 'sub-01_T1w'
++    >>> surf.inputs.side = 'left'
++    >>> surf.inputs.mri_dir = 'out/mri'
++    >>> surf.inputs.surf_dir = 'out/surf'
++    >>> surf.inputs.names_tsv = '/opt/T1Prep/src/t1prep/data/Names.tsv'  # doctest: +SKIP
++    >>> surf.inputs.surf_templates_dir = '/opt/T1Prep/src/t1prep/data/templates_surfaces_32k'
++    >>> surf.inputs.atlas_templates_dir = '/opt/T1Prep/src/t1prep/data/atlases_surfaces_32k'
++    >>> surf.cmdline  # doctest: +SKIP
++    'python -m t1prep.surface_estimation --bname sub-01_T1w --side left ...'
++
++    Skip spherical registration (faster, no atlas parcellation):
++
++    >>> surf.inputs.estimate_spherereg = 0
++    >>> surf.inputs.save_pial_white = 0
++
++    References
++    ----------
++    https://github.com/ChristianGaser/T1Prep
++    https://github.com/ChristianGaser/CAT-Surface
++    """
++
++    _module = "t1prep.surface_estimation"
++    input_spec = T1PrepSurfaceEstimationInputSpec
++    output_spec = T1PrepSurfaceEstimationOutputSpec
++
++    def _list_outputs(self):
++        outputs = self.output_spec().get()
++        surf = os.path.abspath(self.inputs.surf_dir)
++        outputs["surf_dir"] = surf
++        bname = self.inputs.bname
++        # CAT12-style naming: {hemi}.{type}.{bname}[.gii]
++        for hemi in ("lh", "rh"):
++            outputs[f"central_surface_{hemi}"] = os.path.join(
++                surf, f"{hemi}.central.{bname}.gii"
++            )
++            outputs[f"pial_surface_{hemi}"] = os.path.join(
++                surf, f"{hemi}.pial.{bname}.gii"
++            )
++            outputs[f"white_surface_{hemi}"] = os.path.join(
++                surf, f"{hemi}.white.{bname}.gii"
++            )
++            outputs[f"thickness_{hemi}"] = os.path.join(
++                surf, f"{hemi}.thickness.{bname}"
++            )
++            outputs[f"area_{hemi}"] = os.path.join(surf, f"{hemi}.area.{bname}")
++            outputs[f"sphere_{hemi}"] = os.path.join(surf, f"{hemi}.sphere.{bname}.gii")
++            outputs[f"spherereg_{hemi}"] = os.path.join(
++                surf, f"{hemi}.sphere.reg.{bname}.gii"
++            )
++        return outputs
+diff --git a/nipype/interfaces/t1prep/tests/__init__.py b/nipype/interfaces/t1prep/tests/__init__.py
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbreg.py b/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbreg.py
+new file mode 100644
+index 0000000000..648268ec35
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbreg.py
+@@ -0,0 +1,51 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..cat_surf import CatSurfBbreg
++
++
++def test_CatSurfBbreg_inputs():
++    input_map = dict(
++        fwhm=dict(
++            usedefault=True,
++        ),
++        in_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        invert_contrast=dict(
++            usedefault=True,
++        ),
++        lh_surface=dict(
++            extensions=None,
++        ),
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++        ref_file=dict(
++            extensions=None,
++        ),
++        rh_surface=dict(
++            extensions=None,
++        ),
++        verbose=dict(
++            usedefault=True,
++        ),
++    )
++    inputs = CatSurfBbreg.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_CatSurfBbreg_outputs():
++    output_map = dict(
++        cost=dict(),
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++    )
++    outputs = CatSurfBbreg.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbregDetectContrast.py b/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbregDetectContrast.py
+new file mode 100644
+index 0000000000..fe6f595895
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_CatSurfBbregDetectContrast.py
+@@ -0,0 +1,33 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..cat_surf import CatSurfBbregDetectContrast
++
++
++def test_CatSurfBbregDetectContrast_inputs():
++    input_map = dict(
++        in_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        lh_surface=dict(
++            extensions=None,
++        ),
++        rh_surface=dict(
++            extensions=None,
++        ),
++    )
++    inputs = CatSurfBbregDetectContrast.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_CatSurfBbregDetectContrast_outputs():
++    output_map = dict(
++        contrast=dict(),
++    )
++    outputs = CatSurfBbregDetectContrast.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolSanlm.py b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolSanlm.py
+new file mode 100644
+index 0000000000..cf07d93d0e
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolSanlm.py
+@@ -0,0 +1,38 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..cat_surf import CatSurfVolSanlm
++
++
++def test_CatSurfVolSanlm_inputs():
++    input_map = dict(
++        in_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        is_rician=dict(
++            usedefault=True,
++        ),
++        out_file=dict(
++            extensions=None,
++        ),
++        strength=dict(
++            usedefault=True,
++        ),
++    )
++    inputs = CatSurfVolSanlm.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_CatSurfVolSanlm_outputs():
++    output_map = dict(
++        out_file=dict(
++            extensions=None,
++        ),
++    )
++    outputs = CatSurfVolSanlm.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterNmi.py b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterNmi.py
+new file mode 100644
+index 0000000000..cc097abc01
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterNmi.py
+@@ -0,0 +1,49 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..cat_surf import CatSurfVolumeRegisterNmi
++
++
++def test_CatSurfVolumeRegisterNmi_inputs():
++    input_map = dict(
++        fixed_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        max_iter=dict(
++            usedefault=True,
++        ),
++        moving_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        n_bins=dict(
++            usedefault=True,
++        ),
++        n_levels=dict(
++            usedefault=True,
++        ),
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++        verbose=dict(
++            usedefault=True,
++        ),
++    )
++    inputs = CatSurfVolumeRegisterNmi.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_CatSurfVolumeRegisterNmi_outputs():
++    output_map = dict(
++        nmi=dict(),
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++    )
++    outputs = CatSurfVolumeRegisterNmi.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterRobust.py b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterRobust.py
+new file mode 100644
+index 0000000000..0da62f0185
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_CatSurfVolumeRegisterRobust.py
+@@ -0,0 +1,49 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..cat_surf import CatSurfVolumeRegisterRobust
++
++
++def test_CatSurfVolumeRegisterRobust_inputs():
++    input_map = dict(
++        fixed_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        max_iter=dict(
++            usedefault=True,
++        ),
++        moving_file=dict(
++            extensions=None,
++            mandatory=True,
++        ),
++        n_levels=dict(
++            usedefault=True,
++        ),
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++        sat_k=dict(
++            usedefault=True,
++        ),
++        verbose=dict(
++            usedefault=True,
++        ),
++    )
++    inputs = CatSurfVolumeRegisterRobust.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_CatSurfVolumeRegisterRobust_outputs():
++    output_map = dict(
++        out_matrix_file=dict(
++            extensions=None,
++        ),
++        residual=dict(),
++    )
++    outputs = CatSurfVolumeRegisterRobust.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_T1Prep.py b/nipype/interfaces/t1prep/tests/test_auto_T1Prep.py
+new file mode 100644
+index 0000000000..213227dc3c
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_T1Prep.py
+@@ -0,0 +1,141 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..preprocess import T1Prep
++
++
++def test_T1Prep_inputs():
++    input_map = dict(
++        amap=dict(
++            argstr="--amap",
++        ),
++        args=dict(
++            argstr="%s",
++        ),
++        atlas=dict(
++            argstr="--atlas %s",
++        ),
++        atlas_surf=dict(
++            argstr="--atlas-surf %s",
++        ),
++        bids=dict(
++            argstr="--bids",
++        ),
++        csf=dict(
++            argstr="--csf",
++        ),
++        debug=dict(
++            argstr="--debug",
++        ),
++        downsample=dict(
++            argstr="--downsample %g",
++        ),
++        environ=dict(
++            nohash=True,
++            usedefault=True,
++        ),
++        fmriprep=dict(
++            argstr="--fmriprep",
++        ),
++        gz=dict(
++            argstr="--gz",
++        ),
++        in_files=dict(
++            argstr="%s",
++            mandatory=True,
++            position=-1,
++        ),
++        initial_surf=dict(
++            argstr="--initial-surf %s",
++            extensions=None,
++        ),
++        lesions=dict(
++            argstr="--lesions",
++        ),
++        long_data=dict(
++            argstr="--long-data %s",
++        ),
++        median_filter=dict(
++            argstr="--median-filter %d",
++        ),
++        no_atlas=dict(
++            argstr="--no-atlas",
++        ),
++        no_correct_folding=dict(
++            argstr="--no-correct-folding",
++        ),
++        no_mwp=dict(
++            argstr="--no-mwp",
++        ),
++        no_overwrite=dict(
++            argstr="--no-overwrite %s",
++        ),
++        no_retry=dict(
++            argstr="--no-retry",
++        ),
++        no_seg=dict(
++            argstr="--no-seg",
++        ),
++        no_sphere_reg=dict(
++            argstr="--no-sphere-reg",
++        ),
++        no_surf=dict(
++            argstr="--no-surf",
++        ),
++        out_dir=dict(
++            argstr="--out-dir %s",
++        ),
++        p=dict(
++            argstr="--p",
++        ),
++        pial_white=dict(
++            argstr="--pial-white",
++        ),
++        pre_fwhm=dict(
++            argstr="--pre-fwhm %g",
++        ),
++        quiet=dict(
++            argstr="--quiet",
++        ),
++        rp=dict(
++            argstr="--rp",
++        ),
++        seed=dict(
++            argstr="--seed %d",
++        ),
++        skip_skullstrip=dict(
++            argstr="--skip-skullstrip",
++            xor=["skullstrip_only"],
++        ),
++        skullstrip_only=dict(
++            argstr="--skullstrip-only",
++            xor=["skip_skullstrip"],
++        ),
++        thickness_method=dict(
++            argstr="--thickness-method %d",
++        ),
++        vessel=dict(
++            argstr="--vessel %g",
++        ),
++        wp=dict(
++            argstr="--wp",
++        ),
++    )
++    inputs = T1Prep.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_T1Prep_outputs():
++    output_map = dict(
++        label_dir=dict(),
++        mri_dir=dict(),
++        out_dir=dict(),
++        report_dir=dict(),
++        surf_dir=dict(),
++    )
++    outputs = T1Prep.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_T1PrepCommand.py b/nipype/interfaces/t1prep/tests/test_auto_T1PrepCommand.py
+new file mode 100644
+index 0000000000..2b9c46cb04
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_T1PrepCommand.py
+@@ -0,0 +1,19 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..base import T1PrepCommand
++
++
++def test_T1PrepCommand_inputs():
++    input_map = dict(
++        args=dict(
++            argstr="%s",
++        ),
++        environ=dict(
++            nohash=True,
++            usedefault=True,
++        ),
++    )
++    inputs = T1PrepCommand.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_T1PrepRealignLongitudinal.py b/nipype/interfaces/t1prep/tests/test_auto_T1PrepRealignLongitudinal.py
+new file mode 100644
+index 0000000000..314f9b2a93
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_T1PrepRealignLongitudinal.py
+@@ -0,0 +1,92 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..longitudinal import T1PrepRealignLongitudinal
++
++
++def test_T1PrepRealignLongitudinal_inputs():
++    input_map = dict(
++        args=dict(
++            argstr="%s",
++        ),
++        device=dict(
++            argstr="--device %s",
++        ),
++        environ=dict(
++            nohash=True,
++            usedefault=True,
++        ),
++        force_template_zooms=dict(
++            argstr="--force-template-zooms",
++        ),
++        grad_quantile=dict(
++            argstr="--grad-quantile %g",
++        ),
++        in_files=dict(
++            argstr="--inputs %s",
++            mandatory=True,
++        ),
++        inverse_consistent=dict(
++            argstr="--inverse-consistent",
++        ),
++        iterations=dict(
++            argstr="--iterations %d",
++        ),
++        max_fwhm_mm=dict(
++            argstr="--max-fwhm-mm %g",
++        ),
++        no_intensity_scale=dict(
++            argstr="--no-intensity-scale",
++        ),
++        out_dir=dict(
++            argstr="--out-dir %s",
++            mandatory=True,
++        ),
++        out_subfolders=dict(
++            argstr="--out-subfolders %s",
++        ),
++        output_naming=dict(
++            argstr="--output-naming %s",
++        ),
++        overlap_penalty_weight=dict(
++            argstr="--overlap-penalty-weight %g",
++        ),
++        register_to_first=dict(
++            argstr="--register-to-first",
++        ),
++        sample_strategy=dict(
++            argstr="--sample-strategy %s",
++        ),
++        save_resampled=dict(
++            argstr="--save-resampled",
++        ),
++        save_template=dict(
++            argstr="--save-template",
++        ),
++        set_zooms_from_sform=dict(
++            argstr="--set-zooms-from-sform",
++        ),
++        update_headers=dict(
++            argstr="--update-headers",
++        ),
++        use_skullstrip=dict(
++            argstr="--use-skullstrip",
++        ),
++        verbose=dict(
++            argstr="--verbose",
++        ),
++    )
++    inputs = T1PrepRealignLongitudinal.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_T1PrepRealignLongitudinal_outputs():
++    output_map = dict(
++        out_dir=dict(),
++    )
++    outputs = T1PrepRealignLongitudinal.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_T1PrepSegment.py b/nipype/interfaces/t1prep/tests/test_auto_T1PrepSegment.py
+new file mode 100644
+index 0000000000..4664e75d45
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_T1PrepSegment.py
+@@ -0,0 +1,108 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..preprocess import T1PrepSegment
++
++
++def test_T1PrepSegment_inputs():
++    input_map = dict(
++        amap=dict(
++            argstr="--amap",
++        ),
++        args=dict(
++            argstr="%s",
++        ),
++        atlas=dict(
++            argstr="--atlas %s",
++        ),
++        bids=dict(
++            argstr="--bids",
++        ),
++        count=dict(
++            argstr="--count %d",
++        ),
++        csf=dict(
++            argstr="--csf",
++        ),
++        debug=dict(
++            argstr="--debug",
++        ),
++        environ=dict(
++            nohash=True,
++            usedefault=True,
++        ),
++        gz=dict(
++            argstr="--gz",
++        ),
++        in_file=dict(
++            argstr="--input %s",
++            extensions=None,
++            mandatory=True,
++        ),
++        label_dir=dict(
++            argstr="--label-dir %s",
++            mandatory=True,
++        ),
++        lesions=dict(
++            argstr="--lesions",
++        ),
++        mri_dir=dict(
++            argstr="--mri-dir %s",
++            mandatory=True,
++        ),
++        mwp=dict(
++            argstr="--mwp",
++        ),
++        p=dict(
++            argstr="--p",
++        ),
++        report_dir=dict(
++            argstr="--report-dir %s",
++            mandatory=True,
++        ),
++        rp=dict(
++            argstr="--rp",
++        ),
++        save_fmriprep=dict(
++            argstr="--save-fmriprep",
++        ),
++        seed=dict(
++            argstr="--seed %d",
++        ),
++        skip_skullstrip=dict(
++            argstr="--skip-skullstrip",
++            xor=["skullstrip_only"],
++        ),
++        skullstrip_only=dict(
++            argstr="--skullstrip-only",
++            xor=["skip_skullstrip"],
++        ),
++        surf=dict(
++            argstr="--surf",
++        ),
++        verbose=dict(
++            argstr="--verbose",
++        ),
++        vessel=dict(
++            argstr="--vessel %g",
++        ),
++        wp=dict(
++            argstr="--wp",
++        ),
++    )
++    inputs = T1PrepSegment.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_T1PrepSegment_outputs():
++    output_map = dict(
++        label_dir=dict(),
++        mri_dir=dict(),
++        report_dir=dict(),
++    )
++    outputs = T1PrepSegment.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_auto_T1PrepSurfaceEstimation.py b/nipype/interfaces/t1prep/tests/test_auto_T1PrepSurfaceEstimation.py
+new file mode 100644
+index 0000000000..0cabcd9f1d
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_auto_T1PrepSurfaceEstimation.py
+@@ -0,0 +1,178 @@
++# AUTO-GENERATED by tools/checkspecs.py - DO NOT EDIT
++from ..surface import T1PrepSurfaceEstimation
++
++
++def test_T1PrepSurfaceEstimation_inputs():
++    input_map = dict(
++        args=dict(
++            argstr="%s",
++        ),
++        atlas_surf=dict(
++            argstr="--atlas-surf %s",
++        ),
++        atlas_templates_dir=dict(
++            argstr="--atlas-templates-dir %s",
++            mandatory=True,
++        ),
++        bids_naming=dict(
++            argstr="--bids-naming %d",
++            usedefault=True,
++        ),
++        bname=dict(
++            argstr="--bname %s",
++            mandatory=True,
++        ),
++        correct_folding=dict(
++            argstr="--correct-folding %d",
++            usedefault=True,
++        ),
++        debug=dict(
++            argstr="--debug %d",
++            usedefault=True,
++        ),
++        downsample=dict(
++            argstr="--downsample %g",
++            usedefault=True,
++        ),
++        environ=dict(
++            nohash=True,
++            usedefault=True,
++        ),
++        estimate_spherereg=dict(
++            argstr="--estimate-spherereg %d",
++            usedefault=True,
++        ),
++        fmriprep=dict(
++            argstr="--fmriprep %d",
++            usedefault=True,
++        ),
++        initial_surface=dict(
++            argstr="--initial-surface %s",
++            extensions=None,
++        ),
++        median_filter=dict(
++            argstr="--median-filter %d",
++            usedefault=True,
++        ),
++        mri_dir=dict(
++            argstr="--mri-dir %s",
++            mandatory=True,
++        ),
++        multi=dict(
++            argstr="--multi %d",
++            usedefault=True,
++        ),
++        names_tsv=dict(
++            argstr="--names-tsv %s",
++            extensions=None,
++            mandatory=True,
++        ),
++        nii_ext=dict(
++            argstr="--nii-ext %s",
++            usedefault=True,
++        ),
++        pre_fwhm=dict(
++            argstr="--pre-fwhm %g",
++            usedefault=True,
++        ),
++        progress_bar_script=dict(
++            argstr="--progress-bar %s",
++            extensions=None,
++        ),
++        progress_count_file=dict(
++            argstr="--progress-count-file %s",
++            extensions=None,
++        ),
++        progress_end_count=dict(
++            argstr="--progress-end-count %d",
++        ),
++        progress_start_count=dict(
++            argstr="--progress-start-count %d",
++        ),
++        report_log=dict(
++            argstr="--report-log %s",
++            extensions=None,
++        ),
++        save_pial_white=dict(
++            argstr="--save-pial-white %d",
++            usedefault=True,
++        ),
++        side=dict(
++            argstr="--side %s",
++            mandatory=True,
++        ),
++        surf_dir=dict(
++            argstr="--surf-dir %s",
++            mandatory=True,
++        ),
++        surf_templates_dir=dict(
++            argstr="--surf-templates-dir %s",
++            mandatory=True,
++        ),
++        thickness_method=dict(
++            argstr="--thickness-method %d",
++            usedefault=True,
++        ),
++        vessel=dict(
++            argstr="--vessel %d",
++            usedefault=True,
++        ),
++    )
++    inputs = T1PrepSurfaceEstimation.input_spec()
++
++    for key, metadata in list(input_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(inputs.traits()[key], metakey) == value
++
++
++def test_T1PrepSurfaceEstimation_outputs():
++    output_map = dict(
++        area_lh=dict(
++            extensions=None,
++        ),
++        area_rh=dict(
++            extensions=None,
++        ),
++        central_surface_lh=dict(
++            extensions=None,
++        ),
++        central_surface_rh=dict(
++            extensions=None,
++        ),
++        pial_surface_lh=dict(
++            extensions=None,
++        ),
++        pial_surface_rh=dict(
++            extensions=None,
++        ),
++        sphere_lh=dict(
++            extensions=None,
++        ),
++        sphere_rh=dict(
++            extensions=None,
++        ),
++        spherereg_lh=dict(
++            extensions=None,
++        ),
++        spherereg_rh=dict(
++            extensions=None,
++        ),
++        surf_dir=dict(),
++        thickness_lh=dict(
++            extensions=None,
++        ),
++        thickness_rh=dict(
++            extensions=None,
++        ),
++        white_surface_lh=dict(
++            extensions=None,
++        ),
++        white_surface_rh=dict(
++            extensions=None,
++        ),
++    )
++    outputs = T1PrepSurfaceEstimation.output_spec()
++
++    for key, metadata in list(output_map.items()):
++        for metakey, value in list(metadata.items()):
++            assert getattr(outputs.traits()[key], metakey) == value
+diff --git a/nipype/interfaces/t1prep/tests/test_base.py b/nipype/interfaces/t1prep/tests/test_base.py
+new file mode 100644
+index 0000000000..24e137f7ad
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_base.py
+@@ -0,0 +1,89 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Hand-written tests for nipype.interfaces.t1prep.base."""
++
++import sys
++import types
++
++import pytest
++
++from nipype.interfaces.t1prep import base as t1prep_base
++from nipype.interfaces.t1prep.base import Info, T1PrepCommand, import_cat_surf
++
++
++@pytest.fixture(autouse=True)
++def _reset_version_cache():
++    """Info caches the version on the class; reset around each test."""
++    saved = Info._version
++    Info._version = None
++    yield
++    Info._version = saved
++
++
++def test_info_version_none_when_absent(monkeypatch):
++    monkeypatch.setitem(sys.modules, "t1prep", None)  # force ImportError
++    import builtins
++
++    real_import = builtins.__import__
++
++    def fake_import(name, *a, **k):
++        if name == "t1prep" or name.startswith("t1prep."):
++            raise ImportError(name)
++        return real_import(name, *a, **k)
++
++    monkeypatch.setattr(builtins, "__import__", fake_import)
++    assert Info.version() is None
++
++
++def test_info_version_reads_dunder(monkeypatch):
++    fake = types.ModuleType("t1prep")
++    fake.__version__ = "9.9.9"
++    monkeypatch.setitem(sys.modules, "t1prep", fake)
++    assert Info.version() == "9.9.9"
++
++
++def test_info_version_missing_dunder(monkeypatch):
++    fake = types.ModuleType("t1prep")  # no __version__
++    monkeypatch.setitem(sys.modules, "t1prep", fake)
++    assert Info.version() is None
++
++
++def test_info_version_cached():
++    """A pre-populated cache is returned without re-importing t1prep."""
++    Info._version = "cached-1.0"
++    assert Info.version() == "cached-1.0"
++
++
++def test_parse_version_identity():
++    assert Info.parse_version("1.2.3") == "1.2.3"
++
++
++def test_import_cat_surf_prefers_t1prep(monkeypatch):
++    fake_pkg = types.ModuleType("t1prep")
++    fake_cs = types.ModuleType("t1prep.cat_surf")
++    fake_pkg.cat_surf = fake_cs
++    monkeypatch.setitem(sys.modules, "t1prep", fake_pkg)
++    monkeypatch.setitem(sys.modules, "t1prep.cat_surf", fake_cs)
++    assert import_cat_surf() is fake_cs
++
++
++def test_t1prepcommand_cmd_requires_module():
++    """A subclass without _module must raise on cmd access."""
++    cmd = T1PrepCommand()
++    with pytest.raises(NotImplementedError):
++        cmd.cmd
++
++
++def test_t1prepcommand_version_delegates_to_info(monkeypatch):
++    fake = types.ModuleType("t1prep")
++    fake.__version__ = "1.0.0"
++    monkeypatch.setitem(sys.modules, "t1prep", fake)
++    cmd = T1PrepCommand()
++    assert cmd.version == "1.0.0"
++
++
++def test_t1prepcommand_cmd_with_module():
++    class _Dummy(T1PrepCommand):
++        _module = "t1prep.dummy"
++
++    assert _Dummy().cmd == f"{sys.executable} -m t1prep.dummy"
+diff --git a/nipype/interfaces/t1prep/tests/test_cat_surf.py b/nipype/interfaces/t1prep/tests/test_cat_surf.py
+new file mode 100644
+index 0000000000..67ad7a74e2
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_cat_surf.py
+@@ -0,0 +1,211 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Hand-written tests for nipype.interfaces.t1prep.cat_surf.
++
++Only the denoising / registration subset needed to replace FreeSurfer / FSL
++(bbreg) / ANTs is wrapped here; each interface is exercised against a fake
++``cat_surf`` module so the native library is not required.
++"""
++
++import inspect
++import types
++
++import numpy as np
++import pytest
++
++from nipype.interfaces.base import SimpleInterface
++from nipype.interfaces.t1prep import (
++    CatSurfBbreg,
++    CatSurfBbregDetectContrast,
++    CatSurfVolSanlm,
++    CatSurfVolumeRegisterNmi,
++    CatSurfVolumeRegisterRobust,
++)
++from nipype.interfaces.t1prep import base as t1prep_base
++from nipype.interfaces.t1prep import cat_surf as cat_surf_mod
++
++
++def _have_cat_surf():
++    try:
++        from t1prep import cat_surf  # noqa: F401
++
++        return True
++    except ImportError:
++        try:
++            import cat_surf  # noqa: F401
++
++            return True
++        except ImportError:
++            return False
++
++
++def test_import_cat_surf_raises_when_missing(monkeypatch):
++    """If neither t1prep nor cat_surf is importable, the helper should raise."""
++    import builtins
++
++    real_import = builtins.__import__
++
++    def fake_import(name, *args, **kwargs):
++        if (
++            name in {"t1prep", "cat_surf"}
++            or name.startswith("t1prep.")
++            or name.startswith("cat_surf.")
++        ):
++            raise ImportError(name)
++        return real_import(name, *args, **kwargs)
++
++    monkeypatch.setattr(builtins, "__import__", fake_import)
++    with pytest.raises(ImportError):
++        t1prep_base.import_cat_surf()
++
++
++@pytest.mark.skipif(not _have_cat_surf(), reason="cat_surf is not installed")
++def test_import_cat_surf_returns_module():
++    cs = t1prep_base.import_cat_surf()
++    assert hasattr(cs, "read_surface")
++
++
++def test_CatSurfBbreg_trait_validation():
++    """A non-existent in_file should fail trait validation."""
++    from nipype.interfaces.base import traits
++
++    node = CatSurfBbreg()
++    with pytest.raises(traits.TraitError):
++        node.inputs.in_file = "/nonexistent/path/that/does/not/exist.nii.gz"
++
++
++# ---------------------------------------------------------------------------
++# Dispatch coverage: run every wrapper against a fake cat_surf module
++# ---------------------------------------------------------------------------
++
++
++def _fake_cat_surf():
++    """Stand-in for the cat_surf C-extension module.
++
++    Registration helpers return ``(matrix, metric)`` and detection returns an
++    int, matching the arity the wrappers unpack; ``cli.vol_sanlm`` is a no-op.
++    """
++    ns = types.SimpleNamespace()
++    ns.read_surface = lambda *a, **k: ("V", "F")
++    ns.bbreg = lambda *a, **k: (np.eye(4), 0.5)
++    ns.bbreg_detect_contrast = lambda *a, **k: 0
++    ns.volume_register_nmi = lambda *a, **k: (np.eye(4), 0.9)
++    ns.volume_register_robust = lambda *a, **k: (np.eye(4), 0.1)
++    ns.cli = types.SimpleNamespace(vol_sanlm=lambda *a, **k: None)
++    return ns
++
++
++def _fake_runtime(tmp_path):
++    """Minimal runtime stub exposing the ``cwd`` used for default output names."""
++    return types.SimpleNamespace(cwd=str(tmp_path), returncode=0, environ={})
++
++
++def _catsurf_interfaces():
++    out = []
++    for name, obj in vars(cat_surf_mod).items():
++        if (
++            inspect.isclass(obj)
++            and issubclass(obj, SimpleInterface)
++            and name.startswith("CatSurf")
++        ):
++            out.append(obj)
++    return out
++
++
++def _set_mandatory_inputs(node, tmp_path):
++    """Set every mandatory input to a type-appropriate dummy value."""
++    spec = node.input_spec()
++    for name, trait in spec.traits().items():
++        if name in ("trait_added", "trait_modified") or not trait.mandatory:
++            continue
++        ttype = type(trait.trait_type).__name__
++        if ttype == "File":
++            f = tmp_path / f"{node.__class__.__name__}_{name}.nii.gz"
++            f.write_bytes(b"")
++            setattr(node.inputs, name, str(f))
++        elif ttype == "Int":
++            setattr(node.inputs, name, 1)
++        elif ttype == "Float":
++            setattr(node.inputs, name, 1.0)
++        elif ttype == "Bool":
++            setattr(node.inputs, name, True)
++        else:  # Any, Str, etc.
++            setattr(node.inputs, name, "dummy")
++
++
++def test_catsurf_interfaces_discovered():
++    """Guard against the discovery helper silently finding nothing."""
++    assert len(_catsurf_interfaces()) == 5
++
++
++@pytest.mark.parametrize("iface", _catsurf_interfaces(), ids=lambda c: c.__name__)
++def test_catsurf_dispatch_with_fake_module(iface, tmp_path, monkeypatch):
++    """Each wrapper dispatches to cat_surf and records outputs without the C lib."""
++    monkeypatch.setattr(cat_surf_mod, "_import_cat_surf", _fake_cat_surf)
++    node = iface()
++    _set_mandatory_inputs(node, tmp_path)
++    node._run_interface(_fake_runtime(tmp_path))
++    outputs = node._list_outputs()
++    assert isinstance(outputs, dict)
++
++
++def test_volume_register_nmi_writes_matrix(tmp_path, monkeypatch):
++    """NMI registration writes the 4x4 matrix and reports the metric."""
++    monkeypatch.setattr(cat_surf_mod, "_import_cat_surf", _fake_cat_surf)
++
++    def mkfile(name):
++        f = tmp_path / name
++        f.write_bytes(b"")
++        return str(f)
++
++    node = CatSurfVolumeRegisterNmi()
++    node.inputs.moving_file = mkfile("moving.nii.gz")
++    node.inputs.fixed_file = mkfile("fixed.nii.gz")
++    node.inputs.out_matrix_file = str(tmp_path / "moving_to_fixed.mat")
++    node._run_interface(_fake_runtime(tmp_path))
++    outs = node._list_outputs()
++    assert outs["nmi"] == pytest.approx(0.9)
++    written = np.loadtxt(outs["out_matrix_file"])
++    assert written.shape == (4, 4)
++
++
++def test_bbreg_reads_surfaces_and_reports_cost(tmp_path, monkeypatch):
++    """BBR loads the optional surfaces and reports the cost."""
++    monkeypatch.setattr(cat_surf_mod, "_import_cat_surf", _fake_cat_surf)
++
++    def mkfile(name):
++        f = tmp_path / name
++        f.write_bytes(b"")
++        return str(f)
++
++    node = CatSurfBbreg()
++    node.inputs.in_file = mkfile("bold_ref.nii.gz")
++    node.inputs.lh_surface = mkfile("lh.white.gii")
++    node.inputs.rh_surface = mkfile("rh.white.gii")
++    node.inputs.ref_file = mkfile("T1w.nii.gz")
++    node._run_interface(_fake_runtime(tmp_path))
++    outs = node._list_outputs()
++    assert outs["cost"] == pytest.approx(0.5)
++    assert np.loadtxt(outs["out_matrix_file"]).shape == (4, 4)
++
++
++def test_bbreg_detect_contrast_returns_int(tmp_path, monkeypatch):
++    monkeypatch.setattr(cat_surf_mod, "_import_cat_surf", _fake_cat_surf)
++    f = tmp_path / "vol.nii.gz"
++    f.write_bytes(b"")
++    node = CatSurfBbregDetectContrast()
++    node.inputs.in_file = str(f)
++    node._run_interface(_fake_runtime(tmp_path))
++    assert node._list_outputs()["contrast"] == 0
++
++
++def test_vol_sanlm_default_output_name(tmp_path, monkeypatch):
++    """VolSanlm derives a sanlm_ prefixed output when out_file is unset."""
++    monkeypatch.setattr(cat_surf_mod, "_import_cat_surf", _fake_cat_surf)
++    f = tmp_path / "sub-01_T1w.nii.gz"
++    f.write_bytes(b"")
++    node = CatSurfVolSanlm()
++    node.inputs.in_file = str(f)
++    node._run_interface(_fake_runtime(tmp_path))
++    out = node._list_outputs()["out_file"]
++    assert "sanlm_" in out
+diff --git a/nipype/interfaces/t1prep/tests/test_longitudinal.py b/nipype/interfaces/t1prep/tests/test_longitudinal.py
+new file mode 100644
+index 0000000000..6ca9ab964a
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_longitudinal.py
+@@ -0,0 +1,49 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Hand-written tests for nipype.interfaces.t1prep.longitudinal."""
++
++import os
++import sys
++
++import pytest
++
++from nipype.interfaces.t1prep import T1PrepRealignLongitudinal
++
++
++@pytest.fixture
++def in_files(tmp_path):
++    paths = []
++    for ses in ("01", "02", "03"):
++        f = tmp_path / f"sub-01_ses-{ses}_T1w.nii.gz"
++        f.write_bytes(b"")
++        paths.append(str(f))
++    return paths
++
++
++def test_T1PrepRealignLongitudinal_cmd_uses_current_interpreter():
++    ra = T1PrepRealignLongitudinal()
++    assert ra.cmd == f"{sys.executable} -m t1prep.realign_longitudinal"
++
++
++def test_T1PrepRealignLongitudinal_cmdline(in_files, tmp_path):
++    ra = T1PrepRealignLongitudinal()
++    ra.inputs.in_files = in_files
++    ra.inputs.out_dir = str(tmp_path / "out")
++    ra.inputs.save_resampled = True
++    ra.inputs.iterations = 5
++    cmd = ra.cmdline
++    assert "--inputs" in cmd
++    for p in in_files:
++        assert p in cmd
++    assert "--out-dir" in cmd
++    assert f"{tmp_path}/out" in cmd or f"'{tmp_path}/out'" in cmd
++    assert "--save-resampled" in cmd
++    assert "--iterations 5" in cmd
++
++
++def test_T1PrepRealignLongitudinal_list_outputs(in_files, tmp_path):
++    ra = T1PrepRealignLongitudinal()
++    ra.inputs.in_files = in_files
++    ra.inputs.out_dir = "rel/out"
++    outs = ra._list_outputs()
++    assert outs["out_dir"] == os.path.abspath("rel/out")
+diff --git a/nipype/interfaces/t1prep/tests/test_preprocess.py b/nipype/interfaces/t1prep/tests/test_preprocess.py
+new file mode 100644
+index 0000000000..b47df37b92
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_preprocess.py
+@@ -0,0 +1,98 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Hand-written tests for nipype.interfaces.t1prep.preprocess."""
++
++import os
++import sys
++
++import pytest
++
++from nipype.interfaces.t1prep import T1Prep, T1PrepSegment
++
++
++@pytest.fixture
++def in_t1(tmp_path):
++    f = tmp_path / "sub-01_T1w.nii.gz"
++    f.write_bytes(b"")
++    return str(f)
++
++
++def test_T1Prep_cmd_uses_current_interpreter():
++    t = T1Prep()
++    assert t.cmd.startswith(sys.executable + " -m t1prep.t1prep")
++
++
++def test_T1Prep_cmdline(in_t1):
++    t = T1Prep()
++    t.inputs.in_files = [in_t1]
++    t.inputs.bids = True
++    t.inputs.out_dir = "/tmp/derivatives"
++    assert t.cmdline == (
++        f"{sys.executable} -m t1prep.t1prep --bids --out-dir /tmp/derivatives "
++        f"{in_t1}"
++    )
++
++
++def test_T1Prep_list_outputs_default_to_input_dir(in_t1):
++    t = T1Prep()
++    t.inputs.in_files = [in_t1]
++    outs = t._list_outputs()
++    parent = os.path.dirname(os.path.abspath(in_t1))
++    assert outs["out_dir"] == parent
++    assert outs["mri_dir"] == os.path.join(parent, "mri")
++    assert outs["surf_dir"] == os.path.join(parent, "surf")
++    assert outs["report_dir"] == os.path.join(parent, "report")
++    assert outs["label_dir"] == os.path.join(parent, "label")
++
++
++def test_T1Prep_list_outputs_respects_out_dir(in_t1, tmp_path):
++    t = T1Prep()
++    t.inputs.in_files = [in_t1]
++    t.inputs.out_dir = str(tmp_path / "out")
++    outs = t._list_outputs()
++    assert outs["out_dir"] == str(tmp_path / "out")
++    assert outs["mri_dir"] == str(tmp_path / "out" / "mri")
++
++
++def test_T1Prep_skullstrip_xor(in_t1):
++    """Setting both skullstrip_only and skip_skullstrip must raise."""
++    t = T1Prep()
++    t.inputs.in_files = [in_t1]
++    t.inputs.skullstrip_only = True
++    with pytest.raises(OSError):
++        t.inputs.skip_skullstrip = True
++
++
++def test_T1PrepSegment_cmd_uses_current_interpreter():
++    s = T1PrepSegment()
++    assert s.cmd == f"{sys.executable} -m t1prep.segment"
++
++
++def test_T1PrepSegment_cmdline(in_t1, tmp_path):
++    s = T1PrepSegment()
++    s.inputs.in_file = in_t1
++    s.inputs.mri_dir = str(tmp_path / "mri")
++    s.inputs.report_dir = str(tmp_path / "report")
++    s.inputs.label_dir = str(tmp_path / "label")
++    s.inputs.surf = True
++    s.inputs.gz = True
++    cmd = s.cmdline
++    assert cmd.startswith(f"{sys.executable} -m t1prep.segment ")
++    assert "--gz" in cmd
++    assert "--surf" in cmd
++    assert f"--input {in_t1}" in cmd or f"--input '{in_t1}'" in cmd
++    assert "--mri-dir" in cmd
++    assert "--report-dir" in cmd
++    assert "--label-dir" in cmd
++
++
++def test_T1PrepSegment_list_outputs_absolute(in_t1, tmp_path):
++    s = T1PrepSegment()
++    s.inputs.in_file = in_t1
++    s.inputs.mri_dir = "mri"
++    s.inputs.report_dir = "report"
++    s.inputs.label_dir = "label"
++    outs = s._list_outputs()
++    assert outs["mri_dir"] == os.path.abspath("mri")
++    assert outs["report_dir"] == os.path.abspath("report")
++    assert outs["label_dir"] == os.path.abspath("label")
+diff --git a/nipype/interfaces/t1prep/tests/test_surface.py b/nipype/interfaces/t1prep/tests/test_surface.py
+new file mode 100644
+index 0000000000..81fa697d1d
+--- /dev/null
++++ b/nipype/interfaces/t1prep/tests/test_surface.py
+@@ -0,0 +1,71 @@
++# emacs: -*- mode: python; py-indent-offset: 4; indent-tabs-mode: nil -*-
++# vi: set ft=python sts=4 ts=4 sw=4 et:
++"""Hand-written tests for nipype.interfaces.t1prep.surface."""
++
++import os
++import sys
++
++import pytest
++
++from nipype.interfaces.t1prep import T1PrepSurfaceEstimation
++
++
++def _make_file(p):
++    p.write_bytes(b"")
++    return str(p)
++
++
++@pytest.fixture
++def surface_paths(tmp_path):
++    names_tsv = _make_file(tmp_path / "Names.tsv")
++    surf_templates = tmp_path / "surf_templates"
++    atlas_templates = tmp_path / "atlas_templates"
++    surf_templates.mkdir()
++    atlas_templates.mkdir()
++    return {
++        "names_tsv": names_tsv,
++        "surf_templates_dir": str(surf_templates),
++        "atlas_templates_dir": str(atlas_templates),
++        "mri_dir": str(tmp_path / "mri"),
++        "surf_dir": str(tmp_path / "surf"),
++    }
++
++
++def test_T1PrepSurfaceEstimation_cmd_uses_current_interpreter():
++    se = T1PrepSurfaceEstimation()
++    assert se.cmd == f"{sys.executable} -m t1prep.surface_estimation"
++
++
++def test_T1PrepSurfaceEstimation_cmdline_has_required_flags(surface_paths):
++    se = T1PrepSurfaceEstimation()
++    se.inputs.bname = "sub-01_T1w"
++    se.inputs.side = "left"
++    for k, v in surface_paths.items():
++        setattr(se.inputs, k, v)
++    cmd = se.cmdline
++    assert "--bname sub-01_T1w" in cmd
++    assert "--side left" in cmd
++    assert "--mri-dir" in cmd
++    assert "--surf-dir" in cmd
++    assert "--names-tsv" in cmd
++
++
++def test_T1PrepSurfaceEstimation_list_outputs_hemi_pattern(surface_paths):
++    se = T1PrepSurfaceEstimation()
++    se.inputs.bname = "sub-01_T1w"
++    se.inputs.side = "left"
++    for k, v in surface_paths.items():
++        setattr(se.inputs, k, v)
++    outs = se._list_outputs()
++    surf = os.path.abspath(surface_paths["surf_dir"])
++    assert outs["surf_dir"] == surf
++    for hemi in ("lh", "rh"):
++        assert outs[f"central_surface_{hemi}"] == os.path.join(
++            surf, f"{hemi}.central.sub-01_T1w.gii"
++        )
++        assert outs[f"thickness_{hemi}"] == os.path.join(
++            surf, f"{hemi}.thickness.sub-01_T1w"
++        )
++        assert outs[f"spherereg_{hemi}"] == os.path.join(
++            surf, f"{hemi}.sphere.reg.sub-01_T1w.gii"
++        )

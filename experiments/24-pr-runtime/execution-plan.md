@@ -1,7 +1,8 @@
 # Runtime evaluation plan
 
-Status: version 2 cohort membership is recorded; runtime configuration is still in development.
-No candidate PR has been executed in this experiment.
+Status: four development PRs have been executed. Native Docker exports and
+fresh-container grading controls are being checked before held-out freeze.
+The five overlap-screened held-out inputs remain unexecuted.
 
 The question is whether native Repo2RLEnv `pr_runtime` can generate useful tasks
 without per-PR human intervention. The baseline is upstream commit
@@ -62,7 +63,7 @@ Automatic acceptance also requires a bounded set of negative controls: the
 unchanged base, removal of each source-file portion of the reference patch
 (up to five files, hash-ranked), and test-file deletion/tampering. Record
 controls that do not apply cleanly as unresolved controls, not successful
-rejections. Passing partial implementations reveal insufficient discrimination;
+rejections. A partial implementation receiving full reward or strict resolution reveals insufficient discrimination;
 reject those candidates under the frozen policy. This is limited mutation
 coverage, not a proof against every incorrect implementation.
 
@@ -143,10 +144,12 @@ container size against 20 GiB and removes the container on exec timeout.
 The Iris reservation is 3 CPUs / 10 GB / 30 GB, at most 4,200 seconds and zero
 retries, including controller setup. No new capacity or accelerators are requested.
 
-This development invocation supplies a generic Python profile using declared
+The development harness supplies a generic Python profile using declared
 test extras/groups and executes the pinned native validator. It preserves the
-empty-test-command rejection as a separate control. It does not yet export or
-verify final tasks, run a model-assisted bootstrap, or execute held-out PRs.
+empty-test-command rejection as a separate control. It now exports native
+Harbor task bundles, builds their Dockerfiles, and invokes their exact graders
+in fresh offline containers. It does not run a solver model or the Harbor
+trial orchestrator. No model-assisted bootstrap has been run.
 
 Daytona has not been prepared or launched for this experiment, and previous
 experiments' paid allowances do not apply.

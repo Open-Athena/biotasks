@@ -120,10 +120,17 @@ def main():
     commands = []
     container_ids = set()
     exec_index = 0
+    per_pr_deadline = None
 
     def bounded_run(args, **kwargs):
         nonlocal exec_index
         args = list(args)
+        cleanup_call = args[:2] == ["docker", "rm"] or args[:3] == ["docker", "image", "rm"]
+        if per_pr_deadline is not None and not cleanup_call:
+            remaining = int(per_pr_deadline - time.monotonic())
+            if remaining <= 0:
+                raise TimeoutError("Combined PR validation/export budget exhausted")
+            kwargs["timeout"] = min(kwargs.get("timeout", 600), remaining)
         if args[:2] == ["docker", "run"]:
             assert not any(x in args for x in ("--privileged", "-v", "--volume", "--mount"))
             args[2:2] = [
@@ -274,6 +281,7 @@ def main():
             sandbox=sandbox, base_commit=ref, patch="", test_patch="", test_cmds=[],
         ))
         for row in manifest["prs"]:
+            per_pr_deadline = time.monotonic() + 1800
             patch, tests = split_patch_and_test_patch(row["diff"])
             test_cmds = targeted_test_cmds_for_pr(
                 normalize_test_cmds_for_runtime([
@@ -293,11 +301,13 @@ def main():
                     native_docker, manifest, row, outcome, bootstrap, OUT,
                 )
             (OUT / "development-result.json").write_text(json.dumps(report, indent=2) + "\n")
+            per_pr_deadline = None
         report["disposition"] = "development_validation_completed"
     except Exception as exc:
         report["disposition"] = "development_run_failed"
         report["error"] = f"{type(exc).__name__}: {exc}"
     finally:
+        per_pr_deadline = None  # Cleanup remains available after a PR deadline.
         if sandbox is not None:
             sandbox.cleanup()
         remaining = original_run([
@@ -318,7 +328,9 @@ def main():
             "docker", "image", "ls", "-aq", "--filter", f"label=biotasks24.run={run_id}",
         ], timeout=15)
         if owned_images.ok:
-            for image_id in set(owned_images.stdout.split()):
+            # Docker lists newest images first; preserve child-before-parent
+            # order so intermediate layers can be removed without a global prune.
+            for image_id in dict.fromkeys(owned_images.stdout.split()):
                 assert re.fullmatch(r"(sha256:)?[a-f0-9]{12,64}", image_id)
                 original_run(["docker", "image", "rm", "-f", image_id], timeout=30)
         image_check = original_run([

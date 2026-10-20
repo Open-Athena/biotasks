@@ -581,3 +581,17 @@ with the observed Python 3.12 image digest and exact runner-package constraints
 from 006. Target dependency resolution remains declarative at bootstrap and is
 recorded with pip freeze; it is not a fully archived package-index snapshot.
 The native source archive is now verified by its recorded SHA256.
+
+Nipype 008 completed both native Docker builds and fresh-container controls,
+with verified container and owned-image cleanup. #3766 rejects base, omitted
+source and test deletion; reference reward is one. #3745's original extra-gate
+rejection is preserved alongside the diagnosed gate mistakes above.
+Nipype 009 exercised the corrected gates and single-entrypoint dispatch/readback
+on #3745, with all controls passing and cleanup verified. This is development
+evidence, not held-out yield or instruction-quality acceptance.
+
+The held-out protocol is now frozen in `freeze.md` and `heldout-campaign.json`.
+Only housekeeping/bounds differ from the smoke: preserve child-before-parent
+image cleanup order, verify the launcher hash, and cap all PR Docker operations
+to a combined 1,800-second deadline (cleanup remains permitted afterward).
+Five inputs across three repositories will run once, with no repairs or replacements.

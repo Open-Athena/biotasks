@@ -1,0 +1,1187 @@
+diff --git a/docs/modules/datasets.rst b/docs/modules/datasets.rst
+index 0fb236b19..d7c8f1ace 100644
+--- a/docs/modules/datasets.rst
++++ b/docs/modules/datasets.rst
+@@ -7,6 +7,7 @@ Functions for loading benchmark molecular datasets.
+ .. toctree::
+     :maxdepth: 2
+ 
++    datasets/asap
+     datasets/expansionrx
+     datasets/lrgb
+     datasets/moleculeace
+diff --git a/docs/modules/datasets/asap.rst b/docs/modules/datasets/asap.rst
+new file mode 100644
+index 000000000..6502eb0fd
+--- /dev/null
++++ b/docs/modules/datasets/asap.rst
+@@ -0,0 +1,35 @@
++==================================
++ASAP Discovery-OpenADMET challenge
++==================================
++
++.. automodule:: skfp.datasets.asap
++    :exclude-members: load_asap_benchmark, load_asap_dataset, load_asap_splits
++
++=========================================================
++
++.. py:currentmodule:: skfp.datasets.asap
++
++ASAP Discovery-OpenADMET challenge
++
++.. autosummary::
++    :nosignatures:
++    :toctree: generated/
++
++    load_asap_benchmark
++    load_asap_dataset
++    load_asap_splits
++
++
++Dataset loaders
++
++.. autosummary::
++    :nosignatures:
++    :toctree: generated/
++
++    load_hlm
++    load_ksol
++    load_logd
++    load_mdr1_mdckii
++    load_mlm
++    load_pic50_sars_cov_2
++    load_pic50_mers_cov
+diff --git a/skfp/datasets/asap/__init__.py b/skfp/datasets/asap/__init__.py
+new file mode 100644
+index 000000000..dce1b9858
+--- /dev/null
++++ b/skfp/datasets/asap/__init__.py
+@@ -0,0 +1,14 @@
++from .asap import (
++    load_hlm,
++    load_ksol,
++    load_logd,
++    load_mdr1_mdckii,
++    load_mlm,
++    load_pic50_mers_cov,
++    load_pic50_sars_cov_2,
++)
++from .benchmark import (
++    load_asap_benchmark,
++    load_asap_dataset,
++    load_asap_splits,
++)
+diff --git a/skfp/datasets/asap/asap.py b/skfp/datasets/asap/asap.py
+new file mode 100644
+index 000000000..3e711289f
+--- /dev/null
++++ b/skfp/datasets/asap/asap.py
+@@ -0,0 +1,593 @@
++import os
++
++import numpy as np
++import pandas as pd
++from sklearn.utils._param_validation import validate_params
++
++from skfp.datasets.utils import fetch_dataset, get_mol_strings_and_labels
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_hlm(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the HLM dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the human liver microsomal stability (HLM), i.e.
++    intrinsic clearance in uL/min/mg, of antiviral compounds targeting
++    SARS-CoV-2 and MERS-CoV main protease (Mpro) [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                   407
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_hlm
++    >>> dataset = load_hlm()
++    >>> dataset  # doctest: +SKIP
++    (['CN(C1=CC=C2CNCC2=C1)[C@H](C(=O)NCC(F)F)C1=CC(Cl)=CC(C2CC2)=C1', ..., 'CC1=NC=C(CN2C[C@@]3(C(=O)N(C4=CN=CC5=CC=CC=C45)C[C@@H]3C)C3=CC(Cl)=CC=C32)C(=O)N1'], \
++    array([17.1, ..., 143.]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_HLM",
++        filename="hlm.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_ksol(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the KSOL dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the kinetic solubility (KSOL) in uM of antiviral
++    compounds targeting SARS-CoV-2 and MERS-CoV main protease (Mpro) [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                   477
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_ksol
++    >>> dataset = load_ksol()
++    >>> dataset  # doctest: +SKIP
++    (['O=C(NCC(F)F)[C@H](NC1=CC2=C(C=C1Br)CNC2)C1=CC(Cl)=CC(C2CC2)=C1', ..., 'COC[C@H]1CN(C2=CN=CC3=CC=CC=C23)C(=O)[C@@]12CN(CC1=CC=NN1)C(=O)C2'], \
++    array([333., ..., 397.]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_KSOL",
++        filename="ksol.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_logd(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the LogD dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the distribution coefficient (LogD) of antiviral
++    compounds targeting SARS-CoV-2 and MERS-CoV main protease (Mpro) [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                   478
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_logd
++    >>> dataset = load_logd()
++    >>> dataset  # doctest: +SKIP
++    (['COC1=CC=CC(Cl)=C1NC(=O)N1CCC[C@H](C(N)=O)C1', ..., 'CC1=NC=C(CN2C[C@@]3(C(=O)N(C4=CN=CC5=CC=CC=C45)C[C@@H]3C)C3=CC(Cl)=CC=C32)C(=O)N1'], \
++    array([0.3, ..., 2. ]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_LogD",
++        filename="logd.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_mdr1_mdckii(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the MDR1-MDCKII dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the permeability through MDR1-expressing MDCK-II cells
++    (in 10^-6 cm/s) of antiviral compounds targeting SARS-CoV-2 and MERS-CoV main
++    protease (Mpro) [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                   551
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_mdr1_mdckii
++    >>> dataset = load_mdr1_mdckii()
++    >>> dataset  # doctest: +SKIP
++    (['COC1=CC=CC(Cl)=C1NC(=O)N1CCC[C@H](C(N)=O)C1', ..., 'CC1=NC=C(CN2C[C@@]3(C(=O)N(C4=CN=CC5=CC=CC=C45)C[C@@H]3C)C3=CC(Cl)=CC=C32)C(=O)N1'], \
++    array([2. , ..., 5.1]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_MDR1-MDCKII",
++        filename="mdr1_mdckii.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_mlm(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the MLM dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the mouse liver microsomal stability (MLM), i.e.
++    intrinsic clearance in uL/min/mg, of antiviral compounds targeting
++    SARS-CoV-2 and MERS-CoV main protease (Mpro) [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                   425
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_mlm
++    >>> dataset = load_mlm()
++    >>> dataset  # doctest: +SKIP
++    (['CC(C)NC(=O)[C@H](NC1=CC=C2CNCC2=C1)C1=CC(Cl)=CC2=C1N=C(C1=CC=CC=C1)N2', ..., 'CC1=NC=C(CN2C[C@@]3(C(=O)N(C4=CN=CC5=CC=CC=C45)C[C@@H]3C)C3=CC(Cl)=CC=C32)C(=O)N1'], \
++    array([ 11., ..., 259.]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_MLM",
++        filename="mlm.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_pic50_sars_cov_2(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the pIC50 SARS-CoV-2 dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the pIC50 (negative log10 of IC50 in uM) of antiviral
++    compounds against SARS-CoV-2, measured by fluorescence dose-response
++    assay [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                  1105
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_pic50_sars_cov_2
++    >>> dataset = load_pic50_sars_cov_2()
++    >>> dataset  # doctest: +SKIP
++    (['C=C(CN1CCC2=C(C=C(Cl)C=C2)C1C(=O)NC1=CN=CC2=CC=CC=C12)C(N)=O', ..., 'COC1=CC=CC=C1[C@H]1C[C@H](C)CCN1C(=O)CC1=CN=CC2=CC=CC=C12'], \
++    array([5.29, ..., 5.77]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_pIC50_SARS-CoV-2",
++        filename="pic50_sars_cov_2.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
++
++
++@validate_params(
++    {
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_pic50_mers_cov(
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    r"""
++    Load the pIC50 MERS-CoV dataset from the ASAP Discovery-OpenADMET challenge.
++
++    The task is to predict the pIC50 (negative log10 of IC50 in uM) of antiviral
++    compounds against MERS-CoV, measured by fluorescence dose-response
++    assay [1]_ [2]_ [3]_.
++
++    ==================   ==============
++    Tasks                             1
++    Task type                regression
++    Total samples                  1198
++    Recommended split              time
++    Recommended metric              MAE
++    ==================   ==============
++
++    Parameters
++    ----------
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns: "SMILES", "label". Otherwise,
++        returns SMILES as list of strings, and labels as a NumPy array (1D float vector).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++
++    Examples
++    --------
++    >>> from skfp.datasets.asap import load_pic50_mers_cov
++    >>> dataset = load_pic50_mers_cov()
++    >>> dataset  # doctest: +SKIP
++    (['COC[C@]1(C)C(=O)N(C2=CN=CC3=CC=CC=C23)C(=O)N1C', ..., 'COC1=CC=CC=C1[C@H]1C[C@H](C)CCN1C(=O)CC1=CN=CC2=CC=CC=C12'], \
++    array([4.19, ..., 5.47]))
++    """
++    df = fetch_dataset(
++        data_dir,
++        dataset_name="ASAP_OpenADMET_pIC50_MERS-CoV",
++        filename="pic50_mers_cov.csv",
++        verbose=verbose,
++    )
++    return (
++        df
++        if as_frame
++        else get_mol_strings_and_labels(df, non_target_columns="Molecule name")
++    )
+diff --git a/skfp/datasets/asap/benchmark.py b/skfp/datasets/asap/benchmark.py
+new file mode 100644
+index 000000000..94f34dcf7
+--- /dev/null
++++ b/skfp/datasets/asap/benchmark.py
+@@ -0,0 +1,304 @@
++import os
++from collections.abc import Iterator
++
++import numpy as np
++import pandas as pd
++from sklearn.utils._param_validation import StrOptions, validate_params
++
++from skfp.datasets.utils import fetch_splits
++
++from .asap import (
++    load_hlm,
++    load_ksol,
++    load_logd,
++    load_mdr1_mdckii,
++    load_mlm,
++    load_pic50_mers_cov,
++    load_pic50_sars_cov_2,
++)
++
++ASAP_DATASET_NAMES = [
++    "HLM",
++    "KSOL",
++    "LogD",
++    "MDR1-MDCKII",
++    "MLM",
++    "pIC50 SARS-CoV-2",
++    "pIC50 MERS-CoV",
++]
++
++ASAP_DATASET_NAME_TO_LOADER_FUNC = {
++    "HLM": load_hlm,
++    "KSOL": load_ksol,
++    "LogD": load_logd,
++    "MDR1-MDCKII": load_mdr1_mdckii,
++    "MLM": load_mlm,
++    "pIC50 SARS-CoV-2": load_pic50_sars_cov_2,
++    "pIC50 MERS-CoV": load_pic50_mers_cov,
++}
++
++_ASAP_DATASET_NAME_TO_HF_NAME = {
++    "HLM": "ASAP_OpenADMET_HLM",
++    "KSOL": "ASAP_OpenADMET_KSOL",
++    "LogD": "ASAP_OpenADMET_LogD",
++    "MDR1-MDCKII": "ASAP_OpenADMET_MDR1-MDCKII",
++    "MLM": "ASAP_OpenADMET_MLM",
++    "pIC50 SARS-CoV-2": "ASAP_OpenADMET_pIC50_SARS-CoV-2",
++    "pIC50 MERS-CoV": "ASAP_OpenADMET_pIC50_MERS-CoV",
++}
++
++_ASAP_DATASET_NAME_TO_SPLIT_FILENAME = {
++    "HLM": "time_split_hlm.json",
++    "KSOL": "time_split_ksol.json",
++    "LogD": "time_split_logd.json",
++    "MDR1-MDCKII": "time_split_mdr1_mdckii.json",
++    "MLM": "time_split_mlm.json",
++    "pIC50 SARS-CoV-2": "time_split_pic50_sars_cov_2.json",
++    "pIC50 MERS-CoV": "time_split_pic50_mers_cov.json",
++}
++
++
++@validate_params(
++    {
++        "subset": [None, list],
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_asap_benchmark(
++    subset: list[str] | None = None,
++    data_dir: str | os.PathLike | None = None,
++    as_frames: bool = False,
++    verbose: bool = False,
++) -> Iterator[tuple[str, pd.DataFrame]] | Iterator[tuple[str, list[str], np.ndarray]]:
++    """
++    Load the ASAP Discovery-Polaris-OpenADMET challenge datasets.
++
++    ASAP Discovery - Polaris - OpenADMET challenge [1]_ [2]_ [3]_ datasets come from antiviral
++    drug discovery campaigns by the ASAP Discovery consortium, targeting SARS-CoV-2 and
++    MERS-CoV main protease (Mpro) inhibitors. The challenge included ADMET and potency
++    endpoints.
++
++    For more details, see loading functions for particular datasets. Allowed individual
++    dataset names are listed below. Dataset names are also returned (case-sensitive).
++
++    - HLM
++    - KSOL
++    - LogD
++    - MDR1-MDCKII
++    - MLM
++    - pIC50 SARS-CoV-2
++    - pIC50 MERS-CoV
++
++    Parameters
++    ----------
++    subset : None or list of strings
++        If ``None``, returns all datasets. List of strings loads only datasets with given names.
++
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frames : bool, default=False
++        If True, returns the raw DataFrame for each dataset. Otherwise, returns SMILES
++        as a list of strings, and labels as a NumPy array for each dataset.
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : generator of pd.DataFrame or tuples (list[str], np.ndarray)
++        Loads and returns datasets with a generator. Returned types depend on the
++        ``as_frame`` parameter, either:
++        - Pandas DataFrame with columns: "SMILES", "label"
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    .. [2] `Chodera et al.
++        "The ASAP Discovery Antiviral Drug Discovery Challenge"
++        <https://doi.org/10.26434/chemrxiv-2025-zd9mr>`_
++
++    .. [3] `MacDermott-Opeskin, Hugo, et al.
++        "A computational community blind challenge on pan-coronavirus drug discovery data"
++        J. Chem. Inf. Model. 2026, 66, 6, 3129-3149
++        <https://doi.org/10.1021/acs.jcim.5c02106>`_
++    """
++    dataset_names = _subset_to_dataset_names(subset)
++
++    dataset_functions = [
++        ASAP_DATASET_NAME_TO_LOADER_FUNC[name] for name in dataset_names
++    ]
++
++    if as_frames:
++        datasets = (
++            (dataset_name, load_function(data_dir, as_frame=True, verbose=verbose))
++            for dataset_name, load_function in zip(
++                dataset_names, dataset_functions, strict=False
++            )
++        )
++    else:
++        datasets = (
++            (dataset_name, *load_function(data_dir, as_frame=False, verbose=verbose))
++            for dataset_name, load_function in zip(
++                dataset_names, dataset_functions, strict=False
++            )
++        )
++    return datasets
++
++
++@validate_params(
++    {
++        "dataset_name": [StrOptions(set(ASAP_DATASET_NAMES))],
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_asap_dataset(
++    dataset_name: str,
++    data_dir: str | os.PathLike | None = None,
++    as_frame: bool = False,
++    verbose: bool = False,
++) -> pd.DataFrame | tuple[list[str], np.ndarray]:
++    """
++    Load ASAP Discovery-OpenADMET challenge dataset by name.
++
++    Loads a given dataset from ASAP Discovery-OpenADMET challenge [1]_ by its name.
++    This is a proxy for easier benchmarking that avoids looking for individual functions.
++
++    Dataset names here are the same as returned by :py:func:`.load_asap_benchmark` function,
++    and are case-sensitive.
++
++    Parameters
++    ----------
++    dataset_name : str
++        Name of the dataset to load.
++
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_frame : bool, default=False
++        If True, returns the raw DataFrame with columns "SMILES" and labels
++        (dataset-dependent). Otherwise, returns SMILES as list of strings, and
++        labels as a NumPy array (shape and type are dataset-dependent).
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : pd.DataFrame or tuple(list[str], np.ndarray)
++        Depending on the ``as_frame`` argument, one of:
++        - Pandas DataFrame with columns depending on the dataset
++        - tuple of: list of strings (SMILES), NumPy array (labels)
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++
++    Examples
++    --------
++    >> from skfp.datasets.asap import load_asap_dataset
++    >> dataset = load_asap_dataset("LogD")
++    >> dataset   # doctest: +SKIP
++    (['COC1=CC=CC(Cl)=C1NC(=O)N1CCC[C@H](C(N)=O)C1', ..., '])
++    """
++    loader_func = ASAP_DATASET_NAME_TO_LOADER_FUNC[dataset_name]
++    return loader_func(data_dir, as_frame, verbose)
++
++
++@validate_params(
++    {
++        "dataset_name": [StrOptions(set(ASAP_DATASET_NAMES))],
++        "data_dir": [None, str, os.PathLike],
++        "as_frame": ["boolean"],
++        "verbose": ["boolean"],
++    },
++    prefer_skip_nested_validation=True,
++)
++def load_asap_splits(
++    dataset_name: str,
++    data_dir: str | os.PathLike | None = None,
++    as_dict: bool = False,
++    verbose: bool = False,
++) -> tuple[list[int], list[int]] | dict[str, list[int]]:
++    """
++    Load pre-generated dataset splits for the ASAP Discovery-OpenADMET challenge.
++
++    ASAP Discovery-OpenADMET challenge [1]_ provides time (chronological) split,
++    based on the competition train/test partition. No validation data is provided.
++
++    Dataset names are the same as those returned by :py:func:`.load_asap_benchmark`
++    and are case-sensitive.
++
++    Parameters
++    ----------
++    dataset_name : str
++        Name of the dataset to load splits for.
++
++    data_dir : {None, str, path-like}, default=None
++        Path to the root data directory. If ``None``, currently set scikit-learn directory
++        is used, by default `$HOME/scikit_learn_data`.
++
++    as_dict : bool, default=False
++        If True, returns the splits as dictionary with keys "train" and "test",
++        and index lists as values. Otherwise, returns two lists with splits indexes.
++
++    verbose : bool, default=False
++        If True, progress bar will be shown for downloading or loading files.
++
++    Returns
++    -------
++    data : tuple(list[int], list[int]) or dict
++        Depending on the `as_dict` argument, one of:
++        - two lists of integer indexes
++        - dictionary with "train" and "test" keys, and values as lists with
++        splits indexes
++
++    References
++    ----------
++    .. [1] `ASAP Discovery
++        "ASAP Discovery x OpenADMET Antiviral Drug Discovery Challenge"
++        <https://polarishub.io/blog/antiviral-competition>`_
++    """
++    splits = fetch_splits(
++        data_dir,
++        dataset_name=_ASAP_DATASET_NAME_TO_HF_NAME[dataset_name],
++        filename=_ASAP_DATASET_NAME_TO_SPLIT_FILENAME[dataset_name],
++        verbose=verbose,
++    )
++    if as_dict:
++        return splits
++    else:
++        return splits["train"], splits["test"]
++
++
++def _subset_to_dataset_names(subset: list[str] | None) -> list[str]:
++    if subset is None:
++        dataset_names = ASAP_DATASET_NAMES
++    elif isinstance(subset, (list, set, tuple)):
++        for name in subset:
++            if name not in ASAP_DATASET_NAMES:
++                raise ValueError(
++                    f"Dataset name '{name}' not recognized among "
++                    f"ASAP Discovery-OpenADMET challenge datasets"
++                )
++        dataset_names = subset
++    else:
++        raise ValueError(
++            f'Value "{subset}" for subset not recognized, must be a list of strings'
++            f"with dataset names from ASAP Discovery-OpenADMET challenge to load"
++        )
++    return dataset_names
+diff --git a/tests/datasets/asap.py b/tests/datasets/asap.py
+new file mode 100644
+index 000000000..4425cf123
+--- /dev/null
++++ b/tests/datasets/asap.py
+@@ -0,0 +1,199 @@
++import pytest
++from numpy.testing import assert_equal
++from sklearn.utils._param_validation import InvalidParameterError
++
++from skfp.datasets.asap import (
++    load_asap_benchmark,
++    load_asap_splits,
++)
++from skfp.datasets.asap.asap import (
++    load_hlm,
++    load_ksol,
++    load_logd,
++    load_mdr1_mdckii,
++    load_mlm,
++    load_pic50_mers_cov,
++    load_pic50_sars_cov_2,
++)
++from skfp.datasets.asap.benchmark import (
++    ASAP_DATASET_NAMES,
++    _subset_to_dataset_names,
++    load_asap_dataset,
++)
++from tests.datasets.test_utils import run_basic_dataset_checks
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++def test_load_asap_benchmark():
++    benchmark_full = load_asap_benchmark(as_frames=True)
++    benchmark_names = [name for name, df in benchmark_full]
++    assert_equal(benchmark_names, ASAP_DATASET_NAMES)
++
++    benchmark_full_tuples = load_asap_benchmark(as_frames=False)
++    benchmark_names = [name for name, smiles, y in benchmark_full_tuples]
++    assert_equal(benchmark_names, ASAP_DATASET_NAMES)
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++def test_load_asap_benchmark_subset():
++    dataset_names = ["LogD", "KSOL", "MLM"]
++    benchmark_full = load_asap_benchmark(subset=dataset_names, as_frames=True)
++    benchmark_names = [name for name, df in benchmark_full]
++    assert_equal(benchmark_names, dataset_names)
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++def test_load_asap_benchmark_wrong_subset():
++    dataset_names = ["LogD", "Nonexistent"]
++    with pytest.raises(ValueError) as exc_info:
++        load_asap_benchmark(subset=dataset_names, as_frames=True)
++
++    assert "Dataset name 'Nonexistent' not recognized" in str(exc_info)
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++@pytest.mark.parametrize("dataset_name", ASAP_DATASET_NAMES)
++def test_load_asap_splits(dataset_name):
++    train, test = load_asap_splits(dataset_name)
++    assert isinstance(train, list)
++    assert len(train) > 0
++    assert all(isinstance(idx, int) for idx in train)
++
++    assert isinstance(test, list)
++    assert len(test) > 0
++    assert all(isinstance(idx, int) for idx in test)
++
++    assert len(train) > len(test)
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++@pytest.mark.parametrize("dataset_name", ASAP_DATASET_NAMES)
++def test_load_asap_splits_as_dict(dataset_name):
++    train, test = load_asap_splits(dataset_name)
++    split_idxs = load_asap_splits(dataset_name, as_dict=True)
++    assert isinstance(split_idxs, dict)
++    assert set(split_idxs.keys()) == {"train", "test"}
++    assert split_idxs["train"] == train
++    assert split_idxs["test"] == test
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++@pytest.mark.parametrize(
++    "dataset_name, dataset_length",
++    [
++        ("HLM", 407),
++        ("KSOL", 477),
++        ("LogD", 478),
++        ("MDR1-MDCKII", 551),
++        ("MLM", 425),
++        ("pIC50 SARS-CoV-2", 1105),
++        ("pIC50 MERS-CoV", 1198),
++    ],
++)
++def test_load_asap_splits_lengths(dataset_name, dataset_length):
++    train, test = load_asap_splits(dataset_name)
++    loaded_length = len(train) + len(test)
++    assert_equal(loaded_length, dataset_length)
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++def test_load_asap_splits_nonexistent_dataset():
++    with pytest.raises(InvalidParameterError) as error:
++        load_asap_splits("nonexistent")
++
++    assert str(error.value).startswith(
++        "The 'dataset_name' parameter of load_asap_splits must be a str among"
++    )
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++@pytest.mark.parametrize(
++    "dataset_name, load_func, expected_length, num_tasks, task_type",
++    [
++        ("HLM", load_hlm, 407, 1, "regression"),
++        ("KSOL", load_ksol, 477, 1, "regression"),
++        ("LogD", load_logd, 478, 1, "regression"),
++        ("MDR1-MDCKII", load_mdr1_mdckii, 551, 1, "regression"),
++        ("MLM", load_mlm, 425, 1, "regression"),
++        (
++            "pIC50 SARS-CoV-2",
++            load_pic50_sars_cov_2,
++            1105,
++            1,
++            "regression",
++        ),
++        (
++            "pIC50 MERS-CoV",
++            load_pic50_mers_cov,
++            1198,
++            1,
++            "regression",
++        ),
++    ],
++)
++def test_load_dataset(dataset_name, load_func, expected_length, num_tasks, task_type):
++    smiles_list, y = load_func()
++    # load with load_asap_dataset, to test it simultaneously
++    df = load_asap_dataset(dataset_name, as_frame=True)
++    run_basic_dataset_checks(
++        smiles_list,
++        y,
++        df,
++        expected_length=expected_length,
++        num_tasks=num_tasks,
++        task_type=task_type,
++        non_target_columns=["Molecule name"],
++    )
++
++
++@pytest.mark.flaky(
++    reruns=100,
++    reruns_delay=5,
++    only_rerun=["LocalEntryNotFoundError", "FileNotFoundError"],
++)
++@pytest.mark.parametrize(
++    "subset_name, expected_num_datasets",
++    [
++        (None, 7),
++    ],
++)
++def test_subset_to_dataset_names(subset_name, expected_num_datasets):
++    subset_datasets = _subset_to_dataset_names(subset_name)
++    assert_equal(len(subset_datasets), expected_num_datasets)
++
++
++def test_nonexistent_subset_name():
++    with pytest.raises(ValueError, match="not recognized"):
++        _subset_to_dataset_names(["nonexistent"])
