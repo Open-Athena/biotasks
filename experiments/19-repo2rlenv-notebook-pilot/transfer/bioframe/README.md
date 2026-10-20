@@ -14,17 +14,22 @@ repair was made. The user authorized proceeding without the shared lock for
 this lightweight conversion; load and memory checks remained in place.
 
 ENCODE metadata reports both referenced files released for GRCh38, with
-compressed sizes 649,474 and 8,211 bytes. No biological input was downloaded.
+compressed sizes 649,474 and 8,211 bytes. The intake checks preceded biological input downloads; the setup worker subsequently staged the original files.
 `data-access.json` records accessions and provider checksums; `motif-access.json`
 records the exact JASPAR URL check. JASPAR's official About page states CC BY 4.0; its URL is recorded in
 `intake.json`. This permission is independent of bioframe's MIT license.
 
-Current progress: [preparation 001](preparation-runs/001/plan.md),
-[setup/reference 001](setup-runs/001/README.md), and
-[deterministic replay 001](replay-runs/001/README.md) are complete. Specification
-001 is submitted with the existing read-only package tools. No constructed,
-graded or solved task exists for this notebook yet. Original worker outputs are
-preserved; no task-specific scientific repairs were made by the operator.
+[Preparation 001](preparation-runs/001/plan.md),
+[setup/reference 001](setup-runs/001/README.md),
+[deterministic replay 001](replay-runs/001/README.md), and
+[specification 001](specification-runs/001/README.md) are complete.
+[Materialization 005](materialization-runs/005/README.md) produced an executed
+candidate whose oracle matches the projected reference. Fresh scientific
+validation 002 is in progress: its independent implementation and five initial
+controls passed; verifier probes and review remain pending. Native Harbor
+controls, a blind solver attempt and publication have not run for this case.
+Original worker outputs remain unchanged; no task-specific scientific repairs
+were made by the operator.
 
 The setup trace exposed a factory limitation: the worker ran additional full
 analyses through its shell despite the prompt, outside the controller's test
