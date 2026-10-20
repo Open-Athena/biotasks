@@ -595,3 +595,23 @@ Only housekeeping/bounds differ from the smoke: preserve child-before-parent
 image cleanup order, verify the launcher hash, and cap all PR Docker operations
 to a combined 1,800-second deadline (cleanup remains permitted afterward).
 Five inputs across three repositories will run once, with no repairs or replacements.
+
+Original held-out campaign: both submitted jobs were lost to the same reserved
+worker reconcile failure. Neither has logs or an output archive. Three PR
+inputs were assigned, with execution/validation unobservable; two PsychoPy
+inputs were not submitted. The frozen launcher omitted WORKER_FAILED from
+terminal states and therefore did not advance. It was stopped explicitly.
+Original yield is zero accepted, no quality dispositions and three infrastructure
+unresolved inputs, not three scientific rejections. Worker-side cleanup could
+not be independently verified. Preserve this failed unattended campaign.
+
+Prepared one separately versioned infrastructure recovery on the same cohort.
+Only lifecycle handling and worker selection change: use Iris's canonical
+terminal-state predicate, preserve missing-archive failures, and pin to healthy
+workers that previously produced verified development readbacks, excluding the
+failed worker. All PRs, target bootstrap code, source revisions, dependencies,
+grader and acceptance rules are byte-identical to the freeze (run identities
+and recovery provenance differ). There are no per-PR retries or repairs.
+This is same-cohort recovery evidence, not a new independent held-out estimate,
+and cannot retroactively improve the original campaign's result. Its maximum
+10.5 additional allocated CPU-hours keeps the total below the 48-hour budget.

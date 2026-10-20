@@ -32,7 +32,7 @@ def preserve(source, observation, destination, source_commit, disposition, archi
     names = {"development-result.json", "runner-packages.txt", "target-packages.txt",
              "runner-filesystem.json", "docker-client-version.txt", "runner-failure.json"}
     for path in source.iterdir():
-        if path.name in names or path.name.startswith(("build-", "control-", "export-")):
+        if path.name in names or path.name.startswith(("build-", "control-", "export-", "task-")):
             shutil.copyfile(path, destination / path.name)
     receipt = {
         "state": observation["state"], "attempt_exit_code": attempt["exit_code"],

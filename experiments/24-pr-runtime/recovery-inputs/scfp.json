@@ -1,0 +1,75 @@
+{
+  "run_id": "biotasks24-heldout-scfp-002",
+  "cohort": "held_out",
+  "freeze_id": "biotasks24-python-v1",
+  "repository": "MLCIL/scikit-fingerprints",
+  "bootstrap_ref": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+  "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+  "verify_exports": true,
+  "prs": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 544,
+      "base_sha": "113c4e2576cbb82e53be1b561478d064c59378ab",
+      "head_sha": "b2c553acd8cc79efc1a8aaed6abba7b142b49e39",
+      "merge_sha": "cccb2d623d7c4647badd203387400b4ebfbb3ee0",
+      "url": "https://github.com/MLCIL/scikit-fingerprints/pull/544",
+      "diff_path": "inventory/pr-diffs/MLCIL__scikit-fingerprints/544.diff",
+      "diff_sha256": "9549becfd80e94a0dd8b129307a9beff56a753d9f849f53ae95eeb814a8b1141",
+      "rank": "bbf4335ac4cef488c5c29e0bf33933139b24a07c53672a5807dae648fb3a72de",
+      "cohort": "held_out",
+      "repository_role": "configured_on_development",
+      "overlap_group": "fadee166efbbca23",
+      "original_cohort": "held_out",
+      "metadata": {
+        "number": 544,
+        "url": "https://github.com/MLCIL/scikit-fingerprints/pull/544",
+        "title": "ASAP Discovery - OpenADMET challenge datasets",
+        "body": "## Changes\r\n\r\nASAP Discovery - OpenADMET challenge datasets, part of https://github.com/MLCIL/scikit-fingerprints/issues/184\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+        "mergedAt": "2026-04-04T12:48:19Z",
+        "isDraft": false,
+        "changedFiles": 6,
+        "baseRefOid": "113c4e2576cbb82e53be1b561478d064c59378ab",
+        "headRefOid": "b2c553acd8cc79efc1a8aaed6abba7b142b49e39",
+        "mergeCommit": {
+          "oid": "cccb2d623d7c4647badd203387400b4ebfbb3ee0"
+        }
+      },
+      "linked_issues": {}
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 525,
+      "base_sha": "839001468ba8f8da64ba9d54b33fa33c795ed3c5",
+      "head_sha": "6773bb7db23ea7bceb8e1bf35c9354c56b4459c9",
+      "merge_sha": "6c8b6b30f7b76133a508aac651f1f81174f5527a",
+      "url": "https://github.com/MLCIL/scikit-fingerprints/pull/525",
+      "diff_path": "inventory/pr-diffs/MLCIL__scikit-fingerprints/525.diff",
+      "diff_sha256": "d47e534c0a95e718081b342c298fb5106ce8716e838ae1b898ad77fc516abe1d",
+      "rank": "cebd48761aff8dab6fe967b4a8ff035ad49c64892ab2f7707ae3c2cbde0b6837",
+      "cohort": "held_out",
+      "repository_role": "configured_on_development",
+      "overlap_group": "577fa17e4583d11e",
+      "original_cohort": "held_out",
+      "metadata": {
+        "number": 525,
+        "url": "https://github.com/MLCIL/scikit-fingerprints/pull/525",
+        "title": "Fix chirality bug in MAPFingerprint using full molecule instead of substructure",
+        "body": "## Summary\n- Fixes the chirality code path in `_find_env()` which was calling `MolToSmiles(mol, ...)` on the **full molecule** instead of `sub_molecule`\n- This caused the chirality mode (MAPC) to produce the same SMILES for every atom regardless of local environment\n- Now correctly uses `sub_molecule` with `rootedAtAtom`, matching the non-chirality path\n- Added regression test verifying enantiomers (L-alanine vs D-alanine) produce different fingerprints\n\nPartial fix for #519 (addresses the chirality bug; `variant` parameter and MinHash support can be added in a follow-up)\n\n## Test plan\n- [x] All 8 MAP fingerprint tests pass (including new regression test)\n- [x] Verified L/D-alanine produce identical fingerprints without chirality, different with chirality\n- [ ] CI passes",
+        "mergedAt": "2026-03-11T09:41:34Z",
+        "isDraft": false,
+        "changedFiles": 2,
+        "baseRefOid": "839001468ba8f8da64ba9d54b33fa33c795ed3c5",
+        "headRefOid": "6773bb7db23ea7bceb8e1bf35c9354c56b4459c9",
+        "mergeCommit": {
+          "oid": "6c8b6b30f7b76133a508aac651f1f81174f5527a"
+        }
+      },
+      "linked_issues": {}
+    }
+  ],
+  "profile": "generic_pyproject_test_dependencies_v3_editable_backend_requirements",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "infrastructure_recovery_of": "biotasks24-heldout-scfp-001"
+}
