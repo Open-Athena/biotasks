@@ -478,3 +478,23 @@ def test_explicit_tool_preview_keeps_full_output_and_does_not_cap_generation(tmp
     event = next(event for event in events if event["kind"] == "tool_result")
     assert event["truncated"] is True and event["output"] == preview
     assert event["raw_result_record"] == "trace/1/tool-result.json"
+
+
+@pytest.mark.parametrize("name", ["submit_artifact", "revise_artifact"])
+def test_commit_success_survives_short_tool_preview(tmp_path, name):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        return reply(name=name)
+
+    async def submit(**kwargs):
+        return "Artifact committed. " + "details " * 100
+
+    author, _ = make_author(tmp_path, complete, tool_output_chars=48)
+    result = asyncio.run(
+        author(**options(tmp_path, {"submit_artifact": submit, "revise_artifact": submit}, turns=2))
+    )
+    assert result["turns"] == 1
+    assert len(calls) == 1
+    assert "truncated" in result["messages"][-1]["content"]

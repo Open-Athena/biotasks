@@ -11,7 +11,10 @@ import hashlib
 import hmac
 import http.client
 import json
+import math
+import socket
 import sqlite3
+import ssl
 import threading
 import time
 from dataclasses import dataclass
@@ -69,6 +72,44 @@ class RequestLedger:
             db.execute("UPDATE calls SET state=? WHERE id=?", (state, call_id))
 
 
+class _RequestLifetime:
+    """Interrupt blocking reads/writes as well as continuously active streams."""
+
+    def __init__(self, seconds: float):
+        self.expires = time.monotonic() + max(0, seconds)
+        self.lock = threading.Lock()
+        self.sockets: list[socket.socket] = []
+        self.cancelled = False
+        self.timer = threading.Timer(max(0, seconds), self.cancel)
+        self.timer.daemon = True
+
+    def add(self, connection: socket.socket) -> None:
+        with self.lock:
+            if self.cancelled:
+                connection.close()
+                raise TimeoutError("Inference request ended")
+            self.sockets.append(connection)
+
+    def check(self) -> None:
+        with self.lock:
+            if self.cancelled:
+                raise TimeoutError("Inference request ended")
+
+    def cancel(self) -> None:
+        with self.lock:
+            self.cancelled = True
+            for connection in self.sockets:
+                try:
+                    connection.shutdown(socket.SHUT_RDWR)
+                except OSError:
+                    pass
+                connection.close()
+
+    def finish(self) -> None:
+        self.timer.cancel()
+        self.timer.join()
+
+
 class InferenceGate:
     def __init__(
         self,
@@ -92,17 +133,54 @@ class InferenceGate:
             or route.fragment
         ):
             raise ValueError("An HTTP(S) base URL without embedded credentials is required")
-        if not credential or deadline <= time.time() or request_timeout <= 0:
+        if (
+            not credential
+            or not math.isfinite(deadline)
+            or deadline <= time.time()
+            or not math.isfinite(request_timeout)
+            or request_timeout <= 0
+        ):
             raise ValueError("Credential, future deadline and finite timeout are required")
         if structured_output_mode not in {"json_schema", "json_object"}:
             raise ValueError("Unsupported structured-output mode")
         self.route, self.credential, self.model = route, credential, model
         self.ledger, self.deadline, self.request_timeout = ledger, deadline, request_timeout
+        # Resolve before accepting work: the system resolver cannot be cancelled.
+        # Pin these addresses for this gate lifetime; requests do no DNS lookup.
+        self._addresses = socket.getaddrinfo(
+            route.hostname,
+            route.port or (443 if route.scheme == "https" else 80),
+            type=socket.SOCK_STREAM,
+        )
+        self._tls = ssl.create_default_context() if route.scheme == "https" else None
         self.chat_template_kwargs = dict(chat_template_kwargs or {})
         self.structured_output_mode = structured_output_mode
+        self._lock = threading.Lock()
+        self._active: set[_RequestLifetime] = set()
+        self._closing = False
         gate = self
 
         class Handler(BaseHTTPRequestHandler):
+            def handle(self):
+                self.lifetime = _RequestLifetime(
+                    min(gate.request_timeout, gate.deadline - time.time())
+                )
+                self.lifetime.add(self.connection)
+                with gate._lock:
+                    if gate._closing:
+                        self.lifetime.cancel()
+                        return
+                    gate._active.add(self.lifetime)
+                    self.lifetime.timer.start()
+                try:
+                    super().handle()
+                except OSError:
+                    pass  # Cancellation closes sockets; no retry or new request.
+                finally:
+                    self.lifetime.finish()
+                    with gate._lock:
+                        gate._active.discard(self.lifetime)
+
             def log_message(self, format, *args):
                 pass
 
@@ -178,6 +256,7 @@ class InferenceGate:
                 except (ValueError, TypeError, AttributeError, KeyError, TimeoutError):
                     return self.reject(400, "Invalid model request or output-token bound")
                 try:
+                    self.lifetime.check()
                     call_id = gate.ledger.claim(parts[1], body)
                 except RuntimeError:
                     return self.reject(429, "Request allowance exhausted")
@@ -194,6 +273,8 @@ class InferenceGate:
                 )
                 started = False
                 try:
+                    self.lifetime.check()
+                    upstream.sock = gate._connect(self.lifetime)
                     upstream.request(
                         "POST",
                         gate.route.path.rstrip("/") + "/chat/completions",
@@ -217,6 +298,7 @@ class InferenceGate:
                     while chunk := response.read1(65536):
                         self.wfile.write(chunk)
                         self.wfile.flush()
+                    self.lifetime.check()
                     gate.ledger.finish(call_id, f"http_{response.status}")
                 except (OSError, http.client.HTTPException):
                     # An uncertain request keeps its consumed slot. No retry here.
@@ -226,9 +308,33 @@ class InferenceGate:
                     upstream.close()
 
         self.server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
-        self.server.daemon_threads = True
-        self.server.block_on_close = False
+        self.server.daemon_threads = False
+        self.server.block_on_close = True
         self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+
+    def _connect(self, lifetime: _RequestLifetime) -> socket.socket:
+        error: OSError = OSError("No upstream address available")
+        for family, kind, protocol, _, address in self._addresses:
+            lifetime.check()
+            connection = socket.socket(family, kind, protocol)
+            lifetime.add(connection)
+            try:
+                connection.settimeout(max(0.001, lifetime.expires - time.monotonic()))
+                connection.connect(address)
+                if self._tls is not None:
+                    connection = self._tls.wrap_socket(
+                        connection,
+                        server_hostname=self.route.hostname,
+                        do_handshake_on_connect=False,
+                    )
+                    lifetime.add(connection)
+                    connection.do_handshake()
+                lifetime.check()
+                return connection
+            except OSError as exc:
+                connection.close()
+                error = exc
+        raise error
 
     def start(self) -> InferenceGate:
         self.thread.start()
@@ -240,6 +346,13 @@ class InferenceGate:
         return f"http://127.0.0.1:{self.server.server_port}/{scope}/v1"
 
     def close(self) -> None:
-        self.server.shutdown()
-        self.server.server_close()
-        self.thread.join(timeout=5)
+        with self._lock:
+            self._closing = True
+            active = list(self._active)
+        for request in active:
+            request.cancel()
+        if self.thread.is_alive():
+            self.server.shutdown()
+        self.server.server_close()  # Join handlers after interrupting their sockets.
+        if self.thread.is_alive():
+            self.thread.join()

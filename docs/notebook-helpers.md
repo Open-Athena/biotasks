@@ -84,8 +84,12 @@ not a provider invoice or a global campaign scheduler.
 `InferenceGate` is an optional loopback HTTP adapter for an already-authorized
 Chat Completions service. It authenticates scoped requests, applies configured
 allowances and forwards model settings. It does not deploy an inference service,
-provide a task sandbox or authorize spending. The caller must close the gate
-and manage remote resources independently.
+provide a task sandbox or authorize spending. Upstream DNS resolution happens synchronously during construction, before the
+listener starts, and its addresses are pinned for the gate lifetime. The system
+resolver itself has no cancellable deadline. Once started, request deadlines
+include input reads, TCP/TLS establishment and response forwarding; shutdown
+interrupts owned sockets and joins request handlers. The caller must close the
+gate and manage remote resources independently.
 
 `GLMChatAuthor` in `biotasks.chat_author` receives an asynchronous completion
 callback, record writer, ledger, finite deadline and explicit tool handlers. It
