@@ -111,6 +111,9 @@ Preserve source-level reductions; add none. Do not suppress analysis errors.
   establishes its endpoint role; mere persistence or a function name is not
   evidence of that role. Prefer interoperable formats. Several
   existing endpoint values may share a file if their identities remain explicit.
+  Keep this inventory consistent with the export code: every declared path must
+  be written under that exact name, with no placeholder or undeclared output
+  filenames. Check that correspondence before returning the response.
 - `excluded_outputs`: meaningful non-target outputs and branches with no eligible
   terminal result, with a brief reason. Do not enumerate every intermediate.
 - `unresolved_assumptions`: specific questions for subsequent inspection or

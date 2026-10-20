@@ -1,0 +1,81 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 176816350,
+        "exists": true,
+        "path": "peaks_closest.csv",
+        "sha256": "271f932c649f367fc44e11e5ca98118ce1ee826206a50fc747e3f358187dda17"
+      },
+      {
+        "bytes": 179723234,
+        "exists": true,
+        "path": "peaks_closest_upstream_nodir.csv",
+        "sha256": "b783501d5c27da7bd0a845b1e84795b5e0c3c72100797b53bc8097eb647e44f1"
+      },
+      {
+        "exists": false,
+        "path": "peaks_closest_downstream_nodir.csv"
+      },
+      {
+        "bytes": 179718760,
+        "exists": true,
+        "path": "peaks_closest_upstream_dir.csv",
+        "sha256": "2896bd5541779c71f8b6a62a76a8c2f6ff3b1492e693f25a7fadbbeb187d9896"
+      },
+      {
+        "bytes": 179723761,
+        "exists": true,
+        "path": "peaks_closest_downstream_dir.csv",
+        "sha256": "f9b7c427579897ea3542ea876bf32def41a83c8cd7b314449c0a40e076aca3f4"
+      }
+    ],
+    "declared_artifacts_present": false,
+    "semantic_fidelity_validated": false
+  },
+  "candidate_sha256": {
+    "analysis.py": "84fc7482cbb82f261a7563c28653775702b1486673f4d8df940f39ff23c51da9",
+    "inputs.json": "a21b027da8e13bee5c0e1e057f5365409bd9c296ee2fa614baed55041112dcc8",
+    "pyproject.toml": "813785c0cb73cb39e46eb8ad6b6c620fda67c3b6d8a9ffa7712269a7db0b7450",
+    "stage-inputs.sh": "438a14794fa8466fa5cb99f98f635e7e4ae9ad0b31362d84d5cd3375fb9d2979",
+    "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "elapsed_seconds": 30.18014645576477,
+    "exit_code": 0,
+    "finished": 1792522136.8013766,
+    "log": "",
+    "peak_child_rss_kib": 1002176,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792522106.6212301,
+    "timed_out": false
+  },
+  "inputs_after": {
+    "files": 2,
+    "staged_inputs_verified": true
+  },
+  "semantic_fidelity_validated": false,
+  "setup": {
+    "argv": [
+      "sh",
+      "-eu",
+      "/work/setup.sh"
+    ],
+    "elapsed_seconds": 1.6175308227539062,
+    "exit_code": 0,
+    "finished": 1792522094.559472,
+    "log": "Requirement already satisfied: uv==0.12.21 in /usr/local/lib/python3.13/site-packages (0.12.21)\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 21 packages in 11ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 21 packages in 0.90ms\nInstalled 19 packages in 201ms\n + bioframe==0.8.0\n + certifi==2026.10.19\n + charset-normalizer==3.5.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + numpy==2.5.4\n + packaging==26.3\n + pandas==3.0.6\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==2.9.0.post0\n + pyyaml==6.0.3\n + requests==2.34.2\n + six==1.17.0\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged /inputs/ENCFF401MQL.bed.gz from https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz\nstaged /inputs/hg38.ensGene.gtf.gz from https://hgdownload.soe.ucsc.edu/goldenpath/hg38/bigZips/genes/hg38.ensGene.gtf.gz\n",
+    "peak_child_rss_kib": 42088,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792522092.9419413,
+    "timed_out": false
+  },
+  "status": "reference_failed",
+  "test": 2
+}

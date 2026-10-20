@@ -124,7 +124,7 @@ def seal_materialization(raw, view):
 def copy_diagnostics(root):
     # Small original receipts are also returned through bootstrap diagnostics.
     # Full traces and data remain in the independently verified archive.
-    for relative in (
+    selected = (
         "preparation/plan.json",
         "preparation/result.json",
         "setup-raw/result.json",
@@ -132,6 +132,7 @@ def copy_diagnostics(root):
         "setup-raw/cleanup.json",
         "replay/result.json",
         "replay/cleanup.json",
+        "replay/replay/setup-result.json",
         "specification/specification.json",
         "specification/result.json",
         "materialization-raw/result.json",
@@ -146,7 +147,12 @@ def copy_diagnostics(root):
         "grading/independent-result.json",
         "grading/review.json",
         "native/result.json",
-    ):
+    )
+    selected += tuple(
+        path.relative_to(root).as_posix()
+        for path in sorted((root / "setup-raw/setup/trials").glob("*/result.json"))
+    )
+    for relative in selected:
         source = root / relative
         if source.is_file() and source.stat().st_size <= 256_000:
             target = Path("/evidence/autonomous-summary") / relative

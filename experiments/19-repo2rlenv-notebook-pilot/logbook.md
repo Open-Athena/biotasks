@@ -2716,3 +2716,15 @@ recipe. The worker must recreate them from recorded sources and can repair a
 failure using its existing test allowance. Fifteen setup tests pass, including a
 real shell reset on synthetic files that preserves candidate files and symlink
 targets outside the cache. Candidate-first construction was not reached in 005.
+
+## 2026-10-20 — first complete unattended rejection
+
+Campaign 006 correctly rejected a generated export/inventory filename mismatch
+without operator edits. The analysis itself ran; this is a malformed generated
+candidate, not a broken scientific notebook. The host completed and resources
+were cleaned up. Preserved the original worker explanation alongside controller
+records; its extra claim about preparation hash placeholders is unsupported and
+is explicitly separated from the confirmed filename mismatch. Added only a
+general filename/inventory consistency reminder and automatic retention of
+controller test diagnostics. Candidate-first construction and the positive
+validation path still need live exercise, so the next run starts from the seed.

@@ -1,0 +1,42 @@
+{
+  "artifacts": [
+    {
+      "description": "Closest assignment between CDS gene segments and CTCF ChIP-seq peaks (HFF, hg38): one row per assignment with the paired gene record, paired peak record and their genomic distance. The tutorial's main peak-to-gene assignment result.",
+      "path": "peaks_closest.csv",
+      "source_evidence": "The notebook's stated aim is 'assign CTCF ChIP-seq peaks to the nearest genes using bioframe', and the section 'Assign each peak to the gene' interprets this pairing via its distance distribution. Produced in the original script by `peaks_closest = bioframe.closest(genes, ctcf_peaks)`; the variable holds the table at completion (never reassigned or deleted)."
+    },
+    {
+      "description": "Strand-indifferent upstream-restricted closest pairings (direction_col=None) between CDS gene segments and CTCF peaks, with distances.",
+      "path": "peaks_closest_upstream_nodir.csv",
+      "source_evidence": "Independent outcome of the branch 'Ignore upstream/downstream peaks from genes (strand-indifferent version)', computed in the original script as `peaks_closest_upstream_nodir = bioframe.closest(genes, ctcf_peaks, ignore_overlaps=False, ignore_upstream=False, ignore_downstream=True, direction_col=None)`; the narrative interprets it in its own right ('upstream and downstream distances are very similar')."
+    },
+    {
+      "description": "Strand-indifferent downstream-restricted closest pairings (direction_col=None) between CDS gene segments and CTCF peaks, with distances.",
+      "path": "peaks_closest_downstream_nodir.csv",
+      "source_evidence": "Companion outcome of the same strand-indifferent branch, computed as `peaks_closest_downstream_nodir = bioframe.closest(genes, ctcf_peaks, ignore_overlaps=False, ignore_upstream=True, ignore_downstream=False, direction_col=None)`; its comparison with the upstream table is the branch's stated conclusion about upstream/downstream similarity."
+    },
+    {
+      "description": "Strand-aware upstream-restricted closest pairings (direction_col='strand') between CDS gene segments and CTCF peaks, with distances; basis of the notebook's final conclusion about CTCF enrichment near the TSS.",
+      "path": "peaks_closest_upstream_dir.csv",
+      "source_evidence": "Outcome of the branch 'Ignore upstream/downstream peaks from genes (strand-aware version)', motivated as 'More biologically relevant approach... define upstream/downstream by strand of the gene', computed as `peaks_closest_upstream_dir = bioframe.closest(..., ignore_downstream=True, direction_col='strand')`; supports the closing conclusion 'CTCF peaks upstream of the genes are more enriched at short distances to TSS'."
+    },
+    {
+      "description": "Strand-aware downstream-restricted closest pairings (direction_col='strand') between CDS gene segments and CTCF peaks, with distances; the comparison counterpart needed to interpret the upstream enrichment conclusion.",
+      "path": "peaks_closest_downstream_dir.csv",
+      "source_evidence": "Companion outcome of the same strand-aware branch, computed as `peaks_closest_downstream_dir = bioframe.closest(..., ignore_upstream=True, ignore_downstream=False, direction_col='strand')` and compared against the upstream table in the final interpreted plot and closing statement."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "The three matplotlib histograms of the distance distributions: visual diagnostics of the exported tables' `distance` columns. The underlying per-pairing distances are preserved in the exported tables; the binned counts are computed only inside the plt.hist calls and no numbers were recovered or reconstructed from the plots.",
+    "Input/reference tables (chromsizes, the `chromosomes` viewframe, the chromosome-filtered `ctcf_peaks` and the filtered CDS `genes`): loading and filtering steps consumed by the assignment analyses, not independently interpreted scientific findings.",
+    "The commented-out GTF attribute parsing (`bioframe.sandbox.gtf_io.parse_gtf_attributes`): never executed in the baseline, so no result exists to export."
+  ],
+  "explanation": "The notebook's terminal scientific products are its five peak-to-gene closest-assignment tables: the default nearest assignment (peaks_closest) and the upstream/downstream-restricted variants for the strand-indifferent (direction_col=None) and strand-aware (direction_col='strand') analyses, whose distance distributions the notebook interprets directly ('upstream and downstream distances are very similar'; 'CTCF peaks upstream of the genes are more enriched at short distances to TSS'). Each is a standalone result table whose rows are gene-peak pairings, so each is exported whole: the paired gene record and peak record are the identifiers/context needed to interpret the assignment, and 'distance' is the analytic value. The appended code only creates /work/outputs and serializes these five existing DataFrames to CSV with pandas .to_csv, preserving row order and all values; no recomputation, filtering, aggregation or plot capture, and no change to the original analysis.",
+  "export_code": "# Export terminal results: peak-to-gene closest assignment tables\nimport os as _export_os\n\n_export_dir = \"/work/outputs\"\n_export_os.makedirs(_export_dir, exist_ok=True)\n\n# Default (nearest) assignment of peaks to genes, with distances\npeaks_closest.to_csv(\n    _export_os.path.join(_export_dir, \"peaks_closest.csv\"), index=False\n)\n\n# Strand-indifferent upstream/downstream-restricted assignments\npeaks_closest_upstream_nodir.to_csv(\n    _export_os.path.join(_export_dir, \"peaks_closest_upstream_nodir.csv\"),\n    index=False,\n)\npeaks_closest_downstream_nodir.to_csv(\n    _export_os.path.join(_export_dir, \"peaks_closest_downstream_dir_placeholder.csv\"),\n    index=False,\n)\n\n# Strand-aware upstream/downstream-restricted assignments\npeaks_closest_upstream_dir.to_csv(\n    _export_os.path.join(_export_dir, \"peaks_closest_upstream_dir.csv\"), index=False\n)\npeaks_closest_downstream_dir.to_csv(\n    _export_os.path.join(_export_dir, \"peaks_closest_downstream_dir.csv\"), index=False\n)\n",
+  "unresolved_assumptions": [
+    "Exact table shapes are unverified because the script has not been run (number of CDS-derived rows depends on the UCSC GTF; bioframe's column-suffix conventions on the closest output are assumed but not inspected). The export does not depend on any column name, but if the tables are very large, CSV write time and output size should be checked against the 600 s / 10 GiB limits at execution.",
+    "The `distance` columns (and gene rows with no qualifying peak under the upstream/downstream restrictions) may contain missing values depending on bioframe's unmatched-interval behavior; contents are exported as-is without filtering.",
+    "Availability of the ENCODE peaks URL and the UCSC GTF during network-enabled setup, and of bioframe (and its compiled closest backend) in the execution environment, are execution-stage concerns; the original data-loading code was left untouched."
+  ]
+}
