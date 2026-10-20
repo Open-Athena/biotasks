@@ -118,7 +118,11 @@ evidence supports, without declaring static candidates runnable.
 
 An Iris SANDBOX CPU probe succeeded on existing reserved TRC capacity with
 public package-index access and no host Docker socket. Native Docker daemon
-compatibility has not been demonstrated. The prepared DOCKER_ACCESS probe was
+compatibility has not been demonstrated. A subsequent sandbox-only Docker 27.5.1
+rootless probe installed its guest prerequisites but failed at subordinate UID
+mapping (`newuidmap: Operation not permitted`) before daemon startup. No image
+was built or run. Its report and archive were verified, the job is terminal, and
+the observed reserved host has no remaining allocation for it. The prepared DOCKER_ACCESS probe was
 rejected by automatic approval review because the profile grants
 host-root-equivalent access. The user's follow-up asked for an explanation,
 not authorization. Do not submit that probe or an equivalent host-access route

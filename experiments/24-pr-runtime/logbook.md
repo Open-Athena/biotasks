@@ -333,3 +333,65 @@ After explaining the workflow, requested the user's explicit choice on the
 prepared read-only host Docker probe again. Its scope is only Docker version
 inspection; permission for that probe would not authorize running arbitrary
 build containers against the shared host. No approval has been received yet.
+
+## 2026-10-20 — Sandbox-only nested runtime investigation
+
+The host Docker approval remains pending. Investigated a genuinely separate
+execution route: a rootless Docker daemon contained entirely within the existing
+unprivileged Iris SANDBOX profile. This does not mount a host socket, request an
+elevated profile, or change host/cluster configuration.
+
+Reviewed Docker's rootless prerequisites
+(`https://docs.docker.com/engine/security/rootless/`) and gVisor's nested Docker
+compatibility guide (`https://gvisor.dev/docs/tutorials/docker-in-gvisor/`).
+The latter documents Docker 27 support but requires runtime networking features;
+availability in this Iris profile must be measured, not assumed. Host runtime
+settings will not be changed to make a probe pass.
+
+The checkpointed namespace probe (`12a9a9e6`) ran on one existing reserved TRC
+CPU with 512 MB RAM, 1 GB disk, a two-minute execution ceiling, and zero retries.
+It succeeded in one attempt. User, mount, PID/proc, and network namespace
+creation all returned zero inside the sandbox. Docker, rootlesskit, uidmap
+helpers, and slirp4netns were absent. Downloaded archive size/hash and emitted
+report hash matched; sanitized evidence is in `evidence/trc-nested-probe/`.
+This job is terminal and its namespace children exited. These checks prove
+prerequisites only, not Docker execution.
+
+Checkpointed a second probe (`f28fe014`) to install guest-only prerequisites and
+Docker 27.5.1 static binaries, create a dedicated guest user, start a rootless
+daemon on a guest-local Unix socket, and build/run a minimal Alpine image.
+The daemon must report rootless mode before proceeding. Package/download/build
+steps have timeouts; cleanup terminates only the dedicated guest user's
+processes. Download hashes, step times/statuses, image identity and logs are
+captured. No target repository code or model is involved.
+
+Submitted that probe to one existing reserved TRC CPU with 2 GB RAM, 6 GB disk,
+a ten-minute execution ceiling, and zero retries. The profile remains SANDBOX
+with public-only egress and no inherited cluster credentials. At this checkpoint
+the rootless smoke result is pending; do not claim a working native backend.
+
+The probe subsequently completed in 17.749 seconds, with the Iris job marked
+SUCCEEDED because the diagnostic script completed and wrote its report. The
+reported probe disposition is **failed**, not a successful Docker run.
+Guest prerequisites installed and the Docker 27.5.1 client executed. Rootlesskit
+then failed to establish the subordinate UID mapping: `newuidmap` returned
+`write to uid_map failed: Operation not permitted`. The daemon never created
+its guest-local socket. No Docker build or child-container smoke was attempted.
+
+Downloaded static binary hashes are recorded in the probe report; they are
+observed HTTPS-download hashes, not independently supplied signatures. The
+output archive and emitted report hash were verified after download. Sanitized
+report, receipts, selected guest-only logs and diagnosis are preserved in
+`evidence/trc-rootless-probe/`. The raw archive remains private locally.
+
+The in-guest cleanup check still saw one PID after signals; do not claim that
+check succeeded or infer its process state without evidence. The Iris job is
+terminal, and a later bounded readback found four workers on the selected
+reserved host with no running allocation for this job. No elevated host process
+or socket was used. Host settings were left untouched.
+
+Conclusion: namespace creation alone was insufficient. The tested rootless
+configuration is unavailable in the current unprivileged profile. This does not
+prove every possible nested runtime is impossible, and is not evidence that
+PR-runtime task yield is zero. An authorized Docker-compatible backend is still
+needed for the native execution baseline.

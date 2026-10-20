@@ -1,0 +1,66 @@
+{
+  "container_profile": "SANDBOX",
+  "disposition": "probe_failed",
+  "docker_version": "27.5.1",
+  "downloads": [
+    {
+      "bytes": 76186310,
+      "digest_kind": "observed download digest, not an independently supplied signature",
+      "sha256": "4f798b3ee1e0140eab5bf30b0edc4e84f4cdb53255a429dc3bbae9524845d640",
+      "url": "https://download.docker.com/linux/static/stable/x86_64/docker-27.5.1.tgz"
+    },
+    {
+      "bytes": 21058967,
+      "digest_kind": "observed download digest, not an independently supplied signature",
+      "sha256": "40aef06990b062eab77dd1ad0dd642b5d5a7267032d406b8d080325d0d764a7f",
+      "url": "https://download.docker.com/linux/static/stable/x86_64/docker-rootless-extras-27.5.1.tgz"
+    }
+  ],
+  "elapsed_seconds": 17.749,
+  "error": "AssertionError: Rootless daemon did not create its guest-local socket",
+  "model_calls": 0,
+  "owned_process_cleanup_verified": false,
+  "steps": [
+    {
+      "elapsed_seconds": 2.8,
+      "exit_code": 0,
+      "name": "package-index"
+    },
+    {
+      "elapsed_seconds": 10.693,
+      "exit_code": 0,
+      "name": "install-guest-prerequisites"
+    },
+    {
+      "elapsed_seconds": 0.073,
+      "exit_code": 0,
+      "name": "create-guest-user"
+    },
+    {
+      "elapsed_seconds": 0.034,
+      "exit_code": 0,
+      "name": "own-guest-home"
+    },
+    {
+      "elapsed_seconds": 0.067,
+      "exit_code": 0,
+      "name": "client-version"
+    },
+    {
+      "elapsed_seconds": 0.01,
+      "exit_code": 0,
+      "name": "stop-owned-user-processes"
+    },
+    {
+      "elapsed_seconds": 0.01,
+      "exit_code": 0,
+      "name": "kill-remaining-owned-user-processes"
+    },
+    {
+      "elapsed_seconds": 0.01,
+      "exit_code": 0,
+      "name": "remaining-owned-processes"
+    }
+  ],
+  "target_code_executed": false
+}

@@ -1,0 +1,73 @@
+{
+  "container_profile_required": "SANDBOX",
+  "guest_capabilities": {
+    "CapEff": "00000000a80405fb"
+  },
+  "host_docker_socket_present": false,
+  "limitations": "Prerequisites only; does not demonstrate Docker daemon or container execution.",
+  "model_calls": 0,
+  "namespace_tests": {
+    "user": {
+      "arguments": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "/bin/true"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    "user_mount": {
+      "arguments": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--mount",
+        "/bin/true"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    "user_mount_pid_proc": {
+      "arguments": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--mount",
+        "--pid",
+        "--fork",
+        "--mount-proc",
+        "/bin/true"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    },
+    "user_network": {
+      "arguments": [
+        "unshare",
+        "--user",
+        "--map-root-user",
+        "--net",
+        "/bin/true"
+      ],
+      "exit_code": 0,
+      "stderr": "",
+      "stdout": "",
+      "timed_out": false
+    }
+  },
+  "target_code_executed": false,
+  "tools": {
+    "dockerd": false,
+    "newgidmap": false,
+    "newuidmap": false,
+    "rootlesskit": false,
+    "slirp4netns": false
+  }
+}
