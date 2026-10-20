@@ -1,0 +1,37 @@
+{
+  "repo": {
+    "url": "https://github.com/MLCIL/scikit-fingerprints",
+    "ref": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 1000,
+      "since": "2026-04-04",
+      "until": "2026-04-04"
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "/work/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/MLCIL__scikit-fingerprints-544",
+    "org": "open-athena",
+    "dataset_name": "biotasks25-comparison",
+    "visibility": "private"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "repo": {
+    "url": "https://github.com/psychopy/psychopy",
+    "ref": "f150adfd0246e6bf22331949502e27262734be71",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 1000,
+      "since": "2026-09-30",
+      "until": "2026-09-30"
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "/work/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/psychopy__psychopy-7805",
+    "org": "open-athena",
+    "dataset_name": "biotasks25-comparison",
+    "visibility": "private"
+  }
+}

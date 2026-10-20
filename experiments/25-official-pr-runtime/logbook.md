@@ -208,3 +208,18 @@ made, so validation was the live installation/native experiment, bounded artifac
 integrity audit, Python syntax checks and shell syntax checks rather than a claim
 that the full project CI suite ran. The completed negative experiment is ready
 for its issue conclusion; no production PR is proposed.
+
+### 2026-10-20 — authorized Sonnet comparison
+
+After reviewing the GLM action-format failures, the user requested the upstream
+recommended model with the same inputs and budget, keeping everything else the
+same. The pinned CLI docs use Claude Sonnet 4.6 as the concrete bootstrap example;
+there is no implicit model default. This arm uses its canonical OpenRouter ID,
+`anthropic/claude-sonnet-4.6`, retaining the same provider and native settings.
+All five configuration diffs were checked: only `llm.model` changes. The shared
+runner files are byte-identical, staged separately, and hash-recorded. A fresh
+controller/cache prevents reuse of GLM's bootstrap. The original arm and public
+conclusion remain preserved at c20ba1a0. Same one-worker/four-CPU/16-GiB limits,
+20 turns and $5 estimated threshold per repository; no fallback or external
+repairs. This follow-up extends #25's existing question rather than creating a
+new research issue or changing upstream source.

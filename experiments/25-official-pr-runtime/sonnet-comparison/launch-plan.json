@@ -1,0 +1,91 @@
+{
+  "state": "prepared_not_launched",
+  "comparison": "Same native protocol, inputs and budgets; only llm.model changes. Fresh controller/cache and run identity for isolation.",
+  "baseline_commit": "c20ba1a095949e330c81921d24ce820792f152d2",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "recommended_model_basis": {
+    "source": "https://github.com/huggingface/Repo2RLEnv/blob/27d04ee8203cd5b2f20c3997d13836e5f5b64238/docs/reference/cli.mdx",
+    "note": "Pinned CLI docs give anthropic/claude-sonnet-4-6 as bootstrap example; not an implicit model default. OpenRouter canonical model identifier uses 4.6."
+  },
+  "provider": "openrouter",
+  "model": "anthropic/claude-sonnet-4.6",
+  "fallback": null,
+  "bootstrap_max_iterations_per_repository": 20,
+  "bootstrap_max_seconds": 1800,
+  "estimated_spend_threshold_usd_per_repository": 5,
+  "nominal_aggregate_model_usd": 15,
+  "billing_limit_note": "Native estimated guard checked between calls; final call may overshoot and an unknown/zero estimator is not a billing cap. No change to accounting implementation.",
+  "model_max_output_tokens": 2048,
+  "temperature": 0.2,
+  "compute": {
+    "existing_reserved_TRC_only": true,
+    "max_concurrent_workers": 1,
+    "allocated_cpus": 4,
+    "memory": "16GB",
+    "worker_runtime_ceiling_seconds": 36000,
+    "new_run_max_allocated_cpu_hours": 40,
+    "prior_issue_25_allocated_cpu_hours": 1.5063416666666667,
+    "issue_25_total_ceiling_cpu_hours": 48
+  },
+  "run_id": "biotasks25-sonnet-001",
+  "config_differences": [
+    {
+      "file": "MLCIL__scikit-fingerprints-525.json",
+      "changed_field": "llm.model",
+      "before": "z-ai/glm-5.3",
+      "after": "anthropic/claude-sonnet-4.6",
+      "other_fields_identical": true,
+      "baseline_sha256": "e51ce5d0c9302c378866f731c540672a83e4e5074279a0dbbd1cbc1b849104b8",
+      "comparison_sha256": "e6f0bf09ee6849e30c6c559547e63a885aa5fb76c708a7c05ef43182bd9ea404"
+    },
+    {
+      "file": "MLCIL__scikit-fingerprints-544.json",
+      "changed_field": "llm.model",
+      "before": "z-ai/glm-5.3",
+      "after": "anthropic/claude-sonnet-4.6",
+      "other_fields_identical": true,
+      "baseline_sha256": "6e760da10408db483ec99e6ecf392cb8674be35628421b0e39a99c63effb5024",
+      "comparison_sha256": "0f9f06218e2057de5fba7a6430ee324406dfed2ada08adfd50df77d382c74739"
+    },
+    {
+      "file": "nipy__nipype-3753.json",
+      "changed_field": "llm.model",
+      "before": "z-ai/glm-5.3",
+      "after": "anthropic/claude-sonnet-4.6",
+      "other_fields_identical": true,
+      "baseline_sha256": "ac1575d2733dd6b90721b5f44d60dba772e881492319768b83193e70fa2b69b8",
+      "comparison_sha256": "1b19db8bd94f09b338b1946fc858fd293815eaaee7ae7f21e507c94f337ffd3c"
+    },
+    {
+      "file": "psychopy__psychopy-7475.json",
+      "changed_field": "llm.model",
+      "before": "z-ai/glm-5.3",
+      "after": "anthropic/claude-sonnet-4.6",
+      "other_fields_identical": true,
+      "baseline_sha256": "7dabb0b5e2b68919c46334ea126eed94841b5631ded97dbbc8368ff0a352eac1",
+      "comparison_sha256": "2de25b762b46cc36da040888dff71210ad879a78dbd5a44e5c3f56097339138b"
+    },
+    {
+      "file": "psychopy__psychopy-7805.json",
+      "changed_field": "llm.model",
+      "before": "z-ai/glm-5.3",
+      "after": "anthropic/claude-sonnet-4.6",
+      "other_fields_identical": true,
+      "baseline_sha256": "06fe41e31ba9be514029cb278f62076a2d0c47c57b424581c9b00d1feca420bd",
+      "comparison_sha256": "e260a443d769f8965acf3bed4960c38ba8ba212e13a4804d80186975b2c534a0"
+    }
+  ],
+  "shared_code_sha256": {
+    "submit_install_check.py": "ce19305eeb5ac061623f00f6b0319c66413dcebd61e10f7553fb7cd174884c2b",
+    "trc_install_check.py": "b93fe08e9a092bfd5d17c272eeae5d6dae0c80e92b0eaee212e35504b979c7dc",
+    "docker_resource_wrapper.py": "c7a827152f22d478137bf69487e8505a34cd8ec06a8b9a61a4874e2f72a30f66",
+    "trc_supervisor.py": "395ed54084745c60de2d56a4961d31a71f2917f3a8d84fdea750af2407732c58",
+    "install_controller.sh": "97b4101cfc67c6730d3dde3dc5fbec3429a2ab6b675a7a2a712eca158a3dc17a",
+    "run_native_windows.py": "36caa104acaf7215116b6e9451756e60f73a42a0de5e44491b72b72707d81551",
+    "run-official.sh": "99bdddb10cb7c4525827b9c70676667b4a4864f192984e6d69b4472fca2591b7"
+  },
+  "endpoint_metadata_checked_at": "2026-10-20T20:51:03.259804+00:00",
+  "endpoints_advertising_native_request_parameters": 9,
+  "upstream_source_changes": [],
+  "artifact_retention": "Separate immutable comparison evidence on the permanent #25 research branch; preserve baseline evidence unchanged."
+}
