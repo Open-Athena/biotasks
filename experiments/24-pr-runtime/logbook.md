@@ -615,3 +615,13 @@ and recovery provenance differ). There are no per-PR retries or repairs.
 This is same-cohort recovery evidence, not a new independent held-out estimate,
 and cannot retroactively improve the original campaign's result. Its maximum
 10.5 additional allocated CPU-hours keeps the total below the 48-hour budget.
+
+Recovery preflight submitted no jobs: historical worker IDs were no longer
+eligible. A read-only live query found 184 healthy existing reserved workers,
+all with running jobs. Before any recovery task submission, version v2b selects
+two current healthy workers from distinct pools (fewest running jobs, lexical
+tie-break), with exact TPU-name/worker-index constraints. Iris still schedules
+within available reserved resources; no new capacity is created. The recovery
+worker/PR semantics remain byte-identical. The original failure receipts'
+attempt worker_id fields are empty; shared-worker linkage comes from the job
+error messages, not those empty fields.
