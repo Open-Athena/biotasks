@@ -2662,3 +2662,9 @@ replays, including unknown differences, to specification and executable grading;
 only those stages can assess semantic acceptability. Added streaming compressed
 table profiles and regression tests. Eighteen focused offline tests passed. No
 scientific artifact was manually amended; the next campaign starts from the seed.
+
+While campaign 003 runs frozen at `897e24c0`, added a generic payload-building CLI
+and explicit `seed_file` selection to the shared launch helper. This removes the
+private launcher's seed override from future submissions. Four offline tests
+check seed selection, byte identity and path containment. The running campaign
+is unchanged; these launch-interface changes are not part of its factory pin.

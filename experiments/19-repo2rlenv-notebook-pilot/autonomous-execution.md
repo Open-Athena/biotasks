@@ -45,9 +45,34 @@ If a controller defect requires a factory change, the next proof run starts from
 the original seed; it cannot count a repaired stage continuation as unattended.
 
 The first held-out case is Bioframe's `tutorial_assign_peaks_to_genes.ipynb`, pinned
-at `95007ed6fc03b01005d75f95cac511b2df286854`. It has not been used for model task
-generation in this project. The runner receives the notebook and general task
+at `95007ed6fc03b01005d75f95cac511b2df286854`. It had not been used for model task
+generation in this project before the autonomous attempts recorded here. The runner receives the notebook and general task
 policy, without a manually selected analysis endpoint or task design. Input-data
 redistribution is not assessed by this execution test; output remains private
 unless separately approved for publication. PR 23 stays draft and unmerged until
 this acceptance criterion is met and the user approves promotion.
+
+## Starting another seed
+
+Commit the notebook, its provenance JSON (including `source_sha256`), and a
+configuration with a new `campaign` identifier. `notebook_file` and `seed_file`
+are paths relative to this experiment directory. Scientific endpoint selection
+and task design are not configuration inputs; workers derive them from the seed.
+
+Build the immutable launch payload without network/model effects:
+
+```bash
+python experiments/19-repo2rlenv-notebook-pilot/launch_autonomous.py \
+  --revision HEAD \
+  --config autonomous-cases/peaks-to-genes/config.json \
+  --upstream-archive /path/to/pinned-repo2rlenv.tar.gz \
+  --output /tmp/new-autonomous-payload
+```
+
+The builder reads the configuration and seed from the chosen Git revision,
+checks notebook identity before submission, and hashes every payload member.
+It refuses an existing output directory. Submit those files through the existing
+`launch_iris.submit_prepared` adapter using the approved private provider setup;
+credentials and endpoint discovery stay outside the public payload. Submission
+is distinct from payload creation. Once the job starts, `run_autonomous.py`
+performs the complete stage dispatch without operator-produced handoffs.
