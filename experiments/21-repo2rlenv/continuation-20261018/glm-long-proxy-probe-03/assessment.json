@@ -1,0 +1,24 @@
+{
+  "stage": "zero_model_keepalive_delayed_response_delivered",
+  "caller_delay_request_seconds": 650,
+  "caller_timeout_seconds": 780,
+  "caller_elapsed_seconds": 650.119,
+  "server_delay_receipt_recorded": true,
+  "exact_request_hash_correlated": true,
+  "caller_received_response": true,
+  "error_type": null,
+  "model_calls": 0,
+  "task_attempts": 0,
+  "task_fixes": 0,
+  "new_sandboxes": 0,
+  "diagnostic_endpoint_gracefully_finished": true,
+  "owned_diagnostic_endpoints_remaining": 0,
+  "TRC_Docker_cli_available": false,
+  "native_equivalence_backend_unblocked": false,
+  "conclusion": "Same synthetic request/delay now delivers with early headers and JSON-whitespace keepalive:650.119seconds vs prior780.141second timeout. This supports inactivity-related delivery failure but does not identify a specific layer or prove actual GLM transport.",
+  "limits": [
+    "The original650-second silent-response failure remains separately preserved.",
+    "No native task result is repaired or replayed.",
+    "Actual model forwarding remains unadapted; this mode has no GLM credential and makes zero model calls."
+  ]
+}
