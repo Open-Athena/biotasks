@@ -14,7 +14,7 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | Route | Biopython | scikit-bio | bedtools2 | DESeq2 |
 | --- | ---: | ---: | ---: | ---: |
 | pr_diff/native | 3 / 10 | 3 / 10 | 3 / 10 | 3 / 10 |
-| pr_runtime/native | 3 / 9 | 3 / 5 | 0 / ? B | 0 / ? B |
+| pr_runtime/native | 3 / 10 | 3 / 10 | 0 / ? B | 0 / ? B |
 | commit_runtime/native | 0 / 10 | 1 / 10 | 0 / ? B | 0 / ? B |
 | code_instruct/native | 0 / 10 | 0 / 10 | — | — |
 | equivalence_tests/native | 0 / ? B | 0 / ? B | — | — |

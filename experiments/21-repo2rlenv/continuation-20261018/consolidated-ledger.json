@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-20T03:21:08.601779+00:00",
+  "as_of_utc": "2026-10-20T04:28:07.549229+00:00",
   "stage": "consolidated_verified_results_so_far_not_final_completion",
   "tasks": [
     {
@@ -614,16 +614,19 @@
       "shortfall": 0,
       "first_pass_blind_attempts": 0,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 9,
-      "remaining_candidate_allowance": 1,
-      "candidate_charge_note": "One original PR5148 input, three newer matched similarity inputs rejected by native no-test-patch filter, then five fixed historical inputs; selection counts once including filter rejects. Saved eligible PR5316 is not a new charge if later materialized.",
-      "state": "target_met_for_declared_native_reward",
-      "next_action": "Three-task target met for the declared native reward. No further candidate discovery for this unit; retain lineage and complete only pending single blind attempts or declared integration gates.",
+      "charged_candidate_attempts": 10,
+      "remaining_candidate_allowance": 0,
+      "candidate_charge_note": "One original PR5148 input, three newer matched similarity inputs rejected by native no-test-patch filter, then five fixed historical inputs; selection counts once including filter rejects. Saved eligible PR5316 is not a new charge if later materialized. Final automatic-baseline intake conservatively charges the remaining original selection before native filters: one Biopython input or five scikit-bio inputs. This is not a runtime-execution count; adapted legacy admissions remain separate.",
+      "state": "candidate_cap_exhausted_automatic_baseline_intake_rejected",
+      "next_action": "Final unused PR5361 rejected by unchanged native no_new_test_funcs filter. Original selection cap10 exhausted; no new runtime task. Retain3adapted legacy admissions separately from0verified unchanged baseline admissions and automatic target shortfall3.",
       "native_reward_semantics": [],
       "original_status": "native_export_not_independently_accepted",
       "first_pass_sources": [
         "evidence/biopython-pr-01/result.json"
-      ]
+      ],
+      "automatic_unchanged_admissions": 0,
+      "automatic_target_shortfall": 3,
+      "final_baseline_selection": "pr-runtime-final-baseline-selection.json"
     },
     {
       "unit_id": "pr_runtime/native@scikit-bio/scikit-bio",
@@ -637,11 +640,11 @@
       "shortfall": 0,
       "first_pass_blind_attempts": 1,
       "candidate_cap": 10,
-      "charged_candidate_attempts": 5,
-      "remaining_candidate_allowance": 5,
-      "candidate_charge_note": "Conservative charge: two historical native execution profiles for one PR2633 lineage, plus frozen PR2630/2636 selected inputs. New selection counts even if a native filter/execution rejects it; no reset or new independent lineage inferred from repeat profiles.",
-      "state": "target_met_for_declared_native_reward",
-      "next_action": "Three-task target met for the declared native reward. No further candidate discovery for this unit; retain lineage and complete only pending single blind attempts or declared integration gates.",
+      "charged_candidate_attempts": 10,
+      "remaining_candidate_allowance": 0,
+      "candidate_charge_note": "Conservative charge: two historical native execution profiles for one PR2633 lineage, plus frozen PR2630/2636 selected inputs. New selection counts even if a native filter/execution rejects it; no reset or new independent lineage inferred from repeat profiles. Final automatic-baseline intake conservatively charges the remaining original selection before native filters: one Biopython input or five scikit-bio inputs. This is not a runtime-execution count; adapted legacy admissions remain separate.",
+      "state": "candidate_cap_exhausted_original_inputs_continuation_running",
+      "next_action": "PR2638 unchanged baseline collection failure, PR2637 native argv-size abort retained; original2635/2634/2632 never reached, dispatched separately with unchanged profile/native code. No failed-case replay or task fixes. Originalsourcecharge10, unchanged admissions0.",
       "native_reward_semantics": [
         "native_correctness"
       ],
@@ -649,6 +652,15 @@
       "first_pass_sources": [
         "evidence/skbio-pr-runtime-01/result.json",
         "evidence/skbio-pr-runtime-02/result.json"
+      ],
+      "automatic_unchanged_admissions": 0,
+      "automatic_target_shortfall": 3,
+      "final_baseline_selection": "pr-runtime-final-baseline-selection.json",
+      "final_baseline_execution_assessment": "pr-runtime-final-baseline-02/assessment.json",
+      "final_baseline_remaining_selected": [
+        2635,
+        2634,
+        2632
       ]
     },
     {
@@ -2040,9 +2052,9 @@
   "budget": {
     "ceiling_usd": 2000,
     "historical_first_pass_estimates_and_holds_usd": 908,
-    "continuation_estimates_and_holds_usd": 515,
-    "accounted_estimates_and_holds_usd": 1423,
-    "remaining_conservative_allowance_usd": 577,
+    "continuation_estimates_and_holds_usd": 530,
+    "accounted_estimates_and_holds_usd": 1438,
+    "remaining_conservative_allowance_usd": 562,
     "provider_invoice_verified": false,
     "credit_balance_verified": false
   },
@@ -2053,13 +2065,13 @@
       "swe-gen-skbio-pr2630-export-20261020-01"
     ],
     "transferred_holds_excluded_usd": 15,
-    "effective_continuation_holds_usd": 515
+    "effective_continuation_holds_usd": 530
   },
   "source_sha256": {
     "evidence/campaign-census-20261018/census.json": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
-    "continuation-20261018/target-tracker.json": "715ed6792d849755a6eb15905f8052671e8a1afde37c0af532e12c1dd59c3f6b",
+    "continuation-20261018/target-tracker.json": "7caa832c6fca3e7fbec1f972b400b258ce993e7c0706ef2059bb3987a74e1709",
     "continuation-20261018/new-admissions.json": "41121860919ecd19bc36e2ac81a8e66d7963e1c764658037db302fd30330b6d0",
-    "continuation-20261018/budget.json": "31f643edd359f419956b702308f1fa75554d4bc9836456341906f932af5bd41e",
+    "continuation-20261018/budget.json": "501f4908b7d8ac96b6dee56b61ccd5af01aa566fd79f59e8c13d5150a8443cdb",
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",
     "evidence/prdiff-biopython-provider-01/acceptance.json": "abde01f3461c0570ff65b7ce75c980395022c153a6df68b7a9d1c718fd30ac5a",
     "evidence/prdiff-biopython-blind-01/summary.json": "18f21888267c1088fd73976846d83eac886d8b4a8470b3d2b3b7ba72ff5c1be8",
