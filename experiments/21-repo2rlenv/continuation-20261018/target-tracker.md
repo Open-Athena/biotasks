@@ -1,6 +1,6 @@
 # Three-task target tracker
 
-Current admissions count independent validation, not raw exports. PR-diff admissions preserve patch-similarity semantics. Native language/profile exclusions and model/backend/input blockers remain explicit. Each seed recipe has a separate named cohort. The goal is not complete.
+Current admissions count independent validation, not raw exports. PR-diff admissions preserve patch-similarity semantics. Native language/profile exclusions and model/backend/input blockers remain explicit. Each seed recipe has a separate named cohort. The bounded comparison is complete under its original stop rules; this does not mean every three-task target was met.
 
 | Route / recipe | Biopython | scikit-bio | bedtools2 | DESeq2 |
 | --- | --- | --- | --- | --- |
