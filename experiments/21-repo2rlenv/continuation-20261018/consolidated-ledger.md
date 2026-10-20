@@ -4,7 +4,7 @@ First pass and continuation combined. Every accepted task below has independent 
 
 | Reward family | Accepted | Scored once | Maximum reward | Partial | Zero | Pending |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Correctness / algorithmic | 19 | 18 | 15 | 1 | 2 | 1 |
+| Correctness / algorithmic | 19 | 19 | 16 | 1 | 2 | 0 |
 | Patch similarity | 12 | 12 | 1 | 3 | 8 | 0 |
 
 ### Repository-route ledger
@@ -76,6 +76,6 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | commit_runtime/native | scikit-bio/scikit-bio | scikit-bio__scikit-bio-d25f305cea3a | 0.75 |
 | repo_mutate/swe_smith | scikit-bio/scikit-bio | swe-smith-f39ded25ef48a6575366 | 1 |
 | repo_mutate/swe_smith | scikit-bio/scikit-bio | swe-smith-2b1ed7afc9535c5c23fb | 1 |
-| pr_to_env/swe_gen | scikit-bio/scikit-bio | swe-gen-d52d9d8d8c952c886adb | pending |
+| pr_to_env/swe_gen | scikit-bio/scikit-bio | swe-gen-d52d9d8d8c952c886adb | 1 |
 
 Patch-similarity rewards do not establish functional correctness. Scaler uses native −1/+1 rewards; the other scored correctness profiles use 0–1. No combined benchmark pass rate is claimed. Full stable identities and source hashes are preserved in `consolidated-ledger.json`.

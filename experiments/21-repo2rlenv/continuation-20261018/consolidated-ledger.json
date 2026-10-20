@@ -1,5 +1,5 @@
 {
-  "as_of_utc": "2026-10-20T02:09:11.531254+00:00",
+  "as_of_utc": "2026-10-20T02:36:38.332093+00:00",
   "stage": "consolidated_verified_results_so_far_not_final_completion",
   "tasks": [
     {
@@ -481,13 +481,13 @@
       "native_task": "swe-gen-d52d9d8d8c952c886adb",
       "phase": "continuation",
       "reward_semantics": "native binary all320expected tests pass; range[0,1]",
-      "blind_attempts": null,
-      "native_reward": null,
-      "solver_state": "active_counter_unobserved",
+      "blind_attempts": 1,
+      "native_reward": 1.0,
+      "solver_state": "scored",
       "admission_source": "continuation-20261018/new-admissions.json",
-      "solver_source": null,
+      "solver_source": "continuation-20261018/swe-gen-pr2630-blind-01/independent-audit.json",
       "admission_artifact_prefix": "research/21-repo2rlenv/2026-10-18/8d5ab7f104ff381513117037eda7b9a5da072dd2593e622d921a422abbd754f5",
-      "solver_artifact_prefix": null
+      "solver_artifact_prefix": "research/21-repo2rlenv/2026-10-18/573158d7f84281cfaf07cc907b7b7b92cbeeb1354d12ad7436f3af8457139916"
     }
   ],
   "units": [
@@ -1243,8 +1243,8 @@
       "charged_candidate_attempts": 10,
       "remaining_candidate_allowance": 0,
       "candidate_charge_note": "One selected PR reached native recipe materialization and authoring. Rejected instruction stays rejected; source reuse does not reset its original repair bounds. Nine additional inputs fixed from the original PR-diff considered list, excluding the consumed PR, are conservatively charged at selection including native source/schema rejects. Retained source-resolved inputs still require native runtime/author/export stages; no new discovery or replay. Exact source hashes and counter keys are retained in remaining-candidate-reconciliation.json.",
-      "state": "candidate_cap_exhausted_unchanged_output_admitted_blind_controller_active",
-      "next_action": "Monitor the existing swe-gen-pr2630-blind-20261020-01 controller. Native agent-start counter is unobserved; recover original provider controls, one allowed blind attempt, grades/traces and cleanup. Do not redispatch, repair task/runtime or reset source cap. Exact Marin compatibility remains pending.",
+      "state": "candidate_cap_exhausted_unchanged_output_admitted_blind_scored_conversion_pending",
+      "next_action": "Single first blind GLM attempt is scored1.0/320tests and publicly preserved; no repeat attempt or author repair. Check exact-profile Marin compatibility and retain source cap10/target shortfall2.",
       "native_reward_semantics": [
         "binary expected repository tests all pass"
       ],
@@ -2015,15 +2015,15 @@
     },
     "correctness_and_algorithmic": {
       "admitted": 19,
-      "scored": 18,
-      "maximum_reward": 15,
+      "scored": 19,
+      "maximum_reward": 16,
       "partial_reward": 1,
       "zero_reward": 2,
-      "pending": 1
+      "pending": 0
     }
   },
   "total_admitted": 31,
-  "total_scored": 30,
+  "total_scored": 31,
   "budget": {
     "ceiling_usd": 2000,
     "historical_first_pass_estimates_and_holds_usd": 908,
@@ -2044,9 +2044,9 @@
   },
   "source_sha256": {
     "evidence/campaign-census-20261018/census.json": "f5ed856bf9befa15288e13f80b70c74866ea4f6651c03a7d7ac125bd97bdb846",
-    "continuation-20261018/target-tracker.json": "74e713befe8d14a62e8f56335a3e4fb0b3d4f8658cf9b03532bcfd636c459473",
-    "continuation-20261018/new-admissions.json": "0dcfb8b00b8b656b296be7f6a95701ce486df0626547edd737212aa74727d96d",
-    "continuation-20261018/budget.json": "9aea4e489d1877a275906ef21dcb52bef5fcd6570d5410f23e6adf401990915a",
+    "continuation-20261018/target-tracker.json": "e6792fefbcc961d8d63ad910defa00d9fe6a63c05f3b6bd085e1071b237f8c0d",
+    "continuation-20261018/new-admissions.json": "6c7569fdfca3d44d26a46e10045d65fca0b48d5799cdbe212fcd5c2a853cd142",
+    "continuation-20261018/budget.json": "31f643edd359f419956b702308f1fa75554d4bc9836456341906f932af5bd41e",
     "evidence/scaler-native-acceptance/summary.json": "6bea8c4d5469084aa5dc4ec4f5396b953b0376c8a2d4068afb795601a85fe6f9",
     "evidence/prdiff-biopython-provider-01/acceptance.json": "abde01f3461c0570ff65b7ce75c980395022c153a6df68b7a9d1c718fd30ac5a",
     "evidence/prdiff-biopython-blind-01/summary.json": "18f21888267c1088fd73976846d83eac886d8b4a8470b3d2b3b7ba72ff5c1be8",
