@@ -1,0 +1,133 @@
+{
+  "stage": "post_run_assessment_passed_original_automatic_task_unchanged_publication_pending",
+  "repository": "scikit-bio/scikit-bio",
+  "route": "pr_to_env/swe_gen",
+  "candidate_id": "d52d9d8d8c952c886adb",
+  "task_id": "swe-gen-d52d9d8d8c952c886adb",
+  "original_task_asset_hashes_and_modes_verified": 1980,
+  "original_task_matches_published_native_export": true,
+  "manual_assessment_only": true,
+  "model_calls": 0,
+  "new_source_candidates": 0,
+  "new_native_exports": 0,
+  "new_admissions": 0,
+  "task_specific_fixes": 0,
+  "feedback_to_author": false,
+  "native_control_attempts": 6,
+  "native_graded_controls": 6,
+  "native_rewards": [
+    0.0,
+    1.0,
+    1.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "expected_rewards": [
+    0,
+    1,
+    1,
+    0,
+    0,
+    1
+  ],
+  "raw_junit_and_rewards_independently_recomputed": true,
+  "verdict": "passes_declared_post_run_quality_controls_unchanged",
+  "instruction_review": "Original GLM statement accurately specifies ASCII A-Z lowercasing at selected positions, a-z constructor tracking, preservation of punctuation/already-lowercase bytes, masks and writer round trips. Expected examples agree with the frozen source/contrast contract; no instruction rewrite or task-specific feedback.",
+  "native_reward_contract": "Binary all320expected repository tests pass; partial constructor-only repair receives0.",
+  "learner_private_packaging_checks": {
+    "submitted_files": [
+      "skbio/sequence/_sequence.py"
+    ],
+    "declared_private_test_files_absent_from_learner_source": [
+      "skbio/sequence/tests/test_sequence.py",
+      "skbio/io/format/tests/test_fasta.py",
+      "skbio/io/format/tests/test_fastq.py"
+    ],
+    "other_public_test_fixtures_remain_visible": true,
+    "git_history_not_in_learner_source": true,
+    "runtime_provider_private_path_preflight": "Pending blind-provider controls; no fabricated execution result."
+  },
+  "lineage": "Same historical PR2630 ASCII-case competency as other routes; separately generated SWE-gen instruction and binary320-test verifier. Not a new independent biological competency.",
+  "assessment_profile_changed_assets": [],
+  "assessment_profile_deleted_assets": [],
+  "assessment_sandbox_seconds": 493.359539,
+  "assessment_sandbox_minutes": 8.222658983333334,
+  "per_accepted_task_time": null,
+  "rows": [
+    {
+      "case": "baseline",
+      "returncode": 1,
+      "passed": 316,
+      "failed": 4,
+      "skipped": 0,
+      "reward": 0.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/baseline/baseline__ECeSVVS/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/baseline/baseline__ECeSVVS/verifier/results.xml"
+    },
+    {
+      "case": "native_reference",
+      "returncode": 0,
+      "passed": 320,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/native_reference/native_reference__wTpAGna/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/native_reference/native_reference__wTpAGna/verifier/results.xml"
+    },
+    {
+      "case": "alternative",
+      "returncode": 0,
+      "passed": 320,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/alternative/alternative__fBLTZi3/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/alternative/alternative__fBLTZi3/verifier/results.xml"
+    },
+    {
+      "case": "partial",
+      "returncode": 1,
+      "passed": 317,
+      "failed": 3,
+      "skipped": 0,
+      "reward": 0.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/partial/partial__URy6LXW/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/partial/partial__URy6LXW/verifier/results.xml"
+    },
+    {
+      "case": "incorrect",
+      "returncode": 1,
+      "passed": 308,
+      "failed": 12,
+      "skipped": 0,
+      "reward": 0.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/incorrect/incorrect__eZYzP5R/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/incorrect/incorrect__eZYzP5R/verifier/results.xml"
+    },
+    {
+      "case": "alternative_repeat",
+      "returncode": 0,
+      "passed": 320,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/alternative_repeat/alternative_repeat__KZs5hiy/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/alternative_repeat/alternative_repeat__KZs5hiy/verifier/results.xml"
+    }
+  ],
+  "assessor_check_correction": "The first publication check incorrectly rejected every file beneath test directories, including public fixtures and unrelated tests. The corrected check verifies the three declared private grading test files and Git history are absent. No task asset or runtime result changed.",
+  "limits": [
+    "This is post-run manual assessment of the completed automatic output, not a generation/author/repair run.",
+    "Every original task asset including runtime and grader matches all1980published hashes/modes; only separate control solution scripts vary.",
+    "Finite native controls are not exhaustive correctness or broad grader-integrity proof. The deferred end-to-end integrity diagnostic remains unexecuted.",
+    "Native stage orchestration and prior curated repository profile do not establish unattended discovery/end-to-end production yield.",
+    "No admission or solver reward is claimed before public readback and the separate accounting update."
+  ]
+}
