@@ -114,3 +114,75 @@ the required resource guards/thread limits/priorities. Peak RSS was respectively
 20,272 / 22,908 / 20,540 KiB, below the 64 MiB estimate; each exited 0.
 End load was 0.11, MemAvailable 4,529,844 KiB. The metadata collector exited
 normally and has no remaining worker.
+
+## 2026-10-20 — PR window and static eligibility
+
+The frozen panel contains 594 merged PRs in the declared window, with complete
+pagination and count reconciliation for every repository. Hash sampling selected
+115 PRs (up to 20 per repository). Four repositories had no merged PRs in the
+window and were retained without substitution.
+
+| Repository | Window merged PRs | Sampled | Native statically eligible |
+| --- | ---: | ---: | ---: |
+| psychopy/psychopy | 315 | 20 | 2 |
+| nipy/nipype | 27 | 20 | 4 |
+| MLCIL/scikit-fingerprints | 111 | 20 | 10 |
+| fastlmm/PySnpTools | 2 | 2 | 0 |
+| Huber-group-EMBL/rhdf5 | 57 | 20 | 0 |
+| sneumann/xcms | 12 | 12 | 0 |
+| nanoporetech/dorado | 0 | 0 | 0 |
+| samtools/samtools | 69 | 20 | 0 |
+| fastlmm/bed-reader | 0 | 0 | 0 |
+| nglviewer/ngl | 1 | 1 | 0 |
+| AIM-Harvard/pyradiomics | 0 | 0 | 0 |
+| dauparas/ProteinMPNN | 0 | 0 | 0 |
+
+These are 16 structurally eligible candidates, **not validated tasks**.
+One additional PsychoPy PR has unresolved diff coverage because the native
+diff-header parser's file count differs from GitHub's `changedFiles`; it is
+neither admitted nor counted as a confirmed structural rejection.
+The disproportionate repository/language sample does not support multiplying
+16/115 by the whole inventory's lifetime PR count.
+
+`native_filters.py` evaluates only the exact static-filter AST nodes from the
+SHA-verified upstream source. It does not import or run bootstrap/runtime/model
+clients. Metadata, source/test split, test-path and new-test-function fixtures
+passed at 14:38:12 UTC, exit 0, peak RSS 20,324 KiB.
+
+The static scan ran 14:38:41–14:39:48 UTC, exit 0, peak RSS 49,260 KiB against
+a 128 MiB estimate, holding the node-wide lock with resource checks and
+single-thread/nice/ionice settings. Active memory/load observations stayed above
+2 GiB available and below the 2.5 load stop threshold. One later load reading
+was 1.78, so no additional heavy command was launched then. The scan has exited;
+there is no owned analysis worker left running.
+
+Representative native filter limitation: rhdf5 PRs 175, 180 and 226 add
+`test_that(...)` tests, but the new-test regex recognizes Python/Go/JavaScript
+forms and does not recognize R's form. Native rejection is not evidence that
+the underlying R changes lack regression tests. C/C++ parser/profile support
+also remains separate from static source/test splitting.
+
+Cached diffs and hash receipts remain local pending source-terms/public-eligibility
+review; they have not been published or counted as archived. Search metadata,
+sampling inputs and static-filter code are checkpointed separately.
+
+Next: complete recent-PR count coverage beyond the small panel, resolve the
+diff-coverage discrepancy, freeze the development/held-out candidate split,
+inspect bootstrap/provider requirements and prepare the bounded execution plan.
+The issue's execution, automatic acceptance, quality/cost and operational
+pipeline requirements remain open.
+
+## 2026-10-20 — Iris/TRC execution direction
+
+The user explicitly directed parallel CPU work toward Iris, especially TRC.
+Use existing reserved TRC CPU capacity for parallel builds/validation, with
+bounded resources, durable evidence and cleanup. This is not permission to
+purchase new capacity, launch accelerators or restart cluster services.
+No Codex subagents were requested or launched.
+
+The current Iris documentation distinguishes ordinary CPU jobs from Docker
+socket access and privileged nested runtimes; the latter are admin-gated.
+Check supported execution capabilities before choosing the worker implementation.
+An old local Iris client environment failed imports before contacting the
+controller; a read-only capacity query is being attempted with the current
+Marin environment instead. No worker has been submitted.
