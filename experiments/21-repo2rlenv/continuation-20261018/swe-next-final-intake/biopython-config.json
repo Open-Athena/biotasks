@@ -1,0 +1,110 @@
+{
+  "repo": {
+    "url": "https://github.com/biopython/biopython",
+    "ref": "c911b1210e69df202834418ec43fba62a9d0b100",
+    "access": "public"
+  },
+  "recipe": "swe_next",
+  "options": {
+    "source_paths": [
+      "Bio/SeqFeature.py",
+      "Bio/SeqUtils/__init__.py"
+    ],
+    "test_paths": [
+      "Tests/test_SeqFeature.py",
+      "Tests/test_SeqUtils.py",
+      "Tests/GenBank/origin_line.gb"
+    ],
+    "private_test_paths": [
+      "Tests/GenBank/origin_line.gb"
+    ],
+    "pytest_args": [],
+    "test_selectors": [],
+    "public_exclude": [],
+    "materialize_document_links": [],
+    "base_image": "python:3.12.3-slim",
+    "use_system_site_packages": false,
+    "dependencies": [
+      "pytest==9.0.3",
+      "coverage==7.16.0"
+    ],
+    "hub_assets": [],
+    "install_command": "apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/* && python -m pip install --no-cache-dir -e . 'numpy==2.4.2' 'pytest==9.0.3' 'coverage==7.16.0' && python -c 'exec(\"from pathlib import Path\\nimport hashlib\\nlicense_file=Path('\"'\"'LICENSE'\"'\"');license_source=Path('\"'\"'LICENSE.rst'\"'\"');data=license_source.read_bytes()\\nassert (license_file.is_symlink() and license_file.readlink()==Path('\"'\"'LICENSE.rst'\"'\"')) or (license_file.is_file() and license_file.read_bytes()==data)\\nif license_file.is_symlink():license_file.unlink()\\nlicense_file.write_bytes(data)\\nfixture=Path('\"'\"'Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'r2e_tests/Tests/GenBank/origin_line.gb'\"'\"')\\nif not fixture.exists():fixture=Path('\"'\"'GenBank/origin_line.gb'\"'\"')\\nraw=fixture.read_bytes()\\nassert hashlib.sha256(raw).hexdigest()=='\"'\"'a188b26e7d7f9126e1ff4d6f3c4c5db1bd0788c3c5073c9727e9dc4ab504019e'\"'\"'\\nPath('\"'\"'GenBank'\"'\"').mkdir(exist_ok=True)\\nPath('\"'\"'GenBank/origin_line.gb'\"'\"').write_bytes(raw)\\n\")'",
+    "task_install_command": null,
+    "freeze_git_version": false,
+    "test_timeout_sec": 90,
+    "exclude_candidate_ids": [],
+    "test_cpus": 1,
+    "test_memory_mb": 2048,
+    "target": 3,
+    "max_candidates": 10,
+    "history_limit": 2000,
+    "max_non_test_files": 5,
+    "max_non_test_edited_lines": 200,
+    "max_patch_length": 10000,
+    "require_bug_edit": false,
+    "require_test_match": false,
+    "max_added_entities": 1,
+    "max_edited_entities": 4,
+    "max_statement_entities": 6,
+    "max_prs": 300,
+    "pr_numbers": [
+      5376,
+      5369,
+      5361,
+      5360,
+      5359,
+      5358
+    ]
+  },
+  "pulls": [
+    {
+      "number": 5376,
+      "head": "4eda92397bdedff82f04ac218a862ae25ebdc4a8",
+      "title": "Update the documentation for Bio.Align.CodonAligner",
+      "body": "- [X] I hereby agree to dual licence this and any previous contributions under both\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\nlocally, and understand that continuous integration checks will be used to\nconfirm the Biopython unit tests and style checks pass with these changes.\n\n- [X] I have added my name to the alphabetical contributors listings in the files\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\n",
+      "url": "https://github.com/biopython/biopython/pull/5376",
+      "merged_at": "2026-10-16T06:35:11Z"
+    },
+    {
+      "number": 5369,
+      "head": "fc0c156786e86862112a05a720b6f4f47023f36a",
+      "title": "Codon align convenience function part 2",
+      "body": "This PR generalizes the convenience function `codon_align` of the codon aligner such that it can be used in two ways:\n- With an amino acid sequence as the first argument and a nucleotide sequence as the second argument, it performs an alignment between the two and returns it.\n- With an amino acid alignment as the first argument and nucleotide sequences as the second argument, with the number of nucleotide sequences equal to the number of proteins in the amino acid alignment, it performs an alignment between each protein sequence and the corresponding nucleotide sequence. It then returns the alignment of the nucleotide sequences, based on the protein sequence alignment and the alignment of each protein sequence against the corresponding nucleotide sequence.\n\n- [X] I hereby agree to dual licence this and any previous contributions under both\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\nlocally, and understand that continuous integration checks will be used to\nconfirm the Biopython unit tests and style checks pass with these changes.\n\n- [X] I have added my name to the alphabetical contributors listings in the files\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\n",
+      "url": "https://github.com/biopython/biopython/pull/5369",
+      "merged_at": "2026-10-11T16:03:51Z"
+    },
+    {
+      "number": 5361,
+      "head": "fa5f1daee5ead8f44a5560f958c1aea63fc34353",
+      "title": "Ruff misc cleanups like sorting __all__",
+      "body": "Another chunk of minor cleanups from ruff - cross reference #5354.\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\n",
+      "url": "https://github.com/biopython/biopython/pull/5361",
+      "merged_at": "2026-10-10T18:22:23Z"
+    },
+    {
+      "number": 5360,
+      "head": "bb295f15adb75d0296361a063e645eba35160ab0",
+      "title": "Apply ruff's I001 import sorting (with force-single-line)",
+      "body": "These are automated changes from ruff version 0.16.10, using:\r\n\r\n```\r\n$ ruff check --fix --fixable I001 --select I001 --config \"lint.isort.force-single-line = true\" HEAD is now at 072b11ff5 Fix d105 docstrings (#5338) Found 101 errors (101 fixed, 0 remaining).\r\n```\r\n\r\nThis is essentially a repeat of #4662, but is part of the larger set of changes I started in #5354 which was too big to easily review. The idea here is to apply the sensible changes in stages with the hope of adopting the newer ruff soon.\r\n\r\n<!--- Please read each of the following items and confirm by replacing\r\n !--the [ ] with a [X] --->\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\n<!--- Briefly describe the changes included in this pull request below\r\n !--- starting with 'Closes #...' if appropriate --->\r\n\r\nThis could be extended to address #2828 (automate and enforce the import sorting).",
+      "url": "https://github.com/biopython/biopython/pull/5360",
+      "merged_at": "2026-10-08T08:08:22Z"
+    },
+    {
+      "number": 5359,
+      "head": "b77ec82b2652d8d420ba81e9d6d8f6b641c8e159",
+      "title": "Pre commit update",
+      "body": "<!--- Please read each of the following items and confirm by replacing\r\n !--the [ ] with a [X] --->\r\n\r\n- [x] I hereby agree to dual licence this and any previous contributions under both\r\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\r\n\r\n- [x] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\r\nlocally, and understand that continuous integration checks will be used to\r\nconfirm the Biopython unit tests and style checks pass with these changes.\r\n\r\n- [x] I have added my name to the alphabetical contributors listings in the files\r\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\r\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\r\n\r\n<!--- Briefly describe the changes included in this pull request below\r\n !--- starting with 'Closes #...' if appropriate --->\r\n\r\nThe easy subset of #5354 before trying to deal with changes suggested by the new version of ruff.",
+      "url": "https://github.com/biopython/biopython/pull/5359",
+      "merged_at": "2026-10-07T15:37:40Z"
+    },
+    {
+      "number": 5358,
+      "head": "e38c64daa2433ecf21f596f76287d41122a4a000",
+      "title": "Accept CLUSTALW as a Clustal header word",
+      "body": "Closes #5355\n\n- [X] I hereby agree to dual licence this and any previous contributions under both\nthe _Biopython License Agreement_ **AND** the _BSD 3-Clause License_.\n\n- [X] I have read the ``CONTRIBUTING.rst`` file, have run ``pre-commit``\nlocally, and understand that continuous integration checks will be used to\nconfirm the Biopython unit tests and style checks pass with these changes.\n\n- [X] I have added my name to the alphabetical contributors listings in the files\n``NEWS.rst`` and ``CONTRIB.rst`` as part of this pull request, am listed\nalready, or do not wish to be listed. (*This acknowledgement is optional.*)\n\nSome tools (Benchling, per the issue) write the Clustal header as a single word, `CLUSTALW`, rather than `CLUSTAL W`. Both the `Bio.AlignIO` and `Bio.Align` Clustal parsers reject that with `ValueError: CLUSTALW is not a known CLUSTAL header`.\n\nThis adds `CLUSTALW` to the known-program list in both parsers, as suggested in the issue discussion, with a test for each.\n\nTested: the two new tests fail on master and pass with the change; `test_AlignIO_ClustalIO`, `test_Align_clustal`, `test_AlignIO`, `test_SeqIO` pass; `pre-commit` is clean.\n",
+      "url": "https://github.com/biopython/biopython/pull/5358",
+      "merged_at": "2026-10-09T00:36:57Z"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "observed_utc": "2026-10-19T23:23:30.099501+00:00",
+  "observed_utc": "2026-10-20T01:36:09.700848+00:00",
   "stage": "receipt_backed_candidate_counters_before_further_dispatch",
   "units": {
     "commit_runtime/native@biopython/biopython": {
@@ -101,31 +101,43 @@
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_runtime/swe_next@biopython/biopython": {
-      "charged_candidate_attempts": 4,
-      "remaining_allowance": 6,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/swe-next-biopython-broader-02/summary.json",
           "sha256": "0b14e0f1350f66f443a7dacd86225abddef6fe5624ccf45591dc2afb454a6ece",
           "counter_key": "first_pass_considered_candidates_total",
           "charged": 4
+        },
+        {
+          "source": "continuation-20261018/swe-next-final-intake/selection.json",
+          "sha256": "43f3b1955ba7e0d18824c1f7cdb5d3bdfa0e9f112652b46958bd62005d72f121",
+          "counter_key": "units.biopython.new_selected",
+          "charged": 6
         }
       ],
-      "definition": "Conservative considered-input charge includes original PR5317 plus three additional fixed inputs, including native source-filter rejection. Two subsequent materializations failed before authoring; they do not add a second input charge.",
+      "definition": "Conservative considered-input charge includes original PR5317 plus three additional fixed inputs, including native source-filter rejection. Two subsequent materializations failed before authoring; they do not add a second input charge. Final remaining PR-diff-order inputs fixed and charged before metadata/native filtering, using the last existing repository profile with only the input list changed; no outcome-based replacement or task fixes.",
       "new_dispatch_authorized_by_this_file": false
     },
     "pr_runtime/swe_next@scikit-bio/scikit-bio": {
-      "charged_candidate_attempts": 1,
-      "remaining_allowance": 9,
+      "charged_candidate_attempts": 10,
+      "remaining_allowance": 0,
       "receipts": [
         {
           "source": "evidence/swe-next-skbio-01/summary.json",
           "sha256": "23403ae6e8a713bd46fe9deafe65c860f59df8e9ec24306a614769e5a61b228c",
           "counter_key": "candidates",
           "charged": 1
+        },
+        {
+          "source": "continuation-20261018/swe-next-final-intake/selection.json",
+          "sha256": "43f3b1955ba7e0d18824c1f7cdb5d3bdfa0e9f112652b46958bd62005d72f121",
+          "counter_key": "units.skbio.new_selected",
+          "charged": 9
         }
       ],
-      "definition": "One selected PR reached authoring/export; original instruction rejection retained.",
+      "definition": "One selected PR reached authoring/export; original instruction rejection retained. Final remaining PR-diff-order inputs fixed and charged before metadata/native filtering, using the last existing repository profile with only the input list changed; no outcome-based replacement or task fixes.",
       "new_dispatch_authorized_by_this_file": false
     },
     "commit_runtime/r2e_gym@biopython/biopython": {
