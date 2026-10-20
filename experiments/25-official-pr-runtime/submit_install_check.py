@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import os
 from pathlib import Path
 
 from iris.cli.connect import connect_controller
@@ -17,12 +18,21 @@ def main():
     parser.add_argument("--config", type=Path, required=True)
     parser.add_argument("--receipt", type=Path, required=True)
     parser.add_argument("--run-id", required=True)
+    parser.add_argument("--persistent", action="store_true")
     args = parser.parse_args()
     assert not args.receipt.exists(), "Inspect the existing submission; do not resubmit"
     root = Path(__file__).resolve().parent
     paths = [root / "trc_install_check.py", root / "docker_resource_wrapper.py",
              *sorted((root / "proposed-configs").glob("*.json"))]
+    if args.persistent:
+        assert os.environ.get("OPENROUTER_API_KEY"), "Authorized key must be supplied through the process environment"
+        paths.extend([root / "trc_supervisor.py", root / "install_controller.sh"])
     files = {str(path.relative_to(root)): path.read_bytes() for path in paths}
+    runtime = 36000 if args.persistent else 1800
+    entrypoint = "trc_supervisor.py" if args.persistent else "trc_install_check.py"
+    env_vars = {"BIOTASKS_INSTALL_RUN_ID": args.run_id}
+    if args.persistent:
+        env_vars["OPENROUTER_API_KEY"] = os.environ["OPENROUTER_API_KEY"]
     with connect_controller(config_file=args.config) as endpoint:
         with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, timeout_ms=30000) as client:
             workers = client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
@@ -44,20 +54,20 @@ def main():
             name = args.run_id
             receipt = {"job_id": f"/exedev/{name}", "state": "submission_pending",
                        "worker_id": worker.worker_id, "cpu": 4, "memory": "16GB",
-                       "timeout_seconds": 1800, "model_calls": 0}
+                       "timeout_seconds": runtime, "native_execution_requires_go_file": args.persistent}
             with args.receipt.open("x") as handle:
                 handle.write(json.dumps(receipt, indent=2) + "\n")
             job = client.submit(
                 name=name,
                 entrypoint=Entrypoint(command=["bash", "-c",
-                    'exec "$IRIS_PYTHON" -u "$IRIS_WORKDIR/trc_install_check.py"'], workdir_files=files),
+                    f'exec "$IRIS_PYTHON" -u "$IRIS_WORKDIR/{entrypoint}"'], workdir_files=files),
                 resources=ResourceSpec(cpu=4, memory="16GB", disk="30GB"),
-                environment=EnvironmentSpec(setup_scripts=[], env_vars={"BIOTASKS_INSTALL_RUN_ID": name}),
+                environment=EnvironmentSpec(setup_scripts=[], env_vars=env_vars),
                 constraints=[Constraint.create(key="tpu-name", op=ConstraintOp.EQ,
                                                value=worker.metadata.tpu_name),
                              Constraint.create(key="tpu-worker-id", op=ConstraintOp.EQ,
                                                value=int(worker.metadata.tpu_worker_id or 0))],
-                scheduling_timeout=Duration.from_seconds(180), timeout=Duration.from_seconds(1800),
+                scheduling_timeout=Duration.from_seconds(180), timeout=Duration.from_seconds(runtime),
                 max_retries_failure=0, max_retries_preemption=0,
                 priority_band=job_pb2.PRIORITY_BAND_BATCH,
                 container_profile=job_pb2.CONTAINER_PROFILE_DOCKER_ACCESS,

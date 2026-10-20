@@ -137,3 +137,21 @@ existing reserved host and checks reported resource headroom before pinning it.
 No repository bootstrap or model-call retry is involved. Lightweight remote
 status reads do not require the local heavy-work lock; the previous lock gate
 was unnecessarily restrictive.
+
+The second installation check completed successfully in approximately 33 seconds.
+The archive checksum and size were verified on readback. Upstream 0.9.3, Harbor
+0.22.0, GitHub CLI 2.97.0 and Python 3.12.15 loaded; all five native configs passed.
+Two containers were inspected at 1.5 CPUs/6 GiB each; a third was rejected. No
+owned containers remained. Docker 23.0.6 client matched daemon API 1.42. Evidence
+is under `install-002/`. There were no model calls or repository bootstraps.
+
+The persistent runner reuses that setup and pins its observed base-image digest
+and Docker archive checksum. It receives the authorized OpenRouter key only via
+process environment; repository containers do not receive it. GitHub login stays
+inside the private controller. Native execution requires a checkpointed command
+and an explicit go file delivered through Iris's supported `task exec` interface.
+The runner has a ten-hour total timeout (40 allocated CPU-hours maximum), no
+retries, and the same four-CPU/16-GiB reservation and container caps. Installation,
+authentication and waiting time count against that ceiling. The prior check used
+about 0.04 allocated CPU-hours. Authentication is limited to fifteen minutes and
+waiting for the native command to one hour. Only run-owned resources are cleaned.
