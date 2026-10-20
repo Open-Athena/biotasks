@@ -2703,3 +2703,16 @@ execution unlocks shell-assisted repair. An unsupported candidate can instead be
 explicitly blocked. This changes no scientific method or seed-specific behavior,
 adds no model request cap, and does not modify the running frozen campaign.
 Fifteen focused materialization tests pass. Live effectiveness is unproven.
+
+## 2026-10-20 — require reproducible input staging
+
+Campaign 005 passed its setup test but fresh replay failed because the generated
+staging recipe expected an input already present in the exploratory cache.
+The controlled setup test recreated the Python environment but retained input
+files, so it did not establish that staging was self-contained. This is a general
+controller defect, not a scientific rejection or a reason to edit generated files.
+Controlled setup now empties both allowed input/cache roots before executing the
+recipe. The worker must recreate them from recorded sources and can repair a
+failure using its existing test allowance. Fifteen setup tests pass, including a
+real shell reset on synthetic files that preserves candidate files and symlink
+targets outside the cache. Candidate-first construction was not reached in 005.

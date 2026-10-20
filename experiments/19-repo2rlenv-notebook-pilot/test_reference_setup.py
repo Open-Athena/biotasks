@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import json
 import shutil
+import subprocess
 import time
 from pathlib import Path
 
@@ -114,6 +115,38 @@ def session(tmp_path, remote=None):
         reference_seconds=10,
         max_tests=1,
     )
+
+
+def test_controlled_setup_cannot_reuse_exploratory_inputs(tmp_path):
+    work, inputs = tmp_path / "work", tmp_path / "inputs"
+    for directory in (work / "cache", work / "venv", work / "environment", inputs):
+        directory.mkdir(parents=True)
+        (directory / "exploratory-only").write_text("not reproducible")
+    outside = tmp_path / "outside.txt"
+    outside.write_text("preserve")
+    (work / "cache/link").symlink_to(outside)
+    (work / "setup").mkdir()
+    (work / "setup/recipe").write_text("preserve candidate")
+
+    class FreshRemote(FakeRemote):
+        async def command(self, argv, seconds, label, *, cwd="/work"):
+            if label.startswith("reset-env-"):
+                command = argv[-1].replace("/work", str(work)).replace("/inputs", str(inputs))
+                subprocess.run(["sh", "-eu", "-c", command], check=True, timeout=10)
+            if label.startswith("setup-"):
+                assert list(inputs.iterdir()) == []
+                assert list((work / "cache").iterdir()) == []
+                assert not (work / "venv").exists()
+                assert outside.read_text() == "preserve"
+                assert (work / "setup/recipe").read_text() == "preserve candidate"
+            return await super().command(argv, seconds, label, cwd=cwd)
+
+    async def run():
+        s = session(tmp_path / "records", FreshRemote())
+        await s.initialize()
+        assert json.loads(await s.test_reference())["status"] == "reference_executed"
+
+    asyncio.run(run())
 
 
 def successful_outcome(**changes):

@@ -210,7 +210,13 @@ class SetupSession:
             (directory / "reference.py").write_text(script)
             write_environment(directory, recipe, verify_inputs=False)
             await self.setup_command(
-                ["sh", "-eu", "-c", "rm -rf /work/venv /work/environment; mkdir /work/environment"],
+                [
+                    "sh",
+                    "-eu",
+                    "-c",
+                    "rm -rf /work/venv /work/environment /work/cache /inputs; "
+                    "mkdir -p /work/environment /work/cache /inputs",
+                ],
                 30,
                 f"reset-env-{self.tests}",
             )

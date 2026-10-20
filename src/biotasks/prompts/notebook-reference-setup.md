@@ -53,6 +53,11 @@ the scientific script runs in `/work/run`. After staging, the controller deletes
 and recreates `/work/run` and `/work/outputs`. Do not stage inputs or symlinks
 there: they would be removed. Keep staged inputs in `/inputs` or `/work/cache`
 and use necessary input-path adaptations to refer to those persistent paths.
+Before each controlled test, the controller empties `/inputs` and `/work/cache`
+as well as recreating the virtual environment. Your staging recipe must recreate
+all declared data and caches from their recorded sources; it cannot rely on files
+downloaded during exploratory shell work. Those directories persist through the
+subsequent offline reference execution, not between setup tests.
 
 ## Files to produce
 
