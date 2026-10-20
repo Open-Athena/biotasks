@@ -1,0 +1,79 @@
+Traceback (most recent call last):
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 493, in <module>
+    result = asyncio.run(
+        Pipeline(
+    ...<6 lines>...
+        ).execute()
+    )
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 428, in execute
+    await self.step("grading", grading, paid=True)
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 222, in step
+    await action()
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 406, in grading
+    result = await remote(
+             ^^^^^^^^^^^^^
+    ...<5 lines>...
+    )
+    ^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py", line 313, in run
+    await run_grading(
+    ...<8 lines>...
+    )
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/grading_session.py", line 700, in run_grading
+    candidate = await call(
+                ^^^^^^^^^^^
+    ...<6 lines>...
+    )
+    ^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/grading_session.py", line 538, in call
+    return await stage(
+           ^^^^^^^^^^^^
+    ...<15 lines>...
+    )
+    ^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/reference_stage.py", line 74, in stage
+    return await artifact_stage(
+           ^^^^^^^^^^^^^^^^^^^^^
+    ...<19 lines>...
+    )
+    ^
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/src/repo2rlenv/tasksmith/author/artifact.py", line 326, in artifact_stage
+    await (agent_runner or run_agent)(
+    ...<10 lines>...
+    )
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/reference_stage.py", line 65, in run_author
+    return await author(**kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/biotasks/src/biotasks/chat_author.py", line 371, in __call__
+    result = await handlers[name](**arguments)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/src/repo2rlenv/tasksmith/author/artifact.py", line 310, in remote_shell
+    return await shell(command=command, timeout_sec=min(timeout_sec, remaining))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/grading_session.py", line 220, in shell
+    reply = await self.helper(
+            ^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/grading_session.py", line 74, in helper
+    reply = await self.command(["python", "/work/grading_remote.py", *args], seconds, label)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/grading_session.py", line 69, in command
+    return await self.remote.command(argv, seconds, label)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py", line 122, in command
+    self.remaining(seconds)
+    ~~~~~~~~~~~~~~^^^^^^^^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py", line 111, in remaining
+    raise TimeoutError("Insufficient time for the full operation and its return")
+TimeoutError: Insufficient time for the full operation and its return

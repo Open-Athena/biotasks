@@ -2728,3 +2728,21 @@ is explicitly separated from the confirmed filename mismatch. Added only a
 general filename/inventory consistency reminder and automatic retention of
 controller test diagnostics. Candidate-first construction and the positive
 validation path still need live exercise, so the next run starts from the seed.
+
+## 2026-10-20 — autonomous construction and recoverable admission feedback
+
+Campaign 007 completed construction after GLM repaired its own first candidate,
+then executed an independent solution without answer access. Grading remained
+incomplete: a requested shell timeout no longer fit the remaining campaign
+allowance, and the pre-dispatch refusal aborted the stage. This is infrastructure
+failure, not scientific rejection. The host terminated and all owned sandboxes
+were deleted; original receipts are in `autonomous-runs/007`.
+
+The controller now distinguishes safe time-budget refusal before dispatch from
+uncertain remote execution. A shell worker gets actionable remaining-time feedback
+when a shorter operation could still fit; the deadline and computation ceilings
+do not change. Exhausted budgets and lost provider responses remain terminal.
+Fifty-eight focused grading/setup tests pass. No generated scientific content was
+manually changed. The next comparison uses the original approved motifs notebook,
+without any previous generated artifacts, to test the same controller on a
+different analysis. This is a known seed, not a new held-out notebook.

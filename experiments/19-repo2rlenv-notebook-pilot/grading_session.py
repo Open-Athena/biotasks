@@ -26,6 +26,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
+from run_reference_setup import OperationBudgetExceeded
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -217,11 +218,28 @@ class GradingSession:
     async def shell(self, command, timeout_sec=120, *, role="author"):
         if type(timeout_sec) is not int or not 1 <= timeout_sec <= self.config["reference_seconds"]:
             raise ValueError("Shell timeout must fit the agreed single-computation allowance")
-        reply = await self.helper(
-            ["shell", role, command, str(timeout_sec)],
-            timeout_sec + 10,
-            "grading-shell-" + str(time.time_ns()),
-        )
+        try:
+            reply = await self.helper(
+                ["shell", role, command, str(timeout_sec)],
+                timeout_sec + 10,
+                "grading-shell-" + str(time.time_ns()),
+            )
+        except OperationBudgetExceeded as exc:
+            available = exc.available_seconds - 10
+            if available < 1:
+                raise
+            return json.dumps(
+                {
+                    "status": "not_executed",
+                    "reason": "requested_timeout_exceeds_remaining_time",
+                    "max_timeout_seconds": available,
+                    "message": (
+                        "No command executed. The campaign deadline is unchanged. "
+                        "Request a shorter timeout only if the operation can fit, "
+                        "or submit the supported outcome. Allow time for subsequent checks."
+                    ),
+                }
+            )
         return json.dumps(reply)
 
     async def validate_probe_execution(self, probe):

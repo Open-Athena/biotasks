@@ -27,6 +27,74 @@ Path(a.report).write_text(json.dumps({'passed':ok,'checks':[{'id':'value','passe
 """
 
 
+def test_shell_budget_refusal_allows_shorter_request_but_not_transport_retry(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    executions = []
+
+    class Worker:
+        def upload(self, *args):
+            pass
+
+        def exec(self, argv, **kwargs):
+            executions.append(argv)
+            raise TimeoutError("provider response lost")
+
+    remote = Remote(Worker(), SimpleNamespace(), tmp_path / "remote", 200, 1)
+    session = GradingSession(
+        remote=remote,
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
+    )
+
+    async def exercise():
+        refused = json.loads(await session.shell("true", 600))
+        assert refused["status"] == "not_executed"
+        assert refused["max_timeout_seconds"] == 75
+        assert executions == []
+        assert remote.operation == 0 and not remote.uncertain
+        # The worker may choose a shorter timeout. A lost response after dispatch
+        # must still terminate the session, never become recoverable feedback.
+        with pytest.raises(TimeoutError, match="provider response lost"):
+            await session.shell("true", 10)
+        assert len(executions) == 1 and remote.uncertain
+        with pytest.raises(RuntimeError, match="uncertain"):
+            await session.shell("true", 10)
+        assert len(executions) == 1
+
+    (tmp_path / "remote").mkdir()
+    asyncio.run(exercise())
+
+
+def test_exhausted_shell_budget_is_terminal(tmp_path, monkeypatch):
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded, Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    remote = Remote(None, None, tmp_path, 120, 1)
+
+    async def upload(*args):
+        pass
+
+    remote.upload = upload
+    session = GradingSession(
+        remote=remote,
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
+    )
+    with pytest.raises(OperationBudgetExceeded):
+        asyncio.run(session.shell("true", 1))
+    assert remote.operation == 0
+
+
 def candidate():
     return Grader(
         disposition="ready",

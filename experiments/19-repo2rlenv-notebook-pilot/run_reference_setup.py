@@ -92,6 +92,14 @@ def check_config(config):
         raise ValueError("Preparation must be within the frozen experiment")
 
 
+class OperationBudgetExceeded(TimeoutError):
+    """A command was refused before dispatch; no remote outcome is uncertain."""
+
+    def __init__(self, available_seconds):
+        self.available_seconds = available_seconds
+        super().__init__("Insufficient time for the full operation and its return")
+
+
 class Remote:
     """Recorded, timeout-bounded I/O using upstream DaytonaWorker."""
 
@@ -108,7 +116,7 @@ class Remote:
             )
         remaining = int(self.deadline - time.time()) - 15
         if requested > remaining:
-            raise TimeoutError("Insufficient time for the full operation and its return")
+            raise OperationBudgetExceeded(remaining)
         return requested
 
     async def upload(self, local, remote):
