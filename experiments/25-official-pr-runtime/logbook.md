@@ -128,3 +128,12 @@ inspect the existing job before any further execution. Its scheduling timeout
 is 180 seconds and execution timeout is 1,800 seconds. It carries no credentials
 and cannot make model calls. Local launcher and observation processes exited;
 no local worker remains owned by this task.
+
+At 19:58 UTC, a direct lightweight observation confirmed install-001 was
+UNSCHEDULABLE with no attempts and no output archive. The pinned worker was
+absent from the current worker list. This is an infrastructure placement failure,
+not an installation or pipeline result. The next submission prefers an occupied
+existing reserved host and checks reported resource headroom before pinning it.
+No repository bootstrap or model-call retry is involved. Lightweight remote
+status reads do not require the local heavy-work lock; the previous lock gate
+was unnecessarily restrictive.

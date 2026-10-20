@@ -16,7 +16,7 @@ import urllib.request
 
 ROOT = Path(__file__).resolve().parent
 OUT = Path(os.environ["IRIS_OUTPUT_DIR"])
-RUN = "biotasks25-install-001"
+RUN = os.environ["BIOTASKS_INSTALL_RUN_ID"]
 REV = "27d04ee8203cd5b2f20c3997d13836e5f5b64238"
 SOURCE_SHA = "9c09729e909766366d8761e71a3585a64f656d1d3c64909b0656a0af28b402e9"
 TOOLS = Path("/opt/biotasks25-install-tools")
@@ -92,7 +92,7 @@ docker run -d --name biotasks25-install-001-slot2 python:3.12-slim sleep 120
 if docker run -d --name biotasks25-install-001-slot3 python:3.12-slim sleep 120; then exit 91; fi
 docker inspect biotasks25-install-001-slot1 biotasks25-install-001-slot2 --format '{{.HostConfig.NanoCpus}} {{.HostConfig.Memory}} {{.HostConfig.MemorySwap}} {{.HostConfig.NetworkMode}}'
 docker rm -f biotasks25-install-001-slot1 biotasks25-install-001-slot2
-'''.replace("SOURCE_SHA", SOURCE_SHA).replace("REV", REV)
+'''.replace("SOURCE_SHA", SOURCE_SHA).replace("REV", REV).replace("biotasks25-install-001", RUN)
         (TOOLS / "setup.sh").write_text(setup)
         docker("cp", str(TOOLS / "setup.sh"), f"{container}:/work/setup.sh")
         with (OUT / "installation.log").open("w") as log:
