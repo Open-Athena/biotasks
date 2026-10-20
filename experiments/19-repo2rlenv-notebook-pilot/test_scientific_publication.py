@@ -30,6 +30,7 @@ def test_publication_parent_chain(tmp_path, monkeypatch, concurrent_change):
 
         def upload_folder(self, **kwargs):
             assert kwargs["parent_commit"] == "previous"
+            assert kwargs["num_threads"] == 1
             assert kwargs["delete_patterns"] == ["old-task/data.csv"]
             writes.append("release")
             return SimpleNamespace(oid="release")
@@ -41,9 +42,10 @@ def test_publication_parent_chain(tmp_path, monkeypatch, concurrent_change):
             writes.append("registry")
             return SimpleNamespace(oid="registry")
 
-    hub = ModuleType("huggingface_hub")
-    hub.HfApi = Api
-    hub.hf_hub_download = lambda *args, **kwargs: str(old)
+    import huggingface_hub as hub
+
+    monkeypatch.setattr(hub, "HfApi", Api)
+    monkeypatch.setattr(hub, "hf_hub_download", lambda *args, **kwargs: str(old))
     release = ModuleType("repo2rlenv.campaigns.release")
     release.verify_release = lambda path: {
         "repo_id": repo,
@@ -57,14 +59,13 @@ def test_publication_parent_chain(tmp_path, monkeypatch, concurrent_change):
         return {"state": "completed"}
 
     release.publish_release = publish
-    monkeypatch.setitem(sys.modules, "huggingface_hub", hub)
     monkeypatch.setitem(sys.modules, "repo2rlenv.campaigns.release", release)
     monkeypatch.setattr(sys, "argv", ["publish", str(tmp_path), str(tmp_path / "receipt.json")])
     script = Path(__file__).with_name("publish_scientific_release.py")
     if concurrent_change:
         with pytest.raises(RuntimeError, match="Parent commit"):
-            runpy.run_path(str(script))
+            runpy.run_path(str(script), run_name="__main__")
         assert writes == ["release"]
     else:
-        runpy.run_path(str(script))
+        runpy.run_path(str(script), run_name="__main__")
         assert writes == ["release", "registry"]

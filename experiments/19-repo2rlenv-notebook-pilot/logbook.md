@@ -2506,3 +2506,29 @@ worker inputs/prompts/outputs with their hashes; the small public payload has a
 recorded eligibility/credential audit. Native configuration now selects grading
 004 and unchanged materialization 005. Native oracle/no-op controls, one blind
 GLM attempt, publication and independent release download remain required.
+
+### 2026-10-20 — Native controls and blind solver passed; stage release
+
+Native 001 completed from `de7c881b585380b2a415e4fc1ea9b24e4877a540`:
+oracle 1, no-op 0, blind GLM-5.3 Terminus-2 solver 1, without exceptions.
+The gate records seven successful solver requests. Full archive download/readback,
+three exact ownership-label provider absence checks and terminal SUCCEEDED host/
+task readback are verified. The pre-trial task archive was retrieved through the
+supported Iris CLI plus normal signed object reads, with URLs kept in memory;
+local bounded extraction and upstream bundle inspection match
+`sha256:44e68b961e2d5dee6b0ea445f34f5803eabb6198c6aa09d0d6a3420673ad0fa6`.
+
+The locally staged release passes the full acceptance gate, including trial
+result hashes, final control/candidate binding, exact public instructions,
+source-attribution equality and all three original input hashes. It targets the
+approved public personal namespace as `biotasks-notebook-pilot-issue-19-bioframe`.
+Credential/private-endpoint pattern checks on the staged text artifacts are clear.
+No upload has happened yet.
+
+Force the publisher's supported upload thread count to one for the shared node.
+The two existing parent-chain tests were not invoking guarded `main`; correct
+the runpy entrypoint and patch the real lazy Hub module rather than replacing it
+with an incomplete stand-in. Five focused offline ownership/parent-chain tests
+now pass, exercising actual guarded entry, race rejection and one-worker upload.
+This changes publication/test infrastructure only; the staged executable bundle
+and native source identity are unchanged.
