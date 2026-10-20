@@ -565,3 +565,19 @@ for its own tracked bootstrap container and run-specific image tag. This is a
 transport adaptation; validation and emitted task/grader code remain upstream.
 The wrapper now removes only run-labeled images, including intermediate build
 images, after removing owned containers. Shared base/cache images are untouched.
+
+Nipype 008 has built #3745's native task image and executed base/reference,
+three source-file omissions and test deletion in fresh offline containers.
+Native reward is 0 for base/deletion, 1 for reference and 0/0.5 for omissions.
+Two extra-gate harness mistakes were found: treating application ERROR log
+messages as pytest errors and requiring zero rather than non-full reward for
+partial fixes. Both are corrected before held-out freeze. Eight synthetic
+regression cases pass (0.06 seconds, 19,940 KiB peak RSS, exit 0; local estimate
+50 MiB, lock/thread/priority limits applied, available memory 4.46 GiB).
+Original 008 results will remain unchanged; corrected gate replay is separate.
+
+Prepared 009 to exercise the single-entrypoint campaign launcher on #3745 only,
+with the observed Python 3.12 image digest and exact runner-package constraints
+from 006. Target dependency resolution remains declarative at bootstrap and is
+recorded with pip freeze; it is not a fully archived package-index snapshot.
+The native source archive is now verified by its recorded SHA256.

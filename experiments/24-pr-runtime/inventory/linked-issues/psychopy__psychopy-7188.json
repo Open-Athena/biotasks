@@ -1,0 +1,7 @@
+{
+  "number": 7188,
+  "title": "[Bug]: StairHandler minVal and maxVal will be ineffective when set stepSizes to negative",
+  "body": "### PsychoPy Version\n\n2024.2.5\n\n### What OS are your PsychoPy running on?\n\nLinux-based systems\n\n### Bug Description\n\nsee following\n\n### Expected Behaviour\n\n see following\n\n### Steps to Reproduce\n\n```python\n  from psychopy import data\n\n  handler = data.StairHandler(\n      startVal=0,\n      minVal=0,\n      stepType=\"lin\",\n      stepSizes=-1,\n  )\n  i = 20\n  for e in handler:\n      handler.addResponse(0)\n      print(e)\n      i = i - 1\n      if i <= 0:\n          break\n```\n\nIt should not print negative numbers, but 0.\n\n### Additional context\n\n_No response_",
+  "html_url": "https://github.com/psychopy/psychopy/issues/7188",
+  "updated_at": "2025-11-22T08:54:38Z"
+}

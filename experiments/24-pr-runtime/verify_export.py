@@ -18,6 +18,35 @@ import time
 from pathlib import Path
 
 
+def pytest_statuses(parser, log):
+    """Exclude application logger lines misrecognized by the native parser."""
+    return {key: value for key, value in parser("pytest", log).items()
+            if re.match(r"^[^\s:]+\.py(?:::|$)", key)}
+
+
+def baseline_assertion_gate(outcome, parser):
+    statuses = pytest_statuses(parser, outcome.pre_log)
+    return bool(
+        outcome.fail_to_pass and outcome.pass_to_pass
+        and all(statuses.get(t) == "FAILED" for t in outcome.fail_to_pass)
+        and "ERROR" not in statuses.values()
+        and "ERROR collecting" not in outcome.pre_log
+        and re.search(r"AssertionError|DID NOT RAISE|^E\s+assert ", outcome.pre_log,
+                      flags=re.MULTILINE)
+    )
+
+
+def controls_passed(controls, baseline_gate):
+    by_name = {c["name"]: c for c in controls}
+    return bool(
+        baseline_gate and by_name["reference"]["strict_reference_pass"]
+        and all(c.get("disposition") == "graded" and
+                c.get("details", {}).get("resolved") is False and
+                c.get("details", {}).get("reward", 1) < 1
+                for c in controls if c["name"] != "reference")
+    )
+
+
 def verify_export(native_docker, manifest, row, outcome, bootstrap, out):
     from repo2rlenv.emitter.harbor import write_harbor_task
     from repo2rlenv.github import PullRequestSummary
@@ -88,14 +117,8 @@ def verify_export(native_docker, manifest, row, outcome, bootstrap, out):
             verifier_spec = importlib.util.spec_from_file_location("exported_verifier", verifier_file)
             verifier = importlib.util.module_from_spec(verifier_spec)
             verifier_spec.loader.exec_module(verifier)
-            pre_statuses = verifier.parse_logs("pytest", outcome.pre_log)
-            result["baseline_assertion_gate"] = bool(
-                outcome.fail_to_pass and outcome.pass_to_pass
-                and all(pre_statuses.get(t) == "FAILED" for t in outcome.fail_to_pass)
-                and "ERROR" not in pre_statuses.values()
-                and re.search(r"AssertionError|DID NOT RAISE|^E\s+assert ", outcome.pre_log,
-                              flags=re.MULTILINE)
-            )
+
+            result["baseline_assertion_gate"] = baseline_assertion_gate(outcome, verifier.parse_logs)
             chunks = re.split(r"(?=^diff --git )", patch, flags=re.MULTILINE)
             chunks = [chunk for chunk in chunks if chunk.strip()]
             ranked = sorted(
@@ -157,7 +180,7 @@ def verify_export(native_docker, manifest, row, outcome, bootstrap, out):
                     grader_exit_code=graded.exit_code,
                     details=json.loads(details.stdout) if details.ok else None,
                 )
-                statuses = verifier.parse_logs("pytest", graded.stdout)
+                statuses = pytest_statuses(verifier.parse_logs, graded.stdout)
                 control["statuses"] = statuses
                 d = control["details"] or {}
                 control["strict_reference_pass"] = bool(
@@ -174,12 +197,8 @@ def verify_export(native_docker, manifest, row, outcome, bootstrap, out):
                 result["controls"].append(control)
                 sandbox.cleanup()
                 sandbox = None
-            by_name = {c["name"]: c for c in result["controls"]}
-            result["controls_passed"] = bool(
-                result["baseline_assertion_gate"] and by_name["reference"]["strict_reference_pass"]
-                and all(c.get("disposition") == "graded" and
-                        c.get("details", {}).get("reward") == 0
-                        for c in result["controls"] if c["name"] != "reference")
+            result["controls_passed"] = controls_passed(
+                result["controls"], result["baseline_assertion_gate"],
             )
             # Independent instruction/biology audit is an additional gate.
             result["reason"] = "pending_independent_audit" if result["controls_passed"] else "control_failure"

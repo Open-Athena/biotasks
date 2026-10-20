@@ -66,13 +66,18 @@ def prepare():
     venv = tools / "venv"
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True, timeout=60)
     os.environ["PATH"] = f"{tools}:{venv / 'bin'}:/usr/local/bin:/usr/bin:/bin"
+    constraints = ROOT / "runner-constraints.txt"
+    if constraints.exists():
+        os.environ["PIP_CONSTRAINT"] = str(constraints)
+        (OUT / constraints.name).write_bytes(constraints.read_bytes())
     with (OUT / "runner-install.log").open("w") as log:
         subprocess.run([
             str(venv / "bin/python"), "-m", "pip", "install", "uv_build==0.11.2",
         ], stdout=log, stderr=subprocess.STDOUT, check=True, timeout=120)
         subprocess.run([
             str(venv / "bin/python"), "-m", "pip", "install", "--no-build-isolation",
-            f"https://github.com/huggingface/Repo2RLEnv/archive/{REVISION}.tar.gz",
+            f"https://github.com/huggingface/Repo2RLEnv/archive/{REVISION}.tar.gz"
+            "#sha256=9c09729e909766366d8761e71a3585a64f656d1d3c64909b0656a0af28b402e9",
         ], stdout=log, stderr=subprocess.STDOUT, check=True, timeout=600)
     os.execv(str(venv / "bin/python"), [str(venv / "bin/python"), str(__file__), "--installed"])
 
@@ -97,17 +102,19 @@ def main():
         os.environ["DOCKER_BUILDKIT"] = "0"
     with (OUT / "runner-packages.txt").open("w") as packages:
         subprocess.run([sys.executable, "-m", "pip", "freeze", "--all"], stdout=packages, check=True)
-    assert manifest["cohort"] == "development"
+    assert manifest["cohort"] in ("development", "held_out")
+    if manifest["cohort"] == "held_out":
+        assert manifest["freeze_id"] == "biotasks24-python-v1"
     run_id = manifest["run_id"]
     assert re.fullmatch(r"biotasks24-[a-z0-9-]+", run_id)
     repo = manifest["repository"]
     assert re.fullmatch(r"[\w.-]+/[\w.-]+", repo)
     ref = manifest["bootstrap_ref"]
     base_image = manifest.get("base_image", "python:3.11-slim-bookworm")
-    assert re.fullmatch(r"python:3\.(11|12)-slim-bookworm", base_image)
+    assert re.fullmatch(r"python(?::3\.(11|12)-slim-bookworm|@sha256:[a-f0-9]{64})", base_image)
     assert re.fullmatch(r"[a-f0-9]{40}", ref)
     for row in manifest["prs"]:
-        assert row["cohort"] == "development"
+        assert row["cohort"] == manifest["cohort"]
         assert hashlib.sha256(row["diff"].encode()).hexdigest() == row["diff_sha256"]
     original_run = native_docker._run
     commands = []
@@ -200,7 +207,7 @@ def main():
 
     native_docker._run = bounded_run
     report = {
-        "stage": "development_native_validation",
+        "stage": f"{manifest['cohort']}_native_validation",
         "variant": "native validator with generic declarative Python bootstrap",
         "native_revision": REVISION, "model_calls": 0, "repository": repo,
         "run_id": run_id, "bootstrap_ref": ref, "results": [],
@@ -208,7 +215,7 @@ def main():
                    "setup_seconds": 1200, "validation_stage_seconds": 300,
                    "container_lifetime_seconds": 3000, "writable_layer_gib": 20},
         "limitations": [
-            "No held-out execution, final task export/build or solver run.",
+            "No solver model run; exported task checks are separate fields when enabled.",
             "Generic profile is an explicit adaptation; no model-assisted bootstrap was run.",
         ],
     }

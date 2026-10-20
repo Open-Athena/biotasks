@@ -1,0 +1,7 @@
+{
+  "number": 7793,
+  "title": "[Bug]: attribute error in visual.movies with MovieStim.stop()",
+  "body": "### PsychoPy Version\n\n2026.2.4\n\n### What OS are your PsychoPy running on?\n\nWindows 11\n\n### Bug Description\n\n```\n  File \"C:\\Users\\reynoben\\Documents\\greg-rcp\\src\\rcp_task_acquisition\\tasks\\bases.py\", line 176, in play_instructional_video\n    video.stop()\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 2188, in stop\n    self.loadMovie(self._filename)  # reload the movie\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 1464, in loadMovie\n    self.unload()\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 1678, in unload\n    self._freePlayer()  # free the player if it is already open\n    ^^^^^^^^^^^^^^^^\nAttributeError: 'MovieStim' object has no attribute '_freePlayer'. Did you mean: '_hasPlayer'?\n```\n\n\n### Expected Behaviour\n\nshould not raise and stop() should succeed ?\n\n### Steps to Reproduce\n\n1. Windows 11 + Python 3.12 + psychopy 2026.2.4\n2. use MovieStim stop() method\n\n\n### Additional context\n\n_No response_",
+  "html_url": "https://github.com/psychopy/psychopy/issues/7793",
+  "updated_at": "2026-09-30T15:47:49Z"
+}
