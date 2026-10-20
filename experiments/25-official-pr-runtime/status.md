@@ -1,59 +1,42 @@
-# Execution prerequisites unresolved
+# Official native run active
 
-This is preflight evidence, not a Repo2RLEnv result. Issue #25 remains open.
-No official generation run, model call, task export or grader execution has
-occurred. No upstream source has been modified.
+Issue #25 remains open. The official entrypoint is running on the authenticated,
+bounded TRC controller as `/exedev/biotasks25-official-001`, using checkpoint
+`8c67bf99`. No upstream source has been modified. This is not yet a completed
+pipeline result or a scalability conclusion.
 
-## Prepared
+## Verified prerequisites
 
-- Pinned official source and inspected CLI, authentication, bootstrap,
-  GitHub selection and Docker execution behavior.
-- Recorded the five comparison inputs and their revisions.
-- Verified official date-window selection covers those inputs and 11 other
-  same-day PRs, before native filters. No selector bypass is proposed.
-- Selected user-authorized GLM-5.3 through OpenRouter, with no fallback,
-  at most 20 bootstrap turns per repository and three repository bootstraps.
-- Recorded source hashes and a provisional launch plan. This plan is not an
-  executable, fully frozen protocol.
-- Ran two bounded connectivity probes on existing reserved CPU capacity.
-  Their results and authoritative terminal states are recorded separately.
+- Official source archive and frozen dependencies installed successfully.
+- All five native date-window configs passed upstream validation.
+- Docker client/daemon compatibility and the approved two-container resource
+  guard passed live checks; installation-check cleanup and archive readback passed.
+- The user completed a fresh GitHub device login on the controller. No existing
+  local GitHub credential was extracted or transferred.
+- Native GLM-5.3 calls through OpenRouter have begun successfully. There is no
+  fallback and no external LLM repair stage.
 
-## Blocking prerequisites
+## Current execution boundary
 
-1. **Remote GitHub authentication.** The official pipeline invokes `gh`.
-   Local authentication works, but no credential has been supplied for the
-   remote process. The user has been advised to use a short-lived public-read
-   token supplied through an approved secret location. Alternatively, a
-   supported browser login can authenticate the actual execution host.
-   Do not extract or transfer local credentials. The exact secret location
-   or runner login arrangement is still required.
-2. **Private GLM connectivity (superseded by OpenRouter selection).** Service discovery succeeds, but the tested TRC-to-
-   relay HTTP request produced a `URLError` after approximately ten seconds,
-   without an HTTP response. The approved service documentation describes
-   callers inside its serving cluster. A supported route reachable from TRC,
-   or an explicitly agreed execution-location change, is required. Do not
-   bypass the relay, change access controls or start another service silently.
-3. **Docker resource containment (adaptation approved; check pending).** Upstream creates sibling containers on
-   the Docker daemon without CPU or memory arguments. The outer Iris
-   allocation does not bound those siblings. Before launch, establish a
-   dedicated bounded Docker execution arrangement. The user approved the
-   resource-only wrapper on 2026-10-20. Inputs were checkpointed in `5293c751`;
-   the credential-free reserved-TRC installation and wrapper check was
-   submitted as `/exedev/biotasks25-install-001`. No native generation started.
+Three repositories, at most one bootstrap per repository, 20 native agent turns
+per bootstrap, a $5 estimated stop threshold per repository, and unchanged native
+2,048-output-token requests. The estimator is best-effort: early calls show
+$0.0000 estimates, which must not be interpreted as zero billed cost. Model
+responses marked INVALID by upstream remain native failures; no settings are
+changed in response.
 
-The user subsequently selected GLM-5.3 through OpenRouter. Private GLM
-connectivity is no longer a launch prerequisite; remote GitHub authentication
-and Docker resource containment remain unresolved. See `openrouter-preflight.json`.
+The five recorded windows cover the five comparison inputs and 11 additional
+same-day inputs before native filtering. Subsequent windows reuse the native
+bootstrap cache; they remain unresolved if that cache/image is unavailable.
 
 ## Remaining completion requirements
 
-Once access and execution containment are resolved, freeze the actual
-configuration, dependency/toolchain pins, supported service route, resource
-limits, invocation and artifact retention. Checkpoint executable inputs.
-Run the official pipeline with its native outcomes and retry behavior,
-without external model repairs. Preserve every attempt and cost record.
-Verify any exported tasks through the official grading route with base and
-reference controls, keeping native acceptance and diagnostic findings
-separate. Publish immutable evidence and a conclusion before closing #25.
+Record all native outcomes, export counts, usage/cost evidence and limitations.
+If tasks are exported, run official base/reference grading on the preserved
+images, without repairing source, tests or outputs. Keep native acceptance
+separate from grading results. Verify final archived artifacts and cleanup,
+then publish immutable evidence and a conclusion before closing #25.
 
-The current evidence does not justify a pipeline feasibility conclusion.
+The first installation submission was unschedulable with zero attempts because
+its pinned worker disappeared. The second succeeded. Those infrastructure
+attempts are separate from the native pipeline results.
