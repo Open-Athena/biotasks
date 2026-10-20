@@ -1,0 +1,136 @@
+{
+  "source_freeze_commit": "1f087934",
+  "capability_recovery_commit": "6312f1dc",
+  "frozen_worker_and_dependency_code_unchanged": true,
+  "same_inputs_except_run_identity_and_recovery_provenance": true,
+  "denominators": {
+    "inspected_prs": 115,
+    "statically_eligible": 16,
+    "development": 4,
+    "original_heldout_slots": 12,
+    "overlap_exclusions": 7,
+    "recovery_input_prs": 5,
+    "native_pr_validations_reached": 3,
+    "bootstrap_unresolved_prs": 2,
+    "qualified_technical_candidates": 0,
+    "final_automatically_accepted": 0,
+    "accepted_independent_fix_families": 0
+  },
+  "go_gate": {
+    "minimum_verified_tasks": 4,
+    "minimum_repositories": 2,
+    "maximum_allocated_cpu_hours_per_accepted": 12,
+    "decision": "NO_GO for promotion of this configuration",
+    "reason": "Even the technical-admission upper bound is zero; the numerical yield gate fails independently of the missing final automatic semantic acceptance stage."
+  },
+  "cases": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 544,
+      "automatic_disposition": "native_rejected",
+      "native_status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass_count": 0,
+      "reason": "no fail-to-pass tests after validation",
+      "qualified_technical_candidate": false,
+      "final_automatically_accepted": false,
+      "evidence": "evidence/heldout-recovery-v3/scfp/development-result.json"
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 525,
+      "automatic_disposition": "native_rejected",
+      "native_status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass_count": 8,
+      "reason": "no fail-to-pass tests after validation",
+      "qualified_technical_candidate": false,
+      "final_automatically_accepted": false,
+      "evidence": "evidence/heldout-recovery-v3/scfp/development-result.json"
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3753,
+      "automatic_disposition": "native_rejected",
+      "native_status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass_count": 0,
+      "reason": "no fail-to-pass tests after validation",
+      "qualified_technical_candidate": false,
+      "final_automatically_accepted": false,
+      "evidence": "evidence/heldout-recovery-v3/nipype/development-result.json"
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7475,
+      "automatic_disposition": "bootstrap_unresolved",
+      "native_status": null,
+      "fail_to_pass": null,
+      "pass_to_pass_count": null,
+      "reason": "Transitive wxPython source dependency could not import setuptools.build_meta under the frozen no-build-isolation bootstrap. Native PR validation was not reached.",
+      "qualified_technical_candidate": false,
+      "final_automatically_accepted": false,
+      "evidence": "evidence/heldout-recovery-v3/psychopy/bootstrap-failure.json"
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7805,
+      "automatic_disposition": "bootstrap_unresolved",
+      "native_status": null,
+      "fail_to_pass": null,
+      "pass_to_pass_count": null,
+      "reason": "Transitive wxPython source dependency could not import setuptools.build_meta under the frozen no-build-isolation bootstrap. Native PR validation was not reached.",
+      "qualified_technical_candidate": false,
+      "final_automatically_accepted": false,
+      "evidence": "evidence/heldout-recovery-v3/psychopy/bootstrap-failure.json"
+    }
+  ],
+  "audit": {
+    "preselected_hash_order": [
+      {
+        "repository": "psychopy/psychopy",
+        "number": 7475
+      },
+      {
+        "repository": "psychopy/psychopy",
+        "number": 7805
+      },
+      {
+        "repository": "MLCIL/scikit-fingerprints",
+        "number": 544
+      },
+      {
+        "repository": "MLCIL/scikit-fingerprints",
+        "number": 525
+      },
+      {
+        "repository": "nipy/nipype",
+        "number": 3753
+      }
+    ],
+    "preselected_first_three_nonaccepted_inputs": [
+      {
+        "repository": "psychopy/psychopy",
+        "number": 7475
+      },
+      {
+        "repository": "psychopy/psychopy",
+        "number": 7805
+      },
+      {
+        "repository": "MLCIL/scikit-fingerprints",
+        "number": 544
+      }
+    ],
+    "actual_review": "All five nonaccepted inputs were reviewed; this covers the ranked subset and also distinguishes two bootstrap-unresolved inputs from three native rejections.",
+    "accepted_output_sample_size": 0,
+    "false_acceptance_rate": null,
+    "broader_false_rejection_rate": null,
+    "rate_limit": "No accepted outputs; no independent ground-truth runnable task set or manually repaired profiles. Rates are not estimable.",
+    "rejection_consistency": "Both feature additions lack per-test F2P transitions after collection failure; the chirality test is explicitly PASSED in both pre/post logs. These dispositions match the declared gates.",
+    "chirality_limit": "The failing baseline is absent in this resolved environment. This does not prove the upstream fix is unnecessary; historical dependency behavior was not separately reconstructed.",
+    "unseen_repository_limit": "PsychoPy failed bootstrap before either PR was validated. Graphics and fixture requirements are source-audit observations, not the observed runtime failure.",
+    "source_audit": "evidence/source-audit.json",
+    "reviewer_limit": "Separate source/log review by the same assistant, not blinded external adjudication; no output was repaired or admitted by audit."
+  }
+}

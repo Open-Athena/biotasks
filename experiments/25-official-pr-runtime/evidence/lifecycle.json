@@ -1,0 +1,80 @@
+{
+  "observed_at": "2026-10-20T20:29:32.665649+00:00",
+  "runs": [
+    {
+      "run_id": "biotasks25-glm-route-001",
+      "state": "FAILED",
+      "terminal": true,
+      "allocated_cpus": 1.0,
+      "attempts": [
+        {
+          "state": "failed",
+          "started_at": "Timestamp(2026-10-20T18:13:28.352000+00:00)",
+          "finished_at": "Timestamp(2026-10-20T18:13:29.878000+00:00)",
+          "seconds": 1.526,
+          "allocated_cpu_hours": 0.0004238888888888889
+        }
+      ],
+      "error_message": "Cumulative failed task attempts exceeded max_task_failures: failures=1, limit=0; ValueError: Enum ContainerProfile has no name defined for value 6\n\nTraceback:\nTraceback (most recent call last):\n  File \"/app/lib/iris/src/iris/cluster/worker/task_attempt.py\", line 648, in run\n    self._run_container()\n  File \"/app/lib/iris/src/iris/cluster/worker/task_attempt.py\", line 846, in _run_container\n    self._container_handle.run()\n  File \"/app/lib/iris/src/iris/cluster/runtime/docker.py\", line 561, in run\n    self._run_container_id = self._docker_create(\n                             ^^^^^^^^^^^^^^^^^^^^\n  File \"/app/lib/iris/src/iris/cluster/runtime/docker.py\", line 687, in _docker_create\n    job_pb2.ContainerProfile.Name(resolve_container_profile(config.container_profile)),\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/app/.venv/lib/python3.12/site-packages/google/protobuf/internal/enum_type_wrapper.py\", line 52, in Name\n    raise ValueError('Enum {} has no name defined for value {!r}'.format(\nValueError: Enum ContainerProfile has no name defined for value 6\n"
+    },
+    {
+      "run_id": "biotasks25-glm-route-002",
+      "state": "SUCCEEDED",
+      "terminal": true,
+      "allocated_cpus": 1.0,
+      "attempts": [
+        {
+          "state": "succeeded",
+          "started_at": "Timestamp(2026-10-20T18:14:43.066000+00:00)",
+          "finished_at": "Timestamp(2026-10-20T18:14:57.998000+00:00)",
+          "seconds": 14.932,
+          "allocated_cpu_hours": 0.004147777777777778
+        }
+      ],
+      "error_message": ""
+    },
+    {
+      "run_id": "biotasks25-install-001",
+      "state": "UNSCHEDULABLE",
+      "terminal": true,
+      "allocated_cpus": 4.0,
+      "attempts": [],
+      "error_message": "Scheduling timeout exceeded (Duration(180.000s))"
+    },
+    {
+      "run_id": "biotasks25-install-002",
+      "state": "SUCCEEDED",
+      "terminal": true,
+      "allocated_cpus": 4.0,
+      "attempts": [
+        {
+          "state": "succeeded",
+          "started_at": "Timestamp(2026-10-20T19:59:57.626000+00:00)",
+          "finished_at": "Timestamp(2026-10-20T20:00:37.998000+00:00)",
+          "seconds": 40.372,
+          "allocated_cpu_hours": 0.044857777777777774
+        }
+      ],
+      "error_message": ""
+    },
+    {
+      "run_id": "biotasks25-official-001",
+      "state": "SUCCEEDED",
+      "terminal": true,
+      "allocated_cpus": 4.0,
+      "attempts": [
+        {
+          "state": "succeeded",
+          "started_at": "Timestamp(2026-10-20T20:05:17.020000+00:00)",
+          "finished_at": "Timestamp(2026-10-20T20:27:08.241000+00:00)",
+          "seconds": 1311.221,
+          "allocated_cpu_hours": 1.4569122222222222
+        }
+      ],
+      "error_message": ""
+    }
+  ],
+  "all_terminal": true,
+  "total_allocated_cpu_hours": 1.5063416666666667,
+  "accounting": "Scheduler running intervals times reserved CPUs, including startup and artifact upload; not actual CPU utilization. Interactive Codex cost and engineering time not measured."
+}

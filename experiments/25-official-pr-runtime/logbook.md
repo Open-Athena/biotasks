@@ -167,3 +167,33 @@ keeps their images alive for up to two hours for separately checkpointed officia
 base/reference grading, within its original total deadline. If no exports exist,
 there are no grading inputs. The archive includes native caches and outputs only,
 never the controller's GitHub authentication directory.
+
+### 2026-10-20 — native result and final evidence
+
+The persistent run completed without intervention in repository environments.
+Scikit-fingerprints and PsychoPy each exhausted twenty native agent turns; their
+later windows were skipped rather than re-bootstrapped. Nipype saved an environment
+in nine turns and passed upstream's fresh-image gate (which accepted test exit 1),
+then selected six PRs. Four lacked test patches; #3755 and comparison #3753 yielded
+zero parsed pre/post tests and were rejected. There were no exports, hence no
+base/reference grading inputs. Native validation output for rejected PRs was not
+persisted by upstream; its precise zero-parsed-test cause remains unverified.
+
+All five jobs are terminal. The original 27,016-byte archive was downloaded and
+verified against its authoritative checksum; native cache/output payloads were
+extracted with path/type/size bounds. The supervisor recorded zero remaining owned
+containers, controllers and images. Small original records and source notices are
+retained in Git so the temporary seven-day object is not the only copy. Textual
+inputs and extracted artifacts passed a credential scan, including comparison
+against the authorized OpenRouter key without printing or copying its value.
+
+Final attempt-based compute accounting is 1.5063416667 allocated CPU-hours. This
+uses attempt timestamps consistently and supersedes the earlier preflight-only
+job-interval total without deleting that observation. Model billing, request IDs,
+token usage and resolved provider are unavailable from the native records. All
+cost estimates were zero; the configured estimated-dollar guard therefore did not
+provide a billing bound. There were 49 agent iterations, 17 INVALID actions, and
+48 transcript entries because successful SAVE_SETUP is omitted from the transcript.
+Retained invalid prefixes demonstrate newline/format mismatches; no extra model
+call or corrective rerun was made. See results.md for the configuration-specific
+negative conclusion and reproducibility limits.

@@ -1,7 +1,8 @@
 # TRC execution arrangement for the official pipeline
 
 Status: resource-only wrapper approved by the user on 2026-10-20; native run
-not launched. Upstream source remains unchanged.
+subsequently completed. This file preserves the agreed arrangement; see results.md
+for outcomes. Upstream source remained unchanged.
 
 Use one existing reserved TRC worker with a four-CPU, 16-GiB reservation.
 Run the controller in a container capped at one CPU and 4 GiB. Give it the

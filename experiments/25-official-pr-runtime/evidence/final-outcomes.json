@@ -1,0 +1,349 @@
+{
+  "status": "completed_negative_for_tested_configuration",
+  "upstream_source_modifications": [],
+  "native_windows": [
+    {
+      "window": "MLCIL__scikit-fingerprints-544",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/MLCIL__scikit-fingerprints-544.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792526931.8177006,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792527239.0846925
+    },
+    {
+      "window": "MLCIL__scikit-fingerprints-525",
+      "state": "not_run",
+      "reason": "no_reusable_native_bootstrap; no_second_bootstrap_allowed"
+    },
+    {
+      "window": "nipy__nipype-3753",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/nipy__nipype-3753.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792527239.086134,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792527657.2472618
+    },
+    {
+      "window": "psychopy__psychopy-7475",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/psychopy__psychopy-7475.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792527657.2484126,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792528013.3049934
+    },
+    {
+      "window": "psychopy__psychopy-7805",
+      "state": "not_run",
+      "reason": "no_reusable_native_bootstrap; no_second_bootstrap_allowed"
+    }
+  ],
+  "repositories": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "agent_iterations": 20,
+      "actions": {
+        "BASH": 9,
+        "INVALID": 11
+      },
+      "transcript_entries": 20,
+      "bootstrap_saved": false,
+      "native_estimated_cost_usd": 0.0,
+      "billed_cost_usd": null,
+      "stop_reason": "hit max_iterations=20"
+    },
+    {
+      "repository": "nipy/nipype",
+      "agent_iterations": 9,
+      "actions": {
+        "INVALID": 1,
+        "BASH": 7,
+        "SAVE_SETUP": 1
+      },
+      "transcript_entries": 8,
+      "bootstrap_saved": true,
+      "native_estimated_cost_usd": 0.0,
+      "billed_cost_usd": null,
+      "stop_reason": "saved_native_bootstrap",
+      "image_tag": "local/r2e-bootstrap/nipy__nipype:2b671ab9f5f4",
+      "image_digest": "sha256:337993d544914de0f074fc8f1dff7cf7699a0b3cfd2e839f361d4b34f5b0b693",
+      "verify_passed": true,
+      "verify_detail": "exit=1; o tags can describe '2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975'.\nTry --always, or create some tags.\npixdim[0] (qfac) should be 1 (default) or -1; setting qfac to 1\n\ngzip: stdin: unexpected end of file",
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ]
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "agent_iterations": 20,
+      "actions": {
+        "BASH": 14,
+        "READ_FILE": 1,
+        "INVALID": 5
+      },
+      "transcript_entries": 20,
+      "bootstrap_saved": false,
+      "native_estimated_cost_usd": 0.0,
+      "billed_cost_usd": null,
+      "stop_reason": "hit max_iterations=20"
+    }
+  ],
+  "cases": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 545,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 544,
+      "comparison_input": true,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false,
+      "baseline_24": {
+        "automatic_disposition": "native_rejected",
+        "reason": "no fail-to-pass tests after validation",
+        "pass_to_pass_count": 0
+      }
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 542,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 525,
+      "comparison_input": true,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false,
+      "baseline_24": {
+        "automatic_disposition": "native_rejected",
+        "reason": "no fail-to-pass tests after validation",
+        "pass_to_pass_count": 8
+      }
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3765,
+      "comparison_input": false,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_filtered",
+      "reason": "no_test_patch",
+      "native_validation_reached": false,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR."
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3759,
+      "comparison_input": false,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_filtered",
+      "reason": "no_test_patch",
+      "native_validation_reached": false,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR."
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3755,
+      "comparison_input": false,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_rejected",
+      "reason": "no_fail_to_pass",
+      "native_validation_reached": true,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR.",
+      "parsed_pre_tests": 0,
+      "parsed_post_tests": 0,
+      "fail_to_pass_count": 0,
+      "pass_to_pass_count": 0
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3753,
+      "comparison_input": true,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_rejected",
+      "reason": "no_fail_to_pass",
+      "native_validation_reached": true,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR.",
+      "parsed_pre_tests": 0,
+      "parsed_post_tests": 0,
+      "fail_to_pass_count": 0,
+      "pass_to_pass_count": 0,
+      "baseline_24": {
+        "automatic_disposition": "native_rejected",
+        "reason": "no fail-to-pass tests after validation",
+        "pass_to_pass_count": 0
+      }
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3751,
+      "comparison_input": false,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_filtered",
+      "reason": "no_test_patch",
+      "native_validation_reached": false,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR."
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3722,
+      "comparison_input": false,
+      "native_selection_reached": true,
+      "exported": false,
+      "disposition": "native_filtered",
+      "reason": "no_test_patch",
+      "native_validation_reached": false,
+      "attribution": "Native aggregate outcomes mapped using recorded base SHAs and public PR file metadata; plain logs do not enumerate every skipped PR."
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7475,
+      "comparison_input": true,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false,
+      "baseline_24": {
+        "automatic_disposition": "bootstrap_unresolved",
+        "reason": "Transitive wxPython source dependency could not import setuptools.build_meta under the frozen no-build-isolation bootstrap. Native PR validation was not reached.",
+        "pass_to_pass_count": null
+      }
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7812,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7806,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7805,
+      "comparison_input": true,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false,
+      "baseline_24": {
+        "automatic_disposition": "bootstrap_unresolved",
+        "reason": "Transitive wxPython source dependency could not import setuptools.build_meta under the frozen no-build-isolation bootstrap. Native PR validation was not reached.",
+        "pass_to_pass_count": null
+      }
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7803,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7789,
+      "comparison_input": false,
+      "native_selection_reached": false,
+      "exported": false,
+      "disposition": "bootstrap_unresolved",
+      "reason": "shared_repository_bootstrap_exhausted_turn_limit",
+      "native_validation_reached": false
+    }
+  ],
+  "counts": {
+    "planned_prs_before_filters": 16,
+    "comparison_prs": 5,
+    "additional_prs": 11,
+    "native_selected": 6,
+    "native_filtered_no_test_patch": 4,
+    "native_validations": 2,
+    "native_validation_rejections": 2,
+    "bootstrap_unresolved_prs": 10,
+    "exports": 0,
+    "base_reference_grading_runs": 0,
+    "verified_tasks": 0,
+    "agent_iterations": 49,
+    "invalid_actions": 17
+  },
+  "cost": {
+    "allocated_cpu_hours": 1.5063416666666667,
+    "native_estimated_model_usd": 0.0,
+    "billed_model_usd": null,
+    "api_request_count_including_sdk_retries": null,
+    "token_usage": null,
+    "note": "Zero native estimates are not evidence of zero charges. Native records omit request IDs, token usage and billed costs; the $5 estimated guard was not an effective billing bound. Agent iterations remain bounded. Interactive Codex and engineering costs are not measured."
+  },
+  "cleanup": {
+    "run_id": "biotasks25-official-001",
+    "started": 1792526717.8528388,
+    "native_started": true,
+    "authenticated": true,
+    "remaining_containers": [],
+    "remaining_controllers": [],
+    "remaining_images": [],
+    "finished": 1792528015.4220707
+  },
+  "grading": "Not applicable: no task.toml was exported. No solver or extra LLM call was used."
+}

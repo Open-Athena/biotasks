@@ -1,0 +1,24 @@
+{
+  "image_digest": "sha256:337993d544914de0f074fc8f1dff7cf7699a0b3cfd2e839f361d4b34f5b0b693",
+  "image_tag": "local/r2e-bootstrap/nipy__nipype:2b671ab9f5f4",
+  "language": "python",
+  "repo": "nipy/nipype",
+  "ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "rebuild_cmds": [
+    "HATCH_VCS_PRETEND_VERSION=0.0.0 SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 pip install -e '/workspace[tests]'"
+  ],
+  "test_cmds": [
+    "cd /workspace && python -m pytest -v"
+  ],
+  "smoke_passed": true,
+  "iterations": 9,
+  "build_time_sec": 243.72,
+  "llm_provider": "openrouter/z-ai/glm-5.3",
+  "llm_cost_estimate_usd": 0.0,
+  "dockerfile_reconstruction": "# Auto-generated from r2e-bootstrap agent transcript.\n# Build from the cloned repo root: `docker build -t my-image .`\nFROM python:3.12-slim\nWORKDIR /workspace\nCOPY . /workspace\n\nRUN ls /workspace && head -60 /workspace/pyproject.toml 2>/dev/null; head -40 /workspace/setup.py 2>/dev/null; ls /workspace/requirements*.txt 2>/dev/null\nRUN sed -n 60,120p /workspace/pyproject.toml; ls /workspace/*requirements* 2>/dev/null; cat /workspace/requirements.txt 2>/dev/null | headThought: Check the rest of pyproject for test extras.\nRUN HATCH_VCS_PRETEND_VERSION=0.0.0 pip install -e .[tests] 2>&1 | tail -5Observation: \\\n    exit=0 \\\n    Successfully installed ... (many packages)\nRUN HATCH_VCS_PRETEND_VERSION=0.0.0 pip install -e '.[tests]' > /tmp/pip.log 2>&1; echo EXIT=$?; tail -n 3 /tmp/pip.log\nRUN grep -i -m5 -E 'error|failed' /tmp/pip.log | head -20\nRUN HATCH_VCS_PRETEND_VERSION=0.0.0 SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 pip install -e '.[tests]' > /tmp/pip.log 2>&1; echo EXIT=$?; tail -n 3 /tmp/pip.log\nRUN cd /workspace && python -m pytest --collect-only -q > /tmp/collect.log 2>&1; echo EXIT=$?; tail -n 15 /tmp/collect.log\n",
+  "transcript_path": "/work/bootstrap/nipy__nipype/2b671ab9f5f4__74ba7084/transcript.jsonl",
+  "pushed_to_registry": false,
+  "verify_passed": true,
+  "verify_detail": "exit=1; o tags can describe '2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975'.\nTry --always, or create some tags.\npixdim[0] (qfac) should be 1 (default) or -1; setting qfac to 1\n\ngzip: stdin: unexpected end of file",
+  "extra": {}
+}
