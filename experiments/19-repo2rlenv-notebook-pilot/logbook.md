@@ -2757,3 +2757,21 @@ now spools to an anonymous file descriptor and is atomically saved after the
 command ends, so worker cleanup cannot unlink its live output. Seventeen focused
 logging/setup tests pass, including directory deletion followed by nonzero exit
 and timeout. No notebook-specific instructions or generated task edits were added.
+
+## 2026-10-20 — submit graders before duplicating controller checks
+
+Campaign 009 completed autonomous construction with a GLM repair and independently
+executed a solution, but grader authoring exhausted the work allowance while
+running preliminary shell checks. Pre-dispatch time feedback worked, permitting
+a shorter command without extending the deadline. Stage archival subsequently
+timed out; both the primary budget failure and secondary archive failure are
+preserved in `autonomous-runs/009`. Final root evidence was recovered and all owned
+resources were removed.
+
+Initial grader authoring now submits a candidate before shell exploration.
+The existing controller checks run first and their failures guide repair.
+This changes tool ordering, not scientific requirements, request counts or
+deadlines; independent probes and review remain required. Forty-four grading
+tests pass. Also retain the last three operation receipts per stage in the small
+diagnostic export, avoiding a separate recovery job for ordinary command failures.
+Live effectiveness of the grader ordering change remains unproven.

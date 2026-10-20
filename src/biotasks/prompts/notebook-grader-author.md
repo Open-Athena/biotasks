@@ -19,6 +19,13 @@ controller acceptance; failed or unfinished commands do not establish findings.
 Do not invent new measurements. Submit the full candidate promptly; the
 controller will execute its checks and return demonstrated defects for repair.
 It names the directory containing private reference output files in your sandbox.
+For initial authoring, submit a complete candidate from the supplied task, schemas
+and execution evidence before using the shell. The controller runs the basic
+acceptance and rejection checks; do not duplicate them in exploratory scripts
+before submission. After a candidate attempt, shell access is available to diagnose
+its measured failures and repair the grader. If the evidence cannot support a
+candidate, return `blocked` with the reason. This ordering does not establish
+correctness: all later independent probes and review are still required.
 The shell tool, when supplied, runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference

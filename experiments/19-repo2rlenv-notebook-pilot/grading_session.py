@@ -242,6 +242,19 @@ class GradingSession:
             )
         return json.dumps(reply)
 
+    async def grader_repair_shell(self, command, timeout_sec=120):
+        """Use controller feedback before duplicating its checks in a shell."""
+        if self.candidate_number == 0:
+            return (
+                "No command executed. Submit a complete grader candidate first using "
+                "the supplied task, schemas, and execution evidence. The controller "
+                "will test the reference, independent solution, empty submission and "
+                "missing files, then return measured failures. Shell access becomes "
+                "available for repair after that attempt. If the evidence cannot "
+                "support a grader, submit a blocked disposition with the reason."
+            )
+        return await self.shell(command, timeout_sec)
+
     async def validate_probe_execution(self, probe):
         """Check mutation execution without exposing any grader result to its author."""
         self.probe_validation_number += 1
@@ -721,7 +734,7 @@ async def run_grading(
                 "notebook-grader-author",
                 context,
                 session.validate_candidate,
-                session.shell,
+                session.grader_repair_shell,
             )
         save_record(root / "candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":

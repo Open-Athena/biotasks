@@ -95,6 +95,30 @@ def test_exhausted_shell_budget_is_terminal(tmp_path, monkeypatch):
     assert remote.operation == 0
 
 
+def test_grader_shell_opens_only_after_a_controller_candidate_attempt(tmp_path):
+    from grading_session import GradingSession
+
+    session = GradingSession(
+        remote=None, snapshot={"outputs": []}, root=tmp_path / "session", config={}
+    )
+    calls = []
+
+    async def shell(command, timeout_sec):
+        calls.append((command, timeout_sec))
+        return "recorded diagnostic"
+
+    session.shell = shell
+
+    async def exercise():
+        assert "No command executed" in await session.grader_repair_shell("true", 12)
+        assert calls == []
+        session.candidate_number = 1
+        assert await session.grader_repair_shell("true", 12) == "recorded diagnostic"
+        assert calls == [("true", 12)]
+
+    asyncio.run(exercise())
+
+
 def candidate():
     return Grader(
         disposition="ready",
@@ -373,6 +397,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
         async def shell(self, *args, **kwargs):
             return json.dumps({"exit_code": 0, "stdout": "isolated"})
+
+        grader_repair_shell = shell
 
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]
