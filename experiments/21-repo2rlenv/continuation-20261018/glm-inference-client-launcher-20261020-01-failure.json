@@ -1,0 +1,16 @@
+{
+  "stage": "inference_launcher_pre_submission_terminal_enum_check_failure",
+  "observed_utc": "2026-10-20T02:01:21.550229+00:00",
+  "jobs_submitted": 0,
+  "new_endpoint_created": false,
+  "model_calls": 0,
+  "task_or_runtime_asset_changes": 0,
+  "error": "AssertionError: Previous client is not terminal",
+  "actual_prior_job_state": "KILLED",
+  "actual_prior_owned_matching_endpoints": 0,
+  "native_helper_recognizes_terminal": true,
+  "original_launcher_sha256": "711c26df9e0800491958647ab790fc910f9fb7bf774551cd25c599b3eb74db25",
+  "correction": "Use native is_job_finished helper rather than an incomplete hand-written terminal-name set. Reuse the already generated private application credential; no job or model call existed to replay.",
+  "inference_client_payload_unchanged": true,
+  "prior_final_usage_archive_gap_remains_recorded": true
+}
