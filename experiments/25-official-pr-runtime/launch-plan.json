@@ -3,21 +3,21 @@
   "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
   "upstream_source_modifications": [],
   "llm": {
-    "provider": "openai",
-    "model": "glm-5.3",
-    "endpoint": "RUNTIME_PRIVATE_DISCOVERY",
-    "api_key_env": "GLM_BULK_TOKEN",
+    "provider": "openrouter",
+    "model": "z-ai/glm-5.3",
+    "api_key_env": "OPENROUTER_API_KEY",
     "fallback": null
   },
   "bootstrap_limits": {
     "max_iterations": 20,
     "max_seconds": 1800,
-    "max_bootstrap_invocations_per_repository": 1
+    "max_bootstrap_invocations_per_repository": 1,
+    "max_llm_spend_usd": 5.0
   },
   "repositories": 3,
   "maximum_bootstrap_turns": 60,
   "model_output_tokens_per_turn": 2048,
-  "paid_models": false,
+  "paid_models": true,
   "total_allocated_cpu_hour_ceiling": 48,
   "max_concurrent_workers": 1,
   "selection": [
@@ -95,7 +95,6 @@
   ],
   "bootstrap_cache_policy": "Same pinned repository ref and cache across date windows; after a failed bootstrap, later windows for that repository remain unresolved rather than starting another bootstrap.",
   "unresolved": [
-    "TRC to approved GLM relay connectivity",
     "Authorized GitHub authentication for official gh CLI on remote runner",
     "Bounded nested Docker resources without source changes",
     "Exact bootstrap repository refs and image/toolchain pins",
@@ -107,5 +106,5 @@
     "psychopy/psychopy": "f150adfd0246e6bf22331949502e27262734be71"
   },
   "native_validation_timeout_sec": 600,
-  "model_status": "User selected existing free GLM-5.3 bulk service; no Sonnet or OpenRouter."
+  "model_status": "User approved GLM-5.3 through OpenRouter; replaces the private free-service route. Retain the previously approved $5 estimated stop threshold per repository, 20 turns, and no fallback."
 }

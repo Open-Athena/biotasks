@@ -84,3 +84,36 @@ The outer Iris job allocation therefore does not itself establish the
 promised resource bound for those containers. A bounded execution arrangement
 must be documented and agreed before a pipeline launch; no source patch or
 Docker interception has been applied.
+
+### CoreWeave execution check
+
+At the user's request, inspected the configured CoreWeave CPU pool and Iris
+Kubernetes execution backend. The configuration specifies existing always-warm
+CPU capacity; this is not a measurement of currently free schedulable CPUs.
+The approved GLM access documentation describes in-cluster relay discovery.
+
+`lib/iris/src/iris/cluster/backends/k8s/tasks.py::_security_context`
+explicitly rejects `DOCKER_ACCESS`: these nodes use containerd rather than
+a host Docker daemon. The source names `PRIVILEGED` with an in-pod runtime
+as an alternative and maps that profile to Kubernetes privileged mode.
+Therefore CoreWeave is not a ready-made host-Docker executor. A bounded
+Docker-in-Docker pod is a possible infrastructure arrangement, not a verified
+working setup. It would leave Repo2RLEnv source unchanged, but its privileged
+execution must be explicitly authorized and supported by cluster policy.
+No privileged pod, daemon, model call or new capacity was launched.
+
+### OpenRouter model choice
+
+The user approved GLM-5.3 through OpenRouter after discussing cost and reliability. This supersedes the private free-service route and removes that network requirement from the intended TRC run. Keep the previously approved $5 estimated stop threshold per repository, 20 turns and no model fallback. Public endpoint metadata confirms support for the native temperature and max_tokens parameters; this is not a live generation check. The fixed 2,048-token output budget may constrain always-on reasoning. No upstream patch, extra generation probe or model call was made. Prices vary by routed provider; the quoted starting price is not a guaranteed per-run price.
+
+### 2026-10-20 — approved resource wrapper and installation gate
+
+The user approved the resource-only Docker wrapper. It preserves upstream source
+and arguments except for container CPU/memory/network caps and ownership labels.
+Syntax and pure argument checks passed locally. A separate bounded, credential-free
+TRC installation check will install the pinned official archive with its frozen
+lockfile and Harbor extra, validate all five native configs, and exercise two
+container slots plus rejection of a third. It makes no model calls and performs
+no target-repository bootstrap or repairs. The check uses Docker CLI 23.0.6,
+uv 0.11.31, GitHub CLI 2.97.0, and records the resolved Python controller image.
+Native generation remains unlaunched until this infrastructure gate passes.

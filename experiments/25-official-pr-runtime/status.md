@@ -27,7 +27,7 @@ occurred. No upstream source has been modified.
    supported browser login can authenticate the actual execution host.
    Do not extract or transfer local credentials. The exact secret location
    or runner login arrangement is still required.
-2. **GLM connectivity.** Service discovery succeeds, but the tested TRC-to-
+2. **Private GLM connectivity (superseded by OpenRouter selection).** Service discovery succeeds, but the tested TRC-to-
    relay HTTP request produced a `URLError` after approximately ten seconds,
    without an HTTP response. The approved service documentation describes
    callers inside its serving cluster. A supported route reachable from TRC,
@@ -38,6 +38,10 @@ occurred. No upstream source has been modified.
    allocation does not bound those siblings. Before launch, establish a
    dedicated bounded Docker execution arrangement or present an exact
    resource-only adaptation for user agreement. None has been applied.
+
+The user subsequently selected GLM-5.3 through OpenRouter. Private GLM
+connectivity is no longer a launch prerequisite; remote GitHub authentication
+and Docker resource containment remain unresolved. See `openrouter-preflight.json`.
 
 ## Remaining completion requirements
 
