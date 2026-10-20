@@ -243,6 +243,14 @@ def build():
                 if authored_ids:
                     action = 'candidate_cap_exhausted_saved_author_stages_remaining'
                     next_action = f'Native materialization finished for all {len(pending)} retained inputs. Continue only the {len(authored_ids)} unchanged successful native contexts through author/export stages, with native repair limits and no external feedback. Preserve failed contexts; do not replace candidates or reset the cap.'
+                    author_path = ROOT / 'swe-gen-skbio-pr2630-author-01/stage-summary.json'
+                    if unit['repository'] == 'scikit-bio/scikit-bio' and author_path.exists():
+                        authored = json.loads(author_path.read_text())
+                        assert authored_ids == [authored['candidate_id']]
+                        assert authored['native_author_calls'] == 1 and authored['native_substantiality']
+                        assert authored['task_specific_fixes'] == 0 and not authored['task_specific_author_feedback']
+                        action = 'candidate_cap_exhausted_saved_native_export_stage_remaining'
+                        next_action = 'The single successful native context completed its one native GLM author call unchanged. Continue only its existing frozen native export/nop/oracle stage, then final independent assessment. Do not repeat authoring, repair task/runtime assets, add candidates or infer admission from schema/substantiality success.'
                 else:
                     assert assessed['native_materialization_succeeded'] == 0
                     action = 'candidate_cap_exhausted_below_target'
