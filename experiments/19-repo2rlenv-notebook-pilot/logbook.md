@@ -2586,3 +2586,21 @@ light text on the matching dark syntax background, and Prompt/Input/Output
 sections are distinct with raw artifacts collapsed by default. No campaign-log
 banner or historical run selector was added. The source manifest pins the exact
 public release and all embedded inputs.
+
+### 2026-10-20 — Focused promotion draft, separate from research history
+
+Opened draft PR [#23](https://github.com/Open-Athena/biotasks/pull/23) from
+current main `2a1950d239f1ada467c35393991dac87debe35f7` on a fresh
+`codex/pipeline/notebook-factory-primitives-19` branch. Four reusable helpers,
+ten active prompts and their documentation/tests are extracted; no research
+branch merge, experiment drivers, evidence or provider provisioning is included.
+The complete workflow remains research-only and still required operator recovery.
+This promotion does not establish unattended end-to-end generation.
+
+All 58 locked-environment local tests, lint/format/type and pre-commit checks
+passed. GitHub CI independently passed Code quality and Tests for promotion
+commit `4940e992dd9255095b917336d3933662a6721ab3`. Deterministic conversion
+of the two original pinned notebooks produced byte-identical scripts to their
+executed baselines with preserved ordered code; no analysis/model/cloud run
+was launched for promotion. Small receipts are in `promotion/001/`. Issue 19
+remains open for user review.
