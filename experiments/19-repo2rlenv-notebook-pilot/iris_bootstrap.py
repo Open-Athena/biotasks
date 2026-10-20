@@ -130,7 +130,7 @@ def main():
     manifest = json.loads((inputs / "inputs.json").read_text())
     configuration = json.loads((inputs / "campaign-config.json").read_text())
     entrypoint = configuration.get("entrypoint", "run_pilot.py")
-    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py", "run_reference_replay.py", "run_notebook_grader.py", "run_scientific_native.py"}:
+    if entrypoint not in {"run_pilot.py", "run_reference.py", "run_coverage.py", "run_preparation.py", "run_schema_probe.py", "run_reference_setup.py", "run_specification.py", "run_reference_replay.py", "run_notebook_grader.py", "run_scientific_native.py", "run_autonomous.py"}:
         raise ValueError("Unsupported checkpointed experiment entrypoint")
     deadline = min(time.time() + 7200, configuration.get("absolute_deadline", float("inf")))
     evidence = Path("/evidence")
@@ -189,6 +189,14 @@ def main():
             log=evidence / "setup.log",
         )
         (wheel,) = (evidence / "runtime").glob("*.whl")
+        if entrypoint == "run_autonomous.py":
+            converter = Path("/work/converter")
+            command(
+                ["uv", "sync", "--locked", "--no-dev", "--python", sys.executable],
+                cwd=code, deadline=deadline, log=evidence / "setup.log",
+                env={**os.environ, "UV_PROJECT_ENVIRONMENT": str(converter)},
+            )
+            os.environ["BIOTASKS_CONVERSION_PYTHON"] = str(converter / "bin/python")
         endpoint = ""
         if entrypoint != "run_reference_replay.py":
             route = (

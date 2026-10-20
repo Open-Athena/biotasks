@@ -2623,3 +2623,21 @@ deadline/shutdown reproductions and both artifact submission methods with tiny
 previews. Lint, formatting and types pass. Tests use only local fake services;
 no biological data, model calls or cloud workers were launched. The shared fixes
 are applied to both promotion and research branches.
+
+### 2026-10-20 — Single-invocation autonomous runner, before live validation
+
+Added a sequential orchestrator over the existing workers, with programmatic
+conversion, evidence sealing, output restoration, stage dispatch and terminal
+classification. It makes no task-specific scientific edits. Explicit worker or
+validation rejection is distinct from controller/provider failure; a failure or
+budget timeout cannot count as successful autonomy. Five offline tests exercise
+stage order, early rejection, infrastructure errors and tampered output handoffs.
+The new seed is Bioframe's pinned peaks-to-genes notebook, without manually
+chosen task endpoints. Its syntax-preserving conversion is supported.
+
+Plan one fresh run on the existing reserved Iris host profile: two-hour deadline,
+one 4-CPU/8-GiB/10-GiB Daytona sandbox at a time, five $1 stage reservations,
+GLM-5.3 medium, existing reference/solver/verifier bounds and worker repairs.
+No added model token/input/response caps. This uses existing spending authority.
+No public release or merge is part of this autonomy test. A controller fix requires
+a fresh run from the original seed; resuming a stage cannot prove autonomy.
