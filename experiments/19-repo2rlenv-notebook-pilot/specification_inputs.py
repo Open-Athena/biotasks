@@ -26,7 +26,7 @@ INPUT_FILES = (
 )
 
 
-def specification_context(run, policy, *, inspect_packages=False, revision_context=None):
+def specification_context(run, policy, *, inspect_packages=False, revision_context=None, repeatability=None):
     """Check original evidence hashes and audit lineage, without executing it."""
     manifest = json.loads((run / "artifact-manifest.json").read_text())
     originals = {item["path"]: item for item in manifest["files"]}
@@ -84,6 +84,14 @@ def specification_context(run, policy, *, inspect_packages=False, revision_conte
             "measurement, calibrated grader or solver evidence. No tools in this pass."
         ),
     }
+    if repeatability is not None:
+        context["repeatability_observations"] = repeatability
+        context["evidence_boundary"] = (
+            "Passing reference and structural audit, plus the supplied finite replay observations. "
+            "Row-multiset fingerprints describe serialization, not scientific equivalence: row order "
+            "may encode rank, sequence or alignment. No independent reproduction or calibrated grader. "
+            "No full data tables in context. No tools in this pass."
+        )
     if revision_context is not None:
         context["revision_context"] = revision_context
     if inspect_packages:

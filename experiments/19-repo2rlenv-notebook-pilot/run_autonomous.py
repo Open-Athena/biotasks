@@ -121,6 +121,30 @@ def seal_materialization(raw, view):
     write(view / "artifact-manifest.json", dict(original_small_files=records(view)))
 
 
+def copy_diagnostics(root):
+    # Small original receipts are also returned through bootstrap diagnostics.
+    # Full traces and data remain in the independently verified archive.
+    for relative in (
+        "preparation/plan.json",
+        "preparation/result.json",
+        "setup-raw/result.json",
+        "setup-raw/outcome.json",
+        "setup-raw/cleanup.json",
+        "replay/result.json",
+        "replay/cleanup.json",
+        "specification/specification.json",
+        "specification/result.json",
+        "construction-raw/result.json",
+        "grading/result.json",
+        "native/result.json",
+    ):
+        source = root / relative
+        if source.is_file() and source.stat().st_size <= 256_000:
+            target = Path("/evidence/autonomous-summary") / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(source, target)
+
+
 class Pipeline:
     def __init__(self, config, *, root, seed, deadline, endpoint, credential):
         if config.get("entrypoint", "run_autonomous.py") != "run_autonomous.py":
@@ -182,6 +206,9 @@ class Pipeline:
         try:
             await action()
             record["status"] = "completed"
+        except Rejected:
+            record["status"] = "rejected"
+            raise
         except BaseException:
             record["status"] = "incomplete"
             raise
@@ -286,7 +313,9 @@ class Pipeline:
                     endpoint=None,
                     credential=None,
                 )
-                if not result["all_outputs_byte_identical_to_original"]:
+                from replay_tables import reviewable
+
+                if not reviewable(result):
                     raise Rejected(
                         "replay", "reference_not_repeatable", str(replay / "result.json")
                     )
@@ -298,7 +327,12 @@ class Pipeline:
             )
 
             async def specification():
-                context = specification_context(reference, policy, inspect_packages=True)
+                context = specification_context(
+                    reference,
+                    policy,
+                    inspect_packages=True,
+                    repeatability=json.loads((replay / "result.json").read_text()),
+                )
                 write(self.root / "specification-input.json", context)
                 config = self.config_for(
                     "specification",
@@ -306,6 +340,7 @@ class Pipeline:
                     reference_directory=self.relative(reference),
                     policy_file=base["policy_file"],
                     input_file=self.relative(self.root / "specification-input.json"),
+                    repeatability_file=self.relative(replay / "result.json"),
                     inspect_packages=True,
                     output_format="tools",
                 )
@@ -326,7 +361,7 @@ class Pipeline:
 
             async def construct():
                 target_dir = Path("/work/grading-inputs/reference-replay/replay/trials/1/outputs")
-                shutil.copytree(replay / "replay/trials/1/outputs", target_dir)
+                shutil.copytree(reference / "trial/outputs", target_dir)
                 config = self.config_for(
                     "construct", "run_notebook_grader.py", **base, materialize_task=True
                 )
@@ -430,6 +465,7 @@ class Pipeline:
             write(self.root / "pipeline.json", self.receipt)
             os.environ["BIOTASKS_ARTIFACT_PREFIX"] = self.prefix
             shutil.copyfile(self.root / "pipeline.json", "/evidence/autonomous-result.json")
+            copy_diagnostics(self.root)
             from iris_bootstrap import export_on_host
 
             await asyncio.to_thread(

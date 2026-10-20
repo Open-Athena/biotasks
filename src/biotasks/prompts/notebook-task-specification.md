@@ -110,6 +110,19 @@ Do not claim that hashes, a fixed random seed, repeated reference agreement or a
 model review establish semantic correctness. Reject unsuitable targets rather
 than prescribing ever more incidental implementation details to make them match.
 
+## Replay observations
+
+If replay observations are supplied, distinguish byte differences from changes
+in scientific results. Identical headers and row-multiset fingerprints only show
+that the same textual rows recur, ignoring their ordering and serialization.
+They do not establish that ordering is irrelevant. Determine from the analysis
+whether position encodes rank, sequence, correspondence or another scientific
+meaning. Specify identities and ordering requirements explicitly; if order is
+irrelevant, require a valid row-permutation probe in the validation handoff.
+Do not discard duplicate rows or silently sort scientific sequences. If an
+observed instability affects the required result and cannot be resolved from
+the evidence, return an evidence-needed or rejection disposition with the reason.
+
 ## Response
 
 Return these four fields using the supplied structured response interface:

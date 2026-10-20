@@ -8,6 +8,7 @@ from pathlib import Path
 
 from reference_environment import setup_script, validate_environment
 from reference_protocol import materialize
+from replay_tables import observe_tables
 from repo2rlenv.execution.lifecycle import save_record
 
 
@@ -140,6 +141,7 @@ async def replay_reference(*, remote, snapshot, root, config):
             if record["execution"]["exit_code"] or not inventory["declared_artifacts_present"]:
                 raise RuntimeError("Reference replay failed; preserve evidence without repair")
             record["comparison_to_original"] = compare_inventory(snapshot["outputs"], inventory["artifacts"])
+            observe_tables(record["comparison_to_original"], source / "trial/outputs", trial / "outputs")
             if trials:
                 record["comparison_to_previous"] = compare_inventory(trials[-1]["artifacts"]["artifacts"], inventory["artifacts"])
             record["status"] = "executed"
@@ -152,6 +154,11 @@ async def replay_reference(*, remote, snapshot, root, config):
         "all_outputs_byte_identical_to_original": all(
             item["byte_identical"] for trial in trials for item in trial["comparison_to_original"]
         ),
+        "all_output_differences_limited_to_table_serialization_or_row_order": all(
+            item["byte_identical"] or item.get("table_observation", {}).get("same_header_and_row_multiset", False)
+            for trial in trials for item in trial["comparison_to_original"]
+        ),
+        "output_observations": [trial["comparison_to_original"] for trial in trials],
         "comparison_rules_validated": False,
         "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
     }

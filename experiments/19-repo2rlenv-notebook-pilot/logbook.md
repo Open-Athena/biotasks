@@ -2641,3 +2641,15 @@ GLM-5.3 medium, existing reference/solver/verifier bounds and worker repairs.
 No added model token/input/response caps. This uses existing spending authority.
 No public release or merge is part of this autonomy test. A controller fix requires
 a fresh run from the original seed; resuming a stage cannot prove autonomy.
+
+## 2026-10-20 — autonomous replay gate refinement
+
+The first fresh-seed campaign ran preparation, setup and two replays without
+manual handoffs, but stopped on byte differences. A read-only streaming audit
+found identical row multisets in all five outputs. Preserved the original
+rejection in `autonomous-runs/001`; this was a false rejection by an overly strict
+gate, not established notebook instability. Added general CSV/TSV observations,
+with duplicate multiplicity and column order retained, and pass replay evidence
+to the specification worker to assess scientific ordering. Preserve the original
+reference bytes for construction. No generated task artifact was manually fixed.
+The next campaign restarts from the original seed with the new frozen factory.

@@ -56,7 +56,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             return {}
         if config["entrypoint"] == "run_reference_replay.py":
             (root / "replay/trials/1/outputs").mkdir(parents=True)
-            return {"all_outputs_byte_identical_to_original": True}
+            result = {"all_outputs_byte_identical_to_original": True}
+            m.write(root / "result.json", result)
+            return result
         if config.get("materialize_task"):
             (root / "materialized").mkdir(parents=True)
             return {"status": "materialized_requires_scientific_validation"}
@@ -79,7 +81,10 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         "iris_bootstrap": {"export_on_host": lambda *a, **k: None},
     }.items():
         monkeypatch.setitem(sys.modules, name, types.SimpleNamespace(**attrs))
-    monkeypatch.setattr(m, "seal_reference", lambda raw, view, seed: view.mkdir())
+    monkeypatch.setattr(
+        m, "seal_reference", lambda raw, view, seed: (view / "trial/outputs").mkdir(parents=True)
+    )
+    monkeypatch.setattr(m, "copy_diagnostics", lambda root: None)
     monkeypatch.setattr(m, "seal_materialization", lambda raw, view: view.mkdir())
     # Isolate fixed controller paths while exercising actual stage ordering.
     copytree = m.shutil.copytree
@@ -93,8 +98,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     copyfile = m.shutil.copyfile
 
     def isolated_file(source, target):
-        if str(target) == "/evidence/autonomous-result.json":
-            target = tmp_path / "receipt.json"
+        if str(target).startswith("/evidence/"):
+            target = tmp_path / "evidence" / str(target).removeprefix("/evidence/")
+            target.parent.mkdir(parents=True, exist_ok=True)
         return copyfile(source, target)
 
     monkeypatch.setattr(m.shutil, "copyfile", isolated_file)

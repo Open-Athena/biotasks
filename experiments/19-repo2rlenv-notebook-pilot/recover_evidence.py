@@ -14,6 +14,7 @@ import fsspec
 
 SELECTED = {
     "bootstrap-status.json",
+    "autonomous-result.json",
     "campaign.log",
     "setup.log",
     "reference-export.log",
@@ -98,6 +99,7 @@ def main():
         relative = entry["path"]
         selected = (
             relative in SELECTED
+            or relative.startswith("autonomous-summary/")
             or (relative.startswith("pilot/trial-claims/") and relative.endswith(".json"))
             or (relative.startswith(("pilot/tasks/", "pilot/fidelity/")))
             or (relative.startswith("pilot/campaign/") and relative.endswith(".json"))
