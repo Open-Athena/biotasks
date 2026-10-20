@@ -370,6 +370,9 @@ class GLMChatAuthor:
                 event("tool_request", call_id=call["id"], name=name, arguments=arguments)
                 result = await handlers[name](**arguments)
             result = str(result)
+            committed = name in {"submit_artifact", "revise_artifact"} and result.startswith(
+                "Artifact committed."
+            )
             raw_result = request_root / "tool-result.json"
             self.save_record(raw_result, {"call_id": call["id"], "name": name, "output": result})
             truncated = (
@@ -394,8 +397,6 @@ class GLMChatAuthor:
                 raw_result_record=str(raw_result.relative_to(trace.parent)),
             )
             messages.append({"role": "tool", "tool_call_id": call["id"], "content": result})
-            if name in {"submit_artifact", "revise_artifact"} and result.startswith(
-                "Artifact committed."
-            ):
+            if committed:
                 return {"messages": messages, "turns": turn, "cost": 0.0}
         raise RuntimeError("Design worker exhausted its model-call allowance")

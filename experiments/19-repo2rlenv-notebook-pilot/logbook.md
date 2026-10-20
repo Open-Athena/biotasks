@@ -2604,3 +2604,22 @@ of the two original pinned notebooks produced byte-identical scripts to their
 executed baselines with preserved ordered code; no analysis/model/cloud run
 was launched for promotion. Small receipts are in `promotion/001/`. Issue 19
 remains open for user review.
+
+### 2026-10-20 — Review fixes and autonomous-pipeline merge requirement
+
+User explicitly requires an autonomous pipeline before merging into main. Keep
+PR 23 draft; the two operator-assisted published examples do not meet this gate.
+A fresh seed must complete or be rejected explicitly without operator intervention
+between stages. No autonomous-run success is claimed by the helper extraction.
+
+Independent review found two reusable API bugs: forwarding could outlive the
+gateway deadline/shutdown, and shortened tool output could hide a successful
+artifact commit. The fixes interrupt tracked sockets during reads, TCP/TLS
+establishment and response forwarding, join handlers on shutdown, and inspect
+commitment before shortening the tool response. DNS resolves synchronously during
+construction before accepting work, with that resolver limitation documented.
+35 focused worker/gateway tests pass, including continuous-stream and stalled-TLS
+deadline/shutdown reproductions and both artifact submission methods with tiny
+previews. Lint, formatting and types pass. Tests use only local fake services;
+no biological data, model calls or cloud workers were launched. The shared fixes
+are applied to both promotion and research branches.
