@@ -2355,3 +2355,27 @@ stages for each profile, without mobile overflow or JavaScript errors. The
 Bioframe reading view correctly has no solver trajectory yet. Browser launch
 needed normal IPC access outside the execution sandbox; no model or scientific
 run was involved. The published index was not rewritten.
+
+### 2026-10-20 — Recover an unfinished grader without repeating model development
+
+Add an explicit `resume_grader_draft_directory` recovery mode for a campaign
+that submitted an independent program but not a complete grader. It requires a
+download-verified archive, verified cleanup, unchanged worker bytes and the same
+scientific context. Reexecute the saved independent program without answer
+access; do not reuse its acceptance or old output files as new execution proof.
+Supply the complete verified grader transcript only to a shell-free grading
+worker, which submits/repairs the full candidate under the existing typed schema.
+The probe author does not receive that transcript or grader code. No prior
+candidate or acceptance is fabricated. Normal fresh/full-resume paths retain
+their behavior, and unresolved independent comparisons still stop.
+
+This is a generic optional recovery path, not a change to the active campaign
+(frozen at `7fd3398`) or any generated scientific artifact. The canonical grader
+prompt distinguishes shell-free recovery and incomplete observations. Forty-three
+focused offline grading/recovery tests and Ruff pass, including context/byte
+rejection, independent reexecution, shell absence, probe isolation and comparison
+stops. No model or sandbox was launched for these tests. Model caps remain unset.
+
+The explorer default now links to its single canonical case profile. A checked
+rebuild reproduced the earlier reading view exactly apart from pinned Git
+revision links; the published index remains unchanged until case validation.

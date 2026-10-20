@@ -62,6 +62,40 @@ def test_resume_requires_verified_download(tmp_path):
         load_resume(tmp_path, context)
 
 
+def test_unsubmitted_grader_recovery_keeps_independent_code_and_verified_observations(tmp_path):
+    from grading_resume import load_grader_draft
+
+    context = fixture(tmp_path)
+    manifest = json.loads((tmp_path / "artifact-manifest.json").read_text())
+    manifest["original_small_files"] = [
+        row for row in manifest["original_small_files"] if row["path"] != "candidate.json"
+    ]
+    (tmp_path / "candidate.json").unlink()
+    name = "grader/artifact-stage/trace.jsonl"
+    trace = '{"kind":"tool_result","output":"recorded inspection"}\n'
+    path = tmp_path / name
+    path.parent.mkdir(parents=True)
+    path.write_text(trace)
+    manifest["original_small_files"].append(
+        {
+            "path": name,
+            "bytes": len(trace.encode()),
+            "sha256": hashlib.sha256(trace.encode()).hexdigest(),
+        }
+    )
+    (tmp_path / "artifact-manifest.json").write_text(json.dumps(manifest))
+    independent, draft = load_grader_draft(tmp_path, context)
+    assert independent.code == "pass"
+    assert draft["files"]["inspection-trace.jsonl"] == trace
+    with pytest.raises(ValueError, match="artifact unavailable"):
+        load_resume(tmp_path, context)
+    with pytest.raises(ValueError, match="context differs"):
+        load_grader_draft(tmp_path, context | {"question": "changed"})
+    path.write_text("changed")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_grader_draft(tmp_path, context)
+
+
 def test_partial_probe_recovery_binds_bytes_contract_and_cleanup(tmp_path):
     from grading_protocol import Probes
     from grading_resume import load_saved_probes

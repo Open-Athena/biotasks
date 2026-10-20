@@ -40,6 +40,8 @@ def check_config(config):
     }:
         raise ValueError("Use the separate reference-setup entry point")
     grading = config["entrypoint"] == "run_notebook_grader.py"
+    if config.get("resume_grading_directory") and config.get("resume_grader_draft_directory"):
+        raise ValueError("Select full grader recovery or draft recovery, not both")
     if grading:
         if config.get("max_tests", "missing") is not None or config.get("verifier_seconds") != 120:
             raise ValueError("Grading uses time-bounded checks and the agreed 120-second verifier")
@@ -69,6 +71,7 @@ def check_config(config):
         "specification_directory",
         "materialization_directory",
         "resume_grading_directory",
+        "resume_grader_draft_directory",
         "resume_probes_directory",
         "resume_contract_directory",
         "contract_feedback_file",

@@ -196,6 +196,7 @@ def test_probe_blocker_is_representable():
         (False, False, False, False),
         (True, False, False, False),
         (True, True, False, False),
+        (True, "draft", False, False),
         (True, True, True, False),
         (True, True, True, True),
     ],
@@ -207,21 +208,31 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
     config = json.loads((HERE / "grading-config.json").read_text())
     config.pop("resume_grading_directory", None)
+    config.pop("resume_grader_draft_directory", None)
     config.pop("resume_probes_directory", None)
     config.pop("resume_contract_directory", None)
     config.pop("contract_feedback_file", None)
     if resume:
         import grading_resume
 
-        config["resume_grading_directory"] = "saved-run"
+        config[
+            "resume_grader_draft_directory" if resume == "draft" else "resume_grading_directory"
+        ] = "saved-run"
 
         def reuse(directory, context):
             assert "independent_solution" not in context
-            return module.AlternativeSolution(
+            independent = module.AlternativeSolution(
                 disposition="ready", code="pass", rationale="fixture"
-            ), candidate()
+            )
+            return independent, (
+                {"files": {"inspection-trace.jsonl": "private-grader-observations"}}
+                if resume == "draft"
+                else candidate()
+            )
 
-        monkeypatch.setattr(grading_resume, "load_resume", reuse)
+        monkeypatch.setattr(
+            grading_resume, "load_grader_draft" if resume == "draft" else "load_resume", reuse
+        )
     calls = []
     commands = []
     c = candidate()
@@ -322,6 +333,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 disposition="ready", code="pass", rationale="fixture"
             )
         elif name == "probes":
+            assert "prior_worker_draft" not in inputs
+            assert "private-grader-observations" not in json.dumps(inputs)
             assert "candidate" not in inputs and "grader_code" not in json.dumps(inputs)
             assert c.grader_code not in json.dumps(inputs)
             assert inputs["public_instruction"].endswith(c.instruction)
@@ -355,6 +368,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 issues=["repair fixture"] if repair and name == "review" else [],
             )
         else:
+            if name == "grader" and resume == "draft":
+                assert kwargs["shell"] is None
+                assert "private-grader-observations" in json.dumps(inputs["prior_worker_draft"])
             value = c
         if kwargs.get("validate"):
             await kwargs["validate"](value)
@@ -393,7 +409,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         initial = (
             ["contract"]
             if contract_only
-            else ([] if resume else (["independent"] if derived else []) + ["grader"])
+            else (
+                ["grader"]
+                if resume == "draft"
+                else []
+                if resume
+                else (["independent"] if derived else []) + ["grader"]
+            )
         )
         expected = initial
         if conflict_on == 2:
@@ -409,7 +431,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     assert calls == (
         ["contract"]
         if contract_only
-        else ([] if resume else (["independent"] if derived else []) + ["grader"])
+        else (
+            ["grader"]
+            if resume == "draft"
+            else []
+            if resume
+            else (["independent"] if derived else []) + ["grader"]
+        )
     ) + ([] if reuse_probes else ["probes"]) + ["review"] + (
         ["repair", "review-repair"] if repair and not contract_only else []
     )

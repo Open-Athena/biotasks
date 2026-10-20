@@ -12,8 +12,14 @@ The user message contains the current task question, source/export evidence,
 task policy, measured repeatability results and available execution records.
 Use those executed records for validation facts; earlier planning proposals are
 not additional requirements or evidence that a check has run.
+When `prior_worker_draft` is supplied without a shell tool, finalize that existing
+work into a complete submission using the recorded observations and current
+question. Do not start another investigation. Local tests are evidence, not
+controller acceptance; failed or unfinished commands do not establish findings.
+Do not invent new measurements. Submit the full candidate promptly; the
+controller will execute its checks and return demonstrated defects for repair.
 It names the directory containing private reference output files in your sandbox.
-The shell tool runs offline with the reference's resolved Python packages. You
+The shell tool, when supplied, runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference
 copies. When `paths` supplies task inputs and recomputed outputs, inspect those

@@ -393,6 +393,9 @@ async def run_grading(
             complete=complete,
         )
     resumed = None
+    draft = None
+    if config.get("resume_grading_directory") and config.get("resume_grader_draft_directory"):
+        raise ValueError("Select full grader recovery or draft recovery, not both")
     if config.get("resume_grading_directory"):
         from grading_resume import load_resume
 
@@ -408,11 +411,30 @@ async def run_grading(
                 "prior_acceptance_reused": False,
             },
         )
+    elif config.get("resume_grader_draft_directory"):
+        from grading_resume import load_grader_draft
+
+        if "materialization" not in snapshot:
+            raise ValueError("Grader draft recovery requires materialized task inputs")
+        independent, draft = load_grader_draft(
+            HERE / config["resume_grader_draft_directory"], context
+        )
+        resumed = independent, None
+        save_record(
+            root / "resume.json",
+            {
+                "source": config["resume_grader_draft_directory"],
+                "reexecute_independent": True,
+                "reauthor_grader": True,
+                "shell_free_grader": True,
+                "prior_acceptance_reused": False,
+            },
+        )
     saved_probes = None
     if config.get("resume_probes_directory"):
         from grading_resume import load_saved_probes
 
-        if not resumed:
+        if not resumed or resumed[1] is None:
             raise ValueError("Probe recovery requires scientific-context-verified grader recovery")
         saved_probes = load_saved_probes(HERE / config["resume_probes_directory"], resumed[1])
         save_record(
@@ -456,6 +478,9 @@ async def run_grading(
         complete = completion_transport(client)
 
     async def call(schema, name, prompt, inputs, validate=None, shell=None):
+        if name == "grader" and draft is not None:
+            inputs = {**inputs, "prior_worker_draft": draft}
+            shell = None
         return await stage(
             schema=schema,
             name=name,
@@ -614,7 +639,7 @@ async def run_grading(
                 return {"status": "contract_revision_blocked"}
             candidate = apply_contract_text(contract_base, text)
             await session.validate_candidate(candidate)
-        elif resumed:
+        elif resumed and resumed[1] is not None:
             candidate = resumed[1]
             await session.validate_candidate(candidate)
         else:

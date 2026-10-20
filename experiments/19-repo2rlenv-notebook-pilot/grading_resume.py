@@ -7,15 +7,18 @@ from grading_protocol import AlternativeSolution, Grader, Probes, check_probes
 from reference_replay import sha256
 
 
-def load_resume(directory, context):
+def verified_reader(directory, context):
+    """Bind saved worker bytes to the same science before any recovery mode."""
     directory = Path(directory)
     manifest = json.loads((directory / "artifact-manifest.json").read_text())
     if manifest.get("download_checked") is not True:
         raise ValueError("Resume requires a download-verified archive")
     records = {row["path"]: row for row in manifest["original_small_files"]}
 
-    def read(name):
+    def read(name, *, text=False):
         path = directory / name
+        if name not in records or not path.exists():
+            raise ValueError("Required verified worker artifact unavailable: " + name)
         record = records[name]
         if (
             path.is_symlink()
@@ -23,7 +26,7 @@ def load_resume(directory, context):
             or sha256(path) != record["sha256"]
         ):
             raise ValueError("Resume evidence identity mismatch: " + name)
-        return json.loads(path.read_text())
+        return path.read_text() if text else json.loads(path.read_text())
 
     result = read("result.json")
     if result.get("cleanup_verified") is not True:
@@ -34,15 +37,41 @@ def load_resume(directory, context):
     prior_context = dict(prior_context)
     prior_context.pop("independent_solution", None)
     prior_context.pop("independent_execution", None)
+    prior_context.pop("prior_worker_draft", None)
     prior_context["paths"] = dict(prior_context["paths"])
     prior_context["paths"].pop("independent_outputs", None)
     if prior_context != context:
         raise ValueError("Resume scientific context differs from the current task")
+    return read
+
+
+def ready_independent(read):
     independent = AlternativeSolution.model_validate(read("independent-solution.json"))
+    if independent.disposition != "ready":
+        raise ValueError("Resume requires a submitted ready independent program")
+    return independent
+
+
+def load_resume(directory, context):
+    read = verified_reader(directory, context)
+    independent = ready_independent(read)
     candidate = Grader.model_validate(read("candidate.json"))
-    if independent.disposition != "ready" or candidate.disposition != "ready":
+    if candidate.disposition != "ready":
         raise ValueError("Resume requires submitted ready artifacts")
     return independent, candidate
+
+
+def load_grader_draft(directory, context):
+    """Recover observations and a ready independent program, never a fake grader."""
+    read = verified_reader(directory, context)
+    independent = ready_independent(read)
+    trace = read("grader/artifact-stage/trace.jsonl", text=True)
+    if not trace.strip():
+        raise ValueError("Grader draft recovery requires recorded worker observations")
+    return independent, {
+        "provenance": "Unchanged, hash-verified worker transcript from the same scientific context. Local checks are not controller acceptance; failed or unfinished commands establish no findings.",
+        "files": {"inspection-trace.jsonl": trace},
+    }
 
 
 def load_saved_probes(directory, candidate):
