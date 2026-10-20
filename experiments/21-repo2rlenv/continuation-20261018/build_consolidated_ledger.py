@@ -68,13 +68,15 @@ def build():
                     'phase': 'continuation', 'reward_semantics': row['reward_semantics'],
                     'blind_attempts': row['blind_solver_attempts'],
                     'native_reward': row.get('blind_native_reward'),
-                    'solver_state': 'scored' if 'blind_native_reward' in row else 'pending',
+                    'solver_state': ('scored' if 'blind_native_reward' in row else
+                                     'attempted_unscored' if row['blind_solver_attempts'] else 'pending'),
                     'admission_source': 'continuation-20261018/new-admissions.json',
                     'solver_source': row.get('blind_audit_source'),
                     'admission_artifact_prefix': row['artifact_prefix'],
                     'solver_artifact_prefix': row.get('blind_artifact_prefix')}
             assert task['blind_attempts'] in (0, 1)
-            assert (task['native_reward'] is not None) == bool(task['blind_attempts'])
+            if task['native_reward'] is not None:
+                assert task['blind_attempts'] == 1
             tasks.append(task)
     assert len({(x['unit_id'], x['task_id']) for x in tasks}) == len(tasks)
     for unit in tracker['rows']:
@@ -88,13 +90,26 @@ def build():
                         'partial_reward': sum(0 < t['native_reward'] < 1 for t in scored),
                         'zero_reward': sum(t['native_reward'] == 0 for t in scored),
                         'pending': len(selected) - len(scored)}
-    assert budget['accounted_estimates_and_holds_usd'] == budget['historical_first_pass_estimates_and_holds_usd'] + sum(r['daytona_hold_usd'] for r in budget['runs'])
+    # Failed pre-execution launch rows retain their original hold description.
+    # The explicit transfer points at the replacement row; count it only there.
+    runs = {row['run']: row for row in budget['runs']}
+    transferred = [row for row in budget['runs'] if row.get('hold_transferred_to')]
+    for row in transferred:
+        target = row['hold_transferred_to']
+        assert target != row['run'] and target in runs
+        assert runs[target]['daytona_hold_usd'] >= row['daytona_hold_usd']
+    effective_holds = sum(row['daytona_hold_usd'] for row in budget['runs']
+                          if not row.get('hold_transferred_to'))
+    assert budget['accounted_estimates_and_holds_usd'] == budget['historical_first_pass_estimates_and_holds_usd'] + effective_holds
     assert budget['remaining_conservative_allowance_usd'] == budget['ceiling_usd'] - budget['accounted_estimates_and_holds_usd']
     return {'as_of_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'stage': 'consolidated_verified_results_so_far_not_final_completion',
             'tasks': tasks, 'units': tracker['rows'], 'reward_groups': groups,
             'total_admitted': len(tasks), 'total_scored': sum(t['native_reward'] is not None for t in tasks),
             'budget': {k: budget[k] for k in ['ceiling_usd', 'historical_first_pass_estimates_and_holds_usd', 'continuation_estimates_and_holds_usd', 'accounted_estimates_and_holds_usd', 'remaining_conservative_allowance_usd', 'provider_invoice_verified', 'credit_balance_verified']},
+            'budget_hold_accounting': {'explicit_transfer_rows': [row['run'] for row in transferred],
+                                      'transferred_holds_excluded_usd': sum(row['daytona_hold_usd'] for row in transferred),
+                                      'effective_continuation_holds_usd': effective_holds},
             'source_sha256': sources,
             'limitations': ['No common pass-rate aggregation across unlike reward semantics.',
                            'Related PR/commit/mutation variants can share source families; task instances are not independent competencies.',

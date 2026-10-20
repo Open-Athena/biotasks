@@ -4,7 +4,7 @@ First pass and continuation combined. Every accepted task below has independent 
 
 | Reward family | Accepted | Scored once | Maximum reward | Partial | Zero | Pending |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Correctness / algorithmic | 18 | 18 | 15 | 1 | 2 | 0 |
+| Correctness / algorithmic | 19 | 18 | 15 | 1 | 2 | 1 |
 | Patch similarity | 12 | 12 | 1 | 3 | 8 | 0 |
 
 ### Repository-route ledger
@@ -15,17 +15,17 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | --- | ---: | ---: | ---: | ---: |
 | pr_diff/native | 3 / 10 | 3 / 10 | 3 / 10 | 3 / 10 |
 | pr_runtime/native | 3 / 9 | 3 / 5 | 0 / ? B | 0 / ? B |
-| commit_runtime/native | 0 / 10 | 1 / 6 | 0 / ? B | 0 / ? B |
+| commit_runtime/native | 0 / 10 | 1 / 10 | 0 / ? B | 0 / ? B |
 | code_instruct/native | 0 / 10 | 0 / 10 | — | — |
 | equivalence_tests/native | 0 / ? B | 0 / ? B | — | — |
-| cve_patches/native | 0 / ? | 0 / ? B | 0 / ? B | 0 / ? B |
+| cve_patches/native | 0 / 1 | 0 / ? B | 0 / ? B | 0 / ? B |
 | tasksmith/tasksmith | 0 / ? B | 0 / ? B | — | — |
 | repo_mutate/swe_smith | 2 / 10 | 3 / 9 | — | — |
-| pr_to_env/swe_gen | 0 / 1 | 0 / 1 | — | — |
-| repo_reconstruct/swe_flow | 0 / 6 | 2 / 8 | — | — |
+| pr_to_env/swe_gen | 0 / 10 | 1 / 10 | — | — |
+| repo_reconstruct/swe_flow | 0 / 7 | 2 / 8 | — | — |
 | equivalence_tests/r2e | 0 / 10 | 0 / 10 | — | — |
-| pr_runtime/swe_next | 0 / 4 | 0 / 1 | — | — |
-| commit_runtime/r2e_gym | 0 / 7 | 1 / 2 | — | — |
+| pr_runtime/swe_next | 0 / 10 | 0 / 10 | — | — |
+| commit_runtime/r2e_gym | 0 / 7 | 1 / 6 | — | — |
 | env_repair/cli_gym | 0 / ? B | 0 / ? B | — | — |
 | repo_reconstruct/codemidas | 0 / ? B | 0 / ? B | — | — |
 
@@ -33,10 +33,10 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 
 | Recipe / fixed cohort | Accepted | Charged candidates | State |
 | --- | ---: | ---: | --- |
-| terminal_synth/seta_seed2synth / seta-genomic-intervals-v1 | 0/3 | 3/10 | target not met work remaining |
+| terminal_synth/seta_seed2synth / seta-genomic-intervals-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
 | task_evolve/seta_evol / pr2633-parent-v1 | 0/3 | 3/10 | target not met work remaining |
-| terminal_synth/dataarc / pr2633-parent-v1 | 0/3 | 1/10 | target not met work remaining |
-| terminal_synth/tmax / tmax-biological-v1 | 0/3 | 3/10 | target not met work remaining |
+| terminal_synth/dataarc / pr2633-parent-v1 | 0/3 | 3/10 | target not met work remaining |
+| terminal_synth/tmax / tmax-biological-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
 | terminal_synth/endless_terminals / retained-native-draws-biological-context | 0/3 | 10/10 | candidate cap exhausted below target |
 | terminal_reconstruct/terminalworld / bioinfo-notebook-v1 | 0/3 | ?/10 | blocked eligible input or terms |
 | reasoning_synth/scaler / synthetic-DNA-edit-distance-family | 3/3 | 3/10 | target met for declared native reward |
@@ -76,5 +76,6 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | commit_runtime/native | scikit-bio/scikit-bio | scikit-bio__scikit-bio-d25f305cea3a | 0.75 |
 | repo_mutate/swe_smith | scikit-bio/scikit-bio | swe-smith-f39ded25ef48a6575366 | 1 |
 | repo_mutate/swe_smith | scikit-bio/scikit-bio | swe-smith-2b1ed7afc9535c5c23fb | 1 |
+| pr_to_env/swe_gen | scikit-bio/scikit-bio | swe-gen-d52d9d8d8c952c886adb | pending |
 
 Patch-similarity rewards do not establish functional correctness. Scaler uses native −1/+1 rewards; the other scored correctness profiles use 0–1. No combined benchmark pass rate is claimed. Full stable identities and source hashes are preserved in `consolidated-ledger.json`.
