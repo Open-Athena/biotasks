@@ -1,0 +1,162 @@
+{
+  "stage": "development_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "nipy/nipype",
+  "run_id": "biotasks24-dev-nipype-004",
+  "bootstrap_ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "results": [
+    {
+      "number": 3745,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv nipype/pipeline/plugins/tests/test_multiproc.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'error'\n  error: subprocess-exited-with-error\n  \n  \u00d7 Preparing editable metadata (pyproject.toml) did not run successfully.\n  \u2502 exit code: 1\n  \u2570\u2500> [31 lines of output]\n      /usr/local/lib/python3.11/site-packages/vcs_versioning/_backends/_git.py:709: UserWarning: \"/workspace\" is shallow and may cause errors\n        pre_parse(wd)\n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 167, in prepare_metadata_for_build_editable\n          hook = backend.prepare_metadata_for_build_editable\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n      AttributeError: module 'hatchling.build' has no attribute 'prepare_metadata_for_build_editable'\n      \n      During handling of the above exception, another exception occurred:\n      \n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 353, in <module>\n          main()\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 335, in main\n          json_out['return_val'] = hook(**hook_input['kwargs'])\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 176, in prepare_metadata_for_build_editable\n          whl_basename = build_hook(metadata_directory, config_settings)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/build.py\", line 83, in build_editable\n          return os.path.basename(next(builder.build(directory=wheel_directory, versions=[\"editable\"])))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/plugin/interface.py\", line 166, in build\n          artifact = version_api[version](directory, **build_data)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 547, in build_editable\n          return self.build_editable_detection(directory, **build_data)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 550, in build_editable_detection\n          from editables import EditableProject\n      ModuleNotFoundError: No module named 'editables'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nerror: metadata-generation-failed\n\n\u00d7 Encountered error while generating package metadata.\n\u2570\u2500> See above for output.\n\nnote: This is an issue with the package mentioned above, not pip.\nhint: See above for details.\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 2b671ab Merge pull request #3746 from nipy/ci/prerelease\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'error'\n  error: subprocess-exited-with-error\n  \n  \u00d7 Preparing editable metadata (pyproject.toml) did not run successfully.\n  \u2502 exit code: 1\n  \u2570\u2500> [31 lines of output]\n      /usr/local/lib/python3.11/site-packages/vcs_versioning/_backends/_git.py:709: UserWarning: \"/workspace\" is shallow and may cause errors\n        pre_parse(wd)\n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 167, in prepare_metadata_for_build_editable\n          hook = backend.prepare_metadata_for_build_editable\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n      AttributeError: module 'hatchling.build' has no attribute 'prepare_metadata_for_build_editable'\n      \n      During handling of the above exception, another exception occurred:\n      \n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 353, in <module>\n          main()\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 335, in main\n          json_out['return_val'] = hook(**hook_input['kwargs'])\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 176, in prepare_metadata_for_build_editable\n          whl_basename = build_hook(metadata_directory, config_settings)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/build.py\", line 83, in build_editable\n          return os.path.basename(next(builder.build(directory=wheel_directory, versions=[\"editable\"])))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/plugin/interface.py\", line 166, in build\n          artifact = version_api[version](directory, **build_data)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 547, in build_editable\n          return self.build_editable_detection(directory, **build_data)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 550, in build_editable_detection\n          from editables import EditableProject\n      ModuleNotFoundError: No module named 'editables'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nerror: metadata-generation-failed\n\n\u00d7 Encountered error while generating package metadata.\n\u2570\u2500> See above for output.\n\nnote: This is an issue with the package mentioned above, not pip.\nhint: See above for details.\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/base.py...\nChecking patch nipype/pipeline/plugins/legacymultiproc.py...\nChecking patch nipype/pipeline/plugins/multiproc.py...\nApplied patch nipype/pipeline/plugins/base.py cleanly.\nApplied patch nipype/pipeline/plugins/legacymultiproc.py cleanly.\nApplied patch nipype/pipeline/plugins/multiproc.py cleanly.\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/plugins/tests/test_multiproc.py...\nApplied patch nipype/pipeline/plugins/tests/test_multiproc.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    },
+    {
+      "number": 3766,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv nipype/pipeline/engine/tests/test_workflows.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at b4c671f Merge remote-tracking branch 'upstream/maint/1.12.x'\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'error'\n  error: subprocess-exited-with-error\n  \n  \u00d7 Preparing editable metadata (pyproject.toml) did not run successfully.\n  \u2502 exit code: 1\n  \u2570\u2500> [31 lines of output]\n      /usr/local/lib/python3.11/site-packages/vcs_versioning/_backends/_git.py:709: UserWarning: \"/workspace\" is shallow and may cause errors\n        pre_parse(wd)\n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 167, in prepare_metadata_for_build_editable\n          hook = backend.prepare_metadata_for_build_editable\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n      AttributeError: module 'hatchling.build' has no attribute 'prepare_metadata_for_build_editable'\n      \n      During handling of the above exception, another exception occurred:\n      \n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 353, in <module>\n          main()\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 335, in main\n          json_out['return_val'] = hook(**hook_input['kwargs'])\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 176, in prepare_metadata_for_build_editable\n          whl_basename = build_hook(metadata_directory, config_settings)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/build.py\", line 83, in build_editable\n          return os.path.basename(next(builder.build(directory=wheel_directory, versions=[\"editable\"])))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/plugin/interface.py\", line 166, in build\n          artifact = version_api[version](directory, **build_data)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 547, in build_editable\n          return self.build_editable_detection(directory, **build_data)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 550, in build_editable_detection\n          from editables import EditableProject\n      ModuleNotFoundError: No module named 'editables'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nerror: metadata-generation-failed\n\n\u00d7 Encountered error while generating package metadata.\n\u2570\u2500> See above for output.\n\nnote: This is an issue with the package mentioned above, not pip.\nhint: See above for details.\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard b4c671fe5581534bcfd64224db17fd4dc1d9464c\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/tests/test_workflows.py...\nApplied patch nipype/pipeline/engine/tests/test_workflows.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at b4c671f Merge remote-tracking branch 'upstream/maint/1.12.x'\nRemoving nipype/_version.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'error'\n  error: subprocess-exited-with-error\n  \n  \u00d7 Preparing editable metadata (pyproject.toml) did not run successfully.\n  \u2502 exit code: 1\n  \u2570\u2500> [31 lines of output]\n      /usr/local/lib/python3.11/site-packages/vcs_versioning/_backends/_git.py:709: UserWarning: \"/workspace\" is shallow and may cause errors\n        pre_parse(wd)\n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 167, in prepare_metadata_for_build_editable\n          hook = backend.prepare_metadata_for_build_editable\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n      AttributeError: module 'hatchling.build' has no attribute 'prepare_metadata_for_build_editable'\n      \n      During handling of the above exception, another exception occurred:\n      \n      Traceback (most recent call last):\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 353, in <module>\n          main()\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 335, in main\n          json_out['return_val'] = hook(**hook_input['kwargs'])\n                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/pip/_vendor/pyproject_hooks/_in_process/_in_process.py\", line 176, in prepare_metadata_for_build_editable\n          whl_basename = build_hook(metadata_directory, config_settings)\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/build.py\", line 83, in build_editable\n          return os.path.basename(next(builder.build(directory=wheel_directory, versions=[\"editable\"])))\n                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/plugin/interface.py\", line 166, in build\n          artifact = version_api[version](directory, **build_data)\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 547, in build_editable\n          return self.build_editable_detection(directory, **build_data)\n                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n        File \"/usr/local/lib/python3.11/site-packages/hatchling/builders/wheel.py\", line 550, in build_editable_detection\n          from editables import EditableProject\n      ModuleNotFoundError: No module named 'editables'\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\nerror: metadata-generation-failed\n\n\u00d7 Encountered error while generating package metadata.\n\u2570\u2500> See above for output.\n\nnote: This is an issue with the package mentioned above, not pip.\nhint: See above for details.\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard b4c671fe5581534bcfd64224db17fd4dc1d9464c\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/workflows.py...\nApplied patch nipype/pipeline/engine/workflows.py cleanly.\n+ git apply --verbose --reject -\nChecking patch nipype/pipeline/engine/tests/test_workflows.py...\nApplied patch nipype/pipeline/engine/tests/test_workflows.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    }
+  ],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No held-out execution, final task export/build or solver run.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "base_image_repo_digests": [
+    "python@sha256:0a310eeecf4e1f5a0743f9a6520c90c88d089c903ca5fd283f501e3a805f5f89"
+  ],
+  "bootstrap_exit_code": 0,
+  "empty_test_commands_control": {
+    "status": "failed",
+    "fail_to_pass": [],
+    "pass_to_pass": [],
+    "pre_log": "",
+    "post_log": "",
+    "reason": "bootstrap did not record any test_cmds"
+  },
+  "disposition": "development_validation_completed",
+  "cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.02900372099975357
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.01999511000030907
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 3.9890714729990577
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.1069053030005307
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11769168399769114
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 51.586858146998566
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.5765334659954533
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.08700367200071923
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.0682732319983188
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12253613399661845
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8488280640012817
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8264258330018492
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.08540754199930234
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.06983111199951963
+    },
+    {
+      "operation": "exec",
+      "exit_code": 1,
+      "duration_sec": 0.10755534300551517
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 1.117222902001231
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8502247040014481
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8686354439996649
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 8.172531861004245
+    }
+  ],
+  "elapsed_seconds": 69.729
+}

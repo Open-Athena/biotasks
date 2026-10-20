@@ -10,10 +10,22 @@ data = tomllib.loads(Path("/workspace/pyproject.toml").read_text())
 build_requirements = data.get("build-system", {}).get("requires", [])
 if build_requirements:
     subprocess.run([sys.executable, "-m", "pip", "install", *build_requirements], check=True)
+subprocess.run([sys.executable, "-m", "pip", "install", "pyproject_hooks"], check=True)
+from pyproject_hooks import BuildBackendHookCaller
+
+backend = data["build-system"]
+hooks = BuildBackendHookCaller(
+    "/workspace", backend["build-backend"], backend_path=backend.get("backend-path"),
+)
+editable_requirements = hooks.get_requires_for_build_editable()
+if editable_requirements:
+    subprocess.run([sys.executable, "-m", "pip", "install", *editable_requirements], check=True)
 optional = data.get("project", {}).get("optional-dependencies", {})
 extras = [name for name in ("test", "tests", "testing") if name in optional]
 requirement = ".[%s]" % ",".join(extras) if extras else "."
-subprocess.run([sys.executable, "-m", "pip", "install", "-e", requirement], check=True)
+subprocess.run([
+    sys.executable, "-m", "pip", "install", "--no-build-isolation", "-e", requirement,
+], check=True)
 groups = data.get("dependency-groups", {})
 
 
@@ -34,4 +46,5 @@ for name in ("test", "tests", "testing"):
 subprocess.run([sys.executable, "-m", "pip", "install", *requirements], check=True)
 print(json.dumps({
     "extras": extras, "test_requirements": requirements, "build_requirements": build_requirements,
+    "editable_requirements": editable_requirements,
 }))

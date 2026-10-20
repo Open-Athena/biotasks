@@ -510,3 +510,19 @@ Inputs `nipype-004` and `scfp-001` contain only the original development PRs.
 They can run on two bounded reserved CPU workers under the existing execution
 plan. Both use the same generic profile version 2, no per-PR repairs, no model
 calls, and unchanged native validation code. Held-out execution remains untouched.
+
+Nipype attempt `004` completed and cleaned up in 105.894 seconds (0.08825
+allocated CPU-hours), but its offline editable rebuild lacked `editables`.
+That dependency is requested dynamically by Hatch's editable-build hook and is
+not in the project's static build-system requirement list. Both before/after
+stages failed the rebuild before pytest; retain their zero-F2P outcomes as
+setup failures. Archive/result hashes were verified and selected evidence is in
+`evidence/development/nipype-004/`.
+
+Profile version 3 uses the standard PEP 517/660 hook
+`get_requires_for_build_editable` to discover and install dynamic backend
+requirements during initial setup. This avoids hardcoding a Nipype dependency
+or repairing individual PRs. The subsequent per-stage rebuild remains offline.
+Prepared `nipype-005` on the same development inputs. The independent
+scikit-fingerprints `001` run was still running at the last authoritative
+observation; do not resubmit it or rewrite its version-2 input.
