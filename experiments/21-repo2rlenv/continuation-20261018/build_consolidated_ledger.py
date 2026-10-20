@@ -123,6 +123,28 @@ def build():
     assert len(matched_provenance) == len(provenance['rows'])
     provenance_counts = dict(Counter(task['provenance_category'] for task in tasks))
     assert provenance_counts == provenance['categories']
+    route_provenance = []
+    for route in dict.fromkeys(unit['route'] for unit in tracker['rows']):
+        selected = [task for task in tasks if task['route'] == route]
+        unchanged = sum(task['unchanged_output_evidence_eligible'] for task in selected)
+        route_provenance.append({
+            'route': route, 'accepted_mixed_provenance': len(selected),
+            'unchanged_accepted_outputs': unchanged,
+            'categories': dict(Counter(task['provenance_category'] for task in selected)),
+            'full_recurring_time_per_unchanged_accepted_output_minutes': None,
+            'recurring_time_status': ('undefined_zero_unchanged_acceptances' if not unchanged
+                                      else 'complete_phase_accounting_not_available'),
+        })
+    repository_totals = []
+    for repository in dict.fromkeys(task['repository'] for task in tasks if task['repository']):
+        selected = [task for task in tasks if task['repository'] == repository]
+        similarity = sum(task['route'] == 'pr_diff/native' for task in selected)
+        repository_totals.append({
+            'repository': repository, 'accepted_mixed_provenance': len(selected),
+            'correctness_instances': len(selected) - similarity,
+            'similarity_instances': similarity,
+            'unchanged_accepted_outputs': sum(task['unchanged_output_evidence_eligible'] for task in selected),
+        })
     for unit in tracker['rows']:
         assert unit['total_admitted'] == sum(t['unit_id'] == unit['unit_id'] for t in tasks)
     groups = {}
@@ -151,6 +173,8 @@ def build():
             'tasks': tasks, 'units': tracker['rows'], 'reward_groups': groups,
             'automatic_output_accounting': {
                 'categories': provenance_counts,
+                'by_route': route_provenance,
+                'by_repository': repository_totals,
                 'unchanged_accepted_outputs': sum(task['unchanged_output_evidence_eligible'] for task in tasks),
                 'unattended_end_to_end_yield_established': False,
                 'interpretation': 'Accepted instances and blind scores below include legacy assisted evidence. Unchanged authored outputs and unchanged programmatic instances from the declared supplied family support separate parts of the output comparison. The supplied Scaler family was human-authored; instance expansion does not establish family invention. Curated setup, manual orchestration and final assessment remain disclosed; these counts are not production acceptance rates.'},

@@ -48,7 +48,7 @@ Cells are **accepted tasks / charged candidate attempts**. The target is 3 accep
 | Recipe / fixed cohort | Accepted | Charged candidates | State |
 | --- | ---: | ---: | --- |
 | terminal_synth/seta_seed2synth / seta-genomic-intervals-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
-| task_evolve/seta_evol / pr2633-parent-v1 | 0/3 | 3/10 | target not met work remaining |
+| task_evolve/seta_evol / pr2633-parent-v1 | 0/3 | 3/10 | original saved first build active |
 | terminal_synth/dataarc / pr2633-parent-v1 | 0/3 | 3/10 | target not met work remaining |
 | terminal_synth/tmax / tmax-biological-v1 | 0/3 | 3/10 | declared input pool exhausted below target |
 | terminal_synth/endless_terminals / retained-native-draws-biological-context | 0/3 | 10/10 | candidate cap exhausted below target |
