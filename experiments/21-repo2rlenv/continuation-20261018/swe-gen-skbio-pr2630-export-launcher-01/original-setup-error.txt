@@ -1,0 +1,23 @@
+RuntimeError: Build failed with exit_code=2
+Last 50 log lines:
+[stdout] [iris setup] step 1/2
+[stdout] syncing deps
+[stderr] error: invalid value 'huggingface_hub==1.33.0' for '--package <PACKAGE>': Not a valid package or extra name: "huggingface_hub==1.33.0". Names must start and end with a letter or digit and may only contain -, _, ., and alphanumeric characters.
+[stderr] 
+[stderr] For more information, try '--help'.
+
+Traceback:
+Traceback (most recent call last):
+  File "/app/lib/iris/src/iris/cluster/worker/task_attempt.py", line 646, in run
+    self._build_container()
+  File "/app/lib/iris/src/iris/cluster/worker/task_attempt.py", line 836, in _build_container
+    self._container_handle.build(on_logs=on_build_logs)
+  File "/app/lib/iris/src/iris/cluster/runtime/docker.py", line 518, in build
+    raise RuntimeError(f"Build failed with exit_code={status.exit_code}\nLast 50 log lines:\n{log_text}")
+RuntimeError: Build failed with exit_code=2
+Last 50 log lines:
+[stdout] [iris setup] step 1/2
+[stdout] syncing deps
+[stderr] error: invalid value 'huggingface_hub==1.33.0' for '--package <PACKAGE>': Not a valid package or extra name: "huggingface_hub==1.33.0". Names must start and end with a letter or digit and may only contain -, _, ., and alphanumeric characters.
+[stderr] 
+[stderr] For more information, try '--help'.

@@ -1,0 +1,66 @@
+{
+  "stage": "prepared_not_dispatched",
+  "run": "swe-gen-skbio-pr2630-export-20261020-02",
+  "recipe": "swe_gen",
+  "repository": "scikit-bio/scikit-bio",
+  "candidate_ids": [
+    "d52d9d8d8c952c886adb"
+  ],
+  "required_slots": 2,
+  "maximum_native_materializations": 0,
+  "maximum_new_exports": 1,
+  "maximum_native_trials": 2,
+  "model_calls": 0,
+  "task_specific_fixes": 0,
+  "new_candidate_charge": 0,
+  "new_blind_attempts": 0,
+  "prior_native_author_calls": 1,
+  "worker_name": "bt21-swegen2630-export01",
+  "daytona_hold_usd": 5,
+  "native_trial_timeout_seconds": 900,
+  "execution_window_seconds": 6900,
+  "inputs_archive_sha256": "e8575d9b0c94a469f7e43279066421c8c6e86852ed15491f6c00868022c42bdc",
+  "download": {
+    "bucket": "open-athena/biotasks",
+    "path": "research/21-repo2rlenv/2026-10-18/41c2890352a91dd83d959597d031bedca4c6a7a1db60265ba9e160bee608da6e/native-evidence.tar.gz",
+    "bytes": 38573667,
+    "sha256": "cc7f4b3031aedd3cbbdc590edbe9eeee9edba5524c105c4c9a99282b57661e11"
+  },
+  "required_explicit_environment": [
+    "DAYTONA_API_KEY",
+    "BIOTASKS21_WORKER_NAME",
+    "BIOTASKS21_PR_INPUTS_SHA256"
+  ],
+  "files": {
+    "capture_author_process.py": {
+      "bytes": 3044,
+      "sha256": "a9405e00e7029eeb9df1f45bb2a743cbc8fcfd81510beff0f03d0e6a4dec2942"
+    },
+    "export_saved_swe_gen.py": {
+      "bytes": 6638,
+      "sha256": "6dfdd96df201ac64630f4a960d6be554247f441e9278cdfc9394c5bb0aed4d14"
+    },
+    "pr-inputs.tar.gz": {
+      "bytes": 3366,
+      "sha256": "e8575d9b0c94a469f7e43279066421c8c6e86852ed15491f6c00868022c42bdc"
+    },
+    "preserve_author_output.py": {
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    "repo2rlenv-source.tar.gz": {
+      "bytes": 6906904,
+      "sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755"
+    },
+    "run_swe_gen_saved_export_controller.py": {
+      "bytes": 5109,
+      "sha256": "fe19bc3a8ffe7218e2c635894093aad22f1a3c1b53c67aba00bfcd26d4c8c949"
+    },
+    "run_swe_gen_saved_export_trc.py": {
+      "bytes": 5357,
+      "sha256": "790ccb7dbac35c2d5a7294aa441705cc8a6063f09905021cb115b60f63e5a75f"
+    }
+  },
+  "scope": "Exact saved native context/profile and original GLM TaskInstruction. Native exporter arguments, baseline/reference controls and conditional emission only. No input/author/grader/runtime repair or feedback. Public generation archive downloaded and SHA verified on TRC, avoiding large local submission payloads.",
+  "launcher_correction": "Only move Hub dependency from workspace packages to documented pip_packages setup argument; all7payload hashes, original model output and generation inputs unchanged."
+}
