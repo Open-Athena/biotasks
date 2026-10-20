@@ -1,0 +1,50 @@
+{
+  "stage": "prepared_new_finite_inference_client_same_verified_code_for_unchanged_SWE_gen_task",
+  "cohort": "glm-inference-client-20261020-01",
+  "required_client_slots": 1,
+  "resources": {
+    "cpu": 1,
+    "memory_gib": 2,
+    "disk_gib": 5
+  },
+  "CPU_cost_basis": "user allocated free CoreWeave",
+  "lifetime_seconds": 7200,
+  "model": "existing free GLM-5.3",
+  "repository_execution": false,
+  "sandbox_credentials_supplied": false,
+  "upstream_service_modified": false,
+  "own_endpoint_access": "documented Iris LINK capability plus separate opaque application token in X-Biotasks21-Inference-Token",
+  "maximum_concurrent_forwarded_requests": 1,
+  "client_files": {
+    "run_glm_inference_client.py": {
+      "bytes": 9762,
+      "sha256": "6c705ab98bcfea84fac0520605bedcc58d9fecce4b47590480b6ca051053525f"
+    }
+  },
+  "probe_files": {
+    "run_glm_transport_probe.py": {
+      "bytes": 2857,
+      "sha256": "fe31c22691acb2a72e4701ce84e838810c234c82c0f1e769eb3f4f423863644e"
+    }
+  },
+  "zero_model_preflight": [
+    "reject missing application authentication",
+    "reject authoring output allowance",
+    "verify native payload SHA256 and byte length through actual TRC connection",
+    "authenticated existing approved model discovery without generation"
+  ],
+  "solver_limits_unchanged": {
+    "attempts_per_validated_task": 1,
+    "timeout_seconds": 900,
+    "turns": 12,
+    "output_tokens_per_request": 2048,
+    "effort": "unset/native"
+  },
+  "publication": "Preserve raw results privately until all provider, own application and capability credentials/routes pass eligibility review; public artifacts contain no credentials.",
+  "dispatch_gate": "Checkpoint; previous own client terminal, endpoint absent, usage archived and slot released; sufficient aggregate capacity; then zero-model transport preflight before blind attempt.",
+  "original_failed_client": "glm-inference-client-20261018-01",
+  "original_failed_probe": "glm-transport-probe-20261018-01",
+  "intervention": "Fresh finite own endpoint after previous client completed; exact verified client code/model/solver limits unchanged.",
+  "solver_transport_requirement": "Pass the application token through native provider extra_headers, never in model messages/body; preserve max_tokens2048, 12turns/900sec and unset effort.",
+  "previous_client": "glm-inference-client-20261019-05"
+}

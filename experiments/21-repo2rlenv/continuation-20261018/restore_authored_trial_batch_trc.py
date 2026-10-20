@@ -40,7 +40,7 @@ def main():
         cohort.mkdir(exist_ok=False)
         units = []
         for item in inputs['units']:
-            assert item['unit'] in {'enspie', 'lcc', 'tsallis', 'pielou'}
+            assert item['unit'] in {'enspie', 'lcc', 'tsallis', 'pielou', 'swegen2630'}
             assert item['bucket'] == 'open-athena/biotasks'
             assert item['archive_path'].startswith('research/21-repo2rlenv/')
             archive = Path(item['unit'] + '-native.tar.gz')

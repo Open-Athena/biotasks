@@ -50,10 +50,13 @@ async def run():
     sdk = json.loads(Path('native-sdk-preflight.json').read_text())
     assert sdk['native_SDK_passed'] and sdk['requests_dispatched'] == sdk['responses_received'] == 1
     assert manifest['route'] in {'pr_runtime/native', 'commit_runtime/native',
-                                'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith'}
-    authored = manifest['route'] in {'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith'}
+                                'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith',
+                                'pr_to_env/swe_gen'}
+    authored = manifest['route'] in {'repo_reconstruct/swe_flow', 'repo_mutate/swe_smith',
+                                    'pr_to_env/swe_gen'}
     if authored:
         assert (manifest['route'], manifest['task_id']) in {
+            ('pr_to_env/swe_gen', 'swe-gen-d52d9d8d8c952c886adb'),
             ('repo_mutate/swe_smith', 'swe-smith-2b1ed7afc9535c5c23fb'),
             ('repo_reconstruct/swe_flow', 'swe-flow-3ad7ba60ca7686b2007b'),
             ('repo_mutate/swe_smith', 'swe-smith-53ec5f51639d4053971f'),
