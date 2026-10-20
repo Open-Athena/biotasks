@@ -1,25 +1,43 @@
 # Notebook → task → attempt explorer
 
-`index.html` is standalone: it embeds the latest selected notebook, published
-question, successful native solver trajectory and nine pipeline stages. Each
-stage separates recorded prompts, inputs and outputs. Code has syntax
-highlighting; detailed records are collapsed. The notebook view shows source
-cells, not stale saved outputs. Model reasoning is omitted from the reading
-view; original trajectories remain linked.
+`index.html` is standalone. It embeds the selected notebook, task question,
+solver trajectory when recorded, and pipeline evidence. Each stage separates
+prompts, inputs and outputs. Code has syntax highlighting; detailed records are
+collapsed. The notebook view shows source cells rather than treating saved
+outputs as fresh results. Model reasoning is omitted from the reading view;
+original trajectories remain linked. This is an evidence explorer, not a campaign
+log.
 
-The current selection is preparation 010, setup 001, replay 001, specification
-016, materialization 006, grading 006, native 003 and scientific release 001.
-Grading includes the component prompts that produced the accepted grader.
-This is a current evidence explorer, not a campaign log.
+`current.json` selects the default evidence. Other profiles select the same layout
+without changing the renderer. Control counts and solver rewards come from the
+selected records. A profile without validation or an attempt displays that absence;
+it does not borrow results from another task. Missing declared evidence is an
+error, and a solver selection must identify exactly one trajectory.
 
-Build with `python experiments/19-repo2rlenv-notebook-pilot/explorer/build.py`
-using markdown-it-py and Pygments from the recorded upstream environment. All
-inputs are versioned: no private archive or credential is needed. The `evidence`
-folder contains recovered exact worker inputs and the two small published task
-files. `source-manifest.json` records embedded file hashes and release identity.
-GitHub links pin the checkout revision at build time; commit new evidence before
-building for publication. HTML escapes code and disables raw Markdown HTML.
+Build from the repository root using Python with markdown-it-py and Pygments
+available in the recorded upstream environment:
 
-`check_browser.py` checks view/stage navigation, the solver trace and mobile
-layout using Playwright and the node's Chromium. Large biological inputs and
-reference outputs are linked through release manifests rather than embedded.
+```bash
+python experiments/19-repo2rlenv-notebook-pilot/explorer/build.py
+```
+
+Review another selection without replacing the published index:
+
+```bash
+python experiments/19-repo2rlenv-notebook-pilot/explorer/build.py \
+  --profile experiments/19-repo2rlenv-notebook-pilot/transfer/bioframe/explorer-profile.json \
+  --output /tmp/biotasks-explorer-review
+```
+
+All reading inputs are versioned; building does not require a private archive,
+credential, model call or biological data download. Evidence folders preserve
+exact recovered worker inputs with their source hashes. `source-manifest.json`
+records the profile, embedded file hashes, selected trajectory size and release
+identity when available. GitHub links pin the checkout revision at build time;
+commit new evidence before building for publication. HTML escapes code and
+disables raw Markdown HTML.
+
+`check_browser.py --index /tmp/biotasks-explorer-review/index.html` checks
+view/stage navigation, the selected solver trace and mobile layout using
+Playwright and the node's Chromium. Large biological inputs and reference outputs
+are represented by manifests and linked through the release when published.
