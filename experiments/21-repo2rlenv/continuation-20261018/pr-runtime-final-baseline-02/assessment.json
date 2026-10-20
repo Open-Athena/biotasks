@@ -1,0 +1,48 @@
+{
+  "stage": "post_run_assessment_of_unchanged_native_PR_runtime_original_declared_profile",
+  "selected_source_inputs": [
+    2638,
+    2637,
+    2635,
+    2634,
+    2632
+  ],
+  "native_exports": 0,
+  "model_calls": 0,
+  "task_fixes": 0,
+  "compiled_extension_restoration": false,
+  "before_after_pairs_executed": 1,
+  "native_batch_completed": false,
+  "controller_success_not_native_success": true,
+  "outcomes": [
+    {
+      "pr": 2638,
+      "status": "native_validation_failed",
+      "reason": "Native git clean removes built C extensions; pre and post pytest collection both fail to import skbio.metadata._intersection; no F2P/P2P measured.",
+      "pre_post_tests_selected": "Frozen baseline targets test_ancombc.py; native selector preserves explicit path rather than replacing with changed PR test paths.",
+      "scope": "Failure under original declared profile; not a clean test of PR-specific correctness."
+    },
+    {
+      "pr": 2637,
+      "status": "native_process_aborted_before_pretest",
+      "reason": "Native DockerSandbox.exec passes the large stage script via process argv, raising OSError errno7 Argument list too long before test execution."
+    }
+  ],
+  "selected_but_never_reached": [
+    2635,
+    2634,
+    2632
+  ],
+  "recovery_policy": "Do not restore extensions, change test command, transport patches through a new route, or edit task outputs. Only continue the original three never-reached selected inputs using unchanged native code/profile; original failed cases are not replayed.",
+  "original_source_candidate_charge": 10,
+  "new_source_candidate_charge": 0,
+  "controller_wall_seconds": 146.75,
+  "time_per_accepted_task": null,
+  "controller_status": {
+    "status": "cohort_process_failed",
+    "worker_returncode": 1,
+    "cleanup": "terminated",
+    "execution_timeout_sec": 6899
+  },
+  "exact_owned_Daytona_absence_verified": 1
+}

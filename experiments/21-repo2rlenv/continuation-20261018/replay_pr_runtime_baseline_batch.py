@@ -28,7 +28,14 @@ from repo2rlenv.spec.options import PRRuntimeOptions
 def run(inputs, output):
     manifest = json.loads((inputs / "manifest.json").read_text())
     assert manifest["repository"] == "scikit-bio/scikit-bio"
-    assert manifest["prior_candidate_charge"] == 5 and len(manifest["candidates"]) == 5
+    assert manifest["prior_candidate_charge"] == 5
+    candidates = manifest["candidates"]
+    assert 1 <= len(candidates) <= 5 and len(set(candidates)) == len(candidates)
+    original = manifest.get("original_selected_candidates", candidates)
+    consumed = manifest.get("excluded_already_executed_candidates", [])
+    assert original == [2638, 2637, 2635, 2634, 2632]
+    assert len(set(consumed)) == len(consumed) and set(consumed) <= set(original)
+    assert candidates == [number for number in original if number not in consumed]
     assert manifest["campaign_charge_after_selection"] == 10
     for name, record in manifest["files"].items():
         path = inputs / name
@@ -38,7 +45,7 @@ def run(inputs, output):
             assert hashlib.file_digest(stream, "sha256").hexdigest() == record["sha256"]
     options = PRRuntimeOptions.model_validate(manifest["native_options"])
     assert not options.skip_validation and options.require_fail_to_pass
-    assert options.limit == 5 and options.validation_timeout_sec == 600
+    assert options.limit == len(candidates) and options.validation_timeout_sec == 600
     output.mkdir(parents=True, exist_ok=False)
     started = time.monotonic()
     with (output / "build.log").open("w") as log:
