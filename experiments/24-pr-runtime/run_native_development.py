@@ -50,12 +50,15 @@ def prepare():
     archive.unlink()
     venv = tools / "venv"
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True, timeout=60)
+    os.environ["PATH"] = f"{tools}:{venv / 'bin'}:/usr/local/bin:/usr/bin:/bin"
     with (OUT / "runner-install.log").open("w") as log:
         subprocess.run([
-            str(venv / "bin/python"), "-m", "pip", "install",
+            str(venv / "bin/python"), "-m", "pip", "install", "uv_build==0.11.2",
+        ], stdout=log, stderr=subprocess.STDOUT, check=True, timeout=120)
+        subprocess.run([
+            str(venv / "bin/python"), "-m", "pip", "install", "--no-build-isolation",
             f"https://github.com/huggingface/Repo2RLEnv/archive/{REVISION}.tar.gz",
         ], stdout=log, stderr=subprocess.STDOUT, check=True, timeout=600)
-    os.environ["PATH"] = f"{tools}:{venv / 'bin'}:/usr/local/bin:/usr/bin:/bin"
     os.execv(str(venv / "bin/python"), [str(venv / "bin/python"), str(__file__), "--installed"])
 
 

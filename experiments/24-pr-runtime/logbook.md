@@ -419,3 +419,52 @@ This resolves the daemon-reachability question. Native environment construction,
 PR validation, task verification and quality/cost measurement remain unperformed.
 The next executable build/run step must be concretely prepared and separately
 authorized for host Docker use; this probe's approval is not broader permission.
+
+## 2026-10-20 — Authorized bounded development execution
+
+The user explicitly authorized “bounded Docker builds and PR validation on the
+reserved TRC CPUs” and reiterated finishing #24. This authorizes the concrete
+bounded development run without additional approval for each build/test command.
+It does not authorize paid model calls, new capacity, accelerators or changes to
+shared cluster configuration.
+
+Checkpointed `98bdcd93`: generic Python project/test dependency installation,
+bounded native validation driver, and the two Nipype development inputs (3745,
+3766). Bootstrap starts at PR 3745's recorded base revision. No held-out inputs
+are included. The generic profile reads declared test extras and dependency
+groups; it introduces no per-PR repair. It is an explicit bootstrap adaptation,
+while the native validator, diff split and test-command targeting remain pinned.
+An exact source hash check guards the imported validator. The unmodified
+empty-test-command rejection is recorded separately from profile results.
+
+Submitted one worker to an already-running reserved TRC host. Iris reserves
+3 CPUs, 10 GB RAM and 30 GB disk for at most 4,200 seconds, with zero retries.
+Target code runs only in owned sibling containers with 2 CPUs, 8 GiB RAM,
+512 processes, public-only egress, no host mounts or socket, and no credentials.
+The controller environment is cleared before trusted runner installation.
+Each child container has a 3,000-second lifetime and auto-removal; exec timeout
+removes it immediately. Writable-layer monitoring rejects growth beyond 20 GiB.
+Cleanup addresses only this run's labeled containers, never shared image caches.
+
+No model call is used. Source/configuration/input hashes are in the private
+dispatch receipt, and rendered inputs, packages and stage logs are configured
+as output artifacts. The run is pending at this checkpoint; no task success,
+native model-bootstrap success or final export/build has been claimed.
+
+Development attempt `nipype-001` failed during runner package metadata
+generation, before any Docker container or target PR code ran. The archive
+readback verified the failure: the isolated build environment reported
+`RuntimeError: uv-build was not properly installed`. Its actual task attempt
+exit code is 1 (the aggregate job response's exit-code field was 0; use the
+attempt evidence). Runtime was 15.344 seconds, or 0.01279 allocated CPU-hours
+at the three-CPU reservation; actual CPU usage was not available.
+Preserved receipts and installation log are in `evidence/development/nipype-001/`.
+This is infrastructure/setup failure, not a scientific rejection or task result.
+
+Prepared `nipype-002` with identical PRs and generic target profile. The runner
+now puts its venv binaries on PATH before installation, installs the upstream-
+compatible `uv_build==0.11.2` explicitly, and builds the pinned package without
+build isolation. This is a development installation correction, not a change to
+native validation, target source, held-out membership or acceptance rules.
+No automatic replacement PR is selected. Retain the failed first attempt in
+cost and failure accounting.

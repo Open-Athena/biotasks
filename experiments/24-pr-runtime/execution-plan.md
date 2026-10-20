@@ -131,6 +131,23 @@ report hashes were verified. This establishes daemon reachability only; no
 image build or container launch was attempted. The authorization covers this
 probe, not builds, container mutations, or host/cluster configuration changes.
 
+The user subsequently explicitly authorized bounded Docker builds and PR
+validation on reserved TRC CPUs. Development invocation
+`development-inputs/nipype-001.json` uses one reserved worker, no model calls,
+and the two preselected Nipype development PRs. Its controller environment is
+cleared before runner execution. PR containers receive no socket, mounts or
+credentials, use the existing public-only `iris-egress` network, and have
+2 CPU / 8 GiB / 512-process limits. They expire after 3,000 seconds and remove
+themselves even if the controller is interrupted. The runner monitors writable
+container size against 20 GiB and removes the container on exec timeout.
+The Iris reservation is 3 CPUs / 10 GB / 30 GB, at most 4,200 seconds and zero
+retries, including controller setup. No new capacity or accelerators are requested.
+
+This development invocation supplies a generic Python profile using declared
+test extras/groups and executes the pinned native validator. It preserves the
+empty-test-command rejection as a separate control. It does not yet export or
+verify final tasks, run a model-assisted bootstrap, or execute held-out PRs.
+
 Daytona has not been prepared or launched for this experiment, and previous
 experiments' paid allowances do not apply.
 
