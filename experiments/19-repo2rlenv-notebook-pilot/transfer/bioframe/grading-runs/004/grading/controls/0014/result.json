@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "38420e3542202aaee540023fe5bd0faf8d10747ef588b6946ea47898193358aa",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "dropped the row for ('chr19', '48309541', '48309911') ; remaining rows: 40556\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40556 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40556 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40556 data rows; 1 reference row(s) have no counterpart in the submission and 0 submission row(s) have no counterpart in the reference; 1 of the missing reference rows have no submission row for their peak sub-interval at all",
+          "passed": false
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40556 data rows; the submission is missing motif annotations for 1 peak sub-interval(s) retained by the reference; peak sub-intervals that are missing or added are also reported by the peak comparison",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40556 data rows; 1 reference row(s) have no counterpart in the submission and 0 submission row(s) have no counterpart in the reference; 1 further reference row(s) have no submission row with the same fold change and motif annotation",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "cedffe538d56ae1d12d5bd94221677dd5f764da0bd8191ac6d29b834a7a23411"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "cedffe538d56ae1d12d5bd94221677dd5f764da0bd8191ac6d29b834a7a23411"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924"
+      }
+    ],
+    "focus": "lazy_output",
+    "kind": "wrong_solution",
+    "name": "dropped-blank-motif-peak-row",
+    "rationale": "Omission control: rule 10 requires every retained sub-interval row to be present and treats omitting a required row as a failure, including rows whose five motif fields are blank. The single reference row for the retained peak chr19:48309541-48309911 (fc 5.04924, blank motif fields) is deleted and every other row is left untouched, so peak_rows_match loses one (chrom, start, end, fc) item and full_table_match loses one complete row. motif_annotation_match is deliberately not claimed: the public text is ambiguous about whether a peak sub-interval entirely absent from the submission is compared in that check ('for each peak sub-interval present in your table'), so only the checks that fail under either reading are listed.",
+    "script": "\"\"\"Wrong-result control: one required row is dropped (omission).\n\nRule 10 requires every retained sub-interval row to be present and treats\nomitting a required row as a failure. The single reference row for the\nretained peak chr19:48309541-48309911 (fc 5.04924, blank motif fields) is\ndeleted and every other row is left untouched, so peak_rows_match loses one\n(chrom, start, end, fc) item and full_table_match loses one complete row.\nmotif_annotation_match is deliberately not claimed: the public text is\nambiguous about whether a peak sub-interval absent from the submission is\ncompared in that check (\"for each peak sub-interval present in your table\"),\nso only the checks that fail under either reading are listed.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr19\", \"48309541\", \"48309911\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\ni = idx[0]\nrow = rows[i]\nassert float(row[3]) == 5.04924, row[3]\nassert all(f == \"\" for f in row[4:9]), row\ndel rows[i]\nassert len(rows) >= 1\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"dropped the row for\", TARGET, \"; remaining rows:\", len(rows))\n"
+  }
+}

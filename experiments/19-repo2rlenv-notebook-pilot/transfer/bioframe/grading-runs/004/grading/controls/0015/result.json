@@ -1,0 +1,77 @@
+{
+  "candidate_sha256": "38420e3542202aaee540023fe5bd0faf8d10747ef588b6946ea47898193358aa",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "rewrote fc of ('chr1', '150979463', '150979845') as NaN; total rows: 40557\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "1 data row(s) violate the published value rules: data row 40555: 'NaN' is not a plain decimal number; NaN, Inf, empty fields and values with surrounding whitespace are not accepted",
+          "passed": false
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "not evaluated: the submission contains data rows with invalid values, see value_domains",
+          "passed": false
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "not evaluated: the submission contains data rows with invalid values, see value_domains",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "not evaluated: the submission contains data rows with invalid values, see value_domains",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "8fb27c1cb2ff3f715cd29ccc70859426366b328228afef1b93e84fe067e50916"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "8fb27c1cb2ff3f715cd29ccc70859426366b328228afef1b93e84fe067e50916"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "value_domains"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "wrong_solution",
+    "name": "fc-written-as-nan",
+    "rationale": "Nonfinite-value control: rule 6 requires fc to be a plain finite decimal number and explicitly rejects NaN. The fc of the retained peak chr1:150979463-150979845 is rewritten as the literal NaN (the kind of value a 0/0 fold-change computation would emit), leaving the interval, its motif annotation and the row count untouched, so the row still parses as nine comma-separated fields and csv_format is not the intended failure. value_domains must reject the submission so the malformed value cannot slip through as a numeric match. Downstream content checks are not claimed because the value_domains requirement states they are not evaluated against malformed data.",
+    "script": "\"\"\"Wrong-result control: a nonfinite fold change is written for one peak.\n\nRule 6 requires fc to be a plain finite decimal number and explicitly rejects\nNaN. The fc of the retained peak chr1:150979463-150979845 is rewritten as the\nliteral NaN - the kind of value a 0/0 fold-change computation would emit -\nleaving the interval, its motif annotation and the row count untouched, so the\nrow still parses as nine comma-separated fields and csv_format is not the\nintended failure. value_domains must reject the submission. Downstream\ncontent checks are not claimed because the value_domains requirement states\nthey are not evaluated against malformed data.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9, row\nassert float(row[3]) == 580.28482, row[3]\nrow[3] = \"NaN\"\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"rewrote fc of\", TARGET, \"as NaN; total rows:\", len(rows))\n"
+  }
+}

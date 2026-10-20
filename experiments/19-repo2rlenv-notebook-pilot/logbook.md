@@ -2489,3 +2489,20 @@ The new generic prompt guidance requires record-based counts, disclosure of
 acceptance-affecting bounds and preservation of original evidence when a corrected
 version is validated. Follow-up configuration is `grading-config-004.json`; it
 has not launched yet.
+
+### 2026-10-20 — Corrected contract accepted; prepare native execution
+
+The prose-only pass 004 completed in 709.08 seconds with three responses (one
+contract, two review). Code/check/probe identity comparisons confirm no executable
+change. GLM disclosed the existing 64 MiB parser bounds, clarified exact-decimal
+and grouped/full-row comparisons, and separated executed controls from earlier
+narrative claims. All 15 controls passed afresh after the independent program
+reran without answer access. The final review correctly inventories 15 and
+accepts packaging; no further wording or scientific repair is pending.
+
+Original archive/download verification passed, as did cleanup, independent
+zero-sandbox lookup and terminal SUCCEEDED host/task readback. Preserve the exact
+worker inputs/prompts/outputs with their hashes; the small public payload has a
+recorded eligibility/credential audit. Native configuration now selects grading
+004 and unchanged materialization 005. Native oracle/no-op controls, one blind
+GLM attempt, publication and independent release download remain required.

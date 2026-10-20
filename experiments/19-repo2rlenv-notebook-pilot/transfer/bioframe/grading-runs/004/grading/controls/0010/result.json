@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "38420e3542202aaee540023fe5bd0faf8d10747ef588b6946ea47898193358aa",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "replaced the motif of ('chr1', '150979463', '150979845') with the weaker motif ['chr1', '150979700', '150979719', '500.0', '+']\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40557 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40557 data rows; the multiset of retained peak sub-intervals (chrom, start, end) together with their fold change fc is identical to the reference: every retained sub-interval, its fold change and the number of times it is reported agree, so peak selection, blacklist trimming and the fold change of every distinct peak interval are correct",
+          "passed": true
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40557 data rows; 1 peak sub-interval(s) reported by the submission carry a motif annotation that differs from the reference; a reported peak sub-interval carries the motif annotation (chr1, 150979700, 150979719, 500.0, +), which the reference does not report for that peak sub-interval; peak sub-intervals that are missing or added are also reported by the peak comparison",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40557 data rows; 1 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28482, chr1, 150979700, 150979719, 500.0, +)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "d292f4ed15905cf1490ac7ca887d62f3fef041688d81568c1b53e070a8c9d2a2"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "d292f4ed15905cf1490ac7ca887d62f3fef041688d81568c1b53e070a8c9d2a2"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "weaker-motif-substituted",
+    "rationale": "Wrong-value and wrong-association control preserving peak identity and row count: the reference assigns the retained peak chr1:150979463-150979845 (fc 580.28482) the strongest overlapping motif chr1:150979668-150979687 with pval 678.0 on strand -. Its five motif fields are replaced by a plausible competing record inside the same peak span (chr1:150979700-150979719, the same 19 bp motif width, pval 500.0, the opposite strand), mimicking a strongest-motif selection that prefers a weaker or later-file-row motif. Only one row's motif annotation changes, so the peak-row multiset is intact while motif_annotation_match and full_table_match fail.",
+    "script": "\"\"\"Wrong-result control: a weaker, differently placed motif is reported for a\npeak whose reference annotation is the strongest overlapping motif.\n\nThe retained peak chr1:150979463-150979845 (fc 580.28482) is assigned motif\nchr1:150979668-150979687 with pval 678.0 on strand - in the reference. Keeping\nthe peak interval, the fc and the row count, the five motif fields are\nreplaced by a plausible competing record inside the same peak span:\nchr1:150979700-150979719, the same 19 bp motif width, pval 500.0 (weaker than\n678.0) and the opposite strand. This mimics a strongest-motif selection that\nprefers a weaker or later-file-row motif, so the per-sub-interval motif\nmultiset changes while the peak-row multiset does not.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9, row\nassert row[4] != \"\" and row[7] != \"\" and row[8] in (\"+\", \"-\"), row\nref_start, ref_end = int(row[5]), int(row[6])\npeak_start, peak_end = int(row[1]), int(row[2])\nwidth = ref_end - ref_start\nassert width == 19, width\nassert peak_start < ref_start and ref_end <= peak_end, row\nnew_start = ref_start + 32\nnew_end = new_start + width\nassert peak_start < new_start and new_end <= peak_end, (new_start, new_end)\nnew_pval = \"500.0\"\nassert float(new_pval) < float(row[7]), row[7]\nnew_strand = \"+\" if row[8] == \"-\" else \"-\"\nrow[4:9] = [row[4], str(new_start), str(new_end), new_pval, new_strand]\nassert len(row) == 9\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"replaced the motif of\", TARGET, \"with the weaker motif\", row[4:9])\n"
+  }
+}

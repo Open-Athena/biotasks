@@ -1,0 +1,34 @@
+{
+  "execution": {
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "rewrote fc of ('chr1', '150979463', '150979845') as NaN; total rows: 40557\n"
+    },
+    "probe_valid_execution": true,
+    "status": "probe_executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "8fb27c1cb2ff3f715cd29ccc70859426366b328228afef1b93e84fe067e50916"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    }
+  },
+  "probe": {
+    "check_ids": [
+      "value_domains"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "wrong_solution",
+    "name": "fc-written-as-nan",
+    "rationale": "Nonfinite-value control: rule 6 requires fc to be a plain finite decimal number and explicitly rejects NaN. The fc of the retained peak chr1:150979463-150979845 is rewritten as the literal NaN (the kind of value a 0/0 fold-change computation would emit), leaving the interval, its motif annotation and the row count untouched, so the row still parses as nine comma-separated fields and csv_format is not the intended failure. value_domains must reject the submission so the malformed value cannot slip through as a numeric match. Downstream content checks are not claimed because the value_domains requirement states they are not evaluated against malformed data.",
+    "script": "\"\"\"Wrong-result control: a nonfinite fold change is written for one peak.\n\nRule 6 requires fc to be a plain finite decimal number and explicitly rejects\nNaN. The fc of the retained peak chr1:150979463-150979845 is rewritten as the\nliteral NaN - the kind of value a 0/0 fold-change computation would emit -\nleaving the interval, its motif annotation and the row count untouched, so the\nrow still parses as nine comma-separated fields and csv_format is not the\nintended failure. value_domains must reject the submission. Downstream\ncontent checks are not claimed because the value_domains requirement states\nthey are not evaluated against malformed data.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9, row\nassert float(row[3]) == 580.28482, row[3]\nrow[3] = \"NaN\"\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"rewrote fc of\", TARGET, \"as NaN; total rows:\", len(rows))\n"
+  }
+}

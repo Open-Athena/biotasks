@@ -1,0 +1,79 @@
+{
+  "candidate_sha256": "38420e3542202aaee540023fe5bd0faf8d10747ef588b6946ea47898193358aa",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "added a second row for ('chr1', '150979463', '150979845') carrying the other fc 580.28488\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40558 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40558 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40558 data rows; 0 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28488)",
+          "passed": false
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40558 data rows; 1 peak sub-interval(s) reported by the submission carry a motif annotation that differs from the reference; a reported peak sub-interval carries the motif annotation (chr1, 150979668, 150979687, 678.0, -), which the reference does not report for that peak sub-interval; peak sub-intervals that are missing or added are also reported by the peak comparison",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40558 data rows; 0 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28488, chr1, 150979668, 150979687, 678.0, -)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "0c8f9c072db61ae1fb4b46bde5c2247940b1516cc79f39e6ee771e8ce3c2fdaa"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "0c8f9c072db61ae1fb4b46bde5c2247940b1516cc79f39e6ee771e8ce3c2fdaa"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "duplicated-interval-other-fc",
+    "rationale": "Wrong-association control for the 15 doubly-recorded intervals: peak_rows_match is explicitly the check that catches 'a duplicated interval reported with the other record's fold change'. A second row is added for the retained peak chr1:150979463-150979845 carrying the same assigned motif (assignment is per distinct interval) but a plausible larger fc 580.28488 instead of the reference 580.28482, since the peaks file is sorted ascending by fc so the second record of a doubly-recorded interval carries the larger value. peak_rows_match gains an extra (chrom, start, end, fc) item, the interval's motif-annotation multiset doubles, and full_table_match gains a row, so all three content checks must fail.",
+    "script": "\"\"\"Wrong-result control: the same peak interval is reported twice, once with\nthe other record's fold change.\n\nThe peaks file holds 40587 records over 40572 distinct intervals, 15 of them\ndoubly recorded with different fc values, and peak_rows_match is explicitly\nthe check that catches \"a duplicated interval reported with the other record's\nfold change\". This control adds a second row for the retained peak\nchr1:150979463-150979845 that carries the same assigned motif (motif assignment\nis per distinct interval) but the plausible larger fc 580.28488 instead of the\nreference 580.28482; the peaks file is sorted ascending by fc, so the second\nrecord of a doubly-recorded interval carries the larger value. peak_rows_match\ngains an extra (chrom, start, end, fc) item, the interval's motif-annotation\nmultiset doubles, and full_table_match gains a row, so all three content\nchecks must fail.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9 and row[4] != \"\" and row[8] in (\"+\", \"-\"), row\nassert float(row[3]) == 580.28482, row[3]\nother = list(row)\nother[3] = \"580.28488\"\nassert float(other[3]) > float(row[3])\nassert other[0:3] == row[0:3] and other[4:9] == row[4:9]\nrows.insert(idx[0] + 1, other)\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"added a second row for\", TARGET, \"carrying the other fc\", other[3])\n"
+  }
+}

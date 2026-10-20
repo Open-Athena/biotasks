@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "38420e3542202aaee540023fe5bd0faf8d10747ef588b6946ea47898193358aa",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "perturbed fc of ('chr1', '150979463', '150979845') from 580.28482 to 580.28483 ; total rows: 40557\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40557 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40557 data rows; 1 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28483); 1 of the missing reference rows belong to peak sub-intervals that the submission reports with a different fold change or coverage",
+          "passed": false
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40557 data rows; every reported peak sub-interval carries exactly the reference motif annotation (motif_chrom, motif_start, motif_end, motif_pval, motif_strand), and 5765 row(s) keep all five motif fields blank exactly where the reference has no assigned motif",
+          "passed": true
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40557 data rows; 1 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28483, chr1, 150979668, 150979687, 678.0, -)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "e288a35ec7e573292620ccf363f945b90c4610aabd2ae9bb26327afc1b4f61a9"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "e288a35ec7e573292620ccf363f945b90c4610aabd2ae9bb26327afc1b4f61a9"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "wrong_solution",
+    "name": "fc-last-digit-perturbed",
+    "rationale": "Wrong-value control that preserves record identities and row counts: the fc of the single retained row for chr1:150979463-150979845 is changed from 580.28482 to 580.28483, a one-unit perturbation in the last decimal place that rule 11 explicitly names as a mismatch when fc is compared by exact numeric value with no tolerance. The interval, the motif annotation and the row count are untouched, so motif_annotation_match is unaffected while peak_rows_match and full_table_match fail. This also approximates the not-isolable defect of reporting one of the 15 doubly-recorded peak intervals with the other record's fold change.",
+    "script": "\"\"\"Wrong-result control: the fold change of one peak is perturbed by one unit\nin the last decimal place, preserving record identities and row count.\n\nRule 11 compares fc by exact numeric value with no tolerance and names a value\n\"perturbed in the last decimal place\" as a mismatch. The single retained row for\nchr1:150979463-150979845 keeps its interval, its motif annotation and the table\nsize; only its fc changes from 580.28482 to 580.28483. fc participates in the\n(chrom, start, end, fc) multiset and in complete row identity, so\npeak_rows_match and full_table_match must fail while the motif grouping is\nuntouched. This also approximates the defect of reporting one of the 15\ndoubly-recorded peak intervals with the wrong record's fold change.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9, row\nold_fc = row[3]\nassert float(old_fc) == 580.28482, old_fc\nrow[3] = \"580.28483\"\nassert float(row[3]) != float(old_fc)\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"perturbed fc of\", TARGET, \"from\", old_fc, \"to\", row[3], \"; total rows:\", len(rows))\n"
+  }
+}
