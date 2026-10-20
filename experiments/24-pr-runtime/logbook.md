@@ -184,5 +184,30 @@ The current Iris documentation distinguishes ordinary CPU jobs from Docker
 socket access and privileged nested runtimes; the latter are admin-gated.
 Check supported execution capabilities before choosing the worker implementation.
 An old local Iris client environment failed imports before contacting the
-controller; a read-only capacity query is being attempted with the current
-Marin environment instead. No worker has been submitted.
+controller; the read-only capacity query succeeded with the current Marin
+environment at revision `24aa43cea9a508449d4c9094cb3877e6e43e0f67`.
+Its bounded first page contained healthy reserved TRC workers. This was not a
+full-cluster idle-capacity measurement.
+
+One CPU-only runtime probe was then submitted to a specific already-running
+reserved TRC host: 1 CPU, 512 MB RAM, 1 GB disk, DEFAULT container profile,
+180-second scheduling deadline, 120-second execution deadline, zero failure or
+preemption retries. It requested no accelerator and no new host. It executed
+only the checkpointed capability script, with no model calls or target code.
+
+The probe succeeded with exit 0 in one attempt. The standard container has
+Python 3.12.15 and `unshare`, but no Docker client/socket, Podman, runsc or
+bubblewrap binary. The user-namespace sysctl is enabled; actual rootless runtime
+support has not been tested. This proves the reserved CPU execution path, not
+native Docker bootstrap support.
+
+The output archive was downloaded and its size/SHA-256 checked, then the report
+hash was independently matched against the probe's emitted digest. Sanitized
+evidence is in `evidence/trc-runtime-probe/`. Exact job identity and temporary
+object-store location remain in private local receipts. The probe is terminal
+and leaves no active task allocation; the shared reserved host is untouched.
+
+Next runtime step: check a supported isolated execution route on TRC. Do not
+silently mount host Docker access or reuse #21's paid Daytona allowance. If a
+generic Iris adaptation is needed, record it as a declared pipeline variant
+with separate baseline results.
