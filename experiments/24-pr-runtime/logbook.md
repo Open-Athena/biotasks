@@ -526,3 +526,19 @@ or repairing individual PRs. The subsequent per-stage rebuild remains offline.
 Prepared `nipype-005` on the same development inputs. The independent
 scikit-fingerprints `001` run was still running at the last authoritative
 observation; do not resubmit it or rewrite its version-2 input.
+
+Both remaining development runs are terminal with verified archive/result hashes
+and owned-container cleanup. Nipype 005 took 128.905 seconds (0.107421
+allocated CPU-hours): #3745 has two F2P and three P2P tests, with genuine
+DID NOT RAISE assertion failures before the reference fix. #3766 failed its
+editable rebuild because that revision requires Python >=3.12 and the image
+was Python 3.11. This is a setup failure, not a negative scientific result.
+
+Scikit-fingerprints 001 took 128.190 seconds (0.106825 allocated CPU-hours).
+The reference stages pass 12 tests for #652 and three for #649. Both base
+stages fail collection because newly introduced modules do not exist; native
+F2P identity matching rejects both with zero transitions. Preserve these as
+feature-addition limitations, not dependency failures. No final tasks accepted.
+
+Next development iteration uses Python 3.12 as an explicit shared profile
+parameter, without changing source or tests. Held-out inputs remain unexecuted.

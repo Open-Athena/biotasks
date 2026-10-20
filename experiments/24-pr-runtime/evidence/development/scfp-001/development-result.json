@@ -1,0 +1,167 @@
+{
+  "stage": "development_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "MLCIL/scikit-fingerprints",
+  "run_id": "biotasks24-dev-scfp-001",
+  "bootstrap_ref": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+  "results": [
+    {
+      "number": 652,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv tests/fingerprints/_new_mordred/path_count.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at 18ff996 Merge remote-tracking branch 'origin/master' into mordred\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12720 sha256=93bce7355e2b0d2e6ee778e87a477fa5e799c1cb26291821a5431c725d51a7c3\n  Stored in directory: /tmp/pip-ephem-wheel-cache-h8d1km6e/wheels/e2/2c/68/4c4a53c0aec7bc75cfaa7bb42a2542d1390caa1e3199ccef70\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n============================= test session starts ==============================\nplatform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n________ ERROR collecting tests/fingerprints/_new_mordred/path_count.py ________\nImportError while importing test module '/workspace/tests/fingerprints/_new_mordred/path_count.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/local/lib/python3.11/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/usr/local/lib/python3.11/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/usr/local/lib/python3.11/importlib/__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<frozen importlib._bootstrap>:1204: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1176: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1147: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:690: in _load_unlocked\n    ???\n<frozen importlib._bootstrap_external>:940: in exec_module\n    ???\n<frozen importlib._bootstrap>:241: in _call_with_frames_removed\n    ???\ntests/fingerprints/_new_mordred/path_count.py:5: in <module>\n    from skfp.fingerprints._new_mordred.descriptors.path_count import (\nE   ModuleNotFoundError: No module named 'skfp.fingerprints._new_mordred.descriptors.path_count'\n=========================== short test summary info ============================\nERROR tests/fingerprints/_new_mordred/path_count.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.61s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 18ff996d5a56f673b1fcec85d0afed48fea0c2a8\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/_new_mordred/path_count.py...\nApplied patch tests/fingerprints/_new_mordred/path_count.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 18ff996 Merge remote-tracking branch 'origin/master' into mordred\nRemoving tests/fingerprints/_new_mordred/path_count.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12720 sha256=93bce7355e2b0d2e6ee778e87a477fa5e799c1cb26291821a5431c725d51a7c3\n  Stored in directory: /tmp/pip-ephem-wheel-cache-xtqjzh1n/wheels/e2/2c/68/4c4a53c0aec7bc75cfaa7bb42a2542d1390caa1e3199ccef70\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n============================= test session starts ==============================\nplatform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 12 items\n\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Hexane-expected0] PASSED [  8%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Benzene-expected1] PASSED [ 16%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Caffeine-expected2] PASSED [ 25%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Cyanidin-expected3] PASSED [ 33%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Lycopene-expected4] PASSED [ 41%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Limonene-expected5] PASSED [ 50%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Allicin-expected6] PASSED [ 58%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Glutathione-expected7] PASSED [ 66%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Digoxin-expected8] PASSED [ 75%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Capsaicin-expected9] PASSED [ 83%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[EllagicAcid-expected10] PASSED [ 91%]\ntests/fingerprints/_new_mordred/path_count.py::test_path_count_values[Astaxanthin-expected11] PASSED [100%]\n\n============================== 12 passed in 0.54s ==============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 18ff996d5a56f673b1fcec85d0afed48fea0c2a8\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch skfp/fingerprints/_new_mordred/calculator.py...\nChecking patch skfp/fingerprints/_new_mordred/descriptors/path_count.py...\nApplied patch skfp/fingerprints/_new_mordred/calculator.py cleanly.\nApplied patch skfp/fingerprints/_new_mordred/descriptors/path_count.py cleanly.\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/_new_mordred/path_count.py...\nApplied patch tests/fingerprints/_new_mordred/path_count.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    },
+    {
+      "number": 649,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv tests/fingerprints/_new_mordred/geometric_index.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at 797637d Add polarizability (#638)\nRemoving skfp/fingerprints/_new_mordred/descriptors/path_count.py\nRemoving tests/fingerprints/_new_mordred/path_count.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12720 sha256=93bce7355e2b0d2e6ee778e87a477fa5e799c1cb26291821a5431c725d51a7c3\n  Stored in directory: /tmp/pip-ephem-wheel-cache-zu_q7p7i/wheels/e2/2c/68/4c4a53c0aec7bc75cfaa7bb42a2542d1390caa1e3199ccef70\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n============================= test session starts ==============================\nplatform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n_____ ERROR collecting tests/fingerprints/_new_mordred/geometric_index.py ______\nImportError while importing test module '/workspace/tests/fingerprints/_new_mordred/geometric_index.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/local/lib/python3.11/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/usr/local/lib/python3.11/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/usr/local/lib/python3.11/importlib/__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<frozen importlib._bootstrap>:1204: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1176: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1147: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:690: in _load_unlocked\n    ???\n<frozen importlib._bootstrap_external>:940: in exec_module\n    ???\n<frozen importlib._bootstrap>:241: in _call_with_frames_removed\n    ???\ntests/fingerprints/_new_mordred/geometric_index.py:4: in <module>\n    from skfp.fingerprints._new_mordred.descriptors.geometric_index import (\nE   ModuleNotFoundError: No module named 'skfp.fingerprints._new_mordred.descriptors.geometric_index'\n=========================== short test summary info ============================\nERROR tests/fingerprints/_new_mordred/geometric_index.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.54s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 797637d679ed4823c8621fa5e0283bc0e3f66a62\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/_new_mordred/geometric_index.py...\nApplied patch tests/fingerprints/_new_mordred/geometric_index.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 797637d Add polarizability (#638)\nRemoving tests/fingerprints/_new_mordred/geometric_index.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12720 sha256=93bce7355e2b0d2e6ee778e87a477fa5e799c1cb26291821a5431c725d51a7c3\n  Stored in directory: /tmp/pip-ephem-wheel-cache-67022lld/wheels/e2/2c/68/4c4a53c0aec7bc75cfaa7bb42a2542d1390caa1e3199ccef70\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv\n============================= test session starts ==============================\nplatform linux -- Python 3.11.17, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 3 items\n\ntests/fingerprints/_new_mordred/geometric_index.py::test_geometric_index_reference_values[Hexane-expected_values0] PASSED [ 33%]\ntests/fingerprints/_new_mordred/geometric_index.py::test_geometric_index_reference_values[Benzene-expected_values1] PASSED [ 66%]\ntests/fingerprints/_new_mordred/geometric_index.py::test_geometric_index_reference_values[EllagicAcid-expected_values2] PASSED [100%]\n\n============================== 3 passed in 0.30s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 797637d679ed4823c8621fa5e0283bc0e3f66a62\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch skfp/fingerprints/_new_mordred/calculator.py...\nChecking patch skfp/fingerprints/_new_mordred/descriptors/geometric_index.py...\nApplied patch skfp/fingerprints/_new_mordred/calculator.py cleanly.\nApplied patch skfp/fingerprints/_new_mordred/descriptors/geometric_index.py cleanly.\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/_new_mordred/geometric_index.py...\nApplied patch tests/fingerprints/_new_mordred/geometric_index.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    }
+  ],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No held-out execution, final task export/build or solver run.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "base_image_repo_digests": [
+    "python@sha256:0a310eeecf4e1f5a0743f9a6520c90c88d089c903ca5fd283f501e3a805f5f89"
+  ],
+  "bootstrap_exit_code": 0,
+  "empty_test_commands_control": {
+    "status": "failed",
+    "fail_to_pass": [],
+    "pass_to_pass": [],
+    "pre_log": "",
+    "post_log": "",
+    "reason": "bootstrap did not record any test_cmds"
+  },
+  "disposition": "development_validation_completed",
+  "cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.03194336799788289
+    },
+    {
+      "operation": "image",
+      "exit_code": 1,
+      "duration_sec": 0.021207749003224308
+    },
+    {
+      "operation": "pull",
+      "exit_code": 0,
+      "duration_sec": 2.988932250002108
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 5.621188280001661
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.11775051100266865
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.12194348099728813
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 62.630937582001934
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.579559657999198
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10306804300125805
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.07219772499956889
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12859602000025916
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 3.4648247769982845
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 3.1585564390006766
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12255185100002564
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10919033199752448
+    },
+    {
+      "operation": "exec",
+      "exit_code": 1,
+      "duration_sec": 0.07428343400169979
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8814336260002165
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 3.5265168820005783
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 2.938773025001865
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 3.0009002609986055
+    }
+  ],
+  "elapsed_seconds": 89.781
+}

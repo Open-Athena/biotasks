@@ -97,6 +97,8 @@ def main():
     repo = manifest["repository"]
     assert re.fullmatch(r"[\w.-]+/[\w.-]+", repo)
     ref = manifest["bootstrap_ref"]
+    base_image = manifest.get("base_image", "python:3.11-slim-bookworm")
+    assert re.fullmatch(r"python:3\.(11|12)-slim-bookworm", base_image)
     assert re.fullmatch(r"[a-f0-9]{40}", ref)
     for row in manifest["prs"]:
         assert row["cohort"] == "development"
@@ -178,10 +180,10 @@ def main():
                 (ROOT / "install_python_profile.py").read_bytes()
             )
             sandbox = native_docker.DockerSandbox.start(
-                base_image="python:3.11-slim-bookworm", repo_dir=marker,
+                base_image=base_image, repo_dir=marker,
             )
         image = original_run([
-            "docker", "image", "inspect", "python:3.11-slim-bookworm",
+            "docker", "image", "inspect", base_image,
             "--format", "{{json .RepoDigests}}",
         ], timeout=30)
         report["base_image_repo_digests"] = json.loads(image.stdout) if image.ok else None
