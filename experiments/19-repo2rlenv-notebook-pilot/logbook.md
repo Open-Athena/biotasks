@@ -2347,3 +2347,11 @@ subset for the recorded input. The reading view distinguishes prompts, inputs
 and outputs, keeps raw documents collapsed, and derives control/reward displays
 from selected evidence rather than hardcoded case outcomes. Browser checks use
 the selected trajectory's metadata rather than a fixed turn count.
+
+The shared renderer built both selected profiles locally. All 59 previously
+recorded common source hashes stayed unchanged for the existing release. Ruff
+checks pass. Headless browser checks passed all five views and nine selected
+stages for each profile, without mobile overflow or JavaScript errors. The
+Bioframe reading view correctly has no solver trajectory yet. Browser launch
+needed normal IPC access outside the execution sandbox; no model or scientific
+run was involved. The published index was not rewritten.
