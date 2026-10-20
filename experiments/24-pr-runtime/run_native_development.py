@@ -89,6 +89,9 @@ def main():
     (OUT / "development-input.json").write_bytes((ROOT / "development-input.json").read_bytes())
     for filename in ("run_native_development.py", "install_python_profile.py"):
         (OUT / filename).write_bytes((ROOT / filename).read_bytes())
+    if manifest.get("verify_exports"):
+        (OUT / "verify_export.py").write_bytes((ROOT / "verify_export.py").read_bytes())
+        os.environ["DOCKER_BUILDKIT"] = "0"
     with (OUT / "runner-packages.txt").open("w") as packages:
         subprocess.run([sys.executable, "-m", "pip", "freeze", "--all"], stdout=packages, check=True)
     assert manifest["cohort"] == "development"
@@ -118,7 +121,8 @@ def main():
                 "--cpus", "2", "--memory", "8g", "--memory-swap", "8g",
                 "--pids-limit", "512", "--cap-drop", "NET_RAW", "--rm",
                 "--security-opt", "no-new-privileges",
-                "--network", "iris-egress", "--dns", "8.8.8.8",
+                "--network", "none" if os.environ.get("BIOTASKS24_OFFLINE") else "iris-egress",
+                "--dns", "8.8.8.8",
                 "-e", "OMP_NUM_THREADS=1", "-e", "OPENBLAS_NUM_THREADS=1",
                 "-e", "MKL_NUM_THREADS=1", "-e", "NUMEXPR_NUM_THREADS=1",
             ]
@@ -173,6 +177,8 @@ def main():
     }
     started = time.monotonic()
     sandbox = None
+    bootstrap = None
+    bootstrap_tag = f"biotasks24/{run_id}:bootstrap"
     try:
         with tempfile.TemporaryDirectory() as directory:
             marker = Path(directory)
@@ -206,6 +212,18 @@ def main():
             raise RuntimeError("Generic Python profile installation failed")
         freeze = sandbox.exec("python -m pip freeze --all", timeout=30)
         (OUT / "target-packages.txt").write_text(freeze.stdout)
+        if manifest.get("verify_exports"):
+            from repo2rlenv.bootstrap.spec import BootstrapResult, LanguageHint
+            digest = sandbox.commit(bootstrap_tag, timeout=300)
+            bootstrap = BootstrapResult(
+                image_digest=digest, image_tag=bootstrap_tag, language=LanguageHint.PYTHON,
+                repo=repo, ref=ref, rebuild_cmds=[],
+                test_cmds=["python -m pip install --no-deps --no-build-isolation --no-index -e .",
+                           "python -m pytest -vv"],
+                smoke_passed=False, iterations=0, build_time_sec=time.monotonic() - started,
+                llm_provider="none",
+            )
+            report["bootstrap_image_id"] = digest
         # Native supplied-Dockerfile metadata has empty test_cmds. Preserve
         # its direct validator rejection independently of the declared profile.
         report["empty_test_commands_control"] = dataclasses.asdict(validate_pr(
@@ -225,6 +243,11 @@ def main():
             )
             record = {"number": row["number"], "test_cmds": test_cmds, **dataclasses.asdict(outcome)}
             report["results"].append(record)
+            if bootstrap is not None and outcome.status == "verified":
+                from verify_export import verify_export
+                record["export"] = verify_export(
+                    native_docker, manifest, row, outcome, bootstrap, OUT,
+                )
             (OUT / "development-result.json").write_text(json.dumps(report, indent=2) + "\n")
         report["disposition"] = "development_validation_completed"
     except Exception as exc:
@@ -244,6 +267,9 @@ def main():
             "docker", "ps", "-aq", "--filter", f"label=biotasks24.run={run_id}",
         ], timeout=30)
         report["cleanup_verified"] = check.ok and not check.stdout.strip()
+        if bootstrap is not None:
+            removal = original_run(["docker", "image", "rm", bootstrap_tag], timeout=30)
+            report["bootstrap_tag_removed"] = removal.ok
         report["commands"] = commands
         report["elapsed_seconds"] = round(time.monotonic() - started, 3)
         raw = (json.dumps(report, indent=2) + "\n").encode()

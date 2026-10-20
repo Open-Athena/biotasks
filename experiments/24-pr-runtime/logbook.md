@@ -542,3 +542,12 @@ feature-addition limitations, not dependency failures. No final tasks accepted.
 
 Next development iteration uses Python 3.12 as an explicit shared profile
 parameter, without changing source or tests. Held-out inputs remain unexecuted.
+
+Prepared native task export and fresh-container controls in `verify_export.py`.
+The harness commits the generic bootstrap before validation, invokes upstream
+`_build_task` and the Harbor emitter, builds the emitted Dockerfile, then runs
+base/reference, source-file omission, and base test-deletion controls without
+network. It records native reward separately from stricter assertion/P2P gates.
+Images are local-only and removed after use; exported bundles are diagnostic
+artifacts, not distributable/reproducible releases. No solver model is involved.
+Nipype 007 exercises this on development inputs before held-out freeze.
