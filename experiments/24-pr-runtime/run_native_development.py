@@ -8,16 +8,19 @@ with no mounts, inherited secrets, or Docker socket.
 import dataclasses
 import concurrent.futures
 import hashlib
+import http.client
 import inspect
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 import tarfile
 import tempfile
 import time
 import urllib.request
+import urllib.parse
 from pathlib import Path
 
 REVISION = "27d04ee8203cd5b2f20c3997d13836e5f5b64238"
@@ -128,7 +131,41 @@ def main():
             ]
             assert args[-2:] == ["sleep", "infinity"]
             args[-1] = "3000"  # Guest lifetime bound even if the Iris controller is interrupted.
-        if args[:2] == ["docker", "exec"]:
+        if args[:2] == ["docker", "commit"]:
+            # Docker CLI 27 emits an empty config body, rejected by this
+            # Docker 23 daemon. Send the equivalent documented Engine API
+            # request with an explicit empty config; record this adaptation.
+            assert args[-2] in container_ids
+            tag = args[-1]
+            assert tag == f"biotasks24/{run_id}:bootstrap"
+
+            class UnixConnection(http.client.HTTPConnection):
+                def connect(self):
+                    self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+                    self.sock.settimeout(self.timeout)
+                    self.sock.connect("/var/run/docker.sock")
+
+            tick = time.monotonic()
+            connection = UnixConnection("localhost", timeout=kwargs.get("timeout", 300))
+            try:
+                repository, image_tag = tag.rsplit(":", 1)
+                query = urllib.parse.urlencode({
+                    "container": args[-2], "repo": repository, "tag": image_tag,
+                    "comment": "biotasks24 generic bootstrap", "pause": "true",
+                })
+                connection.request("POST", "/v1.42/commit?" + query, body=b"{}",
+                                   headers={"Content-Type": "application/json"})
+                response = connection.getresponse()
+                body = response.read(65536).decode()
+                ok = response.status == 201
+                result = native_docker.ExecResult(
+                    exit_code=0 if ok else 1,
+                    stdout=json.loads(body)["Id"] + "\n" if ok else "",
+                    stderr="" if ok else body, duration_sec=time.monotonic() - tick,
+                )
+            finally:
+                connection.close()
+        elif args[:2] == ["docker", "exec"]:
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
                 future = executor.submit(original_run, args, **kwargs)
                 while True:
@@ -270,6 +307,17 @@ def main():
         if bootstrap is not None:
             removal = original_run(["docker", "image", "rm", bootstrap_tag], timeout=30)
             report["bootstrap_tag_removed"] = removal.ok
+        owned_images = original_run([
+            "docker", "image", "ls", "-aq", "--filter", f"label=biotasks24.run={run_id}",
+        ], timeout=15)
+        if owned_images.ok:
+            for image_id in set(owned_images.stdout.split()):
+                assert re.fullmatch(r"(sha256:)?[a-f0-9]{12,64}", image_id)
+                original_run(["docker", "image", "rm", "-f", image_id], timeout=30)
+        image_check = original_run([
+            "docker", "image", "ls", "-aq", "--filter", f"label=biotasks24.run={run_id}",
+        ], timeout=15)
+        report["owned_image_cleanup_verified"] = image_check.ok and not image_check.stdout.strip()
         report["commands"] = commands
         report["elapsed_seconds"] = round(time.monotonic() - started, 3)
         raw = (json.dumps(report, indent=2) + "\n").encode()

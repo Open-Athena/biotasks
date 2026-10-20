@@ -551,3 +551,17 @@ network. It records native reward separately from stricter assertion/P2P gates.
 Images are local-only and removed after use; exported bundles are diagnostic
 artifacts, not distributable/reproducible releases. No solver model is involved.
 Nipype 007 exercises this on development inputs before held-out freeze.
+
+Nipype 006 completed in 286.878 seconds (0.239065 allocated
+CPU-hours), with verified artifact readback and container cleanup. Python 3.12
+produced native verification for both PRs: #3745 2 F2P/3 P2P; #3766 1 F2P/17 P2P.
+Final export controls are being exercised separately in Nipype 007.
+
+Nipype 007 failed before PR execution because Docker CLI 27's commit request
+was rejected by the Docker 23 daemon as an empty JSON body. The upstream CLI
+implementation passes commit options without a config. For 008, the wrapper
+uses documented Engine API v1.42 POST /commit with explicit `{}` config, only
+for its own tracked bootstrap container and run-specific image tag. This is a
+transport adaptation; validation and emitted task/grader code remain upstream.
+The wrapper now removes only run-labeled images, including intermediate build
+images, after removing owned containers. Shared base/cache images are untouched.
