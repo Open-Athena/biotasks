@@ -137,6 +137,7 @@ def test_streaming_requests_stop_and_shutdown_joins_handlers(tmp_path, stop_reas
     streaming = threading.Event()
     stop = threading.Event()
     received = []
+    client_streaming = threading.Event()
 
     class Upstream(BaseHTTPRequestHandler):
         def log_message(self, format, *args):
@@ -182,7 +183,10 @@ def test_streaming_requests_stop_and_shutdown_joins_handlers(tmp_path, stop_reas
                 body=json.dumps({"model": "fixture", "messages": []}),
                 headers={"Authorization": "Bearer test"},
             )
-            received.append(client.getresponse().read())
+            response = client.getresponse()
+            received.append(response.read(1))
+            client_streaming.set()
+            received[0] += response.read()
         except (OSError, http.client.HTTPException):
             pass
         finally:
@@ -193,6 +197,7 @@ def test_streaming_requests_stop_and_shutdown_joins_handlers(tmp_path, stop_reas
     client_thread.start()
     try:
         assert streaming.wait(2)
+        assert client_streaming.wait(2)
         if stop_reason == "close":
             gate.close()
             assert not gate._active
