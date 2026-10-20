@@ -55,3 +55,13 @@ def test_unmanaged_existing_dataset_rejected():
 
     with pytest.raises(ValueError, match="no managed release manifest"):
         publication_target(API(), "owner/new", {"files": {}}, missing)
+
+
+def test_new_hub_repository_with_only_attributes_is_safe_to_initialize():
+    api = API()
+    api.list_repo_files = lambda *args, **kwargs: [".gitattributes"]
+
+    def no_manifest(*args, **kwargs):
+        raise EntryNotFoundError("no prior release")
+
+    assert publication_target(api, "owner/new", {"files": {}}, no_manifest) == (api.repo_info().sha, [])

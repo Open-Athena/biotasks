@@ -3,6 +3,7 @@
 import json
 import runpy
 import sys
+from inspect import signature
 from pathlib import Path
 from types import ModuleType, SimpleNamespace
 
@@ -17,6 +18,9 @@ def test_publication_parent_chain(tmp_path, monkeypatch, concurrent_change):
         json.dumps({"repo_id": repo, "files": {"old-task/data.csv": {}, "README.md": {}}})
     )
     writes = []
+    from huggingface_hub import HfApi
+
+    real_upload_signature = signature(HfApi.upload_folder)
 
     class Api:
         def whoami(self):
@@ -30,7 +34,7 @@ def test_publication_parent_chain(tmp_path, monkeypatch, concurrent_change):
 
         def upload_folder(self, **kwargs):
             assert kwargs["parent_commit"] == "previous"
-            assert kwargs["num_threads"] == 1
+            real_upload_signature.bind(self, **kwargs)
             assert kwargs["delete_patterns"] == ["old-task/data.csv"]
             writes.append("release")
             return SimpleNamespace(oid="release")

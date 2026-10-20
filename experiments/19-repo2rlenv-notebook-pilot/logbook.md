@@ -2532,3 +2532,20 @@ with an incomplete stand-in. Five focused offline ownership/parent-chain tests
 now pass, exercising actual guarded entry, race rejection and one-worker upload.
 This changes publication/test infrastructure only; the staged executable bundle
 and native source identity are unchanged.
+
+### 2026-10-20 — Reconcile publication interface failure before retry
+
+The first publication attempt created the approved public repository, then failed
+before any file upload because this installed Hub SDK's `upload_folder` does not
+accept `num_threads`. The earlier signature lookup had matched another API.
+Preserve its `upload_dispatched` receipt unchanged. Direct readback confirms the
+repository contains only its initial `.gitattributes`, with no release files.
+No native/task artifact changed and no dataset was replaced.
+
+Remove the unsupported argument. Keep one upload command; this SDK method exposes
+no thread-count parameter. Bind offline wrapper calls against the real installed
+method signature so such an invalid argument is caught before network writes.
+Permit an owned public repository containing only initial `.gitattributes`, while
+continuing to reject unrelated data without a managed manifest and retaining
+parent-commit guards. Six focused offline checks pass. The next upload uses a new
+receipt, preserving the failed attempt and the explicit zero-upload readback.

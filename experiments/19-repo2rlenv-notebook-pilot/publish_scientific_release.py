@@ -28,7 +28,9 @@ def publication_target(api, repo_id, files, download=hf_hub_download):
             ).read_text()
         )
     except EntryNotFoundError:
-        if api.list_repo_files(repo_id, repo_type="dataset", revision=head):
+        if set(api.list_repo_files(repo_id, repo_type="dataset", revision=head)) - {
+            ".gitattributes"
+        }:
             raise ValueError("Existing destination has no managed release manifest") from None
         return head, []
     if old["repo_id"] != repo_id:
@@ -58,7 +60,6 @@ def main():
 
         def upload_folder(self, **kwargs):
             assert kwargs["repo_id"] == repo_id
-            kwargs["num_threads"] = 1
             commit = api.upload_folder(
                 **kwargs, parent_commit=self.parent_commit, delete_patterns=obsolete or None
             )
