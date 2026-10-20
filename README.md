@@ -5,9 +5,11 @@ tasks. Inspired by [Marin](https://github.com/marin-community/marin), it combine
 research through code, experiments and recorded results with focused, reusable
 pipelines and helpers.
 
-The project is in early development. The implemented CLI lists and reads bundled
-prompt templates. It does not render prompts, call models, generate tasks or
-validate scientific results.
+The project is in early development. Its CLI lists and reads bundled prompt
+templates. Python helpers convert ordinary Python notebooks without execution,
+inspect staged files and record GLM worker interactions. An end-to-end task
+factory, remote provisioning and scientific validation still require an external
+controller and separate execution evidence.
 
 `main` holds reasonably established tools, tests and the documentation needed to
 use and maintain them. Experiments and their evidence live on permanent research

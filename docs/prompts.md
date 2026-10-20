@@ -22,6 +22,16 @@ Use a listed name without the `.md` extension.
 | --- | --- |
 | [find-units](../src/biotasks/prompts/find-units.md) | Inspect a repository for scientific units and associated datasets |
 | [author-task](../src/biotasks/prompts/author-task.md) | Propose and construct a task from selected source material |
+| [notebook-reference-prepare](../src/biotasks/prompts/notebook-reference-prepare.md) | Select and append exports of existing terminal results |
+| [notebook-reference-setup](../src/biotasks/prompts/notebook-reference-setup.md) | Prepare dependencies/inputs and test the reference through supplied tools |
+| [notebook-task-specification](../src/biotasks/prompts/notebook-task-specification.md) | Specify the scientific analysis and output contract from recorded evidence |
+| [notebook-task-materialize](../src/biotasks/prompts/notebook-task-materialize.md) | Construct task inputs, a reference and an isolated oracle |
+| [notebook-task-finalize](../src/biotasks/prompts/notebook-task-finalize.md) | Complete a worker-authored draft using recorded observations |
+| [notebook-task-independent-solution](../src/biotasks/prompts/notebook-task-independent-solution.md) | Implement the public question without access to expected answers |
+| [notebook-grader-author](../src/biotasks/prompts/notebook-grader-author.md) | Author scientific artifact comparisons and acceptance rules |
+| [notebook-grader-probes](../src/biotasks/prompts/notebook-grader-probes.md) | Challenge outputs with executable wrong-result and valid-alternative controls |
+| [notebook-grader-review](../src/biotasks/prompts/notebook-grader-review.md) | Review the contract, grader and actual executed controls |
+| [notebook-grader-contract-repair](../src/biotasks/prompts/notebook-grader-contract-repair.md) | Correct acceptance prose while executable grading stays fixed |
 
 These are prompt assets, not implemented workflows. The CLI does not inspect
 repositories, render prompts, call models, orchestrate workers, execute reference
