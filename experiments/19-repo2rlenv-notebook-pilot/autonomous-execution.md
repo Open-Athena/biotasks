@@ -54,7 +54,7 @@ this acceptance criterion is met and the user approves promotion.
 
 ## Starting another seed
 
-Commit the notebook, its provenance JSON (including `source_sha256`), and a
+Commit the notebook, its provenance JSON (a one-item array including `source_sha256`), and a
 configuration with a new `campaign` identifier. `notebook_file` and `seed_file`
 are paths relative to this experiment directory. Scientific endpoint selection
 and task design are not configuration inputs; workers derive them from the seed.

@@ -32,7 +32,10 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
             path = PurePosixPath(value)
             if path.is_absolute() or ".." in path.parts or str(path) != value:
                 raise ValueError("Autonomous seed paths must be canonical experiment-relative paths")
-        seed = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + seed_path))
+        seeds = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + seed_path))
+        if not isinstance(seeds, list) or len(seeds) != 1:
+            raise ValueError("Autonomous payload requires exactly one seed record")
+        seed = seeds[0]
         notebook = frozen_file(repo, revision, EXPERIMENT + "/" + config["notebook_file"])
         if hashlib.sha256(notebook).hexdigest() != seed["source_sha256"]:
             raise ValueError("Pinned notebook differs from seed identity")

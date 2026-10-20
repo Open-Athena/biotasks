@@ -12,7 +12,7 @@ def fixture(monkeypatch, tmp_path):
     prefix = launcher.EXPERIMENT + "/"
     contents = {
         prefix + "case/seed.json": json.dumps(
-            {"source_sha256": hashlib.sha256(notebook).hexdigest()}
+            [{"source_sha256": hashlib.sha256(notebook).hexdigest()}]
         ).encode(),
         prefix + "case/source.ipynb": notebook,
         prefix + "iris_bootstrap.py": b"bootstrap",
@@ -55,6 +55,16 @@ def test_seed_path_cannot_escape_pinned_experiment(monkeypatch, tmp_path, bad):
     config, _, upstream = fixture(monkeypatch, tmp_path)
     config["seed_file"] = bad
     with pytest.raises(ValueError, match="canonical"):
+        launcher.frozen_payload(
+            tmp_path, revision="frozen", upstream_archive=upstream, config=config
+        )
+
+
+@pytest.mark.parametrize("seeds", [{"source_sha256": "x"}, [], [{}, {}]])
+def test_payload_requires_one_seed(monkeypatch, tmp_path, seeds):
+    config, contents, upstream = fixture(monkeypatch, tmp_path)
+    contents[launcher.EXPERIMENT + "/case/seed.json"] = json.dumps(seeds).encode()
+    with pytest.raises(ValueError, match="exactly one"):
         launcher.frozen_payload(
             tmp_path, revision="frozen", upstream_archive=upstream, config=config
         )
