@@ -148,9 +148,27 @@ def main():
     stop = threading.Event()
     started = time.monotonic()
 
+    def progress(event, row):
+        public = {key: row[key] for key in (
+            "request_sha256", "upstream_status", "requested_max_tokens",
+            "requested_effort", "elapsed_seconds", "error_type", "handler_error_type",
+        ) if key in row}
+        usage = row.get("usage") or {}
+        if not isinstance(usage, dict):
+            usage = {}
+        public["tokens"] = {key: value for key, value in usage.items()
+                            if key in ("prompt_tokens", "completion_tokens", "total_tokens")
+                            and type(value) is int}
+        try:
+            print("BIOTASKS21_INFERENCE_PROGRESS " + json.dumps(
+                {"event": event, "utc_epoch": time.time(), **public}), flush=True)
+        except Exception:
+            pass  # Observability must not change inference behavior.
+
     def append(row):
         with lock, (output / "inference-usage.jsonl").open("a") as stream:
             stream.write(json.dumps(row) + "\n")
+        progress("finished", row)
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *args):
@@ -247,6 +265,7 @@ def main():
                     request_receipt = directory / (digest + "-receipt.json")
                     request_receipt.write_text(json.dumps(dict(row, status="dispatched")) + "\n")
                     request_receipt.chmod(0o600)
+                    progress("dispatching", row)
 
                 def fetch():
                     status, content = asyncio.run(upstream_response(self.command,
