@@ -1,0 +1,71 @@
+{
+  "stage": "interim_post_run_assessment_of_completed_unchanged_authored_outputs_DataArc_pending",
+  "assessed_utc": "2026-10-20T06:14:35.144386+00:00",
+  "ledger_sha256": "3516a79c6d3d3ff728979dbbea8ea57d831dd339597dd2283ef45b4ee35a466d",
+  "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "native_files_checked_against_original_archive": {
+    "src/repo2rlenv/pipelines/recipes/r2e/pipeline.py": "e7629b960ce2e66b7539a49a728e0d25bbe7496cecde68dd4b62d3a768c36bb6",
+    "src/repo2rlenv/pipelines/recipes/swe_flow/author.py": "e918ff242a2f084f2041d348ffe19cc2b71ff47572f39afc622ec6d8ce1a252c",
+    "src/repo2rlenv/pipelines/recipes/swe_gen/instruction.py": "eec614059e3372c6b9eb046b849d86d40266f902736d25ab66125557701d9527",
+    "src/repo2rlenv/pipelines/recipes/swe_smith/issue.py": "a3a3d5233b184b7ee2c795bafc566eace2356cc257ea002ac3b4d5699bcc20ae",
+    "src/repo2rlenv/pipelines/recipes/terminal/draft.py": "a19142603226ffb8132439c7e3657850f0c39efddaa3412d3b050d30f47c6492"
+  },
+  "observed_unchanged_authored_examples": 6,
+  "route_counts": {
+    "repo_mutate/swe_smith": 3,
+    "repo_reconstruct/swe_flow": 2,
+    "pr_to_env/swe_gen": 1
+  },
+  "single_attempt_native_maximum_rewards": 6,
+  "inference": "These examples establish limited GLM instruction-authoring feasibility under curated frozen profiles. Smith writes an issue for a programmatic mutation; Flow writes docstrings/specification around removed source and repository tests; SWE-gen writes an instruction for an existing PR/test contrast. They do not demonstrate that GLM can reliably synthesize executable tests, references and environments as required by the terminal builders and R2E test authoring. This is a role distinction, not a controlled causal comparison of models or serving formats.",
+  "difficulty_limit": "Every one of the six checked unchanged authored examples earned maximum native reward in its one GLM solve. This provides no evidence of a difficult held-out curriculum, intrinsic difficulty or reliable solve probabilities. The curated six-instance sample and overlapping source families cannot estimate population yield.",
+  "manual_task_fixes": 0,
+  "task_assets_changed": false,
+  "model_calls": 0,
+  "feedback_to_current_or_completed_authors": false,
+  "DataArc_outcome": "pending_same_original_run_no_result_inferred",
+  "records": [
+    {
+      "route": "repo_mutate/swe_smith",
+      "task_id": "repo2rlenv-swe-smith/05a0a0b6a946e78c51b8b6848e6056474fd67df3f639701aba37132cef79c042",
+      "blind_attempts": 1,
+      "native_reward": 1,
+      "solver_source": "evidence/esty-ci-blind-solver-01/summary.json"
+    },
+    {
+      "route": "repo_reconstruct/swe_flow",
+      "task_id": "repo2rlenv-swe-flow/5131392918c294ddbb1dbfa58e9e2f1d1105abaf3da077712d9bb74adce641d6",
+      "blind_attempts": 1,
+      "native_reward": 1,
+      "solver_source": "evidence/observed-features-blind-solver-01/summary.json"
+    },
+    {
+      "route": "repo_reconstruct/swe_flow",
+      "task_id": "swe-flow-3ad7ba60ca7686b2007b",
+      "blind_attempts": 1,
+      "native_reward": 1.0,
+      "solver_source": "continuation-20261018/authored-two-blind-03/independent-audit.json"
+    },
+    {
+      "route": "repo_mutate/swe_smith",
+      "task_id": "swe-smith-f39ded25ef48a6575366",
+      "blind_attempts": 1,
+      "native_reward": 1.0,
+      "solver_source": "continuation-20261018/authored-tsallis-blind-03/independent-audit.json"
+    },
+    {
+      "route": "repo_mutate/swe_smith",
+      "task_id": "swe-smith-2b1ed7afc9535c5c23fb",
+      "blind_attempts": 1,
+      "native_reward": 1.0,
+      "solver_source": "continuation-20261018/authored-pielou-blind-01/independent-audit.json"
+    },
+    {
+      "route": "pr_to_env/swe_gen",
+      "task_id": "swe-gen-d52d9d8d8c952c886adb",
+      "blind_attempts": 1,
+      "native_reward": 1.0,
+      "solver_source": "continuation-20261018/swe-gen-pr2630-blind-01/independent-audit.json"
+    }
+  ]
+}
