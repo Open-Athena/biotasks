@@ -1,0 +1,13 @@
+{
+  "argv": [
+    "sh",
+    "-c",
+    "cd /work/setup && rm -rf /work/outputs /tmp/dryrun /tmp/uvcheck /tmp/projtest /tmp/wheels /tmp/wheels080 /tmp/stage_src_test; rm -f /work/logs/*.log; ls -la /work/ /work/setup/ /work/logs/ 2>&1; echo \"=== analysis.py final diff (frozen -> setup) ===\"; diff /work/frozen/original.py /work/setup/analysis.py; echo \"(diff exit $?)\"; echo \"=== pyproject ===\"; cat /work/setup/pyproject.toml; echo \"=== files in setup ===\"; find /work/setup -type f | sort"
+  ],
+  "error_type": "DaytonaFileNotFoundError",
+  "finished": 1792530166.5180237,
+  "label": "shell-35",
+  "seconds": 120,
+  "started": 1792530165.9155781,
+  "state": "uncertain"
+}

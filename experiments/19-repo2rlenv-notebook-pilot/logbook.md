@@ -2746,3 +2746,14 @@ Fifty-eight focused grading/setup tests pass. No generated scientific content wa
 manually changed. The next comparison uses the original approved motifs notebook,
 without any previous generated artifacts, to test the same controller on a
 different analysis. This is a known seed, not a new held-out notebook.
+
+## 2026-10-20 — command evidence must survive workspace cleanup
+
+Campaign 008 failed during setup when a generated cleanup command removed the
+controller's active named log. Archived operation evidence confirms the exact
+command; this is infrastructure failure, not a scientific rejection. Host
+termination and absence of owned Daytona sandboxes were verified. Command output
+now spools to an anonymous file descriptor and is atomically saved after the
+command ends, so worker cleanup cannot unlink its live output. Seventeen focused
+logging/setup tests pass, including directory deletion followed by nonzero exit
+and timeout. No notebook-specific instructions or generated task edits were added.

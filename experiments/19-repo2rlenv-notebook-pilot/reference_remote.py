@@ -7,9 +7,11 @@ import json
 import os
 import re
 import resource
+import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from pathlib import Path
@@ -113,7 +115,10 @@ def execute(argv, timeout, directory, label):
     log = Path("/work/logs") / (label + ".log")
     log.parent.mkdir(exist_ok=True)
     started = time.time()
-    with log.open("wb") as stream:
+    # Keep the live output on an anonymous file descriptor. A setup worker may
+    # legitimately clean its workspace, including old logs; unlinking a named
+    # active log must not destroy the controller's only copy of command output.
+    with tempfile.TemporaryFile(mode="w+b") as stream:
         process = subprocess.Popen(
             argv, cwd=directory, stdout=stream, stderr=subprocess.STDOUT, start_new_session=True
         )
@@ -135,6 +140,19 @@ def execute(argv, timeout, directory, label):
                 os.killpg(process.pid, signal.SIGKILL)
             except ProcessLookupError:
                 pass
+        stream.seek(0)
+        log.parent.mkdir(parents=True, exist_ok=True)
+        with tempfile.NamedTemporaryFile(dir=log.parent, delete=False) as saved:
+            saved_path = Path(saved.name)
+            try:
+                shutil.copyfileobj(stream, saved, length=1024 * 1024)
+            except BaseException:
+                saved_path.unlink(missing_ok=True)
+                raise
+        try:
+            os.replace(saved_path, log)
+        finally:
+            saved_path.unlink(missing_ok=True)
     record = {
         "argv": argv,
         "started": started,
