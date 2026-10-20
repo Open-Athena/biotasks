@@ -48,7 +48,11 @@ def recovered_author_files(directory):
         if Path(name).name != name or name in files:
             raise ValueError("Invalid recovered author path")
         path = directory / name
-        if path.is_symlink() or path.stat().st_size != item["bytes"] or sha256(path) != item["sha256"]:
+        if (
+            path.is_symlink()
+            or path.stat().st_size != item["bytes"]
+            or sha256(path) != item["sha256"]
+        ):
             raise ValueError("Recovered author file identity mismatch")
         files[name] = path.read_text()
     if not files:

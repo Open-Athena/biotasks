@@ -7,6 +7,14 @@ oracle/no-op/one blind solver attempt. Scientific artifacts come exclusively fro
 the existing GLM workers and version-controlled prompts. All intermediate copies,
 manifests, structural observations and stage dispatch are programmatic.
 
+Construction uses a candidate-first workflow: its worker submits a reference-based
+candidate from the supplied evidence before exploratory shell commands can run.
+Controlled execution returns failures; those failures unlock tools for repair.
+Numerical comparison and an independent implementation belong to the subsequent
+validation stage. A worker may explicitly block an unsupported proposal instead.
+This ordering is implemented and tested offline; live evidence is recorded by
+factory revision in the run receipts, not implied by this description.
+
 The existing Iris bootstrap accepts this entrypoint. Its submitted payload pins
 the factory revision, notebook bytes, runtime archives and configuration. Model
 and Daytona credentials remain runtime environment variables from the existing
