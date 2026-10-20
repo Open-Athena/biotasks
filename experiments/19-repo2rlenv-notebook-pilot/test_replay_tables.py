@@ -3,7 +3,7 @@
 import hashlib
 
 import pytest
-from replay_tables import observe_tables, reviewable, table_profile
+from replay_tables import observe_tables, table_profile
 
 
 def test_order_and_csv_serialization_only(tmp_path):
@@ -42,11 +42,17 @@ def test_observation_does_not_assert_scientific_equivalence(tmp_path):
         observe_tables(comparisons, baseline, replay)
 
 
-def test_unknown_differences_do_not_pass_gate():
-    assert not reviewable({"all_outputs_byte_identical_to_original": False})
-    assert reviewable(
-        {
-            "all_outputs_byte_identical_to_original": False,
-            "all_output_differences_limited_to_table_serialization_or_row_order": True,
-        }
-    )
+@pytest.mark.parametrize("extension", ["gz", "bz2", "xz"])
+def test_compressed_tables_preserve_observations(tmp_path, extension):
+    import bz2
+    import gzip
+    import lzma
+
+    source = tmp_path / "rows.tsv"
+    source.write_bytes(b"id\tvalue\nx\t1\ny\t2\n")
+    target = tmp_path / ("rows.tsv." + extension)
+    compress = {"gz": gzip.compress, "bz2": bz2.compress, "xz": lzma.compress}[extension]
+    target.write_bytes(compress(b"id\tvalue\ny\t2\nx\t1\n"))
+    assert table_profile(source) == table_profile(target)
+    target.write_bytes(b"truncated archive")
+    assert table_profile(target) is None

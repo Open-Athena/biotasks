@@ -31,7 +31,8 @@ Terminal outcomes are:
   controls passed, with a recorded blind solver attempt. Solver success is not
   required. No automatic public release is performed by this runner.
 - `rejected`: an explicit worker refusal, unsupported conversion profile,
-  non-repeatable outputs or recorded scientific validation failure. The receipt
+  or recorded scientific validation failure. Successful reference replays supply
+  observations to scientific workers; byte differences alone never reject a seed. The receipt
   links the evidence and rejected stage; it does not label the seed bad science.
 - `infrastructure_failed`: unexpected controller/provider failures, time/budget
   exhaustion, uncertain cleanup or missing evidence. This is not a successful

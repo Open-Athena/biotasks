@@ -112,7 +112,11 @@ than prescribing ever more incidental implementation details to make them match.
 
 ## Replay observations
 
-If replay observations are supplied, distinguish byte differences from changes
+Replay observations are evidence, not an admission decision or grading rule.
+An unrecognized format or changed file hash does not establish scientific
+instability. Identify what the observations do and do not measure; pass unresolved
+comparison questions explicitly to executable validation. Do not claim stability
+where it has not been measured. If replay observations are supplied, distinguish byte differences from changes
 in scientific results. Identical headers and row-multiset fingerprints only show
 that the same textual rows recur, ignoring their ordering and serialization.
 They do not establish that ordering is irrelevant. Determine from the analysis

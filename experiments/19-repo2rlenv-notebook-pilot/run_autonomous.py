@@ -134,7 +134,7 @@ def copy_diagnostics(root):
         "replay/cleanup.json",
         "specification/specification.json",
         "specification/result.json",
-        "construction-raw/result.json",
+        "materialization-raw/result.json",
         "grading/result.json",
         "native/result.json",
     ):
@@ -313,12 +313,10 @@ class Pipeline:
                     endpoint=None,
                     credential=None,
                 )
-                from replay_tables import reviewable
-
-                if not reviewable(result):
-                    raise Rejected(
-                        "replay", "reference_not_repeatable", str(replay / "result.json")
-                    )
+                if result["status"] != "repeatability_observed_requires_comparison_review":
+                    raise ValueError("Replay did not produce complete observations")
+                # Repeatability is evidence for scientific validation, not a byte gate.
+                # Successful executions with differing outputs still need semantic review.
 
             await self.step("replay", repeat, paid=True)
             base.update(

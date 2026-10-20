@@ -56,7 +56,10 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             return {}
         if config["entrypoint"] == "run_reference_replay.py":
             (root / "replay/trials/1/outputs").mkdir(parents=True)
-            result = {"all_outputs_byte_identical_to_original": True}
+            result = {
+                "all_outputs_byte_identical_to_original": False,
+                "status": "repeatability_observed_requires_comparison_review",
+            }
             m.write(root / "result.json", result)
             return result
         if config.get("materialize_task"):

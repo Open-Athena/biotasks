@@ -2653,3 +2653,12 @@ with duplicate multiplicity and column order retained, and pass replay evidence
 to the specification worker to assess scientific ordering. Preserve the original
 reference bytes for construction. No generated task artifact was manually fixed.
 The next campaign restarts from the original seed with the new frozen factory.
+
+The second attempt completed reference execution and cleanup but chose compressed
+TSVs, which the observation helper did not understand. Preserved that rejection
+in `autonomous-runs/002`. Corrected the more general design error: replay byte
+comparisons are observations, not a scientific admission gate. Pass successful
+replays, including unknown differences, to specification and executable grading;
+only those stages can assess semantic acceptability. Added streaming compressed
+table profiles and regression tests. Eighteen focused offline tests passed. No
+scientific artifact was manually amended; the next campaign starts from the seed.
