@@ -76,19 +76,26 @@ def main():
     token = os.environ['BIOTASKS21_INFERENCE_CLIENT_TOKEN']
     if len(token) < 32:
         raise ValueError('Protected client credential required')
-    glm_key = os.environ['BIOTASKS21_GLM_KEY']
+    transport_only = os.environ.get('BIOTASKS21_TRANSPORT_ONLY') == '1'
+    delay_seconds = int(os.environ.get('BIOTASKS21_DIAGNOSTIC_DELAY_SECONDS', '130'))
+    lifetime_seconds = int(os.environ.get('BIOTASKS21_CLIENT_LIFETIME_SECONDS', '7200'))
+    if delay_seconds not in (130, 650) or not 900 <= lifetime_seconds <= 7200:
+        raise ValueError('Unsupported bounded diagnostic/lifetime settings')
+    glm_key = '' if transport_only else os.environ['BIOTASKS21_GLM_KEY']
     output = Path(os.environ['IRIS_OUTPUT_DIR'])
     output.mkdir(parents=True, exist_ok=True)
     ctx = iris_ctx()
     info = get_job_info()
     if info is None:
         raise RuntimeError('Expected authorized Iris job context')
-    found = ctx.client.resolver_for_job(JobName.from_string(os.environ['BIOTASKS21_GLM_RELAY_JOB'])).resolve('glm-5.3')
-    if not found.endpoints:
-        raise RuntimeError('Existing GLM service is not registered')
-    upstream = found.endpoints[0].url.rstrip('/')
-    if not upstream.endswith('/v1'):
-        upstream += '/v1'
+    upstream = None
+    if not transport_only:
+        found = ctx.client.resolver_for_job(JobName.from_string(os.environ['BIOTASKS21_GLM_RELAY_JOB'])).resolve('glm-5.3')
+        if not found.endpoints:
+            raise RuntimeError('Existing GLM service is not registered')
+        upstream = found.endpoints[0].url.rstrip('/')
+        if not upstream.endswith('/v1'):
+            upstream += '/v1'
     lock = threading.Lock()
     gate = threading.BoundedSemaphore(1)
     receipts = output / 'inference-usage.jsonl'
@@ -117,7 +124,7 @@ def main():
             if not hmac.compare_digest(self.headers.get('X-Biotasks21-Inference-Token', '').encode(), token.encode()):
                 self.reply(401, b'{"error":"unauthorized"}')
                 return
-            allowed = (self.command, self.path) in {('GET', '/v1/models'), ('POST', '/v1/chat/completions'), ('POST', '/v1/transport-check'), ('POST', '/v1/transport-delay-check')}
+            allowed = (self.command, self.path) in {('GET', '/v1/models'), ('POST', '/v1/chat/completions'), ('POST', '/v1/transport-check'), ('POST', '/v1/transport-delay-check'), ('POST', '/v1/finish')}
             if not allowed:
                 self.reply(404, b'{"error":"unsupported_route"}')
                 return
@@ -136,13 +143,37 @@ def main():
                 except (ValueError, TypeError):
                     self.reply(400, b'{"error":"invalid_native_generation_request"}')
                     return
+            if self.path == '/v1/finish':
+                if not gate.acquire(blocking=False):
+                    self.reply(429, b'{"error":"inference_client_busy"}')
+                    return
+                try:
+                    append({'stage': 'authenticated_finish', 'model_calls': 0})
+                    self.reply(200, b'{"stage":"finishing","model_calls":0}')
+                    stop.set()
+                finally:
+                    gate.release()
+                return
             if self.path in ('/v1/transport-check', '/v1/transport-delay-check'):
                 result = transport_check(raw)
                 if self.path == '/v1/transport-delay-check':
-                    time.sleep(130)
-                    result['diagnostic_delay_seconds'] = 130
+                    if not gate.acquire(blocking=False):
+                        self.reply(429, b'{"error":"inference_client_busy"}')
+                        return
+                    try:
+                        time.sleep(delay_seconds)
+                        result['diagnostic_delay_seconds'] = delay_seconds
+                        append(result)
+                        self.reply(200, json.dumps(result).encode())
+                    finally:
+                        gate.release()
+                    return
                 append(result)
                 self.reply(200, json.dumps(result).encode())
+                return
+            if transport_only:
+                append({'stage': 'transport_only_model_request_rejected', 'model_calls': 0})
+                self.reply(403, b'{"error":"transport_diagnostic_only"}')
                 return
             if not gate.acquire(blocking=False):
                 self.reply(429, b'{"error":"inference_client_busy"}')
@@ -203,8 +234,10 @@ def main():
         with ctx.registry.registered('inference', registration_address(info.advertise_host, server), {'purpose': 'issue21_native_generation_inference_only', 'proxy_timeout_seconds': '1320'}, access=EndpointAccess.ENDPOINT_ACCESS_LINK):
             status['status'] = 'serving'
             status['registered_bound_port_nonzero'] = True
+            status.update(transport_diagnostic_only=transport_only, diagnostic_delay_seconds=delay_seconds,
+                          lifetime_sec=lifetime_seconds)
             (output / 'client-status.json').write_text(json.dumps(status, indent=2) + '\n')
-            while not stop.is_set() and time.monotonic() - started < 7200:
+            while not stop.is_set() and time.monotonic() - started < lifetime_seconds:
                 server.handle_request()
     finally:
         server.server_close()

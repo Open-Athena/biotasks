@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "issue": 21,
-  "created_utc": "2026-10-20T02:55:00.739744+00:00",
+  "created_utc": "2026-10-20T02:57:17.741800+00:00",
   "checkpoint_commit": "23850153d2e36f0b05db9bbbb75b53c614a5944b",
   "stage": "unchanged_SWE_gen_Marin_schema_only_and_original_terminal_response_attribution",
   "model_calls": 0,
@@ -16,10 +16,10 @@
       "archive_format": "tar.zst",
       "members": [
         {
-          "path": "wrapper-status.json",
-          "bytes": 261,
+          "path": "conversion.json",
+          "bytes": 1093,
           "mode": "0o644",
-          "sha256": "ae006e217a59cfd78eb2dbf907cfde2c032f9762ff54f678b7691f56f8c02e8c"
+          "sha256": "d838950677a483bfb7da0d09a57dff117c59375bec942d423f8e4f3f7cbe0316"
         },
         {
           "path": "private-setup.log",
@@ -34,10 +34,10 @@
           "sha256": "f5abbe0546bfaeacd350b07bc6e4dd77637bd1b828194e91a2f1b5f905ca7125"
         },
         {
-          "path": "conversion.json",
-          "bytes": 1093,
+          "path": "wrapper-status.json",
+          "bytes": 261,
           "mode": "0o644",
-          "sha256": "d838950677a483bfb7da0d09a57dff117c59375bec942d423f8e4f3f7cbe0316"
+          "sha256": "ae006e217a59cfd78eb2dbf907cfde2c032f9762ff54f678b7691f56f8c02e8c"
         }
       ]
     },
@@ -106,5 +106,9 @@
       "bytes": 5521,
       "sha256": "9915c6ac9bc0e1c2fbe5f52286a01ffe7d3aeb4f3ee1e84635838d76daed485b"
     }
-  ]
+  ],
+  "supersedes_unverified_snapshot": {
+    "prefix": "research/21-repo2rlenv/2026-10-18/8980dc4d6fa76254a9d42ecb11e9f43941803de6a6bf49a7c25b4cd00ab67f6b",
+    "reason": "Original manifest listed correct archive member identities/hashes/modes in filesystem traversal order rather than original archive order. Add-only upload completed but ordered readback assertion failed. Original archive bytes and content are unchanged; prior prefix retained."
+  }
 }

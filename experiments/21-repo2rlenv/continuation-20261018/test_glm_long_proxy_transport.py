@@ -18,7 +18,8 @@ class DisconnectedCaller(io.BytesIO):
 
 
 class LongProxyTransportTests(unittest.TestCase):
-    def run_fixture(self, *, delayed=False, disconnected=False):
+    def run_fixture(self, *, delayed=False, disconnected=False, transport_only=False,
+                    delay_seconds=130, route=None):
         token = 'synthetic-application-token-1234567890'
         body = json.dumps({'model': 'glm-5.3', 'max_tokens': 131072,
             'chat_template_kwargs': {'reasoning_effort': 'medium'},
@@ -64,7 +65,7 @@ class LongProxyTransportTests(unittest.TestCase):
                 request.headers = {'Content-Length': str(len(body)),
                     'X-Biotasks21-Inference-Token': token}
                 request.command = 'POST'
-                request.path = '/v1/transport-delay-check' if delayed else '/v1/chat/completions'
+                request.path = route or ('/v1/transport-delay-check' if delayed else '/v1/chat/completions')
                 request.rfile = io.BytesIO(body)
                 request.wfile = DisconnectedCaller() if disconnected else io.BytesIO()
                 request.send_response = lambda value: seen.update(reply_status=value)
@@ -81,7 +82,9 @@ class LongProxyTransportTests(unittest.TestCase):
             env = {'IRIS_OUTPUT_DIR': directory, 'BIOTASKS21_INFERENCE_CLIENT_TOKEN': token,
                    'BIOTASKS21_GLM_KEY': 'synthetic-upstream-key',
                    'BIOTASKS21_GLM_RELAY_JOB': '/fixture/relay', 'DAYTONA_API_KEY': '',
-                   'REPO2RLENV_REMOTE_WORKER': ''}
+                   'REPO2RLENV_REMOTE_WORKER': '',
+                   'BIOTASKS21_TRANSPORT_ONLY': '1' if transport_only else '0',
+                   'BIOTASKS21_DIAGNOSTIC_DELAY_SECONDS': str(delay_seconds)}
             with patch.dict(os.environ, env), patch.object(transport, 'iris_ctx', return_value=ctx), \
                  patch.object(transport, 'get_job_info', return_value=SimpleNamespace(advertise_host='127.0.0.1')), \
                  patch.object(transport, 'Server', FakeServer), \
@@ -104,6 +107,20 @@ class LongProxyTransportTests(unittest.TestCase):
         self.assertEqual(seen['rows'][0]['error_type'], 'BrokenPipeError')
         self.assertEqual(seen['metadata']['proxy_timeout_seconds'], '1320')
         self.assertEqual(seen['upstream_timeout'], 1200)
+
+    def test_longer_diagnostic_and_finish_make_no_upstream_requests(self):
+        seen, _, _ = self.run_fixture(delayed=True, transport_only=True, delay_seconds=650)
+        self.assertEqual(seen['upstream_calls'], 0)
+        self.assertEqual(seen['sleep_calls'], [(650,)])
+        self.assertEqual(json.loads(seen['reply_body'])['model_calls'], 0)
+        finished, _, _ = self.run_fixture(transport_only=True, route='/v1/finish')
+        self.assertEqual(finished['upstream_calls'], 0)
+        self.assertEqual(json.loads(finished['reply_body'])['stage'], 'finishing')
+
+    def test_transport_only_client_cannot_forward_a_model_request(self):
+        seen, _, _ = self.run_fixture(transport_only=True)
+        self.assertEqual(seen['upstream_calls'], 0)
+        self.assertEqual(seen['reply_status'], 403)
 
     def test_delayed_diagnostic_is_zero_model_and_has_timeout_metadata(self):
         seen, _, _ = self.run_fixture(delayed=True)
