@@ -2430,3 +2430,30 @@ covering no-op/assertion rejection, absence of grader execution/feedback, byte
 and context checks, recovery orchestration and existing control gates. No new
 model or sandbox was launched for the tests. The current campaign remains frozen
 at its original revision; recovery has not launched yet.
+
+### 2026-10-20 — Launch verified probe recovery 003
+
+Grading 002's complete 1,150-file archive passed download verification. The
+bounded log transport restored 301 files; these are a subset, not the complete
+archive. Preserve 37 original small files against their hashes, including the
+unchanged candidate, independent program, probe suite, review and all seven
+control records. The ledger has 182 received responses and one uncertain repair
+request. Recorded elapsed time is 5,991.98 seconds. Cleanup and independent
+zero-sandbox readback passed; Iris confirmed host and task FAILED.
+
+Automatic approval initially rejected pushing the broad evidence payload. Audit
+the exact small-file set and record eligibility, hashes, source permissions and
+exclusions. All original hashes match; the model-input source components exactly
+match already-public setup files, no credential/private-service endpoint patterns
+were found, and SQLite contains digests/states and allowances only. Full traces,
+host logs and biological files remain outside this Git payload. The reviewed push
+then succeeded at `6435ed748b59293ffb58bf96463652246d979464`.
+
+Recovery 003 was submitted at 01:39 UTC from that committed revision, with the
+recorded `grading-config-003.json`. It reruns the independent program and grader
+controls, reauthors probes through GLM with execution-only feedback, freezes the
+executable suite, and repeats scientific review/any needed grader repair. No
+prior acceptance is reused. Reserved CPU, sequential execution, offline science,
+existing time/spend ceilings and unset extra model caps remain unchanged. A
+stale temporary packing config was caught before submission; discard that
+unlaunched payload and assert the target campaign/config identity when repacking.

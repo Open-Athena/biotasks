@@ -25,8 +25,11 @@ records the exact JASPAR URL check. JASPAR's official About page states CC BY 4.
 [specification 001](specification-runs/001/README.md) are complete.
 [Materialization 005](materialization-runs/005/README.md) produced an executed
 candidate whose oracle matches the projected reference. Fresh scientific
-validation 002 is in progress: its independent implementation and five initial
-controls passed; verifier probes and review remain pending. Native Harbor
+validation 002 passed its independent implementation and five initial controls,
+but its sole wrong-answer probe crashed before changing the output. The review
+requested repair; that campaign was interrupted and archived with verified
+cleanup. [Recovery 003](grading-config-003.json) is running with the general
+probe-execution preflight and a shell-free GLM probe repair. Native Harbor
 controls, a blind solver attempt and publication have not run for this case.
 Original worker outputs remain unchanged; no task-specific scientific repairs
 were made by the operator.
