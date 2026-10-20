@@ -41,6 +41,24 @@ policy, and model settings, if any.
    sufficiency, answer leakage, test relevance, and grading validity. Audit
    failures count against yield; do not repair held-out tasks individually.
 
+Preselect rejected-output audit membership by the cohort hash ranking: audit
+the first three rejected held-out inputs, or all if fewer than three. Preserve
+the automatic disposition and report the audit independently; a manual audit
+cannot convert a rejected output into an accepted task.
+
+Before configuration freeze, review fix-family overlap using patch identities,
+shared issue references, and changed functionality. Cohort membership alone
+does not prove family independence. Resolve overlap before executing held-out
+inputs and preserve any revised membership as a new version.
+
+Automatic acceptance also requires a bounded set of negative controls: the
+unchanged base, removal of each source-file portion of the reference patch
+(up to five files, hash-ranked), and test-file deletion/tampering. Record
+controls that do not apply cleanly as unresolved controls, not successful
+rejections. Passing partial implementations reveal insufficient discrimination;
+reject those candidates under the frozen policy. This is limited mutation
+coverage, not a proof against every incorrect implementation.
+
 Keep native rejection, environment failure, additional quality rejection,
 accepted export, and independently verified task as separate states. Report
 counts over the initial 115 sampled PRs, the 16 statically eligible PRs, and the
@@ -60,6 +78,9 @@ repository bootstrap; thirty minutes per PR validation and final verification;
 and 48 allocated CPU-hours total. Scheduling time is recorded separately.
 Do not purchase capacity or request accelerators. Start at one worker.
 These are ceilings, not measured costs or proof of scheduler capacity.
+The proposed recurring compute gate is at most 12 allocated CPU-hours per
+independently verified held-out task, including failed held-out attempts and
+amortized bootstrap cost. Report development engineering time separately.
 
 Use zero paid model calls until a model budget and provider are recorded.
 Supplied Dockerfiles are allowed by upstream, but their authorship effort and
@@ -85,3 +106,17 @@ without authorization. Do not alter shared hosts or cluster configuration.
 
 Daytona has not been prepared or launched for this experiment, and previous
 experiments' paid allowances do not apply.
+
+## Native verifier audit
+
+`audit_native_verifier.py` executes the hash-pinned standalone native verifier
+on nine synthetic logs. `evidence/native-verifier-audit.json` preserves inputs
+and outputs. Native reward can equal one for unparseable output, untracked
+failures, or a failing command; these rewards do not prove task acceptance.
+Even `command_resolved` does not reject an untracked ERROR if the supplied exit
+code is zero. Require parsed per-test evidence, tracked-test success, clean
+command completion, no FAILED/ERROR statuses, and nonempty retained regression
+coverage in the additional reference gate. These checks do not establish
+baseline validity, honest log provenance, or semantic agreement on their own.
+Any change to the exported reward implementation is a declared improved variant,
+not an unchanged native baseline.

@@ -253,3 +253,43 @@ Daytona backend had been prepared or launched. Keep that authorization boundary.
 numeric decision gates and resource ceilings, and remaining operational
 requirements. Runtime validation, final task builds, quality audit and
 repeatability remain unproven.
+
+## 2026-10-20 — Native verifier contract and diff discrepancy
+
+Re-read the live issue before auditing remaining requirements. In particular,
+fix-family separation, rejected-output auditing, negative controls, and a
+recurring-cost target were not fully specified by the first execution-plan
+draft. The plan now records those requirements; family separation is still
+pending and no claim of a frozen runtime configuration is made.
+
+Fetched the standalone verifier at the pinned upstream revision from
+`src/repo2rlenv/pipelines/_pr_runtime_verifier.py`. Its SHA-256 is
+`154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b`.
+The audit script checks this digest before executing it on synthetic inputs.
+Nine verifier cases ran at 15:07:56 UTC, exit 0, peak RSS 20,188 KiB,
+with a 96 MiB estimate and the shared lock/resource/thread/priority guards.
+This did not build an image or execute a real task.
+
+The preserved native results demonstrate why scalar reward is insufficient for
+automatic acceptance: unparseable logs with exit zero, untracked test failure,
+untracked test ERROR with exit zero, absence of retained regression coverage,
+and command failure after tracked tests pass can each yield reward one.
+The native structured fields distinguish several of these cases. The proposed
+additional reference gate rejects all five and preserves the clean positive
+control. Even that gate does not prove baseline validity, instruction agreement,
+test-output provenance, or verifier isolation. This evidence identifies an
+acceptance requirement, not a measured real-world false-acceptance rate.
+
+`diagnose_diff_coverage.py` verified PsychoPy PR 7599 against its cached diff
+hash. All twelve API-reported file headers are present; the native parser
+recognizes only the four paths without spaces. The other eight paths are PNG
+test fixtures with spaces. All changes are binary test fixtures with no source
+hunks. Preserve the original `unresolved_diff_coverage` ledger entry and the
+separate diagnostic; this is not a replacement parser or an additional runtime
+candidate. The diagnostic ran at 15:08:48 UTC, exit 0, peak RSS 20,448 KiB
+against a 64 MiB estimate under the same guards.
+
+Next: resolve fix-family overlap before execution; establish an authorized
+Docker-compatible execution route; develop the native invocation and freeze
+the runtime configuration before touching held-out failures. The host Docker
+probe remains unapproved and unsubmitted.

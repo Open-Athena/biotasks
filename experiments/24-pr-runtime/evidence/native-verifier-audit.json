@@ -1,0 +1,293 @@
+{
+  "evidence_kind": "synthetic verifier contract audit; no repository task run",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "native_source_sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+  "cases": [
+    {
+      "name": "all_tracked_pass",
+      "input_log": "tests/test_example.py::test_fix PASSED\ntests/test_example.py::test_existing PASSED\n",
+      "input_exit_code": 0,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 2,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": true,
+      "expected_reference_gate": true
+    },
+    {
+      "name": "base_failure",
+      "input_log": "tests/test_example.py::test_fix FAILED\ntests/test_example.py::test_existing PASSED\n",
+      "input_exit_code": 1,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 1,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 2,
+        "exit_code": 1,
+        "command_resolved": false
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "unparseable_exit_zero",
+      "input_log": "test wrapper exited without reporting tests\n",
+      "input_exit_code": 0,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": false,
+        "command_resolved": false,
+        "parse_status": "fallback_exitcode",
+        "eval_trustworthy": false,
+        "runner": "pytest",
+        "f2p_total": 1,
+        "p2p_total": 1,
+        "exit_code": 0
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "missing_regression",
+      "input_log": "tests/test_example.py::test_fix PASSED\n",
+      "input_exit_code": 0,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 1,
+        "p2p_passed": 0,
+        "p2p_rate": 0.0,
+        "regressions": [
+          "tests/test_example.py::test_existing"
+        ],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 1,
+        "exit_code": 0,
+        "command_resolved": false
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "untracked_failure",
+      "input_log": "tests/test_example.py::test_fix PASSED\ntests/test_example.py::test_existing PASSED\ntests/test_example.py::test_other FAILED\n",
+      "input_exit_code": 1,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 1,
+        "untracked_failed": [
+          "tests/test_example.py::test_other"
+        ],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 3,
+        "exit_code": 1,
+        "command_resolved": false
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "untracked_error_exit_zero",
+      "input_log": "tests/test_example.py::test_fix PASSED\ntests/test_example.py::test_existing PASSED\ntests/test_example.py::test_other ERROR\n",
+      "input_exit_code": 0,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 3,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "missing_f2p_oracle",
+      "input_log": "tests/test_example.py::test_fix PASSED\ntests/test_example.py::test_existing PASSED\n",
+      "input_exit_code": 0,
+      "f2p": [],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 0,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 2,
+        "exit_code": 0,
+        "command_resolved": false
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "no_retained_regression",
+      "input_log": "tests/test_example.py::test_fix PASSED\n",
+      "input_exit_code": 0,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 0,
+        "p2p_passed": 0,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 1,
+        "exit_code": 0,
+        "command_resolved": true
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    },
+    {
+      "name": "command_failure_after_passes",
+      "input_log": "tests/test_example.py::test_fix PASSED\ntests/test_example.py::test_existing PASSED\n",
+      "input_exit_code": 2,
+      "f2p": [
+        "tests/test_example.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_example.py::test_existing"
+      ],
+      "native_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 1,
+        "f2p_passed": 1,
+        "f2p_rate": 1.0,
+        "p2p_total": 1,
+        "p2p_passed": 1,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 2,
+        "exit_code": 2,
+        "command_resolved": false
+      },
+      "native_process_exit_code": 0,
+      "proposed_reference_gate": false,
+      "expected_reference_gate": false
+    }
+  ],
+  "limitations": [
+    "Passing this gate is only one necessary condition for task acceptance.",
+    "Synthetic log inputs do not establish honest or complete runner output.",
+    "No build, Docker execution, real PR validation or solver run occurred."
+  ]
+}
