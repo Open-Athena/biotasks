@@ -293,3 +293,43 @@ Next: resolve fix-family overlap before execution; establish an authorized
 Docker-compatible execution route; develop the native invocation and freeze
 the runtime configuration before touching held-out failures. The host Docker
 probe remains unapproved and unsubmitted.
+
+## 2026-10-20 — Conservative cohort overlap screening
+
+`check_cohort_overlap.py` checks cached diff hashes and constructs connected
+components using identical diffs, shared issue/PR references, and shared source
+paths within a repository. This is a conservative leakage screen, not a claim
+that all connected PRs are duplicates. No runtime outcome was consulted.
+The script ran at 15:11:33 UTC under the shared lock/resource/thread/priority
+guards, exit 0, peak RSS 17,124 KiB against a 64 MiB estimate.
+
+Eight scikit-fingerprints PRs form a Mordred descriptor implementation series
+through their shared calculator. Two were selected for development. The six
+original held-out members are now excluded to avoid overstating family-level
+generalization. Nipype PR 3739 also shares a source file with development PR
+3745 and is conservatively excluded, although their stated problems differ.
+The recorded audit has eight potential-overlap components across sixteen PRs.
+There were no full-diff identity matches; shared files do not prove duplicate
+fixes or eliminate unobserved cross-repository semantic overlap.
+
+Version 1 remains unchanged. `execution-cohorts-v2.json` retains all original
+identities and dispositions: four development, five held-out execution inputs,
+and seven excluded for development overlap. No replacements were selected.
+The remaining held-out inputs are scikit-fingerprints 544 and 525, Nipype 3753,
+and PsychoPy 7475 and 7805. The initial twelve-slot denominator and four-task
+proposed go/no-go target remain visible. This smaller panel has weaker precision,
+not evidence of improved yield.
+
+Inspection of `_bootstrap_from_user_dockerfile` in the pinned upstream
+`src/repo2rlenv/bootstrap/runner.py` found another operational prerequisite.
+It returns `test_cmds=[]`, unknown language, and `smoke_passed=True` without
+running a smoke check. `validate_pr` rejects empty test commands before running
+tests. Thus the user-supplied Dockerfile route alone cannot drive native runtime
+validation. A model-free profile would need explicit reusable test commands and
+a real smoke check, recorded as an improvement rather than native success.
+This is a source-inspection finding, not a measured bootstrap attempt.
+
+After explaining the workflow, requested the user's explicit choice on the
+prepared read-only host Docker probe again. Its scope is only Docker version
+inspection; permission for that probe would not authorize running arbitrary
+build containers against the shared host. No approval has been received yet.

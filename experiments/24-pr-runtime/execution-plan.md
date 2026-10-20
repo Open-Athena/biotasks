@@ -1,6 +1,6 @@
 # Runtime evaluation plan
 
-Status: cohort membership is frozen; runtime configuration is still in development.
+Status: version 2 cohort membership is recorded; runtime configuration is still in development.
 No candidate PR has been executed in this experiment.
 
 The question is whether native Repo2RLEnv `pr_runtime` can generate useful tasks
@@ -11,9 +11,13 @@ successful Python test run alone does not establish native Docker task validity.
 
 ## Inputs and development boundary
 
-`execution-cohorts.json` records four development PRs and twelve held-out PRs,
-including two PRs from a repository absent from development. Membership is
-derived from the static scan using a fixed seed. This is a small feasibility
+`execution-cohorts.json` preserves the initial four development PRs and twelve
+held-out slots. The pre-execution overlap audit produces
+`execution-cohorts-v2.json`: four development PRs, five eligible held-out inputs,
+and seven exclusions for potential development overlap, with no replacements.
+Two eligible held-out PRs are from a repository absent from development.
+Membership is derived from the static scan using a fixed seed and then screened
+by conservative shared-file/reference components. This is a small feasibility
 panel, not a representative estimate of all biological repositories.
 
 Use the four development PRs to establish a generic invocation, bootstrap
@@ -46,10 +50,13 @@ the first three rejected held-out inputs, or all if fewer than three. Preserve
 the automatic disposition and report the audit independently; a manual audit
 cannot convert a rejected output into an accepted task.
 
-Before configuration freeze, review fix-family overlap using patch identities,
-shared issue references, and changed functionality. Cohort membership alone
-does not prove family independence. Resolve overlap before executing held-out
-inputs and preserve any revised membership as a new version.
+`evidence/cohort-overlap-audit.json` records potential overlap using patch
+identities, shared issue references, and shared source files. Eight PRs add
+Mordred descriptor functionality through a shared calculator; two were in
+development, so the other six are excluded. One Nipype held-out PR shares a
+source file with a development PR and is conservatively excluded too. Shared
+files are not proof of duplicate fixes; cross-repository semantic duplication
+is not ruled out. Preserve these limitations when reporting unique fix families.
 
 Automatic acceptance also requires a bounded set of negative controls: the
 unchanged base, removal of each source-file portion of the reference patch
@@ -62,15 +69,20 @@ coverage, not a proof against every incorrect implementation.
 Keep native rejection, environment failure, additional quality rejection,
 accepted export, and independently verified task as separate states. Report
 counts over the initial 115 sampled PRs, the 16 statically eligible PRs, and the
-12 held-out execution inputs, with development results separate.
+12 original held-out slots and five overlap-screened execution inputs, with
+development results and the seven overlap exclusions separate.
 
 ## Proposed decision gates and bounds
 
 Freeze these gates before held-out execution. A promising result requires at
-least four independently verified tasks among the twelve held-out inputs,
+least four independently verified tasks among the twelve original held-out slots,
 covering at least two repositories, with no audited false acceptance. Report
 the unseen-repository result separately even if it fails. This pilot cannot
 establish a low population-wide false-acceptance rate.
+The overlap screen does not reduce this absolute target or replace excluded
+inputs; four accepted tasks would require four of the five remaining execution
+inputs to pass. Assess feasibility during development and report failure to meet
+the target honestly.
 
 Proposed execution ceilings are two concurrent CPU workers on existing reserved
 TRC capacity, each at most four CPUs, 16 GiB RAM and 30 GiB disk; one hour per
@@ -87,6 +99,14 @@ Supplied Dockerfiles are allowed by upstream, but their authorship effort and
 repository-specific assumptions must be counted; they do not prove automated
 bootstrap for unseen repositories. A model-assisted bootstrap requires a
 separately checkpointed call/token ceiling and provider configuration.
+
+At this pinned revision, the supplied-Dockerfile bootstrap returns empty
+`test_cmds`, unknown language, and `smoke_passed=True` without a smoke run.
+The native runtime validator immediately rejects empty test commands.
+Consequently a supplied Dockerfile alone is not an executable model-free
+`pr_runtime` profile. A declarative test-command/language configuration and
+an actual fresh-container smoke check would be an explicit improved variant,
+with its engineering cost and behavior measured separately from native results.
 
 If promising, the operational follow-through must demonstrate repeatable
 invocation, resumption without duplicate work, bounded retries, automatic
