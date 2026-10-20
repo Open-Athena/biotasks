@@ -40,9 +40,13 @@ def recovered_author_files(directory):
 
 
 def materialization_context(context, source, seconds):
-    """Give this stage its scientific proposal, not downstream grader work plans."""
+    """Preserve scientific caveats and observations, but omit downstream grader work plans."""
     return {
-        "specification": {"task_brief": context["specification"]["task_brief"]},
+        "specification": {
+            "task_brief": context["specification"]["task_brief"],
+            "review": context["specification"].get("review", ""),
+        },
+        "repeatability": context.get("repeatability"),
         "policy": context["policy"],
         "source_evidence": context["source_evidence"],
         "reference_observations": context["reference_observations"],

@@ -2668,3 +2668,20 @@ and explicit `seed_file` selection to the shared launch helper. This removes the
 private launcher's seed override from future submissions. Four offline tests
 check seed selection, byte identity and path containment. The running campaign
 is unchanged; these launch-interface changes are not part of its factory pin.
+
+## 2026-10-20 — preserve scientific uncertainty across automatic handoffs
+
+Campaign 003 reached construction without intervention, but construction spent
+more than an hour investigating the proposal. Read-only observation found that
+its public draft assumed positive-length intervals and prescribed an incidental
+selection convention, while the specification's private review had already
+flagged uncertainty. The materialization context was dropping that review and
+replay observations. The running frozen campaign was not changed.
+
+For the next version, preserve the scientific review and replay observations in
+the construction input, while continuing to omit downstream grader work plans.
+Prompts now distinguish a proposal from an approved contract, require measured
+support for asserted input properties, and permit transparent clarification of
+unsupported incidental conventions without changing the scientific target.
+Fourteen materialization/controller tests pass. Live impact is not established
+by these offline tests; the next full run must test it.

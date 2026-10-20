@@ -110,6 +110,20 @@ Do not claim that hashes, a fixed random seed, repeated reference agreement or a
 model review establish semantic correctness. Reject unsuitable targets rather
 than prescribing ever more incidental implementation details to make them match.
 
+## Supported assumptions
+
+Only promise input properties that the supplied execution evidence establishes.
+A conventional domain precondition is not evidence that every supplied record
+satisfies it. If a property was not measured, do not assert it as a guarantee;
+identify it as a construction/validation question in the private review.
+
+Do not require a unique representation or selection merely because the reference
+happens to emit one. When several results satisfy the same scientific criterion,
+propose checks of that criterion and explicit coverage/multiplicity instead of
+inventing a package-order convention. Deterministic tie-breaking is appropriate
+only when needed by the scientific question and supported by the evidence. Record
+unresolved representation choices privately; do not turn them into public facts.
+
 ## Replay observations
 
 Replay observations are evidence, not an admission decision or grading rule.

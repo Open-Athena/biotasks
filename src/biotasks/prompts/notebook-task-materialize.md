@@ -1,4 +1,4 @@
-# Materialize the approved scientific task from existing evidence
+# Materialize a proposed scientific task from existing evidence
 
 You are a GLM worker building supplied task inputs and a reference solution.
 Follow the scientific scope in `policy` and the latest `specification`. Older
@@ -12,13 +12,26 @@ remaining gaps from source evidence and inspected inputs. Prior execution does n
 prove its public contract complete. Submit a complete candidate including unchanged
 fields, rather than rebuilding a separate implementation without a concrete need.
 
-You receive the source, export evidence and the approved public scientific task proposal.
+You receive the source, export evidence, replay observations, and the proposed
+public task together with its private scientific review. `draft_ready` means a
+proposal ready for construction, not an approved or validated scientific contract.
+Read the review before investigating; preserve its established facts and unresolved
+questions instead of rediscovering them. Notes about later validation are context,
+not a request to implement that validation here.
+
+Check the proposal against observed inputs. Do not assert an input precondition
+that has not been measured or retain a known unsupported convention solely because
+the proposal stated it. You may clarify unsupported incidental conventions without
+changing the scientific target; explain the evidence and each clarification in the
+rationale. A substantive methodological change requires a blocker, not a silent
+repair. Leave unresolved numerical equivalence to the comparison stage; do not
+attempt repeated full independent implementations before submitting a candidate.
 Grader design and independent-implementation plans belong to later workers.
 The shell runs in a locked Python environment, offline. `/work/reference` contains
 read-only original terminal artifacts. `original_inputs` identifies read-only
 original input files and their recorded identities. Work under `/work/author`.
 Do not modify or recompute the recorded scientific reference. Avoid redoing its
-upstream work excluded from the approved task.
+upstream work excluded from the proposed task.
 
 Return a complete structured artifact:
 
@@ -33,7 +46,7 @@ Return a complete structured artifact:
   original absolute paths), `--reference-dir PATH` (original terminal artifacts),
   and `--destination PATH`. Create only `destination/inputs/` and
   `destination/reference/`. Copy original task data byte-for-byte where required,
-  derive approved supplied metadata by selecting existing fields, and project
+  derive proposed supplied metadata by selecting existing fields, and project
   selected answer fields from existing reference exports. No new scientific
   computation or invented answer values. Document provenance in the rationale.
 - `oracle_code`: Python CLI accepting `--input-dir PATH` and `--output-dir PATH`.
@@ -69,7 +82,7 @@ alone does not validate numerical equivalence: a separate comparison stage check
 the oracle outputs against the projected reference and tests alternatives/errors.
 Do not spend this stage constructing a grader, a separate clean-room implementation,
 or a broad mutation suite. Prefer the simplest faithful oracle, normally using the
-reference packages already installed: adapt the source computation to the approved
+reference packages already installed: adapt the source computation to the proposed
 scope and supplied inputs. Do not reimplement those packages from statistical
 primitives in this stage. A fresh worker will independently implement
 the public question during comparison validation; do not duplicate that stage here.

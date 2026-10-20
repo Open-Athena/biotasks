@@ -166,6 +166,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
             context={
                 "specification": {
                     "task_brief": "Synthetic question",
+                    "review": "Observed scientific uncertainty",
                     "validation_handoff": "Later grader plan",
                 },
                 "policy": {},
@@ -184,7 +185,7 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         )
     )
     assert json.loads((root / "materialize/input.json").read_text())["specification"] == {
-        "task_brief": "Synthetic question"
+        "task_brief": "Synthetic question", "review": "Observed scientific uncertainty"
     }
     assert result["oracle_executed"]
     assert not result["numerical_comparison_validated"]
