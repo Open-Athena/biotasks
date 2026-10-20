@@ -196,6 +196,7 @@ def main():
             row = {"stage": "inference_only_padded_transport", "method": self.command,
                    "request_sha256": digest, "repository_execution": False, "model_calls": 0}
             request_started = time.monotonic()
+            request_receipt = None
             try:
                 if self.path == "/v1/finish":
                     append({"stage": "authenticated_finish", "model_calls": 0})
@@ -237,13 +238,22 @@ def main():
                     consumed.add(digest)
                     row.update(model_calls=1, requested_max_tokens=payload.get("max_tokens", payload.get("max_completion_tokens")),
                                requested_effort="medium")
+                    directory = output / "requests"
+                    directory.mkdir(exist_ok=True)
+                    request_file = directory / (digest + ".json")
+                    with request_file.open("xb") as stream:
+                        stream.write(raw)
+                    request_file.chmod(0o600)
+                    request_receipt = directory / (digest + "-receipt.json")
+                    request_receipt.write_text(json.dumps(dict(row, status="dispatched")) + "\n")
+                    request_receipt.chmod(0o600)
 
                 def fetch():
                     status, content = asyncio.run(upstream_response(self.command,
                         upstream + self.path.removeprefix("/v1"), raw, key))
                     directory = output / "responses"
                     directory.mkdir(exist_ok=True)
-                    path = directory / (uuid4().hex + ".json")
+                    path = directory / (digest + "-" + uuid4().hex + ".json")
                     path.write_bytes(content)
                     path.chmod(0o600)
                     row.update(upstream_status=status, response_file="responses/" + path.name,
@@ -269,6 +279,9 @@ def main():
                 # second HTTP response or a generated replacement completion.
             finally:
                 row["elapsed_seconds"] = round(time.monotonic() - request_started, 3)
+                if request_receipt is not None:
+                    request_receipt.write_text(json.dumps(dict(row, status=(
+                        "response_captured" if row.get("response_file") else "failed_or_uncertain"))) + "\n")
                 append(row)
                 gate.release()
 

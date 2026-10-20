@@ -116,7 +116,10 @@ def build():
         assert index not in matched_provenance
         matched_provenance.add(index)
         task['provenance_category'] = record['category']
-        task['unchanged_output_evidence_eligible'] = record['category'] == 'authored_output_unchanged'
+        task['unchanged_output_evidence_eligible'] = record['category'] in {
+            'authored_output_unchanged',
+            'programmatic_output_unchanged_from_supplied_family',
+        }
     assert len(matched_provenance) == len(provenance['rows'])
     provenance_counts = dict(Counter(task['provenance_category'] for task in tasks))
     assert provenance_counts == provenance['categories']
@@ -150,7 +153,7 @@ def build():
                 'categories': provenance_counts,
                 'unchanged_accepted_outputs': sum(task['unchanged_output_evidence_eligible'] for task in tasks),
                 'unattended_end_to_end_yield_established': False,
-                'interpretation': 'Accepted instances and blind scores below include legacy assisted evidence. Only unchanged accepted outputs support the primary output comparison. Curated setup, manual orchestration and final assessment remain disclosed; these counts are not production acceptance rates.'},
+                'interpretation': 'Accepted instances and blind scores below include legacy assisted evidence. Unchanged authored outputs and unchanged programmatic instances from the declared supplied family support separate parts of the output comparison. The supplied Scaler family was human-authored; instance expansion does not establish family invention. Curated setup, manual orchestration and final assessment remain disclosed; these counts are not production acceptance rates.'},
             'total_admitted': len(tasks), 'total_scored': sum(t['native_reward'] is not None for t in tasks),
             'budget': {k: budget[k] for k in ['ceiling_usd', 'historical_first_pass_estimates_and_holds_usd', 'continuation_estimates_and_holds_usd', 'accounted_estimates_and_holds_usd', 'remaining_conservative_allowance_usd', 'provider_invoice_verified', 'credit_balance_verified']},
             'budget_hold_accounting': {'explicit_transfer_rows': [row['run'] for row in transferred],

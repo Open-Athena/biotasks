@@ -1,0 +1,35 @@
+{
+  "stage": "prepared_production_generation_transport_variant_native_SDK_gate_pending",
+  "cohort": "glm-generation-padded-client-20261020-02",
+  "required_client_slots": 1,
+  "repository_execution": false,
+  "sandbox_credentials_supplied": false,
+  "GLM_credentials_supplied": true,
+  "transport_diagnostic_only": false,
+  "CPU_cost_basis": "user allocated free CoreWeave inference-only client",
+  "resources": {
+    "cpu": 1,
+    "memory_gib": 2,
+    "disk_gib": 5
+  },
+  "lifetime_seconds": 7200,
+  "diagnostic_delay_seconds": 650,
+  "own_endpoint_proxy_timeout_seconds": 1320,
+  "maximum_concurrent_forwarded_requests": 1,
+  "fixed_padded_response_bytes": 8560640,
+  "upstream_service_modified": false,
+  "generation_prompt_or_response_field_changes": false,
+  "HTTP_error_contract": "Early HTTP200 may contain sanitized error object with no choices; exact upstream status/content retained. Native SDK rejection must pass before authoring.",
+  "client_files": {
+    "run_glm_authoring_client_padded.py": {
+      "bytes": 15588,
+      "sha256": "861dba5183f8c3da14c3f9819f85956bfa37ca7400fd2dcc92d70d900be82f43"
+    },
+    "glm_generation_transport_contract.py": {
+      "bytes": 2518,
+      "sha256": "441c3f73a2b2d3aad4d1ceb70e49059ef9351fcbeae9fc582da549e24971d63c"
+    }
+  },
+  "maximum_model_calls": "No new global cap; original native task/repair/time limits apply.",
+  "native_SDK_dispatch_gate": "Require verified native SDK padded650s response and error rejection; reviewed original diagnostic archives/readback and capacity release before fresh task authoring."
+}

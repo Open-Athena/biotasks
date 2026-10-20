@@ -11,7 +11,7 @@ The comparison assesses the automatic pipeline. Task-specific repairs and feedba
 | content unchanged shared runtime modified | 12 |
 | adapted runtime evidence only | 9 |
 | authored output unchanged | 6 |
-| unresolved hand prepared family | 3 |
+| programmatic output unchanged from supplied family | 3 |
 | excluded task specific author feedback | 1 |
 
 ### Native reward results for all accepted evidence

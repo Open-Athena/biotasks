@@ -75,6 +75,8 @@ class PaddedTransportTests(unittest.TestCase):
                 transport.main()
             seen["rows"] = [json.loads(line) for line in (Path(directory)/"inference-usage.jsonl").read_text().splitlines()]
             seen["responses"] = [file.read_bytes() for file in (Path(directory)/"responses").glob("*")]
+            seen["requests"] = [{"name":file.name, "raw":file.read_bytes(), "mode":file.stat().st_mode & 0o777}
+                                for file in (Path(directory)/"requests").glob("*")]
         return seen
 
     def test_duplicate_native_request_is_not_forwarded_again(self):
@@ -90,6 +92,17 @@ class PaddedTransportTests(unittest.TestCase):
         self.assertEqual(seen["bodies"][0], json.loads(transport.FAILURE))
         self.assertEqual(seen["rows"][0]["upstream_status"], 503)
         self.assertEqual(seen["responses"], [b'{"error":"synthetic upstream failure"}'])
+
+    def test_wire_request_and_dispatch_receipt_remain_associated_with_response(self):
+        seen = self.server_fixture(200)
+        request = next(file for file in seen["requests"] if not file["name"].endswith("-receipt.json"))
+        receipt = next(file for file in seen["requests"] if file["name"].endswith("-receipt.json"))
+        metadata = json.loads(receipt["raw"])
+        self.assertEqual(request["name"], metadata["request_sha256"] + ".json")
+        self.assertEqual(metadata["status"], "response_captured")
+        self.assertIn(metadata["request_sha256"], metadata["response_file"])
+        self.assertEqual(request["mode"], 0o600)
+        self.assertEqual(receipt["mode"], 0o600)
 
     def handler(self, *, broken=False):
         seen = {}
