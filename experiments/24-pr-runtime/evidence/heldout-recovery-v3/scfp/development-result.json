@@ -1,0 +1,194 @@
+{
+  "stage": "held_out_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "MLCIL/scikit-fingerprints",
+  "run_id": "biotasks24-heldout-scfp-003",
+  "bootstrap_ref": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+  "results": [
+    {
+      "number": 544,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv tests/datasets/asap.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [],
+      "pre_log": "HEAD is now at 113c4e2 Add ExpansionRx-OpenADMET datasets (#542)\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12221 sha256=47ab9fd499b2d369762d9bb1c881f8ffc98378ae0e00cfd781a88c23ee2e3e37\n  Stored in directory: /tmp/pip-ephem-wheel-cache-mzdas2lf/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 0 items / 1 error\n\n==================================== ERRORS ====================================\n___________________ ERROR collecting tests/datasets/asap.py ____________________\nImportError while importing test module '/workspace/tests/datasets/asap.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/usr/local/lib/python3.12/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/usr/local/lib/python3.12/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/usr/local/lib/python3.12/importlib/__init__.py:90: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n<frozen importlib._bootstrap>:1387: in _gcd_import\n    ???\n<frozen importlib._bootstrap>:1360: in _find_and_load\n    ???\n<frozen importlib._bootstrap>:1331: in _find_and_load_unlocked\n    ???\n<frozen importlib._bootstrap>:935: in _load_unlocked\n    ???\n<frozen importlib._bootstrap_external>:999: in exec_module\n    ???\n<frozen importlib._bootstrap>:488: in _call_with_frames_removed\n    ???\ntests/datasets/asap.py:5: in <module>\n    from skfp.datasets.asap import (\nE   ModuleNotFoundError: No module named 'skfp.datasets.asap'\n=========================== short test summary info ============================\nERROR tests/datasets/asap.py\n!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!\n=============================== 1 error in 0.27s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 113c4e2576cbb82e53be1b561478d064c59378ab\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch tests/datasets/asap.py...\nApplied patch tests/datasets/asap.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 113c4e2 Add ExpansionRx-OpenADMET datasets (#542)\nRemoving tests/datasets/asap.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=12221 sha256=47ab9fd499b2d369762d9bb1c881f8ffc98378ae0e00cfd781a88c23ee2e3e37\n  Stored in directory: /tmp/pip-ephem-wheel-cache-yaxf8094/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 34 items\n\ntests/datasets/asap.py::test_load_asap_benchmark PASSED                  [  2%]\ntests/datasets/asap.py::test_load_asap_benchmark_subset PASSED           [  5%]\ntests/datasets/asap.py::test_load_asap_benchmark_wrong_subset PASSED     [  8%]\ntests/datasets/asap.py::test_load_asap_splits[HLM] PASSED                [ 11%]\ntests/datasets/asap.py::test_load_asap_splits[KSOL] PASSED               [ 14%]\ntests/datasets/asap.py::test_load_asap_splits[LogD] PASSED               [ 17%]\ntests/datasets/asap.py::test_load_asap_splits[MDR1-MDCKII] PASSED        [ 20%]\ntests/datasets/asap.py::test_load_asap_splits[MLM] PASSED                [ 23%]\ntests/datasets/asap.py::test_load_asap_splits[pIC50 SARS-CoV-2] PASSED   [ 26%]\ntests/datasets/asap.py::test_load_asap_splits[pIC50 MERS-CoV] PASSED     [ 29%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[HLM] PASSED        [ 32%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[KSOL] PASSED       [ 35%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[LogD] PASSED       [ 38%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[MDR1-MDCKII] PASSED [ 41%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[MLM] PASSED        [ 44%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[pIC50 SARS-CoV-2] PASSED [ 47%]\ntests/datasets/asap.py::test_load_asap_splits_as_dict[pIC50 MERS-CoV] PASSED [ 50%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[HLM-407] PASSED    [ 52%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[KSOL-477] PASSED   [ 55%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[LogD-478] PASSED   [ 58%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[MDR1-MDCKII-551] PASSED [ 61%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[MLM-425] PASSED    [ 64%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[pIC50 SARS-CoV-2-1105] PASSED [ 67%]\ntests/datasets/asap.py::test_load_asap_splits_lengths[pIC50 MERS-CoV-1198] PASSED [ 70%]\ntests/datasets/asap.py::test_load_asap_splits_nonexistent_dataset PASSED [ 73%]\ntests/datasets/asap.py::test_load_dataset[HLM-load_hlm-407-1-regression] PASSED [ 76%]\ntests/datasets/asap.py::test_load_dataset[KSOL-load_ksol-477-1-regression] PASSED [ 79%]\ntests/datasets/asap.py::test_load_dataset[LogD-load_logd-478-1-regression] PASSED [ 82%]\ntests/datasets/asap.py::test_load_dataset[MDR1-MDCKII-load_mdr1_mdckii-551-1-regression] PASSED [ 85%]\ntests/datasets/asap.py::test_load_dataset[MLM-load_mlm-425-1-regression] PASSED [ 88%]\ntests/datasets/asap.py::test_load_dataset[pIC50 SARS-CoV-2-load_pic50_sars_cov_2-1105-1-regression] PASSED [ 91%]\ntests/datasets/asap.py::test_load_dataset[pIC50 MERS-CoV-load_pic50_mers_cov-1198-1-regression] PASSED [ 94%]\ntests/datasets/asap.py::test_subset_to_dataset_names[None-7] PASSED      [ 97%]\ntests/datasets/asap.py::test_nonexistent_subset_name PASSED              [100%]\n\n============================= 34 passed in 11.50s ==============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 113c4e2576cbb82e53be1b561478d064c59378ab\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch docs/modules/datasets.rst...\nChecking patch docs/modules/datasets/asap.rst...\nChecking patch skfp/datasets/asap/__init__.py...\nChecking patch skfp/datasets/asap/asap.py...\nChecking patch skfp/datasets/asap/benchmark.py...\nApplied patch docs/modules/datasets.rst cleanly.\nApplied patch docs/modules/datasets/asap.rst cleanly.\nApplied patch skfp/datasets/asap/__init__.py cleanly.\nApplied patch skfp/datasets/asap/asap.py cleanly.\nApplied patch skfp/datasets/asap/benchmark.py cleanly.\n+ git apply --verbose --reject -\nChecking patch tests/datasets/asap.py...\nApplied patch tests/datasets/asap.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    },
+    {
+      "number": 525,
+      "test_cmds": [
+        "python -m pip install --no-deps --no-build-isolation --no-index -e .",
+        "python -m pytest -vv tests/fingerprints/map.py"
+      ],
+      "status": "failed",
+      "fail_to_pass": [],
+      "pass_to_pass": [
+        "tests/fingerprints/map.py::test_map_bit_fingerprint",
+        "tests/fingerprints/map.py::test_map_count_fingerprint",
+        "tests/fingerprints/map.py::test_map_raw_hashes_fingerprint",
+        "tests/fingerprints/map.py::test_map_sparse_bit_fingerprint",
+        "tests/fingerprints/map.py::test_map_sparse_count_fingerprint",
+        "tests/fingerprints/map.py::test_map_sparse_raw_hashes_fingerprint",
+        "tests/fingerprints/map.py::test_map_chirality",
+        "tests/fingerprints/map.py::test_map_chirality_uses_substructure"
+      ],
+      "pre_log": "HEAD is now at 8390014 InChI string support in ``ensure_mols`` (#522)\nRemoving docs/modules/datasets/asap.rst\nRemoving skfp/datasets/asap/__init__.py\nRemoving skfp/datasets/asap/asap.py\nRemoving skfp/datasets/asap/benchmark.py\nRemoving tests/datasets/asap.py\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=13793 sha256=35ce0f0a2603f15a7437d48245bbe81f096a9d613cdcdf0dbf0c156a3561fa07\n  Stored in directory: /tmp/pip-ephem-wheel-cache-zhkoxuev/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 8 items\n\ntests/fingerprints/map.py::test_map_bit_fingerprint PASSED               [ 12%]\ntests/fingerprints/map.py::test_map_count_fingerprint PASSED             [ 25%]\ntests/fingerprints/map.py::test_map_raw_hashes_fingerprint PASSED        [ 37%]\ntests/fingerprints/map.py::test_map_sparse_bit_fingerprint PASSED        [ 50%]\ntests/fingerprints/map.py::test_map_sparse_count_fingerprint PASSED      [ 62%]\ntests/fingerprints/map.py::test_map_sparse_raw_hashes_fingerprint PASSED [ 75%]\ntests/fingerprints/map.py::test_map_chirality PASSED                     [ 87%]\ntests/fingerprints/map.py::test_map_chirality_uses_substructure PASSED   [100%]\n\n============================== 8 passed in 2.97s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 839001468ba8f8da64ba9d54b33fa33c795ed3c5\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/map.py...\nApplied patch tests/fingerprints/map.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "post_log": "HEAD is now at 8390014 InChI string support in ``ensure_mols`` (#522)\nR2E_START_TEST_OUTPUT\nObtaining file:///workspace\n  Checking if build backend supports build_editable: started\n  Checking if build backend supports build_editable: finished with status 'done'\n  Preparing editable metadata (pyproject.toml): started\n  Preparing editable metadata (pyproject.toml): finished with status 'done'\nBuilding wheels for collected packages: scikit-fingerprints\n  Building editable for scikit-fingerprints (pyproject.toml): started\n  Building editable for scikit-fingerprints (pyproject.toml): finished with status 'done'\n  Created wheel for scikit-fingerprints: filename=scikit_fingerprints-0.0.0-py3-none-any.whl size=13793 sha256=35ce0f0a2603f15a7437d48245bbe81f096a9d613cdcdf0dbf0c156a3561fa07\n  Stored in directory: /tmp/pip-ephem-wheel-cache-_wlysg0v/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built scikit-fingerprints\nInstalling collected packages: scikit-fingerprints\n  Attempting uninstall: scikit-fingerprints\n    Found existing installation: scikit-fingerprints 0.0.0\n    Uninstalling scikit-fingerprints-0.0.0:\n      Successfully uninstalled scikit-fingerprints-0.0.0\nSuccessfully installed scikit-fingerprints-0.0.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n============================= test session starts ==============================\nplatform linux -- Python 3.12.15, pytest-9.1.1, pluggy-1.7.0 -- /usr/local/bin/python\ncachedir: .pytest_cache\nrootdir: /workspace\nconfigfile: pyproject.toml\nplugins: rerunfailures-16.7, platformdirs-4.13.5, anyio-4.15.1\ncollecting ... collected 8 items\n\ntests/fingerprints/map.py::test_map_bit_fingerprint PASSED               [ 12%]\ntests/fingerprints/map.py::test_map_count_fingerprint PASSED             [ 25%]\ntests/fingerprints/map.py::test_map_raw_hashes_fingerprint PASSED        [ 37%]\ntests/fingerprints/map.py::test_map_sparse_bit_fingerprint PASSED        [ 50%]\ntests/fingerprints/map.py::test_map_sparse_count_fingerprint PASSED      [ 62%]\ntests/fingerprints/map.py::test_map_sparse_raw_hashes_fingerprint PASSED [ 75%]\ntests/fingerprints/map.py::test_map_chirality PASSED                     [ 87%]\ntests/fingerprints/map.py::test_map_chirality_uses_substructure PASSED   [100%]\n\n============================== 8 passed in 2.86s ===============================\nR2E_END_TEST_OUTPUT\n\n--- stderr ---\n+ cd /workspace\n+ git config --global --add safe.directory /workspace\n+ git reset --hard 839001468ba8f8da64ba9d54b33fa33c795ed3c5\n+ git clean -fdx -e .venv -e venv -e __pycache__ -e .tox -e node_modules -e target -e vendor -e .gradle -e .next -e .pytest_cache\n+ git apply --verbose --reject -\nChecking patch skfp/fingerprints/map.py...\nApplied patch skfp/fingerprints/map.py cleanly.\n+ git apply --verbose --reject -\nChecking patch tests/fingerprints/map.py...\nApplied patch tests/fingerprints/map.py cleanly.\n+ echo R2E_START_TEST_OUTPUT\n+ set +x\n+ echo R2E_END_TEST_OUTPUT\n",
+      "reason": "no fail-to-pass tests after validation"
+    }
+  ],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No solver model run; exported task checks are separate fields when enabled.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "base_image_repo_digests": [
+    "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258"
+  ],
+  "bootstrap_exit_code": 0,
+  "bootstrap_image_id": "sha256:ec10bd037f69359678311c2c524ce08bf84d2913620a8ce69658dce485ca53f3",
+  "empty_test_commands_control": {
+    "status": "failed",
+    "fail_to_pass": [],
+    "pass_to_pass": [],
+    "pre_log": "",
+    "post_log": "",
+    "reason": "bootstrap did not record any test_cmds"
+  },
+  "disposition": "development_validation_completed",
+  "cleanup_verified": true,
+  "bootstrap_tag_removed": true,
+  "owned_image_cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.02878118799708318
+    },
+    {
+      "operation": "image",
+      "exit_code": 1,
+      "duration_sec": 0.018271588007337414
+    },
+    {
+      "operation": "pull",
+      "exit_code": 0,
+      "duration_sec": 3.499443025997607
+    },
+    {
+      "operation": "run",
+      "exit_code": 0,
+      "duration_sec": 13.653766756993718
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.12426572099502664
+    },
+    {
+      "operation": "cp",
+      "exit_code": 0,
+      "duration_sec": 0.11668815099983476
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 60.06904782899073
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.465372215010575
+    },
+    {
+      "operation": "commit",
+      "exit_code": 0,
+      "duration_sec": 13.10736732899386
+    },
+    {
+      "operation": "image",
+      "exit_code": 0,
+      "duration_sec": 0.022284058009972796
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10756366200803313
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.08885876300337259
+    },
+    {
+      "operation": "exec",
+      "exit_code": 1,
+      "duration_sec": 0.10276294199866243
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.8760829539969563
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 4.583332453999901
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 15.90726387698669
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.10542041200096719
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 0.30713395700149704
+    },
+    {
+      "operation": "exec",
+      "exit_code": 1,
+      "duration_sec": 0.10011548199690878
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 1.0352752920007333
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 7.304715007005143
+    },
+    {
+      "operation": "exec",
+      "exit_code": 0,
+      "duration_sec": 6.135759267010144
+    },
+    {
+      "operation": "rm",
+      "exit_code": 0,
+      "duration_sec": 1.0751881190080894
+    }
+  ],
+  "elapsed_seconds": 129.688
+}

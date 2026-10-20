@@ -6,7 +6,8 @@ research inputs, not BioTasks-authored code or a relicensed task release.
 revision from which it was retrieved. The Nipype file explicitly names
 Apache-2.0 even though GitHub's license classifier returns `NOASSERTION`.
 
-The nine development/held-out runtime patches and capture receipts are
+The 16 statically eligible patches (development, held-out and overlap
+exclusions) and capture receipts are
 preserved under `inventory/pr-diffs/`. Cohort manifests record their exact
 base/head revisions and SHA256 hashes. Other locally cached static-scan
 patches are not part of this published runtime snapshot; their hashes and

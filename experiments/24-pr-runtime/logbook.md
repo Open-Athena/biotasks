@@ -641,3 +641,24 @@ The PR worker, installer, native code, dependencies, graders, input membership
 and acceptance gates remain byte-identical to the original freeze. Preserve all
 earlier failed campaigns and their costs; this remains same-cohort infrastructure
 recovery, not retroactive success or an independent fresh-cohort estimate.
+
+Capability-aware v3 completed unattended with verified archives/reports and
+owned-container/image cleanup for all three repository jobs. Native validation
+rejected scikit-fingerprints #544 (base collection error, reference 34 passes),
+#525 (all eight tests, including the new test, pass both before and after), and
+Nipype #3753 (base 30 collection errors, reference 54 passes/one skip). All have
+zero F2P. PsychoPy bootstrap failed on wxPython's unavailable setuptools.build_meta
+backend under --no-build-isolation; neither of its PRs reached validation. No
+per-task repair was applied. No candidate reached the technical export gate.
+
+All five nonaccepted inputs were audited separately, including the preselected
+ranked subset. Setup-unresolved inputs are not scientific rejections. No false
+acceptance/rejection rate is estimable from this set. The technical-admission
+upper bound is zero, independently failing the preregistered four-task/two-repo
+gate. The missing final automatic semantic acceptance stage is an additional
+implementation gap, not a source of manually approved outputs. No pipeline
+promotion or task release is justified by this configuration's evidence.
+
+### Final evidence verification
+
+The retained-evidence check passed: 29 script syntax checks, all 16 eligible patch hashes, 86 retained archive member hashes, frozen worker/input hashes, cost/outcome consistency and the terminal lifecycle snapshot. Peak RSS was 18,756 KiB. The first check attempt encountered the older list-shaped hash manifest; the checker now supports both recorded manifest formats without changing evidence.

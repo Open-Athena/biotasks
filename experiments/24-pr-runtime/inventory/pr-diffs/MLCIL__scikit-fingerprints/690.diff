@@ -1,0 +1,981 @@
+diff --git a/skfp/fingerprints/_new_mordred/calculator.py b/skfp/fingerprints/_new_mordred/calculator.py
+index 6cc444268..5934bc012 100644
+--- a/skfp/fingerprints/_new_mordred/calculator.py
++++ b/skfp/fingerprints/_new_mordred/calculator.py
+@@ -2,6 +2,7 @@
+ 
+ import numpy as np
+ from rdkit.Chem import AddHs, GetMolFrags, Mol
++from rdkit.Chem.rdchem import Bond
+ 
+ from skfp.fingerprints._new_mordred.descriptors import (
+     abc_index,
+@@ -26,6 +27,7 @@
+     framework,
+     geometric_index,
+     gravitational_index,
++    information_content,
+     log_s,
+     mc_gowan_volume,
+     mol_filters,
+@@ -55,7 +57,10 @@
+     DistanceMatrix,
+     DistanceMatrix3D,
+ )
+-from skfp.fingerprints._new_mordred.utils.mol_preprocess import preprocess_mol
++from skfp.fingerprints._new_mordred.utils.mol_preprocess import (
++    bonds_apply_func,
++    preprocess_mol,
++)
+ from skfp.fingerprints._new_mordred.utils.molecular_properties import (
+     MolecularProperties,
+ )
+@@ -88,6 +93,7 @@
+     estate,
+     extended_topochemical_atom,
+     fragment_complexity,
++    information_content,
+     mc_gowan_volume,
+     log_s,
+     framework,
+@@ -201,6 +207,7 @@ def compute(mol: Mol, use_3D: bool) -> np.ndarray:
+ 
+     # kekulized molecule (aromatic -> single/double bonds)
+     mol_kekulized = preprocess_mol(mol, kekulize=True)
++    kekulized_bond_types = bonds_apply_func(Bond.GetBondType, mol_kekulized, np.intp)
+     distance_matrix_kekulized = DistanceMatrix.from_mol(mol_kekulized)
+     mol_kekulized_hydrogens = preprocess_mol(
+         mol, kekulize=True, explicit_hydrogens=True
+@@ -272,6 +279,9 @@ def compute(mol: Mol, use_3D: bool) -> np.ndarray:
+             mol_regular, adjacency_matrix_regular, distance_matrix_regular
+         ),
+         molecular_id: molecular_id.calc(props_regular, n_frags),
++        information_content: information_content.calc(
++            mol_hydrogens, props_hydrogens, kekulized_bond_types
++        ),
+     }
+ 
+     for module, values in descriptors_2d.items():
+diff --git a/skfp/fingerprints/_new_mordred/descriptors/gravitational_index.py b/skfp/fingerprints/_new_mordred/descriptors/gravitational_index.py
+index 3d9c3ffe0..078f3c76d 100644
+--- a/skfp/fingerprints/_new_mordred/descriptors/gravitational_index.py
++++ b/skfp/fingerprints/_new_mordred/descriptors/gravitational_index.py
+@@ -1,10 +1,11 @@
+ import numpy as np
+-from rdkit.Chem import Mol
++from rdkit.Chem import Atom, Mol
+ 
+ from skfp.fingerprints._new_mordred.utils.graph_matrix import (
+     AdjacencyMatrix,
+     DistanceMatrix3D,
+ )
++from skfp.fingerprints._new_mordred.utils.mol_preprocess import atoms_apply_func
+ 
+ """
+ This code has been adapted from the BSD-licensed mordred-community library.
+@@ -64,7 +65,8 @@ def _variant_values(
+     """
+     Return the (all-pairs, bonded-pairs) gravitational indices for one molecule.
+     """
+-    masses = np.asarray([atom.GetMass() for atom in mol.GetAtoms()], dtype=np.float32)
++    # RDKit masses, not the Mordred mass table used by the other descriptors
++    masses = atoms_apply_func(Atom.GetMass, mol, np.float32)
+     mass_products = masses[:, np.newaxis] * masses
+     np.fill_diagonal(mass_products, 0.0)
+ 
+diff --git a/skfp/fingerprints/_new_mordred/descriptors/information_content.py b/skfp/fingerprints/_new_mordred/descriptors/information_content.py
+new file mode 100644
+index 000000000..1bff58922
+--- /dev/null
++++ b/skfp/fingerprints/_new_mordred/descriptors/information_content.py
+@@ -0,0 +1,220 @@
++from collections import Counter
++
++import numpy as np
++from rdkit.Chem import Atom, Mol
++from rdkit.Chem.rdchem import BondType
++
++from skfp.fingerprints._new_mordred.utils.atomic_properties import (
++    BOND_ORDERS,
++    AtomicProperties,
++)
++from skfp.fingerprints._new_mordred.utils.mol_preprocess import atoms_apply_func
++
++"""
++This code has been adapted from the BSD-licensed mordred-community library.
++https://github.com/JacksonBurns/mordred-community
++
++See skfp/fingerprints/data/mordred-community_bsd_license.txt for the license text.
++"""
++
++_VARIANTS = (
++    "information_content",
++    "total_information_content",
++    "structural_information_content",
++    "bonding_information_content",
++    "complementary_information_content",
++    "modified_information_content",
++    "Z_modified_information_content",
++)
++_MAX_ORDER = 5
++
++FEATURE_NAMES = [
++    f"{variant}_order_{order}"
++    for variant in _VARIANTS
++    for order in range(_MAX_ORDER + 1)
++]
++
++
++def calc(
++    mol_hydrogens: Mol,
++    atomic_props_hydrogens: AtomicProperties,
++    kekulized_bond_types: np.ndarray,
++) -> np.ndarray:
++    """
++    Information content descriptors, of orders 0 to ``_MAX_ORDER``.
++
++    Atoms are grouped by the neighborhood of a given order around them, into classes
++    of atoms coded alike. One class holds n of the molecule's A atoms, a share
++    p = n / A of them; B is the sum of the bond orders over all bonds; and every sum
++    below runs over the classes, one term each:
++
++    - neighborhood information content, the entropy of those shares:
++        IC = sum of -p * log2(p)
++    - neighborhood total information content, that entropy over the whole molecule
++      rather than per atom:
++        TIC = A * IC
++    - structural information content, IC against the log2(A) that A atoms can reach
++      at most; NaN for a single atom:
++        SIC = IC / log2(A)
++    - bonding information content, the same against the bonds instead; NaN when
++      B <= 1:
++        BIC = IC / log2(B)
++    - complementary information content, how far IC falls short of that maximum:
++        CIC = log2(A) - IC
++    - modified information content index, IC with every term weighted by the mass of
++      the class's atoms:
++        MIC = sum of -mass * p * log2(p)
++    - Z-modified information content index, weighted instead by their atomic number
++      and by the size of the class:
++        ZMIC = sum of -n * Z * p * log2(p)
++
++    The molecule carries explicit hydrogens, and its aromatic bonds are kekulized.
++    """
++    num_atoms = atomic_props_hydrogens.num_atoms  # A
++    if num_atoms == 0:
++        return np.full(len(FEATURE_NAMES), np.nan, dtype=np.float32)
++
++    atomic_nums = atomic_props_hydrogens.atomic_nums  # Z
++    # RDKit masses, not the Mordred mass table used by the other descriptors
++    masses = atoms_apply_func(Atom.GetMass, mol_hydrogens, np.float64)
++
++    # the kekulized types cover the bonds between heavy atoms only, as they were read
++    # off the molecule before hydrogens were added; adding those appends their bonds
++    # last, and every one of them is single
++    n_h_bonds = atomic_props_hydrogens.num_bonds - len(kekulized_bond_types)
++    bond_types = np.concatenate(
++        [kekulized_bond_types, np.full(n_h_bonds, int(BondType.SINGLE), np.intp)]
++    )
++    bond_order_sum = BOND_ORDERS[bond_types].sum()  # B
++
++    codes = _neighborhood_codes(atomic_props_hydrogens, bond_types)
++    class_size_per_atom = _class_size_per_atom(codes)
++
++    ic = _shannon_entropy(class_size_per_atom)
++    tic = num_atoms * ic
++    sic = ic / (np.log2(num_atoms) if num_atoms > 1 else np.nan)
++    bic = ic / (np.log2(bond_order_sum) if bond_order_sum > 1 else np.nan)
++    cic = np.log2(num_atoms) - ic
++    mic = _shannon_entropy(class_size_per_atom, masses)
++    zmic = _shannon_entropy(class_size_per_atom, atomic_nums * class_size_per_atom)
++
++    return np.concatenate((ic, tic, sic, bic, cic, mic, zmic), dtype=np.float32)
++
++
++def _neighborhood_codes(
++    props: AtomicProperties, bond_types: np.ndarray
++) -> list[list[int | tuple]]:
++    """
++    Code of the neighborhood of every order around every atom, as ``_MAX_ORDER + 1``
++    lists holding one code per atom.
++
++    A neighborhood is grown around each atom, one bond further per order, and coded
++    as the sorted paths running from the atom to the leaves, spelling out the element,
++    the degree and the bond type at every step. Atoms coded alike share a class.
++
++    A code of order 1 or higher is a tuple holding those paths, sorted, the ones that
++    repeat among them kept. Order 0 reaches no bond at all and codes an atom by its
++    atomic number alone, so its codes are plain integers.
++    """
++    neighbors = _neighbors(props, bond_types)
++
++    # the element and the degree of every atom, which is all a path spells out about
++    # the atoms it passes through; kept as a list of tuples, as the growing loop below
++    # reads it atom by atom rather than in bulk
++    atom_keys = list(
++        zip(props.atomic_nums.tolist(), props.degrees.tolist(), strict=True)
++    )
++
++    # order 0 reaches no bond at all, so an atom's element is its whole code
++    codes: list[list[int | tuple]] = [props.atomic_nums.tolist()]
++    codes += [[] for _ in range(_MAX_ORDER)]
++
++    for root in range(props.num_atoms):
++        visited = {root}
++        # the atoms the current order reaches, each with the path that leads to it
++        # from the root. A path holds an atom key at every even position and the type
++        # of the bond crossed to the next atom at every odd one, and starts out
++        # holding the key of the root alone
++        frontier: list[tuple[int, tuple]] = [(root, (atom_keys[root],))]
++        # paths that ran out of unvisited atoms to grow into before the current
++        # order; they end at a leaf of the neighborhood, so they keep taking part in
++        # the code of every order from then on
++        finished_paths: list[tuple] = []
++
++        for order in range(1, _MAX_ORDER + 1):
++            next_frontier: list[tuple[int, tuple]] = []
++            for atom_idx, path in frontier:
++                # marking the atom visited here, rather than when it entered the
++                # frontier, lets a path step sideways into another atom of the same
++                # order, which is what happens in a ring
++                visited.add(atom_idx)
++                # one order of growth appends the type of the bond crossed and the
++                # key of the atom it reaches, keeping the path alternating
++                grown = [
++                    (nbr, (*path, bond_type, atom_keys[nbr]))
++                    for nbr, bond_type in neighbors[atom_idx]
++                    if nbr not in visited
++                ]
++                if grown:
++                    next_frontier.extend(grown)
++                else:
++                    finished_paths.append(path)
++
++            # the neighborhood is made of the paths that reach its leaves, sorted so
++            # that two atoms grown alike spell out one and the same code
++            codes[order].append(
++                tuple(sorted(finished_paths + [path for _, path in next_frontier]))
++            )
++            frontier = next_frontier
++
++    return codes
++
++
++def _class_size_per_atom(codes: list[list[int | tuple]]) -> np.ndarray:
++    """
++    Size of the class every atom falls into, shaped ``(_MAX_ORDER + 1, num_atoms)``.
++
++    Atoms carrying the same neighborhood code of a given order make up one class of
++    that order. Every entry is the size of the class holding that atom, repeated once
++    per atom of the class rather than kept once per class.
++    """
++    class_size_per_atom = np.empty((len(codes), len(codes[0])), dtype=np.intp)
++    for order, order_codes in enumerate(codes):
++        # an order holds one code per atom, so counting how often a whole code occurs
++        # among them counts the atoms of the class it stands for
++        class_counts = Counter(order_codes)
++        class_size_per_atom[order] = [class_counts[code] for code in order_codes]
++    return class_size_per_atom
++
++
++def _neighbors(
++    props: AtomicProperties, bond_types: np.ndarray
++) -> list[list[tuple[int, int]]]:
++    """
++    Neighbors of every atom, each with the type of the bond leading to it.
++    """
++    neighbors: list[list[tuple[int, int]]] = [[] for _ in range(props.num_atoms)]
++    for begin, end, bond_type in zip(
++        props.bond_begin_idxs.tolist(),
++        props.bond_end_idxs.tolist(),
++        bond_types.tolist(),
++        strict=True,
++    ):
++        neighbors[begin].append((end, bond_type))
++        neighbors[end].append((begin, bond_type))
++    return neighbors
++
++
++def _shannon_entropy(
++    class_size_per_atom: np.ndarray, weights: np.ndarray | float = 1.0
++) -> np.ndarray:
++    """
++    Entropy of the class sizes of every order, each atom weighted as given.
++
++    ``class_size_per_atom`` holds the size of the class of every atom rather than the
++    size of every class, so the sum runs over atoms: a class of n atoms contributes
++    its term n times, which is the same as weighting that term by n.
++    """
++    num_atoms = class_size_per_atom.shape[1]
++    probabilities = class_size_per_atom / num_atoms
++    return -(weights * np.log2(probabilities)).sum(axis=1) / num_atoms
+diff --git a/skfp/fingerprints/_new_mordred/utils/atomic_properties.py b/skfp/fingerprints/_new_mordred/utils/atomic_properties.py
+index f85490030..fad27fff5 100644
+--- a/skfp/fingerprints/_new_mordred/utils/atomic_properties.py
++++ b/skfp/fingerprints/_new_mordred/utils/atomic_properties.py
+@@ -37,9 +37,9 @@
+ # bond order per bond type, as RDKit's GetBondTypeAsDouble reports it; molecules
+ # only ever carry these four types, and any other one stays NaN so that it shows up
+ # in the descriptors that use bond orders rather than passing as some other order
+-_BOND_ORDERS = np.full(max(int(bond_type) for bond_type in BondType.values) + 1, np.nan)
+-_BOND_ORDERS[[int(BondType.SINGLE), int(BondType.DOUBLE)]] = [1.0, 2.0]
+-_BOND_ORDERS[[int(BondType.TRIPLE), int(BondType.AROMATIC)]] = [3.0, 1.5]
++BOND_ORDERS = np.full(max(int(bond_type) for bond_type in BondType.values) + 1, np.nan)
++BOND_ORDERS[[int(BondType.SINGLE), int(BondType.DOUBLE)]] = [1.0, 2.0]
++BOND_ORDERS[[int(BondType.TRIPLE), int(BondType.AROMATIC)]] = [3.0, 1.5]
+ 
+ # number of outer (valence) electrons per atomic number
+ _N_OUTER_ELECS = np.array(
+@@ -260,7 +260,7 @@ def __init__(
+         # heteroatom: any non-carbon atom, hydrogens included
+         self.is_hetero = atomic_nums != 6
+         self.outer_electrons = _N_OUTER_ELECS[atomic_nums]
+-        self.bond_orders = _BOND_ORDERS[bond_types]
++        self.bond_orders = BOND_ORDERS[bond_types]
+         # the degree of an atom is the number of bonds it takes part in
+         self.degrees = self._count_neighbors(np.ones(self.num_atoms, dtype=bool))
+ 
+diff --git a/skfp/fingerprints/_new_mordred/utils/feature_names.py b/skfp/fingerprints/_new_mordred/utils/feature_names.py
+index 11b26f8a3..d929fb265 100644
+--- a/skfp/fingerprints/_new_mordred/utils/feature_names.py
++++ b/skfp/fingerprints/_new_mordred/utils/feature_names.py
+@@ -1262,48 +1262,48 @@
+     "fMF",
+     "nHBAcc",
+     "nHBDon",
+-    "IC0",
+-    "IC1",
+-    "IC2",
+-    "IC3",
+-    "IC4",
+-    "IC5",
+-    "TIC0",
+-    "TIC1",
+-    "TIC2",
+-    "TIC3",
+-    "TIC4",
+-    "TIC5",
+-    "SIC0",
+-    "SIC1",
+-    "SIC2",
+-    "SIC3",
+-    "SIC4",
+-    "SIC5",
+-    "BIC0",
+-    "BIC1",
+-    "BIC2",
+-    "BIC3",
+-    "BIC4",
+-    "BIC5",
+-    "CIC0",
+-    "CIC1",
+-    "CIC2",
+-    "CIC3",
+-    "CIC4",
+-    "CIC5",
+-    "MIC0",
+-    "MIC1",
+-    "MIC2",
+-    "MIC3",
+-    "MIC4",
+-    "MIC5",
+-    "ZMIC0",
+-    "ZMIC1",
+-    "ZMIC2",
+-    "ZMIC3",
+-    "ZMIC4",
+-    "ZMIC5",
++    "information_content_order_0",
++    "information_content_order_1",
++    "information_content_order_2",
++    "information_content_order_3",
++    "information_content_order_4",
++    "information_content_order_5",
++    "total_information_content_order_0",
++    "total_information_content_order_1",
++    "total_information_content_order_2",
++    "total_information_content_order_3",
++    "total_information_content_order_4",
++    "total_information_content_order_5",
++    "structural_information_content_order_0",
++    "structural_information_content_order_1",
++    "structural_information_content_order_2",
++    "structural_information_content_order_3",
++    "structural_information_content_order_4",
++    "structural_information_content_order_5",
++    "bonding_information_content_order_0",
++    "bonding_information_content_order_1",
++    "bonding_information_content_order_2",
++    "bonding_information_content_order_3",
++    "bonding_information_content_order_4",
++    "bonding_information_content_order_5",
++    "complementary_information_content_order_0",
++    "complementary_information_content_order_1",
++    "complementary_information_content_order_2",
++    "complementary_information_content_order_3",
++    "complementary_information_content_order_4",
++    "complementary_information_content_order_5",
++    "modified_information_content_order_0",
++    "modified_information_content_order_1",
++    "modified_information_content_order_2",
++    "modified_information_content_order_3",
++    "modified_information_content_order_4",
++    "modified_information_content_order_5",
++    "Z_modified_information_content_order_0",
++    "Z_modified_information_content_order_1",
++    "Z_modified_information_content_order_2",
++    "Z_modified_information_content_order_3",
++    "Z_modified_information_content_order_4",
++    "Z_modified_information_content_order_5",
+     "Kier1",
+     "Kier2",
+     "Kier3",
+diff --git a/tests/fingerprints/_new_mordred/information_content.py b/tests/fingerprints/_new_mordred/information_content.py
+new file mode 100644
+index 000000000..ab37364da
+--- /dev/null
++++ b/tests/fingerprints/_new_mordred/information_content.py
+@@ -0,0 +1,71 @@
++import json
++from pathlib import Path
++
++import numpy as np
++import pytest
++from numpy.testing import assert_allclose
++from rdkit.Chem import AddHs
++from rdkit.Chem.rdchem import Bond
++
++from skfp.fingerprints._new_mordred.descriptors.information_content import (
++    FEATURE_NAMES,
++    calc,
++)
++from skfp.fingerprints._new_mordred.utils.atomic_properties import AtomicProperties
++from skfp.fingerprints._new_mordred.utils.mol_preprocess import (
++    bonds_apply_func,
++    preprocess_mol,
++)
++
++"""
++This code has been adapted from the BSD-licensed mordred-community library.
++https://github.com/JacksonBurns/mordred-community
++
++Reference values are stored at ./references/information_content.json as
++expected[molecule][descriptor], and cover only the orders and molecules Mordred's own
++test suite does not skip. They are rounded to three decimals.
++
++See skfp/fingerprints/data/mordred-community_bsd_license.txt for the license text.
++"""
++
++with open(Path(__file__).parent / "references" / "information_content.json") as f:
++    _REFERENCE = json.load(f)
++
++_MOLECULES = list(_REFERENCE["expected"])
++_FEATURE_NAMES = _REFERENCE["feature_names"]
++
++
++@pytest.fixture(scope="module")
++def computed_values(mordred_test_mols):
++    computed = {}
++    for name in _MOLECULES:
++        mol_regular = preprocess_mol(mordred_test_mols[name])
++        mol_hydrogens = AddHs(mol_regular)
++        mol_kekulized = preprocess_mol(mordred_test_mols[name], kekulize=True)
++        kekulized_bond_types = bonds_apply_func(
++            Bond.GetBondType, mol_kekulized, np.intp
++        )
++
++        values = calc(
++            mol_hydrogens,
++            AtomicProperties.from_mol(mol_hydrogens),
++            kekulized_bond_types,
++        )
++        computed[name] = dict(zip(FEATURE_NAMES, values, strict=True))
++    return computed
++
++
++@pytest.mark.parametrize("molecule", _MOLECULES)
++@pytest.mark.parametrize("feature_name", _FEATURE_NAMES)
++def test_information_content_reference_values(feature_name, molecule, computed_values):
++    if feature_name not in _REFERENCE["expected"][molecule]:
++        pytest.skip("mordred skips this order for this molecule")
++
++    expected = _REFERENCE["expected"][molecule][feature_name]
++    actual = computed_values[molecule][feature_name]
++    atol = 0.05 if feature_name.startswith("modified_information_content") else 1e-3
++    assert_allclose(actual, expected, rtol=0, atol=atol, equal_nan=True)
++
++
++def test_feature_names():
++    assert set(_FEATURE_NAMES).issubset(set(FEATURE_NAMES))
+diff --git a/tests/fingerprints/_new_mordred/references/information_content.json b/tests/fingerprints/_new_mordred/references/information_content.json
+new file mode 100644
+index 000000000..43d4c3084
+--- /dev/null
++++ b/tests/fingerprints/_new_mordred/references/information_content.json
+@@ -0,0 +1,414 @@
++{
++  "feature_names": [
++    "information_content_order_0",
++    "information_content_order_1",
++    "information_content_order_2",
++    "information_content_order_3",
++    "information_content_order_4",
++    "information_content_order_5",
++    "total_information_content_order_0",
++    "total_information_content_order_1",
++    "total_information_content_order_2",
++    "total_information_content_order_3",
++    "total_information_content_order_4",
++    "total_information_content_order_5",
++    "structural_information_content_order_0",
++    "structural_information_content_order_1",
++    "structural_information_content_order_2",
++    "structural_information_content_order_3",
++    "structural_information_content_order_4",
++    "structural_information_content_order_5",
++    "bonding_information_content_order_0",
++    "bonding_information_content_order_1",
++    "bonding_information_content_order_2",
++    "bonding_information_content_order_3",
++    "bonding_information_content_order_4",
++    "bonding_information_content_order_5",
++    "complementary_information_content_order_0",
++    "complementary_information_content_order_1",
++    "complementary_information_content_order_2",
++    "complementary_information_content_order_3",
++    "complementary_information_content_order_4",
++    "complementary_information_content_order_5",
++    "modified_information_content_order_0",
++    "Z_modified_information_content_order_0"
++  ],
++  "expected": {
++    "Hexane": {
++      "information_content_order_0": 0.881,
++      "information_content_order_1": 1.157,
++      "information_content_order_2": 2.046,
++      "information_content_order_3": 2.446,
++      "information_content_order_4": 2.446,
++      "total_information_content_order_0": 17.626,
++      "total_information_content_order_1": 23.136,
++      "total_information_content_order_2": 40.929,
++      "total_information_content_order_3": 48.929,
++      "total_information_content_order_4": 48.929,
++      "structural_information_content_order_0": 0.204,
++      "structural_information_content_order_1": 0.268,
++      "structural_information_content_order_2": 0.474,
++      "structural_information_content_order_3": 0.566,
++      "structural_information_content_order_4": 0.566,
++      "complementary_information_content_order_0": 3.441,
++      "complementary_information_content_order_1": 3.165,
++      "complementary_information_content_order_2": 2.275,
++      "complementary_information_content_order_3": 1.875,
++      "complementary_information_content_order_4": 1.875,
++      "bonding_information_content_order_0": 0.207,
++      "bonding_information_content_order_1": 0.272,
++      "bonding_information_content_order_2": 0.482,
++      "bonding_information_content_order_3": 0.576,
++      "bonding_information_content_order_4": 0.576,
++      "modified_information_content_order_0": 6.616095946,
++      "Z_modified_information_content_order_0": 23.80204551
++    },
++    "Benzene": {
++      "information_content_order_0": 1,
++      "information_content_order_1": 1,
++      "information_content_order_2": 1,
++      "information_content_order_3": 1,
++      "information_content_order_4": 1,
++      "information_content_order_5": 1,
++      "total_information_content_order_0": 12,
++      "total_information_content_order_1": 12,
++      "total_information_content_order_2": 12,
++      "total_information_content_order_3": 12,
++      "total_information_content_order_4": 12,
++      "total_information_content_order_5": 12,
++      "structural_information_content_order_0": 0.279,
++      "structural_information_content_order_1": 0.279,
++      "structural_information_content_order_2": 0.279,
++      "structural_information_content_order_3": 0.279,
++      "structural_information_content_order_4": 0.279,
++      "structural_information_content_order_5": 0.279,
++      "complementary_information_content_order_0": 2.585,
++      "complementary_information_content_order_1": 2.585,
++      "complementary_information_content_order_2": 2.585,
++      "complementary_information_content_order_3": 2.585,
++      "complementary_information_content_order_4": 2.585,
++      "complementary_information_content_order_5": 2.585,
++      "bonding_information_content_order_0": 0.256,
++      "bonding_information_content_order_1": 0.256,
++      "bonding_information_content_order_2": 0.256,
++      "bonding_information_content_order_3": 0.256,
++      "bonding_information_content_order_4": 0.256,
++      "bonding_information_content_order_5": 0.256,
++      "modified_information_content_order_0": 6.503912516,
++      "Z_modified_information_content_order_0": 21
++    },
++    "Caffeine": {
++      "information_content_order_0": 1.784,
++      "information_content_order_4": 3.991,
++      "information_content_order_5": 3.991,
++      "total_information_content_order_0": 42.82,
++      "total_information_content_order_4": 95.774,
++      "total_information_content_order_5": 95.774,
++      "structural_information_content_order_0": 0.389,
++      "structural_information_content_order_4": 0.87,
++      "structural_information_content_order_5": 0.87,
++      "complementary_information_content_order_0": 2.801,
++      "complementary_information_content_order_4": 0.594,
++      "complementary_information_content_order_5": 0.594,
++      "modified_information_content_order_0": 17.68156666,
++      "Z_modified_information_content_order_0": 47.46515171
++    },
++    "Cyanidin": {
++      "information_content_order_0": 1.495,
++      "information_content_order_5": 5,
++      "total_information_content_order_0": 47.833,
++      "total_information_content_order_5": 160,
++      "structural_information_content_order_0": 0.299,
++      "structural_information_content_order_5": 1,
++      "complementary_information_content_order_0": 3.505,
++      "complementary_information_content_order_5": 0,
++      "modified_information_content_order_0": 13.89185598
++    },
++    "Lycopene": {
++      "information_content_order_0": 0.98,
++      "information_content_order_1": 2.442,
++      "information_content_order_2": 3.333,
++      "information_content_order_3": 4.193,
++      "information_content_order_4": 4.548,
++      "information_content_order_5": 4.673,
++      "total_information_content_order_0": 94.067,
++      "total_information_content_order_1": 234.457,
++      "total_information_content_order_2": 319.93,
++      "total_information_content_order_3": 402.568,
++      "total_information_content_order_4": 436.608,
++      "total_information_content_order_5": 448.608,
++      "structural_information_content_order_0": 0.149,
++      "structural_information_content_order_1": 0.371,
++      "structural_information_content_order_2": 0.506,
++      "structural_information_content_order_3": 0.637,
++      "structural_information_content_order_4": 0.691,
++      "structural_information_content_order_5": 0.71,
++      "complementary_information_content_order_0": 5.605,
++      "complementary_information_content_order_1": 4.143,
++      "complementary_information_content_order_2": 3.252,
++      "complementary_information_content_order_3": 2.392,
++      "complementary_information_content_order_4": 2.037,
++      "complementary_information_content_order_5": 1.912,
++      "bonding_information_content_order_0": 0.145,
++      "bonding_information_content_order_1": 0.362,
++      "bonding_information_content_order_2": 0.493,
++      "bonding_information_content_order_3": 0.621,
++      "bonding_information_content_order_4": 0.673,
++      "bonding_information_content_order_5": 0.692,
++      "modified_information_content_order_0": 6.772325919,
++      "Z_modified_information_content_order_0": 151.7052882
++    },
++    "Epicatechin": {
++      "information_content_order_0": 1.489,
++      "information_content_order_1": 3.288,
++      "information_content_order_2": 4.169,
++      "information_content_order_3": 4.729,
++      "information_content_order_4": 5.015,
++      "information_content_order_5": 5.072,
++      "total_information_content_order_0": 52.109,
++      "total_information_content_order_1": 115.086,
++      "total_information_content_order_2": 145.915,
++      "total_information_content_order_3": 165.525,
++      "total_information_content_order_4": 175.525,
++      "total_information_content_order_5": 177.525,
++      "structural_information_content_order_0": 0.29,
++      "structural_information_content_order_1": 0.641,
++      "structural_information_content_order_2": 0.813,
++      "structural_information_content_order_3": 0.922,
++      "structural_information_content_order_4": 0.978,
++      "structural_information_content_order_5": 0.989,
++      "complementary_information_content_order_0": 3.64,
++      "complementary_information_content_order_1": 1.841,
++      "complementary_information_content_order_2": 0.96,
++      "complementary_information_content_order_3": 0.4,
++      "complementary_information_content_order_4": 0.114,
++      "complementary_information_content_order_5": 0.057,
++      "bonding_information_content_order_0": 0.274,
++      "bonding_information_content_order_1": 0.606,
++      "bonding_information_content_order_2": 0.768,
++      "bonding_information_content_order_3": 0.872,
++      "bonding_information_content_order_4": 0.924,
++      "bonding_information_content_order_5": 0.935,
++      "modified_information_content_order_0": 13.7959881,
++      "Z_modified_information_content_order_0": 75.4883424
++    },
++    "Limonene": {
++      "information_content_order_0": 0.961,
++      "information_content_order_1": 2.437,
++      "information_content_order_2": 3.565,
++      "information_content_order_3": 3.796,
++      "information_content_order_4": 4.027,
++      "information_content_order_5": 4.027,
++      "total_information_content_order_0": 24.992,
++      "total_information_content_order_1": 63.351,
++      "total_information_content_order_2": 92.702,
++      "total_information_content_order_3": 98.702,
++      "total_information_content_order_4": 104.702,
++      "total_information_content_order_5": 104.702,
++      "structural_information_content_order_0": 0.204,
++      "structural_information_content_order_1": 0.518,
++      "structural_information_content_order_2": 0.759,
++      "structural_information_content_order_3": 0.808,
++      "structural_information_content_order_4": 0.857,
++      "structural_information_content_order_5": 0.857,
++      "complementary_information_content_order_0": 3.739,
++      "complementary_information_content_order_1": 2.264,
++      "complementary_information_content_order_2": 1.135,
++      "complementary_information_content_order_3": 0.904,
++      "complementary_information_content_order_4": 0.673,
++      "complementary_information_content_order_5": 0.673,
++      "bonding_information_content_order_0": 0.2,
++      "bonding_information_content_order_1": 0.507,
++      "bonding_information_content_order_2": 0.742,
++      "bonding_information_content_order_3": 0.79,
++      "bonding_information_content_order_4": 0.838,
++      "bonding_information_content_order_5": 0.838,
++      "modified_information_content_order_0": 6.796774065,
++      "Z_modified_information_content_order_0": 38.70844392
++    },
++    "Allicin": {
++      "information_content_order_0": 1.578,
++      "information_content_order_1": 2.8,
++      "information_content_order_2": 3.406,
++      "information_content_order_3": 3.616,
++      "information_content_order_4": 3.827,
++      "information_content_order_5": 3.827,
++      "total_information_content_order_0": 29.982,
++      "total_information_content_order_1": 53.201,
++      "total_information_content_order_2": 64.711,
++      "total_information_content_order_3": 68.711,
++      "total_information_content_order_4": 72.711,
++      "total_information_content_order_5": 72.711,
++      "structural_information_content_order_0": 0.371,
++      "structural_information_content_order_1": 0.659,
++      "structural_information_content_order_2": 0.802,
++      "structural_information_content_order_3": 0.851,
++      "structural_information_content_order_4": 0.901,
++      "structural_information_content_order_5": 0.901,
++      "complementary_information_content_order_0": 2.67,
++      "complementary_information_content_order_1": 1.448,
++      "complementary_information_content_order_2": 0.842,
++      "complementary_information_content_order_3": 0.632,
++      "complementary_information_content_order_4": 0.421,
++      "complementary_information_content_order_5": 0.421,
++      "bonding_information_content_order_0": 0.359,
++      "bonding_information_content_order_1": 0.637,
++      "bonding_information_content_order_2": 0.775,
++      "bonding_information_content_order_3": 0.823,
++      "bonding_information_content_order_4": 0.871,
++      "bonding_information_content_order_5": 0.871,
++      "modified_information_content_order_0": 21.29984794,
++      "Z_modified_information_content_order_0": 36.50795608
++    },
++    "Glutathione": {
++      "information_content_order_0": 1.886,
++      "information_content_order_1": 3.555,
++      "information_content_order_2": 4.615,
++      "information_content_order_3": 4.885,
++      "information_content_order_4": 4.939,
++      "information_content_order_5": 4.939,
++      "total_information_content_order_0": 69.779,
++      "total_information_content_order_1": 131.53,
++      "total_information_content_order_2": 170.75,
++      "total_information_content_order_3": 180.75,
++      "total_information_content_order_4": 182.75,
++      "total_information_content_order_5": 182.75,
++      "structural_information_content_order_0": 0.362,
++      "structural_information_content_order_1": 0.682,
++      "structural_information_content_order_2": 0.886,
++      "structural_information_content_order_3": 0.938,
++      "structural_information_content_order_4": 0.948,
++      "structural_information_content_order_5": 0.948,
++      "complementary_information_content_order_0": 3.324,
++      "complementary_information_content_order_1": 1.655,
++      "complementary_information_content_order_2": 0.595,
++      "complementary_information_content_order_3": 0.324,
++      "complementary_information_content_order_4": 0.27,
++      "complementary_information_content_order_5": 0.27,
++      "bonding_information_content_order_0": 0.354,
++      "bonding_information_content_order_1": 0.668,
++      "bonding_information_content_order_2": 0.867,
++      "bonding_information_content_order_3": 0.918,
++      "bonding_information_content_order_4": 0.928,
++      "bonding_information_content_order_5": 0.928,
++      "modified_information_content_order_0": 22.06530332,
++      "Z_modified_information_content_order_0": 68.22481004
++    },
++    "Digoxin": {
++      "information_content_order_0": 1.374,
++      "information_content_order_1": 2.876,
++      "information_content_order_2": 4.513,
++      "information_content_order_3": 5.628,
++      "information_content_order_4": 6.012,
++      "information_content_order_5": 6.224,
++      "total_information_content_order_0": 163.521,
++      "total_information_content_order_1": 342.252,
++      "total_information_content_order_2": 537.05,
++      "total_information_content_order_3": 669.776,
++      "total_information_content_order_4": 715.425,
++      "total_information_content_order_5": 740.709,
++      "structural_information_content_order_0": 0.199,
++      "structural_information_content_order_1": 0.417,
++      "structural_information_content_order_2": 0.655,
++      "structural_information_content_order_3": 0.816,
++      "structural_information_content_order_4": 0.872,
++      "structural_information_content_order_5": 0.903,
++      "complementary_information_content_order_0": 5.521,
++      "complementary_information_content_order_1": 4.019,
++      "complementary_information_content_order_2": 2.382,
++      "complementary_information_content_order_3": 1.266,
++      "complementary_information_content_order_4": 0.883,
++      "complementary_information_content_order_5": 0.67,
++      "bonding_information_content_order_0": 0.196,
++      "bonding_information_content_order_1": 0.411,
++      "bonding_information_content_order_2": 0.645,
++      "bonding_information_content_order_3": 0.804,
++      "bonding_information_content_order_4": 0.859,
++      "bonding_information_content_order_5": 0.889,
++      "modified_information_content_order_0": 12.65061412,
++      "Z_modified_information_content_order_0": 201.7746028
++    },
++    "Capsaicin": {
++      "information_content_order_0": 1.366,
++      "information_content_order_1": 3.313,
++      "information_content_order_2": 4.614,
++      "information_content_order_3": 4.875,
++      "information_content_order_4": 4.956,
++      "information_content_order_5": 4.956,
++      "total_information_content_order_0": 66.925,
++      "total_information_content_order_1": 162.318,
++      "total_information_content_order_2": 226.101,
++      "total_information_content_order_3": 238.856,
++      "total_information_content_order_4": 242.856,
++      "total_information_content_order_5": 242.856,
++      "structural_information_content_order_0": 0.243,
++      "structural_information_content_order_1": 0.59,
++      "structural_information_content_order_2": 0.822,
++      "structural_information_content_order_3": 0.868,
++      "structural_information_content_order_4": 0.883,
++      "structural_information_content_order_5": 0.883,
++      "complementary_information_content_order_0": 4.249,
++      "complementary_information_content_order_1": 2.302,
++      "complementary_information_content_order_2": 1,
++      "complementary_information_content_order_3": 0.74,
++      "complementary_information_content_order_4": 0.658,
++      "complementary_information_content_order_5": 0.658,
++      "bonding_information_content_order_0": 0.237,
++      "bonding_information_content_order_1": 0.576,
++      "bonding_information_content_order_2": 0.802,
++      "bonding_information_content_order_3": 0.847,
++      "bonding_information_content_order_4": 0.861,
++      "bonding_information_content_order_5": 0.861,
++      "modified_information_content_order_0": 12.39714246,
++      "Z_modified_information_content_order_0": 76.8350408
++    },
++    "EllagicAcid": {
++      "information_content_order_0": 1.493,
++      "information_content_order_1": 3.039,
++      "total_information_content_order_0": 41.793,
++      "total_information_content_order_1": 85.096,
++      "structural_information_content_order_0": 0.31,
++      "structural_information_content_order_1": 0.632,
++      "complementary_information_content_order_0": 3.315,
++      "complementary_information_content_order_1": 1.768,
++      "bonding_information_content_order_0": 0.282,
++      "bonding_information_content_order_1": 0.575,
++      "modified_information_content_order_0": 14.73952134,
++      "Z_modified_information_content_order_0": 77.9061374
++    },
++    "Astaxanthin": {
++      "information_content_order_0": 1.196,
++      "information_content_order_1": 2.895,
++      "information_content_order_2": 3.852,
++      "information_content_order_3": 4.277,
++      "information_content_order_4": 4.673,
++      "information_content_order_5": 4.756,
++      "total_information_content_order_0": 114.856,
++      "total_information_content_order_1": 277.923,
++      "total_information_content_order_2": 369.756,
++      "total_information_content_order_3": 410.568,
++      "total_information_content_order_4": 448.608,
++      "total_information_content_order_5": 456.608,
++      "structural_information_content_order_0": 0.182,
++      "structural_information_content_order_1": 0.44,
++      "structural_information_content_order_2": 0.585,
++      "structural_information_content_order_3": 0.649,
++      "structural_information_content_order_4": 0.71,
++      "structural_information_content_order_5": 0.722,
++      "complementary_information_content_order_0": 5.389,
++      "complementary_information_content_order_1": 3.69,
++      "complementary_information_content_order_2": 2.733,
++      "complementary_information_content_order_3": 2.308,
++      "complementary_information_content_order_4": 1.912,
++      "complementary_information_content_order_5": 1.829,
++      "bonding_information_content_order_0": 0.176,
++      "bonding_information_content_order_1": 0.427,
++      "bonding_information_content_order_2": 0.568,
++      "bonding_information_content_order_3": 0.631,
++      "bonding_information_content_order_4": 0.689,
++      "bonding_information_content_order_5": 0.701,
++      "modified_information_content_order_0": 9.853707794,
++      "Z_modified_information_content_order_0": 157.3307823
++    }
++  }
++}
+diff --git a/tests/fingerprints/_new_mordred/utils.py b/tests/fingerprints/_new_mordred/utils.py
+index 3fc1dbadd..9c9bd0aae 100644
+--- a/tests/fingerprints/_new_mordred/utils.py
++++ b/tests/fingerprints/_new_mordred/utils.py
+@@ -898,4 +898,47 @@
+     "VR1_Dzionization_potential": "VR1_Dzi",
+     "VR2_Dzionization_potential": "VR2_Dzi",
+     "VR3_Dzionization_potential": "VR3_Dzi",
++    # information content: mordred's abbreviated variant, then the neighborhood order
++    "information_content_order_0": "IC0",
++    "information_content_order_1": "IC1",
++    "information_content_order_2": "IC2",
++    "information_content_order_3": "IC3",
++    "information_content_order_4": "IC4",
++    "information_content_order_5": "IC5",
++    "total_information_content_order_0": "TIC0",
++    "total_information_content_order_1": "TIC1",
++    "total_information_content_order_2": "TIC2",
++    "total_information_content_order_3": "TIC3",
++    "total_information_content_order_4": "TIC4",
++    "total_information_content_order_5": "TIC5",
++    "structural_information_content_order_0": "SIC0",
++    "structural_information_content_order_1": "SIC1",
++    "structural_information_content_order_2": "SIC2",
++    "structural_information_content_order_3": "SIC3",
++    "structural_information_content_order_4": "SIC4",
++    "structural_information_content_order_5": "SIC5",
++    "bonding_information_content_order_0": "BIC0",
++    "bonding_information_content_order_1": "BIC1",
++    "bonding_information_content_order_2": "BIC2",
++    "bonding_information_content_order_3": "BIC3",
++    "bonding_information_content_order_4": "BIC4",
++    "bonding_information_content_order_5": "BIC5",
++    "complementary_information_content_order_0": "CIC0",
++    "complementary_information_content_order_1": "CIC1",
++    "complementary_information_content_order_2": "CIC2",
++    "complementary_information_content_order_3": "CIC3",
++    "complementary_information_content_order_4": "CIC4",
++    "complementary_information_content_order_5": "CIC5",
++    "modified_information_content_order_0": "MIC0",
++    "modified_information_content_order_1": "MIC1",
++    "modified_information_content_order_2": "MIC2",
++    "modified_information_content_order_3": "MIC3",
++    "modified_information_content_order_4": "MIC4",
++    "modified_information_content_order_5": "MIC5",
++    "Z_modified_information_content_order_0": "ZMIC0",
++    "Z_modified_information_content_order_1": "ZMIC1",
++    "Z_modified_information_content_order_2": "ZMIC2",
++    "Z_modified_information_content_order_3": "ZMIC3",
++    "Z_modified_information_content_order_4": "ZMIC4",
++    "Z_modified_information_content_order_5": "ZMIC5",
+ }
