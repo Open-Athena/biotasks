@@ -155,3 +155,15 @@ retries, and the same four-CPU/16-GiB reservation and container caps. Installati
 authentication and waiting time count against that ceiling. The prior check used
 about 0.04 allocated CPU-hours. Authentication is limited to fifteen minutes and
 waiting for the native command to one hour. Only run-owned resources are cleaned.
+
+Persistent job `/exedev/biotasks25-official-001` started successfully; the user
+completed device login, and the runner emitted AUTH_READY. The checkpointed
+native orchestration invokes `repo2rlenv --no-ui generate --config ...
+--max-spend-usd 5` in the recorded five-window order. A second window for a
+repository requires a native cache record and its local image; otherwise it is
+left unresolved, without another bootstrap. Each native return code and log is
+preserved. Generation failures are not repaired. If exports exist, the controller
+keeps their images alive for up to two hours for separately checkpointed official
+base/reference grading, within its original total deadline. If no exports exist,
+there are no grading inputs. The archive includes native caches and outputs only,
+never the controller's GitHub authentication directory.
