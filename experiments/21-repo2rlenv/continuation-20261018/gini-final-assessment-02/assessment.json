@@ -1,0 +1,120 @@
+{
+  "stage": "completed_post_run_manual_assessment_original_task_unchanged",
+  "repository": "scikit-bio/scikit-bio",
+  "candidate_id": "808efa9c59c6f356358f",
+  "original_task_asset_hashes_and_modes_verified": 2036,
+  "original_task_matches_published_native_export": true,
+  "manual_assessment_only": true,
+  "model_calls": 0,
+  "new_source_candidates": 0,
+  "new_native_exports": 0,
+  "new_admissions": 0,
+  "task_specific_fixes": 0,
+  "feedback_to_author": false,
+  "native_control_attempts": 6,
+  "native_graded_controls": 6,
+  "native_rewards": [
+    0.0,
+    1.0,
+    1.0,
+    1.0,
+    0.0,
+    1.0
+  ],
+  "expected_rewards": [
+    0,
+    1,
+    1,
+    1,
+    0,
+    0
+  ],
+  "raw_junit_and_rewards_independently_recomputed": true,
+  "verdict": "reject_unchanged_instruction_verifier_coverage_gap",
+  "reason": "The original instruction requires ValueError for unsupported method values. The frozen wrong implementation silently selects rectangles for those values, yet earns full native reward. This violates the declared rejection-of-meaningful-incorrect-submissions acceptance gate.",
+  "formatting_only_rejection_superseded": true,
+  "control_source_matches_frozen_wrong_body": true,
+  "assessment_profile_changed_assets": [
+    "task.toml"
+  ],
+  "assessment_profile_deleted_assets": [],
+  "assessment_sandbox_seconds": 421.971274,
+  "assessment_sandbox_minutes": 7.032854566666667,
+  "per_accepted_task_time": null,
+  "rows": [
+    {
+      "case": "baseline",
+      "returncode": 1,
+      "passed": 2,
+      "failed": 2,
+      "skipped": 0,
+      "reward": 0.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/baseline/baseline__CBBdWe2/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/baseline/baseline__CBBdWe2/verifier/results.xml"
+    },
+    {
+      "case": "native_reference",
+      "returncode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/native_reference/native_reference__89T4wnY/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/native_reference/native_reference__89T4wnY/verifier/results.xml"
+    },
+    {
+      "case": "alternative",
+      "returncode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/alternative/alternative__HppK6gJ/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/alternative/alternative__HppK6gJ/verifier/results.xml"
+    },
+    {
+      "case": "alternative_repeat",
+      "returncode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 1,
+      "raw_reward_path": "native/authored/jobs/alternative_repeat/alternative_repeat__MubmGCV/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/alternative_repeat/alternative_repeat__MubmGCV/verifier/results.xml"
+    },
+    {
+      "case": "incorrect_constant_zero",
+      "returncode": 1,
+      "passed": 3,
+      "failed": 1,
+      "skipped": 0,
+      "reward": 0.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/incorrect_constant_zero/incorrect_constant_zero__4DrH8Zi/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/incorrect_constant_zero/incorrect_constant_zero__4DrH8Zi/verifier/results.xml"
+    },
+    {
+      "case": "incorrect_accepts_unknown_method",
+      "returncode": 0,
+      "passed": 4,
+      "failed": 0,
+      "skipped": 0,
+      "reward": 1.0,
+      "expected_reward": 0,
+      "raw_reward_path": "native/authored/jobs/incorrect_accepts_unknown_method/incorrect_accepts_unknown_method__MdCsg5F/verifier/reward.txt",
+      "raw_junit_path": "native/authored/jobs/incorrect_accepts_unknown_method/incorrect_accepts_unknown_method__MdCsg5F/verifier/results.xml"
+    }
+  ],
+  "limits": [
+    "This is a separate post-run assessment, not a generation/author/repair run.",
+    "Only control solution scripts vary; original task content hashes and modes match all2036published assets.",
+    "The shared offline resource profile changes task metadata/compose only in assessment copies; private tests, grading code and reference remain unchanged.",
+    "The unsupported-method counterexample follows from the frozen solution code and original public requirement; no additional direct unsupported-method probe was executed.",
+    "Native nop/oracle and valid-alternative success do not establish complete instruction/verifier agreement.",
+    "No task, grader, source profile or author instruction was repaired; original native rewards and legacy admissions are preserved."
+  ]
+}

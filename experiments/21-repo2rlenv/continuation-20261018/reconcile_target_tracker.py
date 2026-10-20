@@ -216,6 +216,15 @@ def build():
             assert assessed['native_exports'] == 3 and assessed['native_nop_oracle_trials'] == 6
             action = 'declared_source_pool_exhausted_final_quality_assessment_remaining'
             next_action = 'All three saved native exports and six nop/oracle controls completed unchanged and passed. Retain the first two coverage concerns; resolve the third formatting-only concern with a consistent final criterion. No new admission, task repair, author feedback or source expansion is inferred.'
+            final_gini = ROOT / 'gini-final-assessment-02/assessment.json'
+            if final_gini.exists():
+                assessed = json.loads(final_gini.read_text())
+                assert assessed['original_task_asset_hashes_and_modes_verified'] == 2036
+                assert assessed['raw_junit_and_rewards_independently_recomputed']
+                assert assessed['native_graded_controls'] == 6 and assessed['new_admissions'] == 0
+                assert assessed['task_specific_fixes'] == 0 and not assessed['feedback_to_author']
+                action = 'declared_source_pool_exhausted_below_target'
+                next_action = 'All eight declared source steps and saved native stages are complete. Final Gini assessment preserved all2036original task assets and graded six controls: baseline0, reference1, alternative1 twice, zero0, unsupported-method variant1 despite its instruction violation. Reject unchanged under the declared negative-control gate; no format-only rejection, author feedback, task repair, source expansion or new admission.'
         final_swe_gen = ROOT / 'swe-gen-final-intake/resolution.json'
         if route == 'pr_to_env/swe_gen' and key in reconciled and final_swe_gen.exists():
             resolved = json.loads(final_swe_gen.read_text())

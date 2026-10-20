@@ -1,0 +1,293 @@
+{
+  "stage": "independent_native_authored_source_controls_not_admission",
+  "model_calls": 0,
+  "native_results_available": true,
+  "controller": {
+    "status": "cohort_process_completed",
+    "worker_returncode": 0,
+    "cleanup": "terminated",
+    "execution_timeout_sec": 6899
+  },
+  "native_results": {
+    "all_controls_executed_and_parsed": true,
+    "all_controls_passed": false,
+    "candidate_id": "808efa9c59c6f356358f",
+    "independently_admitted": false,
+    "model_calls": 0,
+    "native_export_completed": true,
+    "recipe": "swe_flow",
+    "records": [
+      {
+        "bundle": "/evidence/native/authored/cases/baseline",
+        "case": "baseline",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/baseline",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "baseline",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 0,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": false,
+          "returncode": 1,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "failed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "failed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "reward": 0.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      },
+      {
+        "bundle": "/evidence/native/authored/cases/native_reference",
+        "case": "native_reference",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/native_reference",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "native_reference",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 1,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": true,
+          "returncode": 0,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "reward": 1.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      },
+      {
+        "bundle": "/evidence/native/authored/cases/alternative",
+        "case": "alternative",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/alternative",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "alternative",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 1,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": true,
+          "returncode": 0,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "reward": 1.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      },
+      {
+        "bundle": "/evidence/native/authored/cases/alternative_repeat",
+        "case": "alternative_repeat",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/alternative_repeat",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "alternative_repeat",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 1,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": true,
+          "returncode": 0,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "reward": 1.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      },
+      {
+        "bundle": "/evidence/native/authored/cases/incorrect_constant_zero",
+        "case": "incorrect_constant_zero",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/incorrect_constant_zero",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "incorrect_constant_zero",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 0,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": false,
+          "returncode": 1,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "failed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": true,
+        "returncode": 0,
+        "reward": 0.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      },
+      {
+        "bundle": "/evidence/native/authored/cases/incorrect_accepts_unknown_method",
+        "case": "incorrect_accepts_unknown_method",
+        "command": [
+          "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+          "run",
+          "--path",
+          "/evidence/native/authored/cases/incorrect_accepts_unknown_method",
+          "--agent",
+          "oracle",
+          "--env",
+          "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+          "--n-concurrent",
+          "1",
+          "--max-retries",
+          "0",
+          "--job-name",
+          "incorrect_accepts_unknown_method",
+          "--jobs-dir",
+          "/evidence/native/authored/jobs",
+          "--quiet"
+        ],
+        "completed": true,
+        "exception_type": null,
+        "executed_and_parsed": true,
+        "expected_reward": 0,
+        "expected_test_names_match": true,
+        "native_result": {
+          "passed": true,
+          "returncode": 0,
+          "statuses": {
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_gini_index_bug_1844": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve": "passed",
+            "skbio.diversity.alpha.tests.test_gini.GiniTests::test_lorenz_curve_integrator": "passed"
+          }
+        },
+        "passed": false,
+        "returncode": 0,
+        "reward": 1.0,
+        "stage": "completed",
+        "timeout_sec": 900
+      }
+    ],
+    "stage": "authored_native_source_controls_not_admission"
+  },
+  "native_results_source": "controller_downloaded_summary",
+  "workers": [
+    {
+      "worker_id": "bfbf6129-0735-4b77-bf75-99b8576e9369",
+      "state": "terminated",
+      "started_at": "2026-10-20T00:20:12.725180+00:00",
+      "ready_at": "2026-10-20T00:20:18.314453+00:00",
+      "stopped_at": "2026-10-20T00:27:14.696454+00:00"
+    }
+  ],
+  "native_archive_bytes": 28273811,
+  "native_archive_sha256": "b271bd3dc0b4eaf7c04ec9e632c363bc55b0cf870a62d5fbbeb0135e23167e86"
+}

@@ -1,6 +1,6 @@
 # Prior post-run quality findings
 
-Snapshot of the previously published rejection evidence. These records remain unchanged; later assessments can supersede a judgment without editing the task. The saved Gini native stages have since completed, and the third formatting-only concern still needs a consistent final criterion. See [the current unchanged-stage assessment](skbio-flow-saved-exports-02/assessment.json).
+Snapshot of the previously published rejection evidence. These records remain unchanged; later assessments can supersede a judgment without editing the task. The saved Gini native stages have since completed, and the third formatting-only concern is superseded by the final behavioral assessment below. See [the current unchanged-stage assessment](skbio-flow-saved-exports-02/assessment.json).
 
 | Candidate | Reason not admitted | Evidence |
 | --- | --- | --- |
@@ -9,3 +9,7 @@ Snapshot of the previously published rejection evidence. These records remain un
 | Lorenz curve / SWE-Flow | Original model answer contains literal n/nn separators and adds boundary requirements absent from the native assertions. Raw-answer comparison confirms the wrapper did not introduce the formatting defect. | [Review](https://github.com/Open-Athena/biotasks/blob/60f6c8a461f6e9ff0fc1ceee1beee26323f64d08/experiments/21-repo2rlenv/continuation-20261018/skbio-flow-gini-author-01/instruction-review.json) |
 | Lorenz-curve integrator / SWE-Flow | Raw model answer again uses literal n/nn separators; instruction mandates an exact exception message while native tests assert only its class. Static rejection before extra runtime controls. | [Review](https://github.com/Open-Athena/biotasks/blob/87c1b1d89bd0bb6564f15917514977c8fbb90b87/experiments/21-repo2rlenv/continuation-20261018/skbio-flow-gini-author-02/instruction-review.json) |
 | Stockholm / native commit | Native export passed its reference checks, but an incomplete lowercase-only implementation earned full reward under a general keyword-forwarding instruction. Raw logs reproduce all six control rewards: 0, 1, 1, 0, 1, 1. | [Acceptance review](https://github.com/Open-Athena/biotasks/blob/60f6c8a461f6e9ff0fc1ceee1beee26323f64d08/experiments/21-repo2rlenv/continuation-20261018/stockholm-correctness-controls-01/acceptance-review.json) |
+
+## Final Gini assessment, 2026-10-20
+
+Candidate808efa9c59c6f356358f retains all2,036published task asset hashes and modes. Six post-run controls scored0,1,1,1,0,1, independently recomputed from raw JUnit and reward files. The last implementation maps unsupported methods to rectangles despite the unchanged instruction requiring ValueError, and nevertheless receives full native reward. This fails the declared incorrect-submission gate; the task is rejected unchanged, superseding the earlier formatting-only concern. No author feedback or task/grader repair was supplied. [Final assessment](gini-final-assessment-02/assessment.json), [raw grade recomputation](gini-final-assessment-02/reward-recomputation.json).
