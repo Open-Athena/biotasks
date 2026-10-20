@@ -29,8 +29,17 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 def prepare():
     """Install pinned trusted runner code; never install the target repo here."""
-    tools = Path("/tmp/biotasks24-tools")
+    # Iris mounts /tmp as scratch tmpfs; install executables in the guest
+    # filesystem rather than assuming the scratch mount permits execution.
+    tools = Path("/opt/biotasks24-tools")
     tools.mkdir()
+    (OUT / "runner-filesystem.json").write_text(json.dumps({
+        "tools_directory": str(tools),
+        "tmp_mount_options": [
+            line.split()[3] for line in Path("/proc/mounts").read_text().splitlines()
+            if line.split()[1] == "/tmp"
+        ],
+    }, indent=2) + "\n")
     archive = tools / "docker.tgz"
     digest = hashlib.sha256()
     with urllib.request.urlopen(
@@ -48,6 +57,9 @@ def prepare():
         (tools / "docker").write_bytes(bundle.extractfile("docker/docker").read())
     (tools / "docker").chmod(0o755)
     archive.unlink()
+    with (OUT / "docker-client-version.txt").open("w") as log:
+        subprocess.run([str(tools / "docker"), "--version"], stdout=log,
+                       stderr=subprocess.STDOUT, check=True, timeout=15)
     venv = tools / "venv"
     subprocess.run([sys.executable, "-m", "venv", str(venv)], check=True, timeout=60)
     os.environ["PATH"] = f"{tools}:{venv / 'bin'}:/usr/local/bin:/usr/bin:/bin"

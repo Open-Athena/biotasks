@@ -468,3 +468,18 @@ build isolation. This is a development installation correction, not a change to
 native validation, target source, held-out membership or acceptance rules.
 No automatic replacement PR is selected. Retain the failed first attempt in
 cost and failure accounting.
+
+Attempt `nipype-002` also failed before target execution, in 26.369 seconds
+(0.02197 allocated CPU-hours). Its verified archive shows uv_build 0.11.2
+installed successfully, followed by the same executable-discovery error.
+Preserved the attempt independently in `evidence/development/nipype-002/`.
+
+Inspected the official uv_build 0.11.2 wheel (verified against its PyPI SHA-256):
+the error is emitted when `shutil.which("uv-build")` returns none, not when a
+target package fails to compile. Iris runtime source shows `/tmp` is a TMPFS
+mount. The third development configuration installs executable tools under
+`/opt/biotasks24-tools` in the controller filesystem, records effective `/tmp`
+mount options, and checks the Docker client executable before package setup.
+This tests the scratch-mount executability explanation rather than altering
+target PR code. Attempt `nipype-003` retains the same inputs, resource ceilings
+and validator, with both prior setup failures included in cost accounting.
