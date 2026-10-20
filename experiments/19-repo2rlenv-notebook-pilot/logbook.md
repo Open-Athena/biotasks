@@ -2379,3 +2379,22 @@ stops. No model or sandbox was launched for these tests. Model caps remain unset
 The explorer default now links to its single canonical case profile. A checked
 rebuild reproduced the earlier reading view exactly apart from pinned Git
 revision links; the published index remains unchanged until case validation.
+
+### 2026-10-20 — Match native solver metadata to endpoint capacity
+
+A preflight of the pending native solver found stale `max_input_tokens=120000`
+metadata. The installed Harbor client uses that field as its context capacity
+for proactive summarization and message unwinding, rather than as a generation
+length parameter. Correct it to 262,144, the endpoint capacity recorded in the
+original diagnostic provider rejection (request-rejection run 001). This removes
+an artificial smaller context assumption; it does not increase the provider's
+window or impose a completion-token allowance. No change reaches the active
+scientific-validation campaign.
+
+Three focused offline tests passed, including the real pinned Harbor client's
+capacity lookup and observed outbound request with neither `max_tokens` nor
+`max_completion_tokens`. Native oracle gating and solver-failure acceptance
+remain covered. The synthetic local endpoint made no real model or sandbox
+calls. Local peak RSS was 231,120 KiB. Recheck this metadata if the provider's
+capacity changes; the recorded value is service-specific, not a universal GLM
+or Harbor default.

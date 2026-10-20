@@ -94,7 +94,8 @@ def run(config, *, root=Path("/evidence/native")):
                     timeout_sec=600,
                     max_concurrent=1,
                     model_info={
-                        "max_input_tokens": 120000,
+                        # Endpoint-reported capacity; not an additional client cap.
+                        "max_input_tokens": 262144,
                         "input_cost_per_token": 0,
                         "output_cost_per_token": 0,
                     },

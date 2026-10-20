@@ -59,16 +59,18 @@ def test_harbor_client_without_output_cap(tmp_path):
             api_base=gate.endpoint("solver"),
             api_key="fixture-secret",
             model_info={
-                "max_input_tokens": 120000,
+                "max_input_tokens": 262144,
                 "input_cost_per_token": 0,
                 "output_cost_per_token": 0,
             },
         )
+        assert client.get_model_context_limit() == 262144
         response = asyncio.run(client.call("Synthetic compatibility check"))
         assert response.content == "ok"
         assert len(observed) == 1
         assert observed[0]["model"] == "glm-5.3"
         assert observed[0].get("max_tokens") is None
+        assert observed[0].get("max_completion_tokens") is None
         assert observed[0]["chat_template_kwargs"] == {"reasoning_effort": "medium"}
     finally:
         gate.close()
