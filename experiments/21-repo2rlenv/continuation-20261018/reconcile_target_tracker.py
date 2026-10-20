@@ -189,6 +189,14 @@ def build():
                         assert authored['task_specific_fixes'] == 0 and not authored['external_task_feedback']
                         action = 'declared_source_pool_exhausted_saved_native_export_stage_remaining'
                         next_action = 'Final checksum author stage completed unchanged in two free-GLM calls. Source and author archives have verified public readback. Finish the saved native export/nop/oracle stage, then assess the final task without editing it or feeding findings back. The inherited repository setup adaptation remains separate from stock automatic-pipeline success; no new admission is inferred.'
+                    checksum_assessment = ROOT / 'biopython-checksum-native-02/assessment.json'
+                    if checksum_assessment.exists():
+                        assessed = json.loads(checksum_assessment.read_text())
+                        assert assessed['native_exports'] == 1 and assessed['new_admissions'] == 0
+                        assert assessed['native_graded_controls'] == 0
+                        assert assessed['task_specific_fixes'] == 0
+                        action = 'declared_source_pool_exhausted_below_target'
+                        next_action = 'All seven original source steps and the final checksum author/export stages completed unchanged. The checksum instruction ends mid-CRC32 requirement and omits the other three functions; both native controls fail the inherited environment build and produce no grade. Zero new admissions; preserve original failures without task/runtime repair, source expansion or repeated model calls.'
         final_commit_screen = ROOT / 'skbio-commit-final-intake/structural-screen.json'
         if key == 'commit_runtime/native@scikit-bio/scikit-bio' and final_commit_screen.exists():
             selected = json.loads(final_commit_screen.read_text())['eligible_for_native_runtime']

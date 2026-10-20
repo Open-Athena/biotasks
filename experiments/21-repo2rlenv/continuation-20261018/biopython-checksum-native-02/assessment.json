@@ -1,0 +1,64 @@
+{
+  "stage": "post_run_manual_assessment_of_unchanged_automatic_export",
+  "repository": "biopython/biopython",
+  "candidate_id": "0e2bcaee05dcaca0d8bc",
+  "native_exports": 1,
+  "native_control_attempts": 2,
+  "native_graded_controls": 0,
+  "native_rewards": [
+    null,
+    null
+  ],
+  "native_errors": [
+    {
+      "agent": "nop",
+      "exception_type": "RuntimeError",
+      "phase": "environment Docker build",
+      "detail": "Inherited install/fixture/license command exits1 at Dockerfile line5 after package installation; no test grade produced.",
+      "raw_result_path": "native/validation/jobs/flow-0e2bcaee05dcaca0d8bc-nop/swe-flow-0e2bcaee05dcaca0d8bc__LBeaEQJ/result.json"
+    },
+    {
+      "agent": "oracle",
+      "exception_type": "RuntimeError",
+      "phase": "environment Docker build",
+      "detail": "Inherited install/fixture/license command exits1 at Dockerfile line5 after package installation; no test grade produced.",
+      "raw_result_path": "native/validation/jobs/flow-0e2bcaee05dcaca0d8bc-oracle/swe-flow-0e2bcaee05dcaca0d8bc__H5AirZa/result.json"
+    }
+  ],
+  "new_admissions": 0,
+  "task_specific_fixes": 0,
+  "external_task_feedback": false,
+  "new_model_calls_in_native_stage": 0,
+  "new_source_candidate_charge": 0,
+  "instruction_equals_original_model_text_plus_native_suffix": true,
+  "original_instruction_sha256": "bef4d1b9fcb4c65d041ddd67612b7c3da7ad05d4483fa7fd2171f257d395d63d",
+  "exported_instruction_sha256": "92970edfaa7223bde9f20c6a385de30cea2e4a16430038b8f2174bfbc7b54555",
+  "manual_quality_decision": "reject_unchanged_incomplete_specification_and_unvalidated_runtime",
+  "quality_findings": [
+    "The final specification ends mid-backtick at crc32( in the first CRC-32 reference-output bullet.",
+    "CRC-64, GCG and SEGUID appear in the background scope, but have no functional requirements in the final instruction.",
+    "Literal n separators are a presentation issue; rejection is based on missing semantic requirements, independently of presentation.",
+    "Both nop and oracle fail environment image build under the inherited profile; null grades are infrastructure failures, not incorrect-solution scores."
+  ],
+  "runtime_profile_failure_evidence": {
+    "Dockerfile_line": 5,
+    "inherited_command_contains_license_symlink_assertion": true,
+    "exported_license_is_regular_file": true,
+    "license_asset": {
+      "path": "native/validation/tasks/0e2bcaee05dcaca0d8bc/swe-flow-0e2bcaee05dcaca0d8bc/environment/source/LICENSE",
+      "bytes": 3267,
+      "mode": "0o644",
+      "sha256": "11d1ebcaad2eb9f0f09a3df1deb4aca99a4da366ae9ae70f828c7447a24de453"
+    },
+    "interpretation": "The inherited command requires a LICENSE symlink while the exported snapshot contains a regular LICENSE file. The original chained command is retained without repair; individual shell-command exit attribution is not separately logged."
+  },
+  "recorded_sandbox_seconds": 143.546376,
+  "recorded_sandbox_minutes_per_native_export": 2.3924396000000003,
+  "native_wrapper_elapsed_seconds": 149.873,
+  "per_accepted_task_time": null,
+  "limits": [
+    "These timings cover the export/control stage only; original contrast generation and authoring are separate.",
+    "No task instruction, test, source, grader, runtime profile or original failure was repaired.",
+    "This inherited adapted repository setup is not stock automatic-bootstrap evidence."
+  ]
+}

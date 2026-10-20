@@ -1,0 +1,115 @@
+{
+  "stage": "saved_native_flow_export_controls_not_admission",
+  "model_calls": 0,
+  "new_source_candidates": 0,
+  "task_specific_fixes": 0,
+  "records": [
+    {
+      "name": "checksum-01",
+      "candidate_id": "0e2bcaee05dcaca0d8bc",
+      "status": "controller_completed",
+      "controller_exit_code": 0,
+      "controller_result": {
+        "cleanup": "terminated",
+        "evidence_bytes": 43233636,
+        "model_calls": 0,
+        "setup_returncode": 0,
+        "stage": "flow-controls",
+        "status": "worker_completed",
+        "worker_returncode": 0
+      },
+      "workers": [
+        {
+          "claimed_at": "2026-10-19T23:53:51.324975+00:00",
+          "ledger": "/app/flow-output/checksum-01/budget.sqlite",
+          "operation_id": "worker:daytona:bt21-bio-checksum-native02-checksum-01",
+          "ready_at": "2026-10-19T23:54:02.624788+00:00",
+          "spec": {
+            "cpus": 2,
+            "disk_gb": 10,
+            "image": null,
+            "memory_mb": 4096,
+            "name": "bt21-bio-checksum-native02-checksum-01",
+            "provider": "daytona",
+            "snapshot_id": null,
+            "timeout_sec": 7200
+          },
+          "started_at": "2026-10-19T23:53:51.325447+00:00",
+          "state": "terminated",
+          "stopped_at": "2026-10-19T23:56:14.871823+00:00",
+          "worker_id": "c5b159eb-2c89-4266-a28f-b6c1c6d58476"
+        }
+      ],
+      "native_archive_sha256": "a697bff816a5ac9b2273ad6cd4f5d1fd9aa9aa2e2067c72b46d240bd5c1db2f1",
+      "native_archive_bytes": 43233636,
+      "native_summary": {
+        "records": [
+          {
+            "candidate_id": "0e2bcaee05dcaca0d8bc",
+            "native_controls_passed": false,
+            "stage": "native_controls_completed",
+            "task": "/evidence/native/validation/tasks/0e2bcaee05dcaca0d8bc/swe-flow-0e2bcaee05dcaca0d8bc",
+            "trials": [
+              {
+                "agent": "nop",
+                "command": [
+                  "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+                  "run",
+                  "--path",
+                  "/evidence/native/validation/tasks/0e2bcaee05dcaca0d8bc/swe-flow-0e2bcaee05dcaca0d8bc",
+                  "--agent",
+                  "nop",
+                  "--env",
+                  "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+                  "--n-concurrent",
+                  "1",
+                  "--max-retries",
+                  "0",
+                  "--job-name",
+                  "flow-0e2bcaee05dcaca0d8bc-nop",
+                  "--jobs-dir",
+                  "/evidence/native/validation/jobs",
+                  "--quiet"
+                ],
+                "completed": false,
+                "exception_type": "RuntimeError",
+                "returncode": 0,
+                "reward": null,
+                "timeout_sec": 900
+              },
+              {
+                "agent": "oracle",
+                "command": [
+                  "/work/native/huggingface-Repo2RLEnv-27d04ee/.venv/bin/harbor",
+                  "run",
+                  "--path",
+                  "/evidence/native/validation/tasks/0e2bcaee05dcaca0d8bc/swe-flow-0e2bcaee05dcaca0d8bc",
+                  "--agent",
+                  "oracle",
+                  "--env",
+                  "repo2rlenv.execution.harbor_offline:OfflineDockerEnvironment",
+                  "--n-concurrent",
+                  "1",
+                  "--max-retries",
+                  "0",
+                  "--job-name",
+                  "flow-0e2bcaee05dcaca0d8bc-oracle",
+                  "--jobs-dir",
+                  "/evidence/native/validation/jobs",
+                  "--quiet"
+                ],
+                "completed": false,
+                "exception_type": "RuntimeError",
+                "returncode": 0,
+                "reward": null,
+                "timeout_sec": 900
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "status": "finished_recorded_stages",
+  "elapsed_seconds": 149.873
+}
