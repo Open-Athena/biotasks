@@ -1,0 +1,45 @@
+{
+  "method": "Separate source-level review by the same research assistant, without changing pipeline inputs or outputs; not a blinded external review or executable rescue. Runtime dispositions will be joined after recovery.",
+  "reviewed_inputs": [
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7475,
+      "instruction_source": "linked issue 7188",
+      "source_assessment": "The linked issue provides a concrete negative linear-step reproduction and expected nonnegative intensities. The added test checks that behavior. Coverage does not establish all max-bound or nonlinear-step cases.",
+      "biological_relevance": "Adaptive psychophysics procedure; synthetic responses, no participant observations.",
+      "runtime_claim": "None from static inspection."
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7805,
+      "instruction_source": "linked issue 7793",
+      "source_assessment": "The issue identifies a MovieStim.stop AttributeError and the test exercises stop/unload lifecycle. The new test skips without a movie fixture and needs a graphics environment. Its entire test file is new, so targeted retained P2P coverage is not established. A genuine AttributeError bug can also be excluded by the deliberately stricter assertion-only gate.",
+      "biological_relevance": "Stimulus presentation infrastructure rather than biological inference.",
+      "runtime_claim": "None from static inspection."
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 544,
+      "instruction_source": "PR body; part-of issue URL is not a native closing-issue reference",
+      "source_assessment": "This adds dataset-loader APIs and corresponding tests. The short PR description does not specify the detailed API/test contract. A feature-addition collection failure cannot establish the required assertion-level F2P transition. Dataset acquisition is distinct from validating biological results.",
+      "biological_relevance": "Access to ADMET datasets; no dataset redistribution or new scientific measurement in this experiment.",
+      "runtime_claim": "None from static inspection."
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 525,
+      "instruction_source": "PR title/body",
+      "source_assessment": "The regression compares fingerprints of L/D-alanine enantiomers, a meaningful molecular-representation property. The title and body explicitly reveal the fix: use sub_molecule and rootedAtAtom instead of the whole molecule. Native reference-link stripping does not remove this solution explanation.",
+      "biological_relevance": "Molecular descriptor algorithm using curated SMILES fixtures.",
+      "runtime_claim": "None from static inspection."
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3753,
+      "instruction_source": "PR body",
+      "source_assessment": "Adds a new T1Prep/CatSurf interface module and many interface-trait tests. Base collection may fail because the new modules do not exist. Passing metadata/command-interface tests would not establish execution of T1Prep or validation on MRI data.",
+      "biological_relevance": "Neuroimaging software integration, with no observed-image validation established.",
+      "runtime_claim": "None from static inspection."
+    }
+  ]
+}

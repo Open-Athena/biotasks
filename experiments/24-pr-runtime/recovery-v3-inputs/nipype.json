@@ -1,0 +1,45 @@
+{
+  "run_id": "biotasks24-heldout-nipype-003",
+  "cohort": "held_out",
+  "freeze_id": "biotasks24-python-v1",
+  "repository": "nipy/nipype",
+  "bootstrap_ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+  "verify_exports": true,
+  "prs": [
+    {
+      "repository": "nipy/nipype",
+      "number": 3753,
+      "base_sha": "b622463d2ecfdbfdc644f81ffcbbfae4ebbc305d",
+      "head_sha": "2c2c4b3f6d883c99b648db091353db4e52dba195",
+      "merge_sha": "6b6f2035ee05f5ca82c18cf0ead3742bb520b775",
+      "url": "https://github.com/nipy/nipype/pull/3753",
+      "diff_path": "inventory/pr-diffs/nipy__nipype/3753.diff",
+      "diff_sha256": "8f38402536f73d16916d16c34675559f3bf4a97368e1278b2f489539cf3d7e10",
+      "rank": "f11f053f9d4c5c9f60e898d18f42a86e6dacdaa866f94e61595dd38ce1c3f5d7",
+      "cohort": "held_out",
+      "repository_role": "configured_on_development",
+      "overlap_group": "e261ef9630949c55",
+      "original_cohort": "held_out",
+      "metadata": {
+        "number": 3753,
+        "url": "https://github.com/nipy/nipype/pull/3753",
+        "title": "[ENH] Add T1Prep/CatSurf interfaces",
+        "body": "## Summary\r\nAdd interfaces for T1Prep \u2013 T1-weighted MRI preprocessing pipeline (PyCAT). T1Prep performs skull-stripping, tissue segmentation, and cortical surface reconstruction using DeepMriPrep and the CAT-Surface library (via cat-surf).\r\n\r\n## List of changes proposed in this PR (pull-request)\r\n* Add new interface at nipype/interfaces/t1prep\r\n* Add test functions at nipype/interfaces/t1prep/tests\r\n* Updates doc/interfaces.rst \r\n\r\n## Sub-module interfaces\r\n:class:`T1Prep`\r\n    Full pipeline: skull-strip \u2192 segment \u2192 surface estimate.  Wraps ``python -m t1prep.t1prep``.\r\n\r\n:class:`T1PrepSegment`\r\n    Segmentation stage only.  Wraps ``python -m t1prep.segment``.\r\n\r\n:class:`T1PrepSurfaceEstimation`\r\n    Surface-estimation stage for one hemisphere.  Wraps ``python -m t1prep.surface_estimation``.\r\n\r\n:class:`T1PrepRealignLongitudinal`\r\n    Rigid realignment of longitudinal T1w time-points.  Wraps ``python -m t1prep.realign_longitudinal``.\r\n\r\n## Base classes\r\n:class:`Info`\r\n    T1Prep package version detection.\r\n\r\n:class:`T1PrepCommand`\r\n    Base ``CommandLine`` for ``python -m t1prep.<module>`` invocations.\r\n\r\n##  Interfaces for the full ``cat_surf`` / ``t1prep.cat_surf`` Python API.\r\n\r\nEvery public function in ``cat_surf`` that T1Prep exposes is wrapped as a separate :class:`~nipype.interfaces.base.BaseInterface` sub-class so that each operation can be used as an independent node inside a Nipype workflow.\r\n\r\n# References\r\n* https://github.com/ChristianGaser/T1Prep\r\n* https://github.com/ChristianGaser/CAT-Surface\r\n",
+        "mergedAt": "2026-08-25T14:39:54Z",
+        "isDraft": false,
+        "changedFiles": 25,
+        "baseRefOid": "b622463d2ecfdbfdc644f81ffcbbfae4ebbc305d",
+        "headRefOid": "2c2c4b3f6d883c99b648db091353db4e52dba195",
+        "mergeCommit": {
+          "oid": "6b6f2035ee05f5ca82c18cf0ead3742bb520b775"
+        }
+      },
+      "linked_issues": {}
+    }
+  ],
+  "profile": "generic_pyproject_test_dependencies_v3_editable_backend_requirements",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "infrastructure_recovery_of": "biotasks24-heldout-nipype-001"
+}

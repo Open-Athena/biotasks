@@ -1,0 +1,50 @@
+{
+  "stage": "held_out_native_validation",
+  "variant": "native validator with generic declarative Python bootstrap",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "repository": "nipy/nipype",
+  "run_id": "biotasks24-heldout-nipype-002",
+  "bootstrap_ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "results": [],
+  "limits": {
+    "container_cpus": 2,
+    "container_memory_gib": 8,
+    "pids": 512,
+    "setup_seconds": 1200,
+    "validation_stage_seconds": 300,
+    "container_lifetime_seconds": 3000,
+    "writable_layer_gib": 20
+  },
+  "limitations": [
+    "No solver model run; exported task checks are separate fields when enabled.",
+    "Generic profile is an explicit adaptation; no model-assisted bootstrap was run."
+  ],
+  "disposition": "development_run_failed",
+  "error": "DockerError: docker run failed: docker: Error response from daemon: network iris-egress not found.",
+  "cleanup_verified": true,
+  "owned_image_cleanup_verified": true,
+  "commands": [
+    {
+      "operation": "version",
+      "exit_code": 0,
+      "duration_sec": 0.03138516200124286
+    },
+    {
+      "operation": "image",
+      "exit_code": 1,
+      "duration_sec": 0.020720830973004922
+    },
+    {
+      "operation": "pull",
+      "exit_code": 0,
+      "duration_sec": 3.3449838059896138
+    },
+    {
+      "operation": "run",
+      "exit_code": 125,
+      "duration_sec": 14.191814869001973
+    }
+  ],
+  "elapsed_seconds": 17.681
+}

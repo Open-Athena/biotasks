@@ -625,3 +625,19 @@ within available reserved resources; no new capacity is created. The recovery
 worker/PR semantics remain byte-identical. The original failure receipts'
 attempt worker_id fields are empty; shared-worker linkage comes from the job
 error messages, not those empty fields.
+
+The same-cohort v2 recovery completed with archived automatic failure reports:
+all three jobs reached an older worker build and failed before repository setup
+because `iris-egress` was absent. No PR code ran in those attempts. A live worker
+provenance census found 52 workers at 68f0ea2078 and 132 at 205558e1a7. Inspection
+of their pinned Docker-runtime source shows the former lacks EGRESS_NETWORK
+and the latter supports the declared protected network. Worker bootstrap
+provisions it; earlier experiment probes did not establish/provision that host
+state. No host firewall/network or cluster changes are made by this experiment.
+
+Version v3 adds only capability-aware routing to the exact clean worker build
+205558e1a7 and its recorded tree hash, with exact existing TPU/worker constraints.
+The PR worker, installer, native code, dependencies, graders, input membership
+and acceptance gates remain byte-identical to the original freeze. Preserve all
+earlier failed campaigns and their costs; this remains same-cohort infrastructure
+recovery, not retroactive success or an independent fresh-cohort estimate.

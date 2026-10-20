@@ -1,0 +1,91 @@
+{
+  "run_id": "biotasks24-heldout-psychopy-003",
+  "cohort": "held_out",
+  "freeze_id": "biotasks24-python-v1",
+  "repository": "psychopy/psychopy",
+  "bootstrap_ref": "f150adfd0246e6bf22331949502e27262734be71",
+  "base_image": "python@sha256:34386ef0cb081344d7ec1c103ba398e6e9f64e9ab3a1509accc92a4e24a07258",
+  "verify_exports": true,
+  "prs": [
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7475,
+      "base_sha": "f150adfd0246e6bf22331949502e27262734be71",
+      "head_sha": "159d87ad134b11cc5d6850ea16248139cce557b9",
+      "merge_sha": "1ca0bbf0eedfc3738b49f0f76ac49bee5f52368b",
+      "url": "https://github.com/psychopy/psychopy/pull/7475",
+      "diff_path": "inventory/pr-diffs/psychopy__psychopy/7475.diff",
+      "diff_sha256": "2bf0130749d527fbb1cc8fe97f8badd8a6a7e468d6c5839a34ef7073e455e69e",
+      "rank": "7fe28250f848bff63a161991cff928937c1792967645b4242150ec54647b6ec2",
+      "cohort": "held_out",
+      "repository_role": "unseen_repository",
+      "overlap_group": "9d29b8cea3cd96e9",
+      "original_cohort": "held_out",
+      "metadata": {
+        "number": 7475,
+        "url": "https://github.com/psychopy/psychopy/pull/7475",
+        "title": "BF: clamp StairHandler intensity when step size is negative",
+        "body": "Fixes #7188\r\n\r\n## Summary\r\n- enforce `StairHandler` min/max clamping regardless of step direction, covering negative step sizes\r\n- add regression test to ensure negative `stepSizes` with `minVal` do not drop below bounds\r\n\r\n## Testing\r\n- python -m pytest psychopy/tests/test_data/test_StairHandlers.py::TestStairHandler::test_negative_step_clamped_to_min",
+        "mergedAt": "2025-11-22T08:54:37Z",
+        "isDraft": false,
+        "changedFiles": 2,
+        "baseRefOid": "f150adfd0246e6bf22331949502e27262734be71",
+        "headRefOid": "159d87ad134b11cc5d6850ea16248139cce557b9",
+        "mergeCommit": {
+          "oid": "1ca0bbf0eedfc3738b49f0f76ac49bee5f52368b"
+        }
+      },
+      "linked_issues": {
+        "7188": {
+          "number": 7188,
+          "title": "[Bug]: StairHandler minVal and maxVal will be ineffective when set stepSizes to negative",
+          "body": "### PsychoPy Version\n\n2024.2.5\n\n### What OS are your PsychoPy running on?\n\nLinux-based systems\n\n### Bug Description\n\nsee following\n\n### Expected Behaviour\n\n see following\n\n### Steps to Reproduce\n\n```python\n  from psychopy import data\n\n  handler = data.StairHandler(\n      startVal=0,\n      minVal=0,\n      stepType=\"lin\",\n      stepSizes=-1,\n  )\n  i = 20\n  for e in handler:\n      handler.addResponse(0)\n      print(e)\n      i = i - 1\n      if i <= 0:\n          break\n```\n\nIt should not print negative numbers, but 0.\n\n### Additional context\n\n_No response_",
+          "html_url": "https://github.com/psychopy/psychopy/issues/7188",
+          "updated_at": "2025-11-22T08:54:38Z"
+        }
+      }
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7805,
+      "base_sha": "5ee7b7f8b8a45fbc35dd549ae859d33271cc2d32",
+      "head_sha": "ff21c296ad45c80e66afa45e8b4886d18127ccc0",
+      "merge_sha": "ab0a5e8a000e4feb51393322d760ba592176f6b5",
+      "url": "https://github.com/psychopy/psychopy/pull/7805",
+      "diff_path": "inventory/pr-diffs/psychopy__psychopy/7805.diff",
+      "diff_sha256": "65804792ca6c5f907206fad4e362f9f7e0d539d3084ee62e28997a3873dd65da",
+      "rank": "8702eee2b6832bd33fd32047fde824449d544231070e9e5818d02159bf9ed41f",
+      "cohort": "held_out",
+      "repository_role": "unseen_repository",
+      "overlap_group": "efc0aaa30d4b9b37",
+      "original_cohort": "held_out",
+      "metadata": {
+        "number": 7805,
+        "url": "https://github.com/psychopy/psychopy/pull/7805",
+        "title": "BF: Fix AttributeError in MovieStim.stop and unload (#7793)",
+        "body": "### Description of changes\n\nThis fixes an `AttributeError` when calling `MovieStim.stop()`, `MovieStim.unload()`, or when re-loading a movie file (#7793).\n\n#### Problem\nIn `MovieStim.unload()`, `self._freePlayer()` was called to clean up the movie player. However, `_freePlayer()` was only defined on the underlying `MovieFileReader` class, not on `MovieStim` itself. When `video.stop()` ran, it called `self.loadMovie()` which invoked `self.unload()`, resulting in:\n```\n  File \"psychopy/visual/movies/__init__.py\", line 2188, in stop\n    self.loadMovie(self._filename)  # reload the movie\n  File \"psychopy/visual/movies/__init__.py\", line 1464, in loadMovie\n    self.unload()\n  File \"psychopy/visual/movies/__init__.py\", line 1678, in unload\n    self._freePlayer()  # free the player if it is already open\nAttributeError: 'MovieStim' object has no attribute '_freePlayer'. Did you mean: '_hasPlayer'?\n```\n\n#### Solution\n1. **Implement `MovieStim._freePlayer()`**: Safely closes `self._player` (if open) and clears `self._player = None`.\n2. **Update `MovieStim.unload()`**: Ensures `_cleanupAudioTrack()` is called and guards against early teardown (`getattr(self, '_isLoaded', False)`).\n3. **Streamline `MovieStim.stop()`**: Calls `self.unload()` before reloading via `self.loadMovie()` to ensure textures, audio, and player handles are properly torn down and recreated.\n4. **Early attribute initialization**: Defines `self._player = None` and `self._isLoaded = False` before `super().__init__` to prevent secondary exceptions if garbage collected on failed initialization.\n5. **Unit test**: Added `test_moviestim_stop_and_unload` in `psychopy/tests/test_visual/test_movies.py`.\n\n\nFixes #7793",
+        "mergedAt": "2026-09-30T09:15:25Z",
+        "isDraft": false,
+        "changedFiles": 2,
+        "baseRefOid": "5ee7b7f8b8a45fbc35dd549ae859d33271cc2d32",
+        "headRefOid": "ff21c296ad45c80e66afa45e8b4886d18127ccc0",
+        "mergeCommit": {
+          "oid": "ab0a5e8a000e4feb51393322d760ba592176f6b5"
+        }
+      },
+      "linked_issues": {
+        "7793": {
+          "number": 7793,
+          "title": "[Bug]: attribute error in visual.movies with MovieStim.stop()",
+          "body": "### PsychoPy Version\n\n2026.2.4\n\n### What OS are your PsychoPy running on?\n\nWindows 11\n\n### Bug Description\n\n```\n  File \"C:\\Users\\reynoben\\Documents\\greg-rcp\\src\\rcp_task_acquisition\\tasks\\bases.py\", line 176, in play_instructional_video\n    video.stop()\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 2188, in stop\n    self.loadMovie(self._filename)  # reload the movie\n    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 1464, in loadMovie\n    self.unload()\n  File \"C:\\Users\\reynoben\\anaconda3\\envs\\greg-try1\\Lib\\site-packages\\psychopy\\visual\\movies\\__init__.py\", line 1678, in unload\n    self._freePlayer()  # free the player if it is already open\n    ^^^^^^^^^^^^^^^^\nAttributeError: 'MovieStim' object has no attribute '_freePlayer'. Did you mean: '_hasPlayer'?\n```\n\n\n### Expected Behaviour\n\nshould not raise and stop() should succeed ?\n\n### Steps to Reproduce\n\n1. Windows 11 + Python 3.12 + psychopy 2026.2.4\n2. use MovieStim stop() method\n\n\n### Additional context\n\n_No response_",
+          "html_url": "https://github.com/psychopy/psychopy/issues/7793",
+          "updated_at": "2026-09-30T15:47:49Z"
+        }
+      }
+    }
+  ],
+  "profile": "generic_pyproject_test_dependencies_v3_editable_backend_requirements",
+  "native_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "model_calls": 0,
+  "infrastructure_recovery_of": "biotasks24-heldout-psychopy-001"
+}
