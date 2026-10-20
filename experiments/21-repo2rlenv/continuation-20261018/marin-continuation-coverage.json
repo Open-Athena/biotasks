@@ -1,11 +1,11 @@
 {
-  "observed_utc": "2026-10-19T13:54:24.896941+00:00",
-  "stage": "exact_profiles_preserve_original_failures_and_separate_transport_success",
+  "observed_utc": "2026-10-20T03:05:17.138836+00:00",
+  "stage": "reconciled_original_adapted_commit_and_unchanged_SWE_gen_profiles_not_generic_runtime_support",
   "Marin_revision": "45a044387ccd95ab698b4a592056aadaff961540",
-  "source_profiles_prepared": 7,
-  "schema_validated_profiles": 7,
-  "execution_parity_profiles": 4,
-  "native_Marin_pairs_passed": 24,
+  "source_profiles_prepared": 8,
+  "schema_validated_profiles": 8,
+  "execution_parity_profiles": 5,
+  "native_Marin_pairs_passed": 30,
   "profiles_rejected_before_Marin_grading": [
     5317,
     5308
@@ -39,12 +39,32 @@
     "native_task": "scikit-bio__scikit-bio-d25f305cea3a",
     "TaskSpec_id": "repo2rlenv-commit-runtime/a26ec72cc2e4b5ce6b9383ba0803b746a556254abb1be45bf7dd97c66313481f",
     "source_row": "scikit-bio/scikit-bio@d25f305cea3a6cc200b0fe10806151132b395bcf",
-    "stage": "pinned_schema_passed_unresolved_execution_rejected",
+    "stage": "six_exact_native_Marin_control_pairs_audited",
     "schema_source": "commit-schema-01/schema-result.json",
     "expected_native_Marin_pairs": 6,
-    "native_Marin_pairs_executed": 0,
+    "native_Marin_pairs_executed": 6,
     "public_original_archive_pending_scope_approval": false,
     "Atlas_admitted": false,
-    "artifact_prefix": "research/21-repo2rlenv/2026-10-18/d6515bb183c70adad6f428861814d0307a4679316b870924d6294c758f3e30a1"
+    "artifact_prefix": "research/21-repo2rlenv/2026-10-18/ffe05373d49745c99d1596bf8167b4b7b6c85b5ccb92b11ebcb73fee605c3245",
+    "independent_audit": "commit-marin-paired-01/independent-audit.json",
+    "raw_grade_audit": "commit-marin-paired-01/raw-grade-audit.json"
+  },
+  "unchanged_SWE_gen_schema_profile": {
+    "native_task": "swe-gen-d52d9d8d8c952c886adb",
+    "TaskSpec_id": "repo2rlenv-swe-gen/9217f0a1c5bc86bd502530b26f3d9feebafa9a89ab7f7946f03a9c9d8547a1a5",
+    "stage": "schema_only_inline_bytes_and_modes_verified_unresolved_builds_rejected",
+    "schema_source": "swe-gen-marin-schema-01/schema-result.json",
+    "native_Marin_pairs_executed": 0,
+    "native_task_assets_changed": false,
+    "environment_verifier_structure": "Existing separate learner/verifier source-context and binary pytest structure; exact new source profile has no paired Marin execution.",
+    "artifact_prefix": "research/21-repo2rlenv/2026-10-18/39fb2e60fb8095cc64477a26829b975fce4b2ec562108649fc9813228b8a0314",
+    "Atlas_admitted": false
+  },
+  "counting_note": "Eight continuation schema profiles: three original PR mappings, three explicit-license-file transport variants, one commit mapping and one unchanged SWE-gen mapping. Five have runtime pairs: original PR2630, three license-file variants and commit. Original Biopython mapping failures and the new schema-only SWE-gen remain separate; first-pass structure evidence is not included in these counts.",
+  "reconciliation_sources": {
+    "commit-marin-paired-01/independent-audit.json": "dcc1d71d8dd00fba274997b3521323d89bfcf0e097fe4c53853b4fc03a74817b",
+    "commit-marin-paired-01/raw-grade-audit.json": "d161423727eb656fd891361aee8ba7bc0c6b60771f79a4a6b1eacef65146a47d",
+    "pr-marin-biopython-transport-01/independent-audit.json": "4535eb169551994eb490aeb26d5ce84fd1c51e1bd8b7b7d416a6713699726932",
+    "swe-gen-marin-schema-01/schema-result.json": "f5abbe0546bfaeacd350b07bc6e4dd77637bd1b828194e91a2f1b5f905ca7125"
   }
 }

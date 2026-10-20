@@ -1,0 +1,63 @@
+{
+  "stage": "prepared_remaining_allowance_full_native_batch_not_dispatched",
+  "cohort": "dataarc-automatic-20261020-04",
+  "required_controller_and_sandbox_slots": 2,
+  "controller": "existing_free_reserved_TRC_CPU",
+  "sandbox": {
+    "cpu": 2,
+    "memory_gib": 4,
+    "disk_gib": 10
+  },
+  "GLM": "existing_free_endpoint_via_separate_finite_inference_only_client",
+  "model_output_tokens": 131072,
+  "requested_effort": "medium",
+  "model_request_timeout_sec": 1200,
+  "maximum_run_seconds": 6900,
+  "native_repairs": 2,
+  "external_task_feedback": false,
+  "post_failure_runtime_fixes": false,
+  "candidate_limit": 7,
+  "prior_charged_candidates": 3,
+  "campaign_candidate_cap": 10,
+  "campaign_target": 3,
+  "native_source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "source_sha256": "7e387fbb04d5374964de37a31b63e6cabc310198703213c6a40bf8d5c6dd4755",
+  "files": {
+    "run_dataarc_automatic_trc.py": {
+      "bytes": 4740,
+      "sha256": "132e6636b159bf16b2b6e0e1a796e50cf2a78b7d008167b3eb497f2aa763aec5"
+    },
+    "run_dataarc_build.py": {
+      "bytes": 6886,
+      "sha256": "6dd4e3a5209203c614e5cc6d494c3732790b03550c4d2787d80946bbdf105b6d"
+    },
+    "build_dataarc.py": {
+      "bytes": 4819,
+      "sha256": "779955f94115d169044cdc25b501d05ced7953e78c4fe44a5b534fa167c7c1f2"
+    },
+    "glm_authoring_adapter.py": {
+      "bytes": 4137,
+      "sha256": "5f4576b87baad03f43cee1208e5a4e403142555413da6ee74f41154118784e1f"
+    },
+    "preserve_author_output.py": {
+      "bytes": 2190,
+      "sha256": "c664a5da11b1b962fa78691af36c1bfb490aea9cc5a5f44b28cf0c919b2919bd"
+    },
+    "glm-generation-adaptation.json": {
+      "bytes": 597,
+      "sha256": "682d4054fba546d67697c0d4985fc1c5af8ab5aa54c18fc40033678dc5d081ba"
+    },
+    "package_provider_task.py": {
+      "bytes": 2312,
+      "sha256": "ae1b073dc5f33dd8f090fe7e00bfdef08a71d4bd18f7f19798979e6c891f40a7"
+    },
+    "parent-manifest.json": {
+      "bytes": 6181,
+      "sha256": "66310fa04d50555a3e04788c15e2c43989fbe82e2330ac80ca6e6bac6418813e"
+    }
+  },
+  "assessment": "After full native pipeline finishes; report unchanged outputs or failure without task-specific revisions.",
+  "transport_profile": "pending_long_delivery_diagnostic_no_new_generation_client",
+  "dispatch_gate": "Native input/receipt reconciliation plus verified long delivery, protected existing free GLM transport, resource slots and checkpoint required; this preparation launches nothing or charges no candidate.",
+  "selection_policy": "Native excludes the three consumed hashes, then shuffles the original remaining pool with seed24. At most seven candidate iterations, stop at native target3 or deadline. Charge actual attempted inputs, not offline preparation."
+}

@@ -80,6 +80,28 @@ def build():
                 assert row.get('active_blind_job_id') and task['native_reward'] is None
             if task['native_reward'] is not None:
                 assert task['blind_attempts'] == 1
+                # Earlier reports use both experiment-relative and
+                # continuation-relative paths. Canonicalize and read the
+                # actual independent score evidence rather than trusting a
+                # copied scalar in the living admission record.
+                source = task['solver_source']
+                assert source, 'Scored continuation task requires audit evidence'
+                candidates = {(base / source).resolve() for base in (ROOT, HERE)
+                              if (base / source).is_file()}
+                assert len(candidates) == 1, source
+                task['solver_source'] = str(candidates.pop().relative_to(ROOT))
+                audit = read(task['solver_source'])
+                matches = [item for item in audit.get('records', [audit])
+                           if item['task_id'] == task['task_id']]
+                assert len(matches) == 1
+                proof = matches[0]
+                actual_reward = (proof['blind_grade']['reward'] if 'blind_grade' in proof
+                                 else proof['blind_reward'])
+                assert proof['blind_attempts'] == 1 and actual_reward == task['native_reward']
+                assert proof['admitted_asset_manifest_sha256'] == row['portable_asset_manifest_sha256']
+                if 'blind_task_checksum' in row:
+                    assert proof['task_checksum'] == row['blind_task_checksum']
+                task['blind_task_checksum'] = proof['task_checksum']
             tasks.append(task)
     assert len({(x['unit_id'], x['task_id']) for x in tasks}) == len(tasks)
     for unit in tracker['rows']:
