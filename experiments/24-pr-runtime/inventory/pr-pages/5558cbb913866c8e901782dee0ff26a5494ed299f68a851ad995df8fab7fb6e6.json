@@ -1,0 +1,989 @@
+{
+  "query_sha256": "5558cbb913866c8e901782dee0ff26a5494ed299f68a851ad995df8fab7fb6e6",
+  "query": "repo:samtools/samtools is:pr is:merged merged:2025-10-20..2026-10-19",
+  "cursor": null,
+  "captured_at": "2026-10-20T14:36:59.749565+00:00",
+  "response": {
+    "data": {
+      "search": {
+        "issueCount": 69,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "Y3Vyc29yOjY5"
+        },
+        "nodes": [
+          {
+            "number": 2404,
+            "url": "https://github.com/samtools/samtools/pull/2404",
+            "title": "Small markdup Refactor",
+            "body": "A little more refactoring that did not get included in the last one.",
+            "mergedAt": "2026-10-15T15:51:23Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "2d2761a9fcdcaa46bab15b05e0f9859f8e340480",
+            "headRefOid": "7c45422ba6754407521a7f46b7b3217b4c0b3bdb",
+            "mergeCommit": {
+              "oid": "1b7899d95994a200ed71ddf3d8188d778a611e7b"
+            }
+          },
+          {
+            "number": 2403,
+            "url": "https://github.com/samtools/samtools/pull/2403",
+            "title": "Distinguish failure from EOF in cram_cat()",
+            "body": "`cram_read_container()` returns `NULL` for both EOF and errors, so it's necessary to call `cram_eof()` to tell them apart.\n\nAlso adds checks for errors from `cram_filter_container()` and `cram_transcode_rg()` so failures in these functions do not go unnoticed. (Note that while `cram_filter_container()` is [documented](https://github.com/samtools/htslib/blob/054ba580ae95178a2092225ea04a659d933ce41c/htslib/cram.h#L341) as returning -1 on EOF and -2 for errors, it looks like it will actually [return -1 for various error conditions](https://github.com/samtools/htslib/blob/054ba580ae95178a2092225ea04a659d933ce41c/cram/cram_external.c#L882).  This shouldn't be a problem as we don't expect to see EOFs at the point where `cram_filter_container()` is called, and if there is one it was probably a truncated file.)\n\n\nFixes #2401\n",
+            "mergedAt": "2026-10-13T08:22:13Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "75c906ace90b7fb1a276f65b2ea8cc743df04d15",
+            "headRefOid": "25d3e37e7881466c4635f05393ca6b9c10aa30ad",
+            "mergeCommit": {
+              "oid": "2d2761a9fcdcaa46bab15b05e0f9859f8e340480"
+            }
+          },
+          {
+            "number": 2400,
+            "url": "https://github.com/samtools/samtools/pull/2400",
+            "title": "markdup `-d`: incorrect optical calls across tiles with mixed prefix lengths",
+            "body": "I found a bug in function `check_duplicate_chain`\n(bam_markdup.c#L1285-L1401 in 75c906ac) in which the grouping of name\nprefixes in the optical check ends only on an equal-length, different\nprefix in read-encoded flow cell information. The result is erroneous\nmarking of reads on different tiles as optical duplicates (as they\u2019re\ncompared by x/y only).\n\nThe bug is triggered by (1) flow cell tile numbers with different\ndigit counts and (2) names that can\u2019t be parsed, leaving fields unset.\n(It\u2019s something I tested out of caution and is probably unexpected in\ndata unless sequencing runs were merged and/or reads renamed.)\n\nThis fix (1) ends a group when the prefix lengths differ; (2) marks\nunparsed names as -1, preventing their comparison (as a valid parse\nwith no tile part has length 0, hence -1); and (3) calls `memcmp` on\nonly positive lengths.\n\nI\u2019ve added a new test 22 with three sets: (1) unparsed name, (2) mixed\ntile lengths, and (3) same-tile control.\n\nFixes #2399.\n\nAssisted-by: Claude:claude-opus-5-5\nSigned-off-by: Kris Alavattam <34422552+kalavattam@users.noreply.github.com>\n",
+            "mergedAt": "2026-10-12T14:20:59Z",
+            "isDraft": false,
+            "changedFiles": 4,
+            "baseRefOid": "75c906ace90b7fb1a276f65b2ea8cc743df04d15",
+            "headRefOid": "0d9567649e2a6ebeeef609293eb746f398b1b6bb",
+            "mergeCommit": {
+              "oid": "538f060609601e72d351795d8718f22f9bfe5404"
+            }
+          },
+          {
+            "number": 2395,
+            "url": "https://github.com/samtools/samtools/pull/2395",
+            "title": "Make samtools import accept empty FASTQ input",
+            "body": "In the rare, but occasional situation where a sequencing library failed or yielded no reads, I'd like to make samtools and other tools more graceful in consuming that data instead of aborting and causing my pipeline to crash.\r\n\r\nWhen `samtools import` is given empty inputs, it aborrts with \"truncated file. Aborting\" and exit status 1. This happens if the input is a file or on stdin and in every input mode (`-s`, `-0`, `-1`/`-2`, `--i1`/`--i2`, positional).\r\n\r\nI think an empty FASTQ is a legitimate input (e.g. upstream step that filters reads,  empty sequencing run, etc.).\r\n\r\nAnd, for comparison and justification sake, `samtools fastq` itself writes an empty output for a header-only file.\r\n\r\nThis exception happens because HTSlib detects zero-length input as `empty_format`, and `sam_read1()` deliberately returns `-3`, so a failing command piped into `samtools view` is reported as an error.\r\n\r\nWith this PR, the subcommand `import` now treats this case as end of file once `hts_getline()` confirms the stream is empty, and writes a header-only file with the same `@HD`, `@CO`, `@RG` and `@PG` lines that the non-empty case gets. The extra check matters because a gzip file truncated before its first decompressed byte is also detected as `empty_format`; it still fails as before. Tests cover an empty `-s` file and stdin, empty `-1`/`-2` files, `-r`/`-R` read groups in the empty output's header, and a truncated gzip that must still fail.",
+            "mergedAt": "2026-10-14T13:44:44Z",
+            "isDraft": false,
+            "changedFiles": 8,
+            "baseRefOid": "3ee15a3cf9a1d91cb43ff783ad3f266acba5267c",
+            "headRefOid": "43ab355174d916f4cd56cd093bf7d482de47bc94",
+            "mergeCommit": {
+              "oid": "32da608039ff910645d11e30b0f9315f82ab5b19"
+            }
+          },
+          {
+            "number": 2394,
+            "url": "https://github.com/samtools/samtools/pull/2394",
+            "title": "bamshuf.c check n_files>0",
+            "body": "Hi, just a small PR  in bamshuf.c to verify that n_files>0\r\n\r\nshort story : I used `-no-PG`  instead of `--no-PG` and it took me a day to understand why I got an \"arithmetic error : division by zero\" :-P\r\n\r\nP.",
+            "mergedAt": "2026-10-08T11:22:27Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "dfcb27e06d6d5113f47df8b77df679dc2f1b8efe",
+            "headRefOid": "9f52226fe1625ddbbc83e7d6ec57822c7861492a",
+            "mergeCommit": {
+              "oid": "75c906ace90b7fb1a276f65b2ea8cc743df04d15"
+            }
+          },
+          {
+            "number": 2393,
+            "url": "https://github.com/samtools/samtools/pull/2393",
+            "title": "Make phase and targetcut work with records where seq is '*'",
+            "body": "Ignore records which have no seq entry, but still have a CIGAR string.  It's impossible to get sequence and quality data for these, so there's no point in trying to process them.\r\n\r\nAlso make targetcut reject files where the sequence alignments extend beyond the reference length in the header, and fix some assumptions that memory is infinite.  The signature of `gencns()` is changed so it can report failures to its caller.\r\n\r\nFixes #2390",
+            "mergedAt": "2026-10-02T15:33:29Z",
+            "isDraft": false,
+            "changedFiles": 3,
+            "baseRefOid": "ae87484212b3e3db7ea279995fd231f5c5b4a0cc",
+            "headRefOid": "479415451e073d02f0eee6a1da53208be8c32d12",
+            "mergeCommit": {
+              "oid": "3ee15a3cf9a1d91cb43ff783ad3f266acba5267c"
+            }
+          },
+          {
+            "number": 2388,
+            "url": "https://github.com/samtools/samtools/pull/2388",
+            "title": "stats: count duplicates for the same records as \"sequences\"; include isize 0 in the SD",
+            "body": "Fixes #696.\r\n\r\nTwo small corrections to `samtools stats` SN numbers, one commit each, both in `stats.c`,\r\neach with a regression test that fails on `develop`.\r\n\r\n**Duplicate counts** (99c2244). `reads duplicated` and `bases duplicated` were accumulated\r\nbefore the `IS_ORIGINAL()` gate in `collect_stats()`, so secondary and supplementary\r\nrecords carrying the 0x400 flag were counted, while `sequences` and `total length` exclude\r\nthose records. A duplication rate formed from the two lines (MultiQC's samtools stats\r\nmodule does this) was overstated once the supplementary records of duplicates were\r\nflagged, which is what `samtools markdup -S` and Picard MarkDuplicates produce. This is\r\nthe move suggested in #696: the counting now happens inside the `IS_ORIGINAL()` block,\r\nnext to the read length counts, so the two pairs of lines refer to the same records. On\r\n`test/stat/22_dup_supp.sam` (20 reads, 8 duplicates, 4 supplementary records belonging to\r\nduplicate pairs) `develop` reports `reads duplicated: 10` and `bases duplicated: 860`\r\nagainst `sequences: 20`; this branch reports 8 and 800. `flagstat` already distinguishes\r\n`duplicates` from `primary duplicates`; `stats` had no such pair.\r\n\r\n**Insert size standard deviation** (723af0e). The SD loop in `output_stats()` started at\r\n`isize = 1`, while the mean and the count over the same bins started at 0, so pairs\r\nreported with TLEN 0 entered the denominator but not the sum of squares and lowered the\r\nSD instead of raising it. The loop now starts at 0, like the two loops before it. On\r\n`test/stat/23_isize_zero.sam` (10 pairs, two with TLEN 0, the rest 300 to 360) `develop`\r\nreports an SD of 60.1 against a mean of 259.0; the correct value for that mean is 130.5.\r\nWhether the isize 0 bin belongs in these statistics at all is a separate question; this\r\nchange only makes the SD consistent with the mean printed next to it. Happy to drop this\r\ncommit if you would rather take it separately.\r\n\r\nTests: two new `test_cmd` entries in `test/test.pl` compare the SN lines named above; both\r\nfail on unmodified `develop` (de749a6) and pass with this branch. `perl test/test.pl`:\r\n1011 passed, 0 failed, 32 expected failures; `make test` passes. NEWS entries included\r\nunder \"Bug fixes\".\r\n\r\nAssisted-by: Claude:claude-fable-5-1\r\n\r\nFound in Mytochondria, a volunteer project that checks the numerical core of research software and verifies every finding by execution (methods and harnesses: https://github.com/cindykrafft/mytochondria/tree/main/audits/samtools)\r\n\r\n---\r\n_Generated by [Claude Code](https://claude.ai/code)_",
+            "mergedAt": "2026-10-14T13:52:52Z",
+            "isDraft": false,
+            "changedFiles": 8,
+            "baseRefOid": "dfcb27e06d6d5113f47df8b77df679dc2f1b8efe",
+            "headRefOid": "96b359bc40d204bda43b8d716c51e318bb9a76c8",
+            "mergeCommit": {
+              "oid": "861e2d449175ceef6fff91ccae7b846bdbf99ca2"
+            }
+          },
+          {
+            "number": 2387,
+            "url": "https://github.com/samtools/samtools/pull/2387",
+            "title": "Relax the --barcode-name regex.",
+            "body": "The **--barcode-name** regex would only accept numbers and letters in the places between colons.  This change allows anything but colons in the read name sections.\r\n\r\nFixes #2385.",
+            "mergedAt": "2026-10-01T10:59:07Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "664e3b5098a12bd5faca637fdc111ba90c21e135",
+            "headRefOid": "a6fb3551e539ca189f480fe48826150bdc1c516e",
+            "mergeCommit": {
+              "oid": "dfcb27e06d6d5113f47df8b77df679dc2f1b8efe"
+            }
+          },
+          {
+            "number": 2386,
+            "url": "https://github.com/samtools/samtools/pull/2386",
+            "title": "Update values in embed_ref and multi_seq_per_slice options",
+            "body": "",
+            "mergedAt": "2026-09-28T08:13:06Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "664e3b5098a12bd5faca637fdc111ba90c21e135",
+            "headRefOid": "33eb38cd4227c6932ae71cd9edfdd1850d0f3365",
+            "mergeCommit": {
+              "oid": "ae87484212b3e3db7ea279995fd231f5c5b4a0cc"
+            }
+          },
+          {
+            "number": 2382,
+            "url": "https://github.com/samtools/samtools/pull/2382",
+            "title": "Fix --move-umi-to-tag",
+            "body": "Moved one of the move umi bits of code to the right place.\r\n\r\nAlso removed a superfluous duplicate count update.\r\n\r\nFixes #2380.",
+            "mergedAt": "2026-09-22T09:03:17Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "614ccf58b422d34878dc88a450b04ea8ce6359f5",
+            "headRefOid": "45e98f1c03054e0600878170834d83215d1d208d",
+            "mergeCommit": {
+              "oid": "f3778deff59f97a382e4a1cbff170500d4a039b2"
+            }
+          },
+          {
+            "number": 2381,
+            "url": "https://github.com/samtools/samtools/pull/2381",
+            "title": "Switch containers to ones built by samtools/c-maint",
+            "body": "Containers `ghcr.io/samtools/*-for-htslib-ci:latest` include the dependencies needed to build HTSlib, SAMtools and BCFtools. They are also tested to ensure that they can build the latest release.\r\n\r\nThis removes the need to install packages on each CI build, reducing the load on upstream repositories, and making it less likely that builds will fail for reasons unrelated to the code changes that are being tested.",
+            "mergedAt": "2026-09-10T14:38:10Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "7cea289fe3eac39562ea28c18c0b0f7178ecff32",
+            "headRefOid": "62f08f6d7894784a0f9c74e093f0231c6e6639b5",
+            "mergeCommit": {
+              "oid": "614ccf58b422d34878dc88a450b04ea8ce6359f5"
+            }
+          },
+          {
+            "number": 2379,
+            "url": "https://github.com/samtools/samtools/pull/2379",
+            "title": "stats: grow the coverage ring buffer instead of wrapping around",
+            "body": "Fixes #2378.\r\n\r\n`samtools stats` accumulates the coverage distribution (`COV` rows and the `-t`/`-g`\r\ntarget percentage) in a ring buffer of `5 \u00d7 nbases` cells indexed modulo its size\r\nrelative to the current read start. An aligned block ending more than that beyond the\r\nread start \u2014 the far exon of a spliced alignment \u2014 wrapped around onto positions near\r\nthe read start. With 100-bp reads any intron longer than about 1.4 kb triggers it; on a\r\nsimulated six-exon gene the covered-position count was 18 % too high and the `-t`/`-g`\r\npercentage was reported as 117.77 %.\r\n\r\nThis makes `round_buffer_insert_read()` grow the buffer (doubling, linearising the\r\npending counts) whenever a block would reach beyond it, through a new\r\n`round_buffer_resize()`. The same helper replaces the copy in `realloc_buffers()`, which\r\npassed element counts to `memcpy()` where byte counts were needed and dropped three\r\nquarters of the pending counts whenever a longer read arrived while coverage was pending\r\nnear the end of the ring (mixed-length or long-read input).\r\n\r\nMemory: the buffer now grows to the longest span between a read start and the end of\r\none of its blocks, so a 1-Mb intron costs 4 MB of `int`s; previously the size was fixed\r\nat `5 \u00d7 nbases`. A cap with a warning could be added if that is a concern.\r\n\r\nTests: `test/stat/20_spliced.sam` (the two-read wrap case) and\r\n`test/stat/21_mixed_lengths.sam` (the reallocation case), compared on their `COV` rows;\r\nboth fail on unmodified `develop` and pass with this change. `make test` otherwise\r\nunchanged (numbers in the audit's `upstream/README.md`).\r\n\r\nNEWS entry included under \"Bug fixes\".\r\n\r\nAssisted-by: Claude:claude-fable-5-1",
+            "mergedAt": "2026-09-24T15:35:20Z",
+            "isDraft": false,
+            "changedFiles": 7,
+            "baseRefOid": "7cea289fe3eac39562ea28c18c0b0f7178ecff32",
+            "headRefOid": "43069a12643a64dae141e27341cc91fd8d8c405b",
+            "mergeCommit": {
+              "oid": "de749a608d004aa779e1d010669412e8f3308d08"
+            }
+          },
+          {
+            "number": 2376,
+            "url": "https://github.com/samtools/samtools/pull/2376",
+            "title": "Markdup Refactor",
+            "body": "A lot of the work being done in markdup was in one function that was far too big.  This PR breaks that function down into smaller functions.  There should be no change in output or speed.",
+            "mergedAt": "2026-09-04T14:15:31Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "ce612d22973a9e0a001eaa393acdd4ecfed87e1d",
+            "headRefOid": "97ca9705bf146673c5bb96903e581098ce9902ef",
+            "mergeCommit": {
+              "oid": "257e6d10e6818b288a333b3234b78394409d773d"
+            }
+          },
+          {
+            "number": 2373,
+            "url": "https://github.com/samtools/samtools/pull/2373",
+            "title": "Add error checking to bam_smpl_* functions",
+            "body": "Be less optimistic about memory allocations working.\r\n\r\nTry to avoid memory leaks and inconsistent structures when cleaning up after errors.",
+            "mergedAt": "2026-09-04T16:55:04Z",
+            "isDraft": false,
+            "changedFiles": 2,
+            "baseRefOid": "0cdcd58544fb0240a27575df5b98c2aef8b2e033",
+            "headRefOid": "727710b3dce62170716a2b99fe25d82ed9d281bf",
+            "mergeCommit": {
+              "oid": "2d4158337c63cdfe7a84dea848a732c72d701c4f"
+            }
+          },
+          {
+            "number": 2372,
+            "url": "https://github.com/samtools/samtools/pull/2372",
+            "title": "Fix memory leaks when samtools view CLI bails.",
+            "body": "Minimal impact.  It's just a \"nice to have\" thing to enable fuzz detection of memory leaks in actual running code.",
+            "mergedAt": "2026-08-21T14:15:00Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "0cdcd58544fb0240a27575df5b98c2aef8b2e033",
+            "headRefOid": "9b286f69facaf0443ef92a15a07cf463d29cdd05",
+            "mergeCommit": {
+              "oid": "9b286f69facaf0443ef92a15a07cf463d29cdd05"
+            }
+          },
+          {
+            "number": 2371,
+            "url": "https://github.com/samtools/samtools/pull/2371",
+            "title": "Improve memory handling when building translation tables for merge",
+            "body": "Check that hash table insertions and kstring functions worked.\r\n\r\nEnsure pointer ownership is transferred correctly when setting hash table keys.\r\n\r\nClean up kstrings on failure to avoid leaking them.",
+            "mergedAt": "2026-09-08T09:27:50Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "0cdcd58544fb0240a27575df5b98c2aef8b2e033",
+            "headRefOid": "b7d1dc321f48b966ed29942aaf3146575c09d986",
+            "mergeCommit": {
+              "oid": "7cea289fe3eac39562ea28c18c0b0f7178ecff32"
+            }
+          },
+          {
+            "number": 2370,
+            "url": "https://github.com/samtools/samtools/pull/2370",
+            "title": "Improve error checking in samtools phase",
+            "body": "Be less optimistic about memory allocations working.\r\n\r\nCheck for `ks_getuntil()` failure in `loadpos()`.\r\n\r\nEnsure errors are propagated by callers.\r\n\r\nTry to leak less memory when dealing with errors.\r\n\r\nWhile `phase` is mostly unsupported, it's probably a good idea to fix the more obvious problems with it given that bug fixing is now fashionable.",
+            "mergedAt": "2026-08-27T11:34:38Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "9b286f69facaf0443ef92a15a07cf463d29cdd05",
+            "headRefOid": "f9bba8293525330601d070b2c57d0789dc4a8cfa",
+            "mergeCommit": {
+              "oid": "a1cde924feb3cde7efc5f70e94232366cab97a11"
+            }
+          },
+          {
+            "number": 2369,
+            "url": "https://github.com/samtools/samtools/pull/2369",
+            "title": "Improve error reporting in samtools dict",
+            "body": "Be less optimistic about memory allocations working.\r\n\r\nChange `args` in `dict_main()` to be on the stack so it is automatically cleaned up on exit, and make pointers to command-line arguments const.\r\n\r\nKeep the return value from `hts_getline()` so that it's possible to tell if it reported a file read error.\r\n\r\nCheck `ferror()` on the output so at least some write errors can be detected.\r\n\r\nPropagate errors up to `main()` via function return values instead of relying on `exit()` to bail out when things go wrong.",
+            "mergedAt": "2026-08-27T13:27:30Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "77b2b96e3ca65393d84000730e22e9d926f2ebe9",
+            "headRefOid": "8270634ae45a44c41b2584b6b35478ca509c5f4f",
+            "mergeCommit": {
+              "oid": "ce612d22973a9e0a001eaa393acdd4ecfed87e1d"
+            }
+          },
+          {
+            "number": 2368,
+            "url": "https://github.com/samtools/samtools/pull/2368",
+            "title": "Improve checks around khash insertions",
+            "body": "Add checks to ensure entries have been correctly inserted into hash tables.  Ensure that an error is reported in some way if not, and where necessary that any data structures are tidied up so they are not left in a half-constructed state and memory leaks are prevented.",
+            "mergedAt": "2026-08-27T11:30:30Z",
+            "isDraft": false,
+            "changedFiles": 8,
+            "baseRefOid": "77b2b96e3ca65393d84000730e22e9d926f2ebe9",
+            "headRefOid": "8c325ebc5faf56338beebddfc777b97c42df6858",
+            "mergeCommit": {
+              "oid": "4eda397ef5272900803622ec4b979deceecd4a14"
+            }
+          },
+          {
+            "number": 2367,
+            "url": "https://github.com/samtools/samtools/pull/2367",
+            "title": "Spelling corrections [minor]",
+            "body": "Mostly in comments, but a few in strings that may be displayed to the user.",
+            "mergedAt": "2026-08-19T14:23:20Z",
+            "isDraft": false,
+            "changedFiles": 23,
+            "baseRefOid": "bd8b5dc8ade12e575ff2f02e8c0b7e384848a328",
+            "headRefOid": "addf62c640a5fe03b562ff4c68f251e2f45153c3",
+            "mergeCommit": {
+              "oid": "0cdcd58544fb0240a27575df5b98c2aef8b2e033"
+            }
+          },
+          {
+            "number": 2366,
+            "url": "https://github.com/samtools/samtools/pull/2366",
+            "title": "Check string aux tag types before accessing data",
+            "body": "Following 681b50ea, add more checks on aux tag types to ensure that the stored data is a NUL-terminated string before accessing it.\r\n\r\nIn most cases tags with unexpected types are simply ignored as if they don't exist.  An exception is samtools stats, which already reports an error if the tag it expects to split on is not present, so now it also does if the tag has the wrong type. The stats code is also made more efficient so that it doesn't try to `strdup()` the tag value unless it needs to add a new hash entry.\r\n\r\nThe stats man page is updated to note that the tag used for the `-S` option must have a string type.",
+            "mergedAt": "2026-08-18T14:17:34Z",
+            "isDraft": false,
+            "changedFiles": 11,
+            "baseRefOid": "bd8b5dc8ade12e575ff2f02e8c0b7e384848a328",
+            "headRefOid": "c78fc6f01166cb45e18718c581941ddaf4019a0f",
+            "mergeCommit": {
+              "oid": "77b2b96e3ca65393d84000730e22e9d926f2ebe9"
+            }
+          },
+          {
+            "number": 2365,
+            "url": "https://github.com/samtools/samtools/pull/2365",
+            "title": "Move checksum version to 2.0",
+            "body": "Checksum calculations differed between samtools v1.24 and previous\r\nreleases.  In earlier releases, the \"--check-mate\" option produced incorrect\r\nchecksums.  This was fixed in v1.24 but made already existing checksums\r\ninvalid.\r\n\r\nTherefore, the fixed checksum is now designated Checksum 2.0 while the\r\nprevious one is left at Checksum 1.0 in order differentiate the versions.\r\n\r\nA new \"--version-1\" option will set samtools checksum to version 1.0\r\nbehaviour for backwards compatibility.\r\n\r\nShould fix https://github.com/samtools/samtools/issues/2354.",
+            "mergedAt": "2026-09-22T09:04:32Z",
+            "isDraft": false,
+            "changedFiles": 11,
+            "baseRefOid": "614ccf58b422d34878dc88a450b04ea8ce6359f5",
+            "headRefOid": "9380eff51e690c05fe049e415079914381cb0543",
+            "mergeCommit": {
+              "oid": "664e3b5098a12bd5faca637fdc111ba90c21e135"
+            }
+          },
+          {
+            "number": 2364,
+            "url": "https://github.com/samtools/samtools/pull/2364",
+            "title": "Fix reuse-after-free in bam_plcmd ref cache",
+            "body": "The ref cache tracked 3 references: current, last, and next. It has an implicit assumption that we're never going to be querying more than 3 so it has room for exactly 3 slots.  However some scenarios, both in bam_mplp_auto/next and in the mpileup function logic, causes skipping ahead of multiple references and invalidating the current or last reference.\r\n\r\nWe still keep to 3 slots, but we make fewer assumptions of ref always being valid and call mplp_get_ref more frequently.  To ensure this isn't a CPU burden it now explicitly tracks current reference id (curr_tid) and ensures that's always slot 0 so the most common case is never expunged and re-fetched too often.\r\n\r\nFixes #2363",
+            "mergedAt": "2026-08-17T10:30:23Z",
+            "isDraft": false,
+            "changedFiles": 10,
+            "baseRefOid": "217dffe79c63f105a57dceb18d59a0b65f2496d1",
+            "headRefOid": "c7f2d53c28e2340f1ecd3ea78ccb24d460b699e2",
+            "mergeCommit": {
+              "oid": "bd8b5dc8ade12e575ff2f02e8c0b7e384848a328"
+            }
+          },
+          {
+            "number": 2362,
+            "url": "https://github.com/samtools/samtools/pull/2362",
+            "title": "Add --norc --noprofile to bash invocations in test.pl",
+            "body": "One test.pl occurrence managed to get stuck on a cmd(\"cp ...\") call due to it being exanded up to a \"cp -i\" from my .bashrc.  This isn't reproducible and I do not understand the scenario that triggered it, however we may get more robust behaviour and faster testing by explicitly asking to avoid these configuration files.",
+            "mergedAt": "2026-08-13T13:07:18Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "454688770cc8d09d4ff36046ebdd24f043f503e1",
+            "headRefOid": "d0afe9ad9388f932c5706a2c207c2ddc58513364",
+            "mergeCommit": {
+              "oid": "328f3e5808374876b4bc8efb2ab2fc28897f2207"
+            }
+          },
+          {
+            "number": 2361,
+            "url": "https://github.com/samtools/samtools/pull/2361",
+            "title": "Remove the meme of strdup(optarg) in CLI parsing",
+            "body": "There are many pointless strdups, which can lead to minor memory leaks in the case of duplicate arguments or in error handling.\r\n\r\n    samtools view -o a.bam -o a.bam b.bam\r\n\r\nThere are more strdups around, plus definitely cases of broken tidyups on error (I found many in phase.c), but this PR is focused on basic CLI.",
+            "mergedAt": "2026-08-13T14:07:53Z",
+            "isDraft": false,
+            "changedFiles": 7,
+            "baseRefOid": "454688770cc8d09d4ff36046ebdd24f043f503e1",
+            "headRefOid": "abc87ac4807207a5cbf32ea278c8bfb447f2ebe4",
+            "mergeCommit": {
+              "oid": "2d2f8688218240684ac6bb3659fbb3db4c3e8827"
+            }
+          },
+          {
+            "number": 2358,
+            "url": "https://github.com/samtools/samtools/pull/2358",
+            "title": "Make samtools view --unmap and --unoutput work together",
+            "body": "Unmap turns data that does not pass the filtered into unmapped data, but also changes it to go the normal output stream.\r\n\r\nUnoutput redirects data that doesn't pass the filter to go to its own file.\r\n\r\nAs previously rewitten, unoutput didn't do what it was advertised to do and instead operated on records-not-written rather than records-filtered, so the combination (if permitted) would result in an empty file.  It now does the logical thing, and as advertised in the usage statement based on filtering rather than whether appearing in the output stream.\r\n\r\nFixes #2356",
+            "mergedAt": "2026-08-10T11:36:17Z",
+            "isDraft": false,
+            "changedFiles": 4,
+            "baseRefOid": "454688770cc8d09d4ff36046ebdd24f043f503e1",
+            "headRefOid": "f8ef5e3e5187a53860ab879556f73e7b2f58121e",
+            "mergeCommit": {
+              "oid": "217dffe79c63f105a57dceb18d59a0b65f2496d1"
+            }
+          },
+          {
+            "number": 2357,
+            "url": "https://github.com/samtools/samtools/pull/2357",
+            "title": "Strip UR tags from header SQ lines",
+            "body": "The new `--remove-ur` option will delete all the UR tags from SQ lines in the header. This commit depends https://github.com/samtools/htslib/pull/2056.  This should fix #2327.",
+            "mergedAt": "2026-08-03T08:52:45Z",
+            "isDraft": false,
+            "changedFiles": 4,
+            "baseRefOid": "f60e7b82274958eefbd5c94c6c72f5789f93ff53",
+            "headRefOid": "82b75a0c995e06da493709ceda3faee3bf7eff39",
+            "mergeCommit": {
+              "oid": "38482aaabdc5845e958e06d7d27d91f63f556259"
+            }
+          },
+          {
+            "number": 2353,
+            "url": "https://github.com/samtools/samtools/pull/2353",
+            "title": "Add more CI targets",
+            "body": "Adds container-build.yml for various containers and machine images (other linux releases), and vm-build.yml for freebsd, openbsd and opensolaris.\r\n",
+            "mergedAt": "2026-08-04T09:23:40Z",
+            "isDraft": false,
+            "changedFiles": 12,
+            "baseRefOid": "f60e7b82274958eefbd5c94c6c72f5789f93ff53",
+            "headRefOid": "a48ae96244e036d071e4711c9b2f7124691b30d0",
+            "mergeCommit": {
+              "oid": "454688770cc8d09d4ff36046ebdd24f043f503e1"
+            }
+          },
+          {
+            "number": 2351,
+            "url": "https://github.com/samtools/samtools/pull/2351",
+            "title": "Add mpileup --output-extra ENDPOS",
+            "body": "Combined with POS, this gives the left and right extents on the reference for this alignment, meaning we can observe how close to either end this pileup base is.\r\n\r\nFixes #2343",
+            "mergedAt": "2026-07-28T16:03:56Z",
+            "isDraft": false,
+            "changedFiles": 4,
+            "baseRefOid": "755f70f57cfe8c7211f1b5431fccbf972011a417",
+            "headRefOid": "c931884665f859bce4c68d91428e03d2c9fd32f6",
+            "mergeCommit": {
+              "oid": "f60e7b82274958eefbd5c94c6c72f5789f93ff53"
+            }
+          },
+          {
+            "number": 2350,
+            "url": "https://github.com/samtools/samtools/pull/2350",
+            "title": "Add shared helper for samtools @PG lines; fix reset/rmdup provenance",
+            "body": "## Summary\n\nConsolidates the duplicated `@PG`-adding code into one shared helper and fixes two subcommands whose `@PG` records were incomplete or missing.\n\n## What changed\n\n**Shared helper.** Every subcommand that writes an alignment file called `sam_hdr_add_pg()` directly with a near-identical block. Those copies are replaced by `samtools_add_pg_line()` (declared in `samtools.h`, implemented in `sam_opts.c`, which is already linked into every subcommand and into `libst.a`). It also folds in the `--no-PG` check, so callers pass their opt-out flag through instead of repeating the condition.\n\n**HTSlib version in `VN`.** When the HTSlib version cannot be deduced from the SAMtools version it is appended to `VN`, e.g. `VN:1.24.1 (with HTSlib 1.25)`. Since the two are released together with matching major and minor version numbers, **`VN` is unchanged in the usual case** and no expected test outputs move.\n\n**Provenance fixes.**\n- `reset` wrote a `@PG` line with a command line but no `VN`, unlike every other subcommand. Fixed.\n- `rmdup`/`rmdupse` wrote no `@PG` line at all. They now add one and accept `--no-PG`.\n\n**Consistency.** `ampliconclip`'s inverted `add_pg` flag is renamed to the `no_pg` convention used everywhere else.\n\n## Testing\n\n- `make test` \u2014 1000 passed, 0 failures.\n- `make maintainer-check` \u2014 PASS.\n- `test/test.pl` is untouched: because `VN` is unchanged when the versions match, no harness change or expected-output regeneration is needed.\n- The version-mismatch branch cannot be exercised through the CLI (`hts_version()` is fixed at link time), so its logic was verified separately across matching, patch-differing (`1.23.1`/`1.23.2`), major/minor-differing, and unparseable-version cases.\n\n## Changes from the first revision\n\nAddresses @daviesrob's review:\n- HTSlib version moved from a `DS` field to being appended to `VN`, and omitted when it can be deduced from the SAMtools version.\n- Dropped `REPRODUCIBILITY.md`, the `README.md` change, and the sort thread-comparison test.",
+            "mergedAt": "2026-07-23T12:53:00Z",
+            "isDraft": false,
+            "changedFiles": 21,
+            "baseRefOid": "755f70f57cfe8c7211f1b5431fccbf972011a417",
+            "headRefOid": "df68f20a8800b93603f5c5bf2facf40dc3b3b59a",
+            "mergeCommit": {
+              "oid": "df68f20a8800b93603f5c5bf2facf40dc3b3b59a"
+            }
+          },
+          {
+            "number": 2348,
+            "url": "https://github.com/samtools/samtools/pull/2348",
+            "title": "News update, summer 2026",
+            "body": "Additional news,",
+            "mergedAt": "2026-07-06T10:35:30Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "0da66789a0d160085d302793fbe4362c8aa36a24",
+            "headRefOid": "ba25897290dba7f3ac34d583ba82e0bdefacb325",
+            "mergeCommit": {
+              "oid": "ba25897290dba7f3ac34d583ba82e0bdefacb325"
+            }
+          },
+          {
+            "number": 2347,
+            "url": "https://github.com/samtools/samtools/pull/2347",
+            "title": "Fill in mate information on supplementary alignments in fixmate",
+            "body": "`samtools sort --template-coordinate` requires an `MC` tag on every paired, mate-mapped read, but `samtools fixmate` sets `MC` (and the other mate information) only on primary alignments. Supplementary alignments \u2014 emitted for split reads by e.g. `bwa mem` \u2014 reach the sorter without `MC`, so it aborts:\n\n```\n[bam_sort] error: no MC tag. Please run samtools fixmate on file first.\n```\n\nfixmate now fills in mate information (coordinates, orientation, `MC` and `MQ`) on supplementary alignments too, taken from the mate's primary and reusing the helpers already applied to the primary pair. Secondary alignments are left unchanged, matching Picard/htsjdk and fgbio: a supplementary shares its read's primary mate, whereas a secondary is an alternative mapping with no well-defined mate.\n\nThe change only adds mate information that was previously absent on supplementary records, so existing output is unaffected and the test suite passes unchanged. Adds a `fixmate` fixture and an end-to-end `sort --template-coordinate` test covering a supplementary alignment.\n",
+            "mergedAt": "2026-07-02T13:13:41Z",
+            "isDraft": false,
+            "changedFiles": 7,
+            "baseRefOid": "3e4760a6585730c1cc2029a1602b3690664c6461",
+            "headRefOid": "709616952728b24e4536ee661c8b7022d51c4e1f",
+            "mergeCommit": {
+              "oid": "0da66789a0d160085d302793fbe4362c8aa36a24"
+            }
+          },
+          {
+            "number": 2346,
+            "url": "https://github.com/samtools/samtools/pull/2346",
+            "title": "Fix tail usage for Solaris",
+            "body": "Solaris /usr/xpg4/bin/tail doesn't like `tail -n+4`, needing `-n +4` instead.\r\n\r\nIt's happy with -n4 and -n-4 though, so this is just some CLI parsing bug apparently.",
+            "mergedAt": "2026-07-02T11:00:02Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "3e4760a6585730c1cc2029a1602b3690664c6461",
+            "headRefOid": "4169f3343b7b20ea55fa415ce0c5eeb40f19d038",
+            "mergeCommit": {
+              "oid": "2cb11efbf062320514674e2643b2a4d55af2e7c3"
+            }
+          },
+          {
+            "number": 2345,
+            "url": "https://github.com/samtools/samtools/pull/2345",
+            "title": "Version.sh: cope with .git being present but no git executable",
+            "body": "This can happen if we've cloned outside of a VM and copied the files into it, as happens with the vmactions/freebsd-vm action.",
+            "mergedAt": "2026-07-02T10:51:41Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "3e4760a6585730c1cc2029a1602b3690664c6461",
+            "headRefOid": "51078443269624d7f78aa41778330d827e6bb90e",
+            "mergeCommit": {
+              "oid": "51078443269624d7f78aa41778330d827e6bb90e"
+            }
+          },
+          {
+            "number": 2344,
+            "url": "https://github.com/samtools/samtools/pull/2344",
+            "title": "Trivia: Add missing Makefile dependency",
+            "body": "Very trivial trivia for samtools.",
+            "mergedAt": "2026-06-18T07:40:15Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "ca91fba79fd999fc08174622976a230a90719384",
+            "headRefOid": "64d4464bb05b0eb0e18e142af48fb870536a7f39",
+            "mergeCommit": {
+              "oid": "38fdb08de831ff993f143ee56120010545b1f8dd"
+            }
+          },
+          {
+            "number": 2342,
+            "url": "https://github.com/samtools/samtools/pull/2342",
+            "title": "Ensure PACKAGE_VERSION is set in the Makefile",
+            "body": "This variable is set by expanding `$(shell version.sh)`.  As this is not in a normal Makefile rule, failing to run `version.sh` just results in an empty variable.  To check that it really was set, add a check to ensure it's not empty in the rule that builds the `version.h` file.\r\n\r\nAlso change `PACKAGE_VERSION` to be a simply expanded variable so `./version.sh` is only run once.\r\n\r\nFixes #2337 where somehow failing to run `./version.sh` led to broken SAM files.",
+            "mergedAt": "2026-06-17T16:00:18Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "263b01dd0e75dca5f651cee50d461c2b210449cd",
+            "headRefOid": "1ca8584f8b15f621f3b697d2a36641f102121338",
+            "mergeCommit": {
+              "oid": "ca91fba79fd999fc08174622976a230a90719384"
+            }
+          },
+          {
+            "number": 2341,
+            "url": "https://github.com/samtools/samtools/pull/2341",
+            "title": "Updates to copyright for Summer 2026",
+            "body": "Also including a very late New Year update.",
+            "mergedAt": "2026-06-17T12:40:20Z",
+            "isDraft": false,
+            "changedFiles": 21,
+            "baseRefOid": "263b01dd0e75dca5f651cee50d461c2b210449cd",
+            "headRefOid": "94e736728797bbed2be6f80fbe566389d1f777b4",
+            "mergeCommit": {
+              "oid": "94e736728797bbed2be6f80fbe566389d1f777b4"
+            }
+          },
+          {
+            "number": 2339,
+            "url": "https://github.com/samtools/samtools/pull/2339",
+            "title": "News updates for a summer 2026 release.",
+            "body": "Updates for SAMtools.",
+            "mergedAt": "2026-06-25T11:36:14Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "263b01dd0e75dca5f651cee50d461c2b210449cd",
+            "headRefOid": "1ec3d05742e21c3a0d57b24642744c22b5f2c9d6",
+            "mergeCommit": {
+              "oid": "3e4760a6585730c1cc2029a1602b3690664c6461"
+            }
+          },
+          {
+            "number": 2335,
+            "url": "https://github.com/samtools/samtools/pull/2335",
+            "title": "Add a CONTRIBUTING file",
+            "body": "See also samtools/htslib#2003",
+            "mergedAt": "2026-05-14T13:18:34Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "d3d76d1e8f791db9cb932423adf88894bcc56ad9",
+            "headRefOid": "953f71f649a2cff8afc65e7e17a58db7f0180ac3",
+            "mergeCommit": {
+              "oid": "8c865b973c940ed16d8a8a502a6c49d0a61b8e69"
+            }
+          },
+          {
+            "number": 2334,
+            "url": "https://github.com/samtools/samtools/pull/2334",
+            "title": "Update parameter long-hand name of -X in samtools stats",
+            "body": "`--customized-index-file` to `--customized-index` to match other subcommands\r\n\r\nResolves https://github.com/samtools/samtools/issues/2333",
+            "mergedAt": "2026-05-21T14:44:14Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "d3d76d1e8f791db9cb932423adf88894bcc56ad9",
+            "headRefOid": "fec9d219a699a7eb57f8106e06dc67d32a4d164c",
+            "mergeCommit": {
+              "oid": "263b01dd0e75dca5f651cee50d461c2b210449cd"
+            }
+          },
+          {
+            "number": 2332,
+            "url": "https://github.com/samtools/samtools/pull/2332",
+            "title": "Remove pointless NULL checks",
+            "body": "These happen long after the pointers have been dereferenced, and, in the case of `basic_pileup()`, before the loop that could result in `p` being set to NULL.\r\n\r\nAs far as I can tell, `basic_pileup()` and `basic_fasta()` are only ever [called via `pileup_loop()`](https://github.com/samtools/samtools/blob/8e8477146a449b564f08f53d6e49204bac1e52f7/consensus_pileup.c#L437), which will drop out of the while loop where they are called if [the pointer (`phead` in that function) is NULL](https://github.com/samtools/samtools/blob/8e8477146a449b564f08f53d6e49204bac1e52f7/consensus_pileup.c#L384).",
+            "mergedAt": "2026-05-14T11:02:29Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "8e8477146a449b564f08f53d6e49204bac1e52f7",
+            "headRefOid": "5ff5a43be3586cae7875645e58b2db88cfd12c23",
+            "mergeCommit": {
+              "oid": "d3d76d1e8f791db9cb932423adf88894bcc56ad9"
+            }
+          },
+          {
+            "number": 2330,
+            "url": "https://github.com/samtools/samtools/pull/2330",
+            "title": "Add Github actions builds for Linux and Mac OS",
+            "body": "As Cirrus CI is closing down, tests need to migrate elsewhere.  As Windows tests already run using Github actions, using it for Linux and Mac OS builds is the easiest solution.\r\n\r\nAdds Github actions workflows for Linux (specifically ubuntu as it's the only flavour supported natively), and Mac OS.\r\n\r\nUpdates actions/checkout on the Windows build to the latest release.  The reference to it is also changed from a tag name to a sha hash to reduce the risk of supply-chain attack.\r\n\r\nFixes some issues with the existing tests found while checking the new builds:\r\n\r\n* Adds a configure check for `_XOPEN_SOURCE` to make compilation with `-std=c99` work.\r\n\r\n* Adjusts `HTS_PROG_CC_WARNINGS` and `HTS_PROG_CC_WERROR` to remove a directory left behind by the Mac OS compiler, and to redirect compiler messages to the log file.\r\n\r\n* Remove quotes around `$CC` invocations in `HTS_PROG_CC_WARNINGS` and `HTS_PROG_CC_WERROR`.  `AC_PROG_CC` may add flags after the C compiler path to `$CC`, so it needs to be used unquoted so that field splitting can be done on the value.\r\n\r\nThe Cirrus CI tests are left enabled for now so we can run both side-by-side for a bit. They can be removed once we're confident that the new ones are working. Unfortunately we will lose the Rocky Linux test when we turn Cirrus off, although it may be possible to do something with containers to get it back again.",
+            "mergedAt": "2026-04-30T13:53:56Z",
+            "isDraft": false,
+            "changedFiles": 5,
+            "baseRefOid": "900b93d88b1de4007fef64eca06278e634d31276",
+            "headRefOid": "aa02c9e3a54a5e9053335054f200b4124dbe7fea",
+            "mergeCommit": {
+              "oid": "c96acb68a17dd9ad60664c10ff8aada8abf5abc6"
+            }
+          },
+          {
+            "number": 2329,
+            "url": "https://github.com/samtools/samtools/pull/2329",
+            "title": "changes for biobambam2 compatible checksum file merging",
+            "body": "Fixes #2323.\r\nBiobambam2 has different no. of fields in checksum output and have empty group name, to cause this.\r\nUpdated to handle compatibility mode outputs.\r\nAdded aux tags check before merging.\r\nUpdated a checksum calculation length as well.\r\n\r\nNote: biobambam creates empty/no RG checksum only if header has RG lines and it could be an issue in it though in practice there may not be any such outputs. That is ignored and noRG output lines are created in all cases as reads always belong to either an RG group or noRG group.",
+            "mergedAt": "2026-04-30T11:02:34Z",
+            "isDraft": false,
+            "changedFiles": 9,
+            "baseRefOid": "99bd94f53868636281ec9afbb04a47865b2881a1",
+            "headRefOid": "7f1090cebd0f1831b4e9e66eb8bb82012e4fa072",
+            "mergeCommit": {
+              "oid": "4b44cb4acf32ad10bdac40601d12834213a960c5"
+            }
+          },
+          {
+            "number": 2328,
+            "url": "https://github.com/samtools/samtools/pull/2328",
+            "title": "Stats: check before and after region  with --target-regions",
+            "body": "For the calculation of \"bases mapped (cigar) check for positions before and after the region specified.",
+            "mergedAt": "2026-04-30T15:32:08Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "99bd94f53868636281ec9afbb04a47865b2881a1",
+            "headRefOid": "2b125dff918425794e307148ae5a9dd317cdb80f",
+            "mergeCommit": {
+              "oid": "8e8477146a449b564f08f53d6e49204bac1e52f7"
+            }
+          },
+          {
+            "number": 2326,
+            "url": "https://github.com/samtools/samtools/pull/2326",
+            "title": "Change nquals from 256 to 257 for samtools stats.",
+            "body": "The maximum quality in ASCII is 94 (127-33) so anything else is outside of the legal range.  However even if we wanted to handle illegal BAM and ignore the unprintable nature of SAM, using 256 is a bad choice.\r\n\r\nThe reason is down to how CPU caches work.  They're typically an N-way associative hash when each hash bucket can cache results for N addresses and the hash index is just the last bits of the memory address.  This means a power of 2 in the memory address will put a lot pile many addresses into the same bucket, saturating \"N\".\r\n\r\nA trivial workaround is to multiply by 257 instead of 256, causing the bottom bits of the address to not repeatedly collide.  95 is a better multiplier however as it uses less memory and hence with it further reduces cache miss rates.\r\n\r\nBenchmarks from perf stat:\r\n\r\nnquals=256:\r\n\r\n         267540049      cache-misses              #   11.334 % of all cache refs\r\n        2360568687      cache-references\r\n\r\n      20.572468682 seconds time elapsed\r\n\r\nnquals=257:\r\n\r\n          78089279      cache-misses              #    3.391 % of all cache refs\r\n        2302704223      cache-references\r\n\r\n      15.710843218 seconds time elapsed\r\n\r\nnquals=95:\r\n\r\n          45394053      cache-misses              #    2.102 % of all cache refs\r\n        2159597370      cache-references\r\n\r\n      13.713247565 seconds time elapsed\r\n\r\nQuite a good speed up for such a tiny change.\r\n*However* setting nquals=95 isn't sufficient as qual \"*\" is an array of 255 values in BAM (sigh).  So it needs to be >= 256.  We could fix this by mapping 255 to 95 say or better still using a generic mapping table based on real data which would vastly reduce memory for NovaSeq, but this needs buffering and multi-pass, or the ability to add new entries to the lookup table and shuffle around existing entries.  Hence this PR is the trivial win only.\r\n\r\nThe actual code in CPU cycles for the original was:\r\n\r\n```\r\n  0.12 \u2502       addsd    0x218(%r15),%xmm0                                                                        \r\n       \u2502     quals[ i*stats->nquals+qual ]++;                                                                    \r\n  0.22 \u2502       addq     $0x1,(%rdx,%r8,8)                                                                        \r\n       \u2502     stats->sum_qual += qual;                                                                            \r\n 52.52 \u2502       movsd    %xmm0,0x218(%r15)                                                                        \r\n       \u2502     for (i=0; i<seq_len; i++)                                                                           \r\n```\r\n\r\nWith nquals=95 the change it is:\r\n\r\n```\r\n(as above)\r\n 35.44 \u2502       movsd    %xmm0,0x218(%r15)\r\n```\r\n\r\n(perf stats -n showed 37176 counts to 18470 counts).  I didn't record it for nquals=257 as I didn't notice the qual \"*\" issue until later, however the elapsed time is the key indicator.",
+            "mergedAt": "2026-04-30T11:33:02Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "99bd94f53868636281ec9afbb04a47865b2881a1",
+            "headRefOid": "8c3ba4f60b4ab5680fb9a3dffef4c2128135bc33",
+            "mergeCommit": {
+              "oid": "6fcc46d243e6e71481f45dce14ef2b186434b10a"
+            }
+          },
+          {
+            "number": 2322,
+            "url": "https://github.com/samtools/samtools/pull/2322",
+            "title": "Ensure indirect function calls have the correct type.",
+            "body": "Use new HTSlib interfaces khgetline() and kfgetline() in place of kgetline().  Fixes complaints about undefined behaviour from clang's UBsan due to function pointers passed to kgetline() having the wrong type for the last parameter (it wants a void *, but was given functions taking either FILE * or hFILE *). The new interfaces wrap the calls to kgetline() so there is no need to pass a function pointer.",
+            "mergedAt": "2026-04-23T15:12:09Z",
+            "isDraft": false,
+            "changedFiles": 11,
+            "baseRefOid": "aa823b5a608f33a3e5311dc0eec587dd00661420",
+            "headRefOid": "b77db3dc70bd45f5ccc1b117b308a2be09303176",
+            "mergeCommit": {
+              "oid": "900b93d88b1de4007fef64eca06278e634d31276"
+            }
+          },
+          {
+            "number": 2320,
+            "url": "https://github.com/samtools/samtools/pull/2320",
+            "title": "Fix for the footgun of repeated use of \"samtools view --subsample\" with the same (or default) seed",
+            "body": "Changes the default seed from 0, to a value derived from the hash of the incoming file's header. The idea is that the default seed should be deterministic given the same input, but different for different inputs.  This ensures the seed is the same regardless of format (SAM/BAM/CRAM) or compression level, but will generally cause the seed to vary for files that have been processed differently due to the differing @PG lines (and possibly others) in the header.  Since \"samtools view\" will insert a @PG line into the header, serial downsampling of file A to file B to file C will now use different seeds at each step.\r\n\r\nI think this is my first PR in samtools, and this changes the a command line default, so I am mindful that this may not be accepted, or not accepted without changes.  I'm very open to feedback here, but would love to fix this footgun, and this seems like a reasonable way to do it.\r\n\r\nFixes #1201, which is something I also run into once in a while when I forget about the default behavior.",
+            "mergedAt": "2026-04-29T09:17:46Z",
+            "isDraft": false,
+            "changedFiles": 3,
+            "baseRefOid": "aa823b5a608f33a3e5311dc0eec587dd00661420",
+            "headRefOid": "ddd2f6c49395f97d8aeff2331990641d190579b3",
+            "mergeCommit": {
+              "oid": "22522c26f7dd10c3b0aebf7b00cb9d43a125cb6e"
+            }
+          },
+          {
+            "number": 2317,
+            "url": "https://github.com/samtools/samtools/pull/2317",
+            "title": "Option Fixes",
+            "body": "In stats.c: removed the mistaken _required_argument_ entry from `--customized-index-file`.  This makes the long and short (`-X`) option work in the same way.  Fixes #2315.\r\n\r\nAlso removed some unused and undocumented options from bam_plcmd.c.",
+            "mergedAt": "2026-03-26T14:56:32Z",
+            "isDraft": false,
+            "changedFiles": 2,
+            "baseRefOid": "e869be264be4d539ffb14f02656cdd8fa4356482",
+            "headRefOid": "1fff87ba6949754713edafe9270b73eef3396fac",
+            "mergeCommit": {
+              "oid": "aa823b5a608f33a3e5311dc0eec587dd00661420"
+            }
+          },
+          {
+            "number": 2316,
+            "url": "https://github.com/samtools/samtools/pull/2316",
+            "title": "feat: Add --move-umi-to-tag option to samtools markdup to extract UMI from QNAME and add to RX tag.",
+            "body": "Proposed fix for #2181\r\n cc @whitwham ",
+            "mergedAt": "2026-04-15T10:31:41Z",
+            "isDraft": false,
+            "changedFiles": 9,
+            "baseRefOid": "e869be264be4d539ffb14f02656cdd8fa4356482",
+            "headRefOid": "20f6962dc1262161aac6ba2c3c31e282b4d496ce",
+            "mergeCommit": {
+              "oid": "99bd94f53868636281ec9afbb04a47865b2881a1"
+            }
+          },
+          {
+            "number": 2314,
+            "url": "https://github.com/samtools/samtools/pull/2314",
+            "title": "Use cell barcode (if present) during template coordinate sort",
+            "body": "For single-cell technologies, a cell barcode may be present on SAM records and should be used as a grouping key during `--template-coordinate` sort. This ensures templates at the same locus are grouped together successfully when those templates are known to come from the same cell.\r\n\r\nCompanion PR: https://github.com/fulcrumgenomics/fgbio/pull/1142",
+            "mergedAt": "2026-03-06T16:32:48Z",
+            "isDraft": false,
+            "changedFiles": 5,
+            "baseRefOid": "06fc2a219b3d7c94d3f412c09f6d1efd51199f2f",
+            "headRefOid": "8195024ff9aba520839a6d63dcee04a6b6d7d505",
+            "mergeCommit": {
+              "oid": "f3e7e7e62b79d8a0fd95dc4e8e92a71e56660559"
+            }
+          },
+          {
+            "number": 2313,
+            "url": "https://github.com/samtools/samtools/pull/2313",
+            "title": "Improve cram-size error handling.",
+            "body": "Properly deal with compression header decode failure.\r\n\r\nEnsure the compression header and hash table get cleaned up in error handling code.\r\n\r\nIn main_cram_size(), close the input hFILE if it fails to covert to a samFile.",
+            "mergedAt": "2026-02-26T14:48:22Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "3921f9f2effa8a856aac92cc35dc2375717e672b",
+            "headRefOid": "5886cdc57298f510e6c11fbbf97937311feffd3e",
+            "mergeCommit": {
+              "oid": "06fc2a219b3d7c94d3f412c09f6d1efd51199f2f"
+            }
+          },
+          {
+            "number": 2312,
+            "url": "https://github.com/samtools/samtools/pull/2312",
+            "title": "Limit sort memory in \"samtools split\" test",
+            "body": "The default sort buffer size is much bigger than necessary for the tests, and can lead to spurious failures on constrained test environments.  Add the same option used elsewhere to ensure sort processes don't run out of memory.",
+            "mergedAt": "2026-02-24T15:49:32Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "6b0465d6d9e5b472f17d4c094c6f4033ac0a27d9",
+            "headRefOid": "cc5db343010f3910e4b61d801b395cfca31cf2c5",
+            "mergeCommit": {
+              "oid": "3921f9f2effa8a856aac92cc35dc2375717e672b"
+            }
+          },
+          {
+            "number": 2311,
+            "url": "https://github.com/samtools/samtools/pull/2311",
+            "title": "Fix grep for OpenBSD",
+            "body": "In OpenBSD, grep needs to have the input file after the options.  This was causing fails in the testing.",
+            "mergedAt": "2026-02-24T14:31:32Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "de008f192edf42864e991ac81fa26c774a5da2e1",
+            "headRefOid": "6b0465d6d9e5b472f17d4c094c6f4033ac0a27d9",
+            "mergeCommit": {
+              "oid": "6b0465d6d9e5b472f17d4c094c6f4033ac0a27d9"
+            }
+          },
+          {
+            "number": 2306,
+            "url": "https://github.com/samtools/samtools/pull/2306",
+            "title": "Wrap ctype.h functions to avoid array subscript warnings",
+            "body": "Copy HTSlib's internal wrappers for interfaces in `<ctype.h>` into `sam_utils.h` (as it's widely included already) and use them on cases where the input has `char` type.  Fixes \"array subscript has type 'char'\" warnings on platforms that still implement them as a macro around an array look-up.\r\n\r\nThe ctype interface wrappers were originally authored by John Marshall in HTSlib commit [fc9aeb6f7](https://github.com/samtools/htslib/commit/fc9aeb6f7).",
+            "mergedAt": "2026-02-23T09:46:25Z",
+            "isDraft": false,
+            "changedFiles": 14,
+            "baseRefOid": "2af0d71944c0b294227a0eb20e89803886148ff3",
+            "headRefOid": "0f3e6b83504eb96628152b31c5e0343e0aba5ed5",
+            "mergeCommit": {
+              "oid": "de008f192edf42864e991ac81fa26c774a5da2e1"
+            }
+          },
+          {
+            "number": 2305,
+            "url": "https://github.com/samtools/samtools/pull/2305",
+            "title": "Fix ubsan warning in threaded consensus pileup mode",
+            "body": "A block of data that's entirely empty would attempt to write an empty kstring.",
+            "mergedAt": "2026-02-13T16:34:09Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "2af0d71944c0b294227a0eb20e89803886148ff3",
+            "headRefOid": "271a8b13fa67915f368d1e989640eadda92cc7be",
+            "mergeCommit": {
+              "oid": "271a8b13fa67915f368d1e989640eadda92cc7be"
+            }
+          },
+          {
+            "number": 2301,
+            "url": "https://github.com/samtools/samtools/pull/2301",
+            "title": "mpileup changes to use kstring for speed up",
+            "body": "Changed direct file writes to kstring buffer and wrote it at end of processing for each line (main contributor in improvement).\r\nUpdated reference data retrieval function invoke to execute only on tid change (not a big contributor but gets invoked on every read).\r\nAlso there is an htslib update, to prefetch next data to use.\r\n\r\nThis showed 10 - 30% improvement with different test data.\r\n\r\nAttempts to improve #2293",
+            "mergedAt": "2026-03-05T17:32:06Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "06fc2a219b3d7c94d3f412c09f6d1efd51199f2f",
+            "headRefOid": "fe512ac56840ee765c48588bb25e8c62874915bf",
+            "mergeCommit": {
+              "oid": "bf098357e469f82694e0a4653e0bcbe203789ee6"
+            }
+          },
+          {
+            "number": 2300,
+            "url": "https://github.com/samtools/samtools/pull/2300",
+            "title": "reference file support for reset",
+            "body": "Fixes #2297 \r\nEnabled the reference, input format and output format options for reset.\r\nReference file can be passed using either -T or --reference options and cram with external reference should work fine.\r\nInput and output format options enabled to use customisation on input and output files.",
+            "mergedAt": "2026-02-10T00:02:45Z",
+            "isDraft": false,
+            "changedFiles": 4,
+            "baseRefOid": "3669cf70d5249c6131745b99d29676ae7d18e8e8",
+            "headRefOid": "fe3ee4974f9c43dc761801f01ee52785bd2898f0",
+            "mergeCommit": {
+              "oid": "7c85993e60be6e3c3d4bcbf4f684a6f65c4b215c"
+            }
+          },
+          {
+            "number": 2295,
+            "url": "https://github.com/samtools/samtools/pull/2295",
+            "title": "Add a --regions-file BED-FILE option to samtools consensus",
+            "body": "Note this also changes the output format slightly so include \">chr:start-end\" instead of just \">chr\".  This makes it comparable to faidx and helps identify separate regions.\r\n\r\nFixes #2288\r\n\r\nSome sub-commands such as view distinguish between --regions-file BED which uses indices to do random access and -L BED which uses streaming and filtering instead.  I implemented the former only.",
+            "mergedAt": "2026-01-29T16:06:49Z",
+            "isDraft": false,
+            "changedFiles": 14,
+            "baseRefOid": "0d94f517fb1c8650b24d83e32d01f90844185b71",
+            "headRefOid": "fdf9513540786ca46b2d10972ce42866f700ee8d",
+            "mergeCommit": {
+              "oid": "3669cf70d5249c6131745b99d29676ae7d18e8e8"
+            }
+          },
+          {
+            "number": 2292,
+            "url": "https://github.com/samtools/samtools/pull/2292",
+            "title": "Input validation on some numeric command-line values",
+            "body": "Sanity-check some numeric values passed on the command-line, and error out on malformed strings. \r\n\r\nMotivating example: Raise an error on the bogus command-line `samtools sort -@ -n input.bam -O bam -o sorted.bam` which is missing a thread count after -@. (The current behavior is to set thread count to 0 and drop the `-n` flag, since `atoi(\"-n\")` simply returns zero)\r\n\r\nThere's more that could be done to validate inputs, but this adds some safety railings to prevent unpleasant surprises.",
+            "mergedAt": "2026-02-10T12:01:17Z",
+            "isDraft": false,
+            "changedFiles": 6,
+            "baseRefOid": "893eed1214b0eb326f90c8060f8f98930b131348",
+            "headRefOid": "259ffe739cb21b843687c1b7b821c8064d58f38f",
+            "mergeCommit": {
+              "oid": "2af0d71944c0b294227a0eb20e89803886148ff3"
+            }
+          },
+          {
+            "number": 2291,
+            "url": "https://github.com/samtools/samtools/pull/2291",
+            "title": "Fix variable expansion error in seq_cache_populate.py",
+            "body": "In an effort to mimick `seq_cache_populate.pl` the output messages are kept the same as much as possible. Unfortunately I missed a perl variable expansion back then.",
+            "mergedAt": "2025-12-18T10:24:26Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "7df544f2c480df9c85dbec3096f78a7cf9e3a447",
+            "headRefOid": "6b6e9e5d3e7efbd62182ee89339b567998bb933b",
+            "mergeCommit": {
+              "oid": "893eed1214b0eb326f90c8060f8f98930b131348"
+            }
+          },
+          {
+            "number": 2290,
+            "url": "https://github.com/samtools/samtools/pull/2290",
+            "title": "Add seq_cache_populate.py to MISC_SCRIPTS for installation",
+            "body": "The faster python script contributed by @rhpvorderman in #2231 is currently available only in the source tree. It should be installed to `{prefix}/bin/` along with the other scripts so that it can be used with common installation like `brew install samtools`.\r\n",
+            "mergedAt": "2025-12-17T13:30:24Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "7df544f2c480df9c85dbec3096f78a7cf9e3a447",
+            "headRefOid": "144293d300c0a4b985447f682495c791962c2040",
+            "mergeCommit": {
+              "oid": "79288f03e574054f5826db9c87276ef3d58d669b"
+            }
+          },
+          {
+            "number": 2289,
+            "url": "https://github.com/samtools/samtools/pull/2289",
+            "title": "Use canonical calloc arguments order for parsed_opts_t allocation",
+            "body": "This commit should NOT produce any change in behavior; swapping the order of the arguments to `calloc()` does NOT affect the behavior of `calloc()`. Thus, the main purpose of this commit is to improve code readability and conformity.\r\n\r\n---------\r\n\r\nBackground: The [C standard](https://en.cppreference.com/w/c/memory/calloc.html) defines the prototype as `calloc(size_t num, size_t size)`. Importantly, \"If allocation succeeds, returns a pointer to the lowest (first) byte in the allocated memory block that is suitably aligned for any object type with fundamental alignment.\"\r\n\r\nAs `calloc()` only sees the quantity and size of the objects to allocate memory (but NOT the type of the data itself), alignment is not directly dependent on the `size` or `num` argument.",
+            "mergedAt": "2026-01-15T13:56:22Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "28c0f71af72d08b7fa507b3f72bf39f73f6d484d",
+            "headRefOid": "34ade6f7de3840d2c5378dc8d1b266d475ee13d8",
+            "mergeCommit": {
+              "oid": "0d94f517fb1c8650b24d83e32d01f90844185b71"
+            }
+          },
+          {
+            "number": 2287,
+            "url": "https://github.com/samtools/samtools/pull/2287",
+            "title": "Ignore hard clips in template coordinate sort",
+            "body": "Hard clipping may be variable for reads from the same biochemical template, causing them to sort to different positions. Only soft clips are now considered when calculating unclipped coordinates for template coordinate sorting, matching fgbio behavior.\r\n\r\nSee: https://github.com/fulcrumgenomics/fgbio/pull/1065\r\n\r\nThe unclipped_start/end functions now take an include_hard_clips parameter. Template coordinate sort passes 0 (soft clips only), while markdup passes 1 to preserve existing behavior.\r\n\r\nAdds test for hard clip handling in template coordinate sort.",
+            "mergedAt": "2026-03-10T16:00:33Z",
+            "isDraft": false,
+            "changedFiles": 7,
+            "baseRefOid": "f3e7e7e62b79d8a0fd95dc4e8e92a71e56660559",
+            "headRefOid": "80b78e99b25f22a6a6ac0acea0591266a366691c",
+            "mergeCommit": {
+              "oid": "94000daa4548a49f355a94542bc71e617c337c9b"
+            }
+          },
+          {
+            "number": 2286,
+            "url": "https://github.com/samtools/samtools/pull/2286",
+            "title": "Late 2025 Copyright Update.",
+            "body": "Keeping the copyright dates up to date.",
+            "mergedAt": "2025-11-27T11:16:37Z",
+            "isDraft": false,
+            "changedFiles": 5,
+            "baseRefOid": "aaf677ad73b30cc3c16db23764c9e837b17012a7",
+            "headRefOid": "906a2dc610745f90586cd3ad93d2abff01c8a4be",
+            "mergeCommit": {
+              "oid": "004c3e2a1cbee7e841fd481631127004bd88e0e0"
+            }
+          },
+          {
+            "number": 2284,
+            "url": "https://github.com/samtools/samtools/pull/2284",
+            "title": "NEWS For End of 2025 Release.",
+            "body": "This is the NEWS update for the end of 2025 release.\r\n\r\nIt is here for review and is open for updates until the release.",
+            "mergedAt": "2025-12-09T15:30:53Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "aaf677ad73b30cc3c16db23764c9e837b17012a7",
+            "headRefOid": "d65b6e5aa353432675760773a91616b26fd9da5f",
+            "mergeCommit": {
+              "oid": "99152033a18e9cc630e29650e78a3341682253ef"
+            }
+          },
+          {
+            "number": 2281,
+            "url": "https://github.com/samtools/samtools/pull/2281",
+            "title": "Update to split sorted data sequentially and avoid simultaneous open files",
+            "body": "Fixes #2276 \r\nUpdated sort to set sub-sort order when sorted with tags. This will set the SO as unsorted and SS as unsorted:<tag>:<secondary sort>.\r\n\r\nOn split, if the data is sorted by the tag with which it is being split, split is made sequentially instead of opening output files in parallel. If data is not sorted by the split key, split is made by opening output files in parallel as existed.\r\n\r\n",
+            "mergedAt": "2025-11-28T17:18:50Z",
+            "isDraft": false,
+            "changedFiles": 14,
+            "baseRefOid": "aaf677ad73b30cc3c16db23764c9e837b17012a7",
+            "headRefOid": "93fe2cf9ffa4422fe4e82aaf9f6eb1c3bdb07dbf",
+            "mergeCommit": {
+              "oid": "28c0f71af72d08b7fa507b3f72bf39f73f6d484d"
+            }
+          },
+          {
+            "number": 2274,
+            "url": "https://github.com/samtools/samtools/pull/2274",
+            "title": "Add missing sam_global_args_free calls.",
+            "body": "These are a memory leak if we use e.g. --input-fmt-options decode_md. Some tools still leak if they get errors and return early, but this is true in many other ways too (for example calmd doesn't destroy the thread pool if it gets an error closing fpout; one among many). However I focused on removing memory leaks on successful execution (albeit harmless due to immediately exiting anyway) as it's more likely to trip up testing.",
+            "mergedAt": "2025-10-21T14:25:20Z",
+            "isDraft": false,
+            "changedFiles": 6,
+            "baseRefOid": "e406d9eb0f7051b04c98a00f9aeb8f3de11b85dc",
+            "headRefOid": "3b56927234f20693b1ef6c3c2f4f4083a0fbb12e",
+            "mergeCommit": {
+              "oid": "c22b7761617ab91cd9d3ce1048a71dab645cd769"
+            }
+          },
+          {
+            "number": 2270,
+            "url": "https://github.com/samtools/samtools/pull/2270",
+            "title": "Add UMI support to samtools fastq / import.  Needs htslib#1960",
+            "body": "The bulk of these changes are in the associated htslib PR.  This PR just adds CLI / usage information.\r\n\r\nAlso fixed the generated header comment to remove trailing white space, and added missing CASAVA tag hints.\r\n\r\nFixes #2259\r\nFixes #2262\r\n\r\nDraft as I forgot to update man pages.  I'll do that tomorrow, but I wanted to get CI working (it failed due to CI flakiness before)",
+            "mergedAt": "2025-10-21T15:58:22Z",
+            "isDraft": false,
+            "changedFiles": 16,
+            "baseRefOid": "e406d9eb0f7051b04c98a00f9aeb8f3de11b85dc",
+            "headRefOid": "ff1862da8a2c9aaaeb64910b366ae5488d71d34a",
+            "mergeCommit": {
+              "oid": "0978fa797130aa72d488cd0854582ff2153478ad"
+            }
+          },
+          {
+            "number": 2269,
+            "url": "https://github.com/samtools/samtools/pull/2269",
+            "title": "updated to make consensus work with sam.gz along with threads and ite\u2026",
+            "body": "Consensus crashes when sam.gz is used as input along with threads and iterators.\r\nThis happens due to the data validation attempt in sam_parse1 where fp->bam_header, which is null, is used for header.\r\nTo avoid this, each fp in thread data is set with a copy of already read header.\r\nThis is made for bam and cram as well, for filters to work fine where an expression needs to access the header (like rname, mrname, library etc.)",
+            "mergedAt": "2025-10-23T13:41:02Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "2fe448156b6777dd5f5f2c03751bab6864217775",
+            "headRefOid": "d10ea2b9fd6e925e77315a6355d1a52697eab904",
+            "mergeCommit": {
+              "oid": "aaf677ad73b30cc3c16db23764c9e837b17012a7"
+            }
+          }
+        ]
+      },
+      "rateLimit": {
+        "remaining": 4847,
+        "resetAt": "2026-10-20T15:09:39Z"
+      }
+    }
+  }
+}

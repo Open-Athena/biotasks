@@ -1,0 +1,298 @@
+{
+  "repository": "psychopy/psychopy",
+  "stratum": "python",
+  "window": {
+    "since": "2025-10-20",
+    "until": "2026-10-19"
+  },
+  "merged_pr_count": 315,
+  "evidence": [
+    "inventory/pr-pages/4d896d7ad1050fd72c5d92cdd9e039d04e50c604b62799a7a0d5f04c1cece1a6.json",
+    "inventory/pr-pages/1cd4ccd7a8e4058cb6429b4718195bfaeff0403d282f4bf0dd55760f75a9402f.json",
+    "inventory/pr-pages/a1c435326b4d8bbef065c6604d5dbd438791191fdb77cdbddf157c2c42d63a5d.json",
+    "inventory/pr-pages/c1f8435ebf758e3c7d7c0857567db3b69b330eda6531f75b15a29834d798ed9d.json"
+  ],
+  "sample_rule": "SHA256 rank of biotasks-24-prs-v1:github_id:number; first 20",
+  "selected": [
+    {
+      "number": 7670,
+      "url": "https://github.com/psychopy/psychopy/pull/7670",
+      "title": "FF: Various fixes to microphone recording",
+      "body": "Fixes starting a microphone recording when running from studio. Adds missing attributes to the sounddevice microphone class for real-time listeners",
+      "mergedAt": "2026-06-17T08:56:06Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "a94cbc23dc25de9425be60a3deb97b9dc86e76db",
+      "headRefOid": "184e009d075dcf6d7f542e4b9b5f5bb549641625",
+      "mergeCommit": {
+        "oid": "a8bd643dbd8a210f2bb5d5436d23f9c0f6c1e29b"
+      }
+    },
+    {
+      "number": 7374,
+      "url": "https://github.com/psychopy/psychopy/pull/7374",
+      "title": "BF: ExperimentHandler not saving extraInfo to wide text",
+      "body": "I recently updated my PsychoPy, and noticed the `ExperimentHandler` was no longer saving the fields in the `extraInfo` dictionary to the wide text/csv file. I think this is due to a recent change where the `extraInfo` gets stored as PsychoPy's new `IndexDict` object. This was causing checks for the type of the `extraInfo` object to fail, as it isn't a normal Python dictionary any more. Seeing as `IndexDict` inherits from `dict`, just changing the checks to use `isinstance` rather than `type == dict` seems to fix the problem.",
+      "mergedAt": "2025-12-10T11:32:42Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "d2c3caeb63b983060d671d090770f97a73f2d709",
+      "headRefOid": "d15e38f8f1250e86ca20a76b33cbb0828de976bc",
+      "mergeCommit": {
+        "oid": "acd13569d63b9b79ef38e0a2acc3f9d8a1e3ed0b"
+      }
+    },
+    {
+      "number": 7457,
+      "url": "https://github.com/psychopy/psychopy/pull/7457",
+      "title": "BF: Fixed param control text color selection when using system dark theme",
+      "body": "Adds system wide UI theming detection (whether we're using light/dark mode) to ensure parameter text remains legible in either setting.",
+      "mergedAt": "2025-11-07T09:59:34Z",
+      "isDraft": false,
+      "changedFiles": 3,
+      "baseRefOid": "41fe378ec4a266d373eab992dcd4715d4a9018fc",
+      "headRefOid": "d0f5c3bca5fc6dc1fd983267c2d768ede27cc6b0",
+      "mergeCommit": {
+        "oid": "5789ebd9471006e5393bc64d4c9cf043ccde8aea"
+      }
+    },
+    {
+      "number": 7698,
+      "url": "https://github.com/psychopy/psychopy/pull/7698",
+      "title": "BF: Add a more informative error when Pavlovia fails to refresh login",
+      "body": "",
+      "mergedAt": "2026-07-08T16:04:59Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "45c1b7a92348bee6cb45a70b4c50af078bceadb1",
+      "headRefOid": "80205970b12bcde0d3d0d8988eb63d3352205802",
+      "mergeCommit": {
+        "oid": "02bfb3465c3eff3aa0f36da709ddb3528486cfba"
+      }
+    },
+    {
+      "number": 7554,
+      "url": "https://github.com/psychopy/psychopy/pull/7554",
+      "title": "DOCS: Revise workshop details in index.rst",
+      "body": "Updated workshop information and dates.",
+      "mergedAt": "2026-02-13T10:11:05Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "7e4510906b673d5e39fc7586c04afac4b2927a7e",
+      "headRefOid": "89d165c0522ccc528cd8afa98cd9943201232545",
+      "mergeCommit": {
+        "oid": "95fa17f5ffc17e4689adfaaaeb3a0e78469739db"
+      }
+    },
+    {
+      "number": 7599,
+      "url": "https://github.com/psychopy/psychopy/pull/7599",
+      "title": "TEST: regenerate textbox orientation exemplars after #7592",
+      "body": "This commit regenerates the 12 `test_ori_*.png` exemplar images to match the rotation fix in #7592 . #7592 changed `self.size` to `self.contentBox._size.pix` in `_layout()`, which altered the rendered output, but the reference images were not updated. This should fix the 2 `test_ori` failures blocking #7593\r\n\r\nI tested that:\r\n\r\n- `Test_textbox::test_ori` passes locally\r\n- `Test_uax14_textbox::test_ori` passes locally\r\n",
+      "mergedAt": "2026-04-13T16:23:14Z",
+      "isDraft": false,
+      "changedFiles": 12,
+      "baseRefOid": "8ba4464c52d69d025a28d73b5467129ec7e54867",
+      "headRefOid": "97da7951727c9213628b1e31c19040a2fc9dd9be",
+      "mergeCommit": {
+        "oid": "a52c5da7f72b21d585af6af16e909b8a0b78bf7f"
+      }
+    },
+    {
+      "number": 7587,
+      "url": "https://github.com/psychopy/psychopy/pull/7587",
+      "title": "Bump ujson from 5.11.0 to 5.12.0",
+      "body": "Bumps [ujson](https://github.com/ultrajson/ultrajson) from 5.11.0 to 5.12.0.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/ultrajson/ultrajson/releases\">ujson's releases</a>.</em></p>\n<blockquote>\n<h2>5.12.0</h2>\n<h2>Added</h2>\n<ul>\n<li>Update license field (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/693\">#693</a>) <a href=\"https://github.com/wagenrace\"><code>@\u200bwagenrace</code></a></li>\n<li>Build wheels for GraalPy (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/685\">#685</a>) <a href=\"https://github.com/timfel\"><code>@\u200btimfel</code></a></li>\n</ul>\n<h2>Changed</h2>\n<ul>\n<li>Drop support for Python 3.9 (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/686\">#686</a>) <a href=\"https://github.com/hugovk\"><code>@\u200bhugovk</code></a></li>\n</ul>\n<h2>Fixed</h2>\n<ul>\n<li>Fix buffer overflow/infinite loop from indent handling (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/709\">#709</a>) <a href=\"https://github.com/bwoodsend\"><code>@\u200bbwoodsend</code></a></li>\n<li>Remove upper bound of setuptools for PyPy (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/704\">#704</a>) <a href=\"https://github.com/hugovk\"><code>@\u200bhugovk</code></a></li>\n</ul>\n</blockquote>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/4baeb950df780092bd3c89fc702a868e99a3a1d2\"><code>4baeb95</code></a> Fix memory leak parsing large integers</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/486bd4553dc471a1de11613bc7347a6b318e37ea\"><code>486bd45</code></a> Fix buffer overflow/infinite loop from indent handling</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/a465ed7654bb13fd283681e0e7928e4c11ee2cf4\"><code>a465ed7</code></a> Add leak detection to tests</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/32ebf66fa1537c9f48d37eb67af17e7392d5e404\"><code>32ebf66</code></a> Remove upper bound of setuptools for PyPy (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/704\">#704</a>)</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/6bf41bda4b27cd5bee370aad8235de88c0cc417f\"><code>6bf41bd</code></a> Remove upper bound of setuptools for PyPy</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/4a4fd73fb055152f324ebb19b3fe86c402a02561\"><code>4a4fd73</code></a> chore(deps): update github-actions</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/d708b05aefc4ce94dc8c97af4770e21c57cb1338\"><code>d708b05</code></a> Add security policy (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/699\">#699</a>)</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/3d66f4d37819e26f2364b37b3ae13b73870f308e\"><code>3d66f4d</code></a> Add security policy</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/8f23cce7929c49b9235d2f46ac9a403d051a9c95\"><code>8f23cce</code></a> [pre-commit.ci] pre-commit autoupdate (<a href=\"https://redirect.github.com/ultrajson/ultrajson/issues/698\">#698</a>)</li>\n<li><a href=\"https://github.com/ultrajson/ultrajson/commit/2696fc3ac15a97ecf188018a4559ee7631f90633\"><code>2696fc3</code></a> [pre-commit.ci] pre-commit autoupdate</li>\n<li>Additional commits viewable in <a href=\"https://github.com/ultrajson/ultrajson/compare/5.11.0...5.12.0\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=ujson&package-manager=uv&previous-version=5.11.0&new-version=5.12.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)\nYou can disable automated security fix PRs for this repo from the [Security Alerts page](https://github.com/psychopy/psychopy/network/alerts).\n\n</details>",
+      "mergedAt": "2026-03-24T14:40:05Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "97e8403cbcf519c9e06fa5c128fffdb0eb93b99c",
+      "headRefOid": "a406d8118d719f7da0e2e8b00c3d0aa71efc1165",
+      "mergeCommit": {
+        "oid": "29c15da24bc98656291d6c8dfe4a7a0f073e7a09"
+      }
+    },
+    {
+      "number": 7521,
+      "url": "https://github.com/psychopy/psychopy/pull/7521",
+      "title": "FF: Remove stray code causing camera settings to be logged when `systemtools` is imported",
+      "body": "Small fix to remover some code that was committed while working on camera support for Linux. It caused camera settings to be logged to console on import of that module",
+      "mergedAt": "2026-01-16T02:59:45Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "b498114de0acc04629b96cd352f96aef9ea30f58",
+      "headRefOid": "0d2b2e59534f80603a87db822ea9e01becb2e133",
+      "mergeCommit": {
+        "oid": "d05e0e658d3e6cde5f198c312e8ddbe6e5da3e74"
+      }
+    },
+    {
+      "number": 7801,
+      "url": "https://github.com/psychopy/psychopy/pull/7801",
+      "title": "fix(test): fix tests from leaking",
+      "body": "Tests leak windows on failure or skip, keeping them open between tests which bog down the CI runner. Added proper teardown_* methods to ensure that tests cleanly release their resources. Also makes a patch to window to raise when invalid parameters for `viewPos` and `viewOri` are passed to it, which used to just leave a window open half-baked.\r\n\r\nOverall, expect tests to run faster on the CI machines.",
+      "mergedAt": "2026-09-25T11:52:28Z",
+      "isDraft": false,
+      "changedFiles": 23,
+      "baseRefOid": "7a115777bd846f709899ee98fbb4f302429c48cc",
+      "headRefOid": "9af9ca80243642191b3271c4f9fb8df4e610971f",
+      "mergeCommit": {
+        "oid": "014b6a6f3cfd9390d851c9c419153ccab2fe43b5"
+      }
+    },
+    {
+      "number": 7805,
+      "url": "https://github.com/psychopy/psychopy/pull/7805",
+      "title": "BF: Fix AttributeError in MovieStim.stop and unload (#7793)",
+      "body": "### Description of changes\n\nThis fixes an `AttributeError` when calling `MovieStim.stop()`, `MovieStim.unload()`, or when re-loading a movie file (#7793).\n\n#### Problem\nIn `MovieStim.unload()`, `self._freePlayer()` was called to clean up the movie player. However, `_freePlayer()` was only defined on the underlying `MovieFileReader` class, not on `MovieStim` itself. When `video.stop()` ran, it called `self.loadMovie()` which invoked `self.unload()`, resulting in:\n```\n  File \"psychopy/visual/movies/__init__.py\", line 2188, in stop\n    self.loadMovie(self._filename)  # reload the movie\n  File \"psychopy/visual/movies/__init__.py\", line 1464, in loadMovie\n    self.unload()\n  File \"psychopy/visual/movies/__init__.py\", line 1678, in unload\n    self._freePlayer()  # free the player if it is already open\nAttributeError: 'MovieStim' object has no attribute '_freePlayer'. Did you mean: '_hasPlayer'?\n```\n\n#### Solution\n1. **Implement `MovieStim._freePlayer()`**: Safely closes `self._player` (if open) and clears `self._player = None`.\n2. **Update `MovieStim.unload()`**: Ensures `_cleanupAudioTrack()` is called and guards against early teardown (`getattr(self, '_isLoaded', False)`).\n3. **Streamline `MovieStim.stop()`**: Calls `self.unload()` before reloading via `self.loadMovie()` to ensure textures, audio, and player handles are properly torn down and recreated.\n4. **Early attribute initialization**: Defines `self._player = None` and `self._isLoaded = False` before `super().__init__` to prevent secondary exceptions if garbage collected on failed initialization.\n5. **Unit test**: Added `test_moviestim_stop_and_unload` in `psychopy/tests/test_visual/test_movies.py`.\n\n\nFixes #7793",
+      "mergedAt": "2026-09-30T09:15:25Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "5ee7b7f8b8a45fbc35dd549ae859d33271cc2d32",
+      "headRefOid": "ff21c296ad45c80e66afa45e8b4886d18127ccc0",
+      "mergeCommit": {
+        "oid": "ab0a5e8a000e4feb51393322d760ba592176f6b5"
+      }
+    },
+    {
+      "number": 7712,
+      "url": "https://github.com/psychopy/psychopy/pull/7712",
+      "title": "SYS: Update uv lock",
+      "body": "",
+      "mergedAt": "2026-07-27T17:19:52Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "379dfbf506c494044a9f0dc6f279aa72e587e92a",
+      "headRefOid": "6e690cf3c9ad1f0a99a7dc3070352b7896464ba6",
+      "mergeCommit": {
+        "oid": "49eba80db4f38dd379f3a63f429d8be9c3da169a"
+      }
+    },
+    {
+      "number": 7475,
+      "url": "https://github.com/psychopy/psychopy/pull/7475",
+      "title": "BF: clamp StairHandler intensity when step size is negative",
+      "body": "Fixes #7188\r\n\r\n## Summary\r\n- enforce `StairHandler` min/max clamping regardless of step direction, covering negative step sizes\r\n- add regression test to ensure negative `stepSizes` with `minVal` do not drop below bounds\r\n\r\n## Testing\r\n- python -m pytest psychopy/tests/test_data/test_StairHandlers.py::TestStairHandler::test_negative_step_clamped_to_min",
+      "mergedAt": "2025-11-22T08:54:37Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "f150adfd0246e6bf22331949502e27262734be71",
+      "headRefOid": "159d87ad134b11cc5d6850ea16248139cce557b9",
+      "mergeCommit": {
+        "oid": "1ca0bbf0eedfc3738b49f0f76ac49bee5f52368b"
+      }
+    },
+    {
+      "number": 7676,
+      "url": "https://github.com/psychopy/psychopy/pull/7676",
+      "title": "PKG: don't import (unused) psychopy.projects.sshkeys to reduce dependencies",
+      "body": "\r\nsshkeys depends on the cryptography package which otherwise isn't needed",
+      "mergedAt": "2026-06-17T12:01:31Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "a8bd643dbd8a210f2bb5d5436d23f9c0f6c1e29b",
+      "headRefOid": "7c4131c815e46ea00c1850dc2ac1b8b8aee3321c",
+      "mergeCommit": {
+        "oid": "f486d0183734e43a3693756bc4404211e3b5dfe3"
+      }
+    },
+    {
+      "number": 7618,
+      "url": "https://github.com/psychopy/psychopy/pull/7618",
+      "title": "ENH: Set Pavlovia projects to prefer merge over rebase when doing git pull",
+      "body": "",
+      "mergedAt": "2026-05-13T10:22:26Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "c1d3c7d69abee7c58cc203a66f8a35fce4a9d4d5",
+      "headRefOid": "cac4bc4ad207a2cdca4db97cfd00536a0236621c",
+      "mergeCommit": {
+        "oid": "8bf8043ff49e15cac0963499b0c9178fe99e5521"
+      }
+    },
+    {
+      "number": 7637,
+      "url": "https://github.com/psychopy/psychopy/pull/7637",
+      "title": "Bump zeroconf from 0.148.0 to 0.149.7",
+      "body": "Bumps [zeroconf](https://github.com/python-zeroconf/python-zeroconf) from 0.148.0 to 0.149.7.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/python-zeroconf/python-zeroconf/releases\">zeroconf's releases</a>.</em></p>\n<blockquote>\n<h2>0.149.7</h2>\n<h2>v0.149.7 (2026-05-18)</h2>\n<p><em>This release is published under the LGPL-2.1-or-later License.</em></p>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound DNSCache record count to prevent unbounded LAN-driven growth (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1718\">#1718</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ad3f37b5b852b8f614d322283d148efb2cef6e4\"><code>0ad3f37</code></a>)</li>\n</ul>\n<h3>Testing</h3>\n<ul>\n<li>Shave ServiceBrowser first-query delay on loopback (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1720\">#1720</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ff3c6b9dd40e01263ce88803139c3ba68349682\"><code>0ff3c6b</code></a>)</li>\n</ul>\n<hr />\n<p><strong>Detailed Changes</strong>: <a href=\"https://github.com/python-zeroconf/python-zeroconf/compare/0.149.6...0.149.7\">0.149.6...0.149.7</a></p>\n<h2>0.149.6</h2>\n<h2>v0.149.6 (2026-05-18)</h2>\n<p><em>This release is published under the LGPL-2.1-or-later License.</em></p>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound _seen_logs and stop retaining exc_info (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1717\">#1717</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/95561e28b24922358f1991e38e3a86d70d72dcec\"><code>95561e2</code></a>)</li>\n</ul>\n<hr />\n<p><strong>Detailed Changes</strong>: <a href=\"https://github.com/python-zeroconf/python-zeroconf/compare/0.149.5...0.149.6\">0.149.5...0.149.6</a></p>\n<h2>0.149.5</h2>\n<h2>v0.149.5 (2026-05-18)</h2>\n<p><em>This release is published under the LGPL-2.1-or-later License.</em></p>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound DNS compression-pointer chain depth in DNSIncoming (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1719\">#1719</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/f9e23592137f30fdf7ef710dba065da31c79b1cf\"><code>f9e2359</code></a>)</li>\n</ul>\n<h3>Testing</h3>\n<ul>\n<li>\n<p>Cap helper get_service_info timeout in suppression test (~3.0s \u2192 ~1.85s) (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1708\">#1708</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/ee3c7d74ff45327a3a6d520b86a691e21e2bc219\"><code>ee3c7d7</code></a>)</p>\n</li>\n<li>\n<p>Drop ZeroconfServiceTypes.find() timeouts from 500ms to 200ms on loopback (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1710\">#1710</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/64d143d2ee7874ee1d9cef0dd2799c008b4aa791\"><code>64d143d</code></a>)</p>\n</li>\n<li>\n<p>Eliminate test_get_info_single race by injecting from the send mock (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1716\">#1716</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/963d3d70e1cde056967eba0d8747ddcd247ae707\"><code>963d3d7</code></a>)</p>\n</li>\n<li>\n<p>Fix race in test_register_and_lookup_type_by_uppercase_name (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1712\">#1712</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/91aa21d52a0873f5fc12d43675b1b521dfe20519\"><code>91aa21d</code></a>)</p>\n</li>\n<li>\n<p>Speed up service-info request tests with quick_request_timing fixture (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1709\">#1709</a>, <a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/4bae30a2ed0910ee7c4f1d0f92f2c400a7b10f31\"><code>4bae30a</code></a>)</p>\n</li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/python-zeroconf/python-zeroconf/blob/master/CHANGELOG.md\">zeroconf's changelog</a>.</em></p>\n<blockquote>\n<h2>v0.149.7 (2026-05-18)</h2>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound DNSCache record count to prevent unbounded LAN-driven growth\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1718\">#1718</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ad3f37b5b852b8f614d322283d148efb2cef6e4\"><code>0ad3f37</code></a>)</li>\n</ul>\n<h3>Testing</h3>\n<ul>\n<li>Shave ServiceBrowser first-query delay on loopback\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1720\">#1720</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ff3c6b9dd40e01263ce88803139c3ba68349682\"><code>0ff3c6b</code></a>)</li>\n</ul>\n<h2>v0.149.6 (2026-05-18)</h2>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound _seen_logs and stop retaining exc_info\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1717\">#1717</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/95561e28b24922358f1991e38e3a86d70d72dcec\"><code>95561e2</code></a>)</li>\n</ul>\n<h2>v0.149.5 (2026-05-18)</h2>\n<h3>Bug Fixes</h3>\n<ul>\n<li>Bound DNS compression-pointer chain depth in DNSIncoming\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1719\">#1719</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/f9e23592137f30fdf7ef710dba065da31c79b1cf\"><code>f9e2359</code></a>)</li>\n</ul>\n<h3>Testing</h3>\n<ul>\n<li>\n<p>Cap helper get_service_info timeout in suppression test (~3.0s \u2192 ~1.85s)\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1708\">#1708</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/ee3c7d74ff45327a3a6d520b86a691e21e2bc219\"><code>ee3c7d7</code></a>)</p>\n</li>\n<li>\n<p>Drop ZeroconfServiceTypes.find() timeouts from 500ms to 200ms on loopback\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1710\">#1710</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/64d143d2ee7874ee1d9cef0dd2799c008b4aa791\"><code>64d143d</code></a>)</p>\n</li>\n<li>\n<p>Eliminate test_get_info_single race by injecting from the send mock\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1716\">#1716</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/963d3d70e1cde056967eba0d8747ddcd247ae707\"><code>963d3d7</code></a>)</p>\n</li>\n<li>\n<p>Fix race in test_register_and_lookup_type_by_uppercase_name\n(<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/pull/1712\">#1712</a>,\n<a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/91aa21d52a0873f5fc12d43675b1b521dfe20519\"><code>91aa21d</code></a>)</p>\n</li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/e32f52d69d838ec1d2e97856a786691eaa6a4632\"><code>e32f52d</code></a> 0.149.7</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ad3f37b5b852b8f614d322283d148efb2cef6e4\"><code>0ad3f37</code></a> fix: bound DNSCache record count to prevent unbounded LAN-driven growth (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1718\">#1718</a>)</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/0ff3c6b9dd40e01263ce88803139c3ba68349682\"><code>0ff3c6b</code></a> test: shave ServiceBrowser first-query delay on loopback (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1720\">#1720</a>)</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/9683fe6ade7ee080e161fb30c7325024d1d3e02f\"><code>9683fe6</code></a> 0.149.6</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/95561e28b24922358f1991e38e3a86d70d72dcec\"><code>95561e2</code></a> fix: bound _seen_logs and stop retaining exc_info (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1717\">#1717</a>)</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/65b22cb8de06dcb40a8ee21b04ce84e9aa0dac91\"><code>65b22cb</code></a> 0.149.5</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/f9e23592137f30fdf7ef710dba065da31c79b1cf\"><code>f9e2359</code></a> fix: bound DNS compression-pointer chain depth in DNSIncoming (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1719\">#1719</a>)</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/64d143d2ee7874ee1d9cef0dd2799c008b4aa791\"><code>64d143d</code></a> test: drop ZeroconfServiceTypes.find() timeouts from 500ms to 200ms on loopba...</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/963d3d70e1cde056967eba0d8747ddcd247ae707\"><code>963d3d7</code></a> test: eliminate test_get_info_single race by injecting from the send mock (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1\">#1</a>...</li>\n<li><a href=\"https://github.com/python-zeroconf/python-zeroconf/commit/91aa21d52a0873f5fc12d43675b1b521dfe20519\"><code>91aa21d</code></a> test: fix race in test_register_and_lookup_type_by_uppercase_name (<a href=\"https://redirect.github.com/python-zeroconf/python-zeroconf/issues/1712\">#1712</a>)</li>\n<li>Additional commits viewable in <a href=\"https://github.com/python-zeroconf/python-zeroconf/compare/0.148.0...0.149.7\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=zeroconf&package-manager=uv&previous-version=0.148.0&new-version=0.149.7)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)\nYou can disable automated security fix PRs for this repo from the [Security Alerts page](https://github.com/psychopy/psychopy/network/alerts).\n\n</details>",
+      "mergedAt": "2026-06-03T16:06:14Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "e3954c179f5bbd5ac9f012b0130b49526c7978f0",
+      "headRefOid": "f800fc61b75bf39a2f89697b3ab615a6038fe8a8",
+      "mergeCommit": {
+        "oid": "9d2b9136a9842d85cd00e4c776f6624d129ea858"
+      }
+    },
+    {
+      "number": 7460,
+      "url": "https://github.com/psychopy/psychopy/pull/7460",
+      "title": "BF: If Pavlovia API can't find a user, use pygitlab to get their user ID",
+      "body": "",
+      "mergedAt": "2025-11-06T15:31:36Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "244485c8806c2cfb460e06c44da7089f84cca5a3",
+      "headRefOid": "23bcea9a050cd3e41eae8793dc001733dd96db70",
+      "mergeCommit": {
+        "oid": "41fe378ec4a266d373eab992dcd4715d4a9018fc"
+      }
+    },
+    {
+      "number": 7444,
+      "url": "https://github.com/psychopy/psychopy/pull/7444",
+      "title": "BF: Visual validator was ignoring \"Find threshold/sensor\" params",
+      "body": "",
+      "mergedAt": "2025-10-23T13:33:52Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "0d20dd14ca418afea945e43cf5c58a943e93fc85",
+      "headRefOid": "8bce327ac7609c85ea540840b0430c51ca07a810",
+      "mergeCommit": {
+        "oid": "f07a31dd78aaee068220ac4ff6f55e99fae1a684"
+      }
+    },
+    {
+      "number": 7530,
+      "url": "https://github.com/psychopy/psychopy/pull/7530",
+      "title": "BF: Changes to support 3D mesh rendering again",
+      "body": "The PR contains fixes to re-enable 3D mesh rendering support. It also adds the ability to change the scale of models on-the-fly by adding scaling support to the `RigidBodyPose` class. ",
+      "mergedAt": "2026-02-06T15:21:50Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "5c6b097c7646590f22e03aed91bbad11b050bd70",
+      "headRefOid": "8cd0bedd0adccabefff23e46f3de3e54b3e13e87",
+      "mergeCommit": {
+        "oid": "80f3fca7eb02032edc04dc4ddbc81c7d10b03015"
+      }
+    },
+    {
+      "number": 7664,
+      "url": "https://github.com/psychopy/psychopy/pull/7664",
+      "title": "RF: Remove HTML path param",
+      "body": "",
+      "mergedAt": "2026-06-15T10:06:10Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "d7b6630b57f10844b1de008d96796e7873d65dc1",
+      "headRefOid": "742e632c241f9f826eaaa6a8a96db48c580a4e71",
+      "mergeCommit": {
+        "oid": "688f91eb2ae0dddd1c43769db041da09e48c7ba4"
+      }
+    },
+    {
+      "number": 7752,
+      "url": "https://github.com/psychopy/psychopy/pull/7752",
+      "title": "BF: Update textbox container when size changes",
+      "body": "",
+      "mergedAt": "2026-09-07T09:40:55Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "ffb0d332d4d2107457292591003de5c43a8e3f22",
+      "headRefOid": "f1906d3221e2e5d7e8605999b542e3f3f92673ae",
+      "mergeCommit": {
+        "oid": "6af6f43307ab73ec921b90a0457c4b47bcd47119"
+      }
+    }
+  ]
+}

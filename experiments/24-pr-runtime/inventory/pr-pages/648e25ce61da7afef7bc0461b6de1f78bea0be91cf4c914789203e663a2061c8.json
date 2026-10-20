@@ -1,0 +1,177 @@
+{
+  "query_sha256": "648e25ce61da7afef7bc0461b6de1f78bea0be91cf4c914789203e663a2061c8",
+  "query": "repo:MLCIL/scikit-fingerprints is:pr is:merged merged:2025-10-20..2026-10-19",
+  "cursor": "Y3Vyc29yOjEwMA==",
+  "captured_at": "2026-10-20T14:36:49.046450+00:00",
+  "response": {
+    "data": {
+      "search": {
+        "issueCount": 111,
+        "pageInfo": {
+          "hasNextPage": false,
+          "endCursor": "Y3Vyc29yOjExMQ=="
+        },
+        "nodes": [
+          {
+            "number": 518,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/518",
+            "title": "Update dependencies",
+            "body": "## Changes\r\n\r\nAllows Pandas 3.x, closes https://github.com/scikit-fingerprints/scikit-fingerprints/issues/517, and contains a few minor fixes. All tests passed locally with updated dependencies, so this should not cause any problems.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2026-02-06T21:22:00Z",
+            "isDraft": false,
+            "changedFiles": 5,
+            "baseRefOid": "f64ab2e7c5d6e4b1ea814560166967358b03fe02",
+            "headRefOid": "cd3e5781f76a64497deab1adebb1ef8c3a83f5ef",
+            "mergeCommit": {
+              "oid": "9527e92acb077e7fbdf5fed539dda0bd20d45665"
+            }
+          },
+          {
+            "number": 515,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/515",
+            "title": "Adjust benchmarking code to changed interfaces",
+            "body": "## Changes\r\n\r\n- _benchmarking/benchmark.py_ blocked by [OGB PyTorch issue](https://github.com/snap-stanford/ogb/pull/509),\r\n- _benchmarking/fp_tuning.py_ adjusted ECFP changes, also added filtering out data empty data,\r\n- _skfp/bases/base_fp_transformer_ had a bug where the PhysiochemicalProperties fingerprint was not properly cast to binary before calling __hash_fingerprint_bits_, causing an overflow.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2026-01-22T18:05:32Z",
+            "isDraft": false,
+            "changedFiles": 3,
+            "baseRefOid": "e26f390818d2164907333c9ee4fab0e44ba54b80",
+            "headRefOid": "522a61485ede298ef79fc15b05d91e35dcf31896",
+            "mergeCommit": {
+              "oid": "f64ab2e7c5d6e4b1ea814560166967358b03fe02"
+            }
+          },
+          {
+            "number": 512,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/512",
+            "title": "Add MaxMin clustering for binary molecular fingerprints",
+            "body": "## Changes\r\n\r\nThis PR introduces **MaxMin clustering** for binary molecular fingerprints, a diversity-driven, centroid-based clustering algorithm commonly used in cheminformatics.\r\n\r\n### Key additions\r\n- New `MaxMinClustering` estimator following the scikit-learn API (`fit`, `predict`, `fit_predict` + supporting cloning and pickling)\r\n- Centroid selection via RDKit\u2019s `MaxMinPicker` using a Tanimoto-distance threshold\r\n- Assignment of samples to the nearest centroids by maximum Tanimoto similarity\r\n- Support for dense NumPy arrays, SciPy sparse matrices, and RDKit `ExplicitBitVect` inputs\r\n- Convenience method to retrieve clusters as index groups\r\n- Comprehensive unit tests covering correctness, determinism, sparse/dense parity, error handling, cloning, and pickling\r\n- New tutorial notebook: `10_molecular_clustering.ipynb`\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2026-03-14T16:00:15Z",
+            "isDraft": false,
+            "changedFiles": 8,
+            "baseRefOid": "70bcf92dfb5d8bc73b3fe680053bd86d23585e52",
+            "headRefOid": "45fa60cacbdce8f7591d9558bfe0039f7bd96ae4",
+            "mergeCommit": {
+              "oid": "a881f2ce4184acb81a71ce63f45d5814c9c5e2a3"
+            }
+          },
+          {
+            "number": 510,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/510",
+            "title": "CI updates for caching",
+            "body": "## Changes\r\n\r\nCI updates, particularly for more efficient caching. Also covers #498 by fixing dependencies bounds.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-12-29T09:54:13Z",
+            "isDraft": false,
+            "changedFiles": 20,
+            "baseRefOid": "1fb6ee1e1d766accfe1694d5ff641742e91e51dc",
+            "headRefOid": "07c5e9e670c732e41fc25472c4c2882086ec3fd1",
+            "mergeCommit": {
+              "oid": "e26f390818d2164907333c9ee4fab0e44ba54b80"
+            }
+          },
+          {
+            "number": 509,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/509",
+            "title": "Optimize datasets tests",
+            "body": "## Changes\r\n\r\nCloses https://github.com/scikit-fingerprints/scikit-fingerprints/issues/507. Turns off running tests for `skfp/datasets` unless Git indicates changes there. This really cuts down testing time, locally from 7 to 3 minutes.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-12-27T11:25:22Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "d78e9d70aee65357236542b13820d5a2065fed8c",
+            "headRefOid": "c76a264cae48e565f9ea0a63af43d1f544a496f8",
+            "mergeCommit": {
+              "oid": "1fb6ee1e1d766accfe1694d5ff641742e91e51dc"
+            }
+          },
+          {
+            "number": 508,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/508",
+            "title": "Various fixes",
+            "body": "## Changes\r\n\r\nA lot of minor fixes, primarily docstrings or formatting.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-12-27T07:38:54Z",
+            "isDraft": false,
+            "changedFiles": 76,
+            "baseRefOid": "d4b795871a6f6f107c758700489d003f8226c311",
+            "headRefOid": "1268bb989c8a21dd2b77c1c032529be79752d44f",
+            "mergeCommit": {
+              "oid": "d78e9d70aee65357236542b13820d5a2065fed8c"
+            }
+          },
+          {
+            "number": 506,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/506",
+            "title": "Fix Sokal-Sneath typo",
+            "body": "## Changes\r\n\r\nJust a small typo fix.\r\n\r\n## Checklist before requesting a review\r\n- [ ] Docstrings added/updated in public functions and classes\r\n- [ ] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [ ] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-12-05T12:58:25Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "5eb50a00b89377a0b40eed7e03c6b78da8a8550b",
+            "headRefOid": "8271d5f4c51f4cc90d21b16f9c01f500e21a644b",
+            "mergeCommit": {
+              "oid": "d4b795871a6f6f107c758700489d003f8226c311"
+            }
+          },
+          {
+            "number": 504,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/504",
+            "title": "Fix datasets typing",
+            "body": "## Changes\r\n\r\nThere was a typo in typing of return type in datasets loading. This PR fixes that.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-11-22T07:55:18Z",
+            "isDraft": false,
+            "changedFiles": 22,
+            "baseRefOid": "1d279a90a4c5222df835b3362cb695d4d13a6b0c",
+            "headRefOid": "73f114b7bf37877b2383b25021942129bdee4180",
+            "mergeCommit": {
+              "oid": "5eb50a00b89377a0b40eed7e03c6b78da8a8550b"
+            }
+          },
+          {
+            "number": 503,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/503",
+            "title": "Add explicit doc convention to ruff.toml",
+            "body": "## Changes\r\n\r\nAdded additional checks for doc convention\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-10-29T09:36:19Z",
+            "isDraft": false,
+            "changedFiles": 1,
+            "baseRefOid": "611aeac76870f8cef196996cd9387fe927baedd2",
+            "headRefOid": "6940cb1463937cf1d9a6458d98c058b65843fcb8",
+            "mergeCommit": {
+              "oid": "65320386390075d5e10847c7222e7c0bc87a6ed1"
+            }
+          },
+          {
+            "number": 502,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/502",
+            "title": "Add examples to train-test split functions in various splitters",
+            "body": "## Changes\r\n\r\nAdded examples to splitting functions docs.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-10-31T19:42:34Z",
+            "isDraft": false,
+            "changedFiles": 5,
+            "baseRefOid": "611aeac76870f8cef196996cd9387fe927baedd2",
+            "headRefOid": "6bb0503d498880060e5c7090512664290761253e",
+            "mergeCommit": {
+              "oid": "1d279a90a4c5222df835b3362cb695d4d13a6b0c"
+            }
+          },
+          {
+            "number": 500,
+            "url": "https://github.com/MLCIL/scikit-fingerprints/pull/500",
+            "title": "Update Sphinx build",
+            "body": "## Changes\r\n\r\n- Added multithreading to sphinx build options (default all cores)\r\n  - 50+% speedup (`47.00 \u00b1 0.24` seconds to `20.23 \u00b1 0.30` seconds. M3 Pro 5 samples)\r\n- Removed `clean` from build due to lack of issues.\r\n\r\nIf there any reproducibility steps for issues with non-clean builds for docs, please let me know.\r\n\r\n## Checklist before requesting a review\r\n- [x] Docstrings added/updated in public functions and classes\r\n- [x] Tests added, reasonable test coverage (at least ~90%, `make test-coverage`)\r\n- [x] Sphinx docs added/updated and render properly (`make docs` and see `docs/_build/index.html`)\r\n",
+            "mergedAt": "2025-10-25T08:14:18Z",
+            "isDraft": false,
+            "changedFiles": 2,
+            "baseRefOid": "fd105a849d243b557c7677cc0abf8d2c5d1a702e",
+            "headRefOid": "a3570d0ff315a0c2c66850da5cb991793e535139",
+            "mergeCommit": {
+              "oid": "611aeac76870f8cef196996cd9387fe927baedd2"
+            }
+          }
+        ]
+      },
+      "rateLimit": {
+        "remaining": 4852,
+        "resetAt": "2026-10-20T15:09:39Z"
+      }
+    }
+  }
+}

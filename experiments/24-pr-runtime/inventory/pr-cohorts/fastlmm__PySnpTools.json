@@ -1,0 +1,43 @@
+{
+  "repository": "fastlmm/PySnpTools",
+  "stratum": "python",
+  "window": {
+    "since": "2025-10-20",
+    "until": "2026-10-19"
+  },
+  "merged_pr_count": 2,
+  "evidence": [
+    "inventory/pr-pages/5ddf87fd4714c0bc71a53911e5272883836cc25e58799c55dd1d1acdde4a8024.json"
+  ],
+  "sample_rule": "SHA256 rank of biotasks-24-prs-v1:github_id:number; first 20",
+  "selected": [
+    {
+      "number": 11,
+      "url": "https://github.com/fastlmm/PySnpTools/pull/11",
+      "title": "Add Python 3.14 support",
+      "body": "## Summary\r\n\r\n- Add Python 3.14 support\r\n- Update dependency markers and migrate packaging to uv_build\r\n- Modernize and expand CI and installed-artifact testing\r\n- Repair tutorial sample-data retrieval\r\n- Update and execute the maintained notebooks\r\n- Add a Trusted Publishing release workflow\r\n- Prepare version 0.5.15\r\n\r\n## Validation\r\n\r\n- 725 canonical tests pass locally\r\n- Optional BGEN tests pass\r\n- Tutorial and paper notebooks were executed and reviewed\r\n- GitHub CI covers Python 3.10 through 3.14 across supported platforms",
+      "mergedAt": "2026-08-07T14:21:22Z",
+      "isDraft": false,
+      "changedFiles": 21,
+      "baseRefOid": "3befb3498966025929f4c4704fb48df5ae327e2c",
+      "headRefOid": "f13d9e89514d95289723cb2257525b2089559043",
+      "mergeCommit": {
+        "oid": "6f97ee95a55c7091ec11fe086542a6393ada741a"
+      }
+    },
+    {
+      "number": 12,
+      "url": "https://github.com/fastlmm/PySnpTools/pull/12",
+      "title": "Complete release-process follow-ups",
+      "body": "## Summary\n\n- verify the wheel rebuilt from the generated sdist instead of comparing two checkout-built wheels\n- normalize project URL labels and use HTTPS documentation metadata\n- require direct-dependency lower-bound audits when adding Python feature releases\n- record the need for a scheduled fresh dependency-resolution check\n\n## Validation\n\n- workflow YAML parses successfully\n- `uv lock --check` passes\n- direct and sdist-derived Python 3.14 wheels build and compare byte-for-byte equal\n- `git diff --check` passes",
+      "mergedAt": "2026-08-07T16:12:38Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "f881454fba2d8014b505febb72c9aa2fc3afc65b",
+      "headRefOid": "bc2a5f1dd3c907829d4a0f59902b0847a615ffdf",
+      "mergeCommit": {
+        "oid": "3517c307cb17ac13bd00e2d620051550ef191b34"
+      }
+    }
+  ]
+}

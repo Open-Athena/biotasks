@@ -1,0 +1,295 @@
+{
+  "repository": "nipy/nipype",
+  "stratum": "python",
+  "window": {
+    "since": "2025-10-20",
+    "until": "2026-10-19"
+  },
+  "merged_pr_count": 27,
+  "evidence": [
+    "inventory/pr-pages/bde324453447a9c8c6d7e7f33a10060eebde512de2f70d308206f2e322fe8e40.json"
+  ],
+  "sample_rule": "SHA256 rank of biotasks-24-prs-v1:github_id:number; first 20",
+  "selected": [
+    {
+      "number": 3773,
+      "url": "https://github.com/nipy/nipype/pull/3773",
+      "title": "Report gantt runtime threads as cores, not percent",
+      "body": "Closes #3700. runtime_threads is taken from cpu_percent, so a node using four cores was charted as 400.\n",
+      "mergedAt": "2026-09-23T16:48:06Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "a1f4d6d348b2664390f2a68657548d9b290087a8",
+      "headRefOid": "69b37c84cadbf4cda76e6269fe46cc4d6546fd53",
+      "mergeCommit": {
+        "oid": "b02801e61e94301514e58212ee69c29f110318a4"
+      }
+    },
+    {
+      "number": 3779,
+      "url": "https://github.com/nipy/nipype/pull/3779",
+      "title": "FIX: Pass -R before reference_image in ComposeMultiTransform",
+      "body": "`ComposeMultiTransform.reference_image` now renders as `-R <image>`, which is the form the ANTs executable expects. Previously the bare path was emitted and silently ignored. Fixes #3298.\n\n<details>\n<summary>Verification</summary>\n\nRun against ANTs 2.6.5 (`ANTs Version: 2.6.5.post187-g0202eb6`):\n\n```\nComposeMultiTransform 3 composed_R.nii.gz -R fixed.nii.gz out1_0GenericAffine.mat\nreference_image_filename: fixed.nii.gz\n```\n\nBefore the fix, the same inputs produced `ComposeMultiTransform 3 composed.mat fixed.nii.gz out1_0GenericAffine.mat` and ANTs reported \"the reference affine file for center is selected as the first affine\", i.e. the reference image was dropped.\n\nDoctests for `nipype/interfaces/ants/utils.py` and the regenerated `test_auto_ComposeMultiTransform.py` pass; `pre-commit run --all-files` is clean.\n\n</details>\n",
+      "mergedAt": "2026-10-08T15:20:00Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "599a762085006a54634f8abf8cb6f4719d654d62",
+      "headRefOid": "d3aeed804450dfcbf4808ab9b0aeff0f3ab6bebf",
+      "mergeCommit": {
+        "oid": "b7a4a02bd4564daa6d51960d2171ac45c704ec8e"
+      }
+    },
+    {
+      "number": 3765,
+      "url": "https://github.com/nipy/nipype/pull/3765",
+      "title": "REL: 1.12.0",
+      "body": "## Release checklist\r\n\r\n* [x] Merge pending PRs\r\n* [x] Update changelog\r\n* [x] Update .mailmap\r\n* [x] Update .zenodo.json\r\n* [x] Update `doc/interfaces.rst` with previous releases",
+      "mergedAt": "2026-08-25T15:18:15Z",
+      "isDraft": false,
+      "changedFiles": 3,
+      "baseRefOid": "b8ccb51a24e2a8d69a8887506a6f2accb1366045",
+      "headRefOid": "b5271c217d2e9c1da91ecce1c647a9e0e1a883c8",
+      "mergeCommit": {
+        "oid": "b5271c217d2e9c1da91ecce1c647a9e0e1a883c8"
+      }
+    },
+    {
+      "number": 3747,
+      "url": "https://github.com/nipy/nipype/pull/3747",
+      "title": "REL: 1.11.0",
+      "body": "## Release checklist\r\n\r\n* [x] Merge pending PRs\r\n* [x] Update changelog\r\n* [x] Update .mailmap\r\n* [x] Update .zenodo.json\r\n* [ ] Update `doc/interfaces.rst` with previous releases",
+      "mergedAt": "2026-03-02T20:49:16Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "50a782a73d90b1520b55f4edbc97aafa1d26a81e",
+      "headRefOid": "b1add442fbbabfca86b6983652cf9a23cc9a3d36",
+      "mergeCommit": {
+        "oid": "bdb223ee33f9e88ccbd4c0d293446ae6d6a665e5"
+      }
+    },
+    {
+      "number": 3775,
+      "url": "https://github.com/nipy/nipype/pull/3775",
+      "title": "[pre-commit.ci] pre-commit autoupdate",
+      "body": "<!--pre-commit.ci start-->\nupdates:\n- https://github.com/psf/black \u2192 https://github.com/psf/black-pre-commit-mirror\n- [github.com/psf/black-pre-commit-mirror: 87928e6d6761a4a6d22250e1fee5601b3998086e \u2192 96ae3e5802f3fe2d551e703e18f0a367d1a81ac2](https://github.com/psf/black-pre-commit-mirror/compare/87928e6d6761a4a6d22250e1fee5601b3998086e...96ae3e5802f3fe2d551e703e18f0a367d1a81ac2)\n<!--pre-commit.ci end-->",
+      "mergedAt": "2026-10-06T01:51:57Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "b02801e61e94301514e58212ee69c29f110318a4",
+      "headRefOid": "c9a9435044e067b7afd935310fd32edda8c25379",
+      "mergeCommit": {
+        "oid": "15a2dfff13ac6c4a48b5180ab8be7f37b3f777bb"
+      }
+    },
+    {
+      "number": 3752,
+      "url": "https://github.com/nipy/nipype/pull/3752",
+      "title": "FIX: cat12 - fix cobra/hammers field swap, add missing atlases and WMHstr parameter",
+      "body": "- Fix swapped field paths for cobra and hammers ROI atlases: cobra was pointing to 'output.ROImenu.atlases.hammers' and vice versa\r\n- Add 9 new atlas inputs present in current CAT12 but missing from the interface: ibsr, aal3, mori, anatomy3, julichbrain3, thalamus, thalamic_nuclei, suit (all default False as they require optional atlas files to be installed)\r\n- Add wm_hyper_intensity_correction_strength (extopts.WMHCstr, default 0.5) to control the strength of WMH reclassification when WMHC is 1 or 2\r\n",
+      "mergedAt": "2026-05-20T17:00:43Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "a8d71305b7c16965192ad0156e6c8df25f6b0acf",
+      "headRefOid": "4ba74d41b08fe5948d298fc65f9a9f4e5a45bca4",
+      "mergeCommit": {
+        "oid": "b2cfd3bcf248808a1484bf4cbe94bf016787ea20"
+      }
+    },
+    {
+      "number": 3744,
+      "url": "https://github.com/nipy/nipype/pull/3744",
+      "title": "Chore(deps): Bump the actions-infrastructure group across 1 directory with 3 updates",
+      "body": "Bumps the actions-infrastructure group with 3 updates in the / directory: [actions/checkout](https://github.com/actions/checkout), [actions/upload-artifact](https://github.com/actions/upload-artifact) and [actions/download-artifact](https://github.com/actions/download-artifact).\n\nUpdates `actions/checkout` from 4 to 6\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/checkout/releases\">actions/checkout's releases</a>.</em></p>\n<blockquote>\n<h2>v6.0.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Update README to include Node.js 24 support details and requirements by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2248\">actions/checkout#2248</a></li>\n<li>Persist creds to a separate file by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2286\">actions/checkout#2286</a></li>\n<li>v6-beta by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2298\">actions/checkout#2298</a></li>\n<li>update readme/changelog for v6 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2311\">actions/checkout#2311</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v5.0.0...v6.0.0\">https://github.com/actions/checkout/compare/v5.0.0...v6.0.0</a></p>\n<h2>v6-beta</h2>\n<h2>What's Changed</h2>\n<p>Updated persist-credentials to store the credentials under <code>$RUNNER_TEMP</code> instead of directly in the local git config.</p>\n<p>This requires a minimum Actions Runner version of <a href=\"https://github.com/actions/runner/releases/tag/v2.329.0\">v2.329.0</a> to access the persisted credentials for <a href=\"https://docs.github.com/en/actions/tutorials/use-containerized-services/create-a-docker-container-action\">Docker container action</a> scenarios.</p>\n<h2>v5.0.1</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Port v6 cleanup to v5 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2301\">actions/checkout#2301</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v5...v5.0.1\">https://github.com/actions/checkout/compare/v5...v5.0.1</a></p>\n<h2>v5.0.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Update actions checkout to use node 24 by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2226\">actions/checkout#2226</a></li>\n<li>Prepare v5.0.0 release by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2238\">actions/checkout#2238</a></li>\n</ul>\n<h2>\u26a0\ufe0f Minimum Compatible Runner Version</h2>\n<p><strong>v2.327.1</strong><br />\n<a href=\"https://github.com/actions/runner/releases/tag/v2.327.1\">Release Notes</a></p>\n<p>Make sure your runner is updated to this version or newer to use this release.</p>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v4...v5.0.0\">https://github.com/actions/checkout/compare/v4...v5.0.0</a></p>\n<h2>v4.3.1</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Port v6 cleanup to v4 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2305\">actions/checkout#2305</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/checkout/compare/v4...v4.3.1\">https://github.com/actions/checkout/compare/v4...v4.3.1</a></p>\n<h2>v4.3.0</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>docs: update README.md by <a href=\"https://github.com/motss\"><code>@\u200bmotss</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1971\">actions/checkout#1971</a></li>\n<li>Add internal repos for checking out multiple repositories by <a href=\"https://github.com/mouismail\"><code>@\u200bmouismail</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1977\">actions/checkout#1977</a></li>\n<li>Documentation update - add recommended permissions to Readme by <a href=\"https://github.com/benwells\"><code>@\u200bbenwells</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2043\">actions/checkout#2043</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/checkout/blob/main/CHANGELOG.md\">actions/checkout's changelog</a>.</em></p>\n<blockquote>\n<h1>Changelog</h1>\n<h2>v6.0.2</h2>\n<ul>\n<li>Fix tag handling: preserve annotations and explicit fetch-tags by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2356\">actions/checkout#2356</a></li>\n</ul>\n<h2>v6.0.1</h2>\n<ul>\n<li>Add worktree support for persist-credentials includeIf by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2327\">actions/checkout#2327</a></li>\n</ul>\n<h2>v6.0.0</h2>\n<ul>\n<li>Persist creds to a separate file by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2286\">actions/checkout#2286</a></li>\n<li>Update README to include Node.js 24 support details and requirements by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2248\">actions/checkout#2248</a></li>\n</ul>\n<h2>v5.0.1</h2>\n<ul>\n<li>Port v6 cleanup to v5 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2301\">actions/checkout#2301</a></li>\n</ul>\n<h2>v5.0.0</h2>\n<ul>\n<li>Update actions checkout to use node 24 by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2226\">actions/checkout#2226</a></li>\n</ul>\n<h2>v4.3.1</h2>\n<ul>\n<li>Port v6 cleanup to v4 by <a href=\"https://github.com/ericsciple\"><code>@\u200bericsciple</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2305\">actions/checkout#2305</a></li>\n</ul>\n<h2>v4.3.0</h2>\n<ul>\n<li>docs: update README.md by <a href=\"https://github.com/motss\"><code>@\u200bmotss</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1971\">actions/checkout#1971</a></li>\n<li>Add internal repos for checking out multiple repositories by <a href=\"https://github.com/mouismail\"><code>@\u200bmouismail</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1977\">actions/checkout#1977</a></li>\n<li>Documentation update - add recommended permissions to Readme by <a href=\"https://github.com/benwells\"><code>@\u200bbenwells</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2043\">actions/checkout#2043</a></li>\n<li>Adjust positioning of user email note and permissions heading by <a href=\"https://github.com/joshmgross\"><code>@\u200bjoshmgross</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2044\">actions/checkout#2044</a></li>\n<li>Update README.md by <a href=\"https://github.com/nebuk89\"><code>@\u200bnebuk89</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2194\">actions/checkout#2194</a></li>\n<li>Update CODEOWNERS for actions by <a href=\"https://github.com/TingluoHuang\"><code>@\u200bTingluoHuang</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2224\">actions/checkout#2224</a></li>\n<li>Update package dependencies by <a href=\"https://github.com/salmanmkc\"><code>@\u200bsalmanmkc</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/2236\">actions/checkout#2236</a></li>\n</ul>\n<h2>v4.2.2</h2>\n<ul>\n<li><code>url-helper.ts</code> now leverages well-known environment variables by <a href=\"https://github.com/jww3\"><code>@\u200bjww3</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1941\">actions/checkout#1941</a></li>\n<li>Expand unit test coverage for <code>isGhes</code> by <a href=\"https://github.com/jww3\"><code>@\u200bjww3</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1946\">actions/checkout#1946</a></li>\n</ul>\n<h2>v4.2.1</h2>\n<ul>\n<li>Check out other refs/* by commit if provided, fall back to ref by <a href=\"https://github.com/orhantoy\"><code>@\u200borhantoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1924\">actions/checkout#1924</a></li>\n</ul>\n<h2>v4.2.0</h2>\n<ul>\n<li>Add Ref and Commit outputs by <a href=\"https://github.com/lucacome\"><code>@\u200blucacome</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1180\">actions/checkout#1180</a></li>\n<li>Dependency updates by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>- <a href=\"https://redirect.github.com/actions/checkout/pull/1777\">actions/checkout#1777</a>, <a href=\"https://redirect.github.com/actions/checkout/pull/1872\">actions/checkout#1872</a></li>\n</ul>\n<h2>v4.1.7</h2>\n<ul>\n<li>Bump the minor-npm-dependencies group across 1 directory with 4 updates by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1739\">actions/checkout#1739</a></li>\n<li>Bump actions/checkout from 3 to 4 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1697\">actions/checkout#1697</a></li>\n<li>Check out other refs/* by commit by <a href=\"https://github.com/orhantoy\"><code>@\u200borhantoy</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1774\">actions/checkout#1774</a></li>\n<li>Pin actions/checkout's own workflows to a known, good, stable version. by <a href=\"https://github.com/jww3\"><code>@\u200bjww3</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1776\">actions/checkout#1776</a></li>\n</ul>\n<h2>v4.1.6</h2>\n<ul>\n<li>Check platform to set archive extension appropriately by <a href=\"https://github.com/cory-miller\"><code>@\u200bcory-miller</code></a> in <a href=\"https://redirect.github.com/actions/checkout/pull/1732\">actions/checkout#1732</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/checkout/commit/de0fac2e4500dabe0009e67214ff5f5447ce83dd\"><code>de0fac2</code></a> Fix tag handling: preserve annotations and explicit fetch-tags (<a href=\"https://redirect.github.com/actions/checkout/issues/2356\">#2356</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/064fe7f3312418007dea2b49a19844a9ee378f49\"><code>064fe7f</code></a> Add orchestration_id to git user-agent when ACTIONS_ORCHESTRATION_ID is set (...</li>\n<li><a href=\"https://github.com/actions/checkout/commit/8e8c483db84b4bee98b60c0593521ed34d9990e8\"><code>8e8c483</code></a> Clarify v6 README (<a href=\"https://redirect.github.com/actions/checkout/issues/2328\">#2328</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/033fa0dc0b82693d8986f1016a0ec2c5e7d9cbb1\"><code>033fa0d</code></a> Add worktree support for persist-credentials includeIf (<a href=\"https://redirect.github.com/actions/checkout/issues/2327\">#2327</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/c2d88d3ecc89a9ef08eebf45d9637801dcee7eb5\"><code>c2d88d3</code></a> Update all references from v5 and v4 to v6 (<a href=\"https://redirect.github.com/actions/checkout/issues/2314\">#2314</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/1af3b93b6815bc44a9784bd300feb67ff0d1eeb3\"><code>1af3b93</code></a> update readme/changelog for v6 (<a href=\"https://redirect.github.com/actions/checkout/issues/2311\">#2311</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/71cf2267d89c5cb81562390fa70a37fa40b1305e\"><code>71cf226</code></a> v6-beta (<a href=\"https://redirect.github.com/actions/checkout/issues/2298\">#2298</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/069c6959146423d11cd0184e6accf28f9d45f06e\"><code>069c695</code></a> Persist creds to a separate file (<a href=\"https://redirect.github.com/actions/checkout/issues/2286\">#2286</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493\"><code>ff7abcd</code></a> Update README to include Node.js 24 support details and requirements (<a href=\"https://redirect.github.com/actions/checkout/issues/2248\">#2248</a>)</li>\n<li><a href=\"https://github.com/actions/checkout/commit/08c6903cd8c0fde910a37f88322edcfb5dd907a8\"><code>08c6903</code></a> Prepare v5.0.0 release (<a href=\"https://redirect.github.com/actions/checkout/issues/2238\">#2238</a>)</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/checkout/compare/v4...v6\">compare view</a></li>\n</ul>\n</details>\n<br />\n\nUpdates `actions/upload-artifact` from 6 to 7\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/upload-artifact/releases\">actions/upload-artifact's releases</a>.</em></p>\n<blockquote>\n<h2>v7.0.0</h2>\n<h2>v7 What's new</h2>\n<h3>Direct Uploads</h3>\n<p>Adds support for uploading single files directly (unzipped). Callers can set the new <code>archive</code> parameter to <code>false</code> to skip zipping the file during upload. Right now, we only support single files. The action will fail if the glob passed resolves to multiple files. The <code>name</code> parameter is also ignored with this setting. Instead, the name of the artifact will be the name of the uploaded file.</p>\n<h3>ESM</h3>\n<p>To support new versions of the <code>@actions/*</code> packages, we've upgraded the package to ESM.</p>\n<h2>What's Changed</h2>\n<ul>\n<li>Add proxy integration test by <a href=\"https://github.com/Link\"><code>@\u200bLink</code></a>- in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/754\">actions/upload-artifact#754</a></li>\n<li>Upgrade the module to ESM and bump dependencies by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/762\">actions/upload-artifact#762</a></li>\n<li>Support direct file uploads by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/764\">actions/upload-artifact#764</a></li>\n</ul>\n<h2>New Contributors</h2>\n<ul>\n<li><a href=\"https://github.com/Link\"><code>@\u200bLink</code></a>- made their first contribution in <a href=\"https://redirect.github.com/actions/upload-artifact/pull/754\">actions/upload-artifact#754</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/upload-artifact/compare/v6...v7.0.0\">https://github.com/actions/upload-artifact/compare/v6...v7.0.0</a></p>\n</blockquote>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/bbbca2ddaa5d8feaa63e36b76fdaad77386f024f\"><code>bbbca2d</code></a> Support direct file uploads (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/764\">#764</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/589182c5a4cec8920b8c1bce3e2fab1c97a02296\"><code>589182c</code></a> Upgrade the module to ESM and bump dependencies (<a href=\"https://redirect.github.com/actions/upload-artifact/issues/762\">#762</a>)</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/47309c993abb98030a35d55ef7ff34b7fa1074b5\"><code>47309c9</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/upload-artifact/issues/754\">#754</a> from actions/Link-/add-proxy-integration-tests</li>\n<li><a href=\"https://github.com/actions/upload-artifact/commit/02a8460834e70dab0ce194c64360c59dc1475ef0\"><code>02a8460</code></a> Add proxy integration test</li>\n<li>See full diff in <a href=\"https://github.com/actions/upload-artifact/compare/v6...v7\">compare view</a></li>\n</ul>\n</details>\n<br />\n\nUpdates `actions/download-artifact` from 7 to 8\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/actions/download-artifact/releases\">actions/download-artifact's releases</a>.</em></p>\n<blockquote>\n<h2>v8.0.0</h2>\n<h2>v8 - What's new</h2>\n<h3>Direct downloads</h3>\n<p>To support direct uploads in <code>actions/upload-artifact</code>, the action will no longer attempt to unzip all downloaded files. Instead, the action checks the <code>Content-Type</code> header ahead of unzipping and skips non-zipped files. Callers wishing to download a zipped file as-is can also set the new <code>skip-decompress</code> parameter to <code>false</code>.</p>\n<h3>Enforced checks (breaking)</h3>\n<p>A previous release introduced digest checks on the download. If a download hash didn't match the expected hash from the server, the action would log a warning. Callers can now configure the behavior on mismatch with the <code>digest-mismatch</code> parameter. To be secure by default, we are now defaulting the behavior to <code>error</code> which will fail the workflow run.</p>\n<h3>ESM</h3>\n<p>To support new versions of the @actions/* packages, we've upgraded the package to ESM.</p>\n<h2>What's Changed</h2>\n<ul>\n<li>Don't attempt to un-zip non-zipped downloads by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/download-artifact/pull/460\">actions/download-artifact#460</a></li>\n<li>Add a setting to specify what to do on hash mismatch and default it to <code>error</code> by <a href=\"https://github.com/danwkennedy\"><code>@\u200bdanwkennedy</code></a> in <a href=\"https://redirect.github.com/actions/download-artifact/pull/461\">actions/download-artifact#461</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/actions/download-artifact/compare/v7...v8.0.0\">https://github.com/actions/download-artifact/compare/v7...v8.0.0</a></p>\n</blockquote>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/actions/download-artifact/commit/70fc10c6e5e1ce46ad2ea6f2b72d43f7d47b13c3\"><code>70fc10c</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/download-artifact/issues/461\">#461</a> from actions/danwkennedy/digest-mismatch-behavior</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/f258da9a506b755b84a09a531814700b86ccfc62\"><code>f258da9</code></a> Add change docs</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/ccc058e5fbb0bb2352213eaec3491e117cbc4a5c\"><code>ccc058e</code></a> Fix linting issues</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/bd7976ba57ecea96e6f3df575eb922d11a12a9fd\"><code>bd7976b</code></a> Add a setting to specify what to do on hash mismatch and default it to <code>error</code></li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/ac21fcf45e0aaee541c0f7030558bdad38d77d6c\"><code>ac21fcf</code></a> Merge pull request <a href=\"https://redirect.github.com/actions/download-artifact/issues/460\">#460</a> from actions/danwkennedy/download-no-unzip</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/15999bff51058bc7c19b50ebbba518eaef7c26c0\"><code>15999bf</code></a> Add note about package bumps</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/974686ed5098c7f9c9289ec946b9058e496a2561\"><code>974686e</code></a> Bump the version to <code>v8</code> and add release notes</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/fbe48b1d2756394be4cd4358ed3bc1343b330e75\"><code>fbe48b1</code></a> Update test names to make it clearer what they do</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/96bf374a614d4360e225874c3efd6893a3f285e7\"><code>96bf374</code></a> One more test fix</li>\n<li><a href=\"https://github.com/actions/download-artifact/commit/b8c4819ef592cbe04fd93534534b38f853864332\"><code>b8c4819</code></a> Fix skip decompress test</li>\n<li>Additional commits viewable in <a href=\"https://github.com/actions/download-artifact/compare/v7...v8\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\n- `@dependabot ignore <dependency name> major version` will close this group update PR and stop Dependabot creating any more for the specific dependency's major version (unless you unignore this specific dependency's major version or upgrade to it yourself)\n- `@dependabot ignore <dependency name> minor version` will close this group update PR and stop Dependabot creating any more for the specific dependency's minor version (unless you unignore this specific dependency's minor version or upgrade to it yourself)\n- `@dependabot ignore <dependency name>` will close this group update PR and stop Dependabot creating any more for the specific dependency (unless you unignore this specific dependency or upgrade to it yourself)\n- `@dependabot unignore <dependency name>` will remove all of the ignore conditions of the specified dependency\n- `@dependabot unignore <dependency name> <ignore condition>` will remove the ignore condition of the specified dependency and ignore conditions\n\n\n</details>",
+      "mergedAt": "2026-03-02T01:07:23Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "e6c6e223225d6e865d5b24b92086cb7bd3efbc45",
+      "headRefOid": "98301a454aaeb10ef548910e9cbeeef5491c5eb2",
+      "mergeCommit": {
+        "oid": "027e7cee9449dfb3c677626bffa8e02893e69846"
+      }
+    },
+    {
+      "number": 3740,
+      "url": "https://github.com/nipy/nipype/pull/3740",
+      "title": "[ENH]Dynamic ram estimator",
+      "body": "This PR introduces a simple and extensible mechanism to estimate node RAM usage at runtime when executing workflows with MultiProcPlugin.\r\n\r\nA new RamEstimator base class allows users (and interface authors) to attach a RAM estimator to a Node or MapNode via the node.ram_estimator attribute.\r\nThe estimator computes a per-node memory estimate before execution, based on selected input traits, and is fully user-configurable.\r\n\r\nEstimators aggregate RAM contributions from:\r\n* file-like inputs (based on image voxel counts)\r\n* numeric inputs (scalars or lists)\r\n\r\nA human-readable debug string describing the estimate is stored in _report/report.rst under the runtime section.\r\n\r\nFor MapNodes, the estimator is inherited by subnodes and evaluated on a representative iteration; the resulting value is interpreted as the per-task peak RAM requirement.\r\n\r\nNo changes to interface execution logic are required; this only affects scheduling/resource management.\r\n\r\nThis is intended as an opt-in, non-invasive improvement to resource-aware scheduling in multiprocess workflows.\r\n\r\nThe usage would be something like this:\r\n\r\n```\r\nclass FlirtRamEstimator(RamEstimator):\r\n            def __init__(self):\r\n                super().__init__(\r\n                    input_multipliers={\r\n                        'in_file': 32,\r\n                        'reference': 4,\r\n                    },\r\n                    overhead_gb=0.3,\r\n                    min_gb=0.5,\r\n                    max_gb=4.0\r\n                )\r\n\r\nfrom nipype.interfaces.fsl import FLIRT\r\nfrom nipype.pipeline.engine import Node\r\n\r\nflirt = Node(FLIRT(dof=6), name=\"flirt\")\r\nflirt.ram_estimator = FlirtRamEstimator()\r\n```",
+      "mergedAt": "2026-03-02T00:59:35Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "23e003bffddf10b97913111a61a3f251a715f319",
+      "headRefOid": "376ab307808d46b20cf60339270d7b76608b25ba",
+      "mergeCommit": {
+        "oid": "16ea5ec7fef3ae701f2eeca1d84bca8999bd243f"
+      }
+    },
+    {
+      "number": 3753,
+      "url": "https://github.com/nipy/nipype/pull/3753",
+      "title": "[ENH] Add T1Prep/CatSurf interfaces",
+      "body": "## Summary\r\nAdd interfaces for T1Prep \u2013 T1-weighted MRI preprocessing pipeline (PyCAT). T1Prep performs skull-stripping, tissue segmentation, and cortical surface reconstruction using DeepMriPrep and the CAT-Surface library (via cat-surf).\r\n\r\n## List of changes proposed in this PR (pull-request)\r\n* Add new interface at nipype/interfaces/t1prep\r\n* Add test functions at nipype/interfaces/t1prep/tests\r\n* Updates doc/interfaces.rst \r\n\r\n## Sub-module interfaces\r\n:class:`T1Prep`\r\n    Full pipeline: skull-strip \u2192 segment \u2192 surface estimate.  Wraps ``python -m t1prep.t1prep``.\r\n\r\n:class:`T1PrepSegment`\r\n    Segmentation stage only.  Wraps ``python -m t1prep.segment``.\r\n\r\n:class:`T1PrepSurfaceEstimation`\r\n    Surface-estimation stage for one hemisphere.  Wraps ``python -m t1prep.surface_estimation``.\r\n\r\n:class:`T1PrepRealignLongitudinal`\r\n    Rigid realignment of longitudinal T1w time-points.  Wraps ``python -m t1prep.realign_longitudinal``.\r\n\r\n## Base classes\r\n:class:`Info`\r\n    T1Prep package version detection.\r\n\r\n:class:`T1PrepCommand`\r\n    Base ``CommandLine`` for ``python -m t1prep.<module>`` invocations.\r\n\r\n##  Interfaces for the full ``cat_surf`` / ``t1prep.cat_surf`` Python API.\r\n\r\nEvery public function in ``cat_surf`` that T1Prep exposes is wrapped as a separate :class:`~nipype.interfaces.base.BaseInterface` sub-class so that each operation can be used as an independent node inside a Nipype workflow.\r\n\r\n# References\r\n* https://github.com/ChristianGaser/T1Prep\r\n* https://github.com/ChristianGaser/CAT-Surface\r\n",
+      "mergedAt": "2026-08-25T14:39:54Z",
+      "isDraft": false,
+      "changedFiles": 25,
+      "baseRefOid": "b622463d2ecfdbfdc644f81ffcbbfae4ebbc305d",
+      "headRefOid": "2c2c4b3f6d883c99b648db091353db4e52dba195",
+      "mergeCommit": {
+        "oid": "6b6f2035ee05f5ca82c18cf0ead3742bb520b775"
+      }
+    },
+    {
+      "number": 3723,
+      "url": "https://github.com/nipy/nipype/pull/3723",
+      "title": "[ENH] Add -w flag to dcm2niix interface",
+      "body": "Add support for this:\r\n`-w : write behavior for name conflicts (0,1,2, default 2: 0=skip duplicates, 1=overwrite, 2=add suffix)`\r\n",
+      "mergedAt": "2026-03-02T13:41:53Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "114c73d2fc6cbce86a3e1db17900b5341f379090",
+      "headRefOid": "38cafb84e6e1e9f7d36b60ac38f69e3f00685d94",
+      "mergeCommit": {
+        "oid": "67664a57814ada69acbd5565b748f6613cc9fd24"
+      }
+    },
+    {
+      "number": 3739,
+      "url": "https://github.com/nipy/nipype/pull/3739",
+      "title": "fix: Properly quote file paths with spaces",
+      "body": "## Summary\r\nThis PR aims to ensure that we handle files/directories with spaces correctly. Unfortunately, there are a number of interfaces that separately handle the problem by including quotes in their `argstr`s, some with single quotes, some with double quotes. We have to assume that there are downstream tools that do the same.\r\n\r\nThis therefore *narrowly* addresses the case where the `argstr` is a plain-as-dirt `%s` and the trait is either a `File`/`Directory` or a list of such things. \r\n\r\nFixes #3604.\r\n\r\n## List of changes proposed in this PR (pull-request)\r\n* Add a space to the base test directory.\r\n* Specifically test a file name with a space in it.\r\n\r\n### Unrelated changes that I don't want to open separate PRs for\r\n* Add lxml to dependencies so the package will install and import.\r\n* Fix a bbregister bug that I'm not sure how I came to notice, where the `isinstance` check had been copied from the previous `if` block but not updated to match the new context.\r\n* Add `NO_ET` to the tox environments to improve startup times for testing.\r\n",
+      "mergedAt": "2026-03-02T14:18:19Z",
+      "isDraft": false,
+      "changedFiles": 13,
+      "baseRefOid": "027e7cee9449dfb3c677626bffa8e02893e69846",
+      "headRefOid": "0cf71ab327d280f3a38481a62c20930b05af727c",
+      "mergeCommit": {
+        "oid": "b8676b5892ba25f65f43fa97208bee75ed26fe35"
+      }
+    },
+    {
+      "number": 3751,
+      "url": "https://github.com/nipy/nipype/pull/3751",
+      "title": "[DOC] Update readme",
+      "body": "## List of changes proposed in this pull request\r\n- [x] Add logo/banner\r\n- [x] Create table of badges to mirror [Nibabel readme](https://github.com/nipy/nibabel/blob/master/README.rst)\r\n- [x] Add conda badge\r\n- [x] Remove codacy badge since it does not resolve:\r\n    <img width=\"740\" height=\"92\" alt=\"image\" src=\"https://github.com/user-attachments/assets/5017ecdc-1c1a-4bb8-b5bd-80c03b299a41\" />\r\n- [x] Remove reference to `doc/README.txt` since it does not exist\r\n- [x] Update mailing list hyperlink to be clickable\r\n- [x] Update `.zenodo.json`\r\n",
+      "mergedAt": "2026-08-25T14:44:39Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "6b6f2035ee05f5ca82c18cf0ead3742bb520b775",
+      "headRefOid": "b3db2248712eacde192b1c346b1d108854fa897c",
+      "mergeCommit": {
+        "oid": "b8ccb51a24e2a8d69a8887506a6f2accb1366045"
+      }
+    },
+    {
+      "number": 3746,
+      "url": "https://github.com/nipy/nipype/pull/3746",
+      "title": "chore(ci): Split pre-release tests into cron job, open issues on failure",
+      "body": "In #3745, the pre-release tests are failing, causing other the PR to fail. This is generally not desirable, as these are rarely the fault of contributor PRs. This pulls the prerelease tests into their own workflow, run on a schedule rather than PR. The `ci/prerelease` branch can be used to debug and fix issues.\r\n\r\n@remi-gau helped me set this up in nibabel.\r\n\r\nIncidentally, also split the install and test tox stages. Sometimes install can fail or take a long time due to infrastructure issues, and it's nice to separate that from test failures at a glance.",
+      "mergedAt": "2026-03-02T15:41:07Z",
+      "isDraft": false,
+      "changedFiles": 3,
+      "baseRefOid": "b8676b5892ba25f65f43fa97208bee75ed26fe35",
+      "headRefOid": "21b971bc87e81004c481cadb0965e575d268aefa",
+      "mergeCommit": {
+        "oid": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975"
+      }
+    },
+    {
+      "number": 3766,
+      "url": "https://github.com/nipy/nipype/pull/3766",
+      "title": "fix: Make a copy of connection tuples to avoid mutating wf.connect() arguments",
+      "body": "Uncovered in nipreps/fmriprep#3668. Passing a list to `workflow.connect()` mutates the list if any of the connections uses an inline function. Regression test fails without fix:\r\n\r\n```\r\n============================================= FAILURES =============================================\r\n________________________________ test_connect_preserves_input_list _________________________________\r\n\r\n    def test_connect_preserves_input_list():\r\n        \"\"\"Regression test for connection list mutation.\r\n    \r\n        This only occurs when the connection contains an inline function node.\r\n        \"\"\"\r\n        pipe = pe.Workflow(name=\"pipe\")\r\n        pipe.config[\"execution\"][\"poll_sleep_duration\"] = 0.01\r\n        mod1 = pe.Node(EngineTestInterface(input1=2), name=\"mod1\")\r\n        mod2 = pe.MapNode(EngineTestInterface(), iterfield=\"input1\", name=\"mod2\")\r\n    \r\n        connection_list = [(mod1, mod2, [(('output1', _add_one), 'input1')])]\r\n        expected = [\r\n            (in_node, out_node, deepcopy(connections))\r\n            for in_node, out_node, connections in connection_list\r\n        ]\r\n        assert connection_list == expected\r\n    \r\n        pipe.connect(connection_list)\r\n>       assert connection_list == expected\r\nE       AssertionError: assert [(pipe.mod1, ..., 'input1')])] == [(pipe.mod1, ..., 'input1')])]\r\nE         \r\nE         At index 0 diff: (pipe.mod1, pipe.mod2, [(('output1', 'def _add_one(x):\\n    return x + 1\\n', ()), 'input1')]) != (pipe.mod1, pipe.mod2, [(('output1', <function _add_one at 0x7f3e059abab0>), 'input1')])\r\nE         \r\nE         Full diff:\r\nE          \r\nE         \r\nE         ...Full output truncated (18 lines hidden), use '-vv' to show\r\n\r\nnipype/pipeline/engine/tests/test_workflows.py:60: AssertionError\r\n```",
+      "mergedAt": "2026-09-03T16:50:20Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "b4c671fe5581534bcfd64224db17fd4dc1d9464c",
+      "headRefOid": "685ec9181862acf09455b16a78abae27c391b81e",
+      "mergeCommit": {
+        "oid": "a1f4d6d348b2664390f2a68657548d9b290087a8"
+      }
+    },
+    {
+      "number": 3745,
+      "url": "https://github.com/nipy/nipype/pull/3745",
+      "title": "FIX: Propagate errors from `run_without_submitting`",
+      "body": "Came up in https://github.com/nipreps/fmriprep/issues/3611 , https://github.com/nipreps/nibabies/issues/392\r\n\r\nThis adds a  `_run_errors` attribute to `DistributedPluginBase` which is only utilized during the `run()` lifecycle, to ensure any encountered errors are properly reported.\r\n\r\nEach distributed plugin may need to be updated, this only touches on `MultiProc` and `LegacyMultiProc`.",
+      "mergedAt": "2026-03-02T15:56:53Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+      "headRefOid": "7ba9f4a811d2d19b007d31eab609f0fbfe7a9d34",
+      "mergeCommit": {
+        "oid": "50a782a73d90b1520b55f4edbc97aafa1d26a81e"
+      }
+    },
+    {
+      "number": 3742,
+      "url": "https://github.com/nipy/nipype/pull/3742",
+      "title": "MAINT: Modernize packaging",
+      "body": "### Nipype Packaging Modernization\r\n- **Build System**: Migrated to [pyproject.toml](cci:7://file:///Users/mathiasg/occ/nipype/pyproject.toml:0:0-0:0) (PEP 621/517) using the `hatchling` backend.\r\n- **Versioning**: Implemented automatic version/git-hash generation via `hatch-vcs`.\r\n- **Distribution**: Streamlined `sdist` bundling and adopted `uv` for modern project management.\r\n- **Cleanup**: Removed legacy `setup.py`, `setup.cfg`, `MANIFEST.in`, and `requirements.txt`.\r\n\r\n---\r\n*Generated by Antigravity*",
+      "mergedAt": "2026-03-02T00:52:26Z",
+      "isDraft": false,
+      "changedFiles": 18,
+      "baseRefOid": "8234ec318489930fa17487cf15d210420214b00a",
+      "headRefOid": "50c7d3b90437ce431b33b9f62a3f69ccfc2f15e9",
+      "mergeCommit": {
+        "oid": "23e003bffddf10b97913111a61a3f251a715f319"
+      }
+    },
+    {
+      "number": 3734,
+      "url": "https://github.com/nipy/nipype/pull/3734",
+      "title": "Fix SPM output type for version 25",
+      "body": "## Summary\r\n\r\nFixes # .\r\n\r\nUpdated the `_list_outputs` method in `nipype.interfaces.spm.base` to handle SPM version 25 correctly. Previously, the code only checked for SPM12 when determining the output file type (`nii` vs `img`). Now, both SPM12 and SPM25 are treated as using `nii` format.\r\n\r\n## List of changes proposed in this PR (pull-request)\r\n- [x] Modified `_list_outputs` to use:\r\n      ```python\r\n      outtype = \"nii\" if self.version.split(\".\")[0] in [\"12\", \"25\"] else \"img\"\r\n      ```\r\n- [x] Verified that output type defaults to `\"nii\"` for SPM version 25.\r\n",
+      "mergedAt": "2026-03-02T01:02:25Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "8234ec318489930fa17487cf15d210420214b00a",
+      "headRefOid": "698f93a2751a8aec4271db19134faff020962e10",
+      "mergeCommit": {
+        "oid": "2ae1c958ba46dbf88ed32647bea2a7bc1f4aac63"
+      }
+    },
+    {
+      "number": 3764,
+      "url": "https://github.com/nipy/nipype/pull/3764",
+      "title": "Consolidate CI jobs, update pins",
+      "body": "Dragging nipype kicking and screaming into the century of the fruitbat.",
+      "mergedAt": "2026-08-24T21:05:45Z",
+      "isDraft": false,
+      "changedFiles": 18,
+      "baseRefOid": "c66f6c554cf4704a01af8bbc4e6935477ec9de52",
+      "headRefOid": "3a5d0726f6dfce3307a593c24f7db8fa7aa58214",
+      "mergeCommit": {
+        "oid": "7b6660257441c791b0a7871f28f184f2567d9e7b"
+      }
+    },
+    {
+      "number": 3750,
+      "url": "https://github.com/nipy/nipype/pull/3750",
+      "title": "Chore(deps): Bump codecov/codecov-action from 5 to 6",
+      "body": "Bumps [codecov/codecov-action](https://github.com/codecov/codecov-action) from 5 to 6.\n<details>\n<summary>Release notes</summary>\n<p><em>Sourced from <a href=\"https://github.com/codecov/codecov-action/releases\">codecov/codecov-action's releases</a>.</em></p>\n<blockquote>\n<h2>v6.0.0</h2>\n<h2>\u26a0\ufe0f This version introduces support for node24 which make cause breaking changes for systems that do not currently support node24. \u26a0\ufe0f</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>Revert &quot;Revert &quot;build(deps): bump actions/github-script from 7.0.1 to 8.0.0&quot;&quot; by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1929\">codecov/codecov-action#1929</a></li>\n<li>Th/6.0.0 by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1928\">codecov/codecov-action#1928</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.4...v6.0.0\">https://github.com/codecov/codecov-action/compare/v5.5.4...v6.0.0</a></p>\n<h2>v5.5.4</h2>\n<p>This is a mirror of <code>v5.5.2</code>. <code>v6</code> will be released which requires <code>node24</code></p>\n<h2>What's Changed</h2>\n<ul>\n<li>Revert &quot;build(deps): bump actions/github-script from 7.0.1 to 8.0.0&quot; by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1926\">codecov/codecov-action#1926</a></li>\n<li>chore(release): 5.5.4 by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1927\">codecov/codecov-action#1927</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.3...v5.5.4\">https://github.com/codecov/codecov-action/compare/v5.5.3...v5.5.4</a></p>\n<h2>v5.5.3</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>build(deps): bump actions/github-script from 7.0.1 to 8.0.0 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1874\">codecov/codecov-action#1874</a></li>\n<li>chore(release): bump to 5.5.3 by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1922\">codecov/codecov-action#1922</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.2...v5.5.3\">https://github.com/codecov/codecov-action/compare/v5.5.2...v5.5.3</a></p>\n<h2>v5.5.2</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>check gpg only when skip-validation = false by <a href=\"https://github.com/maxweng-sentry\"><code>@\u200bmaxweng-sentry</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1894\">codecov/codecov-action#1894</a></li>\n<li>chore: <code>disable_search</code> alignment by <a href=\"https://github.com/freemanzMrojo\"><code>@\u200bfreemanzMrojo</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1881\">codecov/codecov-action#1881</a></li>\n<li>chore(release): 5.5.2 by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1902\">codecov/codecov-action#1902</a></li>\n</ul>\n<h2>New Contributors</h2>\n<ul>\n<li><a href=\"https://github.com/maxweng-sentry\"><code>@\u200bmaxweng-sentry</code></a> made their first contribution in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1894\">codecov/codecov-action#1894</a></li>\n<li><a href=\"https://github.com/freemanzMrojo\"><code>@\u200bfreemanzMrojo</code></a> made their first contribution in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1881\">codecov/codecov-action#1881</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.1...v5.5.2\">https://github.com/codecov/codecov-action/compare/v5.5.1...v5.5.2</a></p>\n<h2>v5.5.1</h2>\n<h2>What's Changed</h2>\n<ul>\n<li>build(deps): bump ossf/scorecard-action from 2.4.1 to 2.4.2 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1833\">codecov/codecov-action#1833</a></li>\n<li>build(deps): bump github/codeql-action from 3.28.18 to 3.29.9 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1861\">codecov/codecov-action#1861</a></li>\n<li>Document a <code>codecov-cli</code> version reference example by <a href=\"https://github.com/webknjaz\"><code>@\u200bwebknjaz</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1774\">codecov/codecov-action#1774</a></li>\n<li>docs: fix typo in README by <a href=\"https://github.com/datalater\"><code>@\u200bdatalater</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1866\">codecov/codecov-action#1866</a></li>\n<li>fix: update to use local app/ dir by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1872\">codecov/codecov-action#1872</a></li>\n<li>build(deps): bump github/codeql-action from 3.29.9 to 3.29.11 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1867\">codecov/codecov-action#1867</a></li>\n<li>build(deps): bump actions/checkout from 4.2.2 to 5.0.0 by <a href=\"https://github.com/dependabot\"><code>@\u200bdependabot</code></a>[bot] in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1868\">codecov/codecov-action#1868</a></li>\n<li>fix: overwrite pr number on fork by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1871\">codecov/codecov-action#1871</a></li>\n</ul>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Changelog</summary>\n<p><em>Sourced from <a href=\"https://github.com/codecov/codecov-action/blob/main/CHANGELOG.md\">codecov/codecov-action's changelog</a>.</em></p>\n<blockquote>\n<h2>v5.5.2</h2>\n<h3>What's Changed</h3>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.1..v5.5.2\">https://github.com/codecov/codecov-action/compare/v5.5.1..v5.5.2</a></p>\n<h2>v5.5.1</h2>\n<h3>What's Changed</h3>\n<ul>\n<li>fix: overwrite pr number on fork by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1871\">codecov/codecov-action#1871</a></li>\n<li>build(deps): bump actions/checkout from 4.2.2 to 5.0.0 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1868\">codecov/codecov-action#1868</a></li>\n<li>build(deps): bump github/codeql-action from 3.29.9 to 3.29.11 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1867\">codecov/codecov-action#1867</a></li>\n<li>fix: update to use local app/ dir by <a href=\"https://github.com/thomasrockhu-codecov\"><code>@\u200bthomasrockhu-codecov</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1872\">codecov/codecov-action#1872</a></li>\n<li>docs: fix typo in README by <a href=\"https://github.com/datalater\"><code>@\u200bdatalater</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1866\">codecov/codecov-action#1866</a></li>\n<li>Document a <code>codecov-cli</code> version reference example by <a href=\"https://github.com/webknjaz\"><code>@\u200bwebknjaz</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1774\">codecov/codecov-action#1774</a></li>\n<li>build(deps): bump github/codeql-action from 3.28.18 to 3.29.9 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1861\">codecov/codecov-action#1861</a></li>\n<li>build(deps): bump ossf/scorecard-action from 2.4.1 to 2.4.2 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1833\">codecov/codecov-action#1833</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.5.0..v5.5.1\">https://github.com/codecov/codecov-action/compare/v5.5.0..v5.5.1</a></p>\n<h2>v5.5.0</h2>\n<h3>What's Changed</h3>\n<ul>\n<li>feat: upgrade wrapper to 0.2.4 by <a href=\"https://github.com/jviall\"><code>@\u200bjviall</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1864\">codecov/codecov-action#1864</a></li>\n<li>Pin actions/github-script by Git SHA by <a href=\"https://github.com/martincostello\"><code>@\u200bmartincostello</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1859\">codecov/codecov-action#1859</a></li>\n<li>fix: check reqs exist by <a href=\"https://github.com/joseph-sentry\"><code>@\u200bjoseph-sentry</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1835\">codecov/codecov-action#1835</a></li>\n<li>fix: Typo in README by <a href=\"https://github.com/spalmurray\"><code>@\u200bspalmurray</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1838\">codecov/codecov-action#1838</a></li>\n<li>docs: Refine OIDC docs by <a href=\"https://github.com/spalmurray\"><code>@\u200bspalmurray</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1837\">codecov/codecov-action#1837</a></li>\n<li>build(deps): bump github/codeql-action from 3.28.17 to 3.28.18 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1829\">codecov/codecov-action#1829</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.4.3..v5.5.0\">https://github.com/codecov/codecov-action/compare/v5.4.3..v5.5.0</a></p>\n<h2>v5.4.3</h2>\n<h3>What's Changed</h3>\n<ul>\n<li>build(deps): bump github/codeql-action from 3.28.13 to 3.28.17 by <code>@\u200bapp/dependabot</code> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1822\">codecov/codecov-action#1822</a></li>\n<li>fix: OIDC on forks by <a href=\"https://github.com/joseph-sentry\"><code>@\u200bjoseph-sentry</code></a> in <a href=\"https://redirect.github.com/codecov/codecov-action/pull/1823\">codecov/codecov-action#1823</a></li>\n</ul>\n<p><strong>Full Changelog</strong>: <a href=\"https://github.com/codecov/codecov-action/compare/v5.4.2..v5.4.3\">https://github.com/codecov/codecov-action/compare/v5.4.2..v5.4.3</a></p>\n<h2>v5.4.2</h2>\n<!-- raw HTML omitted -->\n</blockquote>\n<p>... (truncated)</p>\n</details>\n<details>\n<summary>Commits</summary>\n<ul>\n<li><a href=\"https://github.com/codecov/codecov-action/commit/57e3a136b779b570ffcdbf80b3bdc90e7fab3de2\"><code>57e3a13</code></a> Th/6.0.0 (<a href=\"https://redirect.github.com/codecov/codecov-action/issues/1928\">#1928</a>)</li>\n<li><a href=\"https://github.com/codecov/codecov-action/commit/f67d33dda8a42b51c42a8318a1f66468119e898b\"><code>f67d33d</code></a> Revert &quot;Revert &quot;build(deps): bump actions/github-script from 7.0.1 to 8.0.0&quot;&quot;...</li>\n<li>See full diff in <a href=\"https://github.com/codecov/codecov-action/compare/v5...v6\">compare view</a></li>\n</ul>\n</details>\n<br />\n\n\n[![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=codecov/codecov-action&package-manager=github_actions&previous-version=5&new-version=6)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)\n\nDependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.\n\n[//]: # (dependabot-automerge-start)\n[//]: # (dependabot-automerge-end)\n\n---\n\n<details>\n<summary>Dependabot commands and options</summary>\n<br />\n\nYou can trigger Dependabot actions by commenting on this PR:\n- `@dependabot rebase` will rebase this PR\n- `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it\n- `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency\n- `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself)\n- `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you reopen the PR or upgrade to it yourself)\n\n\n</details>",
+      "mergedAt": "2026-03-30T14:12:02Z",
+      "isDraft": false,
+      "changedFiles": 2,
+      "baseRefOid": "78dc6b31ea0b39e21b8581e875a072e4214e085e",
+      "headRefOid": "a62bb11d71cff76a423e6f603f4f76d6eb73c73f",
+      "mergeCommit": {
+        "oid": "a8d71305b7c16965192ad0156e6c8df25f6b0acf"
+      }
+    },
+    {
+      "number": 3722,
+      "url": "https://github.com/nipy/nipype/pull/3722",
+      "title": "[ENH]bedpostx and probtrackx gpu and multithread support",
+      "body": "This will enable the gpu version of probtrackx2 and add support to specify the number of thread used by bedpostx (by default it uses a thread per available core)",
+      "mergedAt": "2026-08-25T14:34:39Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "b622463d2ecfdbfdc644f81ffcbbfae4ebbc305d",
+      "headRefOid": "8369cec06708592aec3583fb1d1a3b6c1750e762",
+      "mergeCommit": {
+        "oid": "041c97511b343aefdb624d2b2a3b1ecf8bab6460"
+      }
+    }
+  ]
+}

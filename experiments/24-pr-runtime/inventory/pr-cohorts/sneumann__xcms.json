@@ -1,0 +1,183 @@
+{
+  "repository": "sneumann/xcms",
+  "stratum": "r",
+  "window": {
+    "since": "2025-10-20",
+    "until": "2026-10-19"
+  },
+  "merged_pr_count": 12,
+  "evidence": [
+    "inventory/pr-pages/80d1566415bfcc3da8c8da5f1f4a221cb64e1eec3fbd6129124ccf2072e7562d.json"
+  ],
+  "sample_rule": "SHA256 rank of biotasks-24-prs-v1:github_id:number; first 20",
+  "selected": [
+    {
+      "number": 850,
+      "url": "https://github.com/sneumann/xcms/pull/850",
+      "title": "refactor: ensure beta quality metrics are calculated the same way",
+      "body": "- Use the actual retention times instead of just the scan indices for the calculation of the beta chromatographic peak quality metrics also when calculated during chromatographic peak detection. This addresses issue #849. ",
+      "mergedAt": "2026-10-08T08:06:49Z",
+      "isDraft": false,
+      "changedFiles": 11,
+      "baseRefOid": "d430faeb343625ec556fd4d931e67f34bec8d6ab",
+      "headRefOid": "7f91fa4bbd44fd5dc8cb7b78a79da89408132a02",
+      "mergeCommit": {
+        "oid": "b781f8b0c39a3310d74aebe5ae59d24f7e818431"
+      }
+    },
+    {
+      "number": 829,
+      "url": "https://github.com/sneumann/xcms/pull/829",
+      "title": "Fix .merge_neighboring_peaks2 early-return missing npeaks element",
+      "body": "\r\n## Problem\r\n\r\n`.merge_neighboring_peaks2()` has two return paths:\r\n\r\n1. **Normal path** (after merging): returns `list(chromPeaks = ..., chromPeakData = ..., npeaks = ...)`\r\n2. **Early-return path** (no merge candidates): returns `list(chromPeaks = pks, chromPeakData = pkd)` \u2014 **missing `npeaks`**\r\n\r\nThe calling code in `.xmse_merge_neighboring_peaks()` extracts the third element from every per-file result:\r\n\r\n```r\r\nnpeaks = vapply(res, `[[`, i = 3L, integer(1))\r\n```\r\n\r\nWhen a file has detected peaks but none are close enough to be merge candidates (well-separated in m/z), the early-return path is taken and the list has only 2 elements. Extracting `[[3L]]` then fails with:\r\n\r\n```\r\nError in .subset2(x, i, exact = exact) : subscript out of bounds\r\n```\r\n\r\nThis is data-dependent \u2014 it crashes when at least one file in the experiment has peaks where no pair overlaps in m/z (within `ppm` tolerance).\r\n\r\n## Fix\r\n\r\nAdd `npeaks = nrow(pks)` to the early-return list, consistent with the normal return path:\r\n\r\n```r\r\n## Before:\r\nreturn(list(chromPeaks = pks, chromPeakData = pkd))\r\n\r\n## After:\r\nreturn(list(chromPeaks = pks, chromPeakData = pkd, npeaks = nrow(pks)))\r\n```\r\n\r\n## Reproducible example\r\n\r\nUses the faahKO dataset (available via `BiocManager::install(\"faahKO\")`).\r\nWith restrictive CentWave parameters some files end up with few, well-separated\r\npeaks \u2014 exactly the condition that triggers the early-return bug.\r\n\r\n```r\r\nlibrary(xcms)\r\nlibrary(MsExperiment)\r\nregister(SerialParam())\r\n\r\n## Read the faahKO raw data\r\nfls <- dir(system.file(\"cdf\", package = \"faahKO\"),\r\n           full.names = TRUE, recursive = TRUE)\r\nraw <- readMsExperiment(fls)\r\n\r\n## Restrictive peak picking \u2192 few peaks per file\r\ncwp <- CentWaveParam(peakwidth = c(20, 40), noise = 20000,\r\n                     snthresh = 100, ppm = 5)\r\nxmse <- findChromPeaks(raw, param = cwp)\r\n\r\n## File 1 ends up with 16 well-separated peaks \u2014 zero merge candidates.\r\n## Confirm:\r\npks1 <- chromPeaks(xmse[1L], msLevel = 1L)\r\ncands <- xcms:::.define_merge_candidates(pks1, expandMz = 0, ppm = 10,\r\n                                          expandRt = 2)\r\ncat(\"File 1:\", nrow(pks1), \"peaks,\", length(cands), \"candidate groups\\n\")\r\n## File 1: 16 peaks, 0 candidate groups\r\n\r\n## Without the fix, refineChromPeaks crashes:\r\nprm <- MergeNeighboringPeaksParam(expandRt = 2, expandMz = 0, ppm = 10)\r\nrefineChromPeaks(xmse, param = prm)\r\n## Fejl i FUN(X[[i]], ...) : subscript out of bounds\r\n\r\n## With the fix applied, it completes normally:\r\n## Reduced from 205 to 147 chromatographic peaks.\r\n```\r\n",
+      "mergedAt": "2026-03-19T13:55:03Z",
+      "isDraft": false,
+      "changedFiles": 1,
+      "baseRefOid": "1c6ac38874a93a585f9be9036bf3eb38509e7353",
+      "headRefOid": "b18739c77f170dde73a6b4587d77dcc549bd315e",
+      "mergeCommit": {
+        "oid": "178dc775b9e35b8f5ee083b6c07a9351c639d660"
+      }
+    },
+    {
+      "number": 826,
+      "url": "https://github.com/sneumann/xcms/pull/826",
+      "title": "Fix issue when completely overlapping peaks are not combined",
+      "body": "This PR fixes issue #825 , i.e., solves an issue that can cause completely overlapping chromatographics to be **not** merged by `refineChromPeaks()` with `MergeNeighboringPeaksParam`.",
+      "mergedAt": "2026-02-19T12:45:20Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "b9caf40e4a7daba8a3e73821c1a7c2f531031934",
+      "headRefOid": "921439e00b46e4484dc1465e4715415a18757e88",
+      "mergeCommit": {
+        "oid": "1c6ac38874a93a585f9be9036bf3eb38509e7353"
+      }
+    },
+    {
+      "number": 848,
+      "url": "https://github.com/sneumann/xcms/pull/848",
+      "title": "docs: add vignette for using lcmsPlot with xcms",
+      "body": "[lcmsPlot](https://bioconductor.org/packages/release/bioc/html/lcmsPlot.html) is a Bioconductor package for plotting LC-MS data in a grammar-of-graphics manner.\r\n\r\nThe vignette demonstrates how to plot different aspects of an LC-MS dataset using an xcms preprocessed results object (using `loadXcmsData()`).\r\n\r\n> Note: the `devel` version of `lcmsPlot` has features (e.g., `lp_peak_count_image()`) used in this vignette that are not in the `release` version. I suppose this is fine as in any Bioconductor environment the versions used are paired.\r\n\r\nCloses #844 ",
+      "mergedAt": "2026-10-06T07:37:54Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "088a3c1494331241bbe0910551954356a43b0288",
+      "headRefOid": "cc1f12f16ef1497aeb943d00efc53b0cd8c3b1b1",
+      "mergeCommit": {
+        "oid": "d430faeb343625ec556fd4d931e67f34bec8d6ab"
+      }
+    },
+    {
+      "number": 834,
+      "url": "https://github.com/sneumann/xcms/pull/834",
+      "title": "Avoid unnecessary/misleading warning in refineChromPeaks",
+      "body": "`refineChromPeaks,XcmsExperiment,MergeNeighboringPeaksParam` was showing a warning about duplicated row names, but this was thrown by an internal merging of results - on temporary `data.frame`s/sub sets of the `chromPeakData()`. This PR is removing the row names from these intermediate objects. The final (real) row names of `chromPeakData()` were (and are) assigned correctly at the end of the call.",
+      "mergedAt": "2026-07-05T12:01:10Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "161fe372ca3b71396968d7789e7f3b92ba6a0472",
+      "headRefOid": "d24fb5606b832584ed7c8c2688dfae8dcf610916",
+      "mergeCommit": {
+        "oid": "68c7ab23752855e66adbeed2256008c21017f08f"
+      }
+    },
+    {
+      "number": 822,
+      "url": "https://github.com/sneumann/xcms/pull/822",
+      "title": "docs: add new xcms reference to the vignette",
+      "body": "This PR adds the new paper also as a reference to the package vignette.",
+      "mergedAt": "2026-02-11T12:15:04Z",
+      "isDraft": false,
+      "changedFiles": 3,
+      "baseRefOid": "5c6fd1814363dc903c7298ce256f91af1fc61af2",
+      "headRefOid": "f2b2832d6d4c9765b7127112062a16b9cc71255d",
+      "mergeCommit": {
+        "oid": "b4c3f28efef73c084d7857646e5c0a7528337377"
+      }
+    },
+    {
+      "number": 828,
+      "url": "https://github.com/sneumann/xcms/pull/828",
+      "title": "Address issue 823",
+      "body": "This PR:\r\n\r\n- addresses issue #823 adding a parameter `rtCenterFun` to the `PeakDensityParam`.\r\n- fix the title of the `plotPrecursorIons()` function. ",
+      "mergedAt": "2026-04-22T09:49:24Z",
+      "isDraft": false,
+      "changedFiles": 59,
+      "baseRefOid": "2c50d859e175a6e82d58d55aa3aad1a02e016d46",
+      "headRefOid": "e7c6c19329b7db3e32c8f118aa7da8a3ee15612a",
+      "mergeCommit": {
+        "oid": "161fe372ca3b71396968d7789e7f3b92ba6a0472"
+      }
+    },
+    {
+      "number": 835,
+      "url": "https://github.com/sneumann/xcms/pull/835",
+      "title": "Avoid unnecessary/misleading warning in refineChromPeaks",
+      "body": "This PR is a duplicate of PR #834 , only for the release branch, instead of the devel branch. Info on the PR:\r\n\r\n`refineChromPeaks,XcmsExperiment,MergeNeighboringPeaksParam` was showing a warning about duplicated row names, but this was thrown by an internal merging of results - on temporary `data.frame`s/sub sets of the `chromPeakData()`. This PR is removing the row names from these intermediate objects. The final (real) row names of `chromPeakData()` were (and are) assigned correctly at the end of the call.",
+      "mergedAt": "2026-07-05T11:57:41Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "8c4235aa1d367918ff8bf9c429833e7bfd8fa9cb",
+      "headRefOid": "4bca181c7d882b03b0c3ed2ee4e663ae982faa57",
+      "mergeCommit": {
+        "oid": "3b2063b5098a88011d54c237846f23450b32901d"
+      }
+    },
+    {
+      "number": 820,
+      "url": "https://github.com/sneumann/xcms/pull/820",
+      "title": "Add xcms (2025) citation",
+      "body": "",
+      "mergedAt": "2026-02-11T12:15:38Z",
+      "isDraft": false,
+      "changedFiles": 4,
+      "baseRefOid": "e2f76c8512bd0244f9524c075fe240138335f3e4",
+      "headRefOid": "b4c3f28efef73c084d7857646e5c0a7528337377",
+      "mergeCommit": {
+        "oid": "99667ee9eb40d69303f9620209f3f6505eebb0b9"
+      }
+    },
+    {
+      "number": 827,
+      "url": "https://github.com/sneumann/xcms/pull/827",
+      "title": "Fix issue #825 for BioC release 3.22",
+      "body": "This PR fixes issue #825 for the Bioconductor release 3.22. It is essentially a duplicate of PR #826 , but for the release 3.22 branch.",
+      "mergedAt": "2026-04-20T08:09:30Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "8c7e9cfe3e512a93a5850d2bdf1df28677c87ad4",
+      "headRefOid": "bd7412868a99d7ff9ffebe031eff923c3d0c589e",
+      "mergeCommit": {
+        "oid": "85545fe031cfd0900149981c1671a7edb1f7a10a"
+      }
+    },
+    {
+      "number": 846,
+      "url": "https://github.com/sneumann/xcms/pull/846",
+      "title": "fix: workaround for error reading character subsets from HDF5",
+      "body": "- Reading subsets of a character array defined by indices from an HDF5 file causes errors. The bug is reported for *rhdf5* in issue https://github.com/Huber-group-EMBL/rhdf5/issues/240 . This commit adds a workaround that reads the full character vector and subsets it by index in R.",
+      "mergedAt": "2026-09-01T07:27:55Z",
+      "isDraft": false,
+      "changedFiles": 5,
+      "baseRefOid": "ba6f4a1f8e9d99a1e335aeaa424d304853288aee",
+      "headRefOid": "5c7885449c41172dea0bc4695a8762227b89c3d2",
+      "mergeCommit": {
+        "oid": "088a3c1494331241bbe0910551954356a43b0288"
+      }
+    },
+    {
+      "number": 837,
+      "url": "https://github.com/sneumann/xcms/pull/837",
+      "title": "feat: add support for Chromatograms to chromatogram",
+      "body": "- `chromatogram,XcmsExperiment` and `chromatogram,MsExperiment` now allow to return the results as a `Chromatograms` object.",
+      "mergedAt": "2026-08-17T08:02:06Z",
+      "isDraft": false,
+      "changedFiles": 91,
+      "baseRefOid": "68c7ab23752855e66adbeed2256008c21017f08f",
+      "headRefOid": "fed19bca51a458076e71536ea9b7b337043a431e",
+      "mergeCommit": {
+        "oid": "ba6f4a1f8e9d99a1e335aeaa424d304853288aee"
+      }
+    }
+  ]
+}
