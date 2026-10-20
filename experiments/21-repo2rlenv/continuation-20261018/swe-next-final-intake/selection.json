@@ -1,0 +1,42 @@
+{
+  "stage": "frozen_before_metadata_filter_or_native_execution",
+  "created_utc": "2026-10-20T01:33:49.936165+00:00",
+  "selection_rule": "Original PR-diff considered order, excluding already charged SWE-Next inputs; take only the remaining numeric allowance. No outcome-based replacement or repository-profile changes.",
+  "units": {
+    "biopython": {
+      "repo": "biopython/biopython",
+      "prior_charged": 4,
+      "new_selected": [
+        5376,
+        5369,
+        5361,
+        5360,
+        5359,
+        5358
+      ],
+      "profile": "swe-next-biopython-broader-profile.json",
+      "profile_sha256": "bbe25fed724a4ac9cdf6312da8e06aadd7afb33446910f034f8b4fde4e5ddba0"
+    },
+    "skbio": {
+      "repo": "scikit-bio/scikit-bio",
+      "prior_charged": 1,
+      "new_selected": [
+        2638,
+        2637,
+        2636,
+        2635,
+        2634,
+        2632,
+        2630,
+        2629,
+        2628
+      ],
+      "profile": "swe-next-skbio-profile.json",
+      "profile_sha256": "e0ee853b6d411632e60c8b5455f4f912841c1504dd5664dbd606af5f65913f32"
+    }
+  },
+  "model_calls": 0,
+  "new_exports": 0,
+  "task_specific_fixes": 0,
+  "note": "Use the last existing repository scope for each unit unchanged except its selected PR list. The Biopython profile includes earlier assisted setup adaptations; it is retained as a declared profile, not stock runtime evidence. Native selection does not execute its install command."
+}
