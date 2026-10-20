@@ -1,0 +1,111 @@
+{
+  "status": "prepared_not_executable_until_infrastructure_verified",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "upstream_source_modifications": [],
+  "llm": {
+    "provider": "openai",
+    "model": "glm-5.3",
+    "endpoint": "RUNTIME_PRIVATE_DISCOVERY",
+    "api_key_env": "GLM_BULK_TOKEN",
+    "fallback": null
+  },
+  "bootstrap_limits": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_bootstrap_invocations_per_repository": 1
+  },
+  "repositories": 3,
+  "maximum_bootstrap_turns": 60,
+  "model_output_tokens_per_turn": 2048,
+  "paid_models": false,
+  "total_allocated_cpu_hour_ceiling": 48,
+  "max_concurrent_workers": 1,
+  "selection": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "target_pr": 544,
+      "pipeline_options": {
+        "limit": 1000,
+        "since": "2026-04-04",
+        "until": "2026-04-04"
+      },
+      "selected_before_native_filters": [
+        545,
+        544,
+        542
+      ]
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "target_pr": 525,
+      "pipeline_options": {
+        "limit": 1000,
+        "since": "2026-03-11",
+        "until": "2026-03-11"
+      },
+      "selected_before_native_filters": [
+        525
+      ]
+    },
+    {
+      "repository": "nipy/nipype",
+      "target_pr": 3753,
+      "pipeline_options": {
+        "limit": 1000,
+        "since": "2026-08-25",
+        "until": "2026-08-25"
+      },
+      "selected_before_native_filters": [
+        3765,
+        3759,
+        3755,
+        3753,
+        3751,
+        3722
+      ]
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "target_pr": 7475,
+      "pipeline_options": {
+        "limit": 1000,
+        "since": "2025-11-22",
+        "until": "2025-11-22"
+      },
+      "selected_before_native_filters": [
+        7475
+      ]
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "target_pr": 7805,
+      "pipeline_options": {
+        "limit": 1000,
+        "since": "2026-09-30",
+        "until": "2026-09-30"
+      },
+      "selected_before_native_filters": [
+        7812,
+        7806,
+        7805,
+        7803,
+        7789
+      ]
+    }
+  ],
+  "bootstrap_cache_policy": "Same pinned repository ref and cache across date windows; after a failed bootstrap, later windows for that repository remain unresolved rather than starting another bootstrap.",
+  "unresolved": [
+    "TRC to approved GLM relay connectivity",
+    "Authorized GitHub authentication for official gh CLI on remote runner",
+    "Bounded nested Docker resources without source changes",
+    "Exact bootstrap repository refs and image/toolchain pins",
+    "Native grader orchestration and durable artifact retention"
+  ],
+  "bootstrap_refs": {
+    "MLCIL/scikit-fingerprints": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+    "nipy/nipype": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+    "psychopy/psychopy": "f150adfd0246e6bf22331949502e27262734be71"
+  },
+  "native_validation_timeout_sec": 600,
+  "model_status": "User selected existing free GLM-5.3 bulk service; no Sonnet or OpenRouter."
+}
