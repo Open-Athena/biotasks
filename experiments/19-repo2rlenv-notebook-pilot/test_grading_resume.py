@@ -235,3 +235,30 @@ def test_probe_draft_recovery_excludes_grader_feedback_and_binds_original_suite(
     (tmp_path / "probes.json").write_text("{}")
     with pytest.raises(ValueError, match="identity mismatch"):
         load_probe_draft(tmp_path, context, candidate())
+
+
+def test_full_archive_probe_reuse_binds_candidate_bytes_and_cleanup(tmp_path):
+    from grading_protocol import Probes
+    from grading_resume import load_saved_probes
+    from test_grading import probe
+
+    fixture(tmp_path)
+    suite = Probes(
+        disposition="ready",
+        probes=[probe(), probe(name="format", kind="valid_alternative")],
+        concerns=[],
+    )
+    data = suite.model_dump_json().encode()
+    (tmp_path / "probes.json").write_bytes(data)
+    p = tmp_path / "artifact-manifest.json"
+    manifest = json.loads(p.read_text())
+    manifest["original_small_files"].append(
+        {"path": "probes.json", "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+    )
+    p.write_text(json.dumps(manifest))
+    assert load_saved_probes(tmp_path, candidate()) == suite
+    with pytest.raises(ValueError, match="different grader contract"):
+        load_saved_probes(tmp_path, candidate().model_copy(update={"rationale": "different"}))
+    (tmp_path / "probes.json").write_text("{}")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_saved_probes(tmp_path, candidate())

@@ -1,0 +1,85 @@
+{
+  "candidate_sha256": "628fef1f3f417736b90678d795306854a50402d848f4e7ac793e9bf15bedea10",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "rewrote 40557 rows with exponent fc spellings and quoted chrom fields\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40557 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40557 data rows; the multiset of retained peak sub-intervals (chrom, start, end) together with their fold change fc is identical to the reference: every retained sub-interval, its fold change and the number of times it is reported agree, so peak selection, blacklist trimming and the fold change of every distinct peak interval are correct",
+          "passed": true
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40557 data rows; every reported peak sub-interval carries exactly the reference motif annotation (motif_chrom, motif_start, motif_end, motif_pval, motif_strand), and 5765 row(s) keep all five motif fields blank exactly where the reference has no assigned motif",
+          "passed": true
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40557 data rows; the submission table equals the reference table as a multiset of complete rows: apart from row order, which is free, no row is missing, added or different, and rows that appear more than once appear the same number of times",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "cab03ecff8b87ab20ef5bbcb23a915f2f98688f903e2dabcb83a0234f51eaa9d"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "cab03ecff8b87ab20ef5bbcb23a915f2f98688f903e2dabcb83a0234f51eaa9d"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "csv_format",
+      "value_domains",
+      "peak_rows_match",
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+      },
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "numeric_tolerance",
+    "kind": "valid_alternative",
+    "name": "alt-exponent-and-quoted-chrom",
+    "rationale": "Valid representation control for further explicitly granted freedoms. Rule 6 permits an optional decimal exponent ('e2', 'E-3') and rule 11 states that 450, 450.0 and 4.5e2 are the same number, so every fc is rewritten into an exact scientific-decimal spelling (the cited 580.28482 becomes 5.8028482e2) computed with exact decimal arithmetic and asserted row by row to parse to the identical float. Rule 2 states that quoting of fields is accepted and ignored, so the chrom field and populated motif_chrom fields are wrapped in double quotes (empty motif fields stay empty). Row order, coordinates, numeric values and row count are untouched, so all five checks must pass while the grader has to parse exponents and quoted strings.",
+    "script": "\"\"\"Valid representation control: exponent spellings for fc and quoted\nchromosome fields, with row order, values and row count unchanged.\n\nRule 11 treats 4.5e2, 450 and 450.0 as the same number, and rule 6 explicitly\npermits an optional decimal exponent; rule 2 states that quoting of fields is\naccepted and ignored. Every fc is rewritten into an exact scientific-decimal\nspelling (580.28482 -> 5.8028482e2) using exact decimal arithmetic, and the\nchrom field plus every populated motif_chrom field is wrapped in double\nquotes. A per-value assertion re-checks that each rewritten fc parses to\nexactly the same float, so the parsed scientific content is unchanged and all\nfive checks must pass.\n\"\"\"\nimport csv\nfrom decimal import Decimal\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        header = next(reader)\n        assert [h.lstrip(\"\\ufeff\") for h in header] == HEADER, header\n        rows = []\n        for raw in reader:\n            if not raw:\n                continue\n            while len(raw) < 9:\n                raw.append(\"\")\n            assert len(raw) == 9, raw\n            rows.append(raw)\n        return rows\n\n\ndef exponent_form(text):\n    d = Decimal(text)\n    sign, digits, exp = d.as_tuple()\n    prefix = \"-\" if sign else \"\"\n    if d == 0:\n        return prefix + \"0.0e0\"\n    digits_s = \"\".join(str(x) for x in digits)\n    stripped = digits_s.rstrip(\"0\")\n    exp += len(digits_s) - len(stripped)\n    mantissa = stripped[0] + \".\" + (stripped[1:] or \"0\")\n    e = exp + len(stripped) - 1\n    return prefix + mantissa + \"e\" + str(e)\n\n\ndef quoted(text):\n    return '\"' + text + '\"' if text else \"\"\n\n\nrows = load()\nassert rows, \"no data rows\"\nlines = [\",\".join(HEADER)]\nfor r in rows:\n    new_fc = exponent_form(r[3])\n    assert float(new_fc) == float(r[3]), (r[3], new_fc)\n    for field in r + [new_fc]:\n        assert \",\" not in field and '\"' not in field, field\n    out = [quoted(r[0]), r[1], r[2], new_fc, quoted(r[4]), r[5], r[6], r[7], r[8]]\n    lines.append(\",\".join(out))\nassert len(lines) == len(rows) + 1\nwith open(PATH, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join(lines) + \"\\n\")\nprint(\"rewrote\", len(rows), \"rows with exponent fc spellings and quoted chrom fields\")\n"
+  }
+}

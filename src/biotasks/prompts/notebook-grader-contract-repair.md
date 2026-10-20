@@ -21,3 +21,11 @@ target, return blocked with the reason instead.
 `instruction` is the complete replacement acceptance addendum only. `rationale`
 is private and explains the corrections and remaining limitations without claiming
 new tests ran. Use submit_artifact to finish, or revise_artifact for schema feedback.
+
+Match the public acceptance description to every implemented acceptance-affecting
+restriction, including parser/file-size bounds. Disclose existing restrictions;
+do not silently change code or introduce new ones. Correct false equivalence
+claims and keep assumptions explicit. Base validation counts and claims on the
+supplied execution records, not author-side test prose or a previous review's
+summary. Original evidence remains preserved; a corrected version receives fresh
+controls, so preserving a hash is not a reason to retain misleading wording.

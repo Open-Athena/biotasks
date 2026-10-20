@@ -1,0 +1,36 @@
+{
+  "execution": {
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "appended the fabricated peak row ['chr1', '150980000', '150980370', '580.28482'] with donor motif ['chr1', '150979668', '150979687', '678.0', '-']\n"
+    },
+    "probe_valid_execution": true,
+    "status": "probe_executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "7130ed41ee50aae362a1e00c870f9fbf2d4a57e4e45e1737f5e0a8633a1789f7"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    }
+  },
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "extra-fabricated-peak-row",
+    "rationale": "Tests that extra rows are rejected, standing in for a peak set with a spurious interval or an extra trimmed piece: an additional nine-field data row is appended for a fabricated peak chr1:150980000-150980370 carrying the fc (580.28482) and motif annotation (chr1:150979668-150979687, pval 678.0, strand -) of the real retained peak chr1:150979463-150979845 just upstream. The fabricated interval is known not to collide with any existing row (verified when this control was first executed, and re-asserted here), and the borrowed motif lies inside the implied untrimmed peak span, which the contract explicitly permits because motif assignment precedes blacklist trimming, so the row is well formed and internally consistent but is not part of the reference result. The peak-row multiset, the per-sub-interval motif grouping and the full-row multiset must all fail.",
+    "script": "\"\"\"Wrong-result control: a fabricated extra peak row is added.\n\nAn extra retained peak is invented just downstream of a real one: the appended\nrow chr1:150980000-150980370 borrows its fc (580.28482) and its assigned\nmotif (chr1:150979668-150979687, pval 678.0, strand -) from the genuine\nretained peak chr1:150979463-150979845. The row is well formed and internally\nconsistent: the fabricated interval does not collide with any existing row, it\nsits just downstream of the donor peak, and the borrowed motif lies inside the\nimplied untrimmed peak span, which the contract permits because motif\nassignment precedes blacklist trimming. No such peak is part of the reference\nresult, so the extra-row rule must fail every content check.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nNEAR = (\"chr1\", \"150979463\", \"150979845\")\nNEW_START, NEW_END = \"150980000\", \"150980370\"\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nhits = [r for r in rows if (r[0], r[1], r[2]) == NEAR]\nassert len(hits) == 1, len(hits)\ndonor = hits[0]\nassert donor[4] != \"\" and donor[7] != \"\" and donor[8] in (\"+\", \"-\"), donor\nassert not any(r[0] == \"chr1\" and r[1] == NEW_START and r[2] == NEW_END for r in rows)\nmotif_s, motif_e = int(donor[5]), int(donor[6])\ndonor_s, donor_e = int(donor[1]), int(donor[2])\nnew_s, new_e = int(NEW_START), int(NEW_END)\nassert donor_s < motif_s and motif_e < donor_e, (donor_s, motif_s, motif_e, donor_e)\nassert donor_e <= new_s < new_e, (donor_e, new_s, new_e)\nassert motif_e < new_s and new_s - motif_e < 1000, (motif_e, new_s)\nextra = [\"chr1\", NEW_START, NEW_END, donor[3], donor[4], donor[5], donor[6], donor[7], donor[8]]\nassert len(extra) == 9 and int(extra[1]) < int(extra[2]) and int(extra[5]) < int(extra[6])\nrows.append(extra)\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"appended the fabricated peak row\", extra[:4], \"with donor motif\", extra[4:])\n"
+  }
+}

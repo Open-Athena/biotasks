@@ -1,0 +1,78 @@
+{
+  "candidate_sha256": "628fef1f3f417736b90678d795306854a50402d848f4e7ac793e9bf15bedea10",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "assigned a fabricated motif ['chr19', '48309600', '48309619', '650.0', '+'] to the previously blank peak ('chr19', '48309541', '48309911')\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40557 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40557 data rows; the multiset of retained peak sub-intervals (chrom, start, end) together with their fold change fc is identical to the reference: every retained sub-interval, its fold change and the number of times it is reported agree, so peak selection, blacklist trimming and the fold change of every distinct peak interval are correct",
+          "passed": true
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40557 data rows; 1 peak sub-interval(s) reported by the submission carry a motif annotation that differs from the reference; a reported peak sub-interval carries the motif annotation (chr19, 48309600, 48309619, 650.0, +), which the reference does not report for that peak sub-interval; peak sub-intervals that are missing or added are also reported by the peak comparison",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40557 data rows; 1 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr19, 48309541, 48309911, 5.04924, chr19, 48309600, 48309619, 650.0, +)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "de160c26698576abe62a38d871a6cf0acffeaa90c054f9f97b4ac78f9ca3ba20"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "de160c26698576abe62a38d871a6cf0acffeaa90c054f9f97b4ac78f9ca3ba20"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr19,48309541,48309911,5.04924"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "motif-fabricated-on-blank-peak",
+    "rationale": "Wrong-association control preserving peak identity and row count: the retained peak chr19:48309541-48309911 carries fc 5.04924 and has all five motif fields blank in the reference table (the recorded reference line for this interval is blank after the fc field), i.e. no MA0139.1 motif overlaps it. Its motif fields are filled with a motif-shaped record inside the same peak span (chr19:48309600-48309619, 19 bp, pval 650.0, strand +), mimicking a pipeline that assigns a motif where the rules require blank (for example a relaxed-overlap or nearest-motif bug). The peak-row multiset is unchanged, so motif_annotation_match, which requires unassigned peaks to stay blank, and full_table_match fail.",
+    "script": "\"\"\"Wrong-result control: a motif is assigned to a peak the reference leaves\nunassigned.\n\nThe retained peak chr19:48309541-48309911 carries fc 5.04924 and all five of\nits motif fields are blank in the reference table: no MA0139.1 motif overlaps\nthis peak. The motif fields are filled with a motif-shaped record inside the\nsame peak span (chr19:48309600-48309619, the 19 bp width of the CTCF motif\nrecords, pval 650.0, strand +), mimicking a pipeline that assigns a motif\nwhere the rules require blank. The peak interval, the fc and the row count are\npreserved, so motif_annotation_match and full_table_match fail while\npeak_rows_match still passes.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr19\", \"48309541\", \"48309911\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert float(row[3]) == 5.04924, row[3]\nassert all(f == \"\" for f in row[4:9]), row\npeak_start, peak_end = int(row[1]), int(row[2])\nassert peak_start == 48309541 and peak_end == 48309911, (peak_start, peak_end)\nnew_motif = [\"chr19\", \"48309600\", \"48309619\", \"650.0\", \"+\"]\nassert peak_start < int(new_motif[1]) and int(new_motif[2]) <= peak_end, new_motif\nassert int(new_motif[2]) - int(new_motif[1]) == 19, new_motif\nrow[:] = row[:4] + new_motif\nassert len(row) == 9 and row[8] == \"+\", row\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"assigned a fabricated motif\", row[4:9], \"to the previously blank peak\", TARGET)\n"
+  }
+}

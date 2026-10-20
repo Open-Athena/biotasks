@@ -7,8 +7,8 @@ from grading_protocol import AlternativeSolution, Grader, Probes, check_probes
 from reference_replay import sha256
 
 
-def verified_reader(directory, context):
-    """Bind saved worker bytes to the same science before any recovery mode."""
+def archive_reader(directory):
+    """Read original bytes only from a verified, cleaned-up campaign archive."""
     directory = Path(directory)
     manifest = json.loads((directory / "artifact-manifest.json").read_text())
     if manifest.get("download_checked") is not True:
@@ -31,6 +31,12 @@ def verified_reader(directory, context):
     result = read("result.json")
     if result.get("cleanup_verified") is not True:
         raise ValueError("Prior campaign cleanup must be verified")
+    return read
+
+
+def verified_reader(directory, context):
+    """Bind saved worker bytes to the same science before program recovery."""
+    read = archive_reader(directory)
     prior_context = read("grader/input.json")
     # Compare all current scientific inputs before reusing any worker program.
     # The later independent execution and its output path are added separately.
@@ -121,6 +127,15 @@ def load_probe_draft(directory, context, candidate):
 def load_saved_probes(directory, candidate):
     """Recover submitted probes from a hash-bound partial snapshot, not acceptance."""
     directory = Path(directory)
+    if (directory / "artifact-manifest.json").exists():
+        read = archive_reader(directory)
+        if Grader.model_validate(read("candidate.json")) != candidate:
+            raise ValueError("Saved probes belong to a different grader contract")
+        suite = Probes.model_validate(read("probes.json"))
+        if suite.disposition != "ready":
+            raise ValueError("Recovery requires a submitted ready probe suite")
+        check_probes(suite, candidate)
+        return suite
     records = {row["path"]: row for row in json.loads((directory / "manifest.json").read_text())}
 
     def read(name):

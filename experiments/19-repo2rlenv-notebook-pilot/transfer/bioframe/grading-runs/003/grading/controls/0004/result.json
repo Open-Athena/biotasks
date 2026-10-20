@@ -1,0 +1,52 @@
+{
+  "candidate_sha256": "628fef1f3f417736b90678d795306854a50402d848f4e7ac793e9bf15bedea10",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40557 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40557 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40557 data rows; the multiset of retained peak sub-intervals (chrom, start, end) together with their fold change fc is identical to the reference: every retained sub-interval, its fold change and the number of times it is reported agree, so peak selection, blacklist trimming and the fold change of every distinct peak interval are correct",
+          "passed": true
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40557 data rows; every reported peak sub-interval carries exactly the reference motif annotation (motif_chrom, motif_start, motif_end, motif_pval, motif_strand), and 5765 row(s) keep all five motif fields blank exactly where the reference has no assigned motif",
+          "passed": true
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40557 data rows; the submission table equals the reference table as a multiset of complete rows: apart from row order, which is free, no row is missing, added or different, and rows that appear more than once appear the same number of times",
+          "passed": true
+        }
+      ],
+      "passed": true
+    },
+    "status": "executed",
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "b2e011fe6199cd0be634d3ddca1f6ee4809362a3dbee1a309086001f1c8afe08"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "b2e011fe6199cd0be634d3ddca1f6ee4809362a3dbee1a309086001f1c8afe08"
+    }
+  },
+  "kind": "alternative",
+  "omitted": null,
+  "passed_control": true,
+  "probe": null
+}

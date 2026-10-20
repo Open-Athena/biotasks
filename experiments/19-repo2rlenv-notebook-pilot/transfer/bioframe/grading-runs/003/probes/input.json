@@ -1,0 +1,129 @@
+{
+  "checks": [
+    {
+      "artifacts": [
+        "ctcf_peaks_maxmotif_clean.csv"
+      ],
+      "id": "csv_format",
+      "kind": "structural",
+      "public_requirement": "The required file `ctcf_peaks_maxmotif_clean.csv` is present in the submission directory as a regular, non-empty file. The text is valid UTF-8 with no NUL byte, and any single leading UTF-8 byte order mark is ignored. Comma-separated parsing yields exactly one header line whose nine field names, in order, are `chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand`, followed by at least one data row. Each data row holds exactly nine fields. This check is the container for all structural requirements; its scientific companions are value_domains, peak_rows_match, motif_annotation_match and full_table_match."
+    },
+    {
+      "artifacts": [
+        "ctcf_peaks_maxmotif_clean.csv"
+      ],
+      "id": "value_domains",
+      "kind": "structural",
+      "public_requirement": "Every data row is shape-valid. `chrom` and, when present, `motif_chrom` are non-empty names without leading or trailing whitespace. `start`/`end` and `motif_start`/`motif_end` denote non-negative integers smaller than 2^62 with start < end and motif_start < motif_end. `fc` and `motif_pval` are finite plain decimal numbers. `motif_strand` is exactly `+` or `-`. Within any row, the five motif fields are blank together or present together. A submission violating these rules is rejected through this check only; downstream content checks are not evaluated against malformed data."
+    },
+    {
+      "artifacts": [
+        "ctcf_peaks_maxmotif_clean.csv"
+      ],
+      "id": "peak_rows_match",
+      "kind": "scientific",
+      "public_requirement": "The peak-level content is correct: the multiset of `(chrom, start, end, fc)` rows is identical to the reference. Each row of a repeated peak sub-interval, including rows for intervals reported on both sides of a gap, contributes independently, so row multiplicity is enforced. Intervals are identified by exact chromosome string and their numeric coordinates. `fc` is compared by its exact numeric value. This check verifies that the submission and reference retain exactly the same distinct peak intervals, that the retained peak spans match the requested blacklist-removal rule, and that each peak carries the fold change of the first record for its distinct interval. Failing rows are reported with the submission's row text; reference rows are described only as counts."
+    },
+    {
+      "artifacts": [
+        "ctcf_peaks_maxmotif_clean.csv"
+      ],
+      "id": "motif_annotation_match",
+      "kind": "scientific",
+      "public_requirement": "The motif annotations are correct: grouping by peak sub-interval and comparing the multiset of `(motif_chrom, motif_start, motif_end, motif_pval, motif_strand)` per peak sub-interval yields an identical result to the reference, including peaks whose five motif fields are blank. This check verifies that the assigned motif is the strongest overlapping MA0139.1 motif with the earliest-file-row tie-break, that its coordinates, numeric score and strand agree with those of the reference-selected motif, and that no motif is assigned where the reference has none. A row's assigned motif need not overlap the trimmed sub-interval it is reported on, since assignment precedes trimming."
+    },
+    {
+      "artifacts": [
+        "ctcf_peaks_maxmotif_clean.csv"
+      ],
+      "id": "full_table_match",
+      "kind": "scientific",
+      "public_requirement": "The rows of the submission table equal the rows of the reference as a multiset of complete nine-field rows: no row is missing, added or different. This check is computed independently of the other two content checks, so any inconsistency between peak identity, fold change and motif assignment within a row is caught: it verifies the pairing of the peak interval and its fold change with the assigned motif on the same row, and it requires complete row agreement, not merely per-column-set agreement."
+    }
+  ],
+  "output_paths": [
+    "ctcf_peaks_maxmotif_clean.csv"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "prior_probe_draft": {
+    "execution_failures": [
+      {
+        "execution": {
+          "probe": {
+            "exit_code": 1,
+            "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+            "stderr": "Traceback (most recent call last):\n  File \"/case/probe.py\", line 31, in <module>\n    assert int(donor[5]) < int(new_end) and int(new_start) < int(donor[6])\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAssertionError\n",
+            "stdout": ""
+          },
+          "probe_valid_execution": false,
+          "status": "incomplete",
+          "submission_after_probe": {
+            "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+          },
+          "submission_before": {
+            "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+          }
+        },
+        "name": "extra-fabricated-peak-row"
+      }
+    ],
+    "prior_suite": {
+      "concerns": [
+        "Row multiplicity and split-peak rows could not be probed with a genuine multi-piece peak: every reference row for a given (chrom, start, end) is unique, and no two retained rows on the same chromosome share an identical fc string, so no pair of retained sub-intervals in the reference output can be identified with confidence as pieces of one original peak. The multiplicity and omission behaviours are still exercised (duplicated exact row, removed required row), but a true 'one peak split into several rows and removed mid-piece' control is not covered, and this evidence gap cannot be closed from the released output file alone.",
+        "The public spec states that 15 peak intervals appear in two peaks-file records with different fc and that each distinct interval is reported with the fc of the first record. Because the reference output contains no duplicate (chrom, start, end) rows, a submission cannot be seen to select the wrong record's fc for one of those 15 intervals without changing the row's coordinates too; that specific defect is only approximated by the fc perturbation probe.",
+        "Motif-assignment correctness is probed by cross-file substitution of real, correctly-formed motif annotations, not by an independent recomputation of the strongest-motif rule (ties broken by earliest file row); the raw JASPAR track is unavailable to this stage, so whether the 15-record and earliest-tie-break rules are implemented correctly in the reference itself was not verified."
+      ],
+      "disposition": "ready",
+      "probes": [
+        {
+          "check_ids": [
+            "csv_format",
+            "value_domains",
+            "peak_rows_match",
+            "motif_annotation_match",
+            "full_table_match"
+          ],
+          "evidence": [
+            {
+              "path": "ctcf_peaks_maxmotif_clean.csv",
+              "quote": "chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand"
+            },
+            {
+              "path": "ctcf_peaks_maxmotif_clean.csv",
+              "quote": "chr19,48309541,48309911,5.04924,,,,"
+            }
+          ],
+          "focus": "general",
+          "kind": "valid_alternative",
+          "name": "alt-row-order-and-decimal-spelling",
+          "rationale": "Valid representation control for the explicitly granted freedoms: row order is not evaluated, and any unambiguous decimal representation of fc and motif_pval is acceptable (rule 11 gives 450 and 450.0 as equal). The table is rewritten with reversed row order, fc decimal text with any trailing zeros stripped, and motif_pval without the '.0' suffix. Every value is numerically identical to the reference, so all five checks must pass.",
+          "script": "\"\"\"Valid representation control: equivalent decimal spellings and free row order.\n\nThe contract says row order is free and any unambiguous decimal representation\nof fc and motif_pval is acceptable. This control rewrites every numeric field\ninto a different but exactly equal spelling (fc as a plain decimal with\ntrailing zeros stripped where present, motif_pval as an integer without the\n\".0\" suffix) and reverses the row order. The parsed scientific content is\nunchanged, so all five checks must pass.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\",\"start\",\"end\",\"fc\",\"motif_chrom\",\"motif_start\",\"motif_end\",\"motif_pval\",\"motif_strand\"]\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\ndef trim_trailing_zeros(text):\n    if \".\" in text:\n        whole, frac = text.split(\".\")\n        frac = frac.rstrip(\"0\")\n        return whole + (\".\" + frac if frac else \"\")\n    return text\n\n\nrows = load()\nfor row in rows:\n    row[3] = trim_trailing_zeros(row[3])\n    if row[7] != \"\":\n        row[7] = str(int(round(float(row[7]))))\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(reversed(rows))\nprint(\"rewrote\", len(rows), \"rows with equivalent decimal spellings and reversed order\")\n"
+        },
+        {
+          "check_ids": [
+            "peak_rows_match",
+            "motif_annotation_match",
+            "full_table_match"
+          ],
+          "evidence": [
+            {
+              "path": "ctcf_peaks_maxmotif_clean.csv",
+              "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+            }
+          ],
+          "focus": "general",
+          "kind": "wrong_solution",
+          "name": "extra-fabricated-peak-row",
+          "rationale": "Tests that extra rows are rejected, standing in for a peak set with a spurious interval: an additional nine-field data row is appended for a fabricated peak chr1:150980000-150980370 carrying the fc (580.28482) and motif annotation (chr1:150979668-150979687, pval 678, -) of the real retained peak chr1:150979463-150979845 in the same neighbourhood. All values are internally consistent and plausible (same chromosome, coordinates that do not collide with any existing row, a real motif record, valid strand), but the row is not part of the reference result, so the peak-row multiset, the per-sub-interval motif grouping and the full-row multiset must all fail.",
+          "script": "\"\"\"Wrong-result control: a fabricated extra peak row is added.\n\nAn extra retained peak is invented in the neighbourhood of a real one: the new\nrow chr1:150980000-150980370 borrows its fc (580.28482) and its assigned motif\n(chr1:150979668-150979687, pval 678, -) from the genuine retained peak\nchr1:150979463-150979845. The row is well-formed and internally consistent with\nthe reported motif lying inside the reported peak span, but no such peak is part\nof the reference result, so the extra-row rule must fail every content check.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\",\"start\",\"end\",\"fc\",\"motif_chrom\",\"motif_start\",\"motif_end\",\"motif_pval\",\"motif_strand\"]\nNEAR = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nhits = [r for r in rows if (r[0], r[1], r[2]) == NEAR]\nassert len(hits) == 1, len(hits)\ndonor = hits[0]\nassert donor[4] != \"\" and donor[7] != \"\" and donor[8] in (\"+\", \"-\"), donor\nnew_start, new_end = \"150980000\", \"150980370\"\nassert not any(r[0] == \"chr1\" and r[1] == new_start and r[2] == new_end for r in rows)\nassert int(donor[5]) < int(new_end) and int(new_start) < int(donor[6])\nextra = [\"chr1\", new_start, new_end, donor[3], donor[4], donor[5], donor[6], donor[7], donor[8]]\nrows.append(extra)\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"appended the fabricated peak row\", extra[:4], \"with donor motif\", extra[4:])\n"
+        }
+      ]
+    }
+  },
+  "public_instruction": "# Task: assign the strongest CTCF motif to each CTCF ChIP-seq peak, then blacklist-filter the result\n\n## Objective\n\nFor the CTCF ChIP-seq peak set from HFF cells (ENCODE, assembly GRCh38), assign to every peak the strongest CTCF motif from the JASPAR MA0139.1 track that overlaps it, and then conservatively remove any peak material lying within \u00b11 kb of ENCODE blacklisted genomic regions. The deliverable is a table of the retained peak intervals, each annotated with the peak's fold change and its assigned motif.\n\n## Supplied inputs (read-only; no network access)\n\n1. `/inputs/ENCFF401MQL.bed.gz` \u2014 CTCF ChIP-seq peaks (HFF), gzipped narrowPeak, no header. 40587 rows, each with 10 tab-separated fields in order: `chrom, start, end, name, score, strand, fc, -log10p, -log10q, relSummit`. Only `chrom`, `start`, `end` and `fc` are used; `fc` (the 7th field) is a decimal number.\n2. `/inputs/MA0139.1.tsv.gz` \u2014 CTCF motif occurrences (JASPAR profile MA0139.1, hg38 UCSC track), gzipped, tab-separated. Data rows have exactly 7 tab-separated fields in order: `chrom, start, end, name, score, pval, strand`, where `pval` is the motif score expressed as \u2212log10(p-value) \u00d7 100 (an integer value in this file). The file contains 770050 data rows and no header or track-declaration lines; every decompressed line in the supplied file conforms to this schema. A line that does not conform to the 7-field data-row schema (for example a UCSC `track` declaration, should one be present) is not a data record and must be ignored, as must any blank line.\n3. `/inputs/ENCFF356LFX.bed.gz` \u2014 ENCODE blacklist regions, gzipped BED3 (`chrom, start, end`), no header, 910 rows.\n\nAll coordinates are 0-based, half-open `[start, end)` intervals in base pairs on GRCh38/hg38. Chromosomes are matched by exact name string (no aliasing or prefix normalization). Two intervals on the same chromosome overlap if they share at least one base (`start_A < end_B` and `start_B < end_A`); abutting intervals do not overlap.\n\n## Entities, output grain and combination rules\n\n- The output entities are **distinct peak intervals**, not peak records. The peaks file contains 40587 records over 40572 distinct `(chrom, start, end)` intervals; 15 intervals appear in two records each, with **different `fc` values**. Each distinct interval is analyzed and reported as one peak, annotated with the `fc` of the first record of that interval in the peaks file's row order (the file is sorted ascending by `fc`, so this is also the smaller of the two values).\n- A peak interval can be overlapped by zero, one or many motif records (many is common); the assignment rule below selects a single motif or none.\n- Peaks are neither merged nor re-clustered; each distinct interval is handled independently.\n\n## Analysis specification\n\n1. **Motif assignment per peak.** For each distinct peak interval P = (chrom, start, end), find all motif records whose interval overlaps P. The motif assigned to P is the overlapping motif with the largest `pval`; if several motifs tie for the largest `pval` (such ties do occur for some peaks in this dataset), assign the one that appears **earliest in the motif track file's row order**. A peak with no overlapping motif \u2014 or a peak none of whose overlapping motifs has a defined `pval` \u2014 is retained with blank motif fields. (Every `pval` in the supplied motif file is defined.)\n2. **Blacklist filtering, performed after assignment.** Expand every blacklist interval by 1000 bp on each side and take the union of the expanded intervals (equivalently: first merge expanded intervals that overlap or abut one another). Remove from each peak the portions covered by (sharing at least one base with) the removed set, keeping the surviving sub-intervals with start/end coordinates trimmed to the retained portion. A peak entirely covered by expanded blacklist intervals contributes no rows. Motif assignment is performed on the original, untrimmed peak spans; the blacklist step only trims the reported peak coordinates, so a retained row's assigned motif need not overlap the trimmed sub-interval it is reported on.\n\n## Required output\n\nWrite a single file `/outputs/ctcf_peaks_maxmotif_clean.csv`: UTF-8, comma-separated, exactly one header line followed by one data row per retained peak sub-interval, no index column, no additional files. Columns, in exactly this order and with exactly these names:\n\n```\nchrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand\n```\n\n- `chrom`, `start`, `end` \u2014 the retained (possibly trimmed) peak sub-interval; integers.\n- `fc` \u2014 the peak's fold-change value, per the entity rule above.\n- `motif_chrom`, `motif_start`, `motif_end` \u2014 the assigned motif's interval; `motif_start` and `motif_end` are integers.\n- `motif_pval` \u2014 the assigned motif's `pval` score (\u2212log10 p \u00d7 100).\n- `motif_strand` \u2014 the assigned motif's strand (`+` or `-`).\n- Motif fields are blank for peaks with no assigned motif.\n- A peak split into several retained pieces appears once per piece, each row carrying the same `fc` and motif annotation.\n\nRow order is free and will not be evaluated. `fc` and `motif_pval` are decimal numbers; any unambiguous decimal representation of the value is acceptable (for example `450` or `450.0`). The analysis is fully deterministic; no randomness is involved.\n\n## Environment and resources\n\nRun offline. Limits: 4 CPUs, 8 GiB RAM, 10 GiB disk, 600 s wall-clock. Any toolchain is acceptable provided the output meets the specification above; for convenience a Python environment including bioframe 0.8.0 is available, but its use is not required.\n\n## Acceptance rules\n\n# Acceptance rules (addendum to the task specification)\n\n## What is graded\nYour submission is graded **only** through the single required file `ctcf_peaks_maxmotif_clean.csv`, read from your output directory. Any other file you write is ignored. Grading compares the *parsed scientific content* of your table against the reference result computed under the published analysis rules; no execution of your code takes place, so nothing about your implementation method, toolchain, or intermediate files affects the outcome.\n\n## Structural rules\n1. The file must exist, be non-empty, and decode as UTF-8 (a single leading byte-order mark is ignored). A comma-separated parse must yield exactly one header line followed by at least one data row.\n2. The header line must contain exactly these nine names, in exactly this order: `chrom,start,end,fc,motif_chrom,motif_start,motif_end,motif_pval,motif_strand`. Names are matched literally \u2014 no renaming (`chrom_2`, `pval_2`, \u2026), reordering, extra columns or missing columns. Quoting of fields is accepted and ignored.\n3. Every data row must have exactly nine comma-separated fields. Empty lines are ignored; any row with a different field count fails the file-format check.\n\n## Value rules\n4. `chrom` and `motif_chrom` are matched as exact strings (no case folding and no alias/prefix normalization); they must be non-empty and carry no leading/trailing whitespace.\n5. `start`, `end`, `motif_start`, `motif_end` must denote non-negative integers below 2^62, with `start < end` and `motif_start < motif_end`.\n6. `fc` and `motif_pval` must be plain finite decimal numbers (optional sign, digits, decimal point, optionally a decimal exponent such as `e2` or `E-3`). `NaN`, `Inf`, empty strings and whitespace-padded values are rejected.\n7. `motif_strand` must be exactly `+` or `-`.\n8. For each row, the five motif fields (`motif_chrom`, `motif_start`, `motif_end`, `motif_pval`, `motif_strand`) must be **all blank or all present**. Blanks mean \"no assigned motif\"; a partly filled set is an error. Zero as `fc` or as `motif_pval`, if produced by the analysis, is meaningful and must be written, not left blank.\n\n## Row-level comparison rules\n9. **Row order is free**: rows are compared as an unordered multiset, so you may present rows in any order. Row order is not used to identify anything, and sorting is not required. Original row order is irrelevant, since row order was never a scientific part of the analysis specification.\n10. **Multiplicity counts**: two rows carrying the same values are two distinct items. Omitting a required row, adding an extra row, or duplicating a row all fail. In particular, a peak that survives as multiple trimmed pieces is represented by multiple rows, each carrying the same `fc` and motif annotation, and all must be present.\n11. `fc` and `motif_pval` are compared **by numeric value, exactly, with no tolerance**: `450`, `450.0`, `4.5e2` and `0450` are all the same number. A text denoting any different number \u2014 a value rounded to fewer digits, perturbed in the last decimal place, or off by one unit \u2014 is a mismatch and fails. There is no epsilon, and no rounding is applied to either side; exactness follows from the released input values being decimal literals of at most six digits (`fc` always has five decimal places; `motif_pval` is always an integer), so any disagreement reflects a wrong input value, not formatting noise.\n12. All nine fields are compared together in one row identity, so a correct peak interval paired with a wrong `fc`, or a correct motif paired with a wrong peak, fails.\n\n## What the checks mean\nThe graded-table checks are, in order:\n- `csv_format` \u2014 the file exists, parses as UTF-8 comma-separated text, has the one required header line with the nine required names in order, at least one data row, and every data row has exactly nine fields.\n- `value_domains` \u2014 every data row obeys rules 4\u20138.\n- `peak_rows_match` \u2014 the multiset of `(chrom, start, end, fc)` equals the reference multiset. This verifies that you analyzed **distinct peak intervals** (40572 of them, not 40587 records), assigned each the **fold change of the first record** for that interval in the peaks-file row order, removed peak material within the \u00b11 kb expanded blacklist (so all trimmed pieces are present and wholly covered peaks are absent), and reported the surviving sub-intervals as integers. Because `fc` also participates in row identity, this is the check that catches a duplicated interval reported with the other record's fold change.\n- `motif_annotation_match` \u2014 for each peak sub-interval (`chrom`, `start`, `end`) present in your table, the multiset of motif annotations (`motif_chrom`, `motif_start`, `motif_end`, `motif_pval`, `motif_strand`) matches the reference for that same sub-interval, including the case where those five fields are blank on both sides. This verifies the strongest-motif selection (largest `pval` wins; ties go to the **earliest** motif row in the motif-track file order), the `pval` value itself, the strand, and that unassigned peaks stay blank. Note that a row's assigned motif **need not overlap the trimmed sub-interval** it is reported on, since assignment precedes trimming: do not re-assign or clear motifs after trimming.\n- `full_table_match` \u2014 the multiset of complete nine-field rows equals the reference multiset with no missing, extra or altered row. This is a direct function of the previous two content checks, computed independently, and verifies the pairing between peak interval, fold change and motif annotation within each row.\n\nPassing all five checks is the sole acceptance criterion; `passed` is the conjunction of the five check booleans.\n\n## Controls\nThe grader is deterministic and has no time or randomness dependence; it always finishes within the allotted verifier budget. Missing or malformed files (including an empty submission directory) produce a completed report with `passed: false`, never a crash. Every declared check is reported for every submission, including malformed ones. The grader does not execute your code and does not consult your inputs, intermediate files or file names other than the one required output.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

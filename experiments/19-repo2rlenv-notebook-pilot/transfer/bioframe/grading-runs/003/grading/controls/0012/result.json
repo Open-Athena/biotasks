@@ -1,0 +1,79 @@
+{
+  "candidate_sha256": "628fef1f3f417736b90678d795306854a50402d848f4e7ac793e9bf15bedea10",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "probe": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": "duplicated one complete row; total rows: 40558\n"
+    },
+    "probe_valid_execution": true,
+    "report": {
+      "checks": [
+        {
+          "id": "csv_format",
+          "message": "ctcf_peaks_maxmotif_clean.csv was found in the submission directory and read as UTF-8 text: one header line whose nine column names and their order match the required header exactly, followed by 40558 data rows, each with exactly nine comma-separated fields; empty lines, a byte order mark and quoting of fields are ignored",
+          "passed": true
+        },
+        {
+          "id": "value_domains",
+          "message": "all 40558 data rows satisfy the published value rules: chrom and motif_chrom are non-empty names without surrounding whitespace, start/end and motif_start/motif_end denote non-negative integers with start < end and motif_start < motif_end, fc and motif_pval are finite decimal numbers, motif_strand is + or -, and the five motif fields are blank together or present together",
+          "passed": true
+        },
+        {
+          "id": "peak_rows_match",
+          "message": "the submission holds 40558 data rows; 0 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28482)",
+          "passed": false
+        },
+        {
+          "id": "motif_annotation_match",
+          "message": "the submission holds 40558 data rows; 1 peak sub-interval(s) reported by the submission carry a motif annotation that differs from the reference; a reported peak sub-interval carries the motif annotation (chr1, 150979668, 150979687, 678.0, -), which the reference does not report for that peak sub-interval; peak sub-intervals that are missing or added are also reported by the peak comparison",
+          "passed": false
+        },
+        {
+          "id": "full_table_match",
+          "message": "the submission holds 40558 data rows; 0 reference row(s) have no counterpart in the submission and 1 submission row(s) have no counterpart in the reference; submission row(s) not present in the reference: (chr1, 150979463, 150979845, 580.28482, chr1, 150979668, 150979687, 678.0, -)",
+          "passed": false
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_after_probe": {
+      "ctcf_peaks_maxmotif_clean.csv": "7f402e1675e5a7dcacf7f8ed596bd80f263a5da2a2297f27d220a59eb0db1827"
+    },
+    "submission_before": {
+      "ctcf_peaks_maxmotif_clean.csv": "d513065ee14d0892572bf396e3a33157f3f1125a556dff58dcf6a8b7828d1fd3"
+    },
+    "submission_sha256": {
+      "ctcf_peaks_maxmotif_clean.csv": "7f402e1675e5a7dcacf7f8ed596bd80f263a5da2a2297f27d220a59eb0db1827"
+    }
+  },
+  "kind": "probe",
+  "omitted": null,
+  "passed_control": true,
+  "probe": {
+    "check_ids": [
+      "peak_rows_match",
+      "motif_annotation_match",
+      "full_table_match"
+    ],
+    "evidence": [
+      {
+        "path": "ctcf_peaks_maxmotif_clean.csv",
+        "quote": "chr1,150979463,150979845,580.28482,chr1,150979668,150979687,678.0,-"
+      }
+    ],
+    "focus": "general",
+    "kind": "wrong_solution",
+    "name": "duplicate-existing-row",
+    "rationale": "Multiplicity control: rule 10 counts multiplicity ('two rows carrying the same values are two distinct items' and 'duplicating a row' fails). The complete nine-field row of the retained peak chr1:150979463-150979845 (fc 580.28482, motif chr1:150979668-150979687, pval 678.0, strand -) is appended verbatim as a second copy and nothing else is changed. Every interval, fc and motif annotation is correct as a set; only one peak's multiplicity is wrong, so peak_rows_match, motif_annotation_match and full_table_match must all fail. This is also the control that separates multiset comparison from set comparison: a grader that compared rows as a set would wrongly accept it.",
+    "script": "\"\"\"Wrong-result control: one existing row is duplicated exactly (multiplicity).\n\nRule 10 counts multiplicity: \"two rows carrying the same values are two\ndistinct items\", and \"duplicating a row\" fails. The complete nine-field row of\nthe retained peak chr1:150979463-150979845 (fc 580.28482, motif\nchr1:150979668-150979687, pval 678.0, strand -) is appended verbatim as a\nsecond copy and nothing else is changed. Every interval, fc and motif\nannotation is correct as a set; only one peak's multiplicity is wrong, so\npeak_rows_match, motif_annotation_match and full_table_match must all fail.\nThis is also the control that separates multiset comparison from set\ncomparison: a grader that compared rows as a set would wrongly accept it.\n\"\"\"\nimport csv\n\nPATH = \"ctcf_peaks_maxmotif_clean.csv\"\nHEADER = [\"chrom\", \"start\", \"end\", \"fc\",\n          \"motif_chrom\", \"motif_start\", \"motif_end\", \"motif_pval\", \"motif_strand\"]\nTARGET = (\"chr1\", \"150979463\", \"150979845\")\n\n\ndef load():\n    with open(PATH, newline=\"\", encoding=\"utf-8\") as f:\n        reader = csv.reader(f)\n        next(reader)\n        return [row for row in reader if row]\n\n\nrows = load()\nidx = [i for i, r in enumerate(rows) if (r[0], r[1], r[2]) == TARGET]\nassert len(idx) == 1, idx\nrow = rows[idx[0]]\nassert len(row) == 9 and row[4] != \"\" and row[8] in (\"+\", \"-\"), row\nrows.append(list(row))\nwith open(PATH, \"w\", newline=\"\", encoding=\"utf-8\") as f:\n    writer = csv.writer(f, lineterminator=\"\\n\")\n    writer.writerow(HEADER)\n    writer.writerows(rows)\nprint(\"duplicated one complete row; total rows:\", len(rows))\n"
+  }
+}

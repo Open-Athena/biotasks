@@ -2457,3 +2457,35 @@ prior acceptance is reused. Reserved CPU, sequential execution, offline science,
 existing time/spend ceilings and unset extra model caps remain unchanged. A
 stale temporary packing config was caught before submission; discard that
 unlaunched payload and assert the target campaign/config identity when repacking.
+
+### 2026-10-20 — Fifteen controls accepted; align wording before packaging
+
+Recovery 003 completed in 1,164.28 seconds with six received responses (three
+probe, three review). The unchanged independent program was reexecuted without
+answer access. All 15 final controls passed: five initial cases, two valid
+representations and eight wrong-result probes. All ten submitted scripts passed
+execution-only preflight. The complete 231-file archive passed download/readback
+verification; bounded transport restored 201 files. Provider absence and terminal
+SUCCEEDED host/task state were independently checked.
+
+The review accepted packaging but its narrative says 16 controls and cites some
+author-side local mutations as though separately executed. Actual receipts show
+15; preserve the review unchanged and do not amplify those claims. It also notes
+an undisclosed parser bound and a misleading equivalence explanation. Prepare a
+small GLM prose-only correction with the existing contract-repair stage: keep
+code/checks/probes fixed, disclose implemented restrictions, align explanations,
+then rerun all controls and review. This does not require scientific redesign or
+manual generated-artifact edits. The accepted reference/oracle evidence is
+instance-specific; it does not prove the generated oracle correct on arbitrary
+future inputs.
+
+Allow the existing probe-resume loader to read a complete verified campaign
+archive as well as the earlier partial snapshot layout. It binds original bytes,
+cleanup and the identical grader candidate; probe acceptance is never reused.
+Original program context remains bound through grading 002, while the accepted
+probe suite and final controls come from 003. Fifty-four focused offline tests
+pass, and the exact real handoff passes hash/context/code/check identity checks.
+The new generic prompt guidance requires record-based counts, disclosure of
+acceptance-affecting bounds and preservation of original evidence when a corrected
+version is validated. Follow-up configuration is `grading-config-004.json`; it
+has not launched yet.

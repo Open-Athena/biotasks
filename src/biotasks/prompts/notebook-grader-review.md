@@ -46,3 +46,11 @@ Acceptance here means this grader candidate is suitable for subsequent Harbor
 packaging and its own isolation/oracle checks. It does not validate those later
 checks, a blind solver, or a release. If revised, affected controls and review
 must be repeated on the new candidate; prior evidence stays attached to its hash.
+
+Count controls directly from the supplied records and cite only mutations that
+those records actually executed. Author-side local-test claims are not additional
+controller controls. Check that acceptance-affecting parser/file-size bounds are
+publicly disclosed. A stable candidate hash does not excuse misleading wording:
+a new corrected version can be validated while the original evidence stays
+preserved. Keep instance-specific evidence distinct from general implementation
+claims, and report unresolved public-contract mismatches as actionable issues.
