@@ -2,6 +2,8 @@
 import hashlib
 import json
 import os
+import shutil
+import subprocess
 import time
 import urllib.error
 import urllib.request
@@ -14,6 +16,23 @@ def main():
     base = os.environ['BIOTASKS21_INFERENCE_CLIENT_URL'].rstrip('/')
     token = os.environ['BIOTASKS21_GENERATION_CLIENT_TOKEN']
     assert not os.environ.get('DAYTONA_API_KEY')
+    if os.environ.get('BIOTASKS21_CHECK_CALLER_DOCKER') == '1':
+        executable = shutil.which('docker')
+        backend = {'stage': 'TRC_caller_native_Docker_capability_only',
+                   'docker_cli_present': executable is not None, 'server_available': False,
+                   'model_calls': 0, 'image_builds': 0, 'target_code_executed': False}
+        if executable:
+            try:
+                version = subprocess.run([executable, 'version', '--format', '{{json .Server}}'],
+                    capture_output=True, text=True, timeout=15)
+                backend['exit_code'] = version.returncode
+                if version.returncode == 0:
+                    server = json.loads(version.stdout)
+                    backend.update(server_available=isinstance(server, dict),
+                                   server_version=server.get('Version') if isinstance(server, dict) else None)
+            except Exception as exc:
+                backend['error_type'] = type(exc).__name__
+        (output / 'docker-capability.json').write_text(json.dumps(backend, indent=2) + '\n')
     delay = int(os.environ.get('BIOTASKS21_DIAGNOSTIC_DELAY_SECONDS', '130'))
     assert delay in (130, 650)
     timeout = 180 if delay == 130 else 780

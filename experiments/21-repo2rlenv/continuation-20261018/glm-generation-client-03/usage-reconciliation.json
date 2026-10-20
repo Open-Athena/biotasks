@@ -41,7 +41,13 @@
         "solution_shell",
         "weights",
         "self_review"
-      ]
+      ],
+      "exact_native_wire_attribution": {
+        "candidate_id": "ac6d2cfb83154177",
+        "native_request_file_sha256": "24e34a795fa7744e30e3411aa7a2ece8a592cd59132b4cfa162bc64e6d7e8239",
+        "audit": "native-wire-attribution.json",
+        "wire_sha256": "504a68e602de576054a021b19ed97102d6cb7942452a92ab1190456038d8db81"
+      }
     },
     {
       "request_sha256": "c0cb2abebc77aa8f7996300f6ce7e6523ee7fd554c96ee8a057c7adeb2dde650",
@@ -76,7 +82,13 @@
         "solution_shell",
         "weights",
         "self_review"
-      ]
+      ],
+      "exact_native_wire_attribution": {
+        "candidate_id": "25aff17d910b5959",
+        "native_request_file_sha256": "90e294a1edc61237139f5bbfc49940c35a86fd317ee0010de831bfe3ff4fffdf",
+        "audit": "native-wire-attribution.json",
+        "wire_sha256": "c0cb2abebc77aa8f7996300f6ce7e6523ee7fd554c96ee8a057c7adeb2dde650"
+      }
     }
   ],
   "aggregate_prompt_tokens": 14585,
@@ -88,8 +100,9 @@
   "limits": [
     "Both caller pipelines recorded1200-second timeouts and zero received responses/exports; preserve those original failures.",
     "Upstream completions took640.201/667.515seconds; the end-to-end discrepancy is unresolved, not a proven model-quality failure.",
-    "Wire request hashes differ from native adapter record hashes; full byte-identical per-task correlation remains unestablished.",
     "Original response JSON objects are preserved for assessment, never rewritten or replayed into generation.",
-    "A completed raw TerminalDraft-shaped JSON response is not a validated or exported task."
-  ]
+    "A completed raw TerminalDraft-shaped JSON response is not a validated or exported task.",
+    "The original adapter logical-request hash and HTTP wire-body hash use different encodings. Reconstructed native SDK bodies now match both original wire hashes exactly; original no-received-response/timeouts remain unchanged."
+  ],
+  "per_task_wire_attribution": "exact_original_wire_hash_matches_for_both_requests_after_restoring_native_schema_key_order"
 }
