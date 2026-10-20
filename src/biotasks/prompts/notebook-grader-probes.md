@@ -37,11 +37,20 @@ interpreter, or create background processes. No original biological inputs or
 scientific rerun are needed here. A probe must exit 0 and change at least one
 output; no-op scripts, syntax/import errors and grader crashes cannot establish
 a scientific counterexample. Record changes through the files, not a claimed score.
+Before accepting your suite, the controller runs each submitted script on fresh
+copied outputs and checks successful execution and an actual mutation. This
+preflight does not run or expose the grader. If a script fails, repair the script
+using that execution evidence; preserve its intended challenge. Only after this
+preflight are the scripts frozen and evaluated against the grader.
 
 Wrong-result controls should remain plausible, parseable outputs whenever the
 intended defect is scientific: incorrect identities, result values, assignments,
 rankings or cross-file associations, rather than merely deleting a file. The
-controller separately checks empty and missing-file submissions. Valid alternatives
+controller separately checks empty and missing-file submissions. Where outputs
+contain scientific values or associations, include a wrong-value or wrong-association
+probe that preserves record identities and row counts; extra/missing records alone
+do not test value correctness. Choose each edit from inspected evidence and ensure
+any assertions are true for that edit before submission. Valid alternatives
 must preserve the public contract; format/order changes establish representation
 handling only, not independent biological recomputation or software portability.
 At least one valid representation alternative is required. If no such case can
@@ -69,3 +78,13 @@ processes when it returns; background/nohup work cannot continue between calls.
 For longer computations, explicitly set `timeout_sec` up to the supplied
 `reference_seconds` limit (the shell default is 120 seconds). Save useful results
 to files before returning, then inspect them in later calls.
+
+## Recovery from an invalid mutation script
+
+If `prior_probe_draft` is supplied, the shell is unavailable. Reuse the recorded
+suite and its cited observations; correct execution errors and fill missing
+scientific-value coverage. Do not invent new measured observations or claim that
+prior local checks establish controller acceptance. Submission preflight provides
+execution-only feedback. Preserve the intended scientific challenges, and do not
+relax them to accommodate a grader result. Report a blocker if the available
+observations cannot support a sound repaired suite.

@@ -56,6 +56,7 @@ class GradingSession:
         self.paths = [p["path"] for p in snapshot["outputs"]]
         self.case_number = 0
         self.candidate_number = 0
+        self.probe_validation_number = 0
         self.last_candidate = None
         self.last_controls = []
         self.frozen_probes = None
@@ -74,7 +75,11 @@ class GradingSession:
         if reply["exit_code"]:
             raise RuntimeError("Grading controller failed: " + reply["log"])
         value = json.loads(reply["log"]) if reply["log"].strip() else None
-        if args[0] != "case" and isinstance(value, dict) and value.get("status") == "incomplete":
+        if (
+            args[0] not in {"case", "probe-check"}
+            and isinstance(value, dict)
+            and value.get("status") == "incomplete"
+        ):
             raise RuntimeError("Controller operation failed: " + json.dumps(value))
         return value
 
@@ -218,6 +223,34 @@ class GradingSession:
             "grading-shell-" + str(time.time_ns()),
         )
         return json.dumps(reply)
+
+    async def validate_probe_execution(self, probe):
+        """Check mutation execution without exposing any grader result to its author."""
+        self.probe_validation_number += 1
+        folder = self.root / "probe-validations" / str(self.probe_validation_number)
+        folder.mkdir(parents=True)
+        request = {
+            "kind": "probe",
+            "seconds": self.config["verifier_seconds"],
+            "script": probe.script,
+        }
+        save_record(folder / "request.json", request)
+        await self.remote.upload(folder / "request.json", "/work/grading-private/request.json")
+        reply = await self.helper(
+            ["probe-check"],
+            self.config["verifier_seconds"] + 10,
+            "probe-preflight-" + str(self.probe_validation_number),
+        )
+        save_record(folder / "result.json", {"probe": probe.model_dump(), "execution": reply})
+        if (
+            reply.get("status") != "probe_executed"
+            or reply.get("probe_valid_execution") is not True
+        ):
+            raise ValueError(
+                "Probe script must exit successfully and change the required output files; "
+                "repair its execution without weakening its intended scientific challenge: "
+                + json.dumps({"name": probe.name, "execution": reply})
+            )
 
     async def case(self, candidate, *, kind, omit=None, probe=None):
         self.case_number += 1
@@ -428,6 +461,27 @@ async def run_grading(
                 "reauthor_grader": True,
                 "shell_free_grader": True,
                 "prior_acceptance_reused": False,
+            },
+        )
+    probe_draft = None
+    if config.get("resume_probe_draft_directory"):
+        from grading_resume import load_probe_draft
+
+        if not resumed or resumed[1] is None or config.get("resume_probes_directory"):
+            raise ValueError(
+                "Probe draft repair requires a verified grader and no frozen probe resume"
+            )
+        probe_draft = load_probe_draft(
+            HERE / config["resume_probe_draft_directory"], context, resumed[1]
+        )
+        save_record(
+            root / "probe-draft-resume.json",
+            {
+                "source": config["resume_probe_draft_directory"],
+                "reauthor_probes": True,
+                "shell_free_probes": True,
+                "prior_acceptance_reused": False,
+                "grader_feedback_supplied": False,
             },
         )
     saved_probes = None
@@ -675,6 +729,8 @@ async def run_grading(
         async def validate_probes(suite):
             if suite.disposition == "ready":
                 check_probes(suite, candidate)
+                for probe in suite.probes:
+                    await session.validate_probe_execution(probe)
 
         async def probe_shell(command, timeout_sec=120):
             return await session.shell(command, timeout_sec, role="probe")
@@ -689,6 +745,8 @@ async def run_grading(
             "reference_seconds": config["reference_seconds"],
             "verifier_seconds": config["verifier_seconds"],
         }
+        if probe_draft is not None:
+            probe_context["prior_probe_draft"] = probe_draft
         hide_inputs = "materialization" in snapshot
         if hide_inputs:
             reply = await session.command(
@@ -721,7 +779,7 @@ async def run_grading(
                     "notebook-grader-probes",
                     probe_context,
                     validate_probes,
-                    probe_shell,
+                    None if probe_draft is not None else probe_shell,
                 )
         finally:
             if hide_inputs:

@@ -197,6 +197,7 @@ def test_probe_blocker_is_representable():
         (True, False, False, False),
         (True, True, False, False),
         (True, "draft", False, False),
+        (True, "probe-draft", False, False),
         (True, True, True, False),
         (True, True, True, True),
     ],
@@ -210,6 +211,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     config.pop("resume_grading_directory", None)
     config.pop("resume_grader_draft_directory", None)
     config.pop("resume_probes_directory", None)
+    config.pop("resume_probe_draft_directory", None)
     config.pop("resume_contract_directory", None)
     config.pop("contract_feedback_file", None)
     if resume:
@@ -241,6 +243,12 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         probes=[probe(), probe(name="format", kind="valid_alternative")],
         concerns=[],
     )
+
+    if resume == "probe-draft":
+        config["resume_probe_draft_directory"] = "saved-run"
+        monkeypatch.setattr(
+            grading_resume, "load_probe_draft", lambda *args: {"prior_suite": suite.model_dump()}
+        )
 
     if reuse_probes:
         config["resume_probes_directory"] = "saved-probes"
@@ -305,6 +313,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             if self.validation_count == conflict_on:
                 self.independent_conflict = {"fixture": "unresolved independent output"}
 
+        async def validate_probe_execution(self, value):
+            assert value in suite.probes
+
         async def case(self, *args, **kwargs):
             self.case_number += 1
             return {"passed_control": True, "kind": "probe"}
@@ -333,6 +344,11 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 disposition="ready", code="pass", rationale="fixture"
             )
         elif name == "probes":
+            if resume == "probe-draft":
+                assert kwargs["shell"] is None
+                assert inputs["prior_probe_draft"]["prior_suite"] == suite.model_dump()
+            else:
+                assert "prior_probe_draft" not in inputs
             assert "prior_worker_draft" not in inputs
             assert "private-grader-observations" not in json.dumps(inputs)
             assert "candidate" not in inputs and "grader_code" not in json.dumps(inputs)

@@ -74,6 +74,50 @@ def load_grader_draft(directory, context):
     }
 
 
+def load_probe_draft(directory, context, candidate):
+    """Return unchanged probe scripts and execution errors, never grader feedback."""
+    read = verified_reader(directory, context)
+    if Grader.model_validate(read("candidate.json")) != candidate:
+        raise ValueError("Probe draft belongs to another grader contract")
+    suite = Probes.model_validate(read("probes.json"))
+    if suite.disposition != "ready":
+        raise ValueError("Probe draft recovery requires a submitted suite")
+    check_probes(suite, candidate)
+    known = {p.name: p.model_dump() for p in suite.probes}
+    manifest = json.loads((Path(directory) / "artifact-manifest.json").read_text())
+    failures = []
+    for row in manifest["original_small_files"]:
+        name = row["path"]
+        if not name.startswith("grading/controls/") or not name.endswith("/result.json"):
+            continue
+        control = read(name)
+        execution = control.get("execution", {})
+        if control.get("kind") != "probe" or execution.get("probe_valid_execution") is not False:
+            continue
+        original = control["probe"]
+        if known.get(original["name"]) != original:
+            raise ValueError("Probe execution does not belong to the submitted suite")
+        failures.append(
+            {
+                "name": original["name"],
+                "execution": {
+                    k: execution[k]
+                    for k in (
+                        "status",
+                        "probe",
+                        "probe_valid_execution",
+                        "submission_before",
+                        "submission_after_probe",
+                    )
+                    if k in execution
+                },
+            }
+        )
+    if not failures:
+        raise ValueError("Probe draft recovery requires a recorded execution failure")
+    return {"prior_suite": suite.model_dump(), "execution_failures": failures}
+
+
 def load_saved_probes(directory, candidate):
     """Recover submitted probes from a hash-bound partial snapshot, not acceptance."""
     directory = Path(directory)

@@ -187,3 +187,51 @@ def test_contract_base_binds_verified_revision_to_originals(tmp_path):
     (tmp_path / "final-candidate.json").write_text("{}")
     with pytest.raises(ValueError, match="identity mismatch"):
         load_contract_base(tmp_path, original, probes)
+
+
+def test_probe_draft_recovery_excludes_grader_feedback_and_binds_original_suite(tmp_path):
+    from grading_protocol import Probes
+    from grading_resume import load_probe_draft
+    from test_grading import probe
+
+    context = fixture(tmp_path)
+    suite = Probes(
+        disposition="ready",
+        probes=[probe(), probe(name="format", kind="valid_alternative")],
+        concerns=[],
+    )
+    values = {
+        "probes.json": suite.model_dump(),
+        "grading/controls/0007/result.json": {
+            "kind": "probe",
+            "probe": suite.probes[0].model_dump(),
+            "execution": {
+                "status": "incomplete",
+                "probe_valid_execution": False,
+                "probe": {"exit_code": 1, "stderr": "AssertionError"},
+                "grader": "PRIVATE-GRADER-FEEDBACK",
+                "report": "PRIVATE-GRADER-FEEDBACK",
+            },
+        },
+    }
+    manifest = json.loads((tmp_path / "artifact-manifest.json").read_text())
+    for name, value in values.items():
+        data = json.dumps(value).encode()
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(data)
+        manifest["original_small_files"].append(
+            {"path": name, "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()}
+        )
+    (tmp_path / "artifact-manifest.json").write_text(json.dumps(manifest))
+    draft = load_probe_draft(tmp_path, context, candidate())
+    assert draft["prior_suite"] == suite.model_dump()
+    assert draft["execution_failures"][0]["execution"]["probe"]["stderr"] == "AssertionError"
+    assert "PRIVATE-GRADER-FEEDBACK" not in json.dumps(draft)
+    with pytest.raises(ValueError, match="another grader contract"):
+        load_probe_draft(tmp_path, context, candidate().model_copy(update={"rationale": "changed"}))
+    with pytest.raises(ValueError, match="context differs"):
+        load_probe_draft(tmp_path, context | {"question": "changed"}, candidate())
+    (tmp_path / "probes.json").write_text("{}")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_probe_draft(tmp_path, context, candidate())

@@ -2398,3 +2398,35 @@ remain covered. The synthetic local endpoint made no real model or sandbox
 calls. Local peak RSS was 231,120 KiB. Recheck this metadata if the provider's
 capacity changes; the recorded value is service-specific, not a universal GLM
 or Harbor default.
+
+### 2026-10-20 — Validate probe execution before freezing the suite
+
+Fresh grading 002 passed its five initial controls, including the independently
+executed program. The probe worker used 105 responses but submitted only two
+controls. Its sole wrong-result script failed an assertion before modifying the
+CSV, so no executed wrong-result control exists for that suite. The independent
+review correctly requested probe repair and identified inconsistent explanatory
+counts/precision claims. The orchestration instead routed this to a grader-only
+repair while keeping the invalid probe frozen, making that route unresolvable.
+At 01:28 UTC, interrupt only the verified stage process so its existing archive
+and cleanup path runs. Preserve the original result/review and mark it incomplete;
+no generated scientific artifact was changed manually.
+
+Add a general execution-only preflight to probe submission. Run each mutation
+on a fresh reference copy without loading or invoking the grader, preserve
+execution/mutation receipts, and return recoverable script errors to the probe
+worker. Freeze only a successfully executing suite, then evaluate it against the
+grader. Require actual changed files; assertion failures and no-ops are not
+scientific counterexamples. The canonical prompt also asks for a wrong-value or
+wrong-association probe preserving entity identities/counts where applicable,
+rather than relying only on extra/missing records.
+
+An optional recovery mode supplies the original hash/context-verified probe
+suite and sanitized execution failures to a shell-free GLM probe worker. It
+excludes grader reports/results and does not reuse prior acceptance. Reexecute
+the independent program and grader controls; let GLM author all probe fixes and
+subsequent grader/prose corrections. Fifty-three focused synthetic tests pass,
+covering no-op/assertion rejection, absence of grader execution/feedback, byte
+and context checks, recovery orchestration and existing control gates. No new
+model or sandbox was launched for the tests. The current campaign remains frozen
+at its original revision; recovery has not launched yet.

@@ -162,7 +162,13 @@ def main():
             and before != after
             and all(p in after for p in expected)
         )
-        if not record["probe_valid_execution"]:
+        if hashes(CASE / "reference") != expected or hashes(PRIVATE / "oracle") != expected:
+            raise ValueError("Probe changed read-only reference artifacts")
+        if not record["probe_valid_execution"] or mode == "probe-check":
+            # Submission preflight reveals execution/mutation validity only.
+            # The independent probe author must not see grader behavior.
+            if record["probe_valid_execution"]:
+                record["status"] = "probe_executed"
             print(json.dumps(record))
             return
     for p in [CASE / "submission", *(CASE / "submission").rglob("*")]:
