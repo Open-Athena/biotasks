@@ -1,0 +1,103 @@
+{
+  "observed_at": "2026-10-21T22:40:50.002463+00:00",
+  "scope": "Publication review of the exact staged inputs, separate from scientific validation and from any future release inventory. No task/scientific code was changed.",
+  "pyhmmer": {
+    "campaign": 25,
+    "input_manifest_sha256": "17a4a08840f0d8c76eda8d6e583ba0788ce20a491ae282ae092ff99e52f1857f",
+    "retrieval_hash_verified": true,
+    "repository_notice": {
+      "key": "pyhmmer-copying",
+      "url": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/COPYING",
+      "sha256": "70a1e68aa1c12b73e5a213353ca36de7e72e539d86983bc2164c8903c11df344",
+      "bytes": 1103
+    },
+    "third_party_notice_inventory": {
+      "key": "pyhmmer-data-readme",
+      "url": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/README.md",
+      "sha256": "2039f9fac5dd1ccd5474c02b8d5040dc672ef36e251d9a4998d48c0d77e70981",
+      "bytes": 966
+    },
+    "inputs": [
+      {
+        "path": "/inputs/LuxC.sto",
+        "source": {
+          "key": "pyhmmer-luxc-alignment",
+          "url": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/msa/LuxC.sto",
+          "sha256": "e2cf20e9c15473a9ee33634415327e64b2e77b482dd6e43f759123c22f2e0edc",
+          "bytes": 8548
+        },
+        "lineage_evidence": "Stockholm header identifies Pfam PF05893.5 (LuxC), with UniProt accessions for the aligned sequences.",
+        "data_terms": "Pfam CC0; retain UniProt attribution for constituent sequence data.",
+        "terms_url": "https://pfam-docs.readthedocs.io/en/dev/#license"
+      },
+      {
+        "path": "/inputs/LuxC.faa",
+        "source": {
+          "key": "pyhmmer-luxc-sequences",
+          "url": "https://raw.githubusercontent.com/althonos/pyhmmer/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/src/pyhmmer/tests/data/seqs/LuxC.faa",
+          "sha256": "7ce47aaed2c5e1eba1c683dc0be3efa11ee34038eb498cc09287c61c62b697d0",
+          "bytes": 7302
+        },
+        "lineage_evidence": "FASTA headers identify UniProtKB/Swiss-Prot accessions.",
+        "data_terms": "CC BY 4.0 for copyrightable UniProt database content, with attribution.",
+        "terms_source": {
+          "key": "uniprot-license-api",
+          "url": "https://rest.uniprot.org/help/license",
+          "sha256": "5960c22bf17f22286504b927dbb3ca41713c571ed91a10fe7a88ddd964b416ce",
+          "bytes": 914
+        },
+        "terms_url": "https://www.uniprot.org/help/license"
+      }
+    ],
+    "assessment": "The identified Pfam/UniProt provenance and primary data notices support redistribution of these two unchanged inputs with source links, accession metadata and required attribution. This is a source-specific assessment, not a blanket MIT claim for data.",
+    "release_conditions": [
+      "Verify the terminal release contains only the reviewed data and inspect any additional staged files.",
+      "Include PyHMMER MIT notice, Pfam/source references and UniProt CC BY 4.0 attribution; retain applicable dependency notices in distributed environments.",
+      "Do not publish as validated before scientific controls, native trials and fresh-download verification finish."
+    ],
+    "scientific_validation": "pending",
+    "published": false
+  },
+  "neurokit": {
+    "campaign": 24,
+    "input_manifest_sha256": "ab98773bfb9552dd26f8fa7613650bfa8007a9ae5f260f532145a72a3d54ee5b",
+    "retrieval_hash_verified": true,
+    "repository_notice": {
+      "key": "neurokit-license",
+      "url": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/LICENSE",
+      "sha256": "89a0c90cb8331319e1baea34b004fd6121247e89d132c3fcd01c86353aac8733",
+      "bytes": 1077
+    },
+    "data_readme": {
+      "key": "neurokit-data-readme-rst",
+      "url": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/README.rst",
+      "sha256": "b826358dc5ba9e10fafd2b0ddb78380e2a5f29f41d5ac45c6fc469a089e305f9",
+      "bytes": 228
+    },
+    "loader": {
+      "key": "neurokit-loader",
+      "url": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/neurokit2/data/data.py",
+      "sha256": "445a17d1831b45bb5f0b0c97c12e572be5f01d22975f92d3b94e4e81d6c26f5e",
+      "bytes": 8420
+    },
+    "inputs": [
+      {
+        "path": "/inputs/bio_resting_5min_100hz.csv",
+        "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+        "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385",
+        "bytes": 1784368,
+        "lineage_evidence": "Loader and official example describe a single-subject resting physiological recording at 100 Hz.",
+        "source_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv"
+      },
+      {
+        "path": "/work/cache/neurokit2-data/data.py",
+        "lineage_evidence": "Worker-reported offline loader adaptation of the pinned MIT-licensed package file; preserve its exact changes and original notice in any release."
+      }
+    ],
+    "assessment": "The root MIT notice and data README were inspected. The README describes testing use but does not state an independent data-redistribution license for this recording. The official example describes its source; the documentation CC BY 4.0 footer is not taken as a data license.",
+    "publication_status": "Data redistribution not established; retain generated task/data privately pending a supported determination. Scientific execution can continue under the existing approval.",
+    "source_context_url": "https://neuropsychology.github.io/NeuroKit/examples/bio_intervalrelated/bio_intervalrelated.html",
+    "scientific_validation": "pending",
+    "published": false
+  }
+}
