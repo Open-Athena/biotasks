@@ -3227,3 +3227,7 @@ Built all four immutable payloads with the existing launcher, verified original 
 ### 2026-10-21 — Exact live-input publication review
 
 Hash-verified staged-input manifests from 024/025 identify the actual inputs before any new publication. PyHMMER's Stockholm/FASTA metadata traces the two files to Pfam/UniProt; their primary CC0/CC BY 4.0 notices support source-specific redistribution with attribution, subject to the final inventory and scientific gates. NeuroKit's root MIT notice and testing-data README do not independently establish redistribution of its physiological recording, so that task/data remains private. Record the distinction in `development-panel-active-input-terms.{md,json}`; no worker instructions, task artifacts or running factory were changed.
+
+### 2026-10-21 — Remaining autonomous evidence gaps prepared
+
+Prepared fresh PyRadiomics 030 and newer-Scanpy 031 configurations using the original retained sources and identical task policy. PyRadiomics 018's staging failure still needs a live rerun; the operator-assisted Scanpy release does not establish autonomous execution from its seed. These are existing panel members, with no new seed selection, method constraints or manual scientific edits. Neither follow-up is reserved or submitted. Build and compare immutable payloads before launch; preserve previous failures and published pilots separately.
