@@ -1,0 +1,449 @@
+Cloning into '/work/reconstruction-context'...
+From https://github.com/scverse/anndata
+ * branch            1ec7ba8a9e44ee1eb9fe6756e01ee542666272f8 -> FETCH_HEAD
+HEAD is now at 1ec7ba8 fix: update column order on writes (#2708)
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            BuildKit is currently disabled; enable it by removing the DOCKER_BUILDKIT=0
+            environment-variable.
+
+Sending build context to Docker daemon  11.71MB
+Step 1/15 : FROM python:3.12-slim
+ ---> a33c10a97f11
+Step 2/15 : WORKDIR /workspace
+ ---> Running in 58094fe4ea35
+Removing intermediate container 58094fe4ea35
+ ---> 5f1f6e0b40fd
+Step 3/15 : COPY . /workspace
+ ---> 38afe4410e93
+Step 4/15 : RUN ls /workspace && cat /workspace/pyproject.toml | head -100
+ ---> Running in 77e0b048b832
+LICENSE
+README.md
+benchmarks
+biome.jsonc
+ci
+docs
+hatch.toml
+pyproject.toml
+src
+tests
+[build-system]
+build-backend = "hatchling.build"
+requires = [ "hatch-vcs", "hatchling" ]
+
+[project]
+name = "anndata"
+description = "Annotated data."
+readme = "README.md"
+license = "BSD-3-Clause"
+maintainers = [
+    { name = "Philipp Angerer", email = "philipp.angerer@helmholtz-munich.de" },
+    { name = "Ilan Gold", email = "ilan.gold@helmholtz-munich.de" },
+]
+authors = [
+    { name = "Philipp Angerer" },
+    { name = "Alex Wolf" },
+    { name = "Isaac Virshup" },
+    { name = "Sergei Rybakov" },
+    { name = "Ilan Gold" },
+]
+requires-python = ">=3.13"
+classifiers = [
+    "Environment :: Console",
+    "Framework :: Jupyter",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: 3.15",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Typing :: Typed",
+]
+dynamic = [ "version" ]
+dependencies = [
+    "array-api-compat>=1.7.1",
+    "h5py>=3.12",
+    "legacy-api-wrap",
+    "natsort",
+    "numpy>=2.2",
+    "packaging>=24.2",
+    "pandas>=2.3",
+    "scipy>=1.15,!=1.17",
+    "scverse-misc[settings]>=0.1.3",
+    # `typing_extensions.sentinel`, see `anndata.acc`
+    "typing-extensions>=4.16; python_version<'3.15'",
+    "zarr>=3.1",
+]
+optional-dependencies.cu11 = [ "cupy-cuda11x" ]
+optional-dependencies.cu12 = [ "cupy-cuda12x" ]
+optional-dependencies.cu13 = [ "cupy-cuda13x" ]
+# https://github.com/dask/dask/issues/11290
+# https://github.com/dask/dask/issues/11752
+optional-dependencies.dask = [
+    "dask!=2024.8.*,!=2024.9.*,!=2025.2.*,!=2025.3.*,!=2025.4.*,!=2025.5.*,!=2025.6.*,!=2025.7.*,!=2025.8.*",
+    "dask[array]>=2024.5.1",
+]
+optional-dependencies.gpu = [ "cupy" ]
+# requests and aiohttp needed for zarr remote data
+optional-dependencies.lazy = [ "aiohttp", "anndata[dask]", "requests", "xarray>=2025.6.1" ]
+urls.Documentation = "https://anndata.readthedocs.io/"
+urls.Home-page = "https://github.com/scverse/anndata"
+urls.Source = "https://github.com/scverse/anndata"
+
+[dependency-groups]
+dev = [
+    { include-group = "dev-doc" },
+    { include-group = "typing" },
+]
+test = [
+    "anndata[lazy]",
+    "fast-array-utils>=1.2.3",
+    { include-group = "test-min" },
+]
+dev-doc = [
+    "towncrier>=24.8", # release notes tool
+    "types-array-api", # for dev and linking in the docs
+]
+doc = [
+    "anndata[dask]",
+    "awkward>=2.6.3",
+    "ipython",                          # For syntax highlighting in notebooks
+    "mudata",
+    "myst-nb>=1.4",
+    "pandas>=3",
+    "scverse-doc[full]>=0.2.3",
+    "scverse-misc[sphinx]",
+    "sphinx>=9.1",
+    "sphinx-autodoc-typehints>=3.13.6",
+    "sphinx-issues>=5.0.1",
+    # for unreleased changes
+    { include-group = "dev-doc" },
+]
+test-array-api = [
+    { include-group = "test-jax" },
+Removing intermediate container 77e0b048b832
+ ---> 257ad1c202fa
+Step 5/15 : RUN cat /workspace/pyproject.toml | tail -100
+ ---> Running in c08dd81682a1
+    "sklearn.*",
+]
+follow_untyped_imports = true
+
+# Dependencies that ship no type information (absent or `Incomplete` annotations).
+[[tool.mypy.overrides]]
+module = [
+    "array_api_compat.*",
+    "cupy.*",
+    "cupyx.*",
+    "jax.*",
+    "loompy.*",
+    "memory_profiler",
+    "pooch",
+    "sphinx.*",
+    "torch.*",
+    "zappy.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest]
+addopts = [
+    "--import-mode=importlib",
+    "--doctest-modules",
+    "--pyargs",
+    "-ptesting.anndata._pytest",
+    "--dist=loadgroup",
+]
+filterwarnings = [
+    "ignore::anndata._warnings.OldFormatWarning",
+    "ignore::anndata._warnings.ExperimentalFeatureWarning",
+    # scanpy 1.10.x
+    "ignore:.*first_column_names:FutureWarning:scanpy",
+    "ignore:Importing read_.* from `anndata` is deprecated:FutureWarning:scanpy",
+    "ignore:`__version__` is deprecated:FutureWarning:scanpy",
+    # https://github.com/matplotlib/matplotlib/pull/30589
+    """\
+    ignore:.*'(oneOf|parseString|resetCache|enablePackrat)'.*'(one_of|parse_string|reset_cache|enable_packrat)':Depreca\
+    tionWarning:matplotlib\
+    """,
+    # TODO: remove when https://github.com/scikit-hep/awkward/issues/4078 is resolved
+    "ignore:Setting the shape on a NumPy array has been deprecated:DeprecationWarning",
+]
+# When `--strict-warnings` is used, all warnings are treated as errors, except those:
+filterwarnings_when_strict = [
+    "default::anndata._warnings.ImplicitModificationWarning",
+    "default:Transforming to str index:UserWarning",
+    "default:(Observation|Variable) names are not unique. To make them unique:UserWarning",
+    "default::scipy.sparse.SparseEfficiencyWarning",
+    "default::dask.array.core.PerformanceWarning",
+    # TODO: Remove when https://github.com/zarr-developers/zarr-python/pull/3979 becomes min
+    "default:.*FixedLengthUTF32:zarr.core.dtype.common.UnstableSpecificationWarning",
+]
+# For some reason this effects how logging is shown when tests are run
+markers = [
+    "gpu: mark test to run on GPU",
+    "zarr_io: mark tests that involve zarr io",
+    "dask_distributed: tests that need a distributed client with multiple processes",
+    "array_api: tests specific to the array-api",
+]
+python_files = [ "test_*.py" ]
+strict = true
+testpaths = [
+    "anndata",                            # docstrings (module name due to --pyargs)
+    "./tests",                            # unit tests
+    "./ci/scripts",                       # CI script tests
+    # further doctests
+    "./docs/accessors.rst",
+    "./docs/tutorials/concatenation.rst",
+]
+
+[tool.coverage]
+run.source_pkgs = [ "anndata" ]
+run.omit = [ "**/test_*.py", "src/anndata/_version.py" ]
+run.data_file = "test-data/raw-coverage"
+run.patch = [ "subprocess" ]
+paths.source = [ "./src", "**/site-packages" ]
+report.exclude_also = [
+    "if TYPE_CHECKING:",
+]
+xml.output = "test-data/coverage.xml"
+
+[tool.towncrier]
+package = "anndata"
+package_dir = "src"
+directory = "docs/release-notes"
+filename = "docs/release-notes/{version}.md"
+title_format = "(v{version})=\n### {version} {{small}}`{project_date}`"
+issue_format = "{{pr}}`{issue}`"
+single_file = false
+# Valid fragments should be a subset of conventional commit types (except for `breaking`):
+# https://github.com/commitizen/conventional-commit-types/blob/master/index.json
+# style, refactor, test, build, ci: should not go into changelog
+fragment.breaking.name = "Breaking changes"  # add `!` to commit type (e.g. “feature!:”)
+fragment.chore.name = "Miscellaneous changes"
+fragment.docs.name = "Documentation"
+fragment.feat.name = "Features"
+fragment.fix.name = "Bug fixes"
+fragment.perf.name = "Performance"
+fragment.revert.name = "Revert"
+Removing intermediate container c08dd81682a1
+ ---> bf777e268038
+Step 6/15 : RUN python --version && cat /workspace/pyproject.toml | grep -A 50 "test-min"
+ ---> Running in 180e4cf1b162
+Python 3.12.15
+    { include-group = "test-min" },
+]
+dev-doc = [
+    "towncrier>=24.8", # release notes tool
+    "types-array-api", # for dev and linking in the docs
+]
+doc = [
+    "anndata[dask]",
+    "awkward>=2.6.3",
+    "ipython",                          # For syntax highlighting in notebooks
+    "mudata",
+    "myst-nb>=1.4",
+    "pandas>=3",
+    "scverse-doc[full]>=0.2.3",
+    "scverse-misc[sphinx]",
+    "sphinx>=9.1",
+    "sphinx-autodoc-typehints>=3.13.6",
+    "sphinx-issues>=5.0.1",
+    # for unreleased changes
+    { include-group = "dev-doc" },
+]
+test-array-api = [
+    { include-group = "test-jax" },
+    { include-group = "test-min" },
+]
+test-jax = [
+    "jax>=0.6",
+    "jaxlib>=0.6",
+]
+test-min = [
+    "anndata[dask]",
+    "awkward>=2.6.3",
+    "boltons",
+    "dask[distributed]",
+    "filelock",
+    "joblib",
+    "jsonschema",
+    "matplotlib",
+    "openpyxl",
+    "pooch",
+    "pyarrow",
+    "pytest",
+    "pytest-cov",           # only for VS Code
+    "pytest-memray",
+    "pytest-mock",
+    "pytest-randomly",
+    "pytest-xdist[psutil]",
+    "scanpy>=1.10",
+    "scikit-learn",
+]
+typing = [
+    "docutils-stubs",
+    "mudata",           # `anndata.acc`
+    "pandas-stubs",
+    "scipy-stubs",
+    "types-boltons",
+    "types-jsonschema",
+    "types-psutil",
+    "types-tqdm",
+]
+
+[tool.hatch]
+version.source = "vcs"
+version.raw-options.version_scheme = "release-branch-semver"
+build.targets.wheel.packages = [ "src/anndata", "src/testing" ]
+
+[tool.ruff]
+src = [ "src" ]
+format.preview = true
+format.docstring-code-format = true
+lint.select = [
+    "ANN",  # Annotations
+    "B",    # Likely bugs and design issues
+    "BLE",  # Blind except
+    "C4",   # Comprehensions
+    "E",    # Error detected by Pycodestyle
+    "EM",   # Traceback-friendly error messages
+    "F",    # Errors detected by Pyflakes
+    "FBT",  # Boolean positional arguments
+    "I",    # isort
+Removing intermediate container 180e4cf1b162
+ ---> 3a3537e6e028
+Step 7/15 : RUN apt-get update -qq && apt-get install -y -qq git build-essential curl ca-certificates software-properties-common 2>/dev/null | tail -5
+ ---> Running in c1ad7fae21d5
+Removing intermediate container c1ad7fae21d5
+ ---> e7f2aeb653e2
+Step 8/15 : RUN apt-get install -y python3.13 python3.13-dev python3.13-venv 2>&1 | tail -10
+ ---> Running in 321acfb96ace
+Setting up libpython3.13:amd64 (3.13.5-2+deb13u5) ...
+Setting up manpages-dev (6.9.1-1) ...
+Setting up python3.13 (3.13.5-2+deb13u5) ...
+Setting up python3.13-venv (3.13.5-2+deb13u5) ...
+Setting up libc6-dev:amd64 (2.41-12+deb13u4) ...
+Setting up libexpat1-dev:amd64 (2.9.0-1~deb13u1) ...
+Setting up zlib1g-dev:amd64 (1:1.3.dfsg+really1.3.1-1+b1) ...
+Setting up libpython3.13-dev:amd64 (3.13.5-2+deb13u5) ...
+Setting up python3.13-dev (3.13.5-2+deb13u5) ...
+Processing triggers for libc-bin (2.41-12+deb13u4) ...
+Removing intermediate container 321acfb96ace
+ ---> 21ba83d268ef
+Step 9/15 : RUN python3.13 --version && python3.13 -m venv /workspace/.venv && /workspace/.venv/bin/pip install --upgrade pip -q
+ ---> Running in b7afbc8902f8
+Python 3.13.5
+Removing intermediate container b7afbc8902f8
+ ---> 6f7863d47ce0
+Step 10/15 : RUN cd /workspace && HATCH_VCS_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e ".[dask,lazy]" -q 2>&1 | tail -20
+ ---> Running in d50e4417ce0d
+          raise type(e)(message) from None
+      LookupError: Error getting the version from source `vcs`: setuptools-scm was unable to detect version for /workspace.
+      
+      Make sure you're either building from a fully intact git repository or PyPI tarballs. Most other sources (such as GitHub's tarballs, a git checkout without the .git folder) don't contain the necessary metadata and will not work.
+      
+      For example, if you're using pip, instead of https://github.com/user/proj/archive/master.zip use git+https://github.com/user/proj.git#egg=proj
+      
+      Alternatively, set the version in the environment with SETUPTOOLS_SCM_PRETEND_VERSION or VCS_VERSIONING_PRETEND_VERSION, as described in https://setuptools-scm.readthedocs.io/en/latest/config/
+      
+      No distribution name is known here, so the per-distribution SETUPTOOLS_SCM_PRETEND_VERSION_FOR_<DIST> form cannot match; pass a dist name to use it.
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+error: metadata-generation-failed
+
+× Encountered error while generating package metadata.
+╰─> from file:///workspace
+
+note: This is an issue with the package mentioned above, not pip.
+hint: See above for details.
+Removing intermediate container d50e4417ce0d
+ ---> 99f13e2dc658
+Step 11/15 : RUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e ".[dask,lazy]" -q 2>&1 | tail -20
+ ---> Running in 470609553d83
+Removing intermediate container 470609553d83
+ ---> 8a7612ca36e9
+Step 12/15 : RUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install pytest pytest-xdist pytest-mock pytest-randomly awkward boltons filelock joblib jsonschema matplotlib openpyxl pooch pyarrow scikit-learn fast-array-utils -q 2>&1 | tail -10
+ ---> Running in ec93e90c1ac6
+Removing intermediate container ec93e90c1ac6
+ ---> 80bf2265f116
+Step 13/15 : RUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/python -m pytest --collect-only -q 2>&1 | head -50
+ ---> Running in f70821538ce7
+tests/test_base.py::test_creation_error[too_many_names-var-shape]
+tests/test_base.py::test_convert_matrix[init-obsp]
+tests/test_base.py::test_transpose_errors_with_backed_arrays[zarr-sparse-X]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-sparse-X]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-sparse-layers]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-sparse-obsm]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-dense-layers]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-dense-obsm]
+tests/test_base.py::test_cant_copy_disk_backed[h5ad-dense-X]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-dense-obsm]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-dense-X]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-dense-layers]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-sparse-layers]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-sparse-X]
+tests/test_base.py::test_cant_copy_disk_backed[zarr-sparse-obsm]
+tests/lazy/test_read.py::test_view_of_view_to_memory[zarr-np-array-dont-load-annotation-index]
+tests/lazy/test_read.py::test_uns_uses_dask[zarr-np-array-dont-load-annotation-index]
+tests/lazy/test_read.py::test_to_memory[zarr-np-array-dont-load-annotation-index]
+tests/lazy/test_read.py::test_view_to_memory[zarr-np-array-dont-load-annotation-index]
+tests/lazy/test_concat.py::test_concat_data_with_cluster_to_memory[zarr-np-array-dont-load-annotation-index-inner]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-consecutive integer array]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-slice]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-dont-load-annotation-index-inner-obs-None]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-categorical_subset]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-dont-load-annotation-index-inner-obsm-df]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-dont-load-annotation-index-inner-var-None]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-full slice]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-dont-load-annotation-index-inner-varm-df]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-No index]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-boolean array]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-dont-load-annotation-index-inner-random integer array]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[h5ad-np-array-dont-load-annotation-index-inner-obs-None]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-full slice]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-categorical_subset]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[h5ad-np-array-dont-load-annotation-index-inner-var-None]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[h5ad-np-array-dont-load-annotation-index-inner-varm-df]
+tests/lazy/test_concat.py::test_concat_data_with_cluster_to_memory[h5ad-np-array-dont-load-annotation-index-inner]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-slice]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-No index]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[h5ad-np-array-dont-load-annotation-index-inner-obsm-df]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-consecutive integer array]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-random integer array]
+tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-dont-load-annotation-index-inner-boolean array]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-load-annotation-index-inner-varm-df]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-load-annotation-index-inner-categorical_subset]
+tests/lazy/test_concat.py::test_concat_data_with_cluster_to_memory[zarr-np-array-load-annotation-index-inner]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-load-annotation-index-inner-var-None]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-load-annotation-index-inner-boolean array]
+tests/lazy/test_concat.py::test_concat_data_subsetting[zarr-np-array-load-annotation-index-inner-consecutive integer array]
+tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[zarr-np-array-load-annotation-index-inner-obsm-df]
+Removing intermediate container f70821538ce7
+ ---> 3459510747ed
+Step 14/15 : RUN cd /workspace && /workspace/.venv/bin/python -m pytest --collect-only -q 2>&1 | tail -10
+ ---> Running in 3f927867d61a
+
+.venv/lib/python3.13/site-packages/_pytest/python.py:124
+  /workspace/.venv/lib/python3.13/site-packages/_pytest/python.py:124: PytestRemovedIn10Warning: Passing a non-Collection iterable to parametrize is deprecated.
+  Test: tests/test_deprecations.py::test_warn_on_import_with_redirect, argvalues type: generator
+  Please convert to a list or tuple.
+  See https://docs.pytest.org/en/stable/deprecations.html#parametrize-iterators
+    metafunc.parametrize(*marker.args, **marker.kwargs, _param_mark=marker)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+9534 tests collected in 2.18s
+Removing intermediate container 3f927867d61a
+ ---> 18ca2ba5aae2
+Step 15/15 : LABEL biotasks.run=biotasks27-anndata-controls-002
+ ---> Running in aeb44bce8c0e
+Removing intermediate container aeb44bce8c0e
+ ---> c6e0f2c0325c
+Successfully built c6e0f2c0325c
+Successfully tagged local/r2e-bootstrap/scverse__anndata:1ec7ba8a9e44
