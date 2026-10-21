@@ -2804,3 +2804,8 @@ returned conflicts. Preserve the original failed cleanup and subsequent actions 
 `autonomous-runs/011`. Do not launch another campaign until removal is verified.
 This provider failure exercised neither the new grader-repair ordering nor the
 native admission change; the autonomous positive path remains incomplete.
+
+At 01:32:15 UTC a fresh full ownership inventory confirmed that the provider had
+removed the failed sandbox. Preserve that final observation separately from the
+conflicting cleanup receipts. Campaign 012 will retry the original seed with the
+same factory behavior as 011, since provisioning never reached the new changes.

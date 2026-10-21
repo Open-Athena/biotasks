@@ -1,0 +1,59 @@
+{"event": "model_request_started", "stage": "prepare", "turn": 1}
+{"event": "model_response_received", "stage": "prepare", "turn": 1, "elapsed_seconds": 55.44}
+Traceback (most recent call last):
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/lib/python3.13/site-packages/daytona/_utils/errors.py", line 222, in sync_wrapper
+    return sync_func(*args, **kwargs)
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/lib/python3.13/site-packages/daytona/_utils/timeout.py", line 488, in sync_wrapper
+    with _ThreadingTimeout(timeout, func.__name__):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/lib/python3.13/site-packages/daytona/_utils/timeout.py", line 210, in __exit__
+    raise DaytonaTimeoutError(
+        f"Function '{self.func_name}' exceeded timeout of {self.seconds} seconds."
+    ) from None
+daytona.common.errors.DaytonaTimeoutError: Function 'create' exceeded timeout of 420 seconds.
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 498, in <module>
+    result = asyncio.run(
+        Pipeline(
+    ...<6 lines>...
+        ).execute()
+    )
+  File "/usr/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/usr/lib/python3.13/asyncio/base_events.py", line 725, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 325, in execute
+    await self.step("setup", setup, paid=True)
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 227, in step
+    await action()
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py", line 315, in setup
+    await remote(
+    ...<5 lines>...
+    )
+  File "/work/biotasks/experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py", line 278, in run
+    sandbox = await asyncio.to_thread(
+              ^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<18 lines>...
+    )
+    ^
+  File "/usr/lib/python3.13/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.13/concurrent/futures/thread.py", line 59, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/lib/python3.13/site-packages/daytona/_utils/errors.py", line 224, in sync_wrapper
+    process_n_raise_exception(e)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^
+  File "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/lib/python3.13/site-packages/daytona/_utils/errors.py", line 144, in process_n_raise_exception
+    raise e.__class__(
+    ...<5 lines>...
+    ) from e
+daytona.common.errors.DaytonaTimeoutError: Failed to create sandbox: Function 'create' exceeded timeout of 420 seconds.
