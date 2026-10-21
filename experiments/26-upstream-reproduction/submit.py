@@ -23,7 +23,7 @@ def main():
     assert not args.receipt.exists(), "Inspect the existing submission; do not resubmit"
     root = Path(__file__).resolve().parent
     paths = [root / name for name in ["supervisor.py", "setup_controller.sh", "harbor_docker.py",
-             "native_docker.py", "run_controls.py", "run_generation.py", "pins.json"]]
+             "native_docker.py", "cleanup_owned.py", "run_controls.py", "run_generation.py", "pins.json"]]
     paths += sorted((root / "native-configs").glob("*.json"))
     paths += sorted(p for p in (root / "published").rglob("*") if p.is_file())
     files = {str(path.relative_to(root)): path.read_bytes() for path in paths}

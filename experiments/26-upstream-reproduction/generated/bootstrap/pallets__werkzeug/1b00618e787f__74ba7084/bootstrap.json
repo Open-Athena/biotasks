@@ -1,0 +1,25 @@
+{
+  "image_digest": "sha256:5fc75d31e319b45993296c68a0d073cc0b8a7e2688e749b064ae256ea532c18a",
+  "image_tag": "local/r2e-bootstrap/pallets__werkzeug:1b00618e787f",
+  "language": "python",
+  "repo": "pallets/werkzeug",
+  "ref": "1b00618e787f40dfb21eba29caf8f8be7c8e1d93",
+  "rebuild_cmds": [
+    "pip install -e /workspace -q",
+    "pip install cffi cryptography ephemeral-port-reserve pytest pytest-timeout watchdog -q"
+  ],
+  "test_cmds": [
+    "python -m pytest -v --tb=short /workspace/tests"
+  ],
+  "smoke_passed": true,
+  "iterations": 5,
+  "build_time_sec": 108.43,
+  "llm_provider": "openrouter/anthropic/claude-sonnet-4.6",
+  "llm_cost_estimate_usd": 0.0,
+  "dockerfile_reconstruction": "# Auto-generated from r2e-bootstrap agent transcript.\n# Build from the cloned repo root: `docker build -t my-image .`\nFROM python:3.12-slim\nWORKDIR /workspace\nCOPY . /workspace\n\nRUN ls /workspace && cat /workspace/pyproject.toml 2>/dev/null || cat /workspace/setup.py 2>/dev/null || cat /workspace/setup.cfg 2>/dev/null | head -50\nRUN cd /workspace && pip install -e \".[tests]\" -q && pip install pytest pytest-timeout -q && python -m pytest --collect-only -q 2>&1 | tail -20\nRUN cd /workspace && pip install cffi cryptography ephemeral-port-reserve pytest pytest-timeout watchdog -q && python -m pytest --collect-only -q 2>&1 | tail -20\n",
+  "transcript_path": "/work/bootstrap/pallets__werkzeug/1b00618e787f__74ba7084/transcript.jsonl",
+  "pushed_to_registry": false,
+  "verify_passed": true,
+  "verify_detail": "exit=0; SED                            [ 99%]\ntests/test_wsgi.py::test_closing_iterator PASSED                         [100%]\n\n============================= 992 passed in 12.35s =============================",
+  "extra": {}
+}

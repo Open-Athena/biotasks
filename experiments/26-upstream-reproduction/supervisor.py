@@ -102,30 +102,27 @@ def main():
 
 
 def cleanup(report, created, volume_created):
+    from cleanup_owned import cleanup as remove_owned
     if not DOCKER.exists():
         report["docker_not_installed"] = True
         return
-    if created:
-        for label in ["biotasks.run=" + RUN]:
-            ids = docker("ps", "-aq", "--filter", "label=" + label, capture_output=True, text=True).stdout.split()
+    try:
+        if created:
+            ids = docker("ps", "-aq", "--filter", "label=biotasks.run=" + RUN,
+                         capture_output=True, text=True).stdout.split()
             if ids:
                 docker("rm", "-f", *ids, stdout=subprocess.DEVNULL)
-        try:
-            docker("exec", CONTROLLER, "tar", "-czf", "/work/evidence/phase-artifacts.tar.gz", "-C", "/work",
-                   "published", "bootstrap", "outputs", "jobs", "infra", timeout=120, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception as error:
-            report["archive_error"] = type(error).__name__
-        docker("cp", CONTROLLER + ":/work/evidence/.", str(OUT))
-        docker("rm", "-f", CONTROLLER, stdout=subprocess.DEVNULL)
-        images = docker("image", "ls", "-aq", "--filter", "label=biotasks.run=" + RUN, capture_output=True, text=True).stdout.split()
-        if images:
-            docker("image", "rm", "-f", *sorted(set(images)), stdout=subprocess.DEVNULL)
-    if volume_created:
-        docker("volume", "rm", VOLUME, stdout=subprocess.DEVNULL)
-    report["remaining_containers"] = docker("ps", "-aq", "--filter", "label=biotasks.run=" + RUN, capture_output=True, text=True).stdout.split()
-    report["remaining_controllers"] = docker("ps", "-aq", "--filter", "label=biotasks.controller=" + RUN, capture_output=True, text=True).stdout.split()
-    report["remaining_images"] = docker("image", "ls", "-aq", "--filter", "label=biotasks.run=" + RUN, capture_output=True, text=True).stdout.split()
-    report["remaining_volumes"] = docker("volume", "ls", "-q", "--filter", "label=biotasks.run=" + RUN, capture_output=True, text=True).stdout.split()
+            try:
+                docker("exec", CONTROLLER, "tar", "-czf", "/work/evidence/phase-artifacts.tar.gz", "-C", "/work",
+                       "published", "bootstrap", "outputs", "jobs", "infra", timeout=120,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception as error:
+                report["archive_error"] = type(error).__name__
+            docker("cp", CONTROLLER + ":/work/evidence/.", str(OUT))
+    finally:
+        report["cleanup"] = remove_owned(DOCKER, RUN)
+        assert report["cleanup"]["verified_empty"], "Owned resources remain"
+
 
 if __name__ == "__main__":
     main()

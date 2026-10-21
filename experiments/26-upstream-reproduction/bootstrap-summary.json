@@ -1,0 +1,37 @@
+[
+  {
+    "repo": "pallets/click",
+    "ref": "6a141c3681027e8124ce5a3c70e608dbbebffafb",
+    "iterations": 6,
+    "build_time_sec": 153.15,
+    "smoke_passed": true,
+    "verify_passed": true,
+    "verify_detail": "exit=1; =\nException ignored in: <_io.FileIO name=14 mode='rb+' closefd=True>\nResourceWarning: unclosed file <_io.TextIOWrapper name=\"<_io.FileIO name=14 mode='rb+' closefd=True>\" mode='r+' encoding='utf-8'>",
+    "llm_cost_estimate_usd": 0.0,
+    "rebuild_cmds": [
+      "pip install -e . && pip install 'pytest<9'"
+    ],
+    "test_cmds": [
+      "cd /workspace && python -m pytest -v"
+    ],
+    "pushed_to_registry": false
+  },
+  {
+    "repo": "pallets/werkzeug",
+    "ref": "1b00618e787f40dfb21eba29caf8f8be7c8e1d93",
+    "iterations": 5,
+    "build_time_sec": 108.43,
+    "smoke_passed": true,
+    "verify_passed": true,
+    "verify_detail": "exit=0; SED                            [ 99%]\ntests/test_wsgi.py::test_closing_iterator PASSED                         [100%]\n\n============================= 992 passed in 12.35s =============================",
+    "llm_cost_estimate_usd": 0.0,
+    "rebuild_cmds": [
+      "pip install -e /workspace -q",
+      "pip install cffi cryptography ephemeral-port-reserve pytest pytest-timeout watchdog -q"
+    ],
+    "test_cmds": [
+      "python -m pytest -v --tb=short /workspace/tests"
+    ],
+    "pushed_to_registry": false
+  }
+]
