@@ -2994,3 +2994,13 @@ Preserved original 015, raw empty/next responses, retry event, conflict and
 control records, and cleanup evidence in autonomous-runs/017. Reconciled its
 $5 hold to the prior $1 resource bound; aggregate holds now $95, $5 unallocated,
 not provider invoice figures. No notebook-specific timing offset was introduced.
+
+## 2026-10-21: PyRadiomics first outcome collected
+
+Collected original 018 receipts after host FAILED. Preparation completed; setup
+stopped on the controller snapshot-inputs helper after the setup command had
+completed. Underlying helper log remains undiagnosed; do not infer a notebook
+defect or scientific execution. Setup cleanup and fresh ownership inventory
+confirm no remaining sandboxes. Preserved first outcome in autonomous-runs/018.
+No new campaign or repair was launched. User is discussing whether to improve
+the MDAnalysis comparison-conflict recovery path; no change adopted yet.

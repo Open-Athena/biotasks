@@ -10,7 +10,9 @@ existing $100 aggregate authorization. Preserve first outcomes and verify cleanu
 for each campaign.
 PyRadiomics campaign 018 was submitted on 21 October at 15:44 UTC, while the
 MDAnalysis host was finishing its archive. Factory revision:
-`bd0c81c640c1be3d7b30a958ab84264807d9d18a`. No outcome is established yet.
+`bd0c81c640c1be3d7b30a958ab84264807d9d18a`. It ended with an input-snapshot controller error in setup; host and sandboxes
+are now terminal/absent. This is an infrastructure failure, not a scientific
+rejection; see [original receipts](autonomous-runs/018/README.md).
 
 The pinned source identities and admission findings are in
 [remaining-panel-intake.json](remaining-panel-intake.json). All seven remaining
@@ -18,7 +20,7 @@ sources were fetched and matched their original issue-18 SHA-256 hashes.
 
 | Seed | Current state |
 | --- | --- |
-| PyRadiomics | Submitted campaign 018. General converter profile v4 records and ignores boolean `editable`/`deletable` metadata while preserving ordered executable AST. No biological execution yet. |
+| PyRadiomics | Campaign 018 failed during the controller input-snapshot check in setup. General converter profile v4 records and ignores boolean `editable`/`deletable` metadata while preserving ordered executable AST. No biological execution yet. |
 | scikit-bio IL6 | Unsupported conversion: embedded IPython shell commands, including a conditional install. No source repair or scientific execution. |
 | Harvard bedtools | Unsupported conversion: Bash kernel. Earlier coordinate/assembly concern remains unresolved. No source repair or scientific execution. |
 | methylKit | R Markdown; R support deferred by the user. |
