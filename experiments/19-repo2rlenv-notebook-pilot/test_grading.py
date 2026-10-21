@@ -287,6 +287,63 @@ def test_probe_blocker_is_representable():
     assert result.disposition == "blocked"
 
 
+@pytest.mark.parametrize("mode", ["probe-check", "case"])
+@pytest.mark.parametrize(
+    "script,mutated",
+    [
+        ("from pathlib import Path; Path('value.txt').rename('elsewhere.txt')", True),
+        ("from pathlib import Path; Path('value.txt').unlink()", True),
+        ("pass", False),
+        ("from pathlib import Path; Path('value.txt').unlink(); raise RuntimeError()", False),
+    ],
+)
+def test_probe_preflight_separates_mutation_from_acceptance(
+    tmp_path, monkeypatch, capsys, mode, script, mutated
+):
+    import grading_remote as remote
+
+    private = tmp_path / "private"
+    oracle = private / "oracle"
+    oracle.mkdir(parents=True)
+    (oracle / "value.txt").write_text("right")
+    expected = remote.hashes(oracle)
+    (private / "expected.json").write_text(json.dumps(expected))
+    (private / "grade.py").write_text(CODE)
+    (private / "request.json").write_text(
+        json.dumps({"kind": "probe", "seconds": 10, "script": script})
+    )
+    monkeypatch.setattr(remote, "PRIVATE", private)
+    monkeypatch.setattr(remote, "CASE", tmp_path / "case")
+    monkeypatch.setattr(remote.os, "chown", lambda *a: None)
+    users = []
+
+    def execute(uid, argv, cwd, seconds):
+        users.append(uid)
+        result = subprocess.run(
+            [sys.executable, *argv[1:]],
+            cwd=cwd,
+            capture_output=True,
+            text=True,
+            timeout=seconds,
+        )
+        return dict(exit_code=result.returncode, stdout=result.stdout, stderr=result.stderr)
+
+    monkeypatch.setattr(remote, "run_as", execute)
+    monkeypatch.setattr(sys, "argv", ["grading_remote.py", mode])
+    remote.main()
+    result = json.loads(capsys.readouterr().out)
+    assert result["probe_valid_execution"] is mutated
+    assert remote.hashes(oracle) == expected
+    if mode == "case" and mutated:
+        assert users == [remote.PROBE, remote.GRADER]
+        assert result["status"] == "executed"
+        assert result["report"]["passed"] is False
+    else:
+        assert users == [remote.PROBE]
+        assert "report" not in result
+        assert result["status"] == ("probe_executed" if mutated else "incomplete")
+
+
 @pytest.mark.parametrize("comparison_conflict", [False, True])
 @pytest.mark.parametrize("repair", [False, True])
 @pytest.mark.parametrize(

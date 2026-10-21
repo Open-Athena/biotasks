@@ -13,6 +13,16 @@ scientific workflow or duplicate a grader implementation. Select records from
 the existing result files and change their saved values or representation. Do not
 search the filesystem for analysis scripts or attempt to reconstruct raw inputs.
 
+Batch related inspections. Once you have evidence for a mutation, write its
+script and move on rather than repeatedly checking the same records. Prefer
+deterministic selection from the copied output using explicit predicates and
+assertions over manually transcribing complete records into scripts. Save
+observations and scripts in the working directory so they can be reused.
+Submit when the required coverage is present: the controller already executes
+every script on a fresh copy. If preflight finds a defect, use its recorded
+failure to correct that defect; do not restart discovery or repeat successful
+checks without new evidence.
+
 Return a suite using the supplied schema. Each probe has a stable name, kind
 (`wrong_solution` or `valid_alternative`), focus, rationale, source citations,
 Python `script`, and `check_ids` identifying its intended checks. Cover every
@@ -42,6 +52,10 @@ copied outputs and checks successful execution and an actual mutation. This
 preflight does not run or expose the grader. If a script fails, repair the script
 using that execution evidence; preserve its intended challenge. Only after this
 preflight are the scripts frozen and evaluated against the grader.
+Preflight checks execution and mutation, not whether the resulting submission
+meets the task contract. A deliberate deletion or rename is a mutation; the
+grader determines whether that submission is acceptable. Prefer scientific
+mutations over redundant missing-file controls.
 
 Wrong-result controls should remain plausible, parseable outputs whenever the
 intended defect is scientific: incorrect identities, result values, assignments,

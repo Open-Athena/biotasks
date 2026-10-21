@@ -283,7 +283,7 @@ class GradingSession:
             or reply.get("probe_valid_execution") is not True
         ):
             raise ValueError(
-                "Probe script must exit successfully and change the required output files; "
+                "Probe script must exit successfully and change the submission files; "
                 "repair its execution without weakening its intended scientific challenge: "
                 + json.dumps({"name": probe.name, "execution": reply})
             )

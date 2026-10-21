@@ -2831,3 +2831,20 @@ Eighty-nine focused tests and lint/type checks pass. The design-stage output-lim
 assertion already failed against the unchanged adapter; it now checks the existing
 specific exception without relaxing the no-replay contract. Campaign 013 starts
 from the original notebook and does not reuse prior generated artifacts.
+
+## 2026-10-21 — distinguish probe mutation from scientific acceptance
+
+Campaign 013 passed all 23 scientific controls and review, without manual task
+edits, but grading-stage export exhausted its remaining allowance. Native trials
+were never reached. Preserve the recovered receipts and verified cleanup in
+`autonomous-runs/013`; do not count this as end-to-end validation.
+
+The probe worker spent substantial time inspecting and transcribing records.
+Its first suite also hit a generic preflight bug: renaming an output was rejected
+before grading because the original path was required to remain present.
+Preflight now accepts successful actual mutations, including deletion/rename,
+while the unchanged grader determines scientific acceptability. New synthetic
+tests cover deletion/rename, no-op and crashing scripts in preflight and grading
+modes; all 52 grading tests pass. The prompt encourages batched inspection and
+deterministic selectors, and avoids duplicate preflight work without reducing
+coverage. These changes contain no seed-specific methods or values.
