@@ -3253,3 +3253,5 @@ Built fresh 032/033 payloads at `2085091a7419aea0982cec199cd4f58c60d153a4`, then
 ### 2026-10-21 — Initial HMM comparison failures distinguished
 
 A read-only projection of 025's first six controls records the initial grader rejecting even the reference HMM due to its parser's match-row handling. The independently implemented output additionally differs on two reported domain E-value fields. This separates a generated parser defect from a further scientific-comparison disagreement; it does not establish a broken source or completed task. Both failures are already controller feedback to GLM. Preserve source file/candidate hashes and the projected initial messages in `autonomous-runs/025/initial-control-observation.json`; do not manually patch the candidate or change its target.
+
+At 23:25:16 UTC, the corrected HMM candidate passes all six basic controls, including both executed comparison outputs; the independent probe-author phase is active. Preserve the initial failed controls and corrected observations separately. No manual scientific edit or factory change produced this transition. This does not yet establish final scientific/native acceptance.
