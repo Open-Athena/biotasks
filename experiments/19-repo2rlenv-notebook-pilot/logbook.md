@@ -2912,3 +2912,23 @@ controlled execution. Twenty setup tests and lint pass. Original scientific
 calls and generated artifacts were not manually fixed. Both jobs are terminal;
 fresh provider ownership inventories show no remaining sandboxes. No new accepted
 task, publication, policy rerun or held-out success is claimed.
+
+## 2026-10-21 — retry an empty received response without replaying actions
+
+The user requested general empty-response recovery and a fresh MDAnalysis run,
+preserving the original failure. The adapter now permits one retry per stage
+instance, including any upstream resubmissions, after an otherwise complete
+response contains no text/action/refusal. Save the original response, retain its
+request slot, append the canonical recovery notice, and continue from all completed
+actions and feedback. Do not replay uncertain transport, partial actions or
+refusals, and do not reset time/turn/request limits. One-call stages remain bounded
+to their original single call. The recovery notice hash is captured in stage
+identity. Eighty-two focused tests pass, covering both successful recovery and
+bounded failure paths.
+
+Prepare fresh attempt 017 from the original MDAnalysis notebook, with the strict
+source-import policy retained. Preserve all of attempt 015 unchanged. Its new
+configuration and `rmsd-empty-response-rerun.md` distinguish the rerun. Reconcile
+the two completed example holds to $1 each using verified teardown, reserve $5
+for 017, and retain $97 aggregate holds under the $100 authorization. No scientific
+source, generated artifact or solver result is manually patched.

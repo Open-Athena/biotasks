@@ -57,6 +57,7 @@ def make_author(
     token_allowance=16000,
     output_format="tools",
     context_recovery_notice=None,
+    empty_response_retry_notice=None,
     **limits,
 ):
     def save(path, value):
@@ -75,6 +76,7 @@ def make_author(
         limits=ChatLimits(**limits),
         output_format=output_format,
         context_recovery_notice=context_recovery_notice,
+        empty_response_retry_notice=empty_response_retry_notice,
     )
     return author, ledger
 
@@ -108,6 +110,236 @@ def options(tmp_path, handlers, *, turns=4):
 
 async def committed(**_kwargs):
     return "Artifact committed."
+
+
+def empty_reply(*, finish="tool_calls", calls=None):
+    return {
+        "choices": [
+            {
+                "finish_reason": finish,
+                "message": {
+                    "role": "assistant",
+                    "content": "",
+                    "tool_calls": calls,
+                    "reasoning": None,
+                    "refusal": None,
+                },
+            }
+        ],
+    }
+
+
+@pytest.mark.parametrize("calls", [None, []])
+@pytest.mark.parametrize("finish", ["stop", "tool_calls"])
+def test_empty_response_retry_preserves_actions_evidence_and_accounting(tmp_path, calls, finish):
+    payloads, actions = [], []
+    empty = empty_reply(finish=finish, calls=calls)
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        return {
+            1: reply("shell", {"command": "inspect"}, call_id="inspected"),
+            2: empty,
+            3: reply(call_id="submitted"),
+        }[len(payloads)]
+
+    async def shell(command):
+        actions.append(command)
+        return "completed inspection"
+
+    author, ledger = make_author(
+        tmp_path, complete, empty_response_retry_notice="No action executed; continue."
+    )
+    args = options(
+        tmp_path,
+        {
+            "shell": shell,
+            "submit_artifact": committed,
+            "revise_artifact": committed,
+        },
+    )
+    result = asyncio.run(author(**args))
+    assert result["turns"] == 3 and actions == ["inspect"]
+    assert payloads[2]["messages"][:-1] == payloads[1]["messages"]
+    assert payloads[2]["messages"][-1] == {
+        "role": "user",
+        "content": "No action executed; continue.",
+    }
+    assert json.loads((tmp_path / "trace/2/response.json").read_text()) == empty
+    assert args["budget"].settlements == ["1", "2", "3"]
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
+            ("response_received",),
+            ("response_received",),
+            ("response_received",),
+        ]
+    events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
+    recovery = [e for e in events if e["kind"] == "empty_response_retry_requested"]
+    assert len(recovery) == 1
+    assert recovery[0]["empty_call_id"] == 2
+    assert recovery[0]["allowance_reset"] is False and recovery[0]["actions_executed"] == 0
+
+
+def test_repeated_empty_responses_stop_after_one_retry(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        return empty_reply()
+
+    author, ledger = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
+    args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+    with pytest.raises(IncompleteCompletion, match="Empty model response"):
+        asyncio.run(author(**args))
+    assert len(calls) == 2
+    assert author.empty_response_retries_used == 1
+    assert (tmp_path / "trace/1/response.json").exists()
+    assert (tmp_path / "trace/2/response.json").exists()
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 2
+
+
+@pytest.mark.parametrize("output_format", ["json_schema", "json_unconstrained"])
+def test_empty_json_response_retries_without_submitting_empty_artifact(tmp_path, output_format):
+    payloads, submitted = [], []
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        if len(payloads) == 1:
+            return empty_reply(finish="stop")
+        return {
+            "choices": [
+                {
+                    "finish_reason": "stop",
+                    "message": {
+                        "role": "assistant",
+                        "content": '{"value": 7}',
+                        "tool_calls": None,
+                    },
+                }
+            ]
+        }
+
+    async def submit(**artifact):
+        submitted.append(artifact)
+        return "Artifact committed."
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        output_format=output_format,
+        empty_response_retry_notice="No artifact was received; continue.",
+    )
+    result = asyncio.run(
+        author(
+            **options(
+                tmp_path,
+                {"submit_artifact": submit, "revise_artifact": committed},
+                turns=2,
+            )
+        )
+    )
+    assert result["turns"] == 2 and submitted == [{"value": 7}]
+    assert "tools" not in payloads[1]
+    assert len(payloads[1]["messages"]) == 3
+
+
+def test_empty_retry_allowance_survives_upstream_stage_resubmission(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        return reply() if len(calls) == 2 else empty_reply()
+
+    author, _ = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
+    args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+    asyncio.run(author(**args))
+    with pytest.raises(IncompleteCompletion, match="Empty model response"):
+        asyncio.run(author(**args))
+    assert len(calls) == 3 and author.empty_response_retries_used == 1
+
+
+@pytest.mark.parametrize("case", ["refusal", "length", "filtered", "partial_tool", "text"])
+def test_empty_retry_does_not_regenerate_other_invalid_responses(tmp_path, case):
+    calls = []
+    response = empty_reply()
+    message = response["choices"][0]["message"]
+    if case == "refusal":
+        message["refusal"] = "declined"
+    elif case == "length":
+        response["choices"][0]["finish_reason"] = "length"
+    elif case == "filtered":
+        response["choices"][0]["finish_reason"] = "content_filter"
+    elif case == "partial_tool":
+        message["tool_calls"] = [{"id": "incomplete"}]
+    else:
+        message["content"] = "Some text, but no tool action"
+
+    async def complete(payload):
+        calls.append(payload)
+        return response
+
+    author, _ = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
+    with pytest.raises(IncompleteCompletion):
+        asyncio.run(
+            author(
+                **options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+            )
+        )
+    assert len(calls) == 1 and author.empty_response_retries_used == 0
+
+
+@pytest.mark.parametrize("bound", ["turn", "ledger", "deadline"])
+def test_empty_retry_keeps_original_execution_bounds(tmp_path, bound):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if bound == "deadline":
+            author.deadline = time.time() - 1
+        return empty_reply()
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        requests=1 if bound == "ledger" else 4,
+        empty_response_retry_notice="Retry empty",
+    )
+    expected = {
+        "turn": (IncompleteCompletion, "Empty model response"),
+        "ledger": (RuntimeError, "Request allowance exhausted"),
+        "deadline": (TimeoutError, "deadline exhausted"),
+    }[bound]
+    with pytest.raises(expected[0], match=expected[1]):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"submit_artifact": committed, "revise_artifact": committed},
+                    turns=1 if bound == "turn" else 4,
+                )
+            )
+        )
+    assert len(calls) == 1
+
+
+def test_empty_retry_does_not_retry_uncertain_transport(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        raise TimeoutError("response outcome unknown")
+
+    author, ledger = make_author(tmp_path, complete, empty_response_retry_notice="Retry empty")
+    with pytest.raises(RuntimeError, match="transport failed"):
+        asyncio.run(
+            author(
+                **options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+            )
+        )
+    assert len(calls) == 1 and author.empty_response_retries_used == 0
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls").fetchall() == [("uncertain",)]
 
 
 def test_optional_size_limits_preserve_evidence_and_one_repair(tmp_path):

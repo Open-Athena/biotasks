@@ -28,7 +28,7 @@ class AuthorBudget(Protocol):
 
 
 class IncompleteCompletion(RuntimeError):
-    """A preserved response must not execute tools or be silently regenerated."""
+    """A preserved response cannot execute tools; recovery must be explicit."""
 
 
 class OutputTokenLimit(IncompleteCompletion):
@@ -136,6 +136,7 @@ class GLMChatAuthor:
         limits: ChatLimits,
         output_format: str = "tools",
         context_recovery_notice: str | None = None,
+        empty_response_retry_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -148,7 +149,12 @@ class GLMChatAuthor:
             raise ValueError("Unsupported artifact output format")
         if context_recovery_notice is not None and not context_recovery_notice.strip():
             raise ValueError("Context recovery requires an explicit notice")
+        if empty_response_retry_notice is not None and not empty_response_retry_notice.strip():
+            raise ValueError("Empty-response retry requires an explicit notice")
         self.context_recovery_notice = context_recovery_notice
+        self.empty_response_retry_notice = empty_response_retry_notice
+        # One allowance for this stage instance, including upstream resubmissions.
+        self.empty_response_retries_used = 0
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -336,6 +342,34 @@ class GLMChatAuthor:
             message = choice.get("message", {})
             if not isinstance(message, dict) or message.get("role") != "assistant":
                 raise IncompleteCompletion("Expected an assistant message")
+            content = message.get("content")
+            empty = (
+                (content is None or (isinstance(content, str) and not content.strip()))
+                and message.get("tool_calls") in (None, [])
+                and message.get("function_call") is None
+                and not message.get("refusal")
+            )
+            if empty:
+                if (
+                    self.empty_response_retry_notice is not None
+                    and self.empty_response_retries_used == 0
+                    and (max_turns is None or turn < max_turns)
+                ):
+                    self.empty_response_retries_used += 1
+                    # Keep the raw response, but never put an invalid assistant
+                    # tool message into the next provider request. All completed
+                    # actions and feedback remain in their original order.
+                    messages.append({"role": "user", "content": self.empty_response_retry_notice})
+                    event(
+                        "empty_response_retry_requested",
+                        empty_call_id=call_id,
+                        response=str(request_root / "response.json"),
+                        retry_number=self.empty_response_retries_used,
+                        allowance_reset=False,
+                        actions_executed=0,
+                    )
+                    continue
+                raise IncompleteCompletion("Empty model response; no tool executed")
             if self.output_format in {"json_schema", "json_unconstrained"}:
                 if (
                     message.get("refusal")
