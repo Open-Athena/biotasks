@@ -1,0 +1,61 @@
+{
+  "candidate_sha256": "149592be027f4e49c1addaad2ca0a643e41f41dffc3f2b212ec338f47b298de8",
+  "execution": {
+    "grader": {
+      "exit_code": 0,
+      "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+      "stderr": "",
+      "stdout": ""
+    },
+    "report": {
+      "checks": [
+        {
+          "id": "required_files_present",
+          "message": "all three required CSV files are present",
+          "passed": true
+        },
+        {
+          "id": "table_schema_and_frames",
+          "message": "all three tables have the required header columns in order, rectangular rows of finite numeric cells, and exactly one row per reference frame in each file",
+          "passed": true
+        },
+        {
+          "id": "frame_time_column",
+          "message": "rmsd_core_ca_atomgroup.csv: 98 of 98 compared Time (ps) cells differ from the reference by more than 0.001; examples: frame 0, column Time (ns): submission 0.49999995596000929 vs reference 0.99999991192001858 (difference 0.5 exceeds 0.001) | frame 1, column Time (ns): submission 1.4999998678800279 vs reference 1.9999998238400372 (difference 0.5 exceeds 0.001) | frame 2, column Time (ns): submission 2.4999997798000466 vs reference 2.9999997357600559 (difference 0.5 exceeds 0.001) | frame 3, column Time (ns): submission 3.4999996917200651 vs reference 3.9999996476800743 (difference 0.5 exceeds 0.001) | frame 4, column Time (ns): submission 4.4999996036400836 vs reference 4.9999995596000932 (difference 0.5 exceeds 0.001); rmsd_mass_weighted.csv: 98 of 98 compared Time (ps) cells differ from the reference by more than 0.001; examples: frame 0, column Time (ns): submission 0.49999995596000929 vs reference 0.99999991192001858 (difference 0.5 exceeds 0.001) | frame 1, column Time (ns): submission 1.4999998678800279 vs reference 1.9999998238400372 (difference 0.5 exceeds 0.001) | frame 2, column Time (ns): submission 2.4999997798000466 vs reference 2.9999997357600559 (difference 0.5 exceeds 0.001) | frame 3, column Time (ns): submission 3.4999996917200651 vs reference 3.9999996476800743 (difference 0.5 exceeds 0.001) | frame 4, column Time (ns): submission 4.4999996036400836 vs reference 4.9999995596000932 (difference 0.5 exceeds 0.001); rmsd_custom_weighted.csv: 98 of 98 compared Time (ps) cells differ from the reference by more than 0.001; examples: frame 0, column Time (ns): submission 0.49999995596000929 vs reference 0.99999991192001858 (difference 0.5 exceeds 0.001) | frame 1, column Time (ns): submission 1.4999998678800279 vs reference 1.9999998238400372 (difference 0.5 exceeds 0.001) | frame 2, column Time (ns): submission 2.4999997798000466 vs reference 2.9999997357600559 (difference 0.5 exceeds 0.001) | frame 3, column Time (ns): submission 3.4999996917200651 vs reference 3.9999996476800743 (difference 0.5 exceeds 0.001) | frame 4, column Time (ns): submission 4.4999996036400836 vs reference 4.9999995596000932 (difference 0.5 exceeds 0.001)",
+          "passed": false
+        },
+        {
+          "id": "table_a_core_ca_rmsd",
+          "message": "the CORE column agrees with the reference within 1e-05 A for every frame",
+          "passed": true
+        },
+        {
+          "id": "table_b_mass_weighted_rmsd",
+          "message": "the C-alphas, CORE, LID and NMP columns agree with the reference within 1e-05 A for every frame",
+          "passed": true
+        },
+        {
+          "id": "table_c_resid_weighted_rmsd",
+          "message": "the C-alphas, CORE, LID and NMP columns agree with the reference within 1e-05 A for every frame",
+          "passed": true
+        }
+      ],
+      "passed": false
+    },
+    "status": "executed",
+    "submission_before": {
+      "rmsd_core_ca_atomgroup.csv": "06bca6dd31da3682c4a101289572b3e95c11a26d21400fafb1d284d578aba21b",
+      "rmsd_custom_weighted.csv": "8e9b1046bfb49ce962f4e6f20eccf23f9ca19f0a2cb31e8c36c330aaaed5582b",
+      "rmsd_mass_weighted.csv": "eb31204c62d9f620b575d92d11d4bed032e23cfdfd325827c8963fa054555c23"
+    },
+    "submission_sha256": {
+      "rmsd_core_ca_atomgroup.csv": "06bca6dd31da3682c4a101289572b3e95c11a26d21400fafb1d284d578aba21b",
+      "rmsd_custom_weighted.csv": "8e9b1046bfb49ce962f4e6f20eccf23f9ca19f0a2cb31e8c36c330aaaed5582b",
+      "rmsd_mass_weighted.csv": "eb31204c62d9f620b575d92d11d4bed032e23cfdfd325827c8963fa054555c23"
+    }
+  },
+  "kind": "alternative",
+  "omitted": null,
+  "passed_control": false,
+  "probe": null
+}

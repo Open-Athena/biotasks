@@ -1,0 +1,60 @@
+{
+  "choices": [
+    {
+      "finish_reason": "tool_calls",
+      "index": 0,
+      "logprobs": null,
+      "message": {
+        "annotations": null,
+        "audio": null,
+        "content": "",
+        "function_call": null,
+        "reasoning": "The shell default is sh (dash), which doesn't support process substitution. Let me use python or a simpler approach for verification of the combined run.",
+        "refusal": null,
+        "role": "assistant",
+        "tool_calls": [
+          {
+            "function": {
+              "arguments": "{\"command\": \"cd /tmp/dryrun && cat /work/frozen/exports.py >> analysis.py && MPLBACKEND=Agg MPLCONFIGDIR=/tmp/dryrun/cache HOME=/tmp/dryrun timeout 100 /tmp/probe/.venv/bin/python analysis.py > /tmp/dryrun/stdout2.log 2>/tmp/dryrun/stderr2.log; echo \\\"exit=$?\\\"; ls -l /tmp/dryrun/outputs/; head -2 /tmp/dryrun/outputs/rmsd_core_ca_atomgroup.csv; head -2 /tmp/dryrun/outputs/rmsd_mass_weighted.csv; head -2 /tmp/dryrun/outputs/rmsd_custom_weighted.csv\", \"timeout_sec\": 115}",
+              "name": "shell"
+            },
+            "id": "chatcmpl-tool-945b6e4b44bdd721",
+            "type": "function"
+          }
+        ]
+      },
+      "routed_experts": null,
+      "stop_reason": 154829,
+      "token_ids": null
+    }
+  ],
+  "created": 1792595183,
+  "ec_transfer_params": null,
+  "id": "chatcmpl-9a7018d689b8daff",
+  "kv_transfer_params": null,
+  "metrics": null,
+  "model": "glm-5.3",
+  "object": "chat.completion",
+  "prompt_logprobs": null,
+  "prompt_text": null,
+  "prompt_token_ids": null,
+  "service_tier": null,
+  "system_fingerprint": "vllm-0.28.0-tp8-f8f644d5",
+  "usage": {
+    "completion_tokens": 195,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 30,
+      "rejected_prediction_tokens": null
+    },
+    "prompt_tokens": 57128,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cached_tokens": 56960,
+      "created_cache_tokens": 128,
+      "multimodal_tokens": null
+    },
+    "total_tokens": 57323
+  }
+}

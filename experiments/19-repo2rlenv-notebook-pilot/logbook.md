@@ -2979,3 +2979,18 @@ independent_comparison_unresolved. The first grader rejected the independently
 produced solution; no native solver ran. Root archive/host termination and fresh
 cleanup observations are still being collected. This does not establish that
 the original notebook is broken. Empty-response recovery succeeded earlier.
+
+PyRadiomics campaign autonomous-radiomics-018 submitted at 15:44 UTC from frozen
+factory bd0c81c640c1be3d7b30a958ab84264807d9d18a. Payload identity and aggregate
+reservation checked before submission. No original source or generated scientific
+artifact was manually repaired. Local submit peak RSS 441,656 KiB, exit 0.
+
+MDAnalysis 017 receipts recovered after host SUCCEEDED at 15:45 UTC; root pipeline
+rejected with zero interventions. Provider inventory found all four stage owners
+absent. Independent RMSD columns matched to the proposed tolerance, while the
+public time formula yielded a 0.5 ps origin and the reference yielded 1.0 ps.
+The guard rejected the contradiction before repair or a solver attempt.
+Preserved original 015, raw empty/next responses, retry event, conflict and
+control records, and cleanup evidence in autonomous-runs/017. Reconciled its
+$5 hold to the prior $1 resource bound; aggregate holds now $95, $5 unallocated,
+not provider invoice figures. No notebook-specific timing offset was introduced.
