@@ -1,0 +1,52 @@
+{
+  "observed_at": "2026-10-21T22:13:46.508195+00:00",
+  "rate_source": "https://www.daytona.io/pricing",
+  "rates_verified_date": "2026-10-21",
+  "rates_usd_per_hour": {
+    "vcpu": "0.0504",
+    "memory_gib": "0.0162",
+    "disk_gib": "0.000108"
+  },
+  "free_credits_assumed": false,
+  "actual_provider_invoice_usd": null,
+  "reason": "Two completed historical campaign groups still held their full $5 planning allowances. Original export-manifest hashes, all new trial resource flags, preflight and native cleanup, shared absolute deadlines and fresh provider absence were verified. Imported native results are not charged again.",
+  "groups": [
+    {
+      "scope": "contract-repair campaign 014",
+      "campaigns": [
+        "014",
+        "015",
+        "016"
+      ],
+      "from_usd": "5.00",
+      "retained_usd": "3.00",
+      "new_native_trials": 5,
+      "verified_preflights": 3
+    },
+    {
+      "scope": "schema-contract campaign 017",
+      "campaigns": [
+        "017",
+        "018"
+      ],
+      "from_usd": "5.00",
+      "retained_usd": "2.00",
+      "new_native_trials": 5,
+      "verified_preflights": 2
+    }
+  ],
+  "bounds": {
+    "new_trial_cpus": 1,
+    "new_trial_memory_gib": 2,
+    "disk_gib": 10,
+    "gpu": false,
+    "paid_intervals_nonoverlapping_per_group": true,
+    "shared_work_deadline_seconds_per_group": 7200,
+    "cleanup_seconds": 300,
+    "broader_4cpu_8gib_10gib_running_bound_per_group_usd": "0.692250",
+    "retained_hold_exceeds_running_bound": "Additional historical storage/rounding margin retained; this is reconciliation of conservative holds, not an invoice calculation."
+  },
+  "evidence": "budget-evidence/legacy-014-018/verified-receipts.json",
+  "provider_absence": "budget-evidence/legacy-014-018/provider-absence.json",
+  "released_holds_usd": "5.00"
+}

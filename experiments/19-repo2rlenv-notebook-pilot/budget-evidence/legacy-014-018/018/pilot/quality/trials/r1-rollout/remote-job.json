@@ -1,0 +1,69 @@
+{
+  "cleanup": {
+    "passed": true,
+    "remaining": [],
+    "sandboxes": [
+      {
+        "cpu": 1,
+        "delete_reported_absent": true,
+        "deleted": true,
+        "disk": 10,
+        "id": "9cebb066-5e95-4510-b5b4-ecbf93f7d4eb",
+        "memory": 2
+      }
+    ],
+    "stale_listing_absent_ids": [
+      "9cebb066-5e95-4510-b5b4-ecbf93f7d4eb"
+    ]
+  },
+  "command": [
+    "/work/upstream-archive/huggingface-Repo2RLEnv-5555443/.venv/bin/harbor",
+    "run",
+    "--path",
+    "/work/trials/quality-f7f627e0392a26b3-r1-rollout/seta-seed2synth-edda9ab1b6342001",
+    "--agent",
+    "terminus-2",
+    "--env",
+    "daytona",
+    "--n-concurrent",
+    "1",
+    "--max-retries",
+    "0",
+    "--job-name",
+    "quality-f7f627e0392a26b3-r1-rollout",
+    "--jobs-dir",
+    "/evidence/trials/quality-f7f627e0392a26b3-r1-rollout",
+    "--quiet",
+    "--model",
+    "openai/glm-5.3",
+    "--ak",
+    "max_turns=12",
+    "--ak",
+    "record_terminal_session=false",
+    "--ak",
+    "llm_call_kwargs={\"max_tokens\": 8192}",
+    "--agent-timeout-multiplier",
+    "0.5",
+    "--override-cpus",
+    "1",
+    "--override-memory-mb",
+    "2048",
+    "--override-storage-mb",
+    "10240",
+    "--ak",
+    "api_base=http://127.0.0.1:10241/solver-2/v1",
+    "--ak",
+    "model_info={\"input_cost_per_token\": 0, \"max_input_tokens\": 120000, \"max_output_tokens\": 8192, \"output_cost_per_token\": 0}",
+    "--ek",
+    "labels={\"repo2rlenv.job\": \"f7e5be9e84aa42938b0078de8f6b3d8f\"}",
+    "--ek",
+    "auto_stop_interval_mins=30"
+  ],
+  "finished_at": "2026-10-13T15:48:28.636858+00:00",
+  "job_id": "f7e5be9e84aa42938b0078de8f6b3d8f",
+  "pid": 1609,
+  "returncode": 0,
+  "started_at": "2026-10-13T15:46:50.246355+00:00",
+  "state": "completed",
+  "supervisor_pid": 1607
+}

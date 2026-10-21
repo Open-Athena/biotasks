@@ -3209,3 +3209,9 @@ Add opt-in, versioned `worker-timeout-retry` instructions: once per author insta
 Choose a fresh original-seed campaign 025 rather than an operator-started continuation as the next autonomy proof. The optional recovery helper does not turn the failed 023 into a success. No extra continuation-archive infrastructure was retained. Reserve $5 before launch within existing $100 authorization ($99 held/$1 unallocated), keep original resource/time/network/scientific policy, and preserve 023 unchanged. HRV 024 remains prepared only.
 
 Campaign 025 submitted once from `417df0ed95e0c55ef12a91d264f5e1c220e8b3be`; CPU host started 22:05:28 UTC. Actual worker read at 22:05:57 UTC confirms preparation active. No acceptance or cleanup claim; no additional campaign or human scientific edits.
+
+### 2026-10-21 — Historical holds reconciled; second panel seed in parallel
+
+Verified original export-manifest hashes for preflight/bootstrap and ten newly executed native-trial records across old 014–016 and 017–018; all original cleanup passed. Confirmed shared absolute deadlines and sequential resource intervals. Fifteen fresh provider ownership queries found no old sandbox. Reduce the two $5 planning holds to $3 and $2, retaining storage/rounding margin; this releases $5 of holds, not an invoice adjustment or new authorization. See `budget-reconciliation-legacy-014-018.json` and unchanged receipts under `budget-evidence/legacy-014-018`.
+
+Reserve $5 for HRV 024 and use the exact same frozen factory `417df0ed95e0c55ef12a91d264f5e1c220e8b3be` as active PyHMMER 025. HRV starts from its original notebook; scope/endpoints remain worker choices. This stays within prior authorization for at most two Iris CPU hosts/two Daytona sandboxes, one per campaign, unchanged limits and $100 aggregate ceiling ($99 held/$1 unallocated). Current budget checkpoint differs from the frozen runtime checkpoint; record both rather than silently changing factory code between seeds.
