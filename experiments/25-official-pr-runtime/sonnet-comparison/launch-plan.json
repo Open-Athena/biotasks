@@ -1,5 +1,5 @@
 {
-  "state": "prepared_not_launched",
+  "state": "dedicated_public_read_token_verified_ready_to_submit",
   "comparison": "Same native protocol, inputs and budgets; only llm.model changes. Fresh controller/cache and run identity for isolation.",
   "baseline_commit": "c20ba1a095949e330c81921d24ce820792f152d2",
   "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
@@ -27,7 +27,7 @@
     "prior_issue_25_allocated_cpu_hours": 1.5063416666666667,
     "issue_25_total_ceiling_cpu_hours": 48
   },
-  "run_id": "biotasks25-sonnet-001",
+  "run_id": "biotasks25-sonnet-002",
   "config_differences": [
     {
       "file": "MLCIL__scikit-fingerprints-525.json",
@@ -76,10 +76,10 @@
     }
   ],
   "shared_code_sha256": {
-    "submit_install_check.py": "ce19305eeb5ac061623f00f6b0319c66413dcebd61e10f7553fb7cd174884c2b",
+    "submit_install_check.py": "131f5166ca46285b18f6ab922a6f389482c0142a6f6bd827ebe588cbe2549ea1",
     "trc_install_check.py": "b93fe08e9a092bfd5d17c272eeae5d6dae0c80e92b0eaee212e35504b979c7dc",
     "docker_resource_wrapper.py": "c7a827152f22d478137bf69487e8505a34cd8ec06a8b9a61a4874e2f72a30f66",
-    "trc_supervisor.py": "395ed54084745c60de2d56a4961d31a71f2917f3a8d84fdea750af2407732c58",
+    "trc_supervisor.py": "c33c052b57ff76d97b58964a30819610d3c76c1c8a625b4dc665419b29153325",
     "install_controller.sh": "97b4101cfc67c6730d3dde3dc5fbec3429a2ab6b675a7a2a712eca158a3dc17a",
     "run_native_windows.py": "36caa104acaf7215116b6e9451756e60f73a42a0de5e44491b72b72707d81551",
     "run-official.sh": "99bdddb10cb7c4525827b9c70676667b4a4864f192984e6d69b4472fca2591b7"
@@ -87,5 +87,20 @@
   "endpoint_metadata_checked_at": "2026-10-20T20:51:03.259804+00:00",
   "endpoints_advertising_native_request_parameters": 9,
   "upstream_source_changes": [],
-  "artifact_retention": "Separate immutable comparison evidence on the permanent #25 research branch; preserve baseline evidence unchanged."
+  "artifact_retention": "Separate immutable comparison evidence on the permanent #25 research branch; preserve baseline evidence unchanged.",
+  "first_submission": {
+    "run_id": "biotasks25-sonnet-001",
+    "disposition": "intentionally_stopped_before_authentication_and_native_execution",
+    "native_started": false,
+    "model_calls": 0,
+    "cleanup_verified": true
+  },
+  "authentication_adaptation": {
+    "reason": "User rejected repeated browser logins and requested machine authentication",
+    "change": "Require GH_TOKEN in the launcher/controller process environment and use normal gh auth status; no browser fallback. GITHUB_TOKEN remains unset and auth.use_gh_cli=false remains unchanged. No token injected into repository containers.",
+    "source_changes_upstream": [],
+    "credential_access": "User created and authorized a dedicated public-read credential, stored outside Git with mode 0600. Local authenticated GraphQL PR reads succeeded for all three repositories. No existing CI credential accessed.",
+    "effect_on_comparison": "Only authentication plumbing changes in the runner; native input configs still differ solely at llm.model. Original GLM and first Sonnet checkpoint remain immutable."
+  },
+  "credential_setup_helper_sha256": "a4d2bb9843bdc32f80aa1f4e8293e4b0dcdf0bf7ca946ddefa831c6f01d7c869"
 }

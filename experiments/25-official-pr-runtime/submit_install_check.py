@@ -26,6 +26,7 @@ def main():
              *sorted((root / "proposed-configs").glob("*.json"))]
     if args.persistent:
         assert os.environ.get("OPENROUTER_API_KEY"), "Authorized key must be supplied through the process environment"
+        assert os.environ.get("GH_TOKEN"), "Supply an explicitly authorized machine credential through GH_TOKEN; browser login is disabled"
         paths.extend([root / "trc_supervisor.py", root / "install_controller.sh"])
     files = {str(path.relative_to(root)): path.read_bytes() for path in paths}
     runtime = 36000 if args.persistent else 1800
@@ -33,6 +34,7 @@ def main():
     env_vars = {"BIOTASKS_INSTALL_RUN_ID": args.run_id}
     if args.persistent:
         env_vars["OPENROUTER_API_KEY"] = os.environ["OPENROUTER_API_KEY"]
+        env_vars["GH_TOKEN"] = os.environ["GH_TOKEN"]
     with connect_controller(config_file=args.config) as endpoint:
         with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, timeout_ms=30000) as client:
             workers = client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))

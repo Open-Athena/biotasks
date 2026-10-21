@@ -223,3 +223,33 @@ conclusion remain preserved at c20ba1a0. Same one-worker/four-CPU/16-GiB limits,
 20 turns and $5 estimated threshold per repository; no fallback or external
 repairs. This follow-up extends #25's existing question rather than creating a
 new research issue or changing upstream source.
+
+The user rejected repeating device login and requested a better authentication
+approach. Sonnet submission 001 was intentionally stopped before the native start
+signal; its terminal archive confirms native_started=false and no remaining owned
+containers/controllers/images. This is an infrastructure attempt, not a model or
+PR-runtime outcome. The launcher/controller now support noninteractive GH_TOKEN
+and fail before submission if it is absent. This auth-only adaptation is justified
+by the user's request and changes no native input config or upstream code.
+Credential discovery inspected names, metadata and existing automation code only;
+access to a candidate service credential's value is pending explicit authorization
+under the shared AGENTS.md rule. No secret values or private locator are recorded
+in public evidence. A private submission helper is prepared; no replacement job
+has been launched or model call made while authorization is pending.
+
+The user selected a new dedicated public-read credential, superseding the
+possible CI-credential reuse proposal. That credential has not been accessed.
+Prepared a one-time hidden-input helper that writes only a new mode-0600 file
+outside the repository, refusing piped input and existing files. The pending
+submission helper now loads only the dedicated credential. No replacement runner
+is active; token creation and live API validation remain pending user setup.
+This is authentication plumbing only, with no additional LLM calls or native
+source/config repairs.
+
+### 2026-10-21 — dedicated credential ready
+
+The user completed one-time setup. Verified mode-0600 storage outside Git and
+authenticated public PR GraphQL reads for all three input repositories, suppressing
+credential and response output. Runner/staging hashes match the launch plan; all
+five native configurations still differ only at llm.model. No existing CI token
+was accessed. Token auth is supported directly by gh; upstream remains unchanged.

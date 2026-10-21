@@ -45,7 +45,7 @@ def main():
         docker("create", "--name", CONTROLLER, "--cpus=1", "--memory=4g", "--memory-swap=4g",
                "--network=iris-egress", "--label", f"biotasks.controller={RUN}",
                "-v", "/var/run/docker.sock:/var/run/docker.sock", "-w", "/work",
-               "-e", "OPENROUTER_API_KEY", "-e", f"BIOTASKS_INSTALL_RUN_ID={RUN}",
+               "-e", "OPENROUTER_API_KEY", "-e", "GH_TOKEN", "-e", f"BIOTASKS_INSTALL_RUN_ID={RUN}",
                "-e", f"BIOTASKS_RUN_ID={RUN}", "-e", "BIOTASKS_REAL_DOCKER=/work/real/docker",
                "-e", "BIOTASKS_DOCKER_GUARD_LOCK=/work/docker.lock",
                "-e", "PATH=/work/bin:/work/upstream/.venv/bin:/usr/local/bin:/usr/bin:/bin",
@@ -60,10 +60,14 @@ def main():
         with (OUT / "installation.log").open("w") as log:
             docker("exec", CONTROLLER, "bash", "/work/install.sh", timeout=1500, stdout=log, stderr=subprocess.STDOUT)
         print("BIOTASKS25_AUTH_START", flush=True)
-        docker("exec", "-i", CONTROLLER, "gh", "auth", "login", "--hostname", "github.com",
-               "--git-protocol", "https", "--web", timeout=900, input="\n", text=True)
+        # gh uses GH_TOKEN directly. Keep GITHUB_TOKEN unset so upstream's
+        # public-clone path does not extract or embed a token in repository URLs.
+        # The target repository containers do not receive either credential.
+        docker("exec", CONTROLLER, "gh", "auth", "status", "--hostname", "github.com",
+               timeout=30, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print("BIOTASKS25_AUTH_READY", flush=True)
         report["authenticated"] = True
+        report["authentication_method"] = "GH_TOKEN_environment"
         # No native model call can happen before the checkpointed command is
         # explicitly staged and enabled through the supported Iris exec API.
         wait_until = time.monotonic() + 3600
