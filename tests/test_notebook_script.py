@@ -94,6 +94,29 @@ def test_metadata_cannot_silently_skip_analysis(tmp_path):
         export_python(path)
 
 
+@pytest.mark.parametrize("editable,deletable", [(True, True), (False, False)])
+def test_cell_editing_permissions_do_not_skip_or_change_code(tmp_path, editable, deletable):
+    path = source(tmp_path, ["result = 1 + 2"])
+    data = json.loads(path.read_text())
+    metadata = {"editable": editable, "deletable": deletable}
+    data["cells"][0]["metadata"] = metadata
+    path.write_text(json.dumps(data))
+    script, receipt = export_python(path)
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse("result = 1 + 2"))
+    assert receipt["ignored_cell_editor_metadata"] == [{"cell_index": 0, "metadata": metadata}]
+    assert export_python(path) == (script, receipt)
+
+
+@pytest.mark.parametrize("value", ["false", 0, None, {"skip": True}])
+def test_invalid_editor_permissions_are_rejected(tmp_path, value):
+    path = source(tmp_path, ["result = 3"])
+    data = json.loads(path.read_text())
+    data["cells"][0]["metadata"] = {"editable": value}
+    path.write_text(json.dumps(data))
+    with pytest.raises(UnsupportedNotebook, match="editor metadata"):
+        export_python(path)
+
+
 def test_docs_execution_policy_is_recorded_not_used_to_skip(tmp_path):
     path = source(
         tmp_path,

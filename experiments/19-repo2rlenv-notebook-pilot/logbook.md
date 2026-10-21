@@ -2932,3 +2932,25 @@ configuration and `rmsd-empty-response-rerun.md` distinguish the rerun. Reconcil
 the two completed example holds to $1 each using verified teardown, reserve $5
 for 017, and retain $97 aggregate holds under the $100 authorization. No scientific
 source, generated artifact or solver result is manually patched.
+
+## 2026-10-21: remaining issue-18 panel intake
+
+User requested running all remaining issue-18 seeds. Fetched the seven original
+sources not covered by Scanpy, active MDAnalysis rerun 017 or COBRApy outcome 016;
+every source matched its original panel hash. The old manually selected compact
+task directions are not worker inputs. See remaining-panel.md and its manifest.
+R Markdown (four seeds), Bash (bedtools) and embedded IPython shell commands
+(scikit-bio) expose unsupported conversion/execution paths. Asked whether to add
+generic R support; no answer yet. Do not count these gaps as scientific rejection.
+
+Added conversion profile python-narrative-v4 for documented boolean cell editing
+and deletion permissions. These affect notebook editing, not execution; retain
+values in the receipt and retain ordered AST equivalence. PyRadiomics now
+converts without changing source code. Prepared original source/license/identity
+and campaign 018, not submitted. Twenty-seven converter tests and Ruff passed.
+No new sandbox or model call was launched for this panel.
+
+At 15:11 UTC, active 017 had finished setup and fresh reference replays and reached
+specification. Setup trace records one empty-response retry at call 60, unchanged
+allowances and no action executed from the empty response. The completed stage
+establishes live recovery; original failure 015 remains unmodified.

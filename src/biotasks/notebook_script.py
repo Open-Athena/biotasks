@@ -17,7 +17,7 @@ from pathlib import Path
 import jupytext
 
 MAX_SOURCE_BYTES = 16 * 1024 * 1024
-PROFILE = "python-narrative-v3"
+PROFILE = "python-narrative-v4"
 
 
 class UnsupportedNotebook(ValueError):
@@ -136,6 +136,7 @@ def export_python(path: Path) -> tuple[str, dict]:
     cells: list[dict] = []
     markdown_count = 0
     normalizations = []
+    editor_cells = []
     for cell_index, cell in enumerate(notebook.get("cells", [])):
         if cell.get("cell_type") not in {"code", "markdown", "raw"}:
             raise UnsupportedNotebook("Unknown cell type")
@@ -149,8 +150,24 @@ def export_python(path: Path) -> tuple[str, dict]:
             markdown_count += 1
             continue
         cell_metadata = cell.get("metadata", {})
-        if set(cell_metadata) - {"collapsed", "scrolled", "trusted", "execution"}:
+        if set(cell_metadata) - {
+            "collapsed",
+            "scrolled",
+            "trusted",
+            "execution",
+            "editable",
+            "deletable",
+        }:
             raise UnsupportedNotebook("Code-cell execution directives are unsupported")
+        editor_metadata = {
+            key: cell_metadata[key] for key in ("editable", "deletable") if key in cell_metadata
+        }
+        if any(type(value) is not bool for value in editor_metadata.values()):
+            raise UnsupportedNotebook("Cell editor metadata must contain booleans")
+        if editor_metadata:
+            # Notebook format defines these as editing/deletion permissions,
+            # not execution controls. Preserve them in the receipt, not the script.
+            editor_cells.append({"cell_index": cell_index, "metadata": editor_metadata})
         text, changes = _presentation_directives(text, cell_index)
         normalizations.extend(changes)
         code.append(text)
@@ -209,6 +226,7 @@ def export_python(path: Path) -> tuple[str, dict]:
         "ignored_editor_metadata": {
             key: metadata[key] for key in ("celltoolbar", "vscode") if key in metadata
         },
+        "ignored_cell_editor_metadata": editor_cells,
         "documentation_execution_policy": myst,
         "stored_outputs_used_as_evidence": False,
         "executed": False,
