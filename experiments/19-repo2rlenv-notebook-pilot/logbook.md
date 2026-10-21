@@ -3187,3 +3187,5 @@ standing budget before dispatch. PR #23 stays draft and unmerged.
 ### 2026-10-21 — Fresh placement retry 023
 
 The user requested another availability check. All three approved peers report reachable at 19:14 UTC; this is health metadata, not evidence of successful placement. Reserve $5 for fresh autonomous PyHMMER campaign 023 within the standing $100 authorization ($98 held, $2 unallocated). Retain the existing resource, scientific, model and time limits. Use the compact source payload; preserve cancelled 019–022 unchanged.
+
+Campaign 023 was submitted at 19:15:31 UTC and acquired a CPU worker at 19:15:38 UTC. An actual worker read at 19:16:02 UTC confirmed the autonomous preparation stage running. This establishes restored handoff on the selected approved route, not a scientific outcome. No permissions, priorities or services changed.
