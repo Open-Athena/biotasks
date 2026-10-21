@@ -2887,3 +2887,28 @@ cleanup evidence, adding those runs explicitly and reserving $5 for each new
 example. `budget-reconciliation-20261021.json` distinguishes conservative holds
 from invoices. Total retained holds, including both new attempts, remain $100;
 no free-credit assumption or new aggregate authorization is used.
+
+## 2026-10-21 — additional first outcomes; reject source-code repairs
+
+The two same-revision first attempts are preserved in `autonomous-runs/015` and
+`016`. MDAnalysis passed reference execution and replays but specification failed
+on response 26: finish_reason tool_calls with null tool_calls and empty content.
+The adapter executed no action from it. Recover the original response with a
+verified hash using the already-active COBRApy host's read-only storage client;
+no extra model or sandbox work was launched for recovery.
+
+COBRApy passed reference execution after its GLM setup worker added a missing
+import. Its claim that Jupyter implicitly supplies the package binding is
+incorrect; hidden prior kernel state is only a possible explanation. After
+discussion, the user decided to reject sources needing code repairs such as this.
+The run had independently returned a blocked diagnostic construction candidate
+before a stop was necessary. Do not conflate that original worker decline with
+automatic enforcement of the new source-code policy.
+
+Clarify the general setup prompt: install dependencies and stage inputs, but reject
+missing imports, undefined names and other source-code defects. A controller
+import-signature check now rejects added/removed/changed analysis imports before
+controlled execution. Twenty setup tests and lint pass. Original scientific
+calls and generated artifacts were not manually fixed. Both jobs are terminal;
+fresh provider ownership inventories show no remaining sandboxes. No new accepted
+task, publication, policy rerun or held-out success is claimed.

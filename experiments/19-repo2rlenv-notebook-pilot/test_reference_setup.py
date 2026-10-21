@@ -6,6 +6,7 @@ import json
 import shutil
 import subprocess
 import time
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -147,6 +148,53 @@ def test_controlled_setup_cannot_reuse_exploratory_inputs(tmp_path):
         assert json.loads(await s.test_reference())["status"] == "reference_executed"
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize(
+    "original,changed",
+    [
+        ("result = 1\n", "import fractions\nresult = 1\n"),
+        ("import json\nresult = 1\n", "result = 1\n"),
+        ("import json\nresult = 1\n", "import json as renamed\nresult = 1\n"),
+        ("from pathlib import Path\nresult = 1\n", "from pathlib import PurePath\nresult = 1\n"),
+    ],
+)
+def test_source_import_repairs_are_refused_before_execution(tmp_path, original, changed):
+    async def run():
+        remote = FakeRemote()
+        s = SetupSession(
+            prepared=replace(prepared(), baseline=original),
+            remote=remote,
+            root=tmp_path,
+            setup_seconds=60,
+            reference_seconds=10,
+            max_tests=1,
+        )
+        await s.initialize()
+        remote.files["/work/setup/analysis.py"] = changed.encode()
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "candidate_invalid"
+        assert "Analysis imports changed" in result["error"]
+        assert s.last_pass is None
+        assert not any(
+            label.startswith(("setup-", "reference-", "reset-env-")) for label, *_ in remote.events
+        )
+
+    asyncio.run(run())
+
+
+def test_path_adaptation_with_original_imports_is_admitted(tmp_path):
+    from reference_setup import inspect_candidate
+
+    original = "from pathlib import Path\nresult = Path('remote-input.csv')\n"
+    changed = (
+        "# Offline path adaptation\nfrom pathlib import Path\nresult = Path('/inputs/data.csv')\n"
+    )
+    for name, data in FakeRemote().files.items():
+        (tmp_path / Path(name).name).write_bytes(data)
+    (tmp_path / "analysis.py").write_text(changed)
+    _, script, _ = inspect_candidate(tmp_path, replace(prepared(), baseline=original))
+    assert "/inputs/data.csv" in script
 
 
 def successful_outcome(**changes):

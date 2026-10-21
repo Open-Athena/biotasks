@@ -5,6 +5,7 @@ No local scientific execution. Remote I/O and lifecycle are injected by the host
 
 from __future__ import annotations
 
+import ast
 import hashlib
 import json
 import time
@@ -102,7 +103,21 @@ def inspect_candidate(directory: Path, prepared: PreparedReference):
     ):
         raise ValueError("inputs.json requires a files array")
     # Compile only. Runtime evidence and input byte checks come from the sandbox.
-    script, _ = materialize(files["analysis.py"].decode(), prepared.plan)
+    analysis = files["analysis.py"].decode()
+    script, _ = materialize(analysis, prepared.plan)
+
+    def imports(source):
+        return [
+            ast.dump(node, include_attributes=False)
+            for node in ast.walk(ast.parse(source))
+            if isinstance(node, (ast.Import, ast.ImportFrom))
+        ]
+
+    if imports(analysis) != imports(prepared.baseline):
+        raise ValueError(
+            "Analysis imports changed. Install missing dependencies in the environment; "
+            "do not repair source-code imports. Report the original source blocker."
+        )
     hashes = {name: digest(value) for name, value in files.items()}
     return recipe, script, hashes
 

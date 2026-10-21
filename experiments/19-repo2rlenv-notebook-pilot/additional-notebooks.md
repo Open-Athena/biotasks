@@ -31,3 +31,19 @@ infrastructure failures. Preserve any failure; do not substitute a notebook or
 manually repair generated science to obtain success. General factory changes
 motivated by the results require a new recorded revision and separate reruns.
 Two examples provide additional evidence, not broad generalization proof.
+
+## First outcomes and subsequent decision
+
+Both first attempts used `da37f25d` without operator handoffs. MDAnalysis 015
+passed reference execution and fresh replays, then failed specification because
+the provider returned an empty tool response. Preserve this infrastructure failure
+in `autonomous-runs/015`. COBRApy 016 reached construction and returned a blocked
+diagnostic candidate, so its original pipeline outcome was worker decline.
+
+COBRApy's setup worker had repaired a missing source import. The user subsequently
+decided to reject notebooks needing source-code repairs for now. Record that
+source rejection separately from the original run's construction outcome in
+`autonomous-runs/016`. Missing installed dependencies and input/cache staging
+remain setup responsibilities. The general prompt and import-change guard now
+enforce the narrower boundary; neither baseline run was patched or rerun under
+the new policy. Both hosts terminated and owned sandboxes were verified absent.

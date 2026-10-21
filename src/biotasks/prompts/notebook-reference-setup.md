@@ -83,6 +83,8 @@ Keep one small setup directory with these files:
   created by the analysis. Your claims do not substitute for that check.
 - `analysis.py`: the original source with only necessary input/cache/path
   adaptations. Prefer staging the expected paths/caches to changing source.
+  Keep the original import statements and bindings unchanged. Dependency
+  installation belongs in the environment recipe, not in analysis source edits.
   Preserve comments and all scientific computation. Keep the frozen export code
   separate; the controller adds it after the analysis.
 
@@ -109,7 +111,12 @@ blocker. A rejection is an acceptable outcome. Do not modify package code or
 install a replacement package that changes the scientific analysis to rescue it.
 
 Distinguish a missing dependency or cache from a failure of the original
-analysis. Inspect actual errors before changing requirements. Preserve failed
+analysis. An installed package whose name was never imported is a source-code
+defect, not a missing installed dependency. Reject sources requiring missing-import,
+undefined-name or other code repairs; do not add an import or infer hidden kernel
+state to rescue them. Record the original exception and affected statement as the
+blocker. The controller rejects changes to analysis import statements.
+Inspect actual errors before changing requirements. Preserve failed
 trials. An interrupted or uncertain tool result is not permission to launch a
 duplicate operation. Stop when the controller reports exhausted allowances.
 

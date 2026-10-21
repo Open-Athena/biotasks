@@ -1,0 +1,11 @@
+{
+  "decision_date": "2026-10-21",
+  "source_id": "cobrapy-fba",
+  "disposition": "rejected",
+  "basis": "User instructed rejection of notebooks requiring source-code repairs, including missing imports.",
+  "observed_defect": "The original source calls cobra.flux_analysis without binding cobra. The setup worker added import cobra; original worker output is preserved separately.",
+  "original_run_outcome": "rejected at construction (worker_declined); this is a separate, earlier pipeline outcome, not proof that it detected the missing-import policy violation.",
+  "worker_explanation_correction": "Ordinary Jupyter does not automatically bind a package name after a from-import. Hidden prior kernel state is possible but unverified.",
+  "new_factory_policy": "Install missing packages and stage inputs; do not repair source-code imports or other code defects. Analysis import edits are rejected before controlled execution.",
+  "new_policy_rerun_performed": false
+}

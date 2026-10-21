@@ -1,0 +1,13 @@
+{
+  "derive_code": "#!/usr/bin/env python3\nimport argparse\nfrom pathlib import Path\nparser = argparse.ArgumentParser()\nparser.add_argument('--source-inputs', required=True, type=Path)\nparser.add_argument('--reference-dir', required=True, type=Path)\nparser.add_argument('--destination', required=True, type=Path)\nargs = parser.parse_args()\n(args.destination / 'inputs').mkdir(parents=True, exist_ok=True)\n(args.destination / 'reference').mkdir(parents=True, exist_ok=True)\n",
+  "disposition": "blocked",
+  "input_paths": [],
+  "instruction": "Test instruction minimal.",
+  "oracle_code": "#!/usr/bin/env python3\nimport argparse\nfrom pathlib import Path\nparser = argparse.ArgumentParser()\nparser.add_argument('--input-dir', required=True, type=Path)\nparser.add_argument('--output-dir', required=True, type=Path)\nargs = parser.parse_args()\nargs.output_dir.mkdir(parents=True, exist_ok=True)\n(args.output_dir / 'result.csv').write_text('a\\n')\n",
+  "output_paths": [
+    "flux_distributions.csv",
+    "fba_default_shadow_prices.csv",
+    "solution_objective_values.csv"
+  ],
+  "rationale": "Diagnostic minimal candidate to isolate the schema validation failure."
+}
