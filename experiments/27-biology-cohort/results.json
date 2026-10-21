@@ -1,0 +1,154 @@
+{
+  "repos": [
+    {
+      "repo": "biopython/biopython",
+      "preflight_window_count": 11,
+      "bootstrap": [
+        {
+          "repo": "biopython/biopython",
+          "ref": "f68b896031088a8ad11ae49f5e903d49228fd61f",
+          "iterations": 7,
+          "build_time_sec": 259.86,
+          "smoke_passed": false,
+          "verify_passed": false,
+          "verify_detail": "exit=2; lDependencyError: Download and ins...\n!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!!\n========================= 1 warning, 9 errors in 5.58s =========================",
+          "llm_cost_estimate_usd": 0.0,
+          "rebuild_cmds": [
+            "apt-get install -y -qq build-essential git curl ca-certificates",
+            "pip install numpy --quiet",
+            "pip install -e /workspace --quiet",
+            "pip install numpy matplotlib mmtf-python networkx rdflib reportlab scipy igraph pytest --quiet"
+          ],
+          "test_cmds": [
+            "cd /workspace/Tests && python -m pytest -v"
+          ]
+        }
+      ],
+      "native_exit_code": 2,
+      "pre_fix_attempts_logged": 1,
+      "post_fix_attempts_logged": 0,
+      "paired_parse_records": [],
+      "native_export_count": 0,
+      "independently_verified_count": 0,
+      "phase_exit_code": 0
+    },
+    {
+      "repo": "scikit-bio/scikit-bio",
+      "preflight_window_count": 39,
+      "bootstrap": [
+        {
+          "repo": "scikit-bio/scikit-bio",
+          "ref": "2f573b9a9411c3c41465d9abcd41c3ad3a7dc077",
+          "iterations": 10,
+          "build_time_sec": 587.58,
+          "smoke_passed": false,
+          "verify_passed": false,
+          "verify_detail": "exit=2; rrno 2] No such file or directory:...\n!!!!!!!!!!!!!!!!!!! Interrupted: 16 errors during collection !!!!!!!!!!!!!!!!!!!\n============================== 16 errors in 5.13s ==============================",
+          "llm_cost_estimate_usd": 0.0,
+          "rebuild_cmds": [
+            "apt-get update -qq && apt-get install -y gcc g++ make",
+            "pip install numpy cython setuptools",
+            "cd /workspace && python setup.py build_ext --inplace",
+            "pip install -e '.[test]'"
+          ],
+          "test_cmds": [
+            "cd /workspace && python -m pytest -v"
+          ]
+        }
+      ],
+      "native_exit_code": 2,
+      "pre_fix_attempts_logged": 5,
+      "post_fix_attempts_logged": 5,
+      "paired_parse_records": [
+        {
+          "pre_parsed": 2,
+          "post_parsed": 2,
+          "f2p": 0,
+          "p2p": 0
+        },
+        {
+          "pre_parsed": 1,
+          "post_parsed": 1,
+          "f2p": 0,
+          "p2p": 0
+        },
+        {
+          "pre_parsed": 1,
+          "post_parsed": 1,
+          "f2p": 0,
+          "p2p": 0
+        },
+        {
+          "pre_parsed": 1,
+          "post_parsed": 1,
+          "f2p": 0,
+          "p2p": 0
+        }
+      ],
+      "native_export_count": 0,
+      "independently_verified_count": 0,
+      "phase_exit_code": 0
+    },
+    {
+      "repo": "scverse/anndata",
+      "preflight_window_count": 28,
+      "bootstrap": [
+        {
+          "repo": "scverse/anndata",
+          "ref": "1ec7ba8a9e44ee1eb9fe6756e01ee542666272f8",
+          "iterations": 12,
+          "build_time_sec": 968.79,
+          "smoke_passed": false,
+          "verify_passed": false,
+          "verify_detail": "exit=124; t_backed_raw_subset[slice_int_subset-single_subset-csr_array] PASSED [  3%]\ntests/test_backed_hdf5.py::test_backed_raw_subset[spmatrix_bool_subset-spmatrix_bool_subset-csr_matrix] [timeout after 300s]",
+          "llm_cost_estimate_usd": 0.0,
+          "rebuild_cmds": [
+            "apt-get install -y python3.13 python3.13-dev python3.13-venv",
+            "python3.13 -m venv /workspace/.venv",
+            "/workspace/.venv/bin/pip install --upgrade pip -q",
+            "cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e '.[dask,lazy]' -q",
+            "/workspace/.venv/bin/pip install pytest pytest-xdist pytest-mock pytest-randomly awkward boltons filelock joblib jsonschema matplotlib openpyxl pooch pyarrow scikit-learn fast-array-utils -q"
+          ],
+          "test_cmds": [
+            ". /workspace/.venv/bin/activate && cd /workspace && python -m pytest -v"
+          ]
+        }
+      ],
+      "native_exit_code": 0,
+      "pre_fix_attempts_logged": 5,
+      "post_fix_attempts_logged": 4,
+      "paired_parse_records": [
+        {
+          "pre_parsed": 3070,
+          "post_parsed": 3070,
+          "f2p": 3,
+          "p2p": 2455
+        },
+        {
+          "pre_parsed": 1750,
+          "post_parsed": 348,
+          "f2p": 173,
+          "p2p": 175
+        },
+        {
+          "pre_parsed": 394,
+          "post_parsed": 283,
+          "f2p": 0,
+          "p2p": 184
+        },
+        {
+          "pre_parsed": 1,
+          "post_parsed": 18,
+          "f2p": 0,
+          "p2p": 0
+        }
+      ],
+      "native_export_count": 2,
+      "independently_verified_count": 0,
+      "phase_exit_code": 124
+    }
+  ],
+  "native_exports": 2,
+  "independently_verified_tasks": 0,
+  "interpretation": "Two native exports, no independently verified tasks within the recorded bound. Do not infer no usable tasks among all 78 preflight PRs: two repositories aborted and one export was never independently replayed."
+}

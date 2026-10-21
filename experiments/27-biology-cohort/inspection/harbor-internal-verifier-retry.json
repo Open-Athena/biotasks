@@ -1,0 +1,8 @@
+{
+  "wheel_version": "0.6.6",
+  "wheel_sha256": "30477bf698d6853d6c4bb76d85aec85e1e95190ad3a6e4bf4730435926007652",
+  "path": "harbor/trial/trial.py",
+  "module_sha256": "3cd6cd879c2ccda62c283aa85951f372480e1ada616c57a679bfd4f08bff0515",
+  "lines_395_400": "    @retry(\n        reraise=True,\n        stop=stop_after_attempt(2),\n        wait=wait_exponential(multiplier=1, min=1, max=10),\n        retry=retry_if_exception_type(VerifierTimeoutError),\n    )",
+  "interpretation": "Harbor -r 0 disables trial retries, but the released runtime independently retries VerifierTimeoutError once. The single nop trial therefore spent about 601 seconds in verification for two 300-second attempts. No manual retry or source edit was made. This corrects the original blanket statement that all automatic retries were disabled."
+}

@@ -1,0 +1,28 @@
+{
+  "image_digest": "sha256:679daacdf806b98ad594e22a9becbe0bac8e3ef20f62203508a80aecc1570f3f",
+  "image_tag": "local/r2e-bootstrap/scverse__anndata:1ec7ba8a9e44",
+  "language": "python",
+  "repo": "scverse/anndata",
+  "ref": "1ec7ba8a9e44ee1eb9fe6756e01ee542666272f8",
+  "rebuild_cmds": [
+    "apt-get install -y python3.13 python3.13-dev python3.13-venv",
+    "python3.13 -m venv /workspace/.venv",
+    "/workspace/.venv/bin/pip install --upgrade pip -q",
+    "cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e '.[dask,lazy]' -q",
+    "/workspace/.venv/bin/pip install pytest pytest-xdist pytest-mock pytest-randomly awkward boltons filelock joblib jsonschema matplotlib openpyxl pooch pyarrow scikit-learn fast-array-utils -q"
+  ],
+  "test_cmds": [
+    ". /workspace/.venv/bin/activate && cd /workspace && python -m pytest -v"
+  ],
+  "smoke_passed": false,
+  "iterations": 12,
+  "build_time_sec": 968.79,
+  "llm_provider": "openrouter/anthropic/claude-sonnet-4.6",
+  "llm_cost_estimate_usd": 0.0,
+  "dockerfile_reconstruction": "# Auto-generated from r2e-bootstrap agent transcript.\n# Build from the cloned repo root: `docker build -t my-image .`\nFROM python:3.12-slim\nWORKDIR /workspace\nCOPY . /workspace\n\nRUN ls /workspace && cat /workspace/pyproject.toml | head -100\nRUN cat /workspace/pyproject.toml | tail -100\nRUN python --version && cat /workspace/pyproject.toml | grep -A 50 \"test-min\"\nRUN apt-get update -qq && apt-get install -y -qq git build-essential curl ca-certificates software-properties-common 2>/dev/null | tail -5\nRUN apt-get install -y python3.13 python3.13-dev python3.13-venv 2>&1 | tail -10\nRUN python3.13 --version && python3.13 -m venv /workspace/.venv && /workspace/.venv/bin/pip install --upgrade pip -q\nRUN cd /workspace && HATCH_VCS_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e \".[dask,lazy]\" -q 2>&1 | tail -20\nRUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install -e \".[dask,lazy]\" -q 2>&1 | tail -20\nRUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/pip install pytest pytest-xdist pytest-mock pytest-randomly awkward boltons filelock joblib jsonschema matplotlib openpyxl pooch pyarrow scikit-learn fast-array-utils -q 2>&1 | tail -10\nRUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 /workspace/.venv/bin/python -m pytest --collect-only -q 2>&1 | head -50\nRUN cd /workspace && /workspace/.venv/bin/python -m pytest --collect-only -q 2>&1 | tail -10\n",
+  "transcript_path": "/work/bootstrap/scverse__anndata/1ec7ba8a9e44__74ba7084/transcript.jsonl",
+  "pushed_to_registry": false,
+  "verify_passed": false,
+  "verify_detail": "exit=124; t_backed_raw_subset[slice_int_subset-single_subset-csr_array] PASSED [  3%]\ntests/test_backed_hdf5.py::test_backed_raw_subset[spmatrix_bool_subset-spmatrix_bool_subset-csr_matrix] [timeout after 300s]",
+  "extra": {}
+}

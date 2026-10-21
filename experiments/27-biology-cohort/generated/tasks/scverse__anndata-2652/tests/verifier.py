@@ -1,0 +1,654 @@
+"""In-container verifier for pr_runtime tasks (graded F2P/P2P reward).
+
+This module is the **standalone verifier** that runs inside the task's
+Docker container, NOT a helper used at generation time. It is read as
+source at generation time, base64-encoded, and embedded into
+``tests/test.sh``. At run time the container decodes it back to a file
+and invokes it after the test suite has run.
+
+Why a graded reward instead of binary pass/fail
+------------------------------------------------
+SWE-bench resolution is binary: a patch "resolves" the issue iff ALL
+FAIL_TO_PASS tests pass AND ALL PASS_TO_PASS tests still pass. That's
+the right signal for an eval leaderboard, but a terrible gradient for
+RL training — an agent that fixes 4 of 5 failing tests scores the same
+0.0 as one that fixes nothing.
+
+So this verifier emits BOTH:
+  * /logs/verifier/reward.txt  — the GRADED scalar (training signal,
+        which Harbor reads):  reward = f2p_rate * p2p_factor
+  * /logs/verifier/reward-details.json — carries the strict SWE-bench
+        ``resolved`` bool (eval signal) PLUS the full breakdown.
+
+Refs: SWE-bench (F2P/P2P semantics), SWE-RL / SWE-Gym (dense reward for
+RL), UTBoost (weak-test coverage lets wrong patches pass — hence we
+record p2p_count so consumers can judge regression-guard strength).
+
+Scoring
+-------
+Given the baked FAIL_TO_PASS / PASS_TO_PASS test-name lists (computed by
+the generation-time two-stage validation) and the agent-run test log:
+
+  f2p_rate   = (# F2P tests now PASSED) / (# F2P tests)
+  p2p_rate   = (# P2P tests still PASSED) / (# P2P tests)   [1.0 if no P2P]
+  p2p_factor = p2p_rate          # regressions scale the reward down
+  reward     = f2p_rate * p2p_factor
+  resolved   = (all F2P pass) AND (all P2P pass)            # strict SWE-bench
+
+Oracle invariant: the gold patch flips every F2P and keeps every P2P,
+so f2p_rate=1.0, p2p_rate=1.0 -> reward=1.0 and resolved=True. This is
+what the T3 oracle gate (reward == 1.0) relies on.
+
+Graceful degradation: if the log can't be parsed into per-test
+statuses (unrecognized runner output), fall back to the exit-code
+reward (1.0 if the suite exited 0, else 0.0) and stamp
+``parse_status="fallback_exitcode"`` — never crash, never silently
+zero out a real fix.
+
+Pure stdlib — uses only ``argparse``, ``json``, ``os``, ``re``, ``sys``.
+The 4 per-runner parsers are condensed ports of
+``repo2rlenv.log_parsers.*`` kept in lockstep via the unit tests under
+``tests/test_pr_runtime_verifier.py``.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import re
+import sys
+
+# Canonical statuses. (Plain strings — no typing.Literal so the baked
+# module stays import-light when decoded standalone in the container.)
+PASSED = "PASSED"
+FAILED = "FAILED"
+SKIPPED = "SKIPPED"
+ERROR = "ERROR"
+
+# ---------------------------------------------------------------------------
+# Per-runner log parsers (condensed ports of repo2rlenv.log_parsers.*)
+# ---------------------------------------------------------------------------
+
+_PYTEST_STATUSES = (PASSED, FAILED, SKIPPED, ERROR)
+# Keep these patterns in sync with log_parsers/pytest_parser.py. This module
+# also runs standalone inside task containers, without a repo2rlenv install.
+_PYTEST_PROGRESS = (
+    r"\[\s*\d+%\]|\[\s*\d+\s*/\s*\d+\s*\]"
+    r"|\d+(?:\.\d+)?(?:us|ms|s)|\d+m \d+s|\d+h \d+m"
+)
+_PYTEST_VERBOSE_RE = re.compile(
+    r"^(?P<name>.+?(?:\[.*?\])?)\s+(?P<status>PASSED|FAILED|SKIPPED|ERROR)"
+    rf"(?:\s+\(.*\))?(?:\s+(?:{_PYTEST_PROGRESS}))?$"
+)
+_PYTEST_SUMMARY_NAME_RE = re.compile(r"^(?P<name>.+?(?:\[.*?\])?)(?: - .*)?$")
+# pytest-xdist worker label, e.g. `[gw1] [ 20%] PASSED tests/foo.py::test_x`.
+_PYTEST_XDIST_PREFIX_RE = re.compile(rf"^\[gw\d+\]\s+(?:(?:{_PYTEST_PROGRESS})\s+)?")
+
+
+def parse_pytest(log: str) -> dict[str, str]:
+    """{test_name -> status} from pytest output (verbose or summary)."""
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    for raw in log.split("\n"):
+        line = raw.strip()
+        if not line:
+            continue
+        line = _PYTEST_XDIST_PREFIX_RE.sub("", line, count=1)
+        # Summary lines (STATUS first), preserving the full node ID.
+        leading = None
+        for st in _PYTEST_STATUSES:
+            if line.startswith(st + " ") or line == st:
+                leading = st
+                break
+        if leading is not None:
+            work = line[len(leading) :].strip()
+            # unittest's `FAILED (failures=1)` footer is a count, not a node ID.
+            if work.startswith("(") and work.endswith(")"):
+                continue
+            if leading == SKIPPED and re.match(r"^\[\d+\](?:\s|$)", work):
+                # Folded skips report a file location, not a parametrized ID.
+                tokens = work.split(maxsplit=2)
+                if len(tokens) < 2:
+                    continue
+                out[tokens[1]] = leading
+            elif m := _PYTEST_SUMMARY_NAME_RE.match(work):
+                out[m.group("name")] = leading
+            continue
+        # Verbose progress (NAME first, STATUS after)
+        # Filter non-test output before attempting the backtracking regex.
+        head = line.split(None, 1)[0]
+        if "::" not in head and not head.endswith(".py"):
+            continue
+        m = _PYTEST_VERBOSE_RE.match(line)
+        if m:
+            name = m.group("name")
+            if "::" in name or name.endswith(".py"):
+                out[name] = m.group("status")
+    return out
+
+
+# Keep these patterns in sync with log_parsers/unittest_parser.py.
+_UT_NAME_RE = re.compile(r"^(?P<method>[^\s()]+) \((?P<dotted>[\w.]+)\)(?: .+)?$")
+_UT_BLOCK_RE = re.compile(r"^(?P<status>FAIL|ERROR):\s+(?P<name>.+?)\s*$")
+_UT_STATUS = {
+    "ok": PASSED,
+    "FAIL": FAILED,
+    "ERROR": ERROR,
+    "expected failure": PASSED,
+    "unexpected success": FAILED,
+}
+
+
+# Subtests report under the parent's identity, worst status first, because a
+# repaired run prints only `parent ... ok`.
+_UT_RANK = {SKIPPED: 0, PASSED: 1, FAILED: 2, ERROR: 3}
+
+
+def _ut_canonical(method: str, dotted: str) -> str:
+    return dotted if dotted.endswith(f".{method}") else f"{dotted}.{method}"
+
+
+def _ut_record(out: dict[str, str], name: str, status: str) -> None:
+    if name in out and _UT_RANK[out[name]] >= _UT_RANK[status]:
+        return
+    out[name] = status
+
+
+def _ut_status(tail: str) -> str | None:
+    text = tail.strip()
+    if not text:
+        return None
+    if text.startswith("skipped"):
+        return SKIPPED
+    return _UT_STATUS.get(text)
+
+
+def parse_unittest(log: str) -> dict[str, str]:
+    """{test_name -> status} from `python -m unittest -v` / Django output.
+
+    A docstring pushes the status onto the line after the name, and subtest
+    failures report on their own indented line while the parent prints none.
+    """
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    pending: str | None = None
+    for raw in log.split("\n"):
+        line = raw.rstrip()
+        claimed, pending = pending, None
+        if not line.strip():
+            continue
+        head, sep, tail = line.strip().rpartition(" ... ")
+        if sep:
+            m = _UT_NAME_RE.match(head)
+            if m:
+                status = _ut_status(tail)
+                if status is not None:
+                    _ut_record(out, _ut_canonical(m["method"], m["dotted"]), status)
+            elif claimed is not None:
+                status = _ut_status(tail)
+                if status is not None:
+                    _ut_record(out, claimed, status)
+            continue
+        m = _UT_NAME_RE.match(line.strip())
+        if m:
+            pending = _ut_canonical(m["method"], m["dotted"])
+            continue
+        m = _UT_BLOCK_RE.match(line)
+        if m:
+            name = _UT_NAME_RE.match(m["name"])
+            if name:
+                _ut_record(
+                    out, _ut_canonical(name["method"], name["dotted"]), _UT_STATUS[m["status"]]
+                )
+    return out
+
+
+_GO_TEST_RE = re.compile(r"^\s*---\s+(?P<status>PASS|FAIL|SKIP):\s+(?P<name>\S+)")
+_GO_STATUS = {"PASS": PASSED, "FAIL": FAILED, "SKIP": SKIPPED}
+
+
+def parse_go_test(log: str) -> dict[str, str]:
+    """{test_name -> status} from `go test -v` output."""
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    for raw in log.split("\n"):
+        m = _GO_TEST_RE.match(raw)
+        if m:
+            out[m.group("name")] = _GO_STATUS[m.group("status")]
+    return out
+
+
+# Keep these patterns in sync with log_parsers/cargo_parser.py.
+_CARGO_TEST_RE = re.compile(r"^test\s+(?P<name>\S.*?) \.\.\. (?P<status>ok|FAILED|ignored)\b")
+_CARGO_MODE_RE = re.compile(r" - (?:should panic|compile fail|compile)$")
+_CARGO_DOCTEST_RE = re.compile(r"^(?P<file>\S+) - (?:(?P<item>.+?) )?\(line \d+\)$")
+_CARGO_STATUS = {"ok": PASSED, "FAILED": FAILED, "ignored": SKIPPED}
+_CARGO_DOCTEST_RANK = {SKIPPED: 0, PASSED: 1, FAILED: 2}
+
+
+def parse_cargo_test(log: str) -> dict[str, str]:
+    """{test_name -> status} from `cargo test` output.
+
+    Test modes (` - should panic`) are dropped from names, and doctests are
+    keyed without their `(line N)` so line shifts don't change identity; the
+    worst status among an item's doctests wins.
+    """
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    for raw in log.split("\n"):
+        m = _CARGO_TEST_RE.match(raw)
+        if not m:
+            continue
+        name = _CARGO_MODE_RE.sub("", m.group("name")).rstrip()
+        status = _CARGO_STATUS[m.group("status")]
+        doctest = _CARGO_DOCTEST_RE.match(name)
+        if doctest:
+            item = doctest.group("item")
+            name = f"{doctest.group('file')} - {item}" if item else doctest.group("file")
+            if name in out and _CARGO_DOCTEST_RANK[out[name]] > _CARGO_DOCTEST_RANK[status]:
+                continue
+        out[name] = status
+    return out
+
+
+# Keep these patterns in sync with log_parsers/cargo_parser.py.
+_NEXTEST_RE = re.compile(
+    r"^\s*(?P<status>[A-Z][A-Z0-9 +/-]*?) \[\s*(?:(?P<running>>)?\s*\d+(?:\.\d+)?s)?\s*\] "
+    r"(?:\[\d+/\d+\] )?(?:\((?:\s*\d+/\d+|[-─]+)\) )?(?P<name>\S+ \S.*?)\s*$"
+)
+_NEXTEST_PASSED_RE = re.compile(
+    r"PASS|LEAK|TIMEOUT-PASS|SLOW|SLOW \+ LEAK|SLOW\+TMPASS|FLAKY \d+/\d+"
+    r"|TRY \d+ (?:PASS|LEAK|TMPASS)"
+)
+_NEXTEST_FAILED_RE = re.compile(
+    r"FAIL|FAIL \+ LEAK|LEAK-FAIL|TIMEOUT|XFAIL|ABORT|ABORT SIG \d+|SIG[A-Z0-9]+|FLKY-FL \d+/\d+"
+    r"|TRY \d+ (?!START$|SLOW$|TRMNTG$)(?:[A-Z0-9+]+|SIG \d+)"
+)
+
+
+def parse_cargo_nextest(log: str) -> dict[str, str]:
+    """{"binary-id test::name" -> status} from `cargo nextest run` output.
+
+    Lines still in progress (`SLOW [> 60.000s]`) are skipped; on retries the
+    last line for a test wins.
+    """
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    for raw in log.split("\n"):
+        m = _NEXTEST_RE.match(_ANSI_RE.sub("", raw))
+        if not m or m.group("running"):
+            continue
+        status = m.group("status")
+        if status == "SKIP":
+            out[m.group("name")] = SKIPPED
+        elif _NEXTEST_PASSED_RE.fullmatch(status):
+            out[m.group("name")] = PASSED
+        elif _NEXTEST_FAILED_RE.fullmatch(status):
+            out[m.group("name")] = FAILED
+    return out
+
+
+_JEST_FILE_RE = re.compile(r"^ ?(?:PASS|FAIL)\s+(?:\S+\s+)*?(?P<path>\S+\.[mc]?[jt]sx?)(?=\s|$)")
+_JEST_FILE_MARKER_RE = re.compile(_JEST_FILE_RE.pattern, re.MULTILINE)
+_JEST_TEST_RE = re.compile(
+    r"^(?P<indent>\s*)(?P<glyph>✓|√|✕|×|✗|○|◯)\s+(?P<name>.+?)(?:\s+\(\d+(?:\.\d+)?\s*m?s\))?$"
+)
+_JEST_GLYPH = {
+    "✓": PASSED,
+    "√": PASSED,
+    "✕": FAILED,
+    "×": FAILED,
+    "✗": FAILED,
+    "○": SKIPPED,
+    "◯": SKIPPED,
+}
+# Keep these patterns in sync with log_parsers/jest_parser.py.
+_ANSI_RE = re.compile(r"\x1b\[[0-9;?]*[A-Za-z]")
+_VITEST_MARKER_RE = re.compile(r"^\s*(?:RUN\s+v\d+\.\d+|Test Files\s+\d)", re.MULTILINE)
+_VITEST_TEST_RE = re.compile(
+    r"^\s*(?P<glyph>[✓×↓□]) (?:\|(?P<project>[^|]+)\| | (?P<label>\S+)  )?"
+    r"(?P<name>\S+ > .+?)(?P<duration> \d{1,9}ms)?"
+    r"(?: \(retry x\d{1,9}\))?(?: \(repeat x\d{1,9}\))?(?: \d{1,9} MB heap used)?(?: \[[^\[\]]*\])?$"
+)
+# ✔ is log-symbols' check mark, which jest never prints; √ is ambiguous (both
+# use it on Windows), so a √-only log is recognized by mocha's epilogue.
+_MOCHA_MARKER_RE = re.compile(r"^\s*(?:\d+ passing \(|✔ )", re.MULTILINE)
+_MOCHA_EPILOGUE_RE = re.compile(r"^\s*\d+ passing \(")
+_MOCHA_FAILING_RE = re.compile(r"^\s*(?P<count>\d+) failing\b")
+_MOCHA_TEST_RE = re.compile(
+    r"^(?P<indent>\s*)(?:(?P<passed>[✔✓√])|(?P<failed>\d+\))|(?P<pending>-))\s"
+    r"(?P<name>\S.*?)(?:\s\(\d{1,9}\s?ms\))?$"
+)
+_VITEST_STATUS = {"✓": PASSED, "×": FAILED, "↓": SKIPPED, "□": SKIPPED}
+
+
+def _parse_mocha(log: str) -> dict[str, str]:
+    """{test_name -> status} from mocha's spec reporter (no file header)."""
+    out: dict[str, str] = {}
+    suites: list[tuple[int, str]] = []
+    in_epilogue = False
+    failures_left = 0
+    for raw in log.split("\n"):
+        line = raw.rstrip()
+        stripped = line.lstrip()
+        if not stripped:
+            continue
+        indent = len(line) - len(stripped)
+        if _MOCHA_EPILOGUE_RE.match(line):
+            in_epilogue, failures_left = True, 0
+            continue
+        if in_epilogue:
+            failing = _MOCHA_FAILING_RE.match(line)
+            if failing:
+                failures_left = int(failing.group("count"))
+                continue
+        m = _MOCHA_TEST_RE.match(line)
+        if m:
+            if in_epilogue:
+                if m.group("failed") and indent == 2 and failures_left > 0:
+                    failures_left -= 1
+                    continue
+                in_epilogue = False
+            status = PASSED if m.group("passed") else FAILED if m.group("failed") else SKIPPED
+            describes = [title for ind, title in suites if ind < indent]
+            out[" > ".join([*describes, m.group("name")])] = status
+            continue
+        if indent >= 2:
+            suites = [(i, t) for i, t in suites if i < indent]
+            suites.append((indent, stripped))
+    return out
+
+
+def _parse_vitest(log: str) -> dict[str, str]:
+    """{test_name -> status} from vitest `--reporter=verbose` lines only."""
+    out: dict[str, str] = {}
+    for raw in log.split("\n"):
+        m = _VITEST_TEST_RE.match(raw.rstrip())
+        if not m:
+            continue
+        glyph, name = m.group("glyph"), m.group("name")
+        if glyph in "↓□" and m.group("duration"):
+            name += m.group("duration")
+        project = m.group("project") or m.group("label")
+        out[f"|{project}| {name}" if project else name] = _VITEST_STATUS[glyph]
+    return out
+
+
+def parse_jest(log: str) -> dict[str, str]:
+    """{test_name -> status} from Jest / Mocha / Vitest output."""
+    out: dict[str, str] = {}
+    if not log:
+        return out
+    log = _ANSI_RE.sub("", log)
+    if _VITEST_MARKER_RE.search(log):
+        return _parse_vitest(log)
+    if _MOCHA_MARKER_RE.search(log) and not _JEST_FILE_MARKER_RE.search(log):
+        return _parse_mocha(log)
+    current_file: str | None = None
+    describe_stack: list[tuple[int, str]] = []
+    last_test_indent: int | None = None
+    for raw in log.split("\n"):
+        line = raw.rstrip()
+        if not line:
+            continue
+        m = _JEST_FILE_RE.match(line)
+        if m:
+            current_file = m.group("path")
+            describe_stack = []
+            last_test_indent = None
+            continue
+        m = _JEST_TEST_RE.match(line)
+        if m:
+            indent = len(m.group("indent"))
+            name = re.sub(r"^(?:skipped|todo):\s*", "", m.group("name").strip())
+            describes = [d for ind, d in describe_stack if ind < indent]
+            parts = ([current_file] if current_file else []) + describes + [name]
+            out[" > ".join(parts)] = _JEST_GLYPH[m.group("glyph")]
+            last_test_indent = indent
+            continue
+        stripped = line.lstrip()
+        if not stripped or stripped.startswith(
+            ("Tests:", "Test Suites:", "Snapshots:", "Time:", "Ran all", "●", "→", "✗:")
+        ):
+            continue
+        indent_here = len(line) - len(stripped)
+        if current_file and (last_test_indent is None or indent_here < last_test_indent):
+            describe_stack = [(i, d) for i, d in describe_stack if i < indent_here]
+            describe_stack.append((indent_here, stripped))
+    return out
+
+
+def _detect_runner(test_cmds: str) -> str:
+    joined = test_cmds.lower()
+    if "pytest" in joined:
+        return "pytest"
+    if re.search(r"\bunittest\b|manage\.py\s+test\b|runtests\.py", joined):
+        return "unittest"
+    if re.search(r"\bgo\s+test\b", joined):
+        return "go"
+    if re.search(r"\bcargo\s+nextest\b", joined):
+        return "nextest"
+    if re.search(r"\bcargo\s+test\b", joined):
+        return "cargo"
+    if any(k in joined for k in ("jest", "mocha", "vitest", "npm test", "yarn test", "pnpm test")):
+        return "jest"
+    return "unknown"
+
+
+def parse_logs(runner: str, log: str) -> dict[str, str]:
+    """Dispatch to the right per-runner parser. Empty dict if unknown."""
+    if runner == "pytest":
+        return parse_pytest(log)
+    if runner == "unittest":
+        return parse_unittest(log)
+    if runner == "go":
+        return parse_go_test(log)
+    if runner == "cargo":
+        return parse_cargo_test(log)
+    if runner == "nextest":
+        return parse_cargo_nextest(log)
+    if runner == "jest":
+        return parse_jest(log)
+    return {}
+
+
+# ---------------------------------------------------------------------------
+# Grading
+# ---------------------------------------------------------------------------
+def _has_go_parent(name: str, status_map: dict[str, str]) -> bool:
+    """Return True if a Go test has an ancestor represented in the status map."""
+    parts = name.split("/")
+
+    for i in range(1, len(parts)):
+        parent = "/".join(parts[:i])
+        if status_map.get(parent) == FAILED:
+            return True
+
+    return False
+
+
+def grade(
+    fail_to_pass: list[str],
+    pass_to_pass: list[str],
+    status_map: dict[str, str],
+    runner: str | None = None,
+) -> dict:
+    """Compute the graded reward + strict resolved bool from a status map.
+
+    f2p_rate   = (# F2P now PASSED) / (# F2P)
+    p2p_rate   = (# P2P still PASSED) / (# P2P)   [1.0 when no P2P]
+    reward     = f2p_rate * p2p_rate                       (dense training signal)
+    resolved   = all F2P pass AND all P2P pass   (SWE-bench TRACKED resolution —
+                 the gold patch always satisfies this, preserving the oracle
+                 invariant)
+
+    Two distinct EVAL signals (see the audit's "tracked vs command resolved"):
+      * `resolved`         — tracked resolution (above). Gold patch -> True.
+      * `command_resolved` — stricter: tracked resolution AND the selected test
+                             command had NO failures outside F2P/P2P AND exit
+                             code 0. Computed in main() where the exit code is
+                             known. A benchmark that wants "the whole command
+                             passed cleanly" gates on this; SWE-bench-style
+                             scoring uses `resolved`.
+
+    `untracked_failed` are FAILED tests in the run that are neither F2P nor
+    P2P (e.g. always-failing/flaky tests pulled in by running a whole test
+    file). They don't change the graded `reward` or tracked `resolved`, but
+    they block `command_resolved` and are recorded for transparency.
+    """
+    f2p_total = len(fail_to_pass)
+    p2p_total = len(pass_to_pass)
+    f2p_set = set(fail_to_pass)
+    p2p_set = set(pass_to_pass)
+    f2p_passed = sum(1 for t in fail_to_pass if status_map.get(t) == PASSED)
+    p2p_passed = sum(1 for t in pass_to_pass if status_map.get(t) == PASSED)
+    # Tests that should have stayed green but regressed (PASS->not-pass).
+    regressions = [t for t in pass_to_pass if status_map.get(t) != PASSED]
+
+    # FAILED tests outside the tracked sets — the selected command isn't clean.
+    if runner == "go":
+        failed_tests = {
+            t
+            for t, s in status_map.items()
+            if s == FAILED and t not in f2p_set and t not in p2p_set
+        }
+
+        untracked_failed = sorted(t for t in failed_tests if not _has_go_parent(t, status_map))
+    else:
+        untracked_failed = sorted(
+            t
+            for t, s in status_map.items()
+            if s == FAILED and t not in f2p_set and t not in p2p_set
+        )
+
+    f2p_rate = (f2p_passed / f2p_total) if f2p_total else 0.0
+    p2p_rate = (p2p_passed / p2p_total) if p2p_total else 1.0
+    reward = f2p_rate * p2p_rate
+    resolved = f2p_total > 0 and f2p_passed == f2p_total and p2p_passed == p2p_total
+
+    return {
+        "reward": round(max(0.0, min(1.0, reward)), 6),
+        "resolved": resolved,
+        "f2p_total": f2p_total,
+        "f2p_passed": f2p_passed,
+        "f2p_rate": round(f2p_rate, 6),
+        "p2p_total": p2p_total,
+        "p2p_passed": p2p_passed,
+        "p2p_rate": round(p2p_rate, 6),
+        "regressions": sorted(regressions),
+        "untracked_failed_count": len(untracked_failed),
+        "untracked_failed": untracked_failed[:20],  # cap the list
+    }
+
+
+# ---------------------------------------------------------------------------
+# Entry point (invoked by tests/test.sh inside the container)
+# ---------------------------------------------------------------------------
+
+
+def _read_json_list(path: str) -> list[str]:
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return [str(x) for x in data] if isinstance(data, list) else []
+    except (OSError, ValueError):
+        return []
+
+
+def _read_text(path: str) -> str:
+    try:
+        with open(path, encoding="utf-8") as f:
+            return f.read()
+    except (OSError, UnicodeDecodeError):
+        return ""
+
+
+def main(argv: list[str] | None = None) -> int:
+    p = argparse.ArgumentParser(description="pr_runtime graded F2P/P2P verifier")
+    p.add_argument("--log", required=True, help="captured test-run log file")
+    p.add_argument("--f2p", required=True, help="JSON file: FAIL_TO_PASS test names")
+    p.add_argument("--p2p", required=True, help="JSON file: PASS_TO_PASS test names")
+    p.add_argument(
+        "--runner", default="", help="pytest|unittest|go|cargo|nextest|jest (else auto-detect)"
+    )
+    p.add_argument("--test-cmds", default="", help="test command string (runner auto-detect)")
+    p.add_argument("--exit-code", type=int, default=1, help="test suite exit code (fallback)")
+    p.add_argument("--out-dir", default="/logs/verifier", help="where to write reward.{txt,json}")
+    args = p.parse_args(argv)
+
+    log = _read_text(args.log)
+    f2p = _read_json_list(args.f2p)
+    p2p = _read_json_list(args.p2p)
+    runner = args.runner.strip() or _detect_runner(args.test_cmds)
+
+    status_map = parse_logs(runner, log)
+
+    if not status_map:
+        # Unparseable runner output → fall back to the binary exit-code reward
+        # (a coarse TRAINING signal) so we never silently zero a real fix on an
+        # unrecognized format. But `resolved` is the strict EVAL signal: without
+        # parsed per-test status we have NO evidence the declared FAIL_TO_PASS
+        # tests passed, so when an F2P oracle exists we must NOT claim resolved.
+        # (resolved stays exit-code-based only when there's no declared oracle,
+        # e.g. --skip-validation.)
+        reward = 1.0 if args.exit_code == 0 else 0.0
+        has_oracle = len(f2p) > 0
+        resolved = (args.exit_code == 0) and not has_oracle
+        breakdown = {
+            "reward": reward,
+            "resolved": resolved,
+            "command_resolved": bool(resolved and args.exit_code == 0),
+            "parse_status": "fallback_exitcode",
+            "eval_trustworthy": not has_oracle,
+            "runner": runner,
+            "f2p_total": len(f2p),
+            "p2p_total": len(p2p),
+            "exit_code": args.exit_code,
+        }
+    else:
+        breakdown = grade(f2p, p2p, status_map, runner)
+        breakdown["parse_status"] = "ok"
+        breakdown["runner"] = runner
+        breakdown["tests_parsed"] = len(status_map)
+        breakdown["exit_code"] = args.exit_code
+        # Strict eval signal: tracked resolution AND a clean command (no
+        # untracked failures, exit code 0). Benchmarks wanting "the whole test
+        # command passed" gate on this; SWE-bench-style scoring uses `resolved`.
+        breakdown["command_resolved"] = bool(
+            breakdown["resolved"]
+            and breakdown["untracked_failed_count"] == 0
+            and args.exit_code == 0
+        )
+        reward = breakdown["reward"]
+
+    os.makedirs(args.out_dir, exist_ok=True)
+    with open(os.path.join(args.out_dir, "reward.txt"), "w", encoding="utf-8") as f:
+        f.write(f"{reward:.6f}\n")
+    with open(os.path.join(args.out_dir, "reward-details.json"), "w", encoding="utf-8") as f:
+        json.dump(breakdown, f, indent=2)
+
+    print(json.dumps(breakdown, indent=2))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
+
+
+__all__ = [
+    "grade",
+    "main",
+    "parse_cargo_nextest",
+    "parse_cargo_test",
+    "parse_go_test",
+    "parse_jest",
+    "parse_logs",
+    "parse_pytest",
+    "parse_unittest",
+]

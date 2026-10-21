@@ -1,0 +1,20 @@
+diff --git a/docs/release-notes/2652.fix.md b/docs/release-notes/2652.fix.md
+new file mode 100644
+index 000000000..54fe09b55
+--- /dev/null
++++ b/docs/release-notes/2652.fix.md
+@@ -0,0 +1 @@
++Raise an {class}`IndexError` for float index arrays where only some values are non-integers, instead of truncating them {user}`haeganm`
+diff --git a/src/anndata/_core/index.py b/src/anndata/_core/index.py
+index 2044e57da..af249c15c 100644
+--- a/src/anndata/_core/index.py
++++ b/src/anndata/_core/index.py
+@@ -193,7 +193,7 @@ def _from_array(
+         # if it is a float array or something along those lines, convert it to integers
+         if XArrayDtype.Float(indexer):
+             indexer_int = xp.astype(indexer, xp.int64)
+-            if xp.all((indexer - indexer_int) != 0):
++            if xp.any((indexer - indexer_int) != 0):
+                 msg = f"Indexer {indexer!r} has floating point values."
+                 raise IndexError(msg)
+             return indexer_int
