@@ -3004,3 +3004,15 @@ defect or scientific execution. Setup cleanup and fresh ownership inventory
 confirm no remaining sandboxes. Preserved first outcome in autonomous-runs/018.
 No new campaign or repair was launched. User is discussing whether to improve
 the MDAnalysis comparison-conflict recovery path; no change adopted yet.
+
+## 2026-10-21: ten-notebook development panel proposal
+
+User preferred about ten diverse development notebooks. Drafted a panel retaining
+Scanpy, Bioframe, MDAnalysis and PyRadiomics, plus source-inspected Pyteomics,
+matchms, NeuroKit HRV, COBRApy deletions, SGKit relatedness and PyHMMER MSA/HMM
+examples. All ten source identities/hash checks are in development-panel-proposal.json.
+Three new sources convert under profile v4; three expose literal %cd or benign
+cell-tag gaps. No new package/model/scientific execution or paid resource launch.
+Candidate selection is a draft; source/data admission and full resource fit remain
+unverified for the six additions. R stays deferred. Existing broken COBRApy FBA
+remains separate evidence/control, not a silently replaced baseline.

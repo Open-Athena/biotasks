@@ -1,0 +1,26 @@
+# Ten-notebook development panel — draft
+
+Keep four studied cases and add six complementary analyses from tool repositories or their official tutorials. This is a proposed development panel, not ten proven runnable tasks or a representative sample. R support remains deferred.
+
+| # | Domain | Pinned notebook / source analysis | Current screening |
+| --- | --- | --- | --- |
+| 1 | Transcriptomics | [scverse/scanpy](https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb) — Preprocessing, clustering and marker-gene analysis | Existing operator-assisted pilot |
+| 2 | Regulatory genomics | [open2c/bioframe](https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb) — TF motif assignment to ChIP-seq peaks | Autonomous run 014 validated |
+| 3 | Molecular dynamics | [MDAnalysis/UserGuide](https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb) — Domain RMSD trajectories and weighting variants | Generated timing-contract conflict in 017 |
+| 4 | Medical imaging | [AIM-Harvard/pyradiomics](https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb) — Radiomic features from brain images and masks | Input-staging controller failure in 018 |
+| 5 | Proteomics | [levitsky/pyteomics](https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb) — Search-engine PSM filtering and result comparison | Needs literal %cd conversion support |
+| 6 | Metabolomics | [matchms/matchms-docs](https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb) — Spectral processing and cosine/modified-cosine comparisons | Converts; runtime unmeasured |
+| 7 | Physiology | [neuropsychology/NeuroKit](https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb) — Time-, frequency- and nonlinear-domain heart-rate variability | Needs presentation-tag handling |
+| 8 | Metabolic systems biology | [opencobra/cobrapy](https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb) — Single and double metabolic gene/reaction deletions | Needs empty-tag handling |
+| 9 | Statistical genetics | [sgkit-dev/sgkit](https://github.com/sgkit-dev/sgkit/blob/a8bc952b6a0b85e156e1bc826597922448ffd078/docs/examples/relatedness_tutorial.ipynb) — Pedigree, genomic and hybrid relationship matrices | Converts; dense-matrix resource fit unmeasured |
+| 10 | Protein sequence analysis | [althonos/pyhmmer](https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb) — Build a profile HMM from an alignment and search protein sequences | Converts; execution untested |
+
+Every notebook source was inspected and SHA-256 checked. The [manifest](development-panel-proposal.json) records exact revisions, hashes, input lineage, screening caveats and existing outcomes. Three of the six new sources convert under the current profile; three have explicit intake gaps. No new model calls, scientific runs or paid resources were used for this proposal. External input datasets for the new candidates have not been downloaded or cleared for redistribution.
+
+Before freezing the panel, check external input availability and address general conversion gaps. Pyteomics has a literal `%cd`; NeuroKit has a documentation-only `remove-input` tag; COBRApy has empty tag lists. Preserve execution of all scientific code. SGKit needs a dense-matrix resource check, matchms computes all-pairs spectral similarities on a roughly 39 MB source library, and PyHMMER adds profile-HMM and domain-table serialization. These are screening questions, not evidence that sources are broken.
+
+Freeze the chosen sources before a campaign, then run the same factory version across the panel in parallel within reserved capacity and the existing aggregate budget. Keep current per-campaign resource/time/network limits. Record source rejections, conversion gaps, infrastructure failures, generated-candidate defects, validated tasks and solver results separately. Preserve first outcomes and document any fundamental-suitability substitutions; do not replace notebooks just to increase success rates.
+
+Task objectives, endpoint selection, scientific grading and repairs remain GLM-worker responsibilities through version-controlled prompts. The table describes existing source analyses, not manually prescribed tasks. Factory fixes must stay general. The broken COBRApy FBA notebook remains a separate rejection control outside these ten; the deletions notebook does not overwrite its evidence.
+
+A separate holdout can be selected after development is frozen; it is outside this proposal. No ten-notebook campaign is launched or newly funded by this draft.
