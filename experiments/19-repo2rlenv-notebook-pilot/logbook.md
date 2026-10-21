@@ -3231,3 +3231,5 @@ Hash-verified staged-input manifests from 024/025 identify the actual inputs bef
 ### 2026-10-21 — Remaining autonomous evidence gaps prepared
 
 Prepared fresh PyRadiomics 030 and newer-Scanpy 031 configurations using the original retained sources and identical task policy. PyRadiomics 018's staging failure still needs a live rerun; the operator-assisted Scanpy release does not establish autonomous execution from its seed. These are existing panel members, with no new seed selection, method constraints or manual scientific edits. Neither follow-up is reserved or submitted. Build and compare immutable payloads before launch; preserve previous failures and published pilots separately.
+
+Both follow-up payloads built through the existing launcher at `cb6dd2793330579c7fdb1b5cb0c29329426c6f73`. Hash comparison verified the same 165 runtime files as active 024/025, with only the selected original source/seed inputs different. No new model/scientific execution or cloud resources; checks are in `development-panel-followup-payloads.json`.
