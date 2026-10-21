@@ -2848,3 +2848,17 @@ tests cover deletion/rename, no-op and crashing scripts in preflight and grading
 modes; all 52 grading tests pass. The prompt encourages batched inspection and
 deterministic selectors, and avoids duplicate preflight work without reducing
 coverage. These changes contain no seed-specific methods or values.
+
+## 2026-10-21 — first unattended native validation
+
+Campaign 014 completed every stage from the original notebook with zero operator
+interventions. All 13 scientific controls passed, review accepted packaging,
+Harbor oracle/no-op rewards were 1/0, and the blind GLM solver scored 1. Pipeline
+elapsed time was 60 minutes 35 seconds; solver execution was 3 minutes 37 seconds.
+The host terminated successfully and a fresh complete ownership inventory found
+no stage or native trial sandboxes. Preserve receipts in `autonomous-runs/014`.
+
+This proves one autonomous successful execution on a known development seed,
+without manual generated-task edits or prior generated artifacts. It does not
+establish held-out generality. A new Hub release and promotion of the complete
+runner remain outstanding; PR #23 stays draft and unmerged.

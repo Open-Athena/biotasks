@@ -1,0 +1,866 @@
+[
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the multiset of fully parsed rows (peak coordinates, peak_fc and the strongest-motif annotation, with empty and -1 no-motif sentinels treated as equal) equals the reference multiset, counting multiplicity",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      }
+    },
+    "kind": "reference",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the required output table 'ctcf_peaks_with_strongest_motif_clean.tsv' was not found in the submission directory; accepted locations are ctcf_peaks_with_strongest_motif_clean.tsv or outputs/ctcf_peaks_with_strongest_motif_clean.tsv",
+            "passed": false
+          },
+          {
+            "id": "row_values_valid",
+            "message": "not evaluated: the output table could not be read or does not have the required structure (see output_table_structure)",
+            "passed": false
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {},
+      "submission_sha256": {}
+    },
+    "kind": "empty",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the multiset of fully parsed rows (peak coordinates, peak_fc and the strongest-motif annotation, with empty and -1 no-motif sentinels treated as equal) equals the reference multiset, counting multiplicity",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      }
+    },
+    "kind": "recomputed",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the multiset of fully parsed rows (peak coordinates, peak_fc and the strongest-motif annotation, with empty and -1 no-motif sentinels treated as equal) equals the reference multiset, counting multiplicity",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "1c66466e334644996d1f854d06fbea1a29920b62f0acd686c97896a5b5796dbb"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "1c66466e334644996d1f854d06fbea1a29920b62f0acd686c97896a5b5796dbb"
+      }
+    },
+    "kind": "alternative",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the required output table 'ctcf_peaks_with_strongest_motif_clean.tsv' was not found in the submission directory; accepted locations are ctcf_peaks_with_strongest_motif_clean.tsv or outputs/ctcf_peaks_with_strongest_motif_clean.tsv",
+            "passed": false
+          },
+          {
+            "id": "row_values_valid",
+            "message": "not evaluated: the output table could not be read or does not have the required structure (see output_table_structure)",
+            "passed": false
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {},
+      "submission_sha256": {}
+    },
+    "kind": "missing",
+    "omitted": "ctcf_peaks_with_strongest_motif_clean.tsv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "data rows: 40557 fields per row now: 10\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the header must be exactly the nine columns ['peak_chrom', 'peak_start', 'peak_end', 'peak_fc', 'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand'] in this order; found ['', 'peak_chrom', 'peak_start', 'peak_end', 'peak_fc', 'motif_chrom', 'motif_start', 'motif_end', 'motif_pval', 'motif_strand']",
+            "passed": false
+          },
+          {
+            "id": "row_values_valid",
+            "message": "not evaluated: the output table could not be read or does not have the required structure (see output_table_structure)",
+            "passed": false
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "b10897c0118b26fea1cd9b023556cd3cd0e49d98c39f72777955cb5757ece135"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "b10897c0118b26fea1cd9b023556cd3cd0e49d98c39f72777955cb5757ece135"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "output_table_structure"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "peak_chrom\tpeak_start\tpeak_end\tpeak_fc\tmotif_chrom\tmotif_start\tmotif_end\tmotif_pval\tmotif_strand"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t48309541\t48309911\t5.04924\t\t\t\t-1.0\t"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-structure-index-column",
+      "rationale": "A table exported without suppressing the DataFrame row index is a highly plausible submission shape, but the contract explicitly fails an exported row-index column (extra column, ragged vs the nine named columns). This control prepends an unnamed index column to the header and a sequential integer index to every data row, copying every other cell verbatim, so the row values themselves stay correct and only the column layout can reject it.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: structural defect (exported row-index column).\n\nA table exported without suppressing the row index (e.g. pandas\n``df.to_csv(path, sep=\"\\\\t\")``) is a plausible submission shape, but the\ncontract requires exactly the nine named columns with no extra column, \"in\nparticular an exported row-index column\". This control rewrites the table with\nan unnamed leading index column on the header and a sequential integer index on\nevery data row; all other cell content is copied verbatim, so every nine-field\nrow value itself stays correct and only the structure can reject it.\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\nheader, rows = lines[0], lines[1:]\nassert len(header.split(\"\\t\")) == 9, header\nassert rows, \"no data rows\"\n\nout = [\"\\t\".join([\"\"] + header.split(\"\\t\"))]\nfor i, line in enumerate(rows):\n    assert line, \"unexpected blank line\"\n    out.append(\"\\t\".join([str(i)] + line.split(\"\\t\")))\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join(out) + \"\\n\")\nprint(\"data rows:\", len(rows), \"fields per row now:\", out[1].count(\"\\t\") + 1)\nassert out[1].split(\"\\t\")[0] == \"0\"\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "defective rows touched: 22 total rows: 40557\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "14 of 40557 data row(s) violate the typed value conventions; first issue(s): data row 1: the motif block is partially populated (empty: motif_strand); it must be fully populated, or fully empty with motif_pval -1 or empty | data row 2: peak_fc '-5.05052' is not strictly positive | data row 3: the motif block is partially populated (empty: motif_strand); it must be fully populated, or fully empty with motif_pval -1 or empty | data row 4: peak_fc 'NaN' is not a finite number | data row 5: the motif block is partially populated (empty: motif_strand); it must be fully populated, or fully empty with motif_pval -1 or empty",
+            "passed": false
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "not evaluated: the submission table did not pass the structural or typed value requirements (see output_table_structure and row_values_valid)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "21c908b5ff85a36f3fba1ad2264b4d0bde20820185754ec443180fac5b1ddb77"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "21c908b5ff85a36f3fba1ad2264b4d0bde20820185754ec443180fac5b1ddb77"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "row_values_valid",
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t48309541\t48309911\t5.04924\t\t\t\t-1.0\t"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr4\t130563716\t130564086\t5.05052\t\t\t\t-1.0\t"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr5\t97297262\t97297632\t5.28668\tchr5\t97297309\t97297328\t410.0\t-"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-row-typed-values",
+      "rationale": "Typed-schema defects on otherwise parseable rows: (a) ten no-motif rows get motif_pval \"0\" instead of the sanctioned -1/empty sentinel; (b) five of those get a populated motif block with an empty strand, leaving a partially populated block; (c) five chr4 rows get a negated (negative) peak_fc; (d) two chr5 rows get peak_fc NaN and inf. Row count and all unmodified rows are untouched, so only the row-value checks (and the row multiset comparison once those rows are rejected) can fail.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: typed-value defects on otherwise parseable rows.\n\nRow count, peak coordinates and motif intervals of unmodified rows are kept;\nonly the documented rows are corrupted:\n  * the first ten no-motif rows get motif_pval \"0\" instead of the sanctioned\n    -1 sentinel (an internally inconsistent no-motif encoding);\n  * the first ten no-motif rows alternatively keep that defect and, on five of\n    them, a populated motif block with an empty strand (partially populated\n    block);\n  * the first five chr4 rows get a negative peak_fc (zero/negative peak_fc is\n    a failed row);\n  * the first two chr5 rows get fc \"NaN\" and \"inf\" (nonfinite numbers are\n    failed rows).\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\nheader, rows = lines[0], [ln.split(\"\\t\") for ln in lines[1:]]\n\nchanged = 0\n\n# sentinel confusion on no-motif rows\npicks = [r for r in rows if not r[4]][:10]\nassert len(picks) == 10, len(picks)\nfor r in picks:\n    r[7] = \"0\"\n    changed += 1\n\n# partially populated motif block on the first five of those rows\nfor r in picks[:5]:\n    s = int(r[1])\n    r[4] = r[0]\n    r[5] = str(s)\n    r[6] = str(s + 19)\n    # r[7] stays \"0\"; strand left empty\n    assert r[8] == \"\"\n    changed += 1\n\n# negative peak_fc on chr4 rows (typed-value failure)\npicks = [r for r in rows if r[0] == \"chr4\"][:5]\nassert len(picks) == 5, len(picks)\nfor r in picks:\n    r[3] = \"-\" + r[3]\n    changed += 1\n\n# nonfinite peak_fc on chr5 rows (NaN / inf are failed rows)\npicks = [r for r in rows if r[0] == \"chr5\"][:2]\nassert len(picks) == 2, len(picks)\nfor r, bad in zip(picks, (\"NaN\", \"inf\")):\n    r[3] = bad\n    changed += 1\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join([header] + [\"\\t\".join(r) for r in rows]) + \"\\n\")\nprint(\"defective rows touched:\", changed, \"total rows:\", len(rows))\nassert changed == 22\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "rows changed: 2 total rows: 40557\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the retained peak intervals differ from the reference: 2 reference interval occurrence(s) are missing from the submission; 2 submission interval occurrence(s) never occur in the reference; example submission-only intervals: chr1:90434472-90434805, chr17:65556566-65556707; interval multiplicity is counted, so removed peaks, wrong trims or splits and duplicated, dropped or shifted intervals all count as mismatches.",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the parsed rows differ from the reference: 2 reference row occurrence(s) missing and 2 submission row occurrence(s) unmatched. 2 distinct unmatched submission row(s) lie on intervals that never occur in the reference at all. example unmatched submission row(s): chr17:65556566-65556707 peak_fc=251.42215 [motif chr17:65556567-65556586 pval=695 strand='-']; chr1:90434472-90434805 peak_fc=11.96016 [motif chr1:90434675-90434694 pval=406 strand='+'].",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "fb6f96bf8866980c177627e6395ea97ec818a349256cd52dddc4af63f80cce15"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "fb6f96bf8866980c177627e6395ea97ec818a349256cd52dddc4af63f80cce15"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "retained_peak_intervals",
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr17\t65556624\t65556707\t251.42215\tchr17\t65556567\t65556586\t695.0\t-"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr1\t90434472\t90434842\t11.96016\tchr1\t90434675\t90434694\t406.0\t+"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-blacklist-trim",
+      "rationale": "Blacklist-subtraction arithmetic defects that change only peak coordinates: the chr17 row 65556624-65556707 is the retained sub-interval whose assigned motif (chr17 65556567-65556586) lies entirely upstream of the retained material - the visible trace of a peak trimmed by the 1 kb-padded blacklist - and its peak_start is moved upstream to just before the motif, reinstating material the padded blacklist must remove (under-aggressive filter); the chr1 row 90434472-90434842 has peak_end shrunk by 37 bp, removing material that must be retained (over-aggressive filter). peak_fc, row count and motif annotations are unchanged.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: blacklist subtraction arithmetics on retained intervals.\n\nTwo failures of the peak-trimming step are applied, changing only peak\ncoordinates (peak_fc, row count and motif annotations are untouched):\n\n  * the chr17 row 65556624-65556707 is the only retained sub-interval whose\n    assigned motif (chr17 65556567-65556586) lies entirely upstream of the\n    retained material - i.e. the visible trace of a peak that was trimmed by\n    the 1 kb-padded blacklist. Its peak_start is moved upstream to the motif\n    boundary minus one, reinstating peak material the padded blacklist must\n    remove (an under-aggressive filter).\n  * the chr1 row 90434472-90434842 has its peak_end shrunk by 37 bp, removing\n    peak material that must be retained (an over-aggressive filter).\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\ndef toint(s):\n    return int(float(s))\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\nheader, rows = lines[0], [ln.split(\"\\t\") for ln in lines[1:]]\nassert header.split(\"\\t\")[0] == \"peak_chrom\", header\n\nchanged = 0\nfor r in rows:\n    if r[0] == \"chr17\" and r[1] == \"65556624\" and r[2] == \"65556707\":\n        # reinstate removed upstream material: extend to just before the motif\n        new_start = toint(r[5]) - 1\n        assert 0 <= new_start < toint(r[2]), \"invalid new start\"\n        r[1] = str(new_start)\n        changed += 1\n    elif r[0] == \"chr1\" and r[1] == \"90434472\" and r[2] == \"90434842\":\n        new_end = toint(r[2]) - 37\n        assert toint(r[1]) < new_end, \"invalid new end\"\n        r[2] = str(new_end)\n        changed += 1\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join([header] + [\"\\t\".join(r) for r in rows]) + \"\\n\")\nprint(\"rows changed:\", changed, \"total rows:\", len(rows))\nassert changed == 2, \"expected both blacklist defects to be applied\"\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "total rows: 40556\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40556 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40556 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the retained peak intervals differ from the reference: 3 reference interval occurrence(s) are missing from the submission; 2 submission interval occurrence(s) never occur in the reference; example submission-only intervals: chr1:108877078-108877448, chr19:770301-771530; interval multiplicity is counted, so removed peaks, wrong trims or splits and duplicated, dropped or shifted intervals all count as mismatches.",
+            "passed": false
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the parsed rows differ from the reference: 3 reference row occurrence(s) missing and 2 submission row occurrence(s) unmatched. 2 distinct unmatched submission row(s) lie on intervals that never occur in the reference at all. example unmatched submission row(s): chr19:770301-771530 peak_fc=160.13998 [motif chr19:770417-770436 pval=808 strand='+']; chr1:108877078-108877448 peak_fc=5.12519 [motif chr1:108877020-108877039 pval=500 strand='+'].",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "1d1d91e68b2f97dad390825380b2c153d5fc60a756930a412eaf8ee45b14bdda"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "1d1d91e68b2f97dad390825380b2c153d5fc60a756930a412eaf8ee45b14bdda"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "retained_peak_intervals",
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t770301\t770546\t160.13998\tchr19\t770417\t770436\t808.0\t+"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t771358\t771530\t90.31837\tchr19\t771407\t771426\t436.0\t+"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr2\t130356160\t130356530\t5.18574\tchr2\t130356163\t130356182\t566.0\t+"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr1\t108877017\t108877387\t5.12519\tchr1\t108877020\t108877039\t500.0\t+"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-split-and-row-count",
+      "rationale": "Interval-set/row-count defects from a mis-split blacklist subtraction: the two adjacent chr19 retained intervals 770301-770546 and 771358-771530 (gap 812 bp - one of 2352 adjacent retained pairs with gap under 2 kb) are replaced by a single merged row spanning both, keeping the first row's fc and motif annotation; the chr2 retained sub-interval 130356160-130356530 is dropped entirely (a peak wrongly removed); and an extra plausible chr1 row (the first chr1 motif row shifted by 61 bp, with the source row's fc and motif annotation) is inserted, duplicating peak material. Every remaining row stays fully valid.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: peak splitting / row counting.\n\nThree interval-set defects that keep every remaining row fully valid:\n  * the two adjacent chr19 retained intervals 770301-770546 and 771358-771530\n    are replaced by a single merged row 770301-771530 with the first row's fc\n    and motif annotation (modelling a blacklist subtraction that failed to\n    remove the material between the two peaks);\n  * the chr2 retained sub-interval 130356160-130356530 is dropped (a peak\n    wrongly removed by the padded blacklist);\n  * a plausible extra row is added for chr1 108877017-108877387 + 61 bp (the\n    first chr1 motif row of the reference table), carrying that source row's fc\n    and motif annotation unchanged: peak material that the rules emit once,\n    emitted twice.\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\ndef toint(s):\n    return int(float(s))\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\nheader, rows = lines[0], [ln.split(\"\\t\") for ln in lines[1:]]\n\n# 1: merge two adjacent chr19 intervals\nai = bi = None\nfor i, r in enumerate(rows):\n    if r[0] == \"chr19\" and r[1] == \"770301\" and r[2] == \"770546\":\n        ai = i\n    elif r[0] == \"chr19\" and r[1] == \"771358\" and r[2] == \"771530\":\n        bi = i\nassert ai is not None and bi is not None and ai != bi, (ai, bi)\na, b = rows[ai], rows[bi]\nassert toint(a[2]) <= toint(b[1]), \"expected an ordered, non-overlapping pair\"\nmerged = list(a)\nmerged[2] = b[2]\nrows[ai] = merged\ndel rows[bi]\n\n# 2: drop the chr2 retained sub-interval\nbefore = len(rows)\nrows = [r for r in rows if not (r[0] == \"chr2\" and r[1] == \"130356160\" and r[2] == \"130356530\")]\nassert len(rows) == before - 1, \"expected exactly one dropped row\"\n\n# 3: add an extra plausible row (shifted duplicate of an existing chr1 row)\nsrc = None\nfor r in rows:\n    if r[0] == \"chr1\" and r[4]:\n        src = r\n        break\nassert src is not None\nnew = list(src)\nnew[1] = str(toint(src[1]) + 61)\nnew[2] = str(toint(src[2]) + 61)\nassert toint(new[1]) < toint(new[2])\nidx = rows.index(src)\nrows.insert(idx + 1, new)\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join([header] + [\"\\t\".join(r) for r in rows]) + \"\\n\")\nprint(\"total rows:\", len(rows))\nassert len(rows) == before - 1 + 1, \"unexpected row count\"\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "rows changed: 17\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the parsed rows differ from the reference: 16 reference row occurrence(s) missing and 16 submission row occurrence(s) unmatched. 16 distinct unmatched submission row(s) lie on intervals that do occur in the reference, so their peak_fc or motif annotation differs; for 16 of them the peak_fc itself occurs in the reference for that interval, pointing at the motif annotation. example unmatched submission row(s): chr1:108877017-108877387 peak_fc=5.12519 [motif chr1:16007228-16007247 pval=447 strand='-']; chr1:150972098-150972468 peak_fc=5.8881 [motif chr1:150972255-150972274 pval=422 strand='-']; chr1:16007235-16007605 peak_fc=6.31113 [motif chr1:108877020-108877039 pval=493 strand='+'].",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "3b5110b0c317d9f448a61cdc2090e649a42b9ee68ccb1cfa86ff0f44b7deb452"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "3b5110b0c317d9f448a61cdc2090e649a42b9ee68ccb1cfa86ff0f44b7deb452"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr1\t108877017\t108877387\t5.12519\tchr1\t108877020\t108877039\t500.0\t+"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr2\t130356160\t130356530\t5.18574\tchr2\t130356163\t130356182\t566.0\t+"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr3\t66816327\t66816697\t5.08233\tchr3\t66816332\t66816351\t741.0\t-"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "wrong-motif-annotation",
+      "rationale": "Strongest-motif assignment defects with peak coordinates, peak_fc and row count all unchanged: (1) motif_pval lowered by 7 (with a fallback to 1/0 for small values) on the five earliest chr1 motif rows - a wrong maximum; (2) the assigned motif interval of the five earliest chr2 motif rows shifted by one motif width - the wrong instance among the overlapping candidates (maximum/tie-break or file-order confusion); (3) motif strand flipped on the five earliest chr3 motif rows; (4) the motif blocks of two far-apart chr1 peaks swapped - a cross-peak annotation mix-up. Every mutated row still satisfies the typed schema, so only the annotation comparison can reject it.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: strongest-motif assignment errors.\n\nFour independent annotation defects, all leaving peak coordinates, peak_fc and\nrow count identical so only the annotation comparison can reject them:\n\n  1. motif_pval lowered on the five earliest chr1 motif rows (wrong maximum).\n  2. the assigned motif interval of the five earliest chr2 motif rows is\n     shifted by one motif width - the wrong instance among the overlapping\n     candidates (tie-break / file-order confusion).\n  3. the motif strand is flipped on the five earliest chr3 motif rows.\n  4. the motif annotations of two far-apart chr1 peaks are swapped (a\n     cross-peak annotation mix-up).\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\ndef check_block(r):\n    assert int(r[5]) < int(r[6]), r\n    pv = float(r[7])\n    assert pv == int(pv) and pv >= 0, r\n    assert r[8] in (\"+\", \"-\"), r\n    assert r[4] == r[0], r\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\nheader, rows = lines[0], [ln.split(\"\\t\") for ln in lines[1:]]\n\nchanged = 0\n\n# 1: lower motif_pval (wrong maximum)\npicks = [r for r in rows if r[0] == \"chr1\" and r[4]][:5]\nassert len(picks) == 5, len(picks)\nfor r in picks:\n    check_block(r)\n    pv = int(float(r[7]))\n    nv = pv - 7 if pv >= 7 else (1 if pv >= 1 else 0)\n    r[7] = str(nv)\n    check_block(r)\n    assert int(float(r[7])) != pv\n    changed += 1\n\n# 2: wrong instance among overlapping candidates (interval shifted by width)\npicks = [r for r in rows if r[0] == \"chr2\" and r[4]][:5]\nassert len(picks) == 5, len(picks)\nfor r in picks:\n    check_block(r)\n    w = int(r[6]) - int(r[5])\n    r[5] = str(int(r[5]) + w)\n    r[6] = str(int(r[6]) + w)\n    check_block(r)\n    changed += 1\n\n# 3: flipped strand\npicks = [r for r in rows if r[0] == \"chr3\" and r[4]][:5]\nassert len(picks) == 5, len(picks)\nfor r in picks:\n    check_block(r)\n    r[8] = \"+\" if r[8] == \"-\" else \"-\"\n    check_block(r)\n    changed += 1\n\n# 4: cross-peak annotation swap on chr1\ncand = [r for r in rows if r[0] == \"chr1\" and r[4]]\na = cand[10]\nb = None\nfor r in cand:\n    if abs(int(r[1]) - int(a[1])) > 1000000:\n        b = r\n        break\nassert b is not None, \"need a far-apart chr1 pair\"\ncheck_block(a)\ncheck_block(b)\nblock_a = a[4:9]\na[4:9] = b[4:9]\nb[4:9] = block_a\ncheck_block(a)\ncheck_block(b)\nchanged += 2\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join([header] + [\"\\t\".join(r) for r in rows]) + \"\\n\")\nprint(\"rows changed:\", changed)\nassert changed == 17\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "data rows: 40557 rounded fc values: 81\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the parsed rows differ from the reference: 81 reference row occurrence(s) missing and 81 submission row occurrence(s) unmatched. 81 distinct unmatched submission row(s) lie on intervals that do occur in the reference, so their peak_fc or motif annotation differs; for 0 of them the peak_fc itself occurs in the reference for that interval, pointing at the motif annotation. example unmatched submission row(s): chr10:15661023-15661393 peak_fc=22.379 [no-motif sentinel]; chr10:67306569-67306939 peak_fc=48.699 [motif chr10:67306760-67306779 pval=605 strand='-']; chr10:94280130-94280427 peak_fc=298.793 [motif chr10:94280269-94280288 pval=618 strand='+'].",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "dee17387a3a597ca5f60ed64c712d2f4d2eaf6d094fcf1ae369d4560f6f0926a"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "dee17387a3a597ca5f60ed64c712d2f4d2eaf6d094fcf1ae369d4560f6f0926a"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t48309541\t48309911\t5.04924\t\t\t\t-1.0\t"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr1\t241485905\t241486275\t5.1603\tchr1\t241485892\t241485911\t693.0\t-"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "wrong-fc-rounding",
+      "rationale": "peak_fc is a copied value compared by parsed floating-point value with no tolerance; a rounded rendering parses to a different number and must fail. This control re-renders the peak_fc of a deterministic sample of rows (every 500th data row, index 17 mod 500) rounded to 3 decimals - 81 of the 40557 rows change, all drawn from 5-decimal source values such as 5.04924 or 4-decimal values such as 5.1603. Row count, peak coordinates and motif annotations are untouched, so only the peak_fc comparison can reject it.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Wrong-result control: peak_fc is a copied value compared with no tolerance.\n\nThe contract states peak_fc is copied unchanged from the source peak record and\ncompared by parsed value with no tolerance, so a rounded rendering parses to a\ndifferent number and must fail. This control re-renders the peak_fc of a\ndeterministic sample of rows (every 500th data row, index 17 mod 500) rounded to\n3 decimals, keeping row count, peak coordinates and motif annotations untouched,\nso only the peak_fc comparison can reject it.\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\nHEADER_FC = \"peak_fc\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    lines = f.read().split(\"\\n\")\nif lines and lines[-1] == \"\":\n    lines = lines[:-1]\n\nheader = lines[0]\nassert header.split(\"\\t\")[3] == HEADER_FC, header\n\nout = [header]\nchanged = 0\ntotal = 0\nfor i, line in enumerate(lines[1:]):\n    if not line:\n        continue\n    fields = line.split(\"\\t\")\n    assert len(fields) == 9, i\n    total += 1\n    if i % 500 == 17:\n        fc = fields[3]\n        rounded = \"%.3f\" % float(fc)\n        if rounded != fc:\n            fields[3] = rounded\n            changed += 1\n    out.append(\"\\t\".join(fields))\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join(out) + \"\\n\")\nprint(\"data rows:\", total, \"rounded fc values:\", changed)\nassert changed > 0, \"expected at least one value that changes under rounding\"\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "rows written: 40557 no-motif rows switched to empty pval: 5765\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the multiset of fully parsed rows (peak coordinates, peak_fc and the strongest-motif annotation, with empty and -1 no-motif sentinels treated as equal) equals the reference multiset, counting multiplicity",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "e56c4f6aba5d81516117de961102af5c41f01271df6eca42b46f2a051f4e9a8e"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "e56c4f6aba5d81516117de961102af5c41f01271df6eca42b46f2a051f4e9a8e"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "output_table_structure",
+        "row_values_valid",
+        "retained_peak_intervals",
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "peak_chrom\tpeak_start\tpeak_end\tpeak_fc\tmotif_chrom\tmotif_start\tmotif_end\tmotif_pval\tmotif_strand"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t48309541\t48309911\t5.04924\t\t\t\t-1.0\t"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr1\t108877017\t108877387\t5.12519\tchr1\t108877020\t108877039\t500.0\t+"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "valid-representation-freedoms",
+      "rationale": "Representation freedoms the contract explicitly grants, with no value or association change, verified locally to leave the parsed row multiset identical to the reference: rows shuffled (row order is entirely free; comparison is as multisets counting multiplicity); integer-valued motif_pval re-rendered as a plain integer (450.0 -> 450); the no-motif sentinel, here encoded as -1.0, switched row by row to an empty motif_pval (empty and -1 are the same value and both encodings are sanctioned row by row); peak_fc re-rendered with one extra trailing decimal zero (5.04924 -> 5.049240), which parses to the same number; and the trailing newline dropped (a single trailing newline is optional).",
+      "script": "#!/usr/bin/env python3\n\"\"\"Valid representation alternative: freedoms the contract explicitly grants.\n\n  * row order shuffled (row order is entirely free; comparison is as multisets),\n  * integer-valued motif_pval re-rendered as a plain integer (450.0 -> 450),\n  * the no-motif sentinel re-rendered row by row: an empty motif_pval is\n    sanctioned (\"empty also accepted\"), and empty and -1 are the same value, so\n    every other no-motif row is switched between the two encodings,\n  * peak_fc re-rendered with one extra trailing decimal zero (5.04924 ->\n    5.049240), which parses to the same number,\n  * the trailing newline is dropped (a single trailing newline is optional).\n\nNo value or association changes: the multiset of intervals and the multiset of\nparsed complete rows are identical to the reference.\n\"\"\"\nimport os\nimport random\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\npath = find_path()\nwith open(path, encoding=\"utf-8\") as f:\n    text = f.read()\nif text.endswith(\"\\n\"):\n    text = text[:-1]\nlines = text.split(\"\\n\")\nheader, rows = lines[0], [ln.split(\"\\t\") for ln in lines[1:]]\nassert len(rows) > 0\n\nswapped = 0\nfor i, r in enumerate(rows):\n    pv = r[7]\n    if r[4]:\n        # assigned motif: integer-valued pval re-rendered as a plain integer\n        try:\n            iv = int(float(pv))\n        except ValueError:\n            continue\n        if float(pv) == iv:\n            r[7] = str(iv)\n    else:\n        # no-motif: alternate the two sanctioned encodings row by row\n        r[7] = \"\" if r[7] != \"\" else \"-1\"\n        if r[7] == \"\":\n            swapped += 1\n    fc = r[3]\n    if \".\" in fc and \"e\" not in fc.lower():\n        r[3] = fc + \"0\"\n\nrng = random.Random(20241031)\nrng.shuffle(rows)\n\nwith open(path, \"w\", encoding=\"utf-8\", newline=\"\") as f:\n    f.write(\"\\n\".join([header] + [\"\\t\".join(r) for r in rows]))\nprint(\"rows written:\", len(rows), \"no-motif rows switched to empty pval:\", swapped)\nassert len(rows) > 0 and swapped > 0\n"
+    }
+  },
+  {
+    "candidate_sha256": "d0e7cd95bfe4a3a88c677f77f63f371cad10913e3a6bde415f1e0c3be47340a1",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "moved to outputs/ctcf_peaks_with_strongest_motif_clean.tsv bytes: 2548061\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "output_table_structure",
+            "message": "the output table parses as UTF-8 tab-separated text with the required nine-column header and 40557 data row(s), each with exactly 9 tab-separated fields",
+            "passed": true
+          },
+          {
+            "id": "row_values_valid",
+            "message": "all 40557 data row(s) parse into the typed schema and satisfy the per-row rules (0 <= peak_start < peak_end, strictly positive finite peak_fc, an all-or-nothing motif block on the peak chromosome with motif_end > motif_start, nonnegative integer motif_pval, strand in {+,-}, and the -1/empty no-motif sentinel)",
+            "passed": true
+          },
+          {
+            "id": "retained_peak_intervals",
+            "message": "the multiset of retained peak sub-intervals (peak_chrom, peak_start, peak_end) equals the reference multiset, counting multiplicity",
+            "passed": true
+          },
+          {
+            "id": "peak_fc_and_motif_annotation",
+            "message": "the multiset of fully parsed rows (peak coordinates, peak_fc and the strongest-motif annotation, with empty and -1 no-motif sentinels treated as equal) equals the reference multiset, counting multiplicity",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "outputs/ctcf_peaks_with_strongest_motif_clean.tsv": "b27221fb400e7055bdf1cb9410b5ec372cc56829870f3396a2496492c7b179dd"
+      },
+      "submission_before": {
+        "ctcf_peaks_with_strongest_motif_clean.tsv": "97283ee1bda0ce0c99606564d88c3f10c6a727b596f4087a16bd03764203c882"
+      },
+      "submission_sha256": {
+        "outputs/ctcf_peaks_with_strongest_motif_clean.tsv": "b27221fb400e7055bdf1cb9410b5ec372cc56829870f3396a2496492c7b179dd"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "output_table_structure",
+        "row_values_valid",
+        "retained_peak_intervals",
+        "peak_fc_and_motif_annotation"
+      ],
+      "evidence": [
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "peak_chrom\tpeak_start\tpeak_end\tpeak_fc\tmotif_chrom\tmotif_start\tmotif_end\tmotif_pval\tmotif_strand"
+        },
+        {
+          "path": "/work/reference/ctcf_peaks_with_strongest_motif_clean.tsv",
+          "quote": "chr19\t48309541\t48309911\t5.04924\t\t\t\t-1.0\t"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "valid-location-and-crlf",
+      "rationale": "Location and line-ending freedoms: the graded file is accepted \"directly in your output directory or under outputs/\", and LF or CRLF line endings (including mixed usage) with an optional single trailing newline are both acceptable. This control moves the table from the output-directory root into outputs/ (removing the root copy, so only one graded file exists) and rewrites it with CRLF line endings; the parsed content is otherwise the same records.",
+      "script": "#!/usr/bin/env python3\n\"\"\"Valid representation alternative: file location and line endings.\n\nThe contract accepts the graded file \"directly in your output directory or\nunder outputs/\" and allows LF or CRLF line endings with an optional single\ntrailing newline. This control moves the table into outputs/ (creating the\ndirectory next to the staged copy) and rewrites it with CRLF endings; the\ncontent itself is unchanged.\n\"\"\"\nimport os\nimport sys\n\nNAME = \"ctcf_peaks_with_strongest_motif_clean.tsv\"\n\n\ndef find_path():\n    for c in sys.argv[1:] or [NAME]:\n        if os.path.exists(c):\n            return c\n    for base in (\"/case/submission\", \".\", \"outputs\"):\n        c = os.path.join(base, NAME)\n        if os.path.exists(c):\n            return c\n    raise SystemExit(\"output table not found\")\n\n\nsrc = find_path()\nroot = os.path.dirname(os.path.abspath(src))\noutdir = os.path.join(root, \"outputs\")\nos.makedirs(outdir, exist_ok=True)\nwith open(src, \"rb\") as f:\n    data = f.read()\ntext = data.decode(\"utf-8\").replace(\"\\r\\n\", \"\\n\")\nif not text.endswith(\"\\n\"):\n    text += \"\\n\"\npayload = text.replace(\"\\n\", \"\\r\\n\").encode(\"utf-8\")\ndst = os.path.join(outdir, NAME)\nwith open(dst, \"wb\") as f:\n    f.write(payload)\nos.remove(src)\nprint(\"moved to\", os.path.relpath(dst, root), \"bytes:\", len(payload))\nassert os.path.exists(dst) and not os.path.exists(src)\n"
+    }
+  }
+]
