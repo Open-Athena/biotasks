@@ -3034,3 +3034,21 @@ prompt-inventory assertion encountered by the broader suite. No model/scientific
 runs, new paid resources or HTML changes. Selection remains a draft until input
 availability/terms checks; full runtime/resource fit is still unmeasured for the
 six additions. PR #23 stays draft and unmerged.
+
+## 2026-10-21: development-panel input checks and fresh campaigns
+
+User authorized continuing pipeline improvements without pausing after each step.
+Bounded public HTTP checks found the pinned PyHMMER alignment/FASTA, NeuroKit
+recording and matchms library reachable. Exact SGKit tutorial data URLs returned
+404; BiGG iJO1366 requests timed out from this VM. Pyteomics' original HTTP index
+is reachable; HTTPS has a hostname certificate mismatch. These are availability
+observations, not scientific source rejections or permission to redistribute data.
+Recorded original responses in development-panel-input-access.json. Pinned
+PyHMMER COPYING and NeuroKit LICENSE identify MIT for source code; data terms
+remain a separate review before public task release.
+
+Prepared original-source PyHMMER and NeuroKit cases with unchanged general task
+policy and no hand-selected endpoints. Reserved $5 for PyHMMER autonomous 019;
+aggregate holds reach $100, with no assumed credits or invoice claims. NeuroKit
+020 is prepared but not funded/dispatched yet. Reconcile verified completed-run
+holds before dispatching additional campaigns. No new paid Iris capacity.
