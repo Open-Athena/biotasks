@@ -1,0 +1,106 @@
+{
+  "observed_base": "0ea899c81e3e0e602921befe25735460943e14dd",
+  "failure_stage": "post-fix",
+  "observed_failure": "OSError: [Errno 7] Argument list too long: docker",
+  "shared_base_candidate_prs": [
+    {
+      "number": 2582,
+      "diff_bytes": 159743,
+      "sha256": "1be41222d614276f7eda1594de003334928f917b7552d506ccad2fd131f7f8e8",
+      "sections": [
+        {
+          "path": "CHANGELOG.md",
+          "diff_bytes": 3939
+        },
+        {
+          "path": "skbio/alignment/__init__.py",
+          "diff_bytes": 1288
+        },
+        {
+          "path": "skbio/alignment/_cutils.pyx",
+          "diff_bytes": 13526
+        },
+        {
+          "path": "skbio/alignment/_multi.py",
+          "diff_bytes": 28303
+        },
+        {
+          "path": "skbio/alignment/_pair.py",
+          "diff_bytes": 16684
+        },
+        {
+          "path": "skbio/alignment/_path.py",
+          "diff_bytes": 3185
+        },
+        {
+          "path": "skbio/alignment/_tabular_msa.py",
+          "diff_bytes": 1057
+        },
+        {
+          "path": "skbio/alignment/_utils.py",
+          "diff_bytes": 2502
+        },
+        {
+          "path": "skbio/alignment/tests/test_multi.py",
+          "diff_bytes": 31791
+        },
+        {
+          "path": "skbio/alignment/tests/test_pair.py",
+          "diff_bytes": 37360
+        },
+        {
+          "path": "skbio/alignment/tests/test_path.py",
+          "diff_bytes": 2790
+        },
+        {
+          "path": "skbio/alignment/tests/test_tabular_msa.py",
+          "diff_bytes": 827
+        },
+        {
+          "path": "skbio/alignment/tests/test_utils.py",
+          "diff_bytes": 4154
+        },
+        {
+          "path": "skbio/tree/_utils.py",
+          "diff_bytes": 3201
+        },
+        {
+          "path": "skbio/tree/tests/test_utils.py",
+          "diff_bytes": 3665
+        },
+        {
+          "path": "skbio/util/_array.py",
+          "diff_bytes": 1856
+        },
+        {
+          "path": "skbio/util/tests/test_array.py",
+          "diff_bytes": 3615
+        }
+      ],
+      "test_file_diff_bytes": 84202,
+      "source_and_test_diff_bytes": 159743
+    },
+    {
+      "number": 2581,
+      "diff_bytes": 10480,
+      "sha256": "203bb2a7c7f3454cbad34094baba842169f205df6f6644cb2af5dbad785a9f53",
+      "sections": [
+        {
+          "path": "CHANGELOG.md",
+          "diff_bytes": 1485
+        },
+        {
+          "path": "skbio/diversity/_driver.py",
+          "diff_bytes": 3236
+        },
+        {
+          "path": "skbio/diversity/beta/tests/test_unifrac.py",
+          "diff_bytes": 5759
+        }
+      ],
+      "test_file_diff_bytes": 5759,
+      "source_and_test_diff_bytes": 10480
+    }
+  ],
+  "interpretation": "The log omits a PR number. Two September PRs share this base. PR 2582 has a 159743-byte diff with a smaller test-only patch, consistent with pre-fix executing and post-fix exceeding the single command argument limit. PR 2582 attribution is an inference, not an explicit logged ID; PR 2581 is only 10480 bytes. No retry or transport repair performed."
+}

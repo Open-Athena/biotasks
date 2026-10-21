@@ -1,0 +1,40 @@
+{
+  "expanded_bytes": 22884,
+  "bootstrap": [
+    {
+      "repo": "scikit-bio/scikit-bio",
+      "ref": "2f573b9a9411c3c41465d9abcd41c3ad3a7dc077",
+      "iterations": 10,
+      "build_time_sec": 587.58,
+      "smoke_passed": false,
+      "verify_passed": false,
+      "verify_detail": "exit=2; rrno 2] No such file or directory:...\n!!!!!!!!!!!!!!!!!!! Interrupted: 16 errors during collection !!!!!!!!!!!!!!!!!!!\n============================== 16 errors in 5.13s ==============================",
+      "llm_cost_estimate_usd": 0.0,
+      "rebuild_cmds": [
+        "apt-get update -qq && apt-get install -y gcc g++ make",
+        "pip install numpy cython setuptools",
+        "cd /workspace && python setup.py build_ext --inplace",
+        "pip install -e '.[test]'"
+      ],
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ]
+    }
+  ],
+  "native_logs": [
+    {
+      "file": "scikit-bio__scikit-bio.log",
+      "actions": {
+        "BASH": 9,
+        "SAVE_SETUP": 1
+      },
+      "candidates": [],
+      "emitted": [],
+      "skipped": []
+    }
+  ],
+  "tasks": [],
+  "exported_count": 0,
+  "independently_verified_count": 0,
+  "strict_oracle_count": 0
+}
