@@ -3207,3 +3207,5 @@ Add opt-in, versioned `worker-timeout-retry` instructions: once per author insta
 146 ordinary tests and 110 experiment checks pass under Python 3.13.13; Ruff/format/ty hooks pass. Runtime tests used the hash-verified pinned upstream archive/patches. Sandboxed local asyncio thread wakeups stalled in a minimal reproduction; elevated checks pass, so no scientific/runtime workaround was added. See `factory-checks/timeout-recovery/result.json`.
 
 Choose a fresh original-seed campaign 025 rather than an operator-started continuation as the next autonomy proof. The optional recovery helper does not turn the failed 023 into a success. No extra continuation-archive infrastructure was retained. Reserve $5 before launch within existing $100 authorization ($99 held/$1 unallocated), keep original resource/time/network/scientific policy, and preserve 023 unchanged. HRV 024 remains prepared only.
+
+Campaign 025 submitted once from `417df0ed95e0c55ef12a91d264f5e1c220e8b3be`; CPU host started 22:05:28 UTC. Actual worker read at 22:05:57 UTC confirms preparation active. No acceptance or cleanup claim; no additional campaign or human scientific edits.
