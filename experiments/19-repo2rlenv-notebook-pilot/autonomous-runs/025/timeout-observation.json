@@ -1,0 +1,46 @@
+{
+  "observed_at": "2026-10-21T22:53:59.647952+00:00",
+  "campaign": 25,
+  "events": [
+    {
+      "trace": "grading/grader/artifact-stage/trace.jsonl",
+      "trace_prefix_bytes": 624,
+      "trace_prefix_sha256": "d95df1829ce53a8cad52033139f64a4126cc5051b8f6df94a51ecf3d348c429e",
+      "kind": "timeout_retry_requested",
+      "uncertain_call_id": 128,
+      "retry_number": 1,
+      "backend_outcome": "unknown",
+      "actions_executed": 0,
+      "allowance_reset": false
+    }
+  ],
+  "requests": [
+    {
+      "path": "grading/grader/artifact-stage/trace/128/request.json",
+      "sha256": "9d52b10b4120dcfccffb2010a567c607f0043ec8c27fefcb05768bdc499d4b5f",
+      "bytes": 75490,
+      "model": "glm-5.3",
+      "messages": 2,
+      "stream": false,
+      "response_exists": false,
+      "failure": {
+        "sha256": "23317319aecd0586cdd6e778ebaa4cd8e5a73731d4a1a95acb05c70b121d6a59",
+        "bytes": 113,
+        "error_type": "TimeoutError",
+        "failure_category": "transport_uncertain"
+      }
+    },
+    {
+      "path": "grading/grader/artifact-stage/trace/129/request.json",
+      "sha256": "7a5f78e370cc8d756f2868204fd8cd0e48c707c205488882216f29a9ac28126e",
+      "bytes": 76103,
+      "model": "glm-5.3",
+      "messages": 3,
+      "stream": false,
+      "response_exists": false
+    }
+  ],
+  "scope": "Live read-only observation of automatic timeout retry dispatch; no successful retry response, scientific acceptance or cleanup was established at this observation.",
+  "operator_interventions": 0,
+  "original_failure_preserved": true
+}

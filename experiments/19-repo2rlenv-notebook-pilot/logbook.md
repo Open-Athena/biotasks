@@ -3237,3 +3237,7 @@ Both follow-up payloads built through the existing launcher at `cb6dd2793330579c
 ### 2026-10-21 — Completed post-review hold reconciled
 
 Verified original manifest hashes for old 021 and continuation 022: both preflights and five newly executed native trials completed with cleanup, unchanged small CPU resources and one original absolute deadline. Imported older probes were excluded. Seven fresh exact ownership queries found no sandbox. Retain $2 from the old $5 planning hold, with storage/rounding margin; $3 is released within the existing $100 authorization ($96 held/$4 unallocated). This is not an invoice estimate or new spending authorization; active 024/025 reservations remain unchanged. See `budget-reconciliation-postreview-021-022.json` and unchanged metadata receipts under `budget-evidence/post-review-021-022`.
+
+### 2026-10-21 — Timeout retry exercised by active autonomous 025
+
+Live worker readback at 22:53:59 UTC records grader request 128 timing out, its original uncertain failure retained, and one automatic pure-generation retry 129. The trace records zero dispatched actions from the failed request and no reset allowance. The retry is pending, so this proves dispatch behavior only; it is not a successful response, grading acceptance or completed autonomous task. Source-prefix/request/failure hashes are in `autonomous-runs/025/timeout-observation.json`.
