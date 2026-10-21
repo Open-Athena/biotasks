@@ -8,14 +8,16 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import io
 import json
+import tokenize
 from importlib.metadata import version
 from pathlib import Path
 
 import jupytext
 
 MAX_SOURCE_BYTES = 16 * 1024 * 1024
-PROFILE = "python-narrative-v2"
+PROFILE = "python-narrative-v3"
 
 
 class UnsupportedNotebook(ValueError):
@@ -45,6 +47,33 @@ def _python_tree(source: str) -> ast.Module:
     return tree
 
 
+def _presentation_directives(source: str, cell: int) -> tuple[str, list[dict]]:
+    """Remove only explicitly supported display/timing wrappers, never strings.
+
+    Token positions distinguish a real directive from the same text inside a
+    multiline string. Timing repetitions, shell commands and other magics remain
+    unsupported; no notebook code is evaluated during conversion.
+    """
+    lines = source.splitlines(keepends=True)
+    changes = []
+    try:
+        tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
+    except (tokenize.TokenError, IndentationError) as error:
+        raise UnsupportedNotebook("Cannot tokenize notebook code") from error
+    directive_lines = {
+        token.start[0]
+        for token in tokens
+        if token.type == tokenize.OP and token.string == "%" and token.start[1] == 0
+    }
+    for number in sorted(directive_lines):
+        line = lines[number - 1].rstrip("\r\n")
+        words = line.split()
+        if words == ["%matplotlib", "inline"] or (number == 1 and words == ["%%time"]):
+            changes.append({"cell_index": cell, "line": number, "directive": line})
+            lines[number - 1] = "# Notebook presentation directive: " + line + "\n"
+    return "".join(lines), changes
+
+
 def export_python(path: Path) -> tuple[str, dict]:
     """Export with Jupytext, then compare the ordered executable syntax trees.
 
@@ -69,7 +98,16 @@ def export_python(path: Path) -> tuple[str, dict]:
     }
     if languages != {"python"}:
         raise UnsupportedNotebook("This profile requires an unambiguous Python language")
-    allowed_metadata = {"kernelspec", "language_info", "widgets", "mystnb", "toc", "jupytext"}
+    allowed_metadata = {
+        "kernelspec",
+        "language_info",
+        "widgets",
+        "mystnb",
+        "toc",
+        "jupytext",
+        "celltoolbar",
+        "vscode",
+    }
     if set(metadata) - allowed_metadata:
         raise UnsupportedNotebook("Notebook metadata needs a supported conversion profile")
     # File-pairing formats describe documentation synchronization, not code.
@@ -97,7 +135,8 @@ def export_python(path: Path) -> tuple[str, dict]:
     code: list[str] = []
     cells: list[dict] = []
     markdown_count = 0
-    for cell in notebook.get("cells", []):
+    normalizations = []
+    for cell_index, cell in enumerate(notebook.get("cells", [])):
         if cell.get("cell_type") not in {"code", "markdown", "raw"}:
             raise UnsupportedNotebook("Unknown cell type")
         if cell["cell_type"] == "raw":
@@ -112,6 +151,8 @@ def export_python(path: Path) -> tuple[str, dict]:
         cell_metadata = cell.get("metadata", {})
         if set(cell_metadata) - {"collapsed", "scrolled", "trusted", "execution"}:
             raise UnsupportedNotebook("Code-cell execution directives are unsupported")
+        text, changes = _presentation_directives(text, cell_index)
+        normalizations.extend(changes)
         code.append(text)
         cells.append(
             dict(
@@ -163,6 +204,11 @@ def export_python(path: Path) -> tuple[str, dict]:
         "markdown_cells": markdown_count,
         "markdown_representation": "line_comments",
         "ordered_code_equivalence": True,
+        "equivalence_basis": "Python statements after recorded presentation normalization",
+        "presentation_normalizations": normalizations,
+        "ignored_editor_metadata": {
+            key: metadata[key] for key in ("celltoolbar", "vscode") if key in metadata
+        },
         "documentation_execution_policy": myst,
         "stored_outputs_used_as_evidence": False,
         "executed": False,

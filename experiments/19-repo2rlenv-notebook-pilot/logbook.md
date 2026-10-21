@@ -2862,3 +2862,28 @@ This proves one autonomous successful execution on a known development seed,
 without manual generated-task edits or prior generated artifacts. It does not
 establish held-out generality. A new Hub release and promotion of the complete
 runner remain outstanding; PR #23 stays draft and unmerged.
+
+## 2026-10-21 — freeze two additional examples before execution
+
+The user selected the original MDAnalysis RMSD and COBRApy FBA notebooks.
+Pin both sources and retain their root licenses under `autonomous-cases`.
+Simulation-trajectory and curated-model lineage are explicit; data terms remain
+separate from the source-code licenses. No scientific endpoint or method is
+manually selected in their seed metadata. `additional-notebooks.md` records the
+same-revision, sequential first-attempt protocol.
+
+Both sources exposed general conversion limitations. Profile v3 normalizes only
+standalone `%matplotlib inline` and first-line argument-free `%%time`, recording
+each cell/line change. Token positions protect strings and comments; timing bodies
+execute once, and ordered Python syntax is checked after normalization. Known
+editor presentation metadata is recorded and ignored. Unknown magics and execution
+directives remain explicit unsupported cases. Both real notebooks now convert;
+25 conversion/intake tests and eight orchestration tests pass, plus lint and
+converter type checks. Scientific notebook code was not executed locally.
+
+The aggregate spending ledger was stale relative to the transfer and autonomous
+runs. Reconcile retained holds against the recorded resource/lifetime bounds and
+cleanup evidence, adding those runs explicitly and reserving $5 for each new
+example. `budget-reconciliation-20261021.json` distinguishes conservative holds
+from invoices. Total retained holds, including both new attempts, remain $100;
+no free-credit assumption or new aggregate authorization is used.

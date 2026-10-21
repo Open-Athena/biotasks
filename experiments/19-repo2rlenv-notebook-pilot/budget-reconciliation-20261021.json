@@ -1,0 +1,83 @@
+{
+  "date": "2026-10-21",
+  "rate_source": "https://www.daytona.io/pricing",
+  "rates_usd_per_hour": {
+    "vcpu": "0.0504",
+    "memory_gib": "0.0162",
+    "disk_gib": "0.000108"
+  },
+  "one_active_sandbox_profile": {
+    "cpus": 4,
+    "memory_gib": 8,
+    "disk_gib": 10,
+    "gpu": false
+  },
+  "per_campaign_lifetime_seconds": 7500,
+  "hourly_profile_cost_usd": "0.332280",
+  "maximum_running_resource_cost_usd": "0.692250",
+  "rounding_and_storage_allowance_usd": "0.307750",
+  "resource_based_hold_per_recent_campaign_usd": "1.00",
+  "legacy_replacement_hold_per_slot_usd": "2.00",
+  "released_holds": [
+    {
+      "scope": "replacement slots 1 through 10, including read-only recovery allocations",
+      "from": "40.00",
+      "to": "16.00"
+    },
+    {
+      "scope": "artifact-reference-001: full-source plain-script reference gate",
+      "from": "5.00",
+      "to": "1.00"
+    },
+    {
+      "scope": "artifact-reference-003: explicit review defect schema and scientific-data exports",
+      "from": "5.00",
+      "to": "1.00"
+    },
+    {
+      "scope": "artifact-reference-setup-001: tool-enabled setup and offline reference tests",
+      "from": "5.00",
+      "to": "1.00"
+    }
+  ],
+  "added_holds": [
+    {
+      "scope": "autonomous campaigns 001 through 014, including native trials",
+      "ceiling_usd": "14.00",
+      "reconciliation": "One active 4 CPU/8 GiB/10 GiB Linux sandbox at a time, per-campaign two-hour plus cleanup ceiling; terminal outcomes and cleanup in autonomous-runs. $1 per campaign is a resource-based upper-bound hold, not a sum of internal stage dispatch reservations."
+    },
+    {
+      "scope": "operator-assisted Bioframe transfer: setup 001, replay 001, materialization 001-005, grading 001-004, native 001",
+      "ceiling_usd": "12.00",
+      "reconciliation": "Twelve terminal bounded runs with at most one active 4 CPU/8 GiB/10 GiB Linux sandbox; retain $1 each. Includes canceled materialization 003 conservatively."
+    },
+    {
+      "scope": "additional notebook examples: autonomous-rmsd-015 and autonomous-fba-016",
+      "ceiling_usd": "10.00",
+      "reconciliation": "Two first attempts at $5 each; sequential, unchanged per-campaign resources/time."
+    }
+  ],
+  "total_retained_holds_usd": "100.00",
+  "provider_invoice_usd": null,
+  "evidence": [
+    "campaign-registry.json",
+    "campaign-002-result.json",
+    "campaign-004-result.json",
+    "campaign-005-result.json",
+    "campaign-006-result.json",
+    "campaign-008-result.json",
+    "campaign-009-result.json",
+    "campaign-010-result.json",
+    "campaign-011-result.json",
+    "reference-runs/001/cleanup.json",
+    "reference-runs/003/cleanup.json",
+    "setup-runs/001/result.json",
+    "autonomous-runs",
+    "transfer/bioframe"
+  ],
+  "limitations": [
+    "Resource-based reconciliation of conservative holds, not measured provider invoices or a free-credit assumption.",
+    "Original per-stage dispatch reservations and scientific records are unchanged.",
+    "Recent campaign holds rely on sequential sandbox execution, finite deadlines and verified cleanup; unresolved ownership would require reconciliation before another launch."
+  ]
+}

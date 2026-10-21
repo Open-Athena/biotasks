@@ -47,3 +47,18 @@ outside the checkout. Distribution tests build the wheel and source archive,
 check their prompt assets, then install the wheel in a clean environment and
 exercise both command entry points. These checks cover packaging and inspection,
 not task generation or scientific validation.
+
+## Notebook conversion helper
+
+`biotasks.notebook_script.export_python(path)` converts Python nbformat-4
+notebooks to scripts with Markdown cells retained as comments. It never executes
+the notebook or treats stored outputs as validation evidence. Its receipt records
+source and script hashes, conversion policy and any presentation normalization.
+
+The supported normalizations are standalone `%matplotlib inline` lines and an
+argument-free `%%time` on the first line of a code cell. Timing-cell bodies remain
+in order and execute once. Identical text inside Python strings is preserved.
+Editor metadata for the cell toolbar and VS Code is recorded and ignored.
+After normalization, the helper compares the ordered executable syntax trees
+before and after Jupytext export. Other magics, shell escapes, kernel state,
+execution-skipping directives and unsupported languages are rejected explicitly.

@@ -36,7 +36,11 @@ def test_export_preserves_order_and_has_no_kernel_or_markers(tmp_path):
 @pytest.mark.parametrize(
     "code",
     [
-        "%matplotlib inline",
+        "%matplotlib widget",
+        "%%timeit\nx = 1",
+        "%%time -n 2\nx = 1",
+        "%time x = 1",
+        "%matplotlib inline; x = 1",
         "!curl example.com",
         "await f()",
         "get_ipython().run_line_magic('time', 'f()')",
@@ -45,6 +49,40 @@ def test_export_preserves_order_and_has_no_kernel_or_markers(tmp_path):
 def test_kernel_execution_features_rejected(tmp_path, code):
     with pytest.raises(UnsupportedNotebook):
         export_python(source(tmp_path, [code]))
+
+
+def test_supported_presentation_wrappers_preserve_single_execution(tmp_path):
+    path = source(
+        tmp_path,
+        ["%matplotlib inline\nvalues = []", "%%time\nvalues.append(7)", "result = sum(values)"],
+        celltoolbar="Raw Cell Format",
+        vscode={"interpreter": {"hash": "editor-only"}},
+    )
+    script, receipt = export_python(path)
+    assert ast.dump(ast.parse(script)) == ast.dump(
+        ast.parse("values=[]\nvalues.append(7)\nresult=sum(values)")
+    )
+    scope = {}
+    exec(compile(script, "synthetic.py", "exec"), scope)
+    assert scope["values"] == [7] and scope["result"] == 7
+    assert receipt["presentation_normalizations"] == [
+        {"cell_index": 0, "line": 1, "directive": "%matplotlib inline"},
+        {"cell_index": 1, "line": 1, "directive": "%%time"},
+    ]
+    assert receipt["ignored_editor_metadata"]["celltoolbar"] == "Raw Cell Format"
+    assert export_python(path) == (script, receipt)
+
+
+def test_magic_text_in_strings_comments_and_modulo_is_preserved(tmp_path):
+    code = 'text = """\n%matplotlib inline\n%%time\n"""\n# %%time\nvalue = (7\n% 3)'
+    script, receipt = export_python(source(tmp_path, [code]))
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse(code))
+    assert receipt["presentation_normalizations"] == []
+
+
+def test_cell_timing_wrapper_cannot_appear_after_python_statements(tmp_path):
+    with pytest.raises(UnsupportedNotebook):
+        export_python(source(tmp_path, ["x = 1\n%%time\nx += 1"]))
 
 
 def test_metadata_cannot_silently_skip_analysis(tmp_path):
