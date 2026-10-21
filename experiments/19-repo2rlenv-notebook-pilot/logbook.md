@@ -3113,3 +3113,23 @@ retained a conservative $1 rather than asserting a measured zero charge. Holds
 are now $96, leaving $4 unallocated. PyHMMER 021 submitted at 17:31 from 4e99b0ac
 through another approved peer; it was still awaiting acceptance at 17:37.
 No service was restarted or redeployed, and no permission restriction bypassed.
+
+PyHMMER 021 also exceeded its scheduling allowance without any start time or
+task container. Cancellation at 17:41 UTC returned KILLED and "peer reported
+the job gone"; an independent 17:43 provider check found no owned sandboxes.
+All three new submissions are terminal, with no established pipeline execution.
+Preserved their placement outcomes separately from notebook rejections. No live
+validation of the new factory changes or new scientific task is claimed.
+
+Reviewed recent upstream federation/identity/budget changes, including Marin
+10401. No supported client/configuration correction was established. The absence
+of an explicit owner budget row is not proof of a budget denial: upstream policy
+uses defaults and excess spend downgrades to the already-selected BATCH band.
+Do not change identities, priorities, budgets, authentication or deployments to
+work around the placement failure. Precise external cause remains unconfirmed.
+
+Retained $1 for terminal 021, released $4 in conservative holds, and reserved $5
+for a future original-source PyHMMER 022 with typed staging feedback. Aggregate
+holds $97, $3 unallocated, no invoice/credit assumption. Configuration 022 is
+prepared only and must not submit while placement remains blocked. No task-owned
+model host or paid sandbox is left running. PR #23 remains draft and unmerged.
