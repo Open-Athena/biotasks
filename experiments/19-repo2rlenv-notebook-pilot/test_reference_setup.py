@@ -5,6 +5,7 @@ import hashlib
 import json
 import shutil
 import subprocess
+import sys
 import time
 from dataclasses import replace
 from pathlib import Path
@@ -175,6 +176,66 @@ def test_invalid_input_inventory_returns_feedback_before_build(tmp_path, files):
         assert not any(label.startswith(("setup-", "reference-", "reset-env-")) for label, *_ in remote.events)
 
     asyncio.run(run())
+
+
+def test_missing_staged_file_can_be_repaired_by_worker_within_existing_tests(tmp_path):
+    class MissingInput(FakeRemote):
+        invalid = True
+
+        async def helper(self, args, label):
+            if args[0] == "snapshot-inputs" and self.invalid:
+                return {"input_validation_error": "Missing declared staged file"}
+            return await super().helper(args, label)
+
+    async def run():
+        remote = MissingInput()
+        s = SetupSession(prepared=prepared(), remote=remote, root=tmp_path,
+                         setup_seconds=60, reference_seconds=10, max_tests=2)
+        await s.initialize()
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "candidate_invalid"
+        assert "Missing declared" in result["error"]
+        assert s.last_pass is None
+        assert not any(label.startswith("reference-") for label, *_ in remote.events)
+        # A corrected staging recipe can use the already-agreed second test.
+        remote.invalid = False
+        assert json.loads(await s.test_reference())["status"] == "reference_executed"
+        assert s.last_pass["test"] == 2
+
+    asyncio.run(run())
+
+
+def test_snapshot_controller_fault_is_not_worker_feedback(tmp_path):
+    class BrokenHelper(FakeRemote):
+        async def helper(self, args, label):
+            raise RuntimeError("unexpected controller failure")
+
+    async def run():
+        s = session(tmp_path, BrokenHelper())
+        await s.initialize()
+        with pytest.raises(RuntimeError, match="unexpected controller"):
+            await s.test_reference()
+        assert s.last_pass is None
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("controller_fault", [False, True])
+def test_snapshot_cli_distinguishes_candidate_errors_from_controller_faults(tmp_path, controller_fault):
+    manifest = tmp_path / "inputs.json"
+    manifest.write_text(json.dumps({"files": []} if controller_fault else {"files": [{}]}))
+    receipt = tmp_path if controller_fault else tmp_path / "receipt.json"
+    result = subprocess.run(
+        [sys.executable, str(HERE / "reference_remote.py"), "snapshot-inputs", str(manifest), str(receipt)],
+        capture_output=True, text=True, timeout=5,
+    )
+    if controller_fault:
+        assert result.returncode != 0
+        assert "IsADirectoryError" in result.stderr
+    else:
+        assert result.returncode == 0
+        assert "local_path and source" in json.loads(result.stdout)["input_validation_error"]
+        assert not receipt.exists()
 
 
 @pytest.mark.parametrize(

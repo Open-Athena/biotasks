@@ -3092,3 +3092,24 @@ blocked a local status invocation; resumed after the load dropped below 1.5.
 Failure-log recovery now also preserves partially written operation receipts
 without masking the original error. The focused 36 tests passed again with
 that interrupted-receipt case. No model or scientific execution in 019.
+
+## 2026-10-21: staging feedback and continuing placement failures
+
+Added typed feedback for expected declared-input failures at the sandbox boundary.
+Only the explicit InvalidStagedInputs validation errors become worker feedback;
+transport, helper/controller faults and checksum errors still stop the run.
+The existing two-test session can correct its own staging recipe without a new
+stage, additional allowance or manual intervention. Forty-two focused setup,
+remote logging and orchestration tests passed, including real CLI error/fault
+distinction and a repair within the original two tests. Focused lint passed.
+This reproduces and fixes a general error-handling gap; original 018's particular
+helper log remains unavailable and its cause is not being inferred.
+
+NeuroKit 020 was also unstarted past its scheduling allowance. Cancellation at
+17:33 UTC returned KILLED, "peer reported the job gone", with no start time or
+tasks. A provider read at 17:37 found no owned sandboxes for either 019 or 020.
+Preserved 020 as placement infrastructure failure, not a seed rejection, and
+retained a conservative $1 rather than asserting a measured zero charge. Holds
+are now $96, leaving $4 unallocated. PyHMMER 021 submitted at 17:31 from 4e99b0ac
+through another approved peer; it was still awaiting acceptance at 17:37.
+No service was restarted or redeployed, and no permission restriction bypassed.

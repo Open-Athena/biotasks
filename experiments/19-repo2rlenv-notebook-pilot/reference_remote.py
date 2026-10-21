@@ -17,6 +17,10 @@ import urllib.request
 from pathlib import Path
 
 
+class InvalidStagedInputs(ValueError):
+    """A declared input cannot be admitted; the setup worker may fix its recipe."""
+
+
 def stage_inputs(manifest_path):
     manifest = json.loads(Path(manifest_path).read_text())
     root = Path("/inputs")
@@ -65,15 +69,15 @@ def snapshot_inputs(manifest_path, receipt_path, roots=(Path("/inputs"), Path("/
     """Hash the worker's declared input/cache files; never trust worker hashes."""
     manifest = json.loads(Path(manifest_path).read_text())
     if not isinstance(manifest, dict) or not isinstance(manifest.get("files"), list):
-        raise ValueError("Input manifest requires a files array")
+        raise InvalidStagedInputs("Input manifest requires a files array")
     records = []
     seen = set()
-    for item in manifest["files"]:
+    for index, item in enumerate(manifest["files"]):
         if not isinstance(item, dict) or any(not isinstance(item.get(k), str) or not item[k] for k in ("local_path", "source")):
-            raise ValueError("Each input needs local_path and source")
+            raise InvalidStagedInputs(f"Input {index} needs local_path and source")
         path = Path(item["local_path"])
         if not path.is_absolute() or str(path) in seen or not any(path.resolve().is_relative_to(root.resolve()) for root in roots) or not path.is_file():
-            raise ValueError("Invalid staged input path")
+            raise InvalidStagedInputs(f"Invalid staged input path for input {index}: {path}")
         seen.add(str(path))
         with path.open("rb") as stream:
             sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
@@ -202,7 +206,11 @@ if __name__ == "__main__":
     elif sys.argv[1] == "verify-inputs":
         verify_inputs()
     elif sys.argv[1] == "snapshot-inputs":
-        print(json.dumps(snapshot_inputs(sys.argv[2], sys.argv[3])), flush=True)
+        try:
+            result = snapshot_inputs(sys.argv[2], sys.argv[3])
+        except InvalidStagedInputs as error:
+            result = {"input_validation_error": str(error)}
+        print(json.dumps(result), flush=True)
     elif sys.argv[1] == "verify-staging":
         print(json.dumps(verify_staging(sys.argv[2])), flush=True)
     elif sys.argv[1] == "inventory":

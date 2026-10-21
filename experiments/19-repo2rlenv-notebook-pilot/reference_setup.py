@@ -276,10 +276,13 @@ class SetupSession:
             await self.remote.upload(
                 directory / "candidate/inputs.json", "/work/declared-inputs.json"
             )
-            await self.remote.helper(
+            staged = await self.remote.helper(
                 ["snapshot-inputs", "/work/declared-inputs.json", "/work/setup-inputs.json"],
                 f"inputs-before-{self.tests}",
             )
+            if "input_validation_error" in staged:
+                record.update(status="candidate_invalid", error=staged["input_validation_error"])
+                return json.dumps(record)
             for name, source in [
                 ("uv.lock", "environment/uv.lock"),
                 ("environment.txt", "environment/environment.txt"),
