@@ -1,0 +1,560 @@
+[
+  {
+    "task": "scverse__anndata-2634",
+    "agent": "nop",
+    "command": [
+      "/work/harbor066/bin/harbor",
+      "run",
+      "-p",
+      "/work/published/scverse__anndata-2634",
+      "-a",
+      "nop",
+      "--env",
+      "docker",
+      "-n",
+      "1",
+      "-k",
+      "1",
+      "-r",
+      "0",
+      "--override-cpus",
+      "1",
+      "--override-memory-mb",
+      "6144",
+      "-o",
+      "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved",
+      "--job-name",
+      "scverse__anndata-2634-nop"
+    ],
+    "started": 1792607911.2726889,
+    "state": "completed",
+    "exit_code": 0,
+    "finished": 1792608551.1076047,
+    "trial_results": [
+      {
+        "path": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-nop/scverse__anndata-2634__KjYP9Eg/result.json",
+        "result": {
+          "id": "d5f4e541-bece-43fe-a529-d8c09ee94a04",
+          "task_name": "open-athena/scverse__anndata-2634",
+          "trial_name": "scverse__anndata-2634__KjYP9Eg",
+          "trial_uri": "file:///var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-nop/scverse__anndata-2634__KjYP9Eg",
+          "task_id": {
+            "path": "/work/published/scverse__anndata-2634"
+          },
+          "source": null,
+          "task_checksum": "158683bcc08d832e41c3cc43c0c5d587f0e76d8f9838a9040dc01fb75c20ea0a",
+          "config": {
+            "task": {
+              "path": "/work/published/scverse__anndata-2634",
+              "git_url": null,
+              "git_commit_id": null,
+              "name": null,
+              "ref": null,
+              "overwrite": false,
+              "download_dir": null,
+              "source": null
+            },
+            "trial_name": "scverse__anndata-2634__KjYP9Eg",
+            "trials_dir": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-nop",
+            "timeout_multiplier": 1.0,
+            "agent_timeout_multiplier": null,
+            "verifier_timeout_multiplier": null,
+            "agent_setup_timeout_multiplier": null,
+            "environment_build_timeout_multiplier": null,
+            "agent": {
+              "name": "nop",
+              "import_path": null,
+              "model_name": null,
+              "override_timeout_sec": null,
+              "override_setup_timeout_sec": null,
+              "max_timeout_sec": null,
+              "kwargs": {},
+              "env": {}
+            },
+            "environment": {
+              "type": "docker",
+              "import_path": null,
+              "force_build": false,
+              "delete": true,
+              "override_cpus": 1,
+              "override_memory_mb": 6144,
+              "override_storage_mb": null,
+              "override_gpus": null,
+              "suppress_override_warnings": false,
+              "mounts_json": null,
+              "env": {},
+              "kwargs": {}
+            },
+            "verifier": {
+              "override_timeout_sec": null,
+              "max_timeout_sec": null,
+              "env": {},
+              "disable": false
+            },
+            "artifacts": [],
+            "job_id": "45c16d13-2b02-4ecd-baaf-686899457065"
+          },
+          "agent_info": {
+            "name": "nop",
+            "version": "1.0.0",
+            "model_info": null
+          },
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "verifier_result": null,
+          "exception_info": {
+            "exception_type": "VerifierTimeoutError",
+            "exception_message": "Verifier execution timed out after 300.0 seconds",
+            "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+            "occurred_at": "2026-10-21T18:48:58.679781"
+          },
+          "started_at": "2026-10-21T18:38:38.994149Z",
+          "finished_at": "2026-10-21T18:49:10.273565Z",
+          "environment_setup": {
+            "started_at": "2026-10-21T18:38:39.025282Z",
+            "finished_at": "2026-10-21T18:38:57.249499Z"
+          },
+          "agent_setup": {
+            "started_at": "2026-10-21T18:38:57.249558Z",
+            "finished_at": "2026-10-21T18:38:57.249620Z"
+          },
+          "agent_execution": {
+            "started_at": "2026-10-21T18:38:57.249695Z",
+            "finished_at": "2026-10-21T18:38:57.249743Z"
+          },
+          "verifier": {
+            "started_at": "2026-10-21T18:38:57.477990Z",
+            "finished_at": "2026-10-21T18:48:58.676156Z"
+          },
+          "step_results": null
+        }
+      }
+    ]
+  },
+  {
+    "task": "scverse__anndata-2634",
+    "agent": "oracle",
+    "command": [
+      "/work/harbor066/bin/harbor",
+      "run",
+      "-p",
+      "/work/published/scverse__anndata-2634",
+      "-a",
+      "oracle",
+      "--env",
+      "docker",
+      "-n",
+      "1",
+      "-k",
+      "1",
+      "-r",
+      "0",
+      "--override-cpus",
+      "1",
+      "--override-memory-mb",
+      "6144",
+      "-o",
+      "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved",
+      "--job-name",
+      "scverse__anndata-2634-oracle"
+    ],
+    "started": 1792608551.1090047,
+    "state": "completed",
+    "exit_code": 0,
+    "finished": 1792609171.8411624,
+    "trial_results": [
+      {
+        "path": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-oracle/scverse__anndata-2634__hkvS3nD/result.json",
+        "result": {
+          "id": "2d88fc7a-4563-4961-bdc4-3d8b7f35a0ad",
+          "task_name": "open-athena/scverse__anndata-2634",
+          "trial_name": "scverse__anndata-2634__hkvS3nD",
+          "trial_uri": "file:///var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-oracle/scverse__anndata-2634__hkvS3nD",
+          "task_id": {
+            "path": "/work/published/scverse__anndata-2634"
+          },
+          "source": null,
+          "task_checksum": "158683bcc08d832e41c3cc43c0c5d587f0e76d8f9838a9040dc01fb75c20ea0a",
+          "config": {
+            "task": {
+              "path": "/work/published/scverse__anndata-2634",
+              "git_url": null,
+              "git_commit_id": null,
+              "name": null,
+              "ref": null,
+              "overwrite": false,
+              "download_dir": null,
+              "source": null
+            },
+            "trial_name": "scverse__anndata-2634__hkvS3nD",
+            "trials_dir": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2634-oracle",
+            "timeout_multiplier": 1.0,
+            "agent_timeout_multiplier": null,
+            "verifier_timeout_multiplier": null,
+            "agent_setup_timeout_multiplier": null,
+            "environment_build_timeout_multiplier": null,
+            "agent": {
+              "name": "oracle",
+              "import_path": null,
+              "model_name": null,
+              "override_timeout_sec": null,
+              "override_setup_timeout_sec": null,
+              "max_timeout_sec": null,
+              "kwargs": {},
+              "env": {}
+            },
+            "environment": {
+              "type": "docker",
+              "import_path": null,
+              "force_build": false,
+              "delete": true,
+              "override_cpus": 1,
+              "override_memory_mb": 6144,
+              "override_storage_mb": null,
+              "override_gpus": null,
+              "suppress_override_warnings": false,
+              "mounts_json": null,
+              "env": {},
+              "kwargs": {}
+            },
+            "verifier": {
+              "override_timeout_sec": null,
+              "max_timeout_sec": null,
+              "env": {},
+              "disable": false
+            },
+            "artifacts": [],
+            "job_id": "ff31f328-52a9-47c1-90ec-dc97b124b47c"
+          },
+          "agent_info": {
+            "name": "oracle",
+            "version": "1.0.0",
+            "model_info": null
+          },
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "verifier_result": null,
+          "exception_info": {
+            "exception_type": "VerifierTimeoutError",
+            "exception_message": "Verifier execution timed out after 300.0 seconds",
+            "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+            "occurred_at": "2026-10-21T18:59:19.639996"
+          },
+          "started_at": "2026-10-21T18:49:14.944977Z",
+          "finished_at": "2026-10-21T18:59:31.085184Z",
+          "environment_setup": {
+            "started_at": "2026-10-21T18:49:14.957285Z",
+            "finished_at": "2026-10-21T18:49:17.391812Z"
+          },
+          "agent_setup": {
+            "started_at": "2026-10-21T18:49:17.391878Z",
+            "finished_at": "2026-10-21T18:49:17.391943Z"
+          },
+          "agent_execution": {
+            "started_at": "2026-10-21T18:49:17.392018Z",
+            "finished_at": "2026-10-21T18:49:18.172220Z"
+          },
+          "verifier": {
+            "started_at": "2026-10-21T18:49:18.436318Z",
+            "finished_at": "2026-10-21T18:59:19.636200Z"
+          },
+          "step_results": null
+        }
+      }
+    ]
+  },
+  {
+    "task": "scverse__anndata-2652",
+    "agent": "nop",
+    "command": [
+      "/work/harbor066/bin/harbor",
+      "run",
+      "-p",
+      "/work/published/scverse__anndata-2652",
+      "-a",
+      "nop",
+      "--env",
+      "docker",
+      "-n",
+      "1",
+      "-k",
+      "1",
+      "-r",
+      "0",
+      "--override-cpus",
+      "1",
+      "--override-memory-mb",
+      "6144",
+      "-o",
+      "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved",
+      "--job-name",
+      "scverse__anndata-2652-nop"
+    ],
+    "started": 1792609171.845863,
+    "state": "completed",
+    "exit_code": 0,
+    "finished": 1792609489.9100783,
+    "trial_results": [
+      {
+        "path": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-nop/scverse__anndata-2652__BkgamKd/result.json",
+        "result": {
+          "id": "0fd7af6e-82cb-4bad-b026-1806ebb529b3",
+          "task_name": "open-athena/scverse__anndata-2652",
+          "trial_name": "scverse__anndata-2652__BkgamKd",
+          "trial_uri": "file:///var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-nop/scverse__anndata-2652__BkgamKd",
+          "task_id": {
+            "path": "/work/published/scverse__anndata-2652"
+          },
+          "source": null,
+          "task_checksum": "a7c6214fc5a291c770577afc753d466fc7a682e4af7f9f85212e0583e813fd67",
+          "config": {
+            "task": {
+              "path": "/work/published/scverse__anndata-2652",
+              "git_url": null,
+              "git_commit_id": null,
+              "name": null,
+              "ref": null,
+              "overwrite": false,
+              "download_dir": null,
+              "source": null
+            },
+            "trial_name": "scverse__anndata-2652__BkgamKd",
+            "trials_dir": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-nop",
+            "timeout_multiplier": 1.0,
+            "agent_timeout_multiplier": null,
+            "verifier_timeout_multiplier": null,
+            "agent_setup_timeout_multiplier": null,
+            "environment_build_timeout_multiplier": null,
+            "agent": {
+              "name": "nop",
+              "import_path": null,
+              "model_name": null,
+              "override_timeout_sec": null,
+              "override_setup_timeout_sec": null,
+              "max_timeout_sec": null,
+              "kwargs": {},
+              "env": {}
+            },
+            "environment": {
+              "type": "docker",
+              "import_path": null,
+              "force_build": false,
+              "delete": true,
+              "override_cpus": 1,
+              "override_memory_mb": 6144,
+              "override_storage_mb": null,
+              "override_gpus": null,
+              "suppress_override_warnings": false,
+              "mounts_json": null,
+              "env": {},
+              "kwargs": {}
+            },
+            "verifier": {
+              "override_timeout_sec": null,
+              "max_timeout_sec": null,
+              "env": {},
+              "disable": false
+            },
+            "artifacts": [],
+            "job_id": "c7ba6cfd-4f07-4624-8d19-50bd6e70dfc9"
+          },
+          "agent_info": {
+            "name": "nop",
+            "version": "1.0.0",
+            "model_info": null
+          },
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "verifier_result": {
+            "rewards": {
+              "reward": 0.0
+            }
+          },
+          "exception_info": null,
+          "started_at": "2026-10-21T18:59:35.926473Z",
+          "finished_at": "2026-10-21T19:04:49.017453Z",
+          "environment_setup": {
+            "started_at": "2026-10-21T18:59:35.939177Z",
+            "finished_at": "2026-10-21T18:59:44.294560Z"
+          },
+          "agent_setup": {
+            "started_at": "2026-10-21T18:59:44.294634Z",
+            "finished_at": "2026-10-21T18:59:44.294702Z"
+          },
+          "agent_execution": {
+            "started_at": "2026-10-21T18:59:44.294782Z",
+            "finished_at": "2026-10-21T18:59:44.294824Z"
+          },
+          "verifier": {
+            "started_at": "2026-10-21T18:59:44.557492Z",
+            "finished_at": "2026-10-21T19:04:38.190184Z"
+          },
+          "step_results": null
+        }
+      }
+    ],
+    "reward_files": {
+      "scverse__anndata-2652__BkgamKd/verifier/reward-details.json": "{\n  \"reward\": 0.0,\n  \"resolved\": false,\n  \"f2p_total\": 3,\n  \"f2p_passed\": 0,\n  \"f2p_rate\": 0.0,\n  \"p2p_total\": 2455,\n  \"p2p_passed\": 2455,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 3070,\n  \"exit_code\": 1,\n  \"command_resolved\": false\n}",
+      "scverse__anndata-2652__BkgamKd/verifier/reward.txt": "0.000000\n"
+    }
+  },
+  {
+    "task": "scverse__anndata-2652",
+    "agent": "oracle",
+    "command": [
+      "/work/harbor066/bin/harbor",
+      "run",
+      "-p",
+      "/work/published/scverse__anndata-2652",
+      "-a",
+      "oracle",
+      "--env",
+      "docker",
+      "-n",
+      "1",
+      "-k",
+      "1",
+      "-r",
+      "0",
+      "--override-cpus",
+      "1",
+      "--override-memory-mb",
+      "6144",
+      "-o",
+      "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved",
+      "--job-name",
+      "scverse__anndata-2652-oracle"
+    ],
+    "started": 1792609489.912141,
+    "state": "completed",
+    "exit_code": 0,
+    "finished": 1792609804.828468,
+    "trial_results": [
+      {
+        "path": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-oracle/scverse__anndata-2652__roftWgo/result.json",
+        "result": {
+          "id": "6cdc4083-b215-43b8-8bfb-442e2b3e877b",
+          "task_name": "open-athena/scverse__anndata-2652",
+          "trial_name": "scverse__anndata-2652__roftWgo",
+          "trial_uri": "file:///var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-oracle/scverse__anndata-2652__roftWgo",
+          "task_id": {
+            "path": "/work/published/scverse__anndata-2652"
+          },
+          "source": null,
+          "task_checksum": "a7c6214fc5a291c770577afc753d466fc7a682e4af7f9f85212e0583e813fd67",
+          "config": {
+            "task": {
+              "path": "/work/published/scverse__anndata-2652",
+              "git_url": null,
+              "git_commit_id": null,
+              "name": null,
+              "ref": null,
+              "overwrite": false,
+              "download_dir": null,
+              "source": null
+            },
+            "trial_name": "scverse__anndata-2652__roftWgo",
+            "trials_dir": "/var/lib/docker/volumes/biotasks27-anndata-controls-002-work/_data/jobs/saved/scverse__anndata-2652-oracle",
+            "timeout_multiplier": 1.0,
+            "agent_timeout_multiplier": null,
+            "verifier_timeout_multiplier": null,
+            "agent_setup_timeout_multiplier": null,
+            "environment_build_timeout_multiplier": null,
+            "agent": {
+              "name": "oracle",
+              "import_path": null,
+              "model_name": null,
+              "override_timeout_sec": null,
+              "override_setup_timeout_sec": null,
+              "max_timeout_sec": null,
+              "kwargs": {},
+              "env": {}
+            },
+            "environment": {
+              "type": "docker",
+              "import_path": null,
+              "force_build": false,
+              "delete": true,
+              "override_cpus": 1,
+              "override_memory_mb": 6144,
+              "override_storage_mb": null,
+              "override_gpus": null,
+              "suppress_override_warnings": false,
+              "mounts_json": null,
+              "env": {},
+              "kwargs": {}
+            },
+            "verifier": {
+              "override_timeout_sec": null,
+              "max_timeout_sec": null,
+              "env": {},
+              "disable": false
+            },
+            "artifacts": [],
+            "job_id": "16bd8841-b4d3-4208-9e14-93849bb99956"
+          },
+          "agent_info": {
+            "name": "oracle",
+            "version": "1.0.0",
+            "model_info": null
+          },
+          "agent_result": {
+            "n_input_tokens": null,
+            "n_cache_tokens": null,
+            "n_output_tokens": null,
+            "cost_usd": null,
+            "rollout_details": null,
+            "metadata": null
+          },
+          "verifier_result": {
+            "rewards": {
+              "reward": 1.0
+            }
+          },
+          "exception_info": null,
+          "started_at": "2026-10-21T19:04:53.898690Z",
+          "finished_at": "2026-10-21T19:10:03.307713Z",
+          "environment_setup": {
+            "started_at": "2026-10-21T19:04:53.911326Z",
+            "finished_at": "2026-10-21T19:04:56.354790Z"
+          },
+          "agent_setup": {
+            "started_at": "2026-10-21T19:04:56.354877Z",
+            "finished_at": "2026-10-21T19:04:56.354957Z"
+          },
+          "agent_execution": {
+            "started_at": "2026-10-21T19:04:56.355057Z",
+            "finished_at": "2026-10-21T19:04:57.098930Z"
+          },
+          "verifier": {
+            "started_at": "2026-10-21T19:04:57.360227Z",
+            "finished_at": "2026-10-21T19:09:52.372464Z"
+          },
+          "step_results": null
+        }
+      }
+    ],
+    "reward_files": {
+      "scverse__anndata-2652__roftWgo/verifier/reward-details.json": "{\n  \"reward\": 1.0,\n  \"resolved\": true,\n  \"f2p_total\": 3,\n  \"f2p_passed\": 3,\n  \"f2p_rate\": 1.0,\n  \"p2p_total\": 2455,\n  \"p2p_passed\": 2455,\n  \"p2p_rate\": 1.0,\n  \"regressions\": [],\n  \"untracked_failed_count\": 0,\n  \"untracked_failed\": [],\n  \"parse_status\": \"ok\",\n  \"runner\": \"pytest\",\n  \"tests_parsed\": 3070,\n  \"exit_code\": 0,\n  \"command_resolved\": true\n}",
+      "scverse__anndata-2652__roftWgo/verifier/reward.txt": "1.000000\n"
+    }
+  }
+]

@@ -1,0 +1,145 @@
+{
+  "source_checkpoint": "f1afcca4",
+  "method": "Fresh reconstruction of saved upstream bootstrap Dockerfile; original twenty task files unchanged; no generation or repair",
+  "llm_calls": 0,
+  "task_files_unchanged": true,
+  "trials": [
+    {
+      "trial_name": "scverse__anndata-2634__KjYP9Eg",
+      "started_at": "2026-10-21T18:38:38.994149Z",
+      "finished_at": "2026-10-21T18:49:10.273565Z",
+      "verifier": {
+        "started_at": "2026-10-21T18:38:57.477990Z",
+        "finished_at": "2026-10-21T18:48:58.676156Z"
+      },
+      "verifier_result": null,
+      "exception_info": {
+        "exception_type": "VerifierTimeoutError",
+        "exception_message": "Verifier execution timed out after 300.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+        "occurred_at": "2026-10-21T18:48:58.679781"
+      },
+      "task": "scverse__anndata-2634",
+      "agent": "nop",
+      "path": "jobs/saved/scverse__anndata-2634-nop/scverse__anndata-2634__KjYP9Eg/result.json",
+      "reward_details": null
+    },
+    {
+      "trial_name": "scverse__anndata-2634__hkvS3nD",
+      "started_at": "2026-10-21T18:49:14.944977Z",
+      "finished_at": "2026-10-21T18:59:31.085184Z",
+      "verifier": {
+        "started_at": "2026-10-21T18:49:18.436318Z",
+        "finished_at": "2026-10-21T18:59:19.636200Z"
+      },
+      "verifier_result": null,
+      "exception_info": {
+        "exception_type": "VerifierTimeoutError",
+        "exception_message": "Verifier execution timed out after 300.0 seconds",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/verifier/verifier.py\", line 185, in verify\n    await self._environment.exec(\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 599, in exec\n    return await self._run_docker_compose_command(\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/environments/docker/docker.py\", line 360, in _run_docker_compose_command\n    stdout_bytes, stderr_bytes = await process.communicate()\n                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 201, in communicate\n    stdin, stdout, stderr = await tasks.gather(stdin, stdout, stderr)\n                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/subprocess.py\", line 181, in _read_stream\n    output = await stream.read()\n             ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 706, in read\n    block = await self.read(self._limit)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 713, in read\n    await self._wait_for_data('read')\n  File \"/usr/local/lib/python3.12/asyncio/streams.py\", line 545, in _wait_for_data\n    await self._waiter\nasyncio.exceptions.CancelledError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 410, in _verify_with_retry\n    self.result.verifier_result = await asyncio.wait_for(\n                                  ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/tasks.py\", line 519, in wait_for\n    async with timeouts.timeout(timeout):\n               ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/asyncio/timeouts.py\", line 115, in __aexit__\n    raise TimeoutError from exc_val\nTimeoutError\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 986, in run\n    await self._run_verification()\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 391, in _run_verification\n    await self._verify_with_retry()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 232, in async_wrapped\n    return await copy(fn, *args, **kwargs)  # type: ignore[type-var]\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 126, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 171, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/_utils.py\", line 130, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 482, in exc_check\n    retry_exc.reraise()\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/__init__.py\", line 216, in reraise\n    raise self.last_attempt.result()\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/work/harbor066/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 130, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/work/harbor066/lib/python3.12/site-packages/harbor/trial/trial.py\", line 415, in _verify_with_retry\n    raise VerifierTimeoutError(\nharbor.trial.trial.VerifierTimeoutError: Verifier execution timed out after 300.0 seconds\n",
+        "occurred_at": "2026-10-21T18:59:19.639996"
+      },
+      "task": "scverse__anndata-2634",
+      "agent": "oracle",
+      "path": "jobs/saved/scverse__anndata-2634-oracle/scverse__anndata-2634__hkvS3nD/result.json",
+      "reward_details": null
+    },
+    {
+      "trial_name": "scverse__anndata-2652__BkgamKd",
+      "started_at": "2026-10-21T18:59:35.926473Z",
+      "finished_at": "2026-10-21T19:04:49.017453Z",
+      "verifier": {
+        "started_at": "2026-10-21T18:59:44.557492Z",
+        "finished_at": "2026-10-21T19:04:38.190184Z"
+      },
+      "verifier_result": {
+        "rewards": {
+          "reward": 0.0
+        }
+      },
+      "exception_info": null,
+      "task": "scverse__anndata-2652",
+      "agent": "nop",
+      "path": "jobs/saved/scverse__anndata-2652-nop/scverse__anndata-2652__BkgamKd/result.json",
+      "reward_details": {
+        "reward": 0.0,
+        "resolved": false,
+        "f2p_total": 3,
+        "f2p_passed": 0,
+        "f2p_rate": 0.0,
+        "p2p_total": 2455,
+        "p2p_passed": 2455,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 3070,
+        "exit_code": 1,
+        "command_resolved": false
+      }
+    },
+    {
+      "trial_name": "scverse__anndata-2652__roftWgo",
+      "started_at": "2026-10-21T19:04:53.898690Z",
+      "finished_at": "2026-10-21T19:10:03.307713Z",
+      "verifier": {
+        "started_at": "2026-10-21T19:04:57.360227Z",
+        "finished_at": "2026-10-21T19:09:52.372464Z"
+      },
+      "verifier_result": {
+        "rewards": {
+          "reward": 1.0
+        }
+      },
+      "exception_info": null,
+      "task": "scverse__anndata-2652",
+      "agent": "oracle",
+      "path": "jobs/saved/scverse__anndata-2652-oracle/scverse__anndata-2652__roftWgo/result.json",
+      "reward_details": {
+        "reward": 1.0,
+        "resolved": true,
+        "f2p_total": 3,
+        "f2p_passed": 3,
+        "f2p_rate": 1.0,
+        "p2p_total": 2455,
+        "p2p_passed": 2455,
+        "p2p_rate": 1.0,
+        "regressions": [],
+        "untracked_failed_count": 0,
+        "untracked_failed": [],
+        "parse_status": "ok",
+        "runner": "pytest",
+        "tests_parsed": 3070,
+        "exit_code": 0,
+        "command_resolved": true
+      }
+    }
+  ],
+  "accounting": {
+    "run_id": "biotasks27-anndata-controls-002",
+    "state": "SUCCEEDED",
+    "started_at": "2026-10-21 18:35:45.954000+00:00",
+    "finished_at": "2026-10-21 19:10:11.377000+00:00",
+    "allocated_cpu": 4,
+    "allocated_cpu_hours": 2.2949144444444443,
+    "archive_bytes": 197517,
+    "archive_sha256": "1f250ba22c145a4811be4383ff7ccb50face8d04fbf6c5d87de421674e0fbd70",
+    "readback_verified": true,
+    "cleanup_verified_empty": true
+  },
+  "verified_count": 1,
+  "tasks": [
+    {
+      "task": "scverse__anndata-2634",
+      "verified_tracked": false,
+      "oracle_command_resolved": null
+    },
+    {
+      "task": "scverse__anndata-2652",
+      "verified_tracked": true,
+      "oracle_command_resolved": true
+    }
+  ]
+}

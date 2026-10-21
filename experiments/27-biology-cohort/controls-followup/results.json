@@ -1,0 +1,57 @@
+{
+  "source_checkpoint": "f1afcca4",
+  "run_id": "biotasks27-anndata-controls-002",
+  "all_four_controls_attempted": true,
+  "tasks": [
+    {
+      "task": "scverse__anndata-2634",
+      "verified_tracked": false,
+      "oracle_command_resolved": null
+    },
+    {
+      "task": "scverse__anndata-2652",
+      "verified_tracked": true,
+      "oracle_command_resolved": true
+    }
+  ],
+  "independently_verified_tasks": 1,
+  "strict_oracle_tasks": 1,
+  "trial_log_summary": [
+    {
+      "task": "scverse__anndata-2634",
+      "agent": "nop",
+      "collected_count": 3152,
+      "test_log_last_line": "tests/lazy/test_concat.py::test_concat_df_ds_mixed_types[h5ad-scipy-csc-load-annotation-index-outer-obsm-df] "
+    },
+    {
+      "task": "scverse__anndata-2634",
+      "agent": "oracle",
+      "collected_count": 3152,
+      "test_log_last_line": "tests/lazy/test_concat.py::test_concat_data_subsetting[h5ad-np-array-load-annotation-index-inner-slice] "
+    },
+    {
+      "task": "scverse__anndata-2652",
+      "agent": "nop",
+      "collected_count": 3246,
+      "test_log_last_line": "= 3 failed, 2455 passed, 612 skipped, 176 xfailed, 21 warnings, 72 subtests passed in 288.87s (0:04:48) ="
+    },
+    {
+      "task": "scverse__anndata-2652",
+      "agent": "oracle",
+      "collected_count": 3246,
+      "test_log_last_line": "= 2458 passed, 612 skipped, 176 xfailed, 21 warnings, 72 subtests passed in 290.29s (0:04:50) ="
+    }
+  ],
+  "allocation": {
+    "followup_cpu_hours": 2.2949144444444443,
+    "original_cpu_hours": 7.064761111111111,
+    "combined_cpu_hours": 9.359675555555555,
+    "experiment_ceiling_cpu_hours": 24
+  },
+  "no_regeneration": true,
+  "no_repairs": true,
+  "llm_calls": 0,
+  "task_files_unchanged": true,
+  "image_reconstruction": "Verbatim saved upstream Dockerfile at pinned AnnData ref; new image digest and unpinned dependency resolution. Original image not available.",
+  "interpretation": "One saved AnnData task (#2652) independently verified under the recorded reconstruction. Both #2634 controls timed out under the original 300-second verifier limit plus native retry; neither produced a reward. No overall deadline cancellation occurred."
+}
