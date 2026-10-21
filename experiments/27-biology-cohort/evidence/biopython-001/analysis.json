@@ -1,0 +1,40 @@
+{
+  "expanded_bytes": 42587,
+  "bootstrap": [
+    {
+      "repo": "biopython/biopython",
+      "ref": "f68b896031088a8ad11ae49f5e903d49228fd61f",
+      "iterations": 7,
+      "build_time_sec": 259.86,
+      "smoke_passed": false,
+      "verify_passed": false,
+      "verify_detail": "exit=2; lDependencyError: Download and ins...\n!!!!!!!!!!!!!!!!!!! Interrupted: 9 errors during collection !!!!!!!!!!!!!!!!!!!!\n========================= 1 warning, 9 errors in 5.58s =========================",
+      "llm_cost_estimate_usd": 0.0,
+      "rebuild_cmds": [
+        "apt-get install -y -qq build-essential git curl ca-certificates",
+        "pip install numpy --quiet",
+        "pip install -e /workspace --quiet",
+        "pip install numpy matplotlib mmtf-python networkx rdflib reportlab scipy igraph pytest --quiet"
+      ],
+      "test_cmds": [
+        "cd /workspace/Tests && python -m pytest -v"
+      ]
+    }
+  ],
+  "native_logs": [
+    {
+      "file": "biopython__biopython.log",
+      "actions": {
+        "BASH": 6,
+        "SAVE_SETUP": 1
+      },
+      "candidates": [],
+      "emitted": [],
+      "skipped": []
+    }
+  ],
+  "tasks": [],
+  "exported_count": 0,
+  "independently_verified_count": 0,
+  "strict_oracle_count": 0
+}

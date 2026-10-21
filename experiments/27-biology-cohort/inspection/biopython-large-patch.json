@@ -1,0 +1,60 @@
+{
+  "repo": "biopython/biopython",
+  "first_native_validation_pr": 5337,
+  "base_commit": "0d51cefb25ddf23ba32b3c3086446b28e189c9b7",
+  "failure": "OSError: [Errno 7] Argument list too long: docker",
+  "full_diff": {
+    "diff_bytes": 218062,
+    "sha256": "8ed13baec85e48b9607c5fada8c7e582d9fa59d1315a7ab7e09ffed312215686",
+    "sections": [
+      {
+        "path": "Bio/Align/__init__.py",
+        "diff_bytes": 4939
+      },
+      {
+        "path": "Bio/codonalign/__init__.py",
+        "diff_bytes": 2323
+      },
+      {
+        "path": "Doc/Tutorial/chapter_pairwise.rst",
+        "diff_bytes": 5631
+      },
+      {
+        "path": "Tests/test_Align_a2m.py",
+        "diff_bytes": 856
+      },
+      {
+        "path": "Tests/test_Align_bed.py",
+        "diff_bytes": 19179
+      },
+      {
+        "path": "Tests/test_Align_bigbed.py",
+        "diff_bytes": 20359
+      },
+      {
+        "path": "Tests/test_Align_bigmaf.py",
+        "diff_bytes": 7999
+      },
+      {
+        "path": "Tests/test_Align_bigpsl.py",
+        "diff_bytes": 18978
+      },
+      {
+        "path": "Tests/test_Align_chain.py",
+        "diff_bytes": 9084
+      },
+      {
+        "path": "Tests/test_Align_codonalign.py",
+        "diff_bytes": 128714
+      }
+    ]
+  },
+  "test_file_diff_bytes": 205169,
+  "source_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "sources": [
+    "https://github.com/biopython/biopython/pull/5337",
+    "https://github.com/huggingface/Repo2RLEnv/blob/27d04ee8203cd5b2f20c3997d13836e5f5b64238/src/repo2rlenv/bootstrap/docker.py#L304-L310",
+    "https://github.com/huggingface/Repo2RLEnv/blob/27d04ee8203cd5b2f20c3997d13836e5f5b64238/src/repo2rlenv/pipelines/pr_runtime_validate.py"
+  ],
+  "interpretation": "Pinned upstream embeds the test patch into one bash -lc command argument passed to docker exec. A test patch of 205169 bytes is consistent with the observed per-argument execution limit. No validation rerun or repair was performed. Missing collection dependencies are a separate recorded bootstrap problem."
+}
