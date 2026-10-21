@@ -3193,3 +3193,5 @@ Campaign 023 was submitted at 19:15:31 UTC and acquired a CPU worker at 19:15:38
 ### 2026-10-21 — Original PyRadiomics helper log recovered
 
 A bounded private archive read through the active 023 host recovered and hash-verified original 018 staging diagnostics. The exact error was `Invalid staged input path`: the fifth inventory entry was under `/work/examples`, outside approved `/inputs` or `/work/cache` roots. This confirms the generic staging-validation/error-feedback changes address the relevant defect class; it is not proof of a successful rerun. Preserve original 018 infrastructure outcome, original candidate bytes and source scientific code. See `autonomous-runs/018/diagnosis/`.
+
+Prepared unchanged-policy HRV configuration 024 for a later fresh retry; it is not reserved or submitted. Pinned repository-license metadata for four remaining candidates is in `development-panel-source-notices.json`. matchms-docs has mixed code/book notices; no blanket MIT claim or data-redistribution permission is inferred.
