@@ -102,6 +102,27 @@ def inspect_candidate(directory: Path, prepared: PreparedReference):
         or not isinstance(inventory["files"], list)
     ):
         raise ValueError("inputs.json requires a files array")
+    seen = set()
+    for index, item in enumerate(inventory["files"]):
+        if not isinstance(item, dict) or any(
+            not isinstance(item.get(key), str) or not item[key].strip()
+            for key in ("local_path", "source")
+        ):
+            raise ValueError(
+                f"inputs.json file {index} needs nonempty local_path and source strings"
+            )
+        path = Path(item["local_path"])
+        if (
+            not path.is_absolute()
+            or ".." in path.parts
+            or not any(path.is_relative_to(root) for root in (Path("/inputs"), Path("/work/cache")))
+            or str(path) in seen
+        ):
+            raise ValueError(
+                f"inputs.json file {index} needs a unique absolute file path under "
+                "/inputs or /work/cache, without parent traversal"
+            )
+        seen.add(str(path))
     # Compile only. Runtime evidence and input byte checks come from the sandbox.
     analysis = files["analysis.py"].decode()
     script, _ = materialize(analysis, prepared.plan)

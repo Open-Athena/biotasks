@@ -121,7 +121,7 @@ def seal_materialization(raw, view):
     write(view / "artifact-manifest.json", dict(original_small_files=records(view)))
 
 
-def copy_diagnostics(root):
+def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
     # Small original receipts are also returned through bootstrap diagnostics.
     # Full traces and data remain in the independently verified archive.
     selected = (
@@ -153,10 +153,10 @@ def copy_diagnostics(root):
         for path in sorted((root / "setup-raw/setup/trials").glob("*/result.json"))
     )
     for stage in ("setup-raw", "replay", "materialization-raw", "grading"):
-        selected += tuple(
-            path.relative_to(root).as_posix()
-            for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]
-        )
+        for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]:
+            selected += (path.relative_to(root).as_posix(),)
+            if read(path).get("process", {}).get("exit_code") not in (None, 0):
+                selected += ((path.parent / "output.log").relative_to(root).as_posix(),)
     for stage in ("preparation", "setup-raw", "specification", "materialization-raw", "grading"):
         selected += tuple(
             path.relative_to(root).as_posix()
@@ -165,7 +165,7 @@ def copy_diagnostics(root):
     for relative in selected:
         source = root / relative
         if source.is_file() and source.stat().st_size <= 256_000:
-            target = Path("/evidence/autonomous-summary") / relative
+            target = destination / relative
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(source, target)
 

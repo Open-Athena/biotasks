@@ -26,6 +26,20 @@ def test_worker_rejection_requires_explicit_disposition(tmp_path):
         m.require_worker(path, "prepare", stage="preparation")
 
 
+def test_failed_operation_log_is_available_in_small_diagnostics(tmp_path):
+    root = tmp_path / "run"
+    failed = root / "setup-raw/operations/0001"
+    successful = root / "setup-raw/operations/0002"
+    for directory, code in [(failed, 1), (successful, 0)]:
+        m.write(directory / "operation.json", {"state": "returned", "process": {"exit_code": code}})
+        (directory / "output.log").write_text("diagnostic output")
+    destination = tmp_path / "diagnostics"
+    m.copy_diagnostics(root, destination)
+    assert (destination / "setup-raw/operations/0001/output.log").read_text() == "diagnostic output"
+    assert (destination / "setup-raw/operations/0001/operation.json").is_file()
+    assert not (destination / "setup-raw/operations/0002/output.log").exists()
+
+
 @pytest.mark.parametrize(
     "failure", [None, "blocked", "infrastructure", "construction", "grading", "native"]
 )

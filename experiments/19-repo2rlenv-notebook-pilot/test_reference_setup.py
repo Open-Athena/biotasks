@@ -151,6 +151,33 @@ def test_controlled_setup_cannot_reuse_exploratory_inputs(tmp_path):
 
 
 @pytest.mark.parametrize(
+    "files",
+    [
+        ["not a file record"],
+        [{"local_path": "/inputs/data", "url": "https://example.org/data"}],
+        [{"local_path": "/inputs/data", "source": " "}],
+        [{"local_path": "relative/data", "source": "fixture"}],
+        [{"local_path": "/work/setup/data", "source": "fixture"}],
+        [{"local_path": "/inputs/../data", "source": "fixture"}],
+        [{"local_path": "/inputs/data", "source": "fixture"}] * 2,
+    ],
+)
+def test_invalid_input_inventory_returns_feedback_before_build(tmp_path, files):
+    async def run():
+        remote = FakeRemote()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        remote.files["/work/setup/inputs.json"] = json.dumps({"files": files}).encode()
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "candidate_invalid"
+        assert "inputs.json file" in result["error"]
+        assert s.last_pass is None
+        assert not any(label.startswith(("setup-", "reference-", "reset-env-")) for label, *_ in remote.events)
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize(
     "original,changed",
     [
         ("result = 1\n", "import fractions\nresult = 1\n"),

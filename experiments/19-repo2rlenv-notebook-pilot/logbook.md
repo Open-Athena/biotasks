@@ -3052,3 +3052,29 @@ policy and no hand-selected endpoints. Reserved $5 for PyHMMER autonomous 019;
 aggregate holds reach $100, with no assumed credits or invoice claims. NeuroKit
 020 is prepared but not funded/dispatched yet. Reconcile verified completed-run
 holds before dispatching additional campaigns. No new paid Iris capacity.
+
+PyHMMER 019 submitted at 17:14 UTC from ff7ee3da, but at 17:18 the scheduler
+still reported pending peer acceptance, with no task container. No model or
+scientific execution was established by submission. Keep this distinct from a
+seed rejection. Routine readback of original 018's small archive through the
+local storage client was unavailable; its underlying input-snapshot error is
+still undiagnosed.
+
+Static review found input-inventory entries were only validated after setup in
+the sandbox. Added general structural validation of required fields, unique
+absolute staging paths and allowed roots before dependency installation, returning
+candidate-invalid feedback through the existing worker test loop. No new repair
+stage or allowance. Added failed-operation logs to the existing small recovery
+bundle so a helper failure does not require retrieving the entire remote archive.
+These changes address general gaps; they do not establish 018's particular cause.
+Thirty-six focused setup/orchestration tests and focused lint passed. A sandboxed
+test invocation was interrupted; the complete focused run with local sockets
+permitted passed in 2.52 seconds. No generated scientific artifacts were edited.
+
+Reconciled verified terminal PyRadiomics 018 ($5 to $1) and reference replay 001
+($2 to $1) using recorded cleanup, profiles and bounded lifetimes. Rechecked
+published resource rates; retained $1 per completed run rather than claiming an
+invoice or credit. Reserved the released $5 for NeuroKit 020, preserving the $100
+aggregate ceiling. See budget-reconciliation-development020.json. Dispatch may
+use another documented GLM relay on reserved CPU capacity if the first cluster
+remains pending; no service deployment or restart is authorized or needed.
