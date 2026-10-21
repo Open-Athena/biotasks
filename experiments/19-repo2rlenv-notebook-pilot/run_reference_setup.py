@@ -15,6 +15,7 @@ from pathlib import Path
 import httpx
 from daytona import CreateSandboxFromImageParams, Daytona, Resources
 from design_stage import completion_transport
+from model_profile import native_effort
 from openai import AsyncOpenAI
 from preflight import PROBE, TARGETS
 from reference_setup import TEST_TOOL, PreparedReference, SetupOutcome, SetupSession
@@ -33,6 +34,7 @@ HERE = Path(__file__).parent
 
 
 def check_config(config):
+    native_effort(config)
     if config.get("entrypoint") not in {
         "run_reference_setup.py",
         "run_reference_replay.py",
@@ -41,7 +43,9 @@ def check_config(config):
         raise ValueError("Use the separate reference-setup entry point")
     grading = config["entrypoint"] == "run_notebook_grader.py"
     recovery_keys = (
-        "resume_grading_directory", "resume_grader_draft_directory", "resume_independent_directory"
+        "resume_grading_directory",
+        "resume_grader_draft_directory",
+        "resume_independent_directory",
     )
     if sum(bool(config.get(key)) for key in recovery_keys) > 1:
         raise ValueError("Select one grading recovery mode")
@@ -227,6 +231,7 @@ class Remote:
 
 
 async def run(config, *, root, deadline, endpoint, credential, provider=None, complete=None):
+    config = {**config, "reasoning_effort": native_effort(config)}
     check_config(config)
     prepared = PreparedReference.load(HERE / config["preparation_directory"])
     target = prepared.context["limits"]
@@ -391,7 +396,7 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
                 max_input_bytes=None,
                 max_response_bytes=None,
                 tool_output_chars=None,
-                reasoning_effort="medium",
+                reasoning_effort=native_effort(config),
                 request_timeout_sec=config["request_timeout_seconds"],
             )
             if complete is None:

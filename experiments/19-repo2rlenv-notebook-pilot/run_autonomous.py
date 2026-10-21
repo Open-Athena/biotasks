@@ -17,6 +17,8 @@ import subprocess
 import time
 from pathlib import Path
 
+from model_profile import native_effort
+
 HERE = Path(__file__).parent
 
 
@@ -186,6 +188,7 @@ class Pipeline:
             raise ValueError("Notebook must be checkpoint-relative")
         if not 0 < float(config["daytona_budget_usd"]) <= 5:
             raise ValueError("This profile reserves at most five dollars")
+        self.reasoning_effort = native_effort(config)
         self.config, self.root, self.seed = config, root, seed
         self.deadline, self.endpoint, self.credential = deadline, endpoint, credential
         self.prefix = os.environ["BIOTASKS_ARTIFACT_PREFIX"]
@@ -194,6 +197,8 @@ class Pipeline:
             status="running",
             autonomous=True,
             operator_interventions=0,
+            reasoning_effort_requested=self.reasoning_effort,
+            served_endpoint_effective_effort_verified=False,
             source=seed,
             stages=[],
             started=time.time(),
@@ -215,6 +220,7 @@ class Pipeline:
             reference_seconds=600,
             verifier_seconds=120,
             request_timeout_seconds=600,
+            reasoning_effort=self.reasoning_effort,
             max_requests=None,
             max_tests=2,
             **extra,

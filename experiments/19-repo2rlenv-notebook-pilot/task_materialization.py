@@ -7,6 +7,7 @@ from pathlib import Path
 import httpx
 from design_stage import completion_transport
 from materialization_protocol import Materialization
+from model_profile import native_effort
 from openai import AsyncOpenAI
 from reference_replay import sha256
 from reference_stage import stage
@@ -80,6 +81,7 @@ def materialization_context(context, source, seconds):
 async def run_materialization(
     *, session, context, root, config, endpoint, credential, deadline, complete=None
 ):
+    config = {**config, "reasoning_effort": native_effort(config)}
     source = session.snapshot["directory"]
     context = materialization_context(context, source, config["reference_seconds"])
     prior_files = config.get("prior_author_files")
@@ -151,7 +153,7 @@ async def run_materialization(
                 max_input_bytes=None,
                 max_response_bytes=None,
                 tool_output_chars=None,
-                reasoning_effort="medium",
+                reasoning_effort=native_effort(config),
                 request_timeout_sec=config["request_timeout_seconds"],
             ),
             max_requests=None,

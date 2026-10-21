@@ -124,7 +124,7 @@ class ChatLimits:
                 continue
             if key != "reasoning_effort" and (type(value) is not int or value < 1):
                 raise ValueError(f"{key} must be a positive integer")
-        if self.reasoning_effort not in {"low", "medium", "high"}:
+        if self.reasoning_effort not in {"low", "medium", "high", "max"}:
             raise ValueError("Unsupported reasoning effort")
 
 

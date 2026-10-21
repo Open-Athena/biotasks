@@ -14,6 +14,7 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
+from model_profile import native_effort
 from openai import AsyncOpenAI
 from reference_protocol import ReferencePlan, materialize
 from reference_stage import stage
@@ -43,6 +44,7 @@ def preparation_context(source, seed, target):
 
 
 async def run(config, *, root, seed, endpoint, credential, deadline, complete=None):
+    config = {**config, "reasoning_effort": native_effort(config)}
     if config["entrypoint"] != "run_preparation.py" or config["max_requests"] != 1:
         raise ValueError("Preparation requires exactly one call with no automatic repair")
     root.mkdir(parents=True, exist_ok=False)
@@ -56,7 +58,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
         max_input_bytes=None,
         max_response_bytes=None,
         tool_output_chars=None,
-        reasoning_effort="medium",
+        reasoning_effort=native_effort(config),
         request_timeout_sec=config["request_timeout_seconds"],
     )
     result = dict(
@@ -67,7 +69,7 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
         independent_review_run=False,
         daytona_sandboxes_created=0,
         model="glm-5.3",
-        reasoning_effort="medium",
+        reasoning_effort=native_effort(config),
         output_token_policy="No client max_tokens; provider limits/defaults apply.",
         provider_generation_limit_verified=False,
     )

@@ -18,6 +18,7 @@ from grading_protocol import (
     check_probes,
     parse_report,
 )
+from model_profile import native_effort
 from openai import AsyncOpenAI
 from reference_environment import setup_script
 from reference_replay import sha256
@@ -393,6 +394,7 @@ class GradingSession:
 async def run_grading(
     *, remote, snapshot, root, config, endpoint, credential, deadline, complete=None
 ):
+    config = {**config, "reasoning_effort": native_effort(config)}
     session = GradingSession(remote=remote, snapshot=snapshot, root=root / "grading", config=config)
 
     def comparison_blocker():
@@ -464,7 +466,9 @@ async def run_grading(
     resumed = None
     draft = None
     recovery_keys = (
-        "resume_grading_directory", "resume_grader_draft_directory", "resume_independent_directory"
+        "resume_grading_directory",
+        "resume_grader_draft_directory",
+        "resume_independent_directory",
     )
     if sum(bool(config.get(key)) for key in recovery_keys) > 1:
         raise ValueError("Select one grading recovery mode")
@@ -572,7 +576,7 @@ async def run_grading(
         max_input_bytes=None,
         max_response_bytes=None,
         tool_output_chars=None,
-        reasoning_effort="medium",
+        reasoning_effort=native_effort(config),
         request_timeout_sec=config["request_timeout_seconds"],
     )
     client = None

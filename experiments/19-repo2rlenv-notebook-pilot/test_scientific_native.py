@@ -61,5 +61,8 @@ def test_native_gates_and_blind_attempt(tmp_path, monkeypatch, oracle_reward, ex
     else:
         with pytest.raises(ValueError, match="oracle control failed"):
             native.run(config, root=root)
+    assert native.InferenceGate.call_args.kwargs["chat_template_kwargs"] == {
+        "reasoning_effort": "high"
+    }
     assert agents == expected_agents
     gate.close.assert_called_once()

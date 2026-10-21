@@ -41,7 +41,9 @@ def test_failed_operation_log_is_available_in_small_diagnostics(tmp_path):
     assert (destination / "setup-raw/operations/0001/output.log").read_text() == "diagnostic output"
     assert (destination / "setup-raw/operations/0001/operation.json").is_file()
     assert not (destination / "setup-raw/operations/0002/output.log").exists()
-    assert (destination / "setup-raw/operations/0003/operation.json").read_text() == partial.read_text()
+    assert (
+        destination / "setup-raw/operations/0003/operation.json"
+    ).read_text() == partial.read_text()
 
 
 @pytest.mark.parametrize(
@@ -64,6 +66,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     monkeypatch.setattr(m.subprocess, "run", conversion)
 
     async def prepare(config, *, root, **kwargs):
+        assert config["reasoning_effort"] == "high"
         called.append("prepare")
         if failure == "infrastructure":
             raise ConnectionError("transport")
@@ -72,6 +75,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         )
 
     async def remote(config, *, root, **kwargs):
+        assert config["reasoning_effort"] == "high"
         called.append(config["entrypoint"])
         if config["entrypoint"] == "run_reference_setup.py":
             m.write(root / "outcome.json", {"disposition": "tested"})
@@ -97,10 +101,12 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         return {"status": "grader_candidate_validated", "final_controls_passed": True}
 
     async def specify(config, *, root, **kwargs):
+        assert config["reasoning_effort"] == "high"
         called.append("specify")
         m.write(root / "specification.json", {"disposition": "draft_ready"})
 
     def native(config, *, root):
+        assert config["reasoning_effort"] == "high"
         called.append("native")
         return {"publication_ready": failure != "native"}
 

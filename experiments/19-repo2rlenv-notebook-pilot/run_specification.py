@@ -9,6 +9,7 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
+from model_profile import native_effort
 from openai import AsyncOpenAI
 from package_inspection import PACKAGE_TOOLS, PackageInspection
 from reference_stage import stage
@@ -24,6 +25,7 @@ from biotasks.inference_gate import Allowance, RequestLedger
 
 
 async def run(config, *, root, endpoint, credential, deadline, complete=None):
+    config = {**config, "reasoning_effort": native_effort(config)}
     if config["entrypoint"] != "run_specification.py":
         raise ValueError("Specification cannot launch another stage")
     inspect_packages = config.get("inspect_packages", False)
@@ -43,7 +45,8 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         json.loads((experiment / config["policy_file"]).read_text()),
         inspect_packages=inspect_packages,
         repeatability=json.loads((experiment / config["repeatability_file"]).read_text())
-        if config.get("repeatability_file") else None,
+        if config.get("repeatability_file")
+        else None,
         revision_context=json.loads((experiment / config["revision_context_file"]).read_text())
         if config.get("revision_context_file")
         else None,
@@ -68,7 +71,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         max_input_bytes=None,
         max_response_bytes=None,
         tool_output_chars=None,
-        reasoning_effort="medium",
+        reasoning_effort=native_effort(config),
         request_timeout_sec=config["request_timeout_seconds"],
     )
     result = dict(
@@ -81,7 +84,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         solver_run=False,
         daytona_sandboxes_created=0,
         model="glm-5.3",
-        reasoning_effort="medium",
+        reasoning_effort=native_effort(config),
         output_format=output_format,
         package_inspection_enabled=inspect_packages,
         output_token_policy="No client max_tokens; provider limits/defaults apply.",

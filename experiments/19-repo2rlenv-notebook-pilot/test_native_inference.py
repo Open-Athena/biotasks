@@ -51,7 +51,7 @@ def test_harbor_client_without_output_cap(tmp_path):
         model="glm-5.3",
         ledger=RequestLedger(tmp_path / "requests.sqlite", {"solver": Allowance(None, None)}),
         deadline=time.time() + 30,
-        chat_template_kwargs={"reasoning_effort": "medium"},
+        chat_template_kwargs={"reasoning_effort": "high"},
     ).start()
     try:
         client = LiteLLM(
@@ -71,7 +71,7 @@ def test_harbor_client_without_output_cap(tmp_path):
         assert observed[0]["model"] == "glm-5.3"
         assert observed[0].get("max_tokens") is None
         assert observed[0].get("max_completion_tokens") is None
-        assert observed[0]["chat_template_kwargs"] == {"reasoning_effort": "medium"}
+        assert observed[0]["chat_template_kwargs"] == {"reasoning_effort": "high"}
     finally:
         gate.close()
         server.shutdown()

@@ -10,6 +10,7 @@ from pathlib import Path
 
 from iris_bootstrap import export_on_host
 from iris_execution import IrisDaytonaExecution
+from model_profile import native_effort
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.emitter.bundle import inspect_bundle
 from repo2rlenv.execution.lifecycle import save_record
@@ -41,6 +42,7 @@ def archive_task(task, root, deadline):
 
 
 def run(config, *, root=Path("/evidence/native")):
+    config = {**config, "reasoning_effort": native_effort(config)}
     if (root / "started.json").exists():
         raise FileExistsError("Reconcile the existing native campaign")
     deadline = float(os.environ["BIOTASKS_CAMPAIGN_DEADLINE"])
@@ -63,7 +65,7 @@ def run(config, *, root=Path("/evidence/native")):
         ledger=requests,
         deadline=deadline,
         request_timeout=600,
-        chat_template_kwargs={"reasoning_effort": "medium"},
+        chat_template_kwargs={"reasoning_effort": native_effort(config)},
     ).start()
     result = dict(status="incomplete", controls=[], solver=None, publication_ready=False)
     try:
