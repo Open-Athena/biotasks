@@ -4,8 +4,10 @@ On 21 October the user requested runs of the remaining notebooks from issue 18.
 Use the current autonomous pipeline under issue 19. This does not restore the old
 panel's hand-selected task directions, worker harness or partial-credit contract.
 The worker must derive eligible endpoints and the task from each original source.
-Run sequentially within the existing $100 aggregate authorization, preserving
-first outcomes. Reconcile completed holds and verify cleanup before new launches.
+The user subsequently authorized parallel launches. Use at most two reserved
+Iris CPU hosts and two Daytona sandboxes total, one per campaign, within the
+existing $100 aggregate authorization. Preserve first outcomes and verify cleanup
+for each campaign.
 No extra campaign has been submitted for this panel yet.
 
 The pinned source identities and admission findings are in

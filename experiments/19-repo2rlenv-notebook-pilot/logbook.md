@@ -2963,3 +2963,19 @@ PyRadiomics remains next after active MDAnalysis 017 and verified cleanup.
 At 15:33 UTC, 017 had completed specification and construction and was grading;
 the independent implementation finished and the grader worker had started.
 No new paid campaign has been submitted.
+
+## 2026-10-21: parallel notebook campaigns authorized
+
+User explicitly authorized launching notebooks in parallel. Up to two reserved
+Iris hosts and one 4 CPU/8 GiB/10 GiB CPU-only Daytona sandbox per campaign;
+per-campaign 7200-second work and 300-second cleanup ceilings remain unchanged.
+Reconciled the completed original 019/020 shared-deadline reservation from $5
+to $2 using original cleanup/result/configuration evidence, and reserved $5 for
+PyRadiomics 018. Aggregate held $99 of $100, not a measured invoice or credit
+assumption. See budget-reconciliation-radiomics018.json. No new paid Iris capacity.
+
+At 15:42 UTC, MDAnalysis 017 finished with an explicit grading rejection:
+independent_comparison_unresolved. The first grader rejected the independently
+produced solution; no native solver ran. Root archive/host termination and fresh
+cleanup observations are still being collected. This does not establish that
+the original notebook is broken. Empty-response recovery succeeded earlier.
