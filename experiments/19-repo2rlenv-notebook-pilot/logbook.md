@@ -3133,3 +3133,20 @@ for a future original-source PyHMMER 022 with typed staging feedback. Aggregate
 holds $97, $3 unallocated, no invoice/credit assumption. Configuration 022 is
 prepared only and must not submit while placement remains blocked. No task-owned
 model host or paid sandbox is left running. PR #23 remains draft and unmerged.
+
+## 2026-10-21: separate fresh runtime payloads from research history
+
+While checking the placement blocker, found every fresh seed submission included
+the complete research checkout: the code archive alone was about 16 MiB. Added
+a general fresh-autonomous archive policy containing runtime package/build files,
+Python helpers/requirements, the pinned upstream patches and the selected seed.
+Old outputs, flat historical receipts and other notebook seeds are excluded.
+Continuation workflows retain their complete archive. Literal Git pathspecs avoid
+accidentally including similarly named seeds when a filename contains glob syntax.
+This is an independent payload-growth fix, not an established placement diagnosis.
+
+Real temporary-Git archive tests check exact selected bytes, runtime assets,
+historical/other-seed exclusion and continuation compatibility. The expanded
+payload/reference/setup/evidence/orchestration suite passed 72 tests before the
+final narrower flat-file selection; recheck and validate an actual extracted
+seed payload before any new launch. Existing 019-021 records stay unchanged.

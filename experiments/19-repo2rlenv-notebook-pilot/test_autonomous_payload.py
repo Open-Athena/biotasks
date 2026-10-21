@@ -1,7 +1,10 @@
 """Seed selection and identity must not depend on a private launcher's overrides."""
 
 import hashlib
+import io
 import json
+import subprocess
+import tarfile
 
 import launch_reference as launcher
 import pytest
@@ -19,7 +22,13 @@ def fixture(monkeypatch, tmp_path):
         prefix + "recover_evidence.py": b"diagnostics",
     }
     monkeypatch.setattr(launcher, "frozen_file", lambda repo, revision, name: contents[name])
-    monkeypatch.setattr(launcher.subprocess, "check_output", lambda *a, **k: b"archive")
+
+    def git_output(command, **kwargs):
+        if command[1] == "ls-tree":
+            return ("\0".join(contents) + "\0").encode()
+        return b"archive"
+
+    monkeypatch.setattr(launcher.subprocess, "check_output", git_output)
     upstream = tmp_path / "upstream.tar.gz"
     upstream.write_bytes(b"upstream")
     return (
@@ -68,3 +77,72 @@ def test_payload_requires_one_seed(monkeypatch, tmp_path, seeds):
         launcher.frozen_payload(
             tmp_path, revision="frozen", upstream_archive=upstream, config=config
         )
+
+
+def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(tmp_path):
+    prefix = launcher.EXPERIMENT + "/"
+    contents = {
+        "pyproject.toml": "fixture",
+        "src/biotasks/prompts/prompt.md": "runtime prompt",
+        prefix + "run_autonomous.py": "runtime entrypoint",
+        prefix + "upstream-pin.json": "runtime pin",
+        prefix + "reader-requirements.txt": "runtime requirements",
+        prefix + "patches/adapter.patch": "runtime patch",
+        prefix + "case/seed.json": "seed manifest",
+        prefix + "case/source[1].ipynb": "original notebook",
+        prefix + "case/source1.ipynb": "different seed that a glob must not capture",
+        prefix + "autonomous-runs/old/output.csv": "historical output",
+        prefix + "campaign-old-result.json": "flat historical receipt",
+        prefix + "other-case/source.ipynb": "another seed",
+        "experiments/other-experiment/data.csv": "unrelated experiment",
+    }
+    for name, value in contents.items():
+        path = tmp_path / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(value)
+    subprocess.run(["git", "init", "-q", str(tmp_path)], check=True, capture_output=True)
+    subprocess.run(["git", "add", "."], cwd=tmp_path, check=True, capture_output=True)
+    subprocess.run(
+        [
+            "git",
+            "-c",
+            "user.name=Fixture",
+            "-c",
+            "user.email=fixture@example.org",
+            "commit",
+            "-qm",
+            "fixture",
+        ],
+        cwd=tmp_path,
+        check=True,
+        capture_output=True,
+    )
+    config = {
+        "entrypoint": "run_autonomous.py",
+        "seed_file": "case/seed.json",
+        "notebook_file": "case/source[1].ipynb",
+    }
+    archive = launcher.source_archive(tmp_path, "HEAD", config)
+    with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
+        files = {member.name for member in bundle.getmembers() if member.isfile()}
+        for name in (
+            prefix + "case/seed.json",
+            prefix + "case/source[1].ipynb",
+            prefix + "run_autonomous.py",
+            prefix + "upstream-pin.json",
+            prefix + "reader-requirements.txt",
+            prefix + "patches/adapter.patch",
+            "src/biotasks/prompts/prompt.md",
+            "pyproject.toml",
+        ):
+            assert name in files
+            assert bundle.extractfile(name).read().decode() == contents[name]
+        assert prefix + "case/source1.ipynb" not in files
+        assert prefix + "autonomous-runs/old/output.csv" not in files
+        assert prefix + "campaign-old-result.json" not in files
+        assert prefix + "other-case/source.ipynb" not in files
+        assert "experiments/other-experiment/data.csv" not in files
+    # Continuation workflows still need their explicitly recorded old evidence.
+    full = launcher.source_archive(tmp_path, "HEAD", {"entrypoint": "run_reference_setup.py"})
+    with tarfile.open(fileobj=io.BytesIO(full)) as bundle:
+        assert prefix + "autonomous-runs/old/output.csv" in bundle.getnames()

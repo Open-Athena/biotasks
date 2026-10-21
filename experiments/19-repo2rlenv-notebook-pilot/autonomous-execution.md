@@ -23,6 +23,13 @@ remote workers retain the pinned Repo2RLEnv runtime. No notebook code runs on th
 shared development VM. The entrypoint consumes `BIOTASKS_CONFIG` and
 `BIOTASKS_SEED`, so changing the seed needs data/configuration, not source edits.
 
+Fresh autonomous payloads contain the project package/build files, experiment
+Python helpers and requirements, upstream pin/patches, and only the selected
+notebook and seed manifest. The separately hashed campaign configuration remains
+a top-level payload member. Historical outputs and other seeds are excluded;
+input metadata records `autonomous-runtime-and-seed-v1`. Continuation entrypoints
+retain their complete-checkout archive because they may need prior evidence.
+
 A single host has a two-hour campaign deadline plus the established cleanup
 allowance, and at most one Daytona sandbox at a time. Each of five sandbox stages
 reserves $1 before creation ($5 total); reservations are conservative allowances,

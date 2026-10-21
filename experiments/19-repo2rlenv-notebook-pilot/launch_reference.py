@@ -11,6 +11,45 @@ from launch_iris import EXPERIMENT, frozen_file
 from run_reference import EXECUTION_PENDING
 
 
+def source_archive(repo: Path, revision: str, config) -> bytes:
+    """Fresh autonomous runs need runtime files and their seed, not past runs."""
+    command = ["git", "archive", "--format=tar.gz", revision]
+    if config["entrypoint"] == "run_autonomous.py":
+        tracked = (
+            subprocess.check_output(
+                ["git", "ls-tree", "-r", "-z", "--name-only", revision], cwd=repo
+            )
+            .decode()
+            .split("\0")
+        )
+        root_files = {"pyproject.toml", "uv.lock", ".python-version", "README.md", "LICENSE"}
+        experiment = PurePosixPath(EXPERIMENT)
+        seed_files = {EXPERIMENT + "/" + config[key] for key in ("seed_file", "notebook_file")}
+        if not seed_files.issubset(tracked):
+            raise ValueError("Autonomous archive is missing its pinned seed files")
+        selected = [
+            path
+            for path in tracked
+            if path
+            and (
+                path in root_files
+                or path.startswith("src/")
+                or (
+                    PurePosixPath(path).parent == experiment
+                    and (
+                        PurePosixPath(path).suffix in {".py", ".txt"}
+                        or PurePosixPath(path).name == "upstream-pin.json"
+                    )
+                )
+                or path.startswith(EXPERIMENT + "/patches/")
+                or path in seed_files
+            )
+        ]
+        # Literal pathspecs also support filenames containing Git glob syntax.
+        command += ["--", *[":(literal)" + path for path in selected]]
+    return subprocess.check_output(command, cwd=repo)
+
+
 def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, bytes]:
     config = json.loads(frozen_file(repo, revision, EXPERIMENT + "/reference-execution.json"))
     if config["entrypoint"] != "run_reference.py":
@@ -18,12 +57,19 @@ def payload(repo: Path, *, revision: str, upstream_archive: Path) -> dict[str, b
     return frozen_payload(repo, revision=revision, upstream_archive=upstream_archive, config=config)
 
 
-def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config) -> dict[str, bytes]:
+def frozen_payload(
+    repo: Path, *, revision: str, upstream_archive: Path, config
+) -> dict[str, bytes]:
     """Common frozen inputs; each stage wrapper validates its own configuration."""
     if config["entrypoint"] == "run_reference.py":
         raise NotImplementedError(EXECUTION_PENDING)
-    if config["entrypoint"] in {"run_reference_setup.py", "run_reference_replay.py", "run_notebook_grader.py"}:
+    if config["entrypoint"] in {
+        "run_reference_setup.py",
+        "run_reference_replay.py",
+        "run_notebook_grader.py",
+    }:
         from run_reference_setup import check_config
+
         check_config(config)
     seed_path = "seeds/current.json"
     if config["entrypoint"] == "run_autonomous.py":
@@ -31,7 +77,9 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
         for value in (seed_path, config["notebook_file"]):
             path = PurePosixPath(value)
             if path.is_absolute() or ".." in path.parts or str(path) != value:
-                raise ValueError("Autonomous seed paths must be canonical experiment-relative paths")
+                raise ValueError(
+                    "Autonomous seed paths must be canonical experiment-relative paths"
+                )
         seeds = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + seed_path))
         if not isinstance(seeds, list) or len(seeds) != 1:
             raise ValueError("Autonomous payload requires exactly one seed record")
@@ -42,9 +90,7 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
     files = {
         # The bootstrap auto-detects compression. Keep the existing transport key
         # while avoiding large uncompressed copies in the Iris submission client.
-        "biotasks.tar": subprocess.check_output(
-            ["git", "archive", "--format=tar.gz", revision], cwd=repo
-        ),
+        "biotasks.tar": source_archive(repo, revision, config),
         "upstream.tar.gz": upstream_archive.read_bytes(),
         "seeds.json": frozen_file(repo, revision, EXPERIMENT + "/" + seed_path),
         "bootstrap.py": frozen_file(repo, revision, EXPERIMENT + "/iris_bootstrap.py"),
@@ -54,6 +100,11 @@ def frozen_payload(repo: Path, *, revision: str, upstream_archive: Path, config)
     files["inputs.json"] = json.dumps(
         {
             "factory_revision": revision,
+            "source_archive_policy": (
+                "autonomous-runtime-and-seed-v1"
+                if config["entrypoint"] == "run_autonomous.py"
+                else "complete-checkout"
+            ),
             "files": {name: hashlib.sha256(data).hexdigest() for name, data in files.items()},
         },
         indent=2,
