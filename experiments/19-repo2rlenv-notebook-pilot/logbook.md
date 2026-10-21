@@ -3150,3 +3150,36 @@ historical/other-seed exclusion and continuation compatibility. The expanded
 payload/reference/setup/evidence/orchestration suite passed 72 tests before the
 final narrower flat-file selection; recheck and validate an actual extracted
 seed payload before any new launch. Existing 019-021 records stay unchanged.
+
+Final compact-archive selection passed the 72-test suite; a final requirements
+preservation assertion passed in the eight payload tests. Actual source bundle
+shrunk from 16,090,804 to 260,067 bytes. Isolated runtime import, patch hashes,
+original seed hash and conversion checks passed on the extracted payload, without
+model/scientific execution. Source and results are in payload-checks/001.
+
+Submitted 022 at 18:02 UTC from 92a1e6f5 as a bounded test of this general
+payload-growth fix, reusing its existing $5 hold. This supersedes the earlier
+prepared-only condition for this one attempt within standing authorization; no
+resource, time, model or aggregate allowance increased. The frozen ledger still
+contains that earlier prepared-only note; this observation and current ledger
+record the later decision rather than rewriting the original payload.
+Submission peak RSS fell to 315,588 KiB. At 18:04 no container had started; a
+read-only query of this job's handoff row at 18:05 showed PENDING_HANDOFF (0),
+awaiting peer acknowledgement, rather than QUEUED_HANDOFF waiting for capacity.
+The smaller payload is useful independently; no causal placement fix is claimed.
+
+Compact attempt 022 also remained PENDING_HANDOFF without a start time/task
+container past its scheduling allowance. Cancelled at 18:12 UTC; peer reported
+the job gone. Independent provider readback found no owned resources. Preserved
+this negative placement test in autonomous-runs/022: smaller archive and lower
+client RSS are established, repaired handoff is not. Retained $1, released $4;
+aggregate conservative holds $93, $7 unallocated, no pending campaign reservation.
+All four submissions 019-022 are terminal. No task-owned paid resources remain.
+
+Asked the user whether there is a known Iris scheduling incident or another
+approved CPU route; no reply received while completing the independent work.
+Do not bypass access restrictions or change ownership, budgets, priorities or
+services. After the approved execution route recovers, use the compact policy and
+current generic staging-feedback code with the unchanged original seed. Config
+023 is prepared only, not reserved or submitted; allocate within the remaining
+standing budget before dispatch. PR #23 stays draft and unmerged.
