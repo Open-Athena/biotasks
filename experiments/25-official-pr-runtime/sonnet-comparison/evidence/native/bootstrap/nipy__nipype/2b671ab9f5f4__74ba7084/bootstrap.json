@@ -1,0 +1,24 @@
+{
+  "image_digest": "sha256:dc8db3c7de7d8b252075c5ebfdee728fd5142c5b582ba472ab222146787a53ec",
+  "image_tag": "local/r2e-bootstrap/nipy__nipype:2b671ab9f5f4",
+  "language": "python",
+  "repo": "nipy/nipype",
+  "ref": "2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975",
+  "rebuild_cmds": [
+    "SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 pip install -e '.[tests]' -q"
+  ],
+  "test_cmds": [
+    "cd /workspace && python -m pytest -v"
+  ],
+  "smoke_passed": true,
+  "iterations": 7,
+  "build_time_sec": 281.54,
+  "llm_provider": "openrouter/anthropic/claude-sonnet-4.6",
+  "llm_cost_estimate_usd": 0.0,
+  "dockerfile_reconstruction": "# Auto-generated from r2e-bootstrap agent transcript.\n# Build from the cloned repo root: `docker build -t my-image .`\nFROM python:3.12-slim\nWORKDIR /workspace\nCOPY . /workspace\n\nRUN ls /workspace && cat /workspace/pyproject.toml 2>/dev/null || cat /workspace/setup.py 2>/dev/null | head -50\nRUN cd /workspace && HATCH_VCS_PRETEND_VERSION=0.0.0 pip install -e \".[tests]\" -q 2>&1 | tail -20\nRUN cd /workspace && HATCH_VCS_PRETEND_VERSION=0.0.0 pip install -e \".[tests]\" 2>&1 | grep -E \"(error|Error|Successfully|already)\" | head -20\nRUN cd /workspace && pip install hatch-vcs hatchling -q && HATCH_VCS_PRETEND_VERSION=0.0.0 pip install -e \".[tests]\" -q 2>&1 | tail -20\nRUN cd /workspace && SETUPTOOLS_SCM_PRETEND_VERSION=0.0.0 pip install -e \".[tests]\" -q 2>&1 | tail -20\nRUN cd /workspace && python -m pytest --collect-only -q 2>&1 | tail -30\n",
+  "transcript_path": "/work/bootstrap/nipy__nipype/2b671ab9f5f4__74ba7084/transcript.jsonl",
+  "pushed_to_registry": false,
+  "verify_passed": true,
+  "verify_detail": "exit=1; o tags can describe '2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975'.\nTry --always, or create some tags.\npixdim[0] (qfac) should be 1 (default) or -1; setting qfac to 1\n\ngzip: stdin: unexpected end of file",
+  "extra": {}
+}

@@ -253,3 +253,30 @@ authenticated public PR GraphQL reads for all three input repositories, suppress
 credential and response output. Runner/staging hashes match the launch plan; all
 five native configurations still differ only at llm.model. No existing CI token
 was accessed. Token auth is supported directly by gh; upstream remains unchanged.
+
+Fresh job biotasks25-sonnet-002 authenticated through GH_TOKEN without a
+browser login. Enabled the unchanged checkpointed native command. Its first
+window started at 2026-10-21T13:30:17Z. Initial observation: scikit-fingerprints
+saved a native image after eight valid actions; the post-commit check failed
+with 20 collection errors and upstream continued with the flagged cache. This
+is an interim observation, not a final validation or export outcome.
+
+The Sonnet run finished with 35 actions (33 BASH, two SAVE_SETUP), zero INVALID
+actions, and no exports. Scikit-fingerprints validated four PRs; all had no F2P,
+including comparison #525 with eight P2P tests. Its saved image failed smoke and
+fresh-image checks with 20 collection errors. Nipype saved a seven-turn image,
+then gh pr list --limit 1000 hit the native 60-second timeout before validation.
+No manual retry was performed; this censors the Nipype model comparison. PsychoPy
+used all 20 turns on Python/dependency setup. It eventually installed Python
+3.11.9 with an lzma-extension warning and the project with --no-deps, but did not
+finish test dependencies or save a bootstrap. The second window was skipped.
+
+Original scheduler archive readback passed; all owned controller/container/image
+sets are empty. Both Sonnet jobs are terminal, including the prior stopped-auth
+attempt: 3.11893556 allocated CPU-hours. With the five preserved baseline jobs,
+the issue used 4.62527722 allocated CPU-hours, below 48. Native cost estimates
+were zero; billed cost and token usage remain unavailable. Raw rejected-stage
+logs were not retained by upstream, so parsed counts cannot prove their root
+cause. The dedicated reader token remains outside Git for future runs; no CI
+credential was accessed. Original native evidence passed exact-value and token-
+pattern scans before publication. No image or biological dataset is distributed.

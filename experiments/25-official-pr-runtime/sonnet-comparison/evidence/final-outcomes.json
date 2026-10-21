@@ -1,0 +1,346 @@
+{
+  "model": "anthropic/claude-sonnet-4.6",
+  "upstream_source_modifications": [],
+  "counts": {
+    "agent_iterations": 35,
+    "invalid_actions": 0,
+    "saved_bootstraps": 2,
+    "native_candidates": 4,
+    "native_validation_attempts": 4,
+    "comparison_prs_validated": 2,
+    "exports": 0
+  },
+  "repositories": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "agent_iterations": 8,
+      "actions": {
+        "BASH": 7,
+        "SAVE_SETUP": 1
+      },
+      "transcript_entries": 7,
+      "bootstrap_saved": true,
+      "sum_logged_rounded_estimated_usd": 0.0,
+      "stop_reason": "saved_native_bootstrap",
+      "iterations": 8,
+      "image_tag": "local/r2e-bootstrap/mlcil__scikit-fingerprints:18ff996d5a56",
+      "image_digest": "sha256:ca0a0c059421558713f2e7c8bca5e1bee2309c503693ca389cf6f67d4aac204c",
+      "smoke_passed": false,
+      "verify_passed": false,
+      "verify_detail": "exit=2; selection/splitters/scaffold_split.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 20 errors during collection !!!!!!!!!!!!!!!!!!!\n======================== 1 skipped, 20 errors in 2.34s =========================",
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ],
+      "llm_cost_estimate_usd": 0.0
+    },
+    {
+      "repository": "nipy/nipype",
+      "agent_iterations": 7,
+      "actions": {
+        "BASH": 6,
+        "SAVE_SETUP": 1
+      },
+      "transcript_entries": 6,
+      "bootstrap_saved": true,
+      "sum_logged_rounded_estimated_usd": 0.0,
+      "stop_reason": "saved_native_bootstrap",
+      "iterations": 7,
+      "image_tag": "local/r2e-bootstrap/nipy__nipype:2b671ab9f5f4",
+      "image_digest": "sha256:dc8db3c7de7d8b252075c5ebfdee728fd5142c5b582ba472ab222146787a53ec",
+      "smoke_passed": true,
+      "verify_passed": true,
+      "verify_detail": "exit=1; o tags can describe '2b671ab9f5f4bcf0f88871617b6d0bcb3fd4d975'.\nTry --always, or create some tags.\npixdim[0] (qfac) should be 1 (default) or -1; setting qfac to 1\n\ngzip: stdin: unexpected end of file",
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ],
+      "llm_cost_estimate_usd": 0.0
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "agent_iterations": 20,
+      "actions": {
+        "BASH": 20
+      },
+      "transcript_entries": 20,
+      "bootstrap_saved": false,
+      "sum_logged_rounded_estimated_usd": 0.0,
+      "stop_reason": "native_turn_limit"
+    }
+  ],
+  "windows": [
+    {
+      "window": "MLCIL__scikit-fingerprints-544",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/MLCIL__scikit-fingerprints-544.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792589417.086779,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792590363.955776,
+      "repository": "MLCIL/scikit-fingerprints",
+      "candidates": 3,
+      "emitted": 0,
+      "skip_reasons": {
+        "no_fail_to_pass": 3
+      },
+      "validation_attempts": [
+        {
+          "base_prefix": "cccb2d623d7c",
+          "post_stage_started": true,
+          "pre_tests": 1,
+          "post_tests": 160,
+          "fail_to_pass": 0,
+          "pass_to_pass": 0
+        },
+        {
+          "base_prefix": "113c4e2576cb",
+          "post_stage_started": true,
+          "pre_tests": 1,
+          "post_tests": 34,
+          "fail_to_pass": 0,
+          "pass_to_pass": 0
+        },
+        {
+          "base_prefix": "884eaf4e9dc9",
+          "post_stage_started": true,
+          "pre_tests": 1,
+          "post_tests": 46,
+          "fail_to_pass": 0,
+          "pass_to_pass": 0
+        }
+      ],
+      "stage_failure": null
+    },
+    {
+      "window": "MLCIL__scikit-fingerprints-525",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/MLCIL__scikit-fingerprints-525.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792590364.0212445,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792590420.17449,
+      "repository": "MLCIL/scikit-fingerprints",
+      "candidates": 1,
+      "emitted": 0,
+      "skip_reasons": {
+        "no_fail_to_pass": 1
+      },
+      "validation_attempts": [
+        {
+          "base_prefix": "839001468ba8",
+          "post_stage_started": true,
+          "pre_tests": 8,
+          "post_tests": 8,
+          "fail_to_pass": 0,
+          "pass_to_pass": 8
+        }
+      ],
+      "stage_failure": null
+    },
+    {
+      "window": "nipy__nipype-3753",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/nipy__nipype-3753.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792590420.1755755,
+      "state": "completed",
+      "exit_code": 2,
+      "finished": 1792590893.7051816,
+      "repository": "nipy/nipype",
+      "candidates": null,
+      "emitted": null,
+      "skip_reasons": null,
+      "validation_attempts": [],
+      "stage_failure": "github_listing_timeout"
+    },
+    {
+      "window": "psychopy__psychopy-7475",
+      "command": [
+        "repo2rlenv",
+        "--no-ui",
+        "generate",
+        "--config",
+        "/work/inputs/psychopy__psychopy-7475.json",
+        "--max-spend-usd",
+        "5"
+      ],
+      "started": 1792590893.706122,
+      "state": "completed",
+      "exit_code": 1,
+      "finished": 1792591939.204348,
+      "repository": "psychopy/psychopy",
+      "candidates": null,
+      "emitted": null,
+      "skip_reasons": null,
+      "validation_attempts": [],
+      "stage_failure": null
+    },
+    {
+      "window": "psychopy__psychopy-7805",
+      "state": "not_run",
+      "reason": "no_reusable_native_bootstrap; no_second_bootstrap_allowed",
+      "repository": "psychopy/psychopy",
+      "candidates": null,
+      "emitted": null,
+      "skip_reasons": null,
+      "validation_attempts": [],
+      "stage_failure": null
+    }
+  ],
+  "comparison_inputs": [
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 544,
+      "validation_attempted": true,
+      "validation_records": [
+        {
+          "base_prefix": "113c4e2576cb",
+          "post_stage_started": true,
+          "pre_tests": 1,
+          "post_tests": 34,
+          "fail_to_pass": 0,
+          "pass_to_pass": 0
+        }
+      ],
+      "exported": false,
+      "attribution": "Native stage logs matched to the pre-run recorded PR base commit; absence of a stage marker does not identify its filter reason."
+    },
+    {
+      "repository": "MLCIL/scikit-fingerprints",
+      "number": 525,
+      "validation_attempted": true,
+      "validation_records": [
+        {
+          "base_prefix": "839001468ba8",
+          "post_stage_started": true,
+          "pre_tests": 8,
+          "post_tests": 8,
+          "fail_to_pass": 0,
+          "pass_to_pass": 8
+        }
+      ],
+      "exported": false,
+      "attribution": "Native stage logs matched to the pre-run recorded PR base commit; absence of a stage marker does not identify its filter reason."
+    },
+    {
+      "repository": "nipy/nipype",
+      "number": 3753,
+      "validation_attempted": false,
+      "validation_records": [],
+      "exported": false,
+      "attribution": "Native stage logs matched to the pre-run recorded PR base commit; absence of a stage marker does not identify its filter reason."
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7475,
+      "validation_attempted": false,
+      "validation_records": [],
+      "exported": false,
+      "attribution": "Native stage logs matched to the pre-run recorded PR base commit; absence of a stage marker does not identify its filter reason."
+    },
+    {
+      "repository": "psychopy/psychopy",
+      "number": 7805,
+      "validation_attempted": false,
+      "validation_records": [],
+      "exported": false,
+      "attribution": "Native stage logs matched to the pre-run recorded PR base commit; absence of a stage marker does not identify its filter reason."
+    }
+  ],
+  "exported_tasks": [],
+  "glm_baseline_counts": {
+    "planned_prs_before_filters": 16,
+    "comparison_prs": 5,
+    "additional_prs": 11,
+    "native_selected": 6,
+    "native_filtered_no_test_patch": 4,
+    "native_validations": 2,
+    "native_validation_rejections": 2,
+    "bootstrap_unresolved_prs": 10,
+    "exports": 0,
+    "base_reference_grading_runs": 0,
+    "verified_tasks": 0,
+    "agent_iterations": 49,
+    "invalid_actions": 17
+  },
+  "lifecycle": {
+    "observed_at": "2026-10-21T14:13:19.583852+00:00",
+    "runs": [
+      {
+        "run_id": "biotasks25-sonnet-001",
+        "state": "FAILED",
+        "terminal": true,
+        "allocated_cpus": 4.0,
+        "attempts": [
+          {
+            "state": "failed",
+            "started_at": "Timestamp(2026-10-20T20:51:57.747000+00:00)",
+            "finished_at": "Timestamp(2026-10-20T20:55:03.196000+00:00)",
+            "seconds": 185.449,
+            "allocated_cpu_hours": 0.20605444444444446
+          }
+        ]
+      },
+      {
+        "run_id": "biotasks25-sonnet-002",
+        "state": "SUCCEEDED",
+        "terminal": true,
+        "allocated_cpus": 4.0,
+        "attempts": [
+          {
+            "state": "succeeded",
+            "started_at": "Timestamp(2026-10-21T13:28:43.449000+00:00)",
+            "finished_at": "Timestamp(2026-10-21T14:12:25.042000+00:00)",
+            "seconds": 2621.593,
+            "allocated_cpu_hours": 2.912881111111111
+          }
+        ]
+      }
+    ],
+    "all_terminal": true,
+    "sonnet_attempts_allocated_cpu_hours": 3.1189355555555554,
+    "baseline_allocated_cpu_hours": 1.5063416666666667,
+    "accounting": "Scheduler running intervals times reserved CPUs; includes installation, idle waits, stopped authentication attempt and artifact upload. Not actual CPU utilization or billed model cost.",
+    "issue_25_total_allocated_cpu_hours": 4.625277222222222,
+    "baseline_lifecycle_commit": "c20ba1a095949e330c81921d24ce820792f152d2",
+    "baseline_lifecycle_sha256": "ef3cbd4e72f694c56a69ca11aa751722e31e2105990131e30c0f2585ea1c88bb",
+    "all_issue_25_jobs_terminal": true,
+    "total_recorded_issue_25_jobs": 7
+  },
+  "cleanup": {
+    "run_id": "biotasks25-sonnet-002",
+    "started": 1792589324.5972793,
+    "native_started": true,
+    "authenticated": true,
+    "authentication_method": "GH_TOKEN_environment",
+    "remaining_containers": [],
+    "remaining_controllers": [],
+    "remaining_images": [],
+    "finished": 1792591942.0091941
+  },
+  "billed_model_usd": null,
+  "token_usage": null,
+  "api_request_count_including_sdk_retries": null,
+  "cost_note": "Native estimates are not billed costs. Request IDs, token usage and resolved OpenRouter routing were not retained. No extra model call or repair was used.",
+  "grading": "No exported tasks; no base/reference grading input exists.",
+  "diagnostic_limit": "Upstream does not persist rejected-stage raw logs. Aggregate skip reasons and parsed counts do not establish the exact underlying test failure."
+}

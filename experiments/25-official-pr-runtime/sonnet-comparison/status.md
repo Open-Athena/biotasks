@@ -1,27 +1,20 @@
-# Sonnet comparison ready for noninteractive authentication
+# Sonnet comparison completed
 
-The user requested a second run with the pinned upstream docs' example model,
-Claude Sonnet 4.6, using the same inputs and budgets as the GLM baseline.
+The unchanged official native pipeline produced zero exports. Sonnet emitted 35
+parsed actions with zero INVALID actions; the GLM baseline had 49 actions with
+17 INVALID actions. This supports better compatibility with the native action
+format in this sample, without establishing improved task yield or cost.
 
-All five JSON configurations differ from the original arm only at `llm.model`:
-`z-ai/glm-5.3` becomes `anthropic/claude-sonnet-4.6`. OpenRouter remains the provider.
-The source revision, native prompts/parser, output-token budget,
-temperature, turn/time/spend limits, selection windows, repository refs and Docker
-resource guard are unchanged. Shared launcher files are copied byte-for-byte to a
-separate temporary staging directory; their hashes are checkpointed in the launch
-plan. The fresh controller has an empty bootstrap cache, so GLM's image/cache is
-not reused. Run identity and artifact destination differ for isolation.
+Two native images were saved, including scikit-fingerprints with failed smoke
+and fresh-image checks. Its four selected PRs had zero fail-to-pass matches.
+Nipype saved its image but timed out while listing PRs, before validation.
+PsychoPy exhausted 20 turns without saving an environment; its second window
+was skipped without another bootstrap. No extra model call, manual retry or
+external environment repair ran. With no exports, grading had no inputs.
 
-This is the same research question as #25. Preserve the original negative result
-and its evidence at `c20ba1a095949e330c81921d24ce820792f152d2`; report the new arm
-separately before comparing them. No external repair or extra model probe is part
-of this run. Public endpoint metadata was checked without generation.
-
-The first submission was stopped before authentication or native execution, and
-its archive readback and owned cleanup were verified (`auth-stop-001/`). No Sonnet
-model call has run. The user chose a new dedicated public-read token rather than
-reuse of a CI credential. The user completed hidden terminal setup; local authenticated GraphQL
-PR reads succeeded for all three public repositories. A fresh submission follows. Native calls remain gated until its noninteractive auth check succeeds
-and the original checkpointed native command is explicitly enabled. Any exports
-require the same official base/reference control requirement before claiming a
-verified task. Record missing diagnostics and cost data rather than filling gaps.
+Dedicated GH_TOKEN authentication worked without browser interaction. Both Sonnet
+jobs and the five baseline jobs are terminal. Archive readback and owned cleanup
+passed; 3.118936 CPU-hours cover both Sonnet attempts, and 4.625277 CPU-hours cover
+all seven issue jobs. Model billing remains unverified because native estimates
+were zero and usage/request identifiers were not retained. See results.md and the
+retained original evidence for the comparison and limits.

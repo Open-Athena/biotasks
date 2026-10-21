@@ -1,0 +1,26 @@
+{
+  "image_digest": "sha256:ca0a0c059421558713f2e7c8bca5e1bee2309c503693ca389cf6f67d4aac204c",
+  "image_tag": "local/r2e-bootstrap/mlcil__scikit-fingerprints:18ff996d5a56",
+  "language": "python",
+  "repo": "MLCIL/scikit-fingerprints",
+  "ref": "18ff996d5a56f673b1fcec85d0afed48fea0c2a8",
+  "rebuild_cmds": [
+    "pip install uv uv_build -q",
+    "cd /workspace && pip install -e . -q",
+    "pip install pytest pytest-rerunfailures -q"
+  ],
+  "test_cmds": [
+    "cd /workspace && python -m pytest -v"
+  ],
+  "smoke_passed": false,
+  "iterations": 8,
+  "build_time_sec": 250.11,
+  "llm_provider": "openrouter/anthropic/claude-sonnet-4.6",
+  "llm_cost_estimate_usd": 0.0,
+  "dockerfile_reconstruction": "# Auto-generated from r2e-bootstrap agent transcript.\n# Build from the cloned repo root: `docker build -t my-image .`\nFROM python:3.12-slim\nWORKDIR /workspace\nCOPY . /workspace\n\nRUN ls /workspace && cat /workspace/pyproject.toml 2>/dev/null || cat /workspace/setup.py 2>/dev/null || cat /workspace/setup.cfg 2>/dev/null\nRUN ls /workspace/tests/ | head -20 && pip install build-essential 2>/dev/null; apt-get install -y git build-essential curl ca-certificates -q 2>/dev/null; echo \"done\"\nRUN pip install uv -q && echo \"uv installed\"\nRUN cd /workspace && pip install uv_build -q 2>&1 | tail -5 && echo \"done\"\nRUN cd /workspace && pip install -e . -q 2>&1 | tail -20\nRUN python -c \"import skfp; print('skfp imported successfully')\" && pip install pytest pytest-rerunfailures -q 2>&1 | tail -5\nRUN cd /workspace && python -m pytest --collect-only -q 2>&1 | tail -20\n",
+  "transcript_path": "/work/bootstrap/MLCIL__scikit-fingerprints/18ff996d5a56__74ba7084/transcript.jsonl",
+  "pushed_to_registry": false,
+  "verify_passed": false,
+  "verify_detail": "exit=2; selection/splitters/scaffold_split.py\n!!!!!!!!!!!!!!!!!!! Interrupted: 20 errors during collection !!!!!!!!!!!!!!!!!!!\n======================== 1 skipped, 20 errors in 2.34s =========================",
+  "extra": {}
+}
