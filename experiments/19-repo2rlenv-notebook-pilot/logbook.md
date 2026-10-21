@@ -3183,3 +3183,7 @@ services. After the approved execution route recovers, use the compact policy an
 current generic staging-feedback code with the unchanged original seed. Config
 023 is prepared only, not reserved or submitted; allocate within the remaining
 standing budget before dispatch. PR #23 stays draft and unmerged.
+
+### 2026-10-21 — Fresh placement retry 023
+
+The user requested another availability check. All three approved peers report reachable at 19:14 UTC; this is health metadata, not evidence of successful placement. Reserve $5 for fresh autonomous PyHMMER campaign 023 within the standing $100 authorization ($98 held, $2 unallocated). Retain the existing resource, scientific, model and time limits. Use the compact source payload; preserve cancelled 019–022 unchanged.
