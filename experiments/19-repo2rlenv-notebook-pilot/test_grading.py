@@ -110,11 +110,18 @@ def test_grader_shell_opens_only_after_a_controller_candidate_attempt(tmp_path):
     session.shell = shell
 
     async def exercise():
-        assert "No command executed" in await session.grader_repair_shell("true", 12)
+        initial_shell = session.candidate_first_shell()
+        assert "No command executed" in await initial_shell("true", 12)
         assert calls == []
         session.candidate_number = 1
-        assert await session.grader_repair_shell("true", 12) == "recorded diagnostic"
+        assert await initial_shell("true", 12) == "recorded diagnostic"
         assert calls == [("true", 12)]
+        repair_shell = session.candidate_first_shell()
+        assert "No command executed" in await repair_shell("repair diagnostic", 13)
+        assert calls == [("true", 12)]
+        session.candidate_number += 1
+        assert await repair_shell("repair diagnostic", 13) == "recorded diagnostic"
+        assert calls == [("true", 12), ("repair diagnostic", 13)]
 
     asyncio.run(exercise())
 
@@ -398,7 +405,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         async def shell(self, *args, **kwargs):
             return json.dumps({"exit_code": 0, "stdout": "isolated"})
 
-        grader_repair_shell = shell
+        def candidate_first_shell(self):
+            return self.shell
 
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]

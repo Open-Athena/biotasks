@@ -19,7 +19,7 @@ controller acceptance; failed or unfinished commands do not establish findings.
 Do not invent new measurements. Submit the full candidate promptly; the
 controller will execute its checks and return demonstrated defects for repair.
 It names the directory containing private reference output files in your sandbox.
-For initial authoring, submit a complete candidate from the supplied task, schemas
+For each authoring or repair session, submit a complete candidate from the supplied task, schemas
 and execution evidence before using the shell. The controller runs the basic
 acceptance and rejection checks; do not duplicate them in exploratory scripts
 before submission. After a candidate attempt, shell access is available to diagnose
@@ -104,7 +104,9 @@ criteria. Describe numeric tolerances as limits on observable output differences
 not as guarantees that every use of a particular wrong method will be detected.
 Keep run-specific calibration measurements and test history in the private rationale.
 
-Use targeted tests for the changed behavior, then submit the complete candidate.
+Submit the complete revised candidate before using the shell in this repair session.
+If that submission fails, use targeted diagnostics for the returned failures and
+resubmit the corrected candidate.
 The controller reruns all frozen controls on submission. Do not reconstruct their
 scripts, repeatedly run the entire suite locally, or expand into unrelated edge
 cases after the reported defects are resolved. Repeat a test only when a relevant

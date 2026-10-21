@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import shutil
 import signal
@@ -162,10 +163,14 @@ class IrisDaytonaExecution:
                 if value is None or not 0 < value <= ceiling:
                     raise ValueError("Generated task exceeds the approved phase time limits")
         remaining = (self.deadline - datetime.now(UTC)).total_seconds()
-        timeout = min(kwargs.get("timeout_sec", 1500), 1500)
-        kwargs["timeout_sec"] = timeout
-        if remaining < timeout + 120:
+        # The trial is bounded by both its requested maximum and the existing
+        # campaign deadline. Preserve the cleanup reserve without requiring the
+        # full worst-case duration before dispatch. An outer timeout remains an
+        # infrastructure failure, never a failed scientific answer.
+        timeout = min(kwargs.get("timeout_sec", 1500), 1500, math.floor(remaining) - 120)
+        if timeout <= 0:
             raise TimeoutError("Insufficient allocation time for trial and cleanup")
+        kwargs["timeout_sec"] = timeout
         # Every attempted dispatch consumes a slot, including uncertain outcomes.
         # Re-observing the same upstream receipt does not authorize another launch.
         self.records.mkdir(parents=True, exist_ok=True)

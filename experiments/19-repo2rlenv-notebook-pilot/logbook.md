@@ -2775,3 +2775,21 @@ deadlines; independent probes and review remain required. Forty-four grading
 tests pass. Also retain the last three operation receipts per stage in the small
 diagnostic export, avoiding a separate recovery job for ordinary command failures.
 Live effectiveness of the grader ordering change remains unproven.
+
+## 2026-10-21 — autonomous grading accepted; deadline still prevents completion
+
+Campaign 010 built its first candidate successfully and GLM repaired a grader
+formatting defect exposed by the frozen independent probes. All 17 final controls
+passed and review accepted packaging. Grading took 4,696 seconds; its subsequent
+archive export timed out. No native trial launched. Original small receipts and
+verified cleanup are in `autonomous-runs/010`; this remains an infrastructure
+failure, not full validation. Initial candidate-first grader authoring was exercised
+successfully (two responses), but repair still spent 32 responses before submission.
+
+Apply candidate-first tool ordering separately to each authoring/repair session;
+44 grading tests pass. Native admission now uses the remaining campaign allowance
+instead of requiring a full worst-case 1,500 seconds, still reserving 120 seconds
+for cleanup and preserving phase ceilings. Eighteen execution/native tests pass;
+outer trial timeouts remain infrastructure failures. These changes are general
+controller behavior, not notebook-specific scientific edits. Campaign 011 will
+start again from the original notebook, without reusing generated artifacts.

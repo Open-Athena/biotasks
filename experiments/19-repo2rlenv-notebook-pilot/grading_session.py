@@ -242,18 +242,23 @@ class GradingSession:
             )
         return json.dumps(reply)
 
-    async def grader_repair_shell(self, command, timeout_sec=120):
-        """Use controller feedback before duplicating its checks in a shell."""
-        if self.candidate_number == 0:
-            return (
-                "No command executed. Submit a complete grader candidate first using "
-                "the supplied task, schemas, and execution evidence. The controller "
-                "will test the reference, independent solution, empty submission and "
-                "missing files, then return measured failures. Shell access becomes "
-                "available for repair after that attempt. If the evidence cannot "
-                "support a grader, submit a blocked disposition with the reason."
-            )
-        return await self.shell(command, timeout_sec)
+    def candidate_first_shell(self):
+        """Require a new controller attempt in each authoring or repair session."""
+        prior_attempts = self.candidate_number
+
+        async def shell(command, timeout_sec=120):
+            if self.candidate_number <= prior_attempts:
+                return (
+                    "No command executed. Submit a complete candidate for this session "
+                    "using the supplied evidence, prior candidate and review when present. "
+                    "The controller will execute the applicable controls and return "
+                    "measured failures. Shell access then becomes available for diagnosis. "
+                    "If the evidence cannot support a candidate, submit a blocked "
+                    "disposition with the reason."
+                )
+            return await self.shell(command, timeout_sec)
+
+        return shell
 
     async def validate_probe_execution(self, probe):
         """Check mutation execution without exposing any grader result to its author."""
@@ -734,7 +739,7 @@ async def run_grading(
                 "notebook-grader-author",
                 context,
                 session.validate_candidate,
-                session.grader_repair_shell,
+                session.candidate_first_shell(),
             )
         save_record(root / "candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":
@@ -863,7 +868,7 @@ async def run_grading(
                     "controls": session.last_controls,
                 },
                 session.validate_candidate,
-                session.shell,
+                session.candidate_first_shell(),
             )
             save_record(root / "repaired-candidate.json", candidate.model_dump())
             if candidate.disposition == "blocked":

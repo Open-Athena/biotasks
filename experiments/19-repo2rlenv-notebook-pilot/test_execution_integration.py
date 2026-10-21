@@ -319,3 +319,46 @@ def test_terminus_can_omit_extra_caps(tmp_path, monkeypatch):
     )
     command = launch.call_args.args[2]
     assert not any(x.startswith(("max_turns=", "llm_call_kwargs=")) for x in command)
+
+
+@pytest.mark.parametrize("remaining", [1800, 900, 120, 30])
+def test_adapter_uses_remaining_time_without_spending_cleanup_reserve(
+    tmp_path, monkeypatch, remaining
+):
+    import iris_execution
+
+    now = datetime(2026, 1, 1, tzinfo=UTC)
+
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return now
+
+    monkeypatch.setattr(iris_execution, "datetime", Clock)
+    monkeypatch.setenv("BIOTASKS_IRIS_WORKER_ID", "test-worker")
+    adapter = IrisDaytonaExecution(
+        worker_id="test-worker",
+        deadline=now + timedelta(seconds=remaining),
+        records=tmp_path / "claims",
+        max_trials=3,
+        max_solver_attempts=1,
+        solver_seconds=600,
+    )
+    dispatch = Mock(side_effect=TimeoutError("trial incomplete"))
+    monkeypatch.setattr(harbor, "run_trial", dispatch)
+    with pytest.raises(TimeoutError):
+        adapter.run_trial(
+            adapter.worker,
+            tmp_path / "task",
+            tmp_path / "trial",
+            trial_id="bounded",
+            agent="terminus-2",
+            timeout_sec=1500,
+        )
+    if remaining <= 120:
+        dispatch.assert_not_called()
+        assert not adapter.records.exists()
+    else:
+        assert dispatch.call_args.kwargs["timeout_sec"] == min(1500, remaining - 120)
+        assert dispatch.call_args.kwargs["agent_timeout_sec"] == 600
+        assert len(list(adapter.records.glob("*.json"))) == 1
