@@ -2,6 +2,7 @@
 
 import ast
 import json
+import os
 
 import pytest
 
@@ -188,3 +189,120 @@ def test_pairing_formats_are_recorded_without_controlling_conversion(tmp_path):
 def test_unknown_or_malformed_pairing_options_are_rejected(tmp_path, pairing):
     with pytest.raises(UnsupportedNotebook, match="Jupytext metadata"):
         export_python(source(tmp_path, ["x=1"], jupytext=pairing))
+
+
+def test_literal_directory_changes_preserve_position_without_running_at_conversion(
+    tmp_path, monkeypatch
+):
+    directory = tmp_path / "data set"
+    directory.mkdir()
+    (directory / "value.txt").write_text("observed")
+    path = source(
+        tmp_path,
+        [
+            "os = 'analysis value'\nvalues = []",
+            "%cd 'data set'\nvalues.append(open('value.txt').read())",
+            "%cd ..\nresult = os",
+        ],
+    )
+    monkeypatch.chdir(tmp_path)
+    with monkeypatch.context() as patch:
+
+        def no_directory_changes(*args):
+            raise AssertionError("Conversion must not change directories")
+
+        patch.setattr(os, "chdir", no_directory_changes)
+        script, receipt = export_python(path)
+        assert export_python(path) == (script, receipt)
+    scope = {}
+    exec(compile(script, "synthetic.py", "exec"), scope)
+    assert scope["values"] == ["observed"]
+    assert scope["result"] == "analysis value"
+    assert os.getcwd() == str(tmp_path)
+    assert [change["path"] for change in receipt["directory_normalizations"]] == ["data set", ".."]
+    assert receipt["executed"] is False
+
+
+@pytest.mark.parametrize("argument", ["example3", "./data", "../data", "/tmp/data", '"data set"'])
+def test_supported_literal_directory_paths(tmp_path, argument):
+    script, receipt = export_python(source(tmp_path, [f"%cd {argument}\nresult = 1"]))
+    assert ".chdir(" in script
+    assert len(receipt["directory_normalizations"]) == 1
+
+
+@pytest.mark.parametrize(
+    "argument",
+    [
+        "",
+        "-",
+        "-q data",
+        "-2",
+        "-- data",
+        "$DATA",
+        "{data}",
+        "~",
+        "data*",
+        "a b",
+        "'a' 'b'",
+        "'a",
+        "a; print(1)",
+        "data # comment",
+        "'a\\b'",
+    ],
+)
+def test_directory_expansion_options_and_ambiguous_arguments_are_rejected(tmp_path, argument):
+    with pytest.raises(UnsupportedNotebook):
+        export_python(source(tmp_path, [f"%cd {argument}"]))
+
+
+@pytest.mark.parametrize("cell", ["__import__ = other", "def f(__import__): pass"])
+@pytest.mark.parametrize("before", [True, False])
+def test_directory_changes_reject_shadowed_import_builtin_in_any_cell(tmp_path, cell, before):
+    cells = [cell, "%cd data"] if before else ["%cd data", cell]
+    with pytest.raises(UnsupportedNotebook, match="unshadowed"):
+        export_python(source(tmp_path, cells))
+
+
+def test_directory_magic_in_strings_and_modulo_are_not_rewritten(tmp_path):
+    code = 'text = """\n%cd data\n__import__\n"""\n# %cd data\nvalue = (7\n% 3)'
+    script, receipt = export_python(source(tmp_path, [code]))
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse(code))
+    assert receipt["directory_normalizations"] == []
+
+
+@pytest.mark.parametrize("prefix", ["value = (7\n", "value = 7 \\\n"])
+@pytest.mark.parametrize("directive", ["%matplotlib inline", "%cd data"])
+def test_continued_statement_cannot_be_misclassified_as_directive(tmp_path, prefix, directive):
+    with pytest.raises(UnsupportedNotebook):
+        export_python(source(tmp_path, [prefix + directive + "\n)"]))
+
+
+def test_directory_history_is_not_silently_recreated(tmp_path):
+    with pytest.raises(UnsupportedNotebook, match="kernel state"):
+        export_python(source(tmp_path, ["%cd data\nresult = _dh"]))
+
+
+@pytest.mark.parametrize("tags", [[], ["remove-input"]])
+def test_presentation_tags_retain_execution(tmp_path, tags):
+    path = source(tmp_path, ["values = []", "values.append(7)"])
+    notebook = json.loads(path.read_text())
+    notebook["cells"][1]["metadata"]["tags"] = tags
+    path.write_text(json.dumps(notebook))
+    script, receipt = export_python(path)
+    scope = {}
+    exec(compile(script, "synthetic.py", "exec"), scope)
+    assert scope["values"] == [7]
+    assert receipt["ignored_presentation_tags"] == [{"cell_index": 1, "tags": tags}]
+    assert ast.dump(ast.parse(script)) == ast.dump(ast.parse("values=[]\nvalues.append(7)"))
+
+
+@pytest.mark.parametrize(
+    "tags", [None, "remove-input", [0], ["remove-input", "skip-execution"], ["remove-cell"]]
+)
+def test_unknown_or_malformed_tags_remain_unsupported(tmp_path, tags):
+    path = source(tmp_path, ["result = 1"])
+    notebook = json.loads(path.read_text())
+    notebook["cells"][0]["metadata"]["tags"] = tags
+    path.write_text(json.dumps(notebook))
+    with pytest.raises(UnsupportedNotebook, match="execution directives"):
+        export_python(path)

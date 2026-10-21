@@ -53,12 +53,20 @@ not task generation or scientific validation.
 `biotasks.notebook_script.export_python(path)` converts Python nbformat-4
 notebooks to scripts with Markdown cells retained as comments. It never executes
 the notebook or treats stored outputs as validation evidence. Its receipt records
-source and script hashes, conversion policy and any presentation normalization.
+source and script hashes, conversion policy and each supported normalization.
 
 The supported normalizations are standalone `%matplotlib inline` lines and an
 argument-free `%%time` on the first line of a code cell. Timing-cell bodies remain
 in order and execute once. Identical text inside Python strings is preserved.
 Editor metadata for the cell toolbar and VS Code is recorded and ignored.
+Empty code-cell tag lists and the documentation tag `remove-input` are recorded
+without hiding source or skipping its execution. Unknown tags remain unsupported.
+Standalone `%cd` with one literal POSIX path becomes an in-place directory
+change, without adding a global variable. Quoted spaces are supported; variables,
+home expansion, options, history and bookmarks are not. Conversion never changes
+the working directory; the generated call runs only when the script does. Missing
+directories fail the script rather than silently continuing. Interactive directory
+history and source use of `__import__` with `%cd` are outside this profile.
 After normalization, the helper compares the ordered executable syntax trees
 before and after Jupytext export. Other magics, shell escapes, kernel state,
 execution-skipping directives and unsupported languages are rejected explicitly.

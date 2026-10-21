@@ -9,28 +9,14 @@ from biotasks.prompts import list_prompts, load_prompt
 def test_list_and_read_prompts_outside_checkout(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    templates = Path(__file__).resolve().parents[1] / "src" / "biotasks" / "prompts"
+    expected_names = sorted(path.stem for path in templates.glob("*.md"))
+    assert expected_names
     monkeypatch.chdir(tmp_path)
     with pytest.raises(SystemExit) as result:
         main(["prompts", "list"])
     assert result.value.code == 0
-    assert capsys.readouterr().out.splitlines() == [
-        "author-task",
-        "find-units",
-        "notebook-coercion-audit",
-        "notebook-endpoint-coverage",
-        "notebook-endpoint-review",
-        "notebook-fidelity",
-        "notebook-grounding",
-        "notebook-quality",
-        "notebook-reference-prepare",
-        "notebook-reference-review",
-        "notebook-reference-setup",
-        "notebook-schema-audit",
-        "notebook-task-construction",
-        "notebook-task-design",
-        "notebook-task-design-review",
-        "notebook-task-specification",
-    ]
+    assert capsys.readouterr().out.splitlines() == expected_names
 
     for name in list_prompts():
         template = load_prompt(name)

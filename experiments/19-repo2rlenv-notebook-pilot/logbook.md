@@ -3016,3 +3016,21 @@ cell-tag gaps. No new package/model/scientific execution or paid resource launch
 Candidate selection is a draft; source/data admission and full resource fit remain
 unverified for the six additions. R stays deferred. Existing broken COBRApy FBA
 remains separate evidence/control, not a silently replaced baseline.
+
+## 2026-10-21: general converter compatibility for the development panel
+
+User agreed to literal-directory and benign-tag conversion support. Profile v5
+records literal %cd replacements, empty tag lists and remove-input tags while
+preserving scientific statement order and execution. Unknown/execution tags and
+interactive directory semantics still reject. Added logical-statement boundary
+checks so magic-looking text in continued Python is not stripped. No source-
+specific methods or manual scientific changes were introduced.
+
+All ten original sources passed identity, repeat-conversion and normalized AST
+checks; receipts and the source-only checker are in development-panel-conversion-v5.
+Original v4 screening is retained in the proposal manifest. Sixty-five converter
+tests and 138 ordinary tests passed; Ruff, ty and pre-commit passed. Fixed a stale
+prompt-inventory assertion encountered by the broader suite. No model/scientific
+runs, new paid resources or HTML changes. Selection remains a draft until input
+availability/terms checks; full runtime/resource fit is still unmeasured for the
+six additions. PR #23 stays draft and unmerged.
