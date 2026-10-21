@@ -1,0 +1,7 @@
+# Original NeuroKit HRV seed 024 — active
+
+This is the first executing campaign for the original pinned HRV notebook; unstarted placement 020 is preserved separately. It uses exactly the same frozen factory `417df0ed95e0c55ef12a91d264f5e1c220e8b3be` as PyHMMER 025. Comparison of both actual source payloads verified all 165 runtime files identical; only selected notebook/seed inputs differ. Task scope and exports are worker choices, with no manual scientific instructions or task repairs.
+
+The current budget checkpoint is `04fb82d5`; it is intentionally separate from the runtime revision. The $5 hold fits the existing $100 authorization after evidence-based reconciliation of older holds. User-approved concurrency is at most two reserved Iris CPU hosts and two Daytona sandboxes, one per campaign. Existing model, resource, time, offline-execution and CPU-only rules remain unchanged.
+
+The CPU host started at 22:16:01 UTC on 21 October and was independently observed RUNNING at 22:17:29 UTC. Worker readback at 22:17:55 UTC confirmed preparation completed and setup active. This checkpoint establishes execution, not scientific acceptance or cleanup. Retrieve the terminal result and archive, preserve any rejection/infrastructure failure, and verify sandbox-stage and any native-trial ownership before reconciling the hold. New task/data bundles remain private pending source-specific publication review.
