@@ -1,7 +1,9 @@
-# Fresh PyHMMER autonomous campaign 023 — active
+# Fresh PyHMMER autonomous campaign 023 — grading transport failure
 
-Factory `47ebdb2b8fb51993c06c679e79845fb6541cc28b` was frozen before launch. The original pinned notebook and common policy enter the compact source payload without a manually prescribed scientific task.
+Factory `47ebdb2b8fb51993c06c679e79845fb6541cc28b` completed preparation, setup/offline reference execution, two reference repeats, specification and task construction without operator intervention. Its independent implementation also executed and produced both declared outputs; those outputs were not yet scientifically compared.
 
-The approved CPU route admitted the job at 19:15:38 UTC on 21 October. Worker readback confirmed preparation, setup/offline reference testing and both programmatic reference repeats completed. At 19:36:31 UTC specification remained active (73 completed responses, about 16 minutes in that stage). This confirms restored execution, not a validated task. No operator handoff or candidate edit occurred.
+The first grader-model request then timed out after its existing 600-second allowance. The retained receipt identifies `TimeoutError` / `transport_uncertain`; it does not establish why the provider did not respond. No response or grader was accepted for that request, and uncertain transport is not automatically replayed. The pipeline recorded `infrastructure_failed` at grading. This is neither a validated task nor a scientific notebook rejection; no native solver ran.
 
-The campaign continues independently within its existing two-hour-plus-cleanup bound and $5 reservation. The snapshot here is not terminal; cleanup has not yet been independently verified for this active campaign. Retrieve its terminal artifacts and verify all stage and native-trial owners before reconciling the reservation or recording a scientific outcome. Original unstarted attempts 019–022 remain unchanged.
+Pipeline duration was about 44 minutes 37 seconds; host lifetime including evidence export was about 49 minutes 32 seconds. Specification took about 18 minutes 37 seconds, construction 3 minutes 44 seconds, and grading 18 minutes 1 second including the failed request. Small original receipts were recovered and hash-checked; complete execution evidence remains in the verified private archive.
+
+All four sandbox-stage cleanup receipts passed. A separate provider inventory at 20:58 UTC found zero owned sandboxes. The host is terminal. The original unstarted 019–022 outcomes remain unchanged; no generated candidate was hand-edited. Further work is to diagnose/recover the grading transport boundary through reusable factory code and preserve this failure.
