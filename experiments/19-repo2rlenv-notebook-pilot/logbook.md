@@ -2793,3 +2793,14 @@ for cleanup and preserving phase ceilings. Eighteen execution/native tests pass;
 outer trial timeouts remain infrastructure failures. These changes are general
 controller behavior, not notebook-specific scientific edits. Campaign 011 will
 start again from the original notebook, without reusing generated artifacts.
+
+## 2026-10-21 — provider creation and cleanup conflict
+
+Campaign 011 ended after preparation because Daytona creation exceeded 420 seconds.
+The host terminated, but automatic deletion reported a conflict for its sole
+sandbox. Ownership-checked reconciliation shortened the TTL to one minute;
+readback still showed CREATING after that deadline. Force-stop and delete both
+returned conflicts. Preserve the original failed cleanup and subsequent actions in
+`autonomous-runs/011`. Do not launch another campaign until removal is verified.
+This provider failure exercised neither the new grader-repair ordering nor the
+native admission change; the autonomous positive path remains incomplete.
