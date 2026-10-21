@@ -3078,3 +3078,17 @@ invoice or credit. Reserved the released $5 for NeuroKit 020, preserving the $10
 aggregate ceiling. See budget-reconciliation-development020.json. Dispatch may
 use another documented GLM relay on reserved CPU capacity if the first cluster
 remains pending; no service deployment or restart is authorized or needed.
+
+The 019 cancellation RPC timed out, so no replacement was submitted until a
+separate read at 17:27 UTC confirmed KILLED, "Cancelled before handoff", no start
+time and zero tasks. Recorded placement-only infrastructure outcome under
+autonomous-runs/019 and reassigned its unused $5 to PyHMMER 021. NeuroKit 020
+remained pending at that read. Another documented compute peer is reachable;
+use the existing federation route rather than changing infrastructure. A direct
+controller inspection is unavailable by the current access policy and was not
+bypassed. Aggregate holds remain $100. A short shared-node load excursion also
+blocked a local status invocation; resumed after the load dropped below 1.5.
+
+Failure-log recovery now also preserves partially written operation receipts
+without masking the original error. The focused 36 tests passed again with
+that interrupted-receipt case. No model or scientific execution in 019.

@@ -155,7 +155,12 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
     for stage in ("setup-raw", "replay", "materialization-raw", "grading"):
         for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]:
             selected += (path.relative_to(root).as_posix(),)
-            if read(path).get("process", {}).get("exit_code") not in (None, 0):
+            try:
+                operation = read(path)
+            except (OSError, json.JSONDecodeError):
+                # Preserve an interrupted receipt without hiding the primary failure.
+                continue
+            if operation.get("process", {}).get("exit_code") not in (None, 0):
                 selected += ((path.parent / "output.log").relative_to(root).as_posix(),)
     for stage in ("preparation", "setup-raw", "specification", "materialization-raw", "grading"):
         selected += tuple(

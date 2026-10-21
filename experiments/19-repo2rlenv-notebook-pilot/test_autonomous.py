@@ -33,11 +33,15 @@ def test_failed_operation_log_is_available_in_small_diagnostics(tmp_path):
     for directory, code in [(failed, 1), (successful, 0)]:
         m.write(directory / "operation.json", {"state": "returned", "process": {"exit_code": code}})
         (directory / "output.log").write_text("diagnostic output")
+    partial = root / "setup-raw/operations/0003/operation.json"
+    partial.parent.mkdir(parents=True)
+    partial.write_text('{"state":')
     destination = tmp_path / "diagnostics"
     m.copy_diagnostics(root, destination)
     assert (destination / "setup-raw/operations/0001/output.log").read_text() == "diagnostic output"
     assert (destination / "setup-raw/operations/0001/operation.json").is_file()
     assert not (destination / "setup-raw/operations/0002/output.log").exists()
+    assert (destination / "setup-raw/operations/0003/operation.json").read_text() == partial.read_text()
 
 
 @pytest.mark.parametrize(
