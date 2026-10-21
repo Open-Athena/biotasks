@@ -17,13 +17,13 @@ sources were fetched and matched their original issue-18 SHA-256 hashes.
 | PyRadiomics | Prepared campaign 018. General converter profile v4 records and ignores boolean `editable`/`deletable` metadata while preserving ordered executable AST. No biological execution yet. |
 | scikit-bio IL6 | Unsupported conversion: embedded IPython shell commands, including a conditional install. No source repair or scientific execution. |
 | Harvard bedtools | Unsupported conversion: Bash kernel. Earlier coordinate/assembly concern remains unresolved. No source repair or scientific execution. |
-| methylKit | R Markdown; generic R runner/worker-contract support is needed. |
-| QFeatures | R Markdown; generic R runner/worker-contract support is needed. |
-| xcms | R Markdown; generic R runner/worker-contract support is needed. |
-| phyloseq | R Markdown; generic R runner/worker-contract support is needed. |
+| methylKit | R Markdown; R support deferred by the user. |
+| QFeatures | R Markdown; R support deferred by the user. |
+| xcms | R Markdown; R support deferred by the user. |
+| phyloseq | R Markdown; R support deferred by the user. |
 
-A question about adding R support is pending with the user. Unsupported formats
-are pipeline coverage gaps, not evidence of broken science or validated tasks.
+The user chose supported Python seeds first and deferred R support. Unsupported
+formats are pipeline coverage gaps, not evidence of broken science or validated tasks.
 The Bash path also needs support before the bedtools analysis can be tested.
 The scikit-bio notebook was previously set aside as an out-of-distribution choice;
 it is included in this requested panel's intake, without silently replacing it.

@@ -2954,3 +2954,12 @@ At 15:11 UTC, active 017 had finished setup and fresh reference replays and reac
 specification. Setup trace records one empty-response retry at call 60, unchanged
 allowances and no action executed from the empty response. The completed stage
 establishes live recovery; original failure 015 remains unmodified.
+
+## 2026-10-21: run supported Python seeds first
+
+User chose to defer R support and run supported Python seeds first. The four
+R Markdown cases remain explicitly deferred, not scientifically rejected.
+PyRadiomics remains next after active MDAnalysis 017 and verified cleanup.
+At 15:33 UTC, 017 had completed specification and construction and was grading;
+the independent implementation finished and the grader worker had started.
+No new paid campaign has been submitted.
