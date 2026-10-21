@@ -1,0 +1,3435 @@
+{
+  "dataset": "hub-pr_runtime",
+  "pipeline": "pr_runtime",
+  "task_count": 100,
+  "spec": "harbor-task/1.0 + metadata.repo2env",
+  "validation": {
+    "method": "harbor oracle gate (gold patch -> reward)",
+    "harbor_version": "0.6.6",
+    "agent": "oracle",
+    "env": "docker",
+    "validated_at": "2026-05-27T08:06:36.529726+00:00",
+    "dataset_commit": "6f3480c8f888f999c766d10c5b85b00f3647f491",
+    "tracked_resolved": 100,
+    "command_resolved": 88,
+    "eval_grade": 87,
+    "note": "`resolved` = SWE-bench tracked resolution (all F2P+P2P pass); the gold patch satisfies it for every task. `command_resolved` is stricter: tracked-resolved AND the selected test command had zero untracked failures AND exit code 0. `eval_grade` is `command_resolved` AND p2p_count>0 (has a regression guard) \u2014 the benchmark-grade subset. All tasks are valid for training."
+  },
+  "repo_distribution": {
+    "pallets/click": 28,
+    "urfave/cli": 25,
+    "pallets/werkzeug": 16,
+    "pallets/flask": 7,
+    "gorilla/mux": 5,
+    "python-attrs/attrs": 5,
+    "encode/httpx": 4,
+    "stretchr/testify": 3,
+    "psf/requests": 2,
+    "spf13/cobra": 2,
+    "gin-gonic/gin": 1,
+    "sirupsen/logrus": 1,
+    "tiangolo/typer": 1
+  },
+  "tasks": [
+    {
+      "task_id": "encode__httpx-3367",
+      "repo": "encode/httpx",
+      "ref": "8e36f2bc685dfbe43cd7503bc1c422a6ed6e05a5",
+      "reference": "https://github.com/encode/httpx/pull/3367",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 13,
+      "p2p_count": 803,
+      "loc_changed": 4,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 820,
+        "untracked_failed_count": 2,
+        "runtime_s": 17.6,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:60d41fce184a118b8238180de62fa69aa89084b96fd3cca09976fd04f09f1631",
+        "tests/test.sh": "sha256:30054fb339518e01dd9e31ad7ed38af70670b605d4dbea288542134d2b3b6ddd",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:27804902048faa6ad0e1dce4520f97fb384e9044113745694765d5188e8e0128",
+        "tests/p2p.json": "sha256:0a448f7e95c0308e18ed66c66ffd46fec34c240d8974a330514f3ea32958fc40",
+        "solution/patch.diff": "sha256:84a39fedfb70be2b44324de7c362047a6a28e3b0f4f3493fa8585760154284ef"
+      }
+    },
+    {
+      "task_id": "encode__httpx-3371",
+      "repo": "encode/httpx",
+      "ref": "489fef48ba8619c7604376165c7e8007398e1b5d",
+      "reference": "https://github.com/encode/httpx/pull/3371",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 80,
+      "loc_changed": 92,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 81,
+        "untracked_failed_count": 0,
+        "runtime_s": 17.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:2a98d1d760818f5317bb21c61fa6ea7bb5bf3f9afdc5d12768de22147f12d71b",
+        "tests/test.sh": "sha256:042fff75801ba768c14cd3c2595206a74cbc7f2b9ce520bc6f134d3a06ef95e5",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:676fb054f88619b918b98634d7656340aaf8fc2e443eab613e4d0cc1d15ea6c9",
+        "tests/p2p.json": "sha256:33e43f009b2b68954a48c3c3176ba62dbdd06592281953d828ca19c22d71801c",
+        "solution/patch.diff": "sha256:f24b73c16b7f16ea80d2f511dbf9512cc8fa4f06767096ff3fd9e7f69ab371d4"
+      }
+    },
+    {
+      "task_id": "encode__httpx-3377",
+      "repo": "encode/httpx",
+      "ref": "eeb5e3c2a3ff2403ec47b5926715ecd61143d92d",
+      "reference": "https://github.com/encode/httpx/pull/3377",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 40,
+      "loc_changed": 71,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 42,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:2cc0904acccd56da47b5b21bfcac8beb0339409050dc4dc5b9c075bd68e2d18f",
+        "tests/test.sh": "sha256:c897fbe5d4043e01723bb21364b916ac5fc436527133455361586aca55b827d6",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9d800c8a92740ed44dce3a8461d2ab5dd0637d7f00932c5d8c912ed96465908a",
+        "tests/p2p.json": "sha256:5be66c11001e0c283860f3ac76cc54abc19cab6241ff5f512549966d963d3588",
+        "solution/patch.diff": "sha256:d504b648d20d3f96aa16c623434a0905ae2e82bf87c083cc7fb210691571525d"
+      }
+    },
+    {
+      "task_id": "encode__httpx-3412",
+      "repo": "encode/httpx",
+      "ref": "189fc4bcbe5f314128775dec66a616ac9a31ad48",
+      "reference": "https://github.com/encode/httpx/pull/3412",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 37,
+      "loc_changed": 12,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 40,
+        "untracked_failed_count": 2,
+        "runtime_s": 6.7,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:19e642ead188f59ad0e3d84400aa8932da362ce88e7c5f275ba7406a48efb69d",
+        "tests/test.sh": "sha256:2e96e299a871be3db101adcf3b27269da8a04b63bc76ef3274b12856e7a6134f",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:91d08e519a76586bb5144ef10e079f51226058be67cc65193f9fa940c2aae48c",
+        "tests/p2p.json": "sha256:9f1abd905dd262f65512ecd1dc8ced6d0d38d150954eae48785def2d67d1fe96",
+        "solution/patch.diff": "sha256:f897eae6b51cb9131fd2c00f9cc41c24f34b013336eee3cf5c6e05b1d426fb4f"
+      }
+    },
+    {
+      "task_id": "gin-gonic__gin-4472",
+      "repo": "gin-gonic/gin",
+      "ref": "915e4c90d28ec4cffc6eb146e208ab5a65eac772",
+      "reference": "https://github.com/gin-gonic/gin/pull/4472",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 445,
+      "loc_changed": 3,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 447,
+        "untracked_failed_count": 0,
+        "runtime_s": 140.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:8896fa8f9c4b13a1a80f752cdf1bd89f73526de2889f3d2d32dbe00671c7c6ae",
+        "tests/test.sh": "sha256:577b44f8a624ec2434c534b7da5a3f6c216030b2d6c3052f3871013b2239bdf9",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9762ada08e160ac00b83ad91659ac36a97623f8e83b8b65f128e523af59726bf",
+        "tests/p2p.json": "sha256:26ed4bed25261d0be4d14fdc22dc4cbb68b039c5ff87eca760f21fad08989c34",
+        "solution/patch.diff": "sha256:cc7754b84fa1fd30c25df53bc92bf9d02964f7b6ec6a509303f1f6d494e97fa1"
+      }
+    },
+    {
+      "task_id": "gorilla__mux-510",
+      "repo": "gorilla/mux",
+      "ref": "e67b3c02c7195c052acff13261f0c9fd1ba53011",
+      "reference": "https://github.com/gorilla/mux/pull/510",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 287,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 289,
+        "untracked_failed_count": 0,
+        "runtime_s": 40.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:3af94a8be2a20487dd64bbffc8df1cb8db1b4b54d6780028d08211b4f965c51d",
+        "tests/test.sh": "sha256:526d035e3ef92c584b8cdcb2bb58f21ca8ca0f42991d0ee4db0a17efd586ef67",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:be20d309ae32cb6461558f5175b00f0770d9a0af077b831f5944a8ff676a5689",
+        "tests/p2p.json": "sha256:689879aaef5b689c0585a69bd53f5385818b82f0f9dc475e9d89d559d1ec0160",
+        "solution/patch.diff": "sha256:c89e059e941138c794839366375e043763e5a2598dda2613f10f0e627820bf51"
+      }
+    },
+    {
+      "task_id": "gorilla__mux-535",
+      "repo": "gorilla/mux",
+      "ref": "f395758b854c4efa789b8c1e9b73479704c548cb",
+      "reference": "https://github.com/gorilla/mux/pull/535",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 292,
+      "loc_changed": 25,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 293,
+        "untracked_failed_count": 0,
+        "runtime_s": 38.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:a4f3d4cf6ba6672fd647d2e81058f00cb8892437c5856ad255487487cc09fade",
+        "tests/test.sh": "sha256:7d15e0f651d132a807d35c4919e762cfaf683a0a64bf4e89e6d3ed18a3ba8efe",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:6f5687c383e1010d144ec8e5aebf1e7b58b7cf96625147f4c7a3c75b204bff0f",
+        "tests/p2p.json": "sha256:d35f45ef6862b90980a8b3cce6a1dfd0f7a362c888443173a31cdcabe98d9a16",
+        "solution/patch.diff": "sha256:6abced8985d48b982c82cba3e4d2561ac1d7024ee1b184b153702402072dee3a"
+      }
+    },
+    {
+      "task_id": "gorilla__mux-712",
+      "repo": "gorilla/mux",
+      "ref": "24c3e7f499efd8b1429cfe789c7e6a3631357045",
+      "reference": "https://github.com/gorilla/mux/pull/712",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 321,
+      "loc_changed": 10,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 323,
+        "untracked_failed_count": 0,
+        "runtime_s": 41.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c358f889a6c5349190fcd2282bdacd16c3c6f85ac034955476093fabda99485f",
+        "tests/test.sh": "sha256:962214821ab34d3c567908b10f5111dcf50a7a38f34000091f502eee57f83758",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:1c3d5900ffd46a5185303e1e41c824db3000d07784f4ddb354dda070b77869b6",
+        "tests/p2p.json": "sha256:b619d45f96b901b7e5a2ae60f886530ea661c9cdb9eed53b8beda25a8867968e",
+        "solution/patch.diff": "sha256:2984f6b49166b689a8490eda6059d32d0b63adde82476838792129ee05db2ad9"
+      }
+    },
+    {
+      "task_id": "gorilla__mux-732",
+      "repo": "gorilla/mux",
+      "ref": "cfec64dd9f7b38263f7ac56023c96299587d529a",
+      "reference": "https://github.com/gorilla/mux/pull/732",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 335,
+      "loc_changed": 67,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 337,
+        "untracked_failed_count": 0,
+        "runtime_s": 49.8,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:174132b73ecf61fbccd430580e888205ff7f4d9c94ab1aa8272688a33c8b5e42",
+        "tests/test.sh": "sha256:398de43e4d73a3036dc2987517ce1b42052d58f42e9fd37f95414c4636eef38a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:7b0efeb6dc66a490ccd7268f91a8cc3f073c04f6b1d7b28f6e5b346e76c17f56",
+        "tests/p2p.json": "sha256:24d9b8d416e3cc82c130243e07f2ba76c2544e11ab3cc30869739a8e6e6b0db0",
+        "solution/patch.diff": "sha256:fdd819682d9fc08ef2411e578da72ee4eb619227f2dbd81968b5548812c58f47"
+      }
+    },
+    {
+      "task_id": "gorilla__mux-748",
+      "repo": "gorilla/mux",
+      "ref": "e44017df2b8798f6bfff81fff1c0b319c1a54496",
+      "reference": "https://github.com/gorilla/mux/pull/748",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 331,
+      "loc_changed": 25,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 332,
+        "untracked_failed_count": 0,
+        "runtime_s": 40.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:ef629ebb6736618d8cb69556d1fc29964dd7a885a4a3e7d98d6bb9b1521cfcc5",
+        "tests/test.sh": "sha256:6ca6076f3e37398546c1466b2b26b3bb501b5a56c4f692adb3b1f44e291e0530",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:3ccc01da28624a47b46c415f5b183d6e452c3b40a9d0ec3256c71562cd7ad6ec",
+        "tests/p2p.json": "sha256:becc1ba60488ba18b4dfd993580d46d74b0f7e179477fc16ebc27d2395c924d3",
+        "solution/patch.diff": "sha256:8c40e777c6f8f2d8903bb98b4fab9b8b8dbb0170a2614688f1fecd2580a58af0"
+      }
+    },
+    {
+      "task_id": "pallets__click-3004",
+      "repo": "pallets/click",
+      "ref": "a1235aacb1be55dc66ddcfefbf64dec44b6ab54d",
+      "reference": "https://github.com/pallets/click/pull/3004",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 5,
+      "p2p_count": 246,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 251,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.9,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:dc202f6ced7a00c39106a9f73ced8f42dacfa574430ae5ac9f469f56539e4400",
+        "tests/test.sh": "sha256:c72af7879cdc18603610993ad70de5a5973280bcbbc78eab78448e2fd37c0823",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:23c3a0f0fbf02937dd34a79babea4b448b98b0c5b15afba8fbe06d9e261d1b09",
+        "tests/p2p.json": "sha256:aee007e4a396ff790d5407221b26cf9b47d9e8772e9367c413b9bbccbe1ba28a",
+        "solution/patch.diff": "sha256:c6a05cd9b018cf76eb831ac6a14ca6dc48042d0d4a38bc525cfc1c0922975d24"
+      }
+    },
+    {
+      "task_id": "pallets__click-3058",
+      "repo": "pallets/click",
+      "ref": "16fe802a3f96c4c8fa3cd382f1a7577fda0c5321",
+      "reference": "https://github.com/pallets/click/pull/3058",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 23,
+      "loc_changed": 27,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 25,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:31f91d2877137402bf01dc7a14c84bd62f0375f93158e3c43ddd842dbca6091c",
+        "tests/test.sh": "sha256:e106f2495d6dc1ee452c5c101304ed1207fc5cf70d6a2cb2b2d097fedbe7dc5a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:e55062c77600ba6a25eabbc8b4307bcd8c5d661f7a99fb51ca306b25e2caa078",
+        "tests/p2p.json": "sha256:65e41856e3d8d699e8e9b6545c644c80c44b263671d2fd34643bd313c703b0c8",
+        "solution/patch.diff": "sha256:9e1a99b5be632df4c9c4aeaa86da4bff13c00ff47ba8096a8f2ff8be91d048ed"
+      }
+    },
+    {
+      "task_id": "pallets__click-3068",
+      "repo": "pallets/click",
+      "ref": "7d7183604158f064390539d83d4a19a978c6b08a",
+      "reference": "https://github.com/pallets/click/pull/3068",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 70,
+      "loc_changed": 21,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 72,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d5a622cd8a3dbdf6b9a83fda30419469d843639c2c0d57be99f55af76c17454d",
+        "tests/test.sh": "sha256:62fb6abb8e562b4ee45e01ef0e41eff5f85aee51ffedd72a4231de6fa9df93eb",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:3f8e6c77f12fac4a4113163e6307c71fca1e08dcb4375deb1d651e7361ee6fdf",
+        "tests/p2p.json": "sha256:89346fe9589d14358e8046eb5f48c4eab2ea98e8b691f32191b7d4e1d74fc664",
+        "solution/patch.diff": "sha256:710e93bdc40775c414845e3176101d6db10a222499407d8f3ec6be6c4b0a75cc"
+      }
+    },
+    {
+      "task_id": "pallets__click-3079",
+      "repo": "pallets/click",
+      "ref": "6a1c0d077311f180b356965914e2de5b9e0fdb44",
+      "reference": "https://github.com/pallets/click/pull/3079",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 5,
+      "loc_changed": 22,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 6,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:9b645974b6f6c5f516f7dd18cb39ec6cff45c7049b4c6262db6a2c036ce2555d",
+        "tests/test.sh": "sha256:fb429e37df9b3c16d46e091b0ce1dedea2772aa4a1f3c6737f082ed7ee3a3dc5",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:c032afeaaaa5535fa404e6d210ae886297dffd2248b5415fb8950e775a9afe48",
+        "tests/p2p.json": "sha256:629079fa3c46dbfe5f10aa2a87ed80a6e5279620753bfe9a7e15902400aab577",
+        "solution/patch.diff": "sha256:58960a556ab6f01362fd6ba6a02a20a4e5851ee5783ec6c584b983b2ec16c16a"
+      }
+    },
+    {
+      "task_id": "pallets__click-3090",
+      "repo": "pallets/click",
+      "ref": "06f52a45782a0bd2cb9aa5f289afb68ac3b2b2e5",
+      "reference": "https://github.com/pallets/click/pull/3090",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 502,
+      "loc_changed": 38,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 506,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:8636870a47e106d21ad94e6903ddd65049fb57c3b034181a01f8f5ecce6e0df0",
+        "tests/test.sh": "sha256:ae70b9b768e9585ab1df15bd783fa2ea8311e2679518148a20a26b9f174a546d",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:ed6d5f60531dd1c04a905ca24c2cc58c2e95aa10a0c7bcd13e1d63625f7aa5e9",
+        "tests/p2p.json": "sha256:1d3f6003afbbd4cdb53514da5b2e4d5cd7f218fd19bf2eb3a30a687a536d27af",
+        "solution/patch.diff": "sha256:835fcb9fa244763b08acdf6b02a1396e13723b3a98164d41269f2358e94697be"
+      }
+    },
+    {
+      "task_id": "pallets__click-3126",
+      "repo": "pallets/click",
+      "ref": "c69643b60cf971cd5d8e5d3902632807ceab9b8f",
+      "reference": "https://github.com/pallets/click/pull/3126",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 49,
+      "loc_changed": 26,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 53,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:9cae331ed2269d6e6bb0e3f451bbc4fd58e6ebc388b99204946b65c54dbba136",
+        "tests/test.sh": "sha256:b9c36036ad6cca0b5e4809be275ac371f4b693b0cbeb2b5a14886c97786c0482",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:21669176884a1a769dc01d0dd3057bff3b178b52766413dfb58180f55f7b5efc",
+        "tests/p2p.json": "sha256:5ce617d9d91bcddd67b0999c74255257b231161a80186df2399e49428ba1661e",
+        "solution/patch.diff": "sha256:834e1aaea3c58e63adec02d49bff56a9098842917bdf7beb782cca3ed8d80424"
+      }
+    },
+    {
+      "task_id": "pallets__click-3137",
+      "repo": "pallets/click",
+      "ref": "ea70da487b05d6bb758d472a3a9ffab4a5b7fcd5",
+      "reference": "https://github.com/pallets/click/pull/3137",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 25,
+      "loc_changed": 34,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 26,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c19783131a21ee54c5f653b3f781ca78b85c6a84c57b58edd71f6ac5bf09322c",
+        "tests/test.sh": "sha256:9c1999595ab7d2e4d3dc3dc67459fadde86263fdf0bd9df238f6e158e6b5a74f",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9e9a5419be951560c52f8b091e17c84a485ec6750102ce2347dafac06be432a8",
+        "tests/p2p.json": "sha256:03d8fc1429b2a00ab7c8fc457ec7ea5267969f6603cc5e360a912e48fa504dfa",
+        "solution/patch.diff": "sha256:bb0bc796fafc8222645606c43fc70a2b3423d8b5270099208b4dd0e9f4705164"
+      }
+    },
+    {
+      "task_id": "pallets__click-3152",
+      "repo": "pallets/click",
+      "ref": "7f7bbe4569ea68e8dabee232eade069ef3310aea",
+      "reference": "https://github.com/pallets/click/pull/3152",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 448,
+      "loc_changed": 14,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 450,
+        "untracked_failed_count": 0,
+        "runtime_s": 11.9,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:a3c395b03e4de6530d7022f0ec3badeaa7a698ba1fef93cf9280ca91157f546d",
+        "tests/test.sh": "sha256:9a34dffc32e5714876356ca230ed0db239980ebfb4eae07c63879bb559885d4d",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:730ce05176222a6324e6154222364b5fced886bb1af79c5666d8db6bdf6939dd",
+        "tests/p2p.json": "sha256:04a9c650abe5e7c473c9375efc11dc874e683aa6e9237eab5391ac90f34ea331",
+        "solution/patch.diff": "sha256:b30cf9ddb7feeb9cf1225bba54b392d018df83a98f3892cbfe822c3c6e7a943a"
+      }
+    },
+    {
+      "task_id": "pallets__click-3159",
+      "repo": "pallets/click",
+      "ref": "f67abc6fe7dd3d878879a4f004866bf5acefa9b4",
+      "reference": "https://github.com/pallets/click/pull/3159",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 448,
+      "loc_changed": 398,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 450,
+        "untracked_failed_count": 0,
+        "runtime_s": 16.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:ff3c1ced8a68a06befec1bc61431773d64822bc8c58bc89d63af5eb1ef6d365d",
+        "tests/test.sh": "sha256:f42f02970a72455503460c694d030f371b099cfbc400c6c8a9ca8056580cdade",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:730ce05176222a6324e6154222364b5fced886bb1af79c5666d8db6bdf6939dd",
+        "tests/p2p.json": "sha256:04a9c650abe5e7c473c9375efc11dc874e683aa6e9237eab5391ac90f34ea331",
+        "solution/patch.diff": "sha256:0f868623f5013463ae4ebdfe2c1b0eea58e053d1a492739f54243598e40616a3"
+      }
+    },
+    {
+      "task_id": "pallets__click-3224",
+      "repo": "pallets/click",
+      "ref": "fa7f035ab58dc4d9b8818b92fbc6a8f3c3234af6",
+      "reference": "https://github.com/pallets/click/pull/3224",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 23,
+      "loc_changed": 19,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 27,
+        "untracked_failed_count": 0,
+        "runtime_s": 11.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:4929244a084dae0c7c38d242884fc98707cd9693f55ea25f4e4574cfc9c40afa",
+        "tests/test.sh": "sha256:94bbc73ce7df9befae9b641af44ba9872b5fbc84a1037f47a5e63e10f39fe7fd",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:35e6f81d722cab69bc0ddfc55211b04f802727a9fe2753db72f83b94b927049c",
+        "tests/p2p.json": "sha256:b424a7119294979810cf6bf019a990b230990c02cf85fdc4db7825e3d4b2f547",
+        "solution/patch.diff": "sha256:8dbf67350548e6cbf326bd9dd2c05ae51384be7b1318baf49e8deb343604eae1"
+      }
+    },
+    {
+      "task_id": "pallets__click-3225",
+      "repo": "pallets/click",
+      "ref": "ae46cfd6bc997804893adc799589248eadcdbc29",
+      "reference": "https://github.com/pallets/click/pull/3225",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 5,
+      "p2p_count": 489,
+      "loc_changed": 28,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 494,
+        "untracked_failed_count": 0,
+        "runtime_s": 10.9,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:076175897040cd0d9222a108f40281fa12cdbd35c13f8ad21a733365b0612efc",
+        "tests/test.sh": "sha256:c01dca38629c9d11268341fd0499487cdbf4fe3da6ded7a208341ddac21042dc",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:e4c1d111c74edfadf66dca771cdb9dd09b127607fca1158de51ac7593d20069d",
+        "tests/p2p.json": "sha256:b2aa8ef2d81262cd60546c8c890f78d6bd43c77a7ee05f4a999e2b4227c3c53e",
+        "solution/patch.diff": "sha256:be1d3f4fb984bc5f0251c53ebadea6d88906747bd88da8b828af9397a9668d71"
+      }
+    },
+    {
+      "task_id": "pallets__click-3228",
+      "repo": "pallets/click",
+      "ref": "19fd4d6e18bc9fce451f92f422696b11169faa57",
+      "reference": "https://github.com/pallets/click/pull/3228",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 546,
+      "loc_changed": 68,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 548,
+        "untracked_failed_count": 0,
+        "runtime_s": 16.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:edf7be39481cc112e9d8ad4e6919874073febff960903cb9234148633c8903c7",
+        "tests/test.sh": "sha256:79cd56cbdde4de1a0dfde44dd93de85230fec5cd4da0cc11afc370a8722841c5",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9fed01d42a0d78267a1a73706550700832392aa82ec560bc4d38ba1a9429d0ee",
+        "tests/p2p.json": "sha256:9840343fd428df9d892a05d15a8985be058f3b8542e7f9857dabc9ab746ef020",
+        "solution/patch.diff": "sha256:864c31bcc63edeaba4c6132d2454c71a279abb151c78f634893655237501a048"
+      }
+    },
+    {
+      "task_id": "pallets__click-3235",
+      "repo": "pallets/click",
+      "ref": "1339fd3323357119a9c7a6326c788f80295954ce",
+      "reference": "https://github.com/pallets/click/pull/3235",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 26,
+      "loc_changed": 50,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 27,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.8,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d01d6991f879dd472a9ae551241042984604c7ff27ca79fe422d70c7416f9cd0",
+        "tests/test.sh": "sha256:bfe120e83f82c9f0ec88876da7fdea860da6094986ddb61498d194f5949cad1c",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:8efdb3aeb7dc9a136e64065b9c36c6248247e942aecd9f92a1430f6caba1eca6",
+        "tests/p2p.json": "sha256:479bfc9d487428c8f0db87a772f85741cabc46334f146ba52a9f495887038e97",
+        "solution/patch.diff": "sha256:646ac3ed692f0e54311a81c447a371f613dc10c7e63226123fa95ad4ba389250"
+      }
+    },
+    {
+      "task_id": "pallets__click-3239",
+      "repo": "pallets/click",
+      "ref": "60cad4ad6583bf885c62d6f4597f3555d1ee1a0f",
+      "reference": "https://github.com/pallets/click/pull/3239",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 600,
+      "loc_changed": 131,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 623,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:471773935951827b1a79c95f3c4482a8d9238b9b5828b385cb9fd16a7aa3587f",
+        "tests/test.sh": "sha256:5b0600f0c6fc8bd1d8e74591d432018d9d154c353e174d8d0bfdfca2abecd433",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:bbc8cf649bc8d5ba68d9a01dee74e04150fcc54f1e91652b7eee9c387e4b246a",
+        "tests/p2p.json": "sha256:f56a75f0b2cfc3ecfb14aefb210f2c9cc2f3390dbbdf3439f7ff265052ea5282",
+        "solution/patch.diff": "sha256:0ca290be138b4ad537e314a8af264d8d74f08ec9da8c369ed0a777b62e0f8150"
+      }
+    },
+    {
+      "task_id": "pallets__click-3240",
+      "repo": "pallets/click",
+      "ref": "c7e1ba8448cbcb2cdd9c1c7f4a592e863dcc3995",
+      "reference": "https://github.com/pallets/click/pull/3240",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 33,
+      "loc_changed": 39,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 34,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:de8b26a97f23924465e94b3844a039337654a1ac0738b50f2a474d62ac5e19cb",
+        "tests/test.sh": "sha256:3231fe2da19f0b616ace96d724627c2c7970ef65f58eafa8549c2349e6c1a132",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:88823d826729721f16fe71b144ed0b0bb9a03985c38c894a147e831287069248",
+        "tests/p2p.json": "sha256:ad9601ac2cd69f078ffd7beb37aaf3a335557abb65e5e2c55aa2194993cb63a4",
+        "solution/patch.diff": "sha256:6f8618979efa3ba52a14909b83b634db99f48747fabdc59fe1136c06e5386ed7"
+      }
+    },
+    {
+      "task_id": "pallets__click-3244",
+      "repo": "pallets/click",
+      "ref": "878de46100e9c29aea9dab5b385b8116863cb5e3",
+      "reference": "https://github.com/pallets/click/pull/3244",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 27,
+      "loc_changed": 117,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 28,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.8,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:65beca6bea64471e235e99abab0cd711a769634d11d4c3c20565962228e73f00",
+        "tests/test.sh": "sha256:1aefa1c1d4001c4653e6e2753b790089f21ef03f49d94f39c07db5086904af7c",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:73ee004ed2f4521e10c3a98bde871b7a45632568b53ca24f837d94f61a7814b6",
+        "tests/p2p.json": "sha256:a121e0080dafb85ab50d4f4d82dc3105c763c0a75f4f6839579802186699eb57",
+        "solution/patch.diff": "sha256:664d6864aa15b76cfe385f85e6c350676b750a1615afd09be9b1ea66a04616bd"
+      }
+    },
+    {
+      "task_id": "pallets__click-3256",
+      "repo": "pallets/click",
+      "ref": "fc6c7c47edd6110b6bd5a1a5297b2035214b0cd1",
+      "reference": "https://github.com/pallets/click/pull/3256",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 14,
+      "p2p_count": 145,
+      "loc_changed": 32,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 178,
+        "untracked_failed_count": 0,
+        "runtime_s": 10.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:ba6277da56d2136db8005c6da8a21106f375b3419968cde60e691ce45c8ea8a8",
+        "tests/test.sh": "sha256:7ff981127a9ab6ca471cc217e5be87148dbf92e08ff9ac54458981bea3c8a3c1",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9fc5648b2496f14502ae74fc36cacd3b30455774ccdb4a879fe844f485fae800",
+        "tests/p2p.json": "sha256:715fd0806318250b98902b8b6a073a1e47f4977b1fc160665df0fd9bcf6dd07c",
+        "solution/patch.diff": "sha256:c22dc37f08b8f20f4b5646015b3a7812689e23980eb8ebb4fcf9438a41d6c09e"
+      }
+    },
+    {
+      "task_id": "pallets__click-3299",
+      "repo": "pallets/click",
+      "ref": "04ef3a6f473deb2499721a8d11f92a7d2c0912f2",
+      "reference": "https://github.com/pallets/click/pull/3299",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 461,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 462,
+        "untracked_failed_count": 0,
+        "runtime_s": 18.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:315947a24a581dce3fa0448255e1919d7e344c9132210ede93aa1eb9ef94ba41",
+        "tests/test.sh": "sha256:9f9eb1d0eedfaad5db47cc51b4c28c71bcfff7f5b7de6e81f13fa4995e5a9e2b",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:4a8e641440bb94baa83a7877f6f7efbe1a0cf1b01c89e7e4c2ab51b6b4ce3569",
+        "tests/p2p.json": "sha256:c0e442888b22e2591b47c853fd569a701612b330e1b0176ea4e96d116323c150",
+        "solution/patch.diff": "sha256:f74276964a08d1f5f4161f70c52314e66d8967d4d379b5de0ca6111f28adf9e6"
+      }
+    },
+    {
+      "task_id": "pallets__click-3328",
+      "repo": "pallets/click",
+      "ref": "8c95c73bd5ef89eac638f85f1904a104ba4b1a32",
+      "reference": "https://github.com/pallets/click/pull/3328",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 8,
+      "p2p_count": 604,
+      "loc_changed": 21,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 631,
+        "untracked_failed_count": 0,
+        "runtime_s": 26.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:ad80dc7d28a6273430a1e6e4529292333a8ac4655881ce4525cf7603b4642618",
+        "tests/test.sh": "sha256:7cc0e699738c8fbc8a822792c20bd6e568e803e678ce7e0eaf2de9cc1268ee39",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:6ec16c7a55a80f9e2e6c3d024f7408cc89f9ab11c556988ba66e4b615aa7cb36",
+        "tests/p2p.json": "sha256:4d15eb8d058b8e68a9e49de4b6e58bea917f435f067ac3d67c4917024899d3fe",
+        "solution/patch.diff": "sha256:5d1ad88b6dc35f435155033382db7506c64953b8c55e30520df48471da27ff4b"
+      }
+    },
+    {
+      "task_id": "pallets__click-3363",
+      "repo": "pallets/click",
+      "ref": "c8da1fcc2cb4523c1fb5bef7f0ca82394dde1efd",
+      "reference": "https://github.com/pallets/click/pull/3363",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 9,
+      "p2p_count": 466,
+      "loc_changed": 49,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 475,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d0c8915ab0223b8d2bbc495a34705d74a5c9ca176a6b09243b0e143dd8338c7b",
+        "tests/test.sh": "sha256:f6f2bc7e2d4bda82b6e5d9d91268e4b7429dd5898330424bbe2481d2575a8dfb",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:4b89d2168fff7902511b60d8ea6593675ddd125b91235cb4e8e4ec1a7bb4de2f",
+        "tests/p2p.json": "sha256:093a7f907452e9be9a398d68173733ae143503856d3dc972203ad07795eff912",
+        "solution/patch.diff": "sha256:01ea09cd0e72b6a7b45e3fced753112c7c2e60f462777b2f33d77f5f2e160057"
+      }
+    },
+    {
+      "task_id": "pallets__click-3364",
+      "repo": "pallets/click",
+      "ref": "8a2b48901a08b3d2ec3a9bbd151948a9765368c6",
+      "reference": "https://github.com/pallets/click/pull/3364",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 37,
+      "loc_changed": 38,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 39,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:087fd178aa57774794eb83daba5960b3ce39305bd46025ed6e4be7d7b8f9c159",
+        "tests/test.sh": "sha256:2a970d13f91d1786d5fd846591fa5c4776066e3878d0834d91403b2030f6f6cd",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:3137ef2400f643371b41ff824f2c3369f5a7e4ed5ce5a598cf2b28d32dc697a0",
+        "tests/p2p.json": "sha256:eb13d0c7609b5a28006ddc0ae1bbdc1ea26ff205b2938d5b50cf3b8852694cd0",
+        "solution/patch.diff": "sha256:d0584e3c33477788b0862b6c7a92901aec803f316b84b46a62704f0e9f59beaa"
+      }
+    },
+    {
+      "task_id": "pallets__click-3404",
+      "repo": "pallets/click",
+      "ref": "3619563d9bf8763360d3f0d95eb76e43f26dea5e",
+      "reference": "https://github.com/pallets/click/pull/3404",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 18,
+      "p2p_count": 534,
+      "loc_changed": 189,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 552,
+        "untracked_failed_count": 0,
+        "runtime_s": 18.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:07232123422a9fba08351fc1a1dc2522aa6494602a05bf9991293f5250900f14",
+        "tests/test.sh": "sha256:a58231d6d91d07fd91ffeace8b538862006278d83653d4bef9cdd1f8ce494510",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:76c13d9963752c4dc72228f7df3846152faeebb2c6f9e7b4a2ab024b6e78c2b3",
+        "tests/p2p.json": "sha256:1bdde14134e00ff887577b6f1cd34200c9dba2294a111f86a21b02c798e12c64",
+        "solution/patch.diff": "sha256:9506a00033bb5a5bb9cc63b1d49ee882e6e7ae585a175d2ce9991e053a43f5ad"
+      }
+    },
+    {
+      "task_id": "pallets__click-3405",
+      "repo": "pallets/click",
+      "ref": "7c99ebe23b931f27562d926814423cce85fd9766",
+      "reference": "https://github.com/pallets/click/pull/3405",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 161,
+      "loc_changed": 38,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 182,
+        "untracked_failed_count": 0,
+        "runtime_s": 15.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d8b2f05639852abce3df17c5617458800c4e084d83961fafa4215a7a6b1b8438",
+        "tests/test.sh": "sha256:31045582d83d7d9ba4df83e53ba30a3bf7ee9218fa748775b6481122b90ae413",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:656a2bfaf39b7801e92692eb0e28db12b17a853a8b7fa8015838e762ef4c7531",
+        "tests/p2p.json": "sha256:01e83095244d6dcbd7b4f7c1dafa5e925aa82ff0ed506e9488e57e2f083a7be4",
+        "solution/patch.diff": "sha256:d1cf4e9fae28008d7f9a5dfbb7b40af879c87376f9a22fd1b5c7a74507bb3463"
+      }
+    },
+    {
+      "task_id": "pallets__click-3420",
+      "repo": "pallets/click",
+      "ref": "d959898db264aaf07e70ad4eafa254286f9a5185",
+      "reference": "https://github.com/pallets/click/pull/3420",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 18,
+      "loc_changed": 150,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 22,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:aba7bd9699b7c8aa004959a73904b3beb5ac30c11413e9c066d838234969ded6",
+        "tests/test.sh": "sha256:4f737843d51f89fecc75ccf4581a09d28348429122b52f8deb1321aad0d310de",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:3bda22563e6a6b4bb9646ff4f17da025b0cb3d61c41536aea73e8168d5ffe15b",
+        "tests/p2p.json": "sha256:fc40034e8b7996ba0685e82b790d802bb31f955aeac05df90c1d3ea981b9b784",
+        "solution/patch.diff": "sha256:2252ea466bb35db510af3782e2f70a1716811acb0f59432b8c0a05667f2c7a77"
+      }
+    },
+    {
+      "task_id": "pallets__click-3434",
+      "repo": "pallets/click",
+      "ref": "7c99ebe23b931f27562d926814423cce85fd9766",
+      "reference": "https://github.com/pallets/click/pull/3434",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 7,
+      "p2p_count": 23,
+      "loc_changed": 13,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 30,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d8b2f05639852abce3df17c5617458800c4e084d83961fafa4215a7a6b1b8438",
+        "tests/test.sh": "sha256:1703763e9b1a786be87fa6333abf128b8eb23e9177ccc731ef5883506ac2c39a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:ad497f8ba7d10190fa6376db437a92f310cc837af8ff7224397e0e505b78f372",
+        "tests/p2p.json": "sha256:f2fa3c212fddf3bf217df33f5fdef6153c994d58a18de55dee3d337b5686ef04",
+        "solution/patch.diff": "sha256:975be12b3e95cf94dc1df64be77620b9db7a584d857867d8956dc74d6070fa42"
+      }
+    },
+    {
+      "task_id": "pallets__click-3466",
+      "repo": "pallets/click",
+      "ref": "b8b9ffeb5d012f5d041685c81152636bf596cf72",
+      "reference": "https://github.com/pallets/click/pull/3466",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 53,
+      "loc_changed": 6,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 54,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:b48e5266097c0b2ddf7ea14cee300bf5af8c4c6b53608745d8768e23a30f0aa6",
+        "tests/test.sh": "sha256:058fc3cb1f2e9fa28ac7e6be410061a024ee06e67f404db313988070c5287e16",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:e6d2023c3fc8cd692f86c88a297ce6e28fa8c2986fbe7660816c1d974d275424",
+        "tests/p2p.json": "sha256:190902137bb3afdfc9dcb59d498854119c61ea2a6f27611da651b4eec227740a",
+        "solution/patch.diff": "sha256:444cd60f1c1cbd1cd2f83441a5298ec846b50901baee128923c06479b550365d"
+      }
+    },
+    {
+      "task_id": "pallets__click-3482",
+      "repo": "pallets/click",
+      "ref": "a5f5aa6d4012d256ccca24638f2642fc371e9f77",
+      "reference": "https://github.com/pallets/click/pull/3482",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 202,
+      "loc_changed": 25,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 223,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:215731a76c2361d5434ff6a853f776c460fb3556886a39c5273c2c5c7b3005af",
+        "tests/test.sh": "sha256:5e569e2af077a79506d26de82e4f7a1420a3aa0f30723c49e7bdc07bffdb05b0",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:ca938a5debc74cb4b64af1d44fb82f352469449de73a5f12fa36f8912b349c67",
+        "tests/p2p.json": "sha256:8a4efcca569484ac36aa82f1239bc1e20d155bdb57f02ea6087cd7fe31eec95a",
+        "solution/patch.diff": "sha256:53676d155113206ed4f9e3e1905cab11944a08d264b49e03ab1713076d8f7a78"
+      }
+    },
+    {
+      "task_id": "pallets__click-3484",
+      "repo": "pallets/click",
+      "ref": "4b24a6c8f6658ef89fd6db4dcaf8ee88eef75dfa",
+      "reference": "https://github.com/pallets/click/pull/3484",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 3,
+      "p2p_count": 595,
+      "loc_changed": 34,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 598,
+        "untracked_failed_count": 0,
+        "runtime_s": 16.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:e5fdf655e2315159e4fd7192ff38e8fba54325d8f33cad29cf3c9ec96912cc4f",
+        "tests/test.sh": "sha256:c44b27fe9e7ca1d94910d95eccc13dfe422b75bbb63e3e3a69c4fdc612e38abf",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:a84d6de1dd52c160075b6c665a914f81a1a96c160ff41b46d0f793de489344fb",
+        "tests/p2p.json": "sha256:a2da585ee048d930225a23ae162ce8d6997c1e256cc3c669cfbac5a254527644",
+        "solution/patch.diff": "sha256:785a15c28de4d2b721c6a99569f7741096ada07933c66a0f6b34864e3d87a611"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5626",
+      "repo": "pallets/flask",
+      "ref": "62c56e08c43f5eb174d15dd050591cfba9aed548",
+      "reference": "https://github.com/pallets/flask/pull/5626",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 465,
+      "loc_changed": 189,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 483,
+        "untracked_failed_count": 4,
+        "runtime_s": 27.0,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:4dc263076e8c55b38605e8297fd20ee87c8d284992fb7bd1fa11ef4ea577bbe2",
+        "tests/test.sh": "sha256:02aeb3b4a59a54a49712036a4b7bd1c88e39fdc5a41d95f1634248b76b01fd6a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:a3346a55556689c59d5a018c799d32bca215a3392ac9d54e536e83872449ef99",
+        "tests/p2p.json": "sha256:2ddcd10ed83cb972de036f4f4147c9382d64f902ce260561e96af2b8be71f159",
+        "solution/patch.diff": "sha256:af6a229c308ef4b5fce3f860d604faec68eb9c7dc60eec4d0fc1f794fcf0165e"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5632",
+      "repo": "pallets/flask",
+      "ref": "7522c4bcdb10449dc919e0ffbdebb92fe66822b5",
+      "reference": "https://github.com/pallets/flask/pull/5632",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 469,
+      "loc_changed": 40,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 484,
+        "untracked_failed_count": 1,
+        "runtime_s": 14.5,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:a06a69ff2cb9a1c20d1a3a8f390fa2dd891585113c02930cdb787bd1d62b020a",
+        "tests/test.sh": "sha256:2ad9f5d7cc1ea813243f26afa03a93bb00e24f8d1a027691aa9a01996932946e",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:4a7d159eef5146e80eb938edca0458073252444f11144d47daa7ea8f3117e779",
+        "tests/p2p.json": "sha256:e74e3ef75fc7a0d6e0419537890d55d82411befc1328f0f3a7f824bb006d4f2b",
+        "solution/patch.diff": "sha256:2331aaefa79fab45deb819b95d21a66f328a62b92d1dcac26632982694057f00"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5634",
+      "repo": "pallets/flask",
+      "ref": "07c7d5730a2685ef2281cc635e289685e5c3d478",
+      "reference": "https://github.com/pallets/flask/pull/5634",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 471,
+      "loc_changed": 62,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 487,
+        "untracked_failed_count": 1,
+        "runtime_s": 15.8,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:9b464906c5715fd39e31680a742c0f1db2519fdc56f8369c5b6b322d283b5bfb",
+        "tests/test.sh": "sha256:d7f582b7879d09d556417c90c81445805277bab7d4e332cc3f9ab766631a2b37",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:8a31f51ed4ea752d052d2913ce7f8a54e2b9cfc1ffcfd373d99e376f2e55cea8",
+        "tests/p2p.json": "sha256:5954057530fc269fcaeeac8005bbe9998a54e7d512b2690befeeddc20f242732",
+        "solution/patch.diff": "sha256:1bcf6d29444e020bd857ab5620e2009fad49d0cf0820381aa09c258dcbee20ca"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5637",
+      "repo": "pallets/flask",
+      "ref": "10bdf61a0f751f3cb000f8f8ac5ac5b4bb535677",
+      "reference": "https://github.com/pallets/flask/pull/5637",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 473,
+      "loc_changed": 24,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 488,
+        "untracked_failed_count": 1,
+        "runtime_s": 17.5,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c4596c699fc1bc305e98ff6aeec0876b4e152afa60f69a67b05ae4efd913857d",
+        "tests/test.sh": "sha256:6e3123f0a7339405de0ece32c58c8a95bc4a736dee53292af8175bddd23e5a55",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:d7f2b9561f0e8fc5d7df98750ccc3fc155ce20f5cc4f3b28a73e6616887b96af",
+        "tests/p2p.json": "sha256:090067ed3b76be5acd674dbdd763d3094065e1cbae7bc2f2ed75c61da9fcee95",
+        "solution/patch.diff": "sha256:e4b88286ae78a33c3cf861b72e4a8125f8fe9bfadba33ee26cc0a4772eaf9f83"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5797",
+      "repo": "pallets/flask",
+      "ref": "5addaf833b2e8c7a616f89dd8ad5a44b07d7c000",
+      "reference": "https://github.com/pallets/flask/pull/5797",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 470,
+      "loc_changed": 7,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 485,
+        "untracked_failed_count": 1,
+        "runtime_s": 21.7,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:82a236cf98f48d129e45ff7c368b5beb3ddba115d6c2c569ffcce62c62f960d9",
+        "tests/test.sh": "sha256:65e13f002eb6f4f195d48205c023858e06b56f2710e9e1b180a9a24a85e9904f",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:aa85e2240e96724114b6f598889ab946d4a706da3c69efdd09177379238da104",
+        "tests/p2p.json": "sha256:91efd10680ecbb6ca48275f61fabd20f6a1bea891ca4f9874940937da50ecdca",
+        "solution/patch.diff": "sha256:93d98e104addbaebcedf06b61cdc8e4cafaa7734da83a666f409470ad5db1605"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5917",
+      "repo": "pallets/flask",
+      "ref": "d3b78fd18a8d9e224cb9ef58a23cec9b1ffc9ce9",
+      "reference": "https://github.com/pallets/flask/pull/5917",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 473,
+      "loc_changed": 20,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 490,
+        "untracked_failed_count": 1,
+        "runtime_s": 18.5,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:1d41095dfa601694f3a017b21c45ca580f64f0f92ccbcee2979b63b0f34fda08",
+        "tests/test.sh": "sha256:135639012725ba6aec7171b3406eccfc6dcc13bae599d89affd33ee4e00a9398",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:bea6939fe4352698e39d9c572b76a11b0870f7ccc555e8d0f10d6951fe275608",
+        "tests/p2p.json": "sha256:cc8d62dc2f07046b03196aa11abe22d75e1e80cdc5a6bb39664f7ef875a1029e",
+        "solution/patch.diff": "sha256:f6f2bb8b851633545c09819a34da0241d6e1fce24b16689bb5ad1852e637c74b"
+      }
+    },
+    {
+      "task_id": "pallets__flask-5928",
+      "repo": "pallets/flask",
+      "ref": "7b0088693ece1bd3a9238a6fdf56ed8df7a4d43b",
+      "reference": "https://github.com/pallets/flask/pull/5928",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 462,
+      "p2p_count": 14,
+      "loc_changed": 84,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 491,
+        "untracked_failed_count": 1,
+        "runtime_s": 18.0,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:97ca064d86548b31a47e9231893e8124d199f32f450fea3c24f5587d12b6fe98",
+        "tests/test.sh": "sha256:b436be86a9fb164029c10ba88aadbd6ca34b7afbd228a4446ae462dcd595560a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:fbd9a3f2322c4b82075037f50f310aff90c8250d77f4f1e2af3466f3ff43d5a1",
+        "tests/p2p.json": "sha256:f41706fe22ba24493d87cf9d6d801e29720be2a877bfcdd9dcce6f14bb330d87",
+        "solution/patch.diff": "sha256:854169550accc4d9f4f7ccf438f177a9f1e79640ee2448eb361ad0d5930e38e7"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-2979",
+      "repo": "pallets/werkzeug",
+      "ref": "862cb193c2b13db860d886725fa4235173d0dfcd",
+      "reference": "https://github.com/pallets/werkzeug/pull/2979",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 9,
+      "p2p_count": 110,
+      "loc_changed": 79,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 119,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:cca260e7c9a69e8983bf6df40ec792896a22065cd39baa3ee3fdb87b5df00aed",
+        "tests/test.sh": "sha256:49e7e03e6e9dde58f2a89bc49a12ec19184f2e207076345cfe47bd6158e18a63",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:5f6e8311241b96f24a8ac1caf33e4181faec3a914733e25931a5431498bae7e1",
+        "tests/p2p.json": "sha256:289a552f1b71690c41cb1e8b01e20f40a3700075b5eee2fd1f29ec0d6ce9e751",
+        "solution/patch.diff": "sha256:72a6d3b37ed3fd9cbbe4780b6b68ec1d067f16c7b4c262b69a14c4ff51e1d825"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-2986",
+      "repo": "pallets/werkzeug",
+      "ref": "d1f60d68ac9788aec05712aca29867abd00d5cc3",
+      "reference": "https://github.com/pallets/werkzeug/pull/2986",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 119,
+      "loc_changed": 7,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 120,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:86b01ee36775044b03cd7d509278424334aad2d4717f1e1227b0fc2f8c624d63",
+        "tests/test.sh": "sha256:e3e34ca043705c0cc0cbe1fe2acd53c40b88351ff577d53c4ac0d78fc521ff56",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f596fc72cc975613cf9cabdc930fb5ef9ac4ac182f32de50a5fbe7c827bf272d",
+        "tests/p2p.json": "sha256:6b070d91ee8c1f8b6287a60b7a13ebc9e5ffb35f66a329b4564f0954080b7638",
+        "solution/patch.diff": "sha256:161f196d525b6c5d0aa1f9bbd7fda6371ed28ae37b98384066e6542211ac3b36"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-2995",
+      "repo": "pallets/werkzeug",
+      "ref": "1a1728ed88939ca68928dade168e1989be062c6f",
+      "reference": "https://github.com/pallets/werkzeug/pull/2995",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 122,
+      "loc_changed": 61,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 123,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:50d8962cf538f5b004846e640ac30f00ca77b56743a37f753d861d6ba7c76bcb",
+        "tests/test.sh": "sha256:ac3cd55fa4b97bc69342808849742d4fbc572fca5f6ff4582ce791cfb426c384",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f8a3f12bac63716446a9732da258ce49264554ea4016c5a9e49d05cb978466e0",
+        "tests/p2p.json": "sha256:6072010c6c64e43d65d4a9ce6beee6db3b3e51dd7c7cce4e8ae430a9f5a0cf2c",
+        "solution/patch.diff": "sha256:6132a2f0f8aefbda397845061941f35be1896c62b390c223e7f525fcbefaaff3"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3006",
+      "repo": "pallets/werkzeug",
+      "ref": "cb307c144e7b9092bf72b1a1dba5281e7c6ff838",
+      "reference": "https://github.com/pallets/werkzeug/pull/3006",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 8,
+      "p2p_count": 128,
+      "loc_changed": 343,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 136,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:3cc200825b4b08e4612974c0af258835c724c42b9eb8c2c3e6476238f63886d7",
+        "tests/test.sh": "sha256:334a7be952bb9368bf09876ccbaf747b5cddcbc5bd95df5cda041f4b29d96dd8",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:9d523b44486ebfd88594c99f574065e11aa87f8922db0f34b393eb5aecdbdc27",
+        "tests/p2p.json": "sha256:a9c3f2d6936dd27104235824137361eae8cde83a78a671c0cdb6ed2701e66d0f",
+        "solution/patch.diff": "sha256:4d49d05ad137fda480f4480f04aeae00038bbd8be93f96ff7dbb1504fff79940"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3008",
+      "repo": "pallets/werkzeug",
+      "ref": "2f86acb6de57c87f10ab69b5548e687ff6e71304",
+      "reference": "https://github.com/pallets/werkzeug/pull/3008",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 137,
+      "loc_changed": 24,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 138,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:aed1dc06579b8c56232d7b3670dbae18344f8efe8d89a005e518935430a576df",
+        "tests/test.sh": "sha256:48b95b08b4922da73fd58fe5c67b38d514616e71b51af2117daee7b134d1b005",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:d72e5af97666965ebfebc8c853004c4737d2f78645feb3df99b2e5dd2002b15c",
+        "tests/p2p.json": "sha256:8e2cf8a2f235d625cd2530a4a206242094dab2668ca8d434a34c18d574e0466f",
+        "solution/patch.diff": "sha256:dbd1fc6bb864923e691aca26989b7d6c71ce8ecd001aec7dc963fb6a3b507538"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3066",
+      "repo": "pallets/werkzeug",
+      "ref": "5dceab4c2a39c0a84320ac01a79c005456a0d601",
+      "reference": "https://github.com/pallets/werkzeug/pull/3066",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 5,
+      "p2p_count": 44,
+      "loc_changed": 10,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 49,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c3021486664b00d9694e0f1a6dd1078fef092d3b74978670933c94b8ab42c278",
+        "tests/test.sh": "sha256:13dbf607d8d14d1c70ab9998a3cdf4ba3f5f12758b9f818a3f6691cf04167d3a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:aa6daa43eb3fb612c46837c21bb3ad5e7960c6605779dcd090080c109a848d99",
+        "tests/p2p.json": "sha256:a0ffcddf3f03e305f3b82bf3443456d4b15924545cfcb61c00b167c9276ea977",
+        "solution/patch.diff": "sha256:49da8c76870fc77d1f908121308c107002ebfb37773653c6a18381cc775cfd19"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3071",
+      "repo": "pallets/werkzeug",
+      "ref": "c0e67e96384bb0aa4e3165e1efeed1e9835cf260",
+      "reference": "https://github.com/pallets/werkzeug/pull/3071",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 21,
+      "loc_changed": 4,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 22,
+        "untracked_failed_count": 0,
+        "runtime_s": 6.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:6ba88cef5573a087b70ce33ed104050861486863e926f3d484f88d70f8331f9f",
+        "tests/test.sh": "sha256:9be2bd5b7aaa215ee85ebb86ad81fcf02e72b29088db046ebec87e675220d53d",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:7bd1d87668815e68f597605d49c60828d167ee32c42a37bbda2ecfe94d548553",
+        "tests/p2p.json": "sha256:f6b38b2d7f98a48c02015269d94b87da65788a9b4e78aee7350fb85d9e2c3e27",
+        "solution/patch.diff": "sha256:3d4ea8f0b10882c5f6ae19b40a916ae3c16c92300365651e33db7dbdfc1a8de6"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3078",
+      "repo": "pallets/werkzeug",
+      "ref": "f637275bfa68ebd80bec1da9173211ce2dc4fa33",
+      "reference": "https://github.com/pallets/werkzeug/pull/3078",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 22,
+      "loc_changed": 8,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 23,
+        "untracked_failed_count": 0,
+        "runtime_s": 15.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:a03507e934d815bd1d7743fe80199392f3b034a39e4aabf35991f0f35d717d1b",
+        "tests/test.sh": "sha256:92f1f68c090016ade7bd9abd11a4d779ce0f7c7dc785a736ef111320f686229e",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f33955bfd5b01d7d5f965b9a27179b5e5ac6e9a65cea10557331826ed2c8dba6",
+        "tests/p2p.json": "sha256:d3e25420ecddf00ae009e9a10ba4693a8822160b91b7eb78227a8b53e925d1e0",
+        "solution/patch.diff": "sha256:50926910b558f38c9e96ac28794ad20c1c78e3160a5c2d4dc53db5a76d682d57"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3081",
+      "repo": "pallets/werkzeug",
+      "ref": "b48878cf16dfca3c89ac58aca47ab1ecfcb71354",
+      "reference": "https://github.com/pallets/werkzeug/pull/3081",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 5,
+      "p2p_count": 45,
+      "loc_changed": 61,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 50,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:cd34590d47b8a6c092163faba87bffb60e6129918d31cd79573db87521cfe212",
+        "tests/test.sh": "sha256:45cb0f2de86388a5a73e8f9cee644f435c5ed7564c1503ceb9e85dc51dde54a8",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f4d100be9f7020a4a79ea13c11191d1fcabf9dae50731dd38a2c55adc098b736",
+        "tests/p2p.json": "sha256:8bb1ddcadd2120361be3199a4f7b3e512e4c946ab1f030f17cce664e1e2c9015",
+        "solution/patch.diff": "sha256:ed135a877c88ad702a5c63f3857767a8dba4f17a7c830e45f5340956f0895941"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3101",
+      "repo": "pallets/werkzeug",
+      "ref": "70551309d170d43696fff527cd5b5893421996ba",
+      "reference": "https://github.com/pallets/werkzeug/pull/3101",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 336,
+      "loc_changed": 377,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 340,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.8,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:2664e918005bf2b4a71e4bd4b08a24bc9e1ed57bfa5002ad62741c93fce775dc",
+        "tests/test.sh": "sha256:528c13f961f46d6809f3d9df6a18cccb6728b5f0e564e179da2245b0dab29de5",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:08e99953aa921ad65b19b54d21b3a1e6716c1e3e6b1893b7f2c2b2c4db1cb76d",
+        "tests/p2p.json": "sha256:5e5e70ece17fe7770e9dac42ef85fb5c21ea54dbb746c7fae20857171a25463a",
+        "solution/patch.diff": "sha256:051938d0e15e8c64c304289f2f0c1b6bd5feffea188b60f54cf7fc2d74d35674"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3109",
+      "repo": "pallets/werkzeug",
+      "ref": "bf7529e62685e0b87350481703ddae5b6351072d",
+      "reference": "https://github.com/pallets/werkzeug/pull/3109",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 145,
+      "loc_changed": 58,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 147,
+        "untracked_failed_count": 0,
+        "runtime_s": 18.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:e1f130477b11d3a258ea4970e7e1bdfade3dc4ba940db567c6f65f0834a06c3e",
+        "tests/test.sh": "sha256:c226232561d5ddf023c9ed07e7567b3dd2e79d73d837c65e837226bd39a86d00",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:aa545fe49adb46349c8bea29854b5b08a111e70cd5adfdda93d44fb20f45000f",
+        "tests/p2p.json": "sha256:15eef253e7fb08b241eee6cecc0916f273cd80fe264f5360b7df5fa2be4c5b88",
+        "solution/patch.diff": "sha256:d4fae46556ffee6fcbdb8294fdbe03fa59355b0ed3b9f06c213d9b0ce1df01be"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3110",
+      "repo": "pallets/werkzeug",
+      "ref": "0af402f2e92b11d36f60fa9c6c4d38128a8a9547",
+      "reference": "https://github.com/pallets/werkzeug/pull/3110",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 79,
+      "loc_changed": 25,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 80,
+        "untracked_failed_count": 0,
+        "runtime_s": 10.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c1903b82fa4db8fbf8ef1e9977190e63b179886b7355f9df8afbf4fb843486cc",
+        "tests/test.sh": "sha256:ed480eb139b58236529b8f474f745452252f74c68b8faa4b444c9561cef045bd",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:3aad987ac561216bc9fee52bc6f4f3fc7a824ef3fac739a8a5c2d8f9aad2e934",
+        "tests/p2p.json": "sha256:b8ec7c9c750427e9dfb00b02c1346afbb633881984784daccaff2fcbe4267a81",
+        "solution/patch.diff": "sha256:15f6c9fb2b5b177870ed1713f5d8180b750e6f962665d8d41be9eaefd6a324ae"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3113",
+      "repo": "pallets/werkzeug",
+      "ref": "ef10b724f500f9c3f28f117a4f2a62ca273ff6fb",
+      "reference": "https://github.com/pallets/werkzeug/pull/3113",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 6,
+      "p2p_count": 21,
+      "loc_changed": 158,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 27,
+        "untracked_failed_count": 0,
+        "runtime_s": 11.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:66068f81d08edede0bd931be929c0b1a3d5b9e348dedc7efc2ea7b11882e8a50",
+        "tests/test.sh": "sha256:4864a0f0cf1d0d602614feeddd8b73387f4be636221150c5bc8b95dd80e8c35d",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:4178fc51f83936b7633337586b97c3ccfdb816546d83dfce6ae069aedcdd4580",
+        "tests/p2p.json": "sha256:ea3f1f26e9f42ac67233921adcafbf6c8571fe07d5a3435728768ce14801e35c",
+        "solution/patch.diff": "sha256:a1729eac651bababc293e2265174a606058e194a9a2684b3cf432c30e883ed43"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3147",
+      "repo": "pallets/werkzeug",
+      "ref": "b97e13cc74d8a45dca260d4037edd7d1f5094042",
+      "reference": "https://github.com/pallets/werkzeug/pull/3147",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 147,
+      "loc_changed": 8,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 148,
+        "untracked_failed_count": 0,
+        "runtime_s": 16.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:ac38a30fcbb3383a9b649657ead1d83ced8eac1ea0812b3e67ea3026a2960f3d",
+        "tests/test.sh": "sha256:6f4ef9dc5396299e9b06e1ffce5cf131f22fabadd065d1923fa6fd2142e546b4",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:b7474c0d14c31b221973473258969e877c0836b014a321b699decb4153b796cf",
+        "tests/p2p.json": "sha256:9b915202f7c536443e607cb8c65d371d27055aeb3e78b6736b15e2dbaa3a8e92",
+        "solution/patch.diff": "sha256:7042af4c2454cdec31dcd7a5ad044845a14ff54c2f46481a358440bcec255824"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3148",
+      "repo": "pallets/werkzeug",
+      "ref": "65eb6398231fe94f32fbc765a74980ca61fe5d2b",
+      "reference": "https://github.com/pallets/werkzeug/pull/3148",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 6,
+      "p2p_count": 21,
+      "loc_changed": 22,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 27,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:b45deb7d22b9b7038a76f41eb3351bbeb1e8ada29a7523c32f01d8f809f61423",
+        "tests/test.sh": "sha256:11be5cac08957d8bf1ce4ed367626907979637cbfcd419d010c347223afab496",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:173e56bb5feba77b1e9f7cb199dcaabb390cdc62320d1b7134a50e621c66a08b",
+        "tests/p2p.json": "sha256:ea3f1f26e9f42ac67233921adcafbf6c8571fe07d5a3435728768ce14801e35c",
+        "solution/patch.diff": "sha256:9d90c2f4bac68a71871256960e6cc23d1fef111e6cafd59f585272265b48e038"
+      }
+    },
+    {
+      "task_id": "pallets__werkzeug-3168",
+      "repo": "pallets/werkzeug",
+      "ref": "c012b33e39fd5dd3405841af04ca9d2145ca80ce",
+      "reference": "https://github.com/pallets/werkzeug/pull/3168",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 9,
+      "p2p_count": 1,
+      "loc_changed": 29,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 10,
+        "untracked_failed_count": 0,
+        "runtime_s": 10.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:15fd349d4473d34e3f8f646f536ff6677171c7bc125a913a13af0e1a06956664",
+        "tests/test.sh": "sha256:bcda28df4909bdadeea3b8de01c984aaebe49106927a71c5e2bf37cdd5c67b4a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:8bd14a7d82074a94cdbac099dd715861f65c9cf10cf1af65e5a5e99e79e1acdc",
+        "tests/p2p.json": "sha256:aec8263bf19139e626906562b3fe990becaf159a763bcacd8e29d90aa2366823",
+        "solution/patch.diff": "sha256:a32f14d4a35d720653f927eb8519cf25af22bdcbf704589223dc48a8134c35be"
+      }
+    },
+    {
+      "task_id": "psf__requests-7315",
+      "repo": "psf/requests",
+      "ref": "6360477c52303c9445b45fa8744b02d05a2f0905",
+      "reference": "https://github.com/psf/requests/pull/7315",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 0,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.5,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:93679ed1eac78bf712c6ba1f3ef7ebc3b0c4b46cc4e5b61ecf6a5b5e2eabfc63",
+        "tests/test.sh": "sha256:5201ab08995e8a2c1861faadb9162796cbcb2af98da5ee0c1b6c3ca6e5032181",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:1edfc45665ed8ef42f6eb868d17c5989a39139c112a3342c08ee287d73aba4c8",
+        "tests/p2p.json": "sha256:4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "solution/patch.diff": "sha256:270259d18d6f1e78d9151884a4bb53f5849bdb2a9a77fec9c0cc7f2ce990ad7f"
+      }
+    },
+    {
+      "task_id": "psf__requests-7427",
+      "repo": "psf/requests",
+      "ref": "b684dcb9bbf3aa557d1238e72062c4a29737dd1c",
+      "reference": "https://github.com/psf/requests/pull/7427",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 200,
+      "loc_changed": 6,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 214,
+        "untracked_failed_count": 0,
+        "runtime_s": 17.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:39a8b172d3df23a4d27920572741abfcf1c6ca7484a216c5a9219357237b7b3c",
+        "tests/test.sh": "sha256:b7a725fc8abef036e0f3c7ed76a3898c053d2b713d6767499b2bbb4bba067b20",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:7d4da83ac7518ddabb8f2f449cc4c8896ec7dcae1e0ff31312e6e0856d761f33",
+        "tests/p2p.json": "sha256:105a4705d87c94eb0d69193616f7c237705612ef06354644bdcb9a21095e133f",
+        "solution/patch.diff": "sha256:c60560a23d832d3fba1cff2de924e4ebe75562bb26876ab4c6e686e67d89e984"
+      }
+    },
+    {
+      "task_id": "python-attrs__attrs-1457",
+      "repo": "python-attrs/attrs",
+      "ref": "af349876f4fb5df2b71a3f4878239b775bc89230",
+      "reference": "https://github.com/python-attrs/attrs/pull/1457",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 14,
+      "p2p_count": 253,
+      "loc_changed": 113,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 269,
+        "untracked_failed_count": 0,
+        "runtime_s": 13.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:05c3792d74e08f965af782a9894979a4eadb9a7e4545255ef0c6183cef20a105",
+        "tests/test.sh": "sha256:41ad58b19659bdd4843fb47f91f8f255ac323a2d5acd09724fde69c0f6e58df4",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f7a48064427979deafa03b9d4438b8a58ada70b915f56f5fd74fc156f6687dc4",
+        "tests/p2p.json": "sha256:199c1882c5c4ae4ecefdc7f243c7c89b87a403e90e573b6f8c108742e0787d89",
+        "solution/patch.diff": "sha256:989f568b154659bc18ab99a431327af92c7e25ab39f773b15075d9bf1b9c34a7"
+      }
+    },
+    {
+      "task_id": "python-attrs__attrs-1509",
+      "repo": "python-attrs/attrs",
+      "ref": "f3bcc37c3d2dc3199715f825a86b748c3b3805f9",
+      "reference": "https://github.com/python-attrs/attrs/pull/1509",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 17,
+      "p2p_count": 684,
+      "loc_changed": 60,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 709,
+        "untracked_failed_count": 0,
+        "runtime_s": 43.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:fc8ace2403434f2416a33f53c9a39dee478d64f8a4b889bf6c16dd6f0d5e2c4d",
+        "tests/test.sh": "sha256:b3b8b73c5e3e3f35bdf59569328511a634492cddf497897215aeaf3f556286e1",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:eec6a8279f42b8ec76b961dcb77cf289111adf3cdfc6ee03fc1f0c1edaa18193",
+        "tests/p2p.json": "sha256:1d5962fedf99b6e246040cf623c1bcff77355bad1fe1ca9a2057ae2c87cf8282",
+        "solution/patch.diff": "sha256:05c976edc00668fe5ec5c8872bd0cbc85efba97b5ab301b7b089193c07bab4db"
+      }
+    },
+    {
+      "task_id": "python-attrs__attrs-1513",
+      "repo": "python-attrs/attrs",
+      "ref": "ab7f8b2f4c0f747d5b1575247ce35e5adaad182e",
+      "reference": "https://github.com/python-attrs/attrs/pull/1513",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 162,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 163,
+        "untracked_failed_count": 0,
+        "runtime_s": 12.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:455b1dadab0885f2b5aadedcf5cb32279b5b6e5ee4a1c4fa1d40cddb761656c2",
+        "tests/test.sh": "sha256:8592332603b1dafd3c65237bd0b1276a4183fc17cf316ee4f9f23181b217df25",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:c7c652b794c0279164c7609bce6dd3f46a0a3464a9eb7452e45bb9a6fbcadf7a",
+        "tests/p2p.json": "sha256:624d766b6d80dafcd3ce8db2a096a6825030cb796db6ae9adab9e71dc9100894",
+        "solution/patch.diff": "sha256:ecf69cdf8ef1c7e4e3049347ef6d56ed7296d8816bae904df19ff5a980fa3c4a"
+      }
+    },
+    {
+      "task_id": "python-attrs__attrs-1529",
+      "repo": "python-attrs/attrs",
+      "ref": "3a68d4913221abc6f8ad3be50937f7ae49300a98",
+      "reference": "https://github.com/python-attrs/attrs/pull/1529",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 273,
+      "loc_changed": 20,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 277,
+        "untracked_failed_count": 0,
+        "runtime_s": 20.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:acf74a79f1db0a66965f12a6b33cdf93c5fdb8ebabe59e3035a81295f9f6d034",
+        "tests/test.sh": "sha256:28a51917b0d82721c7545a454377deef8ada640e7d136b6a4a100a4321dc01d0",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:43d0e5a508d0f0ddba11b059fa492aaa383da7c0e6c43bc4220393f0ca7a7bf0",
+        "tests/p2p.json": "sha256:002b0011b1840a48dbdd2fd151d0ede909b69162ceeeaa4a2a4544e60717fb47",
+        "solution/patch.diff": "sha256:d6353562203f48df0b4a5a901451ac7298f31e3e522e677e5afd2adecb2dd45c"
+      }
+    },
+    {
+      "task_id": "python-attrs__attrs-1541",
+      "repo": "python-attrs/attrs",
+      "ref": "57b314c0dc8e0b80c0ed8f61c0be81965137ea41",
+      "reference": "https://github.com/python-attrs/attrs/pull/1541",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 5,
+      "p2p_count": 275,
+      "loc_changed": 42,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 282,
+        "untracked_failed_count": 0,
+        "runtime_s": 16.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:b52814cf6f710b275e6dc2d7161981d0b90eb4296cb30cc27852295d49d515af",
+        "tests/test.sh": "sha256:f9a40a9954fba9445a88e9c0170775667b6a6b7c3d4448f6dc98840fe485d568",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:b0898af65a74e1cc8ec31e6c44513df83ca23d29a7c149fb4844e5dd273489bf",
+        "tests/p2p.json": "sha256:bd986ed0240b4146f7190312f33ecc82893cc20f1846a270dc4793f8537d46a2",
+        "solution/patch.diff": "sha256:820263978e6e4c01ba92556481e734660a40e7f91d4ea5ba4326a2d3eb7dda62"
+      }
+    },
+    {
+      "task_id": "sirupsen__logrus-1482",
+      "repo": "sirupsen/logrus",
+      "ref": "6053a4e6f7e3dac1c1616a4919c5ab638b2a7f09",
+      "reference": "https://github.com/sirupsen/logrus/pull/1482",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 145,
+      "loc_changed": 18,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 146,
+        "untracked_failed_count": 0,
+        "runtime_s": 41.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d4fcc1ed6b05e0165bc583efa099348bbb8e2e04a98b80f4fb0822807cd0b9fb",
+        "tests/test.sh": "sha256:6bda89a12def89609f1de669da3f4d53659b1fac91bfc404020494332ee6cba3",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:dfe99835fb7bfdc8d9114f551ad109ae5403bcdaf026303bc7cd20cef0c13af4",
+        "tests/p2p.json": "sha256:48feb2c3a7692e82dda8c4b528d567d3297d097ae92f04b9dab4d1f6458310c2",
+        "solution/patch.diff": "sha256:1b8a056fe33e578cfe5caf1dad9aac49c81b7aa1faf1d399fa84d89278de2b4f"
+      }
+    },
+    {
+      "task_id": "spf13__cobra-2241",
+      "repo": "spf13/cobra",
+      "ref": "f98cf4216d3cb5235e6e0cd00ee00959deb1dc65",
+      "reference": "https://github.com/spf13/cobra/pull/2241",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 374,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 376,
+        "untracked_failed_count": 1,
+        "runtime_s": 29.9,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:1f9bfd091c6017b6ce0950c67a3020db13ed71c0704e29812261bbf8b16b8347",
+        "tests/test.sh": "sha256:30bf874624be610efa4844eebe1561b460a48938ab04cf7c8016da6405082738",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:71fd23bb83a439e7b1d461e46a1aaf4c29ebe0a5f4bab212e11f114dacc5e1f0",
+        "tests/p2p.json": "sha256:004c88789087c27c72879ec769d8521ddd34988b5fa87db08ef49e6e51e374c2",
+        "solution/patch.diff": "sha256:ef77fd1aaf7c6356e802e621133806d8c6459ce2f8d63db9275ff8c9f8d3ef0f"
+      }
+    },
+    {
+      "task_id": "spf13__cobra-2356",
+      "repo": "spf13/cobra",
+      "ref": "61968e893eee2f27696c2fbc8e34fa5c4afaf7c4",
+      "reference": "https://github.com/spf13/cobra/pull/2356",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 379,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 1,
+        "parse_status": "ok",
+        "tests_parsed": 381,
+        "untracked_failed_count": 1,
+        "runtime_s": 15.5,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:81b0d13c62a7a53f1fc09e6eb797c1d17d07ca4a5df69af7dbb853b08f3d3e79",
+        "tests/test.sh": "sha256:bdd4de49c50ba5d60670bc0253685f9bcc80f9a1b583a3e8738349b02db4c516",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:0e2c252045e9ef0f4aa561769ae11eb52916d4f90379c61fc38bdb8b1c1e5391",
+        "tests/p2p.json": "sha256:9e852cf23c41e8cb9c863761caa5dccda4a27c9ee795df32cfd07492980c2625",
+        "solution/patch.diff": "sha256:05d1758155143c73f48a2d9ad3d0aa0c3de54d9b14d657532c4d0f3312bfd4ff"
+      }
+    },
+    {
+      "task_id": "stretchr__testify-1775",
+      "repo": "stretchr/testify",
+      "ref": "b7801fbf5cd58d201296d5d0e132d1849966dbd4",
+      "reference": "https://github.com/stretchr/testify/pull/1775",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 23,
+      "loc_changed": 15,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 117,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:d78c3899a3d779bc940f20f1d7fd9d0901f753bed263e1148769ff90eb0c9a7e",
+        "tests/test.sh": "sha256:61804ec85fc270509a9d5ff85c17f3a1cedbb790ee906a01ddb21c75e7942a72",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:70c1f2931f5e7c77e11914b0821d990f3697dfaaa57940343e7a360d1665c158",
+        "tests/p2p.json": "sha256:6fed5e769037cdcea033b331881d73eb723d45a42ae1f5c4ad05113756925587",
+        "solution/patch.diff": "sha256:919feef52b550adc35392279e1df51e864ef521ed6f9c8ecb979b57cebcfe3e5"
+      }
+    },
+    {
+      "task_id": "stretchr__testify-1795",
+      "repo": "stretchr/testify",
+      "ref": "5fa984a7595bec3f65a1874f6e5a085545121508",
+      "reference": "https://github.com/stretchr/testify/pull/1795",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1,
+      "loc_changed": 9,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 119,
+        "untracked_failed_count": 0,
+        "runtime_s": 38.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:204f6f4da36c297fd59db1fe6f1087d1661645df46b68486f5cb3247403bad59",
+        "tests/test.sh": "sha256:63f5369df6325fffc57236f225efce27c15e10b6401fd42a7b0f4dba9974f301",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:6238cf17914bc2272b2b36f3911e7ce2a6e755e9b80e1e0f1cfeb34fa0716557",
+        "tests/p2p.json": "sha256:722bb7566a9d11ffd6de74f79739c66ec2d39f0e5600f716c52d56db41d47939",
+        "solution/patch.diff": "sha256:52efe1e4ab05119bcb712b3b20bf275daaa77dab92f3524f106917822e1ddae6"
+      }
+    },
+    {
+      "task_id": "stretchr__testify-1877",
+      "repo": "stretchr/testify",
+      "ref": "246de4504b1b5990508c5ab6b34fbcbd16614095",
+      "reference": "https://github.com/stretchr/testify/pull/1877",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 32,
+      "loc_changed": 4,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": false,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 59,
+        "untracked_failed_count": 22,
+        "runtime_s": 56.0,
+        "eval_grade": false
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:4b141b979550ff849b3e673f25d594a260ea3338ebb20d012aaee96c4d36dbf4",
+        "tests/test.sh": "sha256:831fa1f7697f871b3da520e82ec893456c01feca5dacf833418862906c349300",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:7c5b2333e85333693fc53527a7a48857a8a11303d85f0217427a6cf5615e92cf",
+        "tests/p2p.json": "sha256:e476964bed4836583492ed633f5cd44d023f704e925167828ec7aa3ceb281fab",
+        "solution/patch.diff": "sha256:f1ecb8dc1b0e000bdbcc83c1fad0f1ac0b48769d429fc0de8ba01bb2e1c2f47f"
+      }
+    },
+    {
+      "task_id": "tiangolo__typer-1788",
+      "repo": "tiangolo/typer",
+      "ref": "959a356fec72cedcfd4ee3f84790789f8e961989",
+      "reference": "https://github.com/fastapi/typer/pull/1788",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 22,
+      "loc_changed": 1,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 24,
+        "untracked_failed_count": 0,
+        "runtime_s": 54.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:1712d576c73ca7cb8f80b5ba75d180ed5cd0ab3e4c8a77cf662d8079aaf4ba1e",
+        "tests/test.sh": "sha256:b2ae9d06b321e28efb8c3e7c60549a747d3fdd54694e05dff9f295eb0644a87a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:91b292f10586051d22599021ba518fa26d15d8328ba6b27875fff009643be244",
+        "tests/p2p.json": "sha256:27b96f97a53e816f7aeacbc7cfdc889c59029cd47028d2c790f792481e31cf44",
+        "solution/patch.diff": "sha256:2913c359b61f82246f3a99654b7bcbde48e1496c8853cfb4214fd4dc5ab80f5c"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2108",
+      "repo": "urfave/cli",
+      "ref": "65c6366e4295e29b56d4824b3866800b8cb2d910",
+      "reference": "https://github.com/urfave/cli/pull/2108",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 912,
+      "loc_changed": 40,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 919,
+        "untracked_failed_count": 0,
+        "runtime_s": 19.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:86c830a0653573e52bfb28cb9c89fad434aa20198689fff7b430dec303504310",
+        "tests/test.sh": "sha256:62a28d3d4d8e686cdc0d48731852d23f23c259f5fbfbb01810007d0b7dad9cda",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:d1f0907b18282ca12f5f47a162230e2db3cf0c8b27abbba41261f1c254cea1c4",
+        "tests/p2p.json": "sha256:e16e272274e4b36fcf4acdf16e44a6895ecfb2836a014e01592744f2de0c4376",
+        "solution/patch.diff": "sha256:08fd15b46235ab8209d1cee7c0bc3b151d3d81299e89f966442533f8831e14ef"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2211",
+      "repo": "urfave/cli",
+      "ref": "f27e66c640f93a8ca26a67c608a071da5b29dc0a",
+      "reference": "https://github.com/urfave/cli/pull/2211",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 265,
+      "loc_changed": 17,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 974,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:6dfb08ce0193aaf870f4321e95764671171b374e8d65062c6072090ef40db871",
+        "tests/test.sh": "sha256:ad6b7e21ad12954b3eee7a90e13c88feaa0821362ee4a0323e82f12e84ce9c8a",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:e4cea0cc56b082650d46638c5650337ccfc4d38d0fe7d5ed8e68c7038eca06e2",
+        "tests/p2p.json": "sha256:3b67b899b99f076bce3ba411ee341e70250c65108be3680be00c486f01c208ea",
+        "solution/patch.diff": "sha256:18e4b98cb7e9f4cd47fd20e80b38d8c188339d3e38e5e3a6ba4365263604cfcf"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2221",
+      "repo": "urfave/cli",
+      "ref": "46345bb3890625a76221e1d4ddc8d43aeb430b87",
+      "reference": "https://github.com/urfave/cli/pull/2221",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 980,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 987,
+        "untracked_failed_count": 0,
+        "runtime_s": 20.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:3a8421f6f94e8966c35d9ddefb5d090095edfdd039892aa3a806039172b8ab14",
+        "tests/test.sh": "sha256:b20034fb89fb67472e8e23a5b51433b132bb3380d07a3e6684a63cd69442d6b7",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:b046201c7691a511c74d38377371b6f1e6bc59384b2af7dc30d721cbc7d06065",
+        "tests/p2p.json": "sha256:3cea3406f716ef0218f1e2ea712bb93304bce1ab6328516959fe43366dde047a",
+        "solution/patch.diff": "sha256:9e9d0f7c73734dc11d470db2c1ef33bc64fc9dd3999e86a22113ac54c49b7b50"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2237",
+      "repo": "urfave/cli",
+      "ref": "f0b939963f443f91bbbed3d9ff14513a0ceeb86d",
+      "reference": "https://github.com/urfave/cli/pull/2237",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 2,
+      "p2p_count": 989,
+      "loc_changed": 20,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 997,
+        "untracked_failed_count": 0,
+        "runtime_s": 25.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:717139882e223d4a937b7998a4c2d6ecb0a65b6a9afd63eb7f8078dc93669b5c",
+        "tests/test.sh": "sha256:77c08e723fd5c919c9f9093675120b205f919905276d5c5b0b0178c8f53f3d90",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:1d193bad704952c8da586cfdfcedef3cc135d6d3898d2cc72b2372e4e150ac81",
+        "tests/p2p.json": "sha256:296bf2fabcb9039e6bb47427aea608cef42bc62a79de7d32393dc4f181cd42fe",
+        "solution/patch.diff": "sha256:73e9eef363767cb3cbc196e498948fcc3ce4e0ef74315c25bcba54b99aa9ce90"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2245",
+      "repo": "urfave/cli",
+      "ref": "c32fd204eea8343b388287fa0e8812ad01a71e0f",
+      "reference": "https://github.com/urfave/cli/pull/2245",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 998,
+      "loc_changed": 4,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1005,
+        "untracked_failed_count": 0,
+        "runtime_s": 20.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:8658c6054c6918e799f0d975aa2c8d93b847dd08572c7d4de2455bca57e0d9c2",
+        "tests/test.sh": "sha256:7901397dfe66db5731046155898e70a3b3cd9a839858b964d6f0e26c2dd24c60",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:7a071987a97cc6cd259b6d4a1e943ebe77f0c119d72f3e172a81147f8475b3da",
+        "tests/p2p.json": "sha256:e8c26f07b0002bdc3ac2e28d4ef656a5b07e7dd4a961ee78f14b2023b832ecb5",
+        "solution/patch.diff": "sha256:8aef726bb0dd97eedb217805a61075e19991f33f0a57547561f6f502e65a8fcf"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2255",
+      "repo": "urfave/cli",
+      "ref": "d3abb825fd20fb18c1c813e0e4d474299c5dc454",
+      "reference": "https://github.com/urfave/cli/pull/2255",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 999,
+      "loc_changed": 1,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1006,
+        "untracked_failed_count": 0,
+        "runtime_s": 24.9,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:99f5822c99995cfa4b3f2d7b5de30e4c2e137f9584a11dfa89c09e9f79fdee72",
+        "tests/test.sh": "sha256:18cf33ecd467d0e56a5df9e983e26236f6d8177a8564d4f69d2ccac6f5ee5b28",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:19d1be3d29e97f53ede447f67b278cdd6b3eb83fceccf0579d0e5fac431f45d4",
+        "tests/p2p.json": "sha256:1a8a2d8c120bb9aef046d4cf6e7bc107427b3c097c4c118b00432f7c50e2bf6b",
+        "solution/patch.diff": "sha256:a41f8228c92b3d8f900f523c032dad5290f1762488dd76d266d970e6673b43ca"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2256",
+      "repo": "urfave/cli",
+      "ref": "42779d5de5399f012b326e6a010f7e86c223823d",
+      "reference": "https://github.com/urfave/cli/pull/2256",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1000,
+      "loc_changed": 32,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1007,
+        "untracked_failed_count": 0,
+        "runtime_s": 28.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:70311928cff6ba73b6b401098da3f533da33e6459f99e4b2ed2e4acdc6b3db95",
+        "tests/test.sh": "sha256:50b381e88c7f7e2789ba14c046b14f30ee176f43e4160d39c6a8ce67de279d60",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:2817818f02ebea285a59d28d68750ac08372929bdc7479b380880831bacb7031",
+        "tests/p2p.json": "sha256:7e64c90bf38d71deac6ce09d98ed055fdc9e13165a953a186ab9fe1e6d9dfd4a",
+        "solution/patch.diff": "sha256:747658f68909b6c87d7ee245857f38e59624633581c06d3fcd8a920546d511b7"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2266",
+      "repo": "urfave/cli",
+      "ref": "fd14621cbcd644aa35483480d40f7cdf7b69f4c0",
+      "reference": "https://github.com/urfave/cli/pull/2266",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 999,
+      "loc_changed": 5,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1006,
+        "untracked_failed_count": 0,
+        "runtime_s": 19.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:5c5a5a37ce210f8aa454939d58de8e7ee4d12aa4052f42922db41c7773b6e780",
+        "tests/test.sh": "sha256:6cc6255a0c87b868117d8aa9cc9b8460f3b30cc8239232f16cd04bbbf4a6392f",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f1d56e255c6411495a33835bbf527e89b72d33f960954c853407f5f54fa54d33",
+        "tests/p2p.json": "sha256:1a8a2d8c120bb9aef046d4cf6e7bc107427b3c097c4c118b00432f7c50e2bf6b",
+        "solution/patch.diff": "sha256:854c9e38471b343476f024cbd582675a2ca15162c87a9f7ce969e84843592031"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2269",
+      "repo": "urfave/cli",
+      "ref": "7f5c79799fafb227624d47c460ff9f2e0ced904e",
+      "reference": "https://github.com/urfave/cli/pull/2269",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1002,
+      "loc_changed": 3,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1009,
+        "untracked_failed_count": 0,
+        "runtime_s": 22.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:eeb6f0bff5ecfdbe048b29469fd00484fde021f1d4e9bcec2d24d65642cd0c18",
+        "tests/test.sh": "sha256:6af64dae1572d50f836be927e8e6af3650855d0df1315e5539e58abce85c5d8d",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:a48baf6f16a179d6e84377c23f6c6a5e5f64e4935d2d2401c324d36bacc7ee7f",
+        "tests/p2p.json": "sha256:f824601de1f1875019f0fa8c109cf0b090eb0ba208b7e5ec5a9a32322cdf78fe",
+        "solution/patch.diff": "sha256:3cfb9b6d54a44ebd3fc1b8347305e770fd8e21d52219ac7ffc69ca247474a826"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2274",
+      "repo": "urfave/cli",
+      "ref": "be9a4ba05ccf8e92f34274a5e0c555f2ad09e2b3",
+      "reference": "https://github.com/urfave/cli/pull/2274",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 4,
+      "p2p_count": 1006,
+      "loc_changed": 18,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1017,
+        "untracked_failed_count": 0,
+        "runtime_s": 19.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:67edf8fe41740e1adef3958bb5836aed2ace2fc63997fdc99c9775a6987053ea",
+        "tests/test.sh": "sha256:9b8f68da337cb876f240be99825a8971ba35deda20f5bb02eca61ef76ef530e3",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:ec1ce7436a81ae0819c420d6e81114dd38107b27cec999b3f5556c39167b8bc7",
+        "tests/p2p.json": "sha256:73fced99bc6ba0d76b509ce33da9a45a483831d6d2ce55646dad0a6342061030",
+        "solution/patch.diff": "sha256:5f2c9681ab0c224aaca2c672c18404259b0eb73eaab05f39fca028e9f303b1ac"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2279",
+      "repo": "urfave/cli",
+      "ref": "b5aa7101bd66f4340bfd737fe4bf12496d625632",
+      "reference": "https://github.com/urfave/cli/pull/2279",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 14,
+      "p2p_count": 1028,
+      "loc_changed": 69,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1048,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:f4ee262065872b8fa5832b35909fda608738433024e149afab497dae4f4912c6",
+        "tests/test.sh": "sha256:06fc710471ef4acc1e1b803dbd88bd91c7133eacccf5ffd23c304299f95af1d9",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:34aa9424a2f98a5d2b27106c6e0cacf46729359cbc5d030ebd6185d49de5fa92",
+        "tests/p2p.json": "sha256:8284ede7f4172351515f906e436d792a36f640eb5487f602f82960ba9bf251c2",
+        "solution/patch.diff": "sha256:00cbfc1526a93cd326c6adfcff12064f148e10bf3d32a4becbd8c43f3b0f11c2"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2280",
+      "repo": "urfave/cli",
+      "ref": "b5aa7101bd66f4340bfd737fe4bf12496d625632",
+      "reference": "https://github.com/urfave/cli/pull/2280",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1034,
+      "loc_changed": 3,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1041,
+        "untracked_failed_count": 0,
+        "runtime_s": 20.8,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:f4ee262065872b8fa5832b35909fda608738433024e149afab497dae4f4912c6",
+        "tests/test.sh": "sha256:97dd3a40dcb97daf509419f4e00ea3674a65da42e3337634066ed7b61a70e542",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:f506499723125b286495835534b20533ca0ab3890003243229b7154317e5650f",
+        "tests/p2p.json": "sha256:01f7ae0cc1c699130ddbd3d7ce3f6c9b13164707363c8a47fd8105804f141f0d",
+        "solution/patch.diff": "sha256:75c60191ec3f076012817a55b5b83159163fdf6a49de9bf328a9cb37480431ec"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2286",
+      "repo": "urfave/cli",
+      "ref": "d525e78922331468649ed06f88834cc21a4296dd",
+      "reference": "https://github.com/urfave/cli/pull/2286",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1022,
+      "loc_changed": 14,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1029,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:012a537d3bc8c0b0c9003c95112835fd80547bbe386fdf68a37129a9373556b6",
+        "tests/test.sh": "sha256:83b4e77c377a5f1f133a5f6c88ea9ff19c602ed1975ab27aa9ce3337701e7153",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:281e7f8078ab6c46c239c7fec5ca62ab72197a145564ba7bac16638b4f55c82d",
+        "tests/p2p.json": "sha256:60f9e7f5b17cb244f977431869eaf5d7fce050e6c57b3ef922c4cb9653e101bd",
+        "solution/patch.diff": "sha256:bec3a7f0aa6e607ecf833c096c0e195d24dfc415dd9b2bf9cbb4ccd27e2a97f9"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2290",
+      "repo": "urfave/cli",
+      "ref": "4dc6aa66962b42149d6a95c722577c7cadc28bcd",
+      "reference": "https://github.com/urfave/cli/pull/2290",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1006,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1017,
+        "untracked_failed_count": 0,
+        "runtime_s": 26.2,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:3e6e4d72e10b69cf3ac4ad6985121fdfdabe4430255ffd8c5d400f52bffd45d8",
+        "tests/test.sh": "sha256:eb76eb386f2593f854febf3205ddf85f59de57ee1a4055e93a3a8a0e45e5a6c8",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:dda51ce77e2cb19ffbe47096fa0a385792520e771006a93ad57a63fb2f5da54c",
+        "tests/p2p.json": "sha256:ef982cdd2292a1b90c7ee223caca8e2dac29c37b1b54c6cf1e47a36a60fa29ea",
+        "solution/patch.diff": "sha256:ae877c5b7d3e8c475f8b09b202dd429db0c187ce4edcaf6ee840087ab0619dff"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2295",
+      "repo": "urfave/cli",
+      "ref": "a2d0cf1d520d827910502403d0f0e232bf2c94da",
+      "reference": "https://github.com/urfave/cli/pull/2295",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 3,
+      "p2p_count": 1013,
+      "loc_changed": 21,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1022,
+        "untracked_failed_count": 0,
+        "runtime_s": 21.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:e525de71d0392f800fd2af0e210aa2887b3b704a9c0eaeb9ec124c325d5973e9",
+        "tests/test.sh": "sha256:cb9e5fc3645c0c48d7e6717ba8971574e0b283fcf7052374aabb3019586f1733",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:edcd134776954d97f2eb5b2a985b4352488192a4de8642fae3deef14ca604368",
+        "tests/p2p.json": "sha256:d41bf4e49f376f798fd7741675e3478865b925cebe67c48cc2732d48fc2fb23c",
+        "solution/patch.diff": "sha256:7980a2b7c5273603eee06ce666774383092050a1b7f0785888ed504fa8d390c4"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2296",
+      "repo": "urfave/cli",
+      "ref": "41c4f5ff8d7c6944fd97d0bcf1f5a1d47de75092",
+      "reference": "https://github.com/urfave/cli/pull/2296",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 14,
+      "p2p_count": 1008,
+      "loc_changed": 3,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1029,
+        "untracked_failed_count": 0,
+        "runtime_s": 26.4,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:b946f43640ed54de72e04565e678007b249ff2569d3756a34cae2f5518f5f03c",
+        "tests/test.sh": "sha256:a53ac1b9d3dd44ac5aaf0087a3cc24767cf5a90000eac27568d7e3efcf86d51f",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:88364e6ad0a0d90798b3635cbcea7479c23b7409510c53c801bc807dca8375a7",
+        "tests/p2p.json": "sha256:bcc4e64244c7259ee29a947b8fccb1c6bd20a8b4e330a0b16e77332054422768",
+        "solution/patch.diff": "sha256:2ac3a00cbd1623a669fecfef9f3b85629b803768191027bc0de705282d4e97b2"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2297",
+      "repo": "urfave/cli",
+      "ref": "a2d0cf1d520d827910502403d0f0e232bf2c94da",
+      "reference": "https://github.com/urfave/cli/pull/2297",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 6,
+      "p2p_count": 1009,
+      "loc_changed": 4,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1021,
+        "untracked_failed_count": 0,
+        "runtime_s": 20.1,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:e525de71d0392f800fd2af0e210aa2887b3b704a9c0eaeb9ec124c325d5973e9",
+        "tests/test.sh": "sha256:de33c5f6f37cfe5862fbee3d0acbc48bb5b841be26976754e5588ec8bb88cf7b",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:c6f07a7eb20248ac8a52179a032530b4066432dea0501ecd35b27c259c79b105",
+        "tests/p2p.json": "sha256:00913bbff358035f5fa3901f81dc1284e8866ff88623f26610798e846de9ecc7",
+        "solution/patch.diff": "sha256:a916cdc4d56413038b05960c21352c1241328764410c6030a8df718ebd3bb46e"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2309",
+      "repo": "urfave/cli",
+      "ref": "a9261cf1832b278c1c195c91f9ee961f5fc9554e",
+      "reference": "https://github.com/urfave/cli/pull/2309",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1023,
+      "loc_changed": 1,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1030,
+        "untracked_failed_count": 0,
+        "runtime_s": 19.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:fbe46a02d7a5b5d6a7c673cad9ffbad96adbd6f0f201518261583cd1035546d7",
+        "tests/test.sh": "sha256:76a73a1e2ecb15aec50a19a71b7718bbe861ab8ae40f7ceaaacb148463ea9a11",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:8eca5574b0fb512aba3fe227551e7a13452e9a1c78dc07c174de6275b7da364c",
+        "tests/p2p.json": "sha256:889d1479c3788b3ccd2bec31595f746d16a5d6f7384ab98b081348efbf9399d3",
+        "solution/patch.diff": "sha256:3aeeddd8e4441e2d91942855dfa24f09bfdf0edc29224a1828b049d747e7a2d8"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2310",
+      "repo": "urfave/cli",
+      "ref": "a9261cf1832b278c1c195c91f9ee961f5fc9554e",
+      "reference": "https://github.com/urfave/cli/pull/2310",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1023,
+      "loc_changed": 10,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1031,
+        "untracked_failed_count": 0,
+        "runtime_s": 15.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:fbe46a02d7a5b5d6a7c673cad9ffbad96adbd6f0f201518261583cd1035546d7",
+        "tests/test.sh": "sha256:d0078bd3a1bac09ab0985ae519c6eb3c4dbca64b21053e181a6d0a2b2a794923",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:90c15bd08ffaaa3bb2be12982f94377da6e983d0f02efd2af55682870f53f794",
+        "tests/p2p.json": "sha256:889d1479c3788b3ccd2bec31595f746d16a5d6f7384ab98b081348efbf9399d3",
+        "solution/patch.diff": "sha256:dae2dc25a87594a99cf1b0ea43e6c568d75bf1d6bf4933c34b7a60f0e28e1774"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2311",
+      "repo": "urfave/cli",
+      "ref": "a9261cf1832b278c1c195c91f9ee961f5fc9554e",
+      "reference": "https://github.com/urfave/cli/pull/2311",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 470,
+      "loc_changed": 8,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1030,
+        "untracked_failed_count": 0,
+        "runtime_s": 19.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:fbe46a02d7a5b5d6a7c673cad9ffbad96adbd6f0f201518261583cd1035546d7",
+        "tests/test.sh": "sha256:f762e740c83eaa1ce6924719f3505af0c36c58ee389269b71df7260d6e0fa81c",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:e019c4ca359060c979d79dfc980f5ae2ebcc3bc2ba5baab32675a83320b826d0",
+        "tests/p2p.json": "sha256:34d1ab242a2880a2650bc5f7934e777fd13365268360eac18eb93122e85d2a97",
+        "solution/patch.diff": "sha256:8cc43ea45ae4971ffc776adf93c45e27a5645a8d4a13bbf5b8761078d9cbc93b"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2317",
+      "repo": "urfave/cli",
+      "ref": "bc00bd4d77dae229ec7d0cb46b67760e168b28c9",
+      "reference": "https://github.com/urfave/cli/pull/2317",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1026,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1033,
+        "untracked_failed_count": 0,
+        "runtime_s": 22.6,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:c18a395052d228602b35d184a0ce24568a9ae2fdfc5b196be5067a750b79f89a",
+        "tests/test.sh": "sha256:ee6401ef783f8584f634df6edd4ae68ebb8e2e7ca202ad3702d6aac4126cad85",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:6a0fca92b5aea8553c3f7135fdb94b2c78bcc2ee5464a354c6ef3a8944035312",
+        "tests/p2p.json": "sha256:c8d8f00fa61ed7ad95b9bfde0e907655395b3cba733934a9745989a7601147f5",
+        "solution/patch.diff": "sha256:87ddfd4e500b78b7526e8905a5f1267bf5c7dfb6dfb67e34cc98b035f4cb1fe8"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2319",
+      "repo": "urfave/cli",
+      "ref": "b79d76894ba609be305dbb458a95f1bad6ef7f2f",
+      "reference": "https://github.com/urfave/cli/pull/2319",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1030,
+      "loc_changed": 10,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1037,
+        "untracked_failed_count": 0,
+        "runtime_s": 24.0,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:123c709afc498f5f51756a58bef65d0ac096f38c7b7c05c3181b5764c7a6e4ff",
+        "tests/test.sh": "sha256:8f18cab6b1a68fd95c5bd9b2630a01d688bb44a56981d6b1804c82ea23b9142e",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:66bebc50c02f96f78152a82597e4fe1c7e5d17be0c3efda632f064e5a097091d",
+        "tests/p2p.json": "sha256:0f68d61f240c3b7cc7bdb60c758d5bd35eeb269c6d0a961cb6d32b174d37f761",
+        "solution/patch.diff": "sha256:886aefe89edba453e6cda5ca347be92985d7e331fe33739eeeb9dc70edd3e4b6"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2329",
+      "repo": "urfave/cli",
+      "ref": "9229c617cb4ed5983b42fd8cd689895c332a3e3e",
+      "reference": "https://github.com/urfave/cli/pull/2329",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1046,
+      "loc_changed": 27,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1053,
+        "untracked_failed_count": 0,
+        "runtime_s": 24.5,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:5dee7af1ac68dbe6af33a3a6c06a73d14b8c06a752c26a771e4f1a54b3af1a65",
+        "tests/test.sh": "sha256:74f669df92999d844a3f3b7815cd981b10fbba016b175bdfbeb743227b6ccbd5",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:fe9e2e3637c80ebf2e71fc7a1e09b8bda9fa79463b4d883d7734809fcba472e4",
+        "tests/p2p.json": "sha256:4702da56225314957262ad3b8f0695e3d1c91b5c6444aa1aa5932ba89a16fc5a",
+        "solution/patch.diff": "sha256:8767873826beb4e1d38ce5109bd2440f4b1c13d1b737fa78b4e665e282c9f892"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2337",
+      "repo": "urfave/cli",
+      "ref": "eb79f0545a47972c87c7c41b99d36fc5012423c9",
+      "reference": "https://github.com/urfave/cli/pull/2337",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1046,
+      "loc_changed": 2,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1053,
+        "untracked_failed_count": 0,
+        "runtime_s": 17.3,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:71356535de47674c597719ce5a982db1a32fc72e4e7ef4ab639814af54988758",
+        "tests/test.sh": "sha256:9778763a9736870ad7009b62e4e00783eaf70a4c0ae337edeaea0ca973686241",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:1793fae24c847ad033a6beae67dcd77a27a64a7506d10232aacfbbb460bfa009",
+        "tests/p2p.json": "sha256:4702da56225314957262ad3b8f0695e3d1c91b5c6444aa1aa5932ba89a16fc5a",
+        "solution/patch.diff": "sha256:e8e8c92bae0e0fe9eba4c95f4ab8c22eb57c9afffad9762e4574a16060c5a6d4"
+      }
+    },
+    {
+      "task_id": "urfave__cli-2338",
+      "repo": "urfave/cli",
+      "ref": "eb79f0545a47972c87c7c41b99d36fc5012423c9",
+      "reference": "https://github.com/urfave/cli/pull/2338",
+      "reward_kinds": [
+        "test_execution",
+        "diff_similarity"
+      ],
+      "f2p_count": 1,
+      "p2p_count": 1048,
+      "loc_changed": 8,
+      "difficulty": "medium",
+      "validation": {
+        "build_status": "ok",
+        "oracle_reward": 1.0,
+        "resolved": true,
+        "command_resolved": true,
+        "exit_code": 0,
+        "parse_status": "ok",
+        "tests_parsed": 1055,
+        "untracked_failed_count": 0,
+        "runtime_s": 14.7,
+        "eval_grade": true
+      },
+      "checksums": {
+        "environment/Dockerfile": "sha256:71356535de47674c597719ce5a982db1a32fc72e4e7ef4ab639814af54988758",
+        "tests/test.sh": "sha256:7b53ec4fab6a20201f5046e12c85ff1bf3c7c690d7ac793e81132367e3443a18",
+        "tests/verifier.py": "sha256:44eaf3561c859edf7f1bbdad612916790edb4141879204360f889cf312f4ca2e",
+        "tests/f2p.json": "sha256:d00e308d9d5e8916785bc74607584ba145031a6f80ad97d812887ae0d7a7a28b",
+        "tests/p2p.json": "sha256:05e9aeb8b8b2779a24512d147dbb355011b9263af25423ab16d38548562433cb",
+        "solution/patch.diff": "sha256:f5fc3d4cb5a9ee9473e41cf095990145848155bb3aeba169ba6f3492b367b070"
+      }
+    }
+  ]
+}
