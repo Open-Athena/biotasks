@@ -14,7 +14,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 
-from biotasks.chat_author import ChatLimits
+from biotasks.chat_author import ChatLimits, OutputTokenLimit
 
 
 def response(name, payload, index):
@@ -190,7 +190,7 @@ def test_incomplete_response_retains_stage_and_cannot_auto_replay(tmp_path):
         limits=ChatLimits(),
         complete=complete,
     )
-    with pytest.raises(RuntimeError, match="Incomplete model response"):
+    with pytest.raises(OutputTokenLimit):
         asyncio.run(design_notebook(**kwargs))
     saved = (root / "stage/trace/1/response.json").read_bytes()
     with pytest.raises(RuntimeError, match="reconciliation"):

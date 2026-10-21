@@ -157,6 +157,11 @@ def copy_diagnostics(root):
             path.relative_to(root).as_posix()
             for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]
         )
+    for stage in ("preparation", "setup-raw", "specification", "materialization-raw", "grading"):
+        selected += tuple(
+            path.relative_to(root).as_posix()
+            for path in sorted((root / stage).glob("*/artifact-stage/trace/*/failure.json"))[-3:]
+        )
     for relative in selected:
         source = root / relative
         if source.is_file() and source.stat().st_size <= 256_000:

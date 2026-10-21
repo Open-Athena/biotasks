@@ -38,11 +38,19 @@ async def stage(
 ):
     """Use upstream's one output recovery, never retry an uncertain transport."""
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
+    recovery_notice = (
+        files("biotasks.prompts").joinpath("worker-context-recovery.md").read_text()
+        if shell is not None
+        else None
+    )
     root.mkdir(parents=True, exist_ok=False)
     identity = {
         "limits": asdict(limits),
         "max_requests": max_requests,
         "output_format": output_format,
+        "context_recovery_sha256": hashlib.sha256(recovery_notice.encode()).hexdigest()
+        if recovery_notice is not None
+        else None,
         "stage_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "adapter_sha256": hashlib.sha256(
             files("biotasks").joinpath("chat_author.py").read_bytes()
@@ -58,6 +66,7 @@ async def stage(
         deadline=deadline,
         limits=limits,
         output_format=output_format,
+        context_recovery_notice=recovery_notice,
     )
 
     async def run_author(**kwargs):

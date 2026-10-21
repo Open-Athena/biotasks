@@ -48,8 +48,12 @@ def provider_failure(error: BaseException) -> dict[str, Any]:
     record["http_status"] = status
     record["failure_category"] = "provider_http_error"
     body = getattr(error, "body", None)
+    # Classify the provider's error, not arbitrary echoed request/input text.
+    detail = body.get("error", body) if isinstance(body, dict) else None
+    if isinstance(detail, dict):
+        detail = {key: detail.get(key) for key in ("message", "code", "type")}
     try:
-        text = json.dumps(body, ensure_ascii=False).lower()
+        text = json.dumps(detail, ensure_ascii=False).lower()
     except (TypeError, ValueError):
         text = ""
     if any(
@@ -73,6 +77,32 @@ def provider_failure(error: BaseException) -> dict[str, Any]:
     elif status == 429:
         record["failure_category"] = "provider_rate_limit"
     return record
+
+
+def _restart_context(messages: list[dict[str, Any]], notice: str) -> list[dict[str, Any]] | None:
+    """Keep original instructions and the latest complete candidate/patch chain."""
+    artifacts: list[dict[str, Any]] = []
+    for index, message in enumerate(messages[2:], start=2):
+        calls = message.get("tool_calls", [])
+        if message.get("role") != "assistant" or len(calls) != 1:
+            continue
+        name = calls[0]["function"]["name"]
+        if name not in {"submit_artifact", "revise_artifact"}:
+            continue
+        if index + 1 >= len(messages):
+            continue
+        feedback = messages[index + 1]
+        if feedback.get("role") != "tool" or feedback.get("tool_call_id") != calls[0]["id"]:
+            continue
+        if name == "submit_artifact":
+            artifacts = []
+        artifacts.extend([message, feedback])
+    reduced = messages[:2] + [{"role": "user", "content": notice}] + artifacts
+    if len(json.dumps(reduced, ensure_ascii=False)) >= len(
+        json.dumps(messages, ensure_ascii=False)
+    ):
+        return None
+    return reduced
 
 
 @dataclass(frozen=True)
@@ -105,6 +135,7 @@ class GLMChatAuthor:
         deadline: float,
         limits: ChatLimits,
         output_format: str = "tools",
+        context_recovery_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -115,6 +146,9 @@ class GLMChatAuthor:
             raise ValueError("Output tokens exceed the request ledger allowance")
         if output_format not in {"tools", "json_schema", "json_unconstrained"}:
             raise ValueError("Unsupported artifact output format")
+        if context_recovery_notice is not None and not context_recovery_notice.strip():
+            raise ValueError("Context recovery requires an explicit notice")
+        self.context_recovery_notice = context_recovery_notice
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -237,6 +271,25 @@ class GLMChatAuthor:
                 # Never log raw SDK exception text, endpoints or response bodies.
                 if "http_status" in failure:
                     self.ledger.finish(call_id, "http_error_received")
+                    if (
+                        failure["failure_category"] == "provider_context_length"
+                        and failure["http_status"] == 400
+                        and self.context_recovery_notice is not None
+                        and self.output_format == "tools"
+                        and "shell" in names
+                    ):
+                        reduced = _restart_context(messages, self.context_recovery_notice)
+                        if reduced is not None:
+                            budget.settle(operation, 0.0)
+                            event(
+                                "context_restarted",
+                                rejected_call_id=call_id,
+                                previous_messages=len(messages),
+                                retained_messages=len(reduced),
+                                allowance_reset=False,
+                            )
+                            messages = reduced
+                            continue
                     raise RuntimeError(
                         "Model provider rejected the request; inspect the retained receipt"
                     ) from None

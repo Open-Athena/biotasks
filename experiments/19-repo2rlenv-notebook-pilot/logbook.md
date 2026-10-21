@@ -2809,3 +2809,25 @@ At 01:32:15 UTC a fresh full ownership inventory confirmed that the provider had
 removed the failed sandbox. Preserve that final observation separately from the
 conflicting cleanup receipts. Campaign 012 will retry the original seed with the
 same factory behavior as 011, since provisioning never reached the new changes.
+
+## 2026-10-21 — recover explicit context exhaustion without resetting execution
+
+Campaign 012 passed construction after GLM repaired a missing-column error, but
+its independent worker exhausted provider context after 74 received responses.
+The original notebook was not rejected; validation remained incomplete. Preserve
+stage receipts, the explicitly labeled failure observation, and verified cleanup
+in `autonomous-runs/012`.
+
+Upstream Tasksmith disables compaction in its Pi and OpenCode runtimes. The local
+adapter now offers opt-in recovery after explicit HTTP 400 context-length rejection,
+enabled for tool-supported artifact stages: retain original instructions and the
+latest complete candidate/revision chain, explicitly discard exploratory dialogue,
+and continue against unchanged workspace/controller state. Full traces, deadline
+and request accounting remain intact. No recovery occurs for uncertain transport,
+server errors or an oversized original context. Preserve small sanitized provider
+failure receipts in subsequent diagnostic exports as well.
+
+Eighty-nine focused tests and lint/type checks pass. The design-stage output-limit
+assertion already failed against the unchanged adapter; it now checks the existing
+specific exception without relaxing the no-replay contract. Campaign 013 starts
+from the original notebook and does not reuse prior generated artifacts.
