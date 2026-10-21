@@ -3189,3 +3189,7 @@ standing budget before dispatch. PR #23 stays draft and unmerged.
 The user requested another availability check. All three approved peers report reachable at 19:14 UTC; this is health metadata, not evidence of successful placement. Reserve $5 for fresh autonomous PyHMMER campaign 023 within the standing $100 authorization ($98 held, $2 unallocated). Retain the existing resource, scientific, model and time limits. Use the compact source payload; preserve cancelled 019–022 unchanged.
 
 Campaign 023 was submitted at 19:15:31 UTC and acquired a CPU worker at 19:15:38 UTC. An actual worker read at 19:16:02 UTC confirmed the autonomous preparation stage running. This establishes restored handoff on the selected approved route, not a scientific outcome. No permissions, priorities or services changed.
+
+### 2026-10-21 — Original PyRadiomics helper log recovered
+
+A bounded private archive read through the active 023 host recovered and hash-verified original 018 staging diagnostics. The exact error was `Invalid staged input path`: the fifth inventory entry was under `/work/examples`, outside approved `/inputs` or `/work/cache` roots. This confirms the generic staging-validation/error-feedback changes address the relevant defect class; it is not proof of a successful rerun. Preserve original 018 infrastructure outcome, original candidate bytes and source scientific code. See `autonomous-runs/018/diagnosis/`.
