@@ -4,6 +4,10 @@ The caller supplies an async, no-retry transport and controller tool handlers.
 This module does not choose a task, validate its science, or launch a sandbox.
 Only the approved free GLM model is supported; monetary receipts are zero while
 every attempted HTTP request consumes a durable RequestLedger slot.
+
+An explicit timeout notice enables one retry of pure model generation per author
+instance. The callback must not execute tools or other external actions itself.
+The uncertain request/hold is retained; tool history and original bounds remain.
 """
 
 from __future__ import annotations
@@ -137,6 +141,7 @@ class GLMChatAuthor:
         output_format: str = "tools",
         context_recovery_notice: str | None = None,
         empty_response_retry_notice: str | None = None,
+        timeout_retry_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -151,10 +156,14 @@ class GLMChatAuthor:
             raise ValueError("Context recovery requires an explicit notice")
         if empty_response_retry_notice is not None and not empty_response_retry_notice.strip():
             raise ValueError("Empty-response retry requires an explicit notice")
+        if timeout_retry_notice is not None and not timeout_retry_notice.strip():
+            raise ValueError("Timeout retry requires an explicit notice")
         self.context_recovery_notice = context_recovery_notice
         self.empty_response_retry_notice = empty_response_retry_notice
+        self.timeout_retry_notice = timeout_retry_notice
         # One allowance for this stage instance, including upstream resubmissions.
         self.empty_response_retries_used = 0
+        self.timeout_retries_used = 0
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -301,6 +310,28 @@ class GLMChatAuthor:
                     ) from None
                 if isinstance(exc, asyncio.CancelledError):
                     raise
+                if (
+                    isinstance(exc, TimeoutError)
+                    and self.timeout_retry_notice is not None
+                    and self.timeout_retries_used == 0
+                    and (max_turns is None or turn < max_turns)
+                    and time.time() < self.deadline
+                ):
+                    # Only pure model generation is repeated. No response from
+                    # this attempt reached tool dispatch; prior actions/results
+                    # stay in the conversation. The original request and its
+                    # bookkeeping hold remain uncertain, never refunded.
+                    self.timeout_retries_used += 1
+                    messages.append({"role": "user", "content": self.timeout_retry_notice})
+                    event(
+                        "timeout_retry_requested",
+                        uncertain_call_id=call_id,
+                        retry_number=self.timeout_retries_used,
+                        backend_outcome="unknown",
+                        actions_executed=0,
+                        allowance_reset=False,
+                    )
+                    continue
                 raise RuntimeError("Model transport failed; inspect the retained receipt") from None
             if self.limits.max_response_bytes is not None and (
                 len(json.dumps(response, ensure_ascii=False).encode())

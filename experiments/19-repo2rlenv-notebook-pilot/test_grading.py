@@ -353,6 +353,7 @@ def test_probe_preflight_separates_mutation_from_acceptance(
         (True, False, False, False),
         (True, True, False, False),
         (True, "draft", False, False),
+        (True, "independent", False, False),
         (True, "probe-draft", False, False),
         (True, True, True, False),
         (True, True, True, True),
@@ -366,6 +367,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     config = json.loads((HERE / "grading-config.json").read_text())
     config.pop("resume_grading_directory", None)
     config.pop("resume_grader_draft_directory", None)
+    config.pop("resume_independent_directory", None)
     config.pop("resume_probes_directory", None)
     config.pop("resume_probe_draft_directory", None)
     config.pop("resume_contract_directory", None)
@@ -373,15 +375,19 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if resume:
         import grading_resume
 
-        config[
-            "resume_grader_draft_directory" if resume == "draft" else "resume_grading_directory"
-        ] = "saved-run"
+        recovery_key = {
+            "draft": "resume_grader_draft_directory",
+            "independent": "resume_independent_directory",
+        }.get(resume, "resume_grading_directory")
+        config[recovery_key] = "saved-run"
 
         def reuse(directory, context):
             assert "independent_solution" not in context
             independent = module.AlternativeSolution(
                 disposition="ready", code="pass", rationale="fixture"
             )
+            if resume == "independent":
+                return independent
             return independent, (
                 {"files": {"inspection-trace.jsonl": "private-grader-observations"}}
                 if resume == "draft"
@@ -389,7 +395,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             )
 
         monkeypatch.setattr(
-            grading_resume, "load_grader_draft" if resume == "draft" else "load_resume", reuse
+            grading_resume,
+            {"draft": "load_grader_draft", "independent": "load_independent"}.get(resume, "load_resume"),
+            reuse,
         )
     calls = []
     commands = []
@@ -546,6 +554,12 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             if name == "grader" and resume == "draft":
                 assert kwargs["shell"] is None
                 assert "private-grader-observations" in json.dumps(inputs["prior_worker_draft"])
+            if name == "grader" and resume == "independent":
+                assert callable(kwargs["shell"])
+                assert "prior_worker_draft" not in inputs
+                assert ["python", "/work/alternative_remote.py"] in commands
+                receipt = json.loads((tmp_path / "resume.json").read_text())
+                assert receipt["reexecute_independent"] and not receipt["prior_acceptance_reused"]
             value = c
         if kwargs.get("validate"):
             await kwargs["validate"](value)
@@ -586,7 +600,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             if contract_only
             else (
                 ["grader"]
-                if resume == "draft"
+                if resume in {"draft", "independent"}
                 else []
                 if resume
                 else (["independent"] if derived else []) + ["grader"]
@@ -608,7 +622,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         if contract_only
         else (
             ["grader"]
-            if resume == "draft"
+            if resume in {"draft", "independent"}
             else []
             if resume
             else (["independent"] if derived else []) + ["grader"]

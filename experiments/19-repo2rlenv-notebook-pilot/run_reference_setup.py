@@ -40,8 +40,11 @@ def check_config(config):
     }:
         raise ValueError("Use the separate reference-setup entry point")
     grading = config["entrypoint"] == "run_notebook_grader.py"
-    if config.get("resume_grading_directory") and config.get("resume_grader_draft_directory"):
-        raise ValueError("Select full grader recovery or draft recovery, not both")
+    recovery_keys = (
+        "resume_grading_directory", "resume_grader_draft_directory", "resume_independent_directory"
+    )
+    if sum(bool(config.get(key)) for key in recovery_keys) > 1:
+        raise ValueError("Select one grading recovery mode")
     if config.get("resume_probe_draft_directory") and (
         not config.get("resume_grading_directory") or config.get("resume_probes_directory")
     ):
@@ -78,6 +81,7 @@ def check_config(config):
         "materialization_directory",
         "resume_grading_directory",
         "resume_grader_draft_directory",
+        "resume_independent_directory",
         "resume_probes_directory",
         "resume_probe_draft_directory",
         "resume_contract_directory",

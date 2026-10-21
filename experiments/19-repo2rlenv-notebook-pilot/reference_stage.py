@@ -39,8 +39,9 @@ async def stage(
     """Use recorded empty-response recovery and upstream's output recovery.
 
     Recovery consumes the existing request/turn allowance and deadline. A
-    one-call stage has no spare turn for an empty-response retry. Transport
-    uncertainty is never replayed.
+    one-call stage has no spare turn for recovery. One timeout retry may repeat
+    pure generation without replaying tool actions; its original slot remains
+    uncertain. Other transport failures remain terminal.
     """
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
     recovery_notice = (
@@ -51,6 +52,9 @@ async def stage(
     empty_retry_notice = (
         files("biotasks.prompts").joinpath("worker-empty-response-retry.md").read_text()
     )
+    timeout_retry_notice = (
+        files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+    )
     root.mkdir(parents=True, exist_ok=False)
     identity = {
         "limits": asdict(limits),
@@ -60,6 +64,7 @@ async def stage(
         if recovery_notice is not None
         else None,
         "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest(),
+        "timeout_retry_sha256": hashlib.sha256(timeout_retry_notice.encode()).hexdigest(),
         "stage_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "adapter_sha256": hashlib.sha256(
             files("biotasks").joinpath("chat_author.py").read_bytes()
@@ -77,6 +82,7 @@ async def stage(
         output_format=output_format,
         context_recovery_notice=recovery_notice,
         empty_response_retry_notice=empty_retry_notice,
+        timeout_retry_notice=timeout_retry_notice,
     )
 
     async def run_author(**kwargs):

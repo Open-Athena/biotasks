@@ -62,6 +62,19 @@ def test_resume_requires_verified_download(tmp_path):
         load_resume(tmp_path, context)
 
 
+def test_independent_only_recovery_needs_no_grader_but_binds_science_and_program(tmp_path):
+    from grading_resume import load_independent
+
+    context = fixture(tmp_path)
+    (tmp_path / "candidate.json").unlink()
+    assert load_independent(tmp_path, context).code == "pass"
+    with pytest.raises(ValueError, match="context differs"):
+        load_independent(tmp_path, context | {"question": "different"})
+    (tmp_path / "independent-solution.json").write_text("{}")
+    with pytest.raises(ValueError, match="identity mismatch"):
+        load_independent(tmp_path, context)
+
+
 def test_unsubmitted_grader_recovery_keeps_independent_code_and_verified_observations(tmp_path):
     from grading_resume import load_grader_draft
 

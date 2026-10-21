@@ -3199,3 +3199,11 @@ Prepared unchanged-policy HRV configuration 024 for a later fresh retry; it is n
 ### 2026-10-21 — Autonomous 023 terminated during grading
 
 Recovered and hash-checked 37 small receipts. Preparation, setup, replay, specification and construction completed, and the independent implementation executed. First grader request 118 timed out after the existing 600-second boundary (`TimeoutError`, `transport_uncertain`); no accepted grader, comparison or native solver. Preserve `infrastructure_failed`, not a source rejection. Pipeline lasted about 44m37s, host about 49m32s including export. All four cleanup receipts passed; separate 20:58 UTC provider inventory found no owned sandbox. Reconcile the $5 hold to the established $1 resource bound ($94 held/$6 unallocated), not an invoice claim.
+
+### 2026-10-21 — General model-timeout retry and fresh proof run
+
+Add opt-in, versioned `worker-timeout-retry` instructions: once per author instance, repeat pure generation after `TimeoutError` only when the original deadline and turn allowance permit. Keep the original request/hold uncertain and claim a new slot; no earlier tool execution is replayed. Cancellation, other transport/HTTP failures and uncertain remote operations remain terminal. Preparation still has one call. Added independent-only recovery bound to original scientific context and bytes; it re-executes the saved program and gives a new grader its normal tools without reusing acceptance.
+
+146 ordinary tests and 110 experiment checks pass under Python 3.13.13; Ruff/format/ty hooks pass. Runtime tests used the hash-verified pinned upstream archive/patches. Sandboxed local asyncio thread wakeups stalled in a minimal reproduction; elevated checks pass, so no scientific/runtime workaround was added. See `factory-checks/timeout-recovery/result.json`.
+
+Choose a fresh original-seed campaign 025 rather than an operator-started continuation as the next autonomy proof. The optional recovery helper does not turn the failed 023 into a success. No extra continuation-archive infrastructure was retained. Reserve $5 before launch within existing $100 authorization ($99 held/$1 unallocated), keep original resource/time/network/scientific policy, and preserve 023 unchanged. HRV 024 remains prepared only.

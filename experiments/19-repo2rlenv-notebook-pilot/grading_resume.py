@@ -67,6 +67,11 @@ def load_resume(directory, context):
     return independent, candidate
 
 
+def load_independent(directory, context):
+    """Reuse a submitted program only; the grader still gets its normal tools."""
+    return ready_independent(verified_reader(directory, context))
+
+
 def load_grader_draft(directory, context):
     """Recover observations and a ready independent program, never a fake grader."""
     read = verified_reader(directory, context)

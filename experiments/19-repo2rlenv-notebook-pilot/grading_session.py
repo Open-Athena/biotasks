@@ -463,9 +463,28 @@ async def run_grading(
         )
     resumed = None
     draft = None
-    if config.get("resume_grading_directory") and config.get("resume_grader_draft_directory"):
-        raise ValueError("Select full grader recovery or draft recovery, not both")
-    if config.get("resume_grading_directory"):
+    recovery_keys = (
+        "resume_grading_directory", "resume_grader_draft_directory", "resume_independent_directory"
+    )
+    if sum(bool(config.get(key)) for key in recovery_keys) > 1:
+        raise ValueError("Select one grading recovery mode")
+    if config.get("resume_independent_directory"):
+        from grading_resume import load_independent
+
+        if "materialization" not in snapshot:
+            raise ValueError("Independent recovery requires materialized task inputs")
+        resumed = load_independent(HERE / config["resume_independent_directory"], context), None
+        save_record(
+            root / "resume.json",
+            {
+                "source": config["resume_independent_directory"],
+                "reexecute_independent": True,
+                "author_grader": True,
+                "shell_free_grader": False,
+                "prior_acceptance_reused": False,
+            },
+        )
+    elif config.get("resume_grading_directory"):
         from grading_resume import load_resume
 
         if "materialization" not in snapshot:

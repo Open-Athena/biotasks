@@ -1,0 +1,54 @@
+{
+  "observed_at": "2026-10-21T22:04:20.080382+00:00",
+  "python": "3.13.13",
+  "core_tests": {
+    "passed": 146,
+    "seconds": 14.78
+  },
+  "experiment_tests": {
+    "passed": 110,
+    "seconds": 4.43,
+    "scope": [
+      "test_grading_resume.py",
+      "test_grading.py",
+      "test_reference_setup.py",
+      "test_autonomous.py",
+      "test_probe_preflight.py"
+    ],
+    "upstream_archive_sha256": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+    "all_pinned_patches_verified": true
+  },
+  "pre_commit": {
+    "ruff_lint": "passed",
+    "ruff_format": "passed",
+    "ty": "passed"
+  },
+  "input_files": [
+    {
+      "path": "src/biotasks/chat_author.py",
+      "sha256": "5c71178634020e0a310a341432ad57b3f93ae1ba0c6f10c8a68256bfdf036d54"
+    },
+    {
+      "path": "src/biotasks/prompts/worker-timeout-retry.md",
+      "sha256": "721176cef03b0a3c2750d3b2c8e8aac6aa7e97639905d3c8ab9e01450cfae3c0"
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py",
+      "sha256": "b82d151929ab00867e1f0e6c28c9d8cad6af2306fa5125727b6bf65caa9caa0e"
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/grading_resume.py",
+      "sha256": "2d53a45d03fec5dc2ed252eef00b9ca6e502ae4e7834b35560912b813cd9e39c"
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "sha256": "4a79ff0e057a8fccbccbc02f9e13d7290c8f6fcaa4be8daafe39c872600c7bd6"
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py",
+      "sha256": "4917ffd53f5a4a0ab409d6c79052d6e27f542c11bd726ce98e7cbb64c16042bd"
+    }
+  ],
+  "limits": "Synthetic offline checks only; no model or cloud execution. No live timeout recovery is proven by these checks.",
+  "environment_observation": "Sandboxed asyncio.to_thread stalled even for a one-line constant-return callback; the same command succeeded elevated. Broader tests were therefore run elevated. No runtime scientific code was modified for this environment issue."
+}

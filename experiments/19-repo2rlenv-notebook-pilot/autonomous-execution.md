@@ -40,6 +40,15 @@ Reference and solver computation are limited to 600 seconds, verifier to 120.
 The setup worker retains two reference tests. The grading worker retains its
 existing review and repair pass; no external operator supplies repair feedback.
 
+The model adapter permits one timeout retry per author session using the packaged
+`worker-timeout-retry` prompt. Only pure model generation is repeated: no response
+from the timed-out request reached tool dispatch, and earlier tool actions are
+not replayed. The backend outcome and request hold remain uncertain, every new
+attempt claims a new ledger slot, and the original deadline and turn/request
+allowances still apply. Cancellation, other transport failures, HTTP failures and
+uncertain remote tool executions are not retried by this policy. One-call
+preparation has no spare turn for recovery. This adds no worker stage or repair.
+
 Terminal outcomes are:
 
 - `validated`: scientific controls accepted the candidate and native oracle/no-op

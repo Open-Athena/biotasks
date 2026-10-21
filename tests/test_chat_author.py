@@ -58,6 +58,7 @@ def make_author(
     output_format="tools",
     context_recovery_notice=None,
     empty_response_retry_notice=None,
+    timeout_retry_notice=None,
     **limits,
 ):
     def save(path, value):
@@ -77,6 +78,7 @@ def make_author(
         output_format=output_format,
         context_recovery_notice=context_recovery_notice,
         empty_response_retry_notice=empty_response_retry_notice,
+        timeout_retry_notice=timeout_retry_notice,
     )
     return author, ledger
 
@@ -340,6 +342,99 @@ def test_empty_retry_does_not_retry_uncertain_transport(tmp_path):
     assert len(calls) == 1 and author.empty_response_retries_used == 0
     with sqlite3.connect(ledger.path) as db:
         assert db.execute("SELECT state FROM calls").fetchall() == [("uncertain",)]
+
+
+def test_timeout_retry_preserves_prior_actions_and_uncertain_request(tmp_path):
+    payloads, actions = [], []
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        if len(payloads) == 1:
+            return reply("shell", {"command": "inspect"}, call_id="inspected")
+        if len(payloads) == 2:
+            raise TimeoutError("PRIVATE_PROVIDER_DETAILS")
+        return reply(call_id="submitted")
+
+    async def shell(command):
+        actions.append(command)
+        return "completed inspection"
+
+    author, ledger = make_author(tmp_path, complete, timeout_retry_notice="Continue recorded work")
+    args = options(
+        tmp_path, {"shell": shell, "submit_artifact": committed, "revise_artifact": committed}
+    )
+    result = asyncio.run(author(**args))
+    assert result["turns"] == 3 and actions == ["inspect"]
+    assert payloads[2]["messages"][:-1] == payloads[1]["messages"]
+    assert payloads[2]["messages"][-1]["content"] == "Continue recorded work"
+    assert args["budget"].settlements == ["1", "3"]
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
+            ("response_received",),
+            ("uncertain",),
+            ("response_received",),
+        ]
+    failure = json.loads((tmp_path / "trace/2/failure.json").read_text())
+    assert failure["failure_category"] == "transport_uncertain"
+    assert "PRIVATE" not in json.dumps(failure)
+    events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
+    recovery = [e for e in events if e["kind"] == "timeout_retry_requested"]
+    assert len(recovery) == 1 and recovery[0]["uncertain_call_id"] == 2
+    assert recovery[0]["backend_outcome"] == "unknown"
+    assert recovery[0]["actions_executed"] == 0 and not recovery[0]["allowance_reset"]
+
+
+@pytest.mark.parametrize("bound", ["once", "turn", "ledger", "deadline", "cancel", "connection"])
+def test_timeout_recovery_keeps_original_bounds_and_narrow_exception_scope(tmp_path, bound):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if bound == "deadline":
+            author.deadline = time.time() - 1
+        if bound == "cancel":
+            raise asyncio.CancelledError()
+        if bound == "connection":
+            raise ConnectionError("unknown transport failure")
+        raise TimeoutError()
+
+    author, ledger = make_author(
+        tmp_path,
+        complete,
+        requests=1 if bound == "ledger" else 4,
+        timeout_retry_notice="Continue recorded work",
+    )
+    args = options(
+        tmp_path,
+        {"submit_artifact": committed, "revise_artifact": committed},
+        turns=1 if bound == "turn" else 4,
+    )
+    expected = asyncio.CancelledError if bound == "cancel" else RuntimeError
+    with pytest.raises(expected):
+        asyncio.run(author(**args))
+    assert len(calls) == (2 if bound == "once" else 1)
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT COUNT(*) FROM calls WHERE state='uncertain'").fetchone()[
+            0
+        ] == len(calls)
+    assert author.timeout_retries_used <= 1
+
+
+def test_timeout_retry_allowance_is_not_reset_by_upstream_resubmission(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if len(calls) != 2:
+            raise TimeoutError()
+        return reply()
+
+    author, _ = make_author(tmp_path, complete, timeout_retry_notice="Continue recorded work")
+    args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+    asyncio.run(author(**args))
+    with pytest.raises(RuntimeError, match="transport failed"):
+        asyncio.run(author(**args))
+    assert len(calls) == 3 and author.timeout_retries_used == 1
 
 
 def test_optional_size_limits_preserve_evidence_and_one_repair(tmp_path):
