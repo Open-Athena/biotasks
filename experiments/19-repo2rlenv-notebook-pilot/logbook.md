@@ -3241,3 +3241,5 @@ Verified original manifest hashes for old 021 and continuation 022: both preflig
 ### 2026-10-21 — Timeout retry exercised by active autonomous 025
 
 Live worker readback at 22:53:59 UTC records grader request 128 timing out, its original uncertain failure retained, and one automatic pure-generation retry 129. The trace records zero dispatched actions from the failed request and no reset allowance. The retry is pending, so this proves dispatch behavior only; it is not a successful response, grading acceptance or completed autonomous task. Source-prefix/request/failure hashes are in `autonomous-runs/025/timeout-observation.json`.
+
+Live readback at 23:02:35 UTC confirms the automatic retry returned a complete artifact response after about 546 seconds; original request/failure hashes remained unchanged. Provider-reported completion usage was 101,565 tokens. Record this as successful generation recovery within the existing bounds, not a passed task: basic grader controls exposed agreement failures and GLM continued diagnosing them without operator edits. The earlier pending observation is retained separately.
