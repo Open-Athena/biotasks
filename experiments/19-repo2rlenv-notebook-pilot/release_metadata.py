@@ -47,3 +47,54 @@ def verify_bundle_licenses(task, licenses):
     recorded = json.loads((Path(task) / "environment/SOURCE-LICENSES.json").read_text())
     if recorded != licenses:
         raise ValueError("Release attribution differs from the validated task bundle")
+
+
+def scientific_probe_documents(grading):
+    """Publish the effective suite, preserving its original and repair evidence."""
+    from grading_protocol import (
+        Grader,
+        GraderRepair,
+        Probes,
+        apply_probe_expectations,
+        check_probes,
+    )
+
+    grading = Path(grading)
+
+    def read(name):
+        return json.loads((grading / name).read_text())
+
+    original = Probes.model_validate(read("probes.json"))
+    candidate = Grader.model_validate(read("final-candidate.json"))
+    suite = original
+    repair_path, revised_path = grading / "repair.json", grading / "repaired-probes.json"
+    if repair_path.exists() != revised_path.exists():
+        raise ValueError("Incomplete probe annotation repair evidence")
+    repair = None
+    if repair_path.exists():
+        repair = GraderRepair.model_validate(read("repair.json"))
+        expected_candidate, expected_suite = apply_probe_expectations(repair, original)
+        suite = Probes.model_validate(read("repaired-probes.json"))
+        if candidate != expected_candidate or suite != expected_suite:
+            raise ValueError("Repaired probes or grader differ from recorded repair")
+    check_probes(suite, candidate)
+    expected = {p.name: p.model_dump() for p in suite.probes}
+    seen = set()
+    for control in read("final-controls.json"):
+        if control["kind"] != "probe":
+            continue
+        probe = control.get("probe") or {}
+        name = probe.get("name")
+        if name in seen or name not in expected or probe != expected[name]:
+            raise ValueError("Final controls do not match the effective probe suite")
+        seen.add(name)
+    if seen != set(expected):
+        raise ValueError("Final controls omit an effective probe")
+    documents = {"scientific-probes.json": suite.model_dump()}
+    if repair is not None:
+        documents["initial-scientific-probes.json"] = original.model_dump()
+        documents["probe-expectation-corrections.json"] = {
+            "corrections": [item.model_dump() for item in repair.probe_expectations],
+            "mutation_scripts_unchanged": True,
+        }
+    return documents

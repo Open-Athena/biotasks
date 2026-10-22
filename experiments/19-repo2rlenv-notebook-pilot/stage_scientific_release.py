@@ -5,7 +5,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-from release_metadata import load_release_metadata, verify_bundle_licenses
+from release_metadata import (
+    load_release_metadata,
+    scientific_probe_documents,
+    verify_bundle_licenses,
+)
 from repo2rlenv.campaigns.release import ReleasePlan, ReleaseTask, stage_release, verify_release
 from repo2rlenv.emitter.evaluation import EvaluationLabel, evaluation_time
 from repo2rlenv.quality.labels import write_labeled_copy
@@ -69,7 +73,7 @@ documents = {
     ),
     "independent-solution.json": read(grading / "independent-solution.json"),
     "independent-execution.json": read(grading / "independent-result.json"),
-    "scientific-probes.json": read(grading / "probes.json"),
+    **scientific_probe_documents(grading),
     "solver-trajectory.json": read(trajectory),
     "source-licenses.json": licenses,
     "source-intake-provenance.json": provenance,
