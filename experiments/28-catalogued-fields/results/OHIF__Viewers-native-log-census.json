@@ -1,0 +1,62 @@
+{
+  "method": "Read-only exact pinned standalone Jest parser on unchanged original logs. No test execution, normalization, reward computation, patch application or model calls.",
+  "verifier_sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b",
+  "original_phase_sha256": "2b8e393535865fb5e02b418d2289d6b4eee47a7c5ac7a113cd4995db452c4809",
+  "bootstrap_smoke": {
+    "file": "native-observations/exec-0019-pr-None.json.gz",
+    "sha256": "efebaf801f56731f75aaae53b5376aa3e01f7cd712ca0fb9ea4cdbf50ce51482",
+    "exit_code": 0,
+    "reported_passed_tests": 1446,
+    "unique_parsed_passed_labels": 1440,
+    "count_difference_cause_not_isolated": true
+  },
+  "fresh_check": {
+    "saved_bootstrap_sha256": "3e0fabba67eece49a2f99e9fa86f9a97edb8972ad607e50af9cf55891a30307e",
+    "verify_detail": "exit=0; e for invalid DICOM UIDs (1 ms)\n\nTest Suites: 121 passed, 121 total\nTests:       1446 passed, 1446 total\nSnapshots:   0 total\nTime:        20.386 s, estimated 165 s\nRan all test suites in 9 projects.",
+    "test_cmds": [
+      "export PATH=/usr/bin:$PATH && cd /workspace && ./node_modules/.bin/jest --collectCoverage=false"
+    ]
+  },
+  "native_validations": [
+    {
+      "file": "native-observations/validation-001-pr-6278.json.gz",
+      "sha256": "b8c87a17e26cf62bcf14ca757c4b4afeaf9290ae9e83990a01c3f90adfff4b3e",
+      "native_status": "failed",
+      "native_reason": "no fail-to-pass tests after validation",
+      "native_f2p": 0,
+      "native_p2p": 1407,
+      "original_export_parser_pre_counts": {
+        "PASSED": 1407
+      },
+      "original_export_parser_post_counts": {
+        "PASSED": 1411
+      },
+      "post_only_tests": [
+        "extensions/cornerstone-dicom-sr/src/getSopClassHandlerModule.test.ts > _checkIfCanAddMeasurementsToDisplaySet > leaves the display set of a hydrated segmentation alone",
+        "extensions/cornerstone-dicom-sr/src/getSopClassHandlerModule.test.ts > _checkIfCanAddMeasurementsToDisplaySet > leaves the display set of a segmentation that the client made alone",
+        "extensions/cornerstone-dicom-sr/src/getSopClassHandlerModule.test.ts > _checkIfCanAddMeasurementsToDisplaySet > skips an image id that the metadata provider does not know",
+        "extensions/cornerstone-dicom-sr/src/getSopClassHandlerModule.test.ts > _checkIfCanAddMeasurementsToDisplaySet > still places a measurement on the source image it references"
+      ],
+      "binary_patch_error_lines": []
+    },
+    {
+      "file": "native-observations/validation-002-pr-6273.json.gz",
+      "sha256": "738535f349c0c4d378b296dff1b76b1a85addcb6700420f0b95b1ee370583e21",
+      "native_status": "failed",
+      "native_reason": "test_patch failed to apply at base_commit",
+      "native_f2p": 0,
+      "native_p2p": 0,
+      "original_export_parser_pre_counts": {
+        "PASSED": 1392,
+        "FAILED": 15
+      },
+      "original_export_parser_post_counts": {},
+      "post_only_tests": [],
+      "binary_patch_error_lines": [
+        "error: cannot apply binary patch to 'tests/screenshots/chromium/ThresholdRange.spec.ts/expandedRangePaint.png' without full index line"
+      ]
+    }
+  ],
+  "collection_inference": "PR6278 adds a new Jest project config/mock in the source side while its new test file is in the test side. Four cases appear only after source patch. Collection dependence is a plausible explanation, not an isolated rerun or repaired F2P yield.",
+  "limits": "PR6273 pre log contains test output despite partially failed patch application; no grade inferred. PR6261 aborts at post-fix exec before a validation result. One process/cgroup snapshot does not establish runtime, OOM or slowdown causality."
+}
