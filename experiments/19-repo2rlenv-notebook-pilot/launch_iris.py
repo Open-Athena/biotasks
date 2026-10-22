@@ -4,10 +4,21 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 from pathlib import Path
 
 EXPERIMENT = "experiments/19-repo2rlenv-notebook-pilot"
+
+
+def coreweave_credentials(cluster: str) -> dict[str, str]:
+    """Forward the submitter's pair; never place it in payloads or receipts."""
+    if not cluster.startswith("cw-"):
+        return {}
+    values = {name: os.environ.get(name, "") for name in ("CW_KEY_ID", "CW_KEY_SECRET")}
+    if not all(values.values()):
+        raise ValueError("CoreWeave submissions require both CW_KEY_ID and CW_KEY_SECRET")
+    return values
 
 
 def frozen_file(repo: Path, revision: str, path: str) -> bytes:
@@ -105,28 +116,56 @@ def submit(
         continuation=continuation,
     )
     return submit_prepared(
-        client, files=files, revision=revision, receipt=receipt, token=token,
-        daytona_key=daytona_key, artifact_prefix=artifact_prefix,
-        endpoint_job=endpoint_job, cluster=cluster,
+        client,
+        files=files,
+        revision=revision,
+        receipt=receipt,
+        token=token,
+        daytona_key=daytona_key,
+        artifact_prefix=artifact_prefix,
+        endpoint_job=endpoint_job,
+        cluster=cluster,
     )
 
 
-def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
-                    artifact_prefix, endpoint_job, cluster, reference_archive=None):
+def submit_prepared(
+    client,
+    *,
+    files,
+    revision,
+    receipt,
+    token,
+    daytona_key,
+    artifact_prefix,
+    endpoint_job,
+    cluster,
+    reference_archive=None,
+):
     """Shared one-job launcher for a frozen, separately validated experiment payload."""
     config = json.loads(files["campaign-config.json"])
     replay_only = config.get("entrypoint") == "run_reference_replay.py"
     if replay_only and (token or endpoint_job):
         raise ValueError("Programmatic replay must not receive model credentials or routes")
-    preparation_only = config.get("entrypoint") in {"run_preparation.py", "run_schema_probe.py", "run_specification.py"}
-    if (not replay_only and not token) or (not preparation_only and not daytona_key) or not artifact_prefix.startswith("s3://"):
+    preparation_only = config.get("entrypoint") in {
+        "run_preparation.py",
+        "run_schema_probe.py",
+        "run_specification.py",
+    }
+    if (
+        (not replay_only and not token)
+        or (not preparation_only and not daytona_key)
+        or not artifact_prefix.startswith("s3://")
+    ):
         raise ValueError("Approved credentials and a private artifact destination are required")
     if preparation_only and daytona_key:
         raise ValueError("Preparation-only jobs must not receive Daytona credentials")
-    if config.get("entrypoint") in {"run_coverage.py", "run_notebook_grader.py", "run_scientific_native.py"} and (
-        not reference_archive or not reference_archive.startswith("s3://")
-    ):
+    if config.get("entrypoint") in {
+        "run_coverage.py",
+        "run_notebook_grader.py",
+        "run_scientific_native.py",
+    } and (not reference_archive or not reference_archive.startswith("s3://")):
         raise ValueError("Coverage requires the recorded private reference archive")
+    storage_environment = coreweave_credentials(cluster)
     from iris.cluster.constraints import Constraint, ConstraintOp
     from iris.cluster.setup_scripts import default_setup_script
     from iris.cluster.types import Entrypoint, EnvironmentSpec, ResourceSpec
@@ -156,7 +195,12 @@ def submit_prepared(client, *, files, revision, receipt, token, daytona_key,
                 )
             ],
             env_vars={
-                **({"GLM_BULK_TOKEN": token, "GLM_ENDPOINT_JOB": endpoint_job} if not replay_only else {}),
+                **storage_environment,
+                **(
+                    {"GLM_BULK_TOKEN": token, "GLM_ENDPOINT_JOB": endpoint_job}
+                    if not replay_only
+                    else {}
+                ),
                 **({"DAYTONA_API_KEY": daytona_key} if daytona_key else {}),
                 "BIOTASKS_ARTIFACT_PREFIX": artifact_prefix.rstrip("/") + "/" + job_name,
                 "BIOTASKS_IRIS_WORKER_ID": job_name,

@@ -6,11 +6,11 @@ import sys
 import time
 
 import pytest
-from iris_bootstrap import export
+from iris_bootstrap import CREDENTIAL_ENV_NAMES, export
 
 
 def test_export_download_checks_every_file(tmp_path, monkeypatch):
-    for name in ("GLM_BULK_TOKEN", "DAYTONA_API_KEY", "HF_TOKEN"):
+    for name in CREDENTIAL_ENV_NAMES:
         monkeypatch.delenv(name, raising=False)
     source = tmp_path / "source"
     source.mkdir()
@@ -27,8 +27,9 @@ def test_export_download_checks_every_file(tmp_path, monkeypatch):
         assert len(data) == record["bytes"] and hashlib.sha256(data).hexdigest() == record["sha256"]
 
 
-def test_export_refuses_secret_spanning_chunks(tmp_path, monkeypatch):
-    monkeypatch.setenv("HF_TOKEN", "fixture-secret-only")
+@pytest.mark.parametrize("credential", CREDENTIAL_ENV_NAMES)
+def test_export_refuses_secret_spanning_chunks(tmp_path, monkeypatch, credential):
+    monkeypatch.setenv(credential, "fixture-secret-only")
     source = tmp_path / "source"
     source.mkdir()
     target = tmp_path / "target"
@@ -122,14 +123,17 @@ def test_export_retries_only_stall_without_extending_deadline(tmp_path, monkeypa
     )
 
 
-def test_final_diagnostics_survive_storage_failure_without_credential_output(tmp_path, monkeypatch):
+@pytest.mark.parametrize("credential", CREDENTIAL_ENV_NAMES)
+def test_final_diagnostics_survive_storage_failure_without_credential_output(
+    tmp_path, monkeypatch, credential
+):
     import iris_bootstrap
 
     evidence = tmp_path / "evidence"
     evidence.mkdir()
     (evidence / "bootstrap-status.json").write_text('{"completed": true}')
     monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "s3://fixture/final")
-    monkeypatch.setenv("HF_TOKEN", "fixture-secret-value")
+    monkeypatch.setenv(credential, "fixture-secret-value")
     calls = []
 
     def fail(root, prefix, *, deadline, log):

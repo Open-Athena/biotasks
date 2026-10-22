@@ -20,6 +20,17 @@ import tempfile
 import time
 from pathlib import Path
 
+CREDENTIAL_ENV_NAMES = (
+    "GLM_BULK_TOKEN",
+    "DAYTONA_API_KEY",
+    "HF_TOKEN",
+    "CW_KEY_ID",
+    "CW_KEY_SECRET",
+    "AWS_ACCESS_KEY_ID",
+    "AWS_SECRET_ACCESS_KEY",
+    "AWS_SESSION_TOKEN",
+)
+
 
 def digest(path):
     value = hashlib.sha256()
@@ -124,11 +135,7 @@ def export(root, prefix):
 
     import fsspec
 
-    secrets = [
-        os.environ[key].encode()
-        for key in ("GLM_BULK_TOKEN", "DAYTONA_API_KEY", "HF_TOKEN")
-        if os.environ.get(key)
-    ]
+    secrets = [os.environ[key].encode() for key in CREDENTIAL_ENV_NAMES if os.environ.get(key)]
     overlap = max(map(len, secrets), default=0)
     paths = []
     for path in sorted(root.rglob("*")):
@@ -216,7 +223,7 @@ def export_final_evidence(evidence, inputs, *, deadline):
             except BaseException as error:
                 data = log.read_bytes() if log.exists() else b""
                 original_sha256 = hashlib.sha256(data).hexdigest()
-                for name in ("GLM_BULK_TOKEN", "DAYTONA_API_KEY", "HF_TOKEN"):
+                for name in CREDENTIAL_ENV_NAMES:
                     if secret := os.environ.get(name):
                         data = data.replace(secret.encode(), b"[REDACTED]")
                 (evidence / "archive.log").write_bytes(data)
