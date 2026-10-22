@@ -64,16 +64,27 @@ leaf without being an analysis objective. Source interpretation identifies the
 intended result; execution establishes its provenance and reproducibility.
 Several files can constitute one result, such as a matrix and its identifiers.
 
-For this version, targets must already be stored in named variables or fields
-of those objects in the original source. Preparation returns only code to save those values and their identifiers at
-script completion; the controller appends it to the untouched baseline. Results
-that are overwritten, deleted or out of scope by the end must be explicitly
-excluded. Earlier capture/insertion support is deferred. It must not capture a previously unnamed expression
-into a variable or reconstruct values computed only inside plotting functions.
-For plots, export eligible existing terminal data only; do not introduce new
-aggregation, filtering, ranking, scaling or other scientific computation to
-recreate a figure. Explain plot-only results that have no eligible stored output.
-Visual styling and image reproduction remain outside this version.
+Preparation remains append-only: it returns only code to save terminal results
+and identifiers already accessible in original named variables or fields at script
+completion. The controller appends that code to the untouched baseline. Preparation
+does not insert captures, rewrite the source or recover overwritten state.
+
+Task eligibility is broader than that initial export inventory. Construction may
+recover an unnamed, overwritten or otherwise unavailable scientific endpoint by
+faithfully rerunning its original source computation, preserving methods, arguments,
+inputs and the input state required by that computation. Prefer existing exports
+and projections first. Record the original source location, dependencies and state,
+the reason recovery is necessary, and the new artifact's provenance separately;
+never replace or relabel the previously recorded reference artifacts. Independent
+execution and meaningful controls must validate the recovered endpoint before
+release. If recovery requires guessing state, repairing broken source, changing
+methods or inputs, or introducing an analysis absent from the source, reject the
+candidate rather than silently omitting that branch.
+
+For plots, export existing scientific results; do not reconstruct computations
+hidden inside plotting functions or introduce new aggregation, filtering, ranking
+or scaling to recreate a figure. Explain plot-only results without an eligible
+scientific target. Visual styling and image reproduction remain outside this version.
 
 Intermediate results, diagnostic counts, preprocessing states and checkpoints
 are not exported targets. Select scientific results from the source goals before
@@ -86,9 +97,10 @@ or processing step. Classify results from the source narrative and interpretatio
 preparatory statistics and diagnostics supporting other results are not extra
 targets merely because they survive or are displayed. Apply selection within
 annotation tables as well as within outer objects; preserve endpoint fields and
-necessary identifiers/context. Explain independent outcomes lacking an eligible
-stored result in the exclusions. Keep all original computation, including excluded
-branches. Reject a source with no eligible terminal results.
+necessary identifiers/context. Explain independent outcomes that cannot be saved directly and whether faithful
+source recomputation can recover them. Missing storage alone is not a scientific
+exclusion. Keep all original computation, including excluded branches. Reject a
+source with no eligible scientific endpoints.
 
 For a notebook with two analysis branches, a single task would cover:
 
@@ -194,7 +206,9 @@ These are logical stages, not necessarily separate agents or one LLM call each.
    Retain all eligible endpoints, explicit exclusions and the source's computation.
    Measurements from reduced inputs or a different execution plan do not establish eligibility.
    The [canonical prompt](../../src/biotasks/prompts/notebook-task-specification.md)
-   reviews the existing preparation inventory; it does not choose a new scope.
+   audits the preparation inventory against the full source, including required
+   endpoints recoverable by faithful source recomputation. It does not invent a
+   new analysis or narrow the scientific scope to the initial exports.
    It drafts a pinned reference recipe and output schemas, with open solver tool
    choice. Named package operations and versions may define omitted defaults;
    the worker need not reverse-engineer library internals into a software-neutral
@@ -577,7 +591,7 @@ later testing should freeze the rules before trying other notebook domains.
 | --- | --- | --- |
 | How close must reproduction be? | Reproduce the pinned reference workflow; solver tools remain open if they meet the validated output contract. Do not promise universal implementation independence. | Easier to define than “same biological conclusion,” but may reject scientifically reasonable alternative analyses. |
 | Where may a task start? | Use the original inputs used by the source notebook. Defer added reductions and new starting checkpoints beyond v1. | Keeps extraction simple and preserves the source workflow, but excludes analyses that need adaptation to fit. |
-| Which endpoints are included? | Include eligible terminal results already held in original named variables or object fields; explain branches without eligible results. Keep all original computation. | Simpler exports, with explicit omissions where the source does not store a terminal result. No intermediate or full-state fallback. |
+| Which endpoints are included? | Include every eligible scientific endpoint. Preparation saves accessible named results; construction may recover missing results by faithfully rerunning unchanged source computations on the same inputs and required state. | Separate provenance and independent validation are required for recovered results. No invented analysis, source repair, intermediate or full-state fallback. |
 | What about endpoints presented as plots? | Save eligible existing results only; exclude plot-only results rather than reconstructing plotting internals. | Less custom code, but some displayed scientific results will not become graded targets. |
 | What about results that vary between valid runs? | Accept documented tolerances or equivalent representations only after executable controls distinguish conforming results from meaningful mistakes. Reject the notebook for v1 if any required endpoint lacks a validated comparison. | Allows justified variation while excluding candidates whose grading remains unreliable or unvalidated within budget. |
 | How much source adaptation is acceptable? | Preserve an untouched converted baseline; permit bounded environment/input setup, path configuration and faithful exports. Reject candidates requiring scientific changes, added reductions or new checkpoints. | Keeps the first version focused on runnable sources; unresolved setup failures remain distinct from code defects. |

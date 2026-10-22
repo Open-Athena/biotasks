@@ -46,6 +46,14 @@ ineligible under the endpoint rule. A plot being its only downstream consumer,
 nested serialization, an awkward parser format, or a difficult comparison does
 not by itself make an independent scientific result ineligible.
 
+A result missing from append-only exports is not automatically ineligible. When
+policy allows faithful source recomputation, identify its original computation,
+methods, arguments, original inputs and required input state in the private handoff.
+Construction may rerun that computation to recover the endpoint, with separate
+provenance and later independent validation. You cannot execute it here or claim
+its values have been observed. Do not invent an analysis, repair the source, guess
+missing state or alter inputs/methods to recover it. Block unsupported recovery.
+
 Choose defensible representations and comparisons for all required endpoints.
 Project existing result fields when this preserves their scientific meaning;
 do not drop a scientific branch to avoid designing that representation. If a
@@ -109,7 +117,8 @@ leak measured answer counts, label ranges, result previews or private paths.
 Supplied intermediate metadata may be described, but not accompanied by downstream
 answers. Preserve source-defined scientific constants where relevant. A smaller
 output projection is allowed when it retains the selected scientific result;
-explain its derivation privately, without recomputing or changing the reference.
+explain its derivation privately. Preserve recorded reference artifacts; describe
+any permitted source-faithful recovery separately rather than replacing them.
 
 State resource/network limits from policy. Mark comparison details as provisional
 until executable validation; no solver should receive an unvalidated draft.

@@ -15,6 +15,16 @@ validation stage. A worker may explicitly block an unsupported proposal instead.
 This ordering is implemented and tested offline; live evidence is recorded by
 factory revision in the run receipts, not implied by this description.
 
+Endpoint preparation remains append-only and saves accessible named results.
+For v1, construction may also recover required endpoints absent from those exports
+by faithfully rerunning their original source computations on the same inputs and
+required state, preserving methods and arguments. This is a provenance-recorded
+addition, not a replacement of earlier reference evidence. Independent scientific
+validation remains required. Missing state, broken source or recovery requiring
+new analyses or changed methods/inputs blocks the candidate; it does not authorize
+manual repairs or a smaller task. The canonical prompts now state this rule;
+recorded prompts in prior runs remain immutable.
+
 The existing Iris bootstrap accepts this entrypoint. Its submitted payload pins
 the factory revision, notebook bytes, runtime archives and configuration. Model
 and Daytona credentials remain runtime environment variables from the existing

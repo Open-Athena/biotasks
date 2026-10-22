@@ -40,8 +40,16 @@ Grader design and independent-implementation plans belong to later workers.
 The shell runs in a locked Python environment, offline. `/work/reference` contains
 read-only original terminal artifacts. `original_inputs` identifies read-only
 original input files and their recorded identities. Work under `/work/author`.
-Do not modify or recompute the recorded scientific reference. Avoid redoing its
-upstream work excluded from the proposed task.
+Preserve recorded reference artifacts unchanged. Prefer projecting their existing
+fields. When policy permits, recover a required scientific endpoint absent from
+those exports by rerunning its original source computation with unchanged methods,
+arguments, original inputs and required input state. Keep this recovery separate
+from the recorded reference, document source locations and state/dependency lineage,
+and let controlled execution and subsequent independent validation check it.
+An unnamed or overwritten result alone is not permission to drop a scientific
+branch. Do not guess missing state, repair source defects, change methods or inputs,
+add a new analysis, or reconstruct plotting internals. Block if faithful recovery
+cannot be established. Avoid unrelated upstream work.
 
 Return a complete structured artifact:
 
@@ -57,8 +65,11 @@ Return a complete structured artifact:
   and `--destination PATH`. Create only `destination/inputs/` and
   `destination/reference/`. Copy original task data byte-for-byte where required,
   derive proposed supplied metadata by selecting existing fields, and project
-  selected answer fields from existing reference exports. No new scientific
-  computation or invented answer values. Document provenance in the rationale.
+  selected answer fields from existing reference exports. Where policy permits
+  source-faithful recovery, also save recovered endpoints under the new destination
+  with explicit provenance; retain the original reference untouched. No invented
+  answer values, new analysis or changed scientific methods/inputs. Document the
+  source computation, required state and artifact lineage in the rationale.
 - `oracle_code`: Python CLI accepting `--input-dir PATH` and `--output-dir PATH`.
   Solve the public task using only those supplied inputs. It will run under a
   separate user without access to reference answers or your working directory.
