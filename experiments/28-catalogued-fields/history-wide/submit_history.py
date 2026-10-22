@@ -27,6 +27,11 @@ def main():
     args = parser.parse_args()
     selected = next(r for r in json.loads((BASE / 'cohort.json').read_text()) if r['slug'] == args.slug)
     files = build(selected, Decimal(args.remaining_usd))
+    reference = next(row for row in json.loads((Path(__file__).parent / 'payload-manifest.json').read_text())['reference_payloads'] if row['repo'] == selected['repo'])
+    assert set(files) == set(reference['payload_sha256'])
+    for name, raw in files.items():
+        if name != 'history-run-budget.json':
+            assert hashlib.sha256(raw).hexdigest() == reference['payload_sha256'][name], name
     assert os.environ.get('OPENROUTER_API_KEY') and os.environ.get('GH_TOKEN')
     run = 'biotasks28-history-' + args.slug.lower().replace('__', '-') + '-001'
     args.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
