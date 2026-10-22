@@ -1,0 +1,101 @@
+{
+  "repo": "soedinglab/MMseqs2",
+  "scientific_field": "Microbiome science",
+  "ref": "fcf516aba34be4569b3eb5bda2b9db9e26a8f278",
+  "run_id": "biotasks28-soedinglab-mmseqs2-001",
+  "complete_window_merged": 9,
+  "native_candidates_returned": null,
+  "candidates_entered": 0,
+  "candidate_pr_numbers_entered": [],
+  "candidate_decisions": [],
+  "native_skip_reasons": {},
+  "paired_validation_started": 0,
+  "paired_validation_completed": 0,
+  "native_validation_results": [],
+  "native_validation_exceptions": [],
+  "native_sandbox_nonzero": [
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792694926.1443646,
+      "pr": null,
+      "execution": 14,
+      "command_sha256": "632014f8d093edb0577d0b4b2cc412494e9e01c6222078481a117cd2829cc8b8",
+      "exit_code": 124,
+      "duration_sec": 300.1027063729998
+    },
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792695255.668325,
+      "pr": null,
+      "execution": 15,
+      "command_sha256": "fc8003eabcfec41a5ed4fc86dea1fbcb74241e7a25bd188faa3f6aab340677b9",
+      "exit_code": 124,
+      "duration_sec": 300.10304994299076
+    },
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792695879.204306,
+      "pr": null,
+      "execution": 19,
+      "command_sha256": "7bc67a7f92a0e965508ddd2256d4cee3d095492f6510f4b4bb03e4b0a0fa49e7",
+      "exit_code": 124,
+      "duration_sec": 300.101657555002
+    }
+  ],
+  "generation_wrapper_exit_code": 0,
+  "native_cli_window": {
+    "input": "soedinglab__MMseqs2.json",
+    "command": [
+      "/work/upstream/.venv/bin/python",
+      "/work/observed_cli.py",
+      "--no-ui",
+      "generate",
+      "--config",
+      "/work/inputs/soedinglab__MMseqs2.json",
+      "--max-spend-usd",
+      "5"
+    ],
+    "started": 1792694240.8936129,
+    "state": "completed",
+    "exit_code": 1,
+    "finished": 1792695890.6346698
+  },
+  "native_exports": 0,
+  "task_controls": [],
+  "verified_tasks": 0,
+  "control_allocation_rows": [],
+  "task_files_unchanged": {
+    "verified": true,
+    "before": {},
+    "after": {}
+  },
+  "billing": {
+    "model_calls": 20,
+    "actual_cost_usd": "0.960333",
+    "cost_complete": true,
+    "stop_threshold_usd": "5",
+    "final_request_may_overshoot": true,
+    "shared_account_deltas_used": false,
+    "observer_snapshot_cost_usd": "0.960333",
+    "dispatched_calls": 20,
+    "unresolved_calls": []
+  },
+  "allocated_cpu_hours": 1.905678888888889,
+  "attempts": [
+    {
+      "started_at": "Timestamp(2026-10-22T18:36:27.657000+00:00)",
+      "finished_at": "Timestamp(2026-10-22T19:05:02.768000+00:00)",
+      "allocated_cpu_hours": 1.905678888888889
+    }
+  ],
+  "artifact_readback_verified": true,
+  "owned_cleanup_verified_empty": true,
+  "infra_error_type": null,
+  "orchestration_state": "SUCCEEDED",
+  "native_status": "bootstrap_turns_exhausted_during_compilation",
+  "furthest_stage_reached": "bootstrap_attempt",
+  "strict_oracle_command_resolved_tasks": 0,
+  "failure_cause": "The official agent installed CMake/compiler/Rust dependencies and reached compilation, then exhausted 20 turns (19 BASH, one INVALID) without SAVE_SETUP. Two build commands and a later file-inspection command timed out at the original 300-second limit; upstream also explicitly started background make. No PR discovery, parser evaluation, export or control occurred. Actual compiler/OOM causality unmeasured; no repair/retry or resource change.",
+  "environment_reconstruction": "No completed bootstrap image or saved setup emitted. Original transcript, requests, usage, commands/results and exact source ref retained. No reconstruction run or image publication.",
+  "archive_receipt": "archives/soedinglab__MMseqs2-receipt.json"
+}

@@ -1,0 +1,39 @@
+{
+  "scope": "Read-only classification of original saved commands/results; no execution or repair.",
+  "native_container_cpu_limit": 1.5,
+  "native_container_memory_gib": 6,
+  "timeout_executions": [
+    {
+      "file": "exec-0014-pr-None.json.gz",
+      "command": "source $HOME/.cargo/env && cd /workspace && cmake --build build -j$(nproc) 2>&1 | tail -30",
+      "exit_code": 124,
+      "duration_sec": 300.1027063729998
+    },
+    {
+      "file": "exec-0015-pr-None.json.gz",
+      "command": "source $HOME/.cargo/env && cd /workspace && cmake --build build --target mmseqs -j2 2>&1 | tail -20",
+      "exit_code": 124,
+      "duration_sec": 300.10304994299076
+    },
+    {
+      "file": "exec-0019-pr-None.json.gz",
+      "command": "ls /workspace/build/src/test/ 2>/dev/null | head -20; ls /workspace/build/src/ 2>/dev/null | head -20",
+      "exit_code": 124,
+      "duration_sec": 300.101657555002
+    }
+  ],
+  "explicit_background_build": [
+    {
+      "file": "exec-0016-pr-None.json.gz",
+      "command": "source $HOME/.cargo/env && cd /workspace/build && make -j2 2>&1 | tail -30 &\necho \"Build started in background, PID=$!\"",
+      "exit_code": 0,
+      "duration_sec": 88.37236718200438
+    }
+  ],
+  "facts": [
+    "Initial full build requested -j$(nproc); a later build used -j2.",
+    "Upstream then explicitly launched background make -j2 and continued checking files.",
+    "No SAVE_SETUP, completed image, PR discovery or runtime test parsing was reached."
+  ],
+  "limits": "Actual compiler parallelism, process saturation, OOM state and whether earlier timed-out commands remained alive were not measured. The later background build was explicitly requested by upstream, so its presence alone is not proof of a leaked process. CPU/time choices can affect build progress; no alternate resource/timeout configuration was tested."
+}
