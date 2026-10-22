@@ -9,7 +9,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Epigenomics / macs3-project/MACS | 9 | — | 0 | 0 | 0 | 0 | 0.526755 | 2.1325133333333333 | pr_discovery_attempt |
 | Proteomics / OpenMS/OpenMS | 217 | — | 0 | 0 | 0 | 0 | 0 | 0.16640555555555553 | source_checkout_attempt |
 | Structural biology / lammps/lammps | 34 | — | 0 | 0 | 0 | 0 | 0.938712 | 0.753731111111111 | bootstrap_attempt |
-| Metabolomics / matchms/matchms | 11 | — | — | — | — | — | — | — | not_reported |
+| Metabolomics / matchms/matchms | 11 | 11 | 1 | 0 | 0 | 0 | 0.133545 | 0.7687444444444445 | paired_pr_validation_partial |
 | Systems biology / opencobra/cobrapy | 4 | — | — | — | — | — | — | — | not_reported |
 | Microbiome science / soedinglab/MMseqs2 | 9 | — | — | — | — | — | — | — | not_reported |
 | Neuroscience / mne-tools/mne-python | 82 | — | — | — | — | — | — | — | not_reported |
@@ -17,7 +17,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 
 Completion proven: False.
 
-Reported actual model cost: $2.897427; reported allocated CPU-hours: 9.12128111111111053.
+Reported actual model cost: $3.030972; reported allocated CPU-hours: 9.89002555555555503.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
@@ -54,3 +54,9 @@ Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True
 Upstream exhausted 20 bootstrap BASH turns. Seventeen parsed commands retained trailing </s> or </thinking> tags and produced shell syntax errors; the original sanitizer does not strip them. The saved prompt detected unknown language on ubuntu:24.04. Tools were installed near the end, but no project build/SAVE, PR discovery, exports or controls occurred. No repair/retry applied.
 
 Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## matchms/matchms
+
+Bootstrap smoke and fresh-image checks passed at the pinned newer repo revision. Native returned 11 PRs but entered four: PR966 had missing chemap in both collection stages, two candidates were filtered, then PR958 post-fix Docker exec raised OSError errno 7 on an oversized inline patch script. Two pairs started, one completed, no exports; seven returned PRs were never entered. No repair/retry applied.
+
+Native skip reasons: {"no fail-to-pass tests after validation": 1, "no_new_test_funcs": 1, "no_test_patch": 1}. Controls reached/unstarted: 0/0. Archive accepted: True.
