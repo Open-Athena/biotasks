@@ -95,35 +95,24 @@ def test_exhausted_shell_budget_is_terminal(tmp_path, monkeypatch):
     assert remote.operation == 0
 
 
-def test_grader_shell_opens_only_after_a_controller_candidate_attempt(tmp_path):
+def test_grader_author_can_inspect_before_candidate_submission(tmp_path):
     from grading_session import GradingSession
 
+    async def helper(argv, timeout, label):
+        assert argv == ["shell", "author", "inspect recorded format", "12"]
+        assert timeout == 22
+        return {"exit_code": 0, "stdout": "recorded format evidence"}
+
     session = GradingSession(
-        remote=None, snapshot={"outputs": []}, root=tmp_path / "session", config={}
+        remote=None,
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"reference_seconds": 600},
     )
-    calls = []
-
-    async def shell(command, timeout_sec):
-        calls.append((command, timeout_sec))
-        return "recorded diagnostic"
-
-    session.shell = shell
-
-    async def exercise():
-        initial_shell = session.candidate_first_shell()
-        assert "No command executed" in await initial_shell("true", 12)
-        assert calls == []
-        session.candidate_number = 1
-        assert await initial_shell("true", 12) == "recorded diagnostic"
-        assert calls == [("true", 12)]
-        repair_shell = session.candidate_first_shell()
-        assert "No command executed" in await repair_shell("repair diagnostic", 13)
-        assert calls == [("true", 12)]
-        session.candidate_number += 1
-        assert await repair_shell("repair diagnostic", 13) == "recorded diagnostic"
-        assert calls == [("true", 12), ("repair diagnostic", 13)]
-
-    asyncio.run(exercise())
+    session.helper = helper
+    result = json.loads(asyncio.run(session.shell("inspect recorded format", 12)))
+    assert result["stdout"] == "recorded format evidence"
+    assert session.candidate_number == 0
 
 
 def candidate():
@@ -563,9 +552,6 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
         async def shell(self, *args, **kwargs):
             return json.dumps({"exit_code": 0, "stdout": "isolated"})
-
-        def candidate_first_shell(self):
-            return self.shell
 
         async def validate_candidate(self, value):
             self.last_controls = [{"passed_control": True, "kind": "reference"}]

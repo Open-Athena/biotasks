@@ -131,7 +131,14 @@ class ProbeExpectation(StrictModel):
     rationale: str = Field(min_length=1)
 
 
+class CheckDescription(StrictModel):
+    id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
+    public_requirement: str = Field(min_length=1)
+    rationale: str = Field(min_length=1)
+
+
 class GraderRepair(Grader):
+    check_descriptions: list[CheckDescription] = Field(default_factory=list)
     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
     probe_concerns: list[str] | None = Field(
         default=None,
@@ -144,7 +151,7 @@ class GraderRepair(Grader):
 
 
 class GraderRepairSubmission(StrictModel):
-    """Only fields the repair worker may author; checks stay controller-owned."""
+    """Editable repair fields; check identities and coverage stay controller-owned."""
 
     disposition: Literal["ready", "blocked"]
     instruction: str | None = Field(
@@ -156,6 +163,7 @@ class GraderRepairSubmission(StrictModel):
         description="Null preserves the exact prior grader program; otherwise return its complete replacement.",
     )
     rationale: str = Field(min_length=1)
+    check_descriptions: list[CheckDescription] = Field(default_factory=list)
     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
     probe_concerns: list[str] | None = None
 
@@ -168,15 +176,36 @@ def bind_repair_checks(submission, frozen_checks, *, prior_candidate=None):
             if prior_candidate is None:
                 raise ValueError("Retained repair fields require the exact prior candidate")
             fields[name] = getattr(prior_candidate, name)
-    return GraderRepair.model_validate(
-        {**fields, "checks": [check.model_dump() for check in frozen_checks]}
-    )
+    descriptions = {item.id: item for item in submission.check_descriptions}
+    if len(descriptions) != len(submission.check_descriptions):
+        raise ValueError("Duplicate check description updates")
+    if set(descriptions) - {check.id for check in frozen_checks}:
+        raise ValueError("Description update refers to an unknown check")
+    checks = []
+    for check in frozen_checks:
+        value = check.model_dump()
+        if update := descriptions.get(check.id):
+            value["public_requirement"] = update.public_requirement
+        checks.append(value)
+    return GraderRepair.model_validate({**fields, "checks": checks})
+
+
+def check_repair_inventory(candidate_checks, frozen_checks):
+    """Permit explanatory corrections, retaining every check's identity and coverage."""
+
+    def inventory(checks):
+        return [check.model_dump(exclude={"public_requirement"}) for check in checks]
+
+    if inventory(candidate_checks) != inventory(frozen_checks):
+        raise ValueError(
+            "Repair cannot change the frozen check inventory; report a blocker if coverage must change"
+        )
 
 
 def apply_probe_expectations(repair, original):
     """Correct model-authored annotations without changing any scientific mutation."""
     candidate = Grader.model_validate(
-        repair.model_dump(exclude={"probe_expectations", "probe_concerns"})
+        repair.model_dump(exclude={"check_descriptions", "probe_expectations", "probe_concerns"})
     )
     if candidate.disposition == "blocked":
         return candidate, original

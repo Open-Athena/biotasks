@@ -20,6 +20,7 @@ from grading_protocol import (
     bind_repair_checks,
     check_coverage,
     check_probes,
+    check_repair_inventory,
     check_review_source_coverage,
     control_summary,
     parse_report,
@@ -249,24 +250,6 @@ class GradingSession:
             )
         return json.dumps(reply)
 
-    def candidate_first_shell(self):
-        """Require a new controller attempt in each authoring or repair session."""
-        prior_attempts = self.candidate_number
-
-        async def shell(command, timeout_sec=120):
-            if self.candidate_number <= prior_attempts:
-                return (
-                    "No command executed. Submit a complete candidate for this session "
-                    "using the supplied evidence, prior candidate and review when present. "
-                    "The controller will execute the applicable controls and return "
-                    "measured failures. Shell access then becomes available for diagnosis. "
-                    "If the evidence cannot support a candidate, submit a blocked "
-                    "disposition with the reason."
-                )
-            return await self.shell(command, timeout_sec)
-
-        return shell
-
     async def validate_probe_execution(self, probe):
         """Check mutation execution without exposing any grader result to its author."""
         self.probe_validation_number += 1
@@ -346,10 +329,8 @@ class GradingSession:
         if candidate.disposition == "blocked":
             return
         check_coverage(candidate, self.paths)
-        if self.frozen_checks is not None and candidate.checks != self.frozen_checks:
-            raise ValueError(
-                "Repair cannot change the frozen check inventory; report a blocker if coverage must change"
-            )
+        if self.frozen_checks is not None:
+            check_repair_inventory(candidate.checks, self.frozen_checks)
         self.candidate_number += 1
         folder = self.root / "candidates" / str(self.candidate_number)
         folder.mkdir(parents=True)
@@ -786,7 +767,7 @@ async def run_grading(
                 "notebook-grader-author",
                 context,
                 session.validate_candidate,
-                session.candidate_first_shell(),
+                session.shell,
             )
         save_record(root / "candidate.json", candidate.model_dump())
         if candidate.disposition == "blocked":
@@ -880,6 +861,7 @@ async def run_grading(
             session.last_controls.append(await session.case(candidate, kind="probe", probe=probe))
 
         author_input_control_summary = None
+        check_description_updates = []
 
         async def review(name):
             async def validate_review(value):
@@ -900,6 +882,8 @@ async def run_grading(
                     "candidate": candidate.model_dump(),
                     "probes": probes.model_dump(),
                     "initial_probes": initial_probes.model_dump(),
+                    "initial_checks": [check.model_dump() for check in session.frozen_checks],
+                    "check_description_updates": check_description_updates,
                     "controls": session.last_controls,
                     "control_summary": control_summary(session.last_controls),
                     "author_input_control_summary": author_input_control_summary,
@@ -940,12 +924,13 @@ async def run_grading(
                     "control_summary": author_input_control_summary,
                 },
                 validate_repair,
-                session.candidate_first_shell(),
+                session.shell,
             )
             repaired = bind_repair_checks(
                 repair_submission, session.frozen_checks, prior_candidate=repair_base
             )
             save_record(root / "repair.json", repaired.model_dump())
+            check_description_updates = [item.model_dump() for item in repaired.check_descriptions]
             candidate, probes = apply_probe_expectations(repaired, initial_probes)
             save_record(root / "repaired-probes.json", probes.model_dump())
             save_record(root / "repaired-candidate.json", candidate.model_dump())

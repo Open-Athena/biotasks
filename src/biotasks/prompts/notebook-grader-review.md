@@ -118,6 +118,15 @@ claims, and report unresolved public-contract mismatches as actionable issues.
 
 ## Evidence versions
 
+When `check_description_updates` is present, compare each correction with
+`initial_checks`, the current candidate, source evidence and governing public
+rules. It may align misleading prose with unchanged scientific requirements;
+it must not remove an obligation, relax a criterion or justify an unsupported
+equivalence because current controls pass. The controller freezes check IDs,
+kinds and artifact coverage, but these structural guards cannot establish
+semantic fidelity. Block unsupported scientific changes even when every fresh
+control passes. Both original descriptions and the worker's rationale are supplied.
+
 `control_summary` and `controls` describe the freshly executed candidate.
 `author_input_control_summary`, when present, records the earlier summary supplied
 to the repair author before its submissions were validated. A rationale explicitly

@@ -59,6 +59,14 @@ all declared data and caches from their recorded sources; it cannot rely on file
 downloaded during exploratory shell work. Those directories persist through the
 subsequent offline reference execution, not between setup tests.
 
+Confirm where each input-loading function actually looks for cached data in the
+reference process. Use installed package sources or a focused lookup-path check;
+do not assume a newly created temporary directory is that cache. Staging files
+successfully is insufficient if the unchanged script cannot find them offline.
+Keep every required cache or input-path adaptation in the submitted recipe, not
+only in exploratory shell state. The later clean replay is an additional check,
+not evidence that a passed test in the authoring sandbox was already a clean build.
+
 ## Files to produce
 
 Keep one small setup directory with these files:

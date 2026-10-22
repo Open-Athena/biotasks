@@ -311,3 +311,84 @@ def test_repair_can_replace_one_field_and_retain_the_other():
     assert bound.instruction == replacement
     assert bound.grader_code == grader.grader_code
     assert bound.checks == grader.checks
+
+
+def test_check_explanation_repair_keeps_code_coverage_and_original_evidence():
+    from grading_protocol import (
+        GraderRepairSubmission,
+        bind_repair_checks,
+        check_repair_inventory,
+    )
+
+    grader, probes, _ = fixture()
+    original = grader.model_dump()
+    update = {
+        "id": grader.checks[0].id,
+        "public_requirement": "Compare parsed values under the unchanged public numerical rule.",
+        "rationale": "The original description incorrectly described serialization as the target.",
+    }
+    submission = GraderRepairSubmission(
+        disposition="ready", rationale=update["rationale"], check_descriptions=[update]
+    )
+    bound = bind_repair_checks(submission, grader.checks, prior_candidate=grader)
+    candidate, effective_probes = apply_probe_expectations(bound, probes)
+    check_repair_inventory(candidate.checks, grader.checks)
+    assert candidate.checks[0].public_requirement == update["public_requirement"]
+    assert candidate.checks[1:] == grader.checks[1:]
+    assert candidate.grader_code == grader.grader_code
+    assert candidate.instruction == grader.instruction
+    assert grader.model_dump() == original
+    assert effective_probes == probes
+    assert bound.check_descriptions[0].model_dump() == update
+    assert GraderRepair.model_validate_json(bound.model_dump_json()) == bound
+
+
+@pytest.mark.parametrize("bad_id,duplicate", [("unknown_check", False), ("value", True)])
+def test_description_updates_reject_unknown_or_duplicate_check_ids(bad_id, duplicate):
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, _ = fixture()
+    update = {"id": bad_id, "public_requirement": "Corrected text", "rationale": "Evidence"}
+    submission = GraderRepairSubmission(
+        disposition="ready",
+        rationale="Description correction",
+        check_descriptions=[update, update] if duplicate else [update],
+    )
+    with pytest.raises(ValueError, match="Duplicate|unknown check"):
+        bind_repair_checks(submission, grader.checks, prior_candidate=grader)
+
+
+@pytest.mark.parametrize("field,value", [("kind", "structural"), ("artifacts", ["other.txt"])])
+def test_description_update_cannot_author_check_identity_or_coverage(field, value):
+    from grading_protocol import GraderRepairSubmission
+
+    update = {
+        "id": "value",
+        "public_requirement": "Corrected text",
+        "rationale": "Evidence",
+        field: value,
+    }
+    with pytest.raises(ValidationError, match="Extra inputs"):
+        GraderRepairSubmission(
+            disposition="ready", rationale="Description correction", check_descriptions=[update]
+        )
+
+
+@pytest.mark.parametrize("change", ["id", "kind", "artifacts", "remove", "reorder"])
+def test_repair_inventory_guard_still_rejects_coverage_changes(change):
+    from grading_protocol import check_repair_inventory
+
+    grader, _, _ = fixture()
+    checks = grader.model_copy(deep=True).checks
+    if change == "remove":
+        checks.pop()
+    elif change == "reorder":
+        checks.reverse()
+    elif change == "id":
+        checks[0].id = "different_check"
+    elif change == "kind":
+        checks[0].kind = "structural"
+    else:
+        checks[0].artifacts = ["other.txt"]
+    with pytest.raises(ValueError, match="frozen check inventory"):
+        check_repair_inventory(checks, grader.checks)

@@ -16,22 +16,25 @@ When `prior_worker_draft` is supplied without a shell tool, finalize that existi
 work into a complete submission using the recorded observations and current
 question. Do not start another investigation. Local tests are evidence, not
 controller acceptance; failed or unfinished commands do not establish findings.
-Do not invent new measurements. Submit the full candidate promptly; the
-controller will execute its checks and return demonstrated defects for repair.
-It names the directory containing private reference output files in your sandbox.
-For each authoring or repair session, submit the candidate or repair response
-from the supplied task, schemas and execution evidence before using the shell.
-The controller resolves retained repair fields and runs the basic
-acceptance and rejection checks; do not duplicate them in exploratory scripts
-before submission. After a candidate attempt, shell access is available to diagnose
-its measured failures and repair the grader. If the evidence cannot support a
-candidate, return `blocked` with the reason. This ordering does not establish
-correctness: all later independent probes and review are still required.
+Do not invent new measurements. Use focused inspection when the supplied evidence
+leaves the meaning of a stored quantity or encoding unresolved, then submit a
+complete candidate. You may inspect before submission; the controller will still
+run its own acceptance and rejection controls. Do not duplicate the full control
+suite in exploratory scripts. If available evidence cannot support the scientific
+comparison, return `blocked` with the reason.
+The input names the directory containing private reference output files in your sandbox.
 The shell tool, when supplied, runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference
 copies. When `paths` supplies task inputs and recomputed outputs, inspect those
 as recorded evidence too. Otherwise raw biological inputs are not available.
+For a native scientific file, ground the comparison in its documented encoding
+or the installed parser's behavior. Distinguish stored values from decoded
+quantities, including transformations, units and special tokens. Do not infer
+semantic equivalence from similar-looking strings, field names or floating-point
+parsing alone. Record the source or focused observation supporting each non-obvious
+normalization. A representation-only alternative must preserve the decoded
+scientific value; an edit changing it must be tested as a wrong answer.
 Do not rerun the entire analysis in this grader-author stage; independently
 executed controls are the evidence for recomputation agreement.
 
@@ -127,15 +130,19 @@ that suite or spend the session repeatedly auditing unrelated source internals.
 ## Repair sessions
 
 When a prior candidate and review are supplied, repair the identified defects in
-that candidate. Keep the supplied check definitions and frozen probes unchanged;
-report a blocker if a scientific change to either is necessary. The repair response
-schema contains only editable fields. Do not return or rephrase the check
-inventory: the controller carries its exact original definitions into the repaired
-artifact. You may inspect those definitions in `prior_candidate` when correcting
-the implementation; they remain the public acceptance requirements.
+that candidate. Keep check IDs, kinds, covered artifacts and scientific requirements,
+and the frozen probe programs and intended outcomes, unchanged. Report a blocker
+if a scientific change is necessary. Do not return a replacement check inventory.
+The repair schema permits `check_descriptions`: complete corrected
+`public_requirement` text for an existing check ID, with a source-backed rationale.
+Use this only to correct an explanation that conflicts with the unchanged
+scientific target and governing acceptance rules. Do not delete requirements,
+weaken criteria or fit descriptions to observed passing results. Omit unaffected
+checks. The controller retains their exact descriptions, copies all IDs, kinds
+and artifact coverage unchanged, and preserves both versions for fresh review.
 Return null for `instruction` or `grader_code` when that field needs no change:
 the controller retains its exact prior text. For annotation-only corrections,
-retain both fields and return only the needed probe annotations and your rationale.
+retain both fields and return only the needed check or probe annotations and rationale.
 When either field needs changes, return its complete replacement, not a diff.
 The resolved complete candidate still undergoes every frozen control and fresh
 review. A blocked response may retain those fields too; do not invent a grader

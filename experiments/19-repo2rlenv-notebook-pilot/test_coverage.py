@@ -38,6 +38,22 @@ def test_csv_fingerprints_detect_order_and_row_limit_is_explicit(tmp_path):
         csv_profile(one, row_limit=1)
 
 
+def test_streaming_csv_has_no_implicit_row_rejection(tmp_path):
+    path = tmp_path / "long.csv"
+    chunk = "".join(f"{index % 7},a\n" for index in range(1001))
+    with path.open("w") as stream:
+        stream.write("value,tag\n")
+        for _ in range(1000):
+            stream.write(chunk)
+    result = csv_profile(path, distinct_limit=3)
+    assert result["row_count"] == 1_001_000
+    numbers, tags = result["columns"]
+    assert numbers["finite_numeric"] == result["row_count"]
+    assert numbers["minimum"] == 0 and numbers["maximum"] == 6
+    assert numbers["distinct_capped"] and numbers["distinct_nonempty"] == 3
+    assert not tags["distinct_capped"] and tags["distinct_nonempty"] == 1
+
+
 def test_hdf5_shapes_only_and_external_links_are_not_followed(tmp_path):
     import h5py
 

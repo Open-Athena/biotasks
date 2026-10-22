@@ -26,7 +26,7 @@ def digest(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=1_000_000):
+def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=None):
     csv.field_size_limit(1_048_576)
     with path.open(newline="", encoding="utf-8-sig") as stream:
         rows = csv.reader(stream, delimiter=delimiter, strict=True)
@@ -54,7 +54,7 @@ def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=1_000_
         count = ragged = 0
         for row in rows:
             count += 1
-            if count > row_limit:
+            if row_limit is not None and count > row_limit:
                 raise ValueError("CSV row inspection limit exceeded")
             if len(row) != len(header):
                 ragged += 1
