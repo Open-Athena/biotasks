@@ -1,0 +1,141 @@
+{
+  "frozen_at": "2026-10-22T18:49:16.764172+00:00",
+  "scope": "Three fresh affected-case payloads, not live validation. Original source assets identical; no prior outcomes/task diagnoses included.",
+  "runtime_baseline_revision": "fcbcc09ece76c2e8fd32a794f52edb3230ebbf0b",
+  "runtime_file_count": 179,
+  "changed_from_round001": [
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+    "experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_coverage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py",
+    "src/biotasks/prompts/notebook-grader-author.md",
+    "src/biotasks/prompts/notebook-grader-review.md",
+    "src/biotasks/prompts/notebook-reference-setup.md"
+  ],
+  "private_input_revision": "c6ad24fc8e2d1eec44d9e99f431d5cb91a17204c",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round002-inputs",
+  "private_ref_pushed": false,
+  "private_originals": [
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb",
+      "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "bytes": 423792
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/source.ipynb",
+      "sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "bytes": 29027
+    }
+  ],
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "reasoning_effort_requested": "high",
+  "served_effective_effort_verified": false,
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 64,
+      "baseline_number": 56,
+      "id": "matchms-spectral-matching",
+      "domain": "Metabolomics",
+      "config_file": "autonomous-runs/064/configuration.json",
+      "state": "prepared_not_submitted",
+      "reserved_usd": "0.00",
+      "input_revision": "c6ad24fc8e2d1eec44d9e99f431d5cb91a17204c",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "source_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb",
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/seed.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d"
+      },
+      "runtime_file_count": 179,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "b9cc2aa9021ad9a0d7fae915d8e6749e75e56a02661cc6952542c02a80b8b92b",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "bootstrap.py": "d59ab79c8a70c3c89dd5f9450edced39064f2ff4f4b04b4b80e1687c7131fc3c",
+        "diagnostics.py": "211621a3a7a65718d3fbb0360e0dea8a477dd486ed15aa383e911036d232a029",
+        "campaign-config.json": "6311b7313628147b5695a6a88538f8d5164ec9d862bc87e9cfd0ac1c11a848b7"
+      }
+    },
+    {
+      "number": 65,
+      "baseline_number": 58,
+      "id": "cobrapy-deletions",
+      "domain": "Metabolic systems biology",
+      "config_file": "autonomous-runs/065/configuration.json",
+      "state": "prepared_not_submitted",
+      "reserved_usd": "0.00",
+      "input_revision": "c6ad24fc8e2d1eec44d9e99f431d5cb91a17204c",
+      "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "source_url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb",
+      "source_revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/seed.json": "83cbe4d7717d86a14bce63b698dc46193cfdd34710b40da3be09ad227c2b7b22",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/source.ipynb": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115"
+      },
+      "runtime_file_count": 179,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "63e03cca4e837b7871d14b8d11fa53caa6afb421cd6620f404eae11b63fa5528",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "83cbe4d7717d86a14bce63b698dc46193cfdd34710b40da3be09ad227c2b7b22",
+        "bootstrap.py": "d59ab79c8a70c3c89dd5f9450edced39064f2ff4f4b04b4b80e1687c7131fc3c",
+        "diagnostics.py": "211621a3a7a65718d3fbb0360e0dea8a477dd486ed15aa383e911036d232a029",
+        "campaign-config.json": "c9c91e03918470ee0ae34f99a45f8539d41e3f953e332a1a4b47a33b1ed99e0c"
+      }
+    },
+    {
+      "number": 66,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/066/configuration.json",
+      "state": "prepared_not_submitted",
+      "reserved_usd": "0.00",
+      "input_revision": "fcbcc09ece76c2e8fd32a794f52edb3230ebbf0b",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/seed.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source-license-evidence.json": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source.ipynb": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9"
+      },
+      "runtime_file_count": 179,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "09782caac07e0896a74dc447d5c2fbd44b9ace6f6422852b94bf2653bbb70367",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "bootstrap.py": "d59ab79c8a70c3c89dd5f9450edced39064f2ff4f4b04b4b80e1687c7131fc3c",
+        "diagnostics.py": "211621a3a7a65718d3fbb0360e0dea8a477dd486ed15aa383e911036d232a029",
+        "campaign-config.json": "99d86ae37a2f773f46772a2d42603d58039911be3b0e8fc8e4343b17e5367448"
+      }
+    }
+  ]
+}
