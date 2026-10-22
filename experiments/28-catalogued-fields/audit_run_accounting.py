@@ -63,6 +63,20 @@ def main():
         original = subprocess.check_output(['git', 'show', checkpoint['checkpoint_commit']
             + ':' + str(path.relative_to(ROOT.parents[1]))])
         assert path.read_bytes() == original
+    adaptation = read(ROOT / 'reserved-worker-adaptation.json')
+    original_submitter = (ROOT / 'submit.py').read_bytes()
+    current_submitter = (ROOT / 'submit_current_reserved.py').read_bytes()
+    assert hashlib.sha256(original_submitter).hexdigest() == adaptation['original_sha256']
+    assert hashlib.sha256(current_submitter).hexdigest() == adaptation['prepared_sha256']
+    assert current_submitter == original_submitter.replace(
+        adaptation['only_byte_change']['from'].encode(), adaptation['only_byte_change']['to'].encode())
+    assert adaptation['stage'] == 'proceed_under_existing_reserved_cpu_authorization_after_user_steering'
+    final_submission = read(ROOT / 'results/OHIF__Viewers-submission-provenance.json')
+    assert final_submission['run_id'] == 'biotasks28-ohif-viewers-001'
+    assert final_submission['submitter_sha256'] == adaptation['prepared_sha256']
+    assert final_submission['selected_existing_reserved_worker_healthy_clean']
+    assert final_submission['selected_worker_base_commit'] == 'c7c14a252d'
+    assert final_submission['first_submission'] and final_submission['new_capacity'] is False
     # No partial audit may silently declare the fixed cohort complete.
     for row in cohort:
         run = 'biotasks28-' + row['slug'].lower().replace('__', '-') + '-001'
@@ -84,6 +98,7 @@ def main():
                 assert receipt['cpu'] == 4 and receipt['timeout_seconds'] == pins['job_timeout_seconds']
                 assert len(record['attempts']) == 1
                 attempt = record['attempts'][0]
+                assert attempt['worker_id'] == receipt['worker_id']
                 start, finish = stamp(attempt['started_at']), stamp(attempt['finished_at'])
                 assert finish >= start and (previous_finish is None or start >= previous_finish)
                 duration = finish - start
@@ -161,6 +176,7 @@ def main():
     output = {'checked_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'scope': 'Original-source, actual-charge, serial-budget, task-file and original-handle audit only; scientific reward audit, final archive readback, issue closure and local cleanup are separate requirements.',
         'input_checkpoint': checkpoint['checkpoint_commit'], 'all_ten_original_runs_accounted_for': True,
+        'last_repository_worker_gate_adaptation': final_submission,
         'actual_cost_usd': str(total_cost), 'allocated_cpu_hours': str(cpu_hours), 'repositories': reports}
     args.output.write_text(json.dumps(output, indent=2) + '\n')
     print(json.dumps({k: v for k, v in output.items() if k != 'repositories'}, indent=2), flush=True)
