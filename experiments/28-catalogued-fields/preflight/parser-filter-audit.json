@@ -1,0 +1,55 @@
+{
+  "revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "scope": "Static inspection of exact pinned upstream defaults and execution paths. No native source, task, selection, timeout or running input changes.",
+  "new_test_function_filter": {
+    "enabled_by_default": true,
+    "option_source": "upstream-source/src/repo2rlenv/spec/options.py:64",
+    "gate_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:1039",
+    "regex_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:579",
+    "recognized_added_lines": [
+      "Python def test_... and class ...Test...",
+      "Go func Test...",
+      "JS/TS it(...), test(...), describe(...)"
+    ],
+    "unsupported_patterns": [
+      "C/C++ TEST(...) and TEST_F(...) macros",
+      "Rust fn test... and #[test]"
+    ],
+    "interpretation": "A test patch that only edits existing test bodies can fail this default filter despite valid regression coverage. C++/Rust added tests using only those unsupported forms also count as no_new_test_funcs. This is static behavior; per-repository observed rejection counts remain separate."
+  },
+  "native_parser_dispatch": {
+    "source": "upstream-source/src/repo2rlenv/log_parsers/__init__.py",
+    "named_runners": [
+      "pytest",
+      "unittest/Django",
+      "Go test",
+      "Cargo test",
+      "Cargo nextest",
+      "Jest/Mocha/Vitest"
+    ],
+    "language_fallbacks": {
+      "python": "pytest",
+      "go": "go",
+      "rust": "cargo",
+      "node": "jest"
+    },
+    "no_explicit_parser": [
+      "CTest",
+      "standalone GoogleTest",
+      "generic shell/Perl harness"
+    ],
+    "interpretation": "Unsupported text can produce an empty map/no F2P; bootstrap language support alone does not establish runtime-parser coverage. Do not attribute failures to this gate unless the run reaches it."
+  },
+  "native_timeout": {
+    "default_seconds": 600,
+    "option_source": "upstream-source/src/repo2rlenv/spec/options.py:55",
+    "implementation_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime_validate.py",
+    "actual_application": "Each pre-fix and post-fix sandbox.exec receives timeout separately, despite the options comment calling it a per-PR cap. Two stages can therefore consume about 1200 seconds before overhead.",
+    "unchanged": true
+  },
+  "generated_vs_native_test_scope": {
+    "native_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:941",
+    "export_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:1102",
+    "interpretation": "Both paths call targeted_test_cmds_for_pr with normalized upstream bootstrap commands and changed test files. Do not describe exported Scanpy controls as a manually selected subset or necessarily the entire repository test suite."
+  }
+}
