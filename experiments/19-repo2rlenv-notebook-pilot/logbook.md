@@ -3289,3 +3289,8 @@ The original medium-request HMM campaign is terminal FAILED. Pipeline work laste
 
 
 Submitted original COBRApy deletions campaign 041 from the common rebuilt factory with native high, using its existing $5 reservation. Dispatch independently verified old HMM 025 terminal/clean and HRV 024 as the only other active (archiving) host. Submission alone is not execution or acceptance. HRV 024 has a source-hashed generated-candidate rejection, repair_blocked; it did not enter native trials and its data/task remain private. Keep the active host until its original archives finish.
+
+
+## 2026-10-22 — Original HRV 024 teardown and next panel reservation
+
+HRV 024 rejected its generated candidate at repair_blocked after 106m23s; it did not enter native trials. Its host separately hit the two-hour main-process limit while archiving. Original diagnostic receipts are recovered with verified hashes, all four cleanup receipts pass, and a fresh provider inventory is empty. Full private stage/root archive readback remains pending; do not equate recovered diagnostics with every trace recovered. Recording/task publication stays private pending data terms. Retain $1 from the old $5 planning hold, then reserve $5 for original Pyteomics 038 using the exact same high-profile factory as 041: $95 held/$5 unallocated, within the unchanged $100 authorization. No task edits or extra model stages.
