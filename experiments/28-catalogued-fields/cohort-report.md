@@ -2,24 +2,24 @@
 
 All ten selected repositories remain visible. Missing results are unreported, not zero-cost failures. Only verified archived evidence enters task/success counts. Cost ratios include failed repositories and are withheld until the complete cohort is accounted for.
 
-| Field / repository | Window merges | Native candidates | Paired completed | Exports | Verified tracked | Clean verified oracle | Actual USD | Allocated CPUh | Stage |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| Genomics and genetics / samtools/samtools | 8 | — | 0 | 0 | 0 | 0 | 0.872043 | 1.3986588888888887 | bootstrap_attempt |
-| Transcriptomics / scverse/scanpy | 24 | 24 | 3 | 2 | 1 | 0 | 0.559917 | 4.669972222222222 | independent_tracked_test_verification |
-| Epigenomics / macs3-project/MACS | 9 | — | 0 | 0 | 0 | 0 | 0.526755 | 2.1325133333333333 | pr_discovery_attempt |
-| Proteomics / OpenMS/OpenMS | 217 | — | 0 | 0 | 0 | 0 | 0 | 0.16640555555555553 | source_checkout_attempt |
-| Structural biology / lammps/lammps | 34 | — | 0 | 0 | 0 | 0 | 0.938712 | 0.753731111111111 | bootstrap_attempt |
-| Metabolomics / matchms/matchms | 11 | 11 | 1 | 0 | 0 | 0 | 0.133545 | 0.7687444444444445 | paired_pr_validation_partial |
-| Systems biology / opencobra/cobrapy | 4 | 4 | 0 | 0 | 0 | 0 | 0.332655 | 1.0273144444444444 | native_candidate_filtering |
-| Microbiome science / soedinglab/MMseqs2 | 9 | — | — | — | — | — | — | — | not_reported |
-| Neuroscience / mne-tools/mne-python | 82 | — | — | — | — | — | — | — | not_reported |
-| Bioimage analysis / OHIF/Viewers | 38 | — | — | — | — | — | — | — | not_reported |
+| Field / repository | Window merges | Native returned | Entered | Paired started/completed | Exports | Verified tracked | Clean verified oracle | Actual USD | Allocated CPUh | Stage |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| Genomics and genetics / samtools/samtools | 8 | — | 0 | 0/0 | 0 | 0 | 0 | 0.872043 | 1.399 | bootstrap_attempt |
+| Transcriptomics / scverse/scanpy | 24 | 24 | 24 | 3/3 | 2 | 1 | 0 | 0.559917 | 4.670 | independent_tracked_test_verification |
+| Epigenomics / macs3-project/MACS | 9 | — | 0 | 0/0 | 0 | 0 | 0 | 0.526755 | 2.133 | pr_discovery_attempt |
+| Proteomics / OpenMS/OpenMS | 217 | — | 0 | 0/0 | 0 | 0 | 0 | 0.000000 | 0.166 | source_checkout_attempt |
+| Structural biology / lammps/lammps | 34 | — | 0 | 0/0 | 0 | 0 | 0 | 0.938712 | 0.754 | bootstrap_attempt |
+| Metabolomics / matchms/matchms | 11 | 11 | 4 | 2/1 | 0 | 0 | 0 | 0.133545 | 0.769 | paired_pr_validation_partial |
+| Systems biology / opencobra/cobrapy | 4 | 4 | 4 | 0/0 | 0 | 0 | 0 | 0.332655 | 1.027 | native_candidate_filtering |
+| Microbiome science / soedinglab/MMseqs2 | 9 | — | — | —/— | — | — | — | — | — | not_reported |
+| Neuroscience / mne-tools/mne-python | 82 | — | — | —/— | — | — | — | — | — | not_reported |
+| Bioimage analysis / OHIF/Viewers | 38 | — | — | —/— | — | — | — | — | — | not_reported |
 
 Cohort result evidence complete: False.
 
 Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
-Reported actual model cost: $3.363627; reported allocated CPU-hours: 10.91733999999999943.
+Reported actual model cost: $3.363627; reported allocated CPU-hours: 10.917340.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 

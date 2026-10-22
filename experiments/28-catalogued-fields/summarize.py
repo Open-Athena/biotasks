@@ -95,8 +95,10 @@ def summarize(root):
         'repositories': rows}
 
 
-def display(value):
-    return '—' if value is None else str(value)
+def display(value, *, precision=None):
+    if value is None:
+        return '—'
+    return format(Decimal(str(value)), f'.{precision}f') if precision is not None else str(value)
 
 
 def main():
@@ -106,23 +108,31 @@ def main():
         'All ten selected repositories remain visible. Missing results are unreported, not zero-cost failures. '
         'Only verified archived evidence enters task/success counts. Cost ratios include failed repositories and '
         'are withheld until the complete cohort is accounted for.', '',
-        '| Field / repository | Window merges | Native candidates | Paired completed | Exports | Verified tracked | Clean verified oracle | Actual USD | Allocated CPUh | Stage |',
-        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |']
-    keys = ['complete_window_merged', 'native_candidates_returned', 'paired_validation_completed',
+        '| Field / repository | Window merges | Native returned | Entered | Paired started/completed | Exports | Verified tracked | Clean verified oracle | Actual USD | Allocated CPUh | Stage |',
+        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |']
+    keys = ['complete_window_merged', 'native_candidates_returned', 'candidates_entered', 'paired',
         'exports', 'verified_tasks', 'strict_verified_oracle_command_resolved_tasks',
         'actual_cost_usd', 'allocated_cpu_hours', 'stage']
     for row in result['repositories']:
+        cells = []
+        for key in keys:
+            if key == 'paired':
+                cells.append(display(row.get('paired_validation_started')) + '/'
+                    + display(row.get('paired_validation_completed')))
+            else:
+                precision = 3 if key == 'allocated_cpu_hours' else 6 if key == 'actual_cost_usd' else None
+                cells.append(display(row.get(key), precision=precision))
         lines.append('| ' + row['field'] + ' / ' + row['repo'] + ' | '
-            + ' | '.join(display(row.get(key)) for key in keys) + ' |')
+            + ' | '.join(cells) + ' |')
     lines += ['', 'Cohort result evidence complete: ' + str(result['cohort_result_evidence_complete']) + '.', '',
         result['goal_completion_not_asserted'], '',
         'Reported actual model cost: $' + result['known_reported_actual_cost_usd']
-        + '; reported allocated CPU-hours: ' + result['reported_allocated_cpu_hours'] + '.', '',
+        + '; reported allocated CPU-hours: ' + display(result['reported_allocated_cpu_hours'], precision=6) + '.', '',
         'Verified tasks / successful repositories with archived evidence: '
         + str(result['verified_tasks_with_archived_evidence']) + ' / '
         + str(result['successful_repositories_with_archived_evidence']) + '.', '',
-        'Full-cohort cost per verified task: ' + display(result['cost_per_verified_task_usd'])
-        + '; per successful repository: ' + display(result['cost_per_successful_repository_usd']) + '.', '',
+        'Full-cohort cost per verified task: ' + display(result['cost_per_verified_task_usd'], precision=6)
+        + '; per successful repository: ' + display(result['cost_per_successful_repository_usd'], precision=6) + '.', '',
         'Window inventory is not a processed-PR denominator. A tracked-test oracle reward of one '
         'does not establish whole-command resolution, exact-image replay or release readiness.', '']
     for row in result['repositories']:
