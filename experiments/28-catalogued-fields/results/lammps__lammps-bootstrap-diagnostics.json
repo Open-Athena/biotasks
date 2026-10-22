@@ -1,0 +1,24 @@
+{
+  "scope": "Read-only diagnosis of original saved transcript, requests, response-usage events and exact upstream parser. No repair/regrading/retry.",
+  "actions": {
+    "BASH": 20
+  },
+  "shell_syntax_errors": 17,
+  "trailing_tags": {
+    "</s>": 16,
+    "</thinking>": 1
+  },
+  "model_responses_at_2048_output_tokens": 18,
+  "detected_prompt_lines": [
+    "- Detected language: unknown.",
+    "- Suggested base setup is already in the image: ubuntu:24.04."
+  ],
+  "source_findings": [
+    "Original bootstrap agent._ACTION_RE accepts the first Thought/Action/Input block as BASH.",
+    "Original _TOOL_CALL_TAGS sanitizer has five closing tags; neither </s> nor </thinking> is included.",
+    "Original llm._do_complete forwards choice.message.content directly to the bootstrap parser.",
+    "Original language detection checks root markers only; the saved prompt says unknown with ubuntu:24.04."
+  ],
+  "evidence_limits": "Full unparsed model responses and finish reasons were not retained. Parsed commands and exact parser/model-content forwarding establish the unsanitized action boundary; raw evidence cannot independently identify provider internals or prove that the token limit caused those tags.",
+  "modifications_applied": []
+}
