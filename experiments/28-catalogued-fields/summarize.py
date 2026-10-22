@@ -64,6 +64,7 @@ def summarize(root):
             paired_validation_started=result['paired_validation_started'],
             paired_validation_completed=result['paired_validation_completed'],
             native_skip_reasons=result['native_skip_reasons'],
+            native_error_reasons=result.get('native_error_reasons', {}),
             exports=result['native_exports'], verified_tasks=count,
             strict_verified_oracle_command_resolved_tasks=strict,
             controls_reached=sum(item.get('state') != 'unstarted' for item in result['control_allocation_rows']),
@@ -140,6 +141,7 @@ def main():
             continue
         lines += ['## ' + row['repo'], '', row['failure_or_limit'], '',
             'Native skip reasons: ' + json.dumps(row['native_skip_reasons'], sort_keys=True)
+            + '. Native decision errors: ' + json.dumps(row['native_error_reasons'], sort_keys=True)
             + '. Controls reached/unstarted: ' + str(row['controls_reached']) + '/'
             + str(row['controls_unstarted']) + '. Archive accepted: ' + str(row['evidence_accepted']) + '.', '']
     (ROOT / 'cohort-report.md').write_text('\n'.join(lines))

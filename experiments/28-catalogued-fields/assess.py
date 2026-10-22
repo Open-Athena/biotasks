@@ -127,6 +127,7 @@ def assess(state, cohort_row):
         'native_candidates_returned': None if candidates is None else len(candidates),
         'candidates_entered': len(entered), 'candidate_pr_numbers_entered': entered,
         'candidate_decisions': decisions, 'native_skip_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'skip')),
+        'native_error_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'error')),
         'paired_validation_started': sum(e['event'] == 'validation_start' for e in events),
         'paired_validation_completed': len(validations), 'native_validation_results': validations,
         'native_validation_exceptions': [e for e in events if e['event'] == 'validation_exception'],
