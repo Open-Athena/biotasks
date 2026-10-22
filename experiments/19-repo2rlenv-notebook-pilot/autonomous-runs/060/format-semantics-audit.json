@@ -1,0 +1,15 @@
+{
+  "scope": "Static audit of archived GLM-authored comparator and primary format documentation; no task edits or task-specific probe executed by Codex.",
+  "grader_source_sha256": "dd6c8c84e84fe4ebe43776e358a3c04462e8433b5bb5238589e4a95c38c8a7a5",
+  "original_repair_file_sha256": "bcf2f0fb976cb06efcfd70d268aa54b8ba757ae23c2c04ffe42a29f09e55a33a",
+  "functions": [
+    "_parse_prob_token",
+    "_prob_tokens_match"
+  ],
+  "finding": "The helper returns raw numeric zero for both the impossible-probability marker and a literal numeric zero. Native HMMER3 body values are negative logarithms: literal zero encodes probability one, whereas the special marker encodes probability zero. These states must not be declared scientifically equivalent.",
+  "primary_source": "https://eddylab.org/software/hmmer/Userguide.pdf#page=210",
+  "primary_source_version": "HMMER 3.4 User Guide, profile save-file section, printed pages 210 and 215",
+  "executable_mutant_acceptance_verified": false,
+  "remaining_validation": "A GLM-authored native-decoding/semantics probe and fresh controls in a future frozen factory version; retain original 060 rejection.",
+  "general_pattern": "Verify native numeric encodings and sentinel meanings using package/format evidence before allowing representational normalization. No named-tool exception belongs in the factory."
+}

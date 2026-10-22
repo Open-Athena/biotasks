@@ -3676,3 +3676,6 @@ The generic streaming prototype also passed on the original archived matchms CSV
 
 
 The undeployed combined proposal passed 134 isolated remote software regressions, with one unchanged HDF5 test excluded because h5py is absent. Locked Ruff lint passed and formatted one file; the effective patch identity is recorded. This establishes software regression coverage, not scientific acceptance or fresh pipeline effectiveness. Local checks remain unstarted behind the shared lock. No model calls, scientific data downloads or new hosts/sandboxes were used. Auxiliary runner failures are separate evidence.
+
+
+060 reached an unresolved generated-grader rejection with all 23 final controls passing and no native attempt. Original/fresh cleanup passes; the $1 hold reconciles to $0.50 from the enclosing host interval, then $1 is reserved for 061 ($99 held / $1 unallocated). A static audit against primary format documentation shows a scientific sentinel-encoding problem, so description-only corrections cannot establish acceptance. Investigate grounded native-format validation and the additional candidate-before-inspection shell gate in the next version; keep the current round frozen and do not repair the generated task manually.
