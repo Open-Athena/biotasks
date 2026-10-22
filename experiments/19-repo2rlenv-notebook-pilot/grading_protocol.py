@@ -3,6 +3,7 @@
 import ast
 from typing import Literal
 
+from coverage_protocol import CoverageReview
 from pydantic import Field, model_validator
 from reference_protocol import StrictModel
 from repo2rlenv.quality.loop.models import SemanticProbe
@@ -73,6 +74,15 @@ class Review(StrictModel):
     decision: Literal["accept_for_packaging", "revise", "blocked"]
     rationale: str = Field(min_length=1)
     issues: list[str]
+    # Legacy records remain readable; new live reviews must supply this audit.
+    source_coverage: CoverageReview | None = None
+
+
+def check_review_source_coverage(review):
+    if review.source_coverage is None:
+        raise ValueError("Review must independently audit original-source endpoint coverage")
+    if review.decision == "accept_for_packaging" and review.source_coverage.decision != "approve":
+        raise ValueError("Acceptance requires approved original-source endpoint coverage")
 
 
 class ProbeExpectation(StrictModel):

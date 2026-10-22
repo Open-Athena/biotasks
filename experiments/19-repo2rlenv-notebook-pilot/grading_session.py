@@ -18,6 +18,7 @@ from grading_protocol import (
     apply_probe_expectations,
     check_coverage,
     check_probes,
+    check_review_source_coverage,
     parse_report,
 )
 from model_profile import native_effort
@@ -858,6 +859,7 @@ async def run_grading(
 
         async def review(name):
             async def validate_review(value):
+                check_review_source_coverage(value)
                 if value.decision == "accept_for_packaging" and (
                     value.issues or not all(c["passed_control"] for c in session.last_controls)
                 ):

@@ -532,6 +532,16 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
         elif name.startswith("review"):
+            assert "inputs/original.py" in inputs["source_evidence"]
+            assert "inputs/plan.json" in inputs["source_evidence"]
+            source_coverage = {
+                "decision": "approve",
+                "rationale": "Synthetic source coverage fixture",
+                "omitted_scientific_endpoints": [],
+                "unsupported_evidence_claims": [],
+                "scientific_scope_changes": [],
+                "remaining_validation": [],
+            }
             assert inputs["initial_probes"] == suite.model_dump()
             if name == "review-repair":
                 assert (
@@ -550,7 +560,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             with pytest.raises(ValueError):
                 await validator(
                     module.Review(
-                        decision="accept_for_packaging", rationale="Cannot accept", issues=[]
+                        decision="accept_for_packaging",
+                        rationale="Cannot accept",
+                        issues=[],
+                        source_coverage=source_coverage,
                     )
                 )
             controls[0]["passed_control"] = original
@@ -558,6 +571,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 decision="revise" if repair and name == "review" else "accept_for_packaging",
                 rationale="fixture",
                 issues=["repair fixture"] if repair and name == "review" else [],
+                source_coverage=source_coverage,
             )
         else:
             if name == "grader" and resume == "draft":

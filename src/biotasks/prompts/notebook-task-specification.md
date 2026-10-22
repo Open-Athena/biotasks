@@ -33,10 +33,24 @@ input. One successful reference does not prove portability or valid tolerances.
 
 ## Select the scientific target
 
-Identify the analysis question and its terminal scientific results. Consider all
-branches, but require only outputs with a defensible comparison. Explain excluded
-branches and supplied intermediate inputs. A final file is not automatically a
-suitable target: examine upstream choices that change its meaning or values.
+Identify the analysis question and its terminal scientific results across all
+branches. Preserve every eligible scientific endpoint in one task. The
+preparation inventory and original source are evidence to audit, not permission
+to pick whichever branches are easiest to compare. Reconsider an inventory item
+only with source-backed evidence that it is preparatory, diagnostic, or otherwise
+ineligible under the endpoint rule. A plot being its only downstream consumer,
+nested serialization, an awkward parser format, or a difficult comparison does
+not by itself make an independent scientific result ineligible.
+
+Choose defensible representations and comparisons for all required endpoints.
+Project existing result fields when this preserves their scientific meaning;
+do not drop a scientific branch to avoid designing that representation. If a
+required eligible endpoint cannot be reproduced and graded fairly within policy,
+return `disposition: "reject"` for the whole task and explain the unresolved
+requirement in the private review. Do not turn it into a smaller task or split
+the notebook. Explain source-backed
+exclusions and supplied intermediate inputs. A final file is not automatically
+a suitable target: examine upstream choices that change its meaning or values.
 
 When policy permits, propose supplying an existing intermediate result if this
 removes an unstable or ambiguous upstream problem while leaving a meaningful,

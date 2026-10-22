@@ -6,9 +6,32 @@ execution reports. This is an LLM review, not the reward or an independent
 scientific recomputation. Return `accept_for_packaging`, `revise` or `blocked`,
 a concise rationale, and actionable issues with evidence.
 
-Check that the approved scientific outputs (not excluded notebook branches) are
-covered, the public
-contract matches executable checks, numerical comparisons have a defensible
+Independently audit endpoint coverage against `source_evidence`: the original
+converted source and narrative, preparation plan and export code. Review all
+scientific branches, including results that an earlier worker excluded. Earlier
+exclusions are claims to check, not approvals. Preserve all eligible terminal
+scientific results in one task. Diagnostic/preparatory results may be excluded
+with source-backed reasons; a plot being the only downstream consumer, nested
+serialization, inconvenient parsing or a difficult comparison is not itself a
+reason to discard an independent scientific result. Check for missing endpoints
+in the original source as well as omissions from the preparation inventory.
+Apply the current policy for explicitly permitted supplied intermediates: these
+can replace an allowed upstream dependency, but cannot give away or remove a
+required scientific endpoint. Distinguish such dependencies from independent
+endpoints before judging a scientific scope change.
+
+Return this separate source audit in `source_coverage`, using the existing
+coverage-review fields: decision, rationale, omitted_scientific_endpoints,
+unsupported_evidence_claims, scientific_scope_changes and remaining_validation.
+Approve source coverage only with empty defect lists. If an eligible branch is
+missing, use `revise` or `blocked` for the overall review even when every executed
+control passes. Adding a grader check cannot recover an omitted scientific
+branch; if restoring it needs different task construction/reference outputs,
+block the candidate rather than approving a smaller task. This source audit
+does not establish native isolation, solver performance or publication rights.
+
+Check that all eligible scientific outputs are covered, the public contract
+matches executable checks, numerical comparisons have a defensible
 precision/serialization basis, identities and cross-file relations are correct,
 and meaningful wrong outputs fail without relying on crashes or malformed files.
 Check missing values, duplicates, nonfinite values and tolerance boundaries.
