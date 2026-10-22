@@ -1,0 +1,30 @@
+{
+  "artifacts": [
+    {
+      "description": "RMSD (Angstrom) over the trajectory for the CORE domain, computed on alpha-carbon atoms of the 'name CA' AtomGroup with the AtomGroup-based RMSD class.",
+      "path": "rmsd_ca_core_domain.csv",
+      "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' interprets this CORE-domain RMSD as a result and plots it ('ax = df.plot(x=Frame, y=CORE...)'). The variable is the DataFrame 'df' built from R.results.rmsd after R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()."
+    },
+    {
+      "description": "Mass-weighted RMSD over the trajectory for C-alphas and the CORE, LID and NMP domains.",
+      "path": "rmsd_mass_weighted.csv",
+      "source_evidence": "The 'Weighted RMSD of a trajectory - Mass' section presents this table and plot as its outcome (df_mass built from R_mass.results.rmsd; the notebook notes the plot looks largely the same as the unweighted case). 'df_mass' exists at completion."
+    },
+    {
+      "description": "RMSD over the trajectory weighted by residue numbers for C-alphas and the CORE, LID and NMP domains.",
+      "path": "rmsd_resid_weighted.csv",
+      "source_evidence": "The 'Custom weights' section interprets this result scientifically ('the NMP domain has much higher RMSD than before... residues later in the CORE domain do not seem to contribute significantly'). 'df_charge' is built from R_charge.results.rmsd and exists at completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Backbone-wide trajectory RMSD with Backbone/CORE/LID/NMP group selections (first rms.RMSD run and its DataFrame): the notebook plots and interprets it, but both the variable R and df are overwritten by the later alpha-carbon analysis, so the values no longer exist at script completion and cannot be exported without rerunning computation.",
+    "Single RMSD between open (CRD) and closed (DCD) backbone conformations: computed as a standalone unnamed expression in the 'RMSD between two sets of coordinates' section; capturing it would require assigning a new variable to a previously unnamed expression, which is not permitted. Its value is not recoverable at completion."
+  ],
+  "explanation": "The notebook's terminal scientific results are the three RMSD-versus-frame tables that the narrative interprets and plots: the alpha-carbon CORE-domain RMSD (df, still holding the CA/CORE analysis at completion), the mass-weighted RMSD (df_mass), and the residue-number-weighted RMSD (df_charge). All three exist as named pandas DataFrames at the end of the script. The appended export code only writes these existing DataFrames to CSV files under /work/outputs; it performs no new scientific computation. The earlier backbone-wide trajectory RMSD (R, df with Backbone/CORE/LID/NMP) and the single open-vs-closed rms.rmsd value are excluded because they no longer exist at completion (the first) or were never assigned to a variable (the second).",
+  "export_code": "# --- Export of terminal scientific results ---\n# Save the existing RMSD result tables produced by the original script.\nimport os\n\n_output_dir = \"/work/outputs\"\nos.makedirs(_output_dir, exist_ok=True)\n\ndf.to_csv(os.path.join(_output_dir, \"rmsd_ca_core_domain.csv\"), index=False)\ndf_mass.to_csv(os.path.join(_output_dir, \"rmsd_mass_weighted.csv\"), index=False)\ndf_charge.to_csv(os.path.join(_output_dir, \"rmsd_resid_weighted.csv\"), index=False)",
+  "unresolved_assumptions": [
+    "Whether MDAnalysis, MDAnalysisTests and pandas install and import successfully in the CPU-only offline environment with the staged test data files (PSF, DCD, CRD).",
+    "Whether all three RMSD runs (R, R_mass, R_charge) complete within the 600-second reference limit; trajectory length and runtime are unverified."
+  ]
+}

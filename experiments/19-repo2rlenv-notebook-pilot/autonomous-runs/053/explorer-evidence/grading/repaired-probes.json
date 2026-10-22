@@ -1,0 +1,150 @@
+{
+  "concerns": [
+    "The acceptance addendum states reference row count F is taken from the reference tables rather than the submission; that is observable and unambiguous here, but a grader that trusted the submission would permit dropped frames \u2014 that loophole's absence was not directly inspected ('trajectory_frame_series' assumes reference-derived F).",
+    "Other files under /work (e.g. recomputed/ and alternative/) exist on this sandbox and were not inspected; they were not needed for these probes, which derive mutations only from the reference outputs as instructed."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "open_closed_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_backbone_open_closed.csv",
+          "quote": "rmsd_backbone_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "open-closed-wrong-value",
+      "rationale": "Analysis A's single backbone RMSD (open conformation vs trajectory frame 0, optimal superposition) is reported as 6.823686867261616 A. Overwriting it with a small off-tolerance perturbation (2e-5 A) preserves structure and row count but violates the |v-r| <= 1e-5 + 1e-9*|r| bound definitively, testing that the value is actually compared.",
+      "script": "import csv\np = 'rmsd_backbone_open_closed.csv'\nwith open(p) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['rmsd_backbone_angstrom']\nassert len(rows) == 2\nval = float(rows[1][0])\nassert abs(val - 6.823686867261616) < 1e-9, val\nrows[1][0] = repr(val + 2.0e-5)\nwith open(p, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', p, rows[1][0])"
+    },
+    {
+      "check_ids": [
+        "backbone_fit_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_backbone_domains.csv",
+          "quote": "97,np.float64(6.820321761026975),np.float64(3.507119391295211),np.float64(11.384735982399015),np.float64(10.368205719261319)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "backbone-domain-wrong-values",
+      "rationale": "Analysis B values are replaced with visibly wrong RMSD magnitudes (references at the last frames are ~3.5, ~11.4, ~10.4 A; references are small-mid single digits through the series) while keeping the header, all 98 frames, their order, and the frame 0 near-zero rounding row intact. This tests value correctness for the backbone fit RMSD and all three unweighted domain group RMSDs.",
+      "script": "import csv\np = 'rmsd_backbone_domains.csv'\nwith open(p) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['frame', 'rmsd_backbone_angstrom', 'rmsd_core_angstrom', 'rmsd_lid_angstrom', 'rmsd_nmp_angstrom']\nassert len(rows) == 99\nassert all(r[0] == str(i) for i, r in enumerate(rows[1:]))\nfor r in rows[1:]:\n    r[1] = str(float(r[1].split('(')[-1].rstrip(')')) * 2.0 + 0.01)\n    r[2] = str(abs(float(r[2].split('(')[-1].rstrip(')'))) + 5.0)\n    r[3] = str(max(float(r[3].split('(')[-1].rstrip(')')) * 0.5, 0.001))\n    r[4] = str(abs(float(r[4].split('(')[-1].rstrip(')'))) + 2.5)\nwith open(p, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', p, 'rows', len(rows) - 1)"
+    },
+    {
+      "check_ids": [
+        "ca_core_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_ca_core.csv",
+          "quote": "97,1.9511795506563847"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "ca-core-wrong-values",
+      "rationale": "Analysis C (CORE restricted to alpha-carbons, fit RMSD) values are divided by a constant factor, which is both an incorrect magnitude and a change of unit scale, while preserving the exact header, the complete 0..97 frame series, row count and order. The reference CORE CA RMSDs run up to ~2 A, so a halved series differs by far more than the 1e-5 tolerance.",
+      "script": "import csv\np = 'rmsd_ca_core.csv'\nwith open(p) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['frame', 'rmsd_core_ca_angstrom']\nassert len(rows) == 99\nassert float(rows[98][1]) > 1.9\nfor i, r in enumerate(rows[1:]):\n    assert r[0] == str(i)\n    r[1] = repr(float(r[1]) / 2.0)\nwith open(p, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', p, 'rows', len(rows) - 1)"
+    },
+    {
+      "check_ids": [
+        "mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_mass_weighted.csv",
+          "quote": "0,3.6878070413424054e-07,5.8069410284836064e-08,8.8603862297393e-08,1.3406772489854334e-08"
+        },
+        {
+          "path": "rmsd_mass_weighted.csv",
+          "quote": "2,0.5936586213941683,0.5840004767366076,0.805961567382741,0.7406083009039943"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "mass-weighted-unweighted-swap",
+      "rationale": "Analysis D requires mass weighting of the fitting superposition and of the group RMSDs. Replacing every value with a distinct off-tolerance value (ca series multiplied by 1.5 + 0.05; each domain-column series shifted or scaled by a different constant) reproduces the signature of using a different, effectively unweighted/wrongly-weighted scheme while keeping file structure, frame identity and row count intact, so the check can only fail through value comparison.",
+      "script": "import csv\np = 'rmsd_mass_weighted.csv'\nwith open(p) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['frame', 'rmsd_ca_mass_angstrom', 'rmsd_core_mass_angstrom', 'rmsd_lid_mass_angstrom', 'rmsd_nmp_mass_angstrom']\nassert len(rows) == 99\nfor i, r in enumerate(rows[1:]):\n    assert r[0] == str(i)\n    a = float(r[1]); b = float(r[2]); c = float(r[3]); d = float(r[4])\n    r[1] = repr(a * 1.5 + 0.05)\n    r[2] = repr(b + 0.02)\n    r[3] = repr(c * 0.8)\n    r[4] = repr(d - 0.01 if d > 0.02 else d + 0.03)\nwith open(p, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', p, 'rows', len(rows) - 1)"
+    },
+    {
+      "check_ids": [
+        "resid_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_resid_weighted.csv",
+          "quote": "1,0.4322756870631961,0.45986633026728567,0.47653188389891205,0.48186377931443886"
+        },
+        {
+          "path": "rmsd_resid_weighted.csv",
+          "quote": "2,0.6037761145241416,0.5833415995324451,0.772391339539717,0.7342074695280763"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "resid-weighted-column-cross",
+      "rationale": "Analysis E (residue-number weighting) values are replaced by the analysis D (mass-weighted) values plus small offsets, reproducing the plausible mistake of using mass instead of residue numbers. The two reference tables genuinely differ per column (computed maximum absolute differences are about 0.38, 0.38, 2.09 and 3.50 A), so the substituted values are off-tolerance for every one of the four value columns, while the structural frame series is left untouched and stays valid across all files.",
+      "script": "import csv\npe = 'rmsd_resid_weighted.csv'\nwith open(pe) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['frame', 'rmsd_ca_resid_angstrom', 'rmsd_core_resid_angstrom', 'rmsd_lid_resid_angstrom', 'rmsd_nmp_resid_angstrom']\nassert len(rows) == 99\nsrc = {}\nwith open('rmsd_mass_weighted.csv') as f:\n    for r in list(csv.reader(f))[1:]:\n        src[r[0]] = [float(x) for x in r[1:]]\nused = set()\nmaxdiff = [0.0, 0.0, 0.0, 0.0]\nfor i, r in enumerate(rows[1:]):\n    assert r[0] == str(i)\n    m = src[r[0]]\n    for j in range(4):\n        d = abs(m[j] - float(r[1 + j]))\n        if i > 0 and d > maxdiff[j]:\n            maxdiff[j] = d\n    used.add(r[0])\n    for j in range(4):\n        r[1 + j] = repr(m[j] + 0.001 * (j + 1))\nassert len(used) == 98\nassert max(maxdiff) > 1e-3, maxdiff\nwith open(pe, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', pe, 'rows', len(rows) - 1, 'maxdiff', maxdiff)"
+    },
+    {
+      "check_ids": [
+        "open_closed_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_backbone_open_closed.csv",
+          "quote": "rmsd_backbone_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "open-closed-file-deleted",
+      "rationale": "Deletes the required analysis A output, which has a declared path in the public contract and a dedicated presence/structure check. Listing only trajectory_frame_series as also plausible is omitted because the public rule scopes that check to outputs 2-5, so the deletion necessarily violates open_closed_rmsd alone.",
+      "script": "import os\np = 'rmsd_backbone_open_closed.csv'\nassert os.path.exists(p)\nos.remove(p)\nprint('deleted', p)"
+    },
+    {
+      "check_ids": [
+        "ca_core_rmsd",
+        "trajectory_frame_series"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_backbone_domains.csv",
+          "quote": "0,np.float64(5.834343817915898e-07),np.float64(3.92148642971737e-08),np.float64(1.1969998121003948e-07),np.float64(6.276496925603961e-08)"
+        },
+        {
+          "path": "rmsd_ca_core.csv",
+          "quote": "0,2.2323827208734618e-07"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "repr-format-control",
+      "rationale": "The public contract permits any textual formatting whose parsed doubles satisfy the tolerance, and accepts a cell of the exact form np.float64(<finite number>) read as the enclosed number. The reference rmsd_backbone_domains.csv itself already carries np.float64(...) cells while the reference analyses C-E use plain values, and the reference control (submission identical to the reference) passed all checks, which is the executed demonstration that both representations are parsed uniformly. This control exercises a plain-number rewrite: it rewrites all four trajectory files in a uniform minimal style ('%.17g' cells, plain frame integers, LF CSV), optionally parsing any pre-existing np.float64(...) wrapper in the source cells beforehand, and asserts inside the script that each rewritten cell parses back to the identical double as before rewriting. Its '%.17g' writes are representation-preserving (17 significant digits round-trip a double exactly), so under the public rules every value comparison and the frame-series identity must still pass. Note: although earlier annotation described formatting some cells into the np.float64(...) form, the executed script writes only plain '%.17g' values in both branches; acceptance of the np.float64(...) cell form itself is attributable to the reference control above, not to this mutation. No scientific value, header, frame or column is altered.",
+      "script": "import csv\nfor p in ['rmsd_backbone_domains.csv', 'rmsd_ca_core.csv', 'rmsd_mass_weighted.csv', 'rmsd_resid_weighted.csv']:\n    with open(p) as f:\n        rows = list(csv.reader(f))\n    hdr = rows[0]\n    n = len(rows) - 1\n    assert n > 2\n    for i, r in enumerate(rows[1:]):\n        for j in range(1, len(hdr)):\n            v = float(r[j].split('(')[-1].rstrip(')')) if '(' in r[j] else float(r[j])\n            if i == 0 and j == 1:\n                r[j] = ('%.17g' % v)\n            else:\n                r[j] = ('%.17g' % v)\n    with open(p, 'w', newline='') as f:\n        w = csv.writer(f)\n        w.writerow(hdr)\n        w.writerows(rows[1:])\n    # verify parse-back equality\n    with open(p) as f:\n        rows2 = list(csv.reader(f))\n    def num(s):\n        s = s.strip()\n        if s.startswith('np.float64('):\n            s = s[len('np.float64('):-1]\n        return float(s)\n    for r1, r2 in zip(rows[1:], rows2[1:]):\n        assert r1[0] == r2[0]\n        for a, b in zip(r1[1:], r2[1:]):\n            assert num(a) == num(b)\n    print('rewrote', p, 'rows', n)"
+    },
+    {
+      "check_ids": [
+        "open_closed_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "rmsd_backbone_open_closed.csv",
+          "quote": "rmsd_backbone_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "open-closed-fewer-digits-control",
+      "rationale": "The contract allows fewer digits as long as the parsed values satisfy the tolerance; the open vs closed backbone RMSD is about 6.82 A, so 9 decimals contribute at most 5e-10 A of representation difference, far inside the 1e-5 absolute tolerance. This control attempts to establish acceptance of a reduced-precision decimal representation while keeping the exact header, one data row and standard CSV form.",
+      "script": "import csv\np = 'rmsd_backbone_open_closed.csv'\nwith open(p) as f:\n    rows = list(csv.reader(f))\nassert rows[0] == ['rmsd_backbone_angstrom']\nassert len(rows) == 2\nval = float(rows[1][0])\nassert abs(val - 6.823686867261616) < 1e-9\nrows[1][0] = format(val, '.9f')\nwith open(p, 'w', newline='') as f:\n    csv.writer(f).writerows(rows)\nprint('rewrote', p, rows[1][0])"
+    }
+  ]
+}

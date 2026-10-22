@@ -1,0 +1,10 @@
+{
+  "disposition": "tested",
+  "explanation": "All scientific data (adk.psf, adk_dims.dcd, adk_open.crd) is bundled inside the MDAnalysisTests package, so the dependency-only recipe fully determines the offline inputs and inputs.json/stage-inputs.sh are intentionally empty. The controlled reference test recreated the virtual environment, ran the complete original analysis headlessly (MPLBACKEND=Agg; the controller already sets this, matching the base image's default Agg backend) and produced all three reviewed RMSD CSV artifacts, verified by hash. Evidence from exploratory runs: the trajectory is 98 frames / 3341 atoms, all three rms.RMSD runs (R, R_mass, R_charge) complete in about 1 second (far within the 600 s limit), and the exported DataFrames have the expected shapes and columns (df: 98x3 [Frame, Time (ns), CORE]; df_mass and df_charge: 98x6 [Frame, Time (ns), C-alphas, CORE, LID, NMP]) with frame-0 RMSDs at ~1e-7 (zero) as expected for ref_frame=0. Runtime version is MDAnalysis 2.11.0 rather than the notebook's 2.4.0-dev0; results are the same algorithm and data, but this version difference is noted as a limitation. Per the preparation review, the biological input files and generated bundles should remain private pending separate redistribution review.",
+  "source_adaptations": [],
+  "unresolved_assumptions": [
+    "The analysis uses MDAnalysis/MDAnalysisTests 2.11.0 on Python 3.13 rather than the notebook's MDAnalysis 2.4.0-dev0 (December 2022); the scientific algorithm, test data files and RMSD classes are unchanged, but exact floating-point values could differ from a 2.4.0-dev0 execution.",
+    "The 'semantic_fidelity_validated' flag returned by the controller test is false even though the run succeeded; analysis.py is byte-identical to the frozen original.py (sha256 afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7), so no source-level deviations were introduced by this setup.",
+    "Redistribution review of the PSF/DCD/CRD test files is still marked 'not yet established'; artifacts and inputs were validated operationally, not cleared for publication."
+  ]
+}

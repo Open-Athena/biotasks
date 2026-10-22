@@ -1,0 +1,92 @@
+{
+  "derivation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+    "stdout": ""
+  },
+  "inputs": [
+    {
+      "bytes": 931992,
+      "path": "adk.psf",
+      "sha256": "96cec916c4b5b19a7acb91bd1e672fb9c8b032aee1e7f0868a50655902c9b5b8"
+    },
+    {
+      "bytes": 237319,
+      "path": "adk_open.crd",
+      "sha256": "cd7f5e207a374af19b702b0f46aa554b729bca1d7db8cee2e4ff8dea00f78eb9"
+    },
+    {
+      "bytes": 3931724,
+      "path": "adk_trajectory.dcd",
+      "sha256": "859a5bd9e7de45a0f2401f7971c5ffc296168e7c23f6f65382bde7c1686c19f1"
+    }
+  ],
+  "oracle": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+    "stdout": ""
+  },
+  "oracle_isolation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "",
+    "stdout": "isolated\n"
+  },
+  "oracle_outputs": [
+    {
+      "bytes": 7587,
+      "path": "rmsd_backbone_domains.csv",
+      "sha256": "e4f66198bb5bdc77ee6a19560ccb00feaf11f8fa9ce278d848764eec5e06a93e"
+    },
+    {
+      "bytes": 41,
+      "path": "rmsd_backbone_open_closed.csv",
+      "sha256": "90861f34f1bbafecb0b9a20cfb854729a8babb2f450f68b3daa099900ece75da"
+    },
+    {
+      "bytes": 2160,
+      "path": "rmsd_ca_core.csv",
+      "sha256": "4e0c6c38d2819d6ffe93ad8c0da579e483905381e6b9d3af71ac1cbcedd13eb7"
+    },
+    {
+      "bytes": 7613,
+      "path": "rmsd_mass_weighted.csv",
+      "sha256": "a5df76d61fae4220421d67cb718d15b3a467c9d54e0bbd31253120ffe66835dd"
+    },
+    {
+      "bytes": 7589,
+      "path": "rmsd_resid_weighted.csv",
+      "sha256": "cb5584810f37887d5f0e90f55130bf8c1ad66f5744343932de1cb92a4c574f90"
+    }
+  ],
+  "reference": [
+    {
+      "bytes": 12390,
+      "path": "rmsd_backbone_domains.csv",
+      "sha256": "4ba8a0084143de6942c2adf60e678ef56eb887abc22e709f644afdd36bdcbda4"
+    },
+    {
+      "bytes": 43,
+      "path": "rmsd_backbone_open_closed.csv",
+      "sha256": "46f20afa875a97dc4010ebd653d07100c093988087604756f4a8b0565e5f13a9"
+    },
+    {
+      "bytes": 2259,
+      "path": "rmsd_ca_core.csv",
+      "sha256": "4714affe2dc2563a0c5f4d3983ff905279330ad037d6171ee31609133a240c5e"
+    },
+    {
+      "bytes": 7712,
+      "path": "rmsd_mass_weighted.csv",
+      "sha256": "c18347cd4571dcfbf408c1ffae3e54974dec7dcae1af647db0094636be82eee8"
+    },
+    {
+      "bytes": 7688,
+      "path": "rmsd_resid_weighted.csv",
+      "sha256": "bfee20d90b9d21bb7d91c3fa191ca4fa947e997d1eda1790c46d39ce2d641054"
+    }
+  ],
+  "status": "executed_requires_scientific_validation"
+}
