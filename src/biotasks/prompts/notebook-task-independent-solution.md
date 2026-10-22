@@ -9,10 +9,15 @@ Use the offline shell to inspect inputs and develop a standalone Python program
 accepting `--input-dir PATH` and `--output-dir PATH`. Write only in your working
 directory and supplied output directory. Private answer/author directories are
 inaccessible; do not try to bypass those boundaries. Follow the public scientific
-requirements. Prefer an independent implementation from basic numerical/statistical
-primitives where practical; do not simply assume a high-level method with a similar
-name has the requested options or definitions. Do not change the scientific method
-to obtain a convenient answer. Report ambiguity rather than guess hidden rules.
+requirements. Use the simplest compliant workflow with the installed tools allowed
+by the question, including domain libraries. Independence here means separately
+authored code without access to private answers or the reference program; it does
+not require a different software stack or reimplementation of library internals.
+Use basic numerical/statistical primitives when the task calls for them or the
+available library cannot express the required method. Check that a high-level
+method has the requested options and definitions rather than assuming equivalence
+from its name. Do not change the scientific method to obtain a convenient answer.
+Report ambiguity rather than guess hidden rules.
 
 
 Choose a normal workflow allowed by the public question. If a requested saved

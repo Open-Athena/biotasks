@@ -1,0 +1,72 @@
+{
+  "observed_at": "2026-10-22T22:36:25.273713+00:00",
+  "campaign": 64,
+  "classification": "prolonged_authoring_and_exploratory_tool_use_exhausted_existing_absolute_deadline",
+  "workers": {
+    "independent": {
+      "model_requests": 122,
+      "model_response_elapsed_seconds_total": 1712.6406362503767,
+      "model_response_elapsed_seconds_max": 533.4933972097933,
+      "model_response_elapsed_seconds_median": 2.002835954539478,
+      "tool_calls": {
+        "shell": 121,
+        "submit_artifact": 1
+      },
+      "worker_elapsed_seconds": 2754.786467075348,
+      "worker_status": "completed"
+    },
+    "grader": {
+      "model_requests": 52,
+      "model_response_elapsed_seconds_total": 1536.842269106768,
+      "model_response_elapsed_seconds_max": 430.58222026284784,
+      "model_response_elapsed_seconds_median": 3.0202055438421667,
+      "tool_calls": {
+        "shell": 52
+      },
+      "worker_elapsed_seconds": 1961.064641714096,
+      "worker_status": "incomplete"
+    }
+  },
+  "operations": {
+    "other": {
+      "operations": 26,
+      "child_elapsed_seconds_sum": 39.07229995727539,
+      "child_elapsed_seconds_max": 29.423872470855713
+    },
+    "probe": {
+      "operations": 123,
+      "child_elapsed_seconds_sum": 938.508312702179,
+      "child_elapsed_seconds_max": 74.49433422088623
+    },
+    "author": {
+      "operations": 45,
+      "child_elapsed_seconds_sum": 368.3598790168762,
+      "child_elapsed_seconds_max": 64.00003814697266
+    }
+  },
+  "original_archive": {
+    "files": 1955,
+    "bytes": 1333591432,
+    "manifest_sha256": "0da1787a80530ddde6ef769ced856fcdaf36687412702891933a83efd956bcac",
+    "manifest_download_checked": true,
+    "full_archive_downloaded": false
+  },
+  "selected_readback": {
+    "files": 203,
+    "bytes": 1267121,
+    "all_selected_hashes_verified": true,
+    "biological_arrays_loaded_locally": false
+  },
+  "scientific_outcome": "The independently authored program executed successfully, but the grader never submitted an initial formal candidate. Manual exploratory mutations do not count as controller acceptance controls. No validated task or native attempt.",
+  "causal_limits": "Wall time includes model responses, tool operations and overhead; summed child process time is not an exact disjoint wall-clock decomposition. Returned model/tool activity contradicts treating this as an evidenced transport stall. No claim that one prompt sentence alone caused the timeout.",
+  "general_candidate": "Clarify that independent authorship and answer isolation do not require reimplementing allowed domain-library internals; prefer the simplest compliant installed workflow. This relaxes no scientific method, acceptance tolerance, source input or validation control.",
+  "new_model_or_scientific_executions": 0,
+  "task_specific_edits": 0,
+  "general_prompt_clarification_validation": {
+    "prompt": "src/biotasks/prompts/notebook-task-independent-solution.md",
+    "package_tests_passed": 4,
+    "package_tests_seconds": 0.22,
+    "scientific_effectiveness_verified": false,
+    "active068_receives_clarification": false
+  }
+}
