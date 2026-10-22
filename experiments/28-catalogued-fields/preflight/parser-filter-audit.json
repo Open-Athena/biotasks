@@ -51,5 +51,12 @@
     "native_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:941",
     "export_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:1102",
     "interpretation": "Both paths call targeted_test_cmds_for_pr with normalized upstream bootstrap commands and changed test files. Do not describe exported Scanpy controls as a manually selected subset or necessarily the entire repository test suite."
+  },
+  "environment_reuse": {
+    "run_loop_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:880",
+    "stage_source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime_validate.py:52",
+    "behavior": "A repository-level bootstrap image is created first. Native validation lazily creates one sandbox and reuses it across candidates; stages reset/clean to historical base commits while preserving dependency directories. The stage script does not reinstall repository dependencies for each base.",
+    "observed_case": "Matchms smoke/fresh-image tests passed at its pinned newer revision, while PR966 pre/post both failed to import chemap at its historical base.",
+    "limits": "This is a source-path explanation of an observed compatibility failure, not a tested alternative environment strategy. No dependency refresh, per-PR bootstrap or repair applied."
   }
 }
