@@ -1,0 +1,92 @@
+{
+  "repo": "macs3-project/MACS",
+  "scientific_field": "Epigenomics",
+  "ref": "88c82d62d239d47b9c8ce9e545eeaaa6b7f695de",
+  "run_id": "biotasks28-macs3-project-macs-001",
+  "complete_window_merged": 9,
+  "native_candidates_returned": null,
+  "candidates_entered": 0,
+  "candidate_pr_numbers_entered": [],
+  "candidate_decisions": [],
+  "native_skip_reasons": {},
+  "paired_validation_started": 0,
+  "paired_validation_completed": 0,
+  "native_validation_results": [],
+  "native_validation_exceptions": [],
+  "native_sandbox_nonzero": [
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792690361.8656943,
+      "pr": null,
+      "execution": 10,
+      "command_sha256": "b87ceb8523c457ca0710b1a143f28d03be5c6fe14ac056f7c725f995f4e0df6c",
+      "exit_code": 127,
+      "duration_sec": 0.13533591601299122
+    },
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792691040.793829,
+      "pr": null,
+      "execution": 15,
+      "command_sha256": "0fc88054b9cf27a9e06cb362d17b748fa0955b489517fc8cf798b2ee7015bc2d",
+      "exit_code": 124,
+      "duration_sec": 300.00717936002184
+    }
+  ],
+  "generation_wrapper_exit_code": 0,
+  "native_cli_window": {
+    "input": "macs3-project__MACS.json",
+    "command": [
+      "/work/upstream/.venv/bin/python",
+      "/work/observed_cli.py",
+      "--no-ui",
+      "generate",
+      "--config",
+      "/work/inputs/macs3-project__MACS.json",
+      "--max-spend-usd",
+      "5"
+    ],
+    "started": 1792689517.8289654,
+    "state": "completed",
+    "exit_code": 2,
+    "finished": 1792691371.4632072
+  },
+  "native_exports": 0,
+  "task_controls": [],
+  "verified_tasks": 0,
+  "control_allocation_rows": [],
+  "task_files_unchanged": {
+    "verified": true,
+    "before": {},
+    "after": {}
+  },
+  "billing": {
+    "model_calls": 15,
+    "actual_cost_usd": "0.526755",
+    "cost_complete": true,
+    "stop_threshold_usd": "5",
+    "final_request_may_overshoot": true,
+    "shared_account_deltas_used": false,
+    "observer_snapshot_cost_usd": "0.526755",
+    "dispatched_calls": 15,
+    "unresolved_calls": []
+  },
+  "allocated_cpu_hours": 2.1325133333333333,
+  "attempts": [
+    {
+      "started_at": "Timestamp(2026-10-22T17:17:43.310000+00:00)",
+      "finished_at": "Timestamp(2026-10-22T17:49:42.572000+00:00)",
+      "allocated_cpu_hours": 2.1325133333333333
+    }
+  ],
+  "artifact_readback_verified": true,
+  "owned_cleanup_verified_empty": true,
+  "infra_error_type": null,
+  "orchestration_state": "SUCCEEDED",
+  "native_status": "pr_discovery_failed_after_flagged_bootstrap",
+  "furthest_stage_reached": "pr_discovery_attempt",
+  "strict_oracle_command_resolved_tasks": 0,
+  "failure_cause": "Upstream installed MACS3 and saved a flagged bootstrap image after smoke/post-commit tests each hit the original 300-second timeout. Native PR discovery then failed on GitHub GraphQL HTTP 504; no candidate list returned, no PR paired validation or exports. No retry/repair applied.",
+  "environment_reconstruction": "Original Dockerfile, saved rebuild commands, setup transcript, exact refs and owned image/layer IDs retained. Original image bytes deleted after controls; no image publication or reconstruction run. Dependency specifications are not fully pinned; complete native installed-package freeze unavailable.",
+  "archive_receipt": "archives/macs3-project__MACS-receipt.json"
+}
