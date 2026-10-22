@@ -1,0 +1,194 @@
+{
+  "scope": "Fixed ten-repository cohort only; earlier issues excluded.",
+  "completion_proven": false,
+  "reported_repositories": 2,
+  "evidence_accepted_repositories": 2,
+  "complete_window_merged_prs": 436,
+  "known_reported_actual_cost_usd": "1.431960",
+  "reported_allocated_cpu_hours": "6.0686311111111107",
+  "verified_tasks_with_archived_evidence": 1,
+  "successful_repositories_with_archived_evidence": 1,
+  "cost_per_verified_task_usd": null,
+  "cost_per_successful_repository_usd": null,
+  "ratio_note": "Ratios withheld until all ten have readback, cleanup and complete actual billing; zero denominators remain undefined.",
+  "repositories": [
+    {
+      "repo": "samtools/samtools",
+      "field": "Genomics and genetics",
+      "complete_window_merged": 8,
+      "stage": "bootstrap_attempt",
+      "actual_cost_usd": "0.872043",
+      "verified_tasks": 0,
+      "evidence_accepted": true,
+      "native_status": "bootstrap_failed",
+      "native_cli_window": {
+        "input": "samtools__samtools.json",
+        "command": [
+          "/work/upstream/.venv/bin/python",
+          "/work/observed_cli.py",
+          "--no-ui",
+          "generate",
+          "--config",
+          "/work/inputs/samtools__samtools.json",
+          "--max-spend-usd",
+          "5"
+        ],
+        "started": 1792682626.301559,
+        "state": "completed",
+        "exit_code": 1,
+        "finished": 1792683825.254953
+      },
+      "native_candidates_returned": null,
+      "candidates_entered": 0,
+      "paired_validation_started": 0,
+      "paired_validation_completed": 0,
+      "native_skip_reasons": {},
+      "exports": 0,
+      "strict_verified_oracle_command_resolved_tasks": 0,
+      "controls_reached": 0,
+      "controls_unstarted": 0,
+      "control_allocation_states": [],
+      "allocated_cpu_hours": 1.3986588888888887,
+      "archive_receipt": "archives/samtools__samtools-receipt.json",
+      "failure_or_limit": "Upstream exhausted max_iterations=20 after apt-update timeout and subsequent waits on an apt lock; dependencies were eventually installed but bootstrap never reached SAVE. PR discovery did not run."
+    },
+    {
+      "repo": "scverse/scanpy",
+      "field": "Transcriptomics",
+      "complete_window_merged": 24,
+      "stage": "independent_tracked_test_verification",
+      "actual_cost_usd": "0.559917",
+      "verified_tasks": 1,
+      "evidence_accepted": true,
+      "native_status": "completed_with_two_exports",
+      "native_cli_window": {
+        "input": "scverse__scanpy.json",
+        "command": [
+          "/work/upstream/.venv/bin/python",
+          "/work/observed_cli.py",
+          "--no-ui",
+          "generate",
+          "--config",
+          "/work/inputs/scverse__scanpy.json",
+          "--max-spend-usd",
+          "5"
+        ],
+        "started": 1792685175.6575253,
+        "state": "completed",
+        "exit_code": 0,
+        "finished": 1792687981.230339
+      },
+      "native_candidates_returned": 24,
+      "candidates_entered": 24,
+      "paired_validation_started": 3,
+      "paired_validation_completed": 3,
+      "native_skip_reasons": {
+        "no_test_patch": 7,
+        "non_bug_pr": 13,
+        "empty_source_patch": 1,
+        "no fail-to-pass tests after validation": 1
+      },
+      "exports": 2,
+      "strict_verified_oracle_command_resolved_tasks": 0,
+      "controls_reached": 4,
+      "controls_unstarted": 0,
+      "control_allocation_states": [
+        {
+          "task": "scverse__scanpy-4329",
+          "agent": "nop",
+          "state": "completed"
+        },
+        {
+          "task": "scverse__scanpy-4329",
+          "agent": "oracle",
+          "state": "completed"
+        },
+        {
+          "task": "scverse__scanpy-4333",
+          "agent": "nop",
+          "state": "completed"
+        },
+        {
+          "task": "scverse__scanpy-4333",
+          "agent": "oracle",
+          "state": "completed"
+        }
+      ],
+      "allocated_cpu_hours": 4.669972222222222,
+      "archive_receipt": "archives/scverse__scanpy-receipt.json",
+      "failure_or_limit": "Bootstrap smoke and post-commit checks failed on a Pandas4Warning but upstream continued. PR4329 meets tracked base=0/oracle=1 with ten unchanged untracked Pandas-warning failures; full pytest still exits 1. PR4333 both controls hit VerifierTimeoutError after two 300-second attempts, with no reward."
+    },
+    {
+      "repo": "macs3-project/MACS",
+      "field": "Epigenomics",
+      "complete_window_merged": 9,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "OpenMS/OpenMS",
+      "field": "Proteomics",
+      "complete_window_merged": 217,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "lammps/lammps",
+      "field": "Structural biology",
+      "complete_window_merged": 34,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "matchms/matchms",
+      "field": "Metabolomics",
+      "complete_window_merged": 11,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "opencobra/cobrapy",
+      "field": "Systems biology",
+      "complete_window_merged": 4,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "soedinglab/MMseqs2",
+      "field": "Microbiome science",
+      "complete_window_merged": 9,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "mne-tools/mne-python",
+      "field": "Neuroscience",
+      "complete_window_merged": 82,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    },
+    {
+      "repo": "OHIF/Viewers",
+      "field": "Bioimage analysis",
+      "complete_window_merged": 38,
+      "stage": "not_reported",
+      "actual_cost_usd": null,
+      "verified_tasks": null,
+      "evidence_accepted": false
+    }
+  ]
+}
