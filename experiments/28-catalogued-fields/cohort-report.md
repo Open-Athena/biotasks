@@ -8,7 +8,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Transcriptomics / scverse/scanpy | 24 | 24 | 3 | 2 | 1 | 0 | 0.559917 | 4.669972222222222 | independent_tracked_test_verification |
 | Epigenomics / macs3-project/MACS | 9 | — | 0 | 0 | 0 | 0 | 0.526755 | 2.1325133333333333 | pr_discovery_attempt |
 | Proteomics / OpenMS/OpenMS | 217 | — | 0 | 0 | 0 | 0 | 0 | 0.16640555555555553 | source_checkout_attempt |
-| Structural biology / lammps/lammps | 34 | — | — | — | — | — | — | — | not_reported |
+| Structural biology / lammps/lammps | 34 | — | 0 | 0 | 0 | 0 | 0.938712 | 0.753731111111111 | bootstrap_attempt |
 | Metabolomics / matchms/matchms | 11 | — | — | — | — | — | — | — | not_reported |
 | Systems biology / opencobra/cobrapy | 4 | — | — | — | — | — | — | — | not_reported |
 | Microbiome science / soedinglab/MMseqs2 | 9 | — | — | — | — | — | — | — | not_reported |
@@ -17,7 +17,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 
 Completion proven: False.
 
-Reported actual model cost: $1.958715; reported allocated CPU-hours: 8.36754999999999953.
+Reported actual model cost: $2.897427; reported allocated CPU-hours: 9.12128111111111053.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
@@ -46,5 +46,11 @@ Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True
 ## OpenMS/OpenMS
 
 The original git checkout of the pinned OpenMS revision exceeded upstream's 60-second subprocess timeout, before any bootstrap model request. Native CLI exited 2; no PR discovery, parser evaluation, export or control was reached. No retry/repair applied.
+
+Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## lammps/lammps
+
+Upstream exhausted 20 bootstrap BASH turns. Seventeen parsed commands retained trailing </s> or </thinking> tags and produced shell syntax errors; the original sanitizer does not strip them. The saved prompt detected unknown language on ubuntu:24.04. Tools were installed near the end, but no project build/SAVE, PR discovery, exports or controls occurred. No repair/retry applied.
 
 Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True.
