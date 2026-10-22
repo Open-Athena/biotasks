@@ -7,9 +7,11 @@ The retired combined runner is deliberately not re-enabled.
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import os
 import time
+import uuid
 from pathlib import Path
 
 import httpx
@@ -24,6 +26,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.daytona import DaytonaWorker
 from repo2rlenv.execution.daytona_cleanup import cleanup
 from repo2rlenv.execution.lifecycle import save_record
+from repo2rlenv.execution.read_retry import transient_connection_error
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 
@@ -142,12 +145,14 @@ class Remote:
         self.operation += 1
         directory = self.root / "operations" / f"{self.operation:04d}"
         directory.mkdir(parents=True)
+        remote_label = "command-" + uuid.uuid4().hex
         record = {
             "argv": argv,
             "seconds": seconds,
             "label": label,
             "state": "uncertain",
             "started": time.time(),
+            "remote_label": remote_label,
         }
         save_record(directory / "operation.json", record)
         # Generated setup may overwrite files; reinstall the controller's runner.
@@ -167,32 +172,74 @@ class Remote:
                 )
             ],
         ]
+
+        async def verified_output(process):
+            if (
+                not isinstance(process, dict)
+                or process.get("argv") != argv
+                or process.get("directory") != cwd
+                or process.get("label") != remote_label
+                or process.get("timeout_seconds") != seconds
+                or type(process.get("exit_code")) is not int
+                or type(process.get("timed_out")) is not bool
+                or not isinstance(process.get("log_sha256"), str)
+            ):
+                raise ValueError("Remote completion receipt differs from this operation")
+            await self.download("/work/logs/" + remote_label + ".log", directory / "output.log")
+            with (directory / "output.log").open("rb") as stream:
+                if hashlib.file_digest(stream, "sha256").hexdigest() != process["log_sha256"]:
+                    raise ValueError("Remote completion log checksum mismatch")
+            return {**process, "log": (directory / "output.log").read_text(errors="replace")}
+
         try:
-            result = await asyncio.to_thread(
-                self.worker.exec,
-                [
-                    *env,
-                    "timeout",
-                    "--signal=TERM",
-                    "--kill-after=5",
-                    str(seconds + 10),
-                    "python",
-                    "/work/remote.py",
-                    "execute",
-                    json.dumps(argv),
-                    str(seconds),
-                    cwd,
-                    label,
-                ],
-                timeout=seconds + 25,
-            )
-            result.checked("Reference controller operation")
-            process = json.loads(result.stdout)
-            await self.download("/work/logs/" + label + ".log", directory / "output.log")
+            try:
+                result = await asyncio.to_thread(
+                    self.worker.exec,
+                    [
+                        *env,
+                        "timeout",
+                        "--signal=TERM",
+                        "--kill-after=5",
+                        str(seconds + 10),
+                        "python",
+                        "/work/remote.py",
+                        "execute",
+                        json.dumps(argv),
+                        str(seconds),
+                        cwd,
+                        remote_label,
+                    ],
+                    timeout=seconds + 25,
+                )
+                result.checked("Reference controller operation")
+                process = json.loads(result.stdout)
+                output = await verified_output(process)
+            except Exception as error:
+                if not transient_connection_error(error):
+                    raise
+                try:
+                    remaining = (
+                        min(self.deadline - 15, record["started"] + seconds + 25) - time.time()
+                    )
+                    if remaining <= 0:
+                        raise TimeoutError("No remaining time for completion reconciliation")
+                    async with asyncio.timeout(remaining):
+                        receipt = directory / "recovered-process.json"
+                        await self.download("/work/logs/" + remote_label + ".json", receipt)
+                        process = json.loads(receipt.read_text())
+                        output = await verified_output(process)
+                except Exception as recovery_error:
+                    record["recovery_error_type"] = type(recovery_error).__name__
+                    raise error from None
+                record["transport_recovery"] = {
+                    "error_type": type(error).__name__,
+                    "completion_receipt_verified": True,
+                    "command_reexecuted": False,
+                }
             self.uncertain = False
             record.update(state="returned", process=process, finished=time.time())
             save_record(directory / "operation.json", record)
-            return {**process, "log": (directory / "output.log").read_text(errors="replace")}
+            return output
         except BaseException as error:
             record.update(error_type=type(error).__name__, finished=time.time())
             save_record(directory / "operation.json", record)

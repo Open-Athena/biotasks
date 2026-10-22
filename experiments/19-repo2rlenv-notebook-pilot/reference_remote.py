@@ -109,15 +109,30 @@ def snapshot_inputs(manifest_path, receipt_path, roots=(Path("/inputs"), Path("/
     records = []
     seen = set()
     for index, item in enumerate(manifest["files"]):
-        if not isinstance(item, dict) or any(not isinstance(item.get(k), str) or not item[k] for k in ("local_path", "source")):
+        if not isinstance(item, dict) or any(
+            not isinstance(item.get(k), str) or not item[k] for k in ("local_path", "source")
+        ):
             raise InvalidStagedInputs(f"Input {index} needs local_path and source")
         path = Path(item["local_path"])
-        if not path.is_absolute() or str(path) in seen or not any(path.resolve().is_relative_to(root.resolve()) for root in roots) or not path.is_file():
+        if (
+            not path.is_absolute()
+            or str(path) in seen
+            or not any(path.resolve().is_relative_to(root.resolve()) for root in roots)
+            or not path.is_file()
+        ):
             raise InvalidStagedInputs(f"Invalid staged input path for input {index}: {path}")
         seen.add(str(path))
         with path.open("rb") as stream:
             sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
-        records.append({"local_path": str(path), "source": item["source"], "bytes": path.stat().st_size, "sha256": sha256, "input_preview": input_preview(path)})
+        records.append(
+            {
+                "local_path": str(path),
+                "source": item["source"],
+                "bytes": path.stat().st_size,
+                "sha256": sha256,
+                "input_preview": input_preview(path),
+            }
+        )
     receipt = {"files": records}
     Path(receipt_path).write_text(json.dumps(receipt, indent=2))
     return receipt
@@ -195,6 +210,9 @@ def execute(argv, timeout, directory, label):
             saved_path.unlink(missing_ok=True)
     record = {
         "argv": argv,
+        "directory": directory,
+        "label": label,
+        "timeout_seconds": timeout,
         "started": started,
         "finished": time.time(),
         "exit_code": code,
@@ -203,7 +221,20 @@ def execute(argv, timeout, directory, label):
         "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
     }
     record["elapsed_seconds"] = record["finished"] - started
-    Path("/work/logs", label + ".json").write_text(json.dumps(record, indent=2))
+    with log.open("rb") as stream:
+        record["log_sha256"] = hashlib.file_digest(stream, "sha256").hexdigest()
+    # A reconnecting reader must see either no receipt or a complete receipt.
+    with tempfile.NamedTemporaryFile(dir=log.parent, mode="w", delete=False) as receipt:
+        receipt_path = Path(receipt.name)
+        try:
+            json.dump(record, receipt, indent=2)
+        except BaseException:
+            receipt_path.unlink(missing_ok=True)
+            raise
+    try:
+        os.replace(receipt_path, Path("/work/logs", label + ".json"))
+    finally:
+        receipt_path.unlink(missing_ok=True)
     print(json.dumps(record), flush=True)
 
 

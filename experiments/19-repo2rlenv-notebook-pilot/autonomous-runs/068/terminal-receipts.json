@@ -1,0 +1,60 @@
+{
+  "collection": {
+    "campaign": 68,
+    "host_state": "FAILED",
+    "terminal": true,
+    "diagnostics_complete": true,
+    "diagnostic_files_downloaded": 36,
+    "full_archive_downloaded": false,
+    "pipeline_status": "infrastructure_failed",
+    "source_id": "pyhmmer-msa-to-hmm",
+    "stages": [
+      {
+        "name": "preparation",
+        "status": "completed"
+      },
+      {
+        "name": "setup",
+        "status": "completed"
+      },
+      {
+        "name": "replay",
+        "status": "completed"
+      },
+      {
+        "name": "specification",
+        "status": "completed"
+      },
+      {
+        "name": "construction",
+        "status": "completed"
+      },
+      {
+        "name": "grading",
+        "status": "incomplete"
+      }
+    ],
+    "rejection": null,
+    "error_type": "DaytonaConnectionError",
+    "operator_interventions": 0
+  },
+  "diagnostic_manifest_sha256": "0d9dffeafdaaf6c28e77d50486012a1afcdb68d45d09dfcebfd6500d4ff5712a",
+  "pipeline_receipt_sha256": "d9d1f7624fd4bf25deb484a305b279a7a2460790bbc5d8f4c3dc99047adf6c09",
+  "failed_operation": {
+    "argv": [
+      "python",
+      "/work/grading_remote.py",
+      "shell",
+      "author",
+      "cd /work; cat reference/LuxC.domtbl | sed -n '4,15p' | awk '{print NF}' ; echo ===; sed -n '4,15p' reference/LuxC.domtbl | cut -c1-200; echo; md5sum <(tail -c 20 reference/LuxC.hmm | xxd | tail -2)",
+      "120"
+    ],
+    "error_type": "DaytonaConnectionError",
+    "finished": 1792709686.6144285,
+    "label": "grading-shell-1792709686228475759",
+    "seconds": 130,
+    "started": 1792709686.4739912,
+    "state": "uncertain"
+  },
+  "scope": "Bounded original diagnostics, not a full archive download."
+}

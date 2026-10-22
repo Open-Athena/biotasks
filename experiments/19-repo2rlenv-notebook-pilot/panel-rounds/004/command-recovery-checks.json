@@ -1,0 +1,23 @@
+{
+  "recorded_at": "2026-10-22T23:17:12.074073+00:00",
+  "scope": "Generic completion-receipt reconciliation after transient response loss; no command reexecution, model calls, biological computations or provider runs.",
+  "tests": {
+    "passed": 39,
+    "seconds": 2.73,
+    "peak_rss_kib": 133312,
+    "files": [
+      "test_command_receipt_recovery.py",
+      "test_reference_remote_logging.py",
+      "test_reference_setup.py"
+    ]
+  },
+  "style": "Ruff lint and format checks passed for all three changed files.",
+  "semantics": "Unique per-command nonce, argv/cwd/timeout binding and log SHA-256 required. Reconciliation uses only reads within the original deadline. Missing, mismatched or corrupt completion remains uncertain and stops further execution.",
+  "limitations": [
+    "Synthetic worker loss tests and real local subprocess logging tests only.",
+    "The provider failure in068 is preserved and was not retroactively repaired.",
+    "Reconciliation succeeds only if a completed receipt and matching log can be read; it does not prove an unacknowledged command started or finished."
+  ],
+  "initial_check_failure": "Restricted-sandbox asyncio check stalled and was stopped; the unchanged selected suite passed in elevated execution. No product workaround introduced.",
+  "live_provider_validation": false
+}

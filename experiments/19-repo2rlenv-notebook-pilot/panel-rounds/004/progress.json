@@ -1,21 +1,70 @@
 {
-  "observed_at": "2026-10-22T22:32:05.408371+00:00",
+  "observed_at": "2026-10-22T23:06:55.013254+00:00",
   "records": [
     {
-      "observed_at": "2026-10-22T22:32:05.408371+00:00",
+      "observed_at": "2026-10-22T23:06:55.013254+00:00",
       "campaign": "autonomous-panel-068",
       "source_id": "pyhmmer-msa-to-hmm",
       "runtime_baseline_revision": "ecd1dd60029e6b674ae298658fd6160814db27f5",
-      "state": "running_bootstrap",
-      "host_state": "RUNNING",
+      "state": "infrastructure_failed",
+      "host_state": "FAILED",
       "host_started_at": "Timestamp(2026-10-22T22:30:29.806000+00:00)",
       "personal_credentials_forwarded": true,
       "scientific_source_and_prompts_unchanged": true,
       "prior_preexecution_failure": 67,
       "scientific_validation": false,
       "native_solver_attempted": false,
-      "classification": "active_no_scientific_verdict",
-      "limits": "Existing original campaign, reference, solver, model, repair, resource and aggregate dollar limits unchanged."
+      "classification": "provider_connection_reset_during_grader_shell",
+      "limits": "Existing original campaign, reference, solver, model, repair, resource and aggregate dollar limits unchanged.",
+      "terminal": true,
+      "failed_stage": "grading",
+      "error_type": "DaytonaConnectionError",
+      "pipeline_seconds": 1484.355835199356,
+      "stages": [
+        {
+          "name": "preparation",
+          "status": "completed",
+          "started": 1792708250.6140506,
+          "finished": 1792708266.8582299
+        },
+        {
+          "name": "setup",
+          "status": "completed",
+          "started": 1792708266.8584652,
+          "finished": 1792708452.2681477
+        },
+        {
+          "name": "replay",
+          "status": "completed",
+          "started": 1792708452.26833,
+          "finished": 1792708477.4224837
+        },
+        {
+          "name": "specification",
+          "status": "completed",
+          "started": 1792708477.4227586,
+          "finished": 1792709252.2755122
+        },
+        {
+          "name": "construction",
+          "status": "completed",
+          "started": 1792709252.2757895,
+          "finished": 1792709322.2760205
+        },
+        {
+          "name": "grading",
+          "status": "incomplete",
+          "started": 1792709322.2762375,
+          "finished": 1792709730.4487605
+        }
+      ],
+      "diagnostic_files_independently_hash_verified": 36,
+      "full_archive_download_verified": false,
+      "cleanup_verified": true,
+      "uncertain_remote_operation": 66,
+      "source_rejected": false,
+      "operator_interventions": 0,
+      "explanation": "Daytona process.exec lost its connection while dispatching a grader shell command. The driver preserved an uncertain operation and stopped; it did not blindly reexecute it. Independent solution was executed, but no final grader acceptance or native attempt was reached."
     }
   ]
 }
