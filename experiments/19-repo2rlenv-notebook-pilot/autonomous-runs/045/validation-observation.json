@@ -1,0 +1,47 @@
+{
+  "observed_at": "2026-10-22T06:52:59.896302+00:00",
+  "classification": "generated_evidence_annotations_rejected_after_passing_controls",
+  "original_pipeline_rejection": {
+    "stage": "grading",
+    "reason": "grader_requires_further_work",
+    "evidence": "grading/result.json"
+  },
+  "final_controls": 22,
+  "all_final_control_outcomes_met": true,
+  "cumulative_control_executions": 66,
+  "final_review_decision": "revise",
+  "source_notebook_broken": false,
+  "native_solver_attempted": false,
+  "pre_native_notice_hook_exercised_live": false,
+  "final_review_sha256": "6017966732812dc526deb5ada7eded16fa5f79e6e97616c90e5444aa2c827a0b",
+  "final_candidate_sha256": "cb170f7e68ed2f2734209acdc2c72c5c401ca2529555373272b372787e742260",
+  "final_controls_sha256": "f86a450e4b980ae589027a7e9888ba3480546d2a98a6b5b7970637da447b54ec",
+  "remaining_review_items": [
+    "Candidate rationale quotes 21/22 prior control outcomes where the final measured candidate has 22/22.",
+    "A probe annotation does not describe an additional block-constancy failure visible in its execution.",
+    "An emissions-shift probe rationale miscounts affected nodes."
+  ],
+  "temporal_evidence": {
+    "repair_input_control_summary": {
+      "by_kind": {
+        "alternative": 1,
+        "empty": 1,
+        "misplaced": 1,
+        "missing": 2,
+        "probe": 15,
+        "recomputed": 1,
+        "reference": 1
+      },
+      "controls": 22,
+      "expected_outcomes_met": 21,
+      "probes_by_kind": {
+        "valid_alternative": 2,
+        "wrong_solution": 13
+      }
+    },
+    "fresh_final_outcomes_met": 22,
+    "interpretation": "The repair author was supplied the older 21/22 summary, and its rationale explicitly identifies that supplied history. Final review compares this narrative with newer 22/22 execution. This is an evidence-version question; it does not establish that every remaining annotation is correct."
+  },
+  "repair_schema_observation": "The live worker used controller-bound immutable checks and suite-concern metadata without the earlier repeated-check-inventory rejection; final acceptance still failed on review.",
+  "scientific_assets_manually_changed": false
+}
