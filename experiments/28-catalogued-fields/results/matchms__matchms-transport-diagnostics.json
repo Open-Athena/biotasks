@@ -1,0 +1,115 @@
+{
+  "method": "Reconstruct strings only using exact unmodified pinned upstream pure functions extracted via AST. No shell, Docker, tests, patch application or model request executed.",
+  "repo": "matchms/matchms",
+  "pr": 958,
+  "diff_source_url": "https://github.com/matchms/matchms/pull/958.diff",
+  "diff_bytes": 424646,
+  "diff_sha256": "be9e57d8c01d1962046d1d322ea033bda4f748c4e8b80429d237add943942628",
+  "recorded_patch_hashes_match": true,
+  "source_patch_bytes": 321678,
+  "test_patch_bytes": 102968,
+  "source_patch_sha256": "5bd942c0db7db73761415a3b5478b0a2c7f9067c108ce3a9e1aaf942ebdc19d7",
+  "test_patch_sha256": "7ff31b48b3a45395d22c313a89d5e504767cc0dbfb61e9d1a4b00d24080138fd",
+  "stage_script_bytes": {
+    "pre": 103780,
+    "post": 425528
+  },
+  "patch_paths": [
+    [
+      "README.rst",
+      "README.rst"
+    ],
+    [
+      "matchms/similarity/__init__.py",
+      "matchms/similarity/__init__.py"
+    ],
+    [
+      "matchms/similarity/_flash_cosine.py",
+      "matchms/similarity/_flash_cosine.py"
+    ],
+    [
+      "matchms/similarity/_flash_entropy.py",
+      "matchms/similarity/_flash_entropy.py"
+    ],
+    [
+      "matchms/similarity/_flash_prepared.py",
+      "matchms/similarity/_flash_prepared.py"
+    ],
+    [
+      "matchms/similarity/_flash_tolerance.py",
+      "matchms/similarity/_flash_tolerance.py"
+    ],
+    [
+      "matchms/similarity/cosine.py",
+      "matchms/similarity/cosine.py"
+    ],
+    [
+      "matchms/similarity/entropy.py",
+      "matchms/similarity/entropy.py"
+    ],
+    [
+      "matchms/similarity/entropy_search.py",
+      "matchms/similarity/entropy_search.py"
+    ],
+    [
+      "matchms/similarity/flash_index.py",
+      "matchms/similarity/flash_index.py"
+    ],
+    [
+      "matchms/similarity/flash_similarity.py",
+      "matchms/similarity/flash_similarity.py"
+    ],
+    [
+      "matchms/similarity/flash_similarity_spectrum_list.py",
+      "matchms/similarity/flash_similarity_spectrum_list.py"
+    ],
+    [
+      "matchms/similarity/flash_utils_spectrum_list.py",
+      "matchms/similarity/flash_utils_spectrum_list.py"
+    ],
+    [
+      "matchms/similarity/modified_cosine.py",
+      "matchms/similarity/modified_cosine.py"
+    ],
+    [
+      "tests/similarity/test_entropy_kernel.py",
+      "tests/similarity/test_entropy_kernel.py"
+    ],
+    [
+      "tests/similarity/test_entropy_search.py",
+      "tests/similarity/test_entropy_search.py"
+    ],
+    [
+      "tests/similarity/test_flash_index.py",
+      "tests/similarity/test_flash_index.py"
+    ],
+    [
+      "tests/similarity/test_flash_search_integration.py",
+      "tests/similarity/test_flash_search_integration.py"
+    ],
+    [
+      "tests/similarity/test_flash_similarity.py",
+      "tests/similarity/test_flash_similarity.py"
+    ],
+    [
+      "tests/similarity/test_flash_similarity_spectrum_list.py",
+      "tests/similarity/test_flash_similarity_spectrum_list.py"
+    ],
+    [
+      "tests/similarity/test_flash_utils.py",
+      "tests/similarity/test_flash_utils.py"
+    ],
+    [
+      "tests/similarity/test_flash_utils_spectrum_list.py",
+      "tests/similarity/test_flash_utils_spectrum_list.py"
+    ]
+  ],
+  "observed_exception": {
+    "pr": 958,
+    "exception_type": "OSError",
+    "errno": 7
+  },
+  "transport_source": "Original DockerSandbox.exec sends the full script as one bash -lc argv argument; observer and resource wrapper do not chunk it.",
+  "interpretation": "The post-fix command exceeds the usual Linux 128-KiB per-argument limit, consistent with the observed E2BIG. This is a limitation of the original inline patch transport; no stdin/file repair or candidate bypass applied.",
+  "limits": "Failed exec did not retain its command because no ExecResult returned. Reconstructed source/test patch hashes exactly match the original recorded validation-start inputs. The exact TRC kernel argument ceiling was not probed."
+}

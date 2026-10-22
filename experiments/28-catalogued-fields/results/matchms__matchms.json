@@ -1,0 +1,132 @@
+{
+  "repo": "matchms/matchms",
+  "scientific_field": "Metabolomics",
+  "ref": "50baefdb0ce9401aac55cc2a09d07421dd684481",
+  "run_id": "biotasks28-matchms-matchms-001",
+  "complete_window_merged": 11,
+  "native_candidates_returned": 11,
+  "candidates_entered": 4,
+  "candidate_pr_numbers_entered": [
+    966,
+    964,
+    961,
+    958
+  ],
+  "candidate_decisions": [
+    {
+      "event": "native_decision",
+      "time": 1792693039.637725,
+      "name": "matchms/matchms#966",
+      "outcome": "skip",
+      "reason": "no fail-to-pass tests after validation"
+    },
+    {
+      "event": "native_decision",
+      "time": 1792693040.6401556,
+      "name": "matchms/matchms#964",
+      "outcome": "skip",
+      "reason": "no_test_patch"
+    },
+    {
+      "event": "native_decision",
+      "time": 1792693041.703333,
+      "name": "matchms/matchms#961",
+      "outcome": "skip",
+      "reason": "no_new_test_funcs"
+    }
+  ],
+  "native_skip_reasons": {
+    "no fail-to-pass tests after validation": 1,
+    "no_test_patch": 1,
+    "no_new_test_funcs": 1
+  },
+  "paired_validation_started": 2,
+  "paired_validation_completed": 1,
+  "native_validation_results": [
+    {
+      "file": "native-observations/validation-001-pr-966.json.gz",
+      "pr": 966,
+      "status": "failed",
+      "reason": "no fail-to-pass tests after validation",
+      "f2p": 0,
+      "p2p": 0
+    }
+  ],
+  "native_validation_exceptions": [
+    {
+      "event": "validation_exception",
+      "time": 1792693044.357093,
+      "validation": 2,
+      "pr": 958,
+      "exception_type": "OSError",
+      "errno": 7
+    }
+  ],
+  "native_sandbox_nonzero": [
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792692780.0416248,
+      "pr": null,
+      "execution": 6,
+      "command_sha256": "d3a5ea55f871cd85638e4d78430f7a69424a083ff6bac1d1e6c93dd486fbe569",
+      "exit_code": 1,
+      "duration_sec": 0.15233196399640292
+    }
+  ],
+  "generation_wrapper_exit_code": 0,
+  "native_cli_window": {
+    "input": "matchms__matchms.json",
+    "command": [
+      "/work/upstream/.venv/bin/python",
+      "/work/observed_cli.py",
+      "--no-ui",
+      "generate",
+      "--config",
+      "/work/inputs/matchms__matchms.json",
+      "--max-spend-usd",
+      "5"
+    ],
+    "started": 1792692420.26068,
+    "state": "completed",
+    "exit_code": 2,
+    "finished": 1792693045.4485838
+  },
+  "native_exports": 0,
+  "task_controls": [],
+  "verified_tasks": 0,
+  "control_allocation_rows": [],
+  "task_files_unchanged": {
+    "verified": true,
+    "before": {},
+    "after": {}
+  },
+  "billing": {
+    "model_calls": 5,
+    "actual_cost_usd": "0.133545",
+    "cost_complete": true,
+    "stop_threshold_usd": "5",
+    "final_request_may_overshoot": true,
+    "shared_account_deltas_used": false,
+    "observer_snapshot_cost_usd": "0.133545",
+    "dispatched_calls": 5,
+    "unresolved_calls": []
+  },
+  "allocated_cpu_hours": 0.7687444444444445,
+  "attempts": [
+    {
+      "started_at": "Timestamp(2026-10-22T18:06:04.727000+00:00)",
+      "finished_at": "Timestamp(2026-10-22T18:17:36.597000+00:00)",
+      "allocated_cpu_hours": 0.7687444444444445
+    }
+  ],
+  "artifact_readback_verified": true,
+  "owned_cleanup_verified_empty": true,
+  "infra_error_type": null,
+  "orchestration_state": "SUCCEEDED",
+  "native_status": "native_validation_aborted_on_inline_patch_e2big",
+  "furthest_stage_reached": "paired_pr_validation_partial",
+  "strict_oracle_command_resolved_tasks": 0,
+  "failure_cause": "Bootstrap smoke and fresh-image checks passed at the pinned newer repo revision. Native returned 11 PRs but entered four: PR966 had missing chemap in both collection stages, two candidates were filtered, then PR958 post-fix Docker exec raised OSError errno 7 on an oversized inline patch script. Two pairs started, one completed, no exports; seven returned PRs were never entered. No repair/retry applied.",
+  "environment_reconstruction": "Original bootstrap Dockerfile/rebuild recipe/transcript, pinned ref and owned image/layer IDs retained. Local image bytes deleted after controls; no image publication or reconstruction run. Full native package freeze unavailable; clean HEAD smoke does not establish dependency compatibility at historical PR bases.",
+  "archive_receipt": "archives/matchms__matchms-receipt.json"
+}
