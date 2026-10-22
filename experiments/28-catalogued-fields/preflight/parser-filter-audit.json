@@ -77,5 +77,13 @@
     "export_source": "upstream_verifier.py:89",
     "observed_case": "MNE PR14338 pre/post raw logs contain 4896/2844 ANSI sequences and per-test progress, but both unchanged pytest parsers return empty maps.",
     "scope": "Live intermediate log census only; original native failure retained. Neither pytest parser strips ANSI; standalone ANSI stripping elsewhere applies to Jest. No normalization/adapter/regrading applied."
+  },
+  "timeout_process_lifetime": {
+    "observed_snapshot": "../results/mne-tools__mne-python-process-probe.json",
+    "source": "upstream-source/src/repo2rlenv/bootstrap/docker.py:51",
+    "facts": "At 19:55:39 UTC, three pytest main processes with bash parents shared the reused validation container (ages 1805/1174/588 seconds); another owned container had pytest PID1 aged 2176 seconds. Prior native pre/post stages had each returned exit124 at 600 seconds.",
+    "resource_proof": "Both exact-label owned containers reported cpu.max=150000 100000 and memory.max=6442450944.",
+    "interpretation": "Timed-out pytest work remained runnable while later native stages proceeded. The pinned _run returns after a Docker-client subprocess timeout without an explicit remote-process/container cancellation step.",
+    "limits": "One read-only snapshot in MNE, no signalling/repair and no OOM or exact slowdown attribution. Other repos were not retrospectively probed."
   }
 }
