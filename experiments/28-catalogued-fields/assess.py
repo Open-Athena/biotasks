@@ -6,6 +6,7 @@ import datetime
 import gzip
 import hashlib
 import json
+import math
 from pathlib import Path
 import shutil
 import tarfile
@@ -42,6 +43,34 @@ def timestamp(value):
     return datetime.datetime.fromisoformat(value.removeprefix('Timestamp(').removesuffix(')'))
 
 
+def trial_evidence(path, expanded):
+    value = load(path)
+    details = load(path.parent / 'verifier/reward-details.json')
+    reward = ((value.get('verifier_result') or {}).get('rewards') or {}).get('reward')
+    reward_file = path.parent / 'verifier/reward.txt'
+    written = float(reward_file.read_text().strip()) if reward_file.exists() else None
+    detailed = (details or {}).get('reward')
+    consistent = None if reward is None else (
+        written is not None and detailed is not None and math.isfinite(written)
+        and reward == written and math.isclose(detailed, written, rel_tol=0, abs_tol=0.500001e-6))
+    log = path.parent / 'trial.log'
+    text = log.read_text(errors='replace') if log.exists() else ''
+    return {'path': str(path.relative_to(expanded)), 'reward': reward, 'written_reward': written,
+        'reward_consistent': consistent,
+        'exception': (value.get('exception_info') or {}).get('exception_type'),
+        'reward_details': details, 'verifier_started_finished': value.get('verifier'),
+        'verifier_timeout_log_lines': [line for line in text.splitlines()
+            if 'timed out' in line.lower() or 'retry' in line.lower()]}
+
+
+def verified_pair(base, oracle, *, files_unchanged):
+    return (files_unchanged and base.get('reward') == 0 and oracle.get('reward') == 1
+        and base.get('reward_consistent') is True and oracle.get('reward_consistent') is True
+        and (base.get('reward_details') or {}).get('parse_status') == 'ok'
+        and (oracle.get('reward_details') or {}).get('parse_status') == 'ok'
+        and not base.get('exception') and not oracle.get('exception'))
+
+
 def assess(state, cohort_row):
     run = run_id(cohort_row)
     record = load(state / (run + '-terminal.json'))
@@ -67,6 +96,7 @@ def assess(state, cohort_row):
                             'status': value['status'], 'reason': value.get('reason'),
                             'f2p': len(value['fail_to_pass']), 'p2p': len(value['pass_to_pass'])})
     exports = sorted(p.parent for p in (expanded / 'outputs').rglob('task.toml'))
+    unchanged = load(result / 'fresh-task-files-unchanged.json', {})
     task_rows = []
     for task in exports:
         trials = {}
@@ -76,19 +106,10 @@ def assess(state, cohort_row):
             if not paths:
                 trials[agent] = {'state': 'no_completed_trial_result', 'reward': None}
                 continue
-            path = paths[0];value = load(path)
-            details = load(path.parent / 'verifier/reward-details.json')
-            rewards = (value.get('verifier_result') or {}).get('rewards') or {}
-            trial_log = (path.parent / 'trial.log').read_text(errors='replace') if (path.parent / 'trial.log').exists() else ''
-            trials[agent] = {'path': str(path.relative_to(expanded)), 'reward': rewards.get('reward'),
-                'exception': (value.get('exception_info') or {}).get('exception_type'),
-                'reward_details': details, 'verifier_started_finished': value.get('verifier'),
-                'verifier_timeout_log_lines': [line for line in trial_log.splitlines() if 'timed out' in line.lower() or 'retry' in line.lower()]}
+            trials[agent] = trial_evidence(paths[0], expanded)
         base, oracle = trials['nop'], trials['oracle']
         base_details, oracle_details = base.get('reward_details') or {}, oracle.get('reward_details') or {}
-        verified = (base['reward'] == 0 and oracle['reward'] == 1
-                    and base_details.get('parse_status') == 'ok' and oracle_details.get('parse_status') == 'ok'
-                    and not base.get('exception') and not oracle.get('exception'))
+        verified = verified_pair(base, oracle, files_unchanged=unchanged.get('verified') is True)
         task_rows.append({'task': task.name, 'independently_verified_tracked_tests': verified,
                           'strict_oracle_command_resolved': oracle_details.get('command_resolved'),
                           'trials': trials})
