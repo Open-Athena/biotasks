@@ -4,7 +4,7 @@
   "source_id": "pyradiomics-brain",
   "runtime_baseline_revision": "88d677c015ad56a6f8cc06e557c6c05b619109a3",
   "state": "infrastructure_failed",
-  "classification": "unresolved_reference_replay_execution_failure",
+  "classification": "generated_cache_staging_not_reproducible",
   "terminal": true,
   "operator_interventions": 0,
   "setup_completed": true,
@@ -19,5 +19,6 @@
   "diagnostic_files_hash_verified": 22,
   "full_archive_download_verified": false,
   "cleanup_verified": true,
-  "cause": "Initial controlled setup/reference completed; fresh replay setup recreated successfully, but its first offline analysis process exited1. The original stderr has not yet been independently retrieved, so generated-recipe contamination versus another execution cause remains unresolved. Do not label the notebook broken or a provider network outage from this evidence."
+  "cause": "Hash-verified staging chooses an unconnected random cache directory; original reference uses the package default cache and fresh offline replay tries to download. See replay-failure-audit.json. Exact exploratory action enabling the earlier test is not fully traced.",
+  "cause_audit": "replay-failure-audit.json"
 }

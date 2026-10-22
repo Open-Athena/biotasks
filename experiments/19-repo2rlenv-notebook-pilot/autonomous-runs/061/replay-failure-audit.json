@@ -1,0 +1,43 @@
+{
+  "recorded_at": "2026-10-22T18:30:51.088575+00:00",
+  "scope": "Static diagnosis of original hash-verified generated setup and replay stderr; no task edits or scientific rerun.",
+  "classification": "generated_cache_staging_not_reproducible",
+  "original_manifest_sha256": "3bcad4f5dec0ebac26fa7645c8ac4b9c5684f2e12d6a3043ed65067ee72a71ff",
+  "original_log": {
+    "path": "replay/operations/0007/output.log",
+    "sha256": "e3394bdbf707bc693b11a28961c008a783208d5415d7d1235ff09c5bd9c506d4",
+    "bytes": 3700,
+    "root_manifest_sha256": "3bcad4f5dec0ebac26fa7645c8ac4b9c5684f2e12d6a3043ed65067ee72a71ff"
+  },
+  "original_files": [
+    {
+      "path": "reference/candidate/stage-inputs.sh",
+      "sha256": "3f955891f313f9e925a75a66c02a2dfcb9164558c0c46196d1859b7f2754888d",
+      "bytes": 2306
+    },
+    {
+      "path": "reference/trial/reference.py",
+      "sha256": "95491e010ae5e646fa2520956b955160a30a0aa9c3234ab746d8aef4c0dbbf3d",
+      "bytes": 4164
+    },
+    {
+      "path": "reference/trial/environment.txt",
+      "sha256": "c198ce207e143d6d558d5e0fe598407b77ee0d1f0e2483f0919fdeb060d74440",
+      "bytes": 387
+    }
+  ],
+  "observations": [
+    "The generated staging recipe constructs DATA_DIR with mktemp -d, then copies the four source images/masks there and into /inputs.",
+    "The recorded reference leaves both getTestCase calls at their default dataDirectory.",
+    "The pinned package source resolves that default through tempfile.gettempdir()/pyradiomics/data; the random staging directory is not passed to those calls.",
+    "A fresh offline replay exits in0.43s when getTestCase attempts a network download.",
+    "Both initial controlled test and replay execute in /work/run; this is not a recorded working-directory mismatch."
+  ],
+  "source_reference": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/radiomics/__init__.py#L176",
+  "limits": [
+    "The original setup passed offline in its authoring sandbox; this audit has not exhaustively traced which exploratory action populated that sandbox cache.",
+    "Replay correctly prevented acceptance. The notebook is not classified broken or its original data unavailable.",
+    "No Codex-authored recipe fix or new controlled run was performed."
+  ],
+  "general_next_step": "Make setup tests expose reliance on exploratory filesystem state while the GLM setup worker can still diagnose and repair it; require documented stable cache destinations matched to package lookup semantics."
+}

@@ -3682,3 +3682,6 @@ The undeployed combined proposal passed 134 isolated remote software regressions
 
 
 059 also ended before native trials: 19 final controls pass, but an unsupported public input-population claim remains after the single repair. Original/fresh cleanup passes; full-profile whole-host reconciliation retains $0.75. Reserve $1 for 062, leaving $99.75 held / $0.25 unallocated. 061 is submitted on the same frozen factory. Distinguish these generated-question defects from source rejection and investigate repair ordering/input-fact grounding only in a subsequent version.
+
+
+061 setup/reference passed in the authoring sandbox but fresh offline replay failed. Original hash-verified stderr shows a download attempt; the generated recipe stages into an unconnected random temporary cache while unchanged source calls use the package default cache. Both runs use /work/run, ruling out the suspected working-directory mismatch. This is an unreproducible generated setup, not a broken-source or unavailable-input conclusion. Preserve the original; improve cache grounding and setup isolation generically before a fresh run.
