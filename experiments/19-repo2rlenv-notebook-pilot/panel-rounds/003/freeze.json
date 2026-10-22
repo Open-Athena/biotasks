@@ -1,0 +1,65 @@
+{
+  "frozen_at": "2026-10-22T20:32:51.971302+00:00",
+  "runtime_baseline_revision": "2ac0bc6a",
+  "input_checkpoint": "d7f39bb671a3e4f10dc22e8247c1548164d6e511",
+  "runtime_file_count": 179,
+  "changed_from_round002": [
+    "experiments/19-repo2rlenv-notebook-pilot/iris_bootstrap.py",
+    "experiments/19-repo2rlenv-notebook-pilot/recover_evidence.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_evidence_export.py"
+  ],
+  "scientific_source_and_prompts_unchanged": true,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 67,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/067/configuration.json",
+      "state": "reserved_not_submitted",
+      "reserved_usd": "1.00",
+      "input_revision": "d7f39bb671a3e4f10dc22e8247c1548164d6e511",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/seed.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source-license-evidence.json": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source.ipynb": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9"
+      },
+      "runtime_file_count": 179,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "9ad8d15bac8ea55078ca4282ee51bff0ebcb667fd9bf0fca0a1d5ebab2efe417",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "bootstrap.py": "b759c0278cd2f325702daa8a636c1f69334cfbbca05dd83e53b21cfcc852b829",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "394e31b5a43f0165e2c9e1b23971812e1fa4805758c1a446ebcf7bb4e5c551e9"
+      }
+    }
+  ]
+}
