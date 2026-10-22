@@ -58,5 +58,18 @@
     "behavior": "A repository-level bootstrap image is created first. Native validation lazily creates one sandbox and reuses it across candidates; stages reset/clean to historical base commits while preserving dependency directories. The stage script does not reinstall repository dependencies for each base.",
     "observed_case": "Matchms smoke/fresh-image tests passed at its pinned newer revision, while PR966 pre/post both failed to import chemap at its historical base.",
     "limits": "This is a source-path explanation of an observed compatibility failure, not a tested alternative environment strategy. No dependency refresh, per-PR bootstrap or repair applied."
+  },
+  "targeting_explicit_path_caveat": {
+    "source": "upstream-source/src/repo2rlenv/pipelines/pr_runtime.py:753",
+    "behavior": "targeted_test_cmds_for_pr preserves an existing positional path argument. An explicitly broad directory such as mne/ therefore prevents changed-test-file narrowing. Native validation and export both use this same helper.",
+    "observed_live_input": {
+      "repo": "mne-tools/mne-python",
+      "pr": 14338,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v mne/"
+      ],
+      "native_stage_timeout_seconds": 600
+    },
+    "limits": "Intermediate live validation observation, not a terminal result or a control/grade claim. No command/selection/timeout modification or reconstructed test execution was applied."
   }
 }
