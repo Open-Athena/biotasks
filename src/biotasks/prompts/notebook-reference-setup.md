@@ -70,6 +70,12 @@ Keep one small setup directory with these files:
   Python downloads are disabled. `requires-python` does not install another
   interpreter. Do not add a build backend or dynamic project fields.
 - `system-packages.json`: an array of Debian package names (empty if unnecessary).
+  Include installer/build tools required by the frozen recipe, not just runtime
+  libraries. For example, a Git-based Python dependency needs the Git client in
+  this declaration even if an exploratory command already installed it. A passed
+  test in the current workspace does not establish a clean rebuild. Preserve
+  every required system package in the submitted recipe; do not rely on inherited
+  installation state or cached builds.
 - `stage-inputs.sh`: a POSIX shell recipe that stages the original inputs and
   needed caches. It runs with the resolved Python environment on PATH. It must
   not rewrite the submitted setup files. An empty

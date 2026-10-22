@@ -3530,3 +3530,12 @@ The one-call GLM diagnostic completed on the frozen environment in a 58-second h
 ### 2026-10-22 — Transfer retry of original PyRadiomics source
 
 Reserve $5 within the existing aggregate authorization for fresh autonomous 046. Exact notebook SHA and source-only seed bytes match original 037; no manual scientific design, data, endpoint or method changes. Original 037 is retained as a package-catalog infrastructure failure. Run the latest general factory with native-high GLM and the existing full-stage CPU/offline/time/repair contract. Actual input terms and reviewed pre-native notices remain unestablished, so no release is claimed or automatically published from this run. This is independent of the pending HMM fixture-policy decision.
+
+
+### 2026-10-22 — Missing installer declaration in 046
+
+Original 046 setup ran the full reference offline in 2.27 seconds and produced both outputs. Its fresh frozen-environment replay failed before analysis: the Git-based dependency needed a Git executable, while the recorded system-packages hash matches an empty JSON list. Preserve the infrastructure_failed outcome, not a scientific rejection. Two original cleanup receipts and fresh exact-owner queries pass; the host is terminal. Retain $1 and release $4 of the conservative hold. Full child archive has not been independently downloaded; 21 parent diagnostic originals are hash-verified.
+
+Add only a general environment preflight and versioned setup guidance: direct Git requirement syntax and uv Git-source declarations require a declared Git installer. The GLM worker receives validation errors and must author any corrected recipe; the controller neither inserts packages nor changes science. All 56 focused environment/setup/replay/packaging checks pass. This is a known installer check, not a general proof of all source-build dependencies. Reserve $5 for fresh 047 with unchanged original source/seed and existing limits.
+
+The separate evidence-version review was not dispatched: its proposed reused host had already become terminal. No model call, task change or extra host allocation occurred; retain the preflight-stop record.
