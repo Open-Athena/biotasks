@@ -1,0 +1,129 @@
+{
+  "repo": "opencobra/cobrapy",
+  "scientific_field": "Systems biology",
+  "ref": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+  "run_id": "biotasks28-opencobra-cobrapy-001",
+  "complete_window_merged": 4,
+  "native_candidates_returned": 4,
+  "candidates_entered": 4,
+  "candidate_pr_numbers_entered": [
+    1492,
+    1491,
+    1490,
+    1488
+  ],
+  "candidate_decisions": [
+    {
+      "event": "native_decision",
+      "time": 1792694004.5171247,
+      "name": "opencobra/cobrapy#1492",
+      "outcome": "skip",
+      "reason": "no_new_test_funcs"
+    },
+    {
+      "event": "native_decision",
+      "time": 1792694005.6781573,
+      "name": "opencobra/cobrapy#1491",
+      "outcome": "skip",
+      "reason": "no_test_patch"
+    },
+    {
+      "event": "native_decision",
+      "time": 1792694006.6317124,
+      "name": "opencobra/cobrapy#1490",
+      "outcome": "skip",
+      "reason": "no_test_patch"
+    },
+    {
+      "event": "native_decision",
+      "time": 1792694007.4554968,
+      "name": "opencobra/cobrapy#1488",
+      "outcome": "skip",
+      "reason": "no_test_patch"
+    }
+  ],
+  "native_skip_reasons": {
+    "no_new_test_funcs": 1,
+    "no_test_patch": 3
+  },
+  "paired_validation_started": 0,
+  "paired_validation_completed": 0,
+  "native_validation_results": [],
+  "native_validation_exceptions": [],
+  "native_sandbox_nonzero": [
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792693656.718313,
+      "pr": null,
+      "execution": 10,
+      "command_sha256": "0fc88054b9cf27a9e06cb362d17b748fa0955b489517fc8cf798b2ee7015bc2d",
+      "exit_code": 124,
+      "duration_sec": 300.10497029199905
+    },
+    {
+      "event": "sandbox_exec_end",
+      "time": 1792693661.3235574,
+      "pr": null,
+      "execution": 11,
+      "command_sha256": "d3a5ea55f871cd85638e4d78430f7a69424a083ff6bac1d1e6c93dd486fbe569",
+      "exit_code": 1,
+      "duration_sec": 4.602999271999579
+    }
+  ],
+  "generation_wrapper_exit_code": 0,
+  "native_cli_window": {
+    "input": "opencobra__cobrapy.json",
+    "command": [
+      "/work/upstream/.venv/bin/python",
+      "/work/observed_cli.py",
+      "--no-ui",
+      "generate",
+      "--config",
+      "/work/inputs/opencobra__cobrapy.json",
+      "--max-spend-usd",
+      "5"
+    ],
+    "started": 1792693146.478288,
+    "state": "completed",
+    "exit_code": 1,
+    "finished": 1792694008.102254
+  },
+  "native_exports": 0,
+  "task_controls": [],
+  "verified_tasks": 0,
+  "control_allocation_rows": [],
+  "task_files_unchanged": {
+    "verified": true,
+    "before": {},
+    "after": {}
+  },
+  "billing": {
+    "model_calls": 11,
+    "actual_cost_usd": "0.332655",
+    "cost_complete": true,
+    "stop_threshold_usd": "5",
+    "final_request_may_overshoot": true,
+    "shared_account_deltas_used": false,
+    "observer_snapshot_cost_usd": "0.332655",
+    "dispatched_calls": 11,
+    "unresolved_calls": []
+  },
+  "allocated_cpu_hours": 1.0273144444444444,
+  "attempts": [
+    {
+      "started_at": "Timestamp(2026-10-22T18:18:12.108000+00:00)",
+      "finished_at": "Timestamp(2026-10-22T18:33:36.691000+00:00)",
+      "allocated_cpu_hours": 1.0273144444444444
+    }
+  ],
+  "artifact_readback_verified": true,
+  "owned_cleanup_verified_empty": true,
+  "infra_error_type": null,
+  "orchestration_state": "SUCCEEDED",
+  "native_status": "completed_zero_exports_after_filtering",
+  "furthest_stage_reached": "native_candidate_filtering",
+  "strict_oracle_command_resolved_tasks": 0,
+  "failure_cause": "All four returned window PRs were entered and filtered before paired validation: three no_test_patch and one no_new_test_funcs (PR1492). The saved bootstrap image was independently flagged because both original 300-second smoke checks timed out, but those timeouts did not cause this zero-export outcome. No API/validation exception, repair or retry.",
+  "environment_reconstruction": "Original bootstrap Dockerfile/rebuild commands/transcript, source ref and owned image/layer IDs retained. Image bytes deleted after controls; no image publication/reconstruction performed. Native package freeze unavailable and dependencies not fully pinned. Bootstrap smoke/fresh verify flags are false.",
+  "archive_receipt": "archives/opencobra__cobrapy-receipt.json"
+}
