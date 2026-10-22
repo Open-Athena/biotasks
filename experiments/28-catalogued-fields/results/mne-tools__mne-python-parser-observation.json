@@ -1,5 +1,5 @@
 {
-  "stage": "live_intermediate_observation_pending_original_terminal_archive",
+  "stage": "terminal_original_archive_readback_verified",
   "repo": "mne-tools/mne-python",
   "pr": 14338,
   "native_reported_result": {
@@ -32,5 +32,86 @@
   "method": "Invoke each exact original parser on the unchanged retained log, status census only. No normalization, adapter, reward computation, test execution, input mutation or native rerun.",
   "finding": "Both pytest paths match plain PASSED/FAILED/SKIPPED tokens without stripping ANSI. Captured MNE progress lines color those tokens. Native zero matches therefore coexist with substantial actual per-test output.",
   "correction": "The ANSI stripping first noticed in the standalone verifier belongs to its Jest parser, not its pytest parser. The actual unmodified-parser comparison returned zero for both pytest implementations.",
-  "limits": "Both stages timed out; logs are partial. No revised F2P/P2P set, verified task, hypothetical yield or successful control is inferred. Full original terminal archival/readback remains pending."
+  "limits": "All six completed native stages timed out at 600 seconds; logs are partial. A fourth pair was deadline-censored before its first stage returned. No revised F2P/P2P set, verified task, hypothetical yield or successful control is inferred. Original terminal archive readback and owned cleanup are verified; public retention is pending.",
+  "original_phase_sha256": "0e3a7aaf61898edf53fa874f4fe7398ec3907495a580bf23b56db494dd37ead6",
+  "terminal_validation_census": [
+    {
+      "file": "native-observations/validation-001-pr-14338.json.gz",
+      "sha256": "5e5e0c7f4df6b06b31ba48a697ef5bd2c48d99bc65829e69992da06f78fcde2c",
+      "pr": 14338,
+      "native_status": "failed",
+      "f2p": 0,
+      "p2p": 0,
+      "logs": {
+        "pre": {
+          "characters": 148585,
+          "has_start_marker": true,
+          "ansi_sequences": 4896,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        },
+        "post": {
+          "characters": 91768,
+          "has_start_marker": true,
+          "ansi_sequences": 2844,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        }
+      }
+    },
+    {
+      "file": "native-observations/validation-002-pr-14323.json.gz",
+      "sha256": "dd386934fdbbe2dd782b8f2663311c2d15aedfc3cc1f4191ad2b0d4b09910482",
+      "pr": 14323,
+      "native_status": "failed",
+      "f2p": 0,
+      "p2p": 0,
+      "logs": {
+        "pre": {
+          "characters": 1798,
+          "has_start_marker": true,
+          "ansi_sequences": 32,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        },
+        "post": {
+          "characters": 1857,
+          "has_start_marker": true,
+          "ansi_sequences": 36,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        }
+      }
+    },
+    {
+      "file": "native-observations/validation-003-pr-14313.json.gz",
+      "sha256": "832b7217c301a2ef45022e3ff7301459919a26e1c91609c4ddcfd3bada72b09c",
+      "pr": 14313,
+      "native_status": "failed",
+      "f2p": 0,
+      "p2p": 0,
+      "logs": {
+        "pre": {
+          "characters": 972,
+          "has_start_marker": true,
+          "ansi_sequences": 4,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        },
+        "post": {
+          "characters": 1427,
+          "has_start_marker": true,
+          "ansi_sequences": 20,
+          "original_native_pytest_statuses": {},
+          "original_export_pytest_statuses": {},
+          "timeout_seconds": 600
+        }
+      }
+    }
+  ]
 }

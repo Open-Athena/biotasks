@@ -1,0 +1,16 @@
+{
+  "stage": "prepared_pending_user_agreement_do_not_execute",
+  "reason": "All 208 healthy reserved v4 workers now advertise clean Iris base c7c14a252d. The original 205558e1a7 gate rejects every worker before receipt creation or OHIF job submission.",
+  "original_submitter": "submit.py",
+  "original_sha256": "cd6280aaeff58b969f41591165e1dcab724df2ace11fe41beaa7744f97110c39",
+  "prepared_submitter": "submit_current_reserved.py",
+  "prepared_sha256": "20062346936c6b2a8dae8e27bdfb06d35234a7f765430829257f2cfb569f5b0d",
+  "only_byte_change": {
+    "from": "base_commit.startswith(\"205558e1a7\")",
+    "to": "base_commit.startswith(\"c7c14a252d\")"
+  },
+  "affected_repo": "OHIF/Viewers",
+  "unchanged": "Original submit.py/campaign.py, official Repo2RLEnv source, every remote payload/config SHA, model/turn/token/budget settings, controls, resource/headroom caps, existing-capacity constraint, no retries, cohort/ref/window, credentials and owned cleanup.",
+  "compatibility_check": "Original supervisor checks read-only Docker info for MemoryLimit/CpuCfsQuota/CpuCfsPeriod before starting the model/native pipeline. Original installation reports Docker/Compose/CLI versions and validates configs. No separate probe job or new capacity.",
+  "after_approval": "Record explicit agreement, push the exact prepared helper, submit the original OHIF runID once using this helper with no pre-existing receipt/handle, then use the unchanged foreground campaign watcher to observe/harvest that existing handle. Preserve per-run worker base/source hashes in an additional private receipt and Git-safe provenance."
+}
