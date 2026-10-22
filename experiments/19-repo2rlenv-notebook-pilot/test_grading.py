@@ -240,7 +240,14 @@ def test_restored_reference_selection_and_config(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize(
-    "kind,expected", [("reference", True), ("empty", False), ("missing", False), ("probe", False)]
+    "kind,expected",
+    [
+        ("reference", True),
+        ("empty", False),
+        ("missing", False),
+        ("misplaced", False),
+        ("probe", False),
+    ],
 )
 def test_remote_case_runs_real_synthetic_grader_without_changing_oracle(
     tmp_path, monkeypatch, capsys, kind, expected
@@ -278,6 +285,8 @@ def test_remote_case_runs_real_synthetic_grader_without_changing_oracle(
     assert record["status"] == "executed" and record["report"]["passed"] is expected
     assert remote.hashes(oracle) == expected_hashes
     assert users[-1] == remote.GRADER
+    if kind == "misplaced":
+        assert record["submission_before"] == {"outputs/value.txt": expected_hashes["value.txt"]}
     if kind == "probe":
         assert users[0] == remote.PROBE and record["probe_valid_execution"]
 
@@ -285,6 +294,69 @@ def test_remote_case_runs_real_synthetic_grader_without_changing_oracle(
 def test_probe_blocker_is_representable():
     result = Probes(disposition="blocked", probes=[], concerns=["No valid contract interpretation"])
     assert result.disposition == "blocked"
+
+
+def test_misplaced_control_exposes_an_output_root_fallback(tmp_path, monkeypatch):
+    """Correct values in a second outputs/ layer are still at undeclared paths."""
+    import grading_remote as remote
+    from grading_session import GradingSession
+
+    private = tmp_path / "private"
+    (private / "oracle").mkdir(parents=True)
+    (private / "oracle/value.txt").write_text("right")
+    monkeypatch.setattr(remote, "PRIVATE", private)
+    monkeypatch.setattr(remote, "CASE", tmp_path / "case")
+    remote.prepare("misplaced")
+    # A plausible but incorrect grader searches another outputs/ directory.
+    code = CODE.replace(
+        "Path(a.submission_dir)/'value.txt'",
+        "next(p for p in (Path(a.submission_dir)/'value.txt', "
+        "Path(a.submission_dir)/'outputs/value.txt') if p.is_file())",
+    )
+    program, report = tmp_path / "grade.py", tmp_path / "report.json"
+    program.write_text(code)
+    process = subprocess.run(
+        [
+            sys.executable,
+            str(program),
+            "--reference-dir",
+            str(remote.CASE / "reference"),
+            "--submission-dir",
+            str(remote.CASE / "submission"),
+            "--report",
+            str(report),
+        ],
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    observed = parse_report(json.loads(report.read_text()), candidate())
+    assert observed["passed"] is True  # The executable counterexample succeeds.
+
+    class Transport:
+        async def upload(self, *args):
+            pass
+
+    session = GradingSession(
+        remote=Transport(),
+        snapshot={"outputs": [{"path": "value.txt"}]},
+        root=tmp_path / "session",
+        config={"verifier_seconds": 10},
+    )
+    session.last_candidate = tmp_path / "candidate"
+    session.last_candidate.mkdir()
+    (session.last_candidate / "candidate.json").write_text(json.dumps(candidate().model_dump()))
+
+    async def executed(*args):
+        return {
+            "status": "executed",
+            "grader": {"exit_code": process.returncode},
+            "report": observed,
+        }
+
+    session.helper = executed
+    control = asyncio.run(session.case(candidate(), kind="misplaced"))
+    assert control["passed_control"] is False
 
 
 @pytest.mark.parametrize("mode", ["probe-check", "case"])
@@ -495,6 +567,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         name = kwargs["name"]
         inputs = kwargs["context"]
         calls.append(name)
+        if name != "independent":
+            assert inputs["artifact_interface"] == module.artifact_interface(["value.txt"])
         if derived and name not in {"independent", "probes"}:
             assert inputs["specification"] == {"task_brief": "Scientific question"}
             assert "operator_handoff" not in inputs

@@ -88,7 +88,10 @@ def package(
     if (grading / "instruction.md").read_text() != expected_instruction:
         raise ValueError("Public instructions differ from the validated composition")
     kinds = {c["kind"] for c in controls}
-    if not {"reference", "recomputed", "alternative", "empty", "missing", "probe"} <= kinds:
+    if (
+        not {"reference", "recomputed", "alternative", "empty", "misplaced", "missing", "probe"}
+        <= kinds
+    ):
         raise ValueError("Missing native-content or independent comparison controls")
     packages = sorted(
         set(json.loads((environment / "candidate/system-packages.json").read_text())) | {"tmux"}

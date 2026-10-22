@@ -9,6 +9,27 @@ from reference_protocol import StrictModel
 from repo2rlenv.quality.loop.models import SemanticProbe
 
 
+def artifact_interface(output_paths):
+    """Describe the controller's directory arguments, independently of a task's prose."""
+    return {
+        "output_paths": list(output_paths),
+        "path_rule": (
+            "Each declared output path is relative to the supplied output root. "
+            "The grader reads reference_dir / path and submission_dir / path. "
+            "Directory argument names are opaque: do not append their basename "
+            "or another outputs/ component unless it is part of the declared path."
+        ),
+        "grader_root_arguments": ["--reference-dir", "--submission-dir"],
+        "solution_output_root_argument": "--output-dir",
+        "native_output_root": "/workspace/outputs",
+        "native_grader_submission_dir": "/workspace/outputs",
+        "control_evidence": (
+            "submission_before and submission_sha256 keys are relative to the "
+            "actual supplied submission root; use those records to establish placement."
+        ),
+    }
+
+
 class Check(StrictModel):
     id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
     kind: Literal["structural", "scientific"]

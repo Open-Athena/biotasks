@@ -1,0 +1,34 @@
+{
+  "observed_at": "2026-10-22T03:47:49.033997+00:00",
+  "classification": "generated_grader_public_directory_contract_conflict",
+  "scientific_source_execution_succeeded": true,
+  "pipeline_rejection": "grader_requires_further_work",
+  "final_controls": 18,
+  "all_final_controls_passed": true,
+  "final_control_kinds": {
+    "reference": 1,
+    "empty": 1,
+    "recomputed": 1,
+    "alternative": 1,
+    "missing": 2,
+    "probe": 12
+  },
+  "final_probe_kinds": {
+    "wrong_solution": 9,
+    "valid_alternative": 3
+  },
+  "final_review_decision": "revise",
+  "final_review_sha256": "8aace7025d4224a2dd3c3b907bd7ced08eddde5be64302eeedc05e4a7d87edbe",
+  "final_candidate_sha256": "2ddca1abe17cd96e85060d52c328aa24ccf1a760f659c570dc9bf7fc4ae0e393",
+  "final_controls_sha256": "7fab7215ceff2d686c5197f7c40ba47fb0b589568bb59f85022928a3808899b8",
+  "executed_submission_relative_paths": [
+    "modified_cosine_similarity.npz",
+    "modified_cosine_spectrum_axes.csv"
+  ],
+  "diagnosis": "The grader code searches the supplied root and a second outputs/ layer, while its repaired public text insists on that extra layer. The reviewer also incorrectly says all executed controls used outputs/: the recorded relative paths show they were at the supplied root. The controller and native wrapper both already pass the output root. This is a generated public-text/code mismatch and a factory interface-context gap, not evidence of broken source science.",
+  "additional_review_finding": "An accidental assignment to a NumPy module attribute is reported in the final review; no altered scientific result was demonstrated for that assignment.",
+  "native_solver_attempted": false,
+  "scientific_assets_changed": false,
+  "parent_archive_terminal_verified": false,
+  "remaining_evidence": "Host/archive completion, independent archive readback and fresh provider absence must be reconciled before reusing the slot."
+}

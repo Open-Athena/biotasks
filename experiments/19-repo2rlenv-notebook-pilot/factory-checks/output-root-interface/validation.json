@@ -1,0 +1,49 @@
+{
+  "observed_at": "2026-10-22T03:47:49.034565+00:00",
+  "scope": "Next-version explicit root-relative interface plus a deterministic misplaced-file control. Not deployed in the current frozen cohort.",
+  "focused_checks_passed": 102,
+  "pytest_seconds": 3.47,
+  "process_wall_seconds": 4.17,
+  "peak_rss_kib": 135392,
+  "exit_status": 0,
+  "ruff_lint_format_passed": true,
+  "tests": [
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading_resume.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_preflight.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_scientific_bundle.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_review_source_coverage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_probe_evidence.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_metadata.py"
+  ],
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py": "218163c0d74a07ef09af8044a4c62a51b408b27e0e10c2caac98bfde99376b6e",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_remote.py": "eeb18f6a34b1c28e1f6b0000cd6cc4fa95540d8b1d7d3606d21b247bd4944d9a",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "1a4f6b3b9fb5de661a9ef6d5f0260dcbf14d0a4a269acc1bf4a7c15e4f44ad88",
+    "experiments/19-repo2rlenv-notebook-pilot/scientific_bundle.py": "6f65e17419d26dab81282e785fdf95f1874795c2b7beff5096c4ac23d43ad8e1",
+    "experiments/19-repo2rlenv-notebook-pilot/check_scientific_release.py": "f8b553d39b5c8b32de44ea30c2e3aa1f63f621a9cae83b94e1e193b4ec6a7e8d",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "439b5178d194f3ccc8f4f9cf3b77e16e4e2160ed9ebd3ae011124867da57e4c6",
+    "experiments/19-repo2rlenv-notebook-pilot/test_scientific_bundle.py": "9977004a6888367cdef6671aa4588c43bbb430d7a117fd257733ae438794a685",
+    "src/biotasks/prompts/notebook-grader-author.md": "12cc00842c4527dc41bc6addadf0a5c6bceddc858cd3c492bda50397a811a616",
+    "src/biotasks/prompts/notebook-grader-probes.md": "4cde50f4577a9e185480b29a419a519beb7e9eff83bd035204a183580c1ca15a",
+    "src/biotasks/prompts/notebook-grader-review.md": "b6bbc3a6a22c80ce8bfdaf221d891a02f20344956e7cfb944f59678e3c22b7ac"
+  },
+  "regression_evidence": [
+    "The actual remote-case helper rejects correct synthetic values beneath an additional outputs/ directory and retains original references.",
+    "A real synthetic grader with a root/outputs fallback accepts the misplaced values; the controller correctly records that as a failed misplaced control.",
+    "Author, independent-probe and review/repair contexts receive the same explicit path interface, while existing private-answer isolation tests pass."
+  ],
+  "live_case_observation": "../../autonomous-runs/039/validation-observation.json",
+  "live_new_control_on_real_candidate_executed": false,
+  "new_full_pipeline_run": false,
+  "model_calls": 0,
+  "cloud_allocations": 0,
+  "scientific_methods_or_tolerances_changed": false,
+  "frozen_cohort_runtime_revision": "0a9bb4e1f7dcaa9b94ad2495b33c3503ad3b9b85",
+  "limitations": [
+    "Synthetic implementation checks, not a native real-task result or proof of improved worker judgment.",
+    "The original Matchms candidate and its rejection remain unchanged.",
+    "Selections overlap earlier tests and counts must not be added."
+  ]
+}

@@ -136,6 +136,13 @@ python grade.py --reference-dir PATH --submission-dir PATH --report PATH
 ```
 
 Reference and submission directories contain only the declared endpoint files.
+The supplied `artifact_interface` defines path resolution. Each output path is
+relative to each directory argument: read `reference_dir / path` and
+`submission_dir / path`. The submission argument already names the output root;
+in Harbor it is `/workspace/outputs`, not `/workspace`. A public instruction to
+write under `outputs/` does not add another `outputs/` below that root. Do not
+search fallback directories. The controller also tests correct values moved
+under an extra `outputs/` layer; those files are at the wrong declared paths.
 Read reference values dynamically; do not embed answer arrays, expected dimensions,
 cluster counts or result hashes. Never import or execute submission code. Treat
 missing, malformed, duplicate, out-of-range and nonfinite data as failed checks,

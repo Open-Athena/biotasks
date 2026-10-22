@@ -40,8 +40,11 @@ cannot be tested, report the evidence gap; do not treat a known limitation in th
 contract as proof that arbitrary additions are scientifically valid.
 
 The controller starts each probe from a fresh copy of the reference outputs at
-`/case/submission`. Your script is Python, executed offline in that directory
-with the pinned environment. Modify only these copied output files. Do not touch
+`/case/submission`. Your script is Python, executed offline with the pinned
+environment in that directory, which is already the output root. Resolve the declared relative output paths
+directly there, as described by `artifact_interface`; do not prepend `outputs/`.
+The controller separately tests an extra output-directory layer.
+Modify only these copied output files. Do not touch
 grading assets or expected references, inspect other processes, invoke another
 interpreter, or create background processes. No original biological inputs or
 scientific rerun are needed here. A probe must exit 0 and change at least one

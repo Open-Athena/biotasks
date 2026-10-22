@@ -35,6 +35,14 @@ matches executable checks, numerical comparisons have a defensible
 precision/serialization basis, identities and cross-file relations are correct,
 and meaningful wrong outputs fail without relying on crashes or malformed files.
 Check missing values, duplicates, nonfinite values and tolerance boundaries.
+Use the host-supplied `artifact_interface` for directory semantics. The grader's
+submission argument already names the output root; a declared path is resolved
+directly beneath it. In Harbor that root is `/workspace/outputs`. Do not confuse
+the solver's `outputs/` directory with an additional layer inside the grader's
+argument. Check actual placement from the relative keys in the executed
+submission hash records, rather than repeating a candidate's claim about where
+its controls ran. Flag conflicting public wording and fallback path searches;
+correcting that wording must preserve the controller interface.
 Look for answer leakage, hardcoded result shapes/values, control-name detection,
 probe flaws, untested equivalences, and shortcuts that merely satisfy this suite.
 

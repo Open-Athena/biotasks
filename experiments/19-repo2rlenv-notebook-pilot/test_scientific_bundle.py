@@ -63,7 +63,15 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monk
     digest = hashlib.sha256((grading / "final-candidate.json").read_bytes()).hexdigest()
     controls = [
         dict(kind=kind, passed_control=True, candidate_sha256=digest)
-        for kind in ("reference", "recomputed", "alternative", "empty", "missing", "probe")
+        for kind in (
+            "reference",
+            "recomputed",
+            "alternative",
+            "empty",
+            "misplaced",
+            "missing",
+            "probe",
+        )
     ]
     save(grading / "final-controls.json", controls)
     (grading / "instruction.md").write_text(

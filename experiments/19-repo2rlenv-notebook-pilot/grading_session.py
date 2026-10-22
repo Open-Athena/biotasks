@@ -16,6 +16,7 @@ from grading_protocol import (
     Review,
     apply_contract_text,
     apply_probe_expectations,
+    artifact_interface,
     check_coverage,
     check_probes,
     check_review_source_coverage,
@@ -358,6 +359,7 @@ class GradingSession:
         controls = [
             await self.case(candidate, kind="reference"),
             await self.case(candidate, kind="empty"),
+            await self.case(candidate, kind="misplaced"),
         ]
         if "materialization" in self.snapshot:
             controls.append(await self.case(candidate, kind="recomputed"))
@@ -440,6 +442,7 @@ async def run_grading(
             (HERE / config.get("policy_file", "specification-reference-policy.json")).read_text()
         ),
         "paths": {"reference_outputs": "/work/reference", "working_directory": "/work/author"},
+        "artifact_interface": artifact_interface(session.paths),
         "verifier_seconds": config["verifier_seconds"],
         "reference_seconds": config["reference_seconds"],
     }
@@ -798,6 +801,7 @@ async def run_grading(
             return await session.shell(command, timeout_sec, role="probe")
 
         probe_context = {
+            "artifact_interface": context["artifact_interface"],
             "public_instruction": context["specification"]["task_brief"].rstrip()
             + "\n\n## Acceptance rules\n\n"
             + candidate.instruction,

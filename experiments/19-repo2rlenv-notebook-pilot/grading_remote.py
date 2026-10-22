@@ -106,6 +106,11 @@ def prepare(kind, omitted=None):
     (CASE / "reference").chmod(0o755)
     if kind == "empty":
         (CASE / "submission").mkdir()
+    elif kind == "misplaced":
+        # The submission argument already names the output root. Valid values
+        # beneath an extra outputs/ layer must not satisfy the declared paths.
+        (CASE / "submission").mkdir()
+        shutil.copytree(PRIVATE / "oracle", CASE / "submission/outputs")
     else:
         origin = (
             "recomputed"

@@ -73,7 +73,7 @@ check_review_source_coverage(review)
 assert review.decision == "accept_for_packaging" and not review.issues
 assert controls and all(c["passed_control"] for c in controls)
 assert all(c["candidate_sha256"] == digest(grading / "final-candidate.json") for c in controls)
-assert {"reference", "recomputed", "alternative", "empty", "missing", "probe"} <= {
+assert {"reference", "recomputed", "alternative", "empty", "misplaced", "missing", "probe"} <= {
     c["kind"] for c in controls
 }
 assert (task / "tests/grade.py").read_text() == candidate["grader_code"] + "\n"
