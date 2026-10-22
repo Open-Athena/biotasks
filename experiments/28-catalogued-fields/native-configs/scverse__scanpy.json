@@ -1,0 +1,37 @@
+{
+  "repo": {
+    "url": "https://github.com/scverse/scanpy",
+    "ref": "903925920218f829f3cad4f9f4730c086267ee53",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 100,
+      "since": "2026-09-01",
+      "until": "2026-09-30"
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "/work/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/scverse__scanpy",
+    "org": "open-athena",
+    "dataset_name": "biotasks28-catalogued-fields",
+    "visibility": "private"
+  }
+}

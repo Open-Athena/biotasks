@@ -1,0 +1,21 @@
+# Catalogued-field Repo2RLEnv experiment
+
+## 2026-10-22 — checkpoint before execution
+
+Started from main `2a1950d239f1ada467c35393991dac87debe35f7` on permanent research branch `codex/research/28-catalogued-fields`. The ten-repository selection, scientific-field vocabulary and existing annotations come from the previously approved selection, retained in `selection.json`. No repositories will be replaced after seeing outcomes.
+
+The independent September inventory contains 436 merged PRs. Native newest-300 overfetch can currently reach only 311 before base-SHA lookup and runtime eligibility filters: OpenMS loses 120 window PRs and MNE loses five. Preserve complete-window and newest-300 snapshots independently; the native run still performs its own unchanged discovery. Candidate metadata snapshots are not processing or validation evidence.
+
+The pinned upstream source, controller/tool versions, repository refs and exact native configs are recorded alongside this log. Fresh bootstrap caches, Sonnet 4.6 via OpenRouter, no fallback, 20 bootstrap iterations/1800 seconds, native temperature 0.2/2048 output tokens and native $5 estimated threshold match the previous experiment. No added model calls or repairs are permitted. No source/parser/task files are edited.
+
+The user approved using the shared key serially with a $5 actual per-repository stop threshold; a final request may overshoot. Controller-side observations record unchanged completion arguments/response IDs/usage and actual charges. Read-only per-generation billing retrieval resolves missing response cost. Unknown dispatched cost prevents additional calls and campaign continuation. Whole-key snapshots are context only. Known cumulative actual cost reaching $50 stops further repository submissions.
+
+The primary allocation is ten serial four-CPU jobs, at most 150 minutes each, within 100 reserved CPU-hours. Each job gives setup/native generation up to 84 minutes, independent controls their own hour, and archival/cleanup five minutes plus one minute margin. Native nonzero/deadline exits do not discard earlier exports. Harbor 0.6.6 nop/oracle controls preserve original task bytes, 300-second verifier limits, one CPU/six GiB and native one-time verifier-timeout retry. Trial retries are disabled. Controls left unstarted or interrupted by the allocation are recorded explicitly. No longer-timeout diagnostic is authorized here.
+
+Infrastructure adaptations reuse the prior approved native Docker resource/network/ownership wrapper and Harbor Compose image/resource/network overlay. The controller orchestrator now separates phase deadlines and retains native command, candidate, validation and filter observations. The observer forwards each upstream completion exactly once and returns the same object; it only gates future calls at the approved spending boundary. Native and independent images are inspected before owned cleanup. Generated Dockerfiles, bootstrap artifacts, raw commands and image IDs provide reconstruction provenance; exact image bytes are not retained or claimed portable. No model-directed setup is added outside upstream's own agent.
+
+Only existing healthy, clean reserved TRC workers are eligible. No accelerators, new capacity, provider credential mutation, registry/dataset publication, independent solver run, optional repair, or main-branch promotion is included.
+
+Private local submission/result receipts use `/tmp/biotasks28-private-state`; retain these until the reviewed public evidence snapshot and fresh anonymous readback are verified, then delete redundant archives/extractions and record the cleanup. Never upload the shared key, GitHub credential, runtime environments, unrestricted work directories or unreviewed data. Original task bytes and original observations remain distinct from derived summaries.
+
+The bounded fixtures exercise unchanged model arguments/response identity, original exception propagation, threshold/unknown-cost stopping, metadata retrieval without an extra model call, exact secret redaction, unchanged Dockerfile/egress/resource plumbing and owned-only cleanup. They do not establish live upstream or Docker execution success.

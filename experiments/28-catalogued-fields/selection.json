@@ -1,0 +1,351 @@
+{
+  "status": "local proposal; no runs authorized by this draft",
+  "observed_on": "2026-10-22",
+  "window": {
+    "since": "2026-09-01",
+    "until": "2026-09-30"
+  },
+  "catalog_issue": "https://github.com/Open-Athena/biotasks/issues/5",
+  "catalog_snapshot": "09e375e2dd5a2d1e055ef2e78efe778f636b9311",
+  "catalog_path": "experiments/5-classification-pilot/full-inventory/explorer-data.json",
+  "vocabulary_path": "experiments/5-classification-pilot/full-inventory/vocabulary.json",
+  "historical_popularity_screen_snapshot": "4d1efa0593f40be515b0428fa30be783a54407e9",
+  "historical_popularity_screen_path": "experiments/5-source-discovery/runs/2026-09-30-top300/source-observations.json",
+  "selection": "Reuse repository-level scientific fields and annotation states; screen popular software within fields using saved ranking metadata, then refresh stars and fixed-window merged PR counts. Purposive shortlist, not an exhaustive live ranking. Coverage slots do not replace existing overlapping labels.",
+  "caveats": [
+    "All selected catalog field labels are provisional README rules, not independent adjudication or per-PR biology classification.",
+    "Stars are a popularity proxy. Merged PR counts precede upstream filtering; search counts are not a fully paginated native pipeline denominator.",
+    "Test-runner compatibility and native overfetch/window coverage remain to be checked, particularly OpenMS with 217 window merges and the native limit of 100.",
+    "No model calls, builds, native PR validation, exports or GitHub publication were performed for this shortlist.",
+    "Execution settings, real model-cost logging, compute/spending ceilings and timeout-diagnostic policy are not frozen by this draft."
+  ],
+  "selected": [
+    {
+      "coverage_slot": "genomics-genetics",
+      "field_label": "Genomics and genetics",
+      "repo": "samtools/samtools",
+      "stars": 1969,
+      "merged_pr_count": 8,
+      "catalog_repository": "samtools/samtools",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "genomics-genetics"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/samtools/samtools/ae87484212b3e3db7ea279995fd231f5c5b4a0cc/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "genomics-genetics",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:57",
+            "match": "variant call",
+            "snippet": "rmat conversion and manipulation, sorting, querying, statistics, variant calling, and effect analysis amongst other methods.The first version appeared online 12 years ago and ha",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "transcriptomics",
+      "field_label": "Transcriptomics",
+      "repo": "scverse/scanpy",
+      "stars": 2592,
+      "merged_pr_count": 24,
+      "catalog_repository": "scverse/scanpy",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "transcriptomics"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/scverse/scanpy/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "transcriptomics",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:14",
+            "match": "gene expression",
+            "snippet": "in Python Scanpy is a scalable toolkit for analyzing single-cell gene expression data built jointly with [anndata][]. It includes preprocessing, visualization, clustering, trajecto",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:15",
+            "match": "differential expression",
+            "snippet": "eprocessing, visualization, clustering, trajectory inference and differential expression testing. The Python-based implementation efficiently deals with datasets of more than one million c",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "epigenomics",
+      "field_label": "Epigenomics",
+      "repo": "macs3-project/MACS",
+      "stars": 788,
+      "merged_pr_count": 9,
+      "catalog_repository": "macs3-project/macs",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "genomics-genetics",
+        "epigenomics"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/macs3-project/macs/c5443190e3edfeb301cc94acf450e2b2c026a223/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "epigenomics",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:1",
+            "match": "ChIP-Seq",
+            "snippet": "# MACS: Model-based Analysis for ChIP-Seq ![Status](https://img.shields.io/pypi/status/macs3.svg) ![License](https://img.shields.io/github/li",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:17",
+            "match": "chromatin",
+            "snippet": ") ## Introduction With the improvement of sequencing techniques, chromatin immunoprecipitation followed by high throughput sequencing (ChIP-Seq) is getting popular to study g",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "proteomics",
+      "field_label": "Proteomics",
+      "repo": "OpenMS/OpenMS",
+      "stars": 628,
+      "merged_pr_count": 217,
+      "catalog_repository": "openms/openms",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "proteomics",
+        "metabolomics"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/openms/openms/55f7bdb0ccabd3f1ef9c9aa04bb66ada6e2067a0/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "proteomics",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:20",
+            "match": "proteomic",
+            "snippet": "omes with a vast variety of pre-built and ready-to-use tools for proteomics and metabolomics data analysis (TOPPTools) as well as powerful 1D, 2D and 3D visualization (TOPPVi",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:34",
+            "match": "Proteomic",
+            "snippet": "S API to enable rapid algorithm development. OpenMS supports the Proteomics Standard Initiative (PSI) formats for MS data. The main contributors of OpenMS are currently the E",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "structural-biology",
+      "field_label": "Structural biology",
+      "repo": "lammps/lammps",
+      "stars": 3105,
+      "merged_pr_count": 34,
+      "catalog_repository": "lammps/lammps",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "structural-biology"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/lammps/lammps/b332f28ce4f4e770c9636d3f6ec323b616f0c42e/README",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "structural-biology",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:13",
+            "match": "molecular dynamics",
+            "snippet": "------------------------------------------ LAMMPS is a classical molecular dynamics simulation code designed to run efficiently on parallel computers.  It was developed at Sandia Nati",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "metabolomics",
+      "field_label": "Metabolomics",
+      "repo": "matchms/matchms",
+      "stars": 276,
+      "merged_pr_count": 11,
+      "catalog_repository": "matchms/matchms",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "metabolomics"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/matchms/matchms/e7d98368b06b689a2a935e4614d1b8d83c269d7f/README.rst",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "metabolomics",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:40",
+            "match": "metabolomi",
+            "snippet": "ge of popular spectral data formats, including mzML, mzXML, msp, metabolomics-USI, MGF, and JSON. Matchms offers an array of tools for metadata cleaning and validation, alongs",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:162",
+            "match": "metabolomi",
+            "snippet": "`_ a method allowing a Retention Time (RT) agnostic alignment of metabolomics samples using the fragmentation spectra (MS2) of their constituents. + `RIAssigner <https://githu",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "systems-biology",
+      "field_label": "Systems biology",
+      "repo": "opencobra/cobrapy",
+      "stars": 589,
+      "merged_pr_count": 4,
+      "catalog_repository": "opencobra/cobrapy",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "systems-biology"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/opencobra/cobrapy/6f83a534569557f6a10bfdf6909522016985e47f/README.rst",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "systems-biology",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:48",
+            "match": "metabolic network",
+            "snippet": "===== COBRA methods are widely used for genome-scale modeling of metabolic networks in both prokaryotes and eukaryotes. **COBRApy** is a constraint-based modeling package that is des",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:52",
+            "match": "flux balance",
+            "snippet": "dels and provides access to commonly used COBRA methods, such as flux balance analysis, flux variability analysis, and gene deletion analyses. Our aim with COBRApy is to provide",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "microbiome",
+      "field_label": "Microbiome science",
+      "repo": "soedinglab/MMseqs2",
+      "stars": 2156,
+      "merged_pr_count": 9,
+      "catalog_repository": "soedinglab/mmseqs2",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "genomics-genetics",
+        "microbiome"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/soedinglab/mmseqs2/3b6aa9c87b347a1f49863d43b0fba2e80a169f4b/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "microbiome",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:12",
+            "match": "metagenom",
+            "snippet": "ding J, Levy Karin E: Fast and sensitive taxonomic assignment to metagenomic contigs. Bioinformatics, doi: 10.1093/bioinformatics/btab184 (2021)](https://doi.org/10.1093/bioi",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "neuroscience",
+      "field_label": "Neuroscience",
+      "repo": "mne-tools/mne-python",
+      "stars": 3559,
+      "merged_pr_count": 82,
+      "catalog_repository": "mne-tools/mne-python",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "neuroscience",
+        "physiology"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/mne-tools/mne-python/b112d10c12405ab7a378b6f2fe9824feb34530bd/README.rst",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "neuroscience",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:9",
+            "match": "MEG",
+            "snippet": "visualizing, and analyzing human neurophysiological data such as MEG, EEG, sEEG, ECoG, and more. It includes modules for data input/output, preprocessing, visualization",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:10",
+            "match": "ECoG",
+            "snippet": " analyzing human neurophysiological data such as MEG, EEG, sEEG, ECoG, and more. It includes modules for data input/output, preprocessing, visualization, source estimati",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    },
+    {
+      "coverage_slot": "bioimage-analysis",
+      "field_label": "Bioimage analysis",
+      "repo": "OHIF/Viewers",
+      "stars": 4385,
+      "merged_pr_count": 38,
+      "catalog_repository": "ohif/viewers",
+      "catalog_review": "rule_assigned_readme_scope",
+      "catalog_field_labels": [
+        "bioimage-analysis"
+      ],
+      "catalog_scope_source": "https://raw.githubusercontent.com/ohif/viewers/9ba15ec7947c39da4173765dab5705f9c5e13e9f/README.md",
+      "selection_field_evidence": {
+        "facet": "scientific_field",
+        "term": "bioimage-analysis",
+        "status": "rule_assigned",
+        "evidence": [
+          {
+            "locator": "line:3",
+            "match": "Medical Imag",
+            "snippet": "<!-- prettier-ignore-start --> <div align=\"center\">   <h1>OHIF Medical Imaging Viewer</h1>   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer provi",
+            "source_kind": "narrative"
+          },
+          {
+            "locator": "line:4",
+            "match": "medical imag",
+            "snippet": "r</h1>   <p><strong>The OHIF Viewer</strong> is a zero-footprint medical image viewer provided by the <a href=\"https://ohif.org/\">Open Health Imaging Foundation (OHIF)</a>. It i",
+            "source_kind": "narrative"
+          }
+        ],
+        "method": "source_narrative_pattern",
+        "review": "not_individually_adjudicated"
+      }
+    }
+  ],
+  "selected_pr_total": 436
+}
