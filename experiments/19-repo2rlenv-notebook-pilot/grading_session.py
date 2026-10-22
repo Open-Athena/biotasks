@@ -863,6 +863,8 @@ async def run_grading(
         for probe in probes.probes:
             session.last_controls.append(await session.case(candidate, kind="probe", probe=probe))
 
+        author_input_control_summary = None
+
         async def review(name):
             async def validate_review(value):
                 check_review_source_coverage(value)
@@ -884,6 +886,7 @@ async def run_grading(
                     "initial_probes": initial_probes.model_dump(),
                     "controls": session.last_controls,
                     "control_summary": control_summary(session.last_controls),
+                    "author_input_control_summary": author_input_control_summary,
                 },
                 validate_review,
             )
@@ -900,6 +903,7 @@ async def run_grading(
                     session.frozen_probes = corrected_probes
                 await session.validate_candidate(corrected)
 
+            author_input_control_summary = control_summary(session.last_controls)
             repair_submission = await call(
                 GraderRepairSubmission,
                 "repair",
@@ -910,7 +914,7 @@ async def run_grading(
                     "review": assessment.model_dump(),
                     "frozen_probes": probes.model_dump(),
                     "controls": session.last_controls,
-                    "control_summary": control_summary(session.last_controls),
+                    "control_summary": author_input_control_summary,
                 },
                 validate_repair,
                 session.candidate_first_shell(),

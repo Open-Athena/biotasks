@@ -563,6 +563,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
     monkeypatch.setattr(module, "GradingSession", Session)
 
+    repair_input_summaries = []
+
     async def fake_stage(**kwargs):
         name = kwargs["name"]
         inputs = kwargs["context"]
@@ -619,6 +621,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             }
             assert inputs["initial_probes"] == suite.model_dump()
             if name == "review-repair":
+                assert inputs["author_input_control_summary"] == repair_input_summaries[-1]
+                assert inputs["author_input_control_summary"] != inputs["control_summary"]
                 assert inputs["probes"]["concerns"] == ["Updated synthetic concern"]
                 assert inputs["initial_probes"]["concerns"] == suite.concerns
                 assert (
@@ -653,6 +657,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         else:
             if name == "repair":
                 assert inputs["control_summary"] == module.control_summary(inputs["controls"])
+                repair_input_summaries.append(json.loads(json.dumps(inputs["control_summary"])))
             if name == "grader" and resume == "draft":
                 assert kwargs["shell"] is None
                 assert "private-grader-observations" in json.dumps(inputs["prior_worker_draft"])

@@ -3508,3 +3508,10 @@ All 22 final control outcomes met expectations; 66 is the cumulative execution c
 The remaining source-specific fixture-handling policy question is still pending. The separate potential serialization false negative from 044 remains unisolated. Neither run is a release, and the future generic serialization prompts have only a resource-loading smoke check so far.
 
 The 045 read-only archive host is confirmed KILLED after cancellation. Both parent campaign hosts are terminal, all eleven exact campaign/native ownership queries across 044/045 are empty, and no reader/model worker or task sandbox from this pair remains active. The fixture policy question remains pending; no cleanup policy or publication was assumed.
+
+
+### 2026-10-22 — provide author-input evidence versions to final review
+
+The reviewer now receives `author_input_control_summary` separately from the freshly executed `control_summary`. The controller captures the earlier summary before the quality-repair author is invoked and carries it unchanged to final review, where controls may have different outcomes. The canonical prompt explains that explicitly labeled supplied history refers to the earlier summary and cannot be required to predict validation after the last submission. Later tool feedback is not included in this field; absence is unknown, not proof that no controls were observed.
+
+100 focused checks pass (3.20s; peak RSS 134,344 KiB), with Ruff. Workflow regression checks preserve the input summary while requiring it to differ from the fresh summary in the fixture. The actual acceptance predicate AST is byte-identical in its normalized representation before/after this edit, and the installed canonical reviewer prompt loads exactly outside the checkout. These are offline checks, not a new GLM decision or a waiver of scientific/source/probe requirements. Existing 044/045 artifacts, reviews and rewards remain unchanged; fixture policy and the serialization hypothesis remain unresolved. Details are in `factory-checks/review-evidence-versions/validation.json`.

@@ -105,3 +105,16 @@ publicly disclosed. A stable candidate hash does not excuse misleading wording:
 a new corrected version can be validated while the original evidence stays
 preserved. Keep instance-specific evidence distinct from general implementation
 claims, and report unresolved public-contract mismatches as actionable issues.
+
+## Evidence versions
+
+`control_summary` and `controls` describe the freshly executed candidate.
+`author_input_control_summary`, when present, records the earlier summary supplied
+to the repair author before its submissions were validated. A rationale explicitly
+quoting that supplied history should be checked against the earlier summary, not
+misattributed to the later results. Do not require an author to predict execution
+that occurs after its final submission. This field does not include later tool
+feedback; a missing value means no explicit summary is supplied here, not proof
+that the author observed no controls. Current executed records remain authoritative.
+False scientific claims, invalid probes, failed required outcomes and unresolved
+coverage remain blockers; this distinction does not waive any acceptance gate.
