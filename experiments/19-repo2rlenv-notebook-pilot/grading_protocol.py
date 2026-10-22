@@ -147,17 +147,29 @@ class GraderRepairSubmission(StrictModel):
     """Only fields the repair worker may author; checks stay controller-owned."""
 
     disposition: Literal["ready", "blocked"]
-    instruction: str
-    grader_code: str
+    instruction: str | None = Field(
+        default=None,
+        description="Null preserves the exact prior acceptance addendum; otherwise return its complete replacement.",
+    )
+    grader_code: str | None = Field(
+        default=None,
+        description="Null preserves the exact prior grader program; otherwise return its complete replacement.",
+    )
     rationale: str = Field(min_length=1)
     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
     probe_concerns: list[str] | None = None
 
 
-def bind_repair_checks(submission, frozen_checks):
-    """Create the archival repair artifact with the exact original check inventory."""
+def bind_repair_checks(submission, frozen_checks, *, prior_candidate=None):
+    """Resolve explicitly retained fields and preserve the original check inventory."""
+    fields = submission.model_dump()
+    for name in ("instruction", "grader_code"):
+        if fields[name] is None:
+            if prior_candidate is None:
+                raise ValueError("Retained repair fields require the exact prior candidate")
+            fields[name] = getattr(prior_candidate, name)
     return GraderRepair.model_validate(
-        {**submission.model_dump(), "checks": [check.model_dump() for check in frozen_checks]}
+        {**fields, "checks": [check.model_dump() for check in frozen_checks]}
     )
 
 

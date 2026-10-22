@@ -1,7 +1,7 @@
 {
-  "observed_at": "2026-10-22T10:20:17.712861+00:00",
-  "state": "running",
-  "terminal": false,
+  "observed_at": "2026-10-22T10:59:59.227241+00:00",
+  "state": "rejected",
+  "terminal": true,
   "factory_revision": "2a66e469582f46b32c0f991207090b8d528ab3bf",
   "stages": [
     {
@@ -30,13 +30,27 @@
     },
     {
       "name": "construction",
-      "status": "running",
-      "started": 1792664388.9276996
+      "status": "completed",
+      "started": 1792664388.9276996,
+      "finished": 1792664492.0613937
+    },
+    {
+      "name": "grading",
+      "status": "rejected",
+      "started": 1792664492.061592,
+      "finished": 1792665437.8545523
     }
   ],
   "reasoning_effort_requested": "high",
   "served_effective_effort_verified": false,
   "publication_eligible": false,
-  "cleanup_verified": false,
-  "operator_interventions": 0
+  "cleanup_verified": true,
+  "operator_interventions": 0,
+  "pipeline_seconds": 1406.1957828998566,
+  "original_pipeline_claim": "rejected",
+  "rejection": {
+    "stage": "grading",
+    "reason": "repair_blocked",
+    "evidence": "grading/result.json"
+  }
 }

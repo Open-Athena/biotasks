@@ -168,10 +168,23 @@ def test_scripts_and_kinds_are_not_fields_of_an_annotation_update():
 def test_real_wrong_submission_still_fails_after_annotation_correction(
     tmp_path, monkeypatch, capsys
 ):
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
     grader, original, update = fixture()
-    _, revised = apply_probe_expectations(
-        GraderRepair(**grader.model_dump(), probe_expectations=[update]), original
+    repair = bind_repair_checks(
+        GraderRepairSubmission(
+            disposition="ready",
+            instruction=None,
+            grader_code=None,
+            rationale="Correct the probe annotation while retaining the exact grader.",
+            probe_expectations=[update],
+        ),
+        grader.checks,
+        prior_candidate=grader,
     )
+    corrected, revised = apply_probe_expectations(repair, original)
+    assert corrected.grader_code == grader.grader_code == CODE
+    assert corrected.instruction == grader.instruction
     private = tmp_path / "private"
     oracle = private / "oracle"
     oracle.mkdir(parents=True)
@@ -254,3 +267,47 @@ def test_binding_repair_still_rejects_invalid_ready_grader_code():
     )
     with pytest.raises(ValidationError):
         bind_repair_checks(submission, grader.checks)
+
+
+@pytest.mark.parametrize("disposition", ["ready", "blocked"])
+def test_repair_can_retain_code_and_instruction_without_reauthoring_them(disposition):
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, update = fixture()
+    original = grader.model_dump()
+    submission = GraderRepairSubmission(
+        disposition=disposition,
+        rationale="Only the probe annotation needs a correction.",
+        probe_expectations=[update],
+    )
+    bound = bind_repair_checks(submission, grader.checks, prior_candidate=grader)
+    assert bound.grader_code == grader.grader_code
+    assert bound.instruction == grader.instruction
+    assert bound.checks == grader.checks
+    assert bound.disposition == disposition
+    assert grader.model_dump() == original
+    # The resolved archival format remains complete and backward compatible.
+    assert GraderRepair.model_validate_json(bound.model_dump_json()) == bound
+
+
+def test_retaining_fields_requires_a_supplied_prior_candidate():
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, _ = fixture()
+    submission = GraderRepairSubmission(disposition="ready", rationale="Retain the grader.")
+    with pytest.raises(ValueError, match="exact prior candidate"):
+        bind_repair_checks(submission, grader.checks)
+
+
+def test_repair_can_replace_one_field_and_retain_the_other():
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, _ = fixture()
+    replacement = grader.instruction + " Formatting does not change the compared values."
+    submission = GraderRepairSubmission(
+        disposition="ready", instruction=replacement, rationale="Clarify formatting."
+    )
+    bound = bind_repair_checks(submission, grader.checks, prior_candidate=grader)
+    assert bound.instruction == replacement
+    assert bound.grader_code == grader.grader_code
+    assert bound.checks == grader.checks

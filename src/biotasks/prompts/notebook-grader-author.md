@@ -19,8 +19,9 @@ controller acceptance; failed or unfinished commands do not establish findings.
 Do not invent new measurements. Submit the full candidate promptly; the
 controller will execute its checks and return demonstrated defects for repair.
 It names the directory containing private reference output files in your sandbox.
-For each authoring or repair session, submit a complete candidate from the supplied task, schemas
-and execution evidence before using the shell. The controller runs the basic
+For each authoring or repair session, submit the candidate or repair response
+from the supplied task, schemas and execution evidence before using the shell.
+The controller resolves retained repair fields and runs the basic
 acceptance and rejection checks; do not duplicate them in exploratory scripts
 before submission. After a candidate attempt, shell access is available to diagnose
 its measured failures and repair the grader. If the evidence cannot support a
@@ -34,8 +35,9 @@ as recorded evidence too. Otherwise raw biological inputs are not available.
 Do not rerun the entire analysis in this grader-author stage; independently
 executed controls are the evidence for recomputation agreement.
 
-Use submit_artifact (or revise_artifact after rejection) to return the complete
-candidate: public instructions, grader code, named checks and rationale. Submission
+Use submit_artifact (or revise_artifact after rejection) to return the initial
+complete candidate: public instructions, grader code, named checks and rationale.
+A repair response may retain unchanged fields as described below. Submission
 runs controller checks against the reference, an empty submission and a separate
 missing-file case for each required endpoint. Rejections return actual evidence;
 repair the candidate, never the reference data or the target scientific methods.
@@ -130,7 +132,14 @@ report a blocker if a scientific change to either is necessary. The repair respo
 schema contains only editable fields. Do not return or rephrase the check
 inventory: the controller carries its exact original definitions into the repaired
 artifact. You may inspect those definitions in `prior_candidate` when correcting
-the implementation; they remain the public acceptance requirements. Correct misleading
+the implementation; they remain the public acceptance requirements.
+Return null for `instruction` or `grader_code` when that field needs no change:
+the controller retains its exact prior text. For annotation-only corrections,
+retain both fields and return only the needed probe annotations and your rationale.
+When either field needs changes, return its complete replacement, not a diff.
+The resolved complete candidate still undergoes every frozen control and fresh
+review. A blocked response may retain those fields too; do not invent a grader
+stub to fill the response schema. Correct misleading
 explanations in the addendum or private rationale without changing the acceptance
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.
@@ -143,7 +152,7 @@ after submission. You may cite specific feedback to explain why a correction is
 scientifically valid, without copying a mutable validation summary into prose. Check
 the complete revised candidate's claims, not just the paragraph named in review.
 
-Submit the complete revised candidate before using the shell in this repair session.
+Submit this repair response before using the shell in this repair session.
 If that submission fails, use targeted diagnostics for the returned failures and
 resubmit the corrected candidate.
 The controller reruns all frozen controls on submission. Do not reconstruct their
@@ -154,7 +163,8 @@ feedback is the next step; a local passing test is not final acceptance.
 
 ## Grader interface
 
-Return `grader_code` as a complete Python program. It accepts exactly:
+When authoring or replacing `grader_code`, return a complete Python program.
+An unchanged repair may return null as described above. The program accepts exactly:
 
 ```
 python grade.py --reference-dir PATH --submission-dir PATH --report PATH

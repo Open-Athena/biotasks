@@ -895,9 +895,12 @@ async def run_grading(
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
         if assessment.decision == "revise" and contract_base is None:
+            repair_base = candidate.model_copy(deep=True)
 
             async def validate_repair(value):
-                bound = bind_repair_checks(value, session.frozen_checks)
+                bound = bind_repair_checks(
+                    value, session.frozen_checks, prior_candidate=repair_base
+                )
                 corrected, corrected_probes = apply_probe_expectations(bound, initial_probes)
                 if corrected.disposition == "ready":
                     session.frozen_probes = corrected_probes
@@ -910,7 +913,7 @@ async def run_grading(
                 "notebook-grader-author",
                 {
                     **context,
-                    "prior_candidate": candidate.model_dump(),
+                    "prior_candidate": repair_base.model_dump(),
                     "review": assessment.model_dump(),
                     "frozen_probes": probes.model_dump(),
                     "controls": session.last_controls,
@@ -919,7 +922,9 @@ async def run_grading(
                 validate_repair,
                 session.candidate_first_shell(),
             )
-            repaired = bind_repair_checks(repair_submission, session.frozen_checks)
+            repaired = bind_repair_checks(
+                repair_submission, session.frozen_checks, prior_candidate=repair_base
+            )
             save_record(root / "repair.json", repaired.model_dump())
             candidate, probes = apply_probe_expectations(repaired, initial_probes)
             save_record(root / "repaired-probes.json", probes.model_dump())
