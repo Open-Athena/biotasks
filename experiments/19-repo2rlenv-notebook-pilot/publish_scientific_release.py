@@ -61,7 +61,10 @@ def main():
         def upload_folder(self, **kwargs):
             assert kwargs["repo_id"] == repo_id
             commit = api.upload_folder(
-                **kwargs, parent_commit=self.parent_commit, delete_patterns=obsolete or None
+                **kwargs,
+                parent_commit=self.parent_commit,
+                delete_patterns=obsolete or None,
+                num_threads=1,
             )
             self.parent_commit = commit.oid
             return commit
