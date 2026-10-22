@@ -1,0 +1,60 @@
+{
+  "checked_utc": "2026-10-22T20:47:04.017920+00:00",
+  "scope": "Read-only comparison of five saved completed-bootstrap metadata records against their original per-response charges; failed/active repos without a saved bootstrap are outside this comparison. No regrading, model call, source or estimator modification.",
+  "upstream_source": "preflight/upstream-source/src/repo2rlenv/llm.py:195",
+  "upstream_budget_source": "preflight/upstream-source/src/repo2rlenv/bootstrap/agent.py:186",
+  "source_behavior": "Upstream initializes cost_usd=0, tries LiteLLM completion_cost, and leaves zero if the call raises; agent sums that estimate and checks it between calls. The underlying reason for these observed zero estimates is not retained, so no specific pricing-library exception is asserted.",
+  "experiment_budget": "Approved observer records response.usage.cost or read-only generation metadata and stops further dispatch at actual-$5 or unresolved charge; final call can overshoot. Observed costs stayed below the threshold, so this is not a live threshold-crossing test or hard billing cap. Whole-account deltas were not used.",
+  "repositories": [
+    {
+      "repo": "scverse/scanpy",
+      "saved_bootstrap_file": "bootstrap/scverse__scanpy/903925920218__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "6625f434810aa899394926e565657fb316a163e8c573967172dfd70c1b02d56c",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 13,
+      "recorded_actual_provider_cost_usd": "0.559917",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/scverse__scanpy-receipt.json"
+    },
+    {
+      "repo": "macs3-project/MACS",
+      "saved_bootstrap_file": "bootstrap/macs3-project__MACS/88c82d62d239__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "96fae201c3466c8ca4078a30b767a7b3af4cda44242689ac9c3462e5b7cc78ff",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 15,
+      "recorded_actual_provider_cost_usd": "0.526755",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/macs3-project__MACS-receipt.json"
+    },
+    {
+      "repo": "matchms/matchms",
+      "saved_bootstrap_file": "bootstrap/matchms__matchms/50baefdb0ce9__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "31d6852cf241b10219e8303ac86a38289b75b5930bac8a2e600264d08c4e2913",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 5,
+      "recorded_actual_provider_cost_usd": "0.133545",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/matchms__matchms-receipt.json"
+    },
+    {
+      "repo": "opencobra/cobrapy",
+      "saved_bootstrap_file": "bootstrap/opencobra__cobrapy/a9c5ced29670__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "769cd0bbcb822d11ad05e11c0e36d1ab7f2418054b167a92b3a9509a8812ab16",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 11,
+      "recorded_actual_provider_cost_usd": "0.332655",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/opencobra__cobrapy-receipt.json"
+    },
+    {
+      "repo": "mne-tools/mne-python",
+      "saved_bootstrap_file": "bootstrap/mne-tools__mne-python/349e64dc5b44__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "b3001d3fa3e51a3ad0da1fc9df575c440597b81122357e9c61adca51952d86cb",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 16,
+      "recorded_actual_provider_cost_usd": "0.666906",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/mne-tools__mne-python-receipt.json"
+    }
+  ]
+}
