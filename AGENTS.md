@@ -169,6 +169,20 @@ and keep CI coverage aligned with the local hooks when changing them.
 
 ## Shared exe.dev VM
 
+The shared heavy-work lock applies only to CPU-, memory-, or I/O-intensive local
+execution. It is not a node-wide activity lock. Small file reads/edits, bounded
+metadata/API requests, ordinary Git/GitHub operations, and lightweight remote-job
+submission, status checks and monitoring do not require it and may continue while
+another session holds it. A small streaming metadata collector is not intensive
+merely because it uses Python, makes multiple requests or waits on the network.
+Judge the actual resource footprint; downloads, repository operations or
+collectors that become intensive must follow the rules below. Do not split
+intensive work to evade the lock. A held lock blocks only the proposed intensive
+command: continue independent lightweight work without polling the lock, blocking
+the whole task or moving lightweight work remote solely to bypass it. Keep
+lightweight work bounded and responsive to actual node contention. This does not
+change remote resource/spending limits or authorization for extra agents/tasks.
+
 On the shared VM, inspect one-minute load and `MemAvailable` before launching
 process-heavy work. Do not launch it at load >= 1.5 or available memory < 2.5 GiB.
 Acquire `/tmp/exe-codex-local-heavy.lock` with nonblocking `flock` for the command's
