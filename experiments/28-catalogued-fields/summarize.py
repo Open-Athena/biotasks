@@ -75,12 +75,13 @@ def summarize(root):
             archive_receipt=str(receipt_path.relative_to(root)),
             failure_or_limit=result['failure_cause'])
         rows.append(row)
-    complete = all(row['evidence_accepted'] for row in rows)
+    complete = bool(rows) and all(row['evidence_accepted'] for row in rows)
     published = [row for row in rows if row['evidence_accepted']]
     count = sum(row['verified_tasks'] for row in published)
     successful = sum(row['verified_tasks'] > 0 for row in published)
     return {'scope': 'Fixed ten-repository cohort only; earlier issues excluded.',
-        'completion_proven': complete,
+        'cohort_result_evidence_complete': complete,
+        'goal_completion_not_asserted': 'Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.',
         'reported_repositories': sum(row['stage'] != 'not_reported' for row in rows),
         'evidence_accepted_repositories': len(published),
         'complete_window_merged_prs': sum(row['complete_window_merged'] for row in rows),
@@ -113,7 +114,8 @@ def main():
     for row in result['repositories']:
         lines.append('| ' + row['field'] + ' / ' + row['repo'] + ' | '
             + ' | '.join(display(row.get(key)) for key in keys) + ' |')
-    lines += ['', 'Completion proven: ' + str(result['completion_proven']) + '.', '',
+    lines += ['', 'Cohort result evidence complete: ' + str(result['cohort_result_evidence_complete']) + '.', '',
+        result['goal_completion_not_asserted'], '',
         'Reported actual model cost: $' + result['known_reported_actual_cost_usd']
         + '; reported allocated CPU-hours: ' + result['reported_allocated_cpu_hours'] + '.', '',
         'Verified tasks / successful repositories with archived evidence: '

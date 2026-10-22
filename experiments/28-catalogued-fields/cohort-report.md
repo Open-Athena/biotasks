@@ -15,7 +15,9 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Neuroscience / mne-tools/mne-python | 82 | — | — | — | — | — | — | — | not_reported |
 | Bioimage analysis / OHIF/Viewers | 38 | — | — | — | — | — | — | — | not_reported |
 
-Completion proven: False.
+Cohort result evidence complete: False.
+
+Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
 Reported actual model cost: $3.030972; reported allocated CPU-hours: 9.89002555555555503.
 

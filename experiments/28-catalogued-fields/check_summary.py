@@ -20,7 +20,7 @@ with TemporaryDirectory(prefix='biotasks28-summary-check-') as directory:
                'ref': name, 'window_count': 3} for name in ['good', 'failed']]
     save(root / 'cohort.json', cohort)
     initial = summarize(root)
-    assert not initial['completion_proven']
+    assert not initial['cohort_result_evidence_complete']
     assert initial['repositories'][0]['actual_cost_usd'] is None
     assert initial['repositories'][0]['verified_tasks'] is None
     task = {'independently_verified_tracked_tests': True,
@@ -48,7 +48,7 @@ with TemporaryDirectory(prefix='biotasks28-summary-check-') as directory:
             'anonymous_download_verified': True,
             'manifest_sha256': hashlib.sha256(manifest.read_bytes()).hexdigest()})
     complete = summarize(root)
-    assert complete['completion_proven']
+    assert complete['cohort_result_evidence_complete']
     assert complete['known_reported_actual_cost_usd'] == '2.50'
     assert complete['cost_per_verified_task_usd'] == '2.50'  # Includes failed repo.
     assert complete['cost_per_successful_repository_usd'] == '2.50'
@@ -56,7 +56,7 @@ with TemporaryDirectory(prefix='biotasks28-summary-check-') as directory:
     receipt = root / 'archives/failed-receipt.json'
     receipt.unlink()
     partial = summarize(root)
-    assert not partial['completion_proven'] and partial['cost_per_verified_task_usd'] is None
+    assert not partial['cohort_result_evidence_complete'] and partial['cost_per_verified_task_usd'] is None
     assert partial['verified_tasks_with_archived_evidence'] == 1
     path = root / 'results/good.json'
     result = json.loads(path.read_text())
