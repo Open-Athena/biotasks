@@ -1,0 +1,126 @@
+{
+  "scope": "Original selected terminal receipts, not full archive readback.",
+  "pipeline": {
+    "status": "infrastructure_failed",
+    "autonomous": true,
+    "operator_interventions": 0,
+    "reasoning_effort_requested": "high",
+    "served_endpoint_effective_effort_verified": false,
+    "source": {
+      "id": "pyradiomics-brain",
+      "title": "PyRadiomics: two brain-image examples",
+      "url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+      "source_revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+      "source_sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+      "license": "BSD-3-Clause",
+      "provenance": {
+        "notebook": {
+          "url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+          "revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+          "sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+          "license": "BSD-3-Clause",
+          "license_url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/LICENSE.txt"
+        },
+        "data_lineage": "Source describes brain images with supplied tumor segmentations; retain original image and mask provenance.",
+        "data_redistribution_review": "Not yet established; keep downloaded inputs and generated task bundles private until checked separately."
+      }
+    },
+    "stages": [
+      {
+        "name": "preparation",
+        "status": "completed",
+        "started": 1792690099.878867,
+        "finished": 1792690111.0746956
+      },
+      {
+        "name": "setup",
+        "status": "completed",
+        "started": 1792690111.0749238,
+        "finished": 1792690604.6217968
+      },
+      {
+        "name": "replay",
+        "status": "incomplete",
+        "started": 1792690604.6220016,
+        "finished": 1792690649.9621642
+      }
+    ],
+    "started": 1792690095.2432272,
+    "factory_revision": "88d677c015ad56a6f8cc06e557c6c05b619109a3",
+    "daytona_reserved_usd": 2.0,
+    "failed_stage": "replay",
+    "error_type": "RuntimeError",
+    "finished": 1792690649.9624686
+  },
+  "bootstrap": {
+    "started": 1792690088.0474772,
+    "completed": false,
+    "error_type": "RuntimeError",
+    "finished": 1792690725.7809453
+  },
+  "replay": {
+    "cleanup_verified": true,
+    "construction_run": false,
+    "error_type": "RuntimeError",
+    "finished": 1792690649.9614265,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792690604.631928,
+    "status": "incomplete"
+  },
+  "replay_analysis_operation": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "finished": 1792690640.6264095,
+    "label": "replay-reference-1",
+    "process": {
+      "argv": [
+        "env",
+        "MPLBACKEND=Agg",
+        "/work/venv/bin/python",
+        "/work/reference.py"
+      ],
+      "elapsed_seconds": 0.43135905265808105,
+      "exit_code": 1,
+      "finished": 1792690640.4620032,
+      "peak_child_rss_kib": 135532,
+      "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+      "started": 1792690640.0306442,
+      "timed_out": false
+    },
+    "seconds": 600,
+    "started": 1792690639.8487465,
+    "state": "returned"
+  },
+  "collection": {
+    "campaign": 61,
+    "host_state": "FAILED",
+    "terminal": true,
+    "diagnostics_complete": true,
+    "diagnostic_files_downloaded": 22,
+    "full_archive_downloaded": false,
+    "pipeline_status": "infrastructure_failed",
+    "source_id": "pyradiomics-brain",
+    "stages": [
+      {
+        "name": "preparation",
+        "status": "completed"
+      },
+      {
+        "name": "setup",
+        "status": "completed"
+      },
+      {
+        "name": "replay",
+        "status": "incomplete"
+      }
+    ],
+    "rejection": null,
+    "error_type": "RuntimeError",
+    "operator_interventions": 0
+  }
+}
