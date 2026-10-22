@@ -14,6 +14,7 @@ def main():
     args = parser.parse_args()
     assert args.run_id.startswith('biotasks28-') and all(c.isalnum() or c == '-' for c in args.run_id)
     inner = r'''from pathlib import Path
+from collections import Counter
 import json,os,functools
 
 def tail(path,n=1600):
@@ -26,9 +27,23 @@ for name in ['native-window.json','fresh-controls.json','exported-tasks.json']:
  if p.exists():parts.append(name+' '+tail(p,2200))
 p=Path('/work/native-observations/billing.json')
 if p.exists():parts.append('billing '+tail(p))
+p=Path('/work/native-observations/native-candidates.json')
+if p.exists():
+ assert p.stat().st_size <= 10*1024**2
+ try:parts.append('native_discovery '+json.dumps({'candidates_returned':len(json.loads(p.read_text()))}))
+ except json.JSONDecodeError:parts.append('native_discovery write_in_progress')
 for p in Path('/work/evidence').glob('*.log'):parts.append(p.name+' '+tail(p))
 p=Path('/work/native-observations/events.jsonl')
-if p.exists():parts.append('events '+tail(p,1800))
+if p.exists():
+ assert p.stat().st_size <= 10*1024**2
+ events=[];incomplete=0
+ for line in p.read_text().splitlines():
+  try:events.append(json.loads(line))
+  except json.JSONDecodeError:incomplete+=1
+ parts.append('native_progress '+json.dumps({'events':dict(Counter(e['event'] for e in events)),
+  'decisions':dict(Counter(e['outcome']+':'+e.get('reason','') for e in events if e['event']=='native_decision')),
+  'incomplete_event_lines':incomplete,'live_observation_only':True}))
+ parts.append('events '+tail(p,1800))
 text='\n'.join(parts)
 for k in ['OPENROUTER_API_KEY','GH_TOKEN','GITHUB_TOKEN']:
  value=os.environ.get(k)
