@@ -1,0 +1,72 @@
+{
+  "recorded_at": "2026-10-22T07:37:39.680046+00:00",
+  "status": "paired_diagnostic_completed",
+  "factory_revision": "39e242a341aebf3b207c807e29fb4b7d511e7f73",
+  "original_bundle_hash": "sha256:c6c618d8fd109e4d7b7739b4ff17be895f4262b7c6b8f600deb5e43c76b40c45",
+  "diagnostic_bundle_hash": "sha256:023e9d410753127af3151f1ae3012dc74973c7bb6f72a14dd5617f2f8d849923",
+  "original_bundle_unchanged": true,
+  "original_scientific_grader_and_checks_unchanged": true,
+  "all_other_input_reference_environment_and_instruction_assets_unchanged": true,
+  "glm_authored_experiment_unedited": true,
+  "glm_calls": 1,
+  "reasoning_effort_requested_and_recorded": "high",
+  "effective_served_effort_verified": false,
+  "direct_control_passed": true,
+  "direct_checks_passed": 8,
+  "stored_control_passed": false,
+  "stored_checks_passed": 7,
+  "stored_failed_checks": [
+    "domtbl_hit_records"
+  ],
+  "first_failed_field": "c-Evalue",
+  "interpretation": "The same built model and serialized artifact bytes, fresh identical search settings and re-opened database reproduce a grader disagreement solely after reloading the requested saved artifact. This supports a valid-workflow false-negative diagnosis for this task.",
+  "scientific_code_review": "GLM program builds one common intermediate, writes the same serialized bytes to both branches, uses fresh equivalent analysis state and changes only the read-back hand-off before downstream search. No bundled answer fixture is read.",
+  "original_solver_reward": 0,
+  "original_solver_regraded": false,
+  "new_blind_solver_attempts": 0,
+  "new_full_pipeline_run": false,
+  "publication_eligible": false,
+  "host_seconds": 58.17729568481445,
+  "archive_manifest_sha256": "08e1fcb3ad26055fa460808576fc862698e59b9b207fd6b303d6acc9015be493",
+  "archived_files": 94,
+  "hash_verified_recovered_files": 88,
+  "verified_originals": [
+    {
+      "path": "roundtrip/experiment.json",
+      "bytes": 7178,
+      "sha256": "45214256db79aa5ee75f9cff5b4be01a00b950c561c90e64199bd4e7a8cbc83a"
+    },
+    {
+      "path": "roundtrip/native/task.tar.gz",
+      "bytes": 67195,
+      "sha256": "69452882ed498a4dffefb64e901cd2a5fe5127b4bd88dde88a703885aea6f9c1"
+    },
+    {
+      "path": "roundtrip/native/remote-job.json",
+      "bytes": 1062,
+      "sha256": "4e12ca9232174ab57571f012f56900d14ff1de40f34092f803cec16d4101bc6d"
+    },
+    {
+      "path": "roundtrip/native/trial.json",
+      "bytes": 1605,
+      "sha256": "2c2a5344443a40aec07f94ad2af9df12dbd40fb4c4093faf417a37b29ad855f4"
+    },
+    {
+      "path": "roundtrip/native/saved-artifact-diagnostic-001/saved-artifact-diagnostic-001__wUJEKmn/verifier/report.json",
+      "bytes": 3053,
+      "sha256": "42626a904af84903b2ed02f7bab496c61d74cc5872160c6b6d7a3e1cea921416"
+    },
+    {
+      "path": "roundtrip/author/artifact-stage/trace/1/request.json",
+      "bytes": 19443,
+      "sha256": "4a5b28016f4234dc12dccb1954d97025c94b96d7806467ebe4249a90c6ecdf3e"
+    }
+  ],
+  "terminal_host_state": "SUCCEEDED",
+  "cleanup_verified": true,
+  "limitations": [
+    "One controlled component experiment, not a fresh autonomous pipeline or benchmark regrade.",
+    "Does not establish a general numerical tolerance, repair the original grader, clear the dependency fixture policy, or make original 044 releasable.",
+    "Detailed causal attribution to particular internal rounded fields was not separately measured; the observed intervention is the saved-artifact round trip."
+  ]
+}
