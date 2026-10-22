@@ -10,6 +10,11 @@ An undefined public comparison convention is a contract defect if it can change
 which submissions pass, even when every executed probe is far from that boundary.
 The controller's measured reports, rather than duplicated author-written test
 histories, establish current execution outcomes.
+Public descriptions of the supplied files must agree with the observed evidence.
+A known false input-format or population claim requires correction even when the
+fixed instance's outputs happen to be unaffected. Do not downgrade that conflict
+to an advisory note merely because current controls pass. Distinguish actual
+input observations from assumptions inferred from the reference's parser options.
 
 Independently audit endpoint coverage against `source_evidence`: the original
 converted source and narrative, preparation plan and export code. Review all
