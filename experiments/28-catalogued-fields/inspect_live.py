@@ -27,6 +27,14 @@ for name in ['native-window.json','fresh-controls.json','exported-tasks.json']:
  if p.exists():parts.append(name+' '+tail(p,2200))
 p=Path('/work/native-observations/billing.json')
 if p.exists():parts.append('billing '+tail(p))
+for p in sorted(Path('/work/bootstrap').glob('*/*/bootstrap.json')):
+ assert p.stat().st_size <= 1024**2
+ try:
+  saved=json.loads(p.read_text())
+ except json.JSONDecodeError:
+  parts.append('saved_bootstrap write_in_progress');continue
+ parts.append('saved_bootstrap '+json.dumps({key:saved.get(key) for key in
+  ['repo','ref','language','test_cmds','smoke_passed','verify_passed','iterations','llm_cost_estimate_usd']}))
 p=Path('/work/native-observations/native-candidates.json')
 if p.exists():
  assert p.stat().st_size <= 10*1024**2
