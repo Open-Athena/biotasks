@@ -1,23 +1,23 @@
 {
   "campaign": "autonomous-deletions-041",
-  "status": "running",
+  "status": "rejected",
   "reasoning_effort_requested": "high",
   "served_endpoint_effective_effort_verified": false,
   "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
-  "cleanup_verified": false,
-  "terminal": false,
+  "cleanup_verified": true,
+  "terminal": true,
   "operator_interventions": 0,
   "execution_started": true,
   "scientific_validation": false,
-  "note": "Preparation completed and setup was observed active. Actual saved requests in both stages explicitly use native high with no client token cap; served template and later-stage results are not inferred.",
+  "note": "Reference and prerequisite stages succeeded; generated candidate rejected because scientific probe scripts require redesign beyond the current frozen annotation-repair contract. This does not establish a broken notebook.",
   "factory_revision": "1219fef44f1ab17709f4436d82bcc2d64a5bb93e",
   "public_runtime_baseline": "0a9bb4e1f7dcaa9b94ad2495b33c3503ad3b9b85",
   "payload_profile": "native-high-with-probe-annotation-repair",
   "payload_manifest": "development-panel-native-high-frozen-v2.json",
-  "observed_at": "2026-10-22T00:25:36.754914+00:00",
+  "observed_at": "2026-10-22T00:56:27.958950+00:00",
   "stage": "grading",
-  "stage_status": "running",
-  "host_state": "RUNNING",
+  "stage_status": "rejected",
+  "host_state": "SUCCEEDED",
   "initial_stage_request_profile_verified_at": "2026-10-22T00:14:42.330178+00:00",
   "completed_stages": [
     "preparation",
@@ -25,5 +25,18 @@
     "replay",
     "specification",
     "construction"
-  ]
+  ],
+  "pipeline_status": "rejected",
+  "rejection": {
+    "stage": "grading",
+    "reason": "repair_blocked",
+    "evidence": "grading/result.json"
+  },
+  "native_solver_attempted": false,
+  "publication_ready": false,
+  "pipeline_seconds": 1675.024,
+  "host_seconds": 1824.372,
+  "source_notebook_executed_successfully": true,
+  "diagnostic_export_download_checked": true,
+  "full_autonomous_archive_manifest_locally_verified": false
 }

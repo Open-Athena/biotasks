@@ -10,6 +10,20 @@ import launch_reference as launcher
 import pytest
 
 
+def test_autonomous_seed_metadata_cannot_supply_a_legacy_task_question():
+    from launch_autonomous import require_source_only_seed
+
+    source = {"url": "https://example.org/notebook.ipynb", "source_sha256": "a" * 64}
+    require_source_only_seed([source])
+    legacy = {**source, "question_text": "An already-authored task"}
+    with pytest.raises(ValueError, match="source metadata"):
+        require_source_only_seed([legacy])
+    assert legacy["question_text"] == "An already-authored task"
+    for malformed in ([], [source, source], source, [None]):
+        with pytest.raises(ValueError, match="one notebook source"):
+            require_source_only_seed(malformed)
+
+
 def fixture(monkeypatch, tmp_path):
     notebook = b'{"cells": []}'
     prefix = launcher.EXPERIMENT + "/"

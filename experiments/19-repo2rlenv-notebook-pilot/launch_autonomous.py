@@ -9,6 +9,15 @@ from launch_iris import EXPERIMENT, frozen_file
 from launch_reference import frozen_payload
 
 
+def require_source_only_seed(seeds):
+    if not isinstance(seeds, list) or len(seeds) != 1 or not isinstance(seeds[0], dict):
+        raise ValueError("Autonomous execution requires one notebook source record")
+    if "question_text" in seeds[0]:
+        raise ValueError(
+            "Autonomous seeds must contain source metadata, not a legacy authored question_text"
+        )
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--repo", type=Path, default=Path.cwd())
@@ -28,6 +37,9 @@ def main():
     config = json.loads(frozen_file(args.repo, revision, EXPERIMENT + "/" + args.config))
     if config["entrypoint"] != "run_autonomous.py":
         raise ValueError("Autonomous campaign configuration required")
+    require_source_only_seed(
+        json.loads(frozen_file(args.repo, revision, EXPERIMENT + "/" + config["seed_file"]))
+    )
     files = frozen_payload(
         args.repo, revision=revision, upstream_archive=args.upstream_archive, config=config
     )
