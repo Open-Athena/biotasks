@@ -576,6 +576,19 @@ async def run_grading(
         contract_base = load_contract_base(
             HERE / config["resume_contract_directory"], resumed[1], saved_probes
         )
+    fixed_grader = None
+    if config.get("frozen_grader_file"):
+        if resumed or draft or contract_base or config.get("allow_quality_repair", True):
+            raise ValueError("A frozen grader requires fresh independence and no further repair")
+        frozen = json.loads((HERE / config["frozen_grader_file"]).read_text())
+        if frozen["materialization_candidate"] != snapshot.get("materialization", {}).get(
+            "candidate"
+        ):
+            raise ValueError("Frozen grader belongs to another materialization")
+        fixed_grader = Grader.model_validate(frozen["grader_candidate"])
+        if fixed_grader.disposition != "ready":
+            raise ValueError("Frozen grader must be a submitted ready candidate")
+        save_record(root / "frozen-grader.json", frozen)
     scopes = ("independent", "grader", "probes", "review", "repair", "review-repair", "contract")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
@@ -760,6 +773,9 @@ async def run_grading(
                 return {"status": "contract_revision_blocked"}
             candidate = apply_contract_text(contract_base, text)
             await session.validate_candidate(candidate)
+        elif fixed_grader is not None:
+            candidate = fixed_grader
+            await session.validate_candidate(candidate)
         elif resumed and resumed[1] is not None:
             candidate = resumed[1]
             await session.validate_candidate(candidate)
@@ -894,7 +910,11 @@ async def run_grading(
         initial_probes = probes
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
-        if assessment.decision == "revise" and contract_base is None:
+        if (
+            assessment.decision == "revise"
+            and contract_base is None
+            and config.get("allow_quality_repair", True)
+        ):
             repair_base = candidate.model_copy(deep=True)
 
             async def validate_repair(value):

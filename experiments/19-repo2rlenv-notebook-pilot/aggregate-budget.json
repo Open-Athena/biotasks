@@ -3,8 +3,8 @@
   "ceiling_before_credits": "100.00",
   "authorization_date": "2026-10-13",
   "basis": "User authorized up to $100 total to complete issue 19 and routine recovery/retries without repeated approval.",
-  "reserved_upper_bound_usd": "99.75",
-  "unallocated_usd": "0.25",
+  "reserved_upper_bound_usd": "100.00",
+  "unallocated_usd": "0.00",
   "reservations": [
     {
       "scope": "original pilot 001",
@@ -299,15 +299,22 @@
     },
     {
       "scope": "autonomous-bioframe-051: fresh source-only input-observation validation",
-      "ceiling_usd": "1.00",
+      "ceiling_usd": "0.25",
       "state": "terminal_rejected_source_fidelity",
-      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Internal stage-dispatch reservations do not describe simultaneous sandbox spend. See budget-reconciliation-20261021.json. Reserved Iris capacity, no GPU."
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Internal stage-dispatch reservations do not describe simultaneous sandbox spend. See budget-reconciliation-20261021.json. Reserved Iris capacity, no GPU.",
+      "reconciliation": "Verified 905-second whole-host enclosure, sequential 4 CPU/8 GiB/10 GiB sandboxes and original successful deletion/fresh empty owners. $0.0835315 running upper bound plus $0.1664685 margin retained; release $0.75. See budget-reconciliation-051.json. Not an invoice or credit claim."
     },
     {
       "scope": "autonomous-rmsd-052: fresh full source with retained-field repair contract",
       "ceiling_usd": "1.00",
       "state": "terminal_rejected_independent_comparison",
       "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at previously verified $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin; existing reserved Iris capacity."
+    },
+    {
+      "scope": "autonomous-rmsd-053: original source with one shared question-or-grader repair allowance",
+      "ceiling_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "basis": "At most one 4-CPU/8-GiB/10-GiB sandbox for 7500 seconds at $0.332280/hour = $0.692250, plus $0.307750 storage/rounding margin. Fresh validation after a question repair is sequential within the same campaign deadline; reserved Iris CPU capacity. No new scientific inputs or manual task edits."
     }
   ],
   "actual_provider_invoice_usd": null,

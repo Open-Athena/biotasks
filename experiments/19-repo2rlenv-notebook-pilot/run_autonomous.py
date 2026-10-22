@@ -152,10 +152,27 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "native/result.json",
     )
     selected += tuple(
+        path.replace("grading/", "grading-question-repair/", 1)
+        for path in selected
+        if path.startswith("grading/")
+    )
+    selected += (
+        "question-repair/question-repair.json",
+        "question-repair/result.json",
+        "materialization-question-repair/candidate.json",
+        "materialization-question-repair/question-revision.json",
+    )
+    selected += tuple(
         path.relative_to(root).as_posix()
         for path in sorted((root / "setup-raw/setup/trials").glob("*/result.json"))
     )
-    for stage in ("setup-raw", "replay", "materialization-raw", "grading"):
+    for stage in (
+        "setup-raw",
+        "replay",
+        "materialization-raw",
+        "grading",
+        "grading-question-repair",
+    ):
         for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]:
             selected += (path.relative_to(root).as_posix(),)
             try:
@@ -420,6 +437,7 @@ class Pipeline:
             base["materialization_directory"] = self.relative(mat)
 
             async def grading():
+                nonlocal mat, grade
                 shutil.copytree(
                     mat_raw / "materialized", Path("/work/grading-inputs/grading/materialized")
                 )
@@ -432,6 +450,92 @@ class Pipeline:
                     endpoint=self.endpoint,
                     credential=self.credential,
                 )
+                if (
+                    result["status"] == "independent_comparison_unresolved"
+                    and not (grade / "repair.json").exists()
+                ):
+                    from question_repair import repair_context, revise_question
+
+                    revision_context = repair_context(mat, grade)
+                    self.receipt["quality_repair"] = {
+                        "kind": "question_only",
+                        "allowance_consumed": True,
+                        "original_materialization": self.relative(mat),
+                        "original_grading": self.relative(grade),
+                    }
+                    write(self.root / "pipeline.json", self.receipt)
+                    write(self.root / "question-repair-evidence.json", revision_context)
+                    context = specification_context(
+                        reference,
+                        policy,
+                        inspect_packages=True,
+                        repeatability=read(replay / "result.json"),
+                        revision_context=revision_context,
+                    )
+                    write(self.root / "question-repair-input.json", context)
+                    repair_root = self.root / "question-repair"
+                    await specify(
+                        self.config_for(
+                            "question-repair",
+                            "run_specification.py",
+                            reference_directory=self.relative(reference),
+                            policy_file=base["policy_file"],
+                            input_file=self.relative(self.root / "question-repair-input.json"),
+                            repeatability_file=self.relative(replay / "result.json"),
+                            revision_context_file=self.relative(
+                                self.root / "question-repair-evidence.json"
+                            ),
+                            question_repair=True,
+                            inspect_packages=True,
+                            output_format="tools",
+                        ),
+                        root=repair_root,
+                        endpoint=self.endpoint,
+                        credential=self.credential,
+                        deadline=self.deadline - 300,
+                    )
+                    response = read(repair_root / "question-repair.json")
+                    require_worker(repair_root / "question-repair.json", "ready", stage="grading")
+                    revised = self.root / "materialization-question-repair"
+                    revise_question(mat, revised, response)
+                    mat = revised
+                    grade = self.root / "grading-question-repair"
+                    base["materialization_directory"] = self.relative(mat)
+                    write(
+                        self.root / "question-repair-frozen-grader.json",
+                        {
+                            "materialization_candidate": read(mat / "candidate.json"),
+                            "grader_candidate": revision_context["grader_candidate"],
+                        },
+                    )
+                    # A fresh provider sandbox and independent worker receive only
+                    # this question, staged inputs and the original environment.
+                    # No resume directories, prior independent code or old rewards.
+                    retry = self.config_for(
+                        "grading-question-repair",
+                        "run_notebook_grader.py",
+                        **base,
+                        allow_quality_repair=False,
+                        frozen_grader_file=self.relative(
+                            self.root / "question-repair-frozen-grader.json"
+                        ),
+                    )
+                    retry["max_tests"] = None
+                    os.environ["BIOTASKS_ARTIFACT_PREFIX"] = (
+                        self.prefix + "/stages/grading-question-repair"
+                    )
+                    result = await remote(
+                        retry,
+                        root=grade,
+                        deadline=self.deadline,
+                        endpoint=self.endpoint,
+                        credential=self.credential,
+                    )
+                    self.receipt["quality_repair"].update(
+                        effective_materialization=self.relative(mat),
+                        effective_grading=self.relative(grade),
+                        validation_status=result["status"],
+                    )
                 if result["status"] != "grader_candidate_validated" or not result.get(
                     "final_controls_passed"
                 ):
@@ -448,6 +552,9 @@ class Pipeline:
                     raise Rejected("grading", result["status"], str(grade / "result.json"))
 
             await self.step("grading", grading, paid=True)
+            self.receipt.update(
+                effective_materialization=self.relative(mat), effective_grading=self.relative(grade)
+            )
 
             async def native():
                 from run_scientific_native import run

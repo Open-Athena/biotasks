@@ -429,6 +429,7 @@ def test_probe_preflight_separates_mutation_from_acceptance(
         (True, "probe-draft", False, False),
         (True, True, True, False),
         (True, True, True, True),
+        (True, "frozen", False, False),
     ],
 )
 def test_orchestration_separates_probe_author_and_gates_acceptance(
@@ -444,6 +445,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     config.pop("resume_probe_draft_directory", None)
     config.pop("resume_contract_directory", None)
     config.pop("contract_feedback_file", None)
+    frozen_grader = resume == "frozen"
+    if frozen_grader:
+        resume = False
+        config["allow_quality_repair"] = False
     if resume:
         import grading_resume
 
@@ -476,6 +481,20 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     calls = []
     commands = []
     c = candidate()
+    if frozen_grader:
+        config["frozen_grader_file"] = str(tmp_path / "frozen-grader-input.json")
+        (tmp_path / "frozen-grader-input.json").write_text(
+            json.dumps(
+                {
+                    "materialization_candidate": {
+                        "instruction": "Scientific question",
+                        "input_paths": ["input.txt"],
+                        "oracle_code": "private-original-oracle",
+                    },
+                    "grader_candidate": c.model_dump(),
+                }
+            )
+        )
     suite = Probes(
         disposition="ready",
         probes=[probe(), probe(name="format", kind="valid_alternative")],
@@ -499,7 +518,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         config["contract_feedback_file"] = str(feedback)
         monkeypatch.setattr(grading_resume, "load_contract_base", lambda *args: c)
 
-    conflict_on = (2 if repair and not contract_only else 1) if comparison_conflict else None
+    effective_repair = repair and not contract_only and not frozen_grader
+    conflict_on = (2 if effective_repair else 1) if comparison_conflict else None
 
     class Session:
         def __init__(self, **kwargs):
@@ -737,6 +757,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             )
         )
         expected = initial
+        if frozen_grader:
+            expected = ["independent"]
         if conflict_on == 2:
             expected += ([] if reuse_probes else ["probes"]) + ["review", "repair"]
         assert calls == expected
@@ -747,21 +769,31 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             "fixture": "unresolved independent output"
         }
         return
-    assert calls == (
-        ["contract"]
-        if contract_only
-        else (
-            ["grader"]
-            if resume in {"draft", "independent"}
-            else []
-            if resume
-            else (["independent"] if derived else []) + ["grader"]
+    expected = (
+        (
+            ["contract"]
+            if contract_only
+            else (
+                ["grader"]
+                if resume in {"draft", "independent"}
+                else []
+                if resume
+                else (["independent"] if derived else []) + ["grader"]
+            )
         )
-    ) + ([] if reuse_probes else ["probes"]) + ["review"] + (
-        ["repair", "review-repair"] if repair and not contract_only else []
+        + ([] if reuse_probes else ["probes"])
+        + ["review"]
+        + (["repair", "review-repair"] if effective_repair else [])
     )
+    if frozen_grader:
+        expected = ["independent", "probes", "review"]
+        assert json.loads((tmp_path / "candidate.json").read_text()) == c.model_dump()
+        assert not (tmp_path / "repair.json").exists()
+    assert calls == expected
     assert result["status"] == (
-        "grader_requires_further_work" if contract_only and repair else "grader_candidate_validated"
+        "grader_requires_further_work"
+        if (contract_only or frozen_grader) and repair
+        else "grader_candidate_validated"
     )
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()

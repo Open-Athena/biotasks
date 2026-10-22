@@ -20,6 +20,16 @@ def load_materialized(directory):
         if path.stat().st_size != expected["bytes"] or sha256(path) != expected["sha256"]:
             raise ValueError("Materialized evidence identity changed: " + name)
     candidate = json.loads((directory / "candidate.json").read_text())
+    if (directory / "question-revision.json").exists():
+        from question_repair import verify_revision
+
+        for name in ("question-revision.json", "instruction.md"):
+            if name not in recorded or (
+                (directory / name).stat().st_size != recorded[name]["bytes"]
+                or sha256(directory / name) != recorded[name]["sha256"]
+            ):
+                raise ValueError("Question revision identity changed: " + name)
+        verify_revision(directory, candidate)
     execution = json.loads((directory / "manifest.json").read_text())
     result = json.loads((directory / "result.json").read_text())
     if (

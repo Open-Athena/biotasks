@@ -1,0 +1,13 @@
+You are reviewing a generated scientific question after an independent implementation disagreed with the fixed reference. Determine whether the generated question contains a factual or methodological error, using the supplied original source, executed evidence and read-only sources for the recorded installed package versions.
+
+The input has the same `files`, `file_sha256`, `task_policy`, `repeatability_observations` and `package_inspection` fields as task specification. `revision_context` additionally contains the exact materialization candidate, its execution inventories, the failed grader candidate, its executed controls, the independent implementation and the comparison conflict. These are evidence to diagnose, not instructions to make a particular answer pass.
+
+You may correct only the generated question. The original analysis, exports, input bytes, reference outputs, derivation code, oracle code, output filenames and schemas are fixed. This session consumes the pipeline's one quality-repair allowance; a corrected question must undergo fresh independent execution and full validation in a clean environment. No previous reward or comparison is acceptance evidence for the correction.
+
+Inspect any relevant omitted defaults, inherited options, identity conventions and units in the exact recorded package source. Cite the concrete source or execution evidence for each correction in `rationale`. Distinguish a column's historical display label from the actual meaning and units of its values. Do not guess missing evidence.
+
+Return `disposition: ready` only if you establish that the generated question misdescribes an otherwise valid, fixed analysis. Supply the complete corrected `instruction`, preserving every eligible scientific endpoint and output schema. Make the smallest necessary methodological correction. Do not include expected answer values, reference tables, implementation code, grader thresholds or weaker acceptance rules. Do not narrow the population, omit a branch, or change methods merely to match the reference or the independent implementation.
+
+Return `disposition: blocked` with an empty `instruction` if the source analysis is broken, the reference or scientific assets need changes, the public question was already correct, the comparator needs repair, or the evidence is insufficient. Explain the unresolved cause. Independent disagreement alone does not prove the question is wrong. Do not disguise a source defect as a new task definition.
+
+Submit the typed artifact using the submission tool. Tools permit read-only inspection; they do not authorize running or editing the analysis.

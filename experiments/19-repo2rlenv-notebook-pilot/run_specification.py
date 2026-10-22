@@ -9,6 +9,7 @@ from pathlib import Path
 
 import httpx
 from design_stage import completion_transport
+from grading_protocol import ContractText
 from model_profile import native_effort
 from openai import AsyncOpenAI
 from package_inspection import PACKAGE_TOOLS, PackageInspection
@@ -26,6 +27,9 @@ from biotasks.inference_gate import Allowance, RequestLedger
 
 async def run(config, *, root, endpoint, credential, deadline, complete=None):
     config = {**config, "reasoning_effort": native_effort(config)}
+    question_repair = config.get("question_repair", False)
+    if question_repair and not config.get("revision_context_file"):
+        raise ValueError("Question repair requires recorded comparison evidence")
     if config["entrypoint"] != "run_specification.py":
         raise ValueError("Specification cannot launch another stage")
     inspect_packages = config.get("inspect_packages", False)
@@ -103,9 +107,11 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             )
             complete = completion_transport(client)
         plan = await stage(
-            schema=TaskSpecification,
+            schema=ContractText if question_repair else TaskSpecification,
             name="specify",
-            prompt_name="notebook-task-specification",
+            prompt_name="notebook-question-repair"
+            if question_repair
+            else "notebook-task-specification",
             context=context,
             root=root / "specify",
             ledger=ledger,
@@ -119,11 +125,14 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             extra_tools=PACKAGE_TOOLS if inspection else None,
             extra_handlers=inspection.handlers if inspection else None,
         )
-        save_record(root / "specification.json", plan.model_dump())
-        (root / "review.md").write_text(plan.review + "\n")
-        (root / "validation-handoff.md").write_text(plan.validation_handoff + "\n")
-        if plan.task_brief:
-            (root / "task-brief.md").write_text(plan.task_brief + "\n")
+        if question_repair:
+            save_record(root / "question-repair.json", plan.model_dump())
+        else:
+            save_record(root / "specification.json", plan.model_dump())
+            (root / "review.md").write_text(plan.review + "\n")
+            (root / "validation-handoff.md").write_text(plan.validation_handoff + "\n")
+            if plan.task_brief:
+                (root / "task-brief.md").write_text(plan.task_brief + "\n")
         result.update(status="ready_for_user_inspection", disposition=plan.disposition)
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)

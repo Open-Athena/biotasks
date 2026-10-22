@@ -63,7 +63,19 @@ def test_unresolved_comparison_is_returned_without_changing_original_evidence(tm
 
 
 @pytest.mark.parametrize(
-    "failure", [None, "blocked", "infrastructure", "construction", "grading", "native"]
+    "failure",
+    [
+        None,
+        "blocked",
+        "infrastructure",
+        "construction",
+        "grading",
+        "native",
+        "question",
+        "question-blocked",
+        "question-failed",
+        "question-used",
+    ],
 )
 @pytest.mark.parametrize("reviewed", [False, True])
 def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, failure, reviewed):
@@ -133,16 +145,56 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             result = {"status": "independent_solution_blocked", "final_controls_passed": False}
             m.write(root / "result.json", result)
             return result
+        if failure and failure.startswith("question"):
+            if root.name == "grading":
+                m.write(
+                    root / "result.json",
+                    {"status": "independent_comparison_unresolved", "cleanup_verified": True},
+                )
+                if failure == "question-used":
+                    m.write(root / "repair.json", {"original": "already consumed"})
+                return m.read(root / "result.json")
+            assert root.name == "grading-question-repair"
+            assert config["allow_quality_repair"] is False
+            assert not any(key.startswith("resume_") for key in config)
+            assert config["materialization_directory"].endswith("materialization-question-repair")
+            assert (
+                m.read(tmp_path / "run/grading/result.json")["status"]
+                == "independent_comparison_unresolved"
+            )
+            assert m.read(tmp_path / config["frozen_grader_file"])["grader_candidate"] == {
+                "grader": "unchanged"
+            }
+            assert m.os.environ["BIOTASKS_ARTIFACT_PREFIX"].endswith(
+                "/stages/grading-question-repair"
+            )
+            if failure == "question-failed":
+                m.write(root / "result.json", {"status": "independent_comparison_unresolved"})
+                return m.read(root / "result.json")
         return {"status": "grader_candidate_validated", "final_controls_passed": True}
 
     async def specify(config, *, root, **kwargs):
         assert config["reasoning_effort"] == "high"
         called.append("specify")
+        if config.get("question_repair"):
+            assert config["inspect_packages"] and config["output_format"] == "tools"
+            m.write(
+                root / "question-repair.json",
+                {
+                    "disposition": "blocked" if failure == "question-blocked" else "ready",
+                    "instruction": "Worker correction",
+                    "rationale": "Worker evidence",
+                },
+            )
+            return
         m.write(root / "specification.json", {"disposition": "draft_ready"})
 
     def native(config, *, root):
         assert config["reasoning_effort"] == "high"
         called.append("native")
+        if failure == "question":
+            assert config["grading_directory"].endswith("grading-question-repair")
+            assert config["materialization_directory"].endswith("materialization-question-repair")
         recorded = m.read(tmp_path / config["attribution_file"])
         assert recorded == (
             notices
@@ -173,6 +225,20 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         )
 
     monkeypatch.setattr(m, "seal_materialization", seal_materialization)
+    if failure and failure.startswith("question"):
+        import question_repair
+
+        monkeypatch.setattr(
+            question_repair,
+            "repair_context",
+            lambda *args: {"grader_candidate": {"grader": "unchanged"}},
+        )
+
+        def revision(original, destination, response):
+            copytree(original, destination)
+            m.write(destination / "candidate.json", {"instruction": response["instruction"]})
+
+        monkeypatch.setattr(question_repair, "revise_question", revision)
     # Isolate fixed controller paths while exercising actual stage ordering.
     copytree = m.shutil.copytree
 
@@ -221,10 +287,25 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "construction": "rejected",
             "grading": "rejected",
             "native": "infrastructure_failed",
+            "question": "validated",
+            "question-blocked": "rejected",
+            "question-failed": "rejected",
+            "question-used": "rejected",
         }[failure]
     )
     if failure in {"blocked", "infrastructure"}:
         assert called == ["prepare"]
+    elif failure and failure.startswith("question"):
+        assert called.count("specify") == (1 if failure == "question-used" else 2)
+        assert called.count("run_notebook_grader.py") == (
+            2 if failure in {"question-blocked", "question-used"} else 3
+        )
+        if failure != "question-used":
+            assert receipt["quality_repair"]["allowance_consumed"]
+        else:
+            assert "quality_repair" not in receipt
+        assert receipt["daytona_reserved_usd"] == (5 if failure == "question" else 4)
+        assert len(receipt["stages"]) == (7 if failure == "question" else 6)
     else:
         expected = [
             "prepare",

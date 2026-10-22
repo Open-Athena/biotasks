@@ -35,6 +35,8 @@ HERE = Path(__file__).parent
 
 def check_config(config):
     native_effort(config)
+    if "allow_quality_repair" in config and type(config["allow_quality_repair"]) is not bool:
+        raise ValueError("allow_quality_repair must be boolean")
     if config.get("entrypoint") not in {
         "run_reference_setup.py",
         "run_reference_replay.py",
@@ -90,6 +92,7 @@ def check_config(config):
         "resume_probe_draft_directory",
         "resume_contract_directory",
         "contract_feedback_file",
+        "frozen_grader_file",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts

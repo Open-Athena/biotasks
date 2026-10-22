@@ -12,7 +12,10 @@ def save(path, value):
     path.write_text(json.dumps(value))
 
 
-def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monkeypatch):
+@pytest.mark.parametrize("question_revision", [False, True])
+def test_bundle_keeps_answers_private_and_requires_exact_controls(
+    tmp_path, monkeypatch, question_revision
+):
     materialized, grading, environment = [
         tmp_path / p for p in ("materialized", "grading", "environment")
     ]
@@ -53,6 +56,22 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monk
         path = materialized / kind / name
         path.parent.mkdir()
         path.write_bytes(b"1")
+    if question_revision:
+        from question_repair import revise_question
+
+        revised = tmp_path / "revised-materialization"
+        revise_question(
+            materialized,
+            revised,
+            {
+                "disposition": "ready",
+                "instruction": "Question with corrected convention",
+                "rationale": "Source-grounded correction",
+            },
+        )
+        assert json.loads((materialized / "candidate.json").read_text()) == candidate
+        materialized = revised
+        candidate = json.loads((materialized / "candidate.json").read_text())
     save(grading / "result.json", dict(status="grader_candidate_validated", cleanup_verified=True))
     grader = dict(
         instruction="Acceptance rules",
@@ -75,7 +94,7 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(tmp_path, monk
     ]
     save(grading / "final-controls.json", controls)
     (grading / "instruction.md").write_text(
-        "Scientific question\n\n## Acceptance rules\n\nAcceptance rules\n"
+        candidate["instruction"] + "\n\n## Acceptance rules\n\nAcceptance rules\n"
     )
     save(environment / "candidate/system-packages.json", [])
     (environment / "candidate/pyproject.toml").write_text(
