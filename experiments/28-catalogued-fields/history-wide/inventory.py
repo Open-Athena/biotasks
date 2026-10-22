@@ -9,6 +9,7 @@ from pathlib import Path
 import resource
 import subprocess
 import time
+import urllib.request
 
 ROOT = Path(__file__).resolve().parent
 QUERY = '''query($owner: String!, $name: String!, $cursor: String) {
@@ -73,7 +74,12 @@ def inspect_page(page, repo, cursor, cutoff, seen):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--state-dir', type=Path, required=True)
+    parser.add_argument('--report-dir', type=Path, default=ROOT)
+    parser.add_argument('--remote-worker', action='store_true')
     args = parser.parse_args()
+    args.report_dir.mkdir(parents=True, exist_ok=True)
+    if args.remote_worker:
+        assert os.environ.get('IRIS_OUTPUT_DIR') and os.environ.get('GH_TOKEN')
     counts = read(ROOT / 'history-counts.json')
     cutoff = stamp(counts['finished_utc'])
     args.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
@@ -95,19 +101,32 @@ def main():
         # Rebuild bounded inventory from saved original pages on resumption.
         with output.open('w') as inventory:
             while True:
-                node_safety()
+                if not args.remote_worker:
+                    node_safety()
                 path = directory / f'page-{page_index:04d}.json'
                 if path.exists():
                     page = read(path)
                 else:
-                    command = ['gh', 'api', 'graphql', '-f', 'query=' + QUERY,
-                        '-f', 'owner=' + owner, '-f', 'name=' + name]
-                    if cursor is not None:
-                        command += ['-f', 'cursor=' + cursor]
-                    response = subprocess.run(command, capture_output=True, text=True,
-                        check=True, timeout=60)
-                    assert len(response.stdout.encode()) <= 2 * 1024**2
-                    page = json.loads(response.stdout)
+                    if args.remote_worker:
+                        request = urllib.request.Request('https://api.github.com/graphql',
+                            data=json.dumps({'query': QUERY, 'variables': {
+                                'owner': owner, 'name': name, 'cursor': cursor}}).encode(),
+                            headers={'Authorization': 'Bearer ' + os.environ['GH_TOKEN'],
+                                'User-Agent': 'BioTasks-history-metadata',
+                                'Content-Type': 'application/json'})
+                        with urllib.request.urlopen(request, timeout=60) as response:
+                            body = response.read(2 * 1024**2 + 1)
+                        assert len(body) <= 2 * 1024**2
+                        page = json.loads(body)
+                    else:
+                        command = ['gh', 'api', 'graphql', '-f', 'query=' + QUERY,
+                            '-f', 'owner=' + owner, '-f', 'name=' + name]
+                        if cursor is not None:
+                            command += ['-f', 'cursor=' + cursor]
+                        response = subprocess.run(command, capture_output=True, text=True,
+                            check=True, timeout=60)
+                        assert len(response.stdout.encode()) <= 2 * 1024**2
+                        page = json.loads(response.stdout)
                     assert not page.get('errors'), page.get('errors')
                     save(path, page)
                 connection, accepted, excluded = inspect_page(page, repo, cursor, cutoff, seen)
@@ -134,7 +153,7 @@ def main():
             'inventory': {'path': str(output.relative_to(args.state_dir)),
                 'sha256': sha(output), 'bytes': output.stat().st_size}}
         report['repositories'].append(row)
-        save(ROOT / 'inventory-progress.json', report)
+        save(args.report_dir / 'inventory-progress.json', report)
         print(json.dumps({'repo': repo, 'unique_merged_prs': len(seen), 'pages': len(pages),
             'cutoff_count_matches': True, 'remaining_github_points': page['data']['rateLimit']['remaining']}), flush=True)
     report.update(finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -145,7 +164,7 @@ def main():
         full_history_enumeration_complete=len(report['repositories']) == 10,
         unique_merged_prs=sum(r['unique_merged_prs_at_cutoff'] for r in report['repositories']))
     assert report['unique_merged_prs'] == counts['total_merged_prs']
-    save(ROOT / 'inventory-manifest.json', report)
+    save(args.report_dir / 'inventory-manifest.json', report)
     print(json.dumps({key: value for key, value in report.items() if key not in ['repositories', 'query']}, indent=2), flush=True)
 
 
