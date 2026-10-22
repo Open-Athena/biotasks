@@ -1,0 +1,20 @@
+{
+  "diagnosis": "Generated public question conflicts with the fixed reference/implementation on time units and inherited group weighting. The alternative follows the question.",
+  "public_question_evidence": [
+    "**2. `rmsd_mass_weighted.csv` \u2014 mass-weighted select RMSD with unweighted group RMSDs.**",
+    "Fit-and-report selection: all protein alpha-carbons (`name CA` of protein residues), with atomic mass as the per-atom weight both in the fitting objective and in the reported RMSD of this selection. Report, in addition, the *unweighted* RMSD of three domain groups selected on the full universe as `backbone` atoms (N, CA, C, O) of protein residues in the stated ranges:",
+    "- `Time (ns)`: the trajectory file's own recorded per-frame time in nanoseconds (read from the trajectory metadata), not a frame index times an assumed interval."
+  ],
+  "independent_report": {
+    "table_structure": "pass",
+    "time_metadata": "98/98 rows fail in each file; approximately 1000-fold unit disagreement",
+    "mass_weighted_groups": "290/392 cells fail",
+    "ca_core_values": "all 98 pass",
+    "resid_weighted_values": "all 392 pass"
+  },
+  "reference_oracle_and_basic_controls": "pass",
+  "grader_tolerances_changed": false,
+  "source_data_reference_oracle_edited": false,
+  "native_or_publication_attempted": false,
+  "repair_route": "Not implemented. Evaluate one bounded source-grounded correction of generated question using existing quality-repair allowance, with fixed scientific assets and a fresh independent validation environment; never force agreement or narrow outputs."
+}

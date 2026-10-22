@@ -1,0 +1,62 @@
+{
+  "candidate_sha256": "cd086fa58a7262cfc0bf7e69240ef9706f4ffc8142daf51461206b69a7c54719",
+  "failed_controls": [
+    {
+      "candidate_sha256": "cd086fa58a7262cfc0bf7e69240ef9706f4ffc8142daf51461206b69a7c54719",
+      "execution": {
+        "grader": {
+          "exit_code": 0,
+          "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+          "stderr": "",
+          "stdout": ""
+        },
+        "report": {
+          "checks": [
+            {
+              "id": "table_structure",
+              "message": "all three tables present and parseable with the exact required columns, one data row per frame, Frame axis matching the reference row-by-row",
+              "passed": true
+            },
+            {
+              "id": "time_metadata",
+              "message": "rmsd_ca_core.csv: 98 of 98 Time (ns) values outside the 1e-06 ns tolerance (e.g. frame 0 (|delta|=0.999 ns), frame 1 (|delta|=2 ns), frame 2 (|delta|=3 ns)) rmsd_mass_weighted.csv: 98 of 98 Time (ns) values outside the 1e-06 ns tolerance (e.g. frame 0 (|delta|=0.999 ns), frame 1 (|delta|=2 ns), frame 2 (|delta|=3 ns)) rmsd_resid_weighted.csv: 98 of 98 Time (ns) values outside the 1e-06 ns tolerance (e.g. frame 0 (|delta|=0.999 ns), frame 1 (|delta|=2 ns), frame 2 (|delta|=3 ns))",
+              "passed": false
+            },
+            {
+              "id": "rmsd_ca_core_values",
+              "message": "rmsd_ca_core.csv: all 98 RMSD cells match the reference within 1e-04 A + 1e-08 x |reference| (worst |delta|/tolerance 0.00223)",
+              "passed": true
+            },
+            {
+              "id": "rmsd_mass_weighted_values",
+              "message": "rmsd_mass_weighted.csv: 290 of 392 RMSD cells rejected (0 negative, 290 outside tolerance); worst |delta|/tolerance 264; first failures: frame 1, column 'CORE' (outside tolerance, |delta|/tolerance=76); frame 2, column 'CORE' (outside tolerance, |delta|/tolerance=85.8); frame 3, column 'CORE' (outside tolerance, |delta|/tolerance=69.3)",
+              "passed": false
+            },
+            {
+              "id": "rmsd_resid_weighted_values",
+              "message": "rmsd_resid_weighted.csv: all 392 RMSD cells match the reference within 1e-04 A + 1e-08 x |reference| (worst |delta|/tolerance 0.00797)",
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        "status": "executed",
+        "submission_before": {
+          "rmsd_ca_core.csv": "86bd968dd4e18da3afb40e892a9cb417b3f8466a5b2ebbd48b9f8dc12d5ccbe2",
+          "rmsd_mass_weighted.csv": "d3a321167bcc0ce61bee88a482c3d5d8502d63f69555ab036d9d195c45e2ac0e",
+          "rmsd_resid_weighted.csv": "7b0b7575e5a5dd1298e81adc25414a499719196d015bb371d02a867582519096"
+        },
+        "submission_sha256": {
+          "rmsd_ca_core.csv": "86bd968dd4e18da3afb40e892a9cb417b3f8466a5b2ebbd48b9f8dc12d5ccbe2",
+          "rmsd_mass_weighted.csv": "d3a321167bcc0ce61bee88a482c3d5d8502d63f69555ab036d9d195c45e2ac0e",
+          "rmsd_resid_weighted.csv": "7b0b7575e5a5dd1298e81adc25414a499719196d015bb371d02a867582519096"
+        }
+      },
+      "kind": "alternative",
+      "omitted": null,
+      "passed_control": false,
+      "probe": null
+    }
+  ],
+  "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved"
+}
