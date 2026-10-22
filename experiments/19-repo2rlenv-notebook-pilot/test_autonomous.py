@@ -47,6 +47,21 @@ def test_failed_operation_log_is_available_in_small_diagnostics(tmp_path):
     ).read_text() == partial.read_text()
 
 
+def test_unresolved_comparison_is_returned_without_changing_original_evidence(tmp_path):
+    root = tmp_path / "run"
+    conflict = root / "grading/independent-comparison-conflict.json"
+    m.write(conflict, {"status": "unresolved", "reference": "A", "independent": "B"})
+    original = conflict.read_bytes()
+    destination = tmp_path / "diagnostics"
+    m.copy_diagnostics(root, destination)
+    assert (destination / conflict.relative_to(root)).read_bytes() == original
+    assert conflict.read_bytes() == original
+    # Oversized records remain in the full archive, not the bounded log transport.
+    conflict.write_bytes(b"x" * 256_001)
+    m.copy_diagnostics(root, tmp_path / "bounded")
+    assert not (tmp_path / "bounded" / conflict.relative_to(root)).exists()
+
+
 @pytest.mark.parametrize(
     "failure", [None, "blocked", "infrastructure", "construction", "grading", "native"]
 )

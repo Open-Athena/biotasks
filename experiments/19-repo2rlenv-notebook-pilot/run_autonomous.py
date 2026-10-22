@@ -147,6 +147,7 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "grading/final-candidate.json",
         "grading/final-controls.json",
         "grading/independent-result.json",
+        "grading/independent-comparison-conflict.json",
         "grading/review.json",
         "native/result.json",
     )

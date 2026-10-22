@@ -1,0 +1,89 @@
+{
+  "candidate_sha256": "19a138fa4a7b4f99f7e3e3db5c5998edbeaa3f0c32acefe0b49b4066468f0ac8",
+  "failed_controls": [
+    {
+      "candidate_sha256": "19a138fa4a7b4f99f7e3e3db5c5998edbeaa3f0c32acefe0b49b4066468f0ac8",
+      "execution": {
+        "grader": {
+          "exit_code": 0,
+          "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+          "stderr": "",
+          "stdout": ""
+        },
+        "report": {
+          "checks": [
+            {
+              "id": "required_files_present",
+              "message": "all four declared artifacts present at the declared paths",
+              "passed": true
+            },
+            {
+              "id": "main_table_schema",
+              "message": "main table parsed: 40557 rows, unique (chrom, start, end) keys",
+              "passed": true
+            },
+            {
+              "id": "count_distribution_schema",
+              "message": "distribution table parsed: 17 rows, unique keys",
+              "passed": true
+            },
+            {
+              "id": "reverse_table_schema",
+              "message": "reverse table parsed: 567 rows, unique pval keys, fractions consistent with counts",
+              "passed": true
+            },
+            {
+              "id": "summary_schema",
+              "message": "summary.json parsed with exactly the three declared keys",
+              "passed": true
+            },
+            {
+              "id": "main_peak_fragments_and_fc",
+              "message": "fragment keys: reference=40557 submission=40557 missing=0 extra=0; fc values outside tolerance=0 (largest in-tolerance deviation=0.0005)",
+              "passed": true
+            },
+            {
+              "id": "main_strongest_motif_assignment",
+              "message": "NA-pattern disagreements=0; rows equal to the reference record=34792; accepted same-pval tie alternatives=0; non-maximal pval_2=0; motif records not consistent with any attested reference record=0; missing rows=0; extra rows=0",
+              "passed": true
+            },
+            {
+              "id": "motif_count_distribution_values",
+              "message": "distinct counts: reference=17 submission=17 missing=0 extra=0; mismatched n_peak_records values=0",
+              "passed": true
+            },
+            {
+              "id": "motif_overlap_by_pval_values",
+              "message": "pval keys: reference=567 submission=567 missing=0 extra=0; mismatched integer counts=7; fractions outside tolerance=0",
+              "passed": false
+            },
+            {
+              "id": "summary_values",
+              "message": "integer fields mismatching reference: none; pearson deviation from reference=3.89e-16 (tolerance=1e-06)",
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        "status": "executed",
+        "submission_before": {
+          "ctcf_peaks_with_strongest_motif_clean.tsv": "7d129405694c893178340710429808898b263fa3511e3b15446e1a4200c05fcb",
+          "motif_overlap_fraction_by_pval.tsv": "0ae45254be47111a52f1640ef1ec2d32e5d46bc4321f9be05ca281dfbfda3294",
+          "peak_motif_count_distribution.tsv": "8180e3cf1582f8c935fce43200c78b1a06ccb77dbef65999677e82086077f6de",
+          "summary.json": "4b585d7d0744800cee95816af9b964b6b34fc45706c8caa996a5057da57279f5"
+        },
+        "submission_sha256": {
+          "ctcf_peaks_with_strongest_motif_clean.tsv": "7d129405694c893178340710429808898b263fa3511e3b15446e1a4200c05fcb",
+          "motif_overlap_fraction_by_pval.tsv": "0ae45254be47111a52f1640ef1ec2d32e5d46bc4321f9be05ca281dfbfda3294",
+          "peak_motif_count_distribution.tsv": "8180e3cf1582f8c935fce43200c78b1a06ccb77dbef65999677e82086077f6de",
+          "summary.json": "4b585d7d0744800cee95816af9b964b6b34fc45706c8caa996a5057da57279f5"
+        }
+      },
+      "kind": "alternative",
+      "omitted": null,
+      "passed_control": false,
+      "probe": null
+    }
+  ],
+  "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved"
+}
