@@ -396,7 +396,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
 
         monkeypatch.setattr(
             grading_resume,
-            {"draft": "load_grader_draft", "independent": "load_independent"}.get(resume, "load_resume"),
+            {"draft": "load_grader_draft", "independent": "load_independent"}.get(
+                resume, "load_resume"
+            ),
             reuse,
         )
     calls = []
@@ -530,6 +532,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
         elif name.startswith("review"):
+            assert inputs["initial_probes"] == suite.model_dump()
+            if name == "review-repair":
+                assert (
+                    inputs["probes"]["probes"][0]["rationale"]
+                    == "Correction justified by the unchanged public rule"
+                )
+                assert inputs["probes"]["probes"][0]["script"] == suite.probes[0].script
             if derived:
                 assert ["chmod", "555", "/work/task-inputs"] in commands
             assert inputs["candidate"]["grader_code"] == c.grader_code
@@ -560,7 +569,20 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 assert ["python", "/work/alternative_remote.py"] in commands
                 receipt = json.loads((tmp_path / "resume.json").read_text())
                 assert receipt["reexecute_independent"] and not receipt["prior_acceptance_reused"]
-            value = c
+            value = (
+                module.GraderRepair(
+                    **c.model_dump(),
+                    probe_expectations=[
+                        {
+                            "name": suite.probes[0].name,
+                            "check_ids": suite.probes[0].check_ids,
+                            "rationale": "Correction justified by the unchanged public rule",
+                        }
+                    ],
+                )
+                if name == "repair"
+                else c
+            )
         if kwargs.get("validate"):
             await kwargs["validate"](value)
         return value

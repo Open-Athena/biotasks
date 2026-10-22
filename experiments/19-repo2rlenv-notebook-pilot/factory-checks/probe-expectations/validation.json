@@ -1,0 +1,67 @@
+{
+  "recorded_at": "2026-10-22T00:03:00.423848+00:00",
+  "scope": "Offline general factory repair tests, including real execution of synthetic two-file mutation and grader; no biological, endpoint or paid-cloud validation.",
+  "checks": {
+    "initial_focused_tests_passed": 64,
+    "broader_regression_tests_passed": 95,
+    "counts_overlap_do_not_add": true,
+    "ruff_passed": true,
+    "new_model_calls": 0,
+    "new_cloud_resources": 0
+  },
+  "broader_pytest_selection": [
+    "test_probe_expectations.py",
+    "test_grading.py",
+    "test_grading_resume.py",
+    "test_scientific_bundle.py",
+    "test_model_profile.py",
+    "test_autonomous.py",
+    "test_scientific_native.py"
+  ],
+  "python": "3.13.13",
+  "upstream_revision": "5555443",
+  "source_files": [
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+      "sha256": "521e9ffbc0a1d923cdd34e8e1ceac6e4e39b95a7fbf448d9bd442fb23e404963",
+      "bytes": 7387
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "sha256": "c6710599af8df933b74b10476af6e72b48e2a7b282ac6ff745af56693c58ee41",
+      "bytes": 42305
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py",
+      "sha256": "53e670ae5a56462b27d7d45c96507358558daa73754987ca99c948d88f97d61d",
+      "bytes": 7355
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "sha256": "ebe378d69bd6ee82065e7907bf581d00cb1499d17e226e662643690345892244",
+      "bytes": 28190
+    },
+    {
+      "path": "src/biotasks/prompts/notebook-grader-author.md",
+      "sha256": "f70859a59e7cc705a2a24aafc8e57c76a98d9d6a391c1d8b69f26e887e178d79",
+      "bytes": 11846
+    },
+    {
+      "path": "src/biotasks/prompts/notebook-grader-probes.md",
+      "sha256": "09634062c74d9353ebf4481458d2112320d32055fc6d3b8a1525afe75968aff6",
+      "bytes": 7298
+    },
+    {
+      "path": "src/biotasks/prompts/notebook-grader-review.md",
+      "sha256": "af5b8de4f27d277b2530a1de6efc3a9fcbc71391494aa8affd134ba3fdaf59a3",
+      "bytes": 4392
+    }
+  ],
+  "constraints": [
+    "Existing single quality-repair session only; no additional worker stage or changed execution limits.",
+    "GLM may correct only named check expectations and rationale, with independent review of original and revised metadata.",
+    "No changed probe scripts, names, kinds, focus or source citations; intended overall outcomes unchanged.",
+    "Scientific check coverage retained; all controls rerun and original failure records preserved.",
+    "Source/reference/scientific-method corrections still blocked."
+  ]
+}

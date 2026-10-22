@@ -11,9 +11,11 @@ from grading_protocol import (
     AlternativeSolution,
     ContractText,
     Grader,
+    GraderRepair,
     Probes,
     Review,
     apply_contract_text,
+    apply_probe_expectations,
     check_coverage,
     check_probes,
     parse_report,
@@ -871,16 +873,25 @@ async def run_grading(
                     **context,
                     "candidate": candidate.model_dump(),
                     "probes": probes.model_dump(),
+                    "initial_probes": initial_probes.model_dump(),
                     "controls": session.last_controls,
                 },
                 validate_review,
             )
 
+        initial_probes = probes
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
         if assessment.decision == "revise" and contract_base is None:
-            candidate = await call(
-                Grader,
+
+            async def validate_repair(value):
+                corrected, corrected_probes = apply_probe_expectations(value, initial_probes)
+                if corrected.disposition == "ready":
+                    session.frozen_probes = corrected_probes
+                await session.validate_candidate(corrected)
+
+            repaired = await call(
+                GraderRepair,
                 "repair",
                 "notebook-grader-author",
                 {
@@ -890,9 +901,12 @@ async def run_grading(
                     "frozen_probes": probes.model_dump(),
                     "controls": session.last_controls,
                 },
-                session.validate_candidate,
+                validate_repair,
                 session.candidate_first_shell(),
             )
+            save_record(root / "repair.json", repaired.model_dump())
+            candidate, probes = apply_probe_expectations(repaired, initial_probes)
+            save_record(root / "repaired-probes.json", probes.model_dump())
             save_record(root / "repaired-candidate.json", candidate.model_dump())
             if candidate.disposition == "blocked":
                 return {"status": "repair_blocked", "grader_construction_run": True}

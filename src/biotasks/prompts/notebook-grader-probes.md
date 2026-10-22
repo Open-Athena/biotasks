@@ -75,6 +75,12 @@ actually fail for the control to count. For valid_alternative probes, all grader
 checks must pass. Your controls are frozen before the grader is repaired. Do not
 make them easier just because the implementation rejects or accepts them incorrectly.
 
+List only checks necessarily violated by the intended edit, as justified by the
+public rule. Changing an artifact does not imply every check involving it fails:
+identities, ordering or relations between consistently edited files may remain
+valid. Do not copy all check IDs associated with a modified file. Explain which
+scientific requirement the mutation violates and which relations it preserves.
+
 If blocked, submit `disposition: "blocked"` and explain the evidence gap in the
 private rationale/concerns. Ready artifacts use `disposition: "ready"`. A blocked
 submission stops this stage; do not fabricate a candidate just to fill the schema.

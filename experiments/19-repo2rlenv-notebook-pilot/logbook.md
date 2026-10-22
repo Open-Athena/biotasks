@@ -3272,3 +3272,12 @@ Original download-checked preflight/native receipts, resource flags and the shar
 
 
 Reserved the next original COBRApy deletions campaign 041 at $5 within the reconciled $100 authorization ($98 held/$2 unallocated). It is not submitted and will start only after exact cleanup frees a slot. It uses the immutable native-high factory, without notebook-specific modifications or operator task design. Pyteomics is the next distinct panel member to queue when accounting and the second slot allow.
+
+
+## 2026-10-22 — Repair probe annotations without weakening mutations
+
+HRV 024's original reviewer identified incorrect check expectations: a wrong paired-file edit can preserve a required relation even while violating reference-value checks. The current factory allowed only grader edits, so its existing repair worker could not correct the defective probe annotations. The original run, reviewer and failed controls remain unchanged; no task artifact was manually repaired.
+
+The next factory's existing quality-repair session now accepts optional model-authored check-ID/rationale corrections. The controller retains every original script, name, kind, focus and citation, rejects unknown/duplicate annotations and lost scientific coverage, reruns all controls, and gives original and revised suites to final review. A scientifically invalid script or intended outcome remains blocked. General prompt guidance distinguishes changed artifacts from necessarily violated checks; no biological method or seed-specific rule was added. No new worker stage, token/request allowance, campaign duration or resource budget was added.
+
+64 focused tests and a broader 95-test regression selection passed (overlapping counts). The executed synthetic two-file case keeps an internally consistent wrong answer rejected by the unchanged grader, while correcting its mistaken relational-check annotation. Frozen mutation bytes, original failure records, schema and coverage boundaries, orchestration, recovery and packaging checks pass; Ruff passes. This is offline evidence only. The previously frozen high-profile payloads have not been submitted and must be rebuilt together with this general fix before launch. Current 024/025 still run their original frozen code.

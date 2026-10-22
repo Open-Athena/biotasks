@@ -75,6 +75,45 @@ class Review(StrictModel):
     issues: list[str]
 
 
+class ProbeExpectation(StrictModel):
+    name: str = Field(min_length=1)
+    check_ids: list[str] = Field(min_length=1)
+    rationale: str = Field(min_length=1)
+
+
+class GraderRepair(Grader):
+    probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
+
+
+def apply_probe_expectations(repair, original):
+    """Correct model-authored annotations without changing any scientific mutation."""
+    candidate = Grader.model_validate(repair.model_dump(exclude={"probe_expectations"}))
+    if candidate.disposition == "blocked":
+        return candidate, original
+    updates = {item.name: item for item in repair.probe_expectations}
+    if len(updates) != len(repair.probe_expectations):
+        raise ValueError("Duplicate probe expectation updates")
+    if set(updates) - {probe.name for probe in original.probes}:
+        raise ValueError("Expectation update refers to an unknown probe")
+    probes = []
+    for probe in original.probes:
+        update = updates.get(probe.name)
+        if update:
+            if len(update.check_ids) != len(set(update.check_ids)):
+                raise ValueError("Duplicate probe check IDs")
+            if probe.kind == "valid_alternative" and update.check_ids != probe.check_ids:
+                raise ValueError("Valid-alternative expectations stay fixed: all checks must pass")
+            # The schema has no script/kind/intent fields; all original mutation
+            # bytes, names, kinds, focus and source evidence are copied unchanged.
+            probe = Probe.model_validate(
+                {**probe.model_dump(), "check_ids": update.check_ids, "rationale": update.rationale}
+            )
+        probes.append(probe)
+    revised = Probes.model_validate({**original.model_dump(), "probes": probes})
+    check_probes(revised, candidate)
+    return candidate, revised
+
+
 def check_coverage(candidate, paths):
     known = set(paths)
     if any(set(c.artifacts) - known for c in candidate.checks):

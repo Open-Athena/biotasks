@@ -26,6 +26,15 @@ science, change selected outputs, or weaken acceptance rules to make controls pa
 A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.
 
+If `initial_probes` differs from `probes`, the existing repair worker corrected
+only expected check IDs or rationale; mutation scripts and intended overall
+pass/fail outcomes must remain unchanged. Verify every correction against the
+public scientific rule and actual edit, not merely the grader's observed result.
+Do not accept removal of scientific coverage, a weaker challenge, or a relabeled
+scientific error. Repaired annotations require fresh execution of all controls;
+original failed records remain failures. A scientifically invalid probe script
+or intended outcome remains a blocker for this repair path.
+
 Treat the candidate's prose as claims to check, not as additional experimental
 evidence. Verify numerical explanations and margins against the actual controls
 and recorded measurements. An arbitrary safety factor is not a precision argument.
