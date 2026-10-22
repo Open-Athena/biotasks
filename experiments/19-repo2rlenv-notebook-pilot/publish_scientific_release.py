@@ -9,6 +9,13 @@ from huggingface_hub.errors import EntryNotFoundError, RepositoryNotFoundError
 from repo2rlenv.campaigns.release import publish_release, verify_release
 
 
+class SerialHfApi(HfApi):
+    """The SDK exposes upload concurrency on create_commit, not upload_folder."""
+
+    def create_commit(self, *args, **kwargs):
+        return super().create_commit(*args, **{**kwargs, "num_threads": 1})
+
+
 def publication_target(api, repo_id, files, download=hf_hub_download):
     """Require an owned public destination; replace only manifest-managed paths."""
     owner, separator, name = repo_id.partition("/")
@@ -48,7 +55,7 @@ def main():
     staged, receipt = map(Path, sys.argv[1:])
     files = verify_release(staged)
     repo_id = files["repo_id"]
-    api = HfApi()
+    api = SerialHfApi()
     head, obsolete = publication_target(api, repo_id, files)
 
     class Replacement:
@@ -64,7 +71,6 @@ def main():
                 **kwargs,
                 parent_commit=self.parent_commit,
                 delete_patterns=obsolete or None,
-                num_threads=1,
             )
             self.parent_commit = commit.oid
             return commit

@@ -58,3 +58,38 @@ def test_metadata_expansion_rejected_before_parsing(tmp_path):
     with pytest.raises(ValueError, match="metadata exceeds"):
         bounded_archive(archive, destination, {})
     assert not list(destination.iterdir())
+
+
+def test_real_sdk_folder_upload_routes_serial_setting_to_commit(tmp_path, monkeypatch):
+    """Exercise the installed folder API; it rejects num_threads on that method."""
+    import inspect
+
+    import huggingface_hub.hf_api as sdk
+    from publish_scientific_release import SerialHfApi
+
+    signature = inspect.signature(sdk.HfApi.create_commit)
+    calls = []
+    sentinel = object()
+
+    def commit(self, *args, **kwargs):
+        signature.bind(self, *args, **kwargs)
+        calls.append(kwargs)
+        return sentinel
+
+    monkeypatch.setattr(sdk.HfApi, "create_commit", commit)
+    monkeypatch.setattr(sdk, "is_xet_available", lambda: False)
+    (tmp_path / "artifact.txt").write_text("fixture")
+    api = SerialHfApi(token=False)
+    assert (
+        api.upload_folder(
+            repo_id="owner/release",
+            repo_type="dataset",
+            folder_path=tmp_path,
+            parent_commit="a" * 40,
+            commit_message="fixture",
+        )
+        is sentinel
+    )
+    assert len(calls) == 1 and calls[0]["num_threads"] == 1
+    assert calls[0]["parent_commit"] == "a" * 40
+    assert [op.path_in_repo for op in calls[0]["operations"]] == ["artifact.txt"]
