@@ -33,12 +33,33 @@ retain their complete-checkout archive because they may need prior evidence.
 A single host has a two-hour campaign deadline plus the established cleanup
 allowance, and at most one Daytona sandbox at a time. Each of five sandbox stages
 reserves $1 before creation ($5 total); reservations are conservative allowances,
-not invoices. These are within the standing $100 authorization. GLM-5.3 uses
-medium reasoning; preparation has one call, other tool sessions retain their
+not invoices. These are within the standing $100 authorization. GLM-5.3 requests
+native `high` reasoning; the served effective effort is unverified. Preparation has one call, other tool sessions retain their
 existing finite wall-time boundaries without added byte/token/request caps.
 Reference and solver computation are limited to 600 seconds, verifier to 120.
-The setup worker retains two reference tests. The grading worker retains its
-existing review and repair pass; no external operator supplies repair feedback.
+The setup worker retains two reference tests. Validation has one shared quality-repair allowance; no external operator supplies repair feedback.
+
+When independent comparison disagrees while reference/oracle and every other
+basic control pass, the controller may route that allowance to a question-only
+repair. The retained conflict must bind the exact grader, and the old sandbox
+must have verified cleanup. The existing specification session provides the
+original source, executed evidence and pinned read-only package inspection to
+the `notebook-question-repair` prompt. A worker must establish a factual defect
+in the generated question; broken source, insufficient evidence, a faulty
+comparator or necessary scientific-asset changes block this path.
+
+The original materialization stays unchanged. A separate derived view changes
+only its question, with a self-contained upstream `Edit` record and parent
+identity checks; no scientific reexecution is claimed by this view. Input bytes,
+output inventory, derivation, oracle, original execution and comparator code/checks
+remain fixed. A fresh sandbox runs a new blind independent implementation, the
+unchanged comparator, fresh probes and source review. It receives no old blind
+implementation or acceptance. All native and release gates remain required.
+The consumed allowance disables the later grader-repair pass; a second conflict
+rejects. A prior grader repair also prevents this extra question-repair path.
+Original and revised evidence/export paths stay distinct, and `pipeline.json`
+records the effective materialization/grading paths for downstream use. This is
+a bounded attempt, not a guarantee of correction or broad software portability.
 
 The model adapter permits one timeout retry per author session using the packaged
 `worker-timeout-retry` prompt. Only pure model generation is repeated: no response
