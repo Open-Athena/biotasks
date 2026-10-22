@@ -1,0 +1,460 @@
+--- a/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
+@@ -131,7 +131,14 @@
+     rationale: str = Field(min_length=1)
+
+
++class CheckDescription(StrictModel):
++    id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
++    public_requirement: str = Field(min_length=1)
++    rationale: str = Field(min_length=1)
++
++
+ class GraderRepair(Grader):
++    check_descriptions: list[CheckDescription] = Field(default_factory=list)
+     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
+     probe_concerns: list[str] | None = Field(
+         default=None,
+@@ -144,7 +151,7 @@
+
+
+ class GraderRepairSubmission(StrictModel):
+-    """Only fields the repair worker may author; checks stay controller-owned."""
++    """Editable repair fields; check identities and coverage stay controller-owned."""
+
+     disposition: Literal["ready", "blocked"]
+     instruction: str | None = Field(
+@@ -156,6 +163,7 @@
+         description="Null preserves the exact prior grader program; otherwise return its complete replacement.",
+     )
+     rationale: str = Field(min_length=1)
++    check_descriptions: list[CheckDescription] = Field(default_factory=list)
+     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
+     probe_concerns: list[str] | None = None
+
+@@ -168,15 +176,36 @@
+             if prior_candidate is None:
+                 raise ValueError("Retained repair fields require the exact prior candidate")
+             fields[name] = getattr(prior_candidate, name)
+-    return GraderRepair.model_validate(
+-        {**fields, "checks": [check.model_dump() for check in frozen_checks]}
+-    )
++    descriptions = {item.id: item for item in submission.check_descriptions}
++    if len(descriptions) != len(submission.check_descriptions):
++        raise ValueError("Duplicate check description updates")
++    if set(descriptions) - {check.id for check in frozen_checks}:
++        raise ValueError("Description update refers to an unknown check")
++    checks = []
++    for check in frozen_checks:
++        value = check.model_dump()
++        if update := descriptions.get(check.id):
++            value["public_requirement"] = update.public_requirement
++        checks.append(value)
++    return GraderRepair.model_validate({**fields, "checks": checks})
++
++
++def check_repair_inventory(candidate_checks, frozen_checks):
++    """Permit explanatory corrections, retaining every check's identity and coverage."""
++
++    def inventory(checks):
++        return [check.model_dump(exclude={"public_requirement"}) for check in checks]
++
++    if inventory(candidate_checks) != inventory(frozen_checks):
++        raise ValueError(
++            "Repair cannot change the frozen check inventory; report a blocker if coverage must change"
++        )
+
+
+ def apply_probe_expectations(repair, original):
+     """Correct model-authored annotations without changing any scientific mutation."""
+     candidate = Grader.model_validate(
+-        repair.model_dump(exclude={"probe_expectations", "probe_concerns"})
++        repair.model_dump(exclude={"check_descriptions", "probe_expectations", "probe_concerns"})
+     )
+     if candidate.disposition == "blocked":
+         return candidate, original
+--- a/experiments/19-repo2rlenv-notebook-pilot/grading_session.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/grading_session.py
+@@ -20,6 +20,7 @@
+     bind_repair_checks,
+     check_coverage,
+     check_probes,
++    check_repair_inventory,
+     check_review_source_coverage,
+     control_summary,
+     parse_report,
+@@ -249,24 +250,6 @@
+             )
+         return json.dumps(reply)
+
+-    def candidate_first_shell(self):
+-        """Require a new controller attempt in each authoring or repair session."""
+-        prior_attempts = self.candidate_number
+-
+-        async def shell(command, timeout_sec=120):
+-            if self.candidate_number <= prior_attempts:
+-                return (
+-                    "No command executed. Submit a complete candidate for this session "
+-                    "using the supplied evidence, prior candidate and review when present. "
+-                    "The controller will execute the applicable controls and return "
+-                    "measured failures. Shell access then becomes available for diagnosis. "
+-                    "If the evidence cannot support a candidate, submit a blocked "
+-                    "disposition with the reason."
+-                )
+-            return await self.shell(command, timeout_sec)
+-
+-        return shell
+-
+     async def validate_probe_execution(self, probe):
+         """Check mutation execution without exposing any grader result to its author."""
+         self.probe_validation_number += 1
+@@ -346,10 +329,8 @@
+         if candidate.disposition == "blocked":
+             return
+         check_coverage(candidate, self.paths)
+-        if self.frozen_checks is not None and candidate.checks != self.frozen_checks:
+-            raise ValueError(
+-                "Repair cannot change the frozen check inventory; report a blocker if coverage must change"
+-            )
++        if self.frozen_checks is not None:
++            check_repair_inventory(candidate.checks, self.frozen_checks)
+         self.candidate_number += 1
+         folder = self.root / "candidates" / str(self.candidate_number)
+         folder.mkdir(parents=True)
+@@ -786,7 +767,7 @@
+                 "notebook-grader-author",
+                 context,
+                 session.validate_candidate,
+-                session.candidate_first_shell(),
++                session.shell,
+             )
+         save_record(root / "candidate.json", candidate.model_dump())
+         if candidate.disposition == "blocked":
+@@ -880,6 +861,7 @@
+             session.last_controls.append(await session.case(candidate, kind="probe", probe=probe))
+
+         author_input_control_summary = None
++        check_description_updates = []
+
+         async def review(name):
+             async def validate_review(value):
+@@ -900,6 +882,8 @@
+                     "candidate": candidate.model_dump(),
+                     "probes": probes.model_dump(),
+                     "initial_probes": initial_probes.model_dump(),
++                    "initial_checks": [check.model_dump() for check in session.frozen_checks],
++                    "check_description_updates": check_description_updates,
+                     "controls": session.last_controls,
+                     "control_summary": control_summary(session.last_controls),
+                     "author_input_control_summary": author_input_control_summary,
+@@ -940,12 +924,13 @@
+                     "control_summary": author_input_control_summary,
+                 },
+                 validate_repair,
+-                session.candidate_first_shell(),
++                session.shell,
+             )
+             repaired = bind_repair_checks(
+                 repair_submission, session.frozen_checks, prior_candidate=repair_base
+             )
+             save_record(root / "repair.json", repaired.model_dump())
++            check_description_updates = [item.model_dump() for item in repaired.check_descriptions]
+             candidate, probes = apply_probe_expectations(repaired, initial_probes)
+             save_record(root / "repaired-probes.json", probes.model_dump())
+             save_record(root / "repaired-candidate.json", candidate.model_dump())
+--- a/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py
+@@ -26,7 +26,7 @@
+         return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+-def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=1_000_000):
++def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=None):
+     csv.field_size_limit(1_048_576)
+     with path.open(newline="", encoding="utf-8-sig") as stream:
+         rows = csv.reader(stream, delimiter=delimiter, strict=True)
+@@ -54,7 +54,7 @@
+         count = ragged = 0
+         for row in rows:
+             count += 1
+-            if count > row_limit:
++            if row_limit is not None and count > row_limit:
+                 raise ValueError("CSV row inspection limit exceeded")
+             if len(row) != len(header):
+                 ragged += 1
+--- a/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py
+@@ -36,6 +36,22 @@
+     )
+     with pytest.raises(ValueError, match="row inspection limit"):
+         csv_profile(one, row_limit=1)
++
++
++def test_streaming_csv_has_no_implicit_row_rejection(tmp_path):
++    path = tmp_path / "long.csv"
++    chunk = "".join(f"{index % 7},a\n" for index in range(1001))
++    with path.open("w") as stream:
++        stream.write("value,tag\n")
++        for _ in range(1000):
++            stream.write(chunk)
++    result = csv_profile(path, distinct_limit=3)
++    assert result["row_count"] == 1_001_000
++    numbers, tags = result["columns"]
++    assert numbers["finite_numeric"] == result["row_count"]
++    assert numbers["minimum"] == 0 and numbers["maximum"] == 6
++    assert numbers["distinct_capped"] and numbers["distinct_nonempty"] == 3
++    assert not tags["distinct_capped"] and tags["distinct_nonempty"] == 1
+
+
+ def test_hdf5_shapes_only_and_external_links_are_not_followed(tmp_path):
+--- a/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py
+@@ -311,3 +311,84 @@
+     assert bound.instruction == replacement
+     assert bound.grader_code == grader.grader_code
+     assert bound.checks == grader.checks
++
++
++def test_check_explanation_repair_keeps_code_coverage_and_original_evidence():
++    from grading_protocol import (
++        GraderRepairSubmission,
++        bind_repair_checks,
++        check_repair_inventory,
++    )
++
++    grader, probes, _ = fixture()
++    original = grader.model_dump()
++    update = {
++        "id": grader.checks[0].id,
++        "public_requirement": "Compare parsed values under the unchanged public numerical rule.",
++        "rationale": "The original description incorrectly described serialization as the target.",
++    }
++    submission = GraderRepairSubmission(
++        disposition="ready", rationale=update["rationale"], check_descriptions=[update]
++    )
++    bound = bind_repair_checks(submission, grader.checks, prior_candidate=grader)
++    candidate, effective_probes = apply_probe_expectations(bound, probes)
++    check_repair_inventory(candidate.checks, grader.checks)
++    assert candidate.checks[0].public_requirement == update["public_requirement"]
++    assert candidate.checks[1:] == grader.checks[1:]
++    assert candidate.grader_code == grader.grader_code
++    assert candidate.instruction == grader.instruction
++    assert grader.model_dump() == original
++    assert effective_probes == probes
++    assert bound.check_descriptions[0].model_dump() == update
++    assert GraderRepair.model_validate_json(bound.model_dump_json()) == bound
++
++
++@pytest.mark.parametrize("bad_id,duplicate", [("unknown_check", False), ("value", True)])
++def test_description_updates_reject_unknown_or_duplicate_check_ids(bad_id, duplicate):
++    from grading_protocol import GraderRepairSubmission, bind_repair_checks
++
++    grader, _, _ = fixture()
++    update = {"id": bad_id, "public_requirement": "Corrected text", "rationale": "Evidence"}
++    submission = GraderRepairSubmission(
++        disposition="ready",
++        rationale="Description correction",
++        check_descriptions=[update, update] if duplicate else [update],
++    )
++    with pytest.raises(ValueError, match="Duplicate|unknown check"):
++        bind_repair_checks(submission, grader.checks, prior_candidate=grader)
++
++
++@pytest.mark.parametrize("field,value", [("kind", "structural"), ("artifacts", ["other.txt"])])
++def test_description_update_cannot_author_check_identity_or_coverage(field, value):
++    from grading_protocol import GraderRepairSubmission
++
++    update = {
++        "id": "value",
++        "public_requirement": "Corrected text",
++        "rationale": "Evidence",
++        field: value,
++    }
++    with pytest.raises(ValidationError, match="Extra inputs"):
++        GraderRepairSubmission(
++            disposition="ready", rationale="Description correction", check_descriptions=[update]
++        )
++
++
++@pytest.mark.parametrize("change", ["id", "kind", "artifacts", "remove", "reorder"])
++def test_repair_inventory_guard_still_rejects_coverage_changes(change):
++    from grading_protocol import check_repair_inventory
++
++    grader, _, _ = fixture()
++    checks = grader.model_copy(deep=True).checks
++    if change == "remove":
++        checks.pop()
++    elif change == "reorder":
++        checks.reverse()
++    elif change == "id":
++        checks[0].id = "different_check"
++    elif change == "kind":
++        checks[0].kind = "structural"
++    else:
++        checks[0].artifacts = ["other.txt"]
++    with pytest.raises(ValueError, match="frozen check inventory"):
++        check_repair_inventory(checks, grader.checks)
+--- a/src/biotasks/prompts/notebook-grader-author.md
++++ b/src/biotasks/prompts/notebook-grader-author.md
+@@ -16,22 +16,25 @@
+ work into a complete submission using the recorded observations and current
+ question. Do not start another investigation. Local tests are evidence, not
+ controller acceptance; failed or unfinished commands do not establish findings.
+-Do not invent new measurements. Submit the full candidate promptly; the
+-controller will execute its checks and return demonstrated defects for repair.
+-It names the directory containing private reference output files in your sandbox.
+-For each authoring or repair session, submit the candidate or repair response
+-from the supplied task, schemas and execution evidence before using the shell.
+-The controller resolves retained repair fields and runs the basic
+-acceptance and rejection checks; do not duplicate them in exploratory scripts
+-before submission. After a candidate attempt, shell access is available to diagnose
+-its measured failures and repair the grader. If the evidence cannot support a
+-candidate, return `blocked` with the reason. This ordering does not establish
+-correctness: all later independent probes and review are still required.
++Do not invent new measurements. Use focused inspection when the supplied evidence
++leaves the meaning of a stored quantity or encoding unresolved, then submit a
++complete candidate. You may inspect before submission; the controller will still
++run its own acceptance and rejection controls. Do not duplicate the full control
++suite in exploratory scripts. If available evidence cannot support the scientific
++comparison, return `blocked` with the reason.
++The input names the directory containing private reference output files in your sandbox.
+ The shell tool, when supplied, runs offline with the reference's resolved Python packages. You
+ can inspect those output files and installed package sources, and experiment in
+ your writable working directory. You cannot modify the controller's reference
+ copies. When `paths` supplies task inputs and recomputed outputs, inspect those
+ as recorded evidence too. Otherwise raw biological inputs are not available.
++For a native scientific file, ground the comparison in its documented encoding
++or the installed parser's behavior. Distinguish stored values from decoded
++quantities, including transformations, units and special tokens. Do not infer
++semantic equivalence from similar-looking strings, field names or floating-point
++parsing alone. Record the source or focused observation supporting each non-obvious
++normalization. A representation-only alternative must preserve the decoded
++scientific value; an edit changing it must be tested as a wrong answer.
+ Do not rerun the entire analysis in this grader-author stage; independently
+ executed controls are the evidence for recomputation agreement.
+
+@@ -127,15 +130,19 @@
+ ## Repair sessions
+
+ When a prior candidate and review are supplied, repair the identified defects in
+-that candidate. Keep the supplied check definitions and frozen probes unchanged;
+-report a blocker if a scientific change to either is necessary. The repair response
+-schema contains only editable fields. Do not return or rephrase the check
+-inventory: the controller carries its exact original definitions into the repaired
+-artifact. You may inspect those definitions in `prior_candidate` when correcting
+-the implementation; they remain the public acceptance requirements.
++that candidate. Keep check IDs, kinds, covered artifacts and scientific requirements,
++and the frozen probe programs and intended outcomes, unchanged. Report a blocker
++if a scientific change is necessary. Do not return a replacement check inventory.
++The repair schema permits `check_descriptions`: complete corrected
++`public_requirement` text for an existing check ID, with a source-backed rationale.
++Use this only to correct an explanation that conflicts with the unchanged
++scientific target and governing acceptance rules. Do not delete requirements,
++weaken criteria or fit descriptions to observed passing results. Omit unaffected
++checks. The controller retains their exact descriptions, copies all IDs, kinds
++and artifact coverage unchanged, and preserves both versions for fresh review.
+ Return null for `instruction` or `grader_code` when that field needs no change:
+ the controller retains its exact prior text. For annotation-only corrections,
+-retain both fields and return only the needed probe annotations and your rationale.
++retain both fields and return only the needed check or probe annotations and rationale.
+ When either field needs changes, return its complete replacement, not a diff.
+ The resolved complete candidate still undergoes every frozen control and fresh
+ review. A blocked response may retain those fields too; do not invent a grader
+--- a/src/biotasks/prompts/notebook-grader-review.md
++++ b/src/biotasks/prompts/notebook-grader-review.md
+@@ -118,6 +118,15 @@
+
+ ## Evidence versions
+
++When `check_description_updates` is present, compare each correction with
++`initial_checks`, the current candidate, source evidence and governing public
++rules. It may align misleading prose with unchanged scientific requirements;
++it must not remove an obligation, relax a criterion or justify an unsupported
++equivalence because current controls pass. The controller freezes check IDs,
++kinds and artifact coverage, but these structural guards cannot establish
++semantic fidelity. Block unsupported scientific changes even when every fresh
++control passes. Both original descriptions and the worker's rationale are supplied.
++
+ `control_summary` and `controls` describe the freshly executed candidate.
+ `author_input_control_summary`, when present, records the earlier summary supplied
+ to the repair author before its submissions were validated. A rationale explicitly
+--- a/experiments/19-repo2rlenv-notebook-pilot/test_grading.py
++++ b/experiments/19-repo2rlenv-notebook-pilot/test_grading.py
+@@ -95,35 +95,24 @@
+     assert remote.operation == 0
+
+
+-def test_grader_shell_opens_only_after_a_controller_candidate_attempt(tmp_path):
++def test_grader_author_can_inspect_before_candidate_submission(tmp_path):
+     from grading_session import GradingSession
+
++    async def helper(argv, timeout, label):
++        assert argv == ["shell", "author", "inspect recorded format", "12"]
++        assert timeout == 22
++        return {"exit_code": 0, "stdout": "recorded format evidence"}
++
+     session = GradingSession(
+-        remote=None, snapshot={"outputs": []}, root=tmp_path / "session", config={}
+-    )
+-    calls = []
+-
+-    async def shell(command, timeout_sec):
+-        calls.append((command, timeout_sec))
+-        return "recorded diagnostic"
+-
+-    session.shell = shell
+-
+-    async def exercise():
+-        initial_shell = session.candidate_first_shell()
+-        assert "No command executed" in await initial_shell("true", 12)
+-        assert calls == []
+-        session.candidate_number = 1
+-        assert await initial_shell("true", 12) == "recorded diagnostic"
+-        assert calls == [("true", 12)]
+-        repair_shell = session.candidate_first_shell()
+-        assert "No command executed" in await repair_shell("repair diagnostic", 13)
+-        assert calls == [("true", 12)]
+-        session.candidate_number += 1
+-        assert await repair_shell("repair diagnostic", 13) == "recorded diagnostic"
+-        assert calls == [("true", 12), ("repair diagnostic", 13)]
+-
+-    asyncio.run(exercise())
++        remote=None,
++        snapshot={"outputs": []},
++        root=tmp_path / "session",
++        config={"reference_seconds": 600},
++    )
++    session.helper = helper
++    result = json.loads(asyncio.run(session.shell("inspect recorded format", 12)))
++    assert result["stdout"] == "recorded format evidence"
++    assert session.candidate_number == 0
+
+
+ def candidate():
+@@ -563,9 +552,6 @@
+
+         async def shell(self, *args, **kwargs):
+             return json.dumps({"exit_code": 0, "stdout": "isolated"})
+-
+-        def candidate_first_shell(self):
+-            return self.shell
+
+         async def validate_candidate(self, value):
+             self.last_controls = [{"passed_control": True, "kind": "reference"}]
+--- a/src/biotasks/prompts/notebook-reference-setup.md
++++ b/src/biotasks/prompts/notebook-reference-setup.md
+@@ -58,6 +58,14 @@
+ all declared data and caches from their recorded sources; it cannot rely on files
+ downloaded during exploratory shell work. Those directories persist through the
+ subsequent offline reference execution, not between setup tests.
++
++Confirm where each input-loading function actually looks for cached data in the
++reference process. Use installed package sources or a focused lookup-path check;
++do not assume a newly created temporary directory is that cache. Staging files
++successfully is insufficient if the unchanged script cannot find them offline.
++Keep every required cache or input-path adaptation in the submitted recipe, not
++only in exploratory shell state. The later clean replay is an additional check,
++not evidence that a passed test in the authoring sandbox was already a clean build.
+
+ ## Files to produce
+
