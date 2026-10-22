@@ -3679,3 +3679,6 @@ The undeployed combined proposal passed 134 isolated remote software regressions
 
 
 060 reached an unresolved generated-grader rejection with all 23 final controls passing and no native attempt. Original/fresh cleanup passes; the $1 hold reconciles to $0.50 from the enclosing host interval, then $1 is reserved for 061 ($99 held / $1 unallocated). A static audit against primary format documentation shows a scientific sentinel-encoding problem, so description-only corrections cannot establish acceptance. Investigate grounded native-format validation and the additional candidate-before-inspection shell gate in the next version; keep the current round frozen and do not repair the generated task manually.
+
+
+059 also ended before native trials: 19 final controls pass, but an unsupported public input-population claim remains after the single repair. Original/fresh cleanup passes; full-profile whole-host reconciliation retains $0.75. Reserve $1 for 062, leaving $99.75 held / $0.25 unallocated. 061 is submitted on the same frozen factory. Distinguish these generated-question defects from source rejection and investigate repair ordering/input-fact grounding only in a subsequent version.
