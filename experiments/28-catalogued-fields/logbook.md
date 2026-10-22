@@ -175,3 +175,7 @@ The user requested concise current status in the issue body, with logs in commen
 ### Final owned cleanup
 
 After pushing audit checkpoint da85ea1b and verifying all195 public objects, elevated host-namespace inspection confirms both original watcher PID/start identities absent and no matching experiment workers. All ten original handles were freshly terminal and owned Docker cleanup receipts empty. Removed the exact task-owned persistent checkpoint (644files/6,322,986bytes, including redundant outer/account snapshots and four source caches) and two experiment __pycache__ directories; no biotasks28* path remains in/tmp. Credential files, shared caches and unrelated task paths were untouched. Final-local-cleanup.json records the verified archive receipt hash and completed deletion.
+
+### Final publication and closure
+
+Published the complete result as robot-prefixed comment6352713291, verified exact readback, and replaced the issue body with a concise current-status summary linking that comment and the preserved protocol. This corrects the interim link that referenced protocol.md before that file existed. Verified body equality, agent-generated label and actual CLOSED state with closedAt. All fifteen completion-audit rows now have scientific/accounting/retention/lifecycle/publication evidence. No new model calls, controls, retries or pipeline changes occurred during final auditing. The permanent research branch is retained; no main promotion or task dataset release.
