@@ -183,6 +183,14 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
             if operation.get("process", {}).get("exit_code") not in (None, 0):
                 selected += ((path.parent / "output.log").relative_to(root).as_posix(),)
     for stage in ("preparation", "setup-raw", "specification", "materialization-raw", "grading"):
+        # A one-call author may return a rejected draft without a transport or
+        # tool failure. Preserve upstream's actual validation feedback as well
+        # as the generic exhausted-allowance error in bounded diagnostics.
+        for name in ("draft.json", "operation.json"):
+            selected += tuple(
+                path.relative_to(root).as_posix()
+                for path in sorted((root / stage).glob("*/artifact-stage/" + name))
+            )
         selected += tuple(
             path.relative_to(root).as_posix()
             for path in sorted((root / stage).glob("*/artifact-stage/trace/*/failure.json"))[-3:]

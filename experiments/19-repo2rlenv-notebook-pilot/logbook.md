@@ -3727,3 +3727,12 @@ The general controller now gives every command a unique completion nonce and wri
 
 
 Rechecked12exact ownership labels for terminal021/022/068: all absent. Original resource-configuration hashes and enclosing host intervals support retaining$0.25/$0.25/$0.50respectively, using current published full-profile rates plus$0.10rounded upward to$0.25. This releases$2in unused planning holds, without a zero-invoice/model-call or free-credit claim. Reserve$1each for fresh069protein and070metabolomics using the same current generic factory, original sources and unchanged execution limits. Aggregate remains$100held, not actual invoiced spend.
+
+
+### 2026-10-22 — Fresh shared-factory follow-ups069/070
+
+Both new hosts admitted with the same181runtime/prompt files and unchanged source assets.069completed preparation/setup/replay/specification/construction and reached grading.070received one preparation response but committed no accepted artifact before its one-call allowance ended; no task sandbox or scientific computation ran. Its six bounded original diagnostic files are hash-verified and four fresh exact-owner queries are empty. Release its unused$1sandbox hold (aggregate$99held/$1unallocated). Preserve the original failure; do not infer an empty response, specific validation defect or source rejection.
+
+Detailed070feedback retrieval and a repeated previously successful065manifest read now returnHTTP403with the same approved personal credential. No alternative credential was extracted or substituted. Exact cause remains unresolved; the user was asked whether access changed. The existing069worker remains running.
+
+The failure exposed a generic diagnostic gap: the small export retained the exhausted-allowance exception but omitted upstream draft validation feedback. Future diagnostic exports now also retain bounded original draft.json/operation.jsonrecords.25control-flow checks and Ruff lint/format pass; no extra authoring call or repair was added, and069/070remain frozen.

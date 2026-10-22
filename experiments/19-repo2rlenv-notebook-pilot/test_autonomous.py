@@ -62,6 +62,17 @@ def test_unresolved_comparison_is_returned_without_changing_original_evidence(tm
     assert not (tmp_path / "bounded" / conflict.relative_to(root)).exists()
 
 
+def test_rejected_draft_feedback_is_preserved_in_failure_diagnostics(tmp_path):
+    root = tmp_path / "run"
+    draft = root / "preparation/prepare/artifact-stage/draft.json"
+    m.write(draft, {"status": "unvalidated", "validation_error": "synthetic invalid artifact"})
+    original = draft.read_bytes()
+    destination = tmp_path / "diagnostics"
+    m.copy_diagnostics(root, destination)
+    assert (destination / draft.relative_to(root)).read_bytes() == original
+    assert draft.read_bytes() == original
+
+
 @pytest.mark.parametrize(
     "failure",
     [
