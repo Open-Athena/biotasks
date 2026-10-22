@@ -283,6 +283,7 @@ class SetupSession:
             if "input_validation_error" in staged:
                 record.update(status="candidate_invalid", error=staged["input_validation_error"])
                 return json.dumps(record)
+            record["input_observations"] = staged
             for name, source in [
                 ("uv.lock", "environment/uv.lock"),
                 ("environment.txt", "environment/environment.txt"),

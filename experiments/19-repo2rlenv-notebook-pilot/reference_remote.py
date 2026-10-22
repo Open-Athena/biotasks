@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import gzip
 import hashlib
 import json
 import os
@@ -14,6 +15,7 @@ import sys
 import tempfile
 import time
 import urllib.request
+import zlib
 from pathlib import Path
 
 
@@ -65,6 +67,40 @@ def verify_inputs():
     print(json.dumps({"original_inputs_unchanged": True, "files": len(records)}), flush=True)
 
 
+def input_preview(path):
+    """Expose original bytes for inspection; never infer a schema or header."""
+    with path.open("rb") as stream:
+        compressed = stream.read(2) == b"\x1f\x8b"
+    try:
+        opener = gzip.open if compressed else open
+        with opener(path, "rb") as stream:
+            raw = stream.read(4097)
+    except (OSError, EOFError, zlib.error) as error:
+        return {"status": "unavailable", "error_type": type(error).__name__}
+    prefix = raw[:4096]
+    result = {
+        "compression": "gzip" if compressed else "none",
+        "sampled_bytes": len(prefix),
+        "sample_sha256": hashlib.sha256(prefix).hexdigest(),
+        "byte_prefix_truncated": len(raw) > len(prefix),
+        "scope": "Byte prefix only; no inferred header, schema or record count.",
+    }
+    try:
+        text = prefix.decode("utf-8")
+    except UnicodeDecodeError:
+        text = None
+    if text is None or any(ord(c) < 32 and c not in "\t\n\r" for c in text):
+        result.update(status="raw_hex_prefix", hex=prefix[:64].hex())
+    else:
+        lines = text.splitlines(keepends=True)
+        result.update(
+            status="utf8_text_prefix",
+            text="".join(lines[:5]),
+            displayed_lines_truncated=len(lines) > 5,
+        )
+    return result
+
+
 def snapshot_inputs(manifest_path, receipt_path, roots=(Path("/inputs"), Path("/work/cache"))):
     """Hash the worker's declared input/cache files; never trust worker hashes."""
     manifest = json.loads(Path(manifest_path).read_text())
@@ -81,7 +117,7 @@ def snapshot_inputs(manifest_path, receipt_path, roots=(Path("/inputs"), Path("/
         seen.add(str(path))
         with path.open("rb") as stream:
             sha256 = hashlib.file_digest(stream, "sha256").hexdigest()
-        records.append({"local_path": str(path), "source": item["source"], "bytes": path.stat().st_size, "sha256": sha256})
+        records.append({"local_path": str(path), "source": item["source"], "bytes": path.stat().st_size, "sha256": sha256, "input_preview": input_preview(path)})
     receipt = {"files": records}
     Path(receipt_path).write_text(json.dumps(receipt, indent=2))
     return receipt
