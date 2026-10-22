@@ -158,8 +158,8 @@ def main():
             'cutoff_count_matches': True, 'remaining_github_points': page['data']['rateLimit']['remaining']}), flush=True)
     report.update(finished_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         elapsed_seconds=time.monotonic() - clock,
-        proc_memory_high_water=next(line.strip() for line in Path('/proc/self/status').read_text().splitlines()
-            if line.startswith('VmHWM:')),
+        proc_memory_high_water=next((line.strip() for line in Path('/proc/self/status').read_text().splitlines()
+            if line.startswith('VmHWM:')), None),
         child_peak_rss_kib=resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss,
         full_history_enumeration_complete=len(report['repositories']) == 10,
         unique_merged_prs=sum(r['unique_merged_prs_at_cutoff'] for r in report['repositories']))
