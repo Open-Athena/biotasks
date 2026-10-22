@@ -99,6 +99,11 @@ do not invent a generous threshold, round away meaningful errors, or copy a
 universal epsilon onto unrelated quantities. Exact comparison is permissible
 where justified and publicly stated. Reject nonfinite/invalid values explicitly;
 never let NaN make a numerical failure disappear. Preserve meaningful zero values.
+When a requested artifact can also be a normal hand-off between analysis steps,
+check whether a valid write/read round trip changes downstream numeric results.
+Matching implementations that share an in-memory precision path do not establish
+zero tolerance for that publicly allowed workflow. Use the independent execution
+evidence; report a specific gap if it does not exercise the relevant boundary.
 Normalize representation differences only when their consequences for every
 dependent endpoint are resolved and can be validated. Use stable identifiers for
 alignment; arbitrary row order is not a scientific target. Validate uniqueness,

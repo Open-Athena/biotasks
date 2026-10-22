@@ -1,0 +1,19 @@
+{
+  "observed_at": "2026-10-22T06:24:35.250325+00:00",
+  "classification": "possible_serialization_boundary_false_negative",
+  "original_pipeline_result": "validated",
+  "original_native_solver_reward": 0,
+  "original_native_solver_exception": null,
+  "native_verifier_failed_checks": [
+    "domtbl_hit_records"
+  ],
+  "first_reported_difference": "c-Evalue",
+  "all_other_native_checks_passed": true,
+  "observed_code_difference": "Reference/oracle and independent implementation search the freshly built in-memory model. The solver writes the requested model, reloads that model and then searches. Its written model passes every HMM comparison.",
+  "hypothesis": "Saved-model precision may affect downstream E-values even when the reported model itself matches exactly.",
+  "same_method_isolating_recomputation_executed": false,
+  "causality_established": false,
+  "original_native_score_changed": false,
+  "task_or_grader_repaired_manually": false,
+  "next_general_action": "Use an ordinary publicly allowed saved-artifact hand-off in the independent validation route where feasible, and require a serialization argument before claiming exact downstream equality. No numerical tolerance or biological method is hardcoded."
+}

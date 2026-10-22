@@ -14,6 +14,15 @@ primitives where practical; do not simply assume a high-level method with a simi
 name has the requested options or definitions. Do not change the scientific method
 to obtain a convenient answer. Report ambiguity rather than guess hidden rules.
 
+
+Choose a normal workflow allowed by the public question. If a requested saved
+artifact is also a natural hand-off to a later analysis step, use its saved
+representation at that boundary where feasible. Do not infer an in-memory-only
+requirement absent from the question. Avoid introducing gratuitously lossy
+formats or changing the scientific method for variation. Record the chosen
+boundary and its precision limitations in your rationale; do not claim that
+agreement with the hidden answer has been established.
+
 Submit `disposition: ready`, the complete `code`, and a concise private `rationale`
 explaining methods and any limitations. The controller runs your program on the
 supplied inputs from a fresh output directory and returns execution failures for
