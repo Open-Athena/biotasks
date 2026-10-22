@@ -1,6 +1,12 @@
 {
-  "observed_at": "2026-10-22T10:56:01.794235+00:00",
-  "state": "running",
+  "observed_at": "2026-10-22T11:18:13.630142+00:00",
+  "state": "rejected",
+  "terminal": true,
+  "factory_revision": "367dc85e349aefa73559f87903d88834121b7c10",
+  "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+  "reasoning_effort_requested": "high",
+  "served_effective_effort_verified": false,
+  "operator_interventions": 0,
   "stages": [
     {
       "name": "preparation",
@@ -22,13 +28,19 @@
     },
     {
       "name": "specification",
-      "status": "running",
-      "started": 1792666485.2653577
+      "status": "rejected",
+      "started": 1792666485.2653577,
+      "finished": 1792667036.968892
     }
   ],
-  "terminal": false,
-  "factory_revision": "367dc85e349aefa73559f87903d88834121b7c10",
-  "reasoning_effort_requested": "high",
-  "served_effective_effort_verified": false,
-  "publication_eligible": false
+  "rejection": {
+    "stage": "specification",
+    "reason": "worker_declined",
+    "evidence": "specification/specification.json"
+  },
+  "pipeline_seconds": 830.9121911525726,
+  "host_seconds": 904.3415923118591,
+  "cleanup_verified": true,
+  "publication_eligible": false,
+  "construction_native_or_solver_run": false
 }
