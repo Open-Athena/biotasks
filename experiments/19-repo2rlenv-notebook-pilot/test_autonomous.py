@@ -125,6 +125,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
 
     async def prepare(config, *, root, **kwargs):
         assert config["reasoning_effort"] == "high"
+        assert config["max_requests"] == 2
         called.append("prepare")
         if failure == "infrastructure":
             raise ConnectionError("transport")

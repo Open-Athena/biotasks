@@ -3739,3 +3739,8 @@ The failure exposed a generic diagnostic gap: the small export retained the exha
 
 
 Storage diagnosis corrected: Slack announced shared credential disabling, and the local client was being run outside Marin, where declared bucket configuration was absent. The same personal key succeeds when the existing reader runs in the Marin checkout. No credential replacement or alternate shared key was used.070full17-file/541,973-byte original archive is now independently hash-verified. The response ended normally with validJSONbutprepare+emptyartifacts, and its placeholder export code is invalidPython. The post-schema validator correctly refused it; no biological/source defect is inferred. The original response is preserved. The user was asked whether to permit one validation-driven GLM repair, since the existing preparation agreement is one call/no repair; no allowance change or extra model call has been made.
+
+
+### 2026-10-22 — One approved preparation validation repair
+
+The user approved: Allow one validation repair. The existing structured-artifact feedback path now permits one complete correction after initial response validation fails. Valid initial responses still use one call; the preparation worker has no shell/tools, and empty/truncated/transport-failed responses receive no new retry. Both model responses and exact validator feedback remain recorded. The versioned preparation prompt states the correction boundary.39synthetic preparation/control-flow checks pass (2.17s,86,904KiBpeak); Ruff lint/format pass. Existing069/070inputs remain frozen. Reserve the unused070$1sandbox hold for a separate fresh071with the same original metabolomics notebook and unchanged remaining execution limits; aggregate$100held, no credit/invoice claim.

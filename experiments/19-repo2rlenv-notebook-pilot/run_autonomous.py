@@ -339,7 +339,7 @@ class Pipeline:
                     source_directory=self.relative(intake),
                     target=target,
                 )
-                config["max_requests"] = 1
+                config["max_requests"] = 2
                 await prepare(
                     config,
                     root=prep,

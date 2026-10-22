@@ -4,7 +4,11 @@ schema. This stage selects terminal scientific results and adds code to save
 those existing results to disk after the original script finishes. Return only
 the export code, not an edited or recopied source script. The controller appends
 it to the untouched baseline. This stage does not manage or execute the environment.
-There is one preparation call and no automatic repair. Keep explanations brief and nonduplicated.
+There is one creation call and at most one repair after programmatic validation
+rejects the response. If the controller returns validation feedback, return a
+complete corrected ReferencePlan, including unchanged fields. Keep the original
+scientific source and the export-only boundary fixed. A valid first response
+needs no repair. Keep explanations brief and nonduplicated.
 
 ## Inputs
 
@@ -139,6 +143,8 @@ input-loading code unchanged for execution-stage adaptation and review.
 The later scientific run remains CPU-only and offline, with original inputs
 staged during network-enabled setup. The supplied limits apply; uncertainty
 about fit is an execution question, not permission to simplify the analysis.
-Validation failures are preserved for inspection; no repair call follows
-automatically. Source analysis defects must not be repaired by changing the
+Original responses and validation failures are preserved. The controller may
+request one corrected response for a validation failure; this does not authorize
+repairing the scientific source or retrying transport failures. Source analysis
+defects must not be repaired by changing the
 science. Distinguish a known defect from an untested assumption and explain rejection precisely.

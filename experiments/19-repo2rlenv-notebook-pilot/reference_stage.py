@@ -35,6 +35,7 @@ async def stage(
     shell_timeout_sec=120,
     extra_tools=None,
     extra_handlers=None,
+    response_recovery=True,
 ):
     """Use recorded empty-response recovery and upstream's output recovery.
 
@@ -51,10 +52,18 @@ async def stage(
     )
     empty_retry_notice = (
         files("biotasks.prompts").joinpath("worker-empty-response-retry.md").read_text()
+        if response_recovery
+        else None
     )
-    timeout_retry_notice = files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+    timeout_retry_notice = (
+        files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+        if response_recovery
+        else None
+    )
     missing_tool_retry_notice = (
         files("biotasks.prompts").joinpath("worker-missing-tool-retry.md").read_text()
+        if response_recovery
+        else None
     )
     root.mkdir(parents=True, exist_ok=False)
     identity = {
@@ -64,9 +73,15 @@ async def stage(
         "context_recovery_sha256": hashlib.sha256(recovery_notice.encode()).hexdigest()
         if recovery_notice is not None
         else None,
-        "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest(),
-        "timeout_retry_sha256": hashlib.sha256(timeout_retry_notice.encode()).hexdigest(),
-        "missing_tool_retry_sha256": hashlib.sha256(missing_tool_retry_notice.encode()).hexdigest(),
+        "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest()
+        if empty_retry_notice is not None
+        else None,
+        "timeout_retry_sha256": hashlib.sha256(timeout_retry_notice.encode()).hexdigest()
+        if timeout_retry_notice is not None
+        else None,
+        "missing_tool_retry_sha256": hashlib.sha256(missing_tool_retry_notice.encode()).hexdigest()
+        if missing_tool_retry_notice is not None
+        else None,
         "stage_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "adapter_sha256": hashlib.sha256(
             files("biotasks").joinpath("chat_author.py").read_bytes()

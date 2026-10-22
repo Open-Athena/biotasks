@@ -13,17 +13,30 @@ HERE = Path(__file__).parent
 
 
 def response(plan, finish="stop", call_id="call"):
-    return {"choices": [{"finish_reason": finish, "message": {
-        "role": "assistant", "content": json.dumps(plan),
-    }}]}
+    return {
+        "choices": [
+            {
+                "finish_reason": finish,
+                "message": {
+                    "role": "assistant",
+                    "content": json.dumps(plan),
+                },
+            }
+        ]
+    }
 
 
 @pytest.mark.parametrize("mode", ["accepted", "truncated", "invalid_schema"])
 def test_only_preparation_no_output_recovery(tmp_path, mode):
     calls = []
-    plan = dict(disposition="reject", explanation="No eligible terminal result",
-                export_code="", artifacts=[], excluded_outputs=["Plot-only result"],
-                unresolved_assumptions=[])
+    plan = dict(
+        disposition="reject",
+        explanation="No eligible terminal result",
+        export_code="",
+        artifacts=[],
+        excluded_outputs=["Plot-only result"],
+        unresolved_assumptions=[],
+    )
 
     async def complete(payload):
         calls.append(payload)
@@ -31,7 +44,10 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
         assert payload["response_format"]["json_schema"]["strict"] is True
         assert "export_code" in payload["response_format"]["json_schema"]["schema"]["required"]
         properties = payload["response_format"]["json_schema"]["schema"]["properties"]
-        assert not {"environment_rationale", "pyproject_toml", "system_packages", "stage_inputs_sh"} & properties.keys()
+        assert (
+            not {"environment_rationale", "pyproject_toml", "system_packages", "stage_inputs_sh"}
+            & properties.keys()
+        )
         context = json.loads(payload["messages"][1]["content"])
         assert set(context) == {"source", "baseline_script", "conversion", "limits"}
         assert "question_text" not in context["source"]
@@ -45,7 +61,10 @@ def test_only_preparation_no_output_recovery(tmp_path, mode):
         json.loads((HERE / "preparation-inputs.json").read_text()),
         root=tmp_path / "preparation",
         seed=json.loads((HERE / "seeds/current.json").read_text())[0],
-        endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
+        endpoint="unused",
+        credential="unused",
+        deadline=time.time() + 60,
+        complete=complete,
     )
     if mode in {"truncated", "invalid_schema"}:
         with pytest.raises(RuntimeError):
@@ -75,18 +94,24 @@ def test_export_code_is_appended_inert_and_syntax_failure_stops(tmp_path, invali
         baseline = context["baseline_script"]
         generated = "raise RuntimeError('must not execute')\n"
         candidate = dict(
-            disposition="prepare", explanation="Synthetic inert preparation fixture",
+            disposition="prepare",
+            explanation="Synthetic inert preparation fixture",
             export_code="result = (" if invalid_syntax else generated,
             artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
-            excluded_outputs=[], unresolved_assumptions=[],
+            excluded_outputs=[],
+            unresolved_assumptions=[],
         )
         return response(candidate)
 
     root = tmp_path / "preparation"
     coroutine = run(
         json.loads((HERE / "preparation-inputs.json").read_text()),
-        root=root, seed=json.loads((HERE / "seeds/current.json").read_text())[0],
-        endpoint="unused", credential="unused", deadline=time.time() + 60, complete=complete,
+        root=root,
+        seed=json.loads((HERE / "seeds/current.json").read_text())[0],
+        endpoint="unused",
+        credential="unused",
+        deadline=time.time() + 60,
+        complete=complete,
     )
     if invalid_syntax:
         with pytest.raises(RuntimeError):
@@ -122,10 +147,121 @@ def test_export_code_is_appended_inert_and_syntax_failure_stops(tmp_path, invali
     assert result["daytona_sandboxes_created"] == 0
 
 
-def test_old_two_call_configuration_is_rejected_before_request(tmp_path):
+def test_more_than_one_repair_is_rejected_before_request(tmp_path):
+    config = json.loads((HERE / "preparation-inputs.json").read_text())
+    config["max_requests"] = 3
+    root = tmp_path / "preparation"
+    with pytest.raises(ValueError, match="at most one validation repair"):
+        asyncio.run(
+            run(
+                config,
+                root=root,
+                seed={},
+                endpoint="unused",
+                credential="unused",
+                deadline=time.time() + 60,
+            )
+        )
+    assert not root.exists()
+
+
+@pytest.mark.parametrize("defect", ["empty_inventory", "syntax", "malformed_json"])
+def test_one_repair_uses_validation_feedback_and_preserves_both_responses(tmp_path, defect):
     config = json.loads((HERE / "preparation-inputs.json").read_text())
     config["max_requests"] = 2
+    calls = []
+    plan = dict(
+        disposition="prepare",
+        explanation="Inert synthetic fixture",
+        export_code="raise RuntimeError('must not execute')\n",
+        artifacts=[dict(path="value.txt", description="Fixture", source_evidence="Fixture")],
+        excluded_outputs=[],
+        unresolved_assumptions=[],
+    )
+
+    async def complete(payload):
+        calls.append(payload)
+        candidate = {**plan}
+        if len(calls) == 1:
+            if defect == "empty_inventory":
+                candidate["artifacts"] = []
+            elif defect == "syntax":
+                candidate["export_code"] = "result = ("
+            else:
+                reply = response(candidate)
+                reply["choices"][0]["message"]["content"] = "{"
+                return reply
+        else:
+            assert payload["messages"][:2] == calls[0]["messages"][:2]
+            feedback = payload["messages"][-1]["content"]
+            assert "corrected artifact" in feedback
+            assert "rejected" in feedback.lower()
+        return response(candidate)
+
     root = tmp_path / "preparation"
-    with pytest.raises(ValueError, match="exactly one call"):
-        asyncio.run(run(config, root=root, seed={}, endpoint="unused", credential="unused", deadline=time.time()+60))
-    assert not root.exists()
+    asyncio.run(
+        run(
+            config,
+            root=root,
+            seed=json.loads((HERE / "seeds/current.json").read_text())[0],
+            endpoint="unused",
+            credential="unused",
+            deadline=time.time() + 60,
+            complete=complete,
+        )
+    )
+    assert len(calls) == 2
+    assert json.loads((root / "plan.json").read_text()) == plan
+    assert (root / "exports.py").read_text() == plan["export_code"]
+    assert (root / "prepare/artifact-stage/trace/1/response.json").is_file()
+    assert (root / "prepare/artifact-stage/trace/2/response.json").is_file()
+    result = json.loads((root / "result.json").read_text())
+    assert result["model_request_slots_used"] == 2
+    assert result["scientific_analysis_executed"] is False
+    assert result["daytona_sandboxes_created"] == 0
+
+
+@pytest.mark.parametrize("mode", ["valid", "invalid_twice", "empty", "timeout", "truncated"])
+def test_repair_allowance_does_not_add_transport_or_empty_retries(tmp_path, mode):
+    config = json.loads((HERE / "preparation-inputs.json").read_text())
+    config["max_requests"] = 2
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if mode == "timeout":
+            raise TimeoutError("Synthetic transport timeout")
+        plan = dict(
+            disposition="reject",
+            explanation="Fixture rejection",
+            export_code="",
+            artifacts=[],
+            excluded_outputs=[],
+            unresolved_assumptions=[],
+        )
+        if mode == "invalid_twice":
+            plan.pop("disposition")
+        reply = response(plan, "length" if mode == "truncated" else "stop")
+        if mode == "empty":
+            reply["choices"][0]["message"]["content"] = None
+        return reply
+
+    root = tmp_path / "preparation"
+    action = run(
+        config,
+        root=root,
+        seed=json.loads((HERE / "seeds/current.json").read_text())[0],
+        endpoint="unused",
+        credential="unused",
+        deadline=time.time() + 60,
+        complete=complete,
+    )
+    if mode == "valid":
+        asyncio.run(action)
+    else:
+        with pytest.raises(RuntimeError):
+            asyncio.run(action)
+    assert len(calls) == (2 if mode == "invalid_twice" else 1)
+    result = json.loads((root / "result.json").read_text())
+    assert result["model_request_slots_used"] == len(calls)
+    assert result["scientific_analysis_executed"] is False
