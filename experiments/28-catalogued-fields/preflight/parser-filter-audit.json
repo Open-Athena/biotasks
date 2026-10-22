@@ -71,5 +71,11 @@
       "native_stage_timeout_seconds": 600
     },
     "limits": "Intermediate live validation observation, not a terminal result or a control/grade claim. No command/selection/timeout modification or reconstructed test execution was applied."
+  },
+  "pytest_ansi_limitation": {
+    "source": "upstream-source/src/repo2rlenv/log_parsers/pytest_parser.py",
+    "export_source": "upstream_verifier.py:89",
+    "observed_case": "MNE PR14338 pre/post raw logs contain 4896/2844 ANSI sequences and per-test progress, but both unchanged pytest parsers return empty maps.",
+    "scope": "Live intermediate log census only; original native failure retained. Neither pytest parser strips ANSI; standalone ANSI stripping elsewhere applies to Jest. No normalization/adapter/regrading applied."
   }
 }

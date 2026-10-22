@@ -1,0 +1,36 @@
+{
+  "stage": "live_intermediate_observation_pending_original_terminal_archive",
+  "repo": "mne-tools/mne-python",
+  "pr": 14338,
+  "native_reported_result": {
+    "status": "failed",
+    "pre_parsed": 0,
+    "post_parsed": 0,
+    "f2p": 0,
+    "p2p": 0
+  },
+  "logs": {
+    "pre": {
+      "characters": 148585,
+      "has_start_marker": true,
+      "ansi_sequences": 4896,
+      "original_native_pytest_statuses": {},
+      "original_export_pytest_statuses": {}
+    },
+    "post": {
+      "characters": 91768,
+      "has_start_marker": true,
+      "ansi_sequences": 2844,
+      "original_native_pytest_statuses": {},
+      "original_export_pytest_statuses": {}
+    }
+  },
+  "parser_sha256": {
+    "native": "4fe90bbb7db103f54984d73a7c95b482027ed0d5738c8587b5904c86dbf4b580",
+    "export": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+  },
+  "method": "Invoke each exact original parser on the unchanged retained log, status census only. No normalization, adapter, reward computation, test execution, input mutation or native rerun.",
+  "finding": "Both pytest paths match plain PASSED/FAILED/SKIPPED tokens without stripping ANSI. Captured MNE progress lines color those tokens. Native zero matches therefore coexist with substantial actual per-test output.",
+  "correction": "The ANSI stripping first noticed in the standalone verifier belongs to its Jest parser, not its pytest parser. The actual unmodified-parser comparison returned zero for both pytest implementations.",
+  "limits": "Both stages timed out; logs are partial. No revised F2P/P2P set, verified task, hypothetical yield or successful control is inferred. Full original terminal archival/readback remains pending."
+}

@@ -15,13 +15,13 @@ def main():
     assert args.run_id.startswith('biotasks28-') and all(c.isalnum() or c == '-' for c in args.run_id)
     inner = r'''from pathlib import Path
 from collections import Counter
-import json,os,functools
+import json,os,functools,gzip,importlib.util,hashlib
 
 def tail(path,n=1600):
  with path.open('rb') as f:
   f.seek(max(0,path.stat().st_size-n));return f.read(n).decode(errors='replace')
 
-parts=[]
+parts=[];events=[]
 for name in ['native-window.json','fresh-controls.json','exported-tasks.json']:
  p=Path('/work/evidence')/name
  if p.exists():parts.append(name+' '+tail(p,2200))
@@ -44,6 +44,32 @@ if p.exists():
   'decisions':dict(Counter(e['outcome']+':'+e.get('reason','') for e in events if e['event']=='native_decision')),
   'incomplete_event_lines':incomplete,'live_observation_only':True}))
  parts.append('events '+tail(p,1800))
+for p in sorted(Path('/work/native-observations').glob('validation-*.json.gz'))[-1:]:
+ with gzip.open(p,'rt') as f:raw=f.read(16*1024**2+1)
+ assert len(raw)<=16*1024**2
+ v=json.loads(raw)
+ pr=int(p.name.rsplit('-pr-',1)[1].split('.')[0])
+ pytest_mode=any('pytest' in cmd for e in events if e['event']=='validation_start' and e.get('pr')==pr
+  for cmd in e.get('test_cmds',[]))
+ parsers={};parser_sources={}
+ source_specs=[('native','log_parsers/pytest_parser.py'),('export','pipelines/_pr_runtime_verifier.py')] if pytest_mode else []
+ for name,relative in source_specs:
+  source=Path('/work/upstream/src/repo2rlenv')/relative
+  spec=importlib.util.spec_from_file_location('original_'+name+'_parser',source)
+  module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+  parsers[name]=module;parser_sources[name]=hashlib.sha256(source.read_bytes()).hexdigest()
+ census={}
+ for k in ['pre_log','post_log'] if pytest_mode else []:
+  text=v.get(k,'')
+  native=parsers['native'].parse_pytest(text)
+  exported=parsers['export'].parse_logs('pytest',text)
+  census[k]={'native_original_statuses':dict(Counter(native.values())),
+   'export_verifier_original_statuses':dict(Counter(exported.values()))}
+ parts.append('last_native_validation '+json.dumps({'file':p.name,'status':v['status'],'reason':v.get('reason'),
+  'original_parser_sources':parser_sources,'pytest_only_census':pytest_mode,'read_only_status_census_no_regrading':census,
+  'logs':{k:{'characters':len(v.get(k,'')),'has_start_marker':'R2E_START_TEST_OUTPUT' in v.get(k,''),
+   'ansi_sequences':v.get(k,'').count('\x1b['),'prefix':v.get(k,'')[:400],'suffix':v.get(k,'')[-400:]}
+   for k in ['pre_log','post_log']}}))
 text='\n'.join(parts)
 for k in ['OPENROUTER_API_KEY','GH_TOKEN','GITHUB_TOKEN']:
  value=os.environ.get(k)
