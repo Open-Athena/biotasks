@@ -96,12 +96,31 @@ def download(archive, destination, gcloud):
 def billing_from_archive(path):
     if not path.exists():
         return None
+    billing = None
+    events = []
     with tarfile.open(path, 'r|gz') as archive:
         for member in archive:
             if member.name == 'native-observations/billing.json':
                 assert member.size < 10000
-                return json.load(archive.extractfile(member))
-    return None
+                billing = json.load(archive.extractfile(member))
+            elif member.name == 'native-observations/events.jsonl':
+                assert member.size < 10 * 1024**2
+                events = [json.loads(line) for line in archive.extractfile(member) if line.strip()]
+    if billing is None:
+        return None
+    # A killed in-flight request can leave the preceding billing snapshot intact.
+    # Reconcile dispatched calls against charges, rather than trusting that snapshot.
+    dispatched = {event['call'] for event in events if event['event'] == 'model_request'}
+    charges = {event['call']: event['actual_cost_usd'] for event in events
+               if event['event'] == 'model_charge' and event['actual_cost_usd'] is not None}
+    actual = sum((Decimal(value) for value in charges.values()), Decimal('0'))
+    billing['observer_snapshot_cost_usd'] = billing['actual_cost_usd']
+    billing['actual_cost_usd'] = str(actual)
+    billing['dispatched_calls'] = len(dispatched)
+    billing['unresolved_calls'] = sorted(dispatched - set(charges))
+    billing['cost_complete'] = (billing['cost_complete'] and not billing['unresolved_calls']
+                                and actual == Decimal(billing['observer_snapshot_cost_usd']))
+    return billing
 
 
 def observe(args):
