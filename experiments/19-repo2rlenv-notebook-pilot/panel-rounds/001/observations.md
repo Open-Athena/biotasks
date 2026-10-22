@@ -21,3 +21,9 @@ Two other operational observations need cross-case review before changes. Setup 
 ## Contract audit while the frozen round runs
 
 The newly approved faithful-recomputation rule is broader than preparation's current reject-if-no-export rule. Construction can recover an unnamed or overwritten result when another accessible result lets preparation proceed, as demonstrated in053. A source whose endpoints are all unavailable at script completion can still be rejected before construction. This is a factory eligibility limitation, not evidence such a source has no scientific endpoints. Assess a general no-export handoff for that case in the next revision while retaining append-only preparation and unchanged methods/inputs. No current run has been edited or reclassified solely from this static audit.
+
+## Statistical genetics057
+
+The worker declined because both original Cleveland2012 input files are unavailable. Independent direct checks confirm HTTP404/NoSuchBucket for each exact URL and the bucket root, and upstream issue1338 explicitly lists both links as broken docs dependencies. This supports an input-unavailability rejection; no reference/scientific/native run occurred. It does not establish broken scientific code or that no mirror exists anywhere. Original/fresh cleanup passes.
+
+The worker spent its whole30-minute setup session searching numerous alternative sources without establishing original input bytes. Next-version efficiency guidance should stop after sufficient authoritative unavailability evidence and a focused lineage-preserving search, rather than attempting a global absence proof. No new raw-LLM-call cap is implied. Keep this original case as a negative control; a future genetics replacement would need its own documented source pin and cannot silently replace this result.
