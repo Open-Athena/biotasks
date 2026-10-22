@@ -1,0 +1,93 @@
+{
+  "diagnosis": "The reference skips the first valid motif observation; the public question incorrectly calls it a track header.",
+  "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+  "source_cell_zero_based": 6,
+  "source_statement": "### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/\njaspar_url = \"http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/\"\njaspar_motif_file = \"MA0139.1.tsv.gz\"\nctcf_motifs = bioframe.read_table(\n    jaspar_url + jaspar_motif_file, schema=\"jaspar\", skiprows=1\n)\nctcf_motifs[0:4]",
+  "input": {
+    "url": "https://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz",
+    "bytes": 7698065,
+    "sha256": "b1bbdac330cfc78c9ac9a826d1ca2bfdb22ec2cc21c789404adc0c11acbd4510",
+    "first_record": "chr1\t10470\t10489\tCTCF\t803\t390\t-",
+    "line_count": 770050,
+    "first_record_score": 390,
+    "first_record_is_header": false
+  },
+  "reader": {
+    "url": "https://github.com/open2c/bioframe/blob/v0.8.0/bioframe/io/fileops.py",
+    "sha256": "c495f82bc0fdac2b3d65e15d0c9391ee1a33a28b5f94fdd70fa583e1f446f823",
+    "behavior": "read_table passes skiprows through to pandas.read_csv; default header is None and schema supplies names."
+  },
+  "output_table_readback": {
+    "observed_at": "2026-10-22T09:55:57.761676+00:00",
+    "download_verified": true,
+    "files": [
+      {
+        "path": "grading/independent-outputs/motif_overlap_fraction_by_pval.tsv",
+        "sha256": "0ae45254be47111a52f1640ef1ec2d32e5d46bc4321f9be05ca281dfbfda3294",
+        "bytes": 15515,
+        "mode": 420
+      },
+      {
+        "path": "materialization/reference/motif_overlap_fraction_by_pval.tsv",
+        "sha256": "32d2b999681873bc95b9e3c89fa2bd9c4d7214a377a3b71477414e9e8a43cfe7",
+        "bytes": 19795,
+        "mode": 420
+      }
+    ],
+    "raw_artifacts_public": false
+  },
+  "differences": [
+    {
+      "pval": "384.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "385.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "386.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "387.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "388.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "389.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    },
+    {
+      "pval": "390.0",
+      "independent_minus_reference": {
+        "n_motifs_at_or_above": 1,
+        "n_motifs_overlapping_peak": 0
+      }
+    }
+  ],
+  "original_rejection_preserved": true,
+  "scientific_code_or_tolerances_changed": false,
+  "fresh_pipeline_validation": false
+}

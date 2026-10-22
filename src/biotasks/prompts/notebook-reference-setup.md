@@ -126,6 +126,15 @@ Inspect actual errors before changing requirements. Preserve failed
 trials. An interrupted or uncertain tool result is not permission to launch a
 duplicate operation. Stop when the controller reports exhausted allowances.
 
+Check consequential input-parsing assumptions against the staged bytes, not just
+the source code. For example, skipping a row does not establish that it is a
+header. Distinguish metadata from valid observations and source-justified filtering
+from accidental data loss. If parsing contradicts the source's stated population
+and has no supported scientific rationale, report a source defect; do not change
+the parser, alter the input or invent a format description to justify it. Record
+the inspected file identity, relevant records and affected statement in the
+result so later workers can distinguish observations from assumptions.
+
 ## Final response
 
 Submit `disposition` (`tested` or `blocked`), a brief `explanation`, a list of

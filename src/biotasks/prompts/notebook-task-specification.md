@@ -140,6 +140,11 @@ Only promise input properties that the supplied execution evidence establishes.
 A conventional domain precondition is not evidence that every supplied record
 satisfies it. If a property was not measured, do not assert it as a guarantee;
 identify it as a construction/validation question in the private review.
+In particular, a parser option is not evidence about file contents: discarded
+rows might be observations rather than headers or metadata. Do not turn such an
+assumption into a public fact or hide it as a required filtering convention.
+An established contradiction between the source's stated population and actual
+parsing requires a source-fidelity blocker, not a recipe that reproduces the loss.
 
 Do not require a unique representation or selection merely because the reference
 happens to emit one. When several results satisfy the same scientific criterion,

@@ -75,6 +75,13 @@ reference-derived inputs, not biological ground truth. Retain sufficient identit
 information without exposing downstream answers. Check claimed input formats and
 headers against the actual staged files. Inspect the actual input keys and output
 grain, rather than assuming one source row is one scientific entity. When
+parsing drops records, distinguish verified metadata and scientifically justified
+selection from unsupported data loss. Never describe a real observation as a
+header simply because the reference skips it. Report a source-fidelity blocker
+when the stated population and actual parsing conflict; do not change the source,
+input bytes or public population merely to reproduce that defect. If the necessary
+file observations are unavailable, state the evidence gap instead of inventing them.
+When
 several source rows share an entity key, check whether their annotations agree.
 State the intended multiplicity and any rule for selecting or combining conflicting
 annotations in the public question, supported by the source analysis. Do not leave
