@@ -93,7 +93,8 @@ def test_payload_requires_one_seed(monkeypatch, tmp_path, seeds):
         )
 
 
-def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(tmp_path):
+@pytest.mark.parametrize("entrypoint", ["run_autonomous.py", "run_roundtrip_diagnostic.py"])
+def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(tmp_path, entrypoint):
     prefix = launcher.EXPERIMENT + "/"
     contents = {
         "pyproject.toml": "fixture",
@@ -134,7 +135,7 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
         capture_output=True,
     )
     config = {
-        "entrypoint": "run_autonomous.py",
+        "entrypoint": entrypoint,
         "seed_file": "case/seed.json",
         "notebook_file": "case/source[1].ipynb",
         "source_notices_file": "case/notices[1].json",

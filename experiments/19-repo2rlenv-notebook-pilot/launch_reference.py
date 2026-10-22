@@ -30,7 +30,7 @@ def autonomous_asset_paths(config):
 def source_archive(repo: Path, revision: str, config) -> bytes:
     """Fresh autonomous runs need runtime files and their seed, not past runs."""
     command = ["git", "archive", "--format=tar.gz", revision]
-    if config["entrypoint"] == "run_autonomous.py":
+    if config["entrypoint"] in {"run_autonomous.py", "run_roundtrip_diagnostic.py"}:
         tracked = (
             subprocess.check_output(
                 ["git", "ls-tree", "-r", "-z", "--name-only", revision], cwd=repo
@@ -88,7 +88,7 @@ def frozen_payload(
 
         check_config(config)
     seed_path = "seeds/current.json"
-    if config["entrypoint"] == "run_autonomous.py":
+    if config["entrypoint"] in {"run_autonomous.py", "run_roundtrip_diagnostic.py"}:
         seed_path = config["seed_file"]
         autonomous_asset_paths(config)
         seeds = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + seed_path))
@@ -113,7 +113,7 @@ def frozen_payload(
             "factory_revision": revision,
             "source_archive_policy": (
                 "autonomous-runtime-and-seed-v1"
-                if config["entrypoint"] == "run_autonomous.py"
+                if config["entrypoint"] in {"run_autonomous.py", "run_roundtrip_diagnostic.py"}
                 else "complete-checkout"
             ),
             "files": {name: hashlib.sha256(data).hexdigest() for name, data in files.items()},
