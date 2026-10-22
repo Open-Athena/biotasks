@@ -1,4 +1,6 @@
-# Experiment completion audit
+# September baseline completion audit
+
+This records the completed September experiment only. The user subsequently requested reopening #28 for history-wide discovery; see `history-wide/scope.md`. These completed rows do not assert completion of the expanded scope.
 
 This checklist implements the published protocol. Final accounting, original scientific source hashes, selection/candidate reconciliation and fresh public-archive checks passed on 2026-10-22. Lifecycle cleanup and exact publication/closure receipts also passed; all fifteen requirements are complete.
 

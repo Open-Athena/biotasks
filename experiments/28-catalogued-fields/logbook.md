@@ -179,3 +179,9 @@ After pushing audit checkpoint da85ea1b and verifying all195 public objects, ele
 ### Final publication and closure
 
 Published the complete result as robot-prefixed comment6352713291, verified exact readback, and replaced the issue body with a concise current-status summary linking that comment and the preserved protocol. This corrects the interim link that referenced protocol.md before that file existed. Verified body equality, agent-generated label and actual CLOSED state with closedAt. All fifteen completion-audit rows now have scientific/accounting/retention/lifecycle/publication evidence. No new model calls, controls, retries or pipeline changes occurred during final auditing. The permanent research branch is retained; no main promotion or task dataset release.
+
+### Reopened direction: repository history and $100 OpenRouter ceiling
+
+After closure of the September baseline, the user clarified that the desired scope is merged PR history without the September restriction, approved the direction with a proposed $100 OpenRouter budget, and explicitly requested reopening #28. Treat $100 conservatively as the total issue ceiling including $5.975286 baseline charges, leaving $94.024714. Do not rewrite the baseline protocol, task counts or original receipts.
+
+A single read-only GraphQL query found23,285 merged PRs across the same ten repos. This is a count observation, not completed cursor traversal, eligibility analysis or runtime validation. The pinned provider hard-caps its fetch at min(limit*3,1000) and filters dates client-side, so removing dates alone cannot enumerate full history. history-wide/scope.md records the proposed discovery-only adaptation and unchanged core task behavior. No additional model calls, builds, controls, remote jobs or pipeline changes have run. Keep the issue body concise; detailed revised scope/counts and original logs belong in comments.
