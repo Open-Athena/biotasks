@@ -7,6 +7,7 @@ from pathlib import Path
 
 from release_metadata import (
     load_release_metadata,
+    release_execution_provenance,
     scientific_probe_documents,
     verify_bundle_licenses,
 )
@@ -36,6 +37,7 @@ checked = subprocess.run(
 validation = json.loads(checked.stdout)
 assert validation["accepted"] is True
 verify_bundle_licenses(task, licenses)
+execution_provenance, execution_documents = release_execution_provenance(config, validation)
 
 
 def read(path):
@@ -50,7 +52,7 @@ labeled = write_labeled_copy(
     EvaluationLabel(
         status="unverified",
         stage="complete",
-        provenance="assisted",
+        provenance=execution_provenance,
         reason_codes=["upstream_quality_loop_not_run"],
         checked_at=evaluation_time(),
         profile="biotasks-scientific-content-v1",
@@ -63,6 +65,7 @@ trajectory = native / raw_summary["solver"]["result_path"]
 trajectory = trajectory.parent / "agent/trajectory.json"
 assert trajectory.is_file()
 documents = {
+    **execution_documents,
     "validation-summary.json": validation,
     "grading-result.json": read(grading / "result.json"),
     "grading-controls.json": {"controls": read(grading / "final-controls.json")},

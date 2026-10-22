@@ -49,6 +49,68 @@ def verify_bundle_licenses(task, licenses):
         raise ValueError("Release attribution differs from the validated task bundle")
 
 
+def release_execution_provenance(config, validation):
+    """Bind an unattended label to this source's archived pipeline and native result."""
+    pipeline_path = config.get("autonomous_pipeline")
+    manifest_path = config.get("autonomous_archive_manifest")
+    if pipeline_path is None and manifest_path is None:
+        return "assisted", {}
+    if not pipeline_path or not manifest_path or validation.get("accepted") is not True:
+        raise ValueError("Unattended provenance needs accepted, archived execution evidence")
+    pipeline_path, manifest_path = Path(pipeline_path), Path(manifest_path)
+    manifest = json.loads(manifest_path.read_text())
+    if manifest.get("download_checked") is not True:
+        raise ValueError("Unattended archive must have verified export readback")
+    rows = {row["path"]: row for row in manifest["files"]}
+    if len(rows) != len(manifest["files"]):
+        raise ValueError("Ambiguous unattended archive paths")
+
+    def archived(path):
+        path = Path(path)
+        relative = path.resolve().relative_to(manifest_path.resolve().parent).as_posix()
+        raw = path.read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        row = rows.get(relative)
+        if row is None or row["sha256"] != digest or row["bytes"] != len(raw):
+            raise ValueError("Unattended execution differs from its archive")
+        return json.loads(raw), digest
+
+    pipeline, pipeline_hash = archived(pipeline_path)
+    native, native_hash = archived(Path(config["native"]) / "result.json")
+    seeds = json.loads(Path(config["release_metadata"]["seed_file"]).read_text())
+    if len(seeds) != 1 or pipeline.get("source") != seeds[0]:
+        raise ValueError("Unattended execution belongs to a different release source")
+    stages = pipeline.get("stages", [])
+    if (
+        pipeline.get("status") != "validated"
+        or pipeline.get("autonomous") is not True
+        or type(pipeline.get("operator_interventions")) is not int
+        or pipeline["operator_interventions"] != 0
+        or [stage.get("name") for stage in stages]
+        != ["preparation", "setup", "replay", "specification", "construction", "grading", "native"]
+        or any(stage.get("status") != "completed" for stage in stages)
+        or native.get("status") != "native_validated_solver_attempt_recorded"
+        or native.get("publication_ready") is not True
+    ):
+        raise ValueError("Execution does not establish a completed unattended pipeline")
+    return "unattended", {
+        "autonomous-execution.json": {
+            "pipeline_sha256": pipeline_hash,
+            "native_result_sha256": native_hash,
+            "archive_manifest_sha256": hashlib.sha256(manifest_path.read_bytes()).hexdigest(),
+            "source_sha256": seeds[0]["source_sha256"],
+            "factory_revision": pipeline["factory_revision"],
+            "bundle_hash": validation["bundle_hash"],
+            "operator_interventions": 0,
+            "stages": [{"name": stage["name"], "status": stage["status"]} for stage in stages],
+            "reasoning_effort_requested": pipeline.get("reasoning_effort_requested"),
+            "served_endpoint_effective_effort_verified": pipeline.get(
+                "served_endpoint_effective_effort_verified", False
+            ),
+        }
+    }
+
+
 def scientific_probe_documents(grading):
     """Publish the effective suite, preserving its original and repair evidence."""
     from grading_protocol import (
