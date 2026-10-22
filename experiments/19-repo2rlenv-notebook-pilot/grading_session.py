@@ -11,12 +11,13 @@ from grading_protocol import (
     AlternativeSolution,
     ContractText,
     Grader,
-    GraderRepair,
+    GraderRepairSubmission,
     Probes,
     Review,
     apply_contract_text,
     apply_probe_expectations,
     artifact_interface,
+    bind_repair_checks,
     check_coverage,
     check_probes,
     check_review_source_coverage,
@@ -893,13 +894,14 @@ async def run_grading(
         if assessment.decision == "revise" and contract_base is None:
 
             async def validate_repair(value):
-                corrected, corrected_probes = apply_probe_expectations(value, initial_probes)
+                bound = bind_repair_checks(value, session.frozen_checks)
+                corrected, corrected_probes = apply_probe_expectations(bound, initial_probes)
                 if corrected.disposition == "ready":
                     session.frozen_probes = corrected_probes
                 await session.validate_candidate(corrected)
 
-            repaired = await call(
-                GraderRepair,
+            repair_submission = await call(
+                GraderRepairSubmission,
                 "repair",
                 "notebook-grader-author",
                 {
@@ -913,6 +915,7 @@ async def run_grading(
                 validate_repair,
                 session.candidate_first_shell(),
             )
+            repaired = bind_repair_checks(repair_submission, session.frozen_checks)
             save_record(root / "repair.json", repaired.model_dump())
             candidate, probes = apply_probe_expectations(repaired, initial_probes)
             save_record(root / "repaired-probes.json", probes.model_dump())

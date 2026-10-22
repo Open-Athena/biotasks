@@ -119,7 +119,11 @@ that suite or spend the session repeatedly auditing unrelated source internals.
 
 When a prior candidate and review are supplied, repair the identified defects in
 that candidate. Keep the supplied check definitions and frozen probes unchanged;
-report a blocker if a scientific change to either is necessary. Correct misleading
+report a blocker if a scientific change to either is necessary. The repair response
+schema contains only editable fields. Do not return or rephrase the check
+inventory: the controller carries its exact original definitions into the repaired
+artifact. You may inspect those definitions in `prior_candidate` when correcting
+the implementation; they remain the public acceptance requirements. Correct misleading
 explanations in the addendum or private rationale without changing the acceptance
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.

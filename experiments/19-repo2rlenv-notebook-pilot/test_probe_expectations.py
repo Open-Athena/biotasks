@@ -221,3 +221,36 @@ def test_real_wrong_submission_still_fails_after_annotation_correction(
     assert (session.root / "controls/0001/result.json").is_file()
     assert (session.root / "controls/0002/result.json").is_file()
     assert grading_remote.hashes(oracle) == reference_hashes
+
+
+@pytest.mark.parametrize("disposition", ["ready", "blocked"])
+def test_repair_submission_cannot_reauthor_frozen_requirements(disposition):
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, _ = fixture()
+    original = grader.model_dump()
+    editable = grader.model_dump(exclude={"checks"})
+    editable["disposition"] = disposition
+    editable["rationale"] = "Repair the implementation under the unchanged public rules"
+    submission = GraderRepairSubmission.model_validate(editable)
+    bound = bind_repair_checks(submission, grader.checks)
+    assert bound.checks == grader.checks
+    assert bound.model_dump()["checks"] == original["checks"]
+    assert "checks" not in GraderRepairSubmission.model_json_schema()["properties"]
+    with pytest.raises(ValidationError, match="Extra inputs are not permitted"):
+        GraderRepairSubmission.model_validate({**editable, "checks": original["checks"]})
+    # The archived representation remains backward compatible and independent.
+    assert GraderRepair.model_validate(bound.model_dump()) == bound
+    bound.checks[0].public_requirement = "Attempt to weaken the copied definition"
+    assert grader.model_dump() == original
+
+
+def test_binding_repair_still_rejects_invalid_ready_grader_code():
+    from grading_protocol import GraderRepairSubmission, bind_repair_checks
+
+    grader, _, _ = fixture()
+    submission = GraderRepairSubmission.model_validate(
+        {**grader.model_dump(exclude={"checks"}), "grader_code": "def broken(:"}
+    )
+    with pytest.raises(ValidationError):
+        bind_repair_checks(submission, grader.checks)

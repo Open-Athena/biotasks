@@ -1,0 +1,21 @@
+{
+  "observed_at": "2026-10-22T05:19:42.401808+00:00",
+  "classification": "infrastructure_protocol_failure_after_generated_export_defect",
+  "error_type": "IncompleteCompletion",
+  "source_notebook_broken": null,
+  "original_source_statements_reached_export_boundary": true,
+  "declared_reference_outputs_produced": false,
+  "controlled_tests": 2,
+  "issues": [
+    "First controlled run required a missing dependency, which the worker installed.",
+    "Second controlled run reached the appended exports, whose generated helper referenced a different alias from its generated import, raising NameError. The frozen export was not manually repaired.",
+    "The worker returned nonempty explanatory prose without a tool action despite required-tool mode; the adapter preserved it and ended incomplete."
+  ],
+  "diagnostic_success_is_not_reference_validation": true,
+  "scientific_validation": false,
+  "native_solver_attempted": false,
+  "original_input_equivalence_established": false,
+  "input_lineage_limit": "Worker reconstructed inputs after the historical source location was unavailable; controller staging hashes do not independently establish equivalence to historical source bytes.",
+  "next_version_protocol_fix": "../../factory-checks/evidence-and-tool-protocol/validation.json",
+  "repairing_export_manually": false
+}

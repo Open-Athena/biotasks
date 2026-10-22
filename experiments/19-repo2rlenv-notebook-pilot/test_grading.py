@@ -663,8 +663,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 receipt = json.loads((tmp_path / "resume.json").read_text())
                 assert receipt["reexecute_independent"] and not receipt["prior_acceptance_reused"]
             value = (
-                module.GraderRepair(
-                    **c.model_dump(),
+                module.GraderRepairSubmission(
+                    **c.model_dump(exclude={"checks"}),
                     probe_concerns=["Updated synthetic concern"],
                     probe_expectations=[
                         {

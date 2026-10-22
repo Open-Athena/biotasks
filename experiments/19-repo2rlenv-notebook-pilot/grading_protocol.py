@@ -143,6 +143,25 @@ class GraderRepair(Grader):
     )
 
 
+
+class GraderRepairSubmission(StrictModel):
+    """Only fields the repair worker may author; checks stay controller-owned."""
+
+    disposition: Literal["ready", "blocked"]
+    instruction: str
+    grader_code: str
+    rationale: str = Field(min_length=1)
+    probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
+    probe_concerns: list[str] | None = None
+
+
+def bind_repair_checks(submission, frozen_checks):
+    """Create the archival repair artifact with the exact original check inventory."""
+    return GraderRepair.model_validate(
+        {**submission.model_dump(), "checks": [check.model_dump() for check in frozen_checks]}
+    )
+
+
 def apply_probe_expectations(repair, original):
     """Correct model-authored annotations without changing any scientific mutation."""
     candidate = Grader.model_validate(

@@ -1,0 +1,22 @@
+{
+  "observed_at": "2026-10-22T05:19:42.401808+00:00",
+  "classification": "generated_grader_repair_blocked",
+  "pipeline_rejection": "repair_blocked",
+  "source_notebook_broken": false,
+  "scientific_validation": false,
+  "native_solver_attempted": false,
+  "initial_review_items": [
+    "Whitespace-normalization promises contradicted domain-description comparison.",
+    "Some numerical perturbations also changed whitespace, confounding their intended test.",
+    "Some probe expected-check annotations were inconsistent with the actual perturbation."
+  ],
+  "initial_review_is_not_final_repair_diagnosis": true,
+  "final_repair_archive_inspection_pending": false,
+  "manual_scientific_changes": false,
+  "final_repair_disposition": "blocked",
+  "repair_trace_tool_submissions": 15,
+  "repair_trace_submissions_with_check_definitions": 11,
+  "repair_trace_submissions_repeating_exact_frozen_checks": 0,
+  "repair_worker_claim_verified": false,
+  "repair_observation": "Worker claimed the controller rejected unchanged check definitions. Actual recorded submissions carrying checks all changed requirement wording; the immutable-inventory guard correctly rejected them. The final blocked artifact also rephrased one public requirement. A subsequent general interface simplification will let the controller carry the exact immutable inventory into repair artifacts, without weakening checks or rewriting historical results."
+}
