@@ -11,10 +11,53 @@ from pathlib import PurePosixPath
 from urllib.parse import urlsplit
 
 import httpx
+from packaging.requirements import InvalidRequirement, Requirement
 
 
 def normalized(name):
     return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def installed_records(environment):
+    """Read freeze records without inventing versions or following direct URLs."""
+    installed, unresolved = {}, []
+    for number, raw in enumerate(environment.splitlines(), 1):
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        try:
+            requirement = Requirement(line)
+        except InvalidRequirement:
+            unresolved.append(
+                {
+                    "line": number,
+                    "record_sha256": hashlib.sha256(raw.encode()).hexdigest(),
+                    "reason": "Unparsed or editable environment record; installed identity unavailable",
+                }
+            )
+            continue
+        name = normalized(requirement.name)
+        specs = list(requirement.specifier)
+        version, reason = None, None
+        if requirement.url:
+            reason = "Direct-reference installation; a registry release is not its source evidence"
+        elif (
+            not requirement.marker
+            and not requirement.extras
+            and len(specs) == 1
+            and specs[0].operator in {"==", "==="}
+            and "*" not in specs[0].version
+        ):
+            version = specs[0].version
+        else:
+            reason = "No unconditional exact installed version is recorded"
+        if name in installed:
+            version = None
+            reason = "Duplicate environment records; installed identity is ambiguous"
+        installed[name] = {"version": version}
+        if reason:
+            installed[name]["unavailable_reason"] = reason
+    return installed, unresolved
 
 
 def package_catalog(lock, environment):
@@ -23,19 +66,16 @@ def package_catalog(lock, environment):
     Pure-Python universal wheels expose distributed Python source. Otherwise use
     the locked sdist; it is release source, not proof of the installed binary.
     """
-    installed = {}
-    for line in environment.splitlines():
-        if line.strip():
-            name, version = line.split("==", 1)
-            installed[normalized(name)] = version
+    installed, _ = installed_records(environment)
     catalog = {}
     packages = tomllib.loads(lock)["package"]
-    for name, version in installed.items():
+    for name, record in installed.items():
+        version = record["version"]
         matches = [
             p for p in packages if normalized(p["name"]) == name and p.get("version") == version
         ]
-        item = {"version": version, "distribution": None}
-        if len(matches) == 1:
+        item = {**record, "distribution": None}
+        if version is not None and len(matches) == 1:
             p = matches[0]
             wheels = [
                 w for w in p.get("wheels", []) if urlsplit(w["url"]).path.endswith("-none-any.whl")
@@ -64,17 +104,22 @@ def package_catalog(lock, environment):
     return catalog
 
 
-def inspection_context(catalog):
-    return {
+def inspection_context(catalog, environment=None):
+    context = {
         "packages": catalog,
         "boundary": (
             "Read-only release-source inspection for recorded installed versions. "
             "Archives are hash-verified against the retained reference lock. No installation, "
             "imports, execution, shell, or arbitrary URLs. Universal wheels contain Python "
             "source; sdists are corresponding release source, not evidence of the exact "
-            "installed binary or its build options. Unavailable source remains an evidence gap."
+            "installed binary or its build options. Direct-reference, editable, ambiguous or "
+            "unparsed records do not authorize a registry fallback or arbitrary URL retrieval. "
+            "Unavailable source remains an explicit evidence gap."
         ),
     }
+    if environment is not None:
+        context["unparsed_environment_records"] = installed_records(environment)[1]
+    return context
 
 
 def tool(name, description, properties, required):

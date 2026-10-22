@@ -26,7 +26,9 @@ INPUT_FILES = (
 )
 
 
-def specification_context(run, policy, *, inspect_packages=False, revision_context=None, repeatability=None):
+def specification_context(
+    run, policy, *, inspect_packages=False, revision_context=None, repeatability=None
+):
     """Check original evidence hashes and audit lineage, without executing it."""
     manifest = json.loads((run / "artifact-manifest.json").read_text())
     originals = {item["path"]: item for item in manifest["files"]}
@@ -96,7 +98,8 @@ def specification_context(run, policy, *, inspect_packages=False, revision_conte
         context["revision_context"] = revision_context
     if inspect_packages:
         context["package_inspection"] = inspection_context(
-            package_catalog(files["trial/uv.lock"], files["trial/environment.txt"])
+            package_catalog(files["trial/uv.lock"], files["trial/environment.txt"]),
+            files["trial/environment.txt"],
         )
         context["evidence_boundary"] = context["evidence_boundary"].replace(
             "No tools in this pass.", "Read-only package-source tools are available."

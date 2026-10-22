@@ -10,7 +10,7 @@ import zipfile
 
 import httpx
 import pytest
-from package_inspection import PackageInspection, package_catalog
+from package_inspection import PackageInspection, inspection_context, package_catalog
 
 
 def fixture_archive(kind="universal_wheel"):
@@ -131,3 +131,51 @@ def test_deadline_is_not_converted_to_model_feedback(tmp_path):
     inspection = PackageInspection(catalog, tmp_path / "sources", time.time() - 1)
     with pytest.raises(TimeoutError):
         asyncio.run(inspection.handlers["list_package_files"](package="example"))
+
+
+@pytest.mark.parametrize(
+    "record",
+    [
+        "example @ file:///work/checkout",
+        "example @ git+https://example.org/repository.git@abc123",
+        "example @ https://user:password@example.org/private.whl",
+    ],
+)
+def test_direct_reference_does_not_crash_or_borrow_a_registry_release(record):
+    lock = """[[package]]
+name = "example"
+version = "1.0"
+sdist = {url = "https://files.pythonhosted.org/example.tar.gz", hash = "sha256:HASH", size = 12}
+""".replace("HASH", "a" * 64)
+    catalog = package_catalog(lock, record)
+    assert catalog["example"]["version"] is None
+    assert catalog["example"]["distribution"] is None
+    assert "Direct-reference" in catalog["example"]["unavailable_reason"]
+    assert "password" not in json.dumps(catalog)
+    assert "example.org" not in json.dumps(catalog)
+
+
+def test_comments_editables_and_unparsed_records_are_explicit_evidence_gaps():
+    environment = "# editable local install\n-e /work/project\ninvalid >>> record\nexample==1.0\n"
+    catalog = package_catalog("package = []", environment)
+    context = inspection_context(catalog, environment)
+    assert list(catalog) == ["example"]
+    assert [x["line"] for x in context["unparsed_environment_records"]] == [2, 3]
+    assert all(len(x["record_sha256"]) == 64 for x in context["unparsed_environment_records"])
+    assert "/work/project" not in json.dumps(context)
+    assert "unparsed_environment_records" not in inspection_context(catalog)
+
+
+@pytest.mark.parametrize(
+    "record", ["example", "example>=1", "example==1.*", 'example==1; os_name=="a"']
+)
+def test_unresolved_versions_are_not_invented_from_the_lock(record):
+    catalog = package_catalog('[[package]]\nname="example"\nversion="1.0"\n', record)
+    assert catalog["example"]["version"] is None
+    assert catalog["example"]["distribution"] is None
+
+
+def test_conflicting_normalized_installed_identities_are_unavailable():
+    catalog = package_catalog("package = []", "Example_Package==1\nexample.package==2\n")
+    assert catalog["example-package"]["version"] is None
+    assert "ambiguous" in catalog["example-package"]["unavailable_reason"]

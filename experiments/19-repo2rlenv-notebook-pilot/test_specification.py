@@ -191,6 +191,14 @@ def test_read_only_session_inspects_then_submits_with_local_validation(tmp_path,
     config = json.loads(
         (Path(__file__).parent / "specification-runs/013/configuration.json").read_text()
     )
+    experiment = Path(__file__).parent
+    current_input = specification_context(
+        experiment / config["reference_directory"],
+        json.loads((experiment / config["policy_file"]).read_text()),
+        inspect_packages=True,
+    )
+    config["input_file"] = str(tmp_path / "current-input.json")
+    Path(config["input_file"]).write_text(json.dumps(current_input))
     root = tmp_path / "specification"
     asyncio.run(
         run(
