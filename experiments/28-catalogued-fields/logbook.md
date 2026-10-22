@@ -41,3 +41,7 @@ The derived Git SAMtools summary now names `orchestration_state` separately from
 ### Scanpy intermediate observation
 
 The original Scanpy run returned a bootstrap image after 13 model calls ($0.559917 actual) and began native paired PR validation. Upstream's own smoke/post-commit check exited 2 during collection with Pandas4Warning; it cached and flagged the image, then continued into pr_runtime under unchanged defaults. This is not a claim of a clean bootstrap or a verified task. The first observed paired input is PR4333 with upstream-selected test files and the native 600-second validation timeout. Primary independent controls remain unchanged at 300 seconds per verifier attempt on one CPU, with a separately reserved allocation. No intervention or longer-timeout diagnostic was applied.
+
+### Scanpy live independent-control distinction
+
+PR4329's completed live control records show parsed base reward 0 and oracle reward 1: the patch fixes both tracked F2P tests and preserves all six tracked P2P tests. Both pytest commands nevertheless exit 1 with ten identical untracked failures. Bounded read-only log inspection identifies all ten as `pandas.errors.Pandas4Warning` for deprecated `future.infer_string`; these are dependency-warning failures, not missing test-data evidence. `command_resolved` is false for both runs. This observation remains provisional until the complete job archive and readback are verified. The other export's controls continue under the original 300-second limit; no repair or diagnostic rerun was applied.
