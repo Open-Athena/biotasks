@@ -42,8 +42,15 @@ def submit_next(args):
     cohort = json.loads((ROOT / 'cohort.json').read_text())
     pins = json.loads((ROOT / 'pins.json').read_text())
     assert len(cohort) * pins['job_timeout_seconds'] * 4 / 3600 <= pins['aggregate_allocated_cpu_hour_ceiling']
-    assert not subprocess.check_output(['git', 'diff', 'HEAD', '--', str(ROOT)], text=True)
-    assert not subprocess.check_output(['git', 'ls-files', '--others', '--exclude-standard', str(ROOT)], text=True)
+    checkpoint = json.loads((ROOT / 'input-checkpoint.json').read_text())
+    for relative, expected in checkpoint['payload_files'].items():
+        with (ROOT / relative).open('rb') as handle:
+            assert hashlib.file_digest(handle, 'sha256').hexdigest() == expected['sha256'], relative
+    for relative in ['submit.py', 'cohort.json']:
+        path = ROOT / relative
+        repository_path = path.relative_to(ROOT.parents[1])
+        original = subprocess.check_output(['git', 'show', checkpoint['checkpoint_commit'] + ':' + str(repository_path)])
+        assert path.read_bytes() == original, 'Uncheckpointed submission/cohort input: ' + relative
     actual = Decimal('0')
     for row in cohort:
         run = run_id(row)
@@ -143,6 +150,7 @@ def observe(args):
     target = args.state_dir / (args.run_id + '-terminal.json')
     record = json.loads(target.read_text()) if target.exists() else {
         'run_id': args.run_id, 'state': state.state.name, 'attempts': attempts, 'readback_verified': False}
+    record.update(state=state.state.name, attempts=attempts)
     save(target, record)
     if args.action != 'harvest' or record['readback_verified']:
         print(json.dumps({'terminal_record': str(target), 'readback_verified': record['readback_verified']}))
@@ -184,7 +192,7 @@ def observe(args):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['submit-next', 'observe', 'harvest'])
+    parser.add_argument('action', choices=['submit-next', 'observe', 'harvest', 'watch'])
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--run-id')
@@ -193,6 +201,28 @@ def main():
     args.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     if args.action == 'submit-next':
         submit_next(args)
+    elif args.action == 'watch':
+        # Foreground orchestration only; no detached work or model calls here.
+        cohort = json.loads((ROOT / 'cohort.json').read_text())
+        while True:
+            if (args.state_dir / 'HOLD').exists():
+                print('HOLD present; no further submissions. Existing remote job remains bounded.', flush=True)
+                return
+            pending = next((row for row in cohort if not (
+                (args.state_dir / (run_id(row) + '-terminal.json')).exists()
+                and json.loads((args.state_dir / (run_id(row) + '-terminal.json')).read_text()).get('readback_verified'))), None)
+            if pending is None:
+                submit_next(args)  # Recheck every cost/cleanup gate before declaring terminal.
+                return
+            args.run_id = run_id(pending)
+            if not (args.state_dir / (args.run_id + '-receipt.json')).exists():
+                submit_next(args)
+            args.action = 'harvest'
+            observe(args)
+            terminal = args.state_dir / (args.run_id + '-terminal.json')
+            if terminal.exists() and json.loads(terminal.read_text()).get('readback_verified'):
+                continue
+            time.sleep(180)
     else:
         assert args.run_id
         observe(args)
