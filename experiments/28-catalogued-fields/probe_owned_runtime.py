@@ -22,7 +22,9 @@ def read(argv):
  r=subprocess.run([docker,*argv],capture_output=True,text=True,timeout=10)
  assert len(r.stdout)<1024**2 and len(r.stderr)<1024**2
  return r
-ids=read(['ps','-q','--filter','label=biotasks.run='+RUN_ID]).stdout.split()
+listed=read(['ps','-q','--filter','label=biotasks.run='+RUN_ID])
+assert listed.returncode==0
+ids=listed.stdout.split()
 assert len(ids)<=2
 rows=[]
 for container in ids:
