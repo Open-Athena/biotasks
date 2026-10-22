@@ -18,6 +18,7 @@ SELECTED = {
     "campaign.log",
     "setup.log",
     "reference-export.log",
+    "archive.log",
     "inputs.json",
     "pilot/started.json",
     "pilot/compatibility.json",
@@ -36,7 +37,14 @@ def priority(entry):
     name = entry["path"]
     if name.startswith(("reference-setup/", "reference-replay/")) and (
         name.rsplit("/", 1)[-1]
-        in {"configuration.json", "result.json", "outcome.json", "cleanup.json", "uv.lock", "system-prompt.md"}
+        in {
+            "configuration.json",
+            "result.json",
+            "outcome.json",
+            "cleanup.json",
+            "uv.lock",
+            "system-prompt.md",
+        }
         or "/candidate/" in name
         or "/frozen/" in name
     ):
@@ -124,8 +132,12 @@ def main():
             continue
         # Preparation responses can exceed the old per-file diagnostic bound.
         # Keep the total log-transfer bound; full evidence remains in storage.
-        native_trajectory = relative.startswith("native/") and relative.endswith("/agent/trajectory.json")
-        reference_lock = relative.startswith(("reference-setup/", "reference-replay/")) and relative.endswith("/uv.lock")
+        native_trajectory = relative.startswith("native/") and relative.endswith(
+            "/agent/trajectory.json"
+        )
+        reference_lock = relative.startswith(
+            ("reference-setup/", "reference-replay/")
+        ) and relative.endswith("/uv.lock")
         if (
             entry["bytes"] > 256_000
             and not relative.startswith(("preparation/", "schema-probe/", "specification/"))
