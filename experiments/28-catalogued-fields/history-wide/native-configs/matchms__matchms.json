@@ -1,0 +1,35 @@
+{
+  "repo": {
+    "url": "https://github.com/matchms/matchms",
+    "ref": "50baefdb0ce9401aac55cc2a09d07421dd684481",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 100
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "/work/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/matchms__matchms",
+    "org": "open-athena",
+    "dataset_name": "biotasks28-history-wide",
+    "visibility": "private"
+  }
+}

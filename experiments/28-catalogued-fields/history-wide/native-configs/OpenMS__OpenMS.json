@@ -1,0 +1,35 @@
+{
+  "repo": {
+    "url": "https://github.com/OpenMS/OpenMS",
+    "ref": "5edf83948816aee51225949dd0e613bd40f69c47",
+    "access": "public"
+  },
+  "pipeline": {
+    "name": "pr_runtime",
+    "options": {
+      "limit": 100
+    }
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "anthropic/claude-sonnet-4.6",
+    "api_key_env": "OPENROUTER_API_KEY",
+    "fallback": null
+  },
+  "bootstrap": {
+    "max_iterations": 20,
+    "max_seconds": 1800,
+    "max_llm_spend_usd": 5.0,
+    "cache_dir": "/work/bootstrap"
+  },
+  "auth": {
+    "use_gh_cli": false,
+    "use_hf_cli": false
+  },
+  "output": {
+    "destination": "/work/outputs/OpenMS__OpenMS",
+    "org": "open-athena",
+    "dataset_name": "biotasks28-history-wide",
+    "visibility": "private"
+  }
+}

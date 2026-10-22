@@ -1,0 +1,11 @@
+--- baseline/supervisor.py
++++ history/supervisor.py
+@@ -95,7 +95,7 @@
+         report["phase_started"] = True
+         command = ["/usr/local/bin/python", "/work/run_generation.py"]
+         seconds = max(1, int(deadline - time.monotonic()))
+-        result = subprocess.run([str(DOCKER), "exec", CONTROLLER, "timeout", "--kill-after=15s", str(seconds), *command], timeout=seconds + 30)
++        result = subprocess.run([str(DOCKER), "exec", "-e", "BIOTASKS_NATIVE_DEADLINE_EPOCH=" + str(time.time() + seconds), CONTROLLER, "timeout", "--kill-after=15s", str(seconds), *command], timeout=seconds + 30)
+         report["phase_exit_code"] = result.returncode
+         report['native_finished'] = time.time()
+         # Native timeout can leave a child shell alive in its Docker sandbox.
