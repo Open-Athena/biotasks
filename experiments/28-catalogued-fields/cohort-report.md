@@ -10,7 +10,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Proteomics / OpenMS/OpenMS | 217 | — | 0 | 0 | 0 | 0 | 0 | 0.16640555555555553 | source_checkout_attempt |
 | Structural biology / lammps/lammps | 34 | — | 0 | 0 | 0 | 0 | 0.938712 | 0.753731111111111 | bootstrap_attempt |
 | Metabolomics / matchms/matchms | 11 | 11 | 1 | 0 | 0 | 0 | 0.133545 | 0.7687444444444445 | paired_pr_validation_partial |
-| Systems biology / opencobra/cobrapy | 4 | — | — | — | — | — | — | — | not_reported |
+| Systems biology / opencobra/cobrapy | 4 | 4 | 0 | 0 | 0 | 0 | 0.332655 | 1.0273144444444444 | native_candidate_filtering |
 | Microbiome science / soedinglab/MMseqs2 | 9 | — | — | — | — | — | — | — | not_reported |
 | Neuroscience / mne-tools/mne-python | 82 | — | — | — | — | — | — | — | not_reported |
 | Bioimage analysis / OHIF/Viewers | 38 | — | — | — | — | — | — | — | not_reported |
@@ -19,7 +19,7 @@ Cohort result evidence complete: False.
 
 Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
-Reported actual model cost: $3.030972; reported allocated CPU-hours: 9.89002555555555503.
+Reported actual model cost: $3.363627; reported allocated CPU-hours: 10.91733999999999943.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
@@ -62,3 +62,9 @@ Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True
 Bootstrap smoke and fresh-image checks passed at the pinned newer repo revision. Native returned 11 PRs but entered four: PR966 had missing chemap in both collection stages, two candidates were filtered, then PR958 post-fix Docker exec raised OSError errno 7 on an oversized inline patch script. Two pairs started, one completed, no exports; seven returned PRs were never entered. No repair/retry applied.
 
 Native skip reasons: {"no fail-to-pass tests after validation": 1, "no_new_test_funcs": 1, "no_test_patch": 1}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## opencobra/cobrapy
+
+All four returned window PRs were entered and filtered before paired validation: three no_test_patch and one no_new_test_funcs (PR1492). The saved bootstrap image was independently flagged because both original 300-second smoke checks timed out, but those timeouts did not cause this zero-export outcome. No API/validation exception, repair or retry.
+
+Native skip reasons: {"no_new_test_funcs": 1, "no_test_patch": 3}. Controls reached/unstarted: 0/0. Archive accepted: True.
