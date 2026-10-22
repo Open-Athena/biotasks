@@ -11,6 +11,22 @@ from launch_iris import EXPERIMENT, frozen_file
 from run_reference import EXECUTION_PENDING
 
 
+def autonomous_asset_paths(config):
+    keys = ["seed_file", "notebook_file"]
+    if config.get("source_notices_file") is not None:
+        keys.append("source_notices_file")
+    result = set()
+    for key in keys:
+        value = config[key]
+        if not isinstance(value, str):
+            raise ValueError("Autonomous assets need canonical experiment-relative paths")
+        path = PurePosixPath(value)
+        if path.is_absolute() or ".." in path.parts or str(path) != value or value == ".":
+            raise ValueError("Autonomous assets need canonical experiment-relative paths")
+        result.add(EXPERIMENT + "/" + value)
+    return result
+
+
 def source_archive(repo: Path, revision: str, config) -> bytes:
     """Fresh autonomous runs need runtime files and their seed, not past runs."""
     command = ["git", "archive", "--format=tar.gz", revision]
@@ -24,7 +40,7 @@ def source_archive(repo: Path, revision: str, config) -> bytes:
         )
         root_files = {"pyproject.toml", "uv.lock", ".python-version", "README.md", "LICENSE"}
         experiment = PurePosixPath(EXPERIMENT)
-        seed_files = {EXPERIMENT + "/" + config[key] for key in ("seed_file", "notebook_file")}
+        seed_files = autonomous_asset_paths(config)
         if not seed_files.issubset(tracked):
             raise ValueError("Autonomous archive is missing its pinned seed files")
         selected = [
@@ -74,12 +90,7 @@ def frozen_payload(
     seed_path = "seeds/current.json"
     if config["entrypoint"] == "run_autonomous.py":
         seed_path = config["seed_file"]
-        for value in (seed_path, config["notebook_file"]):
-            path = PurePosixPath(value)
-            if path.is_absolute() or ".." in path.parts or str(path) != value:
-                raise ValueError(
-                    "Autonomous seed paths must be canonical experiment-relative paths"
-                )
+        autonomous_asset_paths(config)
         seeds = json.loads(frozen_file(repo, revision, EXPERIMENT + "/" + seed_path))
         if not isinstance(seeds, list) or len(seeds) != 1:
             raise ValueError("Autonomous payload requires exactly one seed record")

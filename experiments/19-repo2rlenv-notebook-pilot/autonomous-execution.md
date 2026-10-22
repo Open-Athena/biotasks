@@ -25,7 +25,7 @@ shared development VM. The entrypoint consumes `BIOTASKS_CONFIG` and
 
 Fresh autonomous payloads contain the project package/build files, experiment
 Python helpers and requirements, upstream pin/patches, and only the selected
-notebook and seed manifest. The separately hashed campaign configuration remains
+notebook, seed manifest and any explicitly selected source-notice file. The separately hashed campaign configuration remains
 a top-level payload member. Historical outputs and other seeds are excluded;
 input metadata records `autonomous-runtime-and-seed-v1`. Continuation entrypoints
 retain their complete-checkout archive because they may need prior evidence.
@@ -75,6 +75,39 @@ policy, without a manually selected analysis endpoint or task design. Input-data
 redistribution is not assessed by this execution test; output remains private
 unless separately approved for publication. PR 23 stays draft and unmerged until
 this acceptance criterion is met and the user approves promotion.
+
+
+## Attribution before native validation
+
+An optional `source_notices_file` selects already-reviewed attribution JSON by
+canonical experiment-relative path. It is checkpointed and included in the frozen
+payload with the chosen seed. This is source/data metadata, not a task question
+or scientific-method override; workers do not author it. The controller carries
+it unchanged into `attribution.json` before packaging and native trials, retaining
+the exact existing notice-equality gate for publication.
+
+The file binds `source_provenance` and `notebook_source_sha256` to that seed,
+includes the original `notebook_license.text` with its `sha256`, and lists
+`reviewed_inputs`: each has a SHA256, byte count, source URL and terms. Every
+materialized input must match a reviewed identity; filenames may change while
+bytes remain identical. Unused reviewed source notices may remain. Derived or
+additional inputs whose identities are absent require an explicit new review;
+the controller does not infer rights or treat a software license as a data
+license. Packaging independently rehashes the actual input bytes.
+
+Without an explicit reviewed file, native execution still produces a local task
+with publication marked unassessed. This option is not an automatic legal review
+or a publication authorization. Scientific controls, native trials, the final
+inventory review and a fresh release download remain separate requirements.
+Changing notices after native validation still changes the executable bundle
+identity and requires validation of that identity; do not relabel an older run.
+
+All subsequent model stages request native GLM-5.3 `high` by default, or another
+explicitly configured native level. Effective served effort is not inferred from
+the requested setting. A text-only reply in tool mode can receive one explicit
+protocol reminder within the same existing session bounds. It executes no tool,
+repeats no completed action and preserves the original response. It is not a
+semantic task repair or permission to modify frozen scientific artifacts.
 
 ## Starting another seed
 

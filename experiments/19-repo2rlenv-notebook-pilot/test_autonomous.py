@@ -1,6 +1,7 @@
 """Control-flow tests use fake workers; never claim scientific validation evidence."""
 
 import asyncio
+import hashlib
 import importlib.util
 import sys
 import time
@@ -49,13 +50,32 @@ def test_failed_operation_log_is_available_in_small_diagnostics(tmp_path):
 @pytest.mark.parametrize(
     "failure", [None, "blocked", "infrastructure", "construction", "grading", "native"]
 )
-def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, failure):
+@pytest.mark.parametrize("reviewed", [False, True])
+def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, failure, reviewed):
     monkeypatch.setattr(m, "HERE", tmp_path)
     monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "private://fixture")
     monkeypatch.setenv("BIOTASKS_CONVERSION_PYTHON", "unused")
     source = tmp_path / "source.ipynb"
     source.write_text("fixture notebook")
-    seed = {"source_sha256": m.digest(source)}
+    seed = {"source_sha256": m.digest(source), "provenance": {"id": "fixture"}}
+    license_text = "Original fixture license"
+    notices = {
+        "source_provenance": seed["provenance"],
+        "notebook_source_sha256": seed["source_sha256"],
+        "notebook_license": {
+            "text": license_text,
+            "sha256": hashlib.sha256(license_text.encode()).hexdigest(),
+        },
+        "reviewed_inputs": [
+            {
+                "sha256": "b" * 64,
+                "bytes": 123,
+                "source_url": "https://example.org/data",
+                "terms": "Fixture reviewed terms",
+            }
+        ],
+    }
+    m.write(tmp_path / "notices.json", notices)
     called = []
 
     def conversion(*args, **kwargs):
@@ -108,6 +128,12 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     def native(config, *, root):
         assert config["reasoning_effort"] == "high"
         called.append("native")
+        recorded = m.read(tmp_path / config["attribution_file"])
+        assert recorded == (
+            notices
+            if reviewed
+            else {"notebook": seed, "publication_status": "Not assessed; local validated task only"}
+        )
         return {"publication_ready": failure != "native"}
 
     for name, attrs in {
@@ -123,7 +149,15 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         m, "seal_reference", lambda raw, view, seed: (view / "trial/outputs").mkdir(parents=True)
     )
     monkeypatch.setattr(m, "copy_diagnostics", lambda root: None)
-    monkeypatch.setattr(m, "seal_materialization", lambda raw, view: view.mkdir())
+
+    def seal_materialization(raw, view):
+        view.mkdir()
+        m.write(
+            view / "manifest.json",
+            {"inputs": [{"path": "data.dat", "sha256": "b" * 64, "bytes": 123}]},
+        )
+
+    monkeypatch.setattr(m, "seal_materialization", seal_materialization)
     # Isolate fixed controller paths while exercising actual stage ordering.
     copytree = m.shutil.copytree
 
@@ -135,11 +169,11 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     monkeypatch.setattr(m.shutil, "copytree", isolated_copy)
     copyfile = m.shutil.copyfile
 
-    def isolated_file(source, target):
+    def isolated_file(source, target, **kwargs):
         if str(target).startswith("/evidence/"):
             target = tmp_path / "evidence" / str(target).removeprefix("/evidence/")
             target.parent.mkdir(parents=True, exist_ok=True)
-        return copyfile(source, target)
+        return copyfile(source, target, **kwargs)
 
     monkeypatch.setattr(m.shutil, "copyfile", isolated_file)
     pipeline = m.Pipeline(
@@ -149,6 +183,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             notebook_file="source.ipynb",
             task_policy={},
             daytona_budget_usd="5",
+            **({"source_notices_file": "notices.json"} if reviewed else {}),
         ),
         root=tmp_path / "run",
         seed=seed,

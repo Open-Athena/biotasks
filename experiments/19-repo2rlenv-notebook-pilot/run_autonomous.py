@@ -454,12 +454,11 @@ class Pipeline:
                 native_root = self.root / "native"
                 native_root.mkdir()
                 shutil.copytree(mat, native_root / "materialized")
+                from release_metadata import campaign_attribution
+
                 write(
                     self.root / "attribution.json",
-                    dict(
-                        notebook=self.seed,
-                        publication_status="Not assessed; local validated task only",
-                    ),
+                    campaign_attribution(self.config, self.seed, mat, experiment_root=HERE),
                 )
                 config = self.config_for(
                     "native",

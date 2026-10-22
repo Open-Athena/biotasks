@@ -1,0 +1,61 @@
+{
+  "observed_at": "2026-10-22T05:43:14.925095+00:00",
+  "scope": "Optional checkpointed, reviewed source notices frozen before native packaging. No inference of redistribution rights. Original campaign 044 remains frozen and unchanged.",
+  "checks_passed": 92,
+  "pytest_seconds": 1.15,
+  "wall_seconds": 1.44,
+  "peak_rss_kib": 86524,
+  "ruff_lint_format_passed": true,
+  "test_selection": [
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_metadata.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous_payload.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_scientific_bundle.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_execution_provenance.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_hardening.py"
+  ],
+  "source_sha256": {
+    "experiments/19-repo2rlenv-notebook-pilot/launch_reference.py": "5cb4dce56f191b9f6bb94a3131edbd292f58773e619173f3dba4c1190ae1c355",
+    "experiments/19-repo2rlenv-notebook-pilot/release_metadata.py": "cf6b50a1680e3a95f49fd43c2fd50599d48ae7cdfba13a02fd8e4b887bd1d87b",
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py": "6ae2894ef3d073cedde1ddfc741a316d979b06d8a77cd3a64e405a0e44f1a6fa",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_metadata.py": "a19f1979de22b8d531fb6d16504b4d257b3a22d4b9e94a364e7e983fe5192c46",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous_payload.py": "97821db098a8925aaabc4fdadea046ec73ee3ea1f0c39d1f6e413c39335fd9ea",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py": "a2eb8ea1a61bd3a8504e2ac8eaa49cff5ea7266873f9070a1e326c44e769a029"
+  },
+  "manifest_only_component_check": {
+    "scope": "Read-only manifest identity coverage on five live-observed controller artifacts; not a terminal archive or native/publication validation.",
+    "reviewed_input_identities": 2,
+    "actual_input_identities": 2,
+    "all_actual_identities_reviewed": true,
+    "actual_input_manifest_sha256": "5e7e631a15c69c8b83f23bb8f6dc9eba0c64dffd4eebb01058b979ffd818fdb5",
+    "notice_file_sha256": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+    "raw_input_bytes_independently_checked_by_this_component": false,
+    "candidate_or_original_files_changed": false,
+    "scientific_code_executed": false,
+    "current_campaign_attribution_changed": false,
+    "model_calls": 0
+  },
+  "earlier_failed_check": {
+    "failed": 4,
+    "passed": 86,
+    "cause": "Existing fake copyfile helper did not accept shutil.copytree follow_symlinks keyword once the fixture included a manifest; corrected the helper before fresh passing runs.",
+    "scientific_execution": false
+  },
+  "boundaries": [
+    "Unknown, additional or modified input identities cannot use the reviewed notice file.",
+    "Reviewed source bytes may be renamed; unused reviewed-source notices can remain.",
+    "A case without explicit reviewed notices retains the original unassessed/local attribution, without implying publication permission.",
+    "Original notebook provenance, notebook SHA256 and full license-text hash must match; source paths remain canonical and cannot escape through symlinks.",
+    "The real Git archive test selects the explicit pinned notice file with literal pathspecs and excludes unselected notices and old experiment artifacts.",
+    "Existing exact bundled-notice equality, scientific controls, native trials and final release checks remain required."
+  ],
+  "model_calls": 0,
+  "new_cloud_allocations": 0,
+  "live_native_with_new_notice_hook": false,
+  "limitations": [
+    "Pre-reviewed copied-input identities only; changed/derived inputs require an explicit new review.",
+    "The live manifest component check does not independently rehash raw data or establish terminal archive durability.",
+    "No change to current 044 task, original source, worker-generated scientific artifacts or its default attribution."
+  ]
+}

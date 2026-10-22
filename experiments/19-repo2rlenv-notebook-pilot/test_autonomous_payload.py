@@ -104,6 +104,8 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
         prefix + "patches/adapter.patch": "runtime patch",
         prefix + "case/seed.json": "seed manifest",
         prefix + "case/source[1].ipynb": "original notebook",
+        prefix + "case/notices[1].json": "explicit reviewed notices",
+        prefix + "case/notices1.json": "unselected notices",
         prefix + "case/source1.ipynb": "different seed that a glob must not capture",
         prefix + "autonomous-runs/old/output.csv": "historical output",
         prefix + "campaign-old-result.json": "flat historical receipt",
@@ -135,6 +137,7 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
         "entrypoint": "run_autonomous.py",
         "seed_file": "case/seed.json",
         "notebook_file": "case/source[1].ipynb",
+        "source_notices_file": "case/notices[1].json",
     }
     archive = launcher.source_archive(tmp_path, "HEAD", config)
     with tarfile.open(fileobj=io.BytesIO(archive)) as bundle:
@@ -142,6 +145,7 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
         for name in (
             prefix + "case/seed.json",
             prefix + "case/source[1].ipynb",
+            prefix + "case/notices[1].json",
             prefix + "run_autonomous.py",
             prefix + "upstream-pin.json",
             prefix + "reader-requirements.txt",
@@ -152,6 +156,7 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
             assert name in files
             assert bundle.extractfile(name).read().decode() == contents[name]
         assert prefix + "case/source1.ipynb" not in files
+        assert prefix + "case/notices1.json" not in files
         assert prefix + "autonomous-runs/old/output.csv" not in files
         assert prefix + "campaign-old-result.json" not in files
         assert prefix + "other-case/source.ipynb" not in files
@@ -160,3 +165,22 @@ def test_real_archive_contains_runtime_and_selected_seed_without_past_artifacts(
     full = launcher.source_archive(tmp_path, "HEAD", {"entrypoint": "run_reference_setup.py"})
     with tarfile.open(fileobj=io.BytesIO(full)) as bundle:
         assert prefix + "autonomous-runs/old/output.csv" in bundle.getnames()
+
+
+@pytest.mark.parametrize("bad", ["../notices.json", "/notices.json", "case//notices.json", ".", 42])
+def test_notice_payload_path_cannot_escape_pinned_experiment(monkeypatch, tmp_path, bad):
+    config, _, upstream = fixture(monkeypatch, tmp_path)
+    config["source_notices_file"] = bad
+    with pytest.raises(ValueError, match="canonical"):
+        launcher.frozen_payload(
+            tmp_path, revision="frozen", upstream_archive=upstream, config=config
+        )
+
+
+def test_explicit_notice_file_must_be_checkpointed(monkeypatch, tmp_path):
+    config, _, upstream = fixture(monkeypatch, tmp_path)
+    config["source_notices_file"] = "case/missing-notices.json"
+    with pytest.raises(ValueError, match="missing its pinned seed files"):
+        launcher.frozen_payload(
+            tmp_path, revision="frozen", upstream_archive=upstream, config=config
+        )

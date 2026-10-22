@@ -165,3 +165,69 @@ def scientific_probe_documents(grading):
                 "revised": suite.concerns,
             }
     return documents
+
+
+def campaign_attribution(config, seed, materialization, *, experiment_root):
+    """Carry explicit reviewed notices into native validation; never infer rights."""
+    from pathlib import PurePosixPath
+
+    selected = config.get("source_notices_file")
+    if selected is None:
+        return {"notebook": seed, "publication_status": "Not assessed; local validated task only"}
+    if not isinstance(selected, str):
+        raise ValueError("Source notices need a canonical experiment-relative path")
+    relative = PurePosixPath(selected)
+    if (
+        relative.is_absolute()
+        or ".." in relative.parts
+        or str(relative) != selected
+        or selected == "."
+    ):
+        raise ValueError("Source notices need a canonical experiment-relative path")
+    selected_path = Path(experiment_root) / relative
+    if selected_path.is_symlink() or not selected_path.resolve().is_relative_to(
+        Path(experiment_root).resolve()
+    ):
+        raise ValueError("Source notices must be a regular file inside the experiment")
+    notices = json.loads(selected_path.read_text())
+    if not isinstance(notices, dict) or (
+        notices.get("source_provenance") != seed.get("provenance")
+        or not isinstance(seed.get("provenance"), dict)
+        or notices.get("notebook_source_sha256") != seed.get("source_sha256")
+    ):
+        raise ValueError("Source notices differ from the selected notebook provenance/identity")
+    notebook_license = notices.get("notebook_license", {})
+    if not isinstance(notebook_license, dict) or not isinstance(notebook_license.get("text"), str):
+        raise ValueError("Source notices require the original notebook license text")
+    if not notebook_license["text"].strip() or hashlib.sha256(
+        notebook_license["text"].encode()
+    ).hexdigest() != notebook_license.get("sha256"):
+        raise ValueError("Notebook license text differs from its recorded hash")
+    reviewed = notices.get("reviewed_inputs")
+    if not isinstance(reviewed, list) or not reviewed:
+        raise ValueError("Source notices require explicitly reviewed input identities")
+    permitted = set()
+    for item in reviewed:
+        if not isinstance(item, dict) or (
+            not isinstance(item.get("sha256"), str)
+            or len(item["sha256"]) != 64
+            or any(c not in "0123456789abcdef" for c in item["sha256"])
+            or type(item.get("bytes")) is not int
+            or item["bytes"] < 0
+            or any(
+                not isinstance(item.get(k), str) or not item[k].strip()
+                for k in ("source_url", "terms")
+            )
+        ):
+            raise ValueError("Reviewed inputs require checksums, byte counts, sources and terms")
+        permitted.add((item["sha256"], item["bytes"]))
+    manifest = json.loads((Path(materialization) / "manifest.json").read_text())
+    inputs = manifest.get("inputs")
+    if not isinstance(inputs, list) or not inputs:
+        raise ValueError("Source attribution requires a materialized input inventory")
+    actual = {(item["sha256"], item["bytes"]) for item in inputs}
+    if not actual <= permitted:
+        raise ValueError("Materialized inputs include data outside the reviewed identities")
+    # Packaging independently rehashes these files before native execution.
+    # Unused reviewed sources may retain their notices; copied inputs may be renamed.
+    return notices
