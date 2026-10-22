@@ -1,0 +1,65 @@
+{
+  "observed_at": "2026-10-22T05:18:23.307258+00:00",
+  "scope": "Next-version metadata-only repair and one explicit missing-tool protocol correction. Frozen original ten-case runtime remains unchanged.",
+  "reasoning_effort_requested": "high",
+  "served_endpoint_effective_effort_verified": false,
+  "checks": {
+    "focused_grading_tests_passed": 124,
+    "focused_grading_seconds": 4.08,
+    "focused_grading_peak_rss_kib": 138576,
+    "ordinary_and_selected_factory_tests_passed": 318,
+    "ordinary_and_selected_factory_seconds": 19.99,
+    "ordinary_and_selected_factory_wall_seconds": 21.36,
+    "ordinary_and_selected_factory_peak_rss_kib": 171292,
+    "ruff_lint_format_passed": true,
+    "ty_passed": true,
+    "real_distribution_build_install_test_included": true,
+    "single_test_worker": true
+  },
+  "test_selection": [
+    "tests",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_probe_evidence.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading_resume.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_review_source_coverage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_setup.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_preparation.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_design_stage.py"
+  ],
+  "source_sha256": {
+    "src/biotasks/chat_author.py": "0481cae5645ded596382b6191b743c94580b6ed3186e7d09ab28fc557db1c7e7",
+    "src/biotasks/prompts/worker-missing-tool-retry.md": "3c3c136b44c67b684b4c85157db9100f2c4903515d08a2d3c74da05ed6b4e658",
+    "src/biotasks/prompts/notebook-grader-author.md": "6fd5aa8f80dafee0f6de7ff0402f29f09fd806b752bdd70f26e82e78ff9c9c5b",
+    "src/biotasks/prompts/notebook-grader-review.md": "e04556a208bcbea433ae4ddf19f072f3ce6a2ec40f588331b73d10930ea11807",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py": "98575a57903c1a6380619e9b0888728777e9f76a332a9c54394103e2a2ac9a7b",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py": "22953d2a7cf443f0bd38155e3c053a667828ce6b5a36305c07f7d96bdd5683df",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "7b62680e9a5102fb564cb85bc8e9282f25b8f679f30a7f921b344c29408b90f7",
+    "experiments/19-repo2rlenv-notebook-pilot/release_metadata.py": "7496169245cb12548a96322b2ad2b7a752644e26add8bb5d69beb5eb0e50a5c1",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py": "2cad284beee640c4615538c047ec472d01ccb71299260c4b0b53ac7c54b60e7c",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "1f8531159e83f9f484f328c6e2de4e137d60f0c0633bc4178a54edb534da2ae4",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_probe_evidence.py": "6c6fb85606c830c1506680d08d6a8588d1ee782ed132b076609c422861e2d8c3",
+    "tests/test_chat_author.py": "7901efbc16f06f20c59bfad62d8e5ea108ceb45a877db63594fb5cced39c2559"
+  },
+  "regression_evidence": [
+    "Suite concerns may be replaced by the GLM repair without altering probe scripts, kinds, focus, citations or identities. Original and effective notes remain separate and release-bound.",
+    "Programmatic control counts distinguish expected outcomes met from positive rewards and record actual probe kinds.",
+    "The opt-in text-only tool response correction retains the original response, executes no action, consumes an ordinary request, and preserves the original turn/deadline/budget. Refusal, length, partial calls and exhausted bounds remain terminal.",
+    "A repeated missing-tool response remains terminal; default adapter behavior remains unchanged.",
+    "All ordinary package tests include building/installing outside the checkout with the new packaged prompt."
+  ],
+  "earlier_failed_test_attempt": {
+    "tests_failed": 11,
+    "tests_passed": 307,
+    "cause": "Test helper incorrectly forwarded the new adapter option to ChatLimits; corrected the helper before the passing run. No live inference was involved."
+  },
+  "model_calls": 0,
+  "scientific_executions": 0,
+  "new_full_pipeline_run": false,
+  "limitations": [
+    "Offline implementation evidence only; no new scientific acceptance, native solver result or release.",
+    "Test selections overlap earlier checks; counts must not be added.",
+    "One protocol correction cannot fix a generated export defect; original failure remains unchanged."
+  ]
+}

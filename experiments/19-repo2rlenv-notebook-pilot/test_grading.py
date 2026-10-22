@@ -606,6 +606,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
         elif name.startswith("review"):
+            assert inputs["control_summary"] == module.control_summary(inputs["controls"])
             assert "inputs/original.py" in inputs["source_evidence"]
             assert "inputs/plan.json" in inputs["source_evidence"]
             source_coverage = {
@@ -618,6 +619,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             }
             assert inputs["initial_probes"] == suite.model_dump()
             if name == "review-repair":
+                assert inputs["probes"]["concerns"] == ["Updated synthetic concern"]
+                assert inputs["initial_probes"]["concerns"] == suite.concerns
                 assert (
                     inputs["probes"]["probes"][0]["rationale"]
                     == "Correction justified by the unchanged public rule"
@@ -648,6 +651,8 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 source_coverage=source_coverage,
             )
         else:
+            if name == "repair":
+                assert inputs["control_summary"] == module.control_summary(inputs["controls"])
             if name == "grader" and resume == "draft":
                 assert kwargs["shell"] is None
                 assert "private-grader-observations" in json.dumps(inputs["prior_worker_draft"])
@@ -660,6 +665,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             value = (
                 module.GraderRepair(
                     **c.model_dump(),
+                    probe_concerns=["Updated synthetic concern"],
                     probe_expectations=[
                         {
                             "name": suite.probes[0].name,

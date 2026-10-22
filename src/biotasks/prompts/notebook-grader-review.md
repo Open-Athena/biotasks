@@ -58,13 +58,20 @@ A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.
 
 If `initial_probes` differs from `probes`, the existing repair worker corrected
-only expected check IDs or rationale; mutation scripts and intended overall
+only expected check IDs, rationale or suite-level concern annotations; mutation scripts and intended overall
 pass/fail outcomes must remain unchanged. Verify every correction against the
 public scientific rule and actual edit, not merely the grader's observed result.
 Do not accept removal of scientific coverage, a weaker challenge, or a relabeled
 scientific error. Repaired annotations require fresh execution of all controls;
 original failed records remain failures. A scientifically invalid probe script
 or intended outcome remains a blocker for this repair path.
+
+Distinguish executed effects from a script's self-reported diagnostics. A vacuous
+assertion or dead branch does not establish an effect, but the controller's actual
+before/after hashes and reports may establish it independently. Require accurate
+annotations of that evidence and its limits; do not require changing a frozen
+mutation merely for cosmetic cleanup when its intended effect is established.
+Actual invalid mutations or unsupported intended outcomes still block acceptance.
 
 Treat the candidate's prose as claims to check, not as additional experimental
 evidence. Verify numerical explanations and margins against the actual controls
@@ -91,8 +98,8 @@ packaging and its own isolation/oracle checks. It does not validate those later
 checks, a blind solver, or a release. If revised, affected controls and review
 must be repeated on the new candidate; prior evidence stays attached to its hash.
 
-Count controls directly from the supplied records and cite only mutations that
-those records actually executed. Author-side local-test claims are not additional
+Use the supplied programmatic `control_summary`, checking it against the records,
+and cite only mutations those records actually executed. Author-side local-test claims are not additional
 controller controls. Check that acceptance-affecting parser/file-size bounds are
 publicly disclosed. A stable candidate hash does not excuse misleading wording:
 a new corrected version can be validated while the original evidence stays

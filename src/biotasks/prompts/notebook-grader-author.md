@@ -56,6 +56,13 @@ run again against the repaired candidate. If a probe's script or intended overal
 acceptance is scientifically wrong, report a blocker; these annotations cannot
 repair that defect. Independent review sees both original and revised annotations.
 
+The same repair response may also supply `probe_concerns`, a complete corrected
+list of suite-level concern annotations. Omit it or return null to preserve the
+original list. Correct stale descriptions from the actual script and recorded
+execution; do not remove a genuine scientific objection to obtain acceptance.
+This field cannot change mutations, intended outcomes or scientific coverage.
+Original concerns remain preserved alongside the effective list.
+
 ## Public contract
 
 Return only the acceptance-rule addendum in `instruction`; the controller retains
@@ -117,6 +124,11 @@ explanations in the addendum or private rationale without changing the acceptanc
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.
 Keep run-specific calibration measurements and test history in the private rationale.
+Use the supplied `control_summary` for any control counts, distinguishing wrong
+submissions that were correctly rejected from controls that failed. Do not invent
+a new breakdown or carry stale counts from an earlier draft. Prefer a concise
+scientific rationale to recounting records the controller already retains. Check
+the complete revised candidate's claims, not just the paragraph named in review.
 
 Submit the complete revised candidate before using the shell in this repair session.
 If that submission fails, use targeted diagnostics for the returned failures and

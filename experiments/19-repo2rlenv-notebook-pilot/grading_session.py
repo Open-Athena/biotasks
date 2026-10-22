@@ -20,6 +20,7 @@ from grading_protocol import (
     check_coverage,
     check_probes,
     check_review_source_coverage,
+    control_summary,
     parse_report,
 )
 from model_profile import native_effort
@@ -881,6 +882,7 @@ async def run_grading(
                     "probes": probes.model_dump(),
                     "initial_probes": initial_probes.model_dump(),
                     "controls": session.last_controls,
+                    "control_summary": control_summary(session.last_controls),
                 },
                 validate_review,
             )
@@ -906,6 +908,7 @@ async def run_grading(
                     "review": assessment.model_dump(),
                     "frozen_probes": probes.model_dump(),
                     "controls": session.last_controls,
+                    "control_summary": control_summary(session.last_controls),
                 },
                 validate_repair,
                 session.candidate_first_shell(),

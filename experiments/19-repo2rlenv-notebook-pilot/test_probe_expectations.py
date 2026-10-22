@@ -9,7 +9,7 @@ from types import SimpleNamespace
 
 import grading_remote
 import pytest
-from grading_protocol import Grader, GraderRepair, Probes, apply_probe_expectations
+from grading_protocol import Grader, GraderRepair, Probes, apply_probe_expectations, control_summary
 from grading_session import GradingSession
 from pydantic import ValidationError
 
@@ -87,6 +87,43 @@ def test_annotations_cannot_change_mutations_or_original_records():
         )
     assert revised.probes[0].check_ids == ["value"]
     assert revised.probes[1:] == original.probes[1:]
+
+
+@pytest.mark.parametrize(
+    "replacement", [None, [], ["Controller evidence corrects the earlier note."]]
+)
+def test_suite_annotation_repair_keeps_original_and_every_mutation(replacement):
+    grader, original, update = fixture()
+    original = original.model_copy(update={"concerns": ["An earlier, unverified annotation."]})
+    before = original.model_dump()
+    repaired, revised = apply_probe_expectations(
+        GraderRepair(
+            **grader.model_dump(), probe_expectations=[update], probe_concerns=replacement
+        ),
+        original,
+    )
+    assert repaired == grader and original.model_dump() == before
+    assert revised.concerns == (original.concerns if replacement is None else replacement)
+    for old, new in zip(original.probes, revised.probes, strict=True):
+        assert old.model_dump(exclude={"check_ids", "rationale"}) == new.model_dump(
+            exclude={"check_ids", "rationale"}
+        )
+
+
+def test_summary_counts_expected_control_outcomes_instead_of_positive_rewards():
+    controls = [
+        {"kind": "reference", "passed_control": True, "execution": {"report": {"passed": True}}},
+        {"kind": "empty", "passed_control": True, "execution": {"report": {"passed": False}}},
+        {"kind": "probe", "passed_control": True, "probe": {"kind": "wrong_solution"}},
+        {"kind": "probe", "passed_control": False, "probe": {"kind": "valid_alternative"}},
+    ]
+    assert control_summary(controls) == {
+        "controls": 4,
+        "expected_outcomes_met": 3,
+        "by_kind": {"empty": 1, "probe": 2, "reference": 1},
+        "probes_by_kind": {"valid_alternative": 1, "wrong_solution": 1},
+    }
+    assert control_summary([])["controls"] == 0
 
 
 @pytest.mark.parametrize(

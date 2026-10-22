@@ -52,8 +52,9 @@ async def stage(
     empty_retry_notice = (
         files("biotasks.prompts").joinpath("worker-empty-response-retry.md").read_text()
     )
-    timeout_retry_notice = (
-        files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+    timeout_retry_notice = files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+    missing_tool_retry_notice = (
+        files("biotasks.prompts").joinpath("worker-missing-tool-retry.md").read_text()
     )
     root.mkdir(parents=True, exist_ok=False)
     identity = {
@@ -65,6 +66,7 @@ async def stage(
         else None,
         "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest(),
         "timeout_retry_sha256": hashlib.sha256(timeout_retry_notice.encode()).hexdigest(),
+        "missing_tool_retry_sha256": hashlib.sha256(missing_tool_retry_notice.encode()).hexdigest(),
         "stage_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "adapter_sha256": hashlib.sha256(
             files("biotasks").joinpath("chat_author.py").read_bytes()
@@ -83,6 +85,7 @@ async def stage(
         context_recovery_notice=recovery_notice,
         empty_response_retry_notice=empty_retry_notice,
         timeout_retry_notice=timeout_retry_notice,
+        missing_tool_retry_notice=missing_tool_retry_notice,
     )
 
     async def run_author(**kwargs):

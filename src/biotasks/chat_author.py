@@ -142,6 +142,7 @@ class GLMChatAuthor:
         context_recovery_notice: str | None = None,
         empty_response_retry_notice: str | None = None,
         timeout_retry_notice: str | None = None,
+        missing_tool_retry_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -158,12 +159,16 @@ class GLMChatAuthor:
             raise ValueError("Empty-response retry requires an explicit notice")
         if timeout_retry_notice is not None and not timeout_retry_notice.strip():
             raise ValueError("Timeout retry requires an explicit notice")
+        if missing_tool_retry_notice is not None and not missing_tool_retry_notice.strip():
+            raise ValueError("Missing-tool recovery requires an explicit notice")
         self.context_recovery_notice = context_recovery_notice
         self.empty_response_retry_notice = empty_response_retry_notice
         self.timeout_retry_notice = timeout_retry_notice
+        self.missing_tool_retry_notice = missing_tool_retry_notice
         # One allowance for this stage instance, including upstream resubmissions.
         self.empty_response_retries_used = 0
         self.timeout_retries_used = 0
+        self.missing_tool_retries_used = 0
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -442,6 +447,39 @@ class GLMChatAuthor:
                 )
                 continue
             calls = message.get("tool_calls")
+            if (
+                calls in (None, [])
+                and message.get("function_call") is None
+                and not message.get("refusal")
+                and isinstance(content, str)
+                and content.strip()
+                and self.missing_tool_retry_notice is not None
+                and self.missing_tool_retries_used == 0
+                and (max_turns is None or turn < max_turns)
+            ):
+                # A received text-only reply dispatched no action. Preserve it
+                # and request the proper artifact protocol, without replaying
+                # completed work or resetting the caller's execution bounds.
+                self.missing_tool_retries_used += 1
+                assistant = {"role": "assistant", "content": content}
+                for field in ("reasoning", "reasoning_content"):
+                    if field in message:
+                        assistant[field] = message[field]
+                messages.append(assistant)
+                messages.append({"role": "user", "content": self.missing_tool_retry_notice})
+                self.save_record(
+                    request_root / "failure.json",
+                    {"failure_category": "missing_tool_action", "actions_executed": 0},
+                )
+                event(
+                    "missing_tool_retry_requested",
+                    call_id=call_id,
+                    response=str(request_root / "response.json"),
+                    retry_number=self.missing_tool_retries_used,
+                    actions_executed=0,
+                    allowance_reset=False,
+                )
+                continue
             if message.get("refusal") or not isinstance(calls, list) or len(calls) != 1:
                 raise IncompleteCompletion("Expected one tool action; no tool executed")
             call = calls[0]

@@ -1,6 +1,7 @@
 """Typed grader candidates and independent controls; no scientific rules here."""
 
 import ast
+from collections import Counter
 from typing import Literal
 
 from coverage_protocol import CoverageReview
@@ -26,6 +27,24 @@ def artifact_interface(output_paths):
         "control_evidence": (
             "submission_before and submission_sha256 keys are relative to the "
             "actual supplied submission root; use those records to establish placement."
+        ),
+    }
+
+
+def control_summary(controls):
+    """Count recorded controls, not the grader's positive/negative rewards."""
+    return {
+        "controls": len(controls),
+        "expected_outcomes_met": sum(c.get("passed_control") is True for c in controls),
+        "by_kind": dict(sorted(Counter(c["kind"] for c in controls).items())),
+        "probes_by_kind": dict(
+            sorted(
+                Counter(
+                    (c.get("probe") or {}).get("kind", "unrecorded")
+                    for c in controls
+                    if c["kind"] == "probe"
+                ).items()
+            )
         ),
     }
 
@@ -114,11 +133,21 @@ class ProbeExpectation(StrictModel):
 
 class GraderRepair(Grader):
     probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
+    probe_concerns: list[str] | None = Field(
+        default=None,
+        description=(
+            "Optional complete replacement of suite-level concern annotations, justified "
+            "by the recorded mutation and evidence. Null preserves the original concerns. "
+            "Cannot change scripts, scientific challenges or intended outcomes."
+        ),
+    )
 
 
 def apply_probe_expectations(repair, original):
     """Correct model-authored annotations without changing any scientific mutation."""
-    candidate = Grader.model_validate(repair.model_dump(exclude={"probe_expectations"}))
+    candidate = Grader.model_validate(
+        repair.model_dump(exclude={"probe_expectations", "probe_concerns"})
+    )
     if candidate.disposition == "blocked":
         return candidate, original
     updates = {item.name: item for item in repair.probe_expectations}
@@ -140,7 +169,15 @@ def apply_probe_expectations(repair, original):
                 {**probe.model_dump(), "check_ids": update.check_ids, "rationale": update.rationale}
             )
         probes.append(probe)
-    revised = Probes.model_validate({**original.model_dump(), "probes": probes})
+    revised = Probes.model_validate(
+        {
+            **original.model_dump(),
+            "probes": probes,
+            "concerns": original.concerns
+            if repair.probe_concerns is None
+            else repair.probe_concerns,
+        }
+    )
     check_probes(revised, candidate)
     return candidate, revised
 

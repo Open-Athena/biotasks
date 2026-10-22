@@ -59,6 +59,7 @@ def make_author(
     context_recovery_notice=None,
     empty_response_retry_notice=None,
     timeout_retry_notice=None,
+    missing_tool_retry_notice=None,
     **limits,
 ):
     def save(path, value):
@@ -79,6 +80,7 @@ def make_author(
         context_recovery_notice=context_recovery_notice,
         empty_response_retry_notice=empty_response_retry_notice,
         timeout_retry_notice=timeout_retry_notice,
+        missing_tool_retry_notice=missing_tool_retry_notice,
     )
     return author, ledger
 
@@ -129,6 +131,115 @@ def empty_reply(*, finish="tool_calls", calls=None):
             }
         ],
     }
+
+
+@pytest.mark.parametrize("finish", ["stop", "tool_calls"])
+@pytest.mark.parametrize("calls", [None, []])
+def test_text_without_tool_gets_one_explicit_protocol_reminder(tmp_path, finish, calls):
+    payloads, actions = [], []
+    text = empty_reply(finish=finish, calls=calls)
+    text["choices"][0]["message"].update(
+        content="The work cannot proceed.", reasoning="Recorded reason"
+    )
+
+    async def complete(payload):
+        payloads.append(deepcopy(payload))
+        return {
+            1: reply("shell", {"command": "inspect"}, call_id="inspected"),
+            2: text,
+            3: reply(call_id="submitted"),
+        }[len(payloads)]
+
+    async def shell(command):
+        actions.append(command)
+        return "inspection complete"
+
+    author, ledger = make_author(
+        tmp_path, complete, missing_tool_retry_notice="Submit the artifact."
+    )
+    args = options(
+        tmp_path, {"shell": shell, "submit_artifact": committed, "revise_artifact": committed}
+    )
+    result = asyncio.run(author(**args))
+    assert result["turns"] == 3 and actions == ["inspect"]
+    assert payloads[2]["messages"][:-2] == payloads[1]["messages"]
+    assert payloads[2]["messages"][-2:] == [
+        {
+            "role": "assistant",
+            "content": "The work cannot proceed.",
+            "reasoning": "Recorded reason",
+        },
+        {"role": "user", "content": "Submit the artifact."},
+    ]
+    assert json.loads((tmp_path / "trace/2/response.json").read_text()) == text
+    failure = json.loads((tmp_path / "trace/2/failure.json").read_text())
+    assert failure["failure_category"] == "missing_tool_action" and failure["actions_executed"] == 0
+    assert args["budget"].settlements == ["1", "2", "3"]
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
+            ("response_received",),
+            ("response_received",),
+            ("response_received",),
+        ]
+
+
+def test_text_protocol_reminder_does_not_loop_or_reset_allowances(tmp_path):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        value = empty_reply()
+        value["choices"][0]["message"]["content"] = "No artifact was submitted."
+        return value
+
+    author, _ = make_author(tmp_path, complete, missing_tool_retry_notice="Use the supplied tools.")
+    with pytest.raises(IncompleteCompletion, match="Expected one tool action"):
+        asyncio.run(
+            author(
+                **options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+            )
+        )
+    assert len(calls) == 2 and author.missing_tool_retries_used == 1
+
+
+@pytest.mark.parametrize(
+    "case", ["refusal", "length", "partial_tool", "turn", "ledger", "deadline"]
+)
+def test_missing_tool_reminder_preserves_other_failures_and_bounds(tmp_path, case):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        value = empty_reply()
+        value["choices"][0]["message"]["content"] = "An explanation without an artifact."
+        if case == "refusal":
+            value["choices"][0]["message"]["refusal"] = "declined"
+        elif case == "length":
+            value["choices"][0]["finish_reason"] = "length"
+        elif case == "partial_tool":
+            value["choices"][0]["message"]["tool_calls"] = [{"id": "incomplete"}]
+        elif case == "deadline":
+            author.deadline = time.time() - 1
+        return value
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        requests=1 if case == "ledger" else 4,
+        missing_tool_retry_notice="Use the supplied tools.",
+    )
+    expected = {"ledger": RuntimeError, "deadline": TimeoutError}.get(case, IncompleteCompletion)
+    with pytest.raises(expected):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"submit_artifact": committed, "revise_artifact": committed},
+                    turns=1 if case == "turn" else 4,
+                )
+            )
+        )
+    assert len(calls) == 1
 
 
 @pytest.mark.parametrize("calls", [None, []])

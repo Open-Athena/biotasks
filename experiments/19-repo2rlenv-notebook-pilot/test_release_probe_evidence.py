@@ -7,7 +7,7 @@ from grading_protocol import Grader, GraderRepair, Probes, apply_probe_expectati
 from release_metadata import scientific_probe_documents
 
 
-def fixture(tmp_path, *, repaired=True):
+def fixture(tmp_path, *, repaired=True, concerns_update=None):
     candidate = Grader(
         disposition="ready",
         instruction="Return the correct scalar and retain the schema.",
@@ -26,7 +26,7 @@ def fixture(tmp_path, *, repaired=True):
     )
     original = Probes(
         disposition="ready",
-        concerns=[],
+        concerns=[] if concerns_update is None else ["An earlier unverified observation."],
         probes=[
             {
                 **fields,
@@ -52,6 +52,7 @@ def fixture(tmp_path, *, repaired=True):
     if repaired:
         repair = GraderRepair(
             **candidate.model_dump(),
+            probe_concerns=concerns_update,
             probe_expectations=[
                 {
                     "name": "value-edit",
@@ -81,6 +82,19 @@ def test_effective_suite_and_original_annotations_are_both_published(tmp_path):
     assert docs["probe-expectation-corrections.json"]["mutation_scripts_unchanged"] is True
 
 
+def test_corrected_suite_concerns_are_published_with_the_original(tmp_path):
+    original, suite = fixture(
+        tmp_path, concerns_update=["Correction supported by controller evidence."]
+    )
+    docs = scientific_probe_documents(tmp_path)
+    assert docs["scientific-probes.json"]["concerns"] == suite.concerns
+    assert docs["initial-scientific-probes.json"]["concerns"] == original.concerns
+    assert docs["probe-expectation-corrections.json"]["suite_concerns"] == {
+        "original": original.concerns,
+        "revised": suite.concerns,
+    }
+
+
 @pytest.mark.parametrize(
     "defect",
     [
@@ -90,6 +104,7 @@ def test_effective_suite_and_original_annotations_are_both_published(tmp_path):
         "duplicate-control",
         "missing-repair",
         "changed-grader",
+        "changed-concerns",
     ],
 )
 def test_mismatched_or_incomplete_evidence_blocks_release(tmp_path, defect):
@@ -116,6 +131,10 @@ def test_mismatched_or_incomplete_evidence_blocks_release(tmp_path, defect):
         save("final-controls.json", read("final-controls.json") * 2)
     elif defect == "missing-repair":
         (tmp_path / "repair.json").unlink()
+    elif defect == "changed-concerns":
+        value = suite.model_dump()
+        value["concerns"] = ["Unrecorded modification"]
+        save("repaired-probes.json", value)
     else:
         value = read("final-candidate.json")
         value["grader_code"] = "print('different grader')"
