@@ -25,6 +25,16 @@ Keep the implementation and inspection focused; submit a complete program rather
 than building your own grader or mutation suite. If blocked, return
 `disposition: blocked`, an empty code string and a specific explanation.
 
+Use targeted development checks, then submit the complete program for the
+controller's fresh end-to-end execution on the unchanged supplied inputs.
+Do not repeatedly run the full analysis merely to check your own determinism,
+calibrate acceptance tolerances, or compare against a second reference program
+you wrote yourself. Those checks do not establish agreement with the hidden
+answer. Diagnose a concrete execution failure when it occurs; otherwise hand off
+the runnable program and its unresolved limitations. Cleaning exploratory files
+is not required for submission: the returned code is the artifact the controller
+executes. Do not delete useful diagnostic evidence just to tidy the workspace.
+
 ## Shell execution
 
 Keep diagnostics concise: print aggregate checks and representative examples.
