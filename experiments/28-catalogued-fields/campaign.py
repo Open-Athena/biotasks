@@ -1,6 +1,7 @@
 """Discrete serial submit/observe/harvest operations; never regenerate a result."""
 
 import argparse
+from contextlib import ExitStack
 import dataclasses
 from decimal import Decimal
 import fcntl
@@ -66,7 +67,7 @@ def submit_next(args):
     print('All ten submitted jobs have archived readback, billing and owned cleanup records.')
 
 
-def download(archive, destination, gcloud):
+def download(archive, destination, gcloud, *, max_expanded_bytes=2 * 1024**3):
     # Streaming extraction; never load an archive or tar member into memory.
     assert archive['state'] == 'uploaded' and archive['size_bytes'] < 1024**3
     path = destination / 'outputs.tar.zst'
@@ -86,20 +87,23 @@ def download(archive, destination, gcloud):
                     continue
                 assert member.isfile() and Path(member.name).name == member.name
                 extracted += member.size
-                assert member.size < 1024**3 and extracted < 2 * 1024**3
+                assert member.size < 1024**3 and extracted < max_expanded_bytes
                 with bundle.extractfile(member) as source, (destination / member.name).open('wb') as output:
                     while chunk := source.read(1024 * 1024):
                         output.write(chunk)
     return extracted
 
 
-def billing_from_archive(path):
+def billing_from_archive(path, *, max_uncompressed_bytes=2 * 1024**3):
     if not path.exists():
         return None
     billing = None
     events = []
+    uncompressed = 0
     with tarfile.open(path, 'r|gz') as archive:
         for member in archive:
+            uncompressed += member.size
+            assert uncompressed < max_uncompressed_bytes
             if member.name == 'native-observations/billing.json':
                 assert member.size < 10000
                 billing = json.load(archive.extractfile(member))
@@ -145,25 +149,33 @@ def observe(args):
         return
     archive = attempts[-1]['output_archive'] if attempts else None
     assert archive and archive['state'] == 'uploaded', 'Wait on the same handle for output upload'
-    with open('/tmp/exe-codex-local-heavy.lock', 'a') as lock:
-        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    lightweight = archive['size_bytes'] < 1024**2
+    with ExitStack() as stack:
+        if not lightweight:
+            lock = stack.enter_context(open('/tmp/exe-codex-local-heavy.lock', 'a'))
+            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         mem = int(next(x.split()[1] for x in Path('/proc/meminfo').read_text().splitlines() if x.startswith('MemAvailable:'))) * 1024
-        assert mem >= 2.5 * 1024**3 and mem - 128 * 1024**2 >= 2 * 1024**3 and os.getloadavg()[0] < 1.5
+        assert mem >= 2.5 * 1024**3 and mem - 256 * 1024**2 >= 2 * 1024**3
+        if not lightweight:
+            assert os.getloadavg()[0] < 1.5
         os.nice(10)
         started = time.time()
         destination = args.state_dir / (args.run_id + '-results')
         destination.mkdir(exist_ok=True)
-        record['extracted_bytes'] = download(archive, destination, args.gcloud)
+        record['extracted_bytes'] = download(archive, destination, args.gcloud,
+            max_expanded_bytes=8 * 1024**2 if lightweight else 2 * 1024**3)
         report = destination / 'supervisor-result.json'
         if report.exists():
             record['supervisor'] = json.loads(report.read_text())
-        record['billing'] = billing_from_archive(destination / 'phase-artifacts.tar.gz')
+        record['billing'] = billing_from_archive(destination / 'phase-artifacts.tar.gz',
+            max_uncompressed_bytes=16 * 1024**2 if lightweight else 2 * 1024**3)
         if record['billing'] is None and not record.get('supervisor', {}).get('phase_started'):
             record['billing'] = {'actual_cost_usd': '0', 'cost_complete': True, 'model_calls': 0,
                                  'reason': 'infrastructure_failed_before_native_start'}
         record['harvest'] = {'started': started, 'finished': time.time(),
                              'peak_rss_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
-                             'estimate_mib': 128, 'archive_sha256': archive['sha256']}
+                             'estimate_mib': 256, 'lightweight_metadata': lightweight,
+                             'archive_sha256': archive['sha256']}
         record['readback_verified'] = True
         save(target, record)
         print(json.dumps({'readback_verified': True, 'billing': record['billing'],

@@ -32,4 +32,9 @@ with TemporaryDirectory() as directory:
     archive([{'event': 'model_request', 'call': 1},
              {'event': 'model_charge', 'call': 1, 'actual_cost_usd': '0.11'}])
     assert not billing_from_archive(path)['cost_complete']
+    try:
+        billing_from_archive(path, max_uncompressed_bytes=1)
+        raise AssertionError('Small metadata scan must enforce its expansion bound')
+    except AssertionError as error:
+        assert str(error) != 'Small metadata scan must enforce its expansion bound'
 print('Campaign billing fixtures passed: complete charges accepted; interrupted and inconsistent ledgers stop advancement.')
