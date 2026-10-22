@@ -3294,3 +3294,10 @@ Submitted original COBRApy deletions campaign 041 from the common rebuilt factor
 ## 2026-10-22 — Original HRV 024 teardown and next panel reservation
 
 HRV 024 rejected its generated candidate at repair_blocked after 106m23s; it did not enter native trials. Its host separately hit the two-hour main-process limit while archiving. Original diagnostic receipts are recovered with verified hashes, all four cleanup receipts pass, and a fresh provider inventory is empty. Full private stage/root archive readback remains pending; do not equate recovered diagnostics with every trace recovered. Recording/task publication stays private pending data terms. Retain $1 from the old $5 planning hold, then reserve $5 for original Pyteomics 038 using the exact same high-profile factory as 041: $95 held/$5 unallocated, within the unchanged $100 authorization. No task edits or extra model stages.
+
+
+## 2026-10-22 — Independent original-archive checks and next live pair
+
+Using the already-running 041 host, independently downloaded the original HMM whole-root manifest (2,051 file entries) and 17 original files with hash checks, including the terminal pipeline that matches recovered diagnostic bytes. The original HRV grading-stage manifest has 1,909 entries; 112 critical original files, including failed controls, candidates, review and blocked repair, were independently downloaded and hash checked. Its review matches the earlier live source hash. The whole HRV root manifest is absent after its archive timeout; do not claim whole-root completeness. Original stage archives and critical failures are preserved privately. No worker, model call or scientific rerun was added for readback.
+
+Original Pyteomics 038 was submitted after verified HRV teardown, using the same immutable 168-file factory and native high profile as 041. At 00:25 UTC, 038 is in setup; 041 has completed preparation, offline setup/reference, repeatability, specification and construction and is in scientific grading. No new task is yet validated or published. Aggregate conservative holds remain $95/$100, including $5 each for these two runs; PR 23 remains open, draft and unmerged.
