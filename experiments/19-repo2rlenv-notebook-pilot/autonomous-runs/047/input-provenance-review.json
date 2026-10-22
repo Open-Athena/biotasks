@@ -1,5 +1,5 @@
 {
-  "observed_at": "2026-10-22T08:51:43.183209+00:00",
+  "observed_at": "2026-10-22T09:05:48.689170+00:00",
   "source_input_receipt_sha256": "20e7c55be7ff88318631f829c8fc0b48238811a9460daa66aa6abe682f963dd3",
   "inputs": [
     {
@@ -34,8 +34,55 @@
     }
   ],
   "code_license": "BSD-3-Clause",
-  "clinical_image_mask_redistribution_terms": "Not independently established; public example availability and source-code license are not an explicit data-specific notice.",
+  "clinical_image_mask_redistribution_terms": "Not cleared for a new public release. The current original TCGA-GBM collection lists NIH Controlled Data Access Policy; reviewed terms for these specific processed copies and segmentations are not established. Do not infer redistribution permission from the PyRadiomics software license or historical mirror availability.",
   "publication_eligible": false,
   "raw_inputs_publicly_uploaded": false,
-  "input_origin_classification": "Exact source-provided brain image and mask test files; original acquisition and observed-versus-simulated classification have not been independently established."
+  "input_origin_classification": "Observed clinical MRI source data from TCGA-GBM and supplied derived tumor segmentations; exact original case identities are documented by the platform README and all four Git blob identities match the executed inputs.",
+  "origin_evidence": {
+    "repository": "Radiomics/radiomics-platform",
+    "revision": "958c4cf46af4ce2cd96b05f4a46af489fae12c75",
+    "readme_url": "https://github.com/Radiomics/radiomics-platform/blob/958c4cf46af4ce2cd96b05f4a46af489fae12c75/Testing/TCGA_Test_Data/README.md",
+    "readme_git_blob_sha1": "4a861c1d9140731d343d4a51b0dab7359d65aa96",
+    "readme_sha256": "4432bba52c4ac143307b090be3b0ef5a0401e1651d8e517622f4545a7c51b7cc",
+    "case_mapping": {
+      "brain1": "TCGA-02-0003",
+      "brain2": "TCGA-02-0006"
+    },
+    "exact_file_matches": [
+      {
+        "file": "brain1_image.nrrd",
+        "bytes": 2023786,
+        "sha256": "fffdb111ee8b428ede7256707393c927a7d5be912f0604cf3c6f1bd5fc9644cf",
+        "git_blob_sha1": "78a4777caa355253454819d258c85b448a0b2ee4",
+        "original_source_path": "Testing/TCGA_Test_Data/dataset/brain1_image.nrrd",
+        "source_url": "https://github.com/Radiomics/radiomics-platform/blob/958c4cf46af4ce2cd96b05f4a46af489fae12c75/Testing/TCGA_Test_Data/dataset/brain1_image.nrrd"
+      },
+      {
+        "file": "brain1_label.nrrd",
+        "bytes": 7517,
+        "sha256": "ae6d8e6b84f7e99d68c210ee2fa6aaaefa0b2df0a84f55efca4feebe2b216059",
+        "git_blob_sha1": "6dfc24c74c876e326c514d0bcf47fbb76fd1a2a0",
+        "original_source_path": "Testing/TCGA_Test_Data/dataset/brain1_label.nrrd",
+        "source_url": "https://github.com/Radiomics/radiomics-platform/blob/958c4cf46af4ce2cd96b05f4a46af489fae12c75/Testing/TCGA_Test_Data/dataset/brain1_label.nrrd"
+      },
+      {
+        "file": "brain2_image.nrrd",
+        "bytes": 1737246,
+        "sha256": "d35a1c6a3e1eb72bae97c5515472fbe057fb38ee8e1e199215d1c3c6f292332e",
+        "git_blob_sha1": "e6f9a2f8da212fc969db41522388b8fa6151d62d",
+        "original_source_path": "Testing/TCGA_Test_Data/dataset/brain2_image.nrrd",
+        "source_url": "https://github.com/Radiomics/radiomics-platform/blob/958c4cf46af4ce2cd96b05f4a46af489fae12c75/Testing/TCGA_Test_Data/dataset/brain2_image.nrrd"
+      },
+      {
+        "file": "brain2_label.nrrd",
+        "bytes": 6394,
+        "sha256": "15189c024936ecc337649b9a10c475117c7c40df0d53c22163f9a2023ed741a5",
+        "git_blob_sha1": "500d784a614bd040dd84fa9a782d8407bee385c3",
+        "original_source_path": "Testing/TCGA_Test_Data/dataset/brain2_label.nrrd",
+        "source_url": "https://github.com/Radiomics/radiomics-platform/blob/958c4cf46af4ce2cd96b05f4a46af489fae12c75/Testing/TCGA_Test_Data/dataset/brain2_label.nrrd"
+      }
+    ]
+  },
+  "current_collection_policy_url": "https://www.cancerimagingarchive.net/collection/tcga-gbm/",
+  "policy_evidence_limit": "Official current collection search/page snapshot lists controlled access; direct page fetch returned HTTP 500. This is not a conclusion that a historical license was revoked, nor permission to use a mirror to bypass current access requirements."
 }
