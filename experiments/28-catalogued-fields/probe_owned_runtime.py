@@ -39,7 +39,8 @@ for container in ids:
  oom=read(['inspect','--format','{{json .State.OOMKilled}}',container])
  rows.append({'container_id':container,'top_exit_code':top.returncode,'process_count':len(processes),
   'names':dict(collections.Counter(p['name'] for p in processes)),
-  'node_processes':[p for p in processes if 'node' in p['name'].lower() or 'jest' in p['name'].lower()],
+  'processes':processes,
+  'node_name_matches':[p for p in processes if 'node' in p['name'].lower() or 'jest' in p['name'].lower()],
   'cgroup_read_exit_code':limits.returncode,'cgroup_raw':limits.stdout,
   'container_oom_killed':json.loads(oom.stdout) if oom.returncode==0 else None})
 print(json.dumps({'run_id':RUN_ID,'observed_epoch':time.time(),'owned_containers':rows}))
@@ -53,7 +54,7 @@ print(json.dumps({'run_id':RUN_ID,'observed_epoch':time.time(),'owned_containers
     report = json.loads(result.stdout)
     report.update(checked_utc=datetime.datetime.now(datetime.timezone.utc).isoformat(), read_only=True,
         scope='Exact-label owned containers, process names/ages and cgroup accounting only. No command bodies, environment values, signals, test runs, model calls or mutations.',
-        limitations='One snapshot; no attribution of slowdown, worker policy or task yield from process counts alone. Container OOM state and cgroup memory.events have different scopes.')
+        limitations='One snapshot; names alone do not identify executable/runtime. No attribution of slowdown, worker policy or task yield from process counts alone. Container OOM state and cgroup memory.events have different scopes.')
     args.output.write_text(json.dumps(report, indent=2) + '\n')
     print(json.dumps(report, indent=2))
 
