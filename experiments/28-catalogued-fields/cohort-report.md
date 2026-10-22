@@ -12,14 +12,14 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Metabolomics / matchms/matchms | 11 | 11 | 4 | 2/1 | 0 | 0 | 0 | 0.133545 | 0.769 | paired_pr_validation_partial |
 | Systems biology / opencobra/cobrapy | 4 | 4 | 4 | 0/0 | 0 | 0 | 0 | 0.332655 | 1.027 | native_candidate_filtering |
 | Microbiome science / soedinglab/MMseqs2 | 9 | — | 0 | 0/0 | 0 | 0 | 0 | 0.960333 | 1.906 | bootstrap_attempt |
-| Neuroscience / mne-tools/mne-python | 82 | — | — | —/— | — | — | — | — | — | not_reported |
+| Neuroscience / mne-tools/mne-python | 82 | 77 | 30 | 4/3 | 0 | 0 | 0 | 0.666906 | 5.610 | paired_pr_validation_deadline_censored |
 | Bioimage analysis / OHIF/Viewers | 38 | — | — | —/— | — | — | — | — | — | not_reported |
 
 Cohort result evidence complete: False.
 
 Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
-Reported actual model cost: $4.323960; reported allocated CPU-hours: 12.823019.
+Reported actual model cost: $4.990866; reported allocated CPU-hours: 18.433158.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
@@ -74,3 +74,9 @@ Native skip reasons: {"no_new_test_funcs": 1, "no_test_patch": 3}. Native decisi
 The official agent installed CMake/compiler/Rust dependencies and reached compilation, then exhausted 20 turns (19 BASH, one INVALID) without SAVE_SETUP. Two build commands and a later file-inspection command timed out at the original 300-second limit; upstream also explicitly started background make. No PR discovery, parser evaluation, export or control occurred. Actual compiler/OOM causality unmeasured; no repair/retry or resource change.
 
 Native skip reasons: {}. Native decision errors: {}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## mne-tools/mne-python
+
+The original setup/native 84-minute window expired (supervisor exit124), leaving native-window.json state=running. Returned77/entered30, four pairs started/three completed; all six completed stages timed out600s with zero matches in both unchanged pytest parsers despite colored progress output. PR14310 fourth pair was censored before its first stage returned;47 returned PRs were never entered. PR14316 diff_fetch_failed is a GitHub406 error, not an eligibility skip. No exports or independent controls. Read-only live probe observed older timed-out pytest main processes still runnable as later stages proceeded; all owned containers/images/volumes were removed at phase/final cleanup. No repair/retry/normalization or resource change.
+
+Native skip reasons: {"empty_source_patch": 1, "no fail-to-pass tests after validation": 3, "no_new_test_funcs": 9, "no_test_patch": 13, "non_bug_pr": 2}. Native decision errors: {"diff_fetch_failed": 1}. Controls reached/unstarted: 0/0. Archive accepted: True.

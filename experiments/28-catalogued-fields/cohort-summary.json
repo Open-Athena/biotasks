@@ -2,11 +2,11 @@
   "scope": "Fixed ten-repository cohort only; earlier issues excluded.",
   "cohort_result_evidence_complete": false,
   "goal_completion_not_asserted": "Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.",
-  "reported_repositories": 8,
-  "evidence_accepted_repositories": 8,
+  "reported_repositories": 9,
+  "evidence_accepted_repositories": 9,
   "complete_window_merged_prs": 436,
-  "known_reported_actual_cost_usd": "4.323960",
-  "reported_allocated_cpu_hours": "12.82301888888888843",
+  "known_reported_actual_cost_usd": "4.990866",
+  "reported_allocated_cpu_hours": "18.43315777777777743",
   "verified_tasks_with_archived_evidence": 1,
   "successful_repositories_with_archived_evidence": 1,
   "cost_per_verified_task_usd": null,
@@ -378,10 +378,48 @@
       "repo": "mne-tools/mne-python",
       "field": "Neuroscience",
       "complete_window_merged": 82,
-      "stage": "not_reported",
-      "actual_cost_usd": null,
-      "verified_tasks": null,
-      "evidence_accepted": false
+      "stage": "paired_pr_validation_deadline_censored",
+      "actual_cost_usd": "0.666906",
+      "verified_tasks": 0,
+      "evidence_accepted": true,
+      "native_status": "native_generation_deadline_censored",
+      "native_cli_window": {
+        "input": "mne-tools__mne-python.json",
+        "command": [
+          "/work/upstream/.venv/bin/python",
+          "/work/observed_cli.py",
+          "--no-ui",
+          "generate",
+          "--config",
+          "/work/inputs/mne-tools__mne-python.json",
+          "--max-spend-usd",
+          "5"
+        ],
+        "started": 1792696047.2146504,
+        "state": "running"
+      },
+      "native_candidates_returned": 77,
+      "candidates_entered": 30,
+      "paired_validation_started": 4,
+      "paired_validation_completed": 3,
+      "native_skip_reasons": {
+        "no_test_patch": 13,
+        "no_new_test_funcs": 9,
+        "non_bug_pr": 2,
+        "empty_source_patch": 1,
+        "no fail-to-pass tests after validation": 3
+      },
+      "native_error_reasons": {
+        "diff_fetch_failed": 1
+      },
+      "exports": 0,
+      "strict_verified_oracle_command_resolved_tasks": 0,
+      "controls_reached": 0,
+      "controls_unstarted": 0,
+      "control_allocation_states": [],
+      "allocated_cpu_hours": 5.610138888888889,
+      "archive_receipt": "archives/mne-tools__mne-python-receipt.json",
+      "failure_or_limit": "The original setup/native 84-minute window expired (supervisor exit124), leaving native-window.json state=running. Returned77/entered30, four pairs started/three completed; all six completed stages timed out600s with zero matches in both unchanged pytest parsers despite colored progress output. PR14310 fourth pair was censored before its first stage returned;47 returned PRs were never entered. PR14316 diff_fetch_failed is a GitHub406 error, not an eligibility skip. No exports or independent controls. Read-only live probe observed older timed-out pytest main processes still runnable as later stages proceeded; all owned containers/images/volumes were removed at phase/final cleanup. No repair/retry/normalization or resource change."
     },
     {
       "repo": "OHIF/Viewers",
