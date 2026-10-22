@@ -1,14 +1,12 @@
 {
   "state": "synthetic_remote_regression_passed_not_applied",
-  "scope": "Generic prototype tested on reserved remote CPU with synthetic data; canonical source and all ten frozen payloads remain unchanged. Real056CSV profiling and autonomous rerun remain untested.",
+  "scope": "Generic prototype passed synthetic and hash-verified original-artifact streaming checks on reserved remote CPU; canonical source and frozen payloads remain unchanged. Fresh autonomous next-version execution is untested.",
   "trigger": "Frozen metabolomics056 completed its reference run but failed on the unrelated metadata row cap.",
   "seed_specific_methods": false,
   "source_inputs_changed": false,
   "current_runtime_modified": false,
   "validation_required": [
-    "Generic synthetic file exceeding the former ceiling, with known count/ranges and capped-distinct metadata.",
     "Existing CSV/HDF5 inspection regression selection.",
-    "Read-only scan of the retained actual056CSV on reserved remote CPU; no scientific recomputation or model call.",
     "Fresh original-source autonomous attempt under a new frozen version after the current round."
   ],
   "regression": {
@@ -21,5 +19,28 @@
     "model_calls": 0,
     "frozen_pipeline_files_changed": false,
     "temporary_fixture_cleanup": "TemporaryDirectory removes fixture before process exit"
+  },
+  "original_artifact_regression": {
+    "passed": true,
+    "prototype_source_sha256": "2f12edca1063346be7e9e979607e1f0e9823d7d3d51fbbe05477ae76bf40e168",
+    "original_artifact": {
+      "path": "reference/trial/outputs/modified_cosine_scores.csv",
+      "sha256": "e3027b32e59e91b12afd6c1526848f119e4bbb78ee1f7684eb86440a78971c79",
+      "bytes": 298609041,
+      "mode": 420
+    },
+    "row_count": 1605289,
+    "column_count": 8,
+    "distinct_limit_per_column": 100000,
+    "columns_with_capped_distincts": 1,
+    "download_seconds": 54.44998121261597,
+    "profile_seconds": 15.661594152450562,
+    "elapsed_seconds": 70.11157584190369,
+    "peak_rss_kib": 83504,
+    "scientific_recomputation": false,
+    "model_calls": 0,
+    "new_hosts_or_sandboxes": 0,
+    "frozen_pipeline_files_changed": false,
+    "temporary_cleanup": "TemporaryDirectory removed the independently verified original copy before process exit"
   }
 }

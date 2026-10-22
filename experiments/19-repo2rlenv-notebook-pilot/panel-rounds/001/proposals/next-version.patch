@@ -1,11 +1,9 @@
-diff --git a/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py b/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
-index 15e080fe..a9976a0a 100644
 --- a/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
 +++ b/experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py
-@@ -131,7 +131,14 @@ class ProbeExpectation(StrictModel):
+@@ -131,7 +131,14 @@
      rationale: str = Field(min_length=1)
- 
- 
+
+
 +class CheckDescription(StrictModel):
 +    id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
 +    public_requirement: str = Field(min_length=1)
@@ -17,24 +15,24 @@ index 15e080fe..a9976a0a 100644
      probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
      probe_concerns: list[str] | None = Field(
          default=None,
-@@ -144,7 +151,7 @@ class GraderRepair(Grader):
- 
- 
+@@ -144,7 +151,7 @@
+
+
  class GraderRepairSubmission(StrictModel):
 -    """Only fields the repair worker may author; checks stay controller-owned."""
 +    """Editable repair fields; check identities and coverage stay controller-owned."""
- 
+
      disposition: Literal["ready", "blocked"]
      instruction: str | None = Field(
-@@ -156,6 +163,7 @@ class GraderRepairSubmission(StrictModel):
+@@ -156,6 +163,7 @@
          description="Null preserves the exact prior grader program; otherwise return its complete replacement.",
      )
      rationale: str = Field(min_length=1)
 +    check_descriptions: list[CheckDescription] = Field(default_factory=list)
      probe_expectations: list[ProbeExpectation] = Field(default_factory=list)
      probe_concerns: list[str] | None = None
- 
-@@ -168,15 +176,35 @@ def bind_repair_checks(submission, frozen_checks, *, prior_candidate=None):
+
+@@ -168,15 +176,36 @@
              if prior_candidate is None:
                  raise ValueError("Retained repair fields require the exact prior candidate")
              fields[name] = getattr(prior_candidate, name)
@@ -57,6 +55,7 @@ index 15e080fe..a9976a0a 100644
 +
 +def check_repair_inventory(candidate_checks, frozen_checks):
 +    """Permit explanatory corrections, retaining every check's identity and coverage."""
++
 +    def inventory(checks):
 +        return [check.model_dump(exclude={"public_requirement"}) for check in checks]
 +
@@ -64,8 +63,8 @@ index 15e080fe..a9976a0a 100644
 +        raise ValueError(
 +            "Repair cannot change the frozen check inventory; report a blocker if coverage must change"
 +        )
- 
- 
+
+
  def apply_probe_expectations(repair, original):
      """Correct model-authored annotations without changing any scientific mutation."""
      candidate = Grader.model_validate(
@@ -74,11 +73,9 @@ index 15e080fe..a9976a0a 100644
      )
      if candidate.disposition == "blocked":
          return candidate, original
-diff --git a/experiments/19-repo2rlenv-notebook-pilot/grading_session.py b/experiments/19-repo2rlenv-notebook-pilot/grading_session.py
-index ceef563d..f113d57c 100644
 --- a/experiments/19-repo2rlenv-notebook-pilot/grading_session.py
 +++ b/experiments/19-repo2rlenv-notebook-pilot/grading_session.py
-@@ -20,6 +20,7 @@ from grading_protocol import (
+@@ -20,6 +20,7 @@
      bind_repair_checks,
      check_coverage,
      check_probes,
@@ -86,7 +83,7 @@ index ceef563d..f113d57c 100644
      check_review_source_coverage,
      control_summary,
      parse_report,
-@@ -346,10 +347,8 @@ class GradingSession:
+@@ -346,10 +347,8 @@
          if candidate.disposition == "blocked":
              return
          check_coverage(candidate, self.paths)
@@ -99,15 +96,15 @@ index ceef563d..f113d57c 100644
          self.candidate_number += 1
          folder = self.root / "candidates" / str(self.candidate_number)
          folder.mkdir(parents=True)
-@@ -880,6 +879,7 @@ async def run_grading(
+@@ -880,6 +879,7 @@
              session.last_controls.append(await session.case(candidate, kind="probe", probe=probe))
- 
+
          author_input_control_summary = None
 +        check_description_updates = []
- 
+
          async def review(name):
              async def validate_review(value):
-@@ -900,6 +900,8 @@ async def run_grading(
+@@ -900,6 +900,8 @@
                      "candidate": candidate.model_dump(),
                      "probes": probes.model_dump(),
                      "initial_probes": initial_probes.model_dump(),
@@ -116,7 +113,7 @@ index ceef563d..f113d57c 100644
                      "controls": session.last_controls,
                      "control_summary": control_summary(session.last_controls),
                      "author_input_control_summary": author_input_control_summary,
-@@ -946,6 +948,7 @@ async def run_grading(
+@@ -946,6 +948,7 @@
                  repair_submission, session.frozen_checks, prior_candidate=repair_base
              )
              save_record(root / "repair.json", repaired.model_dump())
@@ -124,20 +121,18 @@ index ceef563d..f113d57c 100644
              candidate, probes = apply_probe_expectations(repaired, initial_probes)
              save_record(root / "repaired-probes.json", probes.model_dump())
              save_record(root / "repaired-candidate.json", candidate.model_dump())
-diff --git a/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py b/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py
-index 2e598762..71359fad 100644
 --- a/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py
 +++ b/experiments/19-repo2rlenv-notebook-pilot/inspect_artifacts.py
-@@ -26,7 +26,7 @@ def digest(path):
+@@ -26,7 +26,7 @@
          return hashlib.file_digest(stream, "sha256").hexdigest()
- 
- 
+
+
 -def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=1_000_000):
 +def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=None):
      csv.field_size_limit(1_048_576)
      with path.open(newline="", encoding="utf-8-sig") as stream:
          rows = csv.reader(stream, delimiter=delimiter, strict=True)
-@@ -54,7 +54,7 @@ def csv_profile(path, *, delimiter=",", distinct_limit=100_000, row_limit=1_000_
+@@ -54,7 +54,7 @@
          count = ragged = 0
          for row in rows:
              count += 1
@@ -146,14 +141,14 @@ index 2e598762..71359fad 100644
                  raise ValueError("CSV row inspection limit exceeded")
              if len(row) != len(header):
                  ragged += 1
-diff --git a/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py b/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py
-index a5028c1c..644989ef 100644
 --- a/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py
 +++ b/experiments/19-repo2rlenv-notebook-pilot/test_coverage.py
-@@ -38,6 +38,22 @@ def test_csv_fingerprints_detect_order_and_row_limit_is_explicit(tmp_path):
+@@ -36,6 +36,22 @@
+     )
+     with pytest.raises(ValueError, match="row inspection limit"):
          csv_profile(one, row_limit=1)
- 
- 
++
++
 +def test_streaming_csv_has_no_implicit_row_rejection(tmp_path):
 +    path = tmp_path / "long.csv"
 +    chunk = "".join(f"{index % 7},a\n" for index in range(1001))
@@ -168,16 +163,12 @@ index a5028c1c..644989ef 100644
 +    assert numbers["minimum"] == 0 and numbers["maximum"] == 6
 +    assert numbers["distinct_capped"] and numbers["distinct_nonempty"] == 3
 +    assert not tags["distinct_capped"] and tags["distinct_nonempty"] == 1
-+
-+
+
+
  def test_hdf5_shapes_only_and_external_links_are_not_followed(tmp_path):
-     import h5py
- 
-diff --git a/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py b/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py
-index 0b3051a0..5ad93767 100644
 --- a/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py
 +++ b/experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py
-@@ -311,3 +311,84 @@ def test_repair_can_replace_one_field_and_retain_the_other():
+@@ -311,3 +311,84 @@
      assert bound.instruction == replacement
      assert bound.grader_code == grader.grader_code
      assert bound.checks == grader.checks
@@ -262,13 +253,11 @@ index 0b3051a0..5ad93767 100644
 +        checks[0].artifacts = ["other.txt"]
 +    with pytest.raises(ValueError, match="frozen check inventory"):
 +        check_repair_inventory(checks, grader.checks)
-diff --git a/src/biotasks/prompts/notebook-grader-author.md b/src/biotasks/prompts/notebook-grader-author.md
-index 75ab49c3..b55d1746 100644
 --- a/src/biotasks/prompts/notebook-grader-author.md
 +++ b/src/biotasks/prompts/notebook-grader-author.md
-@@ -127,15 +127,19 @@ that suite or spend the session repeatedly auditing unrelated source internals.
+@@ -127,15 +127,19 @@
  ## Repair sessions
- 
+
  When a prior candidate and review are supplied, repair the identified defects in
 -that candidate. Keep the supplied check definitions and frozen probes unchanged;
 -report a blocker if a scientific change to either is necessary. The repair response
@@ -293,14 +282,12 @@ index 75ab49c3..b55d1746 100644
  When either field needs changes, return its complete replacement, not a diff.
  The resolved complete candidate still undergoes every frozen control and fresh
  review. A blocked response may retain those fields too; do not invent a grader
-diff --git a/src/biotasks/prompts/notebook-grader-review.md b/src/biotasks/prompts/notebook-grader-review.md
-index 1de4ff41..b1edaff6 100644
 --- a/src/biotasks/prompts/notebook-grader-review.md
 +++ b/src/biotasks/prompts/notebook-grader-review.md
-@@ -118,6 +118,15 @@ claims, and report unresolved public-contract mismatches as actionable issues.
- 
+@@ -118,6 +118,15 @@
+
  ## Evidence versions
- 
+
 +When `check_description_updates` is present, compare each correction with
 +`initial_checks`, the current candidate, source evidence and governing public
 +rules. It may align misleading prose with unchanged scientific requirements;
