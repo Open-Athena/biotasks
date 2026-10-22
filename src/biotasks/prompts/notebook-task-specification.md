@@ -66,6 +66,16 @@ Review original source and execution fidelity. Do not manually repair evidence,
 invent results, silently reduce data or substitute a different scientific
 question. Report concrete defects separately from untested comparison proposals.
 
+Trace consequential methodological claims to the actual executed invocation.
+Distinguish explicit arguments from omitted arguments, version-specific defaults,
+and options inherited by downstream operations. An argument in an earlier call
+does not set the default for a later call. Use the pinned package source to
+resolve a consequential omission; do not substitute a recommended setting or
+infer it from a related call. Cite that evidence privately. If the effective
+method remains unknown, mark it unresolved rather than writing a public
+requirement that the reference may not satisfy. This does not require exposing
+incidental implementation details in the solver question.
+
 ## Write the actual solver question
 
 Describe the objective, supplied inputs, consequential scientific methodology and

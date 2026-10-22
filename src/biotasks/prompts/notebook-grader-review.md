@@ -61,6 +61,10 @@ or intended outcome remains a blocker for this repair path.
 Treat the candidate's prose as claims to check, not as additional experimental
 evidence. Verify numerical explanations and margins against the actual controls
 and recorded measurements. An arbitrary safety factor is not a precision argument.
+Check consequential methodology against the executed source, including omitted
+arguments and inherited options. Earlier calls and recommended defaults do not
+establish what a later invocation actually used. A public requirement that
+contradicts the reference is a contract defect, not grounds to widen a tolerance.
 Do not claim that every incorrect method is detected when only particular
 counterexamples were executed, or describe two implementations as independent
 without checking their provenance. Public rules should explain what is accepted;
