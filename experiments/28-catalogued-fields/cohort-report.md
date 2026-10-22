@@ -13,17 +13,17 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Systems biology / opencobra/cobrapy | 4 | 4 | 4 | 0/0 | 0 | 0 | 0 | 0.332655 | 1.027 | native_candidate_filtering |
 | Microbiome science / soedinglab/MMseqs2 | 9 | — | 0 | 0/0 | 0 | 0 | 0 | 0.960333 | 1.906 | bootstrap_attempt |
 | Neuroscience / mne-tools/mne-python | 82 | 77 | 30 | 4/3 | 0 | 0 | 0 | 0.666906 | 5.610 | paired_pr_validation_deadline_censored |
-| Bioimage analysis / OHIF/Viewers | 38 | — | — | —/— | — | — | — | — | — | not_reported |
+| Bioimage analysis / OHIF/Viewers | 38 | 38 | 19 | 3/2 | 0 | 0 | 0 | 0.984420 | 1.598 | paired_pr_validation_partial |
 
-Cohort result evidence complete: False.
+Cohort result evidence complete: True.
 
 Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
-Reported actual model cost: $4.990866; reported allocated CPU-hours: 18.433158.
+Reported actual model cost: $5.975286; reported allocated CPU-hours: 20.030942.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
-Full-cohort cost per verified task: —; per successful repository: —.
+Full-cohort cost per verified task: 5.975286; per successful repository: 5.975286.
 
 Window inventory is not a processed-PR denominator. A tracked-test oracle reward of one does not establish whole-command resolution, exact-image replay or release readiness.
 
@@ -80,3 +80,9 @@ Native skip reasons: {}. Native decision errors: {}. Controls reached/unstarted:
 The original setup/native 84-minute window expired (supervisor exit124), leaving native-window.json state=running. Returned77/entered30, four pairs started/three completed; all six completed stages timed out600s with zero matches in both unchanged pytest parsers despite colored progress output. PR14310 fourth pair was censored before its first stage returned;47 returned PRs were never entered. PR14316 diff_fetch_failed is a GitHub406 error, not an eligibility skip. No exports or independent controls. Read-only live probe observed older timed-out pytest main processes still runnable as later stages proceeded; all owned containers/images/volumes were removed at phase/final cleanup. No repair/retry/normalization or resource change.
 
 Native skip reasons: {"empty_source_patch": 1, "no fail-to-pass tests after validation": 3, "no_new_test_funcs": 9, "no_test_patch": 13, "non_bug_pr": 2}. Native decision errors: {"diff_fetch_failed": 1}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## OHIF/Viewers
+
+Bootstrap smoke/fresh exit0 report1446 passed tests (standalone smoke map1440 unique passed labels). Returned38/entered19, three pairs started/two results. PR6278 parsed1407/1411 all-pass, zero F2P, four tests only post. PR6273 test patch failed on binary screenshot entries without full index. PR6261 post-fix Docker exec raised OSError errno7; exact diff hashes match, one-argument script146149 bytes. Nineteen returned PRs never entered; no exports/controls. No repair/retry; worker-revision-only infrastructure update, unchanged native payload/settings.
+
+Native skip reasons: {"no fail-to-pass tests after validation": 1, "no_test_patch": 7, "non_bug_pr": 9, "test_patch failed to apply at base_commit": 1}. Native decision errors: {}. Controls reached/unstarted: 0/0. Archive accepted: True.

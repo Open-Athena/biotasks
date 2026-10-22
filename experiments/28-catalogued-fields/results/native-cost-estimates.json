@@ -1,6 +1,6 @@
 {
-  "checked_utc": "2026-10-22T20:47:04.017920+00:00",
-  "scope": "Read-only comparison of five saved completed-bootstrap metadata records against their original per-response charges; failed/active repos without a saved bootstrap are outside this comparison. No regrading, model call, source or estimator modification.",
+  "checked_utc": "2026-10-22T22:20:18.486558+00:00",
+  "scope": "Read-only comparison of all six saved completed-bootstrap metadata records with original per-response charges. Failed bootstraps without saved metadata are outside this comparison. No model call, regrading or estimator/source modification.",
   "upstream_source": "preflight/upstream-source/src/repo2rlenv/llm.py:195",
   "upstream_budget_source": "preflight/upstream-source/src/repo2rlenv/bootstrap/agent.py:186",
   "source_behavior": "Upstream initializes cost_usd=0, tries LiteLLM completion_cost, and leaves zero if the call raises; agent sums that estimate and checks it between calls. The underlying reason for these observed zero estimates is not retained, so no specific pricing-library exception is asserted.",
@@ -55,6 +55,16 @@
       "recorded_actual_provider_cost_usd": "0.666906",
       "actual_cost_complete": true,
       "original_archive_receipt": "archives/mne-tools__mne-python-receipt.json"
+    },
+    {
+      "repo": "OHIF/Viewers",
+      "saved_bootstrap_file": "bootstrap/OHIF__Viewers/4965e280cada__74ba7084/bootstrap.json",
+      "saved_bootstrap_sha256": "3e0fabba67eece49a2f99e9fa86f9a97edb8972ad607e50af9cf55891a30307e",
+      "native_llm_cost_estimate_usd": 0.0,
+      "bootstrap_iterations": 20,
+      "recorded_actual_provider_cost_usd": "0.984420",
+      "actual_cost_complete": true,
+      "original_archive_receipt": "archives/OHIF__Viewers-receipt.json"
     }
   ]
 }

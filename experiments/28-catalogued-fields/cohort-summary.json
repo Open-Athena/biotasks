@@ -1,16 +1,16 @@
 {
   "scope": "Fixed ten-repository cohort only; earlier issues excluded.",
-  "cohort_result_evidence_complete": false,
+  "cohort_result_evidence_complete": true,
   "goal_completion_not_asserted": "Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.",
-  "reported_repositories": 9,
-  "evidence_accepted_repositories": 9,
+  "reported_repositories": 10,
+  "evidence_accepted_repositories": 10,
   "complete_window_merged_prs": 436,
-  "known_reported_actual_cost_usd": "4.990866",
-  "reported_allocated_cpu_hours": "18.43315777777777743",
+  "known_reported_actual_cost_usd": "5.975286",
+  "reported_allocated_cpu_hours": "20.03094222222222193",
   "verified_tasks_with_archived_evidence": 1,
   "successful_repositories_with_archived_evidence": 1,
-  "cost_per_verified_task_usd": null,
-  "cost_per_successful_repository_usd": null,
+  "cost_per_verified_task_usd": "5.975286",
+  "cost_per_successful_repository_usd": "5.975286",
   "ratio_note": "Ratios withheld until all ten have readback, cleanup and complete actual billing; zero denominators remain undefined.",
   "repositories": [
     {
@@ -425,10 +425,47 @@
       "repo": "OHIF/Viewers",
       "field": "Bioimage analysis",
       "complete_window_merged": 38,
-      "stage": "not_reported",
-      "actual_cost_usd": null,
-      "verified_tasks": null,
-      "evidence_accepted": false
+      "stage": "paired_pr_validation_partial",
+      "actual_cost_usd": "0.984420",
+      "verified_tasks": 0,
+      "evidence_accepted": true,
+      "native_status": "native_validation_aborted_argument_list_too_long",
+      "native_cli_window": {
+        "input": "OHIF__Viewers.json",
+        "command": [
+          "/work/upstream/.venv/bin/python",
+          "/work/observed_cli.py",
+          "--no-ui",
+          "generate",
+          "--config",
+          "/work/inputs/OHIF__Viewers.json",
+          "--max-spend-usd",
+          "5"
+        ],
+        "started": 1792701680.295322,
+        "state": "completed",
+        "exit_code": 2,
+        "finished": 1792702987.4410918
+      },
+      "native_candidates_returned": 38,
+      "candidates_entered": 19,
+      "paired_validation_started": 3,
+      "paired_validation_completed": 2,
+      "native_skip_reasons": {
+        "no_test_patch": 7,
+        "non_bug_pr": 9,
+        "no fail-to-pass tests after validation": 1,
+        "test_patch failed to apply at base_commit": 1
+      },
+      "native_error_reasons": {},
+      "exports": 0,
+      "strict_verified_oracle_command_resolved_tasks": 0,
+      "controls_reached": 0,
+      "controls_unstarted": 0,
+      "control_allocation_states": [],
+      "allocated_cpu_hours": 1.5977844444444445,
+      "archive_receipt": "archives/OHIF__Viewers-receipt.json",
+      "failure_or_limit": "Bootstrap smoke/fresh exit0 report1446 passed tests (standalone smoke map1440 unique passed labels). Returned38/entered19, three pairs started/two results. PR6278 parsed1407/1411 all-pass, zero F2P, four tests only post. PR6273 test patch failed on binary screenshot entries without full index. PR6261 post-fix Docker exec raised OSError errno7; exact diff hashes match, one-argument script146149 bytes. Nineteen returned PRs never entered; no exports/controls. No repair/retry; worker-revision-only infrastructure update, unchanged native payload/settings."
     }
   ]
 }
