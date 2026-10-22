@@ -11,7 +11,7 @@ All ten selected repositories remain visible. Missing results are unreported, no
 | Structural biology / lammps/lammps | 34 | — | 0 | 0/0 | 0 | 0 | 0 | 0.938712 | 0.754 | bootstrap_attempt |
 | Metabolomics / matchms/matchms | 11 | 11 | 4 | 2/1 | 0 | 0 | 0 | 0.133545 | 0.769 | paired_pr_validation_partial |
 | Systems biology / opencobra/cobrapy | 4 | 4 | 4 | 0/0 | 0 | 0 | 0 | 0.332655 | 1.027 | native_candidate_filtering |
-| Microbiome science / soedinglab/MMseqs2 | 9 | — | — | —/— | — | — | — | — | — | not_reported |
+| Microbiome science / soedinglab/MMseqs2 | 9 | — | 0 | 0/0 | 0 | 0 | 0 | 0.960333 | 1.906 | bootstrap_attempt |
 | Neuroscience / mne-tools/mne-python | 82 | — | — | —/— | — | — | — | — | — | not_reported |
 | Bioimage analysis / OHIF/Viewers | 38 | — | — | —/— | — | — | — | — | — | not_reported |
 
@@ -19,7 +19,7 @@ Cohort result evidence complete: False.
 
 Final live resource/process checks, scientific audit, issue conclusion/readback/closure and task-owned temporary cleanup are separate requirements.
 
-Reported actual model cost: $3.363627; reported allocated CPU-hours: 10.917340.
+Reported actual model cost: $4.323960; reported allocated CPU-hours: 12.823019.
 
 Verified tasks / successful repositories with archived evidence: 1 / 1.
 
@@ -68,3 +68,9 @@ Native skip reasons: {"no fail-to-pass tests after validation": 1, "no_new_test_
 All four returned window PRs were entered and filtered before paired validation: three no_test_patch and one no_new_test_funcs (PR1492). The saved bootstrap image was independently flagged because both original 300-second smoke checks timed out, but those timeouts did not cause this zero-export outcome. No API/validation exception, repair or retry.
 
 Native skip reasons: {"no_new_test_funcs": 1, "no_test_patch": 3}. Controls reached/unstarted: 0/0. Archive accepted: True.
+
+## soedinglab/MMseqs2
+
+The official agent installed CMake/compiler/Rust dependencies and reached compilation, then exhausted 20 turns (19 BASH, one INVALID) without SAVE_SETUP. Two build commands and a later file-inspection command timed out at the original 300-second limit; upstream also explicitly started background make. No PR discovery, parser evaluation, export or control occurred. Actual compiler/OOM causality unmeasured; no repair/retry or resource change.
+
+Native skip reasons: {}. Controls reached/unstarted: 0/0. Archive accepted: True.

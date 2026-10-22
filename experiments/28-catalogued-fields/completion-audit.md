@@ -1,6 +1,6 @@
 # Experiment completion audit
 
-This checklist implements the published protocol; it does not change its scope or define success around the observed results. It is preparation only until final authoritative checks are recorded. Seven repository results are currently archived; MMseqs2 is active, and MNE/OHIF remain. The experiment is incomplete.
+This checklist implements the published protocol; it does not change its scope or define success around the observed results. It is preparation only until final authoritative checks are recorded. Current result progress is recorded in `cohort-summary.json`; this checklist does not assert completion.
 
 | Requirement from the protocol | Authoritative evidence to inspect before closure | Final audit |
 | --- | --- | --- |
