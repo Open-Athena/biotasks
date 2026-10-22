@@ -1,0 +1,119 @@
+{
+  "observed_at": "2026-10-22T03:10:24.101330+00:00",
+  "classification": "generated_contract_reference_conflict",
+  "source_notebook_broken": false,
+  "source_reference_and_replays_completed": true,
+  "controls": [
+    {
+      "path": "grading/grading/controls/0001/result.json",
+      "sha256": "f98c5d51eb3b6318b0650bfab463c74e73cac927007f523dcb78b14f7f1d416e",
+      "kind": "reference",
+      "passed_control": true,
+      "report_passed": true,
+      "failed_checks": []
+    },
+    {
+      "path": "grading/grading/controls/0002/result.json",
+      "sha256": "1ea1eaf0a649803f6520ceb41ccae647345c54e4dd90797b359950cfdfc692fe",
+      "kind": "empty",
+      "passed_control": true,
+      "report_passed": false,
+      "failed_checks": [
+        "cell_table_schema",
+        "umap_file_schema",
+        "de_table_schema",
+        "cell_universe_sample",
+        "leiden_partitions",
+        "cell_type_lineage_labels",
+        "umap_cross_file_consistency",
+        "umap_layout_similarity",
+        "de_group_gene_coverage",
+        "de_row_order",
+        "de_effect_statistics",
+        "de_pvalue_statistics"
+      ]
+    },
+    {
+      "path": "grading/grading/controls/0003/result.json",
+      "sha256": "dcd0728f3917281ecabf64db14c78d7b90a76017528192c585355fb4e28aa7f9",
+      "kind": "recomputed",
+      "passed_control": false,
+      "report_passed": false,
+      "failed_checks": [
+        "leiden_partitions",
+        "de_group_gene_coverage",
+        "de_row_order",
+        "de_effect_statistics",
+        "de_pvalue_statistics"
+      ]
+    },
+    {
+      "path": "grading/grading/controls/0004/result.json",
+      "sha256": "fdc7b7a1daf1af9523b3b89ca20818a0dbf9ae5178785a14ff312d36d15e60f7",
+      "kind": "alternative",
+      "passed_control": false,
+      "report_passed": false,
+      "failed_checks": [
+        "leiden_partitions",
+        "umap_layout_similarity",
+        "de_group_gene_coverage",
+        "de_row_order",
+        "de_effect_statistics",
+        "de_pvalue_statistics"
+      ]
+    },
+    {
+      "path": "grading/grading/controls/0005/result.json",
+      "sha256": "bcc5da889e38738092ecccb0bccf1e0339a95b040f57bdb4e4f0722808dc8f5c",
+      "kind": "missing",
+      "passed_control": true,
+      "report_passed": false,
+      "failed_checks": [
+        "cell_table_schema",
+        "cell_universe_sample",
+        "leiden_partitions",
+        "cell_type_lineage_labels",
+        "umap_cross_file_consistency",
+        "de_group_gene_coverage",
+        "de_row_order",
+        "de_effect_statistics",
+        "de_pvalue_statistics"
+      ]
+    },
+    {
+      "path": "grading/grading/controls/0006/result.json",
+      "sha256": "78be1642d4fc62eb29f11fa0bb74d61fa8ee0c23601a0950f75104aad20d7d4a",
+      "kind": "missing",
+      "passed_control": true,
+      "report_passed": false,
+      "failed_checks": [
+        "de_table_schema",
+        "de_group_gene_coverage",
+        "de_row_order",
+        "de_effect_statistics",
+        "de_pvalue_statistics"
+      ]
+    },
+    {
+      "path": "grading/grading/controls/0007/result.json",
+      "sha256": "75f7656cdbdf7ca9041fe7d9df5ee444adb2a96c892b7134e5ddf629f75e56ad",
+      "kind": "missing",
+      "passed_control": true,
+      "report_passed": false,
+      "failed_checks": [
+        "umap_file_schema",
+        "cell_universe_sample",
+        "umap_cross_file_consistency",
+        "umap_layout_similarity"
+      ]
+    }
+  ],
+  "confirmed_scope": "Executed reference passes its grader, but faithful public-contract recomputation and independent alternative fail. No native attempt occurred.",
+  "worker_diagnosis": "The specification claims the resolution-sweep calls use n_iterations=2; the original calls omit it. The grader worker reports the installed default runs to convergence and reproduces the reference partitions, whereas the declared two-iteration analysis does not. Independent implementation has an additional graph/layout disagreement. This is a generated contract/default-fidelity failure, not evidence that the source notebook cannot execute.",
+  "diagnosis_source": {
+    "path": "grading/candidate.json",
+    "sha256": "8006d08f9d3b02a35f7239bbf61844aceb835a07f55a1c54f4260ebaa05b219f"
+  },
+  "manual_scientific_edits": false,
+  "tolerances_relaxed": false
+}
