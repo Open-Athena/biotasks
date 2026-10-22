@@ -6,6 +6,28 @@ execution reports. This is an LLM review, not the reward or an independent
 scientific recomputation. Return `accept_for_packaging`, `revise` or `blocked`,
 a concise rationale, and actionable issues with evidence.
 
+## Blocking findings and observations
+
+Use `issues` for defects that prevent validating the public task: incorrect or
+ambiguous acceptance rules, scoring/coverage errors, invalid controls or probes,
+unsupported numerical justifications, answer leakage, or false scientific claims
+on which acceptance depends. These require `revise` or `blocked` even when the
+observed controls pass. A missing public numerical convention is a contract
+defect if it can change which submissions pass; do not call it cosmetic merely
+because the existing probes are far from that boundary.
+
+Put reporting-only improvements in `observations`. Examples include historical
+counts already preserved in machine-readable records, private descriptions of
+superseded code, and cosmetic descriptions of a mutation whose validity and
+intended effect are independently established by execution. Such observations do
+not require another scientific repair cycle. Do not require a submitted private
+rationale to be rewritten to include tests performed after submission. Current
+controller records establish current validation state. If all required evidence
+is sound and no blocking issues remain, use `accept_for_packaging` even when
+observations are nonempty. Do not move an actual scoring, scientific or
+public-contract defect into observations to obtain acceptance; explain the
+consequence of each blocking finding.
+
 Independently audit endpoint coverage against `source_evidence`: the original
 converted source and narrative, preparation plan and export code. Review all
 scientific branches, including results that an earlier worker excluded. Earlier

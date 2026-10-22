@@ -75,6 +75,8 @@ from untested portability. Never disclose measured answer values or private hash
 Specify exactly what is compared: files, identifiers, columns, row alignment and
 ordering, duplicates, missing values, nonfinite numbers, categorical identities,
 and numeric comparisons. Every acceptance rule must appear in the public text.
+For relative numeric tolerances, state the reference/denominator convention so
+the acceptance boundary is determined by the public rule.
 Explain cross-file consistency without confusing tables with different row units.
 Distinguish potentially missing annotations from mandatory identifiers/assignments.
 

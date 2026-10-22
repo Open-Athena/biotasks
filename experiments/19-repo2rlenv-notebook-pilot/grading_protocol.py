@@ -114,6 +114,13 @@ class Review(StrictModel):
     decision: Literal["accept_for_packaging", "revise", "blocked"]
     rationale: str = Field(min_length=1)
     issues: list[str]
+    observations: list[str] = Field(
+        default_factory=list,
+        description=(
+            "Nonblocking reporting or presentation observations. Scientific, public-contract, "
+            "control-validity, source-coverage or acceptance defects belong in issues."
+        ),
+    )
     # Legacy records remain readable; new live reviews must supply this audit.
     source_coverage: CoverageReview | None = None
 
@@ -141,7 +148,6 @@ class GraderRepair(Grader):
             "Cannot change scripts, scientific challenges or intended outcomes."
         ),
     )
-
 
 
 class GraderRepairSubmission(StrictModel):
