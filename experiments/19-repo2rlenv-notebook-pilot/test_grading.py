@@ -644,7 +644,6 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         decision="accept_for_packaging",
                         rationale="Cannot accept",
                         issues=[],
-                        observations=["Reporting-only note cannot excuse a failed control"],
                         source_coverage=source_coverage,
                     )
                 )
@@ -655,7 +654,6 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         decision="accept_for_packaging",
                         rationale="Cannot excuse a substantive defect",
                         issues=["An acceptance boundary is not publicly defined"],
-                        observations=["Separate reporting observation"],
                         source_coverage=source_coverage,
                     )
                 )
@@ -663,7 +661,6 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 decision="revise" if repair and name == "review" else "accept_for_packaging",
                 rationale="fixture",
                 issues=["repair fixture"] if repair and name == "review" else [],
-                observations=["Historical reporting note; no scientific effect"],
                 source_coverage=source_coverage,
             )
         else:

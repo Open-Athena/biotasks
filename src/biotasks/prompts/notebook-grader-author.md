@@ -135,10 +135,12 @@ explanations in the addendum or private rationale without changing the acceptanc
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.
 Keep run-specific calibration measurements and test history in the private rationale.
-Use the supplied `control_summary` for any control counts, distinguishing wrong
-submissions that were correctly rejected from controls that failed. Do not invent
-a new breakdown or carry stale counts from an earlier draft. Prefer a concise
-scientific rationale to recounting records the controller already retains. Check
+Keep the rationale focused on the scientific comparison rules, their numerical
+justification, changes made and unresolved limitations. Do not recount control
+totals, maintain a test-history section, or declare the current passing/failing
+inventory: the controller owns those measured reports and will execute new tests
+after submission. You may cite specific feedback to explain why a correction is
+scientifically valid, without copying a mutable validation summary into prose. Check
 the complete revised candidate's claims, not just the paragraph named in review.
 
 Submit the complete revised candidate before using the shell in this repair session.

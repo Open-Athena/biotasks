@@ -25,7 +25,6 @@ def test_legacy_review_is_readable_but_cannot_supply_new_coverage_acceptance():
         decision="accept_for_packaging", rationale="Legacy selected-output check", issues=[]
     )
     assert legacy.source_coverage is None
-    assert legacy.observations == []
     with pytest.raises(ValueError, match="independently audit"):
         check_review_source_coverage(legacy)
 
