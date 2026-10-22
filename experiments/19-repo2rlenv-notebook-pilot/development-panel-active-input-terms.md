@@ -13,3 +13,10 @@ This provenance supports redistribution of these two unchanged inputs with sourc
 The live worker stages the original five-minute, 100-Hz physiological recording and a documented offline adaptation of the MIT-licensed loader. The pinned [data README](https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/data/README.rst) describes use for testing, but does not provide an independent redistribution license for this recording. The [official example](https://neuropsychology.github.io/NeuroKit/examples/bio_intervalrelated/bio_intervalrelated.html) identifies the single-subject resting recording; its documentation license does not establish the dataset's license.
 
 Keep the task and staged recording private while source-specific redistribution remains unestablished. This does not classify the notebook as scientifically rejected or stop its approved execution. No substitute data, synthetic recording or task-specific patch was introduced.
+
+
+## Pyteomics filtering 038 — 22 October 2026
+
+This task is independently accepted, including its exact archived bundle, 27 final scientific controls and all three native trials. Publication is a separate boundary. The final task stages `example.PSMs.tsv` (3,612,795 bytes) and `example_output.csv` (9,815,862 bytes); their source URLs and SHA-256 values are bound in the machine-readable record. The [official filtering example](https://pyteomics.readthedocs.io/en/latest/examples/example_filtering.html) links to the [original public data directory](http://pubdata.theorchromo.ru/pyteomics_filtering_example/). The inspected directory lists data files but no license or README link. Public download availability and the notebook’s Apache-2.0 code license do not independently establish permission to redistribute these example inputs.
+
+Keep this accepted task and its data private while source-specific terms remain unestablished. No public release or data upload is claimed, and no substitute data, task modification or scientific rerun was introduced to bypass that boundary. The directory snapshot remains private; the public record contains only its source URL and checksum.
