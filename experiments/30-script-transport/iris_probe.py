@@ -13,12 +13,13 @@ from rigging.secrets import SecretBehavior
 from rigging.timing import Duration
 
 ROOT = Path(__file__).resolve().parent
-NAME = 'biotasks30-transport-001'
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=['preflight', 'submit', 'observe'])
 parser.add_argument('--config', type=Path, required=True)
+parser.add_argument('--run-id', choices=['biotasks30-transport-001','biotasks30-transport-002'], required=True)
 args = parser.parse_args()
-private = ROOT / 'run-private'
+NAME = args.run_id
+private = ROOT / 'run-private' / NAME
 private.mkdir(mode=0o700, exist_ok=True)
 job_id = JobName.from_string('/exedev/' + NAME)
 with connect_controller(config_file=args.config) as endpoint:
@@ -31,10 +32,12 @@ with connect_controller(config_file=args.config) as endpoint:
             (private / 'observation.json').write_text(json.dumps(payload,indent=2)+'\n')
             for entry in logs:
                 if entry.data.startswith('BIOTASKS30_RESULT='):
-                    result=json.loads(entry.data.split('=',1)[1]);(ROOT/'docker-results.json').write_text(json.dumps(result,indent=2)+'\n')
+                    result=json.loads(entry.data.split('=',1)[1]);(ROOT/('docker-results-'+NAME.rsplit('-',1)[1]+'.json')).write_text(json.dumps(result,indent=2)+'\n')
             print(json.dumps(payload))
         else:
             assert not client.list_jobs(prefix=str(job_id),limit=2), 'Handle exists; observe it, never resubmit'
+            from iris.resources.state import is_job_finished
+            assert all(is_job_finished(j.state) for j in client.list_jobs(prefix='/exedev/biotasks30-transport-',limit=10)), 'Existing active probe: observe it'
             workers=client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
             eligible=[w for w in workers if w.healthy and 'v4-reserved' in w.scale_group and w.metadata.tpu_name and not w.metadata.provenance.dirty]
             chosen=None
@@ -45,7 +48,8 @@ with connect_controller(config_file=args.config) as endpoint:
             assert chosen is not None, 'No healthy existing reserved worker with headroom'
             files={'remote_probe.py':(ROOT/'remote_probe.py').read_bytes(),
                    'original_docker.py':(ROOT/'upstream/bootstrap/docker.py').read_bytes(),
-                   'candidate_docker.py':(ROOT/'candidate/docker.py').read_bytes()}
+                   'candidate_docker.py':(ROOT/'candidate/docker.py').read_bytes(),
+                   'docker-tool.json':(ROOT/'docker-tool.json').read_bytes()}
             evidence={'job_id':str(job_id),'worker_id':chosen.worker_id,'worker_base':chosen.metadata.provenance.base_commit,
                       'new_capacity':False,'cpu':2,'memory_gib':2,'disk_gib':2,'timeout_seconds':600,
                       'max_allocated_cpu_hours':1/3,'model_calls':0,'attempts_allowed':1,
@@ -61,7 +65,7 @@ with connect_controller(config_file=args.config) as endpoint:
             job=client.submit(name=NAME,
                 entrypoint=Entrypoint(command=['bash','-c','exec "$IRIS_PYTHON" -u "$IRIS_WORKDIR/remote_probe.py"'],workdir_files=files),
                 resources=ResourceSpec(cpu=2,memory='2GB',disk='2GB'),
-                environment=EnvironmentSpec(setup_scripts=[],env_vars={'PYTHONDONTWRITEBYTECODE':'1'},secret_behavior=SecretBehavior.ISOLATE),
+                environment=EnvironmentSpec(setup_scripts=[],env_vars={'PYTHONDONTWRITEBYTECODE':'1','BIOTASKS_PROBE_RUN_ID':NAME},secret_behavior=SecretBehavior.ISOLATE),
                 constraints=[Constraint.create(key='tpu-name',op=ConstraintOp.EQ,value=chosen.metadata.tpu_name),Constraint.create(key='tpu-worker-id',op=ConstraintOp.EQ,value=int(chosen.metadata.tpu_worker_id or 0))],
                 scheduling_timeout=Duration.from_seconds(180),timeout=Duration.from_seconds(600),
                 max_retries_failure=0,max_retries_preemption=0,priority_band=job_pb2.PRIORITY_BAND_BATCH,

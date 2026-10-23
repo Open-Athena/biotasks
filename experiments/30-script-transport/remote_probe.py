@@ -5,12 +5,17 @@ import json
 import os
 from pathlib import Path
 import signal
+import shutil
+import tarfile
+import urllib.request
 import subprocess
 import sys
 import time
 
 ROOT = Path(__file__).resolve().parent
-OWNER = 'biotasks30-transport-001'
+OWNER = os.environ['BIOTASKS_PROBE_RUN_ID']
+assert OWNER in {'biotasks30-transport-001', 'biotasks30-transport-002'}
+TOOLS = ROOT / 'probe-tools'
 LABEL = 'org.open-athena.biotasks.owner=' + OWNER
 OWNED = []
 REPORT = {'scope': 'Real Docker synthetic transport probe, no repository tasks/models/builds', 'rows': [], 'cleanup': {}}
@@ -45,9 +50,31 @@ def interrupted(signum, frame):
     raise RuntimeError('probe interrupted by signal ' + str(signum))
 
 
+def prepare_cli():
+    pins = json.loads((ROOT / 'docker-tool.json').read_text())
+    TOOLS.mkdir(exist_ok=False)
+    path = TOOLS / 'docker.tgz'
+    total = 0
+    with urllib.request.urlopen(pins['docker_url'], timeout=60) as response, path.open('wb') as output:
+        while chunk := response.read(1024 * 1024):
+            total += len(chunk)
+            assert total <= 100 * 1024**2
+            output.write(chunk)
+    assert hashlib.sha256(path.read_bytes()).hexdigest() == pins['docker_sha256']
+    with tarfile.open(path) as archive:
+        member = archive.getmember('docker/docker')
+        assert member.isfile() and member.size < 100 * 1024**2
+        (TOOLS / 'docker').write_bytes(archive.extractfile(member).read())
+    (TOOLS / 'docker').chmod(0o755)
+    path.unlink()
+    os.environ['PATH'] = str(TOOLS) + os.pathsep + os.environ['PATH']
+    REPORT['docker_cli_archive_sha256'] = pins['docker_sha256']
+
+
 def main():
     signal.signal(signal.SIGTERM, interrupted)
     signal.signal(signal.SIGINT, interrupted)
+    prepare_cli()
     assert not docker('ps', '-aq', '--filter', 'label=' + LABEL).stdout.strip(), 'Existing owned handle; do not duplicate'
     # Use a cached official base only. Missing image is an explicit prerequisite failure.
     img = json.loads(docker('image', 'inspect', 'python:3.12-slim').stdout)[0]
@@ -115,6 +142,9 @@ if __name__ == '__main__':
         except Exception as exc:
             REPORT['cleanup_error'] = type(exc).__name__ + ': ' + str(exc)
             status = 1
+        if TOOLS.exists():
+            shutil.rmtree(TOOLS)
+        REPORT['tool_files_removed'] = not TOOLS.exists()
         REPORT['elapsed_seconds'] = time.time() - started
         (ROOT / 'probe-result.json').write_text(json.dumps(REPORT, indent=2)+'\n')
         print('BIOTASKS30_RESULT=' + json.dumps(REPORT), flush=True)
