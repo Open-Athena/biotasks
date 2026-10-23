@@ -67,3 +67,7 @@ Prepared the bounded confirmation archive reader, including payload/output hashe
 ## 2026-10-23 — unattended confirmation submitted
 
 The checkpointed controller verified all frozen inputs, performed preflight and submitted `/exedev/biotasks34-macs-742-confirm-001` from source checkpoint `c2b401d3`. The first authoritative observation at 23:12:40 UTC was pending. The controller remains live in local tool session40839 and will collect the same handle on a five-minute cadence, then verify/archive and submit the separately reserved owned cleanup. See `confirmation-submission.json` for public resource/payload bindings; the exact worker remains in the protected submission. Do not invoke a second watcher or resubmit on observation failure. No model calls.
+
+## 2026-10-23 — real controller restart verified
+
+At 23:17:41 UTC the confirmation handle was running. Stopped only the sleeping local controller, then resumed it from the identical journal/submission in session6070. At 23:23:22 the same handle was authoritatively running, without a new submission. Updated continuation metadata to place first-comparison successes under `prior_completed_comparison`; none is presented as a result of the currently running confirmation. Final control/receipt/cleanup outcomes remain unverified.
