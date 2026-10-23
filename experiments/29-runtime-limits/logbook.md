@@ -109,3 +109,7 @@ Submitted biotasks29-ohif-recorded-001 from7871df26on existing reserved worker m
 ### 2026-10-23 — Prepare gated Scanpy image cleanup
 
 Prepared a dedicated cleanup-only job for the recorded Scanpy image, not yet submitted. It requires terminal controls, archive hash readback, unchanged task files and removed control resources, targets the original worker, checks the retained tag/image identity and refuses image users before deletion. Only ownership-labeled images are eligible. Maximum1/6CPU-hour remains budgeted with the full8-hour OHIF reservation. Three entrypoints syntax-checked; remote cleanup execution remains pending.
+
+### 2026-10-23 — OHIF recorded replay completed
+
+All 18 recorded BASH actions matched their original exits, without command repairs. Smoke and fresh-image checks passed; fresh Jest output reports 121 suites and 1,446 tests passed. This establishes reconstruction only: the four original export control pairs remain pending. The archive was downloaded and verified (SHA256 `5a06cc2affd0decc127e6f31f11fafcc5cdff4b42896a14f36f6f47754d1bda5`, 56,675 bytes). Containers, checkout and tools were removed; the ownership-labeled image remains for controls. Actual allocation was 0.5530556 CPU-hours, bringing ten terminal jobs to 1.7413044 CPU-hours; separate Scanpy control reservation remains. Zero model calls.

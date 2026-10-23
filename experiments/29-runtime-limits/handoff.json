@@ -3,9 +3,9 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 10,
+  "remote_jobs": 11,
   "remaining": [
-    "Evaluate a generic complete-checkout reconstruction comparison for OHIF before controls; no lockfile or dependency repair",
+    "Run the four unchanged OHIF export control pairs after successful recorded-action reconstruction; then verify archive and remove retained image",
     "Observe original Scanpy PR4389 controls (300/1200s nop/oracle), verify archive, then clean the retained recorded-replay image",
     "OpenMS checkout comparison completed and read back; MMseqs2 bootstrap comparison still needs separate model allowance"
   ],
@@ -64,7 +64,7 @@
     "owned_resources_removed": true,
     "model_calls": 0
   },
-  "allocated_cpu_hours_so_far": 1.1882488890488943,
+  "allocated_cpu_hours_so_far": 1.7413044446044497,
   "first_stage_cpu_hour_ceiling": 32,
   "ohif_reconstruction": {
     "docker_build_exit": 0,
@@ -77,14 +77,13 @@
   "all_remote_jobs_terminal": false,
   "active_checkpoint": "65cfc8b59ffb35b856e60ca667098955c344480b",
   "owned_resources_removed": false,
-  "allocated_cpu_hours": 1.1882488890488943,
+  "allocated_cpu_hours": 1.7413044446044497,
   "active_job": "/exedev/biotasks29-scanpy-controls-001",
   "active_worker": "marin-tpu-v4-reserved-32-us-central2-b-20261023-1755-6e8581d8-worker-0",
   "retained_image": "biotasks29-scanpy-recorded-001:recorded-actions",
   "retention_condition": "Pending original Scanpy controls; remove image after archive readback",
   "active_jobs": [
-    "/exedev/biotasks29-scanpy-controls-001",
-    "/exedev/biotasks29-ohif-recorded-001"
+    "/exedev/biotasks29-scanpy-controls-001"
   ],
   "openms_checkpoint": "8d0810037b8abecc9f297df5e3fb9b0ae66d3e87",
   "openms_checkout": {
@@ -95,12 +94,17 @@
     "model_calls": 0
   },
   "ohif_recorded_replay": {
-    "state": "submitted",
+    "state": "succeeded",
     "job_id": "/exedev/biotasks29-ohif-recorded-001",
     "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-2",
     "checkpoint": "7871df26b9efd70f6792989bb7e62bec80031417",
     "max_allocated_cpu_hours": 8,
-    "archive_cleanup_pending": true
+    "archive_cleanup_pending": false,
+    "allocated_cpu_hours": 0.5530555555555555,
+    "archive_readback_verified": true,
+    "controls_run": 0,
+    "retained_image": "biotasks29-ohif-recorded-001:recorded-actions",
+    "image_cleanup_pending": true
   },
   "scanpy_cleanup_prepared": {
     "submitter": "submit_scanpy_recorded_cleanup.py",
@@ -112,5 +116,9 @@
       "retained image identity and no container users"
     ],
     "maximum_cpu_hours": 0.16666666666666666
-  }
+  },
+  "retained_images": [
+    "biotasks29-scanpy-recorded-001:recorded-actions",
+    "biotasks29-ohif-recorded-001:recorded-actions"
+  ]
 }
