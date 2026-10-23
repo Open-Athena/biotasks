@@ -51,3 +51,7 @@ The existing control handle succeeded in 586.168 seconds (0.651298 allocated CPU
 ## 2026-10-23 — archival and owned cleanup verified
 
 All sixteen reviewed reconstruction/control snapshot objects passed anonymous HF readback (receipt on #33 branch). The journal then submitted one reserved ownership-gated cleanup attempt. It succeeded in 13.45 seconds, 0.007472 CPU-hours; the 623-byte output archive was downloaded and hash-verified. The cleanup receipt proves no owned images or containers remain and cleanup tools were removed. Total #34 allocation is 2.211349 CPU-hours. The small cleanup archive remains durably local pending HF preservation. Dependency receipt capture remains unresolved; no rerun was launched.
+
+## 2026-10-23 — early receipt capture prepared
+
+Prepared a separate wrapper instrumentation candidate to copy the receipt immediately after image build, before Harbor task startup/teardown. It uses a stopped networkless bounded container and no image execution. The original wrapper is unchanged. Five synthetic checks pass: stopped capture/repeat, foreign-image refusal, failed-copy cleanup, target-wheel rejection and changed-receipt preservation. No remote run. Recorded a proposed combined unattended comparison and an eight-CPU-hour worst-case planning bound; no reservation or submission yet. The existing reconstruction was already cleaned, so any repeat is a distinct reconstructed environment.
