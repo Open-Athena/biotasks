@@ -1,0 +1,9 @@
+Can replaying recorded build commands after a historical PR checkout restore the compiled environment without task-specific repairs? Follow-up to #28. Investigation remains open.
+
+**Candidate:** an opt-in rebuild hook has default-off parity and passes synthetic native, export and package-integration checks. No production change has been promoted. [Candidate checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json).
+
+**MACS environment:** all 16 recorded bootstrap actions replayed unchanged. Raising only the post-bootstrap smoke/fresh limits from 300 to 1,200 seconds made both complete with 4,924 passed and 348 skipped. This provided a reconstructed image; mutable dependencies may differ from the original. [Timing evidence](https://github.com/Open-Athena/biotasks/blob/9c2071e6/experiments/31-historical-builds/macs-longcheck-diagnosis.json).
+
+**PR792 result:** the verified native comparison ran original and rebuild validators with the same eight test paths, parser, Docker transport and 600-second stage limit. Original pre/post each had three collection errors. Rebuilding reduced the base stage to one collection error, but the frozen test patch imports `CallerExecution`, a new module added by this PR. The patched stage passed 364 tests with 29 skipped. Neither arm produced fail-to-pass tests, so this is no recovered task or positive control. The upstream stage's outer exit 0 masked inner pytest collection errors. [Diagnosis](https://github.com/Open-Athena/biotasks/blob/d4626f80/experiments/31-historical-builds/macs-native-diagnosis.json).
+
+**Next:** verify the submitted cleanup of the labeled image, then assess whether the general rebuild hook is worth testing on a base-compatible PR. Three terminal jobs used 3.21597 allocated CPU-hours; cleanup reserves at most 0.16667 more under the 16-hour ceiling. Zero model calls or new capacity. Detailed logs remain in comments.
