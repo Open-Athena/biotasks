@@ -3,11 +3,11 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 9,
+  "remote_jobs": 10,
   "remaining": [
     "Evaluate a generic complete-checkout reconstruction comparison for OHIF before controls; no lockfile or dependency repair",
     "Observe original Scanpy PR4389 controls (300/1200s nop/oracle), verify archive, then clean the retained recorded-replay image",
-    "Perform separately scoped OpenMS checkout and MMseqs2 bootstrap comparisons"
+    "Observe acquisition-only OpenMS comparison; MMseqs2 bootstrap still needs separate model allowance"
   ],
   "local_inputs_retained": [
     {
@@ -81,5 +81,10 @@
   "active_job": "/exedev/biotasks29-scanpy-controls-001",
   "active_worker": "marin-tpu-v4-reserved-32-us-central2-b-20261023-1755-6e8581d8-worker-0",
   "retained_image": "biotasks29-scanpy-recorded-001:recorded-actions",
-  "retention_condition": "Pending original Scanpy controls; remove image after archive readback"
+  "retention_condition": "Pending original Scanpy controls; remove image after archive readback",
+  "active_jobs": [
+    "/exedev/biotasks29-scanpy-controls-001",
+    "/exedev/biotasks29-openms-checkout-001"
+  ],
+  "openms_checkpoint": "8d0810037b8abecc9f297df5e3fb9b0ae66d3e87"
 }
