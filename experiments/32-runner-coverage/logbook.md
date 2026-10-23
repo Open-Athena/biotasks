@@ -53,3 +53,9 @@ Implemented a separate opt-in literal-command selector; 26 bounded checks pass, 
 ### 2026-10-23 — Wire opt-in policy into pinned package
 
 Generated a three-file integration patch: default-off option, shared native/export selector with deleted-path filtering, and literal policy helper. Enabled unsupported commands are skipped before sandbox allocation even with validation disabled; direct export construction fails explicitly. Complete-package config/writer checks pass for default/on/off. Actual run-loop routing with controlled provider/sandbox/validator fixtures preserves selected native/export commands and cleanup; this is integration evidence, not native test outcomes. No external operations, models or remote jobs. PeakRSS49,676KiB, elapsed0.48s, temporary copy removed.
+
+### 2026-10-23 — Freeze original MNE input and reconstruction barrier
+
+Restored the public original phase (415,354bytes), verified its archive SHA and all170member hashes (813,564uncompressed bytes). Anonymous download used59,268KiB peakRSS; task-owned cache removed. A first local path-resolution error occurred before download and is retained separately. Selected PR14445as the earliest original validation ordinal, extracting source/test patches from the original saved shell scripts. Both scripts regenerate byte-for-byte through pinned upstream; both original stages exited124at600seconds. No source fetch or original-log regrading.
+
+The shared selector chooses the two surviving changed test files instead of mne/, explicitly reducing scope. Inspection also finds all12recorded bootstrap BASH actions contain Assistant: tails and exit127; original smoke/fresh flags werefalse. These exact commands are preserved in a private replay payload, not stripped or repaired. Matching exit127alone would not prove successful installation. A faithful executable reconstruction remains prerequisite to live selection/completion comparisons. No model calls or new remote jobs.

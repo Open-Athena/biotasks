@@ -1,0 +1,86 @@
+{
+  "repo": "mne-tools/mne-python",
+  "pr": 14445,
+  "selection": "Earliest original retained validation ordinal; no result-based reselection",
+  "base": "f3e0db8150f020cf577b9af646b36566f42f203b",
+  "head": "f465742baa01d7d9731bfe6a1a84d00ea50aff6e",
+  "bootstrap_ref": "349e64dc5b446e489352d07d61df807b5f78ec9c",
+  "original_archive_sha256": "e7838aabd5e29d487bea778ee127cae55b82c0f48ac4bf06d8cb849065833235",
+  "validation_member": "native-observations/batch-0000/validation-001-pr-14445.json.gz",
+  "discovery_member": "native-observations/batch-0000/discovery-pr-14445.json.gz",
+  "test_paths": [
+    "mne/tests/test_annotations.py",
+    "mne/tests/test_epochs.py"
+  ],
+  "original_commands": [
+    "cd /workspace && python -m pytest -v mne/"
+  ],
+  "candidate_decisions": [
+    {
+      "status": "selected",
+      "reason": "explicit_changed_files_policy",
+      "command": "cd /workspace && python -m pytest -v mne/tests/test_annotations.py mne/tests/test_epochs.py",
+      "targets": [
+        "mne/tests/test_annotations.py",
+        "mne/tests/test_epochs.py"
+      ],
+      "scope_reduced": true
+    }
+  ],
+  "original_stage_scripts_exactly_regenerated": true,
+  "files": {
+    "source.patch": {
+      "bytes": 17704,
+      "sha256": "db58451e70af0e515846b33979a99cf2d37ab237b3ef66be3c6cec8e8f49ca89"
+    },
+    "test.patch": {
+      "bytes": 2837,
+      "sha256": "6aab771b03cdd2d14d80a4fa955b0c0bc6b46dcea70fe2fc9de7511493707e83"
+    },
+    "pre.sh": {
+      "bytes": 3301,
+      "sha256": "8da887543873bb2155d13570189c4102956876f80171e7a375b1d0baa97061a7"
+    },
+    "post.sh": {
+      "bytes": 21075,
+      "sha256": "c967a087aa9afb57c44099cf713b7a3ed12e0e95b3647102128a1320d113ba3b"
+    },
+    "replay.json": {
+      "bytes": 5412,
+      "sha256": "99cf1811aa3d2165f925072492f8a360ffff7b8d6460972279fe26f80e739f4f"
+    }
+  },
+  "original_stages": [
+    {
+      "member": "native-observations/batch-0000/exec-0018-pr-14445.json.gz",
+      "exit_code": 124,
+      "duration_sec": 600.0051214830019,
+      "command_sha256": "8da887543873bb2155d13570189c4102956876f80171e7a375b1d0baa97061a7"
+    },
+    {
+      "member": "native-observations/batch-0000/exec-0019-pr-14445.json.gz",
+      "exit_code": 124,
+      "duration_sec": 600.0038604350011,
+      "command_sha256": "c967a087aa9afb57c44099cf713b7a3ed12e0e95b3647102128a1320d113ba3b"
+    }
+  ],
+  "bootstrap": {
+    "actions": 12,
+    "all_recorded_exits": 127,
+    "assistant_tail_actions": 12,
+    "smoke_passed": false,
+    "verify_passed": false,
+    "transcript_sha256": "7de16bf9d1c2da30a6034f79ed3e480b08a6d710c270e25411ab8b340863daf5"
+  },
+  "original_validation_status": "failed",
+  "original_f2p": [],
+  "original_p2p": [],
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "limits": [
+    "No command repaired or executed",
+    "Original stages timed out; no regrading",
+    "Recorded exit parity cannot prove dependency/image equivalence",
+    "Faithful executable environment required before live targeting comparison"
+  ]
+}
