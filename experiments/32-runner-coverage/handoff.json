@@ -6,7 +6,7 @@
   "remote_jobs": 1,
   "remaining": [
     "Deleted-target comparison complete with zero recovered tasks; missing historical chemap dependency remains, no per-PR repair",
-    "Fix and verify inner runner exit/setup failure handling before combining completion and native/export parser candidates on frozen live cases",
+    "Exercise separate strict-pytest completion/SGR candidate on frozen live cases; outer-only candidate remains insufficient",
     "Determine safe generic targeting and runner support design",
     "Run predeclared comparisons; report static coverage separately from task recovery"
   ],
@@ -81,6 +81,21 @@
       137
     ],
     "evidence": "inner-exit-results.json",
-    "no_original_rewards_changed": true
+    "no_original_rewards_changed": true,
+    "replacement": {
+      "path": "pytest-completion.patch",
+      "native_actual_pytest_cases": 6,
+      "export_actual_pytest_log_cases": 5,
+      "ordinary_nop_oracle_rewards": [
+        0,
+        1
+      ],
+      "partial_error_reward_before_after": [
+        0.5,
+        0
+      ],
+      "supported_runner": "explicit pytest only",
+      "biological_recovery_claimed": false
+    }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "scope": "Experimental explicit-pytest native completion and exported exit gate plus SGR normalization; not generic runner support",
+  "patch_sha256": "7d4a52c4db61d39641e65aaa882787dd5431996a33a60b422ed9c076bb821459",
+  "files": {
+    "pr_runtime_validate.py": "4ffc73063dc7226ee4e54923586383add18e6bafe00bfdf5e85b8b5384f97429",
+    "_pr_runtime_verifier.py": "8944f0f702c468c0a80a05618b18e63dfe620572f534bf671762e9d8609a001e",
+    "pytest_parser.py": "1b2dba35ebadfb6eac358fcf289ff2636a7baa724ba5a18d0cdcbc6b5e3a45f7"
+  },
+  "limitations": [
+    "Unknown and non-pytest native commands are explicitly skipped, not silently certified",
+    "Exported setup/reset behavior is unchanged; historical reset safety remains #31 work",
+    "Arbitrary user commands can themselves mask their inner program exits",
+    "No biological recovery or changed original reward claimed"
+  ]
+}

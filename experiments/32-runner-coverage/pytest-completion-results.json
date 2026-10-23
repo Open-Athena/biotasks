@@ -1,0 +1,162 @@
+{
+  "scope": "Actual pytest/Bash/Git synthetic repository and standalone export verifier; not biological recovery or full Harbor validation",
+  "native_cases": [
+    {
+      "case": "complete",
+      "status": "verified",
+      "reason": "",
+      "f2p": [
+        "tests/test_case.py::test_fix"
+      ],
+      "p2p": [
+        "tests/test_case.py::test_stable",
+        "tests/test_case.py::test_stop"
+      ],
+      "calls": [
+        {
+          "outer_exit": 0,
+          "inner_exit_lines": [
+            "R2E_TEST_EXIT_CODE=1"
+          ],
+          "start_marker": true
+        },
+        {
+          "outer_exit": 0,
+          "inner_exit_lines": [
+            "R2E_TEST_EXIT_CODE=0"
+          ],
+          "start_marker": true
+        }
+      ]
+    },
+    {
+      "case": "keyboard_interrupt",
+      "status": "failed",
+      "reason": "pre-fix pytest stage did not complete (setup, transport, markers or runner exit)",
+      "f2p": [],
+      "p2p": [],
+      "calls": [
+        {
+          "outer_exit": 0,
+          "inner_exit_lines": [
+            "R2E_TEST_EXIT_CODE=2"
+          ],
+          "start_marker": true
+        }
+      ]
+    },
+    {
+      "case": "runner_exit124",
+      "status": "failed",
+      "reason": "pre-fix pytest stage did not complete (setup, transport, markers or runner exit)",
+      "f2p": [],
+      "p2p": [],
+      "calls": [
+        {
+          "outer_exit": 0,
+          "inner_exit_lines": [
+            "R2E_TEST_EXIT_CODE=124"
+          ],
+          "start_marker": true
+        }
+      ]
+    },
+    {
+      "case": "runner_killed",
+      "status": "failed",
+      "reason": "pre-fix pytest stage did not complete (setup, transport, markers or runner exit)",
+      "f2p": [],
+      "p2p": [],
+      "calls": [
+        {
+          "outer_exit": 0,
+          "inner_exit_lines": [
+            "R2E_TEST_EXIT_CODE=137"
+          ],
+          "start_marker": true
+        }
+      ]
+    },
+    {
+      "case": "invalid_base",
+      "status": "failed",
+      "reason": "pre-fix pytest stage did not complete (setup, transport, markers or runner exit)",
+      "f2p": [],
+      "p2p": [],
+      "calls": [
+        {
+          "outer_exit": 128,
+          "inner_exit_lines": [],
+          "start_marker": false
+        }
+      ]
+    },
+    {
+      "case": "invalid_test_patch",
+      "status": "failed",
+      "reason": "pre-fix pytest stage did not complete (setup, transport, markers or runner exit)",
+      "f2p": [],
+      "p2p": [],
+      "calls": [
+        {
+          "outer_exit": 128,
+          "inner_exit_lines": [],
+          "start_marker": false
+        }
+      ]
+    }
+  ],
+  "export_cases": [
+    {
+      "case": "nop",
+      "test_exit": 1,
+      "previous_sgr_only_reward": 0.0,
+      "reward": 0.0,
+      "parse_status": "ok",
+      "resolved": false,
+      "command_resolved": false
+    },
+    {
+      "case": "oracle",
+      "test_exit": 0,
+      "previous_sgr_only_reward": 1.0,
+      "reward": 1.0,
+      "parse_status": "ok",
+      "resolved": true,
+      "command_resolved": true
+    },
+    {
+      "case": "interrupt",
+      "test_exit": 2,
+      "previous_sgr_only_reward": 0.5,
+      "reward": 0.0,
+      "parse_status": "incomplete_pytest_exit",
+      "resolved": false,
+      "command_resolved": false
+    },
+    {
+      "case": "timeout_exit",
+      "test_exit": 124,
+      "previous_sgr_only_reward": 0.5,
+      "reward": 0.0,
+      "parse_status": "incomplete_pytest_exit",
+      "resolved": false,
+      "command_resolved": false
+    },
+    {
+      "case": "killed",
+      "test_exit": 137,
+      "previous_sgr_only_reward": 0.5,
+      "reward": 0.0,
+      "parse_status": "incomplete_pytest_exit",
+      "resolved": false,
+      "command_resolved": false
+    }
+  ],
+  "unsupported_runner_skipped": true,
+  "malformed_protocol_cases_rejected": 5,
+  "temporary_directory_removed": true,
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "pytest_version": "9.0.3"
+}
