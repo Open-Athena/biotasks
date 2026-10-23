@@ -1,0 +1,102 @@
+{
+  "frozen_at": "2026-10-23T02:49:18.111512+00:00",
+  "runtime_baseline_revision": "e1db602336afe8b528c534e2f193995e75173372",
+  "runtime_file_count": 184,
+  "changed_from_round011": [
+    "experiments/19-repo2rlenv-notebook-pilot/design_stage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_design_stage.py",
+    "src/biotasks/chat_author.py",
+    "src/biotasks/prompts/worker-generation-retry.md",
+    "src/biotasks/prompts/worker-timeout-retry.md"
+  ],
+  "original_source_assets_unchanged": true,
+  "private_input_revision": "a6eaa98c16743db94b40deb171ffb4054f27bc49",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round012-inputs",
+  "private_ref_pushed": false,
+  "private_originals": [],
+  "preparation_model_calls_max": 2,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 80,
+      "baseline_number": 61,
+      "id": "pyradiomics-brain",
+      "domain": "Medical imaging",
+      "config_file": "autonomous-runs/080/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "input_revision": "e1db602336afe8b528c534e2f193995e75173372",
+      "source_url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+      "source_revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+      "source_sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/seed.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/source.ipynb": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702"
+      },
+      "runtime_file_count": 184,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "ce07ac18810e99ebe35a6ff83aff744121097cae4d200de48f0511a62dbdcc41",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "a284850d7c317913c50ffb0e818c9c498c2a4cdbae2dea9c4a9ec6328f92d22b"
+      }
+    },
+    {
+      "number": 81,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/081/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "input_revision": "e1db602336afe8b528c534e2f193995e75173372",
+      "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/seed.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source-license-evidence.json": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source.ipynb": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9"
+      },
+      "runtime_file_count": 184,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "41aa17b6eb169127ac4d6b7cffeef2546c93381c4038694ecaee734efc00cbed",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "ad95690260297c97a5a4c1cc46a1423b1510c7ed35f0435cd2d4ec49f78f17c5"
+      }
+    }
+  ],
+  "preparation_response_recovery": false,
+  "generation_retries_per_author": 1,
+  "generation_failure_types_share_allowance": true
+}
