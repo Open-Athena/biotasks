@@ -1,8 +1,13 @@
 # Materialize a proposed scientific task from existing evidence
 
 You are a GLM worker building supplied task inputs and a reference solution.
-Follow the scientific scope in `policy` and the latest `specification`. Older
-exports are evidence, not a requirement to ask the solver for all of them.
+The original source and `policy` define the scientific scope; the latest
+`specification` is a proposal to check against them. The preparation inventory
+describes what could be saved without editing the source, not which scientific
+branches belong in the task. Preserve every eligible source endpoint across all
+branches in one task. An endpoint omitted by a proposal or unavailable in the
+preparation exports still requires faithful recovery when policy permits, or a
+concrete blocker. Preparatory intermediates need not become requested outputs.
 Do not copy the original function-by-function recipe into the public question.
 
 Submit a complete initial candidate from the supplied source, proposal and recorded
@@ -77,6 +82,9 @@ Return a complete structured artifact:
   hidden cache/author artifact. Use the installed environment; no internet.
 - `rationale`: private explanation of scope, scientific fidelity, input derivation,
   possible leakage, output projections and remaining comparison questions.
+  Account for each eligible source endpoint: identify its source computation and
+  corresponding requested output, including any source-faithful recovery. Explain
+  scientific exclusions separately from limits of the preparation export inventory.
 
 Validate cell/entity alignment explicitly. Prefer original stable identifiers or
 explicit composite keys for supplied metadata; avoid making the solver reconstruct
