@@ -31,3 +31,7 @@ Copied five control infrastructure helpers byte-for-byte from #31, including the
 ## 2026-10-23 — packaging and cleanup paths
 
 Prepared candidate packaging that requires verified reconstruction evidence, binds the actual retained image digest, writes a deterministic archive, and independently reads every member against the candidate manifest. Prepared ownership-gated image cleanup with admission requiring all #34 jobs terminal; if controls were submitted, their archive/result evidence must be verified first. No packaging, controls or cleanup executed yet. The existing reconstruction was still running at the latest check. Space further status checks until at least22:24UTC and use the wait for independent #33 work; never resubmit this active handle.
+
+## 2026-10-23 — reconstruction verified; controls checkpoint
+
+One reconstruction attempt succeeded in 1,397.321 seconds, 1.552579 allocated CPU-hours. All 16 recorded actions matched, smoke and fresh-image checks passed; fresh check reported 4,924 passed/348 skipped. Verified the 64,599-byte archive and all retained stream hashes. Owned build containers/tools were removed; only the bound reconstruction image remains. Packaged the twelve-file offline candidate against its exact digest and independently verified every archive member. Original nine non-Dockerfile assets remain unchanged. Reconciled the four-hour reconstruction reservation and booked at most four CPU-hours for controls under the shared budget, preserving cleanup allowance. No model calls. Control submission remains separate.
