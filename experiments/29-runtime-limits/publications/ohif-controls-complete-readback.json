@@ -1,0 +1,61 @@
+{
+  "issue": {
+    "body": "Can timeout and scheduling changes recover complete positive control pairs without repairing tasks? Follow-up to #28. Investigation remains open.\n\n**Validated existing exports:** four Matchms tasks and four OHIF tasks now have positive nop/oracle control pairs with clean oracle commands. For OHIF, all eight controls completed at the original 300-second verifier limit; all 40 task files are unchanged and both sides preserve their tracked regression tests. These are controls of existing exports, not eight new tasks. [Matchms results](https://github.com/Open-Athena/biotasks/blob/188091eb/experiments/29-runtime-limits/matchms-control-results.json) \u00b7 [OHIF results](https://github.com/Open-Athena/biotasks/blob/a090c9ce/experiments/29-runtime-limits/ohif-control-results.json).\n\n**Other comparisons:** OpenMS's original 60-second checkout timed out again, while a 300-second arm completed the same commit in 77.9 seconds; this establishes acquisition recovery only. Scanpy's 16 recorded bootstrap actions replayed without command repairs, but smoke/fresh checks failed. Its unchanged PR4389 controls at 300 versus 1,200 verifier seconds are still running. [OpenMS evidence](https://github.com/Open-Athena/biotasks/blob/875eab80/experiments/29-runtime-limits/openms-checkout-readback-001.json).\n\n**Next:** read back Scanpy controls, finish ownership-gated cleanup of retained images, and assess MMseqs2's bootstrap allowance if a separate model budget is recorded. Eleven terminal jobs used 2.94665 allocated CPU-hours; active Scanpy controls and OHIF cleanup reserve at most 9.83334 more under the 32-hour ceiling. Zero model calls or new capacity in this issue. The OHIF control archive and control-resource cleanup are verified; its reconstructed image cleanup is running. No pipeline promoted. Detailed logs remain in comments.\n",
+    "labels": [
+      {
+        "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+        "name": "agent-generated",
+        "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+        "color": "5319E7"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374397216",
+    "html_url": "https://github.com/Open-Athena/biotasks/issues/29#issuecomment-6374397216",
+    "issue_url": "https://api.github.com/repos/Open-Athena/biotasks/issues/29",
+    "id": 6374397216,
+    "node_id": "IC_kwDOU1dZq88AAAABe_GVIA",
+    "user": {
+      "login": "gonzalobenegas",
+      "id": 5766420,
+      "node_id": "MDQ6VXNlcjU3NjY0MjA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5766420?u=d059be1b75c6ff8174b109722e0ec05a66ed29c1&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gonzalobenegas",
+      "html_url": "https://github.com/gonzalobenegas",
+      "followers_url": "https://api.github.com/users/gonzalobenegas/followers",
+      "following_url": "https://api.github.com/users/gonzalobenegas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gonzalobenegas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gonzalobenegas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gonzalobenegas/subscriptions",
+      "organizations_url": "https://api.github.com/users/gonzalobenegas/orgs",
+      "repos_url": "https://api.github.com/users/gonzalobenegas/repos",
+      "events_url": "https://api.github.com/users/gonzalobenegas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gonzalobenegas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-23T20:45:58Z",
+    "updated_at": "2026-10-23T20:45:58Z",
+    "author_association": "MEMBER",
+    "body": "\ud83e\udd16 The four original OHIF exports (PRs 6334, 6339, 6346, 6352) each completed nop/oracle controls at the original 300-second verifier limit. Every pair was parseable and positive: nop reward 0, oracle reward 1, clean oracle command, and all tracked pass-to-pass tests pass on both sides. Fail-to-pass / pass-to-pass counts respectively were 6/1,411, 3/1,424, 5/1,435 and 2/1,441. All 40 task files match their original hashes before and after execution.\n\nThe job succeeded in 1,084.81 seconds using 1.20534 allocated CPU-hours. Its 853,986-byte archive was downloaded and verified (SHA256 `1a37563bf72b86870034ac8427e355808171a4a8e94576d094c78fdde7d61c36`); all control-owned resources were removed. This verifies four existing exports, without generation, task repair or model calls. The separately owned reconstruction image cleanup is submitted and still running. [Verified results](https://github.com/Open-Athena/biotasks/blob/a090c9ce/experiments/29-runtime-limits/ohif-control-results.json).\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374397216/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  }
+}
