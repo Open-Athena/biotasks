@@ -3758,3 +3758,10 @@ Two earlier materialization runs have hash-bound7200+300second4CPU/8GiB/10GiB en
 071has passed setup, fresh offline replay and specification and reached construction; preparation used one successful initial response, not the new repair. Preserve that distinction. Small diagnostics now include the final review-repair.jsonas well as the initial review, preventing an outdated explanation from being mistaken for the effective verdict.26control-flow checks and Ruff lint/format pass, no task/model changes.
 
 Prepare additional original PyRadiomics072andScanpy073development seeds on the same general factory, retaining source identities, all scientific methods and original time/resource/network/repair limits. Both use the approved one-creation/one-validation-repair preparation contract. Reserve$1each from the verified unused holds, leaving$99.50held/$0.50unallocated; dispatch only when at most one other campaign is active. This broadens evidence without fitting another prompt to the protein candidate.
+
+
+### 2026-10-23: Network state reconciliation and current explorer
+
+A second provider reset during an offline-policy update (072, after baseline054) justified recovering the idempotent control operation separately from scientific command execution. The controller reads back after response loss, repeats only the same desired policy once after a confirmed mismatch, and retains the original control deadline and mandatory probes. Unknown state blocks execution. Fifty focused synthetic checks pass; this is not yet live provider-recovery evidence. Existing frozen071/073campaigns remain unchanged. Original072diagnostics and fresh cleanup are retained.
+
+The explorer default now uses the latest validated/published063archive. Captured prompts remain captured prompts; program links pin the runtime revision. Its first solver message comes directly from the trajectory, replacing the old profile's unavailable solver-prompt file. The checked selection manifest and browser checks preserve the distinction between a reading-view update and a new scientific run.
