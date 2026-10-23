@@ -1,0 +1,70 @@
+--- a/src/repo2rlenv/execution/daytona_cleanup.py
++++ b/src/repo2rlenv/execution/daytona_cleanup.py
+@@ -1,5 +1,7 @@
+ """Delete only sandboxes explicitly labeled by this remote job supervisor."""
+ from __future__ import annotations
++
++import time
+ 
+ from daytona import Daytona, ListSandboxesQuery
+ from daytona.common.errors import DaytonaConflictError, DaytonaNotFoundError
+@@ -15,6 +17,7 @@
+             raise ValueError("Provider returned a sandbox with different ownership")
+         row = {"id": sandbox.id, "cpu": sandbox.cpu,
+                "memory": sandbox.memory, "disk": sandbox.disk}
++        delete_deadline = time.monotonic() + 60
+         try:
+             client.delete(sandbox, timeout=60, wait=True)
+         except DaytonaNotFoundError:
+@@ -25,12 +28,34 @@
+             # A concurrent provider transition may conflict with delete.
+             # Only the independent absence checks below can establish cleanup.
+             row["delete_reported_conflict"] = True
+-        try:
+-            remaining = client.get(sandbox.id, request_timeout=15)
+-        except DaytonaNotFoundError:
+-            row["deleted"] = True
+-        else:
+-            row["deleted"] = getattr(remaining.state, "value", remaining.state) == "destroyed"
++        conflict = row.get("delete_reported_conflict", False)
++        if conflict:
++            row["conflict_readback_count"] = 0
++        while True:
++            seconds = delete_deadline - time.monotonic()
++            if conflict and seconds <= 0:
++                row["deleted"] = False
++                break
++            try:
++                if conflict:
++                    row["conflict_readback_count"] += 1
++                remaining = client.get(
++                    sandbox.id, request_timeout=min(15, seconds) if conflict else 15
++                )
++            except DaytonaNotFoundError:
++                row["deleted"] = True
++            else:
++                row["deleted"] = getattr(remaining.state, "value", remaining.state) == "destroyed"
++            if row["deleted"] or not conflict:
++                break
++            # Harbor may already be deleting the owned sandbox. Observe that
++            # transition within the original delete timeout, without another
++            # mutation, model request or trial. Conflict is never absence proof.
++            time.sleep(min(1.0, max(0.0, delete_deadline - time.monotonic())))
++        if conflict:
++            row["delete_attempt_elapsed_seconds"] = round(
++                max(0.0, 60 - (delete_deadline - time.monotonic())), 3
++            )
+         records.append(row)
+     remaining = []
+     stale = []
+@@ -46,5 +71,10 @@
+                 stale.append(sandbox.id)
+             else:
+                 remaining.append(sandbox.id)
++    # A later exact-ID read can supersede an earlier live observation, while
++    # the earlier conflict/observation counters remain in the receipt.
++    for row in records:
++        if row["id"] in stale:
++            row["deleted"] = True
+     return {"passed": not remaining and all(row["deleted"] for row in records),
+             "sandboxes": records, "remaining": remaining, "stale_listing_absent_ids": stale}

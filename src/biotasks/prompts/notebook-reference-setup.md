@@ -34,9 +34,10 @@ streaming all rows, arrays or mismatches into the conversation.
   the declarations, creates the uv environment, runs the input-staging recipe,
   records resolved dependencies and input hashes, then runs the full reference
   offline from a fresh working/output directory. It appends the frozen exports
-  itself. Each invocation consumes one test allowance, even if declaration
-  validation, dependency installation or input staging fails before computation
-  starts. Use inexpensive file, manifest and import checks with `shell` first.
+  itself. A reference dispatch consumes one computation allowance, including a
+  failed or uncertain dispatch. Declaration validation, dependency installation
+  and input staging failures before that dispatch do not consume one. Use
+  inexpensive file, manifest and import checks with `shell` first.
   Read the returned logs and receipts to diagnose setup failures.
 - `submit_artifact`: finish with a brief result and explanation. A successful
   report is accepted only when the current files match a successful controller
@@ -133,6 +134,14 @@ blocker. The controller rejects changes to analysis import statements.
 Inspect actual errors before changing requirements. Preserve failed
 trials. An interrupted or uncertain tool result is not permission to launch a
 duplicate operation. Stop when the controller reports exhausted allowances.
+
+Before a controlled reference test, inspect the installed APIs used by any
+setup or input-loading adaptation and smoke-test that changed portion. Verify
+attribute assignments and loader behavior rather than guessing from names.
+Cached data alone does not prove offline loading: check for automatic metadata
+or registry requests too. Keep these focused checks in the setup shell; the
+complete scientific analysis still runs only through `test_reference`.
+
 `max_tests` limits controlled reference computations, including failed or uncertain
 reference dispatches. Static candidate rejection and failures while rebuilding
 dependencies or staging inputs do not consume a computation slot. They still

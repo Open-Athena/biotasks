@@ -1,11 +1,28 @@
 """Owned cloud cleanup must never select another job's resources."""
 
 import json
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
 from daytona.common.errors import DaytonaNotFoundError
 from repo2rlenv.execution.daytona_cleanup import cleanup
+
+
+@pytest.fixture
+def cleanup_clock(monkeypatch):
+    from repo2rlenv.execution import daytona_cleanup
+
+    clock = SimpleNamespace(seconds=0.0)
+
+    def advance(seconds):
+        clock.seconds += seconds
+
+    monkeypatch.setattr(
+        daytona_cleanup, "time", SimpleNamespace(monotonic=lambda: clock.seconds, sleep=advance)
+    )
+    clock.advance = advance
+    return clock
 
 
 def test_deletes_only_label_bound_resources():
@@ -92,7 +109,7 @@ def test_stale_final_listing_requires_id_readback():
 
 
 @pytest.mark.parametrize("still_present", [False, True])
-def test_delete_conflict_requires_independent_absence(still_present):
+def test_delete_conflict_requires_independent_absence(still_present, cleanup_clock):
     from daytona.common.errors import DaytonaConflictError
 
     client = MagicMock()
@@ -106,4 +123,71 @@ def test_delete_conflict_requires_independent_absence(still_present):
     result = cleanup("job-1", client)
     assert result["passed"] is (not still_present)
     assert result["sandboxes"][0]["delete_reported_conflict"]
-    assert client.get.call_count == (2 if still_present else 1)
+    assert client.get.call_count >= (2 if still_present else 1)
+    assert cleanup_clock.seconds == (60 if still_present else 0)
+    client.delete.assert_called_once_with(sandbox, timeout=60, wait=True)
+
+
+@pytest.mark.parametrize("terminal", ["absent", "destroyed"])
+def test_delete_conflict_observes_delayed_absence_without_repeating_delete(terminal, cleanup_clock):
+    from daytona.common.errors import DaytonaConflictError
+
+    client = MagicMock()
+    box = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=4, memory=8, disk=10)
+    client.list.side_effect = [[box], []]
+    client.delete.side_effect = DaytonaConflictError("Already transitioning")
+    last = DaytonaNotFoundError("gone") if terminal == "absent" else MagicMock(state="destroyed")
+    client.get.side_effect = [MagicMock(state="started"), MagicMock(state="stopping"), last]
+    result = cleanup("job-1", client)
+    assert result["passed"] and result["sandboxes"][0]["deleted"]
+    assert result["sandboxes"][0]["conflict_readback_count"] == 3
+    assert cleanup_clock.seconds == 2
+    client.delete.assert_called_once_with(box, timeout=60, wait=True)
+    assert all(0 < call.kwargs["request_timeout"] <= 15 for call in client.get.call_args_list)
+
+
+def test_conflict_readback_shares_original_delete_time_allowance(cleanup_clock):
+    from daytona.common.errors import DaytonaConflictError
+
+    client = MagicMock()
+    box = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=4, memory=8, disk=10)
+    client.list.side_effect = [[box], []]
+
+    def delete(*_args, **_kwargs):
+        cleanup_clock.advance(59.5)
+        raise DaytonaConflictError("Late conflict")
+
+    client.delete.side_effect = delete
+    client.get.return_value = MagicMock(state="started")
+    result = cleanup("job-1", client)
+    assert not result["passed"]  # An empty final listing alone is insufficient.
+    assert cleanup_clock.seconds == 60
+    client.get.assert_called_once_with("owned", request_timeout=0.5)
+    client.delete.assert_called_once_with(box, timeout=60, wait=True)
+
+
+def test_final_exact_absence_reconciles_prior_live_observation():
+    client = MagicMock()
+    box = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=4, memory=8, disk=10)
+    client.list.side_effect = [[box], [box]]
+    client.delete.side_effect = DaytonaNotFoundError("Earlier listing raced deletion")
+    client.get.side_effect = [MagicMock(state="stopping"), DaytonaNotFoundError("now gone")]
+    result = cleanup("job-1", client)
+    assert result["passed"] and result["sandboxes"][0]["deleted"]
+    assert result["stale_listing_absent_ids"] == ["owned"]
+    client.delete.assert_called_once()
+
+
+@pytest.mark.parametrize("failure", [RuntimeError, KeyboardInterrupt])
+def test_conflict_readback_errors_do_not_become_cleanup_success(failure, cleanup_clock):
+    from daytona.common.errors import DaytonaConflictError
+
+    client = MagicMock()
+    box = MagicMock(id="owned", labels={"repo2rlenv.job": "job-1"}, cpu=4, memory=8, disk=10)
+    client.list.return_value = [box]
+    client.delete.side_effect = DaytonaConflictError("Transition")
+    client.get.side_effect = failure()
+    with pytest.raises(failure):
+        cleanup("job-1", client)
+    assert cleanup_clock.seconds == 0
+    client.delete.assert_called_once()

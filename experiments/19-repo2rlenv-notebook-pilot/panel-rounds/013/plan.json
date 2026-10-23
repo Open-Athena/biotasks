@@ -1,0 +1,53 @@
+{
+  "prepared_at": "2026-10-23T04:15:21.917135+00:00",
+  "purpose": "Fresh general regressions for asynchronous owned-sandbox cleanup and verified setup/input-loader API adaptations. No notebook-specific method or task corrections.",
+  "records": [
+    {
+      "number": 84,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/084/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_waiting_for_round012_completion"
+    },
+    {
+      "number": 85,
+      "baseline_number": 59,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "config_file": "autonomous-runs/085/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_waiting_for_round012_completion"
+    }
+  ],
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "model": "glm-5.3",
+  "reasoning_effort_requested": "high",
+  "preparation_max_requests": 2,
+  "reference_tests_max": 2,
+  "new_hosts": 0,
+  "submitted": false
+}

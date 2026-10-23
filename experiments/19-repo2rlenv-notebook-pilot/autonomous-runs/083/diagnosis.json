@@ -1,0 +1,25 @@
+{
+  "observed_at": "2026-10-23T04:15:21.917135+00:00",
+  "pipeline_status": "rejected",
+  "reason_class": "Generated setup failed within the existing two reference-dispatch allowance; not source rejection evidence.",
+  "trials": [
+    {
+      "trial": 1,
+      "actual_reference_dispatch": true,
+      "execution_seconds": 7.083063125610352,
+      "exception_tail": "requests.exceptions.ConnectionError: HTTPSConnectionPool(host='doi.org', port=443): Max retries exceeded with url: /10.6084/m9.figshare.22716739.v1 (Caused by NewConnectionError(\"HTTPSConnection(host='doi.org', port=443): Failed to establish a new connection: [Errno 101] Network is unreachable\"))"
+    },
+    {
+      "trial": 2,
+      "actual_reference_dispatch": true,
+      "execution_seconds": 6.534814357757568,
+      "exception_tail": "AttributeError: property 'registry_files' of 'Pooch' object has no setter"
+    }
+  ],
+  "science_reached": false,
+  "source_rejection_supported": false,
+  "earlier_same_source_reference_completed": "077 reference/replay completed before model transport failure; originalsource unchanged.",
+  "general_prompt_changes": "Smoke-test adapted input-loader APIs; cached files alone do not prove offline metadata resolution. Correct the contradictory invocation-vs-computation accounting sentence.",
+  "controlled_test_allowance_changed": false,
+  "operator_scientific_edits": 0
+}

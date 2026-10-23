@@ -117,3 +117,13 @@ in both the tool schema and handler. Upstream's default remains 120 seconds; the
 scientific workers explicitly use the agreed 600-second computation allowance.
 The previous schema still advertised 120 seconds despite the downstream controller
 allowing more, contributing to the materialization worker's background workaround.
+
+`0014-bounded-delete-conflict-readback.patch` handles asynchronous owned-sandbox
+deletion after a provider conflict. It observes the exact ID until it is absent
+or destroyed, sharing the original 60-second deletion allowance. It sends no
+second delete and replays no trial or model request. A conflict alone never
+establishes cleanup, and the final ownership listing/readback remains required.
+A final exact-ID absence may supersede an earlier live observation while the
+original conflict and observation counters remain in the receipt. Unexpected
+provider errors and deadline exhaustion still fail closed. This patch is a
+future-factory candidate; existing frozen campaign inputs are unchanged.
