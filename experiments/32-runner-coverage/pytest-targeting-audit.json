@@ -1,0 +1,64 @@
+{
+  "scope": "Pinned selector executed on synthetic command strings; no shell commands or biological tests executed",
+  "source_sha256": "0b748a897f1802fcaf4b59ab7ed54092c8715745b5dff14813c6389b1e134535",
+  "changed_paths": [
+    "mne/tests/test_example.py"
+  ],
+  "cases": [
+    {
+      "case": "broad_path",
+      "input": "python -m pytest -v mne/",
+      "selected": "python -m pytest -v mne/",
+      "interpretation": "Explicit scope preserved; replacing it changes measured regression coverage."
+    },
+    {
+      "case": "pathless",
+      "input": "python -m pytest -v",
+      "selected": "python -m pytest -v mne/tests/test_example.py",
+      "interpretation": "Simple supported pathless command gains the changed file."
+    },
+    {
+      "case": "option_path_value",
+      "input": "python -m pytest --junitxml results/report.xml",
+      "selected": "python -m pytest --junitxml results/report.xml",
+      "interpretation": "Option value is mistaken for an explicit test path; no narrowing occurs."
+    },
+    {
+      "case": "node_id",
+      "input": "python -m pytest mne/tests/test_other.py::test_example",
+      "selected": "python -m pytest mne/tests/test_other.py::test_example",
+      "interpretation": "Explicit node selection preserved; replacement would discard that selection."
+    },
+    {
+      "case": "shell_suffix",
+      "input": "python -m pytest -v; echo complete",
+      "selected": "python -m pytest -v; echo complete mne/tests/test_example.py",
+      "interpretation": "Changed path is appended to echo, not the pytest invocation."
+    },
+    {
+      "case": "pipeline",
+      "input": "python -m pytest -v | tee results.log",
+      "selected": "python -m pytest -v | tee results.log mne/tests/test_example.py",
+      "interpretation": "Changed path is appended to tee, not the pytest invocation."
+    },
+    {
+      "case": "quoted_expression",
+      "input": "python -m pytest -k \"alpha / beta\"",
+      "selected": "python -m pytest -k \"alpha / beta\"",
+      "interpretation": "Whitespace tokenization treats the expression slash as a path."
+    },
+    {
+      "case": "root_directory",
+      "input": "python -m pytest .",
+      "selected": "python -m pytest . mne/tests/test_example.py",
+      "interpretation": "Dot is not recognized as a path; broad suite remains alongside the added path."
+    }
+  ],
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "limits": [
+    "This audits selection, not runtime outcomes",
+    "No original MNE command or task modified",
+    "No coverage or recovery rate inferred"
+  ]
+}
