@@ -603,6 +603,18 @@ async def run_grading(
         if fixed_grader.disposition != "ready":
             raise ValueError("Frozen grader must be a submitted ready candidate")
         save_record(root / "frozen-grader.json", frozen)
+    independent_feedback = None
+    if config.get("independent_repair_file"):
+        from comparison_repair import independent_worker_feedback
+
+        if fixed_grader is None or resumed or "materialization" not in snapshot:
+            raise ValueError("Independent repair requires frozen science and fresh authoring")
+        independent_feedback = independent_worker_feedback(
+            json.loads((HERE / config["independent_repair_file"]).read_text()),
+            snapshot["materialization"]["candidate"],
+            fixed_grader.model_dump(),
+        )
+        save_record(root / "independent-repair-feedback.json", independent_feedback)
     scopes = ("independent", "grader", "probes", "review", "repair", "review-repair", "contract")
     ledger = RequestLedger(root / "requests.sqlite", {s: Allowance(None, None) for s in scopes})
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "grading", "1")
@@ -743,6 +755,7 @@ async def run_grading(
                             },
                             "reference_seconds": config["reference_seconds"],
                             "policy": context["policy"],
+                            **({"repair": independent_feedback} if independent_feedback else {}),
                         },
                         validate_independent,
                         independent_shell,

@@ -58,6 +58,15 @@ def check_config(config):
     )
     if sum(bool(config.get(key)) for key in recovery_keys) > 1:
         raise ValueError("Select one grading recovery mode")
+    if config.get("independent_repair_file") and (
+        not grading
+        or not config.get("frozen_grader_file")
+        or config.get("allow_quality_repair", True)
+        or any(config.get(key) for key in recovery_keys)
+    ):
+        raise ValueError(
+            "Independent repair requires fresh grading, frozen science and no extra repair"
+        )
     if config.get("resume_probe_draft_directory") and (
         not config.get("resume_grading_directory") or config.get("resume_probes_directory")
     ):
@@ -100,6 +109,7 @@ def check_config(config):
         "resume_contract_directory",
         "contract_feedback_file",
         "frozen_grader_file",
+        "independent_repair_file",
     ):
         if key in config and (
             not config[key] or Path(config[key]).is_absolute() or ".." in Path(config[key]).parts

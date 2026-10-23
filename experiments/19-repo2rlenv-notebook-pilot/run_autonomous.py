@@ -158,11 +158,19 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         for path in selected
         if path.startswith("grading/")
     )
+    selected += tuple(
+        path.replace("grading/", "grading-comparison-repair/", 1)
+        for path in selected
+        if path.startswith("grading/")
+    )
     selected += (
         "question-repair/question-repair.json",
         "question-repair/result.json",
         "materialization-question-repair/candidate.json",
         "materialization-question-repair/question-revision.json",
+        "comparison-repair/comparison-repair.json",
+        "comparison-repair/result.json",
+        "grading-comparison-repair/independent-repair-feedback.json",
     )
     selected += tuple(
         path.relative_to(root).as_posix()
@@ -174,6 +182,7 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "materialization-raw",
         "grading",
         "grading-question-repair",
+        "grading-comparison-repair",
     ):
         for path in sorted((root / stage / "operations").glob("*/operation.json"))[-3:]:
             selected += (path.relative_to(root).as_posix(),)
@@ -466,17 +475,18 @@ class Pipeline:
                     result["status"] == "independent_comparison_unresolved"
                     and not (grade / "repair.json").exists()
                 ):
+                    from comparison_repair import independent_repair_record, validate_diagnosis
                     from question_repair import repair_context, revise_question
 
                     revision_context = repair_context(mat, grade)
                     self.receipt["quality_repair"] = {
-                        "kind": "question_only",
+                        "kind": "comparison_diagnosis",
                         "allowance_consumed": True,
                         "original_materialization": self.relative(mat),
                         "original_grading": self.relative(grade),
                     }
                     write(self.root / "pipeline.json", self.receipt)
-                    write(self.root / "question-repair-evidence.json", revision_context)
+                    write(self.root / "comparison-repair-evidence.json", revision_context)
                     context = specification_context(
                         reference,
                         policy,
@@ -485,20 +495,20 @@ class Pipeline:
                         repeatability=read(replay / "result.json"),
                         revision_context=revision_context,
                     )
-                    write(self.root / "question-repair-input.json", context)
-                    repair_root = self.root / "question-repair"
+                    write(self.root / "comparison-repair-input.json", context)
+                    repair_root = self.root / "comparison-repair"
                     await specify(
                         self.config_for(
-                            "question-repair",
+                            "comparison-repair",
                             "run_specification.py",
                             reference_directory=self.relative(reference),
                             policy_file=base["policy_file"],
-                            input_file=self.relative(self.root / "question-repair-input.json"),
+                            input_file=self.relative(self.root / "comparison-repair-input.json"),
                             repeatability_file=self.relative(replay / "result.json"),
                             revision_context_file=self.relative(
-                                self.root / "question-repair-evidence.json"
+                                self.root / "comparison-repair-evidence.json"
                             ),
-                            question_repair=True,
+                            comparison_repair=True,
                             inspect_packages=True,
                             inspect_reference=True,
                             output_format="tools",
@@ -508,35 +518,58 @@ class Pipeline:
                         credential=self.credential,
                         deadline=self.deadline - 300,
                     )
-                    response = read(repair_root / "question-repair.json")
-                    require_worker(repair_root / "question-repair.json", "ready", stage="grading")
-                    revised = self.root / "materialization-question-repair"
-                    revise_question(mat, revised, response)
-                    mat = revised
-                    grade = self.root / "grading-question-repair"
+                    response = read(repair_root / "comparison-repair.json")
+                    require_worker(repair_root / "comparison-repair.json", "ready", stage="grading")
+                    diagnosis = validate_diagnosis(response, revision_context)
+                    self.receipt["quality_repair"]["target"] = diagnosis.target
+                    independent_file = None
+                    if diagnosis.target == "public_question":
+                        revised = self.root / "materialization-question-repair"
+                        revise_question(
+                            mat,
+                            revised,
+                            {
+                                "disposition": "ready",
+                                "instruction": diagnosis.instruction,
+                                "rationale": diagnosis.rationale,
+                            },
+                        )
+                        mat = revised
+                    else:
+                        independent_file = self.root / "independent-repair-input.json"
+                        write(
+                            independent_file,
+                            independent_repair_record(revision_context, diagnosis),
+                        )
+                    grade = self.root / "grading-comparison-repair"
                     base["materialization_directory"] = self.relative(mat)
                     write(
-                        self.root / "question-repair-frozen-grader.json",
+                        self.root / "comparison-repair-frozen-grader.json",
                         {
                             "materialization_candidate": read(mat / "candidate.json"),
                             "grader_candidate": revision_context["grader_candidate"],
                         },
                     )
-                    # A fresh provider sandbox and independent worker receive only
-                    # this question, staged inputs and the original environment.
-                    # No resume directories, prior independent code or old rewards.
+                    # Fresh isolated validation never receives private diagnostic
+                    # reasoning or answers. Independent repairs add only the
+                    # worker's own code and exact public/prior-code quotes.
                     retry = self.config_for(
-                        "grading-question-repair",
+                        "grading-comparison-repair",
                         "run_notebook_grader.py",
                         **base,
                         allow_quality_repair=False,
                         frozen_grader_file=self.relative(
-                            self.root / "question-repair-frozen-grader.json"
+                            self.root / "comparison-repair-frozen-grader.json"
+                        ),
+                        **(
+                            {"independent_repair_file": self.relative(independent_file)}
+                            if independent_file
+                            else {}
                         ),
                     )
                     retry["max_tests"] = None
                     os.environ["BIOTASKS_ARTIFACT_PREFIX"] = (
-                        self.prefix + "/stages/grading-question-repair"
+                        self.prefix + "/stages/grading-comparison-repair"
                     )
                     result = await remote(
                         retry,

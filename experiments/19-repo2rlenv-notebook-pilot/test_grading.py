@@ -529,6 +529,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     contract_only,
     comparison_conflict,
     semantic_feedback=False,
+    independent_repair=False,
 ):
     import grading_session as module
 
@@ -590,6 +591,23 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 }
             )
         )
+        if independent_repair:
+            frozen_record = json.loads((tmp_path / "frozen-grader-input.json").read_text())
+            config["independent_repair_file"] = str(tmp_path / "independent-repair.json")
+            (tmp_path / "independent-repair.json").write_text(
+                json.dumps(
+                    {
+                        **frozen_record,
+                        "prior_code": "pass",
+                        "issues": [
+                            {
+                                "public_requirement_quote": "Scientific question",
+                                "prior_code_quote": "pass",
+                            }
+                        ],
+                    }
+                )
+            )
     suite = Probes(
         disposition="ready",
         probes=[probe(), probe(name="format", kind="valid_alternative")],
@@ -700,6 +718,19 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             assert "private-original-oracle" not in json.dumps(inputs)
             assert "source_evidence" not in inputs and "materialization" not in inputs
             assert inputs["public_instruction"] == "Scientific question"
+            if independent_repair:
+                assert inputs["repair"] == {
+                    "prior_code": "pass",
+                    "issues": [
+                        {
+                            "public_requirement_quote": "Scientific question",
+                            "prior_code_quote": "pass",
+                        }
+                    ],
+                }
+                assert "grader_candidate" not in json.dumps(inputs)
+            else:
+                assert "repair" not in inputs
             value = module.AlternativeSolution(
                 disposition="ready", code="pass", rationale="fixture"
             )
@@ -960,6 +991,20 @@ def test_semantic_rejection_returns_to_existing_repair_worker(
         contract_only=False,
         comparison_conflict=False,
         semantic_feedback=semantic_feedback,
+    )
+
+
+def test_independent_repair_uses_fresh_isolated_author_and_frozen_grader(tmp_path, monkeypatch):
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=False,
+        derived=True,
+        resume="frozen",
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        independent_repair=True,
     )
 
 

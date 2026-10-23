@@ -8,6 +8,7 @@ import time
 from pathlib import Path
 
 import httpx
+from comparison_repair import ComparisonRepair, validate_diagnosis
 from design_stage import completion_transport
 from grading_protocol import ContractText
 from model_profile import native_effort
@@ -29,8 +30,11 @@ from biotasks.inference_gate import Allowance, RequestLedger
 async def run(config, *, root, endpoint, credential, deadline, complete=None):
     config = {**config, "reasoning_effort": native_effort(config)}
     question_repair = config.get("question_repair", False)
-    if question_repair and not config.get("revision_context_file"):
-        raise ValueError("Question repair requires recorded comparison evidence")
+    comparison_repair = config.get("comparison_repair", False)
+    if question_repair and comparison_repair:
+        raise ValueError("Select one comparison-repair interface")
+    if (question_repair or comparison_repair) and not config.get("revision_context_file"):
+        raise ValueError("Comparison repair requires recorded comparison evidence")
     if config["entrypoint"] != "run_specification.py":
         raise ValueError("Specification cannot launch another stage")
     inspect_packages = config.get("inspect_packages", False)
@@ -126,10 +130,20 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
                 http_client=httpx.AsyncClient(follow_redirects=False),
             )
             complete = completion_transport(client)
+
+        async def validate_comparison(value):
+            validate_diagnosis(value, context["revision_context"])
+
         plan = await stage(
-            schema=ContractText if question_repair else TaskSpecification,
+            schema=ComparisonRepair
+            if comparison_repair
+            else ContractText
+            if question_repair
+            else TaskSpecification,
             name="specify",
-            prompt_name="notebook-question-repair"
+            prompt_name="notebook-comparison-repair"
+            if comparison_repair
+            else "notebook-question-repair"
             if question_repair
             else "notebook-task-specification",
             context=context,
@@ -144,8 +158,11 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             output_format=output_format,
             extra_tools=extra_tools or None,
             extra_handlers=extra_handlers or None,
+            validate=validate_comparison if comparison_repair else None,
         )
-        if question_repair:
+        if comparison_repair:
+            save_record(root / "comparison-repair.json", plan.model_dump())
+        elif question_repair:
             save_record(root / "question-repair.json", plan.model_dump())
         else:
             save_record(root / "specification.json", plan.model_dump())

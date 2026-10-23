@@ -49,6 +49,20 @@ the runnable program and its unresolved limitations. Cleaning exploratory files
 is not required for submission: the returned code is the artifact the controller
 executes. Do not delete useful diagnostic evidence just to tidy the workspace.
 
+## Repairing your earlier implementation
+
+When `repair` is supplied, the earlier independently authored program did not
+establish the required comparison. You receive that program and exact paired
+quotes from the unchanged public question and your prior code. Inspect whether
+that code satisfies the quoted requirement, then repair your implementation
+using only the public question, original inputs and installed environment.
+The private diagnostic reasoning, reference program, grader and expected values
+are not supplied. Do not infer them or weaken the scientific requirement.
+Return a complete program for fresh execution. Preserve the original methods
+and input/output contract; report a blocker if those cannot be met. This is a
+repaired independent check, not a fresh blind benchmark attempt. No additional
+quality-repair campaign is available if the new comparison remains unresolved.
+
 ## Shell execution
 
 Keep diagnostics concise: print aggregate checks and representative examples.
