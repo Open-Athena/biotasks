@@ -13,3 +13,7 @@ The previous #31 license assessment relied on GitHub's null license metadata. #2
 ## 2026-10-23 — verified durable MACS archive
 
 Preserved all eight reviewed #31 execution archives, source notices and provenance in the public HF bucket under `research/33-unattended-validation/2026-10-23/079a0f50dce9cb6c09984c6a4313b97eda8578ae859da0c12d2b143fa007185b`. All 31 objects passed fresh anonymous download and checksum verification, including nested archive member checks. The upload/readback completed in 21.06 seconds with peak RSS 115,400 KiB and exit status 0. Owned readback/cache directories were removed. No model calls or remote jobs were launched. Storage billing is not yet reconciled; retain the conservative $10 reservation. Original control failures remain unchanged.
+
+## 2026-10-23 — control reconciliation
+
+Recomputed #28 acceptance predicates and #29 paired outcomes with source-hash checks. The 83 exports remain 83; 74/59 original positive/clean counts become 82/67 ever-positive/ever-clean across separately retained environments. Ten follow-up pair slots cover nine existing tasks. Scanpy4389 remains without a positive pair; 15 tasks have positive tracked tests without a clean command. Full content/image identity reconciliation remains pending. No model calls or remote jobs. See `control-reconciliation.md` and the machine ledger.
