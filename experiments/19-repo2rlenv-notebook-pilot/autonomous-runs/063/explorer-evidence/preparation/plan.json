@@ -1,0 +1,30 @@
+{
+  "artifacts": [
+    {
+      "description": "RMSD over the trajectory for the CORE-domain alpha-carbons (AtomGroup-restricted RMSD class run), with frame index and time.",
+      "path": "ca_core_rmsd.csv",
+      "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' restricts the analysis to CORE alpha-carbons and plots the resulting RMSD trajectory as its interpreted output ('ax.set_ylabel(RMSD)'); the values are stored in R.results.rmsd at completion and the already-named DataFrame df (Frame, Time (ns), CORE) wraps them with labels and ordering. df is written whole because all its columns are the terminal result plus its frame/time identifiers."
+    },
+    {
+      "description": "Mass-weighted RMSD trajectory for C-alphas (select group) plus unweighted CORE, LID and NMP domain RMSDs, with frame index and time.",
+      "path": "mass_weighted_rmsd.csv",
+      "source_evidence": "The 'Weighted RMSD of a trajectory / Mass' section runs R_mass = rms.RMSD(u, u, weights='mass', groupselections=[CORE, LID, NMP]) and plots the resulting trajectories as the branch's final result; the values persist in R_mass.results.rmsd and the named DataFrame df_mass (Frame, Time (ns), C-alphas, CORE, LID, NMP). df_mass is a pure result table with its identifiers, so it is exported whole."
+    },
+    {
+      "description": "Custom (residue-number) weighted RMSD trajectory for C-alphas plus resid-weighted CORE, LID and NMP domain RMSDs, with frame index and time.",
+      "path": "resid_weighted_rmsd.csv",
+      "source_evidence": "The 'Custom weights' section runs R_charge with weights=ag.resids and weights_groupselections, and the narrative interprets the outcome in its own right ('the NMP domain has much higher RMSD than before... residues later in the NMP domain are mobile'); the values persist in R_charge.results.rmsd and the named DataFrame df_charge (Frame, Time (ns), C-alphas, CORE, LID, NMP), exported whole as a mixed analysis table whose contents are entirely the terminal RMSD results plus frame/time identifiers. Note the weighting is by residue number, not charge, despite the variable name R_charge."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Universe-level backbone RMSD with CORE/LID/NMP group selections (first R = rms.RMSD(u, u, ...) run, including df plotted for Backbone/CORE/LID/NMP): both R and df are overwritten by the later AtomGroup-restricted RMSD branch, so no named variable holds this result at script completion; per the no-recovery rule it is not recaptured or recomputed.",
+    "Single RMSD value between the open (CRD) and closed (DCD) backbone coordinates from the standalone rms.rmsd(...) call: the result is a displayed expression never assigned to a variable, so there is no eligible stored value to export."
+  ],
+  "explanation": "The notebook's scientific outcomes are RMSD-vs-frame trajectories for the adenylate kinase transition, reported per analysis branch (AtomGroup-restricted CORE alpha-carbons, mass-weighted C-alpha/groups, and residue-number-weighted C-alpha/groups). At script completion these remain available as the DataFrames df, df_mass and df_charge (and the underlying R_mass/R_charge result arrays). The export code appends simple pandas CSV writes of those existing tables to /work/outputs, preserving columns, ordering and identifiers; no computation is added or changed. The first Universe-level backbone/CORE/LID/NMP RMSD analysis is lost because both R and df are overwritten by the later AtomGroup branch, and the single open-vs-closed backbone RMSD value is never assigned, so neither can be exported per the no-recovery rules.",
+  "export_code": "import os as _os\n\n_export_dir = \"/work/outputs\"\n_os.makedirs(_export_dir, exist_ok=True)\n\ndf.to_csv(_os.path.join(_export_dir, \"ca_core_rmsd.csv\"), index=False)\ndf_mass.to_csv(_os.path.join(_export_dir, \"mass_weighted_rmsd.csv\"), index=False)\ndf_charge.to_csv(_os.path.join(_export_dir, \"resid_weighted_rmsd.csv\"), index=False)",
+  "unresolved_assumptions": [
+    "The installed MDAnalysis version must expose results via R.results.rmsd (MDAnalysis >= 2.0 semantics); on older 1.x versions the attribute is R.rmsd, which would be an execution-stage compatibility question.",
+    "Whether the guessed Time (ns) column produced by the DCD reader matches the notebook's expected values is unverified until execution."
+  ]
+}

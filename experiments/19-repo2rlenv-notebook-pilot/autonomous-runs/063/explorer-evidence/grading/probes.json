@@ -1,0 +1,132 @@
+{
+  "concerns": [
+    "Analysis B and analysis C probe intent overlaps on the CORE alpha-carbon CSV, but both were kept because each independently edits a distinct file and preserves the common structural state above; any incidental interaction between frozen probes is not expected to be a concern since B and C specify distinct files with no shared row/column.",
+    "The wrong-value probes for analysis B scale the fitting-group result by a constant fractional factor (1.005/1.01) and blend the CA-core RMSDs with backbone-fit backbone-core values. These are pound-for-pound plausible wrong-method substitutions (a wrong backbone fitting set and a wrong per-protein fit) rather than arbitrary numeric noise \u2014 the mutations are coherently derived from the reference file's own physical quantities, but the reproduction of one specific wrong workflow has not been independently re-executed with MDAnalysis, so the exact reference values for those wrong methods are not directly verifiable here. The contract's own tolerance floor already covers small implementation-level differences, so any check flagged as failing is guaranteed by inspection of the numeric deviation against the documented rule.",
+    "The tolerance boundary was exercised from below (within tolerance) only via a legitimate lower-precision serialization, per the contract's own guidance, not by a just-outside-tolerance perturbation."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_a_open_closed"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "Backbone\n6.823686867261616"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "a-open-closed-wrong-superposition",
+      "rationale": "A plausible incorrect endpoint for analysis A is any value off by more than the acceptance-rule floor. A rigidly displaced or sub-optimally superposed closed-state frame (correct centering, wrong initial rotation, or a fit on a subset of the backbone atoms) yields a coherent ~0.05 \u00c5 shift in the single Backbone value. 6.823687 \u2212 6.773687 = 0.05 \u00c5 is far above the floor 5e-6 + 1e-6\u00d76.82 \u2248 1.18e-5 \u00c5, so the value in open_closed_backbone_rmsd.csv (analysis A) is materially wrong while remaining a finite, parseable, single-row CSV that preserves all structural requirements except the numeric cell \u2014 this is a wrong-value control, not a deletion control.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"open_closed_backbone_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\npath = os.path.join(output_root(), \"open_closed_backbone_rmsd.csv\")\nwith open(path, newline=\"\") as fh:\n    rd = csv.DictReader(fh)\n    rows, names = list(rd), list(rd.fieldnames)\nassert rows and len(rows) == 1 and \"Backbone\" in rows[0], rows\nv = float(rows[0][\"Backbone\"])\nassert v > 1.0, v\n# A coordinate-plausible but incorrect endpoint: rigidly pre-rotate/displace the\n# closed-state frame before the open-vs-closed superposition (or a suboptimal\n# fit applied to one of the two structures); the reported backbone RMSD shifts\n# by a coherent 0.05 Angstrom while remaining finite and physically ordinary.\nout = v - 0.05\nwith open(path, \"w\", newline=\"\") as fh:\n    w = csv.DictWriter(fh, fieldnames=names)\n    w.writeheader()\n    for r in rows:\n        r[\"Backbone\"] = repr(out)\n        w.writerow(r)\nprint(\"open_closed Backbone: %.17g -> %.17g\" % (v, out))\n"
+    },
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_b_backbone_groups"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "79,6.688730244830477,3.366738810295301,11.481180245915741,9.835063283022015"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "b-domain-identity-and-fitting-group",
+      "rationale": "A wrong-but-plausible analysis-B defect: correct workflows but wrong domain identities \u2014 swapping the LID and NMP columns of backbone_rmsd.csv fails on 97/98 frames (frame 79: 11.48 vs 9.84 \u00c5, difference 1.65 \u00c5 \u226b 1.1e-5 \u00c5 tolerance). Additionally, the Backbone and CORE values are scaled coherently (0.5\u20131 percent shifts, ~0.03\u20130.15 \u00c5), as occurs when the fitting group is defined on a wrong subset of the backbone atoms. Row counts, Frame keys and structural integrity (single-header CSV, all finite, non-ragged) are preserved; only the numeric values / domain identities of analysis B are wrong.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"backbone_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\nroot = output_root()\n\ndef read_rows(p):\n    with open(p, newline=\"\") as fh:\n        rd = csv.DictReader(fh)\n        return list(rd), list(rd.fieldnames)\n\ndef write_rows(p, rows, fieldnames):\n    with open(p, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=fieldnames)\n        w.writeheader()\n        for r in rows:\n            w.writerow(r)\n\ntol = lambda v: 5e-6 + 1e-6*abs(v)\n\n# backbone_rmsd.csv: swap LID and NMP domain results (wrong domain identity)\npath = os.path.join(root, \"backbone_rmsd.csv\")\nrows, names = read_rows(path)\nassert names[:5] == [\"Frame\",\"Backbone\",\"CORE\",\"LID\",\"NMP\"], names\nfor r in rows:\n    r[\"LID\"], r[\"NMP\"] = r[\"NMP\"], r[\"LID\"]\nndiff = sum(1 for r in rows\n            if abs(float(r[\"LID\"]) - float(r[\"NMP\"])) > tol(float(r[\"NMP\"])))\nassert ndiff >= 90, ndiff\n# ... and perturb the fitting-group / CORE results coherently, as would occur\n# with a fitting group defined on a wrong subset of the backbone atoms\nfor r in rows:\n    if float(r[\"Backbone\"]) > 1e-3:\n        r[\"Backbone\"] = repr(float(r[\"Backbone\"]) * 1.005)\n    if float(r[\"CORE\"]) > 1e-3:\n        r[\"CORE\"] = repr(float(r[\"CORE\"]) * 1.01)\nwrite_rows(path, rows, names)\nprint(\"backbone_rmsd.csv: LID/NMP swapped (%d rows over tol), Backbone/CORE scaled\" % ndiff)\n"
+    },
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_c_ca_core"
+      ],
+      "evidence": [
+        {
+          "path": "ca_core_rmsd.csv",
+          "quote": "79,1.8840232617187505"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "79,6.688730244830477,3.366738810295301,11.481180245915741,9.835063283022015"
+        },
+        {
+          "path": "ca_core_rmsd.csv",
+          "quote": "97,1.9511795506563847"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "c-ca-core-wrong-fitting-group",
+      "rationale": "A plausible wrong method for analysis C is reporting CORE RMSDs after a whole-backbone or subset superposition instead of the CORE-alpha-carbon fit: the reference CA-core values (frame 79 \u2248 1.884 \u00c5, frame 97 \u2248 1.951 \u00c5) are far smaller than the corresponding backbone-superposition backbone-CORE values (frame 79 \u2248 3.367 \u00c5) because the CA-only CORE fit removes the internal-domain mobility. Replacing each CORE value with a blend of the backbone-fit value and the reference CA value in ca_core_rmsd.csv shifts frames 1\u201397 by about +0.07 to +0.77 \u00c5, and the blended values remain irreducibly inconsistent with either correctly-executed fitting group (they differ from the reference by more than 1000x the tolerance in all 97 non-trivial frames: e.g. frame 79 0.5*(3.366738810295301+1.8840232617187505) = 2.625 \u00c5, vs reference 1.884 \u00c5, difference 0.741 \u00c5 \u226b 7e-6 \u00c5 tolerance). Row counts, Frame keys and CSV structure are preserved.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"ca_core_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\nroot = output_root()\n\ndef read_rows(p):\n    with open(p, newline=\"\") as fh:\n        rd = csv.DictReader(fh)\n        return list(rd), list(rd.fieldnames)\n\ndef write_rows(p, rows, fieldnames):\n    with open(p, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=fieldnames)\n        w.writeheader()\n        for r in rows:\n            w.writerow(r)\n\ntol = lambda v: 5e-6 + 1e-6*abs(v)\n\n# ca_core_rmsd.csv: report CORE values obtained after the whole-backbone\n# superposition (backbone atoms) instead of the CORE alpha-carbon fit\nbb, _ = read_rows(os.path.join(root, \"backbone_rmsd.csv\"))\np3 = os.path.join(root, \"ca_core_rmsd.csv\")\nca, cn = read_rows(p3)\nassert cn == [\"Frame\",\"CORE\"], cn\nn = 0\nfor b, c in zip(bb, ca):\n    assert b[\"Frame\"] == c[\"Frame\"]\n    blend = 0.5*(float(b[\"CORE\"]) + float(c[\"CORE\"]))\n    if abs(blend - float(c[\"CORE\"])) > tol(float(c[\"CORE\"])):\n        n += 1\n    c[\"CORE\"] = repr(blend)\nassert n >= 90, n\nwrite_rows(p3, ca, cn)\nprint(\"ca_core_rmsd.csv: CORE replaced by backbone-fit/backbone-superposition blend (%d frames over tol)\" % n)\n"
+    },
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_d_mass_weighted"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "79,6.6634308506918085,3.3628296647793072,11.458590993416928,9.90801858180754"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "79,6.349518302270309,3.7282708154406303,9.390928772556439,13.182545827260636"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "d-mass-vs-resid-weight-swap",
+      "rationale": "A wrong weighting choice for analysis D: putting the residue-number-weighted results (analysis E) into mass_weighted_rmsd.csv makes 388 of 392 cells fail the tolerance rule (frame 79 NMP: 13.183 vs 9.908 \u00c5, difference \u22483.3 \u00c5; frame 97 NMP: 13.912 vs 10.449 \u00c5, difference \u22483.5 \u00c5). Row counts, Frame keys, and file structure are preserved, so only the numeric values / weighting branch are wrong.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"mass_weighted_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\nroot = output_root()\n\ndef read_rows(p):\n    with open(p, newline=\"\") as fh:\n        rd = csv.DictReader(fh)\n        return list(rd), list(rd.fieldnames)\n\ntol = lambda v: 5e-6 + 1e-6*abs(v)\npath = os.path.join(root, \"mass_weighted_rmsd.csv\")\npath_e = os.path.join(root, \"resid_weighted_rmsd.csv\")\nmw, mn = read_rows(path)\nrw, rn = read_rows(path_e)\nassert mn == rn == [\"Frame\",\"C-alphas\",\"CORE\",\"LID\",\"NMP\"], (mn, rn)\nworse = sum(1 for m, r in zip(mw, rw) for c in [\"C-alphas\",\"CORE\",\"LID\",\"NMP\"]\n            if abs(float(m[c]) - float(r[c])) > tol(float(r[c])))\nassert worse >= 90, worse\nfor m, r in zip(mw, rw):\n    assert m[\"Frame\"] == r[\"Frame\"]\n    for c in [\"C-alphas\",\"CORE\",\"LID\",\"NMP\"]:\n        m[c] = r[c]\nwith open(path, \"w\", newline=\"\") as fh:\n    w = csv.DictWriter(fh, fieldnames=mn)\n    w.writeheader()\n    for r in mw:\n        w.writerow(r)\nprint(\"mass_weighted_rmsd.csv: replaced with resid-weighted values (%d cells over tol)\" % worse)\n"
+    },
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_e_resid_weighted"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "79,6.349518302270309,3.7282708154406303,9.390928772556439,13.182545827260636"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "e-resid-weighted-domain-interval",
+      "rationale": "Analysis E's domain selections and per-atom resid weights are applied to specific residue ranges. Duplicating the LID values toward the NMP values simulates a wrong domain-interval assignment (e.g. LID defined as residues 122-160 instead of 122-159, most visible where both branches differ strongly: frame 79 has LID 9.39 and NMP 13.18 \u00c5; moving 2% toward NMP shifts each LID value by ~0.08 \u00c5, well above the ~1e-5 \u00c5 tolerance for all 97 non-trivial frames). Frame keys, row counts and CSV structure are preserved, so this is a wrong-value control for analysis E only.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"resid_weighted_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\npath = os.path.join(output_root(), \"resid_weighted_rmsd.csv\")\nwith open(path, newline=\"\") as fh:\n    rd = csv.DictReader(fh)\n    rows, names = list(rd), list(rd.fieldnames)\nassert names == [\"Frame\",\"C-alphas\",\"CORE\",\"LID\",\"NMP\"], names\ntol = lambda v: 5e-6 + 1e-6*abs(v)\nn = 0\nfor r in rows:\n    l, m = float(r[\"LID\"]), float(r[\"NMP\"])\n    if l > 1e-3 and m > 1e-3:\n        r[\"LID\"] = repr(l*0.98 + m*0.02)\n        n += 1\nassert n >= 90, n\nwith open(path, \"w\", newline=\"\") as fh:\n    w = csv.DictWriter(fh, fieldnames=names)\n    w.writeheader()\n    for r in rows:\n        w.writerow(r)\nprint(\"resid_weighted_rmsd.csv: LID perturbed toward NMP on %d frames\" % n)\n"
+    },
+    {
+      "check_ids": [
+        "structural_schema",
+        "analysis_a_open_closed",
+        "analysis_b_backbone_groups",
+        "analysis_c_ca_core",
+        "analysis_d_mass_weighted",
+        "analysis_e_resid_weighted"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        },
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "Backbone\n6.823686867261616"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "rep-order-extra-column-precision",
+      "rationale": "A contract-permitted representation change. The public contract states: Physical row order is not compared (rows are joined by Frame); any additional columns (such as a trajectory-derived time column) are ignored; enough significant digits to preserve the computed result is sufficient. Reversing the physical row order, adding a trajectory-derived Time column (0.02 ps per frame), and re-serializing cells at %.15g preserve all numeric results well within the absolute floor 5e-6 + 1e-6*|v| (verified locally over every compared cell: max deviation \u22488.9e-15 \u00c5, far below the ~1e-5 \u00c5 floor), and frame-0 self-comparison cells such as 5.83e-07 \u00c5 remain below the 5e-6 \u00c5 absolute floor. The grader must accept this entirely correct answer in a different permitted representation, across all five checks.",
+      "script": "import csv, os\n\ndef output_root():\n    for c in [os.getcwd(), \"/case/submission\"]:\n        if c and os.path.isfile(os.path.join(c, \"backbone_rmsd.csv\")):\n            return c\n    raise SystemExit(\"output root not found\")\n\nroot = output_root()\n\ndef read_rows(p):\n    with open(p, newline=\"\") as fh:\n        rd = csv.DictReader(fh)\n        return list(rd), list(rd.fieldnames)\n\ndef write_rows(p, rows, fieldnames):\n    with open(p, \"w\", newline=\"\") as fh:\n        w = csv.DictWriter(fh, fieldnames=fieldnames)\n        w.writeheader()\n        for r in rows:\n            w.writerow(r)\n\n# Contract-compliant representation changes: (1) extra ignored column\n# (\"Time\" derived from the timestep, explicitly permitted) and reversed\n# physical row order (rows are joined by Frame, order is not compared);\n# (2) values re-serialized at %.15g, well inside the 5e-6 + 1e-6*|v| floor.\nfor fn in [\"backbone_rmsd.csv\",\"mass_weighted_rmsd.csv\",\"resid_weighted_rmsd.csv\",\n           \"ca_core_rmsd.csv\"]:\n    rows, names = read_rows(os.path.join(root, fn))\n    for r in rows:\n        for k in r:\n            if k != \"Frame\":\n                r[k] = \"%.15g\" % float(r[k])\n    out = [dict(r, Time=0.02*int(r[\"Frame\"])) for r in rows]\n    out.reverse()\n    write_rows(os.path.join(root, fn), out, names + [\"Time\"])\n    print(\"representation: %s reversed, Time column added, float values\" % fn)\n\npath = os.path.join(root, \"open_closed_backbone_rmsd.csv\")\nrows, names = read_rows(path)\nrows[0][\"Backbone\"] = \"%.15g\" % float(rows[0][\"Backbone\"])\nwrite_rows(path, rows, names)\nprint(\"representation: open_closed_backbone_rmsd.csv re-serialized\")\n"
+    }
+  ]
+}

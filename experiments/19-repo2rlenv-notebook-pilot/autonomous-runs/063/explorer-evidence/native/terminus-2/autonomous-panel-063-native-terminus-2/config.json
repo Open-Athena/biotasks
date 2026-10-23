@@ -1,0 +1,39 @@
+{
+    "job_name": "autonomous-panel-063-native-terminus-2",
+    "jobs_dir": "/evidence/trials/autonomous-panel-063-native-terminus-2",
+    "agent_timeout_multiplier": 1.0,
+    "n_concurrent_trials": 1,
+    "quiet": true,
+    "environment": {
+        "type": "daytona",
+        "override_cpus": 4,
+        "override_memory_mb": 8192,
+        "override_storage_mb": 10240,
+        "kwargs": {
+            "labels": {
+                "repo2rlenv.job": "014ef0e0db6c4aca843d57d89e8f4c6a"
+            },
+            "auto_stop_interval_mins": 30
+        }
+    },
+    "agents": [
+        {
+            "name": "terminus-2",
+            "model_name": "openai/glm-5.3",
+            "kwargs": {
+                "record_terminal_session": false,
+                "api_base": "http://127.0.0.1:22839/solver/v1",
+                "model_info": {
+                    "input_cost_per_token": 0,
+                    "max_input_tokens": 262144,
+                    "output_cost_per_token": 0
+                }
+            }
+        }
+    ],
+    "tasks": [
+        {
+            "path": "/work/trials/autonomous-panel-063-native-terminus-2/autonomous-panel-063"
+        }
+    ]
+}

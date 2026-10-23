@@ -8,8 +8,7 @@ outputs as fresh results. Model reasoning is omitted from the reading view;
 original trajectories remain linked. This is an evidence explorer, not a campaign
 log.
 
-`current.json` links to the selected default profile; each case has one canonical
-profile. Other profiles select the same layout
+`current.json` is the selected default profile. Other profiles select the same layout
 without changing the renderer. Control counts and solver rewards come from the
 selected records. A profile without validation or an attempt displays that absence;
 it does not borrow results from another task. Missing declared evidence is an
@@ -37,6 +36,12 @@ records the profile, embedded file hashes, selected trajectory size and release
 identity when available. GitHub links pin the checkout revision at build time;
 commit new evidence before building for publication. HTML escapes code and
 disables raw Markdown HTML.
+
+The default selection is the latest validated and published MDAnalysis run, 063.
+Its prompts and worker inputs are captured run artifacts, and program links pin
+the recorded runtime revision. The solver's first input message is extracted
+verbatim from its trajectory; the selection manifest labels this derivation.
+Later factory changes do not alter the recorded prompts or imply a new run.
 
 `check_browser.py --index /tmp/biotasks-explorer-review/index.html` checks
 view/stage navigation, the selected solver trace and mobile layout using

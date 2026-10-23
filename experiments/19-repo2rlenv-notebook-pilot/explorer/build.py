@@ -79,7 +79,9 @@ def artifact(relative, label=None, opened=False):
 
 def stage(key, title, kind, description, program, groups):
     body = f'<article class="panel stage" id="{html.escape(key)}"><span class="pill">{html.escape(kind)}</span><h2>{html.escape(title)}</h2><p>{html.escape(description)}</p>'
-    body += f'<p>Program: <a href="{BASE}{program if program.startswith("src/") else str(EXP.relative_to(ROOT)) + "/" + program}">{program}</a></p>'
+    revision = profile.get("program_revisions", {}).get(key, profile.get("runtime_revision", REV))
+    program_base = f"https://github.com/Open-Athena/biotasks/blob/{revision}/"
+    body += f'<p>Program: <a href="{program_base}{program if program.startswith("src/") else str(EXP.relative_to(ROOT)) + "/" + program}">{program}</a></p>'
     for heading, files in groups:
         body += f"<h3>{heading}</h3>" + "".join(artifact(path, label) for path, label in files)
     return body + "</article>"
@@ -247,6 +249,8 @@ page = (
         {
             "evidence_revision": REV,
             "release_revision": RELEASE,
+            "runtime_revision": profile.get("runtime_revision"),
+            "program_revisions": profile.get("program_revisions", {}),
             "profile": str(profile_path.relative_to(ROOT)),
             "stage_ids": [s[0] for s in stages],
             "has_solver_trajectory": trajectory_path is not None,
