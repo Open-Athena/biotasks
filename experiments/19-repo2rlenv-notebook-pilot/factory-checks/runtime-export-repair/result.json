@@ -1,0 +1,103 @@
+{
+  "prospective_factory_change": true,
+  "live_model_or_scientific_execution": false,
+  "offline_tests": {
+    "passed": 315,
+    "seconds": 20.31,
+    "peak_rss_kib": 172324,
+    "package_and_affected_experiment_checks": true
+  },
+  "quality": {
+    "checks": [
+      {
+        "command": [
+          "uv",
+          "run",
+          "--locked",
+          "ruff",
+          "check",
+          "."
+        ],
+        "exit_code": 0,
+        "started": "2026-10-23T14:13:50.487825+00:00",
+        "finished": "2026-10-23T14:13:50.527164+00:00"
+      },
+      {
+        "command": [
+          "uv",
+          "run",
+          "--locked",
+          "ruff",
+          "format",
+          "--check",
+          "."
+        ],
+        "exit_code": 0,
+        "started": "2026-10-23T14:13:50.527273+00:00",
+        "finished": "2026-10-23T14:13:50.564351+00:00"
+      },
+      {
+        "command": [
+          "uv",
+          "run",
+          "--locked",
+          "ty",
+          "check"
+        ],
+        "exit_code": 0,
+        "started": "2026-10-23T14:13:50.564520+00:00",
+        "finished": "2026-10-23T14:13:50.986402+00:00"
+      },
+      {
+        "command": [
+          "uv",
+          "run",
+          "--locked",
+          "pre-commit",
+          "run",
+          "--all-files"
+        ],
+        "exit_code": 0,
+        "started": "2026-10-23T14:13:50.986937+00:00",
+        "finished": "2026-10-23T14:13:51.725926+00:00"
+      }
+    ],
+    "all_passed": true,
+    "model_calls": 0,
+    "new_cloud_compute": false
+  },
+  "factory_sha256": {
+    "run_preparation.py": "1f706aab1e6e96b4c2ca7c577d0a6b009e853342661b61387b25ddca82b0030d",
+    "reference_setup.py": "c9b6a8148b509cfdd7908262053aefe9348806c4b94aab252455af05cc0216d3",
+    "run_reference_setup.py": "8d0fb83a94fbe44fd99b3c7e8b0057f1f9c898c2015c9e877af1528839711e23",
+    "run_autonomous.py": "30340fe077ed9468dbca5b9561430d26e321fbedad7009010d5ac1ca3c487c63",
+    "test_preparation.py": "d755c7de901061c08290825fb6db375c4a90785fa40f74633e2135762b3790fa",
+    "test_reference_setup.py": "9c02c50bb9c2ff5d8dbc83a9512023e6c33ce0a4c9f7cb5c6a95dd925830386e",
+    "test_autonomous.py": "6ccb4b78aeafead3b3eaa0fcf126e7f65f0d25bff1578112dd691aeebc5e4e1a"
+  },
+  "bounds": {
+    "preparation_calls_total_max": 2,
+    "runtime_repair_only_if_first_call_valid": true,
+    "source_endpoints_exclusions_fixed": true,
+    "shared_request_and_spend_ledgers": true,
+    "no_transport_empty_length_recovery": true,
+    "original_failure_preserved": true,
+    "remaining_reference_test_required": true,
+    "no_setup_or_campaign_deadline_reset": true
+  },
+  "initial_check_failures": [
+    {
+      "kind": "fixture",
+      "detail": "Orchestrator fixture did not export the new preparation callback; fixture updated, production contract unchanged."
+    },
+    {
+      "kind": "command_path",
+      "detail": "One attempted broader check selected a nonexistent test filename; no tests ran; corrected to test_reference.py."
+    }
+  ],
+  "known_limitations": [
+    "Not yet exercised by a fresh live campaign.",
+    "Classification uses definite Python traceback evidence; it does not infer errors from absent files or resource exits.",
+    "Validation fixes endpoint inventory and source bytes; scientific review still checks serialization fidelity."
+  ]
+}

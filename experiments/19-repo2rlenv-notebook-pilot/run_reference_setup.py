@@ -368,7 +368,17 @@ class Remote:
             save_record(path, record)
 
 
-async def run(config, *, root, deadline, endpoint, credential, provider=None, complete=None):
+async def run(
+    config,
+    *,
+    root,
+    deadline,
+    endpoint,
+    credential,
+    provider=None,
+    complete=None,
+    repair_exports=None,
+):
     config = {**config, "reasoning_effort": native_effort(config)}
     check_config(config)
     prepared = PreparedReference.load(HERE / config["preparation_directory"])
@@ -493,6 +503,11 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
             spend = RunBudget(
                 BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "setup", "1"
             )
+
+            async def bounded_repair(feedback):
+                async with asyncio.timeout(max(0, work_deadline - time.time())):
+                    return await repair_exports(feedback, deadline=work_deadline)
+
             session = SetupSession(
                 prepared=prepared,
                 remote=remote,
@@ -500,6 +515,7 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
                 setup_seconds=config["setup_seconds"],
                 reference_seconds=config["reference_seconds"],
                 max_tests=config["max_tests"],
+                repair_exports=bounded_repair if repair_exports is not None else None,
             )
             await session.initialize()
             context = {
@@ -573,6 +589,10 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
                 reference_test_requests=session.test_requests,
                 setup_seconds_remaining=session.setup_remaining,
                 last_passing_test=session.last_pass,
+                effective_frozen_directory=session.frozen.relative_to(root).as_posix(),
+                effective_preparation_directory=str(session.effective_preparation)
+                if session.effective_preparation is not None
+                else None,
             )
     except BaseException as error:
         result.update(status="incomplete", error_type=type(error).__name__)

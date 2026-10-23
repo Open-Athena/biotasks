@@ -135,6 +135,91 @@ async def run(config, *, root, seed, endpoint, credential, deadline, complete=No
         save_record(root / "result.json", result)
 
 
+async def repair_runtime_exports(
+    *, original, feedback, endpoint, credential, deadline, complete=None
+):
+    """Spend only the unused preparation repair, preserving the first response.
+
+    A separate artifact directory shares the original request and spend ledgers.
+    Failed/uncertain requests remain spent; this function never retries them.
+    """
+    from reference_setup import PreparedReference
+
+    prepared = PreparedReference.load(original)
+    config = json.loads((original / "configuration.json").read_text())
+    ledger = RequestLedger(
+        original / "requests.sqlite", {"prepare": Allowance(config["max_requests"], None)}
+    )
+    with sqlite3.connect(ledger.path) as db:
+        used = db.execute("SELECT COUNT(*) FROM calls WHERE scope='prepare'").fetchone()[0]
+    if used != 1 or config["max_requests"] != 2:
+        return None
+    root = original / "runtime-repair"
+    if root.exists():
+        return None
+    context = {
+        **prepared.context,
+        "runtime_validation": {"previous_plan": prepared.plan.model_dump(), "feedback": feedback},
+    }
+    # This is the same remaining allowance and campaign deadline, not a new campaign.
+    spend = RunBudget(BudgetLedger(original / "model-budget.sqlite", limit_usd="1"), "prepare", "1")
+    limits = ChatLimits(
+        max_output_tokens=None,
+        max_input_bytes=None,
+        max_response_bytes=None,
+        tool_output_chars=None,
+        reasoning_effort=native_effort(config),
+        request_timeout_sec=config["request_timeout_seconds"],
+    )
+
+    async def validate(plan):
+        if (
+            plan.disposition != "prepare"
+            or plan.artifacts != prepared.plan.artifacts
+            or plan.excluded_outputs != prepared.plan.excluded_outputs
+        ):
+            raise ValueError("Runtime repair must preserve the selected endpoints and exclusions")
+        materialize(prepared.baseline, plan)
+
+    client = None
+    try:
+        if complete is None:
+            client = AsyncOpenAI(
+                base_url=endpoint,
+                api_key=credential,
+                max_retries=0,
+                timeout=limits.request_timeout_sec,
+                http_client=httpx.AsyncClient(follow_redirects=False),
+            )
+            complete = completion_transport(client)
+        plan = await stage(
+            schema=ReferencePlan,
+            name="prepare",
+            prompt_name="notebook-reference-prepare",
+            context=context,
+            root=root / "prepare",
+            ledger=ledger,
+            budget=AuthorBudget(spend, root / "charges", "runtime-repair"),
+            complete=complete,
+            deadline=deadline,
+            limits=limits,
+            max_requests=1,
+            validate=validate,
+            recover_output_limit=False,
+            output_format="json_schema",
+            response_recovery=False,
+        )
+        script, diff = materialize(prepared.baseline, plan)
+        save_record(root / "plan.json", plan.model_dump())
+        (root / "exports.py").write_text(plan.export_code)
+        (root / "reference.py").write_text(script)
+        (root / "source.diff").write_text(diff)
+        return root
+    finally:
+        if client is not None:
+            await client.close()
+
+
 if __name__ == "__main__":
     asyncio.run(
         run(

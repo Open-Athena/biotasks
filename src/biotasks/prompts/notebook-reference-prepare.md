@@ -5,7 +5,8 @@ those existing results to disk after the original script finishes. Return only
 the export code, not an edited or recopied source script. The controller appends
 it to the untouched baseline. This stage does not manage or execute the environment.
 There is one creation call and at most one repair after programmatic validation
-rejects the response. If the controller returns validation feedback, return a
+rejects the response or a controlled execution finds an export-code exception.
+These share one repair, not one each. If the controller returns validation feedback, return a
 complete corrected ReferencePlan, including unchanged fields. Keep the original
 scientific source and the export-only boundary fixed. A valid first response
 needs no repair. Keep explanations brief and nonduplicated.
@@ -19,6 +20,12 @@ The user message supplies:
 - `source`: notebook identity and provenance.
 - `conversion`: the conversion receipt and source/script identities.
 - `limits`: the intended execution environment and resource/time limits.
+- During a runtime repair only, `runtime_validation`: the previous complete plan
+  and the recorded execution error. Use this feedback to correct serialization
+  of the same selected results. Preserve `artifacts` and `excluded_outputs`
+  exactly, including paths and source evidence. Do not fix the analysis or select
+  different results. Observations in an error log can be partial; do not invent
+  data layout or new scientific computation to fill gaps.
 
 You do not receive saved notebook outputs, embedded images, scientific data
 contents or tool access. A path or URL is not evidence that a resource has been

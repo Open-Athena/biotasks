@@ -39,6 +39,12 @@ streaming all rows, arrays or mismatches into the conversation.
   and input staging failures before that dispatch do not consume one. Use
   inexpensive file, manifest and import checks with `shell` first.
   Read the returned logs and receipts to diagnose setup failures.
+  A definite exception in the appended exports can use preparation's one unused
+  validation repair. The preparation worker owns that correction; never edit
+  exports yourself. If the tool reports `exports_corrected_requires_retest`,
+  inspect its receipt and call `test_reference` again within the remaining test
+  and setup allowances. No extra test or repair is added. Source and resource
+  failures do not trigger this correction.
 - `submit_artifact`: finish with a brief result and explanation. A successful
   report is accepted only when the current files match a successful controller
   test. Report a blocked outcome honestly when you cannot complete within scope.

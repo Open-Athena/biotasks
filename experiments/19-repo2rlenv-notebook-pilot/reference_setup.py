@@ -8,6 +8,7 @@ from __future__ import annotations
 import ast
 import hashlib
 import json
+import re
 import time
 from dataclasses import dataclass
 from pathlib import Path
@@ -25,6 +26,55 @@ class SetupBudgetExceeded(TimeoutError):
 
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
+
+
+def runtime_export_feedback(prepared, analysis: str, script: str, record: dict):
+    """Identify a definite Python exception reached from the appended exports.
+
+    This is execution feedback for an author, never scientific acceptance. Do
+    not reinterpret resource failures, missing reports or source exceptions as
+    an export defect. The setup runner has already closed offline execution and
+    verified the staged input identities before calling this classifier.
+    """
+    run = record.get("execution", {})
+    if (
+        record.get("status") != "reference_failed"
+        or type(run.get("exit_code")) is not int
+        or run["exit_code"] != 1
+        or record.get("inputs_after", {}).get("staged_inputs_verified") is not True
+    ):
+        return None
+    if script != materialize(analysis, prepared.plan)[0]:
+        raise ValueError("Runtime feedback does not match the assembled export script")
+    if record.get("candidate_sha256", {}).get("analysis.py") != digest(analysis.encode()):
+        raise ValueError("Runtime feedback does not match the captured analysis")
+    log = run.get("log")
+    if not isinstance(log, str) or "Traceback (most recent call last):" not in log:
+        return None
+    traceback = log.rsplit("Traceback (most recent call last):", 1)[1]
+    frames = re.findall(
+        r'^\s*File "/work/reference\.py", line (\d+), in <module>\s*$',
+        traceback,
+        re.MULTILINE,
+    )
+    export_start = (analysis + "\n\n").count("\n") + 1
+    if len(frames) != 1 or int(frames[0]) < export_start:
+        return None
+    errors = re.findall(r"^([A-Za-z_]\w*(?:\.[A-Za-z_]\w*)*Error):", traceback, re.MULTILINE)
+    if not errors or errors[-1].rsplit(".", 1)[-1] in {"MemoryError", "TimeoutError"}:
+        return None
+    return {
+        "kind": "runtime_export_exception",
+        "exception_type": errors[-1],
+        "analysis_sha256": digest(analysis.encode()),
+        "reference_script_sha256": digest(script.encode()),
+        "export_code_sha256": digest(prepared.exports.encode()),
+        "export_start_line": export_start,
+        "recorded_module_line": int(frames[0]),
+        "execution": run,
+        "staged_inputs_verified": True,
+        "observation_scope": "Recorded execution log only; printed layouts may be partial. No new scientific computation or source repair is authorized.",
+    }
 
 
 @dataclass(frozen=True)
@@ -154,7 +204,17 @@ class SetupSession:
     command returns a recorded process result plus log; no local execution fallback.
     """
 
-    def __init__(self, *, prepared, remote, root, setup_seconds, reference_seconds, max_tests):
+    def __init__(
+        self,
+        *,
+        prepared,
+        remote,
+        root,
+        setup_seconds,
+        reference_seconds,
+        max_tests,
+        repair_exports=None,
+    ):
         if any(type(x) is not int or x < 1 for x in (setup_seconds, reference_seconds, max_tests)):
             raise ValueError("Explicit positive setup, reference and test allowances required")
         self.prepared, self.remote, self.root = prepared, remote, root
@@ -164,10 +224,13 @@ class SetupSession:
         self.test_requests = 0
         self.shell_calls = 0
         self.last_pass = None
+        self.repair_exports = repair_exports
+        self.effective_preparation = None
+        self.frozen = self.root / "frozen"
         self.root.mkdir(parents=True, exist_ok=True)
 
     async def initialize(self):
-        frozen = self.root / "frozen"
+        frozen = self.frozen
         self.prepared.write(frozen)
         await self.remote.command(
             ["mkdir", "-p", "/work/frozen", "/work/setup", "/inputs", "/work/cache"],
@@ -325,7 +388,7 @@ class SetupSession:
                 f"reset-run-{self.test_requests}",
             )
             await self.remote.upload(directory / "reference.py", "/work/reference.py")
-            await self.remote.upload(self.root / "frozen/plan.json", "/work/plan.json")
+            await self.remote.upload(self.frozen / "plan.json", "/work/plan.json")
             # Restore the receipt from host evidence; generated code cannot redefine it.
             await self.remote.upload(directory / "inputs-before.json", "/work/setup-inputs.json")
             await self.remote.network(True)
@@ -353,7 +416,7 @@ class SetupSession:
                     f"inputs-after-{self.test_requests}",
                 )
                 record["inputs_after"] = checked
-                await self.remote.upload(self.root / "frozen/plan.json", "/work/plan.json")
+                await self.remote.upload(self.frozen / "plan.json", "/work/plan.json")
                 inventory = await self.remote.helper(
                     ["inventory", "/work/plan.json"], f"inventory-{self.test_requests}"
                 )
@@ -380,6 +443,50 @@ class SetupSession:
             finally:
                 # The adapter refuses policy changes after an uncertain command.
                 await self.remote.network(False)
+            if self.repair_exports is not None and self.tests < self.max_tests:
+                feedback = runtime_export_feedback(self.prepared, changed, script, record)
+                if feedback is not None:
+                    # Persist the original failed test before any model or remote mutation.
+                    save_record(directory / "result.json", record)
+                    save_record(directory / "original-execution-result.json", record)
+                    save_record(directory / "runtime-export-feedback.json", feedback)
+                    repair = {"status": "started"}
+                    save_record(directory / "runtime-export-repair.json", repair)
+                    callback, self.repair_exports = self.repair_exports, None
+                    try:
+                        effective = await callback(feedback)
+                        if effective is None:
+                            repair["status"] = "no_preparation_repair_remaining"
+                        else:
+                            revised = PreparedReference.load(effective)
+                            if (
+                                revised.baseline != self.prepared.baseline
+                                or revised.context["source"] != self.prepared.context["source"]
+                                or revised.plan.artifacts != self.prepared.plan.artifacts
+                                or revised.plan.excluded_outputs
+                                != self.prepared.plan.excluded_outputs
+                            ):
+                                raise ValueError(
+                                    "Runtime repair changed the source or endpoint scope"
+                                )
+                            frozen = self.root / "frozen-runtime-repair"
+                            if frozen.exists():
+                                raise ValueError("Runtime repair has already been materialized")
+                            revised.write(frozen)
+                            for name in ("original.py", "exports.py", "plan.json"):
+                                await self.remote.upload(frozen / name, "/work/frozen/" + name)
+                            self.prepared, self.frozen = revised, frozen
+                            self.effective_preparation = effective
+                            repair.update(
+                                status="exports_corrected_requires_retest",
+                                export_code_sha256=digest(revised.exports.encode()),
+                            )
+                    except BaseException as error:
+                        repair.update(status="incomplete", error_type=type(error).__name__)
+                        raise
+                    finally:
+                        save_record(directory / "runtime-export-repair.json", repair)
+                    return json.dumps({**record, "runtime_export_repair": repair})
             return json.dumps(record)
         except SetupBudgetExceeded as exc:
             record.update(status="setup_budget_exhausted", error=str(exc))

@@ -276,7 +276,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
         return {"publication_ready": failure != "native"}
 
     for name, attrs in {
-        "run_preparation": {"run": prepare},
+        "run_preparation": {"run": prepare, "repair_runtime_exports": prepare},
         "run_reference_setup": {"run": remote},
         "run_specification": {"run": specify},
         "specification_inputs": {"specification_context": lambda *a, **k: {}},
@@ -425,11 +425,13 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
 
 
 @pytest.mark.parametrize("trial_number", [1, 3])
-def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch, trial_number):
+@pytest.mark.parametrize("frozen", ["setup/frozen", "setup/frozen-runtime-repair"])
+def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch, trial_number, frozen):
     monkeypatch.syspath_prepend(str(HERE))
     raw, view = tmp_path / "raw", tmp_path / "view"
     trial = raw / "setup/trials" / str(trial_number)
-    (raw / "setup/frozen").mkdir(parents=True)
+    (raw / frozen).mkdir(parents=True)
+    (raw / frozen / "exports.py").write_text("print('effective exports')\n")
     (trial / "candidate").mkdir(parents=True)
     (trial / "outputs").mkdir()
     output = trial / "outputs/result.csv"
@@ -449,12 +451,14 @@ def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch, trial
             "cleanup_verified": True,
             "reference_tests": 1,
             "last_passing_test": {"test": trial_number},
+            "effective_frozen_directory": frozen,
         },
     )
     m.write(raw / "outcome.json", {"disposition": "tested"})
     m.write(raw / "cleanup.json", {"passed": True})
     m.write(trial / "result.json", {"artifacts": {"artifacts": inventory}})
     m.seal_reference(raw, view, {"id": "fixture"})
+    assert (view / "inputs/exports.py").read_text() == "print('effective exports')\n"
     assert m.read(view / "artifact-manifest.json")["large_outputs"] == inventory
     assert m.read(view / "output-audit.json")["outputs"][0]["download_hash_verified"]
     output.write_text("id,value\na,2\n")

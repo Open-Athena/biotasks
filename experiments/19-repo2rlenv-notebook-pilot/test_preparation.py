@@ -265,3 +265,106 @@ def test_repair_allowance_does_not_add_transport_or_empty_retries(tmp_path, mode
     result = json.loads((root / "result.json").read_text())
     assert result["model_request_slots_used"] == len(calls)
     assert result["scientific_analysis_executed"] is False
+
+
+@pytest.mark.parametrize("mode", ["valid", "spent", "scope", "syntax", "empty", "timeout"])
+def test_runtime_repair_shares_original_allowance_and_preserves_inputs(tmp_path, mode):
+    import sqlite3
+
+    from reference_setup import PreparedReference
+    from run_preparation import repair_runtime_exports
+
+    config = json.loads((HERE / "preparation-inputs.json").read_text())
+    config["max_requests"] = 2
+    plan = dict(
+        disposition="prepare",
+        explanation="Synthetic fixture",
+        export_code="print(result)\n",
+        artifacts=[dict(path="result.txt", description="Fixture", source_evidence="Fixture")],
+        excluded_outputs=[],
+        unresolved_assumptions=[],
+    )
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        candidate = {**plan}
+        if mode == "spent" and len(calls) == 1:
+            candidate["export_code"] = "("
+        return response(candidate)
+
+    original = tmp_path / "preparation"
+    asyncio.run(
+        run(
+            config,
+            root=original,
+            seed=json.loads((HERE / "seeds/current.json").read_text())[0],
+            endpoint="unused",
+            credential="unused",
+            deadline=time.time() + 60,
+            complete=complete,
+        )
+    )
+    originals = {
+        p.relative_to(original): p.read_bytes()
+        for p in original.rglob("*")
+        if p.is_file() and p.suffix not in {".sqlite"}
+    }
+    repairs = []
+
+    async def correct(payload):
+        repairs.append(payload)
+        assert payload["response_format"]["type"] == "json_schema"
+        context = json.loads(payload["messages"][1]["content"])
+        assert context["runtime_validation"]["previous_plan"] == plan
+        candidate = {**plan, "export_code": "print('corrected export')\n"}
+        if mode == "scope":
+            candidate["excluded_outputs"] = ["Drop a scientific branch"]
+        if mode == "syntax":
+            candidate["export_code"] = "("
+        if mode == "timeout":
+            raise TimeoutError("Synthetic runtime-repair transport failure")
+        reply = response(candidate)
+        if mode == "empty":
+            reply["choices"][0]["message"]["content"] = None
+        return reply
+
+    action = repair_runtime_exports(
+        original=original,
+        feedback={"kind": "runtime_export_exception", "execution": "fixture"},
+        endpoint="unused",
+        credential="unused",
+        deadline=time.time() + 60,
+        complete=correct,
+    )
+    if mode in {"valid", "spent"}:
+        effective = asyncio.run(action)
+        if mode == "valid":
+            fixed = PreparedReference.load(effective)
+            assert fixed.baseline == PreparedReference.load(original).baseline
+            assert fixed.exports == "print('corrected export')\n"
+            assert len(repairs) == 1
+        else:
+            assert effective is None and not repairs
+    else:
+        with pytest.raises(RuntimeError):
+            asyncio.run(action)
+        assert len(repairs) == 1
+    # No additional request is available, even after a failed/uncertain repair.
+    assert (
+        asyncio.run(
+            repair_runtime_exports(
+                original=original,
+                feedback={},
+                endpoint="unused",
+                credential="unused",
+                deadline=time.time() + 60,
+                complete=correct,
+            )
+        )
+        is None
+    )
+    with sqlite3.connect(original / "requests.sqlite") as db:
+        assert db.execute("SELECT COUNT(*) FROM calls").fetchone()[0] == 2
+    for relative, data in originals.items():
+        assert (original / relative).read_bytes() == data

@@ -1,0 +1,2462 @@
+[
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "reference",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv; core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv; mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv; resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "backbone_rmsd.csv unreadable; core_ca_rmsd.csv unreadable; mass_weighted_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "missing file: open_closed_backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "no parseable single RMSD value to compare (missing or malformed file)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {},
+      "submission_sha256": {}
+    },
+    "kind": "empty",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv; core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv; mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv; resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "backbone_rmsd.csv unreadable; core_ca_rmsd.csv unreadable; mass_weighted_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "missing file: open_closed_backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "no parseable single RMSD value to compare (missing or malformed file)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "outputs/backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "outputs/core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "outputs/mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "outputs/open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "outputs/resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "outputs/backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "outputs/core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "outputs/mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "outputs/open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "outputs/resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "misplaced",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "recomputed",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d023277fd7f9ec5dd56dc40cfd08284be8036a4f624bfe7cfcb477aab141ba9d",
+        "core_ca_rmsd.csv": "aeddac78ca8c5d82ebbc38e6d318a07b209db1dcd19a4d5f578b75765d290f64",
+        "mass_weighted_rmsd.csv": "78a50cd97e657a9072b44c17963c2247ed005bf572a65c136ed986f76d0d72d1",
+        "open_closed_backbone_rmsd.csv": "5f083e967a413a7fb2014cde4b34677726ef998941ba15d0b69f89154db0f57e",
+        "resid_weighted_rmsd.csv": "f7e5ff08beceacfcb106ded206fad1c1b80c959245bcafb6c45710c172e7b34c"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d023277fd7f9ec5dd56dc40cfd08284be8036a4f624bfe7cfcb477aab141ba9d",
+        "core_ca_rmsd.csv": "aeddac78ca8c5d82ebbc38e6d318a07b209db1dcd19a4d5f578b75765d290f64",
+        "mass_weighted_rmsd.csv": "78a50cd97e657a9072b44c17963c2247ed005bf572a65c136ed986f76d0d72d1",
+        "open_closed_backbone_rmsd.csv": "5f083e967a413a7fb2014cde4b34677726ef998941ba15d0b69f89154db0f57e",
+        "resid_weighted_rmsd.csv": "f7e5ff08beceacfcb106ded206fad1c1b80c959245bcafb6c45710c172e7b34c"
+      }
+    },
+    "kind": "alternative",
+    "omitted": null,
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: submission unreadable: missing file: backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "backbone_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "missing",
+    "omitted": "backbone_rmsd.csv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: submission unreadable: missing file: core_ca_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "core_ca_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "missing",
+    "omitted": "core_ca_rmsd.csv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: submission unreadable: missing file: mass_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "mass_weighted_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "missing",
+    "omitted": "mass_weighted_rmsd.csv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "missing file: open_closed_backbone_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "no parseable single RMSD value to compare (missing or malformed file)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "missing",
+    "omitted": "open_closed_backbone_rmsd.csv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv: submission unreadable: missing file: resid_weighted_rmsd.csv",
+            "passed": false
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "resid_weighted_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2"
+      }
+    },
+    "kind": "missing",
+    "omitted": "resid_weighted_rmsd.csv",
+    "passed_control": true,
+    "probe": null
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "shifted 98 backbone value rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: row 0 column Backbone: submission 0.0010006126061008812 vs reference 5.834343817915898e-07 (diff 0.001 exceeds limit 3e-06); backbone_rmsd.csv: row 0 column CORE: submission 0.001000041175607512 vs reference 3.92148642971737e-08 (diff 0.001 exceeds limit 3e-06); backbone_rmsd.csv: row 0 column LID: submission 0.0010001256849802706 vs reference 1.1969998121003948e-07 (diff 0.001 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: row 0 column Backbone: submission 0.0010006126061008812 vs reference 5.834343817915898e-07 (diff 0.001 exceeds limit 3e-06); backbone_rmsd.csv: row 0 column CORE: submission 0.001000041175607512 vs reference 3.92148642971737e-08 (diff 0.001 exceeds limit 3e-06); backbone_rmsd.csv: row 0 column LID: submission 0.0010001256849802706 vs reference 1.1969998121003948e-07 (diff 0.001 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "6110e8928d8007ccda36112662d8988a11e6c96782cf23f74696197178ea227c",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "6110e8928d8007ccda36112662d8988a11e6c96782cf23f74696197178ea227c",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "Frame,Time (ns),Backbone,CORE,LID,NMP"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "backbone-domain-values-bias",
+      "rationale": "Recomputes every Backbone/CORE/LID/NMP value in backbone_rmsd.csv as value*1.05+0.001 while keeping row count, Frame ids, Time (ns), ordering and format intact, violating computation 1 (backbone RMSD of the full backbone set plus domain-group RMSDs after global fitting). The mutated value columns are rejected by 'backbone_domain_rmsd'; the aggregate 'trajectory_tables_structure' check also fails because it aggregates all per-file comparison problems (row-0 column mismatches), even though the file's structural dimensions (header, row count, frame indexing, parseability) remain well-formed. All other files and checks pass. The mutation is thus detected as a value failure, exactly as its executed report shows.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    assert len(row) == 6\n    out.append([row[0], row[1]] + [repr(float(v) * 1.05 + 0.001) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d backbone value rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "shifted 98 core-ca rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: core_ca_rmsd.csv: row 0 column CORE: submission -0.004999754437900704 vs reference 2.2323827208734618e-07 (diff 0.005 exceeds limit 3e-06); core_ca_rmsd.csv: row 1 column CORE: submission 0.4433168906709899 vs reference 0.40756080970089986 (diff 0.0358 exceeds limit 3e-06); core_ca_rmsd.csv: row 2 column CORE: submission 0.5643498795911139 vs reference 0.5175907996282854 (diff 0.0468 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: row 0 column CORE: submission -0.004999754437900704 vs reference 2.2323827208734618e-07 (diff 0.005 exceeds limit 3e-06); core_ca_rmsd.csv: row 1 column CORE: submission 0.4433168906709899 vs reference 0.40756080970089986 (diff 0.0358 exceeds limit 3e-06); core_ca_rmsd.csv: row 2 column CORE: submission 0.5643498795911139 vs reference 0.5175907996282854 (diff 0.0468 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "9369251e4e7f1404421e00059c23957c360b59b6b6a58022f0fda4d1d50e5545",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "9369251e4e7f1404421e00059c23957c360b59b6b6a58022f0fda4d1d50e5545",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "core_ca_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "97.0,97.99999136816182,1.9511795506563847"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "Frame,Time (ns),CORE"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "core-ca-values-bias",
+      "rationale": "Recomputes the CORE column of core_ca_rmsd.csv as value*1.1-0.005 while preserving row count, Frame ids, Time (ns) and CSV formatting, violating computation 2 (CORE alpha-carbon RMSD after optimal superposition of that set onto frame 0). The mutated values are rejected by 'core_ca_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "path = 'core_ca_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'Frame,Time (ns),CORE', lines[0]\nout = [lines[0]]\nfor line in lines[1:]:\n    f, t, c = line.split(',')\n    out.append('%s,%s,%s' % (f, t, repr(float(c) * 1.1 - 0.005)))\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join(out) + '\\n')\nprint('shifted %d core-ca rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "shifted 98 mass-weighted rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: mass_weighted_rmsd.csv: row 0 column C-alphas: submission 0.12000036878070414 vs reference 3.6878070413424054e-07 (diff 0.12 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 0 column CORE: submission 0.12000005806941028 vs reference 5.8069410284836064e-08 (diff 0.12 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 0 column LID: submission 0.1200000886038623 vs reference 8.8603862297393e-08 (diff 0.12 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: row 0 column C-alphas: submission 0.12000036878070414 vs reference 3.6878070413424054e-07 (diff 0.12 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 0 column CORE: submission 0.12000005806941028 vs reference 5.8069410284836064e-08 (diff 0.12 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 0 column LID: submission 0.1200000886038623 vs reference 8.8603862297393e-08 (diff 0.12 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "3bec39b3b86523dab6b6152554c7525c0e01915cc37ae1cab63d79fef0a43794",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "3bec39b3b86523dab6b6152554c7525c0e01915cc37ae1cab63d79fef0a43794",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.814428038193539,3.4964605558289015,11.355678443834563,10.449026883527377"
+        },
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "mass-weighted-values-bias",
+      "rationale": "Shifts all mass-weighted RMSD columns by 0.12 \u00c5 with row identities, Time (ns), ordering and format preserved, violating computation 3 (mass-weighted alpha-carbon fit RMSD plus mass-weighted domain backbone RMSDs after global fitting). The mutated values are rejected by 'mass_weighted_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "import csv\npath = 'mass_weighted_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    out.append([row[0], row[1]] + [repr(float(v) + 0.12) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d mass-weighted rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "shifted 98 resid-weighted rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: resid_weighted_rmsd.csv: row 1 column C-alphas: submission 0.4625349851576198 vs reference 0.4322756870631961 (diff 0.0303 exceeds limit 3e-06); resid_weighted_rmsd.csv: row 1 column CORE: submission 0.4920569731719957 vs reference 0.45986633006728567 (diff 0.0322 exceeds limit 3e-06); resid_weighted_rmsd.csv: row 1 column LID: submission 0.5098891157718359 vs reference 0.47653188389891205 (diff 0.0334 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv: row 1 column C-alphas: submission 0.4625349851576198 vs reference 0.4322756870631961 (diff 0.0303 exceeds limit 3e-06); resid_weighted_rmsd.csv: row 1 column CORE: submission 0.4920569731719957 vs reference 0.45986633006728567 (diff 0.0322 exceeds limit 3e-06); resid_weighted_rmsd.csv: row 1 column LID: submission 0.5098891157718359 vs reference 0.47653188389891205 (diff 0.0334 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "414e9b0c79165c96029ab0faf9fbc63d3a0e3bb50816727823c18f318a5af8f9"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "414e9b0c79165c96029ab0faf9fbc63d3a0e3bb50816727823c18f318a5af8f9"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "resid_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "resid-weighted-values-bias",
+      "rationale": "Scales all residue-number-weighted RMSD columns by 1.07 while preserving row identities, Time (ns), ordering and format, violating computation 4 (resid-number-weighted alpha-carbon fit RMSD plus resid-weighted domain backbone RMSDs). The mutated values are rejected by 'resid_weighted_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "import csv\npath = 'resid_weighted_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    out.append([row[0], row[1]] + [repr(float(v) * 1.07) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d resid-weighted rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "drifted time for 98 rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: core_ca_rmsd.csv: row 1 column Time (ns): submission 2.000000823840037 vs reference 1.9999998238400372 (diff 1e-06 exceeds limit 1e-09); core_ca_rmsd.csv: row 2 column Time (ns): submission 3.0000017357600557 vs reference 2.999999735760056 (diff 2e-06 exceeds limit 1e-09); core_ca_rmsd.csv: row 3 column Time (ns): submission 4.000002647680074 vs reference 3.9999996476800743 (diff 3e-06 exceeds limit 1e-09)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: row 1 column Time (ns): submission 2.000000823840037 vs reference 1.9999998238400372 (diff 1e-06 exceeds limit 1e-09); core_ca_rmsd.csv: row 2 column Time (ns): submission 3.0000017357600557 vs reference 2.999999735760056 (diff 2e-06 exceeds limit 1e-09); core_ca_rmsd.csv: row 3 column Time (ns): submission 4.000002647680074 vs reference 3.9999996476800743 (diff 3e-06 exceeds limit 1e-09)",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "row 1: Time values differ across tables: [1.9999998238400372, 2.000000823840037]; row 2: Time values differ across tables: [2.999999735760056, 3.0000017357600557]; row 3: Time values differ across tables: [3.9999996476800743, 4.000002647680074]",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "e3f65a3d2734d867a4248241f8f6c5011ee652b06f758bb0f16212dac9ff584c",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "e3f65a3d2734d867a4248241f8f6c5011ee652b06f758bb0f16212dac9ff584c",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "core_ca_rmsd",
+        "time_column_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,2.2323827208734618e-07"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "time-single-file-drift",
+      "rationale": "Adds a 1e-6 ns drift to the Time (ns) column of core_ca_rmsd.csv only. The drifted times exceed the 1e-9 absolute per-file time tolerance against the reference, so they are rejected in 'core_ca_rmsd' (whose scope includes the Time column of that file) and, via aggregation, in 'trajectory_tables_structure'; and the cross-file exact-identity rule for per-frame Time fails in 'time_column_consistency' because the other three tables retain the reference times. All RMSD values remain correct. This also exercises the time-tolerance boundary per frame, as the executed report shows.",
+      "script": "import csv\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'CORE'], rows[0]\nout = [rows[0]]\nfor i, row in enumerate(rows[1:]):\n    frame, t, core = row\n    new_t = float(t) + 1e-6 * i\n    out.append([frame, repr(new_t), core])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('drifted time for %d rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "truncated to 50 rows with one inf\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: mass_weighted_rmsd.csv: row count 50 != reference 98 (one row per trajectory frame is required, with no extra or missing frames)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: row count 50 != reference 98 (one row per trajectory frame is required, with no extra or missing frames)",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "row counts differ across the four trajectory tables",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "6e1dc4e0b428b2a8f7e61099778f9000c8b85ab2fac6bdbaa927dc832194a03f",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "6e1dc4e0b428b2a8f7e61099778f9000c8b85ab2fac6bdbaa927dc832194a03f",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "mass_weighted_rmsd",
+        "time_column_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "truncated-frames-lazy",
+      "rationale": "Truncates mass_weighted_rmsd.csv to the first 50 data frames (dropping frames 50\u201397) and inserts 'inf' in the last retained row to mimic a partially failed run. 'trajectory_tables_structure' fails the one-row-per-frame rule (50 rows vs 98) and rejects the nonfinite value; 'mass_weighted_rmsd' fails because frames are missing (membership plus multiplicity) and the nonfinite value is not a comparable RMSD; 'time_column_consistency' fails because the row counts differ across the four tables, as the executed report shows.",
+      "script": "path = 'mass_weighted_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nheader, data = lines[0], lines[1:]\nassert header == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', header\nassert len(data) == 98, len(data)\nrows = data[:50]\nparts = rows[-1].split(',')\nparts[2] = 'inf'\nrows[-1] = ','.join(parts)\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join([header] + rows) + '\\n')\nprint('truncated to %d rows with one inf' % len(rows))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "offset Backbone by 5e-6 for 98 rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: row 0 column Backbone: submission 5.58343438179159e-06 vs reference 5.834343817915898e-07 (diff 5e-06 exceeds limit 3e-06); backbone_rmsd.csv: row 1 column Backbone: submission 0.46366421745665054 vs reference 0.46365921745665056 (diff 5e-06 exceeds limit 3e-06); backbone_rmsd.csv: row 2 column Backbone: submission 0.6419389897158649 vs reference 0.6419339897158649 (diff 5e-06 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: row 0 column Backbone: submission 5.58343438179159e-06 vs reference 5.834343817915898e-07 (diff 5e-06 exceeds limit 3e-06); backbone_rmsd.csv: row 1 column Backbone: submission 0.46366421745665054 vs reference 0.46365921745665056 (diff 5e-06 exceeds limit 3e-06); backbone_rmsd.csv: row 2 column Backbone: submission 0.6419389897158649 vs reference 0.6419339897158649 (diff 5e-06 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "6bb21cdef2336515235e90b701a8edfab3a58212c08e12be36b137b3bb48a345",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "6bb21cdef2336515235e90b701a8edfab3a58212c08e12be36b137b3bb48a345",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "backbone-tolerance-boundary",
+      "rationale": "Adds 5e-6 \u00c5 to the Backbone column only (all other columns untouched), exceeding the 3e-6 \u00c5 absolute tolerance on every scientific row while remaining far above the frame-0 self-comparison floor, so the mutation is unambiguously a value failure rather than a self-comparison edge case. The shifted values are rejected by 'backbone_domain_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    assert len(row) == 6\n    out.append([row[0], row[1], repr(float(row[2]) + 5e-6)] + row[3:])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('offset Backbone by 5e-6 for %d rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "open-vs-closed shifted from 6.823686867261616 to 7.060160604606848\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "submitted value 7.060160604606848 vs reference 6.823686867261616 (diff 0.236 exceeds limit 3e-06)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "77562e99196fce069378cc603d3567ad47978483a035913e564c3ab8e97f969d",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "77562e99196fce069378cc603d3567ad47978483a035913e564c3ab8e97f969d",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "open_closed_rmsd_value"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "open-closed-value-wrong",
+      "rationale": "Replaces the single open-vs-closed backbone RMSD value with reference*1.02+0.1 (a ~0.24 A error), violating computation 5 (centroid-subtracted, rotationally superimposed unweighted backbone RMSD between frame 0 and the open reference) while keeping the one-row structure exactly valid.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nvalue = float(lines[1])\nnew_value = value * 1.02 + 0.1\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\n%s\\n' % repr(new_value))\nprint('open-vs-closed shifted from %r to %r' % (value, new_value))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "replaced open-vs-closed value with nan\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "submission value: nonfinite value 'nan'",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "no parseable single RMSD value to compare (missing or malformed file)",
+            "passed": false
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "cd0ee6a8dbecb4046d5599557c2cbfe9d2043936e6e0565e6faf222718d22b51",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "cd0ee6a8dbecb4046d5599557c2cbfe9d2043936e6e0565e6faf222718d22b51",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "open_closed_rmsd_structure"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "open-closed-value-nan",
+      "rationale": "Replaces the single value with 'nan', a scientifically plausible failure (a failed or empty fit reported as NaN). The structural check requires one finite well-formed value, and the acceptance rule requires nonfinite values to fail even where tolerance would apply; the original numeric value is no longer comparable so the value check is also lost.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\nnan\\n')\nprint('replaced open-vs-closed value with nan')"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "duplicated last row; 99 data rows\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: backbone_rmsd.csv: row count 99 != reference 98 (one row per trajectory frame is required, with no extra or missing frames)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv: row count 99 != reference 98 (one row per trajectory frame is required, with no extra or missing frames)",
+            "passed": false
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "row counts differ across the four trajectory tables",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "7e10aa4547d582c80b32296eb5d40d7b1d569d31467f9e0c6023fb970334386e",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "7e10aa4547d582c80b32296eb5d40d7b1d569d31467f9e0c6023fb970334386e",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "duplicate-frame-row",
+      "rationale": "Duplicates the last data row of backbone_rmsd.csv (frame 97), simulating an off-by-one frame loop that emits an extra row. This preserves parseability but violates the membership-plus-multiplicity-per-frame rule without extra rows: 'trajectory_tables_structure' fails (99 data rows vs 98 frames) and 'backbone_domain_rmsd' fails the one-entry-per-frame value set, as the executed report shows.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nassert len(rows) == 99, len(rows)\nout = rows + [rows[-1]]\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('duplicated last row; %d data rows' % (len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "ragged row at position 40\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: core_ca_rmsd.csv: submission unreadable: ragged row at line 41",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: submission unreadable: ragged row at line 41",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "core_ca_rmsd.csv unreadable",
+            "passed": false
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "71ab053d0d4b4f26d47bcfdb9bc38590c622882862cc66a30e968040d9a0b4da",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "71ab053d0d4b4f26d47bcfdb9bc38590c622882862cc66a30e968040d9a0b4da",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "core_ca_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "Frame,Time (ns),CORE"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "core-ca-ragged-row",
+      "rationale": "The mutation deletes the final field of one data row in core_ca_rmsd.csv, creating a ragged row that violates the public structural rule that each per-frame table has one well-formed finite value per specified column per frame. 'trajectory_tables_structure' rejects the malformed file, and 'core_ca_rmsd' fails because the affected frame's CORE alpha-carbon RMSD (computation 2) is no longer a well-formed comparable value. The original annotation listed 'backbone_domain_rmsd', which covers backbone_rmsd.csv \u2014 a file this mutation never touches \u2014 and was a copy-paste error in probe authoring; backbone_rmsd.csv remains valid, so its scientific check passes, exactly as the executed report showed. No scientific coverage is lost: the mutation is still detected by both the structural rule and the affected file's scientific check.",
+      "script": "import csv\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'CORE'], rows[0]\nassert len(rows) == 99 and all(len(r) == 3 for r in rows[1:])\nrow_idx = 40\norig = rows[row_idx]\nrows[row_idx] = rows[row_idx][:2]\nassert len(rows[row_idx]) == 2 and orig != rows[row_idx]\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(rows)\nprint('ragged row at position %d' % row_idx)"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "set inf in row 57\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: resid_weighted_rmsd.csv: resid_weighted_rmsd.csv row 57 C-alphas: nonfinite value 'inf'",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv: resid_weighted_rmsd.csv row 57 C-alphas: nonfinite value 'inf'",
+            "passed": false
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "4156b2df6fb9f1695ed02b5f82f16ac883eb670139e5de0438e62ad4b3595fa8"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "4156b2df6fb9f1695ed02b5f82f16ac883eb670139e5de0438e62ad4b3595fa8"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "resid_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "nonfinite-value-resid",
+      "rationale": "The mutation replaces the C-alphas RMSD value in resid_weighted_rmsd.csv row 57 with 'inf'. The public rule rejects nonfinite values in any required column regardless of tolerance, so 'trajectory_tables_structure' fails, and 'resid_weighted_rmsd' fails because the residue-number-weighted alpha-carbon RMSD (computation 4) for that frame is nonfinite rather than equal to the reference within tolerance. The original annotation listed 'backbone_domain_rmsd', copied from a backbone-file probe; backbone_rmsd.csv is unmodified by this mutation and its check passes, as the executed report confirmed. Both the structural nonfinite-value rule and the affected file's scientific value check retain wrong-result coverage of this mutation.",
+      "script": "path = 'resid_weighted_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nheader, data = lines[0], lines[1:]\nassert header == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', header\nassert len(data) == 98, len(data)\nidx = 57\nparts = data[idx].split(',')\nassert len(parts) == 6 and parts[2] != 'inf'\nparts[2] = 'inf'\ndata[idx] = ','.join(parts)\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join([header] + data) + '\\n')\nprint('set inf in row %d' % idx)"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "replaced core-ca values with backbone CORE for 98 frames (97 differ)\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: core_ca_rmsd.csv: row 1 column CORE: submission 0.4550181433046967 vs reference 0.40756080970089986 (diff 0.0475 exceeds limit 3e-06); core_ca_rmsd.csv: row 2 column CORE: submission 0.5754417509819941 vs reference 0.5175907996282854 (diff 0.0579 exceeds limit 3e-06); core_ca_rmsd.csv: row 3 column CORE: submission 0.6739184149195765 vs reference 0.6267783315993056 (diff 0.0471 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv: row 1 column CORE: submission 0.4550181433046967 vs reference 0.40756080970089986 (diff 0.0475 exceeds limit 3e-06); core_ca_rmsd.csv: row 2 column CORE: submission 0.5754417509819941 vs reference 0.5175907996282854 (diff 0.0579 exceeds limit 3e-06); core_ca_rmsd.csv: row 3 column CORE: submission 0.6739184149195765 vs reference 0.6267783315993056 (diff 0.0471 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "8085ac65e4d8e3586412ac908a95176e3beea527ad7236fb3ba7c78edefc3e38",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "8085ac65e4d8e3586412ac908a95176e3beea527ad7236fb3ba7c78edefc3e38",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "core_ca_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.40756080970089986"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "core-vs-backbone-cross-association",
+      "rationale": "Replaces core_ca_rmsd.csv's CORE column with the corresponding backbone_rmsd.csv CORE values: a different scientific quantity (core alpha-carbon RMSD after fitting that set alone onto frame 0 vs domain-backbone RMSD after a global backbone fit; they differ by ~0.02\u20131.55 \u00c5 across the trajectory). Row count, Frame ids and Time (ns) are preserved, so this tests that the per-file scientific interpretation is checked rather than just domain plausibility. The substituted values are rejected by 'core_ca_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "import csv\nbb = {}\nwith open('backbone_rmsd.csv', newline='') as fh:\n    rows = list(csv.reader(fh))\nheader = rows[0]\nassert header[0].strip() == 'Frame' and header[3].strip() == 'CORE', header\nfor row in rows[1:]:\n    frame = int(float(row[0]))\n    bb[frame] = float(row[3])\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows2 = list(csv.reader(fh))\nassert rows2[0] == ['Frame', 'Time (ns)', 'CORE'], rows2[0]\nout = [rows2[0]]\nswapped = 0\nfor row in rows2[1:]:\n    frame = int(float(row[0]))\n    if abs(bb[frame] - float(row[2])) > 1e-6:\n        swapped += 1\n    out.append([row[0], row[1], repr(bb[frame])])\nassert swapped > 0, 'replacement must differ from reference values'\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('replaced core-ca values with backbone CORE for %d frames (%d differ)' % (len(out) - 1, swapped))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "replaced mass-weighted RMSDs with resid-weighted RMSDs; 97/98 frames differ\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "missing/unreadable or malformed files: mass_weighted_rmsd.csv: row 1 column C-alphas: submission 0.4322756870631961 vs reference 0.4234302962314481 (diff 0.00885 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 1 column CORE: submission 0.45986633006728567 vs reference 0.46215147409844226 (diff 0.00229 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 1 column LID: submission 0.47653188389891205 vs reference 0.4968180560689264 (diff 0.0203 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv: row 1 column C-alphas: submission 0.4322756870631961 vs reference 0.4234302962314481 (diff 0.00885 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 1 column CORE: submission 0.45986633006728567 vs reference 0.46215147409844226 (diff 0.00229 exceeds limit 3e-06); mass_weighted_rmsd.csv: row 1 column LID: submission 0.47653188389891205 vs reference 0.4968180560689264 (diff 0.0203 exceeds limit 3e-06)",
+            "passed": false
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": false
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": " resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        },
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.4234302962314481,0.46215147409844226,0.4968180560689264,0.4867389984803548"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "resid-vs-mass-backbone-confusion",
+      "rationale": "Overwrites mass_weighted_rmsd.csv's RMSD columns with the same-frame resid_weighted_rmsd.csv values, simulating the common implementation error of using the wrong weights (resid instead of atomic mass). The two quantities differ by up to ~3.5 \u00c5 late in the trajectory. Row count, Frame ids, times and headers are preserved, so the substituted values are rejected by 'mass_weighted_rmsd', and the aggregate 'trajectory_tables_structure' check fails for the same aggregate value-mismatch reporting, as the executed report shows.",
+      "script": "resid = {}\nwith open('resid_weighted_rmsd.csv') as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', lines[0]\nfor line in lines[1:]:\n    parts = line.split(',')\n    resid[int(float(parts[0]))] = parts\npath = 'mass_weighted_rmsd.csv'\nwith open(path) as fh:\n    mass_lines = fh.read().splitlines()\nassert mass_lines[0] == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', mass_lines[0]\nmass = []\nfor line in mass_lines[1:]:\n    parts = line.split(',')\n    mass.append((int(float(parts[0])), parts))\nassert len(mass) == len(resid) == 98\nout = [mass_lines[0]]\nchanged = 0\nfor frame, m_parts in mass:\n    r_parts = resid[frame]\n    assert len(m_parts) == len(r_parts) == 6\n    if any(abs(float(a) - float(b)) > 1e-6 for a, b in zip(m_parts[2:], r_parts[2:])):\n        changed += 1\n    out.append(','.join([m_parts[0], m_parts[1]] + r_parts[2:]))\nassert changed > 0, 'resid values must differ from mass values'\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join(out) + '\\n')\nprint('replaced mass-weighted RMSDs with resid-weighted RMSDs; %d/%d frames differ' % (changed, len(mass)))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "normalized backbone_rmsd.csv (98 rows)\nnormalized core_ca_rmsd.csv (98 rows)\nnormalized mass_weighted_rmsd.csv (98 rows)\nnormalized resid_weighted_rmsd.csv (98 rows)\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "520142ad09325993a5a4997e824397215ffe7baacc631a8a49feced1fbdbd629",
+        "core_ca_rmsd.csv": "e55c9febb345cf2debe75d5eca151f8a419b960f3a852c9ebee9b2f99306ff7c",
+        "mass_weighted_rmsd.csv": "e80ed05769eb9197ba8be19ee0a892be96f05d14a18ab22bb36bbb3bc9c08409",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "9082caac310995d2f1ce81dace5c82f6e56459fb34b1465c88b42e0484b03f66"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "520142ad09325993a5a4997e824397215ffe7baacc631a8a49feced1fbdbd629",
+        "core_ca_rmsd.csv": "e55c9febb345cf2debe75d5eca151f8a419b960f3a852c9ebee9b2f99306ff7c",
+        "mass_weighted_rmsd.csv": "e80ed05769eb9197ba8be19ee0a892be96f05d14a18ab22bb36bbb3bc9c08409",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "9082caac310995d2f1ce81dace5c82f6e56459fb34b1465c88b42e0484b03f66"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd",
+        "time_column_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "representation-full-precision-gen",
+      "rationale": "Client-identical representation alternative: normalizes every per-frame table to a uniform full-precision scientific-notation literal (%.17e) and rewrites Frame as an integer literal after verifying that every value parses back to the exact reference value. All value contents, row count, ordering, headers and per-frame time consistency are preserved; the spec permits fixed, scientific or shortest-round-trip notation and either '7' or '7.0' for the Frame column, so all checks should still pass.",
+      "script": "import csv, math\nfiles = {\n    'backbone_rmsd.csv': ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'],\n    'core_ca_rmsd.csv': ['Frame', 'Time (ns)', 'CORE'],\n    'mass_weighted_rmsd.csv': ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'],\n    'resid_weighted_rmsd.csv': ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'],\n}\nfor path, header in files.items():\n    with open(path, newline='') as fh:\n        rows = list(csv.reader(fh))\n    assert rows[0] == header, (path, rows[0])\n    out = [rows[0]]\n    for row in rows[1:]:\n        assert len(row) == len(header)\n        frame = int(float(row[0]))\n        new = [str(frame), '%.17e' % float(row[1])]\n        for v in row[2:]:\n            x = float(v)\n            assert math.isfinite(x) and x >= 0.0\n            new.append('%.17e' % x)\n        out.append(new)\n    with open(path, 'w', newline='') as fh:\n        csv.writer(fh, lineterminator='\\n').writerows(out)\n    with open(path, newline='') as fh:\n        new_rows = list(csv.reader(fh))\n    for a, b in zip(rows[1:], new_rows[1:]):\n        assert float(a[0]) == float(b[0])\n        for x, y in zip(a[1:], b[1:]):\n            assert float(x) == float(y), (path, x, y)\n    print('normalized %s (%d rows)' % (path, len(out) - 1))"
+    }
+  },
+  {
+    "candidate_sha256": "ad225210ab9281d3f23fd8e03934201fab218eaf3dce0ace8da40e12a6f65d7d",
+    "execution": {
+      "grader": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": ""
+      },
+      "probe": {
+        "exit_code": 0,
+        "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+        "stderr": "",
+        "stdout": "rewrote value as fixed notation: 6.82368686726161577\n"
+      },
+      "probe_valid_execution": true,
+      "report": {
+        "checks": [
+          {
+            "id": "trajectory_tables_structure",
+            "message": "all four trajectory tables present with correct headers, row counts and frame indexing",
+            "passed": true
+          },
+          {
+            "id": "backbone_domain_rmsd",
+            "message": "backbone_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "core_ca_rmsd",
+            "message": "core_ca_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "mass_weighted_rmsd",
+            "message": "mass_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "resid_weighted_rmsd",
+            "message": "resid_weighted_rmsd.csv matches the reference within the stated tolerances",
+            "passed": true
+          },
+          {
+            "id": "time_column_consistency",
+            "message": "identical Time (ns) value per frame across all four trajectory tables",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_structure",
+            "message": "open_closed_backbone_rmsd.csv present with the required single-row schema",
+            "passed": true
+          },
+          {
+            "id": "open_closed_rmsd_value",
+            "message": "static open-vs-closed RMSD within tolerance",
+            "passed": true
+          }
+        ],
+        "passed": true
+      },
+      "status": "executed",
+      "submission_after_probe": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "4c70db1b029e5d95709dc16159b59672cf48661ddd1733ab3cec2b620d512280",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_before": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      },
+      "submission_sha256": {
+        "backbone_rmsd.csv": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d",
+        "core_ca_rmsd.csv": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+        "mass_weighted_rmsd.csv": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+        "open_closed_backbone_rmsd.csv": "4c70db1b029e5d95709dc16159b59672cf48661ddd1733ab3cec2b620d512280",
+        "resid_weighted_rmsd.csv": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    },
+    "kind": "probe",
+    "omitted": null,
+    "passed_control": true,
+    "probe": {
+      "check_ids": [
+        "open_closed_rmsd_structure",
+        "open_closed_rmsd_value"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "open-closed-representation-fixed",
+      "rationale": "Rewrites the single-value file from the shortest-round-trip form 6.823686867261616 to a fixed-notation literal at 17 decimal digits, which round-trips to the identical float; the spec explicitly permits fixed notation at full precision, so both the structural and value checks should still pass.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nvalue = float(lines[1])\ns = '%.17f' % value\nassert float(s) == value, (s, value)\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\n%s\\n' % s)\nprint('rewrote value as fixed notation: %s' % s)"
+    }
+  }
+]

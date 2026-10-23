@@ -83,9 +83,12 @@ def seal_reference(raw, view, seed):
     if result["status"] != "reference_executed_requires_review" or not result["cleanup_verified"]:
         raise ValueError("Reference acceptance or cleanup evidence missing")
     trial = raw / "setup/trials" / str(result["last_passing_test"]["test"])
+    frozen = result.get("effective_frozen_directory", "setup/frozen")
+    if frozen not in {"setup/frozen", "setup/frozen-runtime-repair"}:
+        raise ValueError("Unrecognized effective reference inputs")
     view.mkdir()
     for source, destination in [
-        (raw / "setup/frozen", view / "inputs"),
+        (raw / frozen, view / "inputs"),
         (trial / "candidate", view / "candidate"),
         (trial, view / "trial"),
     ]:
@@ -366,13 +369,31 @@ class Pipeline:
             base = dict(preparation_directory=self.relative(prep))
 
             async def setup():
-                await remote(
+                from run_preparation import repair_runtime_exports
+
+                async def repair_exports(feedback, *, deadline):
+                    return await repair_runtime_exports(
+                        original=prep,
+                        feedback=feedback,
+                        endpoint=self.endpoint,
+                        credential=self.credential,
+                        deadline=deadline,
+                    )
+
+                result = await remote(
                     self.config_for("setup", "run_reference_setup.py", **base),
                     root=setup_raw,
                     deadline=self.deadline,
                     endpoint=self.endpoint,
                     credential=self.credential,
+                    repair_exports=repair_exports,
                 )
+                effective = result.get("effective_preparation_directory")
+                if effective is not None:
+                    effective = Path(effective)
+                    if effective.resolve() != (prep / "runtime-repair").resolve():
+                        raise ValueError("Unexpected effective preparation directory")
+                    base["preparation_directory"] = self.relative(effective)
                 require_worker(setup_raw / "outcome.json", "tested", stage="setup")
                 seal_reference(setup_raw, reference, self.seed)
 

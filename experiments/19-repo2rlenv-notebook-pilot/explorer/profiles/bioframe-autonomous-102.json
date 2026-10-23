@@ -1,0 +1,662 @@
+{
+  "subtitle": "Bioframe \u00b7 regulatory genomics and motif assignment",
+  "footer": "Pinned source and input notices are retained. Recorded notebook, task and attempt; no live model calls.",
+  "seed": "transfer/bioframe/seed.json",
+  "notebook": "transfer/bioframe/source.ipynb",
+  "converted": "autonomous-runs/102/explorer-evidence/intake/baseline.py",
+  "notebook_title": "Bioframe \u00b7 Assign motifs to peaks",
+  "notebook_description": "The pinned tool-repository notebook assigns predicted CTCF motifs to observed ChIP-seq peaks, subtracts blacklist intervals and counts motifs per input peak.",
+  "task_title": "Assign CTCF motifs to ChIP-seq peaks and count overlaps",
+  "instruction": "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/instruction.md",
+  "task_manifest": "autonomous-runs/102/explorer-evidence/materialization/manifest.json",
+  "task_config": "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/task.toml",
+  "oracle": "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/solution/oracle.py",
+  "grader": "autonomous-runs/102/explorer-evidence/grading/grade.py",
+  "review_description": "Both selected scientific results are retained: blacklist-filtered peaks with their strongest overlapping motif, and motif counts per input peak. Twenty final controls behaved as expected; native oracle/no-op rewards were 1/0 and the blind GLM solver scored 1. No operator edited the scientific task. The upstream standard quality-loop label remains unverified. This development example does not establish broad factory reliability, universal software portability or biological validity.",
+  "review_files": [
+    "autonomous-runs/102/explorer-evidence/grading/review-repair.json",
+    "autonomous-runs/102/explorer-evidence/grading/final-controls.json",
+    "autonomous-runs/102/explorer-evidence/native/result.json",
+    "autonomous-runs/102/independent-acceptance.json",
+    "autonomous-runs/102/archive-verification.json",
+    "autonomous-runs/102/hub-download-verification.json",
+    "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/environment/LICENSE.source",
+    "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/environment/SOURCE-LICENSES.json"
+  ],
+  "stages": [
+    [
+      "convert",
+      "01 \u00b7 Convert notebook",
+      "Programmatic",
+      "run_autonomous.py calls convert_seed.py with the pinned notebook JSON and an intake directory. The bootstrap supplies the locked conversion interpreter. Markdown becomes comments; saved outputs are not fresh execution evidence.",
+      "convert_seed.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "transfer/bioframe/source.ipynb",
+              "Actual original notebook JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/intake/baseline.py",
+              "Converted Python script"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/intake/conversion.json",
+              "Conversion receipt"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "prepare",
+      "02 \u00b7 Select and save terminal results",
+      "GLM-5.3 \u00b7 native high requested",
+      "Select terminal motif-assignment and per-peak-count results and append their exports. Setup owns dependencies and input staging; the scientific source remains unchanged.",
+      "run_preparation.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/preparation/prepare/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/preparation/prepare/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/preparation/plan.json",
+              "Submitted export plan"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/preparation/exports.py",
+              "Appended export code"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/preparation/reference.py",
+              "Original script plus exports"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "worker",
+      "03 \u00b7 Prepare and test reference",
+      "GLM-5.3 \u00b7 native high requested",
+      "Install the locked environment, stage the original peak, motif and blacklist inputs and test the prepared source offline. The source diff and execution record are below.",
+      "run_reference_setup.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/setup-raw/worker/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/setup-raw/worker/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/setup-raw/outcome.json",
+              "Worker setup outcome"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/candidate/pyproject.toml",
+              "Python dependencies"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/candidate/inputs.json",
+              "Staged input declarations"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/candidate/analysis.py",
+              "Prepared analysis script"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/source.diff",
+              "Source change record"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/inputs-before.json",
+              "Actual input observations"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/result.json",
+              "Offline execution result"
+            ]
+          ]
+        ],
+        [
+          "Output artifacts",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/outputs/motifs_per_peak.csv",
+              "Actual output \u00b7 motifs_per_peak.csv"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+              "Actual output \u00b7 peaks_with_strongest_motif_blacklist_filtered.csv"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "replay",
+      "04 \u00b7 Replay reference",
+      "Programmatic",
+      "Execute the fixed reference again offline and record repeatability observations. These observations do not replace scientific comparison.",
+      "run_reference_setup.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/reference.py",
+              "Executed reference script"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/reference/trial/environment.txt",
+              "Installed environment"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/replay/result.json",
+              "Replay observations"
+            ]
+          ]
+        ],
+        [
+          "Output artifacts",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/replay/replay/trials/1/outputs/motifs_per_peak.csv",
+              "Actual output \u00b7 motifs_per_peak.csv"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/replay/replay/trials/1/outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+              "Actual output \u00b7 peaks_with_strongest_motif_blacklist_filtered.csv"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "specify",
+      "05 \u00b7 Specify the scientific task",
+      "GLM-5.3 \u00b7 native high requested",
+      "Read the source, executed evidence and read-only pinned package sources to propose the scientific question, supplied inputs and output schemas.",
+      "run_specification.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/specification/specify/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/specification/specify/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/specification/specification.json",
+              "Typed worker proposal"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/specification/task-brief.md",
+              "Proposed question"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/specification/validation-handoff.md",
+              "Validation handoff"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "materialize",
+      "06 \u00b7 Construct reference, inputs and oracle",
+      "GLM-5.3 \u00b7 native high requested",
+      "Construct the task inputs, question and oracle for the two selected source results. Record input and oracle identities before validation.",
+      "task_materialization.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/materialization-raw/materialize/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/materialization-raw/materialize/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/materialization-raw/materialization-candidate.json",
+              "Complete construction candidate"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/materialization/manifest.json",
+              "Executed input/reference/oracle inventories"
+            ]
+          ]
+        ],
+        [
+          "Output artifacts",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/materialization/reference/motifs_per_peak.csv",
+              "Actual output \u00b7 motifs_per_peak.csv"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/materialization/reference/peaks_with_strongest_motif_blacklist_filtered.csv",
+              "Actual output \u00b7 peaks_with_strongest_motif_blacklist_filtered.csv"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "independent",
+      "07 \u00b7 Independent implementation",
+      "GLM-5.3 \u00b7 native high requested",
+      "A separate worker receives the public question, input paths and environment; reference answers and the oracle are inaccessible.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/independent/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/independent/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/independent-solution.json",
+              "Independent implementation"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/grading/independent-result.json",
+              "Blind execution observations"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "grader",
+      "08 \u00b7 Create deterministic comparison",
+      "GLM-5.3 \u00b7 native high requested",
+      "Author and execute an artifact grader against the reference, recomputed oracle and blind independent implementation.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/grader/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/grader/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/candidate.json",
+              "Initial grader candidate"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "probes",
+      "09 \u00b7 Challenge the grader",
+      "GLM-5.3 \u00b7 native high requested",
+      "Author and execute meaningful wrong results and valid representation alternatives against the declared scientific checks.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/probes/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/probes/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/probes.json",
+              "Submitted probe suite"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "initial-review",
+      "10 \u00b7 Review the initial candidate",
+      "GLM-5.3 \u00b7 native high requested",
+      "Review the scientific coverage, public rules, executable controls and evidence before the repair session.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review/input.json",
+              "Actual review input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review.json",
+              "Initial review and repair feedback"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "repair",
+      "11 \u00b7 Repair the candidate",
+      "GLM-5.3 \u00b7 native high requested",
+      "Use the initial review and executed controls to repair the generated grader, disclosed rules or annotations within the allowed session. Preserve the source methodology, required endpoints and immutable probe programs.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/repair/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/repair/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/repair.json",
+              "Resolved worker repair"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/grading/final-candidate.json",
+              "Final grader candidate"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/grading/repaired-probes.json",
+              "Effective probes"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "review-repair",
+      "12 \u00b7 Review and rerun controls",
+      "GLM-5.3 \u00b7 native high requested",
+      "Run fresh controls and source-coverage review on the final candidate. Twenty effective final controls passed; earlier executions are not additional final cases.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review-repair/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review-repair/input.json",
+              "Actual worker input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/grading/final-controls.json",
+              "Final executed controls"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/grading/review-repair.json",
+              "Final source and consistency review"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/grading/result.json",
+              "Scientific validation summary"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "native",
+      "13 \u00b7 Native Harbor controls and solver",
+      "Harbor + GLM-5.3",
+      "Run native oracle/no-op controls and a blind GLM solver attempt in offline CPU task sandboxes. The Attempt tab shows the recorded input, commands and observations.",
+      "run_scientific_native.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/native/solver-input.md",
+              "Actual first solver message, extracted from the recorded trajectory"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/instruction.md",
+              "Published solver question"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/native/tasks/autonomous-panel-102/task.toml",
+              "Harbor configuration"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/native/harness-summary.json",
+              "Recorded harness settings (connection details excluded)"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/native/result.json",
+              "Native rewards and cleanup summary"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "release",
+      "14 \u00b7 Publish and download-check",
+      "Programmatic",
+      "Publish the accepted bundle to the approved public destination, then force-download its immutable release commit and check file hashes, modes and task identity. No new model call.",
+      "publish_scientific_release.py",
+      [
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/102/explorer-evidence/release/manifest.json",
+              "Accepted release manifest"
+            ],
+            [
+              "autonomous-runs/102/explorer-evidence/release/release-files.json",
+              "Immutable release file inventory"
+            ]
+          ]
+        ],
+        [
+          "Programs",
+          [
+            [
+              "repo:experiments/19-repo2rlenv-notebook-pilot/stage_scientific_release.py",
+              "Release staging and scientific gates"
+            ],
+            [
+              "repo:experiments/19-repo2rlenv-notebook-pilot/publish_scientific_release.py",
+              "Owned public destination and serial commit client"
+            ],
+            [
+              "repo:experiments/19-repo2rlenv-notebook-pilot/verify_hub_download.py",
+              "Forced immutable download verifier"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/102/publication.json",
+              "Publication receipt"
+            ],
+            [
+              "autonomous-runs/102/hub-download-verification.json",
+              "Forced immutable download verification"
+            ]
+          ]
+        ]
+      ]
+    ]
+  ],
+  "trajectory_glob": "autonomous-runs/102/explorer-evidence/native/terminus-2/autonomous-panel-102-native-terminus-2/autonomous-panel-102__zvNP57z/agent/trajectory.json",
+  "native_summary": "autonomous-runs/102/explorer-evidence/native/result.json",
+  "grading_controls": "autonomous-runs/102/explorer-evidence/grading/final-controls.json",
+  "release": {
+    "repository": "gonzalobenegas/biotasks-notebook-pilot-issue-19-bioframe",
+    "publication": "autonomous-runs/102/publication.json"
+  },
+  "runtime_revision": "feda2e44cd920e7bb1d65063172200f1c21d594a",
+  "program_revisions": {
+    "release": "bdf33364"
+  },
+  "trial_result": "autonomous-runs/102/independent-acceptance.json",
+  "trial_result_label": "Independent verification of original native trials"
+}

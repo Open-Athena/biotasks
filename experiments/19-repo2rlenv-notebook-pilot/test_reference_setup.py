@@ -119,6 +119,140 @@ def session(tmp_path, remote=None):
     )
 
 
+@pytest.mark.parametrize("trailing_newline", [False, True])
+@pytest.mark.parametrize("phase", ["source", "export", "resource", "missing_trace"])
+def test_runtime_export_feedback_requires_definite_append_phase_evidence(
+    tmp_path, phase, trailing_newline
+):
+    from reference_protocol import materialize
+    from reference_setup import runtime_export_feedback
+
+    analysis = "result = 1" + ("\n" if trailing_newline else "")
+    exports = "def save(value):\n    return value.missing_attribute\nsave(result)\n"
+    current = prepared()
+    if phase == "source":
+        analysis = "result = object().missing_attribute" + ("\n" if trailing_newline else "")
+    plan = current.plan.model_copy(update={"export_code": exports})
+    current = replace(current, baseline=analysis, exports=exports, plan=plan)
+    script, _ = materialize(analysis, plan)
+    path = tmp_path / "reference.py"
+    path.write_text(script)
+    execution = subprocess.run([sys.executable, str(path)], capture_output=True, text=True)
+    log = execution.stderr.replace(str(path), "/work/reference.py")
+    record = {
+        "status": "reference_failed",
+        "candidate_sha256": {"analysis.py": hashlib.sha256(analysis.encode()).hexdigest()},
+        "inputs_after": {"staged_inputs_verified": True},
+        "execution": {"exit_code": execution.returncode, "log": log},
+    }
+    if phase == "resource":
+        record["execution"]["exit_code"] = 137
+    if phase == "missing_trace":
+        record["execution"]["log"] = "No execution traceback was received."
+    feedback = runtime_export_feedback(current, analysis, script, record)
+    if phase != "export":
+        assert feedback is None
+        return
+    assert feedback["exception_type"] == "AttributeError"
+    assert feedback["recorded_module_line"] >= feedback["export_start_line"]
+    assert feedback["export_code_sha256"] == hashlib.sha256(exports.encode()).hexdigest()
+    record["inputs_after"]["staged_inputs_verified"] = False
+    assert runtime_export_feedback(current, analysis, script, record) is None
+    record["inputs_after"]["staged_inputs_verified"] = True
+    record["candidate_sha256"]["analysis.py"] = "0" * 64
+    with pytest.raises(ValueError, match="captured analysis"):
+        runtime_export_feedback(current, analysis, script, record)
+
+
+@pytest.mark.parametrize("mode", ["repair", "spent", "last_test", "source", "resource"])
+def test_runtime_repair_preserves_failed_trial_and_requires_remaining_test(tmp_path, mode):
+    from reference_protocol import materialize
+    from repo2rlenv.execution.lifecycle import save_record
+
+    original = prepared()
+    original = replace(
+        original,
+        context={
+            "baseline_script": original.baseline,
+            "source": {"source_sha256": "fixture"},
+            "conversion": {
+                "source_sha256": "fixture",
+                "script_sha256": hashlib.sha256(original.baseline.encode()).hexdigest(),
+            },
+        },
+    )
+    exports = "raise TypeError('Synthetic export failure')\n"
+    original = replace(
+        original, exports=exports, plan=original.plan.model_copy(update={"export_code": exports})
+    )
+    script = materialize(original.baseline, original.plan)[0]
+    reference = tmp_path / "reference.py"
+    reference.write_text(script)
+    executed = subprocess.run([sys.executable, str(reference)], capture_output=True, text=True)
+    log = executed.stderr.replace(str(reference), "/work/reference.py")
+    if mode == "source":
+        log = log.replace(f"line {len(original.baseline.splitlines()) + 3}", "line 1")
+
+    class ExportRemote(FakeRemote):
+        async def command(self, argv, seconds, label, *, cwd="/work"):
+            reply = await super().command(argv, seconds, label, cwd=cwd)
+            if label == "reference-1":
+                return {"exit_code": 137 if mode == "resource" else 1, "log": log}
+            return reply
+
+    remote = ExportRemote()
+    calls = []
+
+    async def repair(feedback):
+        assert not remote.blocked  # Offline execution has closed before model feedback.
+        assert s.tests == 1
+        assert json.loads((s.root / "trials/1/result.json").read_text())["execution"]["log"] == log
+        calls.append(feedback)
+        if mode == "spent":
+            return None
+        revised = prepared().plan
+        fixed = tmp_path / "corrected"
+        (fixed / "prepare").mkdir(parents=True)
+        save_record(fixed / "prepare/input.json", original.context)
+        save_record(fixed / "plan.json", revised.model_dump())
+        source, diff = materialize(original.baseline, revised)
+        (fixed / "exports.py").write_text(revised.export_code)
+        (fixed / "reference.py").write_text(source)
+        (fixed / "source.diff").write_text(diff)
+        return fixed
+
+    s = SetupSession(
+        prepared=original,
+        remote=remote,
+        root=tmp_path / "setup",
+        setup_seconds=60,
+        reference_seconds=10,
+        max_tests=1 if mode == "last_test" else 2,
+        repair_exports=repair,
+    )
+
+    async def run():
+        await s.initialize()
+        initial = (s.root / "frozen/exports.py").read_bytes()
+        reply = json.loads(await s.test_reference())
+        assert reply["status"] == "reference_failed"
+        saved = (s.root / "trials/1/result.json").read_bytes()
+        if mode == "repair":
+            assert reply["runtime_export_repair"]["status"] == "exports_corrected_requires_retest"
+            assert s.last_pass is None and s.tests == 1
+            assert (s.root / "frozen/exports.py").read_bytes() == initial
+            assert s.frozen.name == "frozen-runtime-repair"
+            assert json.loads(await s.test_reference())["status"] == "reference_executed"
+            assert s.tests == 2 and s.last_pass["test"] == 2
+            assert "exhausted" in json.loads(await s.test_reference())["error"]
+        else:
+            assert s.frozen.name == "frozen" and s.effective_preparation is None
+        assert (s.root / "trials/1/result.json").read_bytes() == saved
+        assert len(calls) == (1 if mode in {"repair", "spent"} else 0)
+
+    asyncio.run(run())
+
+
 def test_controlled_setup_cannot_reuse_exploratory_inputs(tmp_path):
     work, inputs = tmp_path / "work", tmp_path / "inputs"
     for directory in (work / "cache", work / "venv", work / "environment", inputs):

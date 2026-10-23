@@ -1,0 +1,92 @@
+{
+  "derivation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+    "stdout": "=== DERIVATION PROVENANCE ===\n{\n  \"task\": \"AdK domain-motion RMSD analysis\",\n  \"original_inputs_manifest\": {\n    \"files\": []\n  },\n  \"environment\": {\n    \"MDAnalysis\": \"2.11.0\",\n    \"python\": \"3.13 (environment lock)\"\n  },\n  \"staged_inputs\": {\n    \"adk.psf\": {\n      \"source_package_path\": \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk.psf\",\n      \"source_package\": \"MDAnalysisTests 2.11.0 (identity pinned by the environment lock)\",\n      \"sha256\": \"96cec916c4b5b19a7acb91bd1e672fb9c8b032aee1e7f0868a50655902c9b5b8\",\n      \"bytes\": 931992,\n      \"lineage\": \"byte-for-byte unmodified copy of the pinned MDAnalysisTests data file\"\n    },\n    \"adk.dcd\": {\n      \"source_package_path\": \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk_dims.dcd\",\n      \"source_package\": \"MDAnalysisTests 2.11.0 (identity pinned by the environment lock)\",\n      \"sha256\": \"859a5bd9e7de45a0f2401f7971c5ffc296168e7c23f6f65382bde7c1686c19f1\",\n      \"bytes\": 3931724,\n      \"lineage\": \"byte-for-byte unmodified copy of the pinned MDAnalysisTests data file\"\n    },\n    \"adk_open.crd\": {\n      \"source_package_path\": \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk_open.crd\",\n      \"source_package\": \"MDAnalysisTests 2.11.0 (identity pinned by the environment lock)\",\n      \"sha256\": \"cd7f5e207a374af19b702b0f46aa554b729bca1d7db8cee2e4ff8dea00f78eb9\",\n      \"bytes\": 237319,\n      \"lineage\": \"byte-for-byte unmodified copy of the pinned MDAnalysisTests data file\"\n    }\n  },\n  \"copied_reference_exports\": {\n    \"core_ca_rmsd.csv\": {\n      \"source\": \"/work/reference/core_ca_rmsd.csv\",\n      \"sha256\": \"dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab\",\n      \"lineage\": \"unchanged copy of the recorded append-only reference export\"\n    },\n    \"mass_weighted_rmsd.csv\": {\n      \"source\": \"/work/reference/mass_weighted_rmsd.csv\",\n      \"sha256\": \"20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc\",\n      \"lineage\": \"unchanged copy of the recorded append-only reference export\"\n    },\n    \"resid_weighted_rmsd.csv\": {\n      \"source\": \"/work/reference/resid_weighted_rmsd.csv\",\n      \"sha256\": \"55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6\",\n      \"lineage\": \"unchanged copy of the recorded append-only reference export\"\n    }\n  },\n  \"recovered_endpoints\": {\n    \"backbone_rmsd.csv\": {\n      \"sha256\": \"d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d\",\n      \"source_computation\": \"rms.RMSD(u, u, select='backbone', groupselections=[CORE, LID, NMP], ref_frame=0).run() with u = mda.Universe(PSF, DCD) freshly loaded (inputs/original.py)\",\n      \"required_state\": \"fresh Universe u = mda.Universe(PSF, DCD); trajectory at frame 0; group RMSDs computed after the global backbone fit with center=False, superposition=False against raw (un-recentered) reference group coordinates at ref_frame=0 (MDAnalysis RMSD groupselection semantics)\",\n      \"excluded_from_exports_because\": \"R and df are overwritten by the later AtomGroup analysis in the source; policy permits faithful recomputation of the unchanged call\",\n      \"determinism\": \"verified byte-identical across two fresh recovery runs at construction time\",\n      \"inputs\": [\n        \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk.psf\",\n        \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk_dims.dcd\"\n      ]\n    },\n    \"open_closed_backbone_rmsd.csv\": {\n      \"sha256\": \"219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2\",\n      \"source_computation\": \"rms.rmsd(u.select_atoms('backbone').positions, ref.select_atoms('backbone').positions, center=True, superposition=True) (inputs/original.py)\",\n      \"required_state\": \"fresh Universes u = mda.Universe(PSF, DCD) at frame 0 and ref = mda.Universe(PSF, CRD)\",\n      \"excluded_from_exports_because\": \"computed as an unnamed standalone expression; policy permits faithful rerun at the required state\",\n      \"determinism\": \"verified identical value across two fresh recovery runs at construction time\",\n      \"inputs\": [\n        \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk.psf\",\n        \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk_dims.dcd\",\n        \"/work/venv/lib/python3.13/site-packages/MDAnalysisTests/data/adk_open.crd\"\n      ]\n    }\n  }\n}\ninputs/: ['adk.dcd', 'adk.psf', 'adk_open.crd']\nreference/: ['backbone_rmsd.csv', 'core_ca_rmsd.csv', 'mass_weighted_rmsd.csv', 'open_closed_backbone_rmsd.csv', 'resid_weighted_rmsd.csv']\n"
+  },
+  "inputs": [
+    {
+      "bytes": 3931724,
+      "path": "adk.dcd",
+      "sha256": "859a5bd9e7de45a0f2401f7971c5ffc296168e7c23f6f65382bde7c1686c19f1"
+    },
+    {
+      "bytes": 931992,
+      "path": "adk.psf",
+      "sha256": "96cec916c4b5b19a7acb91bd1e672fb9c8b032aee1e7f0868a50655902c9b5b8"
+    },
+    {
+      "bytes": 237319,
+      "path": "adk_open.crd",
+      "sha256": "cd7f5e207a374af19b702b0f46aa554b729bca1d7db8cee2e4ff8dea00f78eb9"
+    }
+  ],
+  "oracle": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\n",
+    "stdout": ""
+  },
+  "oracle_isolation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "",
+    "stdout": "isolated\n"
+  },
+  "oracle_outputs": [
+    {
+      "bytes": 9522,
+      "path": "backbone_rmsd.csv",
+      "sha256": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d"
+    },
+    {
+      "bytes": 4134,
+      "path": "core_ca_rmsd.csv",
+      "sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+    },
+    {
+      "bytes": 9534,
+      "path": "mass_weighted_rmsd.csv",
+      "sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+    },
+    {
+      "bytes": 41,
+      "path": "open_closed_backbone_rmsd.csv",
+      "sha256": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2"
+    },
+    {
+      "bytes": 9506,
+      "path": "resid_weighted_rmsd.csv",
+      "sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+    }
+  ],
+  "reference": [
+    {
+      "bytes": 9522,
+      "path": "backbone_rmsd.csv",
+      "sha256": "d5fd4c0bda8c51f3edd081039e2675de791530caa8afaa19098c9d008cacc69d"
+    },
+    {
+      "bytes": 4134,
+      "path": "core_ca_rmsd.csv",
+      "sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+    },
+    {
+      "bytes": 9534,
+      "path": "mass_weighted_rmsd.csv",
+      "sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+    },
+    {
+      "bytes": 41,
+      "path": "open_closed_backbone_rmsd.csv",
+      "sha256": "219e9f63e6f744876333d5be5b34fa89e024abddfbfe5049fad36301af2bada2"
+    },
+    {
+      "bytes": 9506,
+      "path": "resid_weighted_rmsd.csv",
+      "sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+    }
+  ],
+  "status": "executed_requires_scientific_validation"
+}

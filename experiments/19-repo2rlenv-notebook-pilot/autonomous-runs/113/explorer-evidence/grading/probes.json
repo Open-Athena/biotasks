@@ -1,0 +1,323 @@
+{
+  "concerns": [
+    "Ambiguity: 'Time (ns)' is defined as whatever per-frame value the trajectory reader assigns (deterministically fixed here since the DCD stores no times), yet it is graded scientifically at 1e-9 absolute tolerance. A submission that reports true reader times is indistinguishable from one that happens to know the convention; beyond representation, the time column cannot be scientifically counterexampled without rerunning a reader, which the offline evidence does not permit.",
+    "The tolerance rule's 3e-6 A absolute floor is generous relative to the frame-0 self-comparison values (~1e-7), so near-zero self-RMSD results could plausibly be perturbed by up to a few e-6 and remain within tolerance; I deliberately probed above the floor to keep value failures unambiguous.",
+    "The acceptance rule does not explain how the reference frame-0 time of ~0.9999999119200186 ns arises (it appears to be dt*(frame+1) rather than dt*frame); the addendum asserts both accepted implementations coincide, which was not independently verifiable from the reference outputs alone."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "Frame,Time (ns),Backbone,CORE,LID,NMP"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "backbone-domain-values-bias",
+      "rationale": "Recomputes every Backbone/CORE/LID/NMP value in backbone_rmsd.csv as value*1.05+0.001 while keeping row count, Frame ids, Time (ns), ordering and format intact. All backbone RMSD columns then violate computation 1 (backbone RMSD of the full backbone set plus domain-group RMSDs after global fitting), but the frame/time/structure checks remain satisfied, isolating the value checks.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    assert len(row) == 6\n    out.append([row[0], row[1]] + [repr(float(v) * 1.05 + 0.001) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d backbone value rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "core_ca_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "97.0,97.99999136816182,1.9511795506563847"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "Frame,Time (ns),CORE"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "core-ca-values-bias",
+      "rationale": "Recomputes the CORE column of core_ca_rmsd.csv as value*1.1-0.005 while preserving row count, Frame ids, Time (ns) and CSV formatting, violating computation 2 (core alpha-carbon RMSD after superposition of that set onto frame 0).",
+      "script": "path = 'core_ca_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'Frame,Time (ns),CORE', lines[0]\nout = [lines[0]]\nfor line in lines[1:]:\n    f, t, c = line.split(',')\n    out.append('%s,%s,%s' % (f, t, repr(float(c) * 1.1 - 0.005)))\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join(out) + '\\n')\nprint('shifted %d core-ca rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.814428038193539,3.4964605558289015,11.355678443834563,10.449026883527377"
+        },
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "mass-weighted-values-bias",
+      "rationale": "Shifts all mass-weighted RMSD columns by 0.12 A with row identities, Time (ns), ordering and format preserved, violating computation 3 (mass-weighted alpha-carbon fit RMSD plus mass-weighted domain backbone RMSDs after global fitting).",
+      "script": "import csv\npath = 'mass_weighted_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    out.append([row[0], row[1]] + [repr(float(v) + 0.12) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d mass-weighted rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "resid_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "resid-weighted-values-bias",
+      "rationale": "Scales all residue-number-weighted RMSD columns by 1.07 while preserving row identities, Time (ns), ordering and format, violating computation 4 (residue-number-weighted alpha-carbon fit RMSD plus resid-weighted domain backbone RMSDs).",
+      "script": "import csv\npath = 'resid_weighted_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    out.append([row[0], row[1]] + [repr(float(v) * 1.07) for v in row[2:]])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('shifted %d resid-weighted rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "time_column_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,2.2323827208734618e-07"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "time-single-file-drift",
+      "rationale": "Adds a 1e-6 ns drift to the Time (ns) column of core_ca_rmsd.csv only, exceeding the 1e-9 absolute time tolerance and breaking the identical-Time-per-frame cross-file consistency while all RMSD values remain correct. This also exercises the time-tolerance boundary per frame.",
+      "script": "import csv\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'CORE'], rows[0]\nout = [rows[0]]\nfor i, row in enumerate(rows[1:]):\n    frame, t, core = row\n    new_t = float(t) + 1e-6 * i\n    out.append([frame, repr(new_t), core])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('drifted time for %d rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "trajectory_tables_structure"
+      ],
+      "evidence": [
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "wrong_solution",
+      "name": "truncated-frames-lazy",
+      "rationale": "Truncates mass_weighted_rmsd.csv to the first 50 data frames (dropping frames 50-97) and inserts 'inf' in the last retained row to mimic a partially failed run. This violates the one-row-per-frame structural rule (missing rows rejected), and the nonfinite value additionally breaks the finite-value rule; the scientific value check on that file also fails because frames are missing.",
+      "script": "path = 'mass_weighted_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nheader, data = lines[0], lines[1:]\nassert header == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', header\nassert len(data) == 98, len(data)\nrows = data[:50]\nparts = rows[-1].split(',')\nparts[2] = 'inf'\nrows[-1] = ','.join(parts)\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join([header] + rows) + '\\n')\nprint('truncated to %d rows with one inf' % len(rows))"
+    },
+    {
+      "check_ids": [
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.46365921745665056,0.4550181433046967,0.4871914516599885,0.4745572261841976"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "backbone-tolerance-boundary",
+      "rationale": "Adds 5e-6 A to the Backbone column only (all other columns untouched), exceeding the 3e-6 A absolute tolerance on every scientific row while remaining far above the frame-0 self-comparison floor, so the mutation is unambiguously a value failure rather than a self-comparison edge case.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nout = [rows[0]]\nfor row in rows[1:]:\n    assert len(row) == 6\n    out.append([row[0], row[1], repr(float(row[2]) + 5e-6)] + row[3:])\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('offset Backbone by 5e-6 for %d rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "open_closed_rmsd_value"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "open-closed-value-wrong",
+      "rationale": "Replaces the single open-vs-closed backbone RMSD value with reference*1.02+0.1 (a ~0.24 A error), violating computation 5 (centroid-subtracted, rotationally superimposed unweighted backbone RMSD between frame 0 and the open reference) while keeping the one-row structure exactly valid.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nvalue = float(lines[1])\nnew_value = value * 1.02 + 0.1\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\n%s\\n' % repr(new_value))\nprint('open-vs-closed shifted from %r to %r' % (value, new_value))"
+    },
+    {
+      "check_ids": [
+        "open_closed_rmsd_structure"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "open-closed-value-nan",
+      "rationale": "Replaces the single value with 'nan', a scientifically plausible failure (a failed or empty fit reported as NaN). The structural check requires one finite well-formed value, and the acceptance rule requires nonfinite values to fail even where tolerance would apply; the original numeric value is no longer comparable so the value check is also lost.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\nnan\\n')\nprint('replaced open-vs-closed value with nan')"
+    },
+    {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "duplicate-frame-row",
+      "rationale": "Duplicates the last data row of backbone_rmsd.csv (frame 97.0), simulating an off-by-one frame loop that emits an extra row. This preserves parseability but violates the 'membership plus multiplicity per frame row without extra rows' rule; the extra row breaks the structural check (99 data rows vs 98 frames), and the row set is no longer a correct one-entry-per-frame value set.",
+      "script": "import csv\npath = 'backbone_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'], rows[0]\nassert len(rows) == 99, len(rows)\nout = rows + [rows[-1]]\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('duplicated last row; %d data rows' % (len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "Frame,Time (ns),CORE"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "core-ca-ragged-row",
+      "rationale": "Removes the last field from a single mid-table data row of core_ca_rmsd.csv, creating a ragged row (missing/empty field) that violates the CSV structure rule; the grader rejects such rows, so the affected frame's scientific value is also not comparable as a well-formed RMSD.",
+      "script": "import csv\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == ['Frame', 'Time (ns)', 'CORE'], rows[0]\nassert len(rows) == 99 and all(len(r) == 3 for r in rows[1:])\nrow_idx = 40\norig = rows[row_idx]\nrows[row_idx] = rows[row_idx][:2]\nassert len(rows[row_idx]) == 2 and orig != rows[row_idx]\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(rows)\nprint('ragged row at position %d' % row_idx)"
+    },
+    {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "nonfinite-value-resid",
+      "rationale": "Replaces one C-alphas RMSD value in resid_weighted_rmsd.csv with 'inf', a finite-value break that the acceptance rule rejects even though the number is parseable; other frames keep correct values, isolating the nonfinite-value structural rule for a scientific RMSD column.",
+      "script": "path = 'resid_weighted_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nheader, data = lines[0], lines[1:]\nassert header == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', header\nassert len(data) == 98, len(data)\nidx = 57\nparts = data[idx].split(',')\nassert len(parts) == 6 and parts[2] != 'inf'\nparts[2] = 'inf'\ndata[idx] = ','.join(parts)\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join([header] + data) + '\\n')\nprint('set inf in row %d' % idx)"
+    },
+    {
+      "check_ids": [
+        "core_ca_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.820321761026975,3.507119391295211,11.384735982399015,10.368205719261319"
+        },
+        {
+          "path": "core_ca_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.40756080970089986"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "core-vs-backbone-cross-association",
+      "rationale": "Replaces core_ca_rmsd.csv's CORE column with the corresponding backbone_rmsd.csv CORE values: a different scientific quantity (core alpha-carbon RMSD after fitting that set alone onto frame 0 vs domain-backbone RMSD after a global backbone fit; they differ by ~0.02-1.55 A across the trajectory). Row count, Frame ids and Time (ns) are preserved, so this tests that the per-file scientific interpretation is checked rather than just domain plausibility.",
+      "script": "import csv\nbb = {}\nwith open('backbone_rmsd.csv', newline='') as fh:\n    rows = list(csv.reader(fh))\nheader = rows[0]\nassert header[0].strip() == 'Frame' and header[3].strip() == 'CORE', header\nfor row in rows[1:]:\n    frame = int(float(row[0]))\n    bb[frame] = float(row[3])\npath = 'core_ca_rmsd.csv'\nwith open(path, newline='') as fh:\n    rows2 = list(csv.reader(fh))\nassert rows2[0] == ['Frame', 'Time (ns)', 'CORE'], rows2[0]\nout = [rows2[0]]\nswapped = 0\nfor row in rows2[1:]:\n    frame = int(float(row[0]))\n    if abs(bb[frame] - float(row[2])) > 1e-6:\n        swapped += 1\n    out.append([row[0], row[1], repr(bb[frame])])\nassert swapped > 0, 'replacement must differ from reference values'\nwith open(path, 'w', newline='') as fh:\n    csv.writer(fh, lineterminator='\\n').writerows(out)\nprint('replaced core-ca values with backbone CORE for %d frames (%d differ)' % (len(out) - 1, swapped))"
+    },
+    {
+      "check_ids": [
+        "mass_weighted_rmsd"
+      ],
+      "evidence": [
+        {
+          "path": " resid_weighted_rmsd.csv",
+          "quote": "Frame,Time (ns),C-alphas,CORE,LID,NMP"
+        },
+        {
+          "path": "mass_weighted_rmsd.csv",
+          "quote": "1.0,1.9999998238400372,0.4234302962314481,0.46215147409844226,0.4968180560689264,0.4867389984803548"
+        },
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        }
+      ],
+      "focus": "model_behavior",
+      "kind": "wrong_solution",
+      "name": "resid-vs-mass-backbone-confusion",
+      "rationale": "Overwrites mass_weighted_rmsd.csv's RMSD columns with the same-frame resid_weighted_rmsd.csv values, simulating the common implementation error of using the wrong weights (resid instead of atomic mass). The two quantities differ by up to ~3.5 A late in the trajectory. Row count, Frame ids, times and headers are preserved, so only the mass-weighted scientific check should fail, plus the general value checks on that file.",
+      "script": "resid = {}\nwith open('resid_weighted_rmsd.csv') as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', lines[0]\nfor line in lines[1:]:\n    parts = line.split(',')\n    resid[int(float(parts[0]))] = parts\npath = 'mass_weighted_rmsd.csv'\nwith open(path) as fh:\n    mass_lines = fh.read().splitlines()\nassert mass_lines[0] == 'Frame,Time (ns),C-alphas,CORE,LID,NMP', mass_lines[0]\nmass = []\nfor line in mass_lines[1:]:\n    parts = line.split(',')\n    mass.append((int(float(parts[0])), parts))\nassert len(mass) == len(resid) == 98\nout = [mass_lines[0]]\nchanged = 0\nfor frame, m_parts in mass:\n    r_parts = resid[frame]\n    assert len(m_parts) == len(r_parts) == 6\n    if any(abs(float(a) - float(b)) > 1e-6 for a, b in zip(m_parts[2:], r_parts[2:])):\n        changed += 1\n    out.append(','.join([m_parts[0], m_parts[1]] + r_parts[2:]))\nassert changed > 0, 'resid values must differ from mass values'\nwith open(path, 'w') as fh:\n    fh.write('\\n'.join(out) + '\\n')\nprint('replaced mass-weighted RMSDs with resid-weighted RMSDs; %d/%d frames differ' % (changed, len(mass)))"
+    },
+    {
+      "check_ids": [
+        "trajectory_tables_structure",
+        "backbone_domain_rmsd",
+        "core_ca_rmsd",
+        "mass_weighted_rmsd",
+        "resid_weighted_rmsd",
+        "time_column_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "resid_weighted_rmsd.csv",
+          "quote": "97.0,97.99999136816182,6.435722717772229,3.76256745525141,9.296403891619615,13.912071518157576"
+        },
+        {
+          "path": "backbone_rmsd.csv",
+          "quote": "0.0,0.9999999119200186,5.834343817915898e-07,3.92148642971737e-08,1.1969998121003948e-07,6.276496925603961e-08"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "representation-full-precision-gen",
+      "rationale": "Client-identical representation alternative: normalizes every per-frame table to a uniform full-precision scientific-notation literal (%.17e) and rewrites Frame as an integer literal after verifying that every value parses back to the exact reference value. All value contents, row count, ordering, headers and per-frame time consistency are preserved; the spec permits fixed, scientific or shortest-round-trip notation and either '7' or '7.0' for the Frame column, so all checks should still pass.",
+      "script": "import csv, math\nfiles = {\n    'backbone_rmsd.csv': ['Frame', 'Time (ns)', 'Backbone', 'CORE', 'LID', 'NMP'],\n    'core_ca_rmsd.csv': ['Frame', 'Time (ns)', 'CORE'],\n    'mass_weighted_rmsd.csv': ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'],\n    'resid_weighted_rmsd.csv': ['Frame', 'Time (ns)', 'C-alphas', 'CORE', 'LID', 'NMP'],\n}\nfor path, header in files.items():\n    with open(path, newline='') as fh:\n        rows = list(csv.reader(fh))\n    assert rows[0] == header, (path, rows[0])\n    out = [rows[0]]\n    for row in rows[1:]:\n        assert len(row) == len(header)\n        frame = int(float(row[0]))\n        new = [str(frame), '%.17e' % float(row[1])]\n        for v in row[2:]:\n            x = float(v)\n            assert math.isfinite(x) and x >= 0.0\n            new.append('%.17e' % x)\n        out.append(new)\n    with open(path, 'w', newline='') as fh:\n        csv.writer(fh, lineterminator='\\n').writerows(out)\n    with open(path, newline='') as fh:\n        new_rows = list(csv.reader(fh))\n    for a, b in zip(rows[1:], new_rows[1:]):\n        assert float(a[0]) == float(b[0])\n        for x, y in zip(a[1:], b[1:]):\n            assert float(x) == float(y), (path, x, y)\n    print('normalized %s (%d rows)' % (path, len(out) - 1))"
+    },
+    {
+      "check_ids": [
+        "open_closed_rmsd_structure",
+        "open_closed_rmsd_value"
+      ],
+      "evidence": [
+        {
+          "path": "open_closed_backbone_rmsd.csv",
+          "quote": "backbone_rmsd_angstrom\n6.823686867261616"
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "open-closed-representation-fixed",
+      "rationale": "Rewrites the single-value file from the shortest-round-trip form 6.823686867261616 to a fixed-notation literal at 17 decimal digits, which round-trips to the identical float; the spec explicitly permits fixed notation at full precision, so both the structural and value checks should still pass.",
+      "script": "path = 'open_closed_backbone_rmsd.csv'\nwith open(path) as fh:\n    lines = fh.read().splitlines()\nassert lines[0] == 'backbone_rmsd_angstrom', lines[0]\nassert len(lines) == 2, lines\nvalue = float(lines[1])\ns = '%.17f' % value\nassert float(s) == value, (s, value)\nwith open(path, 'w') as fh:\n    fh.write('backbone_rmsd_angstrom\\n%s\\n' % s)\nprint('rewrote value as fixed notation: %s' % s)"
+    }
+  ]
+}

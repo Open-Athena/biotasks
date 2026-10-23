@@ -1,0 +1,923 @@
+{
+  "evidence_boundary": "Passing reference and structural audit, plus the supplied finite replay observations. Row-multiset fingerprints describe serialization, not scientific equivalence: row order may encode rank, sequence or alignment. No independent reproduction or calibrated grader. No full data tables in context. Read-only package-source tools are available. Read-only reference-text inspection is available for the recorded output catalog.",
+  "file_sha256": {
+    "candidate/analysis.py": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+    "candidate/inputs.json": "6ac91cab38eae269a4e6457275b3b956f615a7df03de4b1ce88f44b8110efc30",
+    "candidate/pyproject.toml": "db0682f2ead458c2a5f5755587603113d5df54a1156fa2ae4db59d99aad605ec",
+    "inputs/exports.py": "2a1c55e66563902ce57a018596d7d23c5bcc5f3af3136bd53e69af81fe7ee730",
+    "inputs/original.py": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+    "inputs/plan.json": "5497ca6b190f5be2130e5d3206ef8cd6e9e23f239a8a0893bd959505f8200827",
+    "output-audit.json": "558031e3e53265207c049bb48b0673b62e207601038e2600126001a8c960c742",
+    "provenance.json": "af84230975cef4f974f0e2668416cc23e898e23f3badd7cc31751f181b70585a",
+    "result.json": "60e2183359dcd5b7c9bfd4c4db6e0074c062827aea25ddb9e7d29c24f13237de",
+    "trial/environment.txt": "bb169d42adeebeee440962c7379607040633afb5524e2a148308d4b923a3bb8c",
+    "trial/inputs-before.json": "59d46edd352b0c7d9422f35f9c05369182b80a19d81b2ea6b4c230bd45ef681f",
+    "trial/reference.py": "38d9a3dd09d7ca39c0823e6460c3da56cd24134aacecddf0d30e6037185719b2",
+    "trial/result.json": "b68b767851c42da8c3a7232208a1011f56b474356e8cdaf70eb4ca0deb3c1258",
+    "trial/source.diff": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "trial/uv.lock": "dd634a829994b231f0e79a63a1a25ce2a1ffd2b441b0a7156bb936c85978dab2"
+  },
+  "files": {
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: guide\n#     language: python\n#     name: python3\n# ---\n\n# # Calculating the root mean square deviation of atomic structures\n#\n# We calculate the RMSD of domains in adenylate kinase as it transitions from an open to closed structure, and look at calculating weighted RMSDs.\n#\n# **Last updated:** December 2022 with MDAnalysis 2.4.0-dev0\n#\n# **Minimum version of MDAnalysis:** 1.0.0\n#\n# **Packages required:**\n#     \n# * MDAnalysis (<a data-cite=\"michaud-agrawal_mdanalysis_2011\" href=\"https://doi.org/10.1002/jcc.21787\">Michaud-Agrawal *et al.*, 2011</a>, <a data-cite=\"gowers_mdanalysis_2016\" href=\"https://doi.org/10.25080/Majora-629e541a-00e\">Gowers *et al.*, 2016</a>)\n# * MDAnalysisTests\n# * [pandas](https://pandas.pydata.org)\n#\n# **See also**\n#\n# * [Pairwise (2D) RMSD](pairwise_rmsd.ipynb)\n# * [RMSF](rmsf.ipynb)\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# MDAnalysis implements RMSD calculation using the fast QCP algorithm (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>). Please cite (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>) when using the ``MDAnalysis.analysis.align`` module in published work.\n#\n# </div>\n\nimport MDAnalysis as mda\nfrom MDAnalysis.tests.datafiles import PSF, DCD, CRD\nfrom MDAnalysis.analysis import rms\n\nimport pandas as pd\n# the next line is necessary to display plots in Jupyter\n# Notebook presentation directive: %matplotlib inline\n\n\n# ## Loading files\n\n# The test files we will be working with here feature adenylate kinase (AdK), a phosophotransferase enzyme. (<a data-cite=\"beckstein_zipping_2009\" href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">Beckstein *et al.*, 2009</a>) The trajectory ``DCD`` samples a transition from a closed to an open conformation. AdK has three domains: \n#\n#   * CORE\n#   * LID: an ATP-binding domain\n#   * NMP: an AMP-binding domain\n#   \n# The LID and NMP domains move around the stable CORE as the enzyme transitions between the opened and closed conformations. One way to quantify this movement is by calculating the root mean square deviation (RMSD) of atomic positions.\n\nu = mda.Universe(PSF, DCD)  # closed AdK (PDB ID: 1AKE)\nref = mda.Universe(PSF, CRD)  # open AdK (PDB ID: 4AKE)\n\n# ## Background\n#\n# The root mean square deviation (RMSD) of particle coordinates is one measure of distance, or dissimilarity, between molecular conformations. Each structure should have matching elementwise atoms $i$ in the same order, as the distance between them is calculated and summed for the final result. It is calculated between coordinate arrays $\\mathbf{x}$ and $\\mathbf{x}^{\\text{ref}}$ according to the equation below:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\sqrt{\\frac{1}{n} \\sum_{i=1}^{n}{|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}} $$\n#\n# As molecules can move around, the structure $\\mathbf{x}$ is usually translated by a vector $\\mathbf{t}$ and rotated by a matrix $\\mathsf{R}$ to align with the reference $\\mathbf{x}^{\\text{ref}}$ such that the RMSD is minimised. The RMSD after this optimal superposition can be expressed as follows:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\min_{\\mathsf{R}, \\mathbf{t}} %\n#   \\sqrt{\\frac{1}{N} \\sum_{i=1}^{N} \\left[ %\n#       (\\mathsf{R}\\cdot\\mathbf{x}_{i}(t) + \\mathbf{t}) - \\mathbf{x}_{i}^{\\text{ref}} \\right]^{2}}$$\n#\n# The RMSD between one reference state and a trajectory of structures is often calculated as a way to measure the dissimilarity of the trajectory conformational ensemble to the reference. This reference is frequently the first frame of the trajectory (the default in MDAnalysis), in which case it can provide insight into the overall movement from the initial starting point. While stable RMSD values from a reference structure are frequently used as a measure of conformational convergence, this metric suffers from the problem of *degeneracy*: many different structures can have the same RMSD from the same reference. For an alternative measure, you could use [pairwise or 2D RMSD](pairwise_rmsd.ipynb).\n#\n# Typically not all coordinates in a structures are included in an RMSD analysis. With proteins, the fluctuation of the residue side-chains is not representative of overall conformational change. Therefore when RMSD analyses are performed to investigate large-scale movements in proteins, the atoms are usually restricted only to the backbone atoms (forming the amide-bond chain) or the alpha-carbon atoms. \n#\n# MDAnalysis provides functions and classes to calculate the [RMSD between coordinate arrays](#RMSD-between-two-sets-of-coordinates), and [Universes](#RMSD-of-a-Universe-with-multiple-selections) or [AtomGroups](#RMSD-of-an-AtomGroup-with-multiple-selections). \n#\n# The contribution of each particle $i$ to the final RMSD value can also [be weighted](#Weighted-RMSD-of-a-trajectory) by $w_i$:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^\\text{ref}) = \\sqrt{\\frac{\\sum_{i=1}^{n}{w_i|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}}{\\sum_{i-1}^n w_i}} $$\n#\n# RMSD analyses are frequently weighted by mass. The MDAnalysis RMSD class ([API docs](https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD)) allows you to both [select mass-weighting](#Mass) with `weights='mass'` or `weights_groupselections='mass'`, or to [pass custom arrays](#Custom-weights) into either keyword.\n\n# ## RMSD between two sets of coordinates\n\n# The ``MDAnalysis.analysis.rms.rmsd`` function returns the root mean square deviation (in Angstrom) between two sets of coordinates. Here, we calculate the RMSD between the backbone atoms of the open and closed conformations of AdK. Only considering the backbone atoms is often more helpful than calculating the RMSD for all the atoms, as movement in amino acid side-chains isn't indicative of overall conformational change.\n\nrms.rmsd(u.select_atoms('backbone').positions,  # coordinates to align\n         ref.select_atoms('backbone').positions,  # reference coordinates\n         center=True,  # subtract the center of geometry\n         superposition=True)  # superimpose coordinates\n\n# ## RMSD of a Universe with multiple selections\n\n# It is more efficient to use the ``MDAnalysis.analysis.rms.RMSD`` class to calculate the RMSD of an entire trajectory to a single reference point, than to use the the ``MDAnalysis.analysis.rms.rmsd`` function.\n#\n# The ``rms.RMSD`` class first performs a rotational and translational alignment of the target trajectory to the reference universe at ``ref_frame``, using the atoms in ``select`` to determine the transformation. The RMSD of the ``select`` selection is calculated. Then, *without further alignment*, the RMSD of each group in ``groupselections`` is calculated. \n\nCORE = 'backbone and (resid 1-29 or resid 60-121 or resid 160-214)'\nLID = 'backbone and resid 122-159'\nNMP = 'backbone and resid 30-59'\n\nR = rms.RMSD(u,  # universe to align\n             u,  # reference universe or atomgroup\n             select='backbone',  # group to superimpose and calculate RMSD\n             groupselections=[CORE, LID, NMP],  # groups for RMSD\n             ref_frame=0)  # frame index of the reference\nR.run()\n\n# The data is saved in ``R.rmsd`` as an array.\n\nR.results.rmsd.shape\n\n# ``R.rmsd`` has a row for each timestep. The first two columns of each row are the frame index of the time step, and the time (which is guessed in trajectory formats without timesteps). The third column is RMSD of ``select``. The last few columns are the RMSD of the groups in ``groupselections``.\n\n# ### Plotting the data\n#\n# We can easily plot this data using the common data analysis package [pandas](https://pandas.pydata.org). We turn the ``R.rmsd`` array into a [DataFrame](https://pandas.pydata.org/docs/user_guide/dsintro.html#dataframe) and label each column below.\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'Backbone', 'CORE', \n                           'LID', 'NMP'])\n\ndf\n\nax = df.plot(x='Frame', y=['Backbone', 'CORE', 'LID', 'NMP'],\n             kind='line')\nax.set_ylabel(r'RMSD ($\\AA$)')\n\n# ## RMSD of an AtomGroup with multiple selections\n#\n# The `RMSD` class accepts both `AtomGroup`s and `Universe`s as arguments. Restricting the atoms considered to an AtomGroup can be very helpful, as the `select` and `groupselections` arguments are applied only to the atoms in the original `AtomGroup`. In the example below, for example, only the alpha-carbons of the CORE domain are incorporated in the analysis.\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# This feature does not currently support `groupselections`.\n#\n# </div>\n\nca = u.select_atoms('name CA')\n\nR = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\nR.run()\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'CORE'])\n\nax = df.plot(x='Frame', y='CORE', kind='line')\nax.set_ylabel('RMSD ($\\AA$)')\n\n# ## Weighted RMSD of a trajectory\n#\n# You can also calculate the weighted RMSD of a trajectory using the `weights` and `weights_groupselections` keywords. The former only applies weights to the group in `select`, while the latter must be a list of the *same length and order* as `groupselections`. If you would like to only weight certain groups in `groupselections`, use `None` for the unweighted groups. Both `weights` and `weights_groupselections` accept `None` (for unweighted), `'mass'` (to weight by mass), and custom arrays. A custom array should have the same number of values as there are particles in the corresponding AtomGroup.\n\n# ### Mass\n\n# It is common to weight RMSD analyses by particle weight, so the `RMSD` class accepts `'mass'` as an argument for `weights`. Note that the `weights` keyword only applies to the group in `select`, and does not apply to the `groupselections`; these remain unweighted below.\n\nR_mass = rms.RMSD(u, u,\n                  select='protein and name CA',\n                  weights='mass',\n                  groupselections=[CORE, LID, NMP])\nR_mass.run()\n\n# The plot looks largely the same as above because all the alpha-carbons and individual backbone atoms have the same mass. Below we show how you can pass in custom weights.\n\ndf_mass = pd.DataFrame(R_mass.results.rmsd, \n                       columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_mass = df_mass.plot(x='Frame', \n                       y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')\n\n# ### Custom weights\n\n# You can also pass in an array of values for the weights. This must have the same length as the number of atoms in your selection groups. In this example, we pass in arrays of residue numbers. This **is not a typical weighting you might choose**, but we use it here to show how you can get different results to the previous graphs for mass-weighted and non-weighted RMSD. You could choose to pass in an array of charges, or your own custom value. \n#\n# First we select the atom groups to make this easier.\n\nag = u.select_atoms('protein and name CA')\nprint('Shape of C-alpha charges:', ag.charges.shape)\ncore = u.select_atoms(CORE)\nlid = u.select_atoms(LID)\nnmp = u.select_atoms(NMP)\n\n# Below, we pass in weights for `ag` with the `weights` keyword, and weights for the `groupselections` with the `weights_groupselections` keyword.\n\nR_charge = rms.RMSD(u, u,\n                    select='protein and name CA',\n                    groupselections=[CORE, LID, NMP],\n                    weights=ag.resids,\n                    weights_groupselections=[core.resids, \n                                             lid.resids, \n                                             nmp.resids])\nR_charge.run()\n\n# You can see in the below graph that the NMP domain has much higher RMSD than before, as each particle is weighted by its residue number. Conversely, the CORE domain doesn't really change much. We could potentially infer from this that residues later in the NMP domain (with a higher residue number) are mobile during the length of the trajectory, whereas residues later in the CORE domain do not seem to contribute significantly to the RMSD.\n#\n# However, again, this is a **very non-conventional metric** and is shown here simply to demonstrate how to use the code.\n\ndf_charge = pd.DataFrame(R_charge.results.rmsd, \n                         columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_charge = df_charge.plot(x='Frame',\n                           y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')\n\n# ## References\n#\n# [1] Oliver Beckstein, Elizabeth&nbsp;J. Denning, Juan&nbsp;R. Perilla, and Thomas&nbsp;B. Woolf.\n# Zipping and <span class=\"bibtex-protected\">Unzipping</span> of <span class=\"bibtex-protected\">Adenylate</span> <span class=\"bibtex-protected\">Kinase</span>: <span class=\"bibtex-protected\">Atomistic</span> <span class=\"bibtex-protected\">Insights</span> into the <span class=\"bibtex-protected\">Ensemble</span> of <span class=\"bibtex-protected\">Open</span>\u2194<span class=\"bibtex-protected\">Closed</span> <span class=\"bibtex-protected\">Transitions</span>.\n# <em>Journal of Molecular Biology</em>, 394(1):160\u2013176, November 2009.\n# 00107.\n# URL: <a href=\"https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164\">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, <a href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">doi:10.1016/j.jmb.2009.09.009</a>.\n#\n# [2] Richard&nbsp;J. Gowers, Max Linke, Jonathan Barnoud, Tyler J.&nbsp;E. Reddy, Manuel&nbsp;N. Melo, Sean&nbsp;L. Seyler, Jan Doma\u0144ski, David&nbsp;L. Dotson, S\u00e9bastien Buchoux, Ian&nbsp;M. Kenney, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> <span class=\"bibtex-protected\">Python</span> <span class=\"bibtex-protected\">Package</span> for the <span class=\"bibtex-protected\">Rapid</span> <span class=\"bibtex-protected\">Analysis</span> of <span class=\"bibtex-protected\">Molecular</span> <span class=\"bibtex-protected\">Dynamics</span> <span class=\"bibtex-protected\">Simulations</span>.\n# <em>Proceedings of the 15th Python in Science Conference</em>, pages 98\u2013105, 2016.\n# 00152.\n# URL: <a href=\"https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html\">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, <a href=\"https://doi.org/10.25080/Majora-629e541a-00e\">doi:10.25080/Majora-629e541a-00e</a>.\n#\n# [3] Naveen Michaud-Agrawal, Elizabeth&nbsp;J. Denning, Thomas&nbsp;B. Woolf, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> toolkit for the analysis of molecular dynamics simulations.\n# <em>Journal of Computational Chemistry</em>, 32(10):2319\u20132327, July 2011.\n# 00778.\n# URL: <a href=\"http://doi.wiley.com/10.1002/jcc.21787\">http://doi.wiley.com/10.1002/jcc.21787</a>, <a href=\"https://doi.org/10.1002/jcc.21787\">doi:10.1002/jcc.21787</a>.\n#\n# [4] Douglas&nbsp;L. Theobald.\n# Rapid calculation of <span class=\"bibtex-protected\">RMSDs</span> using a quaternion-based characteristic polynomial.\n# <em>Acta Crystallographica Section A Foundations of Crystallography</em>, 61(4):478\u2013480, July 2005.\n# 00127.\n# URL: <a href=\"http://scripts.iucr.org/cgi-bin/paper?S0108767305015266\">http://scripts.iucr.org/cgi-bin/paper?S0108767305015266</a>, <a href=\"https://doi.org/10.1107/S0108767305015266\">doi:10.1107/S0108767305015266</a>.\n",
+    "candidate/inputs.json": {
+      "files": []
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"mdanalysis-rmsd-setup\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\ndependencies = [\n    \"MDAnalysis==2.11.0\",\n    \"MDAnalysisTests==2.11.0\",\n    \"pandas\",\n    \"matplotlib\",\n]\n",
+    "inputs/exports.py": "import os as _export_os\n\n_export_os.makedirs('/work/outputs', exist_ok=True)\n\n# Terminal RMSD results already stored by the original analysis; saved as-is.\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: guide\n#     language: python\n#     name: python3\n# ---\n\n# # Calculating the root mean square deviation of atomic structures\n#\n# We calculate the RMSD of domains in adenylate kinase as it transitions from an open to closed structure, and look at calculating weighted RMSDs.\n#\n# **Last updated:** December 2022 with MDAnalysis 2.4.0-dev0\n#\n# **Minimum version of MDAnalysis:** 1.0.0\n#\n# **Packages required:**\n#     \n# * MDAnalysis (<a data-cite=\"michaud-agrawal_mdanalysis_2011\" href=\"https://doi.org/10.1002/jcc.21787\">Michaud-Agrawal *et al.*, 2011</a>, <a data-cite=\"gowers_mdanalysis_2016\" href=\"https://doi.org/10.25080/Majora-629e541a-00e\">Gowers *et al.*, 2016</a>)\n# * MDAnalysisTests\n# * [pandas](https://pandas.pydata.org)\n#\n# **See also**\n#\n# * [Pairwise (2D) RMSD](pairwise_rmsd.ipynb)\n# * [RMSF](rmsf.ipynb)\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# MDAnalysis implements RMSD calculation using the fast QCP algorithm (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>). Please cite (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>) when using the ``MDAnalysis.analysis.align`` module in published work.\n#\n# </div>\n\nimport MDAnalysis as mda\nfrom MDAnalysis.tests.datafiles import PSF, DCD, CRD\nfrom MDAnalysis.analysis import rms\n\nimport pandas as pd\n# the next line is necessary to display plots in Jupyter\n# Notebook presentation directive: %matplotlib inline\n\n\n# ## Loading files\n\n# The test files we will be working with here feature adenylate kinase (AdK), a phosophotransferase enzyme. (<a data-cite=\"beckstein_zipping_2009\" href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">Beckstein *et al.*, 2009</a>) The trajectory ``DCD`` samples a transition from a closed to an open conformation. AdK has three domains: \n#\n#   * CORE\n#   * LID: an ATP-binding domain\n#   * NMP: an AMP-binding domain\n#   \n# The LID and NMP domains move around the stable CORE as the enzyme transitions between the opened and closed conformations. One way to quantify this movement is by calculating the root mean square deviation (RMSD) of atomic positions.\n\nu = mda.Universe(PSF, DCD)  # closed AdK (PDB ID: 1AKE)\nref = mda.Universe(PSF, CRD)  # open AdK (PDB ID: 4AKE)\n\n# ## Background\n#\n# The root mean square deviation (RMSD) of particle coordinates is one measure of distance, or dissimilarity, between molecular conformations. Each structure should have matching elementwise atoms $i$ in the same order, as the distance between them is calculated and summed for the final result. It is calculated between coordinate arrays $\\mathbf{x}$ and $\\mathbf{x}^{\\text{ref}}$ according to the equation below:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\sqrt{\\frac{1}{n} \\sum_{i=1}^{n}{|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}} $$\n#\n# As molecules can move around, the structure $\\mathbf{x}$ is usually translated by a vector $\\mathbf{t}$ and rotated by a matrix $\\mathsf{R}$ to align with the reference $\\mathbf{x}^{\\text{ref}}$ such that the RMSD is minimised. The RMSD after this optimal superposition can be expressed as follows:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\min_{\\mathsf{R}, \\mathbf{t}} %\n#   \\sqrt{\\frac{1}{N} \\sum_{i=1}^{N} \\left[ %\n#       (\\mathsf{R}\\cdot\\mathbf{x}_{i}(t) + \\mathbf{t}) - \\mathbf{x}_{i}^{\\text{ref}} \\right]^{2}}$$\n#\n# The RMSD between one reference state and a trajectory of structures is often calculated as a way to measure the dissimilarity of the trajectory conformational ensemble to the reference. This reference is frequently the first frame of the trajectory (the default in MDAnalysis), in which case it can provide insight into the overall movement from the initial starting point. While stable RMSD values from a reference structure are frequently used as a measure of conformational convergence, this metric suffers from the problem of *degeneracy*: many different structures can have the same RMSD from the same reference. For an alternative measure, you could use [pairwise or 2D RMSD](pairwise_rmsd.ipynb).\n#\n# Typically not all coordinates in a structures are included in an RMSD analysis. With proteins, the fluctuation of the residue side-chains is not representative of overall conformational change. Therefore when RMSD analyses are performed to investigate large-scale movements in proteins, the atoms are usually restricted only to the backbone atoms (forming the amide-bond chain) or the alpha-carbon atoms. \n#\n# MDAnalysis provides functions and classes to calculate the [RMSD between coordinate arrays](#RMSD-between-two-sets-of-coordinates), and [Universes](#RMSD-of-a-Universe-with-multiple-selections) or [AtomGroups](#RMSD-of-an-AtomGroup-with-multiple-selections). \n#\n# The contribution of each particle $i$ to the final RMSD value can also [be weighted](#Weighted-RMSD-of-a-trajectory) by $w_i$:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^\\text{ref}) = \\sqrt{\\frac{\\sum_{i=1}^{n}{w_i|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}}{\\sum_{i-1}^n w_i}} $$\n#\n# RMSD analyses are frequently weighted by mass. The MDAnalysis RMSD class ([API docs](https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD)) allows you to both [select mass-weighting](#Mass) with `weights='mass'` or `weights_groupselections='mass'`, or to [pass custom arrays](#Custom-weights) into either keyword.\n\n# ## RMSD between two sets of coordinates\n\n# The ``MDAnalysis.analysis.rms.rmsd`` function returns the root mean square deviation (in Angstrom) between two sets of coordinates. Here, we calculate the RMSD between the backbone atoms of the open and closed conformations of AdK. Only considering the backbone atoms is often more helpful than calculating the RMSD for all the atoms, as movement in amino acid side-chains isn't indicative of overall conformational change.\n\nrms.rmsd(u.select_atoms('backbone').positions,  # coordinates to align\n         ref.select_atoms('backbone').positions,  # reference coordinates\n         center=True,  # subtract the center of geometry\n         superposition=True)  # superimpose coordinates\n\n# ## RMSD of a Universe with multiple selections\n\n# It is more efficient to use the ``MDAnalysis.analysis.rms.RMSD`` class to calculate the RMSD of an entire trajectory to a single reference point, than to use the the ``MDAnalysis.analysis.rms.rmsd`` function.\n#\n# The ``rms.RMSD`` class first performs a rotational and translational alignment of the target trajectory to the reference universe at ``ref_frame``, using the atoms in ``select`` to determine the transformation. The RMSD of the ``select`` selection is calculated. Then, *without further alignment*, the RMSD of each group in ``groupselections`` is calculated. \n\nCORE = 'backbone and (resid 1-29 or resid 60-121 or resid 160-214)'\nLID = 'backbone and resid 122-159'\nNMP = 'backbone and resid 30-59'\n\nR = rms.RMSD(u,  # universe to align\n             u,  # reference universe or atomgroup\n             select='backbone',  # group to superimpose and calculate RMSD\n             groupselections=[CORE, LID, NMP],  # groups for RMSD\n             ref_frame=0)  # frame index of the reference\nR.run()\n\n# The data is saved in ``R.rmsd`` as an array.\n\nR.results.rmsd.shape\n\n# ``R.rmsd`` has a row for each timestep. The first two columns of each row are the frame index of the time step, and the time (which is guessed in trajectory formats without timesteps). The third column is RMSD of ``select``. The last few columns are the RMSD of the groups in ``groupselections``.\n\n# ### Plotting the data\n#\n# We can easily plot this data using the common data analysis package [pandas](https://pandas.pydata.org). We turn the ``R.rmsd`` array into a [DataFrame](https://pandas.pydata.org/docs/user_guide/dsintro.html#dataframe) and label each column below.\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'Backbone', 'CORE', \n                           'LID', 'NMP'])\n\ndf\n\nax = df.plot(x='Frame', y=['Backbone', 'CORE', 'LID', 'NMP'],\n             kind='line')\nax.set_ylabel(r'RMSD ($\\AA$)')\n\n# ## RMSD of an AtomGroup with multiple selections\n#\n# The `RMSD` class accepts both `AtomGroup`s and `Universe`s as arguments. Restricting the atoms considered to an AtomGroup can be very helpful, as the `select` and `groupselections` arguments are applied only to the atoms in the original `AtomGroup`. In the example below, for example, only the alpha-carbons of the CORE domain are incorporated in the analysis.\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# This feature does not currently support `groupselections`.\n#\n# </div>\n\nca = u.select_atoms('name CA')\n\nR = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\nR.run()\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'CORE'])\n\nax = df.plot(x='Frame', y='CORE', kind='line')\nax.set_ylabel('RMSD ($\\AA$)')\n\n# ## Weighted RMSD of a trajectory\n#\n# You can also calculate the weighted RMSD of a trajectory using the `weights` and `weights_groupselections` keywords. The former only applies weights to the group in `select`, while the latter must be a list of the *same length and order* as `groupselections`. If you would like to only weight certain groups in `groupselections`, use `None` for the unweighted groups. Both `weights` and `weights_groupselections` accept `None` (for unweighted), `'mass'` (to weight by mass), and custom arrays. A custom array should have the same number of values as there are particles in the corresponding AtomGroup.\n\n# ### Mass\n\n# It is common to weight RMSD analyses by particle weight, so the `RMSD` class accepts `'mass'` as an argument for `weights`. Note that the `weights` keyword only applies to the group in `select`, and does not apply to the `groupselections`; these remain unweighted below.\n\nR_mass = rms.RMSD(u, u,\n                  select='protein and name CA',\n                  weights='mass',\n                  groupselections=[CORE, LID, NMP])\nR_mass.run()\n\n# The plot looks largely the same as above because all the alpha-carbons and individual backbone atoms have the same mass. Below we show how you can pass in custom weights.\n\ndf_mass = pd.DataFrame(R_mass.results.rmsd, \n                       columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_mass = df_mass.plot(x='Frame', \n                       y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')\n\n# ### Custom weights\n\n# You can also pass in an array of values for the weights. This must have the same length as the number of atoms in your selection groups. In this example, we pass in arrays of residue numbers. This **is not a typical weighting you might choose**, but we use it here to show how you can get different results to the previous graphs for mass-weighted and non-weighted RMSD. You could choose to pass in an array of charges, or your own custom value. \n#\n# First we select the atom groups to make this easier.\n\nag = u.select_atoms('protein and name CA')\nprint('Shape of C-alpha charges:', ag.charges.shape)\ncore = u.select_atoms(CORE)\nlid = u.select_atoms(LID)\nnmp = u.select_atoms(NMP)\n\n# Below, we pass in weights for `ag` with the `weights` keyword, and weights for the `groupselections` with the `weights_groupselections` keyword.\n\nR_charge = rms.RMSD(u, u,\n                    select='protein and name CA',\n                    groupselections=[CORE, LID, NMP],\n                    weights=ag.resids,\n                    weights_groupselections=[core.resids, \n                                             lid.resids, \n                                             nmp.resids])\nR_charge.run()\n\n# You can see in the below graph that the NMP domain has much higher RMSD than before, as each particle is weighted by its residue number. Conversely, the CORE domain doesn't really change much. We could potentially infer from this that residues later in the NMP domain (with a higher residue number) are mobile during the length of the trajectory, whereas residues later in the CORE domain do not seem to contribute significantly to the RMSD.\n#\n# However, again, this is a **very non-conventional metric** and is shown here simply to demonstrate how to use the code.\n\ndf_charge = pd.DataFrame(R_charge.results.rmsd, \n                         columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_charge = df_charge.plot(x='Frame',\n                           y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')\n\n# ## References\n#\n# [1] Oliver Beckstein, Elizabeth&nbsp;J. Denning, Juan&nbsp;R. Perilla, and Thomas&nbsp;B. Woolf.\n# Zipping and <span class=\"bibtex-protected\">Unzipping</span> of <span class=\"bibtex-protected\">Adenylate</span> <span class=\"bibtex-protected\">Kinase</span>: <span class=\"bibtex-protected\">Atomistic</span> <span class=\"bibtex-protected\">Insights</span> into the <span class=\"bibtex-protected\">Ensemble</span> of <span class=\"bibtex-protected\">Open</span>\u2194<span class=\"bibtex-protected\">Closed</span> <span class=\"bibtex-protected\">Transitions</span>.\n# <em>Journal of Molecular Biology</em>, 394(1):160\u2013176, November 2009.\n# 00107.\n# URL: <a href=\"https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164\">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, <a href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">doi:10.1016/j.jmb.2009.09.009</a>.\n#\n# [2] Richard&nbsp;J. Gowers, Max Linke, Jonathan Barnoud, Tyler J.&nbsp;E. Reddy, Manuel&nbsp;N. Melo, Sean&nbsp;L. Seyler, Jan Doma\u0144ski, David&nbsp;L. Dotson, S\u00e9bastien Buchoux, Ian&nbsp;M. Kenney, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> <span class=\"bibtex-protected\">Python</span> <span class=\"bibtex-protected\">Package</span> for the <span class=\"bibtex-protected\">Rapid</span> <span class=\"bibtex-protected\">Analysis</span> of <span class=\"bibtex-protected\">Molecular</span> <span class=\"bibtex-protected\">Dynamics</span> <span class=\"bibtex-protected\">Simulations</span>.\n# <em>Proceedings of the 15th Python in Science Conference</em>, pages 98\u2013105, 2016.\n# 00152.\n# URL: <a href=\"https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html\">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, <a href=\"https://doi.org/10.25080/Majora-629e541a-00e\">doi:10.25080/Majora-629e541a-00e</a>.\n#\n# [3] Naveen Michaud-Agrawal, Elizabeth&nbsp;J. Denning, Thomas&nbsp;B. Woolf, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> toolkit for the analysis of molecular dynamics simulations.\n# <em>Journal of Computational Chemistry</em>, 32(10):2319\u20132327, July 2011.\n# 00778.\n# URL: <a href=\"http://doi.wiley.com/10.1002/jcc.21787\">http://doi.wiley.com/10.1002/jcc.21787</a>, <a href=\"https://doi.org/10.1002/jcc.21787\">doi:10.1002/jcc.21787</a>.\n#\n# [4] Douglas&nbsp;L. Theobald.\n# Rapid calculation of <span class=\"bibtex-protected\">RMSDs</span> using a quaternion-based characteristic polynomial.\n# <em>Acta Crystallographica Section A Foundations of Crystallography</em>, 61(4):478\u2013480, July 2005.\n# 00127.\n# URL: <a href=\"http://scripts.iucr.org/cgi-bin/paper?S0108767305015266\">http://scripts.iucr.org/cgi-bin/paper?S0108767305015266</a>, <a href=\"https://doi.org/10.1107/S0108767305015266\">doi:10.1107/S0108767305015266</a>.\n",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "RMSD of the alpha-carbon CORE domain selection over the AdK trajectory (Frame, Time (ns), CORE).",
+          "path": "core_ca_rmsd.csv",
+          "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' presents the CORE-domain C-alpha RMSD as its result, and the source stores it in `df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ns)', 'CORE'])` after `R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()`. `df` is not reassigned afterward, so it holds this endpoint at completion."
+        },
+        {
+          "description": "Mass-weighted RMSD trajectory for C-alphas and the CORE, LID and NMP domain groups (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "mass_weighted_rmsd.csv",
+          "source_evidence": "The 'Weighted RMSD of a trajectory \u2014 Mass' section interprets the mass-weighted trajectory RMSDs ('The plot looks largely the same as above...'), produced by `R_mass.run()` and stored as a named object in `df_mass = pd.DataFrame(R_mass.results.rmsd, ...)`, which is never overwritten."
+        },
+        {
+          "description": "Custom (resid-weighted) RMSD trajectory for C-alphas and CORE, LID, NMP groups, showing the elevated NMP-domain RMSD discussed in the narrative (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "resid_weighted_rmsd.csv",
+          "source_evidence": "The 'Custom weights' section interprets this result independently ('the NMP domain has much higher RMSD than before'), produced by `R_charge.run()` and stored in `df_charge = pd.DataFrame(R_charge.results.rmsd, ...)`, which is never overwritten."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "The scalar RMSD between the open and closed backbone conformations (`rms.rmsd(...)` in 'RMSD between two sets of coordinates') was computed as an unnamed standalone expression and never stored in a named variable; capturing or recomputing it would add new scientific work, so it is not exported.",
+        "The Universe-level multi-selection RMSD analysis (Backbone/CORE/LID/NMP from the first `R = rms.RMSD(u, u, ...)`) is a substantive result, but both `R` and `df` are overwritten by the later AtomGroup analysis in the source, so the values no longer exist at script completion. No earlier capture or rerun is inserted.",
+        "All pandas line plots contain no numerical content beyond the exported DataFrames; their values are only a visualization of results held in `df`, `df_mass` and `df_charge`."
+      ],
+      "explanation": "The notebook's scientific goal is to characterize domain motion in adenylate kinase via trajectory RMSD analyses (weighted and unweighted). Three independent terminal results remain accessible at script completion as named pandas DataFrames: `df` (C-alpha CORE domain RMSD from the AtomGroup analysis), `df_mass` (mass-weighted RMSD of C-alphas plus CORE/LID/NMP groups), and `df_charge` (resid-weighted RMSD demonstrating the NMP-domain mobility finding). The appended code only creates `/work/outputs` and writes these existing DataFrames to CSV, preserving their columns, labels and row order. No analysis is recomputed or added.",
+      "export_code": "import os as _export_os\n\n_export_os.makedirs('/work/outputs', exist_ok=True)\n\n# Terminal RMSD results already stored by the original analysis; saved as-is.\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)",
+      "unresolved_assumptions": [
+        "Whether pandas and MDAnalysis execute successfully in the offline reference environment (dependency staging and input availability is an execution-stage concern).",
+        "Whether trajectory time is guessed (non-timestamped DCD) as the notebook narrative notes; the exported 'Time (ns)' column simply preserves whatever the original analysis produced."
+      ]
+    },
+    "output-audit.json": {
+      "outputs": [
+        {
+          "bytes": 4134,
+          "download_hash_verified": true,
+          "file": "core_ca_rmsd.csv",
+          "sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.0",
+                  "1.0",
+                  "2.0"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.0,
+                "minimum": 0.0,
+                "name": "Frame",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8e731b6dcd3aea0a10e0a7b238767c329318edc010424eb3cc41b3e983982d1f",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.9999999119200186",
+                  "1.9999998238400372",
+                  "2.999999735760056"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.99999136816182,
+                "minimum": 0.9999999119200186,
+                "name": "Time (ns)",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a94d37f3d15babfe5db70110b501e2ead48de5cde71feea12de83b85b5aac0ce",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "2.2323827208734618e-07",
+                  "0.40756080970089986",
+                  "0.5175907996282854"
+                ],
+                "finite_numeric": 98,
+                "maximum": 1.9677980349366806,
+                "minimum": 2.2323827208734618e-07,
+                "name": "CORE",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8277f7786bee58aa7e3fb4d1e9c7dd282010100c4cc165a7fab0c1071fe04797",
+                "other": 0,
+                "position": 2
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 98
+          }
+        },
+        {
+          "bytes": 9534,
+          "download_hash_verified": true,
+          "file": "mass_weighted_rmsd.csv",
+          "sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.0",
+                  "1.0",
+                  "2.0"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.0,
+                "minimum": 0.0,
+                "name": "Frame",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8e731b6dcd3aea0a10e0a7b238767c329318edc010424eb3cc41b3e983982d1f",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.9999999119200186",
+                  "1.9999998238400372",
+                  "2.999999735760056"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.99999136816182,
+                "minimum": 0.9999999119200186,
+                "name": "Time (ns)",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a94d37f3d15babfe5db70110b501e2ead48de5cde71feea12de83b85b5aac0ce",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "3.6878070413424054e-07",
+                  "0.4234302962314481",
+                  "0.5936586213941683"
+                ],
+                "finite_numeric": 98,
+                "maximum": 6.8334148764638,
+                "minimum": 3.6878070413424054e-07,
+                "name": "C-alphas",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "40de25f7d404063762e4e08f0bb61e808e70b581bdad877b08d388ef85903ae1",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "5.8069410284836064e-08",
+                  "0.46215147409844226",
+                  "0.5840004767366076"
+                ],
+                "finite_numeric": 98,
+                "maximum": 3.501820723390153,
+                "minimum": 5.8069410284836064e-08,
+                "name": "CORE",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7c2229d845d9e5cc0712b877e7be43a9935bf9ddf1eb9348a4824b7e8628867f",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "8.8603862297393e-08",
+                  "0.4968180560689264",
+                  "0.805961567382741"
+                ],
+                "finite_numeric": 98,
+                "maximum": 11.49459835171095,
+                "minimum": 8.8603862297393e-08,
+                "name": "LID",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4258d57fb06cf597ac47def4881e04d8ba7c806c81808ad7c84f75fac632f1f3",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "1.3406772489854334e-08",
+                  "0.4867389984803548",
+                  "0.7406083009039943"
+                ],
+                "finite_numeric": 98,
+                "maximum": 10.449026883527377,
+                "minimum": 1.3406772489854334e-08,
+                "name": "NMP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4fe9a8e359d54358bb9dfafceb3f81fa35b46a07b41267fb0c373ca9d42b48d1",
+                "other": 0,
+                "position": 5
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 98
+          }
+        },
+        {
+          "bytes": 9506,
+          "download_hash_verified": true,
+          "file": "resid_weighted_rmsd.csv",
+          "sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.0",
+                  "1.0",
+                  "2.0"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.0,
+                "minimum": 0.0,
+                "name": "Frame",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8e731b6dcd3aea0a10e0a7b238767c329318edc010424eb3cc41b3e983982d1f",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "0.9999999119200186",
+                  "1.9999998238400372",
+                  "2.999999735760056"
+                ],
+                "finite_numeric": 98,
+                "maximum": 97.99999136816182,
+                "minimum": 0.9999999119200186,
+                "name": "Time (ns)",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a94d37f3d15babfe5db70110b501e2ead48de5cde71feea12de83b85b5aac0ce",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "5.215346733281427e-07",
+                  "0.4322756870631961",
+                  "0.6037761145241416"
+                ],
+                "finite_numeric": 98,
+                "maximum": 6.46274065656846,
+                "minimum": 5.215346733281427e-07,
+                "name": "C-alphas",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "c4494b242b994ebebc64462031d1f4d4e48c98c5afa1ac4fe05c0b5e8a5cdd2f",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "1.9251951812941004e-07",
+                  "0.45986633006728567",
+                  "0.5833410995324451"
+                ],
+                "finite_numeric": 98,
+                "maximum": 3.7686944121417985,
+                "minimum": 1.9251951812941004e-07,
+                "name": "CORE",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2038c60aa5b24373ff227938b7f6cf9afd647d40ee29adf19759a3b50ff85138",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "2.2311229729437504e-07",
+                  "0.47653188389891205",
+                  "0.772391989539817"
+                ],
+                "finite_numeric": 98,
+                "maximum": 9.412041981858437,
+                "minimum": 2.2311229729437504e-07,
+                "name": "LID",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "1b021d69b0e7e8c318dd0d8e3b8c574b9d44c65890062d14c97aa128e0329666",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 98,
+                "empty": 0,
+                "examples": [
+                  "2.869577368878692e-07",
+                  "0.48186377931443886",
+                  "0.7342074695280763"
+                ],
+                "finite_numeric": 98,
+                "maximum": 13.926335221089248,
+                "minimum": 2.869577368878692e-07,
+                "name": "NMP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a6dbb3af1ca24ec848e6787a56481772c84bf96050e8640c5aa7e4c52a2633fe",
+                "other": 0,
+                "position": 5
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 98
+          }
+        }
+      ],
+      "scope": "Structural observations only"
+    },
+    "provenance.json": {
+      "id": "mdanalysis-rmsd",
+      "license": "LGPL-2.1",
+      "provenance": {
+        "data_lineage": "Supplied molecular-dynamics simulation trajectory, not an observed experimental time series.",
+        "data_redistribution_review": "Not yet established; keep biological inputs and generated bundles private until checked separately.",
+        "notebook": {
+          "license": "LGPL-2.1",
+          "license_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/LICENSE",
+          "revision": "b20b22d2b050238436c76df0f984be7827854bce",
+          "sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+          "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+        }
+      },
+      "source_revision": "b20b22d2b050238436c76df0f984be7827854bce",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "title": "MDAnalysis: RMSD of atomic structures",
+      "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "finished": 1792759236.3938007,
+      "last_passing_test": {
+        "hashes": {
+          "analysis.py": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+          "inputs.json": "6ac91cab38eae269a4e6457275b3b956f615a7df03de4b1ce88f44b8110efc30",
+          "pyproject.toml": "db0682f2ead458c2a5f5755587603113d5df54a1156fa2ae4db59d99aad605ec",
+          "stage-inputs.sh": "2cbb320a610c708c09844db9e9a0420e6f783014f6e6a545ae7b9f2fc33e01b4",
+          "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "source_changed": false,
+        "test": 1
+      },
+      "reference_test_requests": 1,
+      "reference_tests": 1,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1748.4744034851901,
+      "solver_run": false,
+      "started": 1792759121.8670523,
+      "status": "reference_executed_requires_review"
+    },
+    "trial/environment.txt": "cloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\nfilelock==4.2.4\nfonttools==4.67.0\ngriddataformats==1.2.0\nhypothesis==6.170.8\niniconfig==2.3.1\njoblib==1.6.0\nkiwisolver==1.5.1\nmatplotlib==3.11.2\nmda-xdrlib==0.2.0\nmdanalysis==2.11.0\nmdanalysistests==2.11.0\nmmtf-python==1.1.3\nmrcfile==1.5.4\nmsgpack==1.2.3\nnumpy==2.5.4\npackaging==26.3\npandas==3.1.0\npillow==13.0.0\npluggy==1.7.0\npygments==2.21.0\npyparsing==3.3.3\npytest==9.1.1\npython-dateutil==3.0.0\nscipy==1.18.1\nsix==1.17.0\nsortedcontainers==2.4.0\nthreadpoolctl==3.7.0\ntqdm==4.70.1\ntzdata==2026.5\n",
+    "trial/inputs-before.json": {
+      "files": []
+    },
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: guide\n#     language: python\n#     name: python3\n# ---\n\n# # Calculating the root mean square deviation of atomic structures\n#\n# We calculate the RMSD of domains in adenylate kinase as it transitions from an open to closed structure, and look at calculating weighted RMSDs.\n#\n# **Last updated:** December 2022 with MDAnalysis 2.4.0-dev0\n#\n# **Minimum version of MDAnalysis:** 1.0.0\n#\n# **Packages required:**\n#     \n# * MDAnalysis (<a data-cite=\"michaud-agrawal_mdanalysis_2011\" href=\"https://doi.org/10.1002/jcc.21787\">Michaud-Agrawal *et al.*, 2011</a>, <a data-cite=\"gowers_mdanalysis_2016\" href=\"https://doi.org/10.25080/Majora-629e541a-00e\">Gowers *et al.*, 2016</a>)\n# * MDAnalysisTests\n# * [pandas](https://pandas.pydata.org)\n#\n# **See also**\n#\n# * [Pairwise (2D) RMSD](pairwise_rmsd.ipynb)\n# * [RMSF](rmsf.ipynb)\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# MDAnalysis implements RMSD calculation using the fast QCP algorithm (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>). Please cite (<a data-cite=\"theobald_rapid_2005\" href=\"https://doi.org/10.1107/S0108767305015266\">Theobald, 2005</a>) when using the ``MDAnalysis.analysis.align`` module in published work.\n#\n# </div>\n\nimport MDAnalysis as mda\nfrom MDAnalysis.tests.datafiles import PSF, DCD, CRD\nfrom MDAnalysis.analysis import rms\n\nimport pandas as pd\n# the next line is necessary to display plots in Jupyter\n# Notebook presentation directive: %matplotlib inline\n\n\n# ## Loading files\n\n# The test files we will be working with here feature adenylate kinase (AdK), a phosophotransferase enzyme. (<a data-cite=\"beckstein_zipping_2009\" href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">Beckstein *et al.*, 2009</a>) The trajectory ``DCD`` samples a transition from a closed to an open conformation. AdK has three domains: \n#\n#   * CORE\n#   * LID: an ATP-binding domain\n#   * NMP: an AMP-binding domain\n#   \n# The LID and NMP domains move around the stable CORE as the enzyme transitions between the opened and closed conformations. One way to quantify this movement is by calculating the root mean square deviation (RMSD) of atomic positions.\n\nu = mda.Universe(PSF, DCD)  # closed AdK (PDB ID: 1AKE)\nref = mda.Universe(PSF, CRD)  # open AdK (PDB ID: 4AKE)\n\n# ## Background\n#\n# The root mean square deviation (RMSD) of particle coordinates is one measure of distance, or dissimilarity, between molecular conformations. Each structure should have matching elementwise atoms $i$ in the same order, as the distance between them is calculated and summed for the final result. It is calculated between coordinate arrays $\\mathbf{x}$ and $\\mathbf{x}^{\\text{ref}}$ according to the equation below:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\sqrt{\\frac{1}{n} \\sum_{i=1}^{n}{|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}} $$\n#\n# As molecules can move around, the structure $\\mathbf{x}$ is usually translated by a vector $\\mathbf{t}$ and rotated by a matrix $\\mathsf{R}$ to align with the reference $\\mathbf{x}^{\\text{ref}}$ such that the RMSD is minimised. The RMSD after this optimal superposition can be expressed as follows:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^{\\text{ref}}) = \\min_{\\mathsf{R}, \\mathbf{t}} %\n#   \\sqrt{\\frac{1}{N} \\sum_{i=1}^{N} \\left[ %\n#       (\\mathsf{R}\\cdot\\mathbf{x}_{i}(t) + \\mathbf{t}) - \\mathbf{x}_{i}^{\\text{ref}} \\right]^{2}}$$\n#\n# The RMSD between one reference state and a trajectory of structures is often calculated as a way to measure the dissimilarity of the trajectory conformational ensemble to the reference. This reference is frequently the first frame of the trajectory (the default in MDAnalysis), in which case it can provide insight into the overall movement from the initial starting point. While stable RMSD values from a reference structure are frequently used as a measure of conformational convergence, this metric suffers from the problem of *degeneracy*: many different structures can have the same RMSD from the same reference. For an alternative measure, you could use [pairwise or 2D RMSD](pairwise_rmsd.ipynb).\n#\n# Typically not all coordinates in a structures are included in an RMSD analysis. With proteins, the fluctuation of the residue side-chains is not representative of overall conformational change. Therefore when RMSD analyses are performed to investigate large-scale movements in proteins, the atoms are usually restricted only to the backbone atoms (forming the amide-bond chain) or the alpha-carbon atoms. \n#\n# MDAnalysis provides functions and classes to calculate the [RMSD between coordinate arrays](#RMSD-between-two-sets-of-coordinates), and [Universes](#RMSD-of-a-Universe-with-multiple-selections) or [AtomGroups](#RMSD-of-an-AtomGroup-with-multiple-selections). \n#\n# The contribution of each particle $i$ to the final RMSD value can also [be weighted](#Weighted-RMSD-of-a-trajectory) by $w_i$:\n#\n# $$ \\text{RMSD}(\\mathbf{x}, \\mathbf{x}^\\text{ref}) = \\sqrt{\\frac{\\sum_{i=1}^{n}{w_i|\\mathbf{x}_i-\\mathbf{x}_i^{\\text{ref}}|^2}}{\\sum_{i-1}^n w_i}} $$\n#\n# RMSD analyses are frequently weighted by mass. The MDAnalysis RMSD class ([API docs](https://docs.mdanalysis.org/stable/documentation_pages/analysis/rms.html#MDAnalysis.analysis.rms.RMSD)) allows you to both [select mass-weighting](#Mass) with `weights='mass'` or `weights_groupselections='mass'`, or to [pass custom arrays](#Custom-weights) into either keyword.\n\n# ## RMSD between two sets of coordinates\n\n# The ``MDAnalysis.analysis.rms.rmsd`` function returns the root mean square deviation (in Angstrom) between two sets of coordinates. Here, we calculate the RMSD between the backbone atoms of the open and closed conformations of AdK. Only considering the backbone atoms is often more helpful than calculating the RMSD for all the atoms, as movement in amino acid side-chains isn't indicative of overall conformational change.\n\nrms.rmsd(u.select_atoms('backbone').positions,  # coordinates to align\n         ref.select_atoms('backbone').positions,  # reference coordinates\n         center=True,  # subtract the center of geometry\n         superposition=True)  # superimpose coordinates\n\n# ## RMSD of a Universe with multiple selections\n\n# It is more efficient to use the ``MDAnalysis.analysis.rms.RMSD`` class to calculate the RMSD of an entire trajectory to a single reference point, than to use the the ``MDAnalysis.analysis.rms.rmsd`` function.\n#\n# The ``rms.RMSD`` class first performs a rotational and translational alignment of the target trajectory to the reference universe at ``ref_frame``, using the atoms in ``select`` to determine the transformation. The RMSD of the ``select`` selection is calculated. Then, *without further alignment*, the RMSD of each group in ``groupselections`` is calculated. \n\nCORE = 'backbone and (resid 1-29 or resid 60-121 or resid 160-214)'\nLID = 'backbone and resid 122-159'\nNMP = 'backbone and resid 30-59'\n\nR = rms.RMSD(u,  # universe to align\n             u,  # reference universe or atomgroup\n             select='backbone',  # group to superimpose and calculate RMSD\n             groupselections=[CORE, LID, NMP],  # groups for RMSD\n             ref_frame=0)  # frame index of the reference\nR.run()\n\n# The data is saved in ``R.rmsd`` as an array.\n\nR.results.rmsd.shape\n\n# ``R.rmsd`` has a row for each timestep. The first two columns of each row are the frame index of the time step, and the time (which is guessed in trajectory formats without timesteps). The third column is RMSD of ``select``. The last few columns are the RMSD of the groups in ``groupselections``.\n\n# ### Plotting the data\n#\n# We can easily plot this data using the common data analysis package [pandas](https://pandas.pydata.org). We turn the ``R.rmsd`` array into a [DataFrame](https://pandas.pydata.org/docs/user_guide/dsintro.html#dataframe) and label each column below.\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'Backbone', 'CORE', \n                           'LID', 'NMP'])\n\ndf\n\nax = df.plot(x='Frame', y=['Backbone', 'CORE', 'LID', 'NMP'],\n             kind='line')\nax.set_ylabel(r'RMSD ($\\AA$)')\n\n# ## RMSD of an AtomGroup with multiple selections\n#\n# The `RMSD` class accepts both `AtomGroup`s and `Universe`s as arguments. Restricting the atoms considered to an AtomGroup can be very helpful, as the `select` and `groupselections` arguments are applied only to the atoms in the original `AtomGroup`. In the example below, for example, only the alpha-carbons of the CORE domain are incorporated in the analysis.\n#\n# <div class=\"alert alert-info\">\n#     \n# **Note**\n#\n# This feature does not currently support `groupselections`.\n#\n# </div>\n\nca = u.select_atoms('name CA')\n\nR = rms.RMSD(ca, ca, select=CORE, ref_frame=0)\nR.run()\n\ndf = pd.DataFrame(R.results.rmsd, \n                  columns=['Frame', 'Time (ns)', \n                           'CORE'])\n\nax = df.plot(x='Frame', y='CORE', kind='line')\nax.set_ylabel('RMSD ($\\AA$)')\n\n# ## Weighted RMSD of a trajectory\n#\n# You can also calculate the weighted RMSD of a trajectory using the `weights` and `weights_groupselections` keywords. The former only applies weights to the group in `select`, while the latter must be a list of the *same length and order* as `groupselections`. If you would like to only weight certain groups in `groupselections`, use `None` for the unweighted groups. Both `weights` and `weights_groupselections` accept `None` (for unweighted), `'mass'` (to weight by mass), and custom arrays. A custom array should have the same number of values as there are particles in the corresponding AtomGroup.\n\n# ### Mass\n\n# It is common to weight RMSD analyses by particle weight, so the `RMSD` class accepts `'mass'` as an argument for `weights`. Note that the `weights` keyword only applies to the group in `select`, and does not apply to the `groupselections`; these remain unweighted below.\n\nR_mass = rms.RMSD(u, u,\n                  select='protein and name CA',\n                  weights='mass',\n                  groupselections=[CORE, LID, NMP])\nR_mass.run()\n\n# The plot looks largely the same as above because all the alpha-carbons and individual backbone atoms have the same mass. Below we show how you can pass in custom weights.\n\ndf_mass = pd.DataFrame(R_mass.results.rmsd, \n                       columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_mass = df_mass.plot(x='Frame', \n                       y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')\n\n# ### Custom weights\n\n# You can also pass in an array of values for the weights. This must have the same length as the number of atoms in your selection groups. In this example, we pass in arrays of residue numbers. This **is not a typical weighting you might choose**, but we use it here to show how you can get different results to the previous graphs for mass-weighted and non-weighted RMSD. You could choose to pass in an array of charges, or your own custom value. \n#\n# First we select the atom groups to make this easier.\n\nag = u.select_atoms('protein and name CA')\nprint('Shape of C-alpha charges:', ag.charges.shape)\ncore = u.select_atoms(CORE)\nlid = u.select_atoms(LID)\nnmp = u.select_atoms(NMP)\n\n# Below, we pass in weights for `ag` with the `weights` keyword, and weights for the `groupselections` with the `weights_groupselections` keyword.\n\nR_charge = rms.RMSD(u, u,\n                    select='protein and name CA',\n                    groupselections=[CORE, LID, NMP],\n                    weights=ag.resids,\n                    weights_groupselections=[core.resids, \n                                             lid.resids, \n                                             nmp.resids])\nR_charge.run()\n\n# You can see in the below graph that the NMP domain has much higher RMSD than before, as each particle is weighted by its residue number. Conversely, the CORE domain doesn't really change much. We could potentially infer from this that residues later in the NMP domain (with a higher residue number) are mobile during the length of the trajectory, whereas residues later in the CORE domain do not seem to contribute significantly to the RMSD.\n#\n# However, again, this is a **very non-conventional metric** and is shown here simply to demonstrate how to use the code.\n\ndf_charge = pd.DataFrame(R_charge.results.rmsd, \n                         columns=['Frame', \n                                'Time (ns)', \n                                'C-alphas', 'CORE', \n                                'LID', 'NMP'])\nax_charge = df_charge.plot(x='Frame',\n                           y=['C-alphas', 'CORE', 'LID', 'NMP'])\nax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')\n\n# ## References\n#\n# [1] Oliver Beckstein, Elizabeth&nbsp;J. Denning, Juan&nbsp;R. Perilla, and Thomas&nbsp;B. Woolf.\n# Zipping and <span class=\"bibtex-protected\">Unzipping</span> of <span class=\"bibtex-protected\">Adenylate</span> <span class=\"bibtex-protected\">Kinase</span>: <span class=\"bibtex-protected\">Atomistic</span> <span class=\"bibtex-protected\">Insights</span> into the <span class=\"bibtex-protected\">Ensemble</span> of <span class=\"bibtex-protected\">Open</span>\u2194<span class=\"bibtex-protected\">Closed</span> <span class=\"bibtex-protected\">Transitions</span>.\n# <em>Journal of Molecular Biology</em>, 394(1):160\u2013176, November 2009.\n# 00107.\n# URL: <a href=\"https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164\">https://linkinghub.elsevier.com/retrieve/pii/S0022283609011164</a>, <a href=\"https://doi.org/10.1016/j.jmb.2009.09.009\">doi:10.1016/j.jmb.2009.09.009</a>.\n#\n# [2] Richard&nbsp;J. Gowers, Max Linke, Jonathan Barnoud, Tyler J.&nbsp;E. Reddy, Manuel&nbsp;N. Melo, Sean&nbsp;L. Seyler, Jan Doma\u0144ski, David&nbsp;L. Dotson, S\u00e9bastien Buchoux, Ian&nbsp;M. Kenney, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> <span class=\"bibtex-protected\">Python</span> <span class=\"bibtex-protected\">Package</span> for the <span class=\"bibtex-protected\">Rapid</span> <span class=\"bibtex-protected\">Analysis</span> of <span class=\"bibtex-protected\">Molecular</span> <span class=\"bibtex-protected\">Dynamics</span> <span class=\"bibtex-protected\">Simulations</span>.\n# <em>Proceedings of the 15th Python in Science Conference</em>, pages 98\u2013105, 2016.\n# 00152.\n# URL: <a href=\"https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html\">https://conference.scipy.org/proceedings/scipy2016/oliver_beckstein.html</a>, <a href=\"https://doi.org/10.25080/Majora-629e541a-00e\">doi:10.25080/Majora-629e541a-00e</a>.\n#\n# [3] Naveen Michaud-Agrawal, Elizabeth&nbsp;J. Denning, Thomas&nbsp;B. Woolf, and Oliver Beckstein.\n# <span class=\"bibtex-protected\">MDAnalysis</span>: <span class=\"bibtex-protected\">A</span> toolkit for the analysis of molecular dynamics simulations.\n# <em>Journal of Computational Chemistry</em>, 32(10):2319\u20132327, July 2011.\n# 00778.\n# URL: <a href=\"http://doi.wiley.com/10.1002/jcc.21787\">http://doi.wiley.com/10.1002/jcc.21787</a>, <a href=\"https://doi.org/10.1002/jcc.21787\">doi:10.1002/jcc.21787</a>.\n#\n# [4] Douglas&nbsp;L. Theobald.\n# Rapid calculation of <span class=\"bibtex-protected\">RMSDs</span> using a quaternion-based characteristic polynomial.\n# <em>Acta Crystallographica Section A Foundations of Crystallography</em>, 61(4):478\u2013480, July 2005.\n# 00127.\n# URL: <a href=\"http://scripts.iucr.org/cgi-bin/paper?S0108767305015266\">http://scripts.iucr.org/cgi-bin/paper?S0108767305015266</a>, <a href=\"https://doi.org/10.1107/S0108767305015266\">doi:10.1107/S0108767305015266</a>.\n\n\nimport os as _export_os\n\n_export_os.makedirs('/work/outputs', exist_ok=True)\n\n# Terminal RMSD results already stored by the original analysis; saved as-is.\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 4134,
+            "exists": true,
+            "path": "core_ca_rmsd.csv",
+            "sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+          },
+          {
+            "bytes": 9534,
+            "exists": true,
+            "path": "mass_weighted_rmsd.csv",
+            "sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+          },
+          {
+            "bytes": 9506,
+            "exists": true,
+            "path": "resid_weighted_rmsd.csv",
+            "sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+        "inputs.json": "6ac91cab38eae269a4e6457275b3b956f615a7df03de4b1ce88f44b8110efc30",
+        "pyproject.toml": "db0682f2ead458c2a5f5755587603113d5df54a1156fa2ae4db59d99aad605ec",
+        "stage-inputs.sh": "2cbb320a610c708c09844db9e9a0420e6f783014f6e6a545ae7b9f2fc33e01b4",
+        "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "directory": "/work/run",
+        "elapsed_seconds": 4.423947811126709,
+        "exit_code": 0,
+        "finished": 1792759201.6304893,
+        "label": "command-836117533c2c42d69c340d9ea3a91f96",
+        "log": "/work/reference.py:157: SyntaxWarning: invalid escape sequence '\\A'\n  ax.set_ylabel('RMSD ($\\AA$)')\n/work/reference.py:182: SyntaxWarning: invalid escape sequence '\\A'\n  ax_mass.set_ylabel('Mass-weighted RMSD ($\\AA$)')\n/work/reference.py:218: SyntaxWarning: invalid escape sequence '\\A'\n  ax_charge.set_ylabel('Charge-weighted RMSD ($\\AA$)')\n/work/venv/lib/python3.13/site-packages/MDAnalysis/coordinates/DCD.py:176: DeprecationWarning: DCDReader currently makes independent timesteps by copying self.ts while other readers update self.ts inplace. This behavior will be changed in 3.0 to be the same as other readers. Read more at https://github.com/MDAnalysis/mdanalysis/issues/3889 to learn if this change in behavior might affect you.\n  warnings.warn(\nShape of C-alpha charges: (214,)\n",
+        "log_sha256": "01dff6b580d0596d5f8df4c3de12d4fed6a4e4e833fc72da96f8067086f52dd9",
+        "peak_child_rss_kib": 156860,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792759197.2065415,
+        "timed_out": false,
+        "timeout_seconds": 600
+      },
+      "input_observations": {
+        "files": []
+      },
+      "inputs_after": {
+        "files": 0,
+        "staged_inputs_verified": true
+      },
+      "reference_tests_remaining": 1,
+      "reference_tests_used": 1,
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "directory": "/work",
+        "elapsed_seconds": 11.145948886871338,
+        "exit_code": 0,
+        "finished": 1792759194.1493797,
+        "label": "command-aad3e71ee480463e8216fb3c1dfa8810",
+        "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 137.2 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 34 packages in 727ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 34 packages in 0.87ms\n   Building mdanalysistests==2.11.0\nDownloading pygments (1.2MiB)\nDownloading matplotlib (9.4MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading fonttools (5.1MiB)\nDownloading pandas (11.4MiB)\nDownloading scipy (33.7MiB)\nDownloading pillow (6.8MiB)\nDownloading numpy (15.9MiB)\nDownloading hypothesis (1.1MiB)\nDownloading griddataformats (5.4MiB)\nDownloading mdanalysis (13.1MiB)\n Downloaded hypothesis\n Downloaded pygments\n Downloaded kiwisolver\n Downloaded fonttools\n Downloaded griddataformats\n Downloaded pillow\n Downloaded matplotlib\n Downloaded mdanalysis\n Downloaded numpy\n Downloaded pandas\n Downloaded scipy\n      Built mdanalysistests==2.11.0\nPrepared 32 packages in 7.57s\nInstalled 32 packages in 698ms\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + filelock==4.2.4\n + fonttools==4.67.0\n + griddataformats==1.2.0\n + hypothesis==6.170.8\n + iniconfig==2.3.1\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + mda-xdrlib==0.2.0\n + mdanalysis==2.11.0\n + mdanalysistests==2.11.0\n + mmtf-python==1.1.3\n + mrcfile==1.5.4\n + msgpack==1.2.3\n + numpy==2.5.4\n + packaging==26.3\n + pandas==3.1.0\n + pillow==13.0.0\n + pluggy==1.7.0\n + pygments==2.21.0\n + pyparsing==3.3.3\n + pytest==9.1.1\n + python-dateutil==3.0.0\n + scipy==1.18.1\n + six==1.17.0\n + sortedcontainers==2.4.0\n + threadpoolctl==3.7.0\n + tqdm==4.70.1\n + tzdata==2026.5\nUsing Python 3.13.13 environment at: venv\n",
+        "log_sha256": "16678c70109712971de488f8cbc68b7b5af605ad3b4554a773d71811dc7be6fb",
+        "peak_child_rss_kib": 88360,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792759183.0034308,
+        "timed_out": false,
+        "timeout_seconds": 1760
+      },
+      "status": "reference_executed",
+      "test": 1
+    },
+    "trial/source.diff": ""
+  },
+  "package_inspection": {
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Direct-reference, editable, ambiguous or unparsed records do not authorize a registry fallback or arbitrary URL retrieval. Unavailable source remains an explicit evidence gap.",
+    "packages": {
+      "cloudpickle": {
+        "distribution": {
+          "hash": "sha256:9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+          "size": 22228,
+          "url": "https://files.pythonhosted.org/packages/88/39/799be3f2f0f38cc727ee3b4f1445fe6d5e4133064ec2e4115069418a5bb6/cloudpickle-3.1.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.1.2"
+      },
+      "contourpy": {
+        "distribution": {
+          "hash": "sha256:20156f5a1ac4f8ce02656e39a61e82164a3d359796dc8026f75b062783d500e1",
+          "size": 13323726,
+          "url": "https://files.pythonhosted.org/packages/83/5a/a55177dd22553a277388e8a1b3220e92de91bacb28356cdc73caa240121d/contourpy-1.4.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.4.0"
+      },
+      "cycler": {
+        "distribution": {
+          "hash": "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+          "size": 8321,
+          "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.12.1"
+      },
+      "filelock": {
+        "distribution": {
+          "hash": "sha256:301241438c57936ef93f4243a94f2559022268bfcf9b375a9a72eb0f8db8358e",
+          "size": 162475,
+          "url": "https://files.pythonhosted.org/packages/e0/1b/5e74289a1878e666bb4b65fe5805a04cafcac2aa5f519ef1ead67ef91c56/filelock-4.2.4-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.2.4"
+      },
+      "fonttools": {
+        "distribution": {
+          "hash": "sha256:4304f03ed7f4ba000a8dcc941ad854bfa52e2f3b6112b8f099b6f431cf98e701",
+          "size": 1213142,
+          "url": "https://files.pythonhosted.org/packages/3d/61/4161946319472aaa9b897bd18ad5108a5b10f5ebaa503d921a001ac4fff9/fonttools-4.67.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.67.0"
+      },
+      "griddataformats": {
+        "distribution": {
+          "hash": "sha256:b42f0a823ce6f526c0052515047237b233748f2bdc38fc797fc37c7df81a8dd5",
+          "size": 5611607,
+          "url": "https://files.pythonhosted.org/packages/2c/27/9768d918c86ad720ea805ce21cb7ae33ab77e8ca92486ff3c2af5dd5e60b/griddataformats-1.2.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.2.0"
+      },
+      "hypothesis": {
+        "distribution": {
+          "hash": "sha256:dfc56ceac35d825fb6a85fa3ac36a598fee3101d264a39895a62f78c1cc95521",
+          "size": 518977,
+          "url": "https://files.pythonhosted.org/packages/d7/1f/d08bc6d4548cf5f6a022895d2f32c23e981fb417517358aebe612544a2ad/hypothesis-6.170.8.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "6.170.8"
+      },
+      "iniconfig": {
+        "distribution": {
+          "hash": "sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7",
+          "size": 7552,
+          "url": "https://files.pythonhosted.org/packages/56/43/4ca9e49d27a1fcf6bece6f6aec0ea46bb9112489b93d4b688fb415457bdb/iniconfig-2.3.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.3.1"
+      },
+      "joblib": {
+        "distribution": {
+          "hash": "sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+          "size": 306115,
+          "url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.6.0"
+      },
+      "kiwisolver": {
+        "distribution": {
+          "hash": "sha256:f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+          "size": 104395,
+          "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.5.1"
+      },
+      "matplotlib": {
+        "distribution": {
+          "hash": "sha256:cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4",
+          "size": 32660610,
+          "url": "https://files.pythonhosted.org/packages/e7/c8/9aa712a0afb882649424dd8de8ad9aa6235e796e84c6052e8f6dc1598d0d/matplotlib-3.11.2.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "3.11.2"
+      },
+      "mda-xdrlib": {
+        "distribution": {
+          "hash": "sha256:0d1757b339f5db2d017a89ddaae06a82cd7a2cce26b8063df9f52b64e933fb47",
+          "size": 14587,
+          "url": "https://files.pythonhosted.org/packages/4f/4b/5fe3a00833a9f9775b3c237624a6212798167278ffe10fe0de04f58612d0/mda_xdrlib-0.2.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.2.0"
+      },
+      "mdanalysis": {
+        "distribution": {
+          "hash": "sha256:aee95dc08d55169c58adbeb2980ff4a39b153bf85f55f291c6c0f7b8226223b0",
+          "size": 5450970,
+          "url": "https://files.pythonhosted.org/packages/81/20/376e8a20c8b74523baa39f5f71d986971b228275e0c0be73fa9a3a7b94a4/mdanalysis-2.11.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.11.0"
+      },
+      "mdanalysistests": {
+        "distribution": {
+          "hash": "sha256:5edeb5b01805da728b202103aa8d2b5974a37f1005ab1fe0150ed7d59702d2ea",
+          "size": 59555441,
+          "url": "https://files.pythonhosted.org/packages/27/bb/f16a0690f7f0219eec3310deb3d47f09da6df58a50873f6624f4742ea6f0/mdanalysistests-2.11.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.11.0"
+      },
+      "mmtf-python": {
+        "distribution": {
+          "hash": "sha256:502031c509a8a6d73e042781abbd88b84c1afffe65097eb0c1b70f329ffd1e6e",
+          "size": 25252,
+          "url": "https://files.pythonhosted.org/packages/3c/f1/efea3da858043ed9c078f507ab744b6d00933c7bc8a75a24821937600178/mmtf_python-1.1.3-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.1.3"
+      },
+      "mrcfile": {
+        "distribution": {
+          "hash": "sha256:195370a13db5ce19600499f9bdf90fd9888979bf39de19a17c19024436c6f4c2",
+          "size": 45012,
+          "url": "https://files.pythonhosted.org/packages/6f/cb/3f4ee8233f30c7926f1ed4885ff32b79ec7ce3210370f43e1cb2b385bed6/mrcfile-1.5.4-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.5.4"
+      },
+      "msgpack": {
+        "distribution": {
+          "hash": "sha256:32edb81a2b5eb7cd7c9d941b2bfbbb082fd2cd09e0e725930316af6b708db186",
+          "size": 196517,
+          "url": "https://files.pythonhosted.org/packages/0a/e7/bb605a7bab2d8425a64b3fa762b39dc1bf1c7e3f11ba6fb5413d6db0ff8c/msgpack-1.2.3.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.2.3"
+      },
+      "numpy": {
+        "distribution": {
+          "hash": "sha256:9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "size": 20866315,
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.5.4"
+      },
+      "packaging": {
+        "distribution": {
+          "hash": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+          "size": 129956,
+          "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "26.3"
+      },
+      "pandas": {
+        "distribution": {
+          "hash": "sha256:ecb9b2d8a817b1e1ba1fdb90c0abe9eab31b4fdf2562b7a56b86ac66ace17e49",
+          "size": 5933421,
+          "url": "https://files.pythonhosted.org/packages/55/b1/a10c0d1a7e3ce44eb42635771004aa503e3b9ddde0bd39c524dda65f7eff/pandas-3.1.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "3.1.0"
+      },
+      "pillow": {
+        "distribution": {
+          "hash": "sha256:cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "size": 47058631,
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "13.0.0"
+      },
+      "pluggy": {
+        "distribution": {
+          "hash": "sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec",
+          "size": 27082,
+          "url": "https://files.pythonhosted.org/packages/40/9e/2b38731e0fc536806f16490e1a12d7f0dc2a1235aa8cc07bcc75416a7daa/pluggy-1.7.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.7.0"
+      },
+      "pygments": {
+        "distribution": {
+          "hash": "sha256:2363c69b61c4a97c838da3b130dcd6468f4848992b21a82f2a63ec34377137d9",
+          "size": 1250147,
+          "url": "https://files.pythonhosted.org/packages/71/46/17f022dd3e953bf20a04a028a21ec746d942f8d2af30fa0f124fa0e6a684/pygments-2.21.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.21.0"
+      },
+      "pyparsing": {
+        "distribution": {
+          "hash": "sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+          "size": 126420,
+          "url": "https://files.pythonhosted.org/packages/38/bb/d215ee7c73b61497b28a5503f9f53523f294fcc936762b7caf90e0c1c2b5/pyparsing-3.3.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.3.3"
+      },
+      "pytest": {
+        "distribution": {
+          "hash": "sha256:37a86b45efb9a47a61a36449063e8e18d0cab3161329fc099eb21783169c4f0c",
+          "size": 386536,
+          "url": "https://files.pythonhosted.org/packages/24/25/1de2678b631f5a49215c6c96fff41ba892b0a34df68d6d80292b1b48aa7f/pytest-9.1.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "9.1.1"
+      },
+      "python-dateutil": {
+        "distribution": {
+          "hash": "sha256:3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+          "size": 94659,
+          "url": "https://files.pythonhosted.org/packages/5a/17/cebee01d1c0c1441174cf0456ddc91b280d79acb65340c05e41d77866ee8/python_dateutil-3.0.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.0.0"
+      },
+      "scipy": {
+        "distribution": {
+          "hash": "sha256:52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307",
+          "size": 30781235,
+          "url": "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.18.1"
+      },
+      "six": {
+        "distribution": {
+          "hash": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+          "size": 11050,
+          "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.17.0"
+      },
+      "sortedcontainers": {
+        "distribution": {
+          "hash": "sha256:a163dcaede0f1c021485e957a39245190e74249897e2ae4b2aa38595db237ee0",
+          "size": 29575,
+          "url": "https://files.pythonhosted.org/packages/32/46/9cb0e58b2deb7f82b84065f37f3bffeb12413f947f9388e4cac22c4621ce/sortedcontainers-2.4.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.4.0"
+      },
+      "threadpoolctl": {
+        "distribution": {
+          "hash": "sha256:cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+          "size": 26362,
+          "url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.7.0"
+      },
+      "tqdm": {
+        "distribution": {
+          "hash": "sha256:c293e525e6fef9c20e8728fd4612df02a0aa31bb5fe91ecd93e123b1b7bffa73",
+          "size": 80199,
+          "url": "https://files.pythonhosted.org/packages/a7/03/921a3d3c75785aca9ebfbfcabfbc3a1be12e2ab5265deb026d55a5a3f83e/tqdm-4.70.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.70.1"
+      },
+      "tzdata": {
+        "distribution": {
+          "hash": "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+          "size": 347996,
+          "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.5"
+      }
+    },
+    "unparsed_environment_records": []
+  },
+  "reference_inspection": {
+    "boundary": "Read-only UTF-8 text inspection of these recorded reference outputs only. Every read verifies the complete file hash and size before returning text. No execution, imports, filesystem writes, arbitrary paths or input-file access. Binary content remains an explicit inspection gap. Observed text establishes file contents, not scientific correctness or portable comparison tolerances. Text reads default to columns 1\u20131000 of each selected line; reported slices are incomplete fragments. Explicit larger windows or end_column:null are allowed. Reference values are private evidence, not material to copy into solver instructions.",
+    "files": {
+      "core_ca_rmsd.csv": {
+        "bytes": 4134,
+        "sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+      },
+      "mass_weighted_rmsd.csv": {
+        "bytes": 9534,
+        "sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+      },
+      "resid_weighted_rmsd.csv": {
+        "bytes": 9506,
+        "sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+      }
+    }
+  },
+  "repeatability_observations": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": true,
+    "all_outputs_byte_identical_to_original": true,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792759273.3535511,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+          "byte_identical": true,
+          "path": "core_ca_rmsd.csv",
+          "replay_sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+        },
+        {
+          "baseline_sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+          "byte_identical": true,
+          "path": "mass_weighted_rmsd.csv",
+          "replay_sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+        },
+        {
+          "baseline_sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6",
+          "byte_identical": true,
+          "path": "resid_weighted_rmsd.csv",
+          "replay_sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab",
+          "byte_identical": true,
+          "path": "core_ca_rmsd.csv",
+          "replay_sha256": "dc4137170c376ff921474394f5b63e84888c64d1f0f4dafcc6235a16272e78ab"
+        },
+        {
+          "baseline_sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc",
+          "byte_identical": true,
+          "path": "mass_weighted_rmsd.csv",
+          "replay_sha256": "20841677b9ff4179eb5d86263728c34ef6dd4d64e488e82f4afe073f204570bc"
+        },
+        {
+          "baseline_sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6",
+          "byte_identical": true,
+          "path": "resid_weighted_rmsd.csv",
+          "replay_sha256": "55d28d1ef692b5346a018f4e8c398c0cc16ba7210797c625001262f6df6084c6"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792759236.4160032,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "bytes": 195789,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context.",
+      "sha256": "dd634a829994b231f0e79a63a1a25ce2a1ffd2b441b0a7156bb936c85978dab2"
+    }
+  },
+  "task_policy": {
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  }
+}

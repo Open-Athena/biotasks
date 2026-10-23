@@ -1,0 +1,109 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 15,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "86a8c9048da275ba408a47135e12ba5dfbc3444d3fae5116a7407bf19230763a",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {
+        "celltoolbar": "Raw Cell Format",
+        "vscode": {
+          "interpreter": {
+            "hash": "5edc5d8d8cbc0935a054a8e44024f729bc376180aae27775d15f2ff38c68f892"
+          }
+        }
+      },
+      "ignored_presentation_tags": [],
+      "markdown_cells": 21,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [
+        {
+          "cell_index": 1,
+          "directive": "%matplotlib inline",
+          "line": 7
+        }
+      ],
+      "profile": "python-narrative-v5",
+      "script_sha256": "afca45640d1a4d9abd7ce1ff25cd0bdee446a60dcbf1231bda9a261836e11ec7",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "RMSD of the alpha-carbon CORE domain selection over the AdK trajectory (Frame, Time (ns), CORE).",
+          "path": "core_ca_rmsd.csv",
+          "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' presents the CORE-domain C-alpha RMSD as its result, and the source stores it in `df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ns)', 'CORE'])` after `R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()`. `df` is not reassigned afterward, so it holds this endpoint at completion."
+        },
+        {
+          "description": "Mass-weighted RMSD trajectory for C-alphas and the CORE, LID and NMP domain groups (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "mass_weighted_rmsd.csv",
+          "source_evidence": "The 'Weighted RMSD of a trajectory \u2014 Mass' section interprets the mass-weighted trajectory RMSDs ('The plot looks largely the same as above...'), produced by `R_mass.run()` and stored as a named object in `df_mass = pd.DataFrame(R_mass.results.rmsd, ...)`, which is never overwritten."
+        },
+        {
+          "description": "Custom (resid-weighted) RMSD trajectory for C-alphas and CORE, LID, NMP groups, showing the elevated NMP-domain RMSD discussed in the narrative (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+          "path": "resid_weighted_rmsd.csv",
+          "source_evidence": "The 'Custom weights' section interprets this result independently ('the NMP domain has much higher RMSD than before'), produced by `R_charge.run()` and stored in `df_charge = pd.DataFrame(R_charge.results.rmsd, ...)`, which is never overwritten."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "The scalar RMSD between the open and closed backbone conformations (`rms.rmsd(...)` in 'RMSD between two sets of coordinates') was computed as an unnamed standalone expression and never stored in a named variable; capturing or recomputing it would add new scientific work, so it is not exported.",
+        "The Universe-level multi-selection RMSD analysis (Backbone/CORE/LID/NMP from the first `R = rms.RMSD(u, u, ...)`) is a substantive result, but both `R` and `df` are overwritten by the later AtomGroup analysis in the source, so the values no longer exist at script completion. No earlier capture or rerun is inserted.",
+        "All pandas line plots contain no numerical content beyond the exported DataFrames; their values are only a visualization of results held in `df`, `df_mass` and `df_charge`."
+      ],
+      "explanation": "The notebook's scientific goal is to characterize domain motion in adenylate kinase via trajectory RMSD analyses (weighted and unweighted). Three independent terminal results remain accessible at script completion as named pandas DataFrames: `df` (C-alpha CORE domain RMSD from the AtomGroup analysis), `df_mass` (mass-weighted RMSD of C-alphas plus CORE/LID/NMP groups), and `df_charge` (resid-weighted RMSD demonstrating the NMP-domain mobility finding). The appended code only creates `/work/outputs` and writes these existing DataFrames to CSV, preserving their columns, labels and row order. No analysis is recomputed or added.",
+      "export_code": "import os as _export_os\n\n_export_os.makedirs('/work/outputs', exist_ok=True)\n\n# Terminal RMSD results already stored by the original analysis; saved as-is.\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)",
+      "unresolved_assumptions": [
+        "Whether pandas and MDAnalysis execute successfully in the offline reference environment (dependency staging and input availability is an execution-stage concern).",
+        "Whether trajectory time is guessed (non-timestamped DCD) as the notebook narrative notes; the exported 'Time (ns)' column simply preserves whatever the original analysis produced."
+      ]
+    },
+    "source": {
+      "id": "mdanalysis-rmsd",
+      "license": "LGPL-2.1",
+      "provenance": {
+        "data_lineage": "Supplied molecular-dynamics simulation trajectory, not an observed experimental time series.",
+        "data_redistribution_review": "Not yet established; keep biological inputs and generated bundles private until checked separately.",
+        "notebook": {
+          "license": "LGPL-2.1",
+          "license_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/LICENSE",
+          "revision": "b20b22d2b050238436c76df0f984be7827854bce",
+          "sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+          "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+        }
+      },
+      "source_revision": "b20b22d2b050238436c76df0f984be7827854bce",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "title": "MDAnalysis: RMSD of atomic structures",
+      "url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb"
+    }
+  }
+}

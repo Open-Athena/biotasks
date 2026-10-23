@@ -1,0 +1,31 @@
+{
+  "artifacts": [
+    {
+      "description": "RMSD of the alpha-carbon CORE domain selection over the AdK trajectory (Frame, Time (ns), CORE).",
+      "path": "core_ca_rmsd.csv",
+      "source_evidence": "The section 'RMSD of an AtomGroup with multiple selections' presents the CORE-domain C-alpha RMSD as its result, and the source stores it in `df = pd.DataFrame(R.results.rmsd, columns=['Frame', 'Time (ns)', 'CORE'])` after `R = rms.RMSD(ca, ca, select=CORE, ref_frame=0); R.run()`. `df` is not reassigned afterward, so it holds this endpoint at completion."
+    },
+    {
+      "description": "Mass-weighted RMSD trajectory for C-alphas and the CORE, LID and NMP domain groups (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+      "path": "mass_weighted_rmsd.csv",
+      "source_evidence": "The 'Weighted RMSD of a trajectory \u2014 Mass' section interprets the mass-weighted trajectory RMSDs ('The plot looks largely the same as above...'), produced by `R_mass.run()` and stored as a named object in `df_mass = pd.DataFrame(R_mass.results.rmsd, ...)`, which is never overwritten."
+    },
+    {
+      "description": "Custom (resid-weighted) RMSD trajectory for C-alphas and CORE, LID, NMP groups, showing the elevated NMP-domain RMSD discussed in the narrative (Frame, Time (ns), C-alphas, CORE, LID, NMP).",
+      "path": "resid_weighted_rmsd.csv",
+      "source_evidence": "The 'Custom weights' section interprets this result independently ('the NMP domain has much higher RMSD than before'), produced by `R_charge.run()` and stored in `df_charge = pd.DataFrame(R_charge.results.rmsd, ...)`, which is never overwritten."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "The scalar RMSD between the open and closed backbone conformations (`rms.rmsd(...)` in 'RMSD between two sets of coordinates') was computed as an unnamed standalone expression and never stored in a named variable; capturing or recomputing it would add new scientific work, so it is not exported.",
+    "The Universe-level multi-selection RMSD analysis (Backbone/CORE/LID/NMP from the first `R = rms.RMSD(u, u, ...)`) is a substantive result, but both `R` and `df` are overwritten by the later AtomGroup analysis in the source, so the values no longer exist at script completion. No earlier capture or rerun is inserted.",
+    "All pandas line plots contain no numerical content beyond the exported DataFrames; their values are only a visualization of results held in `df`, `df_mass` and `df_charge`."
+  ],
+  "explanation": "The notebook's scientific goal is to characterize domain motion in adenylate kinase via trajectory RMSD analyses (weighted and unweighted). Three independent terminal results remain accessible at script completion as named pandas DataFrames: `df` (C-alpha CORE domain RMSD from the AtomGroup analysis), `df_mass` (mass-weighted RMSD of C-alphas plus CORE/LID/NMP groups), and `df_charge` (resid-weighted RMSD demonstrating the NMP-domain mobility finding). The appended code only creates `/work/outputs` and writes these existing DataFrames to CSV, preserving their columns, labels and row order. No analysis is recomputed or added.",
+  "export_code": "import os as _export_os\n\n_export_os.makedirs('/work/outputs', exist_ok=True)\n\n# Terminal RMSD results already stored by the original analysis; saved as-is.\ndf.to_csv('/work/outputs/core_ca_rmsd.csv', index=False)\ndf_mass.to_csv('/work/outputs/mass_weighted_rmsd.csv', index=False)\ndf_charge.to_csv('/work/outputs/resid_weighted_rmsd.csv', index=False)",
+  "unresolved_assumptions": [
+    "Whether pandas and MDAnalysis execute successfully in the offline reference environment (dependency staging and input availability is an execution-stage concern).",
+    "Whether trajectory time is guessed (non-timestamped DCD) as the notebook narrative notes; the exported 'Time (ns)' column simply preserves whatever the original analysis produced."
+  ]
+}
