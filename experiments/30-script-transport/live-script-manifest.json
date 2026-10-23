@@ -1,0 +1,79 @@
+{
+  "scope": "Pinned-ref diffs rendered by unchanged upstream splitter, targeting and stage builders; syntax-only checks; no script execution or PR recovery",
+  "pipeline_source_sha256": "0b748a897f1802fcaf4b59ab7ed54092c8715745b5dff14813c6389b1e134535",
+  "stage_source_sha256": "1f8349718bc93315bf3e5cbb10d5823c832539a8ef680b5ee169e4562de3ea49",
+  "cases": [
+    {
+      "pr": 958,
+      "base_sha": "80e8d50d6bc5c2d749ea9740a1cd6199f61adafa",
+      "head_sha": "e38d72ae1e0c18d8d94f189acc977cffaaff35b4",
+      "diff_sha256": "be9e57d8c01d1962046d1d322ea033bda4f748c4e8b80429d237add943942628",
+      "source_patch_bytes": 321678,
+      "test_patch_bytes": 102968,
+      "source_patch_sha256": "5bd942c0db7db73761415a3b5478b0a2c7f9067c108ce3a9e1aaf942ebdc19d7",
+      "test_patch_sha256": "7ff31b48b3a45395d22c313a89d5e504767cc0dbfb61e9d1a4b00d24080138fd",
+      "test_files": [
+        "tests/similarity/test_entropy_kernel.py",
+        "tests/similarity/test_entropy_search.py",
+        "tests/similarity/test_flash_index.py",
+        "tests/similarity/test_flash_search_integration.py",
+        "tests/similarity/test_flash_similarity.py",
+        "tests/similarity/test_flash_similarity_spectrum_list.py",
+        "tests/similarity/test_flash_utils.py",
+        "tests/similarity/test_flash_utils_spectrum_list.py"
+      ],
+      "commands": [
+        "cd /workspace && python -m pytest -v tests/similarity/test_entropy_kernel.py tests/similarity/test_entropy_search.py tests/similarity/test_flash_index.py tests/similarity/test_flash_search_integration.py tests/similarity/test_flash_similarity.py tests/similarity/test_flash_similarity_spectrum_list.py tests/similarity/test_flash_utils.py tests/similarity/test_flash_utils_spectrum_list.py"
+      ],
+      "stages": {
+        "pre": {
+          "bytes": 103780,
+          "sha256": "9385d98820fcce06e6603c83921f3c3f9bc1cd29c505bf1775493b3b1c42a099",
+          "bash_syntax_exit": 0,
+          "exceeds_128k_linux_argument_limit": false
+        },
+        "post": {
+          "bytes": 425528,
+          "sha256": "2033ad03983623ece546fba4d0432ccba6df02322a21789be8e8b59066a1141b",
+          "bash_syntax_exit": 0,
+          "exceeds_128k_linux_argument_limit": true
+        }
+      }
+    },
+    {
+      "pr": 671,
+      "base_sha": "7b7fe7e24f87a3dab9fee9114178aae7dde070d5",
+      "head_sha": "1accfcecfb089b973f34f06edb2a3a7bf805bba5",
+      "diff_sha256": "6adab1e15ce8530ad7ddcf5eb7e3e4f6eee2b164508dc6a9dddd6960f95fd833",
+      "source_patch_bytes": 1473,
+      "test_patch_bytes": 3957,
+      "source_patch_sha256": "6bf393146b6c24fa79efb08b38a8ac7d6ce064829fb774c2e21752058c8f0435",
+      "test_patch_sha256": "76515233d88ad0be4b9dbcec7c8ed8716fa70b60cfc9a1a9dc1c7e42c0d87a79",
+      "test_files": [
+        "tests/filtering/test_spectrum_processor.py"
+      ],
+      "commands": [
+        "cd /workspace && python -m pytest -v tests/filtering/test_spectrum_processor.py"
+      ],
+      "stages": {
+        "pre": {
+          "bytes": 4459,
+          "sha256": "3b3ec32cf1afcc5971f5a6062db0f1988e4abd182615cd8c441e6f74038be655",
+          "bash_syntax_exit": 0,
+          "exceeds_128k_linux_argument_limit": false
+        },
+        "post": {
+          "bytes": 6002,
+          "sha256": "fcb19865319ef5d32dfc43c787322104a5bb4c0862ae4b2260614f8ef2160996",
+          "bash_syntax_exit": 0,
+          "exceeds_128k_linux_argument_limit": false
+        }
+      }
+    }
+  ],
+  "limits": [
+    "Original failed script bytes not retained; reconstructed inputs bound here",
+    "No timeout/parser/rebuild changes included",
+    "128 KiB comparison describes typical Linux single-argument boundary, not a live Docker result"
+  ]
+}

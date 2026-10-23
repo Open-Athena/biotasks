@@ -33,3 +33,9 @@ Probe004 is SUCCEEDED: both original and candidate have runnable Bash processes 
 ## 2026-10-23 — fixed live-case selection and acquisition
 
 Selected Matchms958 as the first recorded errno-7 validation exception by original batch order, and Matchms671 as a known-success control independently verified in #29. Selection was committed before acquisition. Both current PR metadata responses match the original base/head SHAs. Bounded pinned-ref compare diff fetches returned 424,646 and 5,430 bytes respectively. Raw patches stay under ignored private inputs. Original failed script/diff bytes were not retained, so a reconstructed-input comparison must not claim exact byte replay. No live transport rerun yet; no easier-case replacement.
+
+### Frozen live inputs and complete-validator driver
+
+Prepared the first original Matchms errno7 identity (958) and previous successful control (671) with unchanged upstream splitting/targeting/stage builders. PR958's post script is425,528bytes versus103,780bytes pre; PR671 stages are4,459/6,002bytes. All four pass Bash syntax checks and are hash-bound privately. Added all pinned parser dependencies so the comparison can import the complete unchanged validator and native parser dispatcher rather than replacing them with a fixture implementation.
+
+The driver verifies sources and stage bytes, records executor calls, isolates each arm on the same image, and aborts/removes the arm on client timeout. Three offline orchestration checks pass through the full validator; no Docker or biological execution has occurred. The bounded build/supervisor/submission is the next prerequisite. No new model calls, remote jobs or per-task repairs were added. `live-driver-check.json` states the remaining live-cleanup limitations.
