@@ -17,3 +17,7 @@ Preserved all eight reviewed #31 execution archives, source notices and provenan
 ## 2026-10-23 — control reconciliation
 
 Recomputed #28 acceptance predicates and #29 paired outcomes with source-hash checks. The 83 exports remain 83; 74/59 original positive/clean counts become 82/67 ever-positive/ever-clean across separately retained environments. Ten follow-up pair slots cover nine existing tasks. Scanpy4389 remains without a positive pair; 15 tasks have positive tracked tests without a clean command. Full content/image identity reconciliation remains pending. No model calls or remote jobs. See `control-reconciliation.md` and the machine ledger.
+
+## 2026-10-23 — offline preparation child issue
+
+Filed #34 and verified its GitHub sub-issue relation to #33. It isolates base-revision dependency preparation while preserving the task egress guard and recorded rebuild/test commands. The first controlled comparison has a maximum 12 allocated CPU-hours inside the shared 32-hour ceiling, with no reservation consumed until a concrete run is checkpointed. Static planning checks are on `codex/research/34-offline-rebuild`; compiled fixture and live task controls remain unexecuted. No new model calls or remote jobs.
