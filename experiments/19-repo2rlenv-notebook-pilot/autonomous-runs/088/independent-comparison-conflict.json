@@ -1,0 +1,95 @@
+{
+  "candidate_sha256": "013e9ca54abc73834157ac4f40af0664c8c9a13f6a90346bbf21395f48b20b7a",
+  "failed_controls": [
+    {
+      "candidate_sha256": "013e9ca54abc73834157ac4f40af0664c8c9a13f6a90346bbf21395f48b20b7a",
+      "execution": {
+        "grader": {
+          "exit_code": 0,
+          "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+          "stderr": "",
+          "stdout": ""
+        },
+        "report": {
+          "checks": [
+            {
+              "id": "xtandem_psms_values",
+              "message": "1 rows with differing values; affected columns: seq(1)",
+              "passed": false
+            },
+            {
+              "id": "xtandem_psms_qvalues",
+              "message": "verified 1110 rows",
+              "passed": true
+            },
+            {
+              "id": "msgf_psms_values",
+              "message": "row count: reference 6599, submission 1406; 5193 keys missing from submission, 0 unexpected extra keys",
+              "passed": false
+            },
+            {
+              "id": "morpheus_psms_values",
+              "message": "verified 758 rows",
+              "passed": true
+            },
+            {
+              "id": "morpheus_psms_qvalues",
+              "message": "verified 758 rows",
+              "passed": true
+            },
+            {
+              "id": "amanda_psms_values",
+              "message": "verified 931 rows",
+              "passed": true
+            },
+            {
+              "id": "amanda_psms_qvalues",
+              "message": "verified 931 rows",
+              "passed": true
+            },
+            {
+              "id": "amanda_peptides",
+              "message": "verified 928 rows",
+              "passed": true
+            },
+            {
+              "id": "morpheus_peptides",
+              "message": "verified 746 rows",
+              "passed": true
+            },
+            {
+              "id": "peptide_intersection",
+              "message": "verified 431 rows",
+              "passed": true
+            }
+          ],
+          "passed": false
+        },
+        "status": "executed",
+        "submission_before": {
+          "amanda_filtered_psms.csv": "3da66c1a156789d8aaf3dbf7d0f28568259ae168ee4075f0fbb1d07b195e82dd",
+          "amanda_peptides.csv": "32c77aff6d54fabed3cf81820a9f5be92fc7d91996f2cac0002e52481989551b",
+          "morpheus_filtered_psms.csv": "75d58efd007ec00a445d5d718ac6dc740d2a4877df11cbeaef01c21930e26247",
+          "morpheus_peptides.csv": "b47ecf0446edccc7106e48582d6a0ad74371c0c655c2362f1cd9b31aa500ef9f",
+          "msgf_filtered_psms.csv": "10e9385a27dde6d4dc437c8feae736c6626224baec58fd0d52c9fd880c59c3be",
+          "peptide_intersection.csv": "8a05f4dbbe5e907e29ebe6275af58118e943ef260e81a22902b22101d0528484",
+          "xtandem_filtered_psms.csv": "b170b13d77c919eeecaa390b15c13e5fac2feb0cd6656f180bb460b95c6f39b7"
+        },
+        "submission_sha256": {
+          "amanda_filtered_psms.csv": "3da66c1a156789d8aaf3dbf7d0f28568259ae168ee4075f0fbb1d07b195e82dd",
+          "amanda_peptides.csv": "32c77aff6d54fabed3cf81820a9f5be92fc7d91996f2cac0002e52481989551b",
+          "morpheus_filtered_psms.csv": "75d58efd007ec00a445d5d718ac6dc740d2a4877df11cbeaef01c21930e26247",
+          "morpheus_peptides.csv": "b47ecf0446edccc7106e48582d6a0ad74371c0c655c2362f1cd9b31aa500ef9f",
+          "msgf_filtered_psms.csv": "10e9385a27dde6d4dc437c8feae736c6626224baec58fd0d52c9fd880c59c3be",
+          "peptide_intersection.csv": "8a05f4dbbe5e907e29ebe6275af58118e943ef260e81a22902b22101d0528484",
+          "xtandem_filtered_psms.csv": "b170b13d77c919eeecaa390b15c13e5fac2feb0cd6656f180bb460b95c6f39b7"
+        }
+      },
+      "kind": "alternative",
+      "omitted": null,
+      "passed_control": false,
+      "probe": null
+    }
+  ],
+  "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved"
+}
