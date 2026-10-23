@@ -1,0 +1,13 @@
+{
+  "classification": "Provider command-response timeout with controller receipt-window mismatch; not a source rejection.",
+  "failed_operation_label": "shell-5",
+  "command_seconds": 120,
+  "request_error": "DaytonaConnectionTimeoutError",
+  "receipt_recovery_error": "TimeoutError",
+  "observed_sdk_http_read_timeout_seconds": 150,
+  "old_receipt_window_seconds": 145,
+  "cause": "The SDK may report loss after the controller reconciliation window has already closed, so no receipt read was attempted. Whether the original command completed remains unproven.",
+  "generic_change": "Future commands record a timeout-aligned return/reconciliation window (computation+55seconds), clipped to the unchanged absolute stage deadline; one completed receipt/log may be verified, never a repeated scientific command.",
+  "live_recovery_demonstrated": false,
+  "originals_preserved": true
+}

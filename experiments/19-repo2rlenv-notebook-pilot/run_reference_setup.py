@@ -34,6 +34,10 @@ from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
 
 HERE = Path(__file__).parent
+# The wrapper may run for seconds+10, then terminate for5seconds. The SDK
+# execution wait is seconds+25 and its HTTP timeout adds5seconds. Leave a
+# further25seconds for receipt/log reconciliation inside the campaign deadline.
+COMMAND_RETURN_ALLOWANCE_SECONDS = 55
 
 
 def check_config(config):
@@ -153,6 +157,9 @@ class Remote:
             "state": "uncertain",
             "started": time.time(),
             "remote_label": remote_label,
+            "reconciliation_deadline": min(
+                self.deadline - 15, time.time() + seconds + COMMAND_RETURN_ALLOWANCE_SECONDS
+            ),
         }
         save_record(directory / "operation.json", record)
         # Generated setup may overwrite files; reinstall the controller's runner.
@@ -218,9 +225,7 @@ class Remote:
                 if not transient_connection_error(error):
                     raise
                 try:
-                    remaining = (
-                        min(self.deadline - 15, record["started"] + seconds + 25) - time.time()
-                    )
+                    remaining = record["reconciliation_deadline"] - time.time()
                     if remaining <= 0:
                         raise TimeoutError("No remaining time for completion reconciliation")
                     async with asyncio.timeout(remaining):

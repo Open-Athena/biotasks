@@ -140,6 +140,13 @@ consume the existing setup and campaign time budgets. Each tool call retains a
 separate trial record; use its reported remaining computation allowance rather
 than assuming the trial-record number is the number of computations used.
 
+The shell tool is for foreground setup and targeted inspection, with an explicit
+timeout. Persistent background jobs are unsupported. Do not launch the complete
+analysis in the shell or poll for its process: invoke `test_reference` for that
+work so its offline state, timeout, artifacts and errors are recorded by the
+controller. A completed shell call does not establish that background work is
+still running or finished successfully. Inspect the returned exit status and logs.
+
 Check consequential input-parsing assumptions against the staged bytes, not just
 the source code. For example, skipping a row does not establish that it is a
 header. Distinguish metadata from valid observations and source-justified filtering

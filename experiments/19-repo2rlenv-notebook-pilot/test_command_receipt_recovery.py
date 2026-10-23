@@ -6,6 +6,7 @@ import json
 import time
 
 import pytest
+import run_reference_setup
 from repo2rlenv.execution.base import CommandResult
 from run_reference_setup import Remote
 
@@ -96,3 +97,33 @@ def test_repeated_human_labels_receive_distinct_completion_nonces(tmp_path):
     ]
     assert records[0]["remote_label"] != records[1]["remote_label"]
     assert worker.executions == 2
+
+
+@pytest.mark.parametrize("case,deadline", [("on_time", 1300), ("late", 1300), ("campaign", 1045)])
+def test_sdk_http_timeout_leaves_only_bounded_receipt_reconciliation(
+    tmp_path, monkeypatch, case, deadline
+):
+    clock = [1000.0]
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: clock[0])
+
+    class SlowLoss(Worker):
+        def exec(self, command, *, timeout):
+            # The completion receipt exists, but the SDK loses its response at
+            # the normal HTTP timeout (server wait+5), after the old window.
+            super().exec(command, timeout=timeout)
+            clock[0] += timeout + (35 if case == "late" else 5)
+            raise DaytonaConnectionError("synthetic lost SDK timeout response")
+
+    worker = SlowLoss()
+    remote = Remote(worker, None, tmp_path, deadline, 1)
+    if case != "on_time":
+        with pytest.raises(DaytonaConnectionError):
+            asyncio.run(remote.command(["synthetic-mutation"], 10, "delayed-response"))
+        assert remote.uncertain
+    else:
+        result = asyncio.run(remote.command(["synthetic-mutation"], 10, "delayed-response"))
+        assert result["exit_code"] == 0 and not remote.uncertain
+    assert worker.executions == 1 and remote.deadline == deadline
+    record = json.loads((tmp_path / "operations/0001/operation.json").read_text())
+    assert record["reconciliation_deadline"] == min(1065, deadline - 15)
+    assert ("transport_recovery" in record) is (case == "on_time")

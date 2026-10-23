@@ -300,6 +300,36 @@ def test_uncertain_reference_dispatch_does_not_refund_a_computation_slot(tmp_pat
     asyncio.run(run())
 
 
+def test_exhausted_setup_returns_feedback_without_dispatch_or_more_computations(tmp_path):
+    async def run():
+        remote = FakeRemote()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        s.setup_remaining = 0
+        before = list(remote.events)
+        answer = json.loads(await s.shell("must not run"))
+        assert "exhausted" in answer["error"] and remote.events == before
+        answer = json.loads(await s.test_reference())
+        assert answer["status"] == "setup_budget_exhausted"
+        assert s.tests == 0 and s.last_pass is None
+        assert not any(label.startswith(("setup-", "reference-")) for label, *_ in remote.events)
+
+    asyncio.run(run())
+
+
+def test_remote_timeout_is_not_misreported_as_safe_budget_feedback(tmp_path):
+    class Uncertain(FakeRemote):
+        async def command(self, *args, **kwargs):
+            raise TimeoutError("Provider completion uncertain")
+
+    async def run():
+        s = session(tmp_path, Uncertain())
+        with pytest.raises(TimeoutError, match="completion uncertain"):
+            await s.shell("one action only")
+
+    asyncio.run(run())
+
+
 def test_snapshot_controller_fault_is_not_worker_feedback(tmp_path):
     class BrokenHelper(FakeRemote):
         async def helper(self, args, label):

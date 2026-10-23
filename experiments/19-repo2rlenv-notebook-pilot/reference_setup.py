@@ -19,6 +19,10 @@ from reference_protocol import ReferencePlan, StrictModel, materialize
 from repo2rlenv.execution.lifecycle import save_record
 
 
+class SetupBudgetExceeded(TimeoutError):
+    """The tool was refused before dispatch because setup time is exhausted."""
+
+
 def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
@@ -180,7 +184,7 @@ class SetupSession:
             raise ValueError("Command timeout must be a positive integer")
         permitted = min(seconds, int(self.setup_remaining))
         if permitted < 1:
-            raise TimeoutError("Cumulative setup tool time exhausted")
+            raise SetupBudgetExceeded("Cumulative setup tool time exhausted; submit blocked.")
         started = time.monotonic()
         try:
             return await self.remote.command(argv, permitted, label)
@@ -191,12 +195,23 @@ class SetupSession:
         if not isinstance(command, str) or not command.strip():
             raise ValueError("A nonempty shell command is required")
         self.shell_calls += 1
-        reply = await self.setup_command(
-            ["sh", "-c", "cd /work/setup && " + command],
-            timeout_sec,
-            f"shell-{self.shell_calls}",
+        try:
+            reply = await self.setup_command(
+                ["sh", "-c", "cd /work/setup && " + command],
+                timeout_sec,
+                f"shell-{self.shell_calls}",
+            )
+        except SetupBudgetExceeded as error:
+            return json.dumps(
+                {"error": str(error), "setup_seconds_remaining": self.setup_remaining}
+            )
+        return json.dumps(
+            {
+                **reply,
+                "setup_seconds_remaining": self.setup_remaining,
+                "process_policy": "Foreground setup and targeted inspection only; durable background jobs are unsupported. Use test_reference for the complete offline analysis.",
+            }
         )
-        return json.dumps({**reply, "setup_seconds_remaining": self.setup_remaining})
 
     async def capture_candidate(self, directory):
         directory.mkdir(parents=True, exist_ok=False)
@@ -365,6 +380,9 @@ class SetupSession:
             finally:
                 # The adapter refuses policy changes after an uncertain command.
                 await self.remote.network(False)
+            return json.dumps(record)
+        except SetupBudgetExceeded as exc:
+            record.update(status="setup_budget_exhausted", error=str(exc))
             return json.dumps(record)
         except (ValueError, SyntaxError) as exc:
             record.update(status="candidate_invalid", error=str(exc))
