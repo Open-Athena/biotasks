@@ -100,6 +100,17 @@ def main():
                     # Without force: parent images needed by kept child remain
                     # tagged/recorded as this active reconstruction's cache.
                     docker('image','rm',*(['-f'] if keep is None else []),image_id,timeout=120,check=False)
+            if keep is None:
+                for attempt in range(32):
+                    remaining=set(docker('image','ls','-aq','--filter','label='+LABEL).stdout.split())
+                    if not remaining:break
+                    removed=False
+                    for image_id in remaining:
+                        checked=docker('image','inspect',image_id,check=False)
+                        if checked.returncode:continue
+                        assert json.loads(checked.stdout)[0]['Config']['Labels']['org.open-athena.biotasks.owner']==OWNER
+                        removed|=docker('image','rm','-f',image_id,timeout=30,check=False).returncode==0
+                    if not removed:break
             REPORT['owned_image_ids_remaining']=docker('image','ls','-aq','--filter','label='+LABEL).stdout.split()
         for path in [CONTEXT,TOOLS]:
             if path.exists():shutil.rmtree(path)
