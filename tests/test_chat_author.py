@@ -6,7 +6,12 @@ from copy import deepcopy
 
 import pytest
 
-from biotasks.chat_author import ChatLimits, GLMChatAuthor, IncompleteCompletion
+from biotasks.chat_author import (
+    ChatLimits,
+    GLMChatAuthor,
+    IncompleteCompletion,
+    ModelConnectionError,
+)
 from biotasks.inference_gate import Allowance, RequestLedger
 
 
@@ -58,7 +63,7 @@ def make_author(
     output_format="tools",
     context_recovery_notice=None,
     empty_response_retry_notice=None,
-    timeout_retry_notice=None,
+    generation_retry_notice=None,
     missing_tool_retry_notice=None,
     **limits,
 ):
@@ -79,7 +84,7 @@ def make_author(
         output_format=output_format,
         context_recovery_notice=context_recovery_notice,
         empty_response_retry_notice=empty_response_retry_notice,
-        timeout_retry_notice=timeout_retry_notice,
+        generation_retry_notice=generation_retry_notice,
         missing_tool_retry_notice=missing_tool_retry_notice,
     )
     return author, ledger
@@ -455,7 +460,8 @@ def test_empty_retry_does_not_retry_uncertain_transport(tmp_path):
         assert db.execute("SELECT state FROM calls").fetchall() == [("uncertain",)]
 
 
-def test_timeout_retry_preserves_prior_actions_and_uncertain_request(tmp_path):
+@pytest.mark.parametrize("failure", [TimeoutError, ModelConnectionError])
+def test_generation_retry_preserves_prior_actions_and_uncertain_request(tmp_path, failure):
     payloads, actions = [], []
 
     async def complete(payload):
@@ -463,14 +469,16 @@ def test_timeout_retry_preserves_prior_actions_and_uncertain_request(tmp_path):
         if len(payloads) == 1:
             return reply("shell", {"command": "inspect"}, call_id="inspected")
         if len(payloads) == 2:
-            raise TimeoutError("PRIVATE_PROVIDER_DETAILS")
+            raise failure()
         return reply(call_id="submitted")
 
     async def shell(command):
         actions.append(command)
         return "completed inspection"
 
-    author, ledger = make_author(tmp_path, complete, timeout_retry_notice="Continue recorded work")
+    author, ledger = make_author(
+        tmp_path, complete, generation_retry_notice="Continue recorded work"
+    )
     args = options(
         tmp_path, {"shell": shell, "submit_artifact": committed, "revise_artifact": committed}
     )
@@ -485,14 +493,97 @@ def test_timeout_retry_preserves_prior_actions_and_uncertain_request(tmp_path):
             ("uncertain",),
             ("response_received",),
         ]
-    failure = json.loads((tmp_path / "trace/2/failure.json").read_text())
-    assert failure["failure_category"] == "transport_uncertain"
-    assert "PRIVATE" not in json.dumps(failure)
+    failure_record = json.loads((tmp_path / "trace/2/failure.json").read_text())
+    assert failure_record["failure_category"] == "transport_uncertain"
+    assert "PRIVATE" not in json.dumps(failure_record)
     events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
-    recovery = [e for e in events if e["kind"] == "timeout_retry_requested"]
+    recovery = [e for e in events if e["kind"] == "generation_retry_requested"]
     assert len(recovery) == 1 and recovery[0]["uncertain_call_id"] == 2
     assert recovery[0]["backend_outcome"] == "unknown"
     assert recovery[0]["actions_executed"] == 0 and not recovery[0]["allowance_reset"]
+    assert recovery[0]["error_type"] == failure.__name__
+
+
+@pytest.mark.parametrize("first", [TimeoutError, ModelConnectionError])
+def test_timeout_and_connection_share_one_retry_across_resubmissions(tmp_path, first):
+    calls = []
+
+    async def complete(payload):
+        calls.append(deepcopy(payload))
+        if len(calls) == 1:
+            raise first()
+        if len(calls) == 2:
+            return reply()
+        raise ModelConnectionError() if first is TimeoutError else TimeoutError()
+
+    author, ledger = make_author(
+        tmp_path, complete, generation_retry_notice="Continue recorded work"
+    )
+    args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
+    asyncio.run(author(**args))
+    with pytest.raises(RuntimeError, match="transport failed"):
+        asyncio.run(author(**args))
+    assert len(calls) == 3 and author.generation_retries_used == 1
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
+            ("uncertain",),
+            ("response_received",),
+            ("uncertain",),
+        ]
+
+
+def test_model_retry_never_replays_a_failing_tool(tmp_path):
+    actions, calls = [], []
+
+    async def complete(payload):
+        calls.append(payload)
+        return reply("shell", {"command": "inspect"})
+
+    async def shell(command):
+        actions.append(command)
+        raise ModelConnectionError()
+
+    author, _ = make_author(tmp_path, complete, generation_retry_notice="Continue recorded work")
+    with pytest.raises(ModelConnectionError):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"shell": shell, "submit_artifact": committed, "revise_artifact": committed},
+                )
+            )
+        )
+    assert actions == ["inspect"] and len(calls) == 1
+    assert author.generation_retries_used == 0
+
+
+@pytest.mark.parametrize("failure", [TimeoutError, ModelConnectionError])
+@pytest.mark.parametrize("bound", ["turn", "ledger", "deadline", "no_notice"])
+def test_generation_recovery_never_increases_original_allowance(tmp_path, failure, bound):
+    calls = []
+
+    async def complete(payload):
+        calls.append(payload)
+        if bound == "deadline":
+            author.deadline = time.time() - 1
+        raise failure()
+
+    author, ledger = make_author(
+        tmp_path,
+        complete,
+        requests=1 if bound == "ledger" else 4,
+        generation_retry_notice=None if bound == "no_notice" else "Continue recorded work",
+    )
+    args = options(
+        tmp_path,
+        {"submit_artifact": committed, "revise_artifact": committed},
+        turns=1 if bound == "turn" else 4,
+    )
+    with pytest.raises(RuntimeError):
+        asyncio.run(author(**args))
+    assert len(calls) == 1
+    with sqlite3.connect(ledger.path) as db:
+        assert db.execute("SELECT state FROM calls").fetchall() == [("uncertain",)]
 
 
 @pytest.mark.parametrize("bound", ["once", "turn", "ledger", "deadline", "cancel", "connection"])
@@ -513,7 +604,7 @@ def test_timeout_recovery_keeps_original_bounds_and_narrow_exception_scope(tmp_p
         tmp_path,
         complete,
         requests=1 if bound == "ledger" else 4,
-        timeout_retry_notice="Continue recorded work",
+        generation_retry_notice="Continue recorded work",
     )
     args = options(
         tmp_path,
@@ -528,7 +619,7 @@ def test_timeout_recovery_keeps_original_bounds_and_narrow_exception_scope(tmp_p
         assert db.execute("SELECT COUNT(*) FROM calls WHERE state='uncertain'").fetchone()[
             0
         ] == len(calls)
-    assert author.timeout_retries_used <= 1
+    assert author.generation_retries_used <= 1
 
 
 def test_timeout_retry_allowance_is_not_reset_by_upstream_resubmission(tmp_path):
@@ -540,12 +631,12 @@ def test_timeout_retry_allowance_is_not_reset_by_upstream_resubmission(tmp_path)
             raise TimeoutError()
         return reply()
 
-    author, _ = make_author(tmp_path, complete, timeout_retry_notice="Continue recorded work")
+    author, _ = make_author(tmp_path, complete, generation_retry_notice="Continue recorded work")
     args = options(tmp_path, {"submit_artifact": committed, "revise_artifact": committed})
     asyncio.run(author(**args))
     with pytest.raises(RuntimeError, match="transport failed"):
         asyncio.run(author(**args))
-    assert len(calls) == 3 and author.timeout_retries_used == 1
+    assert len(calls) == 3 and author.generation_retries_used == 1
 
 
 def test_optional_size_limits_preserve_evidence_and_one_repair(tmp_path):

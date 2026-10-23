@@ -5,8 +5,9 @@ This module does not choose a task, validate its science, or launch a sandbox.
 Only the approved free GLM model is supported; monetary receipts are zero while
 every attempted HTTP request consumes a durable RequestLedger slot.
 
-An explicit timeout notice enables one retry of pure model generation per author
-instance. The callback must not execute tools or other external actions itself.
+An explicit generation-retry notice enables one retry after a timeout or typed
+model connection failure per author instance. The callback must not execute
+tools or other external actions itself.
 The uncertain request/hold is retained; tool history and original bounds remain.
 """
 
@@ -39,6 +40,20 @@ class OutputTokenLimit(IncompleteCompletion):
     """A received and accounted response stopped at the provider's token limit."""
 
 
+class ModelConnectionError(ConnectionError):
+    """The model SDK lost its connection before returning any complete response.
+
+    A transport adapter raises this only around its pure generation request;
+    arbitrary tool, filesystem and controller errors must not be normalized here.
+    """
+
+    def __init__(self, sdk_error_type: str = "APIConnectionError"):
+        if sdk_error_type not in {"APIConnectionError", "APITimeoutError"}:
+            raise ValueError("Unsupported model SDK connection failure")
+        self.sdk_error_type = sdk_error_type
+        super().__init__("Model SDK connection failed")
+
+
 def provider_failure(error: BaseException) -> dict[str, Any]:
     """Keep useful rejection categories without copying private response text."""
     record: dict[str, Any] = {
@@ -46,6 +61,8 @@ def provider_failure(error: BaseException) -> dict[str, Any]:
         "request_slot_retained": True,
         "failure_category": "transport_uncertain",
     }
+    if isinstance(error, ModelConnectionError):
+        record["sdk_error_type"] = error.sdk_error_type
     status = getattr(error, "status_code", None)
     if type(status) is not int or not 400 <= status <= 599:
         return record
@@ -141,7 +158,7 @@ class GLMChatAuthor:
         output_format: str = "tools",
         context_recovery_notice: str | None = None,
         empty_response_retry_notice: str | None = None,
-        timeout_retry_notice: str | None = None,
+        generation_retry_notice: str | None = None,
         missing_tool_retry_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
@@ -157,17 +174,17 @@ class GLMChatAuthor:
             raise ValueError("Context recovery requires an explicit notice")
         if empty_response_retry_notice is not None and not empty_response_retry_notice.strip():
             raise ValueError("Empty-response retry requires an explicit notice")
-        if timeout_retry_notice is not None and not timeout_retry_notice.strip():
-            raise ValueError("Timeout retry requires an explicit notice")
+        if generation_retry_notice is not None and not generation_retry_notice.strip():
+            raise ValueError("Generation retry requires an explicit notice")
         if missing_tool_retry_notice is not None and not missing_tool_retry_notice.strip():
             raise ValueError("Missing-tool recovery requires an explicit notice")
         self.context_recovery_notice = context_recovery_notice
         self.empty_response_retry_notice = empty_response_retry_notice
-        self.timeout_retry_notice = timeout_retry_notice
+        self.generation_retry_notice = generation_retry_notice
         self.missing_tool_retry_notice = missing_tool_retry_notice
         # One allowance for this stage instance, including upstream resubmissions.
         self.empty_response_retries_used = 0
-        self.timeout_retries_used = 0
+        self.generation_retries_used = 0
         self.missing_tool_retries_used = 0
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
@@ -316,9 +333,9 @@ class GLMChatAuthor:
                 if isinstance(exc, asyncio.CancelledError):
                     raise
                 if (
-                    isinstance(exc, TimeoutError)
-                    and self.timeout_retry_notice is not None
-                    and self.timeout_retries_used == 0
+                    isinstance(exc, (TimeoutError, ModelConnectionError))
+                    and self.generation_retry_notice is not None
+                    and self.generation_retries_used == 0
                     and (max_turns is None or turn < max_turns)
                     and time.time() < self.deadline
                 ):
@@ -326,12 +343,13 @@ class GLMChatAuthor:
                     # this attempt reached tool dispatch; prior actions/results
                     # stay in the conversation. The original request and its
                     # bookkeeping hold remain uncertain, never refunded.
-                    self.timeout_retries_used += 1
-                    messages.append({"role": "user", "content": self.timeout_retry_notice})
+                    self.generation_retries_used += 1
+                    messages.append({"role": "user", "content": self.generation_retry_notice})
                     event(
-                        "timeout_retry_requested",
+                        "generation_retry_requested",
                         uncertain_call_id=call_id,
-                        retry_number=self.timeout_retries_used,
+                        error_type=type(exc).__name__,
+                        retry_number=self.generation_retries_used,
                         backend_outcome="unknown",
                         actions_executed=0,
                         allowance_reset=False,

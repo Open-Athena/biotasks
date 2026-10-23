@@ -1,0 +1,53 @@
+{
+  "prepared_at": "2026-10-23T02:48:24.366019+00:00",
+  "purpose": "Shared general workspace + model-generation retry regression; original selected ten-domain imaging and protein-sequence sources. No source reductions, generated-task reuse or manual scientific corrections.",
+  "records": [
+    {
+      "number": 80,
+      "baseline_number": 61,
+      "id": "pyradiomics-brain",
+      "domain": "Medical imaging",
+      "config_file": "autonomous-runs/080/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted"
+    },
+    {
+      "number": 81,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/081/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted"
+    }
+  ],
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "preparation_max_requests": 2,
+  "preparation_response_recovery": false,
+  "generation_retries_per_author": 1,
+  "generation_failure_types_share_allowance": true,
+  "model": "glm-5.3",
+  "reasoning_effort_requested": "high"
+}

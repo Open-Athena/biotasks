@@ -14,7 +14,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 
-from biotasks.chat_author import ChatLimits, OutputTokenLimit
+from biotasks.chat_author import ChatLimits, ModelConnectionError, OutputTokenLimit
 
 
 def response(name, payload, index):
@@ -73,7 +73,10 @@ def test_upstream_validates_revision_and_reuses_completed_stage_without_model(tm
     root = tmp_path / "design"
     kwargs = dict(
         seed={"question_text": "complete notebook"},
-        profile={"scientific_analysis_executed": False, "files": [{"path": "counts.h5"}]},
+        profile={
+            "scientific_analysis_executed": False,
+            "files": [{"path": "counts.h5"}],
+        },
         workspace={"inputs": "/inputs", "scratch": "/scratch"},
         worker=worker,
         root=root,
@@ -135,10 +138,47 @@ def test_sdk_transmits_glm_reasoning_extension_without_live_network():
     assert captured[0]["chat_template_kwargs"] == {"reasoning_effort": "high"}
 
 
+@pytest.mark.parametrize("failure", [httpx.ConnectError, httpx.ReadTimeout])
+def test_sdk_normalizes_only_model_connection_errors_without_retry_or_private_details(
+    failure,
+):
+    calls = []
+
+    async def fake_http(request):
+        calls.append(request)
+        raise failure("PRIVATE_ENDPOINT_OR_CREDENTIAL", request=request)
+
+    async def run():
+        async with AsyncOpenAI(
+            base_url="https://model.invalid/v1",
+            api_key="fake",
+            max_retries=0,
+            http_client=httpx.AsyncClient(transport=httpx.MockTransport(fake_http)),
+        ) as client:
+            with pytest.raises(ModelConnectionError) as info:
+                await completion_transport(client)(
+                    {
+                        "model": "glm-5.3",
+                        "messages": [{"role": "user", "content": "input"}],
+                        "chat_template_kwargs": {"reasoning_effort": "high"},
+                    }
+                )
+            assert info.value.sdk_error_type == (
+                "APITimeoutError" if failure is httpx.ReadTimeout else "APIConnectionError"
+            )
+            assert "PRIVATE" not in str(info.value)
+
+    asyncio.run(run())
+    assert len(calls) == 1
+
+
 def test_remote_tools_are_bounded_and_have_no_local_fallback():
     worker = Worker()
     shell = remote_shell(
-        worker, directory="/scratch with space", deadline=time.time() + 60, total_seconds=1
+        worker,
+        directory="/scratch with space",
+        deadline=time.time() + 60,
+        total_seconds=1,
     )
     assert json.loads(asyncio.run(shell("printf value")))["returncode"] == 0
     assert "exhausted" in asyncio.run(shell("must not run"))

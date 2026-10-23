@@ -40,9 +40,10 @@ async def stage(
     """Use recorded empty-response recovery and upstream's output recovery.
 
     Recovery consumes the existing request/turn allowance and deadline. A
-    one-call stage has no spare turn for recovery. One timeout retry may repeat
-    pure generation without replaying tool actions; its original slot remains
-    uncertain. Other transport failures remain terminal.
+    one-call stage has no spare turn for recovery. At most one retry after a
+    timeout or typed model-connection failure may repeat pure generation without
+    replaying tool actions; its original slot remains uncertain. This allowance
+    is shared across those two failure types. Other failures remain terminal.
     """
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
     recovery_notice = (
@@ -55,8 +56,8 @@ async def stage(
         if response_recovery
         else None
     )
-    timeout_retry_notice = (
-        files("biotasks.prompts").joinpath("worker-timeout-retry.md").read_text()
+    generation_retry_notice = (
+        files("biotasks.prompts").joinpath("worker-generation-retry.md").read_text()
         if response_recovery
         else None
     )
@@ -76,8 +77,8 @@ async def stage(
         "empty_response_retry_sha256": hashlib.sha256(empty_retry_notice.encode()).hexdigest()
         if empty_retry_notice is not None
         else None,
-        "timeout_retry_sha256": hashlib.sha256(timeout_retry_notice.encode()).hexdigest()
-        if timeout_retry_notice is not None
+        "generation_retry_sha256": hashlib.sha256(generation_retry_notice.encode()).hexdigest()
+        if generation_retry_notice is not None
         else None,
         "missing_tool_retry_sha256": hashlib.sha256(missing_tool_retry_notice.encode()).hexdigest()
         if missing_tool_retry_notice is not None
@@ -99,7 +100,7 @@ async def stage(
         output_format=output_format,
         context_recovery_notice=recovery_notice,
         empty_response_retry_notice=empty_retry_notice,
-        timeout_retry_notice=timeout_retry_notice,
+        generation_retry_notice=generation_retry_notice,
         missing_tool_retry_notice=missing_tool_retry_notice,
     )
 

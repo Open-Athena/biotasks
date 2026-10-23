@@ -74,12 +74,13 @@ Original and revised evidence/export paths stay distinct, and `pipeline.json`
 records the effective materialization/grading paths for downstream use. This is
 a bounded attempt, not a guarantee of correction or broad software portability.
 
-The model adapter permits one timeout retry per author session using the packaged
-`worker-timeout-retry` prompt. Only pure model generation is repeated: no response
-from the timed-out request reached tool dispatch, and earlier tool actions are
+The model adapter permits one retry after a timeout or typed SDK connection
+failure per author session using the packaged `worker-generation-retry` prompt.
+These failure types share one allowance. Only pure model generation is repeated:
+no response from the failed request reached tool dispatch, and earlier tool actions are
 not replayed. The backend outcome and request hold remain uncertain, every new
 attempt claims a new ledger slot, and the original deadline and turn/request
-allowances still apply. Cancellation, other transport failures, HTTP failures and
+allowances still apply. Cancellation, unclassified transport failures, HTTP failures and
 uncertain remote tool executions are not retried by this policy. Preparation
 does not use this timeout recovery or the empty-response retry: its optional
 second response is reserved for a programmatic validation failure. This adds

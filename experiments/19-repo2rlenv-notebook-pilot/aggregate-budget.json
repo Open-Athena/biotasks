@@ -3,8 +3,8 @@
   "ceiling_before_credits": "100.00",
   "authorization_date": "2026-10-13",
   "basis": "User authorized up to $100 total to complete issue 19 and routine recovery/retries without repeated approval.",
-  "reserved_upper_bound_usd": "99.25",
-  "unallocated_usd": "0.75",
+  "reserved_upper_bound_usd": "99.00",
+  "unallocated_usd": "1.00",
   "reservations": [
     {
       "scope": "original pilot 001",
@@ -71,13 +71,15 @@
     },
     {
       "scope": "artifact-materialization-001: GLM input projection and isolated oracle execution",
-      "ceiling_usd": "1.00",
-      "reconciliation": "Hash-bound original configuration, terminal outcome and exact4CPU/8GiB/10GiB deletion receipt plus fresh exact-owner absence verified. Retain$1for the entire7500second full-profile allowance ($0.692250running upper bound+$0.307750margin); no native image builds, no invoice or assumed credit. See budget-reconciliation-materialization-001-002.json."
+      "ceiling_usd": "0.50",
+      "reconciliation": "budget-reconciliation-materialization001-002-rounding.json",
+      "state": "terminal_reconciled"
     },
     {
       "scope": "artifact-materialization-002: retry with explicit foreground shell semantics and stage boundaries",
-      "ceiling_usd": "1.00",
-      "reconciliation": "Hash-bound original configuration, terminal outcome and exact4CPU/8GiB/10GiB deletion receipt plus fresh exact-owner absence verified. Retain$1for the entire7500second full-profile allowance ($0.692250running upper bound+$0.307750margin); no native image builds, no invoice or assumed credit. See budget-reconciliation-materialization-001-002.json."
+      "ceiling_usd": "0.25",
+      "reconciliation": "budget-reconciliation-materialization001-002-rounding.json",
+      "state": "terminal_reconciled"
     },
     {
       "scope": "artifact-materialization-003: focused stage inputs and correctable tool argument errors",
@@ -489,9 +491,10 @@
     },
     {
       "scope": "autonomous-panel-077: originalscanpy-clusteringseed, common foreground/setup-accounting/timeout-aligned recovery factory",
-      "ceiling_usd": "1.00",
-      "state": "submitted",
-      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch."
+      "ceiling_usd": "0.75",
+      "state": "terminal_model_connection_failure_cleanup_verified",
+      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch.",
+      "reconciliation": "autonomous-runs/077/budget-reconciliation.json"
     },
     {
       "scope": "autonomous-panel-078: original Pyteomics source, same frozen round010factory; wait for a free authorized slot",
@@ -502,9 +505,22 @@
     },
     {
       "scope": "autonomous-panel-079: original proteomics source with general workspace-root initialization correction",
+      "ceiling_usd": "0.25",
+      "state": "terminal_model_connection_failure_cleanup_verified",
+      "basis": "Standing$100 approval; previous078neverlaunched, all execution/time/model bounds unchanged.",
+      "reconciliation": "autonomous-runs/079/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-080: unchanged pyradiomics-brain source on shared workspace and generation-connection retry factory",
       "ceiling_usd": "1.00",
-      "state": "submitted",
-      "basis": "Standing$100 approval; previous078neverlaunched, all execution/time/model bounds unchanged."
+      "state": "reserved_not_submitted",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB, one sandbox at a time, whole campaign7200+cleanup300seconds bound; no native persistent snapshot requested."
+    },
+    {
+      "scope": "autonomous-panel-081: unchanged pyhmmer-msa-to-hmm source on shared workspace and generation-connection retry factory",
+      "ceiling_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "basis": "Standing $100 authorization; same 4CPU/8GiB/10GiB, one sandbox at a time, whole campaign7200+cleanup300seconds bound; no native persistent snapshot requested."
     }
   ],
   "actual_provider_invoice_usd": null,

@@ -19,12 +19,12 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 import httpx
-from openai import AsyncOpenAI
+from openai import APIConnectionError, AsyncOpenAI
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.pipelines.recipes.seta_seed2synth.recipe import TaskDesign
 from repo2rlenv.tasksmith.author.artifact import artifact_stage, canonical_digest
 
-from biotasks.chat_author import ChatLimits, GLMChatAuthor
+from biotasks.chat_author import ChatLimits, GLMChatAuthor, ModelConnectionError
 from biotasks.inference_gate import Allowance, RequestLedger
 
 
@@ -85,9 +85,15 @@ def completion_transport(client):
     async def complete(payload):
         options = dict(payload)
         extension = options.pop("chat_template_kwargs")
-        response = await client.chat.completions.create(
-            **options, extra_body={"chat_template_kwargs": extension}
-        )
+        try:
+            response = await client.chat.completions.create(
+                **options, extra_body={"chat_template_kwargs": extension}
+            )
+        except APIConnectionError as error:
+            # No SDK response reached the harness, so no associated tool can
+            # have been dispatched. Retain the uncertain original request;
+            # retry policy belongs to the author and its original allowance.
+            raise ModelConnectionError(type(error).__name__) from None
         return response.model_dump(mode="json")
 
     return complete
@@ -146,7 +152,12 @@ async def design_notebook(
         "max_requests": max_requests,
         "max_tool_seconds": max_tool_seconds,
     }
-    context = {"seed": seed, "input_profile": profile, "workspace": workspace, "limits": identity}
+    context = {
+        "seed": seed,
+        "input_profile": profile,
+        "workspace": workspace,
+        "limits": identity,
+    }
     input_path, prompt_path = root / "input.json", root / "system-prompt.md"
     if input_path.exists() and json.loads(input_path.read_text()) != context:
         raise ValueError("Retained design inputs differ; use a new run directory")
