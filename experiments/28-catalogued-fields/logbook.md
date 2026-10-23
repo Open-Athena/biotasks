@@ -341,3 +341,6 @@ Source review of unchanged native defaults identifies a material SAMtools covera
 
 
 Original Matchms read-only03:49:29snapshot reaches native validation: first invocation entered5with one completed noF2P pair and one validation exception; second entered1with another exception; third has6entries/five pairs started/four returned noF2P and one in progress. Only original6calls/$0.165093 recorded; later invocations use upstream savedcache, no extra calls or entered retries. Exact exception details will be read from original events, not inferred from counts. Parent429backlog checkpoint is stale while third batch runs; no terminal or independent grade claim.
+
+
+The03:51:35original Matchms snapshot confirms OSError/errno7 on PR958,957,948 in three separate native invocations, without new model calls or entered retries. Fourth invocation is active; no export/independent control observed yet. Public comment6356971303 records the verified SAMtools filter/parser coverage caveat and these provisional exceptions, with exact readback, unchanged five-result body and OPEN/agent-generated checks. Numerical totals remain the five accepted terminal results, not active snapshots.
