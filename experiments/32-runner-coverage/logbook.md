@@ -49,3 +49,7 @@ Executed the pinned selector on eight bounded command-string cases without runni
 ### 2026-10-23 — Standalone conservative pytest targeting candidate
 
 Implemented a separate opt-in literal-command selector; 26 bounded checks pass, including exact default-off command preservation and the recorded MNE command shape. Selected outcomes declare reduced scope, explicit file/node targets are retained, and ambiguous shell/unknown options fail as unsupported. No generated command was executed; no model calls or remote jobs. Pipeline configuration/native/export wiring and frozen biological comparison remain required.
+
+### 2026-10-23 — Wire opt-in policy into pinned package
+
+Generated a three-file integration patch: default-off option, shared native/export selector with deleted-path filtering, and literal policy helper. Enabled unsupported commands are skipped before sandbox allocation even with validation disabled; direct export construction fails explicitly. Complete-package config/writer checks pass for default/on/off. Actual run-loop routing with controlled provider/sandbox/validator fixtures preserves selected native/export commands and cleanup; this is integration evidence, not native test outcomes. No external operations, models or remote jobs. PeakRSS49,676KiB, elapsed0.48s, temporary copy removed.

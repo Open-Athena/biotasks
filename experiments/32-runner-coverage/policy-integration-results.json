@@ -1,0 +1,57 @@
+{
+  "scope": "Complete-package configuration/writer and actual run-loop routing with provider/sandbox/validator fixtures",
+  "cases": [
+    {
+      "case": "default",
+      "commands": [
+        "cd /workspace && python -m pytest -v mne/"
+      ],
+      "writer_metadata_verified": true
+    },
+    {
+      "case": "enabled",
+      "commands": [
+        "cd /workspace && python -m pytest -v mne/tests/test_value.py"
+      ],
+      "writer_metadata_verified": true
+    },
+    {
+      "case": "disabled",
+      "commands": [
+        "cd /workspace && python -m pytest -v mne/"
+      ],
+      "writer_metadata_verified": true
+    }
+  ],
+  "controlled_native_commands": [
+    [
+      "cd /workspace && python -m pytest -v mne/tests/test_value.py"
+    ]
+  ],
+  "unsupported_skips": [
+    {
+      "skip_validation": false,
+      "skips": {
+        "unsupported_pytest_targeting": 1
+      }
+    },
+    {
+      "skip_validation": true,
+      "skips": {
+        "unsupported_pytest_targeting": 1
+      }
+    }
+  ],
+  "unsupported_direct_build_rejected": true,
+  "unknown_option_rejected": true,
+  "external_operations_attempted": [],
+  "temporary_directory_removed": true,
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "limits": [
+    "No Docker or biological execution",
+    "Validator fixture proves wiring, not test outcomes",
+    "Existing dependency environment, not upstream locked environment",
+    "Deleted-path selection is part of enabled intervention only"
+  ]
+}

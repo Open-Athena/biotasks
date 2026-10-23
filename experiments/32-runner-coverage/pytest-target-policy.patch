@@ -1,0 +1,196 @@
+--- a/src/repo2rlenv/pipelines/pr_runtime.py
++++ b/src/repo2rlenv/pipelines/pr_runtime.py
+@@ -560,6 +560,31 @@
+     }
+ 
+ 
++def _runnable_test_files_in_patch(unified_diff: str) -> list[str]:
++    """Return changed destination paths that survive application of the patch.
++
++    Only inspect diff metadata before the first hunk. Hunk contents can contain
++    text resembling a deletion header and must not affect path selection.
++    Keep _files_in_patch unchanged for reset, cleanup and inventory consumers.
++    """
++    matches = list(_DIFF_HEADER_RE.finditer(unified_diff))
++    result: list[str] = []
++    for index, match in enumerate(matches):
++        end = matches[index + 1].start() if index + 1 < len(matches) else len(unified_diff)
++        block = unified_diff[match.end():end]
++        deleted = False
++        for line in block.splitlines():
++            if line.startswith("@@"):
++                break
++            if line.startswith("deleted file mode ") or line == "+++ /dev/null":
++                deleted = True
++                break
++        path = match.group(2)
++        if not deleted and path not in result:
++            result.append(path)
++    return result
++
++
+ def _files_in_patch(unified_diff: str) -> list[str]:
+     """Extract the unique 'b/' file paths touched by a unified diff."""
+     if not unified_diff.strip():
+@@ -841,6 +866,21 @@
+     def set_progress_callback(self, cb) -> None:
+         self._progress_cb = cb
+ 
++    def _test_selection(self, test_patch: str):
++        commands = normalize_test_cmds_for_runtime(self.bootstrap.test_cmds)
++        if not self.options.literal_pytest_changed_files:
++            return targeted_test_cmds_for_pr(commands, _files_in_patch(test_patch)), []
++        from repo2rlenv.pipelines.pytest_target_policy import select
++
++        paths = _runnable_test_files_in_patch(test_patch)
++        decisions = [select(command, paths, enabled=True) for command in commands]
++        if not decisions:
++            raise ValueError("unsupported_pytest_targeting:empty_commands")
++        unsupported = [d["reason"] for d in decisions if d["status"] == "unsupported"]
++        if unsupported:
++            raise ValueError("unsupported_pytest_targeting:" + ",".join(unsupported))
++        return [d["command"] for d in decisions], decisions
++
+     def _emit_progress(self, name: str, outcome: str, reason: str = "") -> None:
+         if self._progress_cb is not None:
+             try:
+@@ -929,6 +969,19 @@
+                     self._emit_progress(pr_label, "skip", lite_reason)
+                     continue
+ 
++                # Resolve opt-in selection before allocating a sandbox. Unsupported
++                # syntax is a recorded skip, including when validation is disabled.
++                if self.options.literal_pytest_changed_files:
++                    try:
++                        self._test_selection(test_patch)
++                    except ValueError as exc:
++                        if not str(exc).startswith("unsupported_pytest_targeting:"):
++                            raise
++                        key = "unsupported_pytest_targeting"
++                        skip_reasons[key] = skip_reasons.get(key, 0) + 1
++                        self._emit_progress(pr_label, "skip", str(exc))
++                        continue
++
+                 # Validation (optional via skip_validation)
+                 fail_to_pass: list[str] = []
+                 pass_to_pass: list[str] = []
+@@ -938,10 +991,7 @@
+                         sandbox = self._start_validation_sandbox()
+                     from repo2rlenv.pipelines.pr_runtime_validate import validate_pr
+ 
+-                    targeted_cmds = targeted_test_cmds_for_pr(
+-                        normalize_test_cmds_for_runtime(self.bootstrap.test_cmds),
+-                        _files_in_patch(test_patch),
+-                    )
++                    targeted_cmds, _ = self._test_selection(test_patch)
+                     outcome = validate_pr(
+                         sandbox=sandbox,
+                         base_commit=pr.base_sha,
+@@ -1099,10 +1149,7 @@
+         owner, name = self.input.repo.owner_name
+         task_id = f"{owner}__{name}-{pr.number}"
+ 
+-        resolved_test_cmds = targeted_test_cmds_for_pr(
+-            normalize_test_cmds_for_runtime(self.bootstrap.test_cmds),
+-            _files_in_patch(test_patch),
+-        )
++        resolved_test_cmds, selection_decisions = self._test_selection(test_patch)
+         eval_script = build_eval_script(
+             base_commit=pr.base_sha,
+             test_patch=test_patch,
+@@ -1141,6 +1188,9 @@
+                 "fail_to_pass": fail_to_pass,
+                 "pass_to_pass": pass_to_pass,
+                 "validation_status": validation_status,
++                **({"test_selection_policy": "literal_pytest_changed_files",
++                    "test_selection_decisions": selection_decisions}
++                   if self.options.literal_pytest_changed_files else {}),
+                 "bootstrap_image": self.bootstrap.image_digest,
+                 # Graded reward: reward.txt carries f2p_rate*p2p_rate (training
+                 # signal); the strict SWE-bench `resolved` bool + full breakdown
+--- a/src/repo2rlenv/spec/options.py
++++ b/src/repo2rlenv/spec/options.py
+@@ -53,6 +53,7 @@
+     require_fail_to_pass: bool = True  # skip PRs whose F2P set is empty after validation
+     min_fail_to_pass: int = 1
+     validation_timeout_sec: int = 600  # per-PR cap on the two test runs
++    literal_pytest_changed_files: bool = False  # explicit reduced-scope experiment
+     skip_validation: bool = False  # emit candidates without F2P/P2P (debug / fast iteration)
+ 
+     # --- Quality (SWE-bench Lite-style sampling) ---
+--- /dev/null
++++ b/src/repo2rlenv/pipelines/pytest_target_policy.py
+@@ -0,0 +1,73 @@
++"""Experimental literal-pytest selection; never execute a command here."""
++from pathlib import PurePosixPath
++import re
++import shlex
++
++VALUE_OPTIONS = {'-k', '-m', '--junitxml', '--junit-xml', '--rootdir', '--confcutdir', '--color', '--tb', '--maxfail', '--durations', '-c', '-o', '--override-ini'}
++FLAG_OPTIONS = {'-v', '-vv', '-vvv', '-q', '-qq', '-s', '-x', '--disable-warnings', '--strict-markers', '--strict-config', '--showlocals', '--lf', '--ff'}
++
++
++def select(command, changed_files, *, enabled=False):
++    """Return a decision. Unsupported syntax must not be used as a changed-file arm."""
++    def result(status, reason, selected=None, targets=None, reduced=False):
++        return {'status': status, 'reason': reason, 'command': command if selected is None else selected,
++                'targets': targets or [], 'scope_reduced': reduced}
++    if not enabled:
++        return result('unchanged', 'policy_disabled')
++    prefix = 'cd /workspace && '
++    body = command[len(prefix):] if command.startswith(prefix) else command
++    # Intentionally conservative even inside quotes. This is not a shell parser.
++    if any(c in body for c in '\n\r;&|<>`$\\*?[]{}~'):
++        return result('unsupported', 'nonliteral_shell_syntax')
++    try:
++        tokens = shlex.split(body, posix=True)
++    except ValueError:
++        return result('unsupported', 'invalid_quoting')
++    if tokens[:3] in (['python', '-m', 'pytest'], ['python3', '-m', 'pytest']):
++        start = 3
++    elif tokens[:1] == ['pytest']:
++        start = 1
++    else:
++        return result('unsupported', 'unknown_invocation')
++    positions = []
++    i = start
++    while i < len(tokens):
++        token = tokens[i]
++        if token == '--':
++            positions.extend(range(i + 1, len(tokens)))
++            break
++        option = token.split('=', 1)[0]
++        if option in VALUE_OPTIONS:
++            if '=' not in token:
++                if i + 1 >= len(tokens) or tokens[i + 1].startswith('-'):
++                    return result('unsupported', 'missing_option_value')
++                i += 1
++        elif token in FLAG_OPTIONS:
++            pass
++        elif token.startswith('-'):
++            return result('unsupported', 'unknown_option_arity')
++        else:
++            positions.append(i)
++        i += 1
++    targets = [tokens[i] for i in positions]
++    if any('::' in t or t.endswith('.py') for t in targets):
++        return result('unchanged', 'explicit_file_or_node_scope', targets=targets)
++
++    def safe_path(path):
++        return bool(path) and not path.startswith('-') and not PurePosixPath(path).is_absolute() and '..' not in PurePosixPath(path).parts and bool(re.fullmatch(r'[A-Za-z0-9_./-]+', path))
++
++    if any(not safe_path(t) for t in targets):
++        return result('unsupported', 'ambiguous_directory_scope')
++    paths = list(dict.fromkeys(p for p in changed_files if p.endswith('.py')))
++    if not paths:
++        return result('unchanged', 'no_python_test_targets', targets=targets)
++    if any(not safe_path(p) for p in paths):
++        return result('unsupported', 'unsafe_changed_path')
++    roots = [PurePosixPath(t) for t in targets]
++    if roots and any(not any(PurePosixPath(p).is_relative_to(root) for root in roots) for p in paths):
++        return result('unsupported', 'changed_path_outside_recorded_scope')
++    # Removing positional directories preserves all recognized flags and values.
++    selected_tokens = [t for i, t in enumerate(tokens) if i not in positions]
++    selected_tokens.extend(paths)
++    selected = (prefix if command.startswith(prefix) else '') + shlex.join(selected_tokens)
++    return result('selected', 'explicit_changed_files_policy', selected, paths, True)
