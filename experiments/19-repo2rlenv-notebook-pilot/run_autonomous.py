@@ -149,6 +149,7 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "grading/independent-result.json",
         "grading/independent-comparison-conflict.json",
         "grading/review.json",
+        "grading/review-repair.json",
         "native/result.json",
     )
     selected += tuple(

@@ -73,6 +73,18 @@ def test_rejected_draft_feedback_is_preserved_in_failure_diagnostics(tmp_path):
     assert draft.read_bytes() == original
 
 
+def test_final_review_is_preserved_separately_from_initial_review(tmp_path):
+    root = tmp_path / "run"
+    initial = {"decision": "revise", "issues": ["Initial defect"]}
+    final = {"decision": "revise", "issues": ["Different remaining defect"]}
+    m.write(root / "grading/review.json", initial)
+    m.write(root / "grading/review-repair.json", final)
+    destination = tmp_path / "diagnostics"
+    m.copy_diagnostics(root, destination)
+    assert m.read(destination / "grading/review.json") == initial
+    assert m.read(destination / "grading/review-repair.json") == final
+
+
 @pytest.mark.parametrize(
     "failure",
     [
