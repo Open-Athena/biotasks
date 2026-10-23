@@ -31,6 +31,14 @@ accept a known remaining answer copy in the solver environment merely because
 the numerical checks pass. Treat explicit, provenance-bearing supplied
 intermediates separately from withheld downstream answers: meaningful downstream
 science must remain, without the requested answers being supplied as inputs.
+Where supplied, independently assess the installed-asset summary and setup
+worker's `dependency_asset_review`. Names/formats and test/example locations are
+discovery hints. Challenge dismissals based only on different bytes: provenance,
+rounding or serialization changes can leave a full scientific answer intact.
+An accessible fixture usable to check a requested answer is exposure even if
+the solver could also recompute the answer. Empty exclusions or passing controls
+do not override a known remaining fixture. Report unresolved exposure; do not
+treat a fixture-assisted solver result as clean evidence of task difficulty.
 When supplied, use the read-only package-source and hash-bound reference-file
 tools to resolve consequential format or API claims. The catalogs identify the
 recorded versions and output bytes; tools do not run code or modify the task.

@@ -5,7 +5,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from dependency_assets import apply_manifest, validate_manifest
+from dependency_assets import apply_manifest, inspect_assets, validate_manifest
 from reference_replay import load_dependency_exclusions
 
 
@@ -37,6 +37,47 @@ def test_removal_checks_installed_identity_and_preserves_inputs(tmp_path):
     # A stale manifest cannot claim a fresh removal succeeded.
     with pytest.raises(ValueError, match="regular files"):
         apply_manifest({"files": [item]}, distribution=distribution, roots=[root])
+
+
+def test_installed_catalog_exposes_answer_candidates_without_selecting_or_deleting(tmp_path):
+    root, asset, retained, item, _ = fixture(tmp_path)
+    entries = [
+        item["path"],
+        "example/tests/input.txt",
+        "example/core.py",
+        "example/tests/test_core.py",
+        "example/NOTICE.txt",
+    ]
+    for name in entries[2:]:
+        path = root / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("ordinary package file")
+    linked = root / "example/tests/linked.txt"
+    linked.symlink_to(asset)
+    package = SimpleNamespace(
+        metadata={"Name": "example"},
+        files=[*entries, "example/tests/linked.txt"],
+        locate_file=lambda name: root / name,
+    )
+    catalog = inspect_assets(
+        [{"path": "expected.txt", "sha256": item["sha256"]}],
+        distributions=lambda: [package],
+        roots=[root],
+    )
+    records = {row["path"]: row for row in catalog["files"]}
+    assert item["path"] in records and "example/core.py" not in records
+    assert "example/tests/test_core.py" in records and "example/tests/linked.txt" not in records
+    assert not records["example/NOTICE.txt"]["eligible_for_declared_removal"]
+    assert catalog["summary"]["priority_matches"] == [records[item["path"]]]
+    assert any("identical_bytes" in row["reasons"] for row in records[item["path"]]["matches"])
+    assert asset.exists() and retained.read_bytes() == b"required real input"
+    # Different serialized bytes still surface by name; no false safety claim.
+    changed = inspect_assets(
+        [{"path": "expected.txt", "sha256": "0" * 64}],
+        distributions=lambda: [package],
+        roots=[root],
+    )
+    assert changed["summary"]["priority_matches"][0]["path"] == item["path"]
 
 
 @pytest.mark.parametrize("failure", ["hash", "unowned", "outside", "symlink", "metadata", "notice"])

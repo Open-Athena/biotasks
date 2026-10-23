@@ -484,6 +484,8 @@ async def run_grading(
     for name in (
         "candidate/dependency-exclusions.json",
         "trial/dependency-exclusions-applied.json",
+        "trial/dependency-assets-summary.json",
+        "outcome.json",
     ):
         if name in snapshot["hashes"]:
             context["source_evidence"][name] = (reference / name).read_text()

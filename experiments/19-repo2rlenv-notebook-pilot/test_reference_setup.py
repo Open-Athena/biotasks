@@ -70,6 +70,18 @@ class FakeRemote:
 
     async def command(self, argv, seconds, label, *, cwd="/work"):
         self.events.append((label, self.blocked, cwd))
+        if label.startswith("dependency-assets-"):
+            self.files["/work/dependency-assets.json"] = json.dumps(
+                {
+                    "files": [],
+                    "summary": {
+                        "candidate_files": 0,
+                        "priority_matches": [],
+                        "installed_files_inspected": 0,
+                        "scope": "Synthetic empty environment",
+                    },
+                }
+            ).encode()
         if label.startswith("reference-"):
             assert self.blocked
             assert cwd == "/work/run"
@@ -132,6 +144,49 @@ def test_import_inventory_describes_conditional_imports_without_executing():
         {"line": 3, "statement": "from absent_package import Draw", "context": ["module", "If"]},
         {"line": 5, "statement": "import another_absent", "context": ["module", "FunctionDef"]},
     ]
+
+
+def test_actual_asset_candidates_reach_existing_worker_and_require_review(tmp_path):
+    class Assets(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            reply = await super().command(argv, seconds, label, **kwargs)
+            if label.startswith("dependency-assets-"):
+                entry = {
+                    "distribution": "example",
+                    "path": "example/tests/expected.txt",
+                    "sha256": "a" * 64,
+                    "bytes": 10,
+                    "eligible_for_declared_removal": True,
+                }
+                self.files["/work/dependency-assets.json"] = json.dumps(
+                    {
+                        "files": [entry],
+                        "summary": {
+                            "candidate_files": 1,
+                            "priority_matches": [entry],
+                            "scope": "Synthetic installed-file observations",
+                        },
+                    }
+                ).encode()
+            return reply
+
+    async def exercise():
+        s = session(tmp_path, Assets())
+        await s.initialize()
+        result = json.loads(await s.test_reference())
+        assert result["dependency_assets"]["priority_matches"][0]["distribution"] == "example"
+        assert (tmp_path / "trials/1/dependency-assets.json").is_file()
+        with pytest.raises(ValueError, match="Review actual installed"):
+            await s.validate_outcome(successful_outcome())
+        reviewed = successful_outcome().model_copy(
+            update={
+                "dependency_asset_review": "Inspected actual catalog and source usage; candidate is an input, not an answer to the requested result."
+            }
+        )
+        await s.validate_outcome(reviewed)
+        assert s.tests == 1  # Metadata inspection/review is not another reference run.
+
+    asyncio.run(exercise())
 
 
 @pytest.mark.parametrize("trailing_newline", [False, True])

@@ -1,0 +1,41 @@
+{
+  "number": 118,
+  "observed_at": "2026-10-23T17:32:43.554746+00:00",
+  "original_pipeline_status": "validated",
+  "audited_state": "answer_exposure_hold",
+  "scientific_acceptance": false,
+  "publication_ready": false,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 1873.034,
+  "final_scientific_controls": 26,
+  "native_rewards": [
+    1.0,
+    0.0,
+    1.0
+  ],
+  "native_exceptions": [
+    null,
+    null,
+    null
+  ],
+  "native_numerical_gate_passed": true,
+  "blind_solver_result_has_observed_package_answer_access": true,
+  "archive_files": 1561,
+  "archive_bytes": 82535166,
+  "archive_manifest_sha256": "60e2070e74ca21ae87b6d70b5c40cbc548df0c784cda4ac016b6deb6440c4fb6",
+  "full_original_hash_size_mode_readback": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 7,
+  "exposure": {
+    "evidence_type": "Actual recorded native solver command and terminal response, not a compatible-wheel inference.",
+    "trajectory_path": "native/terminus-2/autonomous-panel-118-native-terminus-2/autonomous-panel-118__XLPDjWX/agent/trajectory.json",
+    "trajectory_sha256": "22aaa8c0c7a858b3892599727e5c5acde8966745f25c0e20997c577a9deb11b5",
+    "installed_distribution": "pyhmmer==0.11.0",
+    "observed_asset": "/opt/venv/lib/python3.13/site-packages/pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+    "finding": "Solver read the installed fixture and compared it to its own generated HMM. All normalized lines matched after ignoring format-version/provenance lines and trailing whitespace. Do not claim the solver copied the model: recorded commands first build from supplied inputs and later use this fixture for checking. The accessible answer remains a validation defect.",
+    "comparison_command_sha256": "4ad7694cf7b4ee37639cac3ea1095ac26182c6a95ddc7462778bf568110b08cd",
+    "dependency_exclusions_declared": 0,
+    "unused_status_and_safe_removal_not_yet_validated": true
+  },
+  "next": "General actual-installed asset catalog, explicit setup-worker review and independent grader audit, then a fresh source-only campaign. GLM owns scientific assessment/exclusions and revalidation within existing budgets; no manual task repair."
+}

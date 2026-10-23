@@ -137,6 +137,7 @@ class SetupOutcome(StrictModel):
     explanation: str = Field(min_length=1)
     source_adaptations: list[str]
     unresolved_assumptions: list[str]
+    dependency_asset_review: str = ""
 
 
 @dataclass
@@ -479,10 +480,48 @@ class SetupSession:
                 success = run["exit_code"] == 0 and inventory["declared_artifacts_present"]
                 record["status"] = "reference_executed" if success else "reference_failed"
                 if success:
+                    # Actual installed evidence, not an assumed wheel layout.
+                    # The existing GLM setup worker judges relevance/unused
+                    # status and can use its remaining test after exclusions.
+                    save_record(directory / "output-inventory.json", inventory["artifacts"])
+                    await self.remote.upload(
+                        directory / "output-inventory.json", "/work/output-inventory.json"
+                    )
+                    await self.remote.upload(
+                        directory / "dependency_assets.py", "/work/dependency_assets.py"
+                    )
+                    audit = await self.setup_command(
+                        [
+                            "/work/venv/bin/python",
+                            "/work/dependency_assets.py",
+                            "inspect",
+                            "/work/output-inventory.json",
+                            "/work/dependency-assets.json",
+                        ],
+                        120,
+                        f"dependency-assets-{self.test_requests}",
+                    )
+                    save_record(directory / "dependency-assets-command.json", audit)
+                    if audit["exit_code"]:
+                        raise RuntimeError("Installed dependency-asset inspection failed")
+                    await self.remote.download(
+                        "/work/dependency-assets.json", directory / "dependency-assets.json"
+                    )
+                    catalog = json.loads((directory / "dependency-assets.json").read_text())
+                    summary = catalog["summary"]
+                    save_record(directory / "dependency-assets-summary.json", summary)
+                    record["dependency_assets"] = {
+                        **summary,
+                        "full_catalog": "/work/dependency-assets.json",
+                        "catalog_sha256": digest(
+                            (directory / "dependency-assets.json").read_bytes()
+                        ),
+                    }
                     self.last_pass = {
                         "hashes": hashes,
                         "test": self.test_requests,
                         "source_changed": changed != self.prepared.baseline,
+                        "dependency_asset_candidates": summary["candidate_files"],
                     }
             finally:
                 # The adapter refuses policy changes after an uncertain command.
@@ -553,3 +592,10 @@ class SetupSession:
             )
         if self.last_pass["source_changed"] and not outcome.source_adaptations:
             raise ValueError("Explain source adaptations; the source diff is nonempty")
+        if (
+            self.last_pass.get("dependency_asset_candidates", 0)
+            and not outcome.dependency_asset_review.strip()
+        ):
+            raise ValueError(
+                "Review actual installed asset candidates, requested-answer exposure and exclusions before submitting; differing bytes alone do not prove safety"
+            )

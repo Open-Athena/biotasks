@@ -60,6 +60,33 @@ def test_audit_from_another_execution_is_rejected(run):
         specification_context(run, {})
 
 
+def test_installed_asset_summary_is_hash_bound_and_full_catalog_stays_out_of_context(run):
+    import hashlib
+
+    manifest_path = run / "artifact-manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    for name, value in {
+        "trial/dependency-assets-summary.json": {"candidate_files": 1, "priority_matches": []},
+        "trial/dependency-assets.json": {"files": [{"path": "example/tests/expected.dat"}]},
+    }.items():
+        path = run / name
+        path.write_text(json.dumps(value))
+        manifest["files"].append(
+            {
+                "path": name,
+                "bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        )
+    manifest_path.write_text(json.dumps(manifest))
+    context = specification_context(run, {})
+    assert context["files"]["trial/dependency-assets-summary.json"]["candidate_files"] == 1
+    assert "trial/dependency-assets.json" not in context["files"]
+    (run / "trial/dependency-assets-summary.json").write_text('{"candidate_files": 0}')
+    with pytest.raises(ValueError, match="Original evidence changed"):
+        specification_context(run, {})
+
+
 def test_missing_export_audit_is_rejected(run):
     path = run / "output-audit.json"
     value = json.loads(path.read_text())

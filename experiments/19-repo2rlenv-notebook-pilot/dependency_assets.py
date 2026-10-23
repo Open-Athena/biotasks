@@ -13,6 +13,86 @@ import sysconfig
 from pathlib import Path, PurePosixPath
 
 
+def inspect_assets(outputs, *, distributions=importlib.metadata.distributions, roots=None):
+    """Expose actual installed answer candidates; do not judge or remove them.
+
+    Names/formats and test/example locations are discovery hints. A differing
+    hash does not establish that a fixture lacks the requested scientific answer.
+    """
+    roots = roots or [Path(sysconfig.get_path(key)).resolve() for key in ("purelib", "platlib")]
+    candidates, inspected = [], 0
+    for installed in distributions():
+        distribution = installed.metadata["Name"]
+        for relative in installed.files or []:
+            name = str(relative)
+            path = Path(installed.locate_file(relative))
+            if not any(path.is_relative_to(root) for root in roots):
+                continue
+            if path.is_symlink() or path.resolve() != path or not path.is_file():
+                continue
+            inspected += 1
+            parts = PurePosixPath(name).parts[:-1]
+            if (
+                parts
+                and re.sub(r"[-_.]+", "-", parts[0]).casefold()
+                == re.sub(r"[-_.]+", "-", distribution).casefold()
+            ):
+                parts = parts[1:]  # A package named "example" is not an examples directory.
+            packaged_test = any(
+                part.lower() in {"test", "tests", "example", "examples"} for part in parts
+            )
+            matches = []
+            for output in outputs:
+                target = PurePosixPath(output["path"])
+                reasons = []
+                if path.name.casefold() == target.name.casefold():
+                    reasons.append("same_basename")
+                if path.name.casefold().startswith(target.stem.casefold() + "."):
+                    reasons.append("same_stem")
+                if target.suffix and path.suffix.casefold() == target.suffix.casefold():
+                    reasons.append("same_suffix")
+                if reasons:
+                    matches.append({"output": output["path"], "reasons": reasons})
+            if not packaged_test and not matches:
+                continue
+            with path.open("rb") as stream:
+                identity = hashlib.file_digest(stream, "sha256").hexdigest()
+            for output in outputs:
+                if output["sha256"] == identity:
+                    matches.append({"output": output["path"], "reasons": ["identical_bytes"]})
+            entry = {"distribution": distribution, "path": name, "sha256": identity}
+            try:
+                validate_manifest({"files": [entry]})
+                removable = True
+            except ValueError:
+                removable = False
+            candidates.append(
+                {
+                    **entry,
+                    "bytes": path.stat().st_size,
+                    "matches": matches,
+                    "packaged_test_or_example": packaged_test,
+                    "eligible_for_declared_removal": removable,
+                }
+            )
+    candidates.sort(key=lambda row: (row["distribution"].casefold(), row["path"]))
+    summary = {
+        "scope": "Actual regular files recorded by installed distributions inside active site-packages. Candidate names/formats/tests are hints, not proof of answers or unused status; this is not an exhaustive filesystem or semantic audit.",
+        "installed_files_inspected": inspected,
+        "candidate_files": len(candidates),
+        "priority_matches": [
+            row
+            for row in candidates
+            if any(
+                reason in {"same_basename", "same_stem", "identical_bytes"}
+                for match in row["matches"]
+                for reason in match["reasons"]
+            )
+        ],
+    }
+    return {"files": candidates, "summary": summary}
+
+
 def validate_manifest(value, *, require_reason=False):
     if (
         not isinstance(value, dict)
@@ -92,7 +172,12 @@ def apply_manifest(value, *, distribution=importlib.metadata.distribution, roots
 if __name__ == "__main__":
     if sys.prefix == sys.base_prefix:
         raise RuntimeError("Apply dependency exclusions using the task virtual environment")
-    manifest = json.loads(Path(sys.argv[1]).read_text())
-    result = apply_manifest(manifest)
-    Path(sys.argv[2]).write_text(json.dumps(result, indent=2) + "\n")
-    print(json.dumps({"files_removed": len(result["files"]), "excluded_files_absent": True}))
+    if sys.argv[1] == "inspect":
+        result = inspect_assets(json.loads(Path(sys.argv[2]).read_text()))
+        Path(sys.argv[3]).write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps(result["summary"]))
+    else:
+        manifest = json.loads(Path(sys.argv[1]).read_text())
+        result = apply_manifest(manifest)
+        Path(sys.argv[2]).write_text(json.dumps(result, indent=2) + "\n")
+        print(json.dumps({"files_removed": len(result["files"]), "excluded_files_absent": True}))

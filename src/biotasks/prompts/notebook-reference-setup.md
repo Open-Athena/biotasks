@@ -39,6 +39,16 @@ streaming all rows, arrays or mismatches into the conversation.
   and input staging failures before that dispatch do not consume one. Use
   inexpensive file, manifest and import checks with `shell` first.
   Read the returned logs and receipts to diagnose setup failures.
+  A successful test also reports actual installed dependency-asset candidates,
+  with names, distribution ownership and content identities. Read its
+  `priority_matches` and inspect the full catalog at the supplied sandbox path.
+  These are discovery hints, not automatic answer/unused classifications.
+  Check whether a bundled fixture supplies a full or partial requested answer;
+  differing timestamps, comments, headers, precision or serialization do not
+  establish absence of scientific answer exposure. Do not use a bundled answer
+  as an oracle for validating or calibrating the generated task. Inspect related
+  copies or test/example code when relevant. Review actual installed files,
+  rather than inferring their presence from a compatible wheel.
   Before spending a full reference dispatch, check the staged input lookups from
   the actual reference directory `/work/run`, and test the source imports,
   including imports that occur late in the script. `source_imports` supplies
@@ -55,6 +65,12 @@ streaming all rows, arrays or mismatches into the conversation.
 - `submit_artifact`: finish with a brief result and explanation. A successful
   report is accepted only when the current files match a successful controller
   test. Report a blocked outcome honestly when you cannot complete within scope.
+  Supply `dependency_asset_review` explaining the inspected catalog, any relevant
+  full/partial answers, their source-backed unused status, declared removals,
+  fresh validation and remaining uncertainty. A tested outcome with candidate
+  assets requires this explicit review. An empty exclusion list by itself is
+  not evidence that the environment contains no answers. Use the remaining
+  reference test after changing exclusions; no extra test is authorized.
 
 Run full scientific computation only through `test_reference`, not through the
 setup shell. Do not put scientific computation or endpoint files in a setup

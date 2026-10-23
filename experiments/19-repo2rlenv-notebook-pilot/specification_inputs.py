@@ -47,6 +47,8 @@ def specification_context(
         for name in (
             "candidate/dependency-exclusions.json",
             "trial/dependency-exclusions-applied.json",
+            "trial/dependency-assets-summary.json",
+            "outcome.json",
         )
         if name in originals
     ]
