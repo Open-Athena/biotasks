@@ -3,12 +3,10 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 2,
+  "remote_jobs": 3,
   "remaining": [
-    "Observe original Matchms controls handle; verify archive readback and owned cleanup; then delete retained reconstruction images",
-    "Implement checkpointed bounded supervisor for original image reconstruction, control runner, archival and owned cleanup",
-    "Run Matchms/OHIF unchanged reconstruction and controls if builds succeed",
-    "Report Scanpy retained original recipe failure separately; do not silently repair it",
+    "Reconstruct and run four original OHIF positive-control pairs within remaining first-stage bounds",
+    "Attempt unchanged Scanpy reconstruction; keep setup failure separate from timeout comparison",
     "Perform separately scoped OpenMS checkout and MMseqs2 bootstrap comparisons"
   ],
   "local_inputs_retained": [
@@ -51,26 +49,21 @@
     "dry_run_commands": 20,
     "live_execution": false
   },
-  "active_job": {
-    "id": "/exedev/biotasks29-matchms-controls-001",
-    "state": "running; authoritative observation 2026-10-23T17:41:21Z",
-    "max_allocated_cpu_hours": 9.666666666666666,
-    "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
-    "model_calls": 0
-  },
   "completed_reconstruction": {
     "state": "succeeded",
     "allocated_cpu_hours": 0.12724777777989704,
     "archive_readback_verified": true,
     "retained_image": "biotasks29-matchms-reconstruct-001:original-recipe",
-    "cleanup_condition": "Delete labeled reconstruction image/intermediates after control archive readback or investigation termination"
+    "cleanup_condition": "Satisfied: cleanup-result-001.json verifies labeled images/containers absent"
   },
-  "live_progress_not_archived": {
-    "first_nop_reward": 0,
-    "first_nop_f2p_passed": 0,
-    "first_nop_f2p_total": 1,
-    "first_nop_p2p_passed": 30,
-    "first_nop_p2p_total": 30,
-    "no_pair_claim": true
-  }
+  "completed_controls": {
+    "positive_pairs": 4,
+    "clean_oracle_commands": 4,
+    "original_files_unchanged": 40,
+    "archive_readback_verified": true,
+    "owned_resources_removed": true,
+    "model_calls": 0
+  },
+  "allocated_cpu_hours_so_far": 0.434977222416136,
+  "first_stage_cpu_hour_ceiling": 32
 }

@@ -1,0 +1,11 @@
+Can timeout and scheduling changes recover complete positive control pairs without repairing tasks? Follow-up to #28.
+
+**Result so far:** all four previously incomplete Matchms exports (671, 675, 70, 98) now have verified positive control pairs: nop reward 0, oracle reward 1, all regression tests preserved, and four clean oracle commands. All 40 original task files are unchanged. Reconstruction plus eight controls consumed 0.431 allocated CPU-hours with zero model calls. These are completed controls for existing exports, not newly generated tasks.
+
+**Limit:** the original image was deleted. We replayed its saved recipe unchanged except an ownership label, so mutable base/dependency drift remains. Original results are preserved separately; the new results do not retroactively change their environment provenance. Raw Matchms artifacts remain private with verified local archive readback.
+
+**Remaining:** OHIF's four incomplete pairs, Scanpy's 300→1,200-second comparison, then separate OpenMS checkout/MMseqs2 bootstrap investigations. Scanpy reconstruction is a prerequisite: its saved recipe retains an originally failed pip command. No recipe/test repair or extra LLM repair loop is permitted.
+
+**Execution:** first-stage cumulative bound remains 32 allocated CPU-hours on existing reserved capacity, zero model calls. Control containers/images/volume and the separately owned reconstruction image/cache are verified removed. All follow-up work remains research-only.
+
+[Verified Matchms controls](https://github.com/Open-Athena/biotasks/blob/f0c5778daf26b19e51ed2590d5a53770c4ac0877/experiments/29-runtime-limits/matchms-control-results.json) · [Control accounting](https://github.com/Open-Athena/biotasks/blob/f0c5778daf26b19e51ed2590d5a53770c4ac0877/experiments/29-runtime-limits/controls-accounting.json) · [Reconstruction accounting](https://github.com/Open-Athena/biotasks/blob/f0c5778daf26b19e51ed2590d5a53770c4ac0877/experiments/29-runtime-limits/reconstruction-accounting.json) · [Full plan and limitations](https://github.com/Open-Athena/biotasks/blob/f0c5778daf26b19e51ed2590d5a53770c4ac0877/experiments/29-runtime-limits/plan.md). Detailed logs remain in comments.

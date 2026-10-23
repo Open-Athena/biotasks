@@ -37,3 +37,9 @@ Submitted `/exedev/biotasks29-matchms-controls-001` once on that same worker, wi
 ## 2026-10-23 — live control progress and monitoring
 
 Read-only controller inspection observed Matchms671 nop completing with reward 0, target 0/1 and regression tests 30/30, with no Harbor exception; oracle was running. This is provisional live evidence, not an archived pair. A later log-service request failed transiently; the observer now reports authoritative job state independently of log transport. Same handle remained running at 17:41:21Z; no restart or additional submission.
+
+## 2026-10-23 — all Matchms pairs archived; cleanup verified
+
+All eight original controls completed: four nop=0/oracle=1 pairs, four clean oracle commands and preserved regression tests on both sides. Verified the complete uploaded archive SHA, every recorded output hash and all 40 original task-file hashes. Raw archives are retained under ignored `inputs-private/controls-001`; the remote Iris archive has a seven-day TTL. Summary reads original rewards without regrading.
+
+Control job cleanup removed its containers, labeled task images and shared volume. The subsequent one-attempt cleanup job removed remaining images carrying the reconstruction owner label, including inherited build intermediates, and verified both image/container lists empty. Tools were removed. No reconstruction image is retained. No active job remains; record final cumulative CPU accounting including cleanup separately.
