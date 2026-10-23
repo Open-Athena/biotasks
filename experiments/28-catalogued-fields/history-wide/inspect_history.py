@@ -48,6 +48,8 @@ for path in sorted(Path('/work/native-observations').glob('batch-*')):
  charged={e['call']:Decimal(e['actual_cost_usd']) for e in events if e['event']=='model_charge' and e['actual_cost_usd'] is not None}
  out['batches'].append({'name':path.name,'events':dict(collections.Counter(e['event'] for e in events)),
   'decisions':dict(collections.Counter(e['outcome']+':'+e.get('reason','') for e in events if e['event']=='native_decision')),
+  'validation_exceptions':[{k:e.get(k) for k in ['pr','validation','exception_type','errno']}
+   for e in events if e['event']=='validation_exception'],
   'dispatched_model_calls':len(sent),'recorded_actual_usd':str(sum(charged.values(),Decimal('0'))),
   'unresolved_at_observation':sorted(sent-set(charged)),'incomplete_event_lines':incomplete,
   'last_event':{k:events[-1][k] for k in ['event','time','call','pr','validation','status'] if k in events[-1]} if events else None})
