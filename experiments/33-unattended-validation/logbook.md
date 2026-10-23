@@ -21,3 +21,7 @@ Recomputed #28 acceptance predicates and #29 paired outcomes with source-hash ch
 ## 2026-10-23 — offline preparation child issue
 
 Filed #34 and verified its GitHub sub-issue relation to #33. It isolates base-revision dependency preparation while preserving the task egress guard and recorded rebuild/test commands. The first controlled comparison has a maximum 12 allocated CPU-hours inside the shared 32-hour ceiling, with no reservation consumed until a concrete run is checkpointed. Static planning checks are on `codex/research/34-offline-rebuild`; compiled fixture and live task controls remain unexecuted. No new model calls or remote jobs.
+
+## 2026-10-23 — content identity reconciliation
+
+Bound all83 original exports to canonical ten-file inventories from retained full-phase manifests, checking each phase digest against its original result record. All nine #29 follow-up task input inventories match the original paths, sizes, modes and hashes exactly. Each original task now has a deterministic content identity; original/reconstructed execution attempts remain separate. This step uses previously retained member hashes, not a fresh readback of all raw files. Matchms's old unpublished-private manifest supplies only the historical inventory: its obsolete private-bucket location is not claimed as current storage. Explicit base/head revisions and runtime image digests remain pending. Counts remain83exports,82ever-positive and67ever-clean; no new runs or model calls.
