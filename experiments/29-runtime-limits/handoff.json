@@ -6,7 +6,7 @@
   "remote_jobs": 8,
   "remaining": [
     "Evaluate a generic complete-checkout reconstruction comparison for OHIF before controls; no lockfile or dependency repair",
-    "Observe frozen Scanpy recorded-command replay, verify archive and ownership cleanup; if complete, perform original controls before any readiness claim",
+    "Submit prepared frozen Scanpy PR4389 controls (300/1200s nop/oracle), verify evidence, then clean owned image",
     "Perform separately scoped OpenMS checkout and MMseqs2 bootstrap comparisons"
   ],
   "local_inputs_retained": [
@@ -64,7 +64,7 @@
     "owned_resources_removed": true,
     "model_calls": 0
   },
-  "allocated_cpu_hours_so_far": 0.639657222562366,
+  "allocated_cpu_hours_so_far": 1.0623305557833778,
   "first_stage_cpu_hour_ceiling": 32,
   "ohif_reconstruction": {
     "docker_build_exit": 0,
@@ -74,10 +74,12 @@
     "readback_verified": true,
     "owned_resources_removed": true
   },
-  "all_remote_jobs_terminal": false,
+  "all_remote_jobs_terminal": true,
   "active_checkpoint": "3d3529cb90e0eb1b8f97144eae4333b7c250fd60",
   "owned_resources_removed": false,
-  "allocated_cpu_hours": 0.639657222562366,
-  "active_job": "/exedev/biotasks29-scanpy-recorded-001",
-  "active_worker": "marin-tpu-v4-reserved-32-us-central2-b-20261023-1755-6e8581d8-worker-0"
+  "allocated_cpu_hours": 1.0623305557833778,
+  "active_job": null,
+  "active_worker": "marin-tpu-v4-reserved-32-us-central2-b-20261023-1755-6e8581d8-worker-0",
+  "retained_image": "biotasks29-scanpy-recorded-001:recorded-actions",
+  "retention_condition": "Pending original Scanpy controls; remove image after archive readback"
 }
