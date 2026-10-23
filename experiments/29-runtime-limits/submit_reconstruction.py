@@ -20,7 +20,7 @@ parser.add_argument('--run-id', choices=['biotasks29-matchms-reconstruct-001'], 
 args = parser.parse_args()
 NAME = args.run_id
 private = ROOT / 'run-private' / NAME
-private.mkdir(mode=0o700, exist_ok=True)
+private.mkdir(mode=0o700, parents=True, exist_ok=True)
 job_id = JobName.from_string('/exedev/' + NAME)
 with connect_controller(config_file=args.config) as endpoint:
     with IrisClient.remote(endpoint.url, credentials=endpoint.credentials, timeout_ms=30000) as client:
