@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=['preflight', 'submit', 'observe'])
 parser.add_argument('--config', type=Path, required=True)
-parser.add_argument('--run-id', choices=['biotasks30-transport-001','biotasks30-transport-002','biotasks30-transport-003'], required=True)
+parser.add_argument('--run-id', choices=['biotasks30-transport-001','biotasks30-transport-002','biotasks30-transport-003','biotasks30-transport-004'], required=True)
 args = parser.parse_args()
 NAME = args.run_id
 private = ROOT / 'run-private' / NAME
@@ -38,6 +38,9 @@ with connect_controller(config_file=args.config) as endpoint:
             assert not client.list_jobs(prefix=str(job_id),limit=2), 'Handle exists; observe it, never resubmit'
             from iris.resources.state import is_job_finished
             assert all(is_job_finished(j.state) for j in client.list_jobs(prefix='/exedev/biotasks30-transport-',limit=10)), 'Existing active probe: observe it'
+            if NAME.endswith('004'):
+                accounting=json.loads((ROOT/'probe-accounting.json').read_text())
+                assert accounting['all_terminal'] and accounting['allocated_attempt_cpu_hours'] + 1/3 <= 1, 'Probe campaign CPU budget exhausted'
             workers=client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
             eligible=[w for w in workers if w.healthy and 'v4-reserved' in w.scale_group and w.metadata.tpu_name and not w.metadata.provenance.dirty]
             chosen=None

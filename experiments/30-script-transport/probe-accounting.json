@@ -1,0 +1,86 @@
+{
+  "scope": "All three original probe handles; no resubmission; synthetic Docker evidence, not PR recovery",
+  "runs": [
+    {
+      "job_id": "/exedev/biotasks30-transport-001",
+      "state": "failed",
+      "tasks": [
+        {
+          "state": "failed",
+          "attempts": 1,
+          "exit_code": 1,
+          "started_utc": "2026-10-23T16:48:09.856000+00:00",
+          "finished_utc": "2026-10-23T16:49:09.531000+00:00",
+          "allocated_cpu": 2.0,
+          "attempt_seconds": 59.674999952316284,
+          "allocated_attempt_cpu_hours": 0.033152777751286826
+        }
+      ],
+      "checkpoint": "96127f9e83bb291f3658db38b7f899e9a982a675",
+      "payload_sha256": {
+        "remote_probe.py": "d131d8dcaa86b817aff964ec600ba823c9b39733ab5c76ce0d0b91cc4b831cae",
+        "original_docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+        "candidate_docker.py": "fed64fdffe68249fc1c24f89849181f8da3890b778ee8b6e783a6cd533a9c522"
+      },
+      "result_log_sha256": "46131c9e62fdd1952a70e49a4c5109787aeecfa0b7e3800c6378630b03ec236c",
+      "result_path": "attempts/001/result.json"
+    },
+    {
+      "job_id": "/exedev/biotasks30-transport-002",
+      "state": "failed",
+      "tasks": [
+        {
+          "state": "failed",
+          "attempts": 1,
+          "exit_code": 1,
+          "started_utc": "2026-10-23T16:52:59.806000+00:00",
+          "finished_utc": "2026-10-23T16:53:08.123000+00:00",
+          "allocated_cpu": 2.0,
+          "attempt_seconds": 8.316999912261963,
+          "allocated_attempt_cpu_hours": 0.004620555506812202
+        }
+      ],
+      "checkpoint": "c502af1fbbb3d5d98bdc091570854410bef34beb",
+      "payload_sha256": {
+        "remote_probe.py": "6ec729916e3821d11453acb1b89f056ed40e1c5137e685c8bd7dd8030ca4d053",
+        "original_docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+        "candidate_docker.py": "fed64fdffe68249fc1c24f89849181f8da3890b778ee8b6e783a6cd533a9c522",
+        "docker-tool.json": "f67d44c3622b167f653722bbe20ff20794f98ba37243662eb19afeda7f1f5294"
+      },
+      "result_log_sha256": "6a435502f91e96c8d15d60c9dfb35974756618baf1b71e45539446d1e665f043",
+      "result_path": "attempts/002/result.json"
+    },
+    {
+      "job_id": "/exedev/biotasks30-transport-003",
+      "state": "succeeded",
+      "tasks": [
+        {
+          "state": "succeeded",
+          "attempts": 1,
+          "exit_code": 0,
+          "started_utc": "2026-10-23T16:57:06.642000+00:00",
+          "finished_utc": "2026-10-23T16:57:21.679000+00:00",
+          "allocated_cpu": 2.0,
+          "attempt_seconds": 15.036999940872192,
+          "allocated_attempt_cpu_hours": 0.008353888856040107
+        }
+      ],
+      "checkpoint": "680f261070be66c69e6a1d936fe1e182baca6ab5",
+      "payload_sha256": {
+        "remote_probe.py": "8cc0a983fbebc17ad096a7296c74267861f77d31dfb5dc769e050f137614131b",
+        "original_docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+        "candidate_docker.py": "fed64fdffe68249fc1c24f89849181f8da3890b778ee8b6e783a6cd533a9c522",
+        "docker-tool.json": "3400f3b5b214105b9efe2cf2bb7dc6a7e02a372735121594eec39731023c14e2"
+      },
+      "result_log_sha256": "7add1824889605e41741f6304c76301d9fd624520c85593978def41676f4ca1f",
+      "result_path": "attempts/003/result.json"
+    }
+  ],
+  "all_terminal": true,
+  "one_attempt_each": true,
+  "allocated_attempt_cpu_hours": 0.04612722211413914,
+  "model_calls": 0,
+  "model_cost_usd": 0,
+  "new_capacity": false,
+  "cleanup": "001 failed before first Docker process/container creation; 002 and003 verify owned containers absent and tool files removed. Shared immutable input image retained."
+}

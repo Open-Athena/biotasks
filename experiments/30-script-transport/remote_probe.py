@@ -14,7 +14,7 @@ import time
 
 ROOT = Path(__file__).resolve().parent
 OWNER = os.environ['BIOTASKS_PROBE_RUN_ID']
-assert OWNER in {'biotasks30-transport-001', 'biotasks30-transport-002', 'biotasks30-transport-003'}
+assert OWNER in {'biotasks30-transport-001', 'biotasks30-transport-002', 'biotasks30-transport-003', 'biotasks30-transport-004'}
 TOOLS = ROOT / 'probe-tools'
 LABEL = 'org.open-athena.biotasks.owner=' + OWNER
 OWNED = []
@@ -128,11 +128,17 @@ def main():
         r = sandbox.exec('while :; do :; done', timeout=0.2)
         assert r.exit_code == 124
         # PID1 is sleep; observer is Python. Any remaining Bash is the timed-out command.
-        scan = "import pathlib,json; out=[]\nfor p in pathlib.Path('/proc').iterdir():\n if p.name.isdigit():\n  try:\n   c=(p/'comm').read_text().strip()\n   if c=='bash': out.append(int(p.name))\n  except (FileNotFoundError,ProcessLookupError,PermissionError): pass\nprint(json.dumps(out))"
-        pids = json.loads(docker('exec', cid, 'python', '-c', scan).stdout)
+        scan = "import pathlib,json; out=[]\nfor p in pathlib.Path('/proc').iterdir():\n if p.name.isdigit():\n  try:\n   c=(p/'comm').read_text().strip()\n   if c=='bash':\n    fields=(p/'stat').read_text().split(') ',1)[1].split()\n    out.append({'pid':int(p.name),'state':fields[0],'cpu_ticks':int(fields[11])+int(fields[12])})\n  except (FileNotFoundError,ProcessLookupError,PermissionError): pass\nprint(json.dumps(out))"
+        first = json.loads(docker('exec', cid, 'python', '-c', scan).stdout)
+        time.sleep(0.25)
+        second = json.loads(docker('exec', cid, 'python', '-c', scan).stdout)
+        old_ticks = {p['pid']: p['cpu_ticks'] for p in first}
+        progresses = [p['pid'] for p in second if p['pid'] in old_ticks and p['cpu_ticks'] > old_ticks[p['pid']]]
+        live = [p['pid'] for p in second if p['state'] not in ('Z', 'X', 'x')]
         REPORT['rows'].append({'transport': label, 'case': 'timeout', 'client_exit_code': r.exit_code,
-                               'bash_processes_remaining_inside_owned_container': pids,
-                               'remote_command_terminated_by_client_timeout': not bool(pids)})
+                               'first_process_snapshot': first, 'second_process_snapshot': second,
+                               'live_bash_after_timeout': live, 'cpu_progress_after_timeout': progresses,
+                               'remote_command_terminated_by_client_timeout': not bool(live)})
         docker('rm', '-f', name)
     REPORT['completed'] = True
 
