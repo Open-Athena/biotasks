@@ -1,0 +1,45 @@
+{
+  "scope": "Separate post-bootstrap timing arm, not historical PR validation",
+  "actions_matched": 16,
+  "payload_matches_baseline": true,
+  "actual_base_image_matches_baseline": true,
+  "only_two_post_bootstrap_timeouts_changed": true,
+  "checks": [
+    {
+      "phase": "smoke",
+      "exit_code": 0,
+      "applied_timeout": 1200,
+      "upstream_timeout": 300,
+      "docker_duration_seconds": 414.48339272802696,
+      "pytest_passed": 4924,
+      "pytest_skipped": 348,
+      "pytest_warnings": 306,
+      "pytest_seconds": 412.37,
+      "stdout_sha256": "2fbe442be1ea71d070094779c9a86c7dc885260b5f420109919843b8e231882a"
+    },
+    {
+      "phase": "fresh",
+      "exit_code": 0,
+      "applied_timeout": 1200,
+      "upstream_timeout": 300,
+      "docker_duration_seconds": 431.9364566699951,
+      "pytest_passed": 4924,
+      "pytest_skipped": 348,
+      "pytest_warnings": 306,
+      "pytest_seconds": 411.25,
+      "stdout_sha256": "f4d447a54e116487928ee842d09a8294d1d7d96d8c115844a8901eecb044152e"
+    }
+  ],
+  "smoke_passed": true,
+  "verify_passed": true,
+  "retained_image_id": "sha256:979804eec3d64fffcff3cabf5eda15b04c6a4e1143051bf024ff66ac05312797",
+  "retained_image_tag": "biotasks31-macs-longcheck-001:recorded-actions",
+  "containers_tools_checkout_removed": true,
+  "pr792_comparison_started": false,
+  "model_calls": 0,
+  "limits": [
+    "Mutable dependency installation may differ between reconstructions",
+    "Passing current bootstrap suite does not establish historical PR validity",
+    "Retained image must be removed after frozen comparison/readback or investigation termination"
+  ]
+}

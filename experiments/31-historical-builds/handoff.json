@@ -5,7 +5,7 @@
   "model_calls": 0,
   "remote_jobs": 2,
   "remaining": [
-    "Collect the distinct MACS 1200-second post-bootstrap-check arm; verify archive and cleanup before any PR792 comparison.",
+    "Post-bootstrap smoke and fresh checks passed with1200s bounds. Prepare frozen PR792 original-versus-rebuild comparison on retained image; delete after archive readback.",
     "Run/retain original-versus-rebuild biological comparison if that baseline is available",
     "Full generation CLI and Docker/Harbor live integration remain outside completed local checks"
   ],
@@ -37,12 +37,15 @@
     "configuration_and_task_writer_cases_passed": 3,
     "missing_commands_and_unknown_option_rejected": true
   },
-  "active_job": "/exedev/biotasks31-macs-longcheck-001",
+  "active_job": null,
   "active_checkpoint": "01108ef06a6d89e7552d2624899f090c70233651",
   "active_worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
   "first_stage_cpu_hour_ceiling": 16,
-  "all_remote_jobs_terminal": false,
+  "all_remote_jobs_terminal": true,
   "owned_resources_removed": false,
-  "allocated_cpu_hours": 0.9414400000042386,
-  "active_max_allocated_cpu_hours": 10
+  "allocated_cpu_hours": 2.499747777779897,
+  "active_max_allocated_cpu_hours": 0,
+  "retained_image_id": "sha256:979804eec3d64fffcff3cabf5eda15b04c6a4e1143051bf024ff66ac05312797",
+  "retained_image_tag": "biotasks31-macs-longcheck-001:recorded-actions",
+  "retention_condition": "Pending frozen MACS PR792 native original-versus-rebuild comparison on this worker; delete after comparison/readback or investigation termination. Not original image bytes."
 }
