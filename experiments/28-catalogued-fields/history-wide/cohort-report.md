@@ -5,7 +5,7 @@ All ten repositories remain visible. Pending is not zero yield or free. Unique n
 | Repository | Inventory | Unique returned | Entered | Backlog | Paired started/completed | Exports | Tracked verified | Clean verified | Terminal USD | Evidence accepted |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
 | samtools/samtools | 735 | 735 | 735 | 0 | 0/0 | 0 | 0 | 0 | 0.602694 | True |
-| scverse/scanpy | 1941 | — | — | — | —/— | — | — | — | — | False |
+| scverse/scanpy | 1941 | 100 | 39 | 1902 | 5/4 | 1 | 0 | 0 | 0.880728 | True |
 | macs3-project/MACS | 157 | — | — | — | —/— | — | — | — | — | False |
 | OpenMS/OpenMS | 5671 | — | — | — | —/— | — | — | — | — | False |
 | lammps/lammps | 3367 | — | — | — | —/— | — | — | — | — | False |
@@ -17,6 +17,6 @@ All ten repositories remain visible. Pending is not zero yield or free. Unique n
 
 Result evidence complete: False.
 
-Known terminal history charges: $0.602694. Active/unreported charges excluded: True.
+Known terminal history charges: $1.483422. Active/unreported charges excluded: True.
 
 Final all-ten live accounting, fresh archive verification, controller/worker/local cleanup and issue conclusion/readback/closure remain separate requirements.
