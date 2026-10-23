@@ -1,0 +1,37 @@
+{
+  "purpose": "Fresh autonomous regression of general preparation runtime-export feedback; no prior task, export correction or diagnostic answer supplied. This is not a complete ten-domain cohort.",
+  "source_panel": "panel-rounds/016/plan.json",
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts": 2,
+    "daytona_sandboxes": 2,
+    "sandboxes_per_campaign": 1
+  },
+  "records": [
+    {
+      "number": 116,
+      "id": "cobrapy-deletions",
+      "domain": "Systems biology",
+      "config_file": "autonomous-runs/116/configuration.json",
+      "baseline_number": 91,
+      "unchanged_previous_source_campaign": 111
+    }
+  ]
+}
