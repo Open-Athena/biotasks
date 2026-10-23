@@ -1,0 +1,13 @@
+# Resumable existing-export validation
+
+This is a design checkpoint, not a demonstrated unattended runner.
+
+The pinned upstream PR-runtime exporter creates task output directories but does not provide this experiment's remote submission, independent Harbor controls, verified HF archive or owned-image cleanup state machine. The existing history-wide `run_history.py` serializes discovery batches and records backlog, but explicitly requires a fresh bootstrap directory and initializes a new ledger. Reusing it as a controller restart mechanism would risk resetting work. Preserve the upstream pipeline and reuse the existing bounded submission, collection, readback and archive helpers at the outer orchestration boundary.
+
+The first demonstration should use the frozen #34 export and its existing job handle. Do not regenerate a task or replay controls merely to demonstrate resume. Bind source revision, candidate archive and control plan hashes to a durable journal. Planned stages are candidate verified, submission recorded, remote terminal, archive readback verified, public eligibility reviewed, HF readback verified, cleanup terminal, cleanup verified. A negative scientific outcome may complete preservation and cleanup; a successful job alone must never satisfy the control or archive gates.
+
+Submission is the critical interruption boundary. Persist the deterministic handle and budget reservation before dispatch. After interruption, look up that exact handle. If submission outcome is unknown, do not infer absence from a timeout or resubmit automatically. An existing running handle remains running; an existing terminal handle proceeds to accounting. A missing handle requires authoritative evidence before any explicitly permitted first submission. Hash mismatches stop the affected stage without overwriting original evidence.
+
+Use an atomic journal update and a narrow per-run controller lock to prevent two controllers from advancing the same experiment. This lock is unrelated to the shared-node heavy-work lock and does not serialize other lightweight jobs. Read-only observation is bounded; schedule checks several minutes apart. No detached local CPU-intensive process or per-minute polling.
+
+Required tests include interruption after remote acceptance but before local acknowledgement, duplicate controller admission, lost observation response, tampered input/receipt, partial HF publication, failed controls with successful preservation, and cleanup refusal before verified evidence. The live demonstration must report which stages actually ran automatically and which pre-existing checkpoints were adopted. Synthetic transition tests are not the live demonstration.
