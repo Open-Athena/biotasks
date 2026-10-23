@@ -1,0 +1,106 @@
+{
+  "scope": "Frozen PR742 native original-versus-opt-in-rebuild comparison; no task repair or regrading",
+  "archive_sha256": "38451d5b87fa2dcd8a739e396f91f04cd32ad4469f7b7aa17f775db180f2fb68",
+  "image_id": "sha256:ce3fef4f08842cd99b13916a0f9fc89447eb3def5d759a1bc6b55c0ab5ca2c79",
+  "source_patch_sha256": "0ec14f9c773b8e97791be9bef70e369a53b8df2dd38ad4ffb9d421f234e05301",
+  "test_patch_sha256": "34a811df9dbdc6f49164668922dc97ff6fd6d5442eb1e1662928099c1d017a9d",
+  "arms": [
+    {
+      "name": "original",
+      "state": "completed",
+      "reason": "no fail-to-pass tests after validation",
+      "validator_status": "failed",
+      "validator_reason": "no fail-to-pass tests after validation",
+      "fail_to_pass": [],
+      "pass_to_pass_count": 0,
+      "stages": [
+        {
+          "stage": "pre",
+          "call_index": 3,
+          "output_present": true,
+          "outer_exit_code": 0,
+          "duration_seconds": 3.7127544379909523,
+          "start_marker": true,
+          "end_marker": true,
+          "collection_error_marker_count": 2,
+          "reported_status_lines": {},
+          "pytest_summary": "2 errors",
+          "stale_extension_spec_error": true,
+          "missing_module_error": false
+        },
+        {
+          "stage": "post",
+          "call_index": 4,
+          "output_present": true,
+          "outer_exit_code": 0,
+          "duration_seconds": 2.8889508860302158,
+          "start_marker": true,
+          "end_marker": true,
+          "collection_error_marker_count": 2,
+          "reported_status_lines": {},
+          "pytest_summary": "2 errors",
+          "stale_extension_spec_error": true,
+          "missing_module_error": false
+        }
+      ]
+    },
+    {
+      "name": "rebuild",
+      "state": "completed",
+      "reason": "",
+      "validator_status": "verified",
+      "validator_reason": "",
+      "fail_to_pass": [
+        "test/test_CallPeakUnit.py::test_call_summits_rejects_maximum_in_below_cutoff_gap"
+      ],
+      "pass_to_pass_count": 10,
+      "stages": [
+        {
+          "stage": "pre",
+          "call_index": 3,
+          "output_present": true,
+          "outer_exit_code": 0,
+          "duration_seconds": 237.7131270239479,
+          "start_marker": true,
+          "end_marker": true,
+          "collection_error_marker_count": 0,
+          "reported_status_lines": {
+            "FAILED": 1,
+            "PASSED": 10,
+            "SKIPPED": 1
+          },
+          "pytest_summary": "1 failed, 10 passed, 1 skipped",
+          "stale_extension_spec_error": false,
+          "missing_module_error": false
+        },
+        {
+          "stage": "post",
+          "call_index": 4,
+          "output_present": true,
+          "outer_exit_code": 0,
+          "duration_seconds": 236.7110431640176,
+          "start_marker": true,
+          "end_marker": true,
+          "collection_error_marker_count": 0,
+          "reported_status_lines": {
+            "PASSED": 11,
+            "SKIPPED": 1
+          },
+          "pytest_summary": "11 passed, 1 skipped",
+          "stale_extension_spec_error": false,
+          "missing_module_error": false
+        }
+      ]
+    }
+  ],
+  "native_f2p_pair_reported": true,
+  "exported_task": false,
+  "independent_controls_run": 0,
+  "model_calls": 0,
+  "allocated_cpu_hours": 0.5467577777968513,
+  "limits": [
+    "Upstream native stage outer exit can mask inner pytest failure; inspect archived summaries and collection errors",
+    "Native F2P/P2P alone does not establish exported reward or independent nop/oracle controls",
+    "Image was reconstructed from recorded actions; mutable dependencies may differ from original run"
+  ]
+}

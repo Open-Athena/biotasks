@@ -3,11 +3,11 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 5,
+  "remote_jobs": 6,
   "remaining": [
-    "Submit frozen PR742 original-versus-rebuild native comparison after preflight on retained image",
-    "Archive/read back comparison and classify inner pytest completion separately from upstream outcome",
-    "Remove PR742 owner-labeled image after any justified controls and verified readback"
+    "Build candidate Harbor export with the pinned PR742 native F2P/P2P and verify exact source/test/issue inputs",
+    "Run an unchanged nop/oracle control pair on the exported task if within the recorded budget",
+    "Remove PR742 owner-labeled image after controls/readback or if export proves ineligible"
   ],
   "local_inputs_retained": [
     {
@@ -43,7 +43,7 @@
   "first_stage_cpu_hour_ceiling": 16,
   "all_remote_jobs_terminal": true,
   "owned_resources_removed": false,
-  "allocated_cpu_hours": 4.779914999935362,
+  "allocated_cpu_hours": 5.326672777732213,
   "active_max_allocated_cpu_hours": 0,
   "retained_image_id": "sha256:ce3fef4f08842cd99b13916a0f9fc89447eb3def5d759a1bc6b55c0ab5ca2c79",
   "retained_image_tag": "biotasks31-macs-742-image-001:recorded-actions",
@@ -83,5 +83,21 @@
     "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
     "smoke_and_fresh_passed": true,
     "actions_matched": 16
+  },
+  "macs_742_native": {
+    "state": "succeeded_verified_native",
+    "original_f2p": 0,
+    "rebuild_f2p": 1,
+    "rebuild_p2p": 10,
+    "pre_summary": "1 failed, 10 passed, 1 skipped",
+    "post_summary": "11 passed, 1 skipped",
+    "collection_errors_rebuild_pre_post": [
+      0,
+      0
+    ],
+    "archive_sha256": "38451d5b87fa2dcd8a739e396f91f04cd32ad4469f7b7aa17f775db180f2fb68",
+    "allocated_cpu_hours": 0.5467577777968513,
+    "exported_task": false,
+    "independent_controls_run": 0
   }
 }
