@@ -41,14 +41,15 @@ def lightweight_manifest_inputs(state, slug):
     source = state / ('biotasks28-history-' + slug.lower().replace('__', '-') + '-001-results')
     paths = [source / name for name in review['reviewed_files']]
     assert all(p.parent == source and p.is_file() for p in paths)
-    if sum(p.stat().st_size for p in paths) > 16 * 1024**2:
+    if (sum(p.stat().st_size for p in paths) > 32 * 1024**2
+            or any(p.stat().st_size > 16 * 1024**2 for p in paths)):
         return None
     total = 0
     phase = source / 'phase-artifacts.tar.gz'
     with tarfile.open(phase, 'r|gz') as archive:
         for member in archive:
             total += member.size
-            if total > 16 * 1024**2:
+            if total > 32 * 1024**2 or member.size > 16 * 1024**2:
                 return None
     return total
 
@@ -65,7 +66,7 @@ def bounded_publish_manifest(manifest, profile_digest, client_versions=None):
             or any(row['bytes'] < 0 or row['bytes'] > 16 * 1024**2 for row in rows)):
         return None
     expanded = sum(row['bytes'] for row in phase[0]['members'])
-    if expanded > 16 * 1024**2:
+    if expanded > 32 * 1024**2 or any(row['bytes'] > 16 * 1024**2 for row in phase[0]['members']):
         return None
     return {'total_object_bytes': total, 'original_phase_expanded_bytes': expanded}
 

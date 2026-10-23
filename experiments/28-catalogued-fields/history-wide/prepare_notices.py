@@ -22,6 +22,7 @@ def main():
     parser.add_argument('--slug', required=True)
     parser.add_argument('--snapshot', required=True, type=Path)
     parser.add_argument('--max-seconds', type=int, default=120)
+    parser.add_argument('--filename', default='LICENSE', choices=['LICENSE', 'LICENSE.txt', 'LICENSE.md', 'COPYING'])
     args = parser.parse_args()
     selected = next(row for row in json.loads((ROOT.parent / 'cohort.json').read_text()) if row['slug'] == args.slug)
     assert args.snapshot.resolve().is_relative_to((ROOT / 'live-observations').resolve())
@@ -45,8 +46,8 @@ def main():
             if time.monotonic() - started >= args.max_seconds:
                 pending.append(ref)
                 continue
-            path = destination / (ref + '--LICENSE')
-            url = 'https://raw.githubusercontent.com/' + selected['repo'] + '/' + ref + '/LICENSE'
+            path = destination / (ref + '--' + args.filename)
+            url = 'https://raw.githubusercontent.com/' + selected['repo'] + '/' + ref + '/' + args.filename
             if path.exists():
                 assert path.stat().st_size < 256 * 1024
                 raw = path.read_bytes()

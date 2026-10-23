@@ -13,7 +13,7 @@ The problem spans several boundaries. Removing a date filter fixed neither unsup
 | MACS | 157 entries, 35 pairs started/26 returned, no exports | The agent eventually installed the package, then native validation removed compiled extensions and often encountered collection errors. Nine command-size exceptions and six diff-fetch failures are separate transport boundaries. |
 | OpenMS | Source checkout, before any model call or PR entry | The original 60-second acquisition timeout leaves all 5,671 identities backlog; no selection, model or test-quality conclusion. |
 | LAMMPS | 20 bootstrap actions, no saved setup or PR entry | Accepted Bash inputs retained trailing protocol tokens/simulated output and four build/configuration commands timed out. All 3,367 identities remain backlog. |
-
+| Matchms | 335 entries, 174 pairs started/164 returned, 58 exports | 54 positive tracked-test pairs/49clean commands; one exact runtime duplicate pair and seven unstarted controls. Private original retention remains pending. |
 | Cobrapy | 519 entries, 170 pairs started/161 returned, 12 exports | All 12 tracked-test controls succeed; two oracle commands are clean. The other ten retain exactly their base controls’ untracked failures. All 24 controls complete; 71 PRs remain backlog under the declared 21-minute new-batch time guard. |
 
 The remaining three original runs and final full-cohort evidence are still pending. Current and September results remain separate even though their costs share the approved issue ceiling.

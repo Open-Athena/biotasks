@@ -1,0 +1,98 @@
+{
+  "scope": "Synthetic colored-line parser mechanism plus original unnormalized-log metadata only. No ANSI stripping/recovered grading, actual test run, model call, repair or PR retry.",
+  "pinned_pytest_parser_sha256": "4fe90bbb7db103f54984d73a7c95b482027ed0d5738c8587b5904c86dbf4b580",
+  "original_phase_sha256": "e7838aabd5e29d487bea778ee127cae55b82c0f48ac4bf06d8cb849065833235",
+  "synthetic_plain_result": {
+    "tests/example.py::test_x": "PASSED"
+  },
+  "synthetic_colored_result": {},
+  "original_validation_test_cmds": [
+    {
+      "pr": 14445,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v mne/"
+      ]
+    },
+    {
+      "pr": 14439,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v mne/"
+      ]
+    },
+    {
+      "pr": 14436,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v mne/"
+      ]
+    },
+    {
+      "pr": 14413,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v mne/"
+      ]
+    }
+  ],
+  "stages": [
+    {
+      "member": "native-observations/batch-0000/validation-003-pr-14436.json.gz",
+      "side": "pre",
+      "raw_log_sha256": "576e3aaa3a0175d28a17bb38147ad559568b99b1d31fc116d67b6d30cdf6c6c1",
+      "raw_log_bytes": 6310,
+      "ansi_escape_sequences": 208,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    },
+    {
+      "member": "native-observations/batch-0000/validation-003-pr-14436.json.gz",
+      "side": "post",
+      "raw_log_sha256": "753dda2e83f88295f8e9604f594bca9d544f583baaf2a206be6f5ed8fa0623e8",
+      "raw_log_bytes": 89238,
+      "ansi_escape_sequences": 2756,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    },
+    {
+      "member": "native-observations/batch-0000/validation-002-pr-14439.json.gz",
+      "side": "pre",
+      "raw_log_sha256": "970f96b2ef9e820627f34111afe14f3fc58ffa0d60dddd980cabcf1715c9c060",
+      "raw_log_bytes": 90203,
+      "ansi_escape_sequences": 2792,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    },
+    {
+      "member": "native-observations/batch-0000/validation-002-pr-14439.json.gz",
+      "side": "post",
+      "raw_log_sha256": "1556714b347aca1f4c5d28d5bf9178e6e1ca7c7d1dbe29af7b56409a653a9f5d",
+      "raw_log_bytes": 93097,
+      "ansi_escape_sequences": 2888,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    },
+    {
+      "member": "native-observations/batch-0000/validation-001-pr-14445.json.gz",
+      "side": "pre",
+      "raw_log_sha256": "f445c9afb39a06c71f922a7f2a79fe59c38db907e838a45f4d0c5ca112278f54",
+      "raw_log_bytes": 216097,
+      "ansi_escape_sequences": 7432,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    },
+    {
+      "member": "native-observations/batch-0000/validation-001-pr-14445.json.gz",
+      "side": "post",
+      "raw_log_sha256": "fe3111d89401f5eda21bbe8131f261de33e77390da38ce55f78af6667cb324dc",
+      "raw_log_bytes": 112258,
+      "ansi_escape_sequences": 3572,
+      "original_timeout_marker": true,
+      "native_original_f2p_count": 0,
+      "native_original_p2p_count": 0
+    }
+  ],
+  "interpretation": "The original logs contain colored pytest status output but pinned parser is not ANSI tolerant; all six returned native stages also time out at600seconds. Empty parsed maps therefore do not establish tests never ran or PRs lack regressions. Original grades remain unchanged."
+}
