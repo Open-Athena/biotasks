@@ -3923,3 +3923,7 @@ Original metabolomics evidence isolates the context failure to a single compact 
 ### 2026-10-23 — prioritize a new general failure mode over a redundant repeat
 
 Cancelled unsubmitted physiology100 and transferred its exact $1 reservation to latest-factory metabolomics109. No worker existed and no original observation was replaced. Physiology090 already provides public validation;109 tests the diagnosed compact-reference failure in the latest common factory. Prospective106/113/109 share the same frozen runtime and original source policy. Total holds remain $99.75/$100, with two concurrent hosts/sandboxes.
+
+### 2026-10-23 — dependency-bundled result fixture
+
+A metadata audit of the hash-verified locked compatible wheel found a precomputed model matching the recorded reference on all 1,225 lines after excluding version/date/command headers. This is byte evidence, not a manually authored scientific control or direct installed-image inspection. Existing096 acceptance records remain unchanged and publication remains held. Asked for the general policy: worker-authored exclusion with original inputs preserved and fresh validation, or v1 rejection. Hold unlaunched106 pending that answer;113/109 can proceed after the prior cohort is terminal/clean. No task edit, new model call or sandbox was made. See `autonomous-runs/096/dependency-fixture-audit.json`.
