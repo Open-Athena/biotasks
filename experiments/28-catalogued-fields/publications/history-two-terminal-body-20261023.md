@@ -1,0 +1,7 @@
+Evaluate official Repo2RLEnv `pr_runtime` across merged-PR history for the same ten repositories, without the September cutoff. Keep changes minimal and justified, with only upstream's model calls and no extra repair loop.
+
+**Status: in progress.** Discovery is verified and archived: **23,285 unique merged PRs / 237 pages**. **Two of ten history results are reviewed and archived:** SAMtools exported no tasks; Scanpy exported one task whose base/oracle grades are both unavailable after verifier timeouts. Zero independently verified history tasks so far. MACS is running; eight repository results remain pending. Discovery, processing coverage and backlog are reported separately.
+
+**OpenRouter ceiling: $100 total**, including the **$5.975286 September baseline**. Reconciled completed-history charges are **$1.483422**, excluding active MACS charges. Repos run serially on existing reserved TRC CPUs, with no new capacity or accelerators.
+
+The September baseline remains separate: two exports, one tracked-test verified task, zero clean oracle commands. [Baseline conclusion](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6352713291) · [History protocol and discovery](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6353824098) · [Current results, logs and verified archives](https://github.com/Open-Athena/biotasks/issues/28#issuecomment-6355843514). Detailed updates remain in comments.
