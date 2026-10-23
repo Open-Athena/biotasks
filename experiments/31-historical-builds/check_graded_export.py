@@ -75,7 +75,7 @@ def main():
                 assert details['command_resolved']==(side in ('oracle','new_test'))
                 if side=='new_test': assert (repo/'new_test.txt').read_text()=='expected test payload\n'
             results.append({'case':side,'script_exit':r.returncode,'reward':reward,'details':details})
-    report={'scope':'Actual unittest execution on synthetic compiled library through candidate exported shell and unchanged pinned graded verifier; local paths, no Harbor/Docker/biological repo','verifier_sha256':VERIFIER_SHA,'cases':results,'all_assertions_passed':True,'temporary_directory_removed':not root.exists(),'limits':['Exported test reset guards and full pipeline configuration remain untested','Does not establish MACS task recovery','No timeouts or process cancellation measured here']}
+    report={'scope':'Actual unittest execution on synthetic compiled library through candidate exported shell and unchanged pinned graded verifier; local paths, no Harbor/Docker/biological repo','verifier_sha256':VERIFIER_SHA,'cases':results,'all_assertions_passed':True,'temporary_directory_removed':not root.exists(),'limits':['No full generation CLI or Docker/Harbor execution','Does not establish MACS task recovery','No timeouts or process cancellation measured here']}
     (ROOT/'graded-export-results.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'cases':len(results),'all_assertions_passed':True,'temporary_directory_removed':not root.exists()}))
 

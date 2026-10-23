@@ -1,0 +1,79 @@
+{
+  "selection_rule": "Earliest retained batch/validation filename among original pairs with extension removal; no replacement case",
+  "repo": "macs3-project/MACS",
+  "pr": 792,
+  "base_sha": "3b131c9b0195b50217edcecf0f9f7475314d4062",
+  "head_sha": "fd8e665afee877801deafaf521cc68dcd2fa7136",
+  "url": "https://github.com/macs3-project/MACS/pull/792",
+  "descriptor_member": "native-observations/batch-0001/native-candidates.json",
+  "descriptor_member_sha256": "926014560d47274755d88b0bddd8c4ad2ea17b38cfd3e1ac7fc933d2182daa48",
+  "validation": {
+    "member": "native-observations/batch-0001/validation-001-pr-792.json.gz",
+    "sha256": "87d8b29780942079bbc65eae6d4853285ae155f6f98dd3ffc0d659c054d9a74f",
+    "sides": {
+      "pre_log": {
+        "removed_extensions": [
+          "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+          "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+        ],
+        "collection_error_present": true
+      }
+    }
+  },
+  "original_status": "failed",
+  "original_reason": "no fail-to-pass tests after validation",
+  "original_phase_sha256": "9c5a19b814006b3df98d085de203807b165c6849fa4f81cd7b85f915812e7d43",
+  "reconstruction_sh_syntax_failures": [
+    {
+      "line": 8,
+      "exit_code": 2,
+      "command_sha256": "80a746dae7ee2735df7cbe9bc0267c5c1462aa7a0132c393e5822a57eb454be0",
+      "diagnostic": "/bin/sh: 1: Syntax error: end of file unexpected"
+    },
+    {
+      "line": 9,
+      "exit_code": 2,
+      "command_sha256": "553ed65363dee0e41f87d30ce588e549c09e85d89bfdac5800933468f8bffc02",
+      "diagnostic": "/bin/sh: 1: Syntax error: end of file unexpected"
+    },
+    {
+      "line": 11,
+      "exit_code": 2,
+      "command_sha256": "9b1a0d5df4eb0acdb070e8860255540850f2dc8fabd80cf9269e45f5f32c415a",
+      "diagnostic": "/bin/sh: 1: Syntax error: end of file unexpected"
+    }
+  ],
+  "baseline_status": "Saved recipe cannot execute unchanged: three RUN bodies fail default shell syntax checks",
+  "live_comparison_run": false,
+  "model_calls": 0,
+  "limits": [
+    "Syntax evidence is not a Docker build attempt",
+    "Deleted original image is unavailable; no replacement image or recipe repair applied",
+    "Native/package fixtures do not establish MACS task recovery"
+  ]
+}

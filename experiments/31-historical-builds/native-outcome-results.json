@@ -1,0 +1,142 @@
+{
+  "scope": "Complete imported native validator and original parser dispatcher; actual compiled unittest fixture via local path adapter",
+  "cases": [
+    {
+      "mode": "original",
+      "status": "failed",
+      "reason": "no fail-to-pass tests after validation",
+      "f2p": [],
+      "p2p": [],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "900296876d8c885fd8844b664de3bdbd79207fe3d9bedf2912abe695b2769058"
+        },
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "fb1de669c2c5e2ab1ff3dfac66427fc9298ed0ee6bd32bd29470fc968a7bb8bb"
+        }
+      ]
+    },
+    {
+      "mode": "candidate_disabled",
+      "status": "failed",
+      "reason": "no fail-to-pass tests after validation",
+      "f2p": [],
+      "p2p": [],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "900296876d8c885fd8844b664de3bdbd79207fe3d9bedf2912abe695b2769058"
+        },
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "fb1de669c2c5e2ab1ff3dfac66427fc9298ed0ee6bd32bd29470fc968a7bb8bb"
+        }
+      ]
+    },
+    {
+      "mode": "rebuild",
+      "status": "verified",
+      "reason": "",
+      "f2p": [
+        "test_value.ValueTests.test_fixed"
+      ],
+      "p2p": [
+        "test_value.ValueTests.test_stable"
+      ],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "98ae29d6dc64568ef4f6525b8ae3f99e0af76472c3170d4626a9bb818a7c4ff5"
+        },
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "0ce59b47328f9456c065239641d3198d237999e4d2d6aae7e3bfed40db66a75c"
+        }
+      ]
+    },
+    {
+      "mode": "pre_build_failure",
+      "status": "failed",
+      "reason": "pre stage incomplete or setup/rebuild failed",
+      "f2p": [],
+      "p2p": [],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 1,
+          "start_marker": false,
+          "end_marker": false,
+          "command_sha256": "fa43bd86440181679277395bfa779ae0118ca17fe5bfc6c7f073bc7305e63ab6"
+        }
+      ]
+    },
+    {
+      "mode": "post_build_failure",
+      "status": "failed",
+      "reason": "post stage incomplete or setup/rebuild failed",
+      "f2p": [],
+      "p2p": [],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 0,
+          "start_marker": true,
+          "end_marker": true,
+          "command_sha256": "38b4b124d1ab9dec75977a9450b0817cac2ba045700fcbce7de84a0ece4381ce"
+        },
+        {
+          "stage": true,
+          "exit_code": 1,
+          "start_marker": false,
+          "end_marker": false,
+          "command_sha256": "0bd161f5ca174b2fba7e529ac7b9a0a360ce8a4070e0c222e2ab218b7a350f41"
+        }
+      ]
+    },
+    {
+      "mode": "invalid_test_patch",
+      "status": "failed",
+      "reason": "pre stage incomplete or setup/rebuild failed",
+      "f2p": [],
+      "p2p": [],
+      "stage_calls": [
+        {
+          "stage": true,
+          "exit_code": 1,
+          "start_marker": false,
+          "end_marker": false,
+          "command_sha256": "dac44816d431a3d00170c417817d19da082dda974b236e7da77fe2b1ba8c4057"
+        }
+      ]
+    }
+  ],
+  "all_assertions_passed": true,
+  "default_disabled_outcome_and_commands_equal": true,
+  "temporary_directory_removed": true,
+  "model_calls": 0,
+  "limits": [
+    "No full CLI/configuration construction or Docker execution",
+    "Local adapter remaps /workspace and uses bash -c instead of Docker login shell",
+    "No MACS or biological task recovery; no timeout cancellation claim"
+  ]
+}
