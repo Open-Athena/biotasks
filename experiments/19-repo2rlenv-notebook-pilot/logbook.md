@@ -4073,3 +4073,8 @@ Original whole-bootstrap intervals5530/502seconds rounded up enclose all serial 
 
 
 Authenticated active123metadata shows16base manual packages; the one introduced package is explicitly declared before/after setup, with no unrecorded additions. The first controlled reference test passes and one computation slot remains. Clean replay and specification subsequently completed; construction is running. Preserve exact captured receipt hashes for later sealed-original crosscheck; this is live setup/replay progress, not task acceptance/native/publication. See autonomous-runs/123/setup-observation.json.
+
+
+## 2026-10-23 UTC: fund a second common-factory domain from verified unused holds
+
+Original001and017whole terminal intervals, exact original lifecycle/resource bytes and fresh provider absence support0.25/0.50retained holds, releasing1.25USD.009/010/013long whole-host intervals require retaining1USD each; no release was assumed.001lifecycle bytes match the previously authenticated original scientific manifest and original root pipeline identity; a current direct storage403was not bypassed. Native/legacy snapshot margins are untouched. Reserve1USDfor124unchanged originalPyHMMERon123'ssame generalfactory, subjecttofreshfreeze/slotcheck; holds99.75USD,unallocated0.25. No model/jobwasstartedbythisaudit/reservation. See budget-reconciliation-remaining-nonnative-20261023.json.123independent implementationfinished andgraderconstructioncontinues.
