@@ -75,3 +75,9 @@ Booked eight CPU-hours for one combined job and 1/6 hour for later cleanup. Wors
 ## 2026-10-23 — separate diagnostic identity
 
 Added a source/hash-bound ledger for MACS PR742. It is absent from the frozen 83-export task ledger, so its #31 failed exported controls and #34 successful offline-cache controls are attempts for a separate diagnostic task. Nine original non-Dockerfile assets match exactly across those variants. This leaves the original cohort's 83/82/67 denominators unchanged. The currently submitted confirmation is not counted until its verified result exists. A first path-resolution typo in the ledger script was corrected before producing output; no remote run or source artifact was affected.
+
+## 2026-10-23 — real controller interruption
+
+Authoritative observation at 23:17:41 UTC showed the existing confirmation handle running. Intentionally interrupted only controller session40839 during its sleep; it exited130 with KeyboardInterrupt. Restarted the same command in session6070. Journal and submission SHA-256 values remained identical, and startup resumed waiting on the same stage without preflight or submission. The next scheduled authoritative observation is still required before closing the restart proof. Added the current completion audit and operational runbook; both retain pending scientific, archive and cleanup gates. Known disposable fixture `/tmp` prefixes and partial-transfer files are absent.
+
+At 23:23:22 UTC the resumed controller authoritatively observed the same fixed handle running. Journal/submission bytes still match the pre-interruption hashes, with no re-entry into the submission stage. Final one-attempt accounting remains pending. Five protected raw archives were independently rehashed against retention records; all match and none was uploaded. The current audit and restart proof are checkpointed without claiming scientific completion.
