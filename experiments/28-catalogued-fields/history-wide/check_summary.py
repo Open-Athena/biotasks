@@ -69,6 +69,15 @@ def main():
         assert complete['repositories'][1]['native_validation_exception_counts'] == {'OSError/errno7': 1}
         assert complete['repositories'][1]['native_cli_exception_counts'] == {'OSError': 1}
         assert complete['repositories'][1]['entered_without_decision'] == 1
+        receipt = root / 'archives/9-receipt.json'
+        retained = receipt.read_bytes(); receipt.unlink()
+        missing_retention = summarize(root)
+        assert not missing_retention['all_ten_result_evidence_complete']
+        assert missing_retention['all_ten_costs_reported']
+        assert not missing_retention['active_and_unreported_costs_excluded']
+        assert missing_retention['known_terminal_history_cost_usd'] == '10'
+        assert missing_retention['cost_per_verified_task_usd'] is None
+        receipt.write_bytes(retained)
         missing = root / 'results/9.json'; original = missing.read_bytes(); missing.unlink()
         partial = summarize(root)
         assert not partial['all_ten_result_evidence_complete'] and partial['cost_per_verified_task_usd'] is None

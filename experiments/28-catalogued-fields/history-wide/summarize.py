@@ -122,7 +122,8 @@ def summarize(root):
         'known_terminal_history_cost_usd': str(cost), 'reported_history_allocated_cpu_hours': str(cpu),
         'september_baseline_actual_cost_usd': '5.975286',
         'known_terminal_issue_cost_usd': str(cost + Decimal('5.975286')),
-        'active_and_unreported_costs_excluded': not complete,
+        'all_ten_costs_reported': len(rows) == 10 and all(r['actual_cost_usd'] is not None for r in rows),
+        'active_and_unreported_costs_excluded': any(r['actual_cost_usd'] is None for r in rows),
         'primary_verified_tasks_with_accepted_evidence': verified_count,
         'strict_clean_tasks_with_accepted_evidence': sum(r['strict_clean_verified'] for r in accepted),
         'new_to_baseline_primary_verified_with_accepted_evidence': sum(r['primary_verified'] - r['baseline_overlap_primary_verified'] for r in accepted),
@@ -154,7 +155,8 @@ def main():
         lines.append('| ' + ' | '.join(display(value) for value in cells) + ' |')
     lines += ['', 'Result evidence complete: ' + str(result['all_ten_result_evidence_complete']) + '.', '',
         'Known terminal history charges: $' + result['known_terminal_history_cost_usd'] + '. '
-        'Active/unreported charges excluded: ' + str(result['active_and_unreported_costs_excluded']) + '.', '',
+        'All ten costs reported: ' + str(result['all_ten_costs_reported']) + '. '
+        'Repositories with active/unreported charges excluded: ' + str(result['active_and_unreported_costs_excluded']) + '.', '',
         result['completion_not_asserted'], '']
     for row in result['repositories']:
         if row.get('native_validation_exception_counts') or row.get('native_cli_exception_counts'):

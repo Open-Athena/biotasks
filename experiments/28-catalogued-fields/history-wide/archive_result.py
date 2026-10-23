@@ -131,6 +131,17 @@ def main():
         previous = read(archive_dir / (args.slug + '-receipt.json'))
         assert previous['manifest_sha256'] == digest and verified_receipt(previous, manifest)
     with TemporaryDirectory(prefix='history-anonymous-', dir=args.state_dir) as temporary:
+        if args.action == 'verify':
+            # The documented BucketFile input avoids a metadata POST per object.
+            # One bounded download group retains the pinned single-file stream.
+            by_path = {f.path: f for f in prior if f.type == 'file'}
+            downloads = []
+            for name in objects:
+                destination = Path(temporary) / name
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                downloads.append((by_path[prefix + '/' + name], destination))
+            api.download_bucket_files(bucket, downloads, raise_on_missing_files=True,
+                token=False if visibility == 'public' else None)
         for name, path in objects.items():
             if name != 'manifest.json':
                 original = next(r for r in manifest['files'] if r['path'] == name)
@@ -140,8 +151,9 @@ def main():
                 assert args.action == 'publish'
                 api.batch_bucket_files(bucket, add=[(str(path), remote)])
             destination = Path(temporary) / name; destination.parent.mkdir(parents=True, exist_ok=True)
-            api.download_bucket_files(bucket, [(remote, destination)], raise_on_missing_files=True,
-                token=False if visibility == 'public' else None)
+            if args.action != 'verify':
+                api.download_bucket_files(bucket, [(remote, destination)], raise_on_missing_files=True,
+                    token=False if visibility == 'public' else None)
             assert destination.stat().st_size == path.stat().st_size and baseline.sha(destination) == baseline.sha(path)
             if path.name == 'phase-artifacts.tar.gz':
                 assert baseline.members(destination) == next(r['members'] for r in manifest['files'] if r['path'] == name)

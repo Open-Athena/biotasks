@@ -17,7 +17,7 @@ All ten repositories remain visible. Pending is not zero yield or free. Unique n
 
 Result evidence complete: False.
 
-Known terminal history charges: $6.113565. Active/unreported charges excluded: True.
+Known terminal history charges: $6.113565. All ten costs reported: True. Repositories with active/unreported charges excluded: False.
 
 Final all-ten live accounting, fresh archive verification, controller/worker/local cleanup and issue conclusion/readback/closure remain separate requirements.
 
