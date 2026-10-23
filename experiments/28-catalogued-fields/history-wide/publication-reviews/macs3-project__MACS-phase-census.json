@@ -1,0 +1,732 @@
+{
+  "checked_utc": "2026-10-23T03:19:55.739786+00:00",
+  "scope": "Read-only bounded text/ref inventory; signals require review and do not establish public eligibility.",
+  "source_sha256": "f1997d6b872552e7e76b5fd492af7669a3a27e3f5bf796a8a6e7d547bdb47057",
+  "original_phase_sha256": "9c5a19b814006b3df98d085de203807b165c6849fa4f81cd7b85f915812e7d43",
+  "regular_members": 1155,
+  "expanded_bytes": 3000816,
+  "decoded_text_bytes": 8602788,
+  "roots": {
+    "bootstrap": 3,
+    "infra": 12,
+    "native-observations": 1140
+  },
+  "signals": {
+    "git_binary_patch": 0,
+    "binary_file_marker_only": 2,
+    "embedded_image_data_uri": 0,
+    "long_base64_like_run": 0
+  },
+  "patch_paths": [
+    ".github/workflows/build-and-test-MACS3-macos.yml",
+    ".github/workflows/build-and-test-MACS3-non-x64-others.yml",
+    ".github/workflows/build-and-test-MACS3-non-x64.yml",
+    ".github/workflows/build-and-test-MACS3-website.yml",
+    ".github/workflows/build-and-test-MACS3-x64.yml",
+    ".github/workflows/native-compatibility.yml",
+    ".github/workflows/publish-to-anaconda.yml",
+    ".github/workflows/publish-to-gh-with-sphinx.yml",
+    ".github/workflows/publish-to-pypi.yml",
+    ".gitignore",
+    "ChangeLog",
+    "MACS2/IO/BedGraph.pyx",
+    "MACS2/IO/PeakIO.pyx",
+    "MACS2/Prob.pyx",
+    "MACS3/Commands/callpeak_cmd.py",
+    "MACS3/Commands/hmmratac_cmd.py",
+    "MACS3/Commands/pileup_cmd.py",
+    "MACS3/IO/BAMStream.pxd",
+    "MACS3/IO/BAMStream.py",
+    "MACS3/IO/BedGraphIO.py",
+    "MACS3/IO/Parser.py",
+    "MACS3/IO/PeakIO.py",
+    "MACS3/IO/cbgzf_mt.pxd",
+    "MACS3/IO/cparser_layout.pxd",
+    "MACS3/IO/czlib.pxd",
+    "MACS3/Signal/BedGraph.py",
+    "MACS3/Signal/CallPeakUnit.py",
+    "MACS3/Signal/CallerExecution.py",
+    "MACS3/Signal/CallerStorage.py",
+    "MACS3/Signal/FixWidthTrack.py",
+    "MACS3/Signal/NUMPY_LICENSE.txt",
+    "MACS3/Signal/PairedEndTrack.py",
+    "MACS3/Signal/PeakDetect.py",
+    "MACS3/Signal/PeakModel.py",
+    "MACS3/Signal/Pileup.py",
+    "MACS3/Signal/PileupV2.py",
+    "MACS3/Signal/Prob.py",
+    "MACS3/Signal/Region.py",
+    "MACS3/Signal/Region.pyx",
+    "MACS3/Signal/ScoreTrack.py",
+    "MACS3/Signal/SignalProcessing.py",
+    "MACS3/Signal/chugepages.pxd",
+    "MACS3/Signal/cmalloc.pxd",
+    "MACS3/Utilities/Constants.py",
+    "MACS3/Utilities/OptValidator.py",
+    "MACS3/Utilities/Performance.py",
+    "MACS3/Utilities/Threads.py",
+    "README.md",
+    "bin/macs2",
+    "bin/macs3",
+    "conda/macs3/meta.yaml",
+    "docs/INSTALL.md",
+    "docs/Makefile",
+    "docs/callvar.md",
+    "docs/make.bat",
+    "docs/pileup.md",
+    "docs/qa.md",
+    "docs/source/CODE_OF_CONDUCT.md",
+    "docs/source/CONTRIBUTING.md",
+    "docs/source/conf.py",
+    "docs/source/docs/Advanced_Step-by-step_Peak_Calling.md",
+    "docs/source/docs/FRAG.md",
+    "docs/source/docs/INSTALL.md",
+    "docs/source/docs/SAMBAMBAMPE.md",
+    "docs/source/docs/api/io/Parser.rst",
+    "docs/source/docs/api/signal/CallPeakUnit.rst",
+    "docs/source/docs/api/signal/Prob.rst",
+    "docs/source/docs/bdgbroadcall.md",
+    "docs/source/docs/bdgcmp.md",
+    "docs/source/docs/bdgdiff.md",
+    "docs/source/docs/bdgopt.md",
+    "docs/source/docs/bdgpeakcall.md",
+    "docs/source/docs/callpeak.md",
+    "docs/source/docs/callvar.md",
+    "docs/source/docs/callvar_algorithm.jpeg",
+    "docs/source/docs/cmbreps.md",
+    "docs/source/docs/execution.md",
+    "docs/source/docs/filterdup.md",
+    "docs/source/docs/hmmratac.md",
+    "docs/source/docs/index.md",
+    "docs/source/docs/native_validation.md",
+    "docs/source/docs/performance_defaults.md",
+    "docs/source/docs/pileup.md",
+    "docs/source/docs/pileup.png",
+    "docs/source/docs/predictd.md",
+    "docs/source/docs/qa.md",
+    "docs/source/docs/randsample.md",
+    "docs/source/docs/refinepeak.md",
+    "docs/source/docs/tutorial.md",
+    "docs/source/index.md",
+    "docs/testing_in_docker.md",
+    "docs/tutorial.md",
+    "pyproject.toml",
+    "requirements.txt",
+    "scripts/check_native_distribution.py",
+    "scripts/run_native_regressions.py",
+    "setup.py",
+    "setup_w_cython.py",
+    "test/CTCF_PE_CTRL_chr22_50k.bam.bai",
+    "test/CTCF_PE_ChIP_chr22_50k.bam.bai",
+    "test/Dockerfile.multiarch.base.buster.py37",
+    "test/Dockerfile.multiarch.install.macs3",
+    "test/callvar_examples/PE_demo/PEcontrol_peaks_sorted.bam",
+    "test/callvar_examples/PE_demo/PEsample_peaks_sorted.bam",
+    "test/callvar_examples/PE_demo/PEsample_peaks_sorted.bed",
+    "test/callvar_examples/PEsample.vcf",
+    "test/callvar_examples/README.rst",
+    "test/callvar_examples/SE_demo/SEcontrol_peaks_sorted.bam",
+    "test/callvar_examples/SE_demo/SEsample_peaks_sorted.bam",
+    "test/callvar_examples/SE_demo/SEsample_peaks_sorted.bed",
+    "test/callvar_examples/SEsample.vcf",
+    "test/callvar_testing.narrowPeak",
+    "test/chromosome_batching_probe.py",
+    "test/cmdlinetest",
+    "test/cmdlinetest-nohmmratac",
+    "test/conftest.py",
+    "test/execution_probe.py",
+    "test/jaccard.py",
+    "test/native_probe.py",
+    "test/native_sysfs.c",
+    "test/peakmodel_alloc.h",
+    "test/peakmodel_alloc.pxd",
+    "test/peakmodel_alloc_runner.py",
+    "test/pyrprofile",
+    "test/pyrprofile_stat",
+    "test/standard_results_callpeak_pe_narrow/run_callpeak_bampe_narrow_peaks.narrowPeak",
+    "test/standard_results_callpeak_pe_narrow/run_callpeak_bampe_narrow_summits.bed",
+    "test/standard_results_callpeak_pe_narrow/run_callpeak_bedpe_narrow_peaks.narrowPeak",
+    "test/standard_results_callpeak_pe_narrow/run_callpeak_bedpe_narrow_summits.bed",
+    "test/standard_results_callvar/PEsample.vcf",
+    "test/standard_results_hmmratac/hmmratac_scatac_test_accessible_regions.narrowPeak",
+    "test/test.sh",
+    "test/test_BAMBAI.py",
+    "test/test_BedGraph.py",
+    "test/test_BedGraphIO.py",
+    "test/test_CallPeakUnit.py",
+    "test/test_CallPeakUnit_backend.py",
+    "test/test_CallPeakUnit_concurrency.py",
+    "test/test_Execution.py",
+    "test/test_Execution_paths.py",
+    "test/test_FixWidthTrack.py",
+    "test/test_HMMR_HMM.py",
+    "test/test_OptValidator.py",
+    "test/test_PairedEndTrack.py",
+    "test/test_Parser.py",
+    "test/test_Parser_bam_truncation.py",
+    "test/test_Parser_frag_eof.py",
+    "test/test_Parser_imports.py",
+    "test/test_PeakDetect.py",
+    "test/test_PeakIO.py",
+    "test/test_PeakModel.py",
+    "test/test_PeakModel_allocation.py",
+    "test/test_Performance.py",
+    "test/test_Pileup.py",
+    "test/test_Prob.py",
+    "test/test_Prob_concurrency.py",
+    "test/test_Region.py",
+    "test/test_ScoreTrack.py",
+    "test/test_Signal.py",
+    "test/test_SignalProcessing.py",
+    "test/test_Statistics.py",
+    "test/test_cArray.pyx",
+    "test/test_cParser.py",
+    "test/test_cStat.py",
+    "test/test_caller_ownership.py",
+    "test/test_callpeak_cmd.py",
+    "test/test_callsummits.py",
+    "test/test_callvar_cmd.py",
+    "test/test_chromosome_batching.py",
+    "test/test_filterdup_cmd.py",
+    "test/test_hashtable.py",
+    "test/test_hmmratac_cmd.py",
+    "test/test_native_allocator.py",
+    "test/test_native_cli.py",
+    "test/test_native_compatibility.py",
+    "test/test_native_streams.py",
+    "test/test_online.py",
+    "test/test_performance_benchmark.py",
+    "test/test_pileup_cmd.py",
+    "test/test_pileup_lifecycle.py",
+    "test/test_predictd_cmd.py",
+    "test/test_randsample_cmd.py",
+    "test/test_refinepeak_cmd.py",
+    "test/test_thread_lifecycle.py",
+    "test/tiny.bam.bai",
+    "test/tiny.frag.tsv.gz",
+    "test/yeast_500k_SRR1822137.barcode.txt",
+    "test/yeast_500k_SRR1822137.bedpe.gz",
+    "test/yeast_500k_SRR1822137.frag.gz"
+  ],
+  "actual_validation_source_refs": {
+    "26f6709ede9d69e7a4091c7e89fb0639006a6f8e": [
+      {
+        "pr": 742,
+        "role": "base"
+      }
+    ],
+    "b0e3a8a28778e8f99a0cc2713e18d4be121c3922": [
+      {
+        "pr": 742,
+        "role": "head"
+      }
+    ],
+    "c18cc244b2e22b578535d8dd8d150995657b7341": [
+      {
+        "pr": 739,
+        "role": "base"
+      }
+    ],
+    "9dbb3c7cd2cee691659b084ea7decb9fd3c8c8b1": [
+      {
+        "pr": 739,
+        "role": "head"
+      }
+    ],
+    "84651f5a34b454fe992c8153a14cdf8d990c8d41": [
+      {
+        "pr": 737,
+        "role": "base"
+      }
+    ],
+    "5456b024143288a47b041a34500cf62481b05227": [
+      {
+        "pr": 737,
+        "role": "head"
+      }
+    ],
+    "a341a2f0ede26735f744d6d5e3b0f7ac1861cfe9": [
+      {
+        "pr": 736,
+        "role": "base"
+      }
+    ],
+    "d49d77f55400e38edc036cca92b1006b51717b2a": [
+      {
+        "pr": 736,
+        "role": "head"
+      }
+    ],
+    "d44cf4ebad48bf102454839bb9a6e12c8725f6c9": [
+      {
+        "pr": 733,
+        "role": "base"
+      }
+    ],
+    "e0bd1e2e51f161d3789545943e0b7559039901bd": [
+      {
+        "pr": 733,
+        "role": "head"
+      }
+    ],
+    "24b27ae7172ce9ef0ee021ae1e642f865df2d05f": [
+      {
+        "pr": 727,
+        "role": "base"
+      }
+    ],
+    "42f5a785c0c12e8243b9573bf53c31009d5503ac": [
+      {
+        "pr": 727,
+        "role": "head"
+      }
+    ],
+    "8a6cc812e314862db55c236b3347c8d873a4d76c": [
+      {
+        "pr": 521,
+        "role": "base"
+      }
+    ],
+    "d6c220287a564e16549134a76e82295c2bb0ec9b": [
+      {
+        "pr": 521,
+        "role": "head"
+      }
+    ],
+    "c1287de2d9b955267aea426cb7112e7dbd2b224f": [
+      {
+        "pr": 794,
+        "role": "base"
+      }
+    ],
+    "3a29bfdec2eb34adc4a0e049f09472f93d181ad4": [
+      {
+        "pr": 794,
+        "role": "head"
+      }
+    ],
+    "b7fb06f86c055cd5f6216c367269c303c653abe5": [
+      {
+        "pr": 449,
+        "role": "base"
+      }
+    ],
+    "95a196696bbe809a9ea30b658b43179ef89de59b": [
+      {
+        "pr": 449,
+        "role": "head"
+      }
+    ],
+    "d6807952764452bbe669978a7d9dd62080f968e9": [
+      {
+        "pr": 350,
+        "role": "base"
+      }
+    ],
+    "a1926754f03ab90e700b9b6592364c2c19c52b7a": [
+      {
+        "pr": 350,
+        "role": "head"
+      }
+    ],
+    "b9b5499c6370fc2019a7d545b3d1fc1668f4587b": [
+      {
+        "pr": 619,
+        "role": "base"
+      }
+    ],
+    "c4e687e972dfb725742ead67eff368912e1628ae": [
+      {
+        "pr": 619,
+        "role": "head"
+      }
+    ],
+    "f830bcb36e571b03019c903aa8e10babb404de56": [
+      {
+        "pr": 563,
+        "role": "base"
+      }
+    ],
+    "a2d83ea6c8c0c4ad8e8a1d1fafa482bd1b3e840d": [
+      {
+        "pr": 563,
+        "role": "head"
+      }
+    ],
+    "3b131c9b0195b50217edcecf0f9f7475314d4062": [
+      {
+        "pr": 792,
+        "role": "base"
+      }
+    ],
+    "fd8e665afee877801deafaf521cc68dcd2fa7136": [
+      {
+        "pr": 792,
+        "role": "head"
+      }
+    ],
+    "da19e1dcbf3a2ff06ab906abc0658edb0c7e82d1": [
+      {
+        "pr": 791,
+        "role": "base"
+      }
+    ],
+    "5bda6a1b6f713d90e89767e6883fe31a8225bcbb": [
+      {
+        "pr": 791,
+        "role": "head"
+      }
+    ],
+    "6039a68bb4ce6ad96cd913be351257e8a3c40957": [
+      {
+        "pr": 790,
+        "role": "base"
+      }
+    ],
+    "3f33d1c2ff50de3b737685adbb59337da737f06f": [
+      {
+        "pr": 790,
+        "role": "head"
+      }
+    ],
+    "411b7074a1960a74339afa42ad21c4c174ab4ab0": [
+      {
+        "pr": 788,
+        "role": "base"
+      }
+    ],
+    "90c31505d55eedc7e05219579b16fc705fd31956": [
+      {
+        "pr": 788,
+        "role": "head"
+      }
+    ],
+    "2dfa6e54c8fda12d4d16448d23e3c1b2a624b630": [
+      {
+        "pr": 787,
+        "role": "base"
+      }
+    ],
+    "fa5fcd4a239e5172a2333738c9839fb1c6c72fed": [
+      {
+        "pr": 787,
+        "role": "head"
+      }
+    ],
+    "f5c811f53025726bf622c1887912dfed07286ab8": [
+      {
+        "pr": 307,
+        "role": "base"
+      }
+    ],
+    "71834613b1a64a3fdb4bbadf1a4d8eb40ec98afb": [
+      {
+        "pr": 307,
+        "role": "head"
+      }
+    ],
+    "b1c77ee1d18f00ed33fbdea2a1f14bea349918c7": [
+      {
+        "pr": 300,
+        "role": "base"
+      }
+    ],
+    "e5b570233097396285081cf2e3d8a47d3f2ba69b": [
+      {
+        "pr": 300,
+        "role": "head"
+      }
+    ],
+    "27e34303f2536187b51ba22faa35b73170405759": [
+      {
+        "pr": 635,
+        "role": "base"
+      }
+    ],
+    "82917c454ef1c2d0b3942a6f7158d11eaf21aeac": [
+      {
+        "pr": 635,
+        "role": "head"
+      }
+    ],
+    "8a833cf29e7357311ae6dc34d69175be5702b0ba": [
+      {
+        "pr": 712,
+        "role": "base"
+      }
+    ],
+    "6c2ef9852bf5828ce199c17378788d5101c6cc43": [
+      {
+        "pr": 712,
+        "role": "head"
+      }
+    ],
+    "f01cb680e239192484ab672b9e34531b1403eb3d": [
+      {
+        "pr": 689,
+        "role": "base"
+      }
+    ],
+    "5b0866838b9c1acad3474928454da763eed4121d": [
+      {
+        "pr": 689,
+        "role": "head"
+      }
+    ],
+    "e722a5490afa6144f9a8f44136da1a6c9c449988": [
+      {
+        "pr": 685,
+        "role": "base"
+      }
+    ],
+    "27a044fbcde0278602d7834758aacb86560cdadd": [
+      {
+        "pr": 685,
+        "role": "head"
+      }
+    ],
+    "d459079ef71757f2665312e1be26e059f563c768": [
+      {
+        "pr": 645,
+        "role": "base"
+      }
+    ],
+    "e03da87b211462a16fc1c00223c53de9cb7cef37": [
+      {
+        "pr": 645,
+        "role": "head"
+      }
+    ],
+    "39cc7cb247e030c67669b07f8798a1922ca2ddab": [
+      {
+        "pr": 785,
+        "role": "base"
+      }
+    ],
+    "324f779a270910c8befda97443912b1175704823": [
+      {
+        "pr": 785,
+        "role": "head"
+      }
+    ],
+    "7d75df2c7a1b22376fe54ec581c84001232277a6": [
+      {
+        "pr": 784,
+        "role": "base"
+      }
+    ],
+    "6a5f2dfd7617fef03b0cda965385d67cabd1e590": [
+      {
+        "pr": 784,
+        "role": "head"
+      }
+    ],
+    "22eb40f7b51f5b20b635614ca0b1759dc5398c5c": [
+      {
+        "pr": 783,
+        "role": "base"
+      }
+    ],
+    "b7de2a64fd407c7b6b3597fe302059f8fcf025a5": [
+      {
+        "pr": 783,
+        "role": "head"
+      }
+    ],
+    "b03dc9c9076afc6a2c9fd506a2ceb2a54c8a3650": [
+      {
+        "pr": 782,
+        "role": "base"
+      }
+    ],
+    "27a240e9f3c364796fa24079cc7348f27d3cd47e": [
+      {
+        "pr": 782,
+        "role": "head"
+      }
+    ],
+    "d04eab637746b413b045f614cc40ca2f666c7da1": [
+      {
+        "pr": 781,
+        "role": "base"
+      }
+    ],
+    "616707e500c075ed3a859a1f0206bbb21c497ac4": [
+      {
+        "pr": 781,
+        "role": "head"
+      }
+    ],
+    "6d42a58d3fd9aa4439aba8e82ab0cbdba316e831": [
+      {
+        "pr": 780,
+        "role": "base"
+      }
+    ],
+    "d42766270b4033734ca228e4dd24b4dfabceb3be": [
+      {
+        "pr": 780,
+        "role": "head"
+      }
+    ],
+    "10e999c08a15238ce806151758b8eea3eacc1ecd": [
+      {
+        "pr": 779,
+        "role": "base"
+      }
+    ],
+    "a9c52978bb84d89f172e32178b3ec5f4df137ba8": [
+      {
+        "pr": 779,
+        "role": "head"
+      }
+    ],
+    "2ee8544712eb12169c91c1277663f1a69d9e8055": [
+      {
+        "pr": 775,
+        "role": "base"
+      }
+    ],
+    "0bee673c7b9c377c939a2f15c197d579964c4ce5": [
+      {
+        "pr": 775,
+        "role": "head"
+      }
+    ],
+    "170556de25475fc59b1e219e898c21b7eecd5dd8": [
+      {
+        "pr": 774,
+        "role": "base"
+      }
+    ],
+    "e8a304bc3dbdb20b385e2ce130158d12fa356e52": [
+      {
+        "pr": 774,
+        "role": "head"
+      }
+    ],
+    "760ff63b958f79cc82abc8c1a9847705cd99c907": [
+      {
+        "pr": 750,
+        "role": "base"
+      }
+    ],
+    "9597df4740bbb9b0d9af24fd7e8de1f1f7b75991": [
+      {
+        "pr": 750,
+        "role": "head"
+      }
+    ],
+    "ece08963b6a30f4de0c5a5e684513f876b788d2c": [
+      {
+        "pr": 749,
+        "role": "base"
+      }
+    ],
+    "4b488196e36a9c2ae8a1e631ac8a9991bf11330f": [
+      {
+        "pr": 749,
+        "role": "head"
+      }
+    ]
+  },
+  "embedded_notice_paths": {
+    "MACS3/Signal/NUMPY_LICENSE.txt": [
+      790
+    ]
+  },
+  "bootstrap_editable_installs": [
+    {
+      "member": "native-observations/batch-0000/exec-0009-pr-None.json.gz",
+      "command": "cd /workspace && pip install -e . 2>&1 | tail -30",
+      "shell_exit": 0,
+      "duration_sec": 189.22228698301478,
+      "successful_install_marker": false,
+      "failed_build_marker": true,
+      "output_tail": "\n      gcc -fno-strict-overflow -Wsign-compare -DNDEBUG -g -O3 -Wall -fPIC -IMACS3/Signal -I./ -I./MACS3/fermi-lite/ -I./MACS3/Signal/ -I/usr/local/include/python3.12 -c MACS3/fermi-lite/ksw.c -o /tmp/tmp2w8wbu2f.build-temp/MACS3/fermi-lite/ksw.o -w -O3 -g0 -std=gnu99 -DUSE_SIMDE -DSIMDE_ENABLE_NATIVE_ALIASES -fopenmp-simd -DSIMDE_ENABLE_OPENMP\n      MACS3/fermi-lite/ksw.c:31:10: fatal error: lib/x86/sse2.h: No such file or directory\n         31 | #include \"lib/x86/sse2.h\"\n            |          ^~~~~~~~~~~~~~~~\n      compilation terminated.\n      error: Command '['gcc', '-fno-strict-overflow', '-Wsign-compare', '-DNDEBUG', '-g', '-O3', '-Wall', '-fPIC', '-IMACS3/Signal', '-I./', '-I./MACS3/fermi-lite/', '-I./MACS3/Signal/', '-I/usr/local/include/python3.12', '-c', 'MACS3/fermi-lite/ksw.c', '-o', '/tmp/tmp2w8wbu2f.build-temp/MACS3/fermi-lite/ksw.o', '-w', '-O3', '-g0', '-std=gnu99', '-DUSE_SIMDE', '-DSIMDE_ENABLE_NATIVE_ALIASES', '-fopenmp-simd', '-DSIMDE_ENABLE_OPENMP']' returned non-zero exit status 1.\n      [end of output]\n  \n  note: This error originates from a subprocess, and is likely not a problem with pip.\n  ERROR: Failed building editable for MACS3\nFailed to build MACS3\n\n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\n[notice] To update, run: pip install --upgrade pip\nERROR: Failed to build installable wheels for some pyproject.toml based projects (MACS3)\n"
+    },
+    {
+      "member": "native-observations/batch-0000/exec-0014-pr-None.json.gz",
+      "command": "cd /workspace && pip install -e . 2>&1 | tail -20",
+      "shell_exit": 0,
+      "duration_sec": 257.99698898300994,
+      "successful_install_marker": true,
+      "failed_build_marker": false,
+      "output_tail": "1 in /usr/local/lib/python3.12/site-packages (from pydantic>=2.7.0->pydantic-settings->scverse-misc[settings]>=0.1.0->anndata>=0.10->MACS3==3.1.0) (2.50.1)\nBuilding wheels for collected packages: MACS3\n  Building editable for MACS3 (pyproject.toml): started\n  Building editable for MACS3 (pyproject.toml): still running...\n  Building editable for MACS3 (pyproject.toml): still running...\n  Building editable for MACS3 (pyproject.toml): still running...\n  Building editable for MACS3 (pyproject.toml): finished with status 'done'\n  Created wheel for MACS3: filename=macs3-3.1.0-0.editable-cp312-cp312-linux_x86_64.whl size=33744 sha256=2c817d845bcfea2fccbd7b959360092fabc7c09dba2a0e651e197746e8ec5ed1\n  Stored in directory: /tmp/pip-ephem-wheel-cache-1lj7os0b/wheels/b0/41/ab/4e04a8678980f3355548f1261923479fbf2a713a7393a7dea8\nSuccessfully built MACS3\nInstalling collected packages: MACS3\nSuccessfully installed MACS3-3.1.0\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\n\n[notice] A new release of pip is available: 25.0.1 -> 26.2.2\n[notice] To update, run: pip install --upgrade pip\n"
+    }
+  ],
+  "original_exception_events": [
+    {
+      "event": "validation_exception",
+      "time": 1792722987.1090176,
+      "validation": 6,
+      "pr": 727,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792723653.479981,
+      "validation": 1,
+      "pr": 521,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792722404.4097602,
+      "validation": 1,
+      "pr": 794,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792723797.358661,
+      "validation": 2,
+      "pr": 350,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792723547.5083976,
+      "validation": 2,
+      "pr": 563,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792722584.5139208,
+      "validation": 5,
+      "pr": 787,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792723388.1544046,
+      "validation": 1,
+      "pr": 635,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792723256.3003874,
+      "validation": 4,
+      "pr": 645,
+      "exception_type": "OSError",
+      "errno": 7
+    },
+    {
+      "event": "validation_exception",
+      "time": 1792722816.5270524,
+      "validation": 11,
+      "pr": 749,
+      "exception_type": "OSError",
+      "errno": 7
+    }
+  ]
+}
