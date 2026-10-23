@@ -1,6 +1,6 @@
 # Failure diagnosis and proposed controlled comparisons
 
-Status: diagnostic review, 2026-10-23. Issue #28 is reopened at the user's request and must remain open until the user is satisfied. The completed original campaign and its closure records are historical evidence; they do not mean this follow-up review is complete. No new native/model runs or repairs have been performed for this review.
+Status: diagnostic review concluded, 2026-10-23. After reviewing the distinctions between our setup and upstream limitations, the user explicitly requested closing issue #28 for now with these findings summarized in its body. This supersedes the earlier instruction to keep the issue open. Proposed comparisons below remain untested; no new native/model runs or repairs were performed for this review.
 
 ## What failed, and what might help
 
@@ -51,4 +51,4 @@ No recovery rate, additional spend, new resource allocation or successful fix is
 - [OpenMS acquisition](results/OpenMS__OpenMS-diagnosis.md), [LAMMPS action/build diagnosis](results/lammps__lammps-diagnosis.md), and [MACS lifecycle/transport diagnosis](results/macs3-project__MACS-diagnosis.md).
 - [MMseqs2 original assessment](results/soedinglab__MMseqs2.json), [Scanpy control context](task-reviews/scverse__scanpy-4389-live.json), and [MNE parser/timeout context](task-reviews/mne-native-color-timeout-context.json).
 - [Transport mechanism probe](task-reviews/upstream-argument-transport-probe-20261023.json) and [source binding](task-reviews/upstream-argument-transport-source-binding-20261023.json).
-- [Cohort counts](cohort-report.md) and [original campaign completion audit](completion-audit.md). The latter records completion of the earlier campaign, not permission to close the reopened issue.
+- [Cohort counts](cohort-report.md) and [original campaign completion audit](completion-audit.md). The latter records completion of the earlier campaign; the subsequent diagnostic-review closure was separately requested by the user.

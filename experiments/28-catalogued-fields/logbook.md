@@ -567,3 +567,8 @@ Final conclusion6368617416and concise completed body are published with exact re
 ### 2026-10-23: reopen for all-ten failure diagnosis
 
 The user requested a diagnosis of all current repositories and whether different timeouts or other changes could recover failures, and explicitly required issue #28 to remain open until they are satisfied. Reopened the issue and verified OPEN. The original campaign/completion records remain historical evidence. Added history-wide/failure-diagnosis.md with all-ten observed boundaries, ownership of each timeout/resource limit, concrete proposed controlled comparisons, and priorities. This review uses retained original assessments and pinned source; no model/native jobs, repairs, task regeneration or extra spend. Proposed changes are untested and not applied. User satisfaction now controls issue closure; do not automatically close after a diagnostic or execution milestone.
+
+
+### 2026-10-23: user-requested closure after diagnosis
+
+After discussing our CPU/scheduling limits, historical and language coverage, and limitations in the pinned upstream implementation, the user requested closing #28 for now with a summary in the issue body. This explicitly supersedes the prior keep-open instruction. Updated the diagnosis status and prepared a concise body covering results, limitations, untested recovery proposals, spending and retention. No further native/model jobs, repairs or spending. Original evidence and earlier lifecycle records remain preserved.

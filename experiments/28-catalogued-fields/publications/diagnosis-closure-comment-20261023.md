@@ -1,0 +1,3 @@
+🤖 Closing at the user's request after the all-ten diagnostic review. The issue body now summarizes results, our resource/scheduling and coverage choices, observed limitations in the pinned upstream pipeline, costs and retention.
+
+The study is complete for now. Timeout/resource changes and generic transport, environment-lifecycle and runner improvements remain proposals, not demonstrated recoveries. No additional runs, repairs or spending occurred during this review. The earlier instruction to keep the issue open is superseded by the user's explicit request to close it; original experiment and diagnostic records remain preserved.
