@@ -1,0 +1,76 @@
+--- baseline/replay_macs.py
++++ comparison/replay_macs_longcheck.py
+@@ -24,9 +24,10 @@
+ from collections.abc import Callable
+ 
+ from recorded_replay import replay_recorded_actions
++from post_check_limits import effective_timeout
+ 
+ ROOT = Path(__file__).resolve().parent
+-OWNER = 'biotasks31-macs-recorded-001'
++OWNER = 'biotasks31-macs-longcheck-001'
+ LABEL = 'org.open-athena.biotasks.owner=' + OWNER
+ TAG = OWNER + ':recorded-actions'
+ TOOLS = ROOT / 'replay-tools'
+@@ -127,7 +128,9 @@
+     assert os.environ['BIOTASKS_RUN_ID'] == OWNER
+     assert not any(os.environ.get(k) for k in ('OPENROUTER_API_KEY', 'GH_TOKEN', 'GITHUB_TOKEN', 'CW_KEY_SECRET'))
+     REPORT['started'] = time.time()
+-    deadline = time.monotonic() + 6600
++    deadline = time.monotonic() + 8400
++    REPORT["post_bootstrap_timeout_seconds"] = 1200
++    REPORT["original_post_bootstrap_timeout_seconds"] = 300
+     def interrupted(sig, frame):
+         raise RuntimeError('received signal ' + str(sig))
+     signal.signal(signal.SIGTERM, interrupted)
+@@ -151,21 +154,24 @@
+         spec.loader.exec_module(original)
+         native_run = original._run
+         sequence = 0
++        phase = "actions"
++        test_script = " && ".join(payload["test_cmds"])
+         def bounded_run(args, *, timeout=600, input_text=None):
+             nonlocal sequence
+             if REPORT.get('client_timeout'):
+                 raise RuntimeError('No further work after client timeout; cleanup only')
+-            if time.monotonic() + timeout > deadline:
++            applied_timeout = effective_timeout(args, timeout, phase, test_script)
++            if time.monotonic() + applied_timeout > deadline:
+                 raise RuntimeError('Full command timeout does not fit work deadline')
+             call = list(args)
+             assert call[0] == 'docker'
+             if call[1] == 'run':
+                 call[2:2] = ['--cpus', '1.5', '--memory', '6g', '--memory-swap', '6g', '--network', 'iris-egress', '--label', LABEL]
+-            result = native_run(call, timeout=timeout, input_text=input_text)
++            result = native_run(call, timeout=applied_timeout, input_text=input_text)
+             sequence += 1
+             row = {'sequence': sequence, 'command_sha256': digest(json.dumps(args).encode()),
+                    'docker_operation': args[1], 'exit_code': result.exit_code,
+-                   'timeout_seconds': timeout, 'duration_sec': result.duration_sec}
++                   'timeout_seconds': applied_timeout, 'upstream_timeout_seconds': timeout, 'phase': phase, 'duration_sec': result.duration_sec}
+             for stream in ('stdout', 'stderr'):
+                 data = getattr(result, stream).encode()
+                 (OUT / f'call-{sequence:03d}-{stream}.txt').write_bytes(data)
+@@ -192,10 +198,13 @@
+         REPORT['replay'] = replay_recorded_actions(sandbox, payload['actions'], OUT / 'actions')
+         if REPORT['replay']['status'] != 'matched_recorded_exits':
+             return
++        phase = "smoke"
+         namespace.update(sandbox=sandbox, outcome=SimpleNamespace(test_cmds=payload['test_cmds']), _emit=lambda *a, **kw: None)
+         load_post_checks(ROOT / 'runner_original.py', namespace)
+         REPORT['smoke_passed'] = namespace['smoke_ok']
++        phase = 'commit'
+         REPORT['image_id'] = sandbox.commit(TAG)
++        phase = 'fresh'
+         REPORT['verify_passed'], REPORT['verify_detail'] = namespace['_verify_committed_image'](TAG, payload['test_cmds'], platform='linux/amd64')
+         if REPORT.get('client_timeout'):
+             return
+@@ -213,7 +222,7 @@
+             cleanup()
+         finally:
+             REPORT['finished'] = time.time()
+-            (OUT / 'macs-recorded-result.json').write_text(json.dumps(REPORT, indent=2) + '\n')
++            (OUT / 'macs-longcheck-result.json').write_text(json.dumps(REPORT, indent=2) + '\n')
+             print('BIOTASKS31_RESULT=' + json.dumps(REPORT), flush=True)
+     assert REPORT.get('cleanup_verified') and not REPORT.get('error'), 'Inspect preserved evidence; no repair/retry'
+ 
