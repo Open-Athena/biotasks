@@ -1,0 +1,52 @@
+--- a/src/repo2rlenv/pipelines/pr_runtime.py
++++ b/src/repo2rlenv/pipelines/pr_runtime.py
+@@ -560,6 +560,31 @@
+     }
+ 
+ 
++def _runnable_test_files_in_patch(unified_diff: str) -> list[str]:
++    """Return changed destination paths that survive application of the patch.
++
++    Only inspect diff metadata before the first hunk. Hunk contents can contain
++    text resembling a deletion header and must not affect path selection.
++    Keep _files_in_patch unchanged for reset, cleanup and inventory consumers.
++    """
++    matches = list(_DIFF_HEADER_RE.finditer(unified_diff))
++    result: list[str] = []
++    for index, match in enumerate(matches):
++        end = matches[index + 1].start() if index + 1 < len(matches) else len(unified_diff)
++        block = unified_diff[match.end():end]
++        deleted = False
++        for line in block.splitlines():
++            if line.startswith("@@"):
++                break
++            if line.startswith("deleted file mode ") or line == "+++ /dev/null":
++                deleted = True
++                break
++        path = match.group(2)
++        if not deleted and path not in result:
++            result.append(path)
++    return result
++
++
+ def _files_in_patch(unified_diff: str) -> list[str]:
+     """Extract the unique 'b/' file paths touched by a unified diff."""
+     if not unified_diff.strip():
+@@ -940,7 +965,7 @@
+ 
+                     targeted_cmds = targeted_test_cmds_for_pr(
+                         normalize_test_cmds_for_runtime(self.bootstrap.test_cmds),
+-                        _files_in_patch(test_patch),
++                        _runnable_test_files_in_patch(test_patch),
+                     )
+                     outcome = validate_pr(
+                         sandbox=sandbox,
+@@ -1101,7 +1126,7 @@
+ 
+         resolved_test_cmds = targeted_test_cmds_for_pr(
+             normalize_test_cmds_for_runtime(self.bootstrap.test_cmds),
+-            _files_in_patch(test_patch),
++            _runnable_test_files_in_patch(test_patch),
+         )
+         eval_script = build_eval_script(
+             base_commit=pr.base_sha,

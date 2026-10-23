@@ -19,3 +19,9 @@ Extended the SGR candidate to the standalone exported pytest parser as a separat
 ### Cross-issue live targeting evidence
 
 #30's frozen Matchms958 comparison removes transport errno7 but still collects zero tests. The test patch deletes two paths that the unchanged target selector passes to pytest. The exact diagnosis and log hashes are pinned at `4862b97e:experiments/30-script-transport/live-diagnosis.json`. No input was repaired and no extra #32 run was launched. Add this frozen case to the general diff-aware targeting comparison; do not infer recovery before execution. The issue body and marked comment were read back exactly after publication.
+
+### General deleted-target candidate and frozen live checkpoint
+
+Added a generic diff-metadata selector used only for native/export target commands. It leaves reset/inventory paths unchanged, does not inspect PR identity, and ignores deletion-like text inside hunks. Ten path fixtures, four runner fixtures and two frozen real-patch selection checks pass (21.6MiB peakRSS,0.05seconds; temporary directory removed). Same frozen Matchms958 now selects six surviving test files;671remains byte-identical in command selection.
+
+Prepared a one-attempt paired comparison with stdin transport fixed in both arms, original parser/validator, same source/test patches and same reconstructed image. No command edit per PR, extra LLM call, dependency repair, parsing change or completion-gate candidate is applied. Full imports, eight frozen stage hashes and four new Bash syntax checks pass. Checkpoint/submit scope and cumulative10CPUhour ceiling are in protocol.md. No live recovery claim before outcome and independent-control evidence.

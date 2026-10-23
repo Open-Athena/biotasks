@@ -1,0 +1,155 @@
+{
+  "scope": "General selection fixtures and frozen Matchms patch selection, no test execution",
+  "candidate_sha256": "2c0518b3ae303055e834e080747ecb9b856c47adc6f66de8493b2ddb369f2300",
+  "path_cases": [
+    {
+      "case": "modified",
+      "expected": [
+        "tests/test_a.py"
+      ],
+      "actual": [
+        "tests/test_a.py"
+      ]
+    },
+    {
+      "case": "deleted",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "dev_null_only",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "empty_deleted",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "new",
+      "expected": [
+        "tests/test_a.py"
+      ],
+      "actual": [
+        "tests/test_a.py"
+      ]
+    },
+    {
+      "case": "renamed",
+      "expected": [
+        "tests/new.py"
+      ],
+      "actual": [
+        "tests/new.py"
+      ]
+    },
+    {
+      "case": "hunk_literal",
+      "expected": [
+        "tests/test_a.py"
+      ],
+      "actual": [
+        "tests/test_a.py"
+      ]
+    },
+    {
+      "case": "duplicate",
+      "expected": [
+        "tests/test_a.py"
+      ],
+      "actual": [
+        "tests/test_a.py"
+      ]
+    },
+    {
+      "case": "empty",
+      "expected": [],
+      "actual": []
+    },
+    {
+      "case": "mixed",
+      "expected": [
+        "tests/test_new.py"
+      ],
+      "actual": [
+        "tests/test_new.py"
+      ]
+    }
+  ],
+  "runner_cases": [
+    {
+      "command": "python -m pytest -v",
+      "result": [
+        "python -m pytest -v tests/test_new.py"
+      ]
+    },
+    {
+      "command": "npx jest",
+      "result": [
+        "npx jest tests/new.test.js"
+      ]
+    },
+    {
+      "command": "go test -v ./...",
+      "result": [
+        "go test -v ./new"
+      ]
+    },
+    {
+      "command": "python -m pytest -v tests/",
+      "result": [
+        "python -m pytest -v tests/"
+      ]
+    }
+  ],
+  "deletion_only_uses_original_command": true,
+  "frozen_cases": [
+    {
+      "pr": 958,
+      "test_patch_sha256": "7ff31b48b3a45395d22c313a89d5e504767cc0dbfb61e9d1a4b00d24080138fd",
+      "original_paths": [
+        "tests/similarity/test_entropy_kernel.py",
+        "tests/similarity/test_entropy_search.py",
+        "tests/similarity/test_flash_index.py",
+        "tests/similarity/test_flash_search_integration.py",
+        "tests/similarity/test_flash_similarity.py",
+        "tests/similarity/test_flash_similarity_spectrum_list.py",
+        "tests/similarity/test_flash_utils.py",
+        "tests/similarity/test_flash_utils_spectrum_list.py"
+      ],
+      "candidate_paths": [
+        "tests/similarity/test_entropy_kernel.py",
+        "tests/similarity/test_entropy_search.py",
+        "tests/similarity/test_flash_index.py",
+        "tests/similarity/test_flash_search_integration.py",
+        "tests/similarity/test_flash_similarity.py",
+        "tests/similarity/test_flash_utils.py"
+      ],
+      "candidate_commands": [
+        "cd /workspace && python -m pytest -v tests/similarity/test_entropy_kernel.py tests/similarity/test_entropy_search.py tests/similarity/test_flash_index.py tests/similarity/test_flash_search_integration.py tests/similarity/test_flash_similarity.py tests/similarity/test_flash_utils.py"
+      ]
+    },
+    {
+      "pr": 671,
+      "test_patch_sha256": "76515233d88ad0be4b9dbcec7c8ed8716fa70b60cfc9a1a9dc1c7e42c0d87a79",
+      "original_paths": [
+        "tests/filtering/test_spectrum_processor.py"
+      ],
+      "candidate_paths": [
+        "tests/filtering/test_spectrum_processor.py"
+      ],
+      "candidate_commands": [
+        "cd /workspace && python -m pytest -v tests/filtering/test_spectrum_processor.py"
+      ]
+    }
+  ],
+  "patch_applies_to_pinned_source": true,
+  "temporary_directory_removed": true,
+  "limitations": [
+    "No live PR recovery or task export",
+    "No change to broad explicit command paths, parser, runner recognition or completion guard",
+    "Baseline reset/inventory paths remain unchanged",
+    "Deletion-only patches retain upstream whole-command fallback; no empty command is accepted"
+  ]
+}
