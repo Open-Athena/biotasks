@@ -1,0 +1,117 @@
+{
+  "observation_only": true,
+  "batches": [
+    {
+      "name": "batch-0000",
+      "events": {
+        "campaign_cost_reservation": 11,
+        "model_request": 11,
+        "model_response": 11,
+        "model_charge": 11,
+        "sandbox_exec_end": 100,
+        "history_listing_requested": 1,
+        "history_listing_transport_complete": 1,
+        "native_candidates_returned": 1,
+        "candidate_entered": 65,
+        "validation_start": 18,
+        "validation_end": 17,
+        "native_decision": 64,
+        "validation_exception": 1
+      },
+      "decisions": {
+        "emit:": 3,
+        "skip:no_new_test_funcs": 13,
+        "skip:no_test_patch": 33,
+        "skip:no fail-to-pass tests after validation": 14,
+        "skip:non_bug_pr": 1
+      },
+      "validation_exceptions": [
+        {
+          "pr": 1245,
+          "validation": 18,
+          "exception_type": "OSError",
+          "errno": 7
+        }
+      ],
+      "dispatched_model_calls": 11,
+      "recorded_actual_usd": "0.349488",
+      "unresolved_at_observation": [],
+      "incomplete_event_lines": 0,
+      "last_event": {
+        "event": "validation_exception",
+        "time": 1792734415.6513371,
+        "pr": 1245,
+        "validation": 18
+      }
+    },
+    {
+      "name": "batch-0001",
+      "events": {
+        "history_listing_requested": 1,
+        "history_listing_transport_complete": 1,
+        "native_candidates_returned": 1,
+        "candidate_entered": 43,
+        "native_decision": 42,
+        "validation_start": 20,
+        "sandbox_exec_end": 98,
+        "validation_end": 20
+      },
+      "decisions": {
+        "skip:no_test_patch": 14,
+        "skip:no_new_test_funcs": 6,
+        "skip:no fail-to-pass tests after validation": 18,
+        "skip:empty_source_patch": 1,
+        "skip:test_patch failed to apply at base_commit": 2,
+        "skip:non_bug_pr": 1
+      },
+      "validation_exceptions": [],
+      "dispatched_model_calls": 0,
+      "recorded_actual_usd": "0",
+      "unresolved_at_observation": [],
+      "incomplete_event_lines": 0,
+      "last_event": {
+        "event": "candidate_entered",
+        "time": 1792734637.6293426,
+        "pr": 1134
+      }
+    }
+  ],
+  "bootstrap": [
+    {
+      "repo": "opencobra/cobrapy",
+      "ref": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+      "language": "python",
+      "smoke_passed": false,
+      "verify_passed": false,
+      "iterations": 11,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ]
+    }
+  ],
+  "controls_metadata_present": false,
+  "history": {
+    "repo": "opencobra/cobrapy",
+    "state": "running",
+    "input_id_count": 590,
+    "actual_cost_usd": "0.349488",
+    "cost_complete": true,
+    "backlog_count_at_last_checkpoint": 525,
+    "batch_states": [
+      {
+        "index": 0,
+        "state": "completed",
+        "selected": 100
+      },
+      {
+        "index": 1,
+        "state": "running",
+        "selected": 100
+      }
+    ]
+  },
+  "checked_utc": "2026-10-23T05:50:38.457276+00:00",
+  "run_id": "biotasks28-history-opencobra-cobrapy-001",
+  "read_only": true,
+  "scope": "Live snapshot of original batch/event/billing/bootstrap metadata only. Not terminal reconciliation, native validation, independent grading or a retry."
+}
