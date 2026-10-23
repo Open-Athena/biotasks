@@ -1,0 +1,65 @@
+{
+  "frozen_at": "2026-10-23T00:36:05.471735+00:00",
+  "runtime_baseline_revision": "bf5c225045298cd1491b4504505c6d084b940a4f",
+  "runtime_file_count": 182,
+  "changed_from_round007": [
+    "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_network_reconciliation.py",
+    "src/biotasks/prompts/notebook-task-materialize.md"
+  ],
+  "source_assets_unchanged": true,
+  "private_ref_required": false,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "preparation_model_calls_max": 2,
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 74,
+      "baseline_number": 72,
+      "id": "pyradiomics-brain",
+      "domain": "Medical imaging",
+      "config_file": "autonomous-runs/074/configuration.json",
+      "state": "reserved_not_submitted",
+      "reserved_usd": "1.00",
+      "input_revision": "bf5c225045298cd1491b4504505c6d084b940a4f",
+      "source_url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+      "source_revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+      "source_sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/seed.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/source.ipynb": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702"
+      },
+      "runtime_file_count": 182,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "0edebc3ff07ac5eed5aa97193a9f0c8457b70727767ccb38f2ba04f7deda3d15",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "77ecfb8881ae924aecf6a268d335c223ad410664e603017ce05c8466f06c736a"
+      }
+    }
+  ]
+}
