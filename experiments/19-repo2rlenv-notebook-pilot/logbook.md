@@ -4114,3 +4114,6 @@ The user explicitly authorized100USDmore, raising the aggregate before-credit ce
 
 
 126 NeuroKit submitted only after complete original124 archive/root and fresh absence proof. Dispatcher checked all086–125ownedhost states and every terminal cleanup;125was the sole prior active host. Original source-only126payload and all198runtime hashes match the frozen common factory. No source, scientific method, prompt, worker allowance or spending ceiling changed;106USDholds/94USDunallocated. Remaining127–132arefundedqueued.
+
+
+Release-only staging metadata now accepts the explicitly configured aggregate authorization (legacy default retained), so a new release can report the approved200USD rather than a stale hardcoded100USD. This does not change any frozen campaign payload, prompt, scientific contract or worker; alltencontinueusingtheir198-file501fbc2farchives.124releaseauditpassedtheexactsource/inputnotices,installedfixtureexclusion/buildguard,source-awarecontrolsandrecordedsolvercomputation;different-engineportabilityisexcludedfromclaims.

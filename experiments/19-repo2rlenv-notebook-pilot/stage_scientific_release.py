@@ -111,7 +111,7 @@ plan = ReleasePlan(
         "memory_gib": 8,
         "disk_gib": 10,
         "actual_daytona_invoice_usd": None,
-        "aggregate_authorized_usd": "100.00",
+        "aggregate_authorized_usd": config.get("aggregate_authorized_usd", "100.00"),
     },
     citations=metadata["citations"],
     limitations=[
