@@ -4,10 +4,9 @@ import json
 import shutil
 from pathlib import Path
 
-from grading_remote import AUTHOR, hashes, owned, run_as
+from grading_remote import AUTHOR, ORACLE, hashes, owned, run_as
 
 PRIVATE = Path("/work/grading-private")
-ORACLE = 18004
 
 
 def verify_sources(manifest):
@@ -71,8 +70,12 @@ def main():
         if set(actual) != expected:
             raise ValueError(
                 "Derived artifact inventory differs from declaration: "
-                + json.dumps({"missing": sorted(expected - set(actual)),
-                              "unexpected": sorted(set(actual) - expected)})
+                + json.dumps(
+                    {
+                        "missing": sorted(expected - set(actual)),
+                        "unexpected": sorted(set(actual) - expected),
+                    }
+                )
             )
         # Freeze and archive derivation products before exposing only inputs.
         saved = PRIVATE / "materialized"

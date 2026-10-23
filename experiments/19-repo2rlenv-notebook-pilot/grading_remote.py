@@ -13,7 +13,8 @@ from pathlib import Path
 
 PRIVATE = Path("/work/grading-private")
 CASE = Path("/case")
-AUTHOR, GRADER, PROBE = 18001, 18002, 18003
+AUTHOR, GRADER, PROBE, ORACLE = 18001, 18002, 18003, 18004
+WORKER_ROLES = frozenset({AUTHOR, GRADER, PROBE, ORACLE})
 
 
 def role_processes(uid, proc=Path("/proc")):
@@ -23,7 +24,7 @@ def role_processes(uid, proc=Path("/proc")):
     descendant may start a new process group or session; ancestry/group-only
     cleanup cannot prove that the role has stopped. Never use a shared-node UID.
     """
-    if uid not in {AUTHOR, GRADER, PROBE}:
+    if uid not in WORKER_ROLES:
         raise ValueError("Only dedicated sandbox worker roles may be inspected")
     result = []
     for path in proc.iterdir():
@@ -39,7 +40,7 @@ def role_processes(uid, proc=Path("/proc")):
 
 
 def stop_role_processes(uid):
-    if uid not in {AUTHOR, GRADER, PROBE} or os.geteuid() != 0:
+    if uid not in WORKER_ROLES or os.geteuid() != 0:
         raise RuntimeError("Role cleanup requires the disposable sandbox root controller")
     deadline = time.monotonic() + 2
     while pids := role_processes(uid):
@@ -73,7 +74,7 @@ def owned(path, uid, mode):
 
 
 def run_as(uid, argv, cwd, seconds):
-    if uid not in {AUTHOR, GRADER, PROBE} or os.geteuid() != 0:
+    if uid not in WORKER_ROLES or os.geteuid() != 0:
         raise RuntimeError("Generated execution requires a dedicated sandbox worker role")
 
     def drop():

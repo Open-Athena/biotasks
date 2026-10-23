@@ -1,0 +1,37 @@
+{
+  "number": 106,
+  "observed_at": "2026-10-23T16:20:26.017386+00:00",
+  "original_pipeline_status": "rejected",
+  "state": "factory_controller_rejected",
+  "source_rejection": false,
+  "scientific_acceptance": false,
+  "operator_scientific_interventions": 0,
+  "elapsed_pipeline_seconds": 643.326,
+  "archive_files": 566,
+  "archive_bytes": 17796823,
+  "archive_manifest_sha256": "7448ecd982b719e5621f10793d37ade9532f4afd06b719b28d115e23f5827c9c",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 3,
+  "defect": "Construction uses dedicated oracleUID18004, but the frozen nested-process cleanup guard only admits18001/18002/18003. Both candidate attempts fail in controller oracle isolation before running the oracle; this is infrastructure, not a defective notebook.",
+  "frozen_controller_sha256": "81357d406d17eb1b0cdde5401d47e89d2b8cc53b990e77b429da7d7e576f2f8c",
+  "failed_attempts": [
+    {
+      "path": "materialization-raw/materialization/1/result.json",
+      "sha256": "0ae0c9d8139d1f12f46c3e090c1c258e290ddc231bab85b0586b6554f0838efa",
+      "exit_code": 1,
+      "controller_fault_before_oracle_execution": true
+    },
+    {
+      "path": "materialization-raw/materialization/2/result.json",
+      "sha256": "24ccb7d8dbc32bee0bf02b9ef9d817ca0ecd90d643b271175a076fb939f1c738",
+      "exit_code": 1,
+      "controller_fault_before_oracle_execution": true
+    }
+  ],
+  "dependency_exclusions_declared": 0,
+  "nonempty_dependency_asset_removal_live_validated": false,
+  "native_trials": 0,
+  "scientific_grading_run": false,
+  "next": "General shared role registry fix and fresh original-source campaign; no manual task repair or reuse of generated task/diagnostic answers."
+}

@@ -10,6 +10,7 @@ import time
 from pathlib import Path
 
 import grading_remote as remote
+import materialization_remote as materialization
 import pytest
 
 HERE = Path(__file__).parent
@@ -23,6 +24,7 @@ def test_role_discovery_excludes_other_users_and_zombies(tmp_path):
         (14, "18001 18001 18001 18001", "Z"),
         (15, "1000 18001 1000 1000", "S"),
         (16, "18001 0 0 0", "S"),
+        (18, "18004 18004 18004 18004", "S"),
     ]:
         folder = tmp_path / str(pid)
         folder.mkdir()
@@ -30,11 +32,14 @@ def test_role_discovery_excludes_other_users_and_zombies(tmp_path):
     (tmp_path / "self").mkdir()
     (tmp_path / "17").mkdir()  # Process exited before its status was read.
     assert set(remote.role_processes(remote.AUTHOR, tmp_path)) == {11, 15, 16}
+    assert remote.role_processes(materialization.ORACLE, tmp_path) == [18]
     with pytest.raises(ValueError, match="dedicated"):
         remote.role_processes(os.getuid(), tmp_path)
 
 
-@pytest.mark.parametrize("uid,root", [(0, True), (1000, True), (remote.AUTHOR, False)])
+@pytest.mark.parametrize(
+    "uid,root", [(0, True), (1000, True), (18005, True), (remote.AUTHOR, False)]
+)
 def test_role_cleanup_refuses_shared_node_users(monkeypatch, uid, root):
     monkeypatch.setattr(remote.os, "geteuid", lambda: 0 if root else 1000)
     killed = []
@@ -63,7 +68,10 @@ def test_role_cleanup_verifies_absence_or_fails_closed(monkeypatch):
 
 
 @pytest.mark.parametrize("mode", ["timeout", "success", "interruption"])
-def test_nested_process_group_is_stopped_without_pipe_hang(tmp_path, mode):
+@pytest.mark.parametrize(
+    "role", [remote.AUTHOR, remote.GRADER, remote.PROBE, materialization.ORACLE]
+)
+def test_nested_process_group_is_stopped_without_pipe_hang(tmp_path, mode, role):
     pid_file = tmp_path / "child.json"
     child = (
         "import os,time,json;from pathlib import Path;Path("
@@ -95,7 +103,7 @@ def owned(uid):
     return [] if any(s.startswith('State:') and s.split()[1]=='Z' for s in state.splitlines()) else [pid]
 r.role_processes=owned
 try:
-    print(json.dumps(r.run_as(r.AUTHOR,['sh','-c',{command!r}],{str(tmp_path)!r},{20 if mode == "interruption" else 1})))
+    print(json.dumps(r.run_as({role},['sh','-c',{command!r}],{str(tmp_path)!r},{20 if mode == "interruption" else 1})))
 except TimeoutError:
     print(json.dumps({{'outer_interrupted':True}}))
 """
