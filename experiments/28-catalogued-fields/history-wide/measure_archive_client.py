@@ -26,6 +26,11 @@ def available():
         if line.startswith('MemAvailable:'))) * 1024
 
 
+def own_peak_kib():
+    return int(next(line.split()[1] for line in Path('/proc/self/status').read_text().splitlines()
+        if line.startswith('VmHWM:')))
+
+
 def child(state):
     profile = json.loads((ROOT / 'archive-client-profile.json').read_text())
     os.environ.update(profile['environment'])
@@ -74,6 +79,7 @@ def main():
             print('Heavy measurement skipped: lock held. Lightweight campaign continues.'); return
         work = args.state_dir / 'archive-client-readback-check'; assert not work.exists(); work.mkdir()
         started = datetime.datetime.now(datetime.timezone.utc).isoformat(); before = time.monotonic()
+        parent_initial_peak = own_peak_kib()
         log = args.state_dir / 'archive-client-readback-check.log'
         stopped, sampled_peak = None, 0
         with log.open('w') as output:
@@ -102,11 +108,14 @@ def main():
                     os.killpg(process.pid, signal.SIGKILL); process.wait()
                 shutil.rmtree(work)
         peak = resource.getrusage(resource.RUSAGE_CHILDREN).ru_maxrss
-        parent_peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        parent_peak = own_peak_kib()
         report = {'started_utc': started, 'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'duration_seconds': time.monotonic() - before, 'exit_code': code, 'stop_reason': stopped,
             'estimated_working_set_mib': 400, 'child_peak_rss_kib': peak,
             'parent_peak_rss_kib': parent_peak, 'combined_peak_upper_bound_kib': peak + parent_peak,
+            'parent_initial_exec_peak_kib': parent_initial_peak,
+            'parent_raw_rusage_including_launch_history_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
+            'supervisor_peak_source': 'Current-exec /proc/self/status VmHWM; raw launch-history rusage retained separately',
             'source_sha256': sha(Path(__file__)), 'profile_sha256': sha(ROOT / 'archive-client-profile.json'),
             'readback_working_directory_removed': not work.exists(), 'only_owned_process_group_supervised': True}
         (ROOT / 'archive-client-measurement.json').write_text(json.dumps(report, indent=2) + '\n')
