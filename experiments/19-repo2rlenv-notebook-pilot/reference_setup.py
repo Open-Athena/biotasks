@@ -157,6 +157,7 @@ class SetupSession:
         self.setup_remaining = float(setup_seconds)
         self.reference_seconds, self.max_tests = reference_seconds, max_tests
         self.tests = 0
+        self.test_requests = 0
         self.shell_calls = 0
         self.last_pass = None
         self.root.mkdir(parents=True, exist_ok=True)
@@ -222,11 +223,17 @@ class SetupSession:
     async def test_reference(self):
         if self.tests >= self.max_tests:
             return json.dumps({"error": "Reference-test allowance exhausted; report the blocker."})
-        self.tests += 1
+        self.test_requests += 1
         self.last_pass = None
-        directory = self.root / "trials" / str(self.tests)
+        directory = self.root / "trials" / str(self.test_requests)
         directory.mkdir(parents=True)
-        record = {"test": self.tests, "status": "incomplete", "semantic_fidelity_validated": False}
+        record = {
+            "test": self.test_requests,
+            "reference_tests_used": self.tests,
+            "reference_tests_remaining": self.max_tests - self.tests,
+            "status": "incomplete",
+            "semantic_fidelity_validated": False,
+        }
         try:
             recipe, script, hashes = await self.capture_candidate(directory / "candidate")
             record["candidate_sha256"] = hashes
@@ -254,7 +261,7 @@ class SetupSession:
                     "mkdir -p /work/environment /work/cache /inputs",
                 ],
                 30,
-                f"reset-env-{self.tests}",
+                f"reset-env-{self.test_requests}",
             )
             for name, target in [
                 ("pyproject.toml", "environment/pyproject.toml"),
@@ -263,7 +270,9 @@ class SetupSession:
             ]:
                 await self.remote.upload(directory / name, "/work/" + target)
             setup = await self.setup_command(
-                ["sh", "-eu", "/work/setup.sh"], int(self.setup_remaining), f"setup-{self.tests}"
+                ["sh", "-eu", "/work/setup.sh"],
+                int(self.setup_remaining),
+                f"setup-{self.test_requests}",
             )
             record["setup"] = setup
             if setup["exit_code"] != 0:
@@ -278,7 +287,7 @@ class SetupSession:
             )
             staged = await self.remote.helper(
                 ["snapshot-inputs", "/work/declared-inputs.json", "/work/setup-inputs.json"],
-                f"inputs-before-{self.tests}",
+                f"inputs-before-{self.test_requests}",
             )
             if "input_validation_error" in staged:
                 record.update(status="candidate_invalid", error=staged["input_validation_error"])
@@ -298,7 +307,7 @@ class SetupSession:
                     "rm -rf /work/run /work/outputs; mkdir /work/run /work/outputs",
                 ],
                 30,
-                f"reset-run-{self.tests}",
+                f"reset-run-{self.test_requests}",
             )
             await self.remote.upload(directory / "reference.py", "/work/reference.py")
             await self.remote.upload(self.root / "frozen/plan.json", "/work/plan.json")
@@ -306,10 +315,18 @@ class SetupSession:
             await self.remote.upload(directory / "inputs-before.json", "/work/setup-inputs.json")
             await self.remote.network(True)
             try:
+                # A rejected manifest or failed build never reached reference
+                # dispatch. Those calls retain evidence and consume setup/time
+                # budgets, but do not spend a full computation attempt.
+                self.tests += 1
+                record.update(
+                    reference_tests_used=self.tests,
+                    reference_tests_remaining=self.max_tests - self.tests,
+                )
                 run = await self.remote.command(
                     ["env", "MPLBACKEND=Agg", "/work/venv/bin/python", "/work/reference.py"],
                     self.reference_seconds,
-                    f"reference-{self.tests}",
+                    f"reference-{self.test_requests}",
                     cwd="/work/run",
                 )
                 record["execution"] = run
@@ -317,12 +334,13 @@ class SetupSession:
                     directory / "inputs-before.json", "/work/setup-inputs.json"
                 )
                 checked = await self.remote.helper(
-                    ["verify-staging", "/work/setup-inputs.json"], f"inputs-after-{self.tests}"
+                    ["verify-staging", "/work/setup-inputs.json"],
+                    f"inputs-after-{self.test_requests}",
                 )
                 record["inputs_after"] = checked
                 await self.remote.upload(self.root / "frozen/plan.json", "/work/plan.json")
                 inventory = await self.remote.helper(
-                    ["inventory", "/work/plan.json"], f"inventory-{self.tests}"
+                    ["inventory", "/work/plan.json"], f"inventory-{self.test_requests}"
                 )
                 record["artifacts"] = inventory
                 for artifact in inventory["artifacts"]:
@@ -341,7 +359,7 @@ class SetupSession:
                 if success:
                     self.last_pass = {
                         "hashes": hashes,
-                        "test": self.tests,
+                        "test": self.test_requests,
                         "source_changed": changed != self.prepared.baseline,
                     }
             finally:

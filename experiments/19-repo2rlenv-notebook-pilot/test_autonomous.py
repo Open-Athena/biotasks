@@ -349,10 +349,11 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     assert receipt["operator_interventions"] == 0
 
 
-def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch):
+@pytest.mark.parametrize("trial_number", [1, 3])
+def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch, trial_number):
     monkeypatch.syspath_prepend(str(HERE))
     raw, view = tmp_path / "raw", tmp_path / "view"
-    trial = raw / "setup/trials/1"
+    trial = raw / "setup/trials" / str(trial_number)
     (raw / "setup/frozen").mkdir(parents=True)
     (trial / "candidate").mkdir(parents=True)
     (trial / "outputs").mkdir()
@@ -371,7 +372,8 @@ def test_reference_handoff_checks_real_output_bytes(tmp_path, monkeypatch):
         {
             "status": "reference_executed_requires_review",
             "cleanup_verified": True,
-            "last_passing_test": {"test": 1},
+            "reference_tests": 1,
+            "last_passing_test": {"test": trial_number},
         },
     )
     m.write(raw / "outcome.json", {"disposition": "tested"})

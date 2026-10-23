@@ -173,7 +173,9 @@ def test_invalid_input_inventory_returns_feedback_before_build(tmp_path, files):
         assert result["status"] == "candidate_invalid"
         assert "inputs.json file" in result["error"]
         assert s.last_pass is None
-        assert not any(label.startswith(("setup-", "reference-", "reset-env-")) for label, *_ in remote.events)
+        assert not any(
+            label.startswith(("setup-", "reference-", "reset-env-")) for label, *_ in remote.events
+        )
 
     asyncio.run(run())
 
@@ -189,18 +191,111 @@ def test_missing_staged_file_can_be_repaired_by_worker_within_existing_tests(tmp
 
     async def run():
         remote = MissingInput()
-        s = SetupSession(prepared=prepared(), remote=remote, root=tmp_path,
-                         setup_seconds=60, reference_seconds=10, max_tests=2)
+        s = SetupSession(
+            prepared=prepared(),
+            remote=remote,
+            root=tmp_path,
+            setup_seconds=60,
+            reference_seconds=10,
+            max_tests=1,
+        )
         await s.initialize()
         result = json.loads(await s.test_reference())
         assert result["status"] == "candidate_invalid"
         assert "Missing declared" in result["error"]
         assert s.last_pass is None
+        assert s.tests == 0
         assert not any(label.startswith("reference-") for label, *_ in remote.events)
-        # A corrected staging recipe can use the already-agreed second test.
+        # No reference was dispatched; the first computation is still available.
         remote.invalid = False
         assert json.loads(await s.test_reference())["status"] == "reference_executed"
         assert s.last_pass["test"] == 2
+        assert s.tests == 1
+
+    asyncio.run(run())
+
+
+@pytest.mark.parametrize("defect", ["manifest", "setup"])
+def test_preexecution_failures_keep_computation_slot_and_preserve_each_trial(tmp_path, defect):
+    async def run():
+        remote = FakeRemote(setup_failure=defect == "setup")
+        s = session(tmp_path, remote)
+        await s.initialize()
+        if defect == "manifest":
+            remote.files["/work/setup/inputs.json"] = b'{"files": [{}]}'
+        for number in (1, 2):
+            result = json.loads(await s.test_reference())
+            assert result["status"] == (
+                "candidate_invalid" if defect == "manifest" else "setup_failed"
+            )
+            assert result["test"] == number
+            assert result["reference_tests_used"] == 0
+            assert result["reference_tests_remaining"] == 1
+            assert s.tests == 0 and s.last_pass is None
+            assert (tmp_path / f"trials/{number}/result.json").is_file()
+        remote.setup_failure = False
+        remote.files["/work/setup/inputs.json"] = b'{"files": []}'
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "reference_executed"
+        assert result["test"] == 3 and result["reference_tests_used"] == 1
+        assert s.last_pass["test"] == 3 and s.tests == 1
+        assert sum(label.startswith("reference-") for label, *_ in remote.events) == 1
+        before = list(remote.events)
+        assert "exhausted" in json.loads(await s.test_reference())["error"]
+        assert remote.events == before and s.test_requests == 3
+
+    asyncio.run(run())
+
+
+def test_failed_computation_uses_a_slot_and_no_third_reference_is_dispatched(tmp_path):
+    class FailedReference(FakeRemote):
+        failed = True
+
+        async def command(self, argv, seconds, label, *, cwd="/work"):
+            result = await super().command(argv, seconds, label, cwd=cwd)
+            if label.startswith("reference-") and self.failed:
+                result["exit_code"] = 1
+            return result
+
+    async def run():
+        remote = FailedReference()
+        s = SetupSession(
+            prepared=prepared(),
+            remote=remote,
+            root=tmp_path,
+            setup_seconds=60,
+            reference_seconds=10,
+            max_tests=2,
+        )
+        await s.initialize()
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "reference_failed" and s.tests == 1
+        remote.failed = False
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "reference_executed" and s.tests == 2
+        before = list(remote.events)
+        assert "exhausted" in json.loads(await s.test_reference())["error"]
+        assert remote.events == before
+        assert sum(label.startswith("reference-") for label, *_ in remote.events) == 2
+
+    asyncio.run(run())
+
+
+def test_uncertain_reference_dispatch_does_not_refund_a_computation_slot(tmp_path):
+    class LostReference(FakeRemote):
+        async def command(self, argv, seconds, label, *, cwd="/work"):
+            if label.startswith("reference-"):
+                raise RuntimeError("Uncertain reference completion")
+            return await super().command(argv, seconds, label, cwd=cwd)
+
+    async def run():
+        remote = LostReference()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        with pytest.raises(RuntimeError, match="Uncertain reference"):
+            await s.test_reference()
+        assert s.tests == 1 and s.last_pass is None
+        assert "exhausted" in json.loads(await s.test_reference())["error"]
 
     asyncio.run(run())
 
@@ -221,13 +316,23 @@ def test_snapshot_controller_fault_is_not_worker_feedback(tmp_path):
 
 
 @pytest.mark.parametrize("controller_fault", [False, True])
-def test_snapshot_cli_distinguishes_candidate_errors_from_controller_faults(tmp_path, controller_fault):
+def test_snapshot_cli_distinguishes_candidate_errors_from_controller_faults(
+    tmp_path, controller_fault
+):
     manifest = tmp_path / "inputs.json"
     manifest.write_text(json.dumps({"files": []} if controller_fault else {"files": [{}]}))
     receipt = tmp_path if controller_fault else tmp_path / "receipt.json"
     result = subprocess.run(
-        [sys.executable, str(HERE / "reference_remote.py"), "snapshot-inputs", str(manifest), str(receipt)],
-        capture_output=True, text=True, timeout=5,
+        [
+            sys.executable,
+            str(HERE / "reference_remote.py"),
+            "snapshot-inputs",
+            str(manifest),
+            str(receipt),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=5,
     )
     if controller_fault:
         assert result.returncode != 0

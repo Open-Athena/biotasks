@@ -133,6 +133,12 @@ blocker. The controller rejects changes to analysis import statements.
 Inspect actual errors before changing requirements. Preserve failed
 trials. An interrupted or uncertain tool result is not permission to launch a
 duplicate operation. Stop when the controller reports exhausted allowances.
+`max_tests` limits controlled reference computations, including failed or uncertain
+reference dispatches. Static candidate rejection and failures while rebuilding
+dependencies or staging inputs do not consume a computation slot. They still
+consume the existing setup and campaign time budgets. Each tool call retains a
+separate trial record; use its reported remaining computation allowance rather
+than assuming the trial-record number is the number of computations used.
 
 Check consequential input-parsing assumptions against the staged bytes, not just
 the source code. For example, skipping a row does not establish that it is a

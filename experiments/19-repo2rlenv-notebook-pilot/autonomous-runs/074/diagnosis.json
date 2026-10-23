@@ -1,0 +1,23 @@
+{
+  "classification": "Generated setup/controller accounting stop, not a source rejection.",
+  "original_setup_requests": [
+    {
+      "trial": 1,
+      "status": "candidate_invalid",
+      "reason": "inputs.json file 0 needs a unique absolute file path under /inputs or /work/cache, without parent traversal",
+      "reference_execution": false
+    },
+    {
+      "trial": 2,
+      "status": "setup_failed",
+      "reason": "Recipe installed dependencies but attempted to copy unstaged source files; worker corrected recipe after the allowance was spent.",
+      "reference_execution": false
+    }
+  ],
+  "original_request_limit": 2,
+  "actual_controlled_reference_runs": 0,
+  "worker_exploratory_execution_claim": "Not substituted for a clean controlled offline reference test.",
+  "general_fix": "Keep separate unique request IDs and actual reference-dispatch count; static/setup/input staging failures do not consume computation slots. Failed or uncertain reference dispatches still consume slots. No time/resource/model allowances increased.",
+  "originals_preserved": true,
+  "no_live_provider_recovery_claim": true
+}

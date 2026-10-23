@@ -553,6 +553,7 @@ async def run(config, *, root, deadline, endpoint, credential, provider=None, co
                 if outcome.disposition == "tested"
                 else "worker_blocked",
                 reference_tests=session.tests,
+                reference_test_requests=session.test_requests,
                 setup_seconds_remaining=session.setup_remaining,
                 last_passing_test=session.last_pass,
             )
