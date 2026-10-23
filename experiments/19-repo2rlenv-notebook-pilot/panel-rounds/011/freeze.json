@@ -1,0 +1,68 @@
+{
+  "frozen_at": "2026-10-23T02:01:57.362862+00:00",
+  "runtime_baseline_revision": "456c6263684304d9f6f324dac6ab6b6274246a2f",
+  "public_configuration_revision": "456c6263684304d9f6f324dac6ab6b6274246a2f",
+  "runtime_file_count": 184,
+  "changed_from_round010": [
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_workspace_staging_contract.py"
+  ],
+  "runtime_files_identical_to_round010_076_077": false,
+  "private_input_revision": "d915bdd902d9cd71f21db0c5054663f049c37b30",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round011-pyteomics-inputs",
+  "private_ref_pushed": false,
+  "source_assets_unchanged": true,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 78,
+      "id": "pyteomics-filtering",
+      "domain": "Proteomics",
+      "source_url": "https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb",
+      "source_revision": "a133667b090e41c645ed682861b73d98bef2d045",
+      "source_sha256": "5f76d296993dd7fe4c54fdc198df8fd8801944d5086c24a76c3d5faeed659127",
+      "config_file": "autonomous-runs/079/configuration.json",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyteomics-filtering/seed.json": "d3f61f90da0c9924b686765495e0b05c54fe8b575b9a317e361a7bcaf973cec0",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyteomics-filtering/source.ipynb": "5f76d296993dd7fe4c54fdc198df8fd8801944d5086c24a76c3d5faeed659127"
+      },
+      "prior_panel_campaign": "autonomous-psm-038",
+      "state": "reserved_not_submitted",
+      "reserved_usd": "1.00",
+      "input_revision": "d915bdd902d9cd71f21db0c5054663f049c37b30",
+      "runtime_files_identical": true,
+      "runtime_file_count": 184,
+      "payload_files": {
+        "biotasks.tar": "b60a0ee0bf7635e25679c85e0966ba9ea7514bb52b3199d1fba75e0919ca99de",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "d3f61f90da0c9924b686765495e0b05c54fe8b575b9a317e361a7bcaf973cec0",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "673639f0ba664886acb02171e4250c221630db096dab0dc841f9bea4b93360f9"
+      },
+      "baseline_number": 54
+    }
+  ]
+}
