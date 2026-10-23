@@ -55,7 +55,8 @@ class ExistingControls:
         if stage == 'cleanup_terminal' and not (self.root / 'cleanup-cpu-reservation.json').exists():
             return dict(state='pending', reason='cleanup CPU reservation must be checkpointed')
         if stage in ('remote_terminal', 'cleanup_terminal'):
-            gates = [self.root / 'continuation.json', ROOT / 'private/resume-macs-742/observation-gate.json']
+            gates = ([self.root / 'continuation.json', ROOT / 'private/resume-macs-742/observation-gate.json']
+                if stage == 'remote_terminal' else [ROOT / 'private/resume-macs-742/cleanup-observation-gate.json'])
             for gate in gates:
                 if gate.exists():
                     next_check = json.loads(gate.read_text()).get('next_remote_check_not_before_utc')
@@ -124,6 +125,8 @@ class ExistingControls:
             receipt = json.loads((ROOT / 'offline-evidence-receipt.json').read_text())
             manifest = json.loads((ROOT / 'offline-evidence-manifest.json').read_text())
             assert receipt['manifest_sha256'] == digest(ROOT / 'offline-evidence-manifest.json')
+            assert receipt['bucket'] == 'open-athena/biotasks'
+            assert receipt['prefix'] == 'research/33-unattended-validation/' + manifest['created_utc'][:10] + '/' + receipt['manifest_sha256']
             assert receipt['anonymous_download_verified'] is True and receipt['overwrites'] is False
             expected = {receipt['prefix'] + '/' + row['path']: row['sha256'] for row in manifest['files']}
             expected[receipt['prefix'] + '/manifest.json'] = receipt['manifest_sha256']
@@ -172,7 +175,7 @@ class ExistingControls:
     def recover(self, stage):
         if stage == 'cleanup_terminal':
             # The submit acknowledgement may have been lost. Never resubmit.
-            atomic_write(ROOT / 'private/resume-macs-742/observation-gate.json',
+            atomic_write(ROOT / 'private/resume-macs-742/cleanup-observation-gate.json',
                 dict(next_remote_check_not_before_utc=(datetime.now(timezone.utc) + timedelta(minutes=5)).isoformat()))
             subprocess.run([self.python, str(self.root / 'collect_macs_742_image_cleanup.py'),
                 '--config', self.config], check=True, timeout=180)
