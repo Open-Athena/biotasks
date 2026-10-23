@@ -1,6 +1,7 @@
 """Supervise bounded archive work or a small existing-object readback; no native/model work."""
 
 import argparse
+from contextlib import nullcontext
 import datetime
 import fcntl
 import hashlib
@@ -13,6 +14,7 @@ import shutil
 import signal
 import subprocess
 import sys
+import tarfile
 import time
 
 ROOT = Path(__file__).resolve().parent
@@ -30,6 +32,22 @@ def available():
 def own_peak_kib():
     return int(next(line.split()[1] for line in Path('/proc/self/status').read_text().splitlines()
         if line.startswith('VmHWM:')))
+
+
+def lightweight_manifest_inputs(state, slug):
+    """Only bounded local hashing/scanning, with no upload, qualifies for this path."""
+    review = json.loads((ROOT / 'publication-reviews' / (slug + '.json')).read_text())
+    source = state / ('biotasks28-history-' + slug.lower().replace('__', '-') + '-001-results')
+    paths = [source / name for name in review['reviewed_files']]
+    assert all(p.parent == source and p.is_file() for p in paths)
+    assert sum(p.stat().st_size for p in paths) <= 16 * 1024**2
+    total = 0
+    phase = source / 'phase-artifacts.tar.gz'
+    with tarfile.open(phase, 'r|gz') as archive:
+        for member in archive:
+            total += member.size
+            assert total <= 16 * 1024**2
+    return total
 
 
 def child(state, action=None, slug=None):
@@ -79,14 +97,17 @@ def main():
     if args.child:
         child(args.state_dir, args.archive_action, args.slug); return
     assert bool(args.archive_action) == bool(args.slug)
-    estimate = 400 * 1024**2
+    lightweight = args.archive_action == 'prepare'
+    manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if lightweight else None
+    estimate = (128 if lightweight else 400) * 1024**2
     assert estimate <= 500 * 1024**2
     assert available() >= max(int(2.5 * 1024**3), estimate + 2 * 1024**3) and os.getloadavg()[0] < 1.5
-    with open('/tmp/exe-codex-local-heavy.lock', 'a') as lock:
-        try:
-            fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        except BlockingIOError:
-            print('Heavy measurement skipped: lock held. Lightweight campaign continues.'); return
+    with (nullcontext() if lightweight else open('/tmp/exe-codex-local-heavy.lock', 'a')) as lock:
+        if not lightweight:
+            try:
+                fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except BlockingIOError:
+                print('Heavy measurement skipped: lock held. Lightweight campaign continues.'); return
         work = args.state_dir / 'archive-client-readback-check'; assert not work.exists(); work.mkdir()
         started = datetime.datetime.now(datetime.timezone.utc).isoformat(); before = time.monotonic()
         parent_initial_peak = own_peak_kib()
@@ -124,7 +145,9 @@ def main():
         parent_peak = own_peak_kib()
         report = {'started_utc': started, 'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'duration_seconds': time.monotonic() - before, 'exit_code': code, 'stop_reason': stopped,
-            'estimated_working_set_mib': 400, 'child_peak_rss_kib': peak,
+            'estimated_working_set_mib': estimate // 1024**2, 'child_peak_rss_kib': peak,
+            'resource_classification': 'bounded lightweight manifest scan' if lightweight else 'intensive archive transfer',
+            'heavy_lock_required': not lightweight, 'bounded_manifest_expanded_bytes': manifest_bytes,
             'parent_peak_rss_kib': parent_peak, 'combined_peak_upper_bound_kib': peak + parent_peak,
             'parent_initial_exec_peak_kib': parent_initial_peak,
             'parent_raw_rusage_including_launch_history_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
