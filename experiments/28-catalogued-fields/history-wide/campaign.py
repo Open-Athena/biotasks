@@ -1,4 +1,4 @@
-"""Foreground serial history campaign: original handles, actual billing, cleanup, no repair."""
+"""Serial history control plane: original handles, actual billing, cleanup, no repair."""
 
 import argparse
 import dataclasses
@@ -98,9 +98,12 @@ def harvest(args, record):
     target = args.state_dir / (record['run_id'] + '-results'); target.mkdir(exist_ok=True)
     lock = None
     try:
+        if args.lightweight_only:
+            assert archive['size_bytes'] <= 32 * 1024**2, 'Large result needs a separately checked local harvest; no native retry'
         if archive['size_bytes'] > 32 * 1024**2:
             lock = open('/tmp/exe-codex-local-heavy.lock', 'a'); fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        record['extracted_bytes'] = baseline.download(archive, target, args.gcloud, max_expanded_bytes=2 * 1024**3)
+        expanded_limit = 32 * 1024**2 if args.lightweight_only else 2 * 1024**3
+        record['extracted_bytes'] = baseline.download(archive, target, args.gcloud, max_expanded_bytes=expanded_limit)
     finally:
         if lock:
             lock.close()
@@ -130,11 +133,14 @@ def main():
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--gcloud', default='/home/exedev/.local/google-cloud-sdk/bin/gcloud')
     parser.add_argument('--interval', type=int, default=180)
+    parser.add_argument('--lightweight-only', action='store_true',
+        help='Stop before large local harvests; retain original remote handle and partial readback')
     args = parser.parse_args(); assert args.interval >= 180
     args.state_dir.mkdir(mode=0o700, parents=True, exist_ok=True)
     owner = {'pid': os.getpid(), 'process_start_ticks': Path('/proc/self/stat').read_text().split(') ', 1)[1].split()[19],
         'started_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        'scope': 'Foreground lightweight serial orchestration; no local native execution or model calls'}
+        'scope': 'Lightweight serial orchestration; no local native execution or model calls',
+        'lightweight_only': args.lightweight_only}
     save(args.state_dir / 'history-watch-owner.json', owner)
     cohort = read(BASE / 'cohort.json')
     try:
