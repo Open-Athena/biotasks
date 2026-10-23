@@ -1,0 +1,20 @@
+{
+  "body": "Can timeout and scheduling changes recover complete positive control pairs without repairing tasks? Follow-up to #28; investigation remains open.\n\n**Completed controls:** four existing Matchms exports have positive nop/oracle pairs, preserved regression tests and clean oracle commands; all 40 task files are unchanged. These are completed controls, not new exports. [Results](https://github.com/Open-Athena/biotasks/blob/188091eb/experiments/29-runtime-limits/matchms-control-results.json).\n\n**OpenMS:** the original 60-second checkout timed out again; the 300-second arm completed the same commit in 77.9 seconds with no tracked changes, using the same CPU/memory limits. This establishes acquisition recovery only. Bootstrap, PR discovery and task generation were not run. Both containers were removed and the archive verified. [Evidence](https://github.com/Open-Athena/biotasks/blob/875eab80/experiments/29-runtime-limits/openms-checkout-readback-001.json).\n\n**Scanpy:** all 16 recorded bootstrap commands replayed with original exits and no repairs, crossing the saved Dockerfile's stop-at-first-failure barrier. Smoke/fresh-image checks remain false. The unchanged PR4389 export's nop/oracle controls are running at 300 versus 1,200 verifier seconds. Results remain pending. [Protocol](https://github.com/Open-Athena/biotasks/blob/65cfc8b5/experiments/29-runtime-limits/scanpy-controls-protocol.md).\n\n**Remaining:** verify Scanpy controls and cleanup; collect the submitted OHIF recorded-action reconstruction, which restores original full-checkout copy behavior without command repairs; checkpoint MMseqs2's bootstrap comparison and model allowance. Longer verifier limits cannot resolve installation or checkout failures.\n\n**Budget and retention:** nine terminal jobs used 1.18825 allocated CPU-hours. Active Scanpy controls reserve at most 9.6667 more and the submitted OHIF replay at most 8 more within the same 32-hour ceiling, on reserved capacity. Zero model calls. One Scanpy image remains for controls and will be removed after archive readback. Raw Matchms evidence remains private. No pipeline promoted. Detailed logs remain in comments.\n",
+  "comment": {
+    "id": "IC_kwDOU1dZq88AAAABe-dqwA",
+    "author": {
+      "login": "gonzalobenegas"
+    },
+    "authorAssociation": "MEMBER",
+    "body": "\ud83e\udd16 Submitted `biotasks29-ohif-recorded-001` from [checkpoint 7871df26](https://github.com/Open-Athena/biotasks/blob/7871df26/experiments/29-runtime-limits/ohif-recorded-protocol.md). Replays all 18 saved BASH commands unchanged with upstream full-checkout copying, avoiding the saved Dockerfile context\u2019s exclusion of `platform/docs`. Original failed reconstruction evidence remains intact. No dependency/test repair, model call or export regeneration.\n\nOne attempt on existing reserved capacity, at most 8 allocated CPU-hours. Prior 1.18825 plus the full Scanpy-control reservation of 9.6667 and this reservation remain below #29\u2019s 32-hour ceiling. Per-command timeouts and sandbox CPU/memory remain unchanged. Stop on divergence/timeout; archive and verify cleanup, retaining only a labeled completed image for the original OHIF controls if reconstruction reaches that point. Results are pending.\n",
+    "createdAt": "2026-10-23T20:07:58Z",
+    "includesCreatedEdit": false,
+    "isMinimized": false,
+    "minimizedReason": "",
+    "reactionGroups": [],
+    "url": "https://github.com/Open-Athena/biotasks/issues/29#issuecomment-6373731008",
+    "viewerDidAuthor": true
+  },
+  "state": "OPEN",
+  "label_verified": true
+}
