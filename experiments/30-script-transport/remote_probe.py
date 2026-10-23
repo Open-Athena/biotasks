@@ -14,7 +14,7 @@ import time
 
 ROOT = Path(__file__).resolve().parent
 OWNER = os.environ['BIOTASKS_PROBE_RUN_ID']
-assert OWNER in {'biotasks30-transport-001', 'biotasks30-transport-002'}
+assert OWNER in {'biotasks30-transport-001', 'biotasks30-transport-002', 'biotasks30-transport-003'}
 TOOLS = ROOT / 'probe-tools'
 LABEL = 'org.open-athena.biotasks.owner=' + OWNER
 OWNED = []
@@ -42,7 +42,8 @@ def cleanup():
             docker('rm', '-f', name)
     remaining = docker('ps', '-aq', '--filter', 'label=' + LABEL).stdout.strip()
     REPORT['cleanup'] = {'owned_containers_absent': not bool(remaining), 'created': OWNED,
-                         'host_mounts': False, 'images_created_or_deleted': False}
+                         'host_mounts': False, 'owned_images_created_or_deleted': False,
+                         'shared_base_image_retained': REPORT.get('base_image_reference')}
     assert not remaining
 
 
@@ -76,8 +77,17 @@ def main():
     signal.signal(signal.SIGINT, interrupted)
     prepare_cli()
     assert not docker('ps', '-aq', '--filter', 'label=' + LABEL).stdout.strip(), 'Existing owned handle; do not duplicate'
-    # Use a cached official base only. Missing image is an explicit prerequisite failure.
-    img = json.loads(docker('image', 'inspect', 'python:3.12-slim').stdout)[0]
+    # Use the immutable official image already pinned in the original experiment.
+    image_ref = json.loads((ROOT / 'docker-tool.json').read_text())['probe_image']
+    assert image_ref.startswith('python@sha256:')
+    inspected = docker('image', 'inspect', image_ref, check=False)
+    REPORT['base_image_pulled'] = inspected.returncode != 0
+    if inspected.returncode != 0:
+        docker('pull', image_ref, timeout=120)
+        inspected = docker('image', 'inspect', image_ref)
+    img = json.loads(inspected.stdout)[0]
+    assert any(x.endswith(image_ref.split('@',1)[1]) for x in img.get('RepoDigests', []))
+    REPORT['base_image_reference'] = image_ref
     REPORT['image_id'] = img['Id']
     REPORT['image_repo_digests'] = img.get('RepoDigests', [])
     modules = [('baseline', load('original_docker', 'original_docker.py')),

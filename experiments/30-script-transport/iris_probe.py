@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parent
 parser = argparse.ArgumentParser()
 parser.add_argument('action', choices=['preflight', 'submit', 'observe'])
 parser.add_argument('--config', type=Path, required=True)
-parser.add_argument('--run-id', choices=['biotasks30-transport-001','biotasks30-transport-002'], required=True)
+parser.add_argument('--run-id', choices=['biotasks30-transport-001','biotasks30-transport-002','biotasks30-transport-003'], required=True)
 args = parser.parse_args()
 NAME = args.run_id
 private = ROOT / 'run-private' / NAME
