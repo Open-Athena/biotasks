@@ -1,0 +1,287 @@
+{
+  "scope": "Standalone experimental policy checks, not pipeline integration or task validation",
+  "candidate_sha256": "5da3488168291b7b6776d06a93d423f4c2250603fe3e215e93624095b2446bf7",
+  "cases": [
+    {
+      "case": "recorded_mne",
+      "input": "cd /workspace && python -m pytest -v mne/",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "cd /workspace && python -m pytest -v mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "dot",
+      "input": "pytest .",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "pathless",
+      "input": "pytest -v",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest -v mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "junit_value",
+      "input": "pytest --junitxml results/report.xml mne/",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest --junitxml results/report.xml mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "junit_equals",
+      "input": "pytest --junitxml=results/report.xml mne/",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest --junitxml=results/report.xml mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "quoted_filter",
+      "input": "pytest -k \"alpha or beta\" mne/",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest -k 'alpha or beta' mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "delimiter",
+      "input": "pytest -v -- mne/",
+      "decision": {
+        "status": "selected",
+        "reason": "explicit_changed_files_policy",
+        "command": "pytest -v -- mne/tests/test_example.py",
+        "targets": [
+          "mne/tests/test_example.py"
+        ],
+        "scope_reduced": true
+      }
+    },
+    {
+      "case": "explicit_file",
+      "input": "pytest mne/tests/test_other.py",
+      "decision": {
+        "status": "unchanged",
+        "reason": "explicit_file_or_node_scope",
+        "command": "pytest mne/tests/test_other.py",
+        "targets": [
+          "mne/tests/test_other.py"
+        ],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "explicit_node",
+      "input": "pytest mne/tests/test_other.py::test_a",
+      "decision": {
+        "status": "unchanged",
+        "reason": "explicit_file_or_node_scope",
+        "command": "pytest mne/tests/test_other.py::test_a",
+        "targets": [
+          "mne/tests/test_other.py::test_a"
+        ],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "outside",
+      "input": "pytest other/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "changed_path_outside_recorded_scope",
+        "command": "pytest other/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "prefix_collision",
+      "input": "pytest mn/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "changed_path_outside_recorded_scope",
+        "command": "pytest mn/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "absolute",
+      "input": "pytest /workspace/mne/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "ambiguous_directory_scope",
+        "command": "pytest /workspace/mne/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "traversal",
+      "input": "pytest ../mne/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "ambiguous_directory_scope",
+        "command": "pytest ../mne/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "unknown_flag",
+      "input": "pytest --custom-option value mne/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "unknown_option_arity",
+        "command": "pytest --custom-option value mne/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "missing_value",
+      "input": "pytest -k",
+      "decision": {
+        "status": "unsupported",
+        "reason": "missing_option_value",
+        "command": "pytest -k",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "suffix",
+      "input": "pytest -v; echo complete",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest -v; echo complete",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "pipe",
+      "input": "pytest -v | tee results.log",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest -v | tee results.log",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "redirect",
+      "input": "pytest > results.log",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest > results.log",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "expansion",
+      "input": "pytest \"$TEST_DIR\"",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest \"$TEST_DIR\"",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "wildcard",
+      "input": "pytest mne/*",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest mne/*",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "multiline",
+      "input": "pytest\necho done",
+      "decision": {
+        "status": "unsupported",
+        "reason": "nonliteral_shell_syntax",
+        "command": "pytest\necho done",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "invalid_quote",
+      "input": "pytest \"mne/",
+      "decision": {
+        "status": "unsupported",
+        "reason": "invalid_quoting",
+        "command": "pytest \"mne/",
+        "targets": [],
+        "scope_reduced": false
+      }
+    },
+    {
+      "case": "unknown_runner",
+      "input": "python tests.py",
+      "decision": {
+        "status": "unsupported",
+        "reason": "unknown_invocation",
+        "command": "python tests.py",
+        "targets": [],
+        "scope_reduced": false
+      }
+    }
+  ],
+  "all_default_commands_byte_preserved": true,
+  "additional_cases": [
+    "empty_python_targets",
+    "unsafe_changed_path",
+    "deduplication"
+  ],
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "shell_execution": false,
+  "pipeline_integrated": false
+}

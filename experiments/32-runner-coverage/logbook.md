@@ -45,3 +45,7 @@ Published the outer-only counterexample, revised pytest-specific candidate, actu
 ### 2026-10-23 — Audit targeting grammar before MNE intervention
 
 Executed the pinned selector on eight bounded command-string cases without running generated shell. It preserves broad mne/ scope, mistakes option path values for targets, misses dot scope, and appends paths to later echo/tee commands. Recorded exact source hash and input/output strings in pytest-targeting-audit.json. targeting-design.md defines an explicit changed-files comparison with conservative syntax support and separate reporting of reduced regression coverage. No task command, dependency or original result changed; no remote job or model call.
+
+### 2026-10-23 — Standalone conservative pytest targeting candidate
+
+Implemented a separate opt-in literal-command selector; 26 bounded checks pass, including exact default-off command preservation and the recorded MNE command shape. Selected outcomes declare reduced scope, explicit file/node targets are retained, and ambiguous shell/unknown options fail as unsupported. No generated command was executed; no model calls or remote jobs. Pipeline configuration/native/export wiring and frozen biological comparison remain required.
