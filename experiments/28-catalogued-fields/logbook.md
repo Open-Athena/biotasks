@@ -360,3 +360,12 @@ Provisional interpretation also distinguishes the separate September comparator 
 
 
 The600-second inotify observation window ended normally with exit0 and no terminal receipt; the read-only observer left no process or files. A fresh authoritative original-handle query04:08:56UTC confirms Matchms still RUNNING rather than inferring state from missing output or restarting. Published original dependency-boundary comment6357149783 with exact readback, unchanged concise five-result body and OPEN/agent-generated checks. Original terminal assessment, all-pair/module census and live-to-terminal hash matching remain pending. Git whitespace check notes terminal blank lines in two exact Apache2license notices; source bytes and their verified hashes were preserved rather than normalized. No native/test/parser/environment/model changes were made.
+
+
+### First substantial provisional native yield in Matchms
+
+The next goal turn begins with authoritative original Matchms RUNNING/oneattempt at04:12:15UTC. A second bounded600-second inotify wait exits0 normally without a receipt; it adds no submission/model/native action or APIpolling. Authoritative query04:23:31confirms the same handle remains RUNNING. The single original serial controller is retained.
+
+Read-only04:23:30metadata now records195candidate entries,102paired starts/93returns/eight validation exceptions and28native emission events. Parent146backlog is the last completed-invocation checkpoint, not a terminal identity reconciliation. Original native discovery omissions/current-batch changes must be reconciled from the final ledger; counts are not assumed to sum while active. Controls remain unstarted at that observation.
+
+A separate read-only output inventory at04:24:34UTC finds31actual task directories and hashes their original files. Each inventory includes task.toml, instruction.md and the verifier; no task is executed, changed or independently graded by the probe. These are provisional native exports, not31accepted tasks or a final result. The same upstream six-call bootstrap is reused, no extra model calls, repairs or entered retries. The raw yield changes the next work from interpreting early failures alone to reviewing all emitted tasks and the original bounded controls. Original source/data provenance, native completion/timeout status, filehash/phase matches and final actual costs remain pending. Five accepted terminal results/five pending rows and the full final-audit scope remain unchanged.
