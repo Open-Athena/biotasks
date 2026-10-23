@@ -1,0 +1,102 @@
+{
+  "frozen_at": "2026-10-23T05:05:08.651652+00:00",
+  "runtime_baseline_revision": "a26c9d3b5ef505d2b940c09e679c31549b351328",
+  "runtime_file_count": 185,
+  "changed_from_round013": [
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+    "experiments/19-repo2rlenv-notebook-pilot/release_metadata.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_probe_evidence.py",
+    "src/biotasks/prompts/notebook-grader-author.md",
+    "src/biotasks/prompts/notebook-grader-probes.md",
+    "src/biotasks/prompts/notebook-grader-review.md"
+  ],
+  "original_source_assets_unchanged": true,
+  "private_input_revision": "1032d1269903856ee1b56d6219b71602b7f3fbf3",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round014-inputs",
+  "private_ref_pushed": false,
+  "private_originals": [],
+  "preparation_model_calls_max": 2,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 86,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/086/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "transferred_from": 84,
+      "input_revision": "a26c9d3b5ef505d2b940c09e679c31549b351328",
+      "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/seed.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source-license-evidence.json": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source.ipynb": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9"
+      },
+      "runtime_file_count": 185,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "0f49ea71aed207713174b041c05eb02e43f80c2729467a4208b0079f22f6f2f9",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "849bf87c02c1c9038fe9792606600e9d72568a22d35ef5a0b93e52b64b45f34d"
+      }
+    },
+    {
+      "number": 87,
+      "baseline_number": 59,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "config_file": "autonomous-runs/087/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "transferred_from": 85,
+      "input_revision": "a26c9d3b5ef505d2b940c09e679c31549b351328",
+      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+      "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/scanpy-clustering/source-seed.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "experiments/19-repo2rlenv-notebook-pilot/reference-inputs/scanpy/clustering.ipynb": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6"
+      },
+      "runtime_file_count": 185,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "ced36632a44bc7ab4b01a5298ea574626e0570d2bb4484bd900f67b64ff32c63",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "a98970c89dda8c19045fb8109f8f0d80357861fbb251641fd619dd5606f866b6"
+      }
+    }
+  ]
+}
