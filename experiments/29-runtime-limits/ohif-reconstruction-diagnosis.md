@@ -4,7 +4,7 @@ The original saved recipe produced Docker exit 0 but did not install the project
 
 The exact pinned source has `platform/docs/package.json`, while its root `.dockerignore` excludes `platform/docs/` (and `testdata/`, `.git`, among other paths). The reconstruction's `COPY . /workspace` obeys those ignore rules. This identifies a build-context omission, not proof that the original lockfile itself was inconsistent. The original bootstrap copied the checkout into its sandbox rather than using this reconstructed Docker build context; that distinction must be preserved in any follow-up.
 
-The recipe's `pnpm install ... | tail` and test-listing pipelines mask intermediate failures, explaining the successful Docker exit. Syntax-only checks and Docker exit status cannot establish environment readiness. The image is being removed after archive readback rather than used to produce misleading failed task controls.
+The recipe's `pnpm install ... | tail` and test-listing pipelines mask intermediate failures, explaining the successful Docker exit. Syntax-only checks and Docker exit status cannot establish environment readiness. The owned image/cache has been removed after archive readback, with empty labeled image/container lists verified. No failed task control was manufactured from this unusable environment.
 
 A possible general infrastructure comparison is reconstruction from the complete original checkout, explicitly controlling build-context exclusions, while preserving all saved RUN instructions, task files and dependencies. This has not been applied. Do not silently repair the lockfile, install missing packages manually, or count this failed environment as a verifier-timeout result.
 

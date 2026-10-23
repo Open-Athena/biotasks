@@ -43,3 +43,9 @@ Read-only controller inspection observed Matchms671 nop completing with reward 0
 All eight original controls completed: four nop=0/oracle=1 pairs, four clean oracle commands and preserved regression tests on both sides. Verified the complete uploaded archive SHA, every recorded output hash and all 40 original task-file hashes. Raw archives are retained under ignored `inputs-private/controls-001`; the remote Iris archive has a seven-day TTL. Summary reads original rewards without regrading.
 
 Control job cleanup removed its containers, labeled task images and shared volume. The subsequent one-attempt cleanup job removed remaining images carrying the reconstruction owner label, including inherited build intermediates, and verified both image/container lists empty. Tools were removed. No reconstruction image is retained. No active job remains; record final cumulative CPU accounting including cleanup separately.
+
+## 2026-10-23 — OHIF context omission
+
+One unchanged OHIF reconstruction attempt returned Docker exit 0 (0.12388112 allocated CPU-hours), but verified logs show frozen-lockfile installation failure and missing Jest environment/zero listed tests. Exact pinned source readback confirms root `.dockerignore` excludes `platform/docs/`, while that workspace's package.json exists in Git. Original bootstrap uses docker cp rather than filtered Docker build context. No controls were launched on this unusable image and no lockfile/package repair was made. Submitted one scoped cleanup job for its owned image/cache; follow its original handle and record terminal removal/accounting.
+
+OHIF cleanup completed in its sole attempt; `ohif-cleanup-result-001.json` verifies no reconstruction-owned images or containers remain and tools were removed. All five submitted #29 jobs are terminal; cumulative accounting is updated. Next investigate full-checkout context fidelity as a generic infrastructure comparison, not lockfile/dependency edits.

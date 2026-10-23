@@ -3,9 +3,9 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 3,
+  "remote_jobs": 5,
   "remaining": [
-    "Reconstruct and run four original OHIF positive-control pairs within remaining first-stage bounds",
+    "Evaluate a generic complete-checkout reconstruction comparison for OHIF before controls; no lockfile or dependency repair",
     "Attempt unchanged Scanpy reconstruction; keep setup failure separate from timeout comparison",
     "Perform separately scoped OpenMS checkout and MMseqs2 bootstrap comparisons"
   ],
@@ -64,6 +64,14 @@
     "owned_resources_removed": true,
     "model_calls": 0
   },
-  "allocated_cpu_hours_so_far": 0.434977222416136,
-  "first_stage_cpu_hour_ceiling": 32
+  "allocated_cpu_hours_so_far": 0.5637022225062053,
+  "first_stage_cpu_hour_ceiling": 32,
+  "ohif_reconstruction": {
+    "docker_build_exit": 0,
+    "usable_environment": false,
+    "cause": "Root dockerignore excludes platform/docs, causing frozen-lockfile workspace failure; piped commands hide exit status",
+    "controls_run": 0,
+    "readback_verified": true,
+    "owned_resources_removed": true
+  }
 }
