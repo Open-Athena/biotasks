@@ -5,6 +5,7 @@ from contextlib import nullcontext
 import datetime
 import fcntl
 import hashlib
+import importlib.metadata
 import json
 import os
 from pathlib import Path
@@ -52,9 +53,10 @@ def lightweight_manifest_inputs(state, slug):
     return total
 
 
-def bounded_publish_manifest(manifest, profile_digest):
+def bounded_publish_manifest(manifest, profile_digest, client_versions=None):
     """Known small streaming transfers under the already measured client profile."""
-    if manifest.get('archive_client_resource_profile_sha256') != profile_digest:
+    if (manifest.get('archive_client_resource_profile_sha256') != profile_digest
+            or client_versions != {'huggingface_hub': '1.21.0', 'hf_xet': '1.5.1'}):
         return None
     rows = manifest['files']
     total = sum(row['bytes'] for row in rows)
@@ -120,9 +122,11 @@ def main():
     assert 30 <= args.max_seconds <= 900
     manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if args.archive_action == 'prepare' else None
     publish_bounds = None
+    measured_client_versions = None
     if args.archive_action == 'publish':
+        measured_client_versions = {name: importlib.metadata.version(name) for name in ['huggingface_hub', 'hf_xet']}
         publish_bounds = bounded_publish_manifest(json.loads((ROOT / 'archives' / (args.slug + '-manifest.json')).read_text()),
-            sha(ROOT / 'archive-client-profile.json'))
+            sha(ROOT / 'archive-client-profile.json'), measured_client_versions)
     lightweight = manifest_bytes is not None or publish_bounds is not None
     estimate = (200 if publish_bounds else 128 if lightweight else 400) * 1024**2
     assert estimate <= 500 * 1024**2
@@ -175,6 +179,7 @@ def main():
                 'bounded lightweight manifest scan' if lightweight else 'intensive archive scan/transfer'),
             'heavy_lock_required': not lightweight, 'bounded_manifest_expanded_bytes': manifest_bytes,
             'bounded_publish_inputs': publish_bounds,
+            'measured_client_versions': measured_client_versions,
             'small_transfer_estimate_basis': ('Four same-profile original successful transfers peaked at132720..135168KiBcombined, with one stream and64MBdownload buffer; use200MiBestimate, existing active stop thresholds retained.' if publish_bounds else None),
             'walltime_limit_seconds': args.max_seconds,
             'parent_peak_rss_kib': parent_peak, 'combined_peak_upper_bound_kib': peak + parent_peak,
