@@ -1,0 +1,5 @@
+🤖 The styling-normalization candidate now covers both the native pytest parser and the exported standalone verifier. A native-only change could recognize statuses during generation that the eventual task grader still misreads.
+
+All 12 expected-status fixtures pass for both candidate parsers, including plain-output parity with the pinned baselines and colored-output agreement. Normalization strips only ANSI SGR styling; it does not change test IDs, broaden terminal control handling, or prove that a test command finished. The separate completion guard and live comparisons remain required. No original task was regraded, and no model calls or remote jobs were launched for #32.
+
+[Exact fixture results](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/parser-results.json), [exported-parser patch](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/sgr-export-parser.patch), [native-parser patch](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/sgr-parser.patch).

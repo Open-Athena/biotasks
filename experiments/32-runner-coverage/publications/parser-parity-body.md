@@ -1,0 +1,9 @@
+How much validation coverage is lost through test recognition, command selection and output parsing? Follow-up to #28.
+
+**Current findings:** A predeclared six-PR SAMtools sample contains four PRs adding net Perl test invocations; the pinned recognizer counts zero for all six. All test-path sets agree with retained descriptors, but current diff bytes are not claimed identical to original unretained diffs. SGR normalization now passes the same 12 explicit fixtures in both the native parser and exported standalone verifier; two targeting checks reproduce preservation of MNE’s broad path.
+
+**Remaining work:** Next: evaluate general runner/targeting changes and complete execution checks before live recovery claims. Seven synthetic validation cases show the pinned validator accepting six incomplete/error cases; a candidate completion guard rejects them while preserving the complete pair. This is mechanism evidence, not regrading of original tasks.
+
+**Boundaries:** original baselines remain immutable; use only justified general changes and upstream’s built-in model calls, with no added per-task LLM/Codex repair loop. No remote/native jobs or model calls have been launched in this follow-up. Execution requires a checkpointed cumulative allowance; #28’s unused ceiling is not a fresh budget. A mechanism test does not establish task recovery or production readiness.
+
+[Evidence](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/sample-findings.json) · [Full comparison scope and success criteria](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/issue-scope.md) · [Logbook](https://github.com/Open-Athena/biotasks/blob/0d38f3e76bbfeba803fa42bc5a026d688ec0d873/experiments/32-runner-coverage/logbook.md). Detailed investigation updates are in comments.
