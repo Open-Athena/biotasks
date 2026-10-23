@@ -1,0 +1,36 @@
+{
+  "scope": "Two real Bash state/continuation fixtures, actual divergence, synthetic timeout/exception boundaries",
+  "cases": [
+    {
+      "case": "expected_failure_preserves_state_and_continues",
+      "status": "matched_recorded_exits",
+      "steps": 2
+    },
+    {
+      "case": "expected_syntax_error_continues",
+      "status": "matched_recorded_exits",
+      "steps": 2
+    },
+    {
+      "case": "unexpected_exit_stops",
+      "status": "exit_code_divergence",
+      "steps": 1
+    },
+    {
+      "case": "synthetic_client_timeout_stops",
+      "status": "client_timeout_remove_sandbox",
+      "steps": 1
+    },
+    {
+      "case": "executor_exception_stops",
+      "status": "executor_exception",
+      "steps": 1
+    }
+  ],
+  "all_assertions_passed": true,
+  "temporary_directory_removed": true,
+  "limits": [
+    "No Docker or original repository replay",
+    "No remote cancellation, image reconstruction or readiness established"
+  ]
+}
