@@ -52,6 +52,22 @@ def lightweight_manifest_inputs(state, slug):
     return total
 
 
+def bounded_publish_manifest(manifest, profile_digest):
+    """Known small streaming transfers under the already measured client profile."""
+    if manifest.get('archive_client_resource_profile_sha256') != profile_digest:
+        return None
+    rows = manifest['files']
+    total = sum(row['bytes'] for row in rows)
+    phase = [row for row in rows if row['path'] == 'evidence/phase-artifacts.tar.gz']
+    if (not rows or len(phase) != 1 or total > 32 * 1024**2
+            or any(row['bytes'] < 0 or row['bytes'] > 16 * 1024**2 for row in rows)):
+        return None
+    expanded = sum(row['bytes'] for row in phase[0]['members'])
+    if expanded > 16 * 1024**2:
+        return None
+    return {'total_object_bytes': total, 'original_phase_expanded_bytes': expanded}
+
+
 def child(state, action=None, slug=None):
     profile = json.loads((ROOT / 'archive-client-profile.json').read_text())
     os.environ.update(profile['environment'])
@@ -103,8 +119,12 @@ def main():
     assert bool(args.archive_action) == bool(args.slug)
     assert 30 <= args.max_seconds <= 900
     manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if args.archive_action == 'prepare' else None
-    lightweight = args.archive_action == 'prepare' and manifest_bytes is not None
-    estimate = (128 if lightweight else 400) * 1024**2
+    publish_bounds = None
+    if args.archive_action == 'publish':
+        publish_bounds = bounded_publish_manifest(json.loads((ROOT / 'archives' / (args.slug + '-manifest.json')).read_text()),
+            sha(ROOT / 'archive-client-profile.json'))
+    lightweight = manifest_bytes is not None or publish_bounds is not None
+    estimate = (200 if publish_bounds else 128 if lightweight else 400) * 1024**2
     assert estimate <= 500 * 1024**2
     assert available() >= max(int(2.5 * 1024**3), estimate + 2 * 1024**3) and os.getloadavg()[0] < 1.5
     with (nullcontext() if lightweight else open('/tmp/exe-codex-local-heavy.lock', 'a')) as lock:
@@ -151,8 +171,11 @@ def main():
         report = {'started_utc': started, 'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'duration_seconds': time.monotonic() - before, 'exit_code': code, 'stop_reason': stopped,
             'estimated_working_set_mib': estimate // 1024**2, 'child_peak_rss_kib': peak,
-            'resource_classification': 'bounded lightweight manifest scan' if lightweight else 'intensive archive scan/transfer',
+            'resource_classification': ('bounded lightweight streaming transfer' if publish_bounds else
+                'bounded lightweight manifest scan' if lightweight else 'intensive archive scan/transfer'),
             'heavy_lock_required': not lightweight, 'bounded_manifest_expanded_bytes': manifest_bytes,
+            'bounded_publish_inputs': publish_bounds,
+            'small_transfer_estimate_basis': ('Four same-profile original successful transfers peaked at132720..135168KiBcombined, with one stream and64MBdownload buffer; use200MiBestimate, existing active stop thresholds retained.' if publish_bounds else None),
             'walltime_limit_seconds': args.max_seconds,
             'parent_peak_rss_kib': parent_peak, 'combined_peak_upper_bound_kib': peak + parent_peak,
             'parent_initial_exec_peak_kib': parent_initial_peak,
