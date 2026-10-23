@@ -1,0 +1,5 @@
+🤖 Submitted `/exedev/biotasks29-scanpy-reconstruct-001`, one unchanged saved-recipe reconstruction at source `903925920218f829f3cad4f9f4730c086267ee53`. It is currently running. The originally failed system-pip command remains intact; no skip, repair or model call is added.
+
+The attempt uses existing reserved capacity: 4 allocated CPUs/16GiB, 2,400 seconds total, with the build capped at 1.5CPU/6GiB/1,800 seconds. Its 2.667 allocated CPU-hour hold plus previously measured 0.5637022 remains within the existing 32-hour first-stage bound. Failure is a reconstruction result, not evidence about the verifier timeout; controls start only if a usable baseline is available.
+
+[Submission and input hashes](https://github.com/Open-Athena/biotasks/blob/302cbbcb/experiments/29-runtime-limits/scanpy-reconstruction-submission.json). The image, if successfully built, remains owned only for the pending control comparison/cleanup. Failed build resources are cleaned under the exact ownership label. No task files have changed.
