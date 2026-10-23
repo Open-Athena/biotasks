@@ -1,0 +1,94 @@
+{
+  "frozen_at": "2026-10-23T00:04:08.890638+00:00",
+  "runtime_baseline_revision": "74822a224ec75204176fa768292453352c28f347",
+  "runtime_file_count": 181,
+  "changed_from_round006": [
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py"
+  ],
+  "scientific_source_and_prompts_unchanged_from_original_and_round006_respectively": true,
+  "private_input_revision": "ccb7f3d0e21f4adfcbca9b478e2f9d42f8c56b0f",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round007-inputs",
+  "private_ref_pushed": false,
+  "private_originals": [],
+  "preparation_model_calls_max": 2,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 72,
+      "baseline_number": 61,
+      "id": "pyradiomics-brain",
+      "domain": "Medical imaging",
+      "config_file": "autonomous-runs/072/configuration.json",
+      "state": "reserved_not_submitted",
+      "reserved_usd": "1.00",
+      "input_revision": "74822a224ec75204176fa768292453352c28f347",
+      "source_url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+      "source_revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+      "source_sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/seed.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/source.ipynb": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702"
+      },
+      "runtime_file_count": 181,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "50db5bac86d905e9e775a020a51cf4b53a15bfe34aec5ded828c22057f6381e4",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "88d316331a0bc352a62ddd349975c81fe1d0f0ab361f623ea8649571a99c1521"
+      }
+    },
+    {
+      "number": 73,
+      "baseline_number": 59,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "config_file": "autonomous-runs/073/configuration.json",
+      "state": "reserved_not_submitted",
+      "reserved_usd": "1.00",
+      "input_revision": "74822a224ec75204176fa768292453352c28f347",
+      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+      "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/scanpy-clustering/source-seed.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "experiments/19-repo2rlenv-notebook-pilot/reference-inputs/scanpy/clustering.ipynb": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6"
+      },
+      "runtime_file_count": 181,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "e1bfc7816efe2550b86cfd3b3a75ca40ec11015988cd35de4164c61760868362",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "3b1036bd2e22006244db652f0121d2a252251c5a2abfeb86c108596146b4c929"
+      }
+    }
+  ]
+}
