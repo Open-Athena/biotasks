@@ -20,6 +20,18 @@ def main():
 from pathlib import Path
 from decimal import Decimal
 out={'observation_only':True,'batches':[],'bootstrap':[]}
+p=Path('/work/evidence/fresh-controls.json')
+out['controls_metadata_present']=p.exists()
+if p.exists():
+ assert p.stat().st_size<2*1024**2
+ try:
+  out['controls']=[{k:r.get(k) for k in ['task','agent','state','started','finished','exit_code','reason']} for r in json.loads(p.read_text())]
+ except json.JSONDecodeError:out['controls_metadata_incomplete_at_read']=True
+p=Path('/work/evidence/fresh-task-files-unchanged.json')
+if p.exists():
+ assert p.stat().st_size<2*1024**2
+ try:out['control_task_hashes_verified']=json.loads(p.read_text())['verified']
+ except json.JSONDecodeError:out['control_hash_metadata_incomplete_at_read']=True
 p=Path('/work/evidence/history-batches.json')
 if p.exists():
  d=json.loads(p.read_text());out['history']={k:d[k] for k in ['repo','state','input_id_count','actual_cost_usd','cost_complete']}
