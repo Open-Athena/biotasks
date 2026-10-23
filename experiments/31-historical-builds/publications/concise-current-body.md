@@ -1,0 +1,9 @@
+Can replaying recorded build commands after a historical PR checkout restore the compiled environment without task-specific repairs? Follow-up to #28. Investigation remains open.
+
+**Candidate:** an opt-in hook runs the repository's recorded bootstrap commands after applying the historical source and test patches. Default-off behavior matches upstream. Twelve lifecycle checks, seven export checks, six native-validator checks and complete-package configuration/writer checks pass on synthetic inputs. These do not establish biological task recovery. [Candidate and checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json).
+
+**MACS reconstruction:** all 16 recorded actions replayed unchanged. At the original 300-second limit, smoke timed out; raising only smoke/fresh checks to 1,200 seconds made both pass with 4,924 tests passed and 348 skipped. This yielded a usable reconstructed image, with mutable dependency drift still possible. [Timing evidence](https://github.com/Open-Athena/biotasks/blob/9c2071e6/experiments/31-historical-builds/macs-longcheck-diagnosis.json).
+
+**Live comparison:** frozen MACS PR792 original validation versus the opt-in rebuild is running in separate fresh containers from that image. The original eight test paths, parser, Docker argument transport and 600-second native stage limit are fixed. Outcomes are pending. [Protocol](https://github.com/Open-Athena/biotasks/blob/52f57a92/experiments/31-historical-builds/macs-native-protocol.md).
+
+**Next:** verify the native archive, run independent export controls if recovery is claimed, and remove the retained image after readback. Two terminal reconstruction jobs used 2.49975 allocated CPU-hours; the active comparison reserves at most 10 more under the 16-hour ceiling. Zero model calls or new capacity. No production change promoted. Detailed logs remain in comments.
