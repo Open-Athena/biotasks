@@ -255,7 +255,7 @@ page = (
     .replace("__SUBTITLE__", html.escape(profile["subtitle"]))
     .replace("__FOOTER__", html.escape(profile["footer"]))
 )
-(OUTPUT / "index.html").write_text(page)
+(OUTPUT / "index.html").write_text("\n".join(line.rstrip() for line in page.split("\n")))
 (OUTPUT / "source-manifest.json").write_text(
     json.dumps(
         {
