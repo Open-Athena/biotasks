@@ -1,0 +1,21 @@
+{
+  "reproduced_general_defect": true,
+  "original_live_signature": "109 grading shell requested120s and helper returned Outer controller interrupted generated execution at130s; command included nested GNUtimeout.",
+  "causal_limit": "Minimal synthetic reproduction establishes this mechanism. Original live process ancestry was not captured, so exact original child ownership/ancestry is not independently proven.",
+  "fix": "Dedicated sandbox role UID cleanup plus regular-file output capture; bounded verified cleanup before returning a definite command timeout. Do not catch/retry unknown provider outcomes.",
+  "infrastructure_scope": "Only root inside the task sandbox and controller-reserved UIDs18001/18002/18003. Other users/root UID0 are refused before execution/cleanup. No shared-node user cleanup.",
+  "offline_checks": {
+    "passed": 197,
+    "seconds": 9.37,
+    "peak_rss_kib": 139192,
+    "includes": "Grader sessions/resume, nested-group timeout/success/interruption cleanup, role discovery/refusal/failclosed, setup/preparation/autonomous/remote logging."
+  },
+  "local_process_test_limit": "Actual subprocesses/groups/signals/file output exercised; sandbox UID allocation/discovery injected for local execution. procfs selection and root/role guards tested separately. Full sandbox behavior awaits fresh live regression.",
+  "factory_sha256": {
+    "grading_remote.py": "81357d406d17eb1b0cdde5401d47e89d2b8cc53b990e77b429da7d7e576f2f8c",
+    "test_grading.py": "b439411d447fe0743ee0a6ce3ac64c33bb835e32c71ada58dc095c8eafda319a",
+    "test_grading_process_cleanup.py": "c20bcce1cb76eacb2e69bb4ffe6f1fb4e16780c82ced5ed61819534babd7c86a"
+  },
+  "scientific_code_model_calls_cloud_runs": 0,
+  "existing116_frozen_runtime_changed": false
+}

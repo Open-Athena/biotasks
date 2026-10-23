@@ -1077,8 +1077,12 @@ import grading_remote
 os.setgroups=lambda _:None
 os.setgid=lambda _:None
 os.setuid=lambda _:None
+# This local process cannot allocate sandbox UIDs. The original process-group
+# assertion remains real; the separate tests cover dedicated-role discovery.
+os.geteuid=lambda:0
+grading_remote.stop_role_processes=lambda _:None
 try:
-    grading_remote.run_as(os.getuid(),[{sys.executable!r},'-c',{child!r}],{str(tmp_path)!r},30)
+    grading_remote.run_as(grading_remote.AUTHOR,[{sys.executable!r},'-c',{child!r}],{str(tmp_path)!r},30)
 except TimeoutError:
     print('interrupted-and-reaped')
 """

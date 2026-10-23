@@ -7,11 +7,50 @@ import shutil
 import signal
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 PRIVATE = Path("/work/grading-private")
 CASE = Path("/case")
 AUTHOR, GRADER, PROBE = 18001, 18002, 18003
+
+
+def role_processes(uid, proc=Path("/proc")):
+    """Find live processes for a dedicated role inside this disposable sandbox.
+
+    UIDs are reserved by the controller for one foreground call at a time. A
+    descendant may start a new process group or session; ancestry/group-only
+    cleanup cannot prove that the role has stopped. Never use a shared-node UID.
+    """
+    if uid not in {AUTHOR, GRADER, PROBE}:
+        raise ValueError("Only dedicated sandbox worker roles may be inspected")
+    result = []
+    for path in proc.iterdir():
+        if not path.name.isdecimal():
+            continue
+        try:
+            fields = dict(line.split(":", 1) for line in (path / "status").read_text().splitlines())
+        except (FileNotFoundError, ProcessLookupError):
+            continue
+        if uid in map(int, fields["Uid"].split()) and fields["State"].split()[0] != "Z":
+            result.append(int(path.name))
+    return result
+
+
+def stop_role_processes(uid):
+    if uid not in {AUTHOR, GRADER, PROBE} or os.geteuid() != 0:
+        raise RuntimeError("Role cleanup requires the disposable sandbox root controller")
+    deadline = time.monotonic() + 2
+    while pids := role_processes(uid):
+        for pid in pids:
+            try:
+                os.kill(pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        if time.monotonic() >= deadline:
+            raise RuntimeError("Worker process cleanup could not be verified")
+        time.sleep(0.02)
 
 
 def hashes(root):
@@ -34,6 +73,9 @@ def owned(path, uid, mode):
 
 
 def run_as(uid, argv, cwd, seconds):
+    if uid not in {AUTHOR, GRADER, PROBE} or os.geteuid() != 0:
+        raise RuntimeError("Generated execution requires a dedicated sandbox worker role")
+
     def drop():
         os.setgroups([])
         os.setgid(uid)
@@ -59,44 +101,51 @@ def run_as(uid, argv, cwd, seconds):
             )
         },
     }
-    process = subprocess.Popen(
-        argv,
-        cwd=cwd,
-        env=env,
-        preexec_fn=drop,
-        start_new_session=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        text=True,
-    )
 
     def interrupted(_signal, _frame):
         raise TimeoutError("Outer controller interrupted generated execution")
 
-    previous_handler = signal.signal(signal.SIGTERM, interrupted)
-    try:
-        stdout, stderr = process.communicate(timeout=seconds)
-        return {
-            "exit_code": process.returncode,
-            "stdout": stdout,
-            "stderr": stderr,
-            "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
-        }
-    except subprocess.TimeoutExpired:
-        return {
-            "exit_code": None,
-            "timed_out": True,
-            "stdout": "",
-            "stderr": "Generated process exceeded its timeout",
-        }
-    finally:
-        # A tool may fork children; clean the entire owned group even on success.
+    # Regular files cannot be held open as pipes by a detached descendant.
+    # Cleanup still proves the dedicated role stopped before returning output.
+    with tempfile.TemporaryFile() as stdout_file, tempfile.TemporaryFile() as stderr_file:
+        process = subprocess.Popen(
+            argv,
+            cwd=cwd,
+            env=env,
+            preexec_fn=drop,
+            start_new_session=True,
+            stdout=stdout_file,
+            stderr=stderr_file,
+        )
+        previous_handler = signal.signal(signal.SIGTERM, interrupted)
+        timed_out = False
         try:
-            os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
-            pass
-        process.communicate()
-        signal.signal(signal.SIGTERM, previous_handler)
+            try:
+                process.wait(timeout=seconds)
+            except subprocess.TimeoutExpired:
+                timed_out = True
+        finally:
+            try:
+                # Kill the original group, plus role descendants that changed it.
+                try:
+                    os.killpg(process.pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
+                stop_role_processes(uid)
+                process.wait(timeout=2)
+            finally:
+                signal.signal(signal.SIGTERM, previous_handler)
+        stdout_file.seek(0)
+        stderr_file.seek(0)
+        stderr = stderr_file.read().decode("utf-8", errors="replace")
+        return {
+            "exit_code": None if timed_out else process.returncode,
+            "timed_out": timed_out,
+            "stdout": stdout_file.read().decode("utf-8", errors="replace"),
+            "stderr": stderr + ("\nGenerated process exceeded its timeout" if timed_out else ""),
+            "role_process_cleanup_verified": True,
+            "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+        }
 
 
 def prepare(kind, omitted=None):
