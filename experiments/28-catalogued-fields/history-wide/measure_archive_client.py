@@ -1,4 +1,4 @@
-"""Bounded anonymous readback measurement, using only an already-published object."""
+"""Supervise bounded archive work or a small existing-object readback; no native/model work."""
 
 import argparse
 import datetime
@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import resource
+import runpy
 import shutil
 import signal
 import subprocess
@@ -31,7 +32,7 @@ def own_peak_kib():
         if line.startswith('VmHWM:')))
 
 
-def child(state):
+def child(state, action=None, slug=None):
     profile = json.loads((ROOT / 'archive-client-profile.json').read_text())
     os.environ.update(profile['environment'])
     os.environ['HF_XET_CACHE'] = str(state / 'archive-client-cache')
@@ -43,6 +44,10 @@ def child(state):
     assert config.get('reconstruction.download_buffer_limit') == 64000000
     assert config.get('shard.chunk_index_table_max_size') == 8388608
     assert config.get('client.ac_max_download_concurrency') == 1
+    if action:
+        sys.argv = [str(ROOT / 'archive_result.py'), action, '--state-dir', str(state), '--slug', slug]
+        runpy.run_path(str(ROOT / 'archive_result.py'), run_name='__main__')
+        return
     manifest = ROOT / 'archives/samtools__samtools-manifest.json'
     receipt = json.loads((ROOT / 'archives/samtools__samtools-receipt.json').read_text())
     assert sha(manifest) == receipt['manifest_sha256'] and receipt['anonymous_download_verified']
@@ -66,9 +71,14 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--child', action='store_true')
+    parser.add_argument('--archive-action', choices=['prepare', 'publish'])
+    parser.add_argument('--slug')
     args = parser.parse_args()
+    if args.archive_action:
+        assert args.slug in {r['slug'] for r in json.loads((ROOT.parent / 'cohort.json').read_text())}
     if args.child:
-        child(args.state_dir); return
+        child(args.state_dir, args.archive_action, args.slug); return
+    assert bool(args.archive_action) == bool(args.slug)
     estimate = 400 * 1024**2
     assert estimate <= 500 * 1024**2
     assert available() >= max(int(2.5 * 1024**3), estimate + 2 * 1024**3) and os.getloadavg()[0] < 1.5
@@ -80,11 +90,14 @@ def main():
         work = args.state_dir / 'archive-client-readback-check'; assert not work.exists(); work.mkdir()
         started = datetime.datetime.now(datetime.timezone.utc).isoformat(); before = time.monotonic()
         parent_initial_peak = own_peak_kib()
-        log = args.state_dir / 'archive-client-readback-check.log'
+        suffix = (args.slug + '-' + args.archive_action + '-' + datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%SZ')) if args.archive_action else 'readback-check'
+        log = args.state_dir / ('archive-client-' + suffix + '.log')
         stopped, sampled_peak = None, 0
         with log.open('w') as output:
-            process = subprocess.Popen([sys.executable, '-B', str(Path(__file__).resolve()),
-                '--state-dir', str(args.state_dir), '--child'], stdout=output, stderr=subprocess.STDOUT,
+            command = [sys.executable, '-B', str(Path(__file__).resolve()), '--state-dir', str(args.state_dir), '--child']
+            if args.archive_action:
+                command += ['--archive-action', args.archive_action, '--slug', args.slug]
+            process = subprocess.Popen(command, stdout=output, stderr=subprocess.STDOUT,
                 start_new_session=True)
             try:
                 while process.poll() is None:
@@ -117,8 +130,10 @@ def main():
             'parent_raw_rusage_including_launch_history_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
             'supervisor_peak_source': 'Current-exec /proc/self/status VmHWM; raw launch-history rusage retained separately',
             'source_sha256': sha(Path(__file__)), 'profile_sha256': sha(ROOT / 'archive-client-profile.json'),
+            'action': args.archive_action or 'anonymous_readback_check', 'slug': args.slug,
             'readback_working_directory_removed': not work.exists(), 'only_owned_process_group_supervised': True}
-        (ROOT / 'archive-client-measurement.json').write_text(json.dumps(report, indent=2) + '\n')
+        target = (ROOT / 'archives' / (suffix + '-resources.json')) if args.archive_action else ROOT / 'archive-client-measurement.json'
+        target.write_text(json.dumps(report, indent=2) + '\n')
         print(json.dumps(report, indent=2))
         assert code == 0 and stopped is None and peak + parent_peak <= 500 * 1024
 

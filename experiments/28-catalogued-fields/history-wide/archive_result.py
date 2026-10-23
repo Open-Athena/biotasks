@@ -5,12 +5,10 @@ import datetime
 import importlib.metadata
 import importlib.util
 import json
+import os
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
-
-from huggingface_hub import HfApi
-from huggingface_hub.utils import disable_progress_bars
 
 ROOT = Path(__file__).resolve().parent
 BASE = ROOT.parent
@@ -28,6 +26,9 @@ def main():
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--slug', required=True)
     args = parser.parse_args()
+    profile_path = ROOT / 'archive-client-profile.json'
+    os.environ.update(read(profile_path)['environment'])
+    os.environ['HF_XET_CACHE'] = str(args.state_dir / 'archive-client-cache')
     selected = next(r for r in read(BASE / 'cohort.json') if r['slug'] == args.slug)
     run = 'biotasks28-history-' + args.slug.lower().replace('__', '-') + '-001'
     terminal = read(args.state_dir / (run + '-terminal.json'))
@@ -74,6 +75,7 @@ def main():
             'repo': selected['repo'], 'ref': selected['ref'],
             'created_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'publication_checkpoint': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+            'archive_client_resource_profile_sha256': baseline.sha(profile_path),
             'native_execution_checkpoint': read(provenance_path)['source_checkpoint'],
             'retention': 'Retain while referenced; no automatic deletion.', 'files': files}
         manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
@@ -81,10 +83,14 @@ def main():
             'original_phase_members': sum(len(f.get('members', [])) for f in files), 'manifest_sha256': baseline.sha(manifest_path)}))
         return
     manifest = read(manifest_path); digest = baseline.sha(manifest_path)
+    if 'archive_client_resource_profile_sha256' in manifest:
+        assert manifest['archive_client_resource_profile_sha256'] == baseline.sha(profile_path)
     subprocess.run(['git', 'ls-files', '--error-unmatch', str(manifest_path)], capture_output=True, check=True)
     subprocess.run(['git', 'diff', '--exit-code', '--', str(manifest_path)], capture_output=True, check=True)
     capture_date = manifest['created_utc'][:10]
     prefix = 'research/28-catalogued-fields/' + capture_date + '/' + digest
+    from huggingface_hub import HfApi
+    from huggingface_hub.utils import disable_progress_bars
     disable_progress_bars(); api = HfApi()
     prior = list(api.list_bucket_tree('open-athena/biotasks', prefix=prefix, recursive=True))
     attempt_path = args.state_dir / (run + '-publication-attempt.json')
@@ -114,6 +120,8 @@ def main():
         'verified_objects': len(objects), 'verified_archive_members': sum(len(f.get('members', [])) for f in manifest['files']),
         'overwrites': False, 'temporary_readbacks_removed': True, 'retention': manifest['retention'],
         'publication_tool_checkpoint': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
+        'archive_client_resource_profile_sha256': baseline.sha(profile_path),
+        'xet_client': 'hf_xet ' + importlib.metadata.version('hf_xet'),
         'client': 'huggingface_hub ' + importlib.metadata.version('huggingface_hub')}
     (archive_dir / (args.slug + '-receipt.json')).write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt, indent=2))
