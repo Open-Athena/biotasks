@@ -44,7 +44,10 @@ A single host has a two-hour campaign deadline plus the established cleanup
 allowance, and at most one Daytona sandbox at a time. Each of five sandbox stages
 reserves $1 before creation ($5 total); reservations are conservative allowances,
 not invoices. These are within the standing $100 authorization. GLM-5.3 requests
-native `high` reasoning; the served effective effort is unverified. Preparation has one call, other tool sessions retain their
+native `high` reasoning; the served effective effort is unverified. Preparation
+has one initial call and at most one correction after programmatic validation
+rejects its response. Both responses and the validation feedback are preserved;
+a valid first response uses only one call. Other tool sessions retain their
 existing finite wall-time boundaries without added byte/token/request caps.
 Reference and solver computation are limited to 600 seconds, verifier to 120.
 The setup worker retains two reference tests. Validation has one shared quality-repair allowance; no external operator supplies repair feedback.
@@ -77,8 +80,10 @@ from the timed-out request reached tool dispatch, and earlier tool actions are
 not replayed. The backend outcome and request hold remain uncertain, every new
 attempt claims a new ledger slot, and the original deadline and turn/request
 allowances still apply. Cancellation, other transport failures, HTTP failures and
-uncertain remote tool executions are not retried by this policy. One-call
-preparation has no spare turn for recovery. This adds no worker stage or repair.
+uncertain remote tool executions are not retried by this policy. Preparation
+does not use this timeout recovery or the empty-response retry: its optional
+second response is reserved for a programmatic validation failure. This adds
+no worker stage or quality-repair allowance.
 
 Terminal outcomes are:
 

@@ -60,10 +60,16 @@ and syntax validator alone cannot enforce them.
 
 ## Preparation interface and run boundary
 
-`run_preparation.py` uses GLM-5.3, medium reasoning and strict JSON-schema
-responses. It makes exactly one call, with no automatic repair, no extra client
-token/byte limits and the existing 600-second per-request timeout. Schema or
-syntax failures preserve the response and stop for inspection. It creates no task sandbox and executes no generated code.
+`run_preparation.py` uses GLM-5.3 with native `high` reasoning requested and
+strict JSON-schema responses. The served effective reasoning level is
+unverified. The autonomous runner allows one initial call and at most one
+correction after programmatic schema or syntax validation rejects the response.
+A valid first response uses one call; both responses and exact validation
+feedback are preserved when a correction is needed. Empty, truncated or
+transport-failed responses do not receive this repair. There are no extra client
+token/byte limits; the per-request timeout remains 600 seconds. A standalone
+configuration may retain a one-call allowance. It creates no task sandbox and
+executes no generated code.
 The worker returns `export_code` instead of a full script. The controller saves
 that response as `exports.py` and constructs `reference.py` as the untouched
 baseline, two newlines, then that code. Original text is preserved by
