@@ -1,0 +1,9 @@
+# MACS PR742 reconstruction for offline preparation
+
+Reuse #31's original sixteen-action MACS bootstrap replay and pinned upstream Docker/clone/check code. Only run ownership identifiers, evidence marker, budget admission and retention purpose change. Preserve bootstrap ref `88c82d62d239d47b9c8ce9e545eeaaa6b7f695de`, recipe SHA-256 `bae10d85d1f89b111de6df621fe02a2f4226f17eb62ba80fcdc7d87760ed3e5a`, existing 1.5-CPU/6-GiB sandbox caps, and 1,200-second smoke/fresh-image check limits. No model calls or per-command repairs. Record mutable image/dependency drift.
+
+One existing healthy reserved TRC worker, four allocated CPUs, 16 GiB memory/disk, one attempt, 3,600-second job deadline: maximum four allocated CPU-hours. This is the first reservation inside #34's twelve and #33's thirty-two CPU-hour ceilings. No new capacity or accelerators. Payload carries no model/GitHub credentials. Controller storage authentication stays in the local authorized process.
+
+Preflight checks exact payload hashes and available worker headroom; persist its evidence before submission. On an existing job handle, observe it rather than resubmit. Record terminal status and archive digest, verify downloaded output evidence, then retain only the exact ownership-labeled completed image for offline preparation and controls on that worker. If reconstruction fails, preserve evidence and remove only owned resources. If subsequent work cannot proceed, submit ownership-gated image cleanup on that same worker. Remaining comparison and cleanup must fit the eight CPU-hours left in the child allowance.
+
+This job reconstructs the recorded environment only; it does not change the export or establish offline rebuild success. A separate checkpoint must bind its actual image digest to the original task and specify the dependency cache adaptation before control execution. Temporary local input copies remain ignored; remove after remote evidence has been preserved and no replay is needed.
