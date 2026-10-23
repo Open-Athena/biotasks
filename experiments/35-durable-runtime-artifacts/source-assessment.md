@@ -1,0 +1,11 @@
+# Native distribution already exists
+
+Pinned Repo2RLEnv `27d04ee8203cd5b2f20c3997d13836e5f5b64238` already has two distribution routes. Bootstrap's `image_registry` setting pushes the committed image and resolves a registry-qualified digest. `pr_runtime` then chooses that digest for a pushed image, or a local tag for a local-only image. The emitter initially labels runtime exports `local_only`; push-time preparation can rewrite them into registry or inline-recipe form. The local-only MACS comparison did not exercise those routes.
+
+`prepare_dataset_for_push` is the native preparation interface. It rewrites task Dockerfiles and reproducibility metadata without uploading to HF itself. Its registry route may discover/probe credentials and push images; explicit inline mode uses a cached bootstrap Dockerfile. `push_to_hub` also creates an HF dataset repository before preparation, so it must not be used as a read-only inspection call. No interface was executed during this assessment, and no credential store was inspected.
+
+The next comparison should reuse these native paths. Registry mode needs an approved destination, scoped push authorization, an eligible image inventory and a verified pullable digest. Explicit inline mode needs the exact cached recipe and an honest distinction between recipe reconstruction and identical image bytes. Both need independent nop/oracle controls on a different worker after original daemon state is absent. `--skip-image-push` assumes remote availability and cannot establish it.
+
+One source-level edge case needs an evidence gate: bootstrap can record a successful push even when resolving `RepoDigests` returns no reference, leaving the image digest as a local ID. Because downstream selection uses the pushed flag, metadata alone is insufficient. This is a reachable source path, not a reproduced registry failure. Require the actual registry-qualified reference and a fresh-worker retrieval/control result.
+
+Eight source files were verified against the earlier acquisition manifest and their Git blob identities. `source-assessment.json` records hashes, exact revision, source links and line ranges. Current image size, redistribution inventory, registry authorization, recipe-cache compatibility and fresh-worker behavior remain unverified. No source package execution, model call, remote job or upload occurred.
