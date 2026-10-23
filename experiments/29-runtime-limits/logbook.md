@@ -113,3 +113,7 @@ Prepared a dedicated cleanup-only job for the recorded Scanpy image, not yet sub
 ### 2026-10-23 — OHIF recorded replay completed
 
 All 18 recorded BASH actions matched their original exits, without command repairs. Smoke and fresh-image checks passed; fresh Jest output reports 121 suites and 1,446 tests passed. This establishes reconstruction only: the four original export control pairs remain pending. The archive was downloaded and verified (SHA256 `5a06cc2affd0decc127e6f31f11fafcc5cdff4b42896a14f36f6f47754d1bda5`, 56,675 bytes). Containers, checkout and tools were removed; the ownership-labeled image remains for controls. Actual allocation was 0.5530556 CPU-hours, bringing ten terminal jobs to 1.7413044 CPU-hours; separate Scanpy control reservation remains. Zero model calls.
+
+### 2026-10-23 — Checkpoint unchanged OHIF controls
+
+Prepared eight original nop/oracle controls for four OHIF exports. Verified all 40 task files and archive members, original modes, and 7,200 seconds of trial allowances. The supervisor differs from Scanpy only in identities and paths; common helper/setup/resource wrapper are unchanged. Preflight found headroom on the same reserved worker retaining the image. One attempt is bounded to 8,700 seconds, 4 CPUs/16 GiB; full reservations for Scanpy and OHIF plus terminal accounting total 21.07464 CPU-hours under 32. No model calls, new capacity or task repairs. Five entrypoints pass syntax checks. Scanpy cleanup now conservatively reserves the OHIF controls bound rather than its completed reconstruction bound.

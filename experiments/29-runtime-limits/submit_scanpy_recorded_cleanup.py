@@ -48,7 +48,7 @@ with connect_controller(config_file=args.config) as endpoint:
             assert prior['task_files_unchanged'] and prior['owned_control_resources_removed']
             terminal=json.loads((ROOT/'campaign-accounting.json').read_text())
             scanpy_extra=0 if 'biotasks29-scanpy-controls-001' in terminal['jobs'] else prior['allocated_cpu_hours_controls']
-            assert terminal['allocated_cpu_hours']+scanpy_extra+8+1/6<=32
+            assert terminal['allocated_cpu_hours']+scanpy_extra+4*8700/3600+1/6<=32
             assert is_job_finished(client.job(JobName.from_string('/exedev/biotasks29-scanpy-controls-001')).status().state)
             assert prior['archive_sha256']==json.loads((ROOT/'scanpy-controls-accounting.json').read_text())['output_archive']['sha256']
             target_worker=json.loads((ROOT/'scanpy-recorded-submission.json').read_text())['worker_id']
