@@ -1,0 +1,132 @@
+{
+  "observation_only": true,
+  "batches": [
+    {
+      "name": "batch-0000",
+      "events": {
+        "campaign_cost_reservation": 18,
+        "model_request": 18,
+        "model_response": 18,
+        "model_charge": 18,
+        "sandbox_exec_end": 22,
+        "history_listing_requested": 1,
+        "history_listing_transport_complete": 1,
+        "native_candidates_returned": 1,
+        "candidate_entered": 4,
+        "native_decision": 3,
+        "validation_start": 1,
+        "validation_exception": 1
+      },
+      "decisions": {
+        "skip:non_bug_pr": 1,
+        "skip:no_test_patch": 2
+      },
+      "dispatched_model_calls": 18,
+      "recorded_actual_usd": "0.772173",
+      "unresolved_at_observation": [],
+      "incomplete_event_lines": 0,
+      "last_event": {
+        "event": "validation_exception",
+        "time": 1792722404.4097602,
+        "pr": 794,
+        "validation": 1
+      }
+    },
+    {
+      "name": "batch-0001",
+      "events": {
+        "history_listing_requested": 1,
+        "history_listing_transport_complete": 1,
+        "native_candidates_returned": 1,
+        "candidate_entered": 7,
+        "native_decision": 6,
+        "validation_start": 5,
+        "sandbox_exec_end": 24,
+        "validation_end": 4,
+        "validation_exception": 1
+      },
+      "decisions": {
+        "skip:no_test_patch": 2,
+        "skip:no fail-to-pass tests after validation": 4
+      },
+      "dispatched_model_calls": 0,
+      "recorded_actual_usd": "0",
+      "unresolved_at_observation": [],
+      "incomplete_event_lines": 0,
+      "last_event": {
+        "event": "validation_exception",
+        "time": 1792722584.5139208,
+        "pr": 787,
+        "validation": 5
+      }
+    },
+    {
+      "name": "batch-0002",
+      "events": {
+        "history_listing_requested": 1,
+        "history_listing_transport_complete": 1,
+        "native_candidates_returned": 1,
+        "candidate_entered": 3,
+        "validation_start": 3,
+        "sandbox_exec_end": 13,
+        "validation_end": 2,
+        "native_decision": 2
+      },
+      "decisions": {
+        "skip:no fail-to-pass tests after validation": 2
+      },
+      "dispatched_model_calls": 0,
+      "recorded_actual_usd": "0",
+      "unresolved_at_observation": [],
+      "incomplete_event_lines": 0,
+      "last_event": {
+        "event": "sandbox_exec_end",
+        "time": 1792722749.2848384,
+        "pr": 783
+      }
+    }
+  ],
+  "bootstrap": [
+    {
+      "repo": "macs3-project/MACS",
+      "ref": "88c82d62d239d47b9c8ce9e545eeaaa6b7f695de",
+      "language": "python",
+      "smoke_passed": false,
+      "verify_passed": false,
+      "iterations": 18,
+      "test_cmds": [
+        "cd /workspace && python -m pytest -v"
+      ]
+    }
+  ],
+  "controls_metadata_present": false,
+  "history": {
+    "repo": "macs3-project/MACS",
+    "state": "running",
+    "input_id_count": 157,
+    "actual_cost_usd": "0.772173",
+    "cost_complete": true,
+    "backlog_count_at_last_checkpoint": 146,
+    "batch_states": [
+      {
+        "index": 0,
+        "state": "completed",
+        "selected": 100
+      },
+      {
+        "index": 1,
+        "state": "completed",
+        "selected": 100
+      },
+      {
+        "index": 2,
+        "state": "running",
+        "selected": 100
+      }
+    ]
+  },
+  "checked_utc": "2026-10-23T02:32:29.376161+00:00",
+  "run_id": "biotasks28-history-macs3-project-macs-001",
+  "read_only": true,
+  "scope": "Live snapshot of original batch/event/billing/bootstrap metadata only. Not terminal reconciliation, native validation, independent grading or a retry."
+}

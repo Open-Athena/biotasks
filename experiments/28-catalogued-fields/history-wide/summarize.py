@@ -1,6 +1,7 @@
 """Report the full frozen history cohort; missing evidence is never zero yield or free."""
 
 from decimal import Decimal
+from collections import Counter
 import hashlib
 import json
 from pathlib import Path
@@ -75,6 +76,11 @@ def summarize(root):
         pairs_started = sum(r['paired_started'] for r in coverage['batches'])
         pairs_completed = sum(r['validation_result_files'] for r in coverage['batches'])
         assert pairs_completed <= pairs_started
+        exceptions = [event for batch in coverage['batches'] for event in batch.get('validation_exceptions', [])]
+        validation_errors = Counter(event['exception_type'] +
+            ('/errno' + str(event['errno']) if event.get('errno') is not None else '') for event in exceptions)
+        cli_errors = Counter(batch['original_cli_exception_type'] for batch in coverage['batches']
+            if batch.get('original_cli_exception_type'))
         stage = ('independent_controls' if any('command' in r for r in controls) else
             'export' if result['native_exports_manifest_present'] else
             'paired_validation' if pairs_started else 'native_entry' if entered else
@@ -85,6 +91,7 @@ def summarize(root):
             native_returned_appearances=coverage['native_returned_appearances'], native_entered=entered,
             original_discovery_omitted=omitted, native_backlog=coverage['backlog_count'],
             native_skip_reasons=result['native_skip_reasons'], native_error_reasons=result['native_error_reasons'],
+            native_validation_exception_counts=dict(validation_errors), native_cli_exception_counts=dict(cli_errors),
             entered_without_decision=sum(len(r['entered_without_native_decision']) for r in coverage['batches']),
             paired_started=pairs_started, paired_completed=pairs_completed,
             native_stage_timeouts=sum(r['exit_code'] == 124 and r['stderr_timeout_marker'] for r in result.get('native_stage_executions', [])),
@@ -119,6 +126,7 @@ def summarize(root):
         'cost_per_verified_task_usd': str(cost / verified_count) if complete and verified_count else None,
         'cost_per_successful_repository_usd': str(cost / successful) if complete and successful else None,
         'ratios': 'Full-cohort ratios must include all ten failures/attempts and require complete evidence; zero denominators remain undefined. Inventory is not an eligible or validated-task denominator.',
+        'exception_counts': 'Validation and CLI exception channels can describe the same failure and must not be added together; censored candidates remain separate.',
         'repositories': rows}
 
 
@@ -143,6 +151,11 @@ def main():
         'Known terminal history charges: $' + result['known_terminal_history_cost_usd'] + '. '
         'Active/unreported charges excluded: ' + str(result['active_and_unreported_costs_excluded']) + '.', '',
         result['completion_not_asserted'], '']
+    for row in result['repositories']:
+        if row.get('native_validation_exception_counts') or row.get('native_cli_exception_counts'):
+            lines += [row['repo'] + ': original validation exceptions ' + json.dumps(row.get('native_validation_exception_counts', {}))
+                + '; original CLI exceptions ' + json.dumps(row.get('native_cli_exception_counts', {})) + '.', '']
+    lines += [result['exception_counts'], '']
     (ROOT / 'cohort-report.md').write_text('\n'.join(lines))
     print(json.dumps({k:v for k,v in result.items() if k != 'repositories'}, indent=2))
 

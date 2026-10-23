@@ -20,3 +20,7 @@ Result evidence complete: False.
 Known terminal history charges: $1.483422. Active/unreported charges excluded: True.
 
 Final all-ten live accounting, fresh archive verification, controller/worker/local cleanup and issue conclusion/readback/closure remain separate requirements.
+
+samtools/samtools: original validation exceptions {}; original CLI exceptions {"UnicodeDecodeError": 1}.
+
+Validation and CLI exception channels can describe the same failure and must not be added together; censored candidates remain separate.

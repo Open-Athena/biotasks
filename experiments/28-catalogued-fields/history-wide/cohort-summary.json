@@ -16,6 +16,7 @@
   "cost_per_verified_task_usd": null,
   "cost_per_successful_repository_usd": null,
   "ratios": "Full-cohort ratios must include all ten failures/attempts and require complete evidence; zero denominators remain undefined. Inventory is not an eligible or validated-task denominator.",
+  "exception_counts": "Validation and CLI exception channels can describe the same failure and must not be added together; censored candidates remain separate.",
   "repositories": [
     {
       "repo": "samtools/samtools",
@@ -42,6 +43,10 @@
         "empty_source_patch": 28
       },
       "native_error_reasons": {},
+      "native_validation_exception_counts": {},
+      "native_cli_exception_counts": {
+        "UnicodeDecodeError": 1
+      },
       "entered_without_decision": 1,
       "paired_started": 0,
       "paired_completed": 0,
@@ -83,6 +88,8 @@
         "no fail-to-pass tests after validation": 2
       },
       "native_error_reasons": {},
+      "native_validation_exception_counts": {},
+      "native_cli_exception_counts": {},
       "entered_without_decision": 1,
       "paired_started": 5,
       "paired_completed": 4,

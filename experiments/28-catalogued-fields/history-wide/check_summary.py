@@ -47,6 +47,10 @@ def main():
                 'native_parent_stop_reason': 'fixture', 'native_skip_reasons': {}, 'native_error_reasons': {},
                 'owned_cleanup_empty': True}
             result['native_stage_executions'] = [{'exit_code': 124, 'stderr_timeout_marker': True} for _ in range(2)] if good else []
+            if slug == '1':
+                batch = result['coverage']['batches'][0]
+                batch.update(paired_started=1, validation_exceptions=[{'pr': 2, 'exception_type': 'OSError', 'errno': 7}],
+                    original_cli_exception_type='OSError', entered_without_native_decision=[2])
             result_path = root / 'results' / (slug + '.json'); save(result_path, result)
             manifest = root / 'archives' / (slug + '-manifest.json')
             save(manifest, {'files': [{'path': 'evidence/phase-artifacts.tar.gz', 'sha256': 'fixture-phase'}]})
@@ -62,6 +66,9 @@ def main():
         assert complete['new_to_baseline_primary_verified_with_accepted_evidence'] == 0
         assert complete['repositories'][0]['native_stage_timeouts'] == 2
         assert complete['repositories'][0]['exports_with_native_stage_timeouts'] == 1
+        assert complete['repositories'][1]['native_validation_exception_counts'] == {'OSError/errno7': 1}
+        assert complete['repositories'][1]['native_cli_exception_counts'] == {'OSError': 1}
+        assert complete['repositories'][1]['entered_without_decision'] == 1
         missing = root / 'results/9.json'; original = missing.read_bytes(); missing.unlink()
         partial = summarize(root)
         assert not partial['all_ten_result_evidence_complete'] and partial['cost_per_verified_task_usd'] is None
