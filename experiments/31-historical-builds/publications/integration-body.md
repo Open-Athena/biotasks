@@ -1,0 +1,11 @@
+Can rebuilding after historical resets restore correct-revision code without per-task repairs? Follow-up to #28, initially scoped to MACS; investigation remains open.
+
+**Candidate evidence:** an opt-in hook replays recorded bootstrap commands after patch application in native validation and exported verification. Twelve compiled lifecycle checks, seven graded-export checks and six complete native-validator checks pass. The native check produces the expected F2P/P2P sets; pre/post build failures stop validation. Default-off outcomes and commands match upstream.
+
+**Integration:** the complete patched upstream package loads configuration, constructs the registered pipeline, builds tasks and writes Harbor files for default/on/off settings. Missing rebuild commands and unknown options are rejected. No external calls occur in these checks. This is synthetic local evidence, not biological recovery or a full generation CLI/Docker/Harbor run; the dependency environment is recorded and is not upstream's full locked environment.
+
+**Baseline barrier:** MACS PR792 is frozen as the earliest retained extension-removal pair. Its saved reconstruction recipe contains three commands that fail default-shell syntax checks; the original image is unavailable. Saved rebuild commands also contain unquoted version constraints. No command or dependency was repaired.
+
+**Remaining:** establish a faithful executable baseline before the original/candidate MACS comparison. Correct-revision compilation in a fixture does not prove historical dependency compatibility or task suitability. Zero model calls and no remote jobs in this follow-up; research only, nothing promoted to main.
+
+[Native outcomes](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json) · [Package integration](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/package-integration-results.json) · [Frozen MACS case](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/macs-case.json) · [Full scope](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/issue-scope.md). Detailed logs remain in comments.

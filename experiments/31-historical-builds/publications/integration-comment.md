@@ -1,0 +1,9 @@
+🤖 Six cases now pass through the complete imported native validator and original parser with actual compiled unittest execution via a local path adapter. Enabled rebuilding yields the exact expected F2P/P2P sets; failed pre/post builds and invalid test patches fail before tests. Disabled outcomes and commands match upstream.
+
+Separately acquired the complete pinned source (353 selected files verified against Git blob identities), applied the research patch to a disposable copy, and exercised actual option/config loading, registered construction, task building and Harbor writing for default/on/off. Missing rebuild commands and unknown options are rejected. No network/subprocess operation was attempted after applying the patch. An isolated, hash-verified tomli-w wheel supplied the writer dependency without changing the shared or biological runtime.
+
+These checks are not full CLI generation, Docker execution or MACS recovery. The check environment includes Rich14.2.0below upstream's declared15.0minimum; versions are recorded. Temporary fixture/source copies were removed; zero model calls and no remote jobs.
+
+Frozen MACS792as the earliest original extension-removal pair, with retained base/head and log hashes. Its saved recipe still has three default-shell syntax failures. No per-repository command repair was applied; faithful reconstruction remains the prerequisite for the biological comparison.
+
+[Native checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json) · [Package checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/package-integration-results.json) · [Frozen case](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/macs-case.json).
