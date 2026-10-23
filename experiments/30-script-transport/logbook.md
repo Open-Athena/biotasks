@@ -29,3 +29,7 @@ Read-only accounting verifies all three jobs terminal/one attempt each, with 0.0
 ## 2026-10-23 — final synthetic-probe evidence
 
 Probe004 is SUCCEEDED: both original and candidate have runnable Bash processes with CPU ticks increasing after client timeout. Representative behavior and exact 1,080,000-byte candidate delivery pass. All four original handles are terminal/one attempt each; total allocated attempt CPU-hours 0.05441777772373624, $0 model calls/spend. All owned containers and downloaded tool files removed; shared immutable base cache retained. Raw result-log readbacks and payload/checkpoint bindings are preserved. Redundant parsed-result copies were removed only after equality with committed attempt records. Live PR comparisons remain required.
+
+## 2026-10-23 — fixed live-case selection and acquisition
+
+Selected Matchms958 as the first recorded errno-7 validation exception by original batch order, and Matchms671 as a known-success control independently verified in #29. Selection was committed before acquisition. Both current PR metadata responses match the original base/head SHAs. Bounded pinned-ref compare diff fetches returned 424,646 and 5,430 bytes respectively. Raw patches stay under ignored private inputs. Original failed script/diff bytes were not retained, so a reconstructed-input comparison must not claim exact byte replay. No live transport rerun yet; no easier-case replacement.
