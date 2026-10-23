@@ -1,0 +1,101 @@
+{
+  "frozen_at": "2026-10-23T03:03:14.643802+00:00",
+  "runtime_baseline_revision": "e1db602336afe8b528c534e2f193995e75173372",
+  "runtime_file_count": 184,
+  "changed_from_active_round012": [],
+  "original_source_assets_unchanged": true,
+  "private_input_revision": "7b37f798fba61313b70ffc30f3eed702481a16e0",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round012-queued-inputs",
+  "private_ref_pushed": false,
+  "private_originals": [
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb",
+      "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "bytes": 423792
+    }
+  ],
+  "preparation_model_calls_max": 2,
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 82,
+      "baseline_number": 56,
+      "id": "matchms-spectral-matching",
+      "domain": "Metabolomics",
+      "config_file": "autonomous-runs/082/configuration.json",
+      "state": "reserved_waiting_for_slot",
+      "reserved_usd": "1.00",
+      "input_revision": "7b37f798fba61313b70ffc30f3eed702481a16e0",
+      "source_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb",
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/seed.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d"
+      },
+      "runtime_file_count": 184,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "e38fa976fce7643fc07c17b88ea9a5452bf8b4f8997dbe28efb7c0625e0a047b",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "02ea462fccb410684bfb92e476b425ab3564b6da1c02a924f246ef18aebefac6"
+      }
+    },
+    {
+      "number": 83,
+      "baseline_number": 59,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "config_file": "autonomous-runs/083/configuration.json",
+      "state": "reserved_waiting_for_slot",
+      "reserved_usd": "1.00",
+      "input_revision": "e1db602336afe8b528c534e2f193995e75173372",
+      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+      "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/scanpy-clustering/source-seed.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "experiments/19-repo2rlenv-notebook-pilot/reference-inputs/scanpy/clustering.ipynb": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6"
+      },
+      "runtime_file_count": 184,
+      "runtime_files_identical": true,
+      "payload_files": {
+        "biotasks.tar": "7c85de8c30e0e2d96f410b424e0f520bdd75513e83c729d8bee433b2cbcb7c00",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "3615b94506986db17be3cbd4d03821f451635471f95c4d6f3976458289cf3733"
+      }
+    }
+  ],
+  "preparation_response_recovery": false,
+  "generation_retries_per_author": 1,
+  "generation_failure_types_share_allowance": true,
+  "dispatch_requires_free_authorized_slot": true
+}
