@@ -114,6 +114,14 @@ Keep one small setup directory with these files:
   test in the current workspace does not establish a clean rebuild. Preserve
   every required system package in the submitted recipe; do not rely on inherited
   installation state or cached builds.
+  The controller records direct/manual Debian packages before exploration in
+  `/work/base-system-packages.json`. Before scientific dispatch it checks that
+  packages you added are declared, including additions made by staging code.
+  Declare required additions or remove unused exploratory installations; do not
+  relabel packages as automatic to bypass the check. A library installed by one
+  of your earlier commands is not part of the original base image. This check
+  does not prove completeness: transitive/unmanaged dependencies and filesystem
+  side effects still require the separate clean replay.
 - `dependency-exclusions.json`: `{"files": []}` if no unused answer asset was
   established. Otherwise, each item needs `distribution` (installed distribution
   name), `path` (exact distribution-relative file path), the observed `sha256`,

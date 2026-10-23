@@ -120,6 +120,11 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
 )
 @pytest.mark.parametrize("reviewed", [False, True])
 def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, failure, reviewed):
+    if failure == "question-joint":
+        # Load shared fixture definitions before replacing worker modules below;
+        # importing them afterward depends on test collection/import order.
+        from test_grading import candidate, probe
+
     monkeypatch.setattr(m, "HERE", tmp_path)
     monkeypatch.setenv("BIOTASKS_ARTIFACT_PREFIX", "private://fixture")
     monkeypatch.setenv("BIOTASKS_CONVERSION_PYTHON", "unused")
@@ -349,8 +354,6 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
 
         monkeypatch.setattr(question_repair, "revise_question", revision)
         if failure == "question-joint":
-            from test_grading import candidate, probe
-
             monkeypatch.setattr(
                 question_repair,
                 "repair_context",

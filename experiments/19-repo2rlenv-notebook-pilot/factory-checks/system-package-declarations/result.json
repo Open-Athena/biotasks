@@ -1,0 +1,34 @@
+{
+  "recorded_at": "2026-10-23T20:46:22.012890+00:00",
+  "trigger": "panel-rounds/022/result-122.json",
+  "general_change": "Record base direct/manual Debian packages before worker exploration. Before and after submitted setup, require newly manual packages to be declared or removed before scientific dispatch; preserve the inventory and feedback. GLM still chooses required packages.",
+  "bounds_unchanged": "No extra stage, model call cap, repair/reference allowance, sandbox, time reset or source edit. Invalid pre-dispatch recipe validation consumes only existing setup/time budget.",
+  "limitations": [
+    "This catches newly manual Debian package additions, including exploratory/staging installs. It does not prove a clean rebuild, detect all transitive/unmanaged/filesystem changes, or establish scientific correctness. Clean replay remains required.",
+    "A still-unreproducible recipe remains a failed generated setup, not proof the notebook itself is broken."
+  ],
+  "offline_verification": {
+    "focused_setup_environment_controller": {
+      "passed": 114,
+      "seconds": 3.24,
+      "peak_rss_kib": 137000
+    },
+    "full_available_suite": {
+      "passed": 906,
+      "deselected": 1,
+      "seconds": 45.31,
+      "peak_rss_kib": 337144,
+      "junit_sha256": "f47d98cb87ae2875740a9d616e8cfd580098d1ac7a65888878d174166d48caa8",
+      "junit_bytes": 153430,
+      "remaining_unverified_checks": [
+        "test_artifact_shell_timeout.py: one optional pytest-asyncio case",
+        "test_hdf5_profile.py: two optional h5py cases",
+        "test_native_inference.py: one full Harbor optional-dependency case",
+        "test_coverage.py::test_hdf5_shapes_only_and_external_links_are_not_followed: one optional h5py case"
+      ]
+    },
+    "quality": "Repository pre-commit Ruff lint/format and ty passed; changed experiment Python files explicitly linted/formatted.",
+    "regression": "Exploratory and staging-installed packages omitted from the recipe fail before any scientific dispatch; a corrected architecture/version-qualified declaration uses the same unspent computation slot. Original scientific source stays unchanged. Inventory failures fail closed. A test fixture import-order dependency exposed by the focused order was also corrected."
+  },
+  "live_validation": "Pending future fresh123. Original121/122 payloads and scientific records are unchanged."
+}

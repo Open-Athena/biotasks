@@ -60,6 +60,7 @@ class FakeRemote:
         self.setup_failure = setup_failure
         self.missing_output = missing_output
         self.mutated_input = mutated_input
+        self.manual_packages = {"base-runtime"}
 
     async def upload(self, local, remote):
         self.files[remote] = local.read_bytes()
@@ -70,6 +71,8 @@ class FakeRemote:
 
     async def command(self, argv, seconds, label, *, cwd="/work"):
         self.events.append((label, self.blocked, cwd))
+        if argv == ["apt-mark", "showmanual"]:
+            return {"exit_code": 0, "log": "\n".join(sorted(self.manual_packages)) + "\n"}
         if label.startswith("dependency-assets-"):
             self.files["/work/dependency-assets.json"] = json.dumps(
                 {
@@ -133,6 +136,59 @@ def session(tmp_path, remote=None):
         reference_seconds=10,
         max_tests=1,
     )
+
+
+@pytest.mark.parametrize("installed_by_staging", [False, True])
+def test_unrecorded_exploratory_packages_return_feedback_before_scientific_dispatch(
+    tmp_path, installed_by_staging
+):
+    class Packages(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if installed_by_staging and label.startswith("setup-"):
+                self.manual_packages.add("additional-runtime:amd64")
+            return await super().command(argv, seconds, label, **kwargs)
+
+    async def run():
+        remote = Packages()
+        s = session(tmp_path, remote)
+        await s.initialize()
+        baseline = json.loads((tmp_path / "base-system-packages.json").read_text())
+        assert baseline["manual_packages"] == ["base-runtime"]
+        if not installed_by_staging:
+            remote.manual_packages.add("additional-runtime:amd64")
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "candidate_invalid"
+        assert "additional-runtime" in result["error"]
+        assert s.tests == 0 and s.last_pass is None
+        assert not any(label.startswith("reference-") for label, _, _ in remote.events)
+        phase = "after-setup" if installed_by_staging else "before-setup"
+        audit = json.loads((tmp_path / f"trials/1/system-package-audit-{phase}.json").read_text())
+        assert audit["undeclared_introduced_packages"] == ["additional-runtime"]
+        # A corrected declaration, including a version/architecture, can use
+        # the same still-unspent computation slot. No scientific source edit.
+        original = remote.files["/work/setup/analysis.py"]
+        remote.files["/work/setup/system-packages.json"] = b'["additional-runtime:amd64=1:2.0"]'
+        result = json.loads(await s.test_reference())
+        assert result["status"] == "reference_executed" and s.tests == 1
+        assert remote.files["/work/setup/analysis.py"] == original
+
+    asyncio.run(run())
+
+
+def test_package_inventory_fault_is_not_a_validated_recipe(tmp_path):
+    class BrokenInventory(FakeRemote):
+        async def command(self, argv, seconds, label, **kwargs):
+            if argv == ["apt-mark", "showmanual"]:
+                return {"exit_code": 1, "log": "inventory unavailable"}
+            return await super().command(argv, seconds, label, **kwargs)
+
+    async def run():
+        s = session(tmp_path, BrokenInventory())
+        with pytest.raises(RuntimeError, match="installation state"):
+            await s.initialize()
+        assert s.tests == 0 and s.last_pass is None
+
+    asyncio.run(run())
 
 
 def test_import_inventory_describes_conditional_imports_without_executing():

@@ -263,6 +263,7 @@ class SetupSession:
         self.last_pass = None
         self.repair_exports = repair_exports
         self.effective_preparation = None
+        self.base_manual_packages = None
         self.frozen = self.root / "frozen"
         self.root.mkdir(parents=True, exist_ok=True)
 
@@ -277,7 +278,48 @@ class SetupSession:
         for name in ("original.py", "exports.py", "plan.json"):
             await self.remote.upload(frozen / name, "/work/frozen/" + name)
         await self.remote.upload(frozen / "original.py", "/work/setup/analysis.py")
+        self.base_manual_packages = await self.manual_packages("base-system-packages")
+        baseline = self.root / "base-system-packages.json"
+        save_record(baseline, {"manual_packages": sorted(self.base_manual_packages)})
+        await self.remote.upload(baseline, "/work/base-system-packages.json")
         await self.remote.network(False)
+
+    async def manual_packages(self, label):
+        reply = await self.setup_command(["apt-mark", "showmanual"], 30, label)
+        if reply["exit_code"]:
+            raise RuntimeError("Cannot inspect the base/system package installation state")
+        packages = reply["log"].splitlines()
+        if any(not re.fullmatch(r"[a-z0-9][a-z0-9+.-]*(?::[a-z0-9-]+)?", p) for p in packages):
+            raise RuntimeError("Unrecognized manual package inventory")
+        return {p.split(":", 1)[0] for p in packages}
+
+    async def audit_system_packages(self, recipe, directory, phase):
+        """Catch unrecorded exploratory installs; not a clean-rebuild proof."""
+        if self.base_manual_packages is None:
+            raise RuntimeError("System-package baseline must precede worker exploration")
+        current = await self.manual_packages(f"system-package-audit-{self.test_requests}-{phase}")
+        declared = {p.split("=", 1)[0].split(":", 1)[0] for p in recipe.system_packages}
+        introduced = current - self.base_manual_packages
+        missing = sorted(introduced - declared)
+        save_record(
+            directory / f"system-package-audit-{phase}.json",
+            {
+                "base_manual_packages": sorted(self.base_manual_packages),
+                "current_manual_packages": sorted(current),
+                "introduced_manual_packages": sorted(introduced),
+                "declared_packages": sorted(declared),
+                "undeclared_introduced_packages": missing,
+                "scope": "Direct/manual Debian package additions only; clean replay remains required.",
+            },
+        )
+        if missing:
+            raise ValueError(
+                "System packages installed during exploration/setup are missing from "
+                "system-packages.json: "
+                + ", ".join(missing)
+                + ". Declare required packages or remove unused exploratory installations; "
+                "do not change package auto/manual flags to bypass the check."
+            )
 
     async def setup_command(self, argv, seconds, label):
         if type(seconds) is not int or seconds < 1:
@@ -354,6 +396,7 @@ class SetupSession:
         try:
             recipe, script, hashes = await self.capture_candidate(directory / "candidate")
             record["candidate_sha256"] = hashes
+            await self.audit_system_packages(recipe, directory, "before-setup")
             import difflib
 
             changed = (directory / "candidate/analysis.py").read_text()
@@ -397,6 +440,7 @@ class SetupSession:
             if setup["exit_code"] != 0:
                 record["status"] = "setup_failed"
                 return json.dumps(record)
+            await self.audit_system_packages(recipe, directory, "after-setup")
             # Staging must not rewrite the candidate after its snapshot was taken.
             _, _, after_setup = await self.capture_candidate(directory / "after-setup")
             if after_setup != hashes:

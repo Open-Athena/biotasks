@@ -1,0 +1,49 @@
+{
+  "number": 122,
+  "observed_at": "2026-10-23T20:46:22.010213+00:00",
+  "original_pipeline_status": "infrastructure_failed",
+  "terminal_host_state": "FAILED",
+  "audited_state": "generated_environment_recipe_not_reproducible",
+  "scientific_acceptance": false,
+  "native_run": false,
+  "solver_run": false,
+  "publication_ready": false,
+  "source_rejected_as_broken": false,
+  "source_quality_conclusion": null,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 436.273,
+  "original_archive_files": 454,
+  "original_archive_bytes": 5681853,
+  "original_archive_manifest_sha256": "c02b64e341cc82e4b007f4c91bf732c3b9591ab0626c88f702c0d310bff9ab29",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 2,
+  "complete_root_export_verified": true,
+  "cause": "GLM explicitly installed libexpat1 during exploration, then submitted an empty system-packages.json and misdescribed the library as present in the base image. Two controlled tests ran in that modified sandbox (one export failure, one pass). Fresh replay on the declared recipe failed at the first import with missing libexpat.so.1. This is generated setup reproducibility failure, not an original-source defect or a provider outage.",
+  "source_unchanged": true,
+  "reference_tests_used": 2,
+  "shared_preparation_repair_used": 1,
+  "evidence": {
+    "setup-raw/operations/0009/output.log": {
+      "sha256": "068ebad17a5d41f2170a2b2369d8d6377864f8f6fad75d0eddd518dcd1dc9c30",
+      "bytes": 157
+    },
+    "setup-raw/operations/0012/operation.json": {
+      "sha256": "45936791f4030d299b494d13dd8da021b7fc47aff3e207abb6e8da56abeacd2b",
+      "bytes": 1173
+    },
+    "setup-raw/operations/0012/output.log": {
+      "sha256": "f1c55c3a1bb3602867e1ad9f2c977fe6c33a0999c17410c3ef2654ffb6be9b54",
+      "bytes": 162
+    },
+    "reference/candidate/system-packages.json": {
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "bytes": 3
+    },
+    "replay/operations/0007/output.log": {
+      "sha256": "326ccb9f32d14d4744f613c1db5a2289fe19edbe7dac854ee17f9bc49a4e0464",
+      "bytes": 722
+    }
+  },
+  "repair_for_this_frozen_run": false
+}
