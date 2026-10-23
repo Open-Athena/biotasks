@@ -270,8 +270,10 @@ def main():
         'audit_source_sha256': sha(Path(__file__)), 'all_ten_accounting_audited': complete,
         'all_ten_execution_audited': execution_complete,
         'execution_only': args.execution_only,
-        'retention_acceptance_complete': all(row['archive_receipt_accepted'] for row in reports),
-        'scope': 'Original payload/source/charges/reservations/serial controls/terminal handles/resources/retention accounting. Scientific assessment, fresh archive recheck, lifecycle cleanup and publication remain separate.',
+        'all_ten_retention_audited': execution_complete and all(row['archive_receipt_accepted'] for row in reports),
+        'unaccepted_archive_repositories': [row['repo'] for row in reports if not row['archive_receipt_accepted']],
+        'scope': ('Execution-only original payload/source/charge/reservation/serial-control/terminal/resource audit; missing retention remains unaccepted. Not full accounting, issue completion or a retention waiver.'
+            if args.execution_only else 'Original payload/source/charges/reservations/serial controls/terminal handles/resources/retention accounting. Scientific assessment, fresh archive recheck, lifecycle cleanup and publication remain separate.'),
         'repositories': reports}
     if execution_complete:
         cpu = sum((Decimal(r['allocated_cpu_hours']) for r in reports), Decimal('0'))
