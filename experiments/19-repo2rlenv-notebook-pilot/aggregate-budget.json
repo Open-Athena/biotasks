@@ -3,8 +3,8 @@
   "ceiling_before_credits": "100.00",
   "authorization_date": "2026-10-13",
   "basis": "User authorized up to $100 total to complete issue 19 and routine recovery/retries without repeated approval.",
-  "reserved_upper_bound_usd": "98.25",
-  "unallocated_usd": "1.75",
+  "reserved_upper_bound_usd": "99.00",
+  "unallocated_usd": "1.00",
   "reservations": [
     {
       "scope": "original pilot 001",
@@ -81,13 +81,15 @@
     },
     {
       "scope": "artifact-materialization-003: focused stage inputs and correctable tool argument errors",
-      "ceiling_usd": "1.00",
-      "reconciliation": "Released $1 against verified sandbox lifetime/profile; see budget-reconciliation-materialization003.json."
+      "ceiling_usd": "0.50",
+      "reconciliation": "budget-reconciliation-materialization003-004-rounding.json",
+      "state": "terminal_reconciled"
     },
     {
       "scope": "artifact-materialization-004: schema-response finalization of unchanged captured GLM draft, with controlled execution feedback",
-      "ceiling_usd": "1.00",
-      "reconciliation": "Released $1 against verified single-sandbox lifetime/profile; see budget-reconciliation-materialization004.json."
+      "ceiling_usd": "0.25",
+      "reconciliation": "budget-reconciliation-materialization003-004-rounding.json",
+      "state": "terminal_reconciled"
     },
     {
       "scope": "artifact-materialization-005: finalization retry after client timeout, longer authoring request wait within unchanged campaign deadline",
@@ -477,6 +479,18 @@
       "state": "terminal_cleanup_verified",
       "basis": "Standing$100 authorization; no increase to CPU/RAM/disk, computation, setup or campaign time limits.",
       "reconciliation": "autonomous-runs/075/budget-reconciliation.json"
+    },
+    {
+      "scope": "autonomous-panel-076: originalpyradiomics-brainseed, common foreground/setup-accounting/timeout-aligned recovery factory",
+      "ceiling_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch."
+    },
+    {
+      "scope": "autonomous-panel-077: originalscanpy-clusteringseed, common foreground/setup-accounting/timeout-aligned recovery factory",
+      "ceiling_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "basis": "Existing$100 approval, original4CPU/8GiB/10GiB and7200+300seconds limits; fresh$1full-lifetime hold before dispatch."
     }
   ],
   "actual_provider_invoice_usd": null,
@@ -485,5 +499,5 @@
     "Recovery worker 013 carries prior campaign 012 holds and does not add another $5 reservation.",
     "Any further run must reserve within the unallocated balance before submission."
   ],
-  "reconciliation_date": "2026-10-23T01:16:04.398136+00:00"
+  "reconciliation_date": "2026-10-23T01:20:45.062908+00:00"
 }
