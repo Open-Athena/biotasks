@@ -1,0 +1,391 @@
+{
+  "source": {
+    "member": "bootstrap/macs3-project__MACS/88c82d62d239__74ba7084/bootstrap.json",
+    "sha256": "7d288c6cdbdf72ff626ef957df73324da6c832fc88be9859b4b4328b6341e9ff"
+  },
+  "original_phase_sha256": "9c5a19b814006b3df98d085de203807b165c6849fa4f81cd7b85f915812e7d43",
+  "bootstrap_ref": "88c82d62d239d47b9c8ce9e545eeaaa6b7f695de",
+  "original_image_digest": "sha256:4d6e17bc2442091878cb458d29d0c67e2f2370831ea9865c860750bd5a2918cc",
+  "smoke_passed": false,
+  "verify_passed": false,
+  "saved_rebuild_cmds": [
+    "apt-get update -qq && apt-get install -y git build-essential curl ca-certificates zlib1g-dev",
+    "cd /workspace && git submodule update --init --recursive",
+    "pip install numpy>=1.25 Cython>=3.0 scipy pandas anndata hmmlearn scikit-learn pytest psutil",
+    "cd /workspace && pip install -e ."
+  ],
+  "reconstruction_syntax_checks": [
+    {
+      "dockerfile_line": 7,
+      "command_sha256": "b649b7ebf2b0b9f3cb31abfc804d648418a6388b5d3763339e0036e5e657e86a",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 8,
+      "command_sha256": "80a746dae7ee2735df7cbe9bc0267c5c1462aa7a0132c393e5822a57eb454be0",
+      "syntax_exit": 2,
+      "diagnostic": "/bin/bash: -c: line 1: syntax error near unexpected token `newline'\n/bin/bash: -c: line 1: `cat /workspace/setup.py && cat /workspace/requirements.txt</p>'"
+    },
+    {
+      "dockerfile_line": 9,
+      "command_sha256": "553ed65363dee0e41f87d30ce588e549c09e85d89bfdac5800933468f8bffc02",
+      "syntax_exit": 2,
+      "diagnostic": "/bin/bash: -c: line 1: syntax error near unexpected token `newline'\n/bin/bash: -c: line 1: `cat /workspace/setup.py && echo \"---\" && cat /workspace/requirements.txt</p>'"
+    },
+    {
+      "dockerfile_line": 10,
+      "command_sha256": "b55e76992513a94dab846c04890b244827ac4c9ccfc7758d0e4c66a84b1605b4",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 11,
+      "command_sha256": "9b1a0d5df4eb0acdb070e8860255540850f2dc8fabd80cf9269e45f5f32c415a",
+      "syntax_exit": 2,
+      "diagnostic": "/bin/bash: -c: line 1: syntax error near unexpected token `newline'\n/bin/bash: -c: line 1: `apt-get install -y git build-essential curl ca-certificates zlib1g-dev 2>&1 | tail -5</p>'"
+    },
+    {
+      "dockerfile_line": 12,
+      "command_sha256": "4994678a7ca0bc60c79005c722a3ebc408c0e6fdba1a93a02ddacbb7d09352df",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 13,
+      "command_sha256": "c855686950679bd2734bb27568580d2d58608eef7805f2c97b904e02ba0d5521",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 14,
+      "command_sha256": "a2448e116896a95b96e7fc7752c838cbc92e07e1fbc102d0e7580858e89e1674",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 15,
+      "command_sha256": "c5e46584cfb3a591cf85eb46a8744a6c97bbf4adc1d60b05d17a1eafb0579dda",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 16,
+      "command_sha256": "b55631cdac623030644345fd07bb7c4710d7d562a99a81705d92ef269266f431",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 17,
+      "command_sha256": "52fdeb50cce8fedf30032f9ac87eec5fc5b9c2ea7bef2acf86ddef767099bad3",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 18,
+      "command_sha256": "de912119a1ee350988caffd72bb7ca85f6d623e6e23cdbd02190980028ddc549",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 19,
+      "command_sha256": "71859fad57018408d89d01dbd010f67232ac2fce07e8c87f3c59c0185a4e6714",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 20,
+      "command_sha256": "8dc5d5b31e5ddcf2af7c6453e3b9e1cc55d5b397a5aca7069c9772bac3c36e51",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 21,
+      "command_sha256": "64260ea05bc2d5afb57123ced43548a6d9bd4210474ffb8651acae65a5e3e9a0",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    },
+    {
+      "dockerfile_line": 22,
+      "command_sha256": "ae4b125899817cb13fff4454701b5c45f6cf2ca98a179846c235cd1186d86059",
+      "syntax_exit": 0,
+      "diagnostic": ""
+    }
+  ],
+  "syntax_error_count": 3,
+  "pairs_with_extension_removal": [
+    {
+      "member": "native-observations/batch-0003/validation-001-pr-742.json.gz",
+      "sha256": "0b7c271986a75b07981037cd35835d8a9122673059d809fdc4d62755f0a42f31",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0008/validation-001-pr-449.json.gz",
+      "sha256": "6966fdb529b8d40f51bdfd61072d9c922987fc2e4fec551fc67901f4043be667",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0006/validation-001-pr-619.json.gz",
+      "sha256": "81706fe86cc5331c30b5556c312e9bb247194e352e258037b38e5f90dd8fdbfb",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0001/validation-001-pr-792.json.gz",
+      "sha256": "87d8b29780942079bbc65eae6d4853285ae155f6f98dd3ffc0d659c054d9a74f",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0009/validation-001-pr-307.json.gz",
+      "sha256": "1f0670cc54fb44fb241f5aa3f6696ab84959e676c55f692270da1f5fd1d66435",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0004/validation-001-pr-712.json.gz",
+      "sha256": "d6c72c97913d1b1e4c8656aaccb84ec2184c0ac6ed7d101d672fc73f57e4db4d",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": false
+        }
+      }
+    },
+    {
+      "member": "native-observations/batch-0002/validation-001-pr-785.json.gz",
+      "sha256": "edb7af55d6ecffbe5a3fa6663c8774fc811b187fd7f178ad9e96d718cb1b5123",
+      "sides": {
+        "pre_log": {
+          "removed_extensions": [
+            "Removing MACS3/IO/BAM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BAMStream.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/BedGraphIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/Parser.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/IO/PeakIO.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/BedGraph.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallPeakUnit.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/CallerStorage.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/FixWidthTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_EM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_HMM.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/HMMR_Signal_Processing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PairedEndTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakDetect.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakModel.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PeakVariants.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Pileup.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PileupV2.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/PosReadsInfo.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Prob.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/RACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ReadAlignment.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/Region.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/ScoreTrack.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/SignalProcessing.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/UnitigRACollection.cpython-312-x86_64-linux-gnu.so",
+            "Removing MACS3/Signal/VariantStat.cpython-312-x86_64-linux-gnu.so"
+          ],
+          "collection_error_present": true
+        }
+      }
+    }
+  ],
+  "scope": "Original evidence plus bash -n syntax-only checks; no recipe, compiled code, test suite, container or model executed",
+  "limits": [
+    "No exact original image replay",
+    "Syntax correctness does not imply installation success",
+    "Rebuild commands contain unquoted version comparisons; preserving versus repairing semantics must be explicit",
+    "Historical dependency compatibility and task suitability remain untested"
+  ]
+}
