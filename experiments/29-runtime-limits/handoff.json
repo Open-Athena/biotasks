@@ -3,9 +3,9 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 1,
+  "remote_jobs": 2,
   "remaining": [
-    "Observe original Matchms reconstruction job; archive result and verify owned-container cleanup before any further execution",
+    "Observe original Matchms controls handle; verify archive readback and owned cleanup; then delete retained reconstruction images",
     "Implement checkpointed bounded supervisor for original image reconstruction, control runner, archival and owned cleanup",
     "Run Matchms/OHIF unchanged reconstruction and controls if builds succeed",
     "Report Scanpy retained original recipe failure separately; do not silently repair it",
@@ -52,11 +52,17 @@
     "live_execution": false
   },
   "active_job": {
-    "id": "/exedev/biotasks29-matchms-reconstruct-001",
-    "state": "running (authoritative Iris observation 2026-10-23T17:32:33Z)",
-    "max_allocated_cpu_hours": 2.6666666666666665,
+    "id": "/exedev/biotasks29-matchms-controls-001",
+    "state": "submitted; observe same handle",
+    "max_allocated_cpu_hours": 9.666666666666666,
     "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
-    "controls_run": 0,
     "model_calls": 0
+  },
+  "completed_reconstruction": {
+    "state": "succeeded",
+    "allocated_cpu_hours": 0.12724777777989704,
+    "archive_readback_verified": true,
+    "retained_image": "biotasks29-matchms-reconstruct-001:original-recipe",
+    "cleanup_condition": "Delete labeled reconstruction image/intermediates after control archive readback or investigation termination"
   }
 }
