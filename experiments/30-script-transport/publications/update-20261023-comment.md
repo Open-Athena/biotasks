@@ -1,0 +1,9 @@
+🤖 Real Docker mechanism checks are complete; live repository comparisons remain outstanding.
+
+Two initial infrastructure attempts failed before creating containers (missing Docker CLI, then an uncached mutable image tag). The subsequent two probes used the pinned Docker CLI and immutable image from the original experiment. Both reproduce upstream `E2BIG` and exact delivery of the 1,080,000-byte payload by the candidate. All attempts and adaptations are retained separately.
+
+The fourth probe distinguishes runnable processes from zombie entries: after client timeout, baseline Bash CPU ticks increased 36→67 and candidate ticks 36→71. Both share the original timeout implementation. This is a separate inherited cancellation problem; it does not demonstrate that the old repository failures were caused by leftover processes. A transport comparison must isolate and remove owned sandboxes between arms to avoid contamination.
+
+All four jobs are terminal with one attempt each, 0.05441778 allocated CPU-hours total, zero model calls and no new capacity. Every created container was removed and absence verified; downloaded tool files were removed. The shared immutable input-image cache remains. No biological PR or task has yet been recovered by this candidate.
+
+[Findings](https://github.com/Open-Athena/biotasks/blob/39048b92429f437127db14ec69de6731ef310c3e/experiments/30-script-transport/findings.md), [precise timeout/delivery result](https://github.com/Open-Athena/biotasks/blob/39048b92429f437127db14ec69de6731ef310c3e/experiments/30-script-transport/attempts/004/result.json), [all-attempt accounting](https://github.com/Open-Athena/biotasks/blob/39048b92429f437127db14ec69de6731ef310c3e/experiments/30-script-transport/probe-accounting.json), [candidate patch](https://github.com/Open-Athena/biotasks/blob/39048b92429f437127db14ec69de6731ef310c3e/experiments/30-script-transport/transport.patch).
