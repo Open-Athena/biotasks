@@ -1,0 +1,142 @@
+{
+  "scope": "Read offline dependency-cache PR742 controls; original verifier, patch, timeout and egress guard unchanged; no regrading or repair",
+  "job_state": "succeeded",
+  "rows": [
+    {
+      "task": "macs3-project__MACS-742",
+      "agent": "nop",
+      "verifier_timeout_seconds": 300,
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_record_present": true,
+      "reward_details_present": true,
+      "exception_type": null,
+      "exception_present": false,
+      "reward": 0.0,
+      "parse_status": "ok",
+      "resolved": false,
+      "command_resolved": false,
+      "test_exit_code": 1,
+      "f2p_passed": 0,
+      "f2p_total": 1,
+      "p2p_passed": 10,
+      "p2p_total": 10,
+      "reason": null,
+      "wall_seconds": 282.65236258506775
+    },
+    {
+      "task": "macs3-project__MACS-742",
+      "agent": "oracle",
+      "verifier_timeout_seconds": 300,
+      "state": "completed",
+      "wrapper_exit": 0,
+      "trial_record_present": true,
+      "reward_details_present": true,
+      "exception_type": null,
+      "exception_present": false,
+      "reward": 1.0,
+      "parse_status": "ok",
+      "resolved": true,
+      "command_resolved": true,
+      "test_exit_code": 0,
+      "f2p_passed": 1,
+      "f2p_total": 1,
+      "p2p_passed": 10,
+      "p2p_total": 10,
+      "reason": null,
+      "wall_seconds": 252.54450011253357
+    }
+  ],
+  "pairs": [
+    {
+      "verifier_timeout_seconds": 300,
+      "complete_parseable_pair": true,
+      "positive_control_pair": true,
+      "clean_oracle_command": true,
+      "all_regression_tests_pass_both": true
+    }
+  ],
+  "task_files_unchanged": true,
+  "verified_task_files": 12,
+  "comparison_provenance_verified": false,
+  "reconstruction_image_matches": true,
+  "dependency_preparation_verified": false,
+  "dependency_receipts": [],
+  "dependency_receipt_error": null,
+  "archive_sha256": "d771226abc5bc8ef7b3e59ee456254cde354a733813c8aef347b6dea731cfeea",
+  "archive_members": [
+    {
+      "path": "bounded-builds.jsonl",
+      "bytes": 934,
+      "sha256": "d7b3d3534621fd5757ba68ac2c0dd517978e8a75956b70e0592d7d7c0d93656c"
+    },
+    {
+      "path": "build-starts.jsonl",
+      "bytes": 404,
+      "sha256": "cd22ac92e10d4e41af6d282ff04c44e6846be94b507bd0aa976ae0768ac297e2"
+    },
+    {
+      "path": "control-artifacts.tar.gz",
+      "bytes": 31992,
+      "sha256": "292ba0f0226f15b856cf793dfd14c7f3b37f6361dc72913be96ea83effb62d31"
+    },
+    {
+      "path": "control-result.json",
+      "bytes": 1908,
+      "sha256": "f1d26396ec8274895ec882e28e36c188e9fb945a3dc8ba610992be069ea96525"
+    },
+    {
+      "path": "controller.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "controls/controls.json",
+      "bytes": 11016,
+      "sha256": "087d23a08dd3c7b6a173741c5b3f6a204d0b99534c0c8371bf998966afb7ed23"
+    },
+    {
+      "path": "controls/harbor-version.txt",
+      "bytes": 6,
+      "sha256": "986d95a92d1538ad7a755e6776e7bf62e90e6deb9c26c5aecc40e3a0346daee6"
+    },
+    {
+      "path": "controls/macs3-project__MACS-742-300s-nop.log",
+      "bytes": 1665,
+      "sha256": "d1731e1bf7a83306dd45f336a4a2a1e026b65447e02ad40fae238ba3c7c169bc"
+    },
+    {
+      "path": "controls/macs3-project__MACS-742-300s-oracle.log",
+      "bytes": 1552,
+      "sha256": "3e0933f530ab28a0734068ded8dd7f3313bbfde2a19271d9eab524c08c9eeae3"
+    },
+    {
+      "path": "controls/task-files-unchanged.json",
+      "bytes": 3608,
+      "sha256": "f0dad917e86ba86ba051a441bc62fe8f9a77596a42732da82cc7b5f4b6a46600"
+    },
+    {
+      "path": "harbor066-freeze.txt",
+      "bytes": 1877,
+      "sha256": "e33bf49124ff3eea8ab4260754a7a10ee847423378761fa6822a4e2bbf766bbf"
+    },
+    {
+      "path": "setup.log",
+      "bytes": 19036,
+      "sha256": "b8269995fd067872fffd88591e0b33c6bc93e7630bb71324b9576f6d486896d8"
+    }
+  ],
+  "owned_control_resources_removed": true,
+  "retained_reconstruction_image": "biotasks34-macs-742-image-001:recorded-actions",
+  "model_calls": 0,
+  "allocated_cpu_hours_controls": 0.6512977777587043,
+  "limits": [
+    "Candidate export used archived inputs and the pinned upstream writer; it is not a fresh official generate CLI run",
+    "Reconstructed environment is not the deleted original image; mutable dependencies can drift",
+    "Smoke and fresh-image checks passed before controls",
+    "Unstarted/timed-out/missing-reward trials are not positive controls",
+    "One nop/oracle pair is one candidate task, not a benchmark score",
+    "Dependency receipt records preparation; passing controls remain a separate gate",
+    "Owned reconstructed image requires separate cleanup after readback"
+  ]
+}

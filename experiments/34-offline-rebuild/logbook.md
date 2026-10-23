@@ -43,3 +43,7 @@ Control preflight passed on the original reserved worker with the verified recon
 ## 2026-10-23 — control readback gates
 
 Prepared terminal accounting and a bounded archive reader for the existing control handle. The reader verifies twelve candidate files, archive/member digests, the actual dependency receipt and reconstructed image identity. It reports preparation provenance, positive control pairing, clean oracle command and regression preservation separately. Twelve synthetic classification checks pass, including missing rewards, timeout, wrapper error and parse failure; these are reader checks, not live control outcomes. No new remote execution or model calls.
+
+## 2026-10-23 — positive controls, incomplete dependency receipt
+
+The existing control handle succeeded in 586.168 seconds (0.651298 allocated CPU-hours). Hash-verified the 44,324-byte archive and all reported outputs. Nop0/oracle1, 1 F2P repaired, 10 P2P passing in both arms, oracle exit0, twelve files unchanged. Both verifier logs show successful offline-cache editable rebuilds. The supervisor captured no wheel receipt, and nested archive inspection found no executed receipt line; preserved this provenance gap rather than inventing dependency versions or rerunning. See `control-diagnosis.md`. Reconciled CPU allocation and reserved 1/6 CPU-hour for later cleanup. No model calls.
