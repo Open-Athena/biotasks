@@ -442,3 +442,10 @@ Provisional interpretation now reflects Matchms terminal direct54/49controls, ex
 
 
 The300-second foreground inotify observer exits0 without an original Cobrapy terminal receipt, leaving no observerprocess or scratchpaths. This observation timeout is not a native timeout or terminal state. Fresh authoritative2026-10-23T05:58:13.237541+00:00query confirms the same original handle RUNNING/oneattempt; the original serial service remains active/MainPID29092. No resubmission or native repair. The specific private Matchms upload approval remains pending; important originals retained and all independent authorized work continues.
+
+
+### Cobrapy original source/contract preparation
+
+Fresh05:59:19original metadata records201entries,76paired starts/72returns and four separate OSError/errno7 exceptions, still three emission events and11calls/$0.349488. A bounded read-only06:02:09contract/ref snapshot records98actual validation starts/188unique base/head refs and three actual export contracts (PR1482/1487/1497). Their original generated verifiers are300seconds; trackedF2P/P2P counts are2/17,2/4and17/69. Test-patch paths concern variability, web-model loading and GPR logic. This is contract metadata, not independent controls or data-term clearance. No fixture bytes are published.
+
+Serial public root-notice preparation fetches all188exact refs in17.57seconds/7,477,888bytes, no missing/unfetched refs and no supplied project credential. All original notices are byte-identical to bootstrap’s39,776-byte combined GPL2/LGPL2.1text; retained verbatim and readback hashes/lengths verified. File text alone does not determine component applicability or third-party biological-data terms. Snapshot/ref uses must still match terminal originals before final eligibility. New reporting helpers avoid repeated ad-hoc capture code and never run models, native commands, tests or repairs. Source/outputs checkpoint78925b85preserves the executed collector; subsequent stream guard rejects oversize responses before buffering beyond256KiB.

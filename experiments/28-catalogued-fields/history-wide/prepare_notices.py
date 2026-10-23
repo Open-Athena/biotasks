@@ -57,8 +57,11 @@ def main():
                             rows.append({'ref': ref, 'source': url, 'http_status': response.status_code,
                                 'unavailable': True, 'uses_in_original_validation_records': uses})
                             continue
-                        raw = b''.join(response.iter_content(chunk_size=8192))
-                    assert len(raw) < 256 * 1024
+                        buffer = bytearray()
+                        for chunk in response.iter_content(chunk_size=8192):
+                            assert len(buffer) + len(chunk) < 256 * 1024
+                            buffer.extend(chunk)
+                        raw = bytes(buffer)
                     raw.decode('utf8')
                 except requests.RequestException as error:
                     rows.append({'ref': ref, 'source': url, 'unavailable': True,
