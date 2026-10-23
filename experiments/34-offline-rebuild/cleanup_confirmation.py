@@ -29,8 +29,11 @@ def main():
         expected=json.loads((ROOT/'image-binding.json').read_text())
         inspected=docker('image','inspect',expected['tag'],check=False)
         if inspected.returncode==0:
-            assert json.loads(inspected.stdout)[0]['Id']==expected['id'], 'Tag now points at a different image'
-        assert not docker('ps','-aq','--filter','ancestor='+expected['id']).stdout.strip(), 'Image still has container users'
+            actual=json.loads(inspected.stdout)[0]
+            assert actual['Config']['Labels']['org.open-athena.biotasks.owner']==OWNER
+            assert expected['id'] is None or actual['Id']==expected['id'], 'Tag now points at a different image'
+            expected['id']=actual['Id']
+        assert expected['id'] is None or not docker('ps','-aq','--filter','ancestor='+expected['id']).stdout.strip(), 'Image still has container users'
         for attempt in range(16):
             ids=sorted(set(docker('image','ls','-aq','--no-trunc','--filter','label='+LABEL).stdout.split()))
             if not ids:break
