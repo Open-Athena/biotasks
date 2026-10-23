@@ -1,0 +1,32 @@
+{
+  "scope": "Post hoc diagnosis of one immutable PR742 candidate Harbor control pair",
+  "archive_sha256": "75deffd41fc2dde60d337495423e5eb5a97c63cbc6fb6efcdcd35b230441a9a6",
+  "task_files_unchanged": true,
+  "verified_task_files": 10,
+  "observations": [
+    {
+      "agent": "nop",
+      "stdout_sha256": "22186e698f8476dd9f1374a6da9762bd8120c6df1ad0e473611a4c5fdd6ecd2e",
+      "stdout_bytes": 8019,
+      "connection_refused_count": 5,
+      "rebuild_failed_marker": true,
+      "missing_build_requirement": "setuptools>=80.0",
+      "failure_phase": "pip isolated build dependency download during recorded editable install"
+    },
+    {
+      "agent": "oracle",
+      "stdout_sha256": "27472cc29ebd4975bd006ac1081aaaf8cba08a360564f38ecd89773f17596f78",
+      "stdout_bytes": 8019,
+      "connection_refused_count": 5,
+      "rebuild_failed_marker": true,
+      "missing_build_requirement": "setuptools>=80.0",
+      "failure_phase": "pip isolated build dependency download during recorded editable install"
+    }
+  ],
+  "positive_control_pair": false,
+  "failure_class": "rebuild dependency fetch failure in the Harbor verifier runtime",
+  "attribution_limit": "Connection refused identifies a failed package-index connection; the archive does not distinguish egress policy, index configuration, or transient service failure.",
+  "test_execution": "F2P and P2P tests were not reached in either control",
+  "model_calls": 0,
+  "task_repairs": 0
+}
