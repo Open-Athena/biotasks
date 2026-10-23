@@ -47,3 +47,5 @@ Published the verified smoke-timeout outcome and complete cleanup at https://git
 ### 2026-10-23 — Checkpoint longer post-bootstrap checks
 
 Prepared a distinct MACS arm with smoke/fresh-image allowances 300→1,200 seconds only. All recorded actions, commands, input/source hashes and CPU/memory remain fixed. A phase/operation/exact-command routing helper passes seven checks and logs upstream/applied limits. The complete driver diff is retained. The first sandbox was removed, so this arm must replay the immutable actions again; it is not a model or task regeneration. One attempt is capped at10CPU-hours, with baseline0.94144 included under #31's16-hour ceiling. No model calls or new capacity. See `macs-longcheck-protocol.md`; submission and outcomes remain separate stages.
+
+Submitted `biotasks31-macs-longcheck-001` from `01108ef0` on existing reserved capacity. Payload hashes match preflight; one attempt, no model calls, no new capacity. The separate ten-CPU-hour reservation plus measured baseline remains below the sixteen-hour ceiling. Collect this handle rather than resubmitting; archive verification and any retained-image cleanup remain outstanding.
