@@ -39,6 +39,15 @@ with connect_controller(config_file=args.config) as endpoint:
             from iris.resources.state import is_job_finished
             assert all(is_job_finished(j.state) for j in client.list_jobs(prefix='/exedev/biotasks31-',limit=10)), 'Existing active probe: observe it'
             workers=client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
+            reconstruction=json.loads((ROOT/'macs-742-image-result-001.json').read_text())
+            reconstruction_readback=json.loads((ROOT/'macs-742-image-readback-001.json').read_text())
+            reconstruction_account=json.loads((ROOT/'macs-742-image-accounting.json').read_text())
+            assert reconstruction_account['state']=='succeeded' and reconstruction_readback['archive_sha256']==reconstruction_account['output_archive']['sha256']
+            assert reconstruction_readback['result_record_verified'] and reconstruction_readback['cleanup_verified']
+            assert reconstruction['retained_image_id'] and reconstruction['retained_image_tag']
+            manifest=json.loads((ROOT/'macs-native-742-manifest.json').read_text())
+            assert manifest['image_id']==reconstruction['retained_image_id'] and manifest['image_tag']==reconstruction['retained_image_tag']
+            assert manifest['image_owner']==reconstruction['run_id']
             target_worker=json.loads((ROOT/'run-private/biotasks31-macs-742-image-001/submission.json').read_text())['worker_id']
             eligible=[w for w in workers if w.worker_id==target_worker and w.healthy and 'v4-reserved' in w.scale_group and w.metadata.tpu_name and not w.metadata.provenance.dirty]
             chosen=None
