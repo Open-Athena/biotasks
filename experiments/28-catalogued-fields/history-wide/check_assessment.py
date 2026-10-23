@@ -22,6 +22,8 @@ def main():
     assert coverage['native_entered_pr_numbers'] == [5, 4, 3]
     assert coverage['backlog_count'] == 2 and coverage['original_parent_backlog_count'] == 3
     assert coverage['parent_checkpoint_censored'] and coverage['complete_identity_accounting']
+    assert coverage['native_unique_returned_count'] == 5 and coverage['native_returned_appearances'] == 8
+    assert coverage['returned_but_unentered_pr_numbers'] == [2, 1]
     omitted = reconcile_identities(ids, {'state': 'bounded_with_backlog', 'backlog_pr_numbers': [4, 3, 2],
         'batches': [{'index': 0, 'state': 'completed', 'selected_pr_numbers': ids}]},
         {'batch-0000': {'returned': [5, 4, 3, 2], 'events': [{'event': 'candidate_entered', 'pr': 5}]}})

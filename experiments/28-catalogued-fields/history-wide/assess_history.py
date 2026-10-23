@@ -33,7 +33,7 @@ def stamp(value):
 
 def reconcile_identities(identities, ledger, observations):
     pending = identities.copy(); entered_all = []; omitted_all = []
-    batches = []
+    batches = []; returned_all = set(); returned_appearances = 0
     for row in ledger.get('batches', []):
         name = f"batch-{row['index']:04d}"
         actual = observations.get(name, {})
@@ -41,6 +41,9 @@ def reconcile_identities(identities, ledger, observations):
         assert chosen == pending[:100], 'Batch selection must preserve frozen remaining order'
         events = actual.get('events', [])
         returned = actual.get('returned')
+        if returned is not None:
+            assert len(set(returned)) == len(returned)
+            returned_all.update(returned); returned_appearances += len(returned)
         entered = [e['pr'] for e in events if e['event'] == 'candidate_entered']
         decision_prs, current_pr = set(), None
         for event in events:
@@ -73,7 +76,11 @@ def reconcile_identities(identities, ledger, observations):
     raw = ledger.get('backlog_pr_numbers', identities)
     if ledger.get('state') != 'running':
         assert raw == pending
-    return {'native_entered_pr_numbers': entered_all, 'native_discovery_omitted_pr_numbers': omitted_all,
+    return {'native_unique_returned_count': len(returned_all),
+        'native_returned_appearances': returned_appearances,
+        'native_list_available': any(row['native_list_available'] for row in batches),
+        'returned_but_unentered_pr_numbers': [n for n in identities if n in returned_all and n not in set(entered_all)],
+        'native_entered_pr_numbers': entered_all, 'native_discovery_omitted_pr_numbers': omitted_all,
         'backlog_count': len(pending), 'backlog_sha256': hashlib.sha256(json.dumps(pending).encode()).hexdigest(),
         'original_parent_backlog_count': len(raw),
         'parent_checkpoint_censored': ledger.get('state') == 'running',
@@ -222,6 +229,7 @@ def assess(state, selected):
     if exports:
         assert unchanged.get('verified') and unchanged['before'] == unchanged['after'] == hashes
     module, expected = verifier_module()
+    baseline_exports = {r['task'] for r in read(BASE / 'results' / (selected['slug'] + '.json'), {}).get('task_controls', [])}
     tasks = []
     for task_name in exports:
         task = extracted / task_name; name = task.name; controls = {}
@@ -230,7 +238,8 @@ def assess(state, selected):
             assert len(matches) <= 1, 'No independent trial retries'
             controls[agent] = trial(matches[0], task, module, expected, unchanged.get('verified')) if matches else {'reward': None, 'state': 'no_original_trial_result'}
         primary = verified(controls['nop'], controls['oracle'], unchanged.get('verified'))
-        tasks.append({'task': name, 'raw_primary_verified': primary,
+        tasks.append({'task': name, 'also_exported_in_september_baseline': name in baseline_exports,
+            'raw_primary_verified': primary,
             'strict_clean_verified': bool(primary and controls['oracle']['reward_details'].get('command_resolved')),
             'controls': controls})
     events = [e for b in observations.values() for e in b['events']]
