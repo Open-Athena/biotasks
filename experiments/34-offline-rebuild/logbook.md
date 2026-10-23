@@ -19,3 +19,7 @@ Fetched only pyproject metadata at the exact MACS PR742 base and verified its Gi
 ## 2026-10-23 — reconstruction launched
 
 Checkpoint `2d6d665a` passed preflight and launched one bounded original-recipe reconstruction on an existing reserved worker; authoritative observation at22:12:04UTC reports running. See `reconstruction-submission.json` for payload hashes and resource bounds. Four CPU-hours remain reserved, not actual consumed usage. No retry, new capacity, model calls or control run. Private submission retains the exact worker binding for follow-up and cleanup. Do not resubmit this handle after interrupted observation.
+
+## 2026-10-23 — candidate transformation and readback prepared
+
+The original reconstruction remains running on its existing handle. Added terminal-accounting/readback helpers with duplicate archive-member rejection. Prepared the trusted base-declaration cache helper and separate task transformation. A static transformation check against the exact archived MACS task verifies nine unchanged original files, twelve final files, unchanged egress guard/test assets, refusal of mutable image tags and no overwrite. The test's synthetic digest is explicitly not an executed image, and the temporary variant was removed. Candidate Docker build and controls remain unexecuted; use the actual verified reconstruction digest before producing the real variant. See `offline-controls-protocol.md` for admission and evidence requirements.
