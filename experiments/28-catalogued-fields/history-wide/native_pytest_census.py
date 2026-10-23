@@ -79,10 +79,13 @@ def main():
             statuses = {stage: parse(slice_output(outcome[stage + '_log'])) for stage in ['pre', 'post']}
             f2p = sorted(t for t,s in statuses['pre'].items() if s in ['FAILED', 'ERROR'] and statuses['post'].get(t) == 'PASSED')
             p2p = sorted(t for t,s in statuses['pre'].items() if s == 'PASSED' and statuses['post'].get(t) == 'PASSED')
-            assert f2p == outcome['fail_to_pass'] and p2p == outcome['pass_to_pass']
+            compared = outcome['status'] == 'verified' or outcome['reason'] == 'no fail-to-pass tests after validation'
+            if compared:
+                assert f2p == outcome['fail_to_pass'] and p2p == outcome['pass_to_pass']
             rows.append({'member': member.name, 'member_sha256': hashlib.sha256(compressed).hexdigest(),
                 'pr': start['pr'], 'original_status': outcome['status'], 'original_reason': outcome['reason'],
-                'original_f2p_p2p_match': True, 'original_test_cmds': start['test_cmds'],
+                'original_set_comparison_applicable': compared,
+                'original_f2p_p2p_match': True if compared else None, 'original_test_cmds': start['test_cmds'],
                 'stages': {stage: {'parsed_statuses': dict(Counter(statuses[stage].values())),
                     'parsed_count': len(statuses[stage]),
                     'collection_error_marker': bool(re.search(r'errors? during collection', outcome[stage + '_log'], re.I)),
