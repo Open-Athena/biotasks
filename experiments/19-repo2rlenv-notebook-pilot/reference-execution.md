@@ -1,6 +1,7 @@
 # Notebook reference workflow
 
-Current agreement, 2026-10-15. Preparation selects existing terminal results and
+Contract updated 2026-10-23. The run examples below are historical single-case
+evidence, not a current panel-wide success claim. Preparation selects existing terminal results and
 returns export code for the controller to append to the untouched source.
 [Run 010](preparation-runs/010/README.md) passed static preparation review and
 confirmed [run 009](preparation-runs/009/README.md) with byte-identical prompt,
@@ -127,9 +128,12 @@ existing 30-minute cumulative setup-tool allowance, 600-second reference tests,
 The model-request count is explicitly `null`: there is no request-count cap.
 Requests remain recorded, with time and spending limits active. The reference-test
 allowance for session 001 is two combined invocations; one was used.
-Each invocation counts even if validation or setup fails before computation.
-Historical preparation/45-request budgets are not inherited. GLM remains medium effort with no extra client token/input/
-response caps. Each individual model request retains the 600-second timeout.
+Each actual reference dispatch counts even if setup or validation then fails;
+a controller refusal before dispatch does not consume a reference test.
+Historical preparation/45-request budgets are not inherited. Subsequent runs
+request GLM's native `high` effort with no extra client token/input/response caps;
+this does not retroactively change session 001's recorded settings or prove the
+served template's effective effort. Each individual model request retains the 600-second timeout.
 Upstream's final-report tool schema/size limits still apply; scripts and logs
 are files rather than fields in that report. Session 001 made 93 model calls and
 one complete reference test; its owned sandbox was cleaned up.

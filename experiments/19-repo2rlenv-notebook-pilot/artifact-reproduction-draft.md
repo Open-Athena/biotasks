@@ -1,6 +1,7 @@
 # Notebook2task through artifact reproduction
 
-Local discussion draft — updated 2026-10-15. Scope clarified with the user: one task per
+Local discussion draft — contract updated 2026-10-23. Historical case-specific
+observations below retain their original scope. Scope clarified with the user: one task per
 notebook, considering all branches and exporting eligible existing terminal
 scientific results. Branches without eligible outputs are explicitly excluded
 from the target inventory, while their original computation remains intact.
@@ -169,9 +170,11 @@ not become measured facts merely because it is executable code.
 | Packaging and evaluation | Assemble Harbor files, enforce visibility boundaries, run blind attempts and preserve results. | Produce remaining task-specific text/code and repair permitted defects within the boundary and budgets below. |
 
 The controller owns scheduling, limits, artifact identity and retry accounting.
-The preparation worker has no tools: exactly one call, no automatic repair,
-medium reasoning, strict JSON-schema responses and no extra client
-token/byte caps. Execution setup can use tools to inspect and diagnose actual
+The preparation worker has no tools: one creation call and at most one repair
+when programmatic validation rejects its response, native `high` reasoning
+requested, strict JSON-schema responses and no extra client token/byte caps.
+Preserve both responses and validation feedback; this does not authorize retrying
+empty, truncated or transport-failed preparation responses. Execution setup can use tools to inspect and diagnose actual
 failures; running the scientific script itself is programmatic. See the
 [current workflow](reference-execution.md) for implemented boundaries and status.
 
@@ -347,8 +350,8 @@ Proposed finite budgets for the first experiment:
 | Reference or independently computed valid alternative | 600 seconds per complete execution, including imports, all branches and artifact exports. Environment construction and input downloads are separate. |
 | Verifier | 120 seconds per invocation, separate from the solver clock. |
 | Blind solver | Provisionally 600 seconds per attempt, with the total agent allowance to be revisited separately; at most two attempts, with a fresh attempt allowed after a permitted repair. The clock starts when the prepared sandbox and task are handed to the solver, before its first model request. It includes model latency and tool use; it excludes environment setup and final verification. |
-| Preparation repairs | None automatically: one call, schema/syntax validation, preserve output or failure, then inspection. Scientific source repairs remain forbidden. Execution/construction budgets need reconciliation with the new stage separation before launch. |
-| Model requests | Preparation permits exactly one GLM-5.3 call, native `high` reasoning (the middle official level), no extra client token/byte caps and the existing 600-second per-request timeout. Record execution-worker and downstream budgets before those stages launch. No automatic model escalation. The requested level does not establish the served template's effective effort. |
+| Preparation repairs | One creation plus at most one programmatic-validation repair; preserve both responses and exact feedback. No automatic empty/length/transport recovery in preparation. Scientific source repairs remain forbidden. |
+| Model requests | Preparation permits at most two GLM-5.3 calls as specified above, native `high` reasoning requested, no extra client token/byte caps and the existing 600-second per-request timeout. Tool-enabled execution and downstream stages retain their recorded time/spending boundaries without an extra raw-request cap. No automatic model escalation. The requested level does not establish the served template's effective effort. |
 | Whole experiment | Two hours of wall-clock work, including every stage and retry, followed by up to five minutes of active cleanup. Stop starting work when any applicable limit is exhausted; report and track unresolved cleanup rather than declaring it complete. |
 
 All limits apply together. Exhausting a budget leaves a rejected, unresolved or
@@ -552,17 +555,22 @@ unmeasured; conversion retains the scientific dependencies and computations.
 
 The [factual profiler](../../src/biotasks/data_profile.py) covers bounded
 file structure and identity. The prepared [Tasksmith integration](design_stage.py)
-provides structured proposal machinery. The current preparation worker uses
+provides structured proposal machinery. The preparation worker uses
 strict JSON-schema responses and appended export code. Preparation makes one
-call, validates structure/syntax and preserves failures without automatic repair.
+creation call and permits one validation-driven repair, preserving both responses
+and their feedback; it does not repair the scientific source.
 The separate tool-enabled setup/offline-test worker is implemented with synthetic
 boundary tests. Its first remote run passed the full offline reference in 147.5
 seconds with all reviewed exports preserved; see [run 001](setup-runs/001/README.md)
 for evidence and limits. The setup worker has no model-request-count cap; time
 and spending bounds remain.
 See [the current workflow](reference-execution.md) for the actual prompt, inputs,
-outputs and limits. Harbor and the existing quality/release components remain
-candidates downstream.
+outputs and limits. The [autonomous controller](run_autonomous.py) now coordinates
+construction, scientific controls and native Harbor trials, with the existing
+release components downstream. The [release gate](check_scientific_release.py)
+checks recorded scientific/native evidence; publication additionally requires
+input-term review, visibility/isolation checks and independent immutable readback.
+Earlier single-case evidence does not establish reliability across the development panel.
 
 ## 8. A small experiment that would test the idea
 
