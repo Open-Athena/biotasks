@@ -4106,3 +4106,8 @@ Alltenapprovedsourcesnowhavefrozenpayloadsforcommon501fbc2f:123/124existingorigi
 ## 2026-10-23 UTC: user authorizes another100USD; complete frozen cohort funded
 
 The user explicitly authorized100USDmore, raising the aggregate before-credit ceiling from100to200USD. Reserve1USDfor each already-frozen127–132 original source campaign, retaining every existing hold; total conservative holds106USD,94USDunallocated, not aninvoiceorcreditsclaim. Alltenactualpayload runtime maps remainidentical198files/501fbc2f; frozen receipts areunchanged.126–132arefundedqueuedbehind124/125, withatmosttwohosts/sandboxes. Noresource/time/model/test/repair/concurrencyallowanceorscientificartifactchanged. Stopadditionalbudget-reclamationworkfornow;preserveitsaudits. See panel-rounds/025/funding-127-132.json.
+
+
+## 2026-10-23 UTC: common-factory PyHMMER validates; publication audit remains
+
+124 completed all seven stages autonomously in 3352.5 seconds, with zero operator interventions. The existing single quality repair corrected one probe expectation; fresh 18/18 controls and source-aware coverage review accepted, followed by native oracle/no-op/GLM solver rewards 1/0/1 on one exact bundle. All 19 captured live receipts match the sealed originals. Independently verified the complete 1,935-file/64,983,489-byte original archive, 103-file root export and seven original/fresh cleanup records; no owned sandbox remains. Publication still requires exact-bundle, dependency-answer exclusion, source-specific input-notice and solver-trajectory audit plus anonymous immutable Hub download. No task/science/runtime/prompt changed. See panel-rounds/025/result-124.json.
