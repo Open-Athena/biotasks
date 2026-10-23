@@ -63,3 +63,7 @@ Implemented a sequential job entrypoint that checks its entire payload, reuses t
 ## 2026-10-23 — confirmation readback and cleanup gates
 
 Prepared the bounded confirmation archive reader, including payload/output hashes, reconstructed image binding, unchanged twelve-file task inventory, two dependency receipts and original control parsing. Parsing the first verified run reproduces its positive/clean pair and rejects duplicate arms; this is reader validation, not a new control result. Confirmation cleanup is restricted to the same worker and owned labels and requires the exact job archive's verified HF receipt, including on a preserved failed run. Reserved eight CPU-hours for the combined run and 1/6 for cleanup in #33. Worst-case child total is 10.378016 hours. No preflight or remote submission at this checkpoint.
+
+## 2026-10-23 — unattended confirmation submitted
+
+The checkpointed controller verified all frozen inputs, performed preflight and submitted `/exedev/biotasks34-macs-742-confirm-001` from source checkpoint `c2b401d3`. The first authoritative observation at 23:12:40 UTC was pending. The controller remains live in local tool session40839 and will collect the same handle on a five-minute cadence, then verify/archive and submit the separately reserved owned cleanup. See `confirmation-submission.json` for public resource/payload bindings; the exact worker remains in the protected submission. Do not invoke a second watcher or resubmit on observation failure. No model calls.
