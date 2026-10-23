@@ -53,3 +53,9 @@ OHIF cleanup completed in its sole attempt; `ohif-cleanup-result-001.json` verif
 ### Scanpy unchanged-recipe build checkpoint
 
 Prepared one reconstruction attempt for the saved Scanpy903925920218f829f3cad4f9f4730c086267ee53record. The original failed system-pip RUN remains intact; no skip, dependency repair, retry or model call is added. Use the same bounded reconstruction procedure (ownership label only, build1.5CPU/6GiB/1,800seconds; job4CPU/16GiB/2,400seconds). Failed-image cache cleanup is explicitly forced only for this attempt's owned labels; a successful image is retained only pending the original control comparison/cleanup. The submit gate includes all prior measured #29 allocation0.5637022CPUhours and rejects exceeding the first-stage32CPUhour ceiling. This build tests whether timeout controls can be reached; it is not itself a timeout comparison.
+
+### Scanpy reconstruction failure and cleanup-only recovery
+
+The unchanged Scanpy attempt is terminal failed after63.984seconds (0.0710933allocatedCPUhours). Its SHA-verified11,538-byte archive contains the48,621-byte build log: step12fails at the saved `get-pip.py | python3.13` command with `externally-managed-environment`, before later venv creation. No controls ran and no recipe was repaired.
+
+The wrapper then raised during cleanup while inspecting an image already removed as a dependency of another owned image; therefore no final result JSON was written. This is a separate harness cleanup failure, not a biological outcome. Preserved original source/logs, adapted the archive reader to report missing result evidence explicitly, and prepared a single bounded cleanup-only job for the exact Scanpy ownership label on the original reserved worker. No build/control/model rerun occurs. Closure/cleanup claims require this cleanup's terminal readback.
