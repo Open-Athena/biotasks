@@ -1,0 +1,41 @@
+{
+  "observed_at": "2026-10-23T05:58:32.907657+00:00",
+  "pipeline_status": "rejected",
+  "classification": "Generated candidate still requires public-contract/probe-evidence correction; source coverage approved, no source rejection.",
+  "final_controls": 16,
+  "all_final_controls_passed": true,
+  "final_review_decision": "revise",
+  "source_coverage_decision": "approve",
+  "scientific_acceptance": false,
+  "native_trials_started": false,
+  "review_issues": [
+    "Probe annotation for `domtbl-hmm-leng-mismatch` misdescribes the executed failure mode. The rationale states 'Both files individually remain parseable and complete; only the cross-file identity is broken', but the controller records show the rejection occurred inside parse_hmm ('LENG (401) does not equal the number of node blocks (400)') for hmm_ascii_structure, hmm_header_metadata, hmm_calibration_stats, hmm_model_body and domtbl_query_profile_consistency; the cross-file comparison loop (qname/qacc/qlen vs NAME/ACC/LENG) never executed against a genuine mismatch. Because every cross-file field (NAME/ACC/LENG, qname/qacc/qlen) is also exact-matched per file, a cross-file mismatch necessarily also violates a per-file rule, so domtbl_query_profile_consistency is logically subsumed and cannot be isolated by any mutation. Fix by correcting the rationale to state this coupling honestly (exactly as done for hmm-node-block-deleted in the concerns list) and adding the corresponding suite concern. The mutation script, name, focus, check_ids, grader code, tolerances and all scientific checks must remain unchanged; re-execute all controls on the corrected candidate.",
+    "Advisory (upstream, no candidate change): the controller-owned task brief's Output-file-1 enumeration still mandates a `MAXL` line, while the frozen reference HMMER3/f protein record (da53c7f5...) contains none and HMMER emits MAXL only for nucleotide models. The addendum resolves the contradiction for acceptance and the grader consistently implements it (extra header lines ignored, required fields read from the reference), but the public brief retains a false format claim that should be corrected at the specification level before release.",
+    "Advisory (verify during packaging/isolation): the grader compares the three domtbl header comment lines byte-for-byte against the reference. All executed replays are byte-identical there, consistent with these being the canonical HMMER p7_tophits_TabularDomains lines, but confirm during subsequent isolation/oracle checks that the reference header lines are exactly the standard hmmsearch header and not writer-specific metadata that would reject an otherwise valid standard-format implementation.",
+    "Advisory (no change required): the disclosed 0.11 relative E-value tolerance, justified by the two-significant-digit %9.2g serialization, also admits small Z/domZ miscount errors (e.g., a Z off by 1 of 12 shifts E-values by ~8%). This is already publicly disclosed ('limits on observable output differences, not a guarantee that a wrong method passes'), so it is noted as a residual limitation, not a defect."
+  ],
+  "classification_correction_exercised_live": true,
+  "kind_corrections": [
+    {
+      "name": "domtbl-description-first-word",
+      "original": "valid_alternative",
+      "revised": "wrong_solution",
+      "mutation_sha256": "9a9f648793001e5095257abf553ce6b68a13ff0d1b46341197edb81e90a4049c"
+    }
+  ],
+  "all_mutation_scripts_and_source_evidence_unchanged": true,
+  "operator_scientific_edits": 0,
+  "original_evidence_changed": false,
+  "reference_header_check": {
+    "path": "reference/trial/outputs/LuxC.hmm",
+    "sha256": "da53c7f5c1d8bf782a52e4071e9386ab63ea12cf1bd92cf2067c66fc844c7d0a",
+    "actual_header_has_MAXL": false,
+    "draft_public_instruction_requires_MAXL": true
+  },
+  "specification_evidence_gap": "Both native-format artifacts had unsupported structural profiles; the specification worker had package-source tools but no read-only reference-file access. Reference header bytes were not supplied.",
+  "general_followups_not_implemented": [
+    "Consider read-only access to exact hash-bound reference artifacts for the specification worker, rather than format-specific prompt hints.",
+    "Consider a coherent public instruction or a constrained factual brief correction in the existing GLM quality repair, preserving scientific targets, outputs, methods and fresh review."
+  ],
+  "cohort_policy": "Do not hotpatch current185-file factory or manually correct this generated task; finish the shared-version cohort before adoption."
+}
