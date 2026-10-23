@@ -24,6 +24,17 @@ def verified_receipt(receipt, manifest):
     if manifest.get('archive_visibility', 'public') != visibility:
         return False
     if bucket == PUBLIC_BUCKET and visibility == 'public':
+        if manifest.get('archive_kind') == 'curated_public_with_local_originals':
+            return bool(receipt.get('anonymous_download_verified') is True
+                and receipt.get('archive_kind') == manifest['archive_kind']
+                and receipt.get('curated_public_bytes_verified') is True
+                and receipt.get('full_original_phase_uploaded') is False
+                and receipt.get('local_originals_verified') is True
+                and receipt.get('local_originals_receipt_sha256') == manifest.get('local_originals_receipt_sha256')
+                and receipt.get('local_original_manifest_sha256') == manifest.get('local_original_manifest_sha256')
+                and receipt.get('original_phase_sha256') == manifest.get('original_phase_sha256')
+                and all(manifest.get(k) for k in ['local_originals_receipt_sha256',
+                    'local_original_manifest_sha256', 'original_phase_sha256']))
         return receipt.get('anonymous_download_verified') is True
     return bool(bucket == PRIVATE_BUCKET and visibility == 'private'
         and receipt.get('anonymous_download_verified') is False

@@ -124,9 +124,14 @@ def audit_repo(state, selected, remaining, client, *, retention_required=True):
     manifest = read(manifest_path)
     published_path = ROOT / 'archives' / (selected['slug'] + '-receipt.json')
     published = read(published_path) if published_path.exists() else None
+    curated = manifest.get('archive_kind') == 'curated_public_with_local_originals'
     archive_ok = published is not None
     if archive_ok:
         assert verified_receipt(published, manifest) and sha(manifest_path) == published['manifest_sha256']
+        if curated:
+            assert selected['slug'] == 'matchms__matchms'
+            from curated_matchms import verify_local_originals
+            verify_local_originals(state, manifest)
     assert archive_ok or not retention_required, 'Verified retention is required for full accounting'
     assert terminal['readback_verified'] and terminal['billing']['cost_complete'] and not terminal['billing']['unresolved_calls']
     assert receipt['job_id'] == '/exedev/' + run and receipt['repo_ref'] == selected['ref']
@@ -159,8 +164,9 @@ def audit_repo(state, selected, remaining, client, *, retention_required=True):
         assert all(text in installation for text in ['/work/source.tar.gz: OK', 'repo2rlenv 0.9.3', 'Native configurations validated'])
     phase = result_dir / 'phase-artifacts.tar.gz'
     phase_row = next((r for r in manifest['files'] if r['path'] == 'evidence/phase-artifacts.tar.gz'), None)
+    expected_original_phase_sha256 = manifest['original_phase_sha256'] if curated else (phase_row or {}).get('sha256')
     if phase.exists():
-        assert phase_row and sha(phase) == phase_row['sha256'] == result['original_phase_sha256']
+        assert sha(phase) == expected_original_phase_sha256 == result['original_phase_sha256']
         records = phase_records(phase)
         calls = audit_calls(records, remaining)
         if records.get('infra/history-run-budget.json'):
@@ -223,6 +229,8 @@ def audit_repo(state, selected, remaining, client, *, retention_required=True):
         'task_byte_audit_in_assessment': sha(assessment_path),
         'actual_exported_verifier_timeouts_seconds': verifier_timeouts,
         'archive_receipt_accepted': archive_ok, 'original_phase_sha256': result['original_phase_sha256'],
+        'archive_kind': manifest.get('archive_kind', 'full_original_evidence'),
+        'original_retention': 'protected_local_originals_with_curated_public_evidence' if curated else 'verified_hf_original_archive',
         'archive_bucket': (published or manifest).get('bucket', manifest.get('archive_bucket', PUBLIC_BUCKET)),
         'archive_visibility': (published or manifest).get('visibility', manifest.get('archive_visibility', 'public')),
         'archive_manifest_sha256': sha(manifest_path)}

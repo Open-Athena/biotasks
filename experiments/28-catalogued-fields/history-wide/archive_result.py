@@ -39,6 +39,11 @@ def main():
     source = args.state_dir / (run + '-results')
     review_path = ROOT / 'publication-reviews' / (args.slug + '.json')
     review = read(review_path); assert review['repo'] == selected['repo']
+    if review.get('archive_kind') == 'curated_public_with_local_originals':
+        assert args.slug == 'matchms__matchms'
+        from curated_matchms import run
+        run(args.action, args.state_dir)
+        return
     bucket, visibility = route(review)
     sources = {}
     for name in review['reviewed_files']:

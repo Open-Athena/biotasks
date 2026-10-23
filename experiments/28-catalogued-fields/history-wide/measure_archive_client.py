@@ -61,7 +61,8 @@ def bounded_publish_manifest(manifest, profile_digest, client_versions=None):
         return None
     rows = manifest['files']
     total = sum(row['bytes'] for row in rows)
-    phase = [row for row in rows if row['path'] == 'evidence/phase-artifacts.tar.gz']
+    phase = [row for row in rows if row['path'] in
+        ['evidence/phase-artifacts.tar.gz', 'evidence/curated-phase-artifacts.tar.gz']]
     if (not rows or len(phase) != 1 or total > 32 * 1024**2
             or any(row['bytes'] < 0 or row['bytes'] > 16 * 1024**2 for row in rows)):
         return None

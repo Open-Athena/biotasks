@@ -58,8 +58,14 @@ def summarize(root):
         archive_ok = bool(manifest and receipt and verified_receipt(receipt, manifest)
             and sha(manifest_path) == receipt['manifest_sha256'])
         if archive_ok and result['original_phase_sha256'] is not None:
-            phase = next(r for r in manifest['files'] if r['path'] == 'evidence/phase-artifacts.tar.gz')
-            assert phase['sha256'] == result['original_phase_sha256']
+            if manifest.get('archive_kind') == 'curated_public_with_local_originals':
+                local_path = root / 'archives' / (slug + '-local-originals-receipt.json')
+                local = read(local_path)
+                assert local and sha(local_path) == manifest['local_originals_receipt_sha256']
+                assert local['original_phase_sha256'] == manifest['original_phase_sha256'] == result['original_phase_sha256']
+            else:
+                phase = next(r for r in manifest['files'] if r['path'] == 'evidence/phase-artifacts.tar.gz')
+                assert phase['sha256'] == result['original_phase_sha256']
         accounting = read(root / 'accounting' / (slug + '.json'))
         audited = accounting['repositories'] if accounting else final.get('repositories', [])
         matching = [r for r in audited if r['repo'] == selected['repo']]
@@ -87,6 +93,8 @@ def summarize(root):
             'paired_validation' if pairs_started else 'native_entry' if entered else
             'native_discovery' if coverage['native_list_available'] else 'setup_or_bootstrap')
         row.update(stage=stage, wrapper_state=result['wrapper_state'], native_parent_state=result['native_parent_state'],
+            original_retention=('curated public + protected local originals'
+                if manifest and manifest.get('archive_kind') == 'curated_public_with_local_originals' else 'HF original archive' if archive_ok else 'pending'),
             native_stop_reason=result['native_parent_stop_reason'],
             native_unique_returned=coverage['native_unique_returned_count'],
             native_returned_appearances=coverage['native_returned_appearances'], native_entered=entered,
@@ -144,14 +152,14 @@ def main():
         'Entered, discovery-omitted and backlog identities partition that inventory. '
         'A PR returned earlier can still be omitted by a later listing before entry. '
         'History evidence stays separate from the September baseline.', '',
-        '| Repository | Inventory | Unique returned | Entered | Discovery omitted | Backlog | Paired started/completed | Exports | Tracked verified | Clean verified | Terminal USD | Evidence accepted |',
-        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |']
+        '| Repository | Inventory | Unique returned | Entered | Discovery omitted | Backlog | Paired started/completed | Exports | Tracked verified | Clean verified | Terminal USD | Retention | Evidence accepted |',
+        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- | --- |']
     def display(value):
         return '—' if value is None else str(value)
     for row in result['repositories']:
         cells = [row.get(k) for k in ['repo', 'history_inventory', 'native_unique_returned', 'native_entered', 'original_discovery_omitted', 'native_backlog']]
         cells += [display(row.get('paired_started')) + '/' + display(row.get('paired_completed'))]
-        cells += [row.get(k) for k in ['exports', 'primary_verified', 'strict_clean_verified', 'actual_cost_usd', 'evidence_accepted']]
+        cells += [row.get(k) for k in ['exports', 'primary_verified', 'strict_clean_verified', 'actual_cost_usd', 'original_retention', 'evidence_accepted']]
         lines.append('| ' + ' | '.join(display(value) for value in cells) + ' |')
     lines += ['', 'Result evidence complete: ' + str(result['all_ten_result_evidence_complete']) + '.', '',
         'Known terminal history charges: $' + result['known_terminal_history_cost_usd'] + '. '
