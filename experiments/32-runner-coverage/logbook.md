@@ -69,3 +69,9 @@ Submitted biotasks32-mne-recorded-001 from661d4071on existing reserved worker ma
 ### 2026-10-23 — SAMtools composite runner and identity contract
 
 Read pinned PR1605test.pl/Makefile through public GitHub API; retained hashes and files privately. Native result helpers/summary executed on four synthetic outcomes:pass/fail/xfail/xpass counts and exit1preserved. Source repeats function headings across commands/thread variants, while make test also runs C/shell components. Pinned upstream detects allfour relevant command forms asunknown. Report why recognition-only or heading-keyed parsing cannot establish task validity; define identity/completion/composite-coverage requirements. No full harness execution, source repair, models or remote jobs. Fixture elapsed0.10s,peak17,984KiB.
+
+### 2026-10-23 — MNE replay reaches full-suite smoke timeout
+
+One attempt is terminalFAILED after448.093seconds,0.497881111CPU-hours. All12original BASH actions matched their expected127exits without repairs. The next original full-suite smoke command timed out at300.011seconds; its exact Docker call identity is verified from the archived container ID and command hash. Partial progress reached28%, which is not a completed test result. The guard prevented commit/fresh verification while timed-out work could remain active, then removed allownedcontainers/images/tools/checkout. No PR14445validation or task export occurred.
+
+Verified23,940-byte archive4f4bfd35428e998776d628d84fe5d345479888b8b32a508e8f800d5faece959dand allretainedoutputhashes. No image remains. #32cumulative two-job usage is0.7212466663784451allocatedCPU-hours under10,zero models. A longer post-bootstrap allowance is a possible separate timing comparison; it has not been applied to this result.
