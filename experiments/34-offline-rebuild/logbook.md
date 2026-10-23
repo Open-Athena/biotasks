@@ -39,3 +39,7 @@ One reconstruction attempt succeeded in 1,397.321 seconds, 1.552579 allocated CP
 ## 2026-10-23 — offline controls running
 
 Control preflight passed on the original reserved worker with the verified reconstruction digest and candidate archive. Submitted one attempt from checkpoint `1ac19916`; authoritative observation at 22:38:05 UTC reports running. It preserves original Harbor commands, 300-second verifier timeout, resource wrapper and task egress guard. Maximum four CPU-hours reserved; actual usage pending. No model calls or retries. Do not resubmit the handle after interrupted observation; inspect its terminal archive and dependency receipt before any result claim.
+
+## 2026-10-23 — control readback gates
+
+Prepared terminal accounting and a bounded archive reader for the existing control handle. The reader verifies twelve candidate files, archive/member digests, the actual dependency receipt and reconstructed image identity. It reports preparation provenance, positive control pairing, clean oracle command and regression preservation separately. Twelve synthetic classification checks pass, including missing rewards, timeout, wrapper error and parse failure; these are reader checks, not live control outcomes. No new remote execution or model calls.
