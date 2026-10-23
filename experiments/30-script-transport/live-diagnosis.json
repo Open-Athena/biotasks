@@ -1,0 +1,40 @@
+{
+  "failed_pr": 958,
+  "successful_control_pr": 671,
+  "original_errno7_reproduced": true,
+  "candidate_delivers_both_stages": true,
+  "candidate_native_status": "failed",
+  "candidate_f2p_count": 0,
+  "deleted_test_targets": [
+    "tests/similarity/test_flash_similarity_spectrum_list.py",
+    "tests/similarity/test_flash_utils_spectrum_list.py"
+  ],
+  "candidate_stage_evidence": [
+    {
+      "stage": "pre",
+      "outer_exit_code": 0,
+      "tests_collected": 0,
+      "missing_target": "tests/similarity/test_flash_similarity_spectrum_list.py",
+      "stdout_sha256": "5129beb3a82215cac94d78803b70bbc37efca68cde3d0971f99560fcab579c0f"
+    },
+    {
+      "stage": "post",
+      "outer_exit_code": 0,
+      "tests_collected": 0,
+      "missing_target": "tests/similarity/test_flash_similarity_spectrum_list.py",
+      "stdout_sha256": "e71d929e46d8d6f6f8eb3e287b72313fc68b750c71052ca0ebe514e01b8ab782"
+    }
+  ],
+  "control_exact_f2p_and_p2p_equal": true,
+  "control_f2p_count": 1,
+  "control_p2p_count": 30,
+  "cleanup_verified": true,
+  "model_calls": 0,
+  "conclusion": "Transport exception removed; deleted-file targeting still prevents PR958 validation. Successful control preserves native test sets.",
+  "limits": [
+    "No PR958 task recovered, export generated or independent Harbor control added",
+    "Original pinned validator/parser unchanged; no deleted-target repair applied",
+    "Native outer exit 0 does not imply successful pytest command",
+    "Reconstruction dependency drift and missing original failed script bytes remain"
+  ]
+}

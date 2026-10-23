@@ -20,3 +20,13 @@ This means a long-lived native validation sandbox can retain timed-out work unle
 Each job used only existing reserved TRC capacity with two allocated CPUs and 2 GiB and a 600-second maximum. Docker containers were sequential, 1 CPU/512 MiB/64 PIDs, network none, no host mounts. Every created container was removed and owned-container absence verified; downloaded tool files removed. The original immutable Python base-image cache remains shared input, not a task-built image. All four attempts together consumed 0.05442 allocated CPU-hours. Model calls/spend are zero. The fourth submission enforced measured prior allocation plus its maximum against a one-CPU-hour campaign ceiling.
 
 The candidate changes only `DockerSandbox.exec`, leaves original `_run` unchanged and has not been promoted/applied to an actual repository pipeline run. Real failed-PR and successful-control comparisons remain required, with original tests and environment provenance preserved. This issue remains open.
+
+## Frozen biological comparison
+
+The single live job completed on the reconstructed saved Matchms recipe. PR958 reproduces original errno7 on its425,528-byte post script. Stdin transport delivers both stages, but native validation returns no fail-to-pass tests: the unchanged targeting function includes two files deleted by the test patch, and pytest exits with a missing-file error before collecting tests. Transport recovery therefore does not recover a valid task. No test selection, dependency, patch or parser repair was applied.
+
+The successful PR671 control preserves the exact native test sets under both transports:1fail-to-pass and30pass-to-pass tests. Each pre command reports1failed/30passed; each post command reports31passed. These are native validation outcomes, not newly exported tasks or additional independent Harbor controls.
+
+`live-readback.json` verifies the output archive, call-stream hashes, image identity and cleanup. `live-diagnosis.json` binds deleted paths to the frozen patch and logs, and checks exact control-set equality. The job consumed0.2007278allocatedCPUhours; all five #30 attempts total0.2551456CPUhours, zero model calls. All owned containers, images/cache, source context and tools were removed. Raw Matchms evidence stays private with verified local archive readback; the remote archive expires after7days.
+
+The transport research question now has a bounded positive mechanism result with a preserved successful control. This is not production readiness: diagnostic shell differences and inherited client-timeout cancellation remain, and reconstruction dependency drift limits historical equivalence. Deleted-file targeting is a separate #32 investigation; do not edit this completed comparison's inputs or outcomes.
