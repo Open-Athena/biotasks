@@ -1,0 +1,14 @@
+{
+  "classification": "Controller workspace contract failure before construction worker, not a source rejection.",
+  "evidence": "Locked environment dependencies installed successfully, then frozen staging script cp failed because /inputs did not exist in the downstream sandbox.",
+  "controlled_reference_completed": true,
+  "clean_replay_completed": true,
+  "scientific_validation_complete": false,
+  "reference_computations": 1,
+  "reference_test_requests": 1,
+  "counting_fix_exercised_on_a_preexecution_failure": false,
+  "cause": "Setup provisions /inputs and /work/cache; downstream GradingSession.initialize omitted both before rerunning the same source staging recipe.",
+  "general_change": "Provision the same input roots before downstream staging. No edits to the frozen generated recipe, original notebook or scientific methods.",
+  "new_validated_task": false,
+  "operator_task_edits": 0
+}

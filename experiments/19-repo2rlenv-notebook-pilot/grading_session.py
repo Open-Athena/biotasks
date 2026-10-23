@@ -104,8 +104,18 @@ class GradingSession:
             if self.config.get("materialize_task")
             else "#!/bin/sh\nexit 0\n"
         )
+        # Frozen staging recipes see the same allowed input roots as in setup
+        # and clean replay, before any of their copy/download commands run.
         reply = await self.command(
-            ["mkdir", "-p", "/work/environment", "/work/grading-private/oracle", "/work/reference"],
+            [
+                "mkdir",
+                "-p",
+                "/work/environment",
+                "/work/grading-private/oracle",
+                "/work/reference",
+                "/inputs",
+                "/work/cache",
+            ],
             30,
             "grading-initialize",
         )

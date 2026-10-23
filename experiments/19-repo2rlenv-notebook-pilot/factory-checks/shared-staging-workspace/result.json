@@ -1,0 +1,20 @@
+{
+  "trigger": "Original076reference/replaypassed, construction bootstrap failed creating a staged file under missing /inputs.",
+  "change": "The downstream controller creates the same /inputs and /work/cache roots as setup/replay before the frozen staging recipe.",
+  "scope": "Generic workspace contract; no generated recipe, notebook, inputs, methods or grading tolerances edited.",
+  "checks": {
+    "passed": 78,
+    "seconds": 3.95,
+    "peak_rss_kib": 134296,
+    "files": [
+      "test_workspace_staging_contract.py",
+      "test_materialization.py",
+      "test_materialization_handoff.py",
+      "test_grading.py"
+    ],
+    "regression": "Real byte-sized shell cp commands require both roots; the controller must provision them before staging. Dependency installation and scientific computation are not executed by this fixture.",
+    "ruff": "passed"
+  },
+  "live_corrected_validation": false,
+  "original_source_case_preserved": "autonomous-runs/076"
+}
