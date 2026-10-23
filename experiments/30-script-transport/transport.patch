@@ -1,0 +1,22 @@
+--- a/src/repo2rlenv/bootstrap/docker.py
++++ b/src/repo2rlenv/bootstrap/docker.py
+@@ -305,9 +305,16 @@
+         """Run a shell command inside the container. State persists across calls."""
+         if not self._alive:
+             raise DockerError("sandbox has been cleaned up; cannot exec")
+-        # Wrap in bash -lc so users can write multi-line / piped commands.
+-        args = ["docker", "exec", self.container_id, "bash", "-lc", command]
+-        return _run(args, timeout=timeout)
++        # Read the script before executing it, so commands see closed stdin
++        # as with non-interactive docker exec. No script-sized argv element.
++        if "\x00" in command:
++            raise ValueError("embedded null byte")
++        loader = (
++            "IFS= read -r -d '' __repo2rlenv_command || :; "
++            "exec 0</dev/null; eval \"$__repo2rlenv_command\""
++        )
++        args = ["docker", "exec", "-i", self.container_id, "bash", "-lc", loader]
++        return _run(args, timeout=timeout, input_text=command)
+ 
+     def read_file(self, path: str, *, max_bytes: int = 50_000) -> str:
+         """Read a file path inside the container, capped at max_bytes."""

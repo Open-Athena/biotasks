@@ -1,0 +1,9 @@
+# First transport comparison
+
+Pinned original source and license are in `upstream/`; `provenance.json` identifies the main/upstream baseline. `candidate/docker.py` and `transport.patch` change only the script delivery in `DockerSandbox.exec`. The proposed loader reads the complete script from stdin, closes command stdin, then uses Bash's builtin eval rather than passing a script-sized argument through execve. Original `_run`, login-shell mode, working directory, timeout and result capture remain in use.
+
+This is a candidate for review, not an applied live pipeline modification. NUL input is explicitly rejected as before. Shell diagnostic prefixes and `BASH_EXECUTION_STRING` differ, so this is not arbitrary-shell introspection equivalence. The upstream timeout only terminates the local Docker client; remote descendant cancellation is an inherited unresolved boundary and must be tested before calling cleanup reliable.
+
+`python -B check_transport.py` exercises the original and candidate methods through an explicitly labeled local adapter that checks Docker arguments and invokes their actual Bash commands. It tests quoting, UTF-8, newlines, heredocs, stdin EOF, cwd, functions, exit status, stderr, traps, pipefail, errexit, nounset, login mode, actual Linux E2BIG on a large payload, exact payload hashing, builtin-loop timeout and dead-sandbox rejection. It does not exercise a Docker daemon or biological repository. Temporary files are removed by a context manager.
+
+Execution bound: one serial local process, no network/model calls, <100 MiB estimated peak working set and <30 seconds wall time. Use the shared nonblocking heavy-work lock, thread limits, nice/ionice and start/end/exit/peak-RSS evidence. No full repository test suite or new installation is necessary for this isolated standard-library harness.
