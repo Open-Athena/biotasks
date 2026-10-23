@@ -507,7 +507,11 @@ class Pipeline:
                     in {"independent_comparison_unresolved", "public_question_defect"}
                     and not (grade / "repair.json").exists()
                 ):
-                    from comparison_repair import independent_repair_record, validate_diagnosis
+                    from comparison_repair import (
+                        freeze_comparison_revision,
+                        independent_repair_record,
+                        validate_diagnosis,
+                    )
                     from question_repair import repair_context, revise_question
 
                     revision_context = repair_context(mat, grade)
@@ -579,10 +583,9 @@ class Pipeline:
                     base["materialization_directory"] = self.relative(mat)
                     write(
                         self.root / "comparison-repair-frozen-grader.json",
-                        {
-                            "materialization_candidate": read(mat / "candidate.json"),
-                            "grader_candidate": revision_context["grader_candidate"],
-                        },
+                        freeze_comparison_revision(
+                            read(mat / "candidate.json"), revision_context, diagnosis
+                        ),
                     )
                     # Fresh isolated validation never receives private diagnostic
                     # reasoning or answers. Independent repairs add only the
@@ -627,6 +630,7 @@ class Pipeline:
                         "probe_author_blocked",
                         "repair_blocked",
                         "grader_requires_further_work",
+                        "question_review_blocked",
                     }
                     if result["status"] not in allowed:
                         raise ValueError("Unrecognized validation outcome")

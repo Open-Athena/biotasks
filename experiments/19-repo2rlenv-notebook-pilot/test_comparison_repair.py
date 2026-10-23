@@ -7,8 +7,10 @@ from pathlib import Path
 import pytest
 from comparison_repair import (
     ComparisonRepair,
+    freeze_comparison_revision,
     independent_repair_record,
     independent_worker_feedback,
+    load_comparison_revision,
     validate_diagnosis,
 )
 from pydantic import ValidationError
@@ -72,6 +74,126 @@ def test_semantic_question_evidence_cannot_request_independent_code_changes(cont
         target="public_question", instruction="Source-defined question", independent_issues=[]
     )
     assert validate_diagnosis(corrected, context).target == "public_question"
+
+
+@pytest.fixture
+def mixed_context(context):
+    from test_grading import candidate, probe
+
+    prior = candidate().model_dump()
+    context["grader_candidate"] = prior
+    context["original_probes"] = {
+        "disposition": "ready",
+        "probes": [
+            probe().model_dump(),
+            probe(name="format", kind="valid_alternative").model_dump(),
+        ],
+        "concerns": ["Original recorded concern"],
+    }
+    context["allowed_targets"] = ["public_question"]
+    return context
+
+
+def joint_diagnosis():
+    return diagnosis(
+        target="public_question",
+        instruction="Complete source-backed corrected question",
+        independent_issues=[],
+        grader_repair={
+            "disposition": "ready",
+            "instruction": "Corrected acceptance explanation; unchanged scientific criterion",
+            "grader_code": "def compare(a, b):\n    return a == b\n",
+            "rationale": "Fix both recorded defects in the same quality iteration",
+        },
+    )
+
+
+@pytest.mark.parametrize("joint", [False, True])
+def test_question_revision_retains_every_probe_and_binds_grader_inventory(mixed_context, joint):
+    before = copy.deepcopy(mixed_context)
+    response = joint_diagnosis()
+    if not joint:
+        response.grader_repair = None
+    revised_question = {**before["materialization_candidate"], "instruction": response.instruction}
+    frozen = freeze_comparison_revision(revised_question, mixed_context, response)
+    grader, probes = load_comparison_revision(frozen)
+    assert mixed_context == before
+    assert frozen["materialization_candidate"] == revised_question
+    assert probes.model_dump() == before["original_probes"]
+    assert [c.model_dump() for c in grader.checks] == before["grader_candidate"]["checks"]
+    assert grader.grader_code == (
+        response.grader_repair.grader_code if joint else before["grader_candidate"]["grader_code"]
+    )
+    frozen["grader_candidate"]["checks"][0]["artifacts"] = ["another-output"]
+    with pytest.raises(ValueError, match="bound grader edits"):
+        load_comparison_revision(frozen)
+
+
+def test_joint_revision_cannot_add_checks_change_mutations_or_bypass_blind_boundary(mixed_context):
+    response = joint_diagnosis().model_dump()
+    response["grader_repair"]["checks"] = []
+    with pytest.raises(ValidationError):
+        validate_diagnosis(response, mixed_context)
+    response = joint_diagnosis().model_dump()
+    response["grader_repair"]["probe_replacements"] = [{"script": "pass"}]
+    with pytest.raises(ValidationError):
+        validate_diagnosis(response, mixed_context)
+    with pytest.raises(ValidationError, match="ready question repair"):
+        diagnosis(grader_repair=joint_diagnosis().grader_repair)
+    mixed_context.pop("original_probes")
+    with pytest.raises(ValueError, match="retained original probe"):
+        validate_diagnosis(joint_diagnosis(), mixed_context)
+
+
+def test_joint_revision_executes_new_grader_without_reusing_old_acceptance(mixed_context, tmp_path):
+    import subprocess
+    import sys
+
+    from test_grading import CODE
+
+    # The original byte comparator rejects a different encoding of the same
+    # numeric result. The complete revised program must actually replace it;
+    # a question-only revision would leave the legitimate alternative failing.
+    numeric = CODE.replace(
+        "(Path(a.reference_dir)/'value.txt').read_text()==(Path(a.submission_dir)/'value.txt').read_text()",
+        "float((Path(a.reference_dir)/'value.txt').read_text())==float((Path(a.submission_dir)/'value.txt').read_text())",
+    )
+    response = joint_diagnosis()
+    response.grader_repair.grader_code = numeric
+    frozen = freeze_comparison_revision(
+        mixed_context["materialization_candidate"], mixed_context, response
+    )
+    revised, _ = load_comparison_revision(frozen)
+    reference, submission = tmp_path / "reference", tmp_path / "submission"
+    reference.mkdir()
+    submission.mkdir()
+    (reference / "value.txt").write_text("1")
+
+    def execute(code, value):
+        (submission / "value.txt").write_text(value)
+        program, report = tmp_path / "grade.py", tmp_path / "report.json"
+        program.write_text(code)
+        subprocess.run(
+            [
+                sys.executable,
+                str(program),
+                "--reference-dir",
+                str(reference),
+                "--submission-dir",
+                str(submission),
+                "--report",
+                str(report),
+            ],
+            check=True,
+            capture_output=True,
+            timeout=5,
+        )
+        return json.loads(report.read_text())["passed"]
+
+    assert not execute(CODE, "1.0\n")
+    assert execute(revised.grader_code, "1.0\n")
+    assert not execute(revised.grader_code, "2.0\n")
+    assert mixed_context["grader_candidate"]["grader_code"] == CODE
 
 
 @pytest.mark.parametrize(

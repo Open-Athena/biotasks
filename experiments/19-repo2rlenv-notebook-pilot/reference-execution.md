@@ -190,3 +190,17 @@ reference stages followed by task construction, scientific controls and native
 Harbor trials. Its run-specific manifests and validation records establish how
 far each candidate actually progressed. The historical examples above must not
 be substituted for those candidate-specific gates.
+
+
+## Coherent quality revisions
+
+A source-approved question defect may use the existing one quality-repair iteration
+to correct both the base question and related generated grader/addendum defects.
+The GLM worker returns complete revised fields through the versioned comparison
+repair prompt. The controller binds check identities and output coverage, preserves
+original mutation scripts, and reruns them with fresh independent execution and
+source-aware review. Annotation corrections use the existing evidence requirements;
+no failed scientific challenge is silently replaced. Source, data, reference and
+scientific computations remain fixed. A remaining defect is a rejection; no second
+quality iteration or deadline reset is implied. Original candidates and failures
+remain separate from the derived revision.

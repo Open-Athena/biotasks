@@ -35,6 +35,9 @@ semantic equivalence from similar-looking strings, field names or floating-point
 parsing alone. Record the source or focused observation supporting each non-obvious
 normalization. A representation-only alternative must preserve the decoded
 scientific value; an edit changing it must be tested as a wrong answer.
+Prefer an available native format reader over custom physical-line parsing.
+Its accepted representations still need validation, and extra data or malformed
+content must not silently disappear during parsing.
 Do not rerun the entire analysis in this grader-author stage; independently
 executed controls are the evidence for recomputation agreement.
 

@@ -108,8 +108,10 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
         "native",
         "question",
         "question-semantic",
+        "question-joint",
         "question-blocked",
         "question-failed",
+        "question-review-failed",
         "question-used",
         "independent-repair",
         "independent-repair-blocked",
@@ -191,7 +193,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                     root / "result.json",
                     {
                         "status": "public_question_defect"
-                        if failure == "question-semantic"
+                        if failure in {"question-semantic", "question-joint"}
                         else "independent_comparison_unresolved",
                         "cleanup_verified": True,
                     },
@@ -216,17 +218,23 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                 )
             assert m.read(tmp_path / "run/grading/result.json")["status"] == (
                 "public_question_defect"
-                if failure == "question-semantic"
+                if failure in {"question-semantic", "question-joint"}
                 else "independent_comparison_unresolved"
             )
-            assert m.read(tmp_path / config["frozen_grader_file"])["grader_candidate"] == {
-                "grader": "unchanged"
-            }
+            frozen = m.read(tmp_path / config["frozen_grader_file"])
+            if failure == "question-joint":
+                assert frozen["grader_candidate"]["instruction"] == "Corrected acceptance"
+                assert "quality_revision" in frozen
+            else:
+                assert frozen["grader_candidate"] == {"grader": "unchanged"}
             assert m.os.environ["BIOTASKS_ARTIFACT_PREFIX"].endswith(
                 "/stages/grading-comparison-repair"
             )
             if failure in {"question-failed", "independent-repair-failed"}:
                 m.write(root / "result.json", {"status": "independent_comparison_unresolved"})
+                return m.read(root / "result.json")
+            if failure == "question-review-failed":
+                m.write(root / "result.json", {"status": "question_review_blocked"})
                 return m.read(root / "result.json")
         return {"status": "grader_candidate_validated", "final_controls_passed": True}
 
@@ -256,6 +264,17 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                     if failure.startswith("independent-repair") and not failure.endswith("blocked")
                     else [],
                     "rationale": "Worker evidence",
+                    **(
+                        {
+                            "grader_repair": {
+                                "disposition": "ready",
+                                "instruction": "Corrected acceptance",
+                                "rationale": "Recorded mixed defects need one coherent revision",
+                            }
+                        }
+                        if failure == "question-joint"
+                        else {}
+                    ),
                 },
             )
             return
@@ -264,7 +283,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     def native(config, *, root):
         assert config["reasoning_effort"] == "high"
         called.append("native")
-        if failure in {"question", "question-semantic"}:
+        if failure in {"question", "question-semantic", "question-joint"}:
             assert config["grading_directory"].endswith("grading-comparison-repair")
             assert config["materialization_directory"].endswith("materialization-question-repair")
         recorded = m.read(tmp_path / config["attribution_file"])
@@ -329,6 +348,28 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             m.write(destination / "candidate.json", {"instruction": response["instruction"]})
 
         monkeypatch.setattr(question_repair, "revise_question", revision)
+        if failure == "question-joint":
+            from test_grading import candidate, probe
+
+            monkeypatch.setattr(
+                question_repair,
+                "repair_context",
+                lambda *a: {
+                    "grader_candidate": candidate().model_dump(),
+                    "materialization_candidate": m.read(
+                        tmp_path / "run/materialization/candidate.json"
+                    ),
+                    "allowed_targets": ["public_question"],
+                    "original_probes": {
+                        "disposition": "ready",
+                        "probes": [
+                            probe().model_dump(),
+                            probe(name="format", kind="valid_alternative").model_dump(),
+                        ],
+                        "concerns": [],
+                    },
+                },
+            )
     # Isolate fixed controller paths while exercising actual stage ordering.
     copytree = m.shutil.copytree
 
@@ -379,8 +420,10 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "native": "infrastructure_failed",
             "question": "validated",
             "question-semantic": "validated",
+            "question-joint": "validated",
             "question-blocked": "rejected",
             "question-failed": "rejected",
+            "question-review-failed": "rejected",
             "question-used": "rejected",
             "independent-repair": "validated",
             "independent-repair-blocked": "rejected",
@@ -400,8 +443,13 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             assert receipt["quality_repair"]["allowance_consumed"]
         else:
             assert "quality_repair" not in receipt
-        completed = failure in {"question", "question-semantic", "independent-repair"}
-        if failure == "question-semantic":
+        completed = failure in {
+            "question",
+            "question-semantic",
+            "question-joint",
+            "independent-repair",
+        }
+        if failure in {"question-semantic", "question-joint"}:
             assert receipt["quality_repair"]["kind"] == "public_question_diagnosis"
         assert receipt["daytona_reserved_usd"] == (5 if completed else 4)
         assert len(receipt["stages"]) == (7 if completed else 6)

@@ -532,6 +532,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     independent_repair=False,
     inspect_review=False,
     question_defect=False,
+    joint_revision=False,
 ):
     import grading_session as module
 
@@ -616,6 +617,34 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         probes=[probe(), probe(name="format", kind="valid_alternative")],
         concerns=[],
     )
+    if joint_revision:
+        from comparison_repair import ComparisonRepair, freeze_comparison_revision
+
+        path = tmp_path / "frozen-grader-input.json"
+        frozen = json.loads(path.read_text())
+        response = ComparisonRepair(
+            disposition="ready",
+            target="public_question",
+            instruction="Scientific question",
+            independent_issues=[],
+            grader_repair={
+                "disposition": "ready",
+                "instruction": "Corrected public acceptance explanation",
+                "rationale": "One coherent mixed-defect repair; no new scientific computation",
+            },
+            rationale="Both recorded defects need correction before fresh validation",
+        )
+        path.write_text(
+            json.dumps(
+                freeze_comparison_revision(
+                    frozen["materialization_candidate"],
+                    {**frozen, "original_probes": suite.model_dump()},
+                    response,
+                )
+            )
+        )
+        c.instruction = response.grader_repair.instruction
+        c.rationale = response.grader_repair.rationale
 
     if resume == "probe-draft":
         config["resume_probe_draft_directory"] = "saved-run"
@@ -998,9 +1027,17 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         + (["repair", "review-repair"] if effective_repair else [])
     )
     if frozen_grader:
-        expected = ["independent", "probes", "review"]
+        expected = ["independent"] + ([] if joint_revision else ["probes"]) + ["review"]
         assert json.loads((tmp_path / "candidate.json").read_text()) == c.model_dump()
         assert not (tmp_path / "repair.json").exists()
+        if joint_revision:
+            assert (
+                json.loads((tmp_path / "quality-revision.json").read_text())["original_probes"]
+                == suite.model_dump()
+            )
+            assert json.loads((tmp_path / "probes.json").read_text()) == suite.model_dump()
+            controls = json.loads((tmp_path / "final-controls.json").read_text())
+            assert sum(row["kind"] == "probe" for row in controls) == len(suite.probes)
     if semantic_feedback:
         expected.append("review-repair")
         assert len(repair_reviews) == 2
@@ -1026,6 +1063,20 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     if semantic_feedback:
         expected_candidate["rationale"] = "Supported comparison; no unsupported measurement claim"
     assert json.loads((tmp_path / "final-candidate.json").read_text()) == expected_candidate
+
+
+def test_joint_revision_reexecutes_original_probes_and_blind_implementation(tmp_path, monkeypatch):
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=False,
+        derived=True,
+        resume="frozen",
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        joint_revision=True,
+    )
 
 
 @pytest.mark.parametrize("semantic_feedback", [True, "blocked"])

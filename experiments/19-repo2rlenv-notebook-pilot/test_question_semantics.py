@@ -47,7 +47,7 @@ def test_acceptance_cannot_excuse_a_question_defect():
 
 
 @pytest.mark.parametrize(
-    "problem", [None, "quote", "review_hash", "control", "used", "cleanup", "scope"]
+    "problem", [None, "quote", "review_hash", "probe_hash", "control", "used", "cleanup", "scope"]
 )
 def test_question_repair_requires_bound_review_passing_basics_and_unused_allowance(
     original, tmp_path, problem
@@ -78,12 +78,14 @@ def test_question_repair_requires_bound_review_passing_basics_and_unused_allowan
         review["source_coverage"]["decision"] = "revise"
         review["source_coverage"]["omitted_scientific_endpoints"] = ["another endpoint"]
     write(grading / "review.json", review)
+    write(grading / "probes.json", {"original probe": "immutable script"})
     write(
         grading / "public-question-defect.json",
         {
             "candidate_sha256": digest,
             "review_sha256": record(grading / "review.json")["sha256"],
             "controls_sha256": record(grading / "question-defect-controls.json")["sha256"],
+            "probes_sha256": record(grading / "probes.json")["sha256"],
             "quality_repair_used": False,
         },
     )
@@ -98,6 +100,8 @@ def test_question_repair_requires_bound_review_passing_basics_and_unused_allowan
         write(grading / "review.json", review)
     if problem == "used":
         write(grading / "repair.json", {})
+    if problem == "probe_hash":
+        write(grading / "probes.json", {"replacement probe": "unbound"})
     if problem:
         with pytest.raises(ValueError):
             repair_context(original, grading)
@@ -106,6 +110,7 @@ def test_question_repair_requires_bound_review_passing_basics_and_unused_allowan
         assert context["allowed_targets"] == ["public_question"]
         assert context["semantic_question_review"] == review
         assert context["grader_candidate"] == read(grading / "candidate.json")
+        assert context["original_probes"] == read(grading / "probes.json")
 
 
 def test_review_routes_question_to_existing_allowance_before_grader_repair(tmp_path, monkeypatch):

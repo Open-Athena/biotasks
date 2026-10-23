@@ -110,6 +110,9 @@ needed to define the requested quantities. Express these in scientific terms,
 without an exhaustive recipe of qualified functions, versions or object mutations.
 Software choice is open. A compatible environment can be supplied for convenience;
 its availability is not a requirement to use a particular implementation.
+An identified standard procedure or versioned reference preset may disambiguate
+the scientific method without requiring that software. State consequential
+nondefaults; do not replace that concise identification with guessed internals.
 
 Be precise where alternatives change the quantity being requested. Do not expand
 every incidental package default or numerical routine into a requirement merely

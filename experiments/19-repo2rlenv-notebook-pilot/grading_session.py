@@ -621,6 +621,7 @@ async def run_grading(
             HERE / config["resume_contract_directory"], resumed[1], saved_probes
         )
     fixed_grader = None
+    quality_revision = None
     if config.get("frozen_grader_file"):
         if resumed or draft or contract_base or config.get("allow_quality_repair", True):
             raise ValueError("A frozen grader requires fresh independence and no further repair")
@@ -630,6 +631,14 @@ async def run_grading(
         ):
             raise ValueError("Frozen grader belongs to another materialization")
         fixed_grader = Grader.model_validate(frozen["grader_candidate"])
+        if "quality_revision" in frozen:
+            from comparison_repair import load_comparison_revision
+
+            if saved_probes is not None or probe_draft is not None:
+                raise ValueError("A quality revision cannot replace its original probe suite")
+            fixed_grader, saved_probes = load_comparison_revision(frozen)
+            quality_revision = frozen["quality_revision"]
+            save_record(root / "quality-revision.json", quality_revision)
         if fixed_grader.disposition != "ready":
             raise ValueError("Frozen grader must be a submitted ready candidate")
         save_record(root / "frozen-grader.json", frozen)
@@ -953,7 +962,11 @@ async def run_grading(
             session.last_controls.append(await session.case(candidate, kind="probe", probe=probe))
 
         author_input_control_summary = None
-        check_description_updates = []
+        check_description_updates = (
+            (quality_revision.get("grader_repair") or {}).get("check_descriptions", [])
+            if quality_revision
+            else []
+        )
         inspection = None
         if config.get("inspect_review_evidence", False):
             from review_inspection import ReviewInspection
@@ -997,7 +1010,9 @@ async def run_grading(
                     "candidate": (reviewed_candidate or candidate).model_dump(),
                     "probes": (reviewed_probes or probes).model_dump(),
                     "initial_probes": initial_probes.model_dump(),
-                    "initial_checks": [check.model_dump() for check in session.frozen_checks],
+                    "initial_checks": quality_revision["grader_candidate"]["checks"]
+                    if quality_revision
+                    else [check.model_dump() for check in session.frozen_checks],
                     "check_description_updates": check_description_updates
                     if descriptions is None
                     else descriptions,
@@ -1010,7 +1025,11 @@ async def run_grading(
                 inspection=inspection,
             )
 
-        initial_probes = probes
+        initial_probes = (
+            Probes.model_validate(quality_revision["original_probes"])
+            if quality_revision
+            else probes
+        )
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
         if assessment.question_issues:
@@ -1034,6 +1053,7 @@ async def run_grading(
                         "candidate_sha256": sha256(root / "candidate.json"),
                         "review_sha256": sha256(root / "review.json"),
                         "controls_sha256": sha256(root / "question-defect-controls.json"),
+                        "probes_sha256": sha256(root / "probes.json"),
                         "quality_repair_used": False,
                     },
                 )

@@ -16,6 +16,9 @@ claim as harmless merely because a particular library call produces correct data
 Check necessary logical quantifiers, conjunctions/disjunctions, conditionals and
 threshold meanings against source/input/package evidence. Prefer referring to
 an encoded rule over introducing an unsupported natural-language approximation.
+Check any proposed illustrative correction against the definition and its stated
+conditions before recommending it. A false example can survive matching numerical
+implementations and must not be copied into the public question as a repair.
 
 An undefined public comparison convention is a contract defect if it can change
 which submissions pass, even when every executed probe is far from that boundary.

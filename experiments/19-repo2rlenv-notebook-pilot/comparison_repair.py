@@ -2,7 +2,15 @@
 
 from typing import Literal
 
-from grading_protocol import StrictModel
+from grading_protocol import (
+    Grader,
+    GraderRepairSubmission,
+    Probes,
+    StrictModel,
+    apply_probe_expectations,
+    bind_repair_checks,
+    check_repair_inventory,
+)
 from pydantic import Field, model_validator
 
 
@@ -16,10 +24,17 @@ class ComparisonRepair(StrictModel):
     target: Literal["public_question", "independent_solution", "none"]
     instruction: str | None
     independent_issues: list[PublicCodeIssue]
+    grader_repair: GraderRepairSubmission | None = None
     rationale: str = Field(min_length=1)
 
     @model_validator(mode="after")
     def coherent_target(self):
+        if self.grader_repair is not None and (
+            self.disposition != "ready"
+            or self.target != "public_question"
+            or self.grader_repair.disposition != "ready"
+        ):
+            raise ValueError("A joint grader revision requires a ready question repair")
         if self.disposition == "blocked":
             if self.target != "none" or self.instruction is not None or self.independent_issues:
                 raise ValueError("A blocked diagnosis proposes no artifact changes")
@@ -56,7 +71,61 @@ def validate_diagnosis(value, context):
                 raise ValueError(
                     "Repair feedback must quote the public question and prior code exactly"
                 )
+    if value.grader_repair is not None:
+        if "original_probes" not in context:
+            raise ValueError("Joint revision requires retained original probe evidence")
+        revised_grading(context, value.grader_repair)
     return value
+
+
+def revised_grading(context, repair):
+    """Bind edits to the original checks and mutation scripts, never new science."""
+    prior = Grader.model_validate(context["grader_candidate"])
+    probes = Probes.model_validate(context["original_probes"])
+    if repair is None:
+        return prior, probes
+    bound = bind_repair_checks(repair, prior.checks, prior_candidate=prior)
+    check_repair_inventory(bound.checks, prior.checks)
+    return apply_probe_expectations(bound, probes)
+
+
+def freeze_comparison_revision(materialization, context, response):
+    """Seal one coherent generated revision for fresh independent validation.
+
+    Like upstream's multi-edit repair, this creates a separate candidate. Typed
+    field binding is used here because these pre-Harbor artifacts are not yet a
+    task tree accepted by upstream apply_repair. No prior acceptance is reused.
+    """
+    diagnosis = validate_diagnosis(response, context)
+    frozen = {
+        "materialization_candidate": materialization,
+        "grader_candidate": context["grader_candidate"],
+    }
+    if "original_probes" in context:
+        grader, _ = revised_grading(context, diagnosis.grader_repair)
+        frozen["grader_candidate"] = grader.model_dump()
+        frozen["quality_revision"] = {
+            "grader_candidate": context["grader_candidate"],
+            "original_probes": context["original_probes"],
+            "grader_repair": diagnosis.grader_repair.model_dump()
+            if diagnosis.grader_repair is not None
+            else None,
+        }
+    return frozen
+
+
+def load_comparison_revision(frozen):
+    """Revalidate the sealed typed edit and retain all original probe scripts."""
+    revision = frozen["quality_revision"]
+    repair = revision["grader_repair"]
+    if repair is not None:
+        repair = GraderRepairSubmission.model_validate(repair)
+        if repair.disposition != "ready":
+            raise ValueError("A frozen quality revision requires a ready grader repair")
+    grader, probes = revised_grading(revision, repair)
+    if grader.model_dump() != frozen["grader_candidate"]:
+        raise ValueError("Frozen quality revision differs from its bound grader edits")
+    return grader, probes
 
 
 def independent_repair_record(context, response):

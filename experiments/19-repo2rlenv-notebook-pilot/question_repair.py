@@ -74,6 +74,7 @@ def semantic_question_context(candidate, execution, grading):
         ("candidate.json", "candidate_sha256"),
         ("review.json", "review_sha256"),
         ("question-defect-controls.json", "controls_sha256"),
+        ("probes.json", "probes_sha256"),
     ):
         if record(grading / name)["sha256"] != defect[key]:
             raise ValueError("Public-question defect evidence identity changed")
@@ -119,6 +120,7 @@ def semantic_question_context(candidate, execution, grading):
         "independent_solution": read(grading / "independent-solution.json"),
         "independent_execution": read(grading / "independent-result.json"),
         "semantic_question_review": review.model_dump(),
+        "original_probes": read(grading / "probes.json"),
         "allowed_targets": ["public_question"],
     }
 
