@@ -1,0 +1,67 @@
+{
+  "checked_at": "2026-10-23T04:56:19Z",
+  "cause": "A live metabolomics review identified a probe whose unchanged mutation and rationale satisfy the public tolerance but whose kind was wrong_solution. The repair schema could correct check IDs and rationale but could not express the reviewed classification correction. The running campaign remains frozen.",
+  "change": "The existing GLM quality-repair stage may explicitly correct a probe kind with a public-rule justification. Null preserves the original kind. No new stage, tool, model-call allowance or scientific operator edit is introduced.",
+  "guards": [
+    "Original mutation programs, names, focus and source evidence are immutable.",
+    "Every scientific check must retain wrong-result coverage; a classification correction cannot remove its only negative control.",
+    "At least one valid alternative remains required.",
+    "Fresh execution and independent final review still gate acceptance; a grader reward alone is not a justification.",
+    "Original probes, corrected probes and explicit before/after classifications are preserved in release evidence.",
+    "No grading threshold or scientific target was changed to force the current candidate to pass."
+  ],
+  "focused_checks": {
+    "passed": 129,
+    "pytest_seconds": 4.07,
+    "guard_elapsed_seconds": 4.85,
+    "peak_rss_kib": 136392,
+    "files": [
+      "test_probe_expectations.py",
+      "test_release_probe_evidence.py",
+      "test_grading.py",
+      "test_probe_preflight.py",
+      "test_release_metadata.py"
+    ],
+    "started_at": "2026-10-23T04:55:20.568580+00:00",
+    "finished_at": "2026-10-23T04:55:25.437180+00:00",
+    "exit_status": 0
+  },
+  "package_and_related_checks": {
+    "passed": 198,
+    "includes_ordinary_tests": 169,
+    "pytest_seconds": 16.58,
+    "guard_elapsed_seconds": 17.47,
+    "peak_rss_kib": 166696,
+    "additional_files": [
+      "test_grading_resume.py",
+      "test_release_execution_provenance.py",
+      "test_release_hardening.py"
+    ],
+    "started_at": "2026-10-23T04:56:01.626892+00:00",
+    "finished_at": "2026-10-23T04:56:19.150044+00:00",
+    "exit_status": 0
+  },
+  "code_quality": "Ruff lint/format, ty and diff whitespace checks passed. Experimental Python files were checked explicitly.",
+  "initial_selection_error": "An initial test command named a nonexistent test_grading_protocol.py. No tests ran; the corrected actual-file selection produced the results above.",
+  "live_validation": false,
+  "active_campaigns_hotpatched": false,
+  "new_model_calls": 0,
+  "new_cloud_resources": 0,
+  "pre_commit": {
+    "started_at": "2026-10-23T04:58:16.726773+00:00",
+    "finished_at": "2026-10-23T04:58:17.392875+00:00",
+    "exit_status": 0,
+    "guard_elapsed_seconds": 0.66,
+    "peak_rss_kib": 80656,
+    "all_hooks_passed": true
+  },
+  "checked_files": {
+    "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py": "26e7a6a51cc74d281cf75e7a2722cdddfd82353e7a640e2aba30c9ce93677d73",
+    "experiments/19-repo2rlenv-notebook-pilot/release_metadata.py": "cd385784d92b50d31f33eca0ff207dc5ae09d5240452239174f165fc4653e78a",
+    "experiments/19-repo2rlenv-notebook-pilot/test_probe_expectations.py": "4afbb0895f514d873d7c3d4f88b9fcc300b0b2b23b94f3dff691d0f9faf64854",
+    "experiments/19-repo2rlenv-notebook-pilot/test_release_probe_evidence.py": "d70de29f182ed83f1cf4105ec1df1307650ee9c3b04530feadb3fdb06053a529",
+    "src/biotasks/prompts/notebook-grader-author.md": "1739409e01c1fb3167c6a0cdf9bc5bc23af40e5186bd930612ddcb557bf2fb8e",
+    "src/biotasks/prompts/notebook-grader-probes.md": "f026bbd39621f0f82461e7a977ffb245a016a241831c93be7ed84f138189dc01",
+    "src/biotasks/prompts/notebook-grader-review.md": "40653a28a35c17320e528d4ea419d329fb5c7d3c55e229cd602a7eb5061baa57"
+  }
+}

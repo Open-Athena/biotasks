@@ -75,7 +75,10 @@ be justified, explain the blocker instead of inventing an equivalence.
 
 For wrong_solution probes, `check_ids` lists checks expected to fail; each must
 actually fail for the control to count. For valid_alternative probes, all grader
-checks must pass. Your controls are frozen before the grader is repaired. Do not
+checks must pass. Choose the kind from the complete mutated submission and the
+public rule: changing a number within an explicitly permitted tolerance is a
+valid alternative, not a wrong result merely because the saved value differs.
+Your mutation programs are frozen before the grader is repaired. Do not
 make them easier just because the implementation rejects or accepts them incorrectly.
 
 List only checks necessarily violated by the intended edit, as justified by the

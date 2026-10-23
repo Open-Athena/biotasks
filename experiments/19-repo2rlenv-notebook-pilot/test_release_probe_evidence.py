@@ -95,11 +95,49 @@ def test_corrected_suite_concerns_are_published_with_the_original(tmp_path):
     }
 
 
+def test_release_exposes_original_and_corrected_classification(tmp_path):
+    from grading_protocol import ProbeExpectation
+
+    original, _ = fixture(tmp_path)
+    original.probes.append(
+        original.probes[-1].model_copy(
+            update={"name": "mislabeled-format", "kind": "wrong_solution"}
+        )
+    )
+    repair = GraderRepair.model_validate_json((tmp_path / "repair.json").read_text())
+    repair.probe_expectations.append(
+        ProbeExpectation(
+            name="mislabeled-format",
+            kind="valid_alternative",
+            check_ids=["schema"],
+            rationale="The script preserves the scalar and schema; the original classification was mistaken.",
+        )
+    )
+    _, revised = apply_probe_expectations(repair, original)
+    for name, value in [
+        ("probes.json", original.model_dump()),
+        ("repair.json", repair.model_dump()),
+        ("repaired-probes.json", revised.model_dump()),
+        (
+            "final-controls.json",
+            [{"kind": "probe", "probe": p.model_dump()} for p in revised.probes],
+        ),
+    ]:
+        (tmp_path / name).write_text(json.dumps(value))
+    docs = scientific_probe_documents(tmp_path)
+    assert docs["initial-scientific-probes.json"]["probes"][-1]["kind"] == "wrong_solution"
+    assert docs["scientific-probes.json"]["probes"][-1]["kind"] == "valid_alternative"
+    assert docs["probe-expectation-corrections.json"]["kind_corrections"] == [
+        {"name": "mislabeled-format", "original": "wrong_solution", "revised": "valid_alternative"}
+    ]
+
+
 @pytest.mark.parametrize(
     "defect",
     [
         "stale-controls",
         "changed-script",
+        "changed-kind",
         "missing-control",
         "duplicate-control",
         "missing-repair",
@@ -124,6 +162,10 @@ def test_mismatched_or_incomplete_evidence_blocks_release(tmp_path, defect):
     elif defect == "changed-script":
         value = suite.model_dump()
         value["probes"][0]["script"] = "print('changed mutation')"
+        save("repaired-probes.json", value)
+    elif defect == "changed-kind":
+        value = suite.model_dump()
+        value["probes"][0]["kind"] = "valid_alternative"
         save("repaired-probes.json", value)
     elif defect == "missing-control":
         save("final-controls.json", read("final-controls.json")[:1])

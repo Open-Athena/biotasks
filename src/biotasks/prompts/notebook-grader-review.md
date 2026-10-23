@@ -68,13 +68,18 @@ A failed/unknown test cannot be described as passing. Distinguish problems with
 the proposed public rule from problems with its implementation or a probe.
 
 If `initial_probes` differs from `probes`, the existing repair worker corrected
-only expected check IDs, rationale or suite-level concern annotations; mutation scripts and intended overall
-pass/fail outcomes must remain unchanged. Verify every correction against the
+expected check IDs, rationale, suite-level concerns or an originally mistaken
+`kind` classification. Mutation scripts, names, focus and source evidence must
+remain unchanged. Verify every correction against the
 public scientific rule and actual edit, not merely the grader's observed result.
 Do not accept removal of scientific coverage, a weaker challenge, or a relabeled
-scientific error. Repaired annotations require fresh execution of all controls;
-original failed records remain failures. A scientifically invalid probe script
-or intended outcome remains a blocker for this repair path.
+scientific error. For a kind correction, explain whether the complete unchanged
+mutation satisfies or violates the public contract independently of the grader's
+observed reward. In particular, different saved numbers need not violate a rule
+that explicitly permits those differences. Retain meaningful wrong-result coverage
+for every scientific check. Repaired annotations require fresh execution of all
+controls; original failed records remain failures. A scientifically invalid probe
+script or an unsupported outcome correction remains a blocker for this repair path.
 
 Distinguish executed effects from a script's self-reported diagnostics. A vacuous
 assertion or dead branch does not establish an effect, but the controller's actual

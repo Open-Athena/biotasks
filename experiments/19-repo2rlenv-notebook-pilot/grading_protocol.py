@@ -129,6 +129,15 @@ class ProbeExpectation(StrictModel):
     name: str = Field(min_length=1)
     check_ids: list[str] = Field(min_length=1)
     rationale: str = Field(min_length=1)
+    kind: Literal["wrong_solution", "valid_alternative"] | None = Field(
+        default=None,
+        description=(
+            "Null retains the original classification. Correct an originally mislabeled "
+            "mutation only when its unchanged script and public scientific rules justify "
+            "the classification; observed grader agreement alone is insufficient. "
+            "All scientific checks must retain wrong-result coverage."
+        ),
+    )
 
 
 class CheckDescription(StrictModel):
@@ -220,12 +229,19 @@ def apply_probe_expectations(repair, original):
         if update:
             if len(update.check_ids) != len(set(update.check_ids)):
                 raise ValueError("Duplicate probe check IDs")
-            if probe.kind == "valid_alternative" and update.check_ids != probe.check_ids:
+            kind = probe.kind if update.kind is None else update.kind
+            if probe.kind == kind == "valid_alternative" and update.check_ids != probe.check_ids:
                 raise ValueError("Valid-alternative expectations stay fixed: all checks must pass")
-            # The schema has no script/kind/intent fields; all original mutation
-            # bytes, names, kinds, focus and source evidence are copied unchanged.
+            # Scripts, names, focus and source evidence remain immutable. Kind
+            # corrections are explicit annotations, checked by fresh execution
+            # and independent review; coverage is enforced below.
             probe = Probe.model_validate(
-                {**probe.model_dump(), "check_ids": update.check_ids, "rationale": update.rationale}
+                {
+                    **probe.model_dump(),
+                    "kind": kind,
+                    "check_ids": update.check_ids,
+                    "rationale": update.rationale,
+                }
             )
         probes.append(probe)
     revised = Probes.model_validate(

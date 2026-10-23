@@ -154,9 +154,9 @@ def test_repairs_cannot_drop_scientific_probe_coverage():
         )
 
 
-def test_scripts_and_kinds_are_not_fields_of_an_annotation_update():
+def test_mutation_and_source_fields_are_not_editable_annotations():
     grader, original, update = fixture()
-    for field in ("script", "kind", "focus", "evidence"):
+    for field in ("script", "focus", "evidence"):
         with pytest.raises(ValidationError):
             GraderRepair(**grader.model_dump(), probe_expectations=[update | {field: "changed"}])
     with pytest.raises(ValueError, match="Duplicate"):
@@ -165,19 +165,52 @@ def test_scripts_and_kinds_are_not_fields_of_an_annotation_update():
         )
 
 
+def test_classification_correction_cannot_remove_negative_scientific_coverage():
+    grader, original, update = fixture()
+    with pytest.raises(ValueError, match="Missing wrong-result controls"):
+        apply_probe_expectations(
+            GraderRepair(
+                **grader.model_dump(),
+                probe_expectations=[update | {"kind": "valid_alternative"}],
+            ),
+            original,
+        )
+    with pytest.raises(ValidationError):
+        GraderRepair(**grader.model_dump(), probe_expectations=[update | {"kind": "anything"}])
+
+
 def test_real_wrong_submission_still_fails_after_annotation_correction(
     tmp_path, monkeypatch, capsys
 ):
     from grading_protocol import GraderRepairSubmission, bind_repair_checks
 
     grader, original, update = fixture()
+    original = original.model_copy(
+        update={
+            "probes": [
+                *original.probes,
+                original.probes[-1].model_copy(
+                    update={"name": "mislabeled-format", "kind": "wrong_solution"}
+                ),
+            ]
+        }
+    )
+    original_record = original.model_dump()
     repair = bind_repair_checks(
         GraderRepairSubmission(
             disposition="ready",
             instruction=None,
             grader_code=None,
             rationale="Correct the probe annotation while retaining the exact grader.",
-            probe_expectations=[update],
+            probe_expectations=[
+                update,
+                {
+                    "name": "mislabeled-format",
+                    "kind": "valid_alternative",
+                    "check_ids": ["value"],
+                    "rationale": "The same decoded value is a valid representation under the unchanged scalar rule; the original wrong-result label was mistaken.",
+                },
+            ],
         ),
         grader.checks,
         prior_candidate=grader,
@@ -233,6 +266,15 @@ def test_real_wrong_submission_still_fails_after_annotation_correction(
         assert record["probe"]["script"] == original.probes[0].script
     assert (session.root / "controls/0001/result.json").is_file()
     assert (session.root / "controls/0002/result.json").is_file()
+    mislabeled = asyncio.run(session.case(grader, kind="probe", probe=original.probes[-1]))
+    classified = asyncio.run(session.case(grader, kind="probe", probe=revised.probes[-1]))
+    assert mislabeled["passed_control"] is False and classified["passed_control"] is True
+    for record in (mislabeled, classified):
+        assert record["execution"]["report"]["passed"] is True
+        assert record["execution"]["grader"]["exit_code"] == 0
+        assert record["probe"]["script"] == original.probes[-1].script
+    assert original.model_dump() == original_record
+    assert (session.root / "controls/0004/result.json").is_file()
     assert grading_remote.hashes(oracle) == reference_hashes
 
 

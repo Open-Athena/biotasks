@@ -48,18 +48,22 @@ A separate worker will generate scientific counterexamples without seeing your
 grader. In a repair session, those frozen probes and measured failures are supplied.
 
 In that existing repair session only, the response schema also permits
-`probe_expectations`: corrections to named probes' `check_ids` and `rationale`.
+`probe_expectations`: corrections to named probes' `check_ids`, `rationale` and,
+when originally mislabeled, `kind`. Omit `kind` or return null to retain it.
 Use this only when the review and public rules show an annotation is wrong, not
 to fit an observed grader result. A changed file need not violate all associated
 checks; an edit may preserve identities or cross-file relations. Do not change a
 correct grader to force an incorrect annotation to fail. Explain each correction
 from the unchanged public scientific requirement and mutation. Omit unaffected
-probes from this list. Every original script, name, kind, focus and source citation
-stays fixed, every wrong submission must still be rejected overall, and scientific
-check coverage cannot be removed. All basic controls and original mutation scripts
-run again against the repaired candidate. If a probe's script or intended overall
-acceptance is scientifically wrong, report a blocker; these annotations cannot
-repair that defect. Independent review sees both original and revised annotations.
+probes from this list. Every original script, name, focus and source citation
+stays fixed. A classification correction must follow from that unchanged mutation
+and the public rule, not from a desire to make a failed control pass. Explain the
+original mistake explicitly. Scientifically wrong submissions must still be
+rejected, and every scientific check must retain wrong-result coverage. All basic
+controls and original mutation scripts run again against the repaired candidate.
+If correcting the probe requires changing its script or scientific challenge,
+report a blocker. Independent review sees both original and revised classifications
+and must verify their justification before acceptance.
 
 The same repair response may also supply `probe_concerns`, a complete corrected
 list of suite-level concern annotations. Omit it or return null to preserve the
@@ -131,7 +135,8 @@ that suite or spend the session repeatedly auditing unrelated source internals.
 
 When a prior candidate and review are supplied, repair the identified defects in
 that candidate. Keep check IDs, kinds, covered artifacts and scientific requirements,
-and the frozen probe programs and intended outcomes, unchanged. Report a blocker
+and the frozen probe programs and scientific challenges, unchanged. A mislabeled
+probe outcome may be corrected only as described above. Report a blocker
 if a scientific change is necessary. Do not return a replacement check inventory.
 The repair schema permits `check_descriptions`: complete corrected
 `public_requirement` text for an existing check ID, with a source-backed rationale.

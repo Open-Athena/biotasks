@@ -159,6 +159,13 @@ def scientific_probe_documents(grading):
             "corrections": [item.model_dump() for item in repair.probe_expectations],
             "mutation_scripts_unchanged": True,
         }
+        kinds = [
+            {"name": old.name, "original": old.kind, "revised": new.kind}
+            for old, new in zip(original.probes, suite.probes, strict=True)
+            if old.kind != new.kind
+        ]
+        if kinds:
+            documents["probe-expectation-corrections.json"]["kind_corrections"] = kinds
         if repair.probe_concerns is not None:
             documents["probe-expectation-corrections.json"]["suite_concerns"] = {
                 "original": original.concerns,
