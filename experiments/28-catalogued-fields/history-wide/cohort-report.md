@@ -9,7 +9,7 @@ All ten repositories remain visible. Pending is not zero yield or free. Unique n
 | macs3-project/MACS | 157 | 157 | 157 | 0 | 0 | 35/26 | 0 | 0 | 0 | 0.772173 | True |
 | OpenMS/OpenMS | 5671 | 0 | 0 | 0 | 5671 | 0/0 | 0 | 0 | 0 | 0 | True |
 | lammps/lammps | 3367 | 0 | 0 | 0 | 3367 | 0/0 | 0 | 0 | 0 | 0.934599 | True |
-| matchms/matchms | 435 | — | — | — | — | —/— | — | — | — | — | False |
+| matchms/matchms | 435 | 431 | 335 | 100 | 0 | 174/164 | 58 | 54 | 49 | 0.165093 | False |
 | opencobra/cobrapy | 590 | — | — | — | — | —/— | — | — | — | — | False |
 | soedinglab/MMseqs2 | 87 | — | — | — | — | —/— | — | — | — | — | False |
 | mne-tools/mne-python | 7888 | — | — | — | — | —/— | — | — | — | — | False |
@@ -17,12 +17,14 @@ All ten repositories remain visible. Pending is not zero yield or free. Unique n
 
 Result evidence complete: False.
 
-Known terminal history charges: $3.190194. Active/unreported charges excluded: True.
+Known terminal history charges: $3.355287. Active/unreported charges excluded: True.
 
 Final all-ten live accounting, fresh archive verification, controller/worker/local cleanup and issue conclusion/readback/closure remain separate requirements.
 
 samtools/samtools: original validation exceptions {}; original CLI exceptions {"UnicodeDecodeError": 1}.
 
 macs3-project/MACS: original validation exceptions {"OSError/errno7": 9}; original CLI exceptions {"OSError": 9}.
+
+matchms/matchms: original validation exceptions {"OSError/errno7": 10}; original CLI exceptions {"OSError": 10}.
 
 Validation and CLI exception channels can describe the same failure and must not be added together; censored candidates remain separate.
