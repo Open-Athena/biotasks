@@ -5,9 +5,10 @@
   "model_calls": 0,
   "remote_jobs": 0,
   "remaining": [
-    "Build a checkpointed controls-only runner using verified original recipes and Harbor0.6.6 verifier-only multiplier",
-    "Execute and archive scheduling/timeout comparisons under explicit cumulative resource bound",
-    "Run separately scoped OpenMS acquisition and MMseqs2 bootstrap comparisons"
+    "Implement checkpointed bounded supervisor for original image reconstruction, control runner, archival and owned cleanup",
+    "Run Matchms/OHIF unchanged reconstruction and controls if builds succeed",
+    "Report Scanpy retained original recipe failure separately; do not silently repair it",
+    "Perform separately scoped OpenMS checkout and MMseqs2 bootstrap comparisons"
   ],
   "local_inputs_retained": [
     {
@@ -31,11 +32,22 @@
       "bytes": 8730760
     }
   ],
-  "local_retention_reason": "Active investigation evidence; not temporary /tmp storage. Review publication eligibility or verify durable backing before cleanup.",
+  "local_retention_reason": "Active original inputs, including extracted selected task packages. Clean ignored private copies after archived controls or investigation completion; protected originals remain authoritative.",
   "agents_spawned": 0,
   "verified_prerequisites": [
     "All original task/reconstruction hashes inventoried",
     "Three recipes pass syntax-only checks",
     "Exact Harbor0.6.6 verifier-only multiplier source verified"
-  ]
+  ],
+  "control_inputs": {
+    "files_verified": 90,
+    "tasks": 9,
+    "location": "inputs-private/controls",
+    "raw_matchms_publication": false
+  },
+  "control_runner": {
+    "path": "run_existing_controls.py",
+    "dry_run_commands": 20,
+    "live_execution": false
+  }
 }

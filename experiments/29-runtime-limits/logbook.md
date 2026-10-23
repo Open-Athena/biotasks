@@ -15,3 +15,9 @@ Verified the original bootstrap metadata for all three control repositories agai
 ## 2026-10-23 — exact Harbor override source
 
 Read the historical Harbor0.6.6 wheel from PyPI, verified its published SHA256/1,120,578bytes and retained selected source/license. No installation/import. Verified the CLI verifier-only multiplier and effective timeout formula: multiplier4 turns original300seconds into1,200without changing task bytes or other stage limits. This resolves the override-support prerequisite; execution and complete controls remain outstanding.
+
+## 2026-10-23 — selected control inputs and runner
+
+Verified/extracted 90 original files for nine exports, then generated all 20 control commands without execution. Added explicit per-trial admission, 300-second cleanup reserve, task hash/mode checks, fresh output directories, original Harbor version requirement, and stop-on-wrapper-timeout behavior. Execution still requires an owning bounded supervisor, image reconstruction and archive/cleanup implementation. No model calls or remote jobs.
+
+Read-only transcript alignment found Scanpy's original failed pip command retained in its saved Dockerfile. Recorded its original exit status and archive/member hashes. This makes a syntax-clean recipe insufficient evidence for executable reconstruction. No failed recipe command has been changed.

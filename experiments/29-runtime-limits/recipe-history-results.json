@@ -1,0 +1,34 @@
+{
+  "scope": "Read-only original recipe/transcript comparison, no build or model calls",
+  "repositories": [
+    {
+      "repo": "OHIF__Viewers",
+      "archive_sha256": "324f865921439533867d507676baaa457a7200ae357ea4ac75750dc306a11836",
+      "transcript_member": "bootstrap/OHIF__Viewers/4965e280cada__74ba7084/transcript.jsonl",
+      "transcript_sha256": "28c42ab4a5bebd6a97841239b8e24821b1eb478db785c8a998ee21c154a56bd8",
+      "bash_commands": 18,
+      "recipe_commands_match_transcript": true,
+      "nonzero_commands_retained": [],
+      "limits": "Original observations, not fresh Docker replay. Zero shell status can mask failures in piped commands."
+    },
+    {
+      "repo": "scverse__scanpy",
+      "archive_sha256": "52eab704e777aeb5f1b78e5447668ea8c91eee574926b60bb740edaf57355f1c",
+      "transcript_member": "bootstrap/scverse__scanpy/903925920218__74ba7084/transcript.jsonl",
+      "transcript_sha256": "116c9ff62a209f484158ecef0b8c8739b3872f1584d9910dc91d9c947529d959",
+      "bash_commands": 16,
+      "recipe_commands_match_transcript": true,
+      "nonzero_commands_retained": [
+        {
+          "step": 7,
+          "command_sha256": "bc7bf2cf447c490093c408cc487f7fe2bc01a1594112ec1a2148bb13e48d94d5",
+          "original_exit": 1,
+          "command": "python3.13 --version && curl -sS https://bootstrap.pypa.io/get-pip.py | python3.13",
+          "externally_managed_environment": true
+        }
+      ],
+      "limits": "Original observations, not fresh Docker replay. Zero shell status can mask failures in piped commands."
+    }
+  ],
+  "conclusion": "Scanpy saved Dockerfile retains original exit-1 pip command; syntax-only preflight does not establish executable reconstruction. OHIF has no nonzero BASH observations but unpinned dependencies/pipeline status masking remain."
+}
