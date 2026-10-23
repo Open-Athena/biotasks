@@ -33,3 +33,7 @@ Original recipe receives an ownership LABEL immediately after FROM; all base/COP
 Original Matchms recipe completed successfully in one attempt, consuming 0.12724778 allocated CPU-hours. Downloaded and SHA-verified its 4,967-byte Iris output archive to ignored durable private storage. Build log records successful installation and 1,446 collected tests; this is not a task-validity result. No build containers remain. The uniquely labeled reconstructed image/cache stays on the recorded worker for controls and must be removed after control archive readback.
 
 Submitted `/exedev/biotasks29-matchms-controls-001` once on that same worker, with the frozen eight-control schedule and unchanged 40 task files. Four allocated CPUs/16 GiB, 8,700 seconds maximum, no retries/model calls/credentials. The 9.667 CPU-hour maximum plus measured reconstruction remains within the 32 CPU-hour first-stage bound. Exact payload and checkpoint are recorded in `controls-submission.json`. No outcome is claimed until terminal archive/control records are read back.
+
+## 2026-10-23 — live control progress and monitoring
+
+Read-only controller inspection observed Matchms671 nop completing with reward 0, target 0/1 and regression tests 30/30, with no Harbor exception; oracle was running. This is provisional live evidence, not an archived pair. A later log-service request failed transiently; the observer now reports authoritative job state independently of log transport. Same handle remained running at 17:41:21Z; no restart or additional submission.

@@ -27,8 +27,14 @@ with connect_controller(config_file=args.config) as endpoint:
         if args.action == 'observe':
             job = client.job(job_id)
             status = job.status()
-            logs = job.logs(max_lines=100, tail=True)
-            payload = {'job_id':str(job_id),'state':str(status.state),'logs':[e.data for e in logs]}
+            # Log transport failure must not hide authoritative job status.
+            logs_error = None
+            try:
+                logs = job.logs(max_lines=100, tail=True)
+            except Exception as error:
+                logs = []
+                logs_error = type(error).__name__
+            payload = {'job_id':str(job_id),'state':str(status.state),'logs':[e.data for e in logs],'logs_error':logs_error}
             (private / 'observation.json').write_text(json.dumps(payload,indent=2)+'\n')
             for entry in logs:
                 if entry.data.startswith('BIOTASKS29_CONTROLS='):
