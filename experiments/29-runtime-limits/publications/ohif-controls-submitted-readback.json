@@ -1,0 +1,61 @@
+{
+  "issue": {
+    "body": "Can timeout and scheduling changes recover complete positive control pairs without repairing tasks? Follow-up to #28; investigation remains open.\n\n**Completed controls:** four existing Matchms exports have positive nop/oracle pairs, preserved regression tests and clean oracle commands; all 40 task files are unchanged. These are completed controls, not new exports. [Results](https://github.com/Open-Athena/biotasks/blob/188091eb/experiments/29-runtime-limits/matchms-control-results.json).\n\n**OpenMS:** the original 60-second checkout timed out again; the 300-second arm completed the same commit in 77.9 seconds with no tracked changes, using the same CPU/memory limits. This establishes acquisition recovery only. Bootstrap, PR discovery and task generation were not run. Both containers were removed and the archive verified. [Evidence](https://github.com/Open-Athena/biotasks/blob/875eab80/experiments/29-runtime-limits/openms-checkout-readback-001.json).\n\n**Scanpy:** all 16 recorded bootstrap commands replayed with original exits and no repairs, crossing the saved Dockerfile's stop-at-first-failure barrier. Smoke/fresh-image checks remain false. The unchanged PR4389 export's nop/oracle controls are running at 300 versus 1,200 verifier seconds. Results remain pending. [Protocol](https://github.com/Open-Athena/biotasks/blob/65cfc8b5/experiments/29-runtime-limits/scanpy-controls-protocol.md).\n\n**OHIF:** replaying all 18 original bootstrap actions with the original full-checkout copy behavior succeeded, without command repairs. Smoke and fresh-image checks passed (121 suites, 1,446 tests). The four unchanged export control pairs are now submitted at the original 300-second verifier limit; outcomes remain pending. Reconstruction alone does not validate them. [Evidence](https://github.com/Open-Athena/biotasks/blob/89880373/experiments/29-runtime-limits/ohif-recorded-result-001.json).\n\n**Remaining:** verify Scanpy controls and cleanup; verify the submitted OHIF export controls and cleanup; checkpoint MMseqs2's bootstrap comparison and model allowance. Longer verifier limits cannot resolve installation or checkout failures.\n\n**Budget and retention:** ten terminal jobs used 1.74130 allocated CPU-hours. Scanpy controls were last observed active; Scanpy and OHIF controls each reserve at most 9.6667 more within the same 32-hour ceiling, on reserved capacity. Zero model calls. Scanpy and OHIF images remain for controls and subsequent cleanup after archive readback. Raw Matchms evidence remains private. No pipeline promoted. Detailed logs remain in comments.\n",
+    "labels": [
+      {
+        "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+        "name": "agent-generated",
+        "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+        "color": "5319E7"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374057535",
+    "html_url": "https://github.com/Open-Athena/biotasks/issues/29#issuecomment-6374057535",
+    "issue_url": "https://api.github.com/repos/Open-Athena/biotasks/issues/29",
+    "id": 6374057535,
+    "node_id": "IC_kwDOU1dZq88AAAABe-xmPw",
+    "user": {
+      "login": "gonzalobenegas",
+      "id": 5766420,
+      "node_id": "MDQ6VXNlcjU3NjY0MjA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5766420?u=d059be1b75c6ff8174b109722e0ec05a66ed29c1&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gonzalobenegas",
+      "html_url": "https://github.com/gonzalobenegas",
+      "followers_url": "https://api.github.com/users/gonzalobenegas/followers",
+      "following_url": "https://api.github.com/users/gonzalobenegas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gonzalobenegas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gonzalobenegas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gonzalobenegas/subscriptions",
+      "organizations_url": "https://api.github.com/users/gonzalobenegas/orgs",
+      "repos_url": "https://api.github.com/users/gonzalobenegas/repos",
+      "events_url": "https://api.github.com/users/gonzalobenegas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gonzalobenegas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-23T20:26:49Z",
+    "updated_at": "2026-10-23T20:26:49Z",
+    "author_association": "MEMBER",
+    "body": "\ud83e\udd16 Submitted eight nop/oracle controls for OHIF exports 6334, 6339, 6346 and 6352 on the same reserved worker holding the reconstructed image. All 40 original task files retain hashes and modes. Harbor 0.6.6, original 300-second verifier limit, 1 CPU/6 GiB per task; no command/parser repairs or model calls.\n\nThe one-attempt supervisor allows 7,200 seconds for trials, 8,400 for work and 8,700 including cleanup, with 4 allocated CPUs/16 GiB. Terminal accounting plus full Scanpy/OHIF reservations is 21.07464 CPU-hours under the existing 32-hour ceiling. No new capacity. Controls and archive cleanup remain pending; reconstruction images are retained until verified readback.\n\n[Checkpoint and protocol](https://github.com/Open-Athena/biotasks/blob/8873e3ed/experiments/29-runtime-limits/ohif-controls-protocol.md).\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374057535/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  }
+}
