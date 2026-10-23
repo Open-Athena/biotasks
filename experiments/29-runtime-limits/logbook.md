@@ -21,3 +21,9 @@ Read the historical Harbor0.6.6 wheel from PyPI, verified its published SHA256/1
 Verified/extracted 90 original files for nine exports, then generated all 20 control commands without execution. Added explicit per-trial admission, 300-second cleanup reserve, task hash/mode checks, fresh output directories, original Harbor version requirement, and stop-on-wrapper-timeout behavior. Execution still requires an owning bounded supervisor, image reconstruction and archive/cleanup implementation. No model calls or remote jobs.
 
 Read-only transcript alignment found Scanpy's original failed pip command retained in its saved Dockerfile. Recorded its original exit status and archive/member hashes. This makes a syntax-clean recipe insufficient evidence for executable reconstruction. No failed recipe command has been changed.
+
+## 2026-10-23 — original Matchms reconstruction submitted
+
+Submitted `/exedev/biotasks29-matchms-reconstruct-001` once on existing reserved TRC worker capacity. Four allocated CPUs, 16 GiB RAM/disk, 2,400-second maximum, zero retries/model calls/project credentials. Maximum 2.667 allocated CPU-hours is part of the first-stage 32 CPU-hour bound. Exact source/payload/worker checkpoint is in `reconstruction-submission.json`.
+
+Original recipe receives an ownership LABEL immediately after FROM; all base/COPY/RUN bytes remain unchanged. Build resources are 1.5 CPU/6 GiB with 1,800-second deadline. An owned successful image is retained on the recorded worker for subsequent controls, with explicit removal after controls/archive or investigation termination. No control execution is part of this job. Initial local preflight failed before connection because the private output parent was absent; fixed directory creation and repeated read-only preflight before the sole submission.
