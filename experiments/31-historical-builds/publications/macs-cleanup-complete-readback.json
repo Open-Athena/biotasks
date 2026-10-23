@@ -1,0 +1,61 @@
+{
+  "issue": {
+    "body": "Can replaying recorded build commands after a historical PR checkout restore the compiled environment without task-specific repairs? Follow-up to #28. Investigation remains open.\n\n**Candidate:** an opt-in rebuild hook has default-off parity and passes synthetic native, export and package-integration checks. No production change has been promoted. [Candidate checks](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json).\n\n**MACS environment:** all 16 recorded bootstrap actions replayed unchanged. Raising only the post-bootstrap smoke/fresh limits from 300 to 1,200 seconds made both complete with 4,924 passed and 348 skipped. This provided a reconstructed image; mutable dependencies may differ from the original. [Timing evidence](https://github.com/Open-Athena/biotasks/blob/9c2071e6/experiments/31-historical-builds/macs-longcheck-diagnosis.json).\n\n**PR792 result:** the verified native comparison ran original and rebuild validators with the same eight test paths, parser, Docker transport and 600-second stage limit. Original pre/post each had three collection errors. Rebuilding reduced the base stage to one collection error, but the frozen test patch imports `CallerExecution`, a new module added by this PR. The patched stage passed 364 tests with 29 skipped. Neither arm produced fail-to-pass tests, so this is no recovered task or positive control. The upstream stage's outer exit 0 masked inner pytest collection errors. [Diagnosis](https://github.com/Open-Athena/biotasks/blob/d4626f80/experiments/31-historical-builds/macs-native-diagnosis.json).\n\n**Next:** assess the opt-in hook on a PR whose frozen tests can collect at the base revision before claiming general recovery. All four jobs are terminal; verified cleanup removed the labeled MACS image and left no owned containers. Total allocation was 3.22030 CPU-hours under the 16-hour ceiling, with zero model calls or new capacity. [Cleanup readback](https://github.com/Open-Athena/biotasks/blob/6741d370/experiments/31-historical-builds/macs-image-cleanup-readback-001.json). Detailed logs remain in comments.\n",
+    "labels": [
+      {
+        "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+        "name": "agent-generated",
+        "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+        "color": "5319E7"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374368701",
+    "html_url": "https://github.com/Open-Athena/biotasks/issues/31#issuecomment-6374368701",
+    "issue_url": "https://api.github.com/repos/Open-Athena/biotasks/issues/31",
+    "id": 6374368701,
+    "node_id": "IC_kwDOU1dZq88AAAABe_ElvQ",
+    "user": {
+      "login": "gonzalobenegas",
+      "id": 5766420,
+      "node_id": "MDQ6VXNlcjU3NjY0MjA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5766420?u=d059be1b75c6ff8174b109722e0ec05a66ed29c1&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gonzalobenegas",
+      "html_url": "https://github.com/gonzalobenegas",
+      "followers_url": "https://api.github.com/users/gonzalobenegas/followers",
+      "following_url": "https://api.github.com/users/gonzalobenegas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gonzalobenegas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gonzalobenegas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gonzalobenegas/subscriptions",
+      "organizations_url": "https://api.github.com/users/gonzalobenegas/orgs",
+      "repos_url": "https://api.github.com/users/gonzalobenegas/repos",
+      "events_url": "https://api.github.com/users/gonzalobenegas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gonzalobenegas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-23T20:44:14Z",
+    "updated_at": "2026-10-23T20:44:14Z",
+    "author_association": "MEMBER",
+    "body": "\ud83e\udd16 The MACS reconstruction image cleanup completed after the negative PR792 comparison and verified archive readback. The cleanup job removed only the exact owner-labeled image `sha256:979804eec3d64fffcff3cabf5eda15b04c6a4e1143051bf024ff66ac05312797`; no labeled images or containers remain, and its tools were removed. The 298-byte output archive was downloaded and verified (SHA256 `1c434f42a9cfbdbb28e9f257831d7c2febeb70fbf3c1c4128f20179814f9777f`). It used 0.00433 allocated CPU-hours, bringing four terminal #31 jobs to 3.22030; zero model calls. [Verified cleanup](https://github.com/Open-Athena/biotasks/blob/6741d370/experiments/31-historical-builds/macs-image-cleanup-readback-001.json). The issue remains open for general hook assessment; PR792 itself did not yield a positive pair.\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374368701/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  }
+}
