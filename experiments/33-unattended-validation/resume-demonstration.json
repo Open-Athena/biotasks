@@ -1,5 +1,5 @@
 {
-  "scope": "Real frozen candidate and existing-submission adoption across separate controller processes",
+  "scope": "Real frozen-candidate verification, adopted existing controls, terminal collection, readback, HF publication and one owned cleanup via resumed controller invocations",
   "journal": {
     "plan_sha256": "2ed54a5cced97a966a839d5a4660f70476d09a2716cf5b5c55f713a038ebf4bf",
     "run_id": "biotasks34-macs-742-controls-001",
@@ -33,6 +33,76 @@
             "sha256": "94862beabbaca9ebd72db48eb31f4f959deee4fb2b6c21d14d9e2002a018d150"
           }
         ]
+      },
+      {
+        "stage": "remote_terminal",
+        "evidence": [
+          {
+            "path": "experiments/34-offline-rebuild/macs-742-controls-accounting.json",
+            "sha256": "f66e5cc9aa6cfbf3b40689a83c688fbe5c069a897bbd5014682eb8224ba1783b"
+          }
+        ]
+      },
+      {
+        "stage": "archive_readback_verified",
+        "evidence": [
+          {
+            "path": "experiments/34-offline-rebuild/macs-742-control-results.json",
+            "sha256": "caa1fb73918f6ede4408e4f583bcaa11d4f6de727b956b33603b8e8e0b64701a"
+          },
+          {
+            "path": "experiments/34-offline-rebuild/macs-742-controls-result-001.json",
+            "sha256": "f1d26396ec8274895ec882e28e36c188e9fb945a3dc8ba610992be069ea96525"
+          },
+          {
+            "path": "experiments/34-offline-rebuild/inputs-private/macs-742-controls-001/outputs.tar.zst",
+            "sha256": "d771226abc5bc8ef7b3e59ee456254cde354a733813c8aef347b6dea731cfeea"
+          }
+        ]
+      },
+      {
+        "stage": "public_eligibility_reviewed",
+        "evidence": [
+          {
+            "path": "experiments/33-unattended-validation/offline-public-review.json",
+            "sha256": "10713b802388ad043be5cca2b821982dfd447361d84c30d99834b133f18baf74"
+          },
+          {
+            "path": "experiments/33-unattended-validation/offline-evidence-manifest.json",
+            "sha256": "e6d02a059753c44330d7a47321c6258d1d21e230bb07cc065fe4c6d58567759c"
+          }
+        ]
+      },
+      {
+        "stage": "hf_readback_verified",
+        "evidence": [
+          {
+            "path": "experiments/33-unattended-validation/offline-evidence-receipt.json",
+            "sha256": "65ffebbf1565fbeaab3721266fff4bad1444ac71e7d59e0e97e05fc0aa00bf99"
+          }
+        ]
+      },
+      {
+        "stage": "cleanup_terminal",
+        "evidence": [
+          {
+            "path": "experiments/34-offline-rebuild/macs-742-image-cleanup-accounting.json",
+            "sha256": "daecee82b4f9fc24ef60b74938d02fdd332241cdb120e965d4bff1c44c7681ad"
+          }
+        ]
+      },
+      {
+        "stage": "cleanup_verified",
+        "evidence": [
+          {
+            "path": "experiments/34-offline-rebuild/macs-742-image-cleanup-readback-001.json",
+            "sha256": "ed5775ee48c86c23f4ef7669ca320634e8632028830108c633f340963ef6b671"
+          },
+          {
+            "path": "experiments/34-offline-rebuild/inputs-private/macs-742-image-cleanup-001/outputs.tar.zst",
+            "sha256": "5ab28958a68ef3dda88414c6892c122e026855570badfa70dc2f21063c0b514a"
+          }
+        ]
       }
     ],
     "events": [
@@ -43,17 +113,61 @@
       {
         "stage": "submission_recorded",
         "event": "evidence_verified"
+      },
+      {
+        "stage": "remote_terminal",
+        "event": "intent_persisted"
+      },
+      {
+        "stage": "remote_terminal",
+        "event": "evidence_verified"
+      },
+      {
+        "stage": "archive_readback_verified",
+        "event": "intent_persisted"
+      },
+      {
+        "stage": "archive_readback_verified",
+        "event": "evidence_verified"
+      },
+      {
+        "stage": "public_eligibility_reviewed",
+        "event": "evidence_verified"
+      },
+      {
+        "stage": "hf_readback_verified",
+        "event": "intent_persisted"
+      },
+      {
+        "stage": "hf_readback_verified",
+        "event": "evidence_verified"
+      },
+      {
+        "stage": "cleanup_terminal",
+        "event": "intent_persisted"
+      },
+      {
+        "stage": "cleanup_terminal",
+        "event": "evidence_verified"
+      },
+      {
+        "stage": "cleanup_verified",
+        "event": "intent_persisted"
+      },
+      {
+        "stage": "cleanup_verified",
+        "event": "evidence_verified"
       }
     ]
   },
-  "new_submissions": 0,
+  "new_control_submissions": 0,
+  "new_cleanup_submissions": 1,
   "new_model_calls": 0,
   "live_controls_launched_by_this_runner": false,
   "remaining": [
-    "remote terminal collection",
-    "output readback",
-    "public eligibility and HF archive",
-    "owned cleanup"
+    "Exact dependency receipt missing",
+    "Cleanup archive retained locally; HF preservation pending",
+    "Fully unattended first-submission orchestration not yet demonstrated"
   ],
   "synthetic_checks": 8
 }
