@@ -1,0 +1,5 @@
+🤖 Submitted the first #32 live comparison, `/exedev/biotasks32-matchms-targets-001`, after checkpointing the generic deleted-path selector, four arms and all inputs. It is currently running. Both arms use #30's stdin transport and the unchanged native validator/parser; only path selection differs. PR958 uses eight versus six targets; PR671's command is unchanged.
+
+Local checks passed ten path fixtures, four runner fixtures, two frozen patch selections, complete source imports and all generated stage hashes/syntax. The selector changes both native and export targeting call sites, preserving reset/inventory extraction. No per-PR exception or manual command edit is present.
+
+[Protocol and limits](https://github.com/Open-Athena/biotasks/blob/d3de9d30/experiments/32-runner-coverage/protocol.md): one attempt, existing reserved capacity, at most 10 allocated CPU-hours, zero model calls. Native outcomes will be reported separately from recovered exports and independent controls. No live result is claimed yet.
