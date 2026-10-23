@@ -3,9 +3,9 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 11,
+  "remote_jobs": 12,
   "remaining": [
-    "Run the four unchanged OHIF export control pairs after successful recorded-action reconstruction; then verify archive and remove retained image",
+    "Observe the four unchanged OHIF export control pairs, verify archive and remove the retained image after readback",
     "Observe original Scanpy PR4389 controls (300/1200s nop/oracle), verify archive, then clean the retained recorded-replay image",
     "OpenMS checkout comparison completed and read back; MMseqs2 bootstrap comparison still needs separate model allowance"
   ],
@@ -83,7 +83,8 @@
   "retained_image": "biotasks29-scanpy-recorded-001:recorded-actions",
   "retention_condition": "Pending original Scanpy controls; remove image after archive readback",
   "active_jobs": [
-    "/exedev/biotasks29-scanpy-controls-001"
+    "/exedev/biotasks29-scanpy-controls-001",
+    "/exedev/biotasks29-ohif-controls-001"
   ],
   "openms_checkpoint": "8d0810037b8abecc9f297df5e3fb9b0ae66d3e87",
   "openms_checkout": {
@@ -120,5 +121,12 @@
   "retained_images": [
     "biotasks29-scanpy-recorded-001:recorded-actions",
     "biotasks29-ohif-recorded-001:recorded-actions"
-  ]
+  ],
+  "ohif_controls": {
+    "state": "submitted",
+    "job_id": "/exedev/biotasks29-ohif-controls-001",
+    "checkpoint": "8873e3ed7d47373c260b50dc393f911c5e2dbf51",
+    "max_allocated_cpu_hours": 9.666666666666666,
+    "task_files_unchanged": 40
+  }
 }

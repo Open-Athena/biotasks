@@ -117,3 +117,5 @@ All 18 recorded BASH actions matched their original exits, without command repai
 ### 2026-10-23 — Checkpoint unchanged OHIF controls
 
 Prepared eight original nop/oracle controls for four OHIF exports. Verified all 40 task files and archive members, original modes, and 7,200 seconds of trial allowances. The supervisor differs from Scanpy only in identities and paths; common helper/setup/resource wrapper are unchanged. Preflight found headroom on the same reserved worker retaining the image. One attempt is bounded to 8,700 seconds, 4 CPUs/16 GiB; full reservations for Scanpy and OHIF plus terminal accounting total 21.07464 CPU-hours under 32. No model calls, new capacity or task repairs. Five entrypoints pass syntax checks. Scanpy cleanup now conservatively reserves the OHIF controls bound rather than its completed reconstruction bound.
+
+Submitted `biotasks29-ohif-controls-001` from `8873e3ed` on the original image worker. Payload hashes match preflight; no new capacity/model calls. Archive, outcomes and cleanup remain pending. Scanpy control handle was authoritatively observed running before this submission.
