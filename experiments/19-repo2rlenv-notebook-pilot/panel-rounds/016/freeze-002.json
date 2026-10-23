@@ -1,0 +1,368 @@
+{
+  "frozen_at": "2026-10-23T11:17:10.909130+00:00",
+  "public_runtime_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+  "runtime_file_count": 192,
+  "all_ten_runtime_maps_identical": true,
+  "changed_from_round015": [
+    "experiments/19-repo2rlenv-notebook-pilot/comparison_repair.py",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_inspection.py",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py",
+    "experiments/19-repo2rlenv-notebook-pilot/review_inspection.py",
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+    "experiments/19-repo2rlenv-notebook-pilot/run_reference_setup.py",
+    "experiments/19-repo2rlenv-notebook-pilot/run_specification.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_comparison_repair.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_inspection.py",
+    "experiments/19-repo2rlenv-notebook-pilot/test_review_inspection.py",
+    "src/biotasks/chat_author.py",
+    "src/biotasks/prompts/notebook-comparison-repair.md",
+    "src/biotasks/prompts/notebook-grader-author.md",
+    "src/biotasks/prompts/notebook-grader-review.md",
+    "src/biotasks/prompts/notebook-task-independent-solution.md",
+    "src/biotasks/prompts/worker-context-recovery.md"
+  ],
+  "supersedes_unlaunched_freeze": "panel-rounds/016/freeze.json",
+  "prior_payloads_preserved": true,
+  "runtime_candidate_includes_compact_text_pagination_and_read_only_context_recovery": true,
+  "original_notebook_and_seed_bytes_unchanged": true,
+  "private_input_revision": "b3608912e38101ffa29cdb4fa76c0154fb4df9da",
+  "private_local_ref": "refs/heads/codex/research/19-private-panel-round016-inputs-002",
+  "private_ref_pushed": false,
+  "private_originals": [
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyteomics-filtering/source.ipynb",
+      "sha256": "5f76d296993dd7fe4c54fdc198df8fd8801944d5086c24a76c3d5faeed659127",
+      "bytes": 128060
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb",
+      "sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "bytes": 423792
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/source.ipynb",
+      "sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "bytes": 29027
+    },
+    {
+      "path": "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/sgkit-relatedness/source.ipynb",
+      "sha256": "62055601969dbaa543f0214b6d6b42d7dde535f61dfd4413fea5cae50bd0e6fd",
+      "bytes": 4997669
+    }
+  ],
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "records": [
+    {
+      "number": 106,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "baseline_number": 60,
+      "previous_number": 96,
+      "config_file": "autonomous-runs/106/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb",
+      "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+      "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/seed.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source-license-evidence.json": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyhmmer-msa-to-hmm/source.ipynb": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "2f0791e892d0e6972ed4685fb06d8dbc95802269a9f824d66dee01be954d1b45",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1c6ba0377f5aa3be3b3e13ebbc86aa8a666c744c506af96a4d0a3fc870b1cb2",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "2e4ad2e3fbbaacfc262302faa76de02c7261ce877aeafba9b6ae954ccb5d9a2a"
+      }
+    },
+    {
+      "number": 107,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "baseline_number": 59,
+      "previous_number": 97,
+      "config_file": "autonomous-runs/107/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/scverse/scanpy/blob/8c1463d5d97272d5811ad3f4efb57483e23b4c7e/docs/tutorials/basics/clustering.ipynb",
+      "source_revision": "8c1463d5d97272d5811ad3f4efb57483e23b4c7e",
+      "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/scanpy-clustering/source-seed.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "experiments/19-repo2rlenv-notebook-pilot/reference-inputs/scanpy/clustering.ipynb": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "2c6fcc188e050668d5a496b0832ce6dfa4afefe7c6521ac927993d740a224f42",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "893504d8f89bf961d8fcdea8d858b26e65e205bcf1b230f9837ad7698ebc9e1a",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "f321a8b9b68a55140c2ee39382d889987380f4d27eb1bdde3be6eb38b6a92be4"
+      }
+    },
+    {
+      "number": 108,
+      "id": "pyteomics-filtering",
+      "domain": "Proteomics",
+      "baseline_number": 54,
+      "previous_number": 98,
+      "config_file": "autonomous-runs/108/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "b3608912e38101ffa29cdb4fa76c0154fb4df9da",
+      "source_url": "https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb",
+      "source_revision": "a133667b090e41c645ed682861b73d98bef2d045",
+      "source_sha256": "5f76d296993dd7fe4c54fdc198df8fd8801944d5086c24a76c3d5faeed659127",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyteomics-filtering/seed.json": "d3f61f90da0c9924b686765495e0b05c54fe8b575b9a317e361a7bcaf973cec0",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyteomics-filtering/source.ipynb": "5f76d296993dd7fe4c54fdc198df8fd8801944d5086c24a76c3d5faeed659127"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "2ae75619457cacdc0721777af2c445bf7eb80cd9c426c9a934541fa10072ef7f",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "d3f61f90da0c9924b686765495e0b05c54fe8b575b9a317e361a7bcaf973cec0",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "9c7ed8687dff069004915cf44fd287d53c4dc394799e6f83e6a53b4d6824f46e"
+      }
+    },
+    {
+      "number": 109,
+      "id": "matchms-spectral-matching",
+      "domain": "Metabolomics",
+      "baseline_number": 56,
+      "previous_number": 99,
+      "config_file": "autonomous-runs/109/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "b3608912e38101ffa29cdb4fa76c0154fb4df9da",
+      "source_url": "https://github.com/matchms/matchms-docs/blob/796f156c58d25adfb7e1528fcb24eb8c40c143a5/notebooks/matchms_tutorial_01_building_analysis_pipeline.ipynb",
+      "source_revision": "796f156c58d25adfb7e1528fcb24eb8c40c143a5",
+      "source_sha256": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/seed.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/matchms-spectral-matching/source.ipynb": "1888514d9ee43fdd648ff037c83c2990074cc6d16b6a2102694eea16bf21da7d"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "baf733afe4e2a60b729f22a1dabadc76882681db6a7372175dbe7534df1ba31b",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "6b330a04f8d3c907cecf93ef1245a8ffaefa7f092fc35bf43663ad4d6f809006",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "3398a77a29b3bfc8971191e7a0e22ebedd30012826366332c8fd0644a9827385"
+      }
+    },
+    {
+      "number": 110,
+      "id": "neurokit-hrv",
+      "domain": "Physiology",
+      "baseline_number": 55,
+      "previous_number": 100,
+      "config_file": "autonomous-runs/110/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb",
+      "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/neurokit-hrv/seed.json": "57c4c8c32f4f978f78d22e478032949e06aa3e649526e8c2a39265a3ef6319a2",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/neurokit-hrv/source-license-evidence.json": "de64e85a368e2c806b4cf4935eb03a1251afe1f93bfa9dbcd2bc186925e53b94",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/neurokit-hrv/source.ipynb": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "a8d04aa9f427d71e1e15260179e33dc0be6fa7f8c71fe79be0a7501f5536a492",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "57c4c8c32f4f978f78d22e478032949e06aa3e649526e8c2a39265a3ef6319a2",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "83772077670e1a8f2aa38af97f0a6477a6452980feca9e5fb77dc61ee0a8be3c"
+      }
+    },
+    {
+      "number": 111,
+      "id": "cobrapy-deletions",
+      "domain": "Metabolic systems biology",
+      "baseline_number": 58,
+      "previous_number": 101,
+      "config_file": "autonomous-runs/111/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "b3608912e38101ffa29cdb4fa76c0154fb4df9da",
+      "source_url": "https://github.com/opencobra/cobrapy/blob/a9c5ced29670bed5035fb19e87e7b0b588adb62d/documentation_builder/deletions.ipynb",
+      "source_revision": "a9c5ced29670bed5035fb19e87e7b0b588adb62d",
+      "source_sha256": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/seed.json": "83cbe4d7717d86a14bce63b698dc46193cfdd34710b40da3be09ad227c2b7b22",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/cobrapy-deletions/source.ipynb": "64da8bc313b923ae2e536964cb0db903e94d9eefa6ee7c8b593ebe2000507115"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "ae7a02f8bf02565327812c0578e0b85190e86d6303451fa2c415656782b9d70e",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "83cbe4d7717d86a14bce63b698dc46193cfdd34710b40da3be09ad227c2b7b22",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "8a5ea2099fa9334d42e0e7597d70bd32bb795b6eea5e2fccd0a5c19581f01ada"
+      }
+    },
+    {
+      "number": 112,
+      "id": "bioframe-motifs-to-peaks",
+      "domain": "Regulatory genomics",
+      "baseline_number": 62,
+      "previous_number": 102,
+      "config_file": "autonomous-runs/112/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/open2c/bioframe/blob/95007ed6fc03b01005d75f95cac511b2df286854/docs/tutorials/tutorial_assign_motifs_to_peaks.ipynb",
+      "source_revision": "95007ed6fc03b01005d75f95cac511b2df286854",
+      "source_sha256": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/transfer/bioframe/seed.json": "06a091fe78fd5f49959d1671cfe5a68b8d04a8670d30719bbde59c09667f8e31",
+        "experiments/19-repo2rlenv-notebook-pilot/transfer/bioframe/source-license-evidence-autonomous.json": "cdd08345ccc83ceeb05fcfcaccf0ab6656e0338fd4ef46f6e3fb24f3a4968831",
+        "experiments/19-repo2rlenv-notebook-pilot/transfer/bioframe/source.ipynb": "4d4c17cf31d838b66d01111add13eebd4df94ac4b8cd6d6e36d6f3897a47b89b"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "373d1f580b356d6da1ec6941bcdac90cadfb04c2f43b06bae2974d59bd89f823",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "06a091fe78fd5f49959d1671cfe5a68b8d04a8670d30719bbde59c09667f8e31",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "335b648f880b2145e472ef755fd71792c1244704f090e85827004e362772b93b"
+      }
+    },
+    {
+      "number": 113,
+      "id": "mdanalysis-rmsd",
+      "domain": "Molecular dynamics",
+      "baseline_number": 63,
+      "previous_number": 103,
+      "config_file": "autonomous-runs/113/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/MDAnalysis/UserGuide/blob/b20b22d2b050238436c76df0f984be7827854bce/doc/source/examples/analysis/alignment_and_rms/rmsd.ipynb",
+      "source_revision": "b20b22d2b050238436c76df0f984be7827854bce",
+      "source_sha256": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/mdanalysis-rmsd/seed.json": "a69edfd5ed7ad7240f08c46c32dece937113a09dfd84f8d0a3a3e52a56766748",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/mdanalysis-rmsd/source-license-evidence.json": "d37945e40154eeb34894d2435e5504f4c5583d1ced8bdff027c0ff613d1b74bf",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/mdanalysis-rmsd/source.ipynb": "58132de825e5e266f2c9890594a32b548167ac23f43826a3341db7abd71e3e7b"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "c7c22f30720994b3ebd5aa22b0f427dcf9d3a99afd58da0131dec17136313895",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "a69edfd5ed7ad7240f08c46c32dece937113a09dfd84f8d0a3a3e52a56766748",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "7997e05b3b79427d04990b3a5b0c4c0473fc2d1b1e40a1d82ce7f256b5c823cf"
+      }
+    },
+    {
+      "number": 114,
+      "id": "sgkit-relatedness",
+      "domain": "Statistical genetics",
+      "baseline_number": 57,
+      "previous_number": 104,
+      "config_file": "autonomous-runs/114/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "b3608912e38101ffa29cdb4fa76c0154fb4df9da",
+      "source_url": "https://github.com/sgkit-dev/sgkit/blob/a8bc952b6a0b85e156e1bc826597922448ffd078/docs/examples/relatedness_tutorial.ipynb",
+      "source_revision": "a8bc952b6a0b85e156e1bc826597922448ffd078",
+      "source_sha256": "62055601969dbaa543f0214b6d6b42d7dde535f61dfd4413fea5cae50bd0e6fd",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/sgkit-relatedness/seed.json": "f1df95c3d62c170a4bc50a649e55347c7aa51cde867537fb10e4f23e225329eb",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/sgkit-relatedness/source.ipynb": "62055601969dbaa543f0214b6d6b42d7dde535f61dfd4413fea5cae50bd0e6fd"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "eb37b6c86336ead1c055522b71de86b1aa7cf9f881e6ac17b0f4c5bca9577dd7",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "f1df95c3d62c170a4bc50a649e55347c7aa51cde867537fb10e4f23e225329eb",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "70741fcb804b3a1025cb4e8bb12fe3fd6326dc867b5ea8d25caa04da132f41c3"
+      }
+    },
+    {
+      "number": 115,
+      "id": "pyradiomics-brain",
+      "domain": "Medical imaging",
+      "baseline_number": 61,
+      "previous_number": 105,
+      "config_file": "autonomous-runs/115/configuration.json",
+      "reserved_usd": "0.00",
+      "state": "planned_unfunded",
+      "input_revision": "846c8f50785ce9750efb154dacb276ee522eb88a",
+      "source_url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/notebooks/RadiomicsExample.ipynb",
+      "source_revision": "8ed579383b44806651c463d5e691f3b2b57522ab",
+      "source_sha256": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702",
+      "source_assets": {
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/seed.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "experiments/19-repo2rlenv-notebook-pilot/autonomous-cases/pyradiomics-brain/source.ipynb": "a92a5af3c46995fea7510fb1d91ce7f8854d8932f51b554698bdce885cab3702"
+      },
+      "runtime_file_count": 192,
+      "original_notebook_and_seed_bytes_unchanged": true,
+      "payload_files": {
+        "biotasks.tar": "c8fc4a1c7496e3876fe17ae0f4b44e8ed7d1010a0ac96152a35e9916ca940331",
+        "upstream.tar.gz": "82725446001e3ca4520f43d83ea9e6c73cbd14afa7a9e438293a4d2230edaac0",
+        "seeds.json": "aca7395e3f2daf3ca7024ba2e3b32488b0e61d5bcf0831be915deefee9fda321",
+        "bootstrap.py": "71d83904683daae5967cfa54064ed56541eb33aa544bc2760e593e8c18d14209",
+        "diagnostics.py": "abc70b478e614b9270c5f9246619fefc49c844971011c89d7b4027e66b0c2876",
+        "campaign-config.json": "212ff57397d671aad0fcdabc4fb68c32e97d0219991157ecd1db5ac275f131e2"
+      }
+    }
+  ],
+  "new_model_calls": 0,
+  "new_hosts": 0,
+  "funding": "Frozen only; ledger reserves106/113,othercasesunfunded. Dispatch requires prior submitted cohort terminal/clean and all existing limits."
+}
