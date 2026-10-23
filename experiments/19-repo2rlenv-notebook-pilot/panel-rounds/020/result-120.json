@@ -1,0 +1,79 @@
+{
+  "number": 120,
+  "observed_at": "2026-10-23T19:35:02.573542+00:00",
+  "original_pipeline_status": "rejected",
+  "audited_state": "generated_contract_and_grader_rejected_after_quality_repair",
+  "scientific_acceptance": false,
+  "publication_ready": false,
+  "source_quality_conclusion": null,
+  "source_rejected_as_broken": false,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 4577.214,
+  "stage_seconds": {
+    "preparation": 8.555,
+    "setup": 194.025,
+    "replay": 49.988,
+    "specification": 485.466,
+    "construction": 146.833,
+    "grading": 3687.851
+  },
+  "nonempty_glm_exclusion_and_passing_offline_reference_verified": true,
+  "clean_replay_completed": true,
+  "live_setup_observation_files_crosschecked_against_sealed_archive": 18,
+  "initial_review_decision": "revise",
+  "initial_question_issue_count": 1,
+  "initial_other_issue_count": 3,
+  "quality_repair_target": "public_question",
+  "quality_repair_allowance_consumed": true,
+  "grader_code_check_inventory_and_addendum_frozen_unchanged": true,
+  "unchanged_grader_code_sha256": "fb0ce7d320a1c8f127d0413a39ba6629d82780a040f2e54650f73c6d057a0674",
+  "final_review_decision": "revise",
+  "final_completed_controls": 20,
+  "final_passed_controls": 19,
+  "failed_controls": [
+    {
+      "kind": "probe",
+      "probe_name": "hmm-representation-valid-alt",
+      "passed_control": false
+    }
+  ],
+  "final_review_issue_summary": [
+    "Valid representation alternative rejected: reviewer identifies blank-line-tolerant native format semantics, while the generated positional parser rejects it.",
+    "Numeric-band prose and implemented threshold disagree; this was already identified in the initial review.",
+    "Reviewer identifies incorrect field-order names in public check descriptions."
+  ],
+  "repair_routing_observation": "The first review identified both public-question and grader/probe defects. The single repair path revised the question while freezing the same grader code, checks and addendum; final revalidation still rejected the generated candidate. A coherent multi-component quality revision within the existing one-iteration budget is a general factory improvement to assess, not an adopted extra allowance.",
+  "final_question_issues_reported_by_glm": 0,
+  "additional_operator_question_consistency_concern_remains_provisional": true,
+  "native_run": false,
+  "solver_run": false,
+  "full_original_hash_size_mode_readback": true,
+  "archive_files": 2865,
+  "archive_bytes": 120957514,
+  "archive_manifest_sha256": "e7e9e5f0eeb78d8f01722f376ecb4c5e80b33da655b1ee4b248e1ad0b8b82d5e",
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 5,
+  "review_evidence": [
+    {
+      "path": "grading/review.json",
+      "sha256": "ae821d2c2ac6ca0ba4e00f4770fdb5fa961695acf7c15d56a306a5afb887407f"
+    },
+    {
+      "path": "comparison-repair/comparison-repair.json",
+      "sha256": "bf2d199fedede318691d94224d2526a7e2c9258d852a684f8fb296875a753e2e"
+    },
+    {
+      "path": "comparison-repair-frozen-grader.json",
+      "sha256": "c1e867661416c87227590bd081a0b3013cab19105177918aaf1f2ac9cc654f0d"
+    },
+    {
+      "path": "grading-comparison-repair/review.json",
+      "sha256": "b87d4bdb0673dac5e736f7b957cff4053b22bd1f318d2901d072eb7415898294"
+    },
+    {
+      "path": "grading-comparison-repair/final-controls.json",
+      "sha256": "4a6ec75bb2ede4ee15c28e2f91e1c80d0ac44faf0d61e8163bd4756e8277d897"
+    }
+  ],
+  "next": "Preserve the rejected original. Improve general repair routing/contract clarity with versioned GLM prompts; no operator task patch or extra repair for this frozen campaign. Continue the diverse panel and keep any future publication gated."
+}

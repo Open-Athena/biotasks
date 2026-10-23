@@ -4040,3 +4040,8 @@ The living proposal still contained blanket bans on new starting checkpoints/int
 
 
 121submitted on its pre-frozen198-file runtime, exactly matching120; original Matchms source/seed bytes match117.119hostFAILED, completeoriginalarchive and4freshoriginal-ID/owner cleanup checks were verified before slot reuse.120was the sole pre-existing livehost. Atmost2hosts/2sandboxes; holds99.50USDunchanged. No prior generated task or diagnostic answer supplied, no task/science edit or extra repair/test/deadline. The source notebook remains in its local-only input checkpoint, not pushed.
+
+
+## 2026-10-23 UTC: quality gate rejects the generated PyHMMER revision
+
+120completed all pre-grading stages, including GLM-owned actual fixture exclusion and passing offline reference/replay. All18previouslycaptured setupmetadatafiles nowmatchthe sealedoriginalarchive. Firstreview found bothquestion andgrader/probe defects; currentrepairroute changedthepublicquestionwhilefreezingthegrader/checks/addendum. Freshvalidation passed19/20controls and finalreview correctlyrequestedfurtherwork: a valid native-formatrepresentationwasrejected andthepre-existingnumeric-band contradictionremained. No native/solver, no release, no broken-source claim. Preserveall2865originalfiles(120,957,514bytes),5original/freshcleanuprecords andtheoriginalone-quality-repair accounting;hostSUCCEEDEDmeansunattendedrejectioncompleted,not scientificacceptance. Investigateonecoherent multi-componentqualityrevisionandsimplerstandard-method descriptions ratherthan adding task-specificpatches or silently enlarging the allowance. Current121continuesfrozenonthesamegeneral198-filefactory;holds99.50USDunchanged. See panel-rounds/020/result-120.json.
