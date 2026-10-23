@@ -1,0 +1,132 @@
+{
+  "source_archive_manifest_sha256": "4cb60f940bd0928638c63387f904c69b33c142840166f6e8b6c532a209598e68",
+  "pipeline_status": "rejected",
+  "source_id": "neurokit-hrv",
+  "elapsed_pipeline_seconds": 3399.239,
+  "completed_stage_seconds": {
+    "preparation": 30.775,
+    "setup": 479.874,
+    "replay": 66.195,
+    "specification": 286.932,
+    "construction": 195.317,
+    "grading": 2335.585
+  },
+  "accounted_model_request_attempts": 161,
+  "request_ledgers": [
+    {
+      "path": "comparison-repair/requests.sqlite",
+      "sha256": "46bb7525395e35733cfcbd76a54bd19b350d456450d3dd7495537115fbee8a08",
+      "count": 19,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 19
+        }
+      ]
+    },
+    {
+      "path": "grading-comparison-repair/requests.sqlite",
+      "sha256": "1c742017207bedf515164f0079b31efcd71db413c60c3aaccc6cc2716196e475",
+      "count": 40,
+      "calls": [
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 20
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 20
+        }
+      ]
+    },
+    {
+      "path": "grading/requests.sqlite",
+      "sha256": "77e9d94d57aa84e28ac980f2e8a6058dc53340e134230633e2365f88c4464c8c",
+      "count": 47,
+      "calls": [
+        {
+          "scope": "grader",
+          "state": "response_received",
+          "count": 3
+        },
+        {
+          "scope": "independent",
+          "state": "response_received",
+          "count": 8
+        },
+        {
+          "scope": "probes",
+          "state": "response_received",
+          "count": 11
+        },
+        {
+          "scope": "review",
+          "state": "response_received",
+          "count": 25
+        }
+      ]
+    },
+    {
+      "path": "materialization-raw/requests.sqlite",
+      "sha256": "fedafc12951cf15a31b70d4f226ea8cc9803ae57d2dad5d3e87ddaa6616ae8f0",
+      "count": 5,
+      "calls": [
+        {
+          "scope": "materialize",
+          "state": "response_received",
+          "count": 5
+        }
+      ]
+    },
+    {
+      "path": "preparation/requests.sqlite",
+      "sha256": "5f1a3a9302be976a2fd3c9419f43251fe9ab741915962306be5bf89bb70dc734",
+      "count": 1,
+      "calls": [
+        {
+          "scope": "prepare",
+          "state": "response_received",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "replay/requests.sqlite",
+      "sha256": "e2f280d7b17f832639376556a77f40ca2dc283bfd9df736e7768584274fcf1fa",
+      "count": 0,
+      "calls": []
+    },
+    {
+      "path": "setup-raw/requests.sqlite",
+      "sha256": "abfd184bb1749514bfa30e051686c1a188cfbee63db55a8dacd68b5bf20f957b",
+      "count": 32,
+      "calls": [
+        {
+          "scope": "setup",
+          "state": "response_received",
+          "count": 32
+        }
+      ]
+    },
+    {
+      "path": "specification/requests.sqlite",
+      "sha256": "dd538c65d3e1eb31a9214bb9279d7c12e9edeef9195e0b2cdc6c0ff809f2d4b6",
+      "count": 17,
+      "calls": [
+        {
+          "scope": "specify",
+          "state": "response_received",
+          "count": 17
+        }
+      ]
+    }
+  ],
+  "author_provider_response_receipts": 161,
+  "distinct_author_response_operations_within_stage": 161,
+  "scope": "Durable client/gateway request claims, including tool-use turns and retained failed/uncertain attempts. These are not a fixed stage count or a monetary invoice. SDK internal network transmissions beyond the recorded boundary are not separately inferred.",
+  "method": "Immutable read-only SQL queries against every hash/size-verified original requests.sqlite; distinct author provider response receipt identities are counted separately. No live run or model call.",
+  "logical_quality_repair_allowances_used": 1
+}
