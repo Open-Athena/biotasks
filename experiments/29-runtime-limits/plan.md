@@ -27,3 +27,11 @@ MMseqs2: compare bootstrap1,800→3,600 seconds with the same model,20turns,2048
 ## Evidence and completion
 
 Report raw verifier completion, expected base failures, preserved tests, oracle passes, full-command status, wall time, allocated CPU-hours, missing data and any reconstruction drift separately for each arm. Do not infer valid tasks from a timeout disappearing. Until these controls execute and are archived/read back, #29 remains incomplete.
+
+## Original-recipe syntax preflight
+
+`reconstruction-readback.json` verifies all three original bootstrap records. `reconstruction-findings.json` reports zero syntax errors across Matchms 4, OHIF 18 and Scanpy 16 saved RUN bodies. This is a syntax-only result, not a successful image build. Raw metadata remains local under ignored `inputs-private/`; public findings contain only identities, hashes, flags and syntax diagnostics. The protected Matchms original remains untouched.
+
+## Verified Harbor timeout control
+
+The SHA-verified Harbor 0.6.6 wheel exposes `harbor run --verifier-timeout-multiplier 4`. Its trial code multiplies only the verifier limit when that specific option is set, leaving the general multiplier and other stage allowances unchanged. With the original task verifier value 300 seconds and unset override/max values, this yields 1,200 seconds without editing task files. Use multiplier 1 for the baseline arm and retain -r0/original internal retry behavior. Exact CLI, model and trial sources/license are in `harbor066-source/`, bound by `harbor066-provenance.json`; no package was installed or imported.
