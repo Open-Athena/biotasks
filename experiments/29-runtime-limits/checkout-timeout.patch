@@ -1,0 +1,46 @@
+--- a/src/repo2rlenv/bootstrap/runner.py
++++ b/src/repo2rlenv/bootstrap/runner.py
+@@ -154,6 +154,7 @@
+     dest: Path,
+     *,
+     depth: int = 1,
++    checkout_timeout: int = 60,
+     on_progress: Callable[[str], None] | None = None,
+ ) -> None:
+     """Clone repo and check out `ref`. Works for HEAD, branch, tag, or commit SHA.
+@@ -218,7 +219,7 @@
+         capture_output=True,
+         text=True,
+         encoding="utf-8",
+-        timeout=60,
++        timeout=checkout_timeout,
+         check=False,
+     )
+     if r.returncode != 0:
+@@ -338,7 +339,7 @@
+     with tempfile.TemporaryDirectory(prefix="r2e-clone-") as tmp:
+         clone_dir = Path(tmp) / "repo"
+         logger.info("cloning %s @ %s for user_dockerfile build", repo.url, repo.ref)
+-        _shallow_clone_at_ref(repo.url, repo.ref, token, clone_dir)
++        _shallow_clone_at_ref(repo.url, repo.ref, token, clone_dir, checkout_timeout=spec.checkout_timeout_seconds)
+         # Scrub token from .git/config before the dir becomes the Docker build context
+         if token:
+             _scrub_clone_credentials(clone_dir, repo.url)
+@@ -510,6 +511,7 @@
+             token,
+             clone_dir,
+             on_progress=lambda line: _emit("clone_progress", {"detail": line}),
++            checkout_timeout=spec.checkout_timeout_seconds,
+         )
+         # Scrub the embedded token from .git/config before the clone gets
+         # copied into the sandbox and baked into the committed image.
+--- a/src/repo2rlenv/spec/input.py
++++ b/src/repo2rlenv/spec/input.py
+@@ -266,6 +266,7 @@
+     enabled: bool = True
+     max_iterations: int = 20
+     max_seconds: int = 1800  # 30-minute timeout per bootstrap
++    checkout_timeout_seconds: int = Field(default=60, gt=0, strict=True)
+     base_image: str | None = None  # override per-language default
+     user_dockerfile: Path | None = None  # bypass agent iteration entirely
+     cache_dir: Path = Field(
