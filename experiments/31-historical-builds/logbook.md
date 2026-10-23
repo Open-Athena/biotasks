@@ -67,3 +67,7 @@ Implemented actual original/candidate validate_pr execution with unchanged argv 
 Submitted `biotasks31-macs-native-001` from `52f57a92` on the original retained-image worker. Payload matches preflight. Results, archive readback and comparison-container cleanup pending; original reconstruction image remains retained.
 
 Prepared bounded native-comparison archive readback. It verifies the Iris archive digest/size, each extracted member, reported output hashes, frozen stage command hashes and 600-second limits, native outcome records when present, and cleanup claims. Raw logs stay private; no result or success is inferred before the live job reaches terminal state.
+
+### 2026-10-23 — MACS PR792 native comparison terminal
+
+One successful Iris attempt used0.716219 CPU-hours. Verified 16,173-byte archive SHA256 `a049a6b75afeab4a4507836b9e7ac5ee5691fa386f374044e0605c2b095d1409`; both separate containers and tools are removed, no cleanup errors. Original pre/post each have3 pytest collection errors involving `__spec__`. Rebuild pre has one collection error: missing `MACS3.Signal.CallerExecution`, which the PR source patch adds and its frozen test patch imports. Rebuild post collects and passes364 tests with29 skipped. Both validators return failed,0 F2P,0 P2P; no positive task or export controls. Upstream outer stage exit0 masks inner collection failure. No command repair or regrading. The reconstruction image remains for explicit cleanup; cumulative allocation3.215967 CPU-hours, zero model calls.
