@@ -562,3 +562,8 @@ After committed full acceptance in d58fe2bd, all nine redundant public-original 
 
 
 Final conclusion6368617416and concise completed body are published with exact readbacks; #28CLOSED/reasoncompleted at2026-10-23T15:36:31Z, agent-generated label retained. Final requirement-by-requirement proof validates all ten scope/identity/cost/resource/source/scientific/retention/cleanup/publication gates, source hashes, post-cleanup actual Matchms475object/4190member integrity, unchanged native runtime files sinceb93f0aa7and unchanged original scientific results since3007714f. No remaining required work. Retained local originals/private job provenance have explicit no-automatic-deletion conditions; public-only replay and VM-dependence limits remain. Permanent research branch retained; no merge/promotion/solver score/dataset release. Final metadata checkpoint and persistent handoff precede goal completion.
+
+
+### 2026-10-23: reopen for all-ten failure diagnosis
+
+The user requested a diagnosis of all current repositories and whether different timeouts or other changes could recover failures, and explicitly required issue #28 to remain open until they are satisfied. Reopened the issue and verified OPEN. The original campaign/completion records remain historical evidence. Added history-wide/failure-diagnosis.md with all-ten observed boundaries, ownership of each timeout/resource limit, concrete proposed controlled comparisons, and priorities. This review uses retained original assessments and pinned source; no model/native jobs, repairs, task regeneration or extra spend. Proposed changes are untested and not applied. User satisfaction now controls issue closure; do not automatically close after a diagnostic or execution milestone.
