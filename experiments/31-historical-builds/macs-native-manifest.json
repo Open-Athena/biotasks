@@ -1,0 +1,93 @@
+{
+  "repo": "macs3-project/MACS",
+  "pr": 792,
+  "base_sha": "3b131c9b0195b50217edcecf0f9f7475314d4062",
+  "head_sha": "fd8e665afee877801deafaf521cc68dcd2fa7136",
+  "original_archive_sha256": "9c5a19b814006b3df98d085de203807b165c6849fa4f81cd7b85f915812e7d43",
+  "original_stage_members": [
+    {
+      "path": "native-observations/batch-0001/exec-0004-pr-792.json.gz",
+      "sha256": "cb4cde92a6e71b309da838b14442c5c2f88274ff699a9fe58de882c57d08f14e"
+    },
+    {
+      "path": "native-observations/batch-0001/exec-0005-pr-792.json.gz",
+      "sha256": "001a5a99a36ce3cdaf33c0165491aa7f015bff062d7b2eab7a42650f383b0261"
+    }
+  ],
+  "commands": [
+    "cd /workspace && python -m pytest -v test/chromosome_batching_probe.py test/native_probe.py test/test_CallPeakUnit_backend.py test/test_CallPeakUnit_concurrency.py test/test_caller_ownership.py test/test_callpeak_cmd.py test/test_pileup_lifecycle.py test/test_thread_lifecycle.py"
+  ],
+  "rebuild_cmds": [
+    "apt-get update -qq && apt-get install -y git build-essential curl ca-certificates zlib1g-dev",
+    "cd /workspace && git submodule update --init --recursive",
+    "pip install numpy>=1.25 Cython>=3.0 scipy pandas anndata hmmlearn scikit-learn pytest psutil",
+    "cd /workspace && pip install -e ."
+  ],
+  "arms": [
+    {
+      "name": "original",
+      "stages": {
+        "pre": {
+          "sha256": "3d2148d1b792b7c6f910d67e65913b3339104c41547ac23bbfc23daf83c0d7d3",
+          "bytes": 20304
+        },
+        "post": {
+          "sha256": "5ad6a8e6854df19c44a576c760006de0b1068b093299282e5ae9acbe6d7fe625",
+          "bytes": 78455
+        }
+      }
+    },
+    {
+      "name": "rebuild",
+      "stages": {
+        "pre": {
+          "sha256": "0891754d5e8e874863b3ebe823120fdd86a06160203ddc5e93312eebe5dffa01",
+          "bytes": 20617
+        },
+        "post": {
+          "sha256": "17362cecf1ea3ff0c7599c9b4f7b1f94429834d753f20320bb6b75f59d34de3f",
+          "bytes": 78768
+        }
+      }
+    }
+  ],
+  "files": {
+    "source.patch": {
+      "sha256": "56340e3ec3fb7137360de58c46bb5fc7bb0b0c20cdcd4d53af195db6615fd4fc",
+      "bytes": 58081
+    },
+    "test.patch": {
+      "sha256": "5331cdde295772dcf2dfb8df02be9c5c8cd3595f7169ef439b6249f886c281ae",
+      "bytes": 19602
+    },
+    "original-pre.sh": {
+      "sha256": "3d2148d1b792b7c6f910d67e65913b3339104c41547ac23bbfc23daf83c0d7d3",
+      "bytes": 20304
+    },
+    "original-post.sh": {
+      "sha256": "5ad6a8e6854df19c44a576c760006de0b1068b093299282e5ae9acbe6d7fe625",
+      "bytes": 78455
+    },
+    "rebuild-pre.sh": {
+      "sha256": "0891754d5e8e874863b3ebe823120fdd86a06160203ddc5e93312eebe5dffa01",
+      "bytes": 20617
+    },
+    "rebuild-post.sh": {
+      "sha256": "17362cecf1ea3ff0c7599c9b4f7b1f94429834d753f20320bb6b75f59d34de3f",
+      "bytes": 78768
+    }
+  },
+  "default_off_original_stage_parity": true,
+  "baseline_scripts_exactly_regenerated": true,
+  "transport": "unchanged argv; all scripts below128KiB",
+  "image_id": "sha256:979804eec3d64fffcff3cabf5eda15b04c6a4e1143051bf024ff66ac05312797",
+  "image_tag": "biotasks31-macs-longcheck-001:recorded-actions",
+  "image_owner": "biotasks31-macs-longcheck-001",
+  "live_execution": false,
+  "model_calls": 0,
+  "limits": [
+    "No dependency/test command repair",
+    "Rebuild syntax/version constraints preserved literally",
+    "No native outcomes or exported controls yet"
+  ]
+}
