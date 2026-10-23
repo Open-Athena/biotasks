@@ -1,6 +1,7 @@
 """Offline coverage, original-parser/control consistency and streaming evidence checks."""
 
 import hashlib
+import gzip
 import io
 import json
 from pathlib import Path
@@ -64,12 +65,18 @@ def main():
         files = {'outputs/example/example-1/task.toml': b'fixture',
             'outputs/example/example-1/tests/f2p.json': b'["fix"]',
             'outputs/example/example-1/solution/patch.diff': b'unchanged source patch',
-            'outputs/example/metadata/index.json': b'{}'}
+            'outputs/example/metadata/index.json': b'{}',
+            'native-observations/batch-0000/validation-001-pr-1.json.gz': gzip.compress(json.dumps({
+                'status': 'failed', 'reason': 'fixture original validation',
+                'fail_to_pass': [], 'pass_to_pass': ['kept']}).encode())}
         with tarfile.open(phase, 'w:gz') as archive:
             for name, raw in files.items():
                 member = tarfile.TarInfo(name); member.size = len(raw); archive.addfile(member, io.BytesIO(raw))
         extract = root / 'selected-files'; extract.mkdir()
-        _, hashes, _, exports = scan_phase(phase, extract)
+        observations, hashes, _, exports = scan_phase(phase, extract)
+        assert observations['batch-0000']['validations'] == [{
+            'file': 'native-observations/batch-0000/validation-001-pr-1.json.gz',
+            'status': 'failed', 'reason': 'fixture original validation', 'f2p': 0, 'p2p': 1}]
         assert exports == ['outputs/example/example-1']
         assert set(hashes) == {'/work/outputs/example/example-1'}
         assert hashes['/work/outputs/example/example-1']['tests/f2p.json'] == hashlib.sha256(b'["fix"]').hexdigest()

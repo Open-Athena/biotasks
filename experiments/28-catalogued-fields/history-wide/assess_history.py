@@ -265,6 +265,8 @@ def assess(state, selected):
         'frozen_history_identities': len(identities), 'coverage': coverage, 'bootstrap': bootstrap,
         'native_skip_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'skip')),
         'native_error_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'error')),
+        'native_validation_results': [dict(batch=name, **value)
+            for name, observed in sorted(observations.items()) for value in observed['validations']],
         'campaign_reservation_failures': [e for e in events if e['event'] == 'campaign_reservation_unavailable'
             or (e['event'] == 'campaign_cost_reservation' and not e['allowed'])],
         'native_emission_events': [e['name'] for e in decisions if e['outcome'] == 'emit'],
