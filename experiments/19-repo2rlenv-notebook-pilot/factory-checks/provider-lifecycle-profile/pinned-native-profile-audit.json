@@ -1,0 +1,71 @@
+{
+  "observed_at": "2026-10-23T01:32:28.044385+00:00",
+  "purpose": "Check the exact pinned native provider profile before treating separately billed named snapshots as task-owned leftovers.",
+  "pinned_harbor_version": "0.22.0",
+  "wheel": {
+    "url": "https://files.pythonhosted.org/packages/ce/12/d517f1ca18738f7be78a210b13264c64bace531fdf644632128966aca530/harbor-0.22.0-py3-none-any.whl",
+    "hash": "sha256:4c4c6571b3d160ed0cb45b82918136751fb08e7b8596412723ac00dde12eeabb",
+    "size": 2058718,
+    "upload-time": "2026-08-22T03:22:38.071Z"
+  },
+  "wheel_hash_and_size_verified": true,
+  "source_files": [
+    {
+      "name": "__init__.py",
+      "sha256": "3f18936fb6e00788c648c608dafb716353e0392e043068cbc0db377556c8a443"
+    },
+    {
+      "name": "container_cache.py",
+      "sha256": "5caabfe0b2abd1bfba292109a47a8a4c83113d857c56c9ccd09d96ac0154422d"
+    },
+    {
+      "name": "environment.py",
+      "sha256": "cacd53f958f0f7a08bf7ef8034fa2f5632dc74d09d7c8045ace6dd9c0621eeb7"
+    },
+    {
+      "name": "snapshots.py",
+      "sha256": "8ba84bff4eb06fef6f8f047a739430d382fd7986c11d24e8f0b2a943914eddad"
+    },
+    {
+      "name": "utils.py",
+      "sha256": "6e5471dffa69ff65aee158744fdc2b34d61ef5d087da3ef44f4a1e02f161d3a4"
+    }
+  ],
+  "profile_facts": [
+    "Harbor0.22.0defaults auto_snapshot toFalse.",
+    "Its named-snapshot creation path requires auto_snapshot=Trueor an explicit snapshot template.",
+    "Observed055/063nativeconfigs request neither; the current setup/native paths use images instead."
+  ],
+  "observed_native_configurations": [
+    {
+      "campaign": 55,
+      "configuration_sha256": "eeaae511ef91fdedcbc1f6cddccbb0c372f73e27e835125dea779e20e24a2ca4",
+      "environment_kwargs_keys": [
+        "auto_stop_interval_mins",
+        "labels"
+      ],
+      "auto_snapshot_requested": false,
+      "snapshot_template_requested": false
+    },
+    {
+      "campaign": 63,
+      "configuration_sha256": "dbccaee893c856fa6da50a71867c81b252d630eea68ba545fc218df0e54cfe59",
+      "environment_kwargs_keys": [
+        "auto_stop_interval_mins",
+        "labels"
+      ],
+      "auto_snapshot_requested": false,
+      "snapshot_template_requested": false
+    }
+  ],
+  "provider_snapshot_api_calls": 0,
+  "provider_snapshot_objects_deleted": 0,
+  "limitations": [
+    "This is source/configuration evidence for the named-snapshot path, not an inventory of unrelated organization snapshots or a provider invoice.",
+    "Completed campaign sandbox cleanup remains established by original receipts and fresh exact-owner queries."
+  ],
+  "documentation": [
+    "https://www.daytona.io/docs/billing",
+    "https://www.daytona.io/docs/snapshots/"
+  ]
+}
