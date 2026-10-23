@@ -1,0 +1,64 @@
+{
+  "reviewed_at": "2026-10-23T04:38:21Z",
+  "scientific_acceptance_changed": false,
+  "bundle_hash": "sha256:c99818cc1a663633b596fc57879b93af83aaef206309aa1577e30ee0da6ccd2b",
+  "publication_decision": "Keep the task and MRI inputs private. Public redistribution eligibility is unresolved.",
+  "input_revision": "6a761c4eb01905cfcb1139b0b158547c55edd4df",
+  "input_tag": "v3.1.0",
+  "input_tag_object": "b0f1dcddc15986b3079423e42e0588258ff54fe3",
+  "actual_validated_inputs": [
+    {
+      "name": "brain1_image.nrrd",
+      "bytes": 2023786,
+      "sha256": "fffdb111ee8b428ede7256707393c927a7d5be912f0604cf3c6f1bd5fc9644cf",
+      "git_blob_sha1": "78a4777caa355253454819d258c85b448a0b2ee4"
+    },
+    {
+      "name": "brain1_label.nrrd",
+      "bytes": 7517,
+      "sha256": "ae6d8e6b84f7e99d68c210ee2fa6aaaefa0b2df0a84f55efca4feebe2b216059",
+      "git_blob_sha1": "6dfc24c74c876e326c514d0bcf47fbb76fd1a2a0"
+    },
+    {
+      "name": "brain2_image.nrrd",
+      "bytes": 1737246,
+      "sha256": "d35a1c6a3e1eb72bae97c5515472fbe057fb38ee8e1e199215d1c3c6f292332e",
+      "git_blob_sha1": "e6f9a2f8da212fc969db41522388b8fa6151d62d"
+    },
+    {
+      "name": "brain2_label.nrrd",
+      "bytes": 6394,
+      "sha256": "15189c024936ecc337649b9a10c475117c7c40df0d53c22163f9a2023ed741a5",
+      "git_blob_sha1": "500d784a614bd040dd84fa9a782d8407bee385c3"
+    }
+  ],
+  "source_binding": "Each local validated input's computed Git blob SHA-1 and byte size matches the original repository API record. The historical introduction/rename records have the same four blob identities; no additional MRI data was downloaded or executed for this review.",
+  "primary_sources": [
+    {
+      "url": "https://github.com/AIM-Harvard/pyradiomics/commit/086c4470fc8dd5e7fba6b778cfefe58f2dba5ef9",
+      "finding": "The unchanged brain1 image and mask were renamed from paths identifying a TCGA-GBM MRI example. This establishes a concrete upstream data lineage beyond the software repository's BSD license."
+    },
+    {
+      "url": "https://github.com/AIM-Harvard/pyradiomics/commit/abcbc57caf38882aa0af810da2bc6fe0e0e465e3",
+      "finding": "The unchanged brain2 image and mask were copied from radiomics_platform. The commit does not establish separate data redistribution permission."
+    },
+    {
+      "url": "https://github.com/AIM-Harvard/pyradiomics/blob/6a761c4eb01905cfcb1139b0b158547c55edd4df/data/README.md",
+      "finding": "The data-folder README describes regression test cases and baselines; it does not specify independent medical-data redistribution terms."
+    },
+    {
+      "url": "https://wiki.cancerimagingarchive.net/pages/viewpage.action?pageId=1966258",
+      "finding": "The current official wiki page, last modified April 15, 2024, lists the collection's images under restricted access, citing potential reconstruction of a human face. Older CC BY references are insufficient to establish this derivative's present publication eligibility."
+    },
+    {
+      "url": "https://github.com/AIM-Harvard/pyradiomics/blob/8ed579383b44806651c463d5e691f3b2b57522ab/LICENSE.txt",
+      "finding": "The source repository has a BSD-3-Clause software notice. Its presence alone does not resolve the separately identified medical-data terms."
+    }
+  ],
+  "limits": [
+    "This is a publication eligibility stop, not a finding that the original licensed derivative is definitively forbidden or that earlier scientific execution failed.",
+    "The current TCIA collection landing page returned HTTP 500; the official current wiki page and its version history were inspected instead.",
+    "No images, task bundle or new viewer containing these inputs were uploaded publicly. Existing validated evidence and cleanup records are unchanged.",
+    "Do not silently remove or substitute an input to make this particular task publishable."
+  ]
+}
