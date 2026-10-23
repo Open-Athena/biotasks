@@ -123,7 +123,7 @@ def summarize(root):
     successful = sum(r['primary_verified'] > 0 for r in accepted)
     return {'scope': 'Same ten catalogued fields; full frozen merged-PR history, no lower date cutoff. September baseline is separate.',
         'all_ten_result_evidence_complete': complete,
-        'completion_not_asserted': 'Final all-ten live accounting, fresh archive verification, controller/worker/local cleanup and issue conclusion/readback/closure remain separate requirements.',
+        'completion_not_asserted': 'Result-evidence acceptance alone does not assert issue completion. Accounting, retention readback, cleanup and publication/closure are checked separately in completion-audit.md.',
         'history_inventory': sum(r['history_inventory'] for r in rows),
         'result_repositories': sum(r['stage'] != 'result_pending' for r in rows),
         'accepted_result_repositories': len(accepted),
