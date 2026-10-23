@@ -3919,3 +3919,7 @@ A successful fixed-instance gate did not catch an unsupported explanation of a n
 ### 2026-10-23 — compact reference text and inspection-only recovery
 
 Original metabolomics evidence isolates the context failure to a single compact JSON line returned by a 60-line read. The prospective general text tool now exposes explicit column windows and slice metadata, with unlimited explicit larger/full-line reads and complete identity verification. The existing context restart also covers read-only tool sessions. Preparation keeps its separate creation/validation-repair contract. All 239 distinct offline checks passed; neither frozen cohort was changed or rerun. See `autonomous-runs/099/context-diagnosis.json` and `factory-checks/reference-text-pagination/result.json`.
+
+### 2026-10-23 — prioritize a new general failure mode over a redundant repeat
+
+Cancelled unsubmitted physiology100 and transferred its exact $1 reservation to latest-factory metabolomics109. No worker existed and no original observation was replaced. Physiology090 already provides public validation;109 tests the diagnosed compact-reference failure in the latest common factory. Prospective106/113/109 share the same frozen runtime and original source policy. Total holds remain $99.75/$100, with two concurrent hosts/sandboxes.
