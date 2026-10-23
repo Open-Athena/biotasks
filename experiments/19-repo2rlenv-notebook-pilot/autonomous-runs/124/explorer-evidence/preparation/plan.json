@@ -1,0 +1,26 @@
+{
+  "artifacts": [
+    {
+      "description": "Plan7 profile HMM built from the LuxC multiple sequence alignment, in HMMER ASCII format.",
+      "path": "LuxC.hmm",
+      "source_evidence": "The narrative section '## Saving the resulting HMM' states the HMM is saved 'to a file to avoid having to rebuild it every time' and for compatibility with the hmmsearch binary, establishing it as a final product. It is produced by `hmm, _, _ = builder.build_msa(msa, background)` and remains in the `hmm` variable at script completion; the export re-serializes that existing object with `hmm.write`."
+    },
+    {
+      "description": "Domain hits from searching the LuxC pHMM against the LuxC.faa protein database, in hmmsearch domain-table format.",
+      "path": "LuxC.domtbl",
+      "source_evidence": "The final section concludes 'Finally, we can save the results in tabular format similar to what hmmsearch would have produced', establishing the search hits as the terminal result of the sequence-search branch. They are produced by `hits = pipeline.search_hmm(hmm, seq_file)` and remain in the `hits` variable at script completion; the export re-serializes that existing object with `hits.write(..., format='domains')`."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "hmm.consensus display: a quick inspection of the HMM's consensus sequence ('We can have a look at the consensus sequence'); its information is contained in the exported HMM file, and it was not interpreted as an independent result.",
+    "ali = hits[0].domains[0].alignment with its print: an illustrative view of the top domain hit in the narrative ('We can then query the TopHits object'); the domain hits themselves are fully exported in LuxC.domtbl, so this display adds no separate endpoint.",
+    "The input objects (msa, background) and the pipeline are preparatory or input artifacts, not terminal results."
+  ],
+  "explanation": "The notebook has two terminal scientific products: the profile HMM built from the LuxC alignment (explicitly saved by the source for reuse and hmmsearch compatibility) and the database search results in hmmsearch-style domain table format (explicitly saved as the final step). Both `hmm` and `hits` hold the intended values at script completion. The appended code re-serializes these existing objects under /work/outputs, adding no scientific computation.",
+  "export_code": "import os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\nwith open(\"/work/outputs/LuxC.hmm\", \"wb\") as _export_hmm_file:\n    hmm.write(_export_hmm_file)\n\nwith open(\"/work/outputs/LuxC.domtbl\", \"wb\") as _export_hits_file:\n    hits.write(_export_hits_file, format=\"domains\")\n",
+  "unresolved_assumptions": [
+    "Both export files are written by re-calling the existing `write` serialization methods on `hmm` and `hits`; this assumes those objects remain valid and serializable at script completion, which the script structure supports but execution has not verified.",
+    "The HMM name is derived from the MSA name in the input Stockholm file; if that name were missing, the original build would already have failed before the export code runs."
+  ]
+}

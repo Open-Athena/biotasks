@@ -1,0 +1,37 @@
+{
+  "environment": "psutil==7.2.2\npyhmmer==0.12.3\n",
+  "input_paths": [
+    "msa/LuxC.sto",
+    "seqs/LuxC.faa"
+  ],
+  "output_paths": [
+    "LuxC.domtbl",
+    "LuxC.hmm"
+  ],
+  "paths": {
+    "inputs": "/work/task-inputs",
+    "working_directory": "/work/probe"
+  },
+  "policy": {
+    "dependency_answers": "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "supplied_intermediates": "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  },
+  "public_instruction": "# Build a profile HMM for the LuxC acyl-CoA reductase family and search a protein sequence database\n\n## Objective\n\nBuild a profile HMM from a multiple sequence alignment of the LuxC acyl-CoA reductase protein family, then use that HMM to search a protein sequence database. Deliver the built profile HMM and the search results in standard HMMER3 output formats.\n\n## Inputs (under `inputs/`)\n\n- `inputs/msa/LuxC.sto` \u2014 Stockholm-format multiple sequence alignment of the LuxC acyl-CoA reductase family (13 protein sequences, 400 alignment columns). The alignment header carries family annotation: the alignment name, accession, description, and the GA (gathering), TC (trusted) and NC (noise) cutoff score lines.\n- `inputs/seqs/LuxC.faa` \u2014 FASTA file of protein sequences; the sequence database to search.\n\n## Method\n\n1. Read the Stockholm alignment as a single amino-acid multiple sequence alignment (all 13 sequences).\n2. Build the profile HMM from the alignment using standard HMMER3 profile construction with default `hmmbuild` settings: relative sequence weighting by the Henikoff position-based scheme, effective sequence number by relative-entropy targeting, amino-acid mixture Dirichlet priors, default position-architecting thresholds, and E-value calibration of the MSV/Viterbi/Forward score statistics against the standard amino-acid background distribution. The model must be named after the alignment name recorded in the file, must carry the alignment accession, and must carry the alignment's GA/TC/NC cutoff annotations through unchanged.\n3. Search the protein database with this HMM using standard `hmmsearch` default settings: local alignment mode, per-sequence (hit) reporting threshold E \u2264 10, per-domain reporting threshold E \u2264 10, the default MSV/Viterbi/Forward pipeline filtering, and E-values computed from the actual number of sequences searched.\n4. Use the same standard amino-acid background frequencies for both building and searching.\n\nAny software implementing HMMER3 profile construction and search may be used (e.g., the HMMER3 binaries, pyhmmer, or a compatible work-alike). No network access is available. Resources: CPU-only, at most 8 GB RAM; the computation is small and completes in minutes at most (the reference run takes well under one second on this data).\n\n## Required outputs (under `outputs/`)\n\n**1. `outputs/LuxC.hmm`** \u2014 the profile HMM in HMMER3 ASCII text format: a header containing the model name derived from the alignment name, the alignment accession, the model length (400 match positions), sequence count and effective sequence number, the HMM checksum, the GA/TC/NC cutoff scores carried from the alignment, and the local-mode calibration statistics lines (MSV/VITERBI/FORWARD parameters), followed by the per-position emission, insert and transition parameters for all 400 model positions, terminated with `//`. The DATE build-timestamp line and the COM command-line line are run-specific and may differ between runs; all other content is fixed scientific content.\n\n**2. `outputs/LuxC.domtbl`** \u2014 the search results in HMMER `hmmsearch` domain-table format (`--domtblout` style): leading comment lines beginning with `#`, then exactly one row per reported domain with the standard column order: target name, target accession, target length, query (HMM) name, query accession, query length, full-sequence E-value, full-sequence score, full-sequence bias, domain number (and total), conditional and independent per-domain E-values, per-domain score and bias, HMM coordinates (from/to), alignment coordinates (from/to), envelope coordinates (from/to), average posterior accuracy, and target description. Rows must follow the hmmsearch domain-table ordering convention (best full-sequence E-value first, with the hmmsearch tie-break rules). Only domains passing the stated reporting thresholds appear; the set of reported target sequences, the number of domains per sequence, and their coordinates are part of the requested scientific content \u2014 do not pad or prune rows heuristically, let the thresholds decide.\n\nCross-file consistency: the query name, accession and length reported in the domain table must match the model written to `outputs/LuxC.hmm`.",
+  "reference_seconds": 600
+}

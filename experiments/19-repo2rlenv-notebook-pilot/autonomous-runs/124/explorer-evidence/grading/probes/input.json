@@ -1,0 +1,79 @@
+{
+  "artifact_interface": {
+    "control_evidence": "submission_before and submission_sha256 keys are relative to the actual supplied submission root; use those records to establish placement.",
+    "grader_root_arguments": [
+      "--reference-dir",
+      "--submission-dir"
+    ],
+    "native_grader_submission_dir": "/workspace/outputs",
+    "native_output_root": "/workspace/outputs",
+    "output_paths": [
+      "LuxC.domtbl",
+      "LuxC.hmm"
+    ],
+    "path_rule": "Each declared output path is relative to the supplied output root. The grader reads reference_dir / path and submission_dir / path. Directory argument names are opaque: do not append their basename or another outputs/ component unless it is part of the declared path.",
+    "solution_output_root_argument": "--output-dir"
+  },
+  "checks": [
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_ascii_structure",
+      "kind": "structural",
+      "public_requirement": "outputs/LuxC.hmm exists and is a structurally valid HMMER3 ASCII amino-acid profile HMM: it parses with a HMMER3 plan7 ASCII reader as an amino-acid model, contains all standard header keys (NAME, ACC, DESC, LENG, ALPH, RF, MM, CONS, CS, MAP, EFFN, NSEQ, CKSUM, GA, TC, NC, local-mode STATS lines), has the HMM column-header row, the COMPO block and one three-line block per match position (emissions, insert emissions, transitions), and terminates with a // line."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_model_annotation",
+      "kind": "scientific",
+      "public_requirement": "The model identification and annotation fields match the reference model: NAME, ACC, DESC, LENG, NSEQ, CKSUM and the GA/TC/NC cutoff score pairs, each header key compared with its full value list. NAME, ACC, DESC, NSEQ, CKSUM and GA/TC/NC values must be identical to the reference (GA/TC/NC are the values carried from the alignment GS/GA-style cutoff lines); CKSUM is an integer identity; LENG and NSEQ compared as integers."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm"
+      ],
+      "id": "hmm_model_parameters",
+      "kind": "scientific",
+      "public_requirement": "The effective sequence number (EFFN), the three local-mode STATS calibration lines (MSV/VITERBI/FORWARD lambda/mu/tau pairs), the COMPO block, the HMM column-header row, and the complete per-position match emission, insert emission and transition parameter rows for every model position (in position order 1..L) match the reference model. Real-valued parameters are compared with an absolute tolerance of 2e-5 (the reference files print them with 5 decimals, so this bounds the serialization difference); the '*' unsigned-probability token, the MAP/CS/RF consensus characters and all other non-numeric tokens are compared as exact text."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_structure",
+      "kind": "structural",
+      "public_requirement": "outputs/LuxC.domtbl exists and is a well-formed hmmsearch domain table: leading comment rows beginning with '#' are ignored; every data row parses into the standard 22 columns (target name, accession, tlen, query name, accession, qlen, full-sequence E-value/score/bias, dom idx, dom total, c-Evalue, i-Evalue, score, bias, hmm from/to, ali from/to, env from/to, acc) plus an optional free-text description column; all numeric columns are finite (non-NaN, non-inf, not '*'); the domain index is within 1..total domains."
+    },
+    {
+      "artifacts": [
+        "LuxC.domtbl"
+      ],
+      "id": "domtbl_hits",
+      "kind": "scientific",
+      "public_requirement": "The reported domain hits match the reference exactly in row order (best full-sequence E-value first, hmmsearch tie-breaks), count and content: target name/accession, query name/accession, target length and query length (integers, exact), full-sequence E-value, conditional and independent per-domain E-values (relative tolerance: the absolute difference must be at most 5% of the larger of the two magnitudes), full-sequence and per-domain scores and bias (absolute tolerance 0.06, i.e. half a printed 1-decimal unit plus rounding slack), HMM/alignment/envelope coordinates (exact integers), average posterior accuracy (absolute tolerance 0.006, half a printed 2-decimal unit plus rounding slack), and the target description (exact text when present). The number of rows, the number of domains per target, and all coordinates are requested scientific content: padding with extra rows, dropping rows, or reordering rows is a wrong answer."
+    },
+    {
+      "artifacts": [
+        "LuxC.hmm",
+        "LuxC.domtbl"
+      ],
+      "id": "hmm_domtbl_query_consistency",
+      "kind": "scientific",
+      "public_requirement": "Cross-file consistency: every domain-table row reports the query name, query accession and query length of the profile HMM written to outputs/LuxC.hmm; the query name and accession must match the HMM's NAME/ACC text fields and the query length must equal the HMM's LENG model length."
+    }
+  ],
+  "output_paths": [
+    "LuxC.domtbl",
+    "LuxC.hmm"
+  ],
+  "paths": {
+    "reference_outputs": "/work/reference",
+    "working_directory": "/work/probe"
+  },
+  "public_instruction": "# Build a profile HMM for the LuxC acyl-CoA reductase family and search a protein sequence database\n\n## Objective\n\nBuild a profile HMM from a multiple sequence alignment of the LuxC acyl-CoA reductase protein family, then use that HMM to search a protein sequence database. Deliver the built profile HMM and the search results in standard HMMER3 output formats.\n\n## Inputs (under `inputs/`)\n\n- `inputs/msa/LuxC.sto` \u2014 Stockholm-format multiple sequence alignment of the LuxC acyl-CoA reductase family (13 protein sequences, 400 alignment columns). The alignment header carries family annotation: the alignment name, accession, description, and the GA (gathering), TC (trusted) and NC (noise) cutoff score lines.\n- `inputs/seqs/LuxC.faa` \u2014 FASTA file of protein sequences; the sequence database to search.\n\n## Method\n\n1. Read the Stockholm alignment as a single amino-acid multiple sequence alignment (all 13 sequences).\n2. Build the profile HMM from the alignment using standard HMMER3 profile construction with default `hmmbuild` settings: relative sequence weighting by the Henikoff position-based scheme, effective sequence number by relative-entropy targeting, amino-acid mixture Dirichlet priors, default position-architecting thresholds, and E-value calibration of the MSV/Viterbi/Forward score statistics against the standard amino-acid background distribution. The model must be named after the alignment name recorded in the file, must carry the alignment accession, and must carry the alignment's GA/TC/NC cutoff annotations through unchanged.\n3. Search the protein database with this HMM using standard `hmmsearch` default settings: local alignment mode, per-sequence (hit) reporting threshold E \u2264 10, per-domain reporting threshold E \u2264 10, the default MSV/Viterbi/Forward pipeline filtering, and E-values computed from the actual number of sequences searched.\n4. Use the same standard amino-acid background frequencies for both building and searching.\n\nAny software implementing HMMER3 profile construction and search may be used (e.g., the HMMER3 binaries, pyhmmer, or a compatible work-alike). No network access is available. Resources: CPU-only, at most 8 GB RAM; the computation is small and completes in minutes at most (the reference run takes well under one second on this data).\n\n## Required outputs (under `outputs/`)\n\n**1. `outputs/LuxC.hmm`** \u2014 the profile HMM in HMMER3 ASCII text format: a header containing the model name derived from the alignment name, the alignment accession, the model length (400 match positions), sequence count and effective sequence number, the HMM checksum, the GA/TC/NC cutoff scores carried from the alignment, and the local-mode calibration statistics lines (MSV/VITERBI/FORWARD parameters), followed by the per-position emission, insert and transition parameters for all 400 model positions, terminated with `//`. The DATE build-timestamp line and the COM command-line line are run-specific and may differ between runs; all other content is fixed scientific content.\n\n**2. `outputs/LuxC.domtbl`** \u2014 the search results in HMMER `hmmsearch` domain-table format (`--domtblout` style): leading comment lines beginning with `#`, then exactly one row per reported domain with the standard column order: target name, target accession, target length, query (HMM) name, query accession, query length, full-sequence E-value, full-sequence score, full-sequence bias, domain number (and total), conditional and independent per-domain E-values, per-domain score and bias, HMM coordinates (from/to), alignment coordinates (from/to), envelope coordinates (from/to), average posterior accuracy, and target description. Rows must follow the hmmsearch domain-table ordering convention (best full-sequence E-value first, with the hmmsearch tie-break rules). Only domains passing the stated reporting thresholds appear; the set of reported target sequences, the number of domains per sequence, and their coordinates are part of the requested scientific content \u2014 do not pad or prune rows heuristically, let the thresholds decide.\n\nCross-file consistency: the query name, accession and length reported in the domain table must match the model written to `outputs/LuxC.hmm`.\n\n## Acceptance rules\n\n# Acceptance rules (addendum to the task question)\n\n## Compared artifacts\nExactly two files are graded, read from the solver's output root at the declared paths: `LuxC.hmm` (HMMER3 plan7 ASCII profile HMM) and `LuxC.domtbl` (hmmsearch domain table). Each file must be present at its declared path; a file placed under an extra `outputs/` subdirectory inside the output root is at the wrong path and is treated as missing. Values are compared against the reference outputs.\n\n## LuxC.hmm (HMMER3 ASCII profile)\n- **Ignored (run-specific):** the `HMMER3/f` version banner line, the `DATE` build-timestamp line and the `COM` command-line line. These lines are excluded from every comparison; the grader does not compare the HMMER version string.\n- **Compared exactly:** the model name (`NAME`, from the alignment `#=GF ID`), accession (`ACC`), description (`DESC`), model length (`LENG`, 400 match positions), sequence count (`NSEQ`), HMM checksum (`CKSUM`, integer), and the `GA`/`TC`/`NC` cutoff score pairs (values parsed as real numbers; these are the alignment's cutoff lines carried through unchanged). The presence of `ALPH`, `RF`, `MM`, `CONS`, `CS`, `MAP`, `EFFN`, `NSEQ` and the three `STATS LOCAL` calibration lines is required, as is the trailing `//` terminator.\n- **Compared numerically:** `EFFN` (effective sequence number), the `STATS LOCAL MSV`, `STATS LOCAL VITERBI` and `STATS LOCAL FORWARD` parameters, the `COMPO` background line, and every per-position match emission, insert emission and transition row for all 400 model positions in position order. Each of these values is compared with an absolute tolerance of 2\u00d710\u207b\u2075 (all reference values are indistinguishable beyond their 5-decimal print width); `*` (zero probability) and the `m->m`-style header tokens and consensus/MAP characters are compared as exact text. Trailing whitespace and column alignment is not compared.\n- **Structural requirement:** the file must parse as an amino-acid plan7 HMM with a HMMER3 plan7 ASCII reader, declare a model length equal to the number of per-position parameter blocks, and terminate with `//`.\n\n## LuxC.domtbl (hmmsearch domain table)\n- Comment lines beginning with `#` are ignored as header text; their presence or exact wording is not compared.\n- Every data row is parsed into the standard 22 fixed columns plus the free-text description; a row with fewer than 22 fields fails. Rows are compared **in file order**, which is the hmmsearch ordering: best full-sequence E-value first, with the hmmsearch tie-break rules (in this reference there are no E-value ties, so the ranking is unambiguous).\n- **Row count:** the number of reported domain rows is compared exactly \u2014 the set of reported targets, the number of domains per target (columns \"dom\" and \"of\") and the total row count are requested scientific content. Padding with extra rows or pruning rows is a wrong answer.\n- **Exact integer fields:** target length (`tlen`), query length (`qlen`), domain index/total (`#`, `of`), and all HMM, alignment and envelope coordinates (`hmm from/to`, `ali from/to`, `env from/to`).\n- **Numeric tolerance \u2014 scores and bias:** full-sequence and per-domain scores and bias are printed with one decimal; a submission value passes if its absolute difference from the reference value is \u2264 0.06 (half a printed decimal unit plus floating-point rounding slack). This bounds a representation/rounding difference only; it is not a guarantee that every wrong scoring method is detected.\n- **Numeric tolerance \u2014 E-values:** full-sequence, conditional and independent per-domain E-values span many orders of magnitude and are compared with a *relative* rule: a submitted E-value passes if |submitted \u2212 reference| \u2264 0.05 \u00d7 max(|submitted|, |reference|), i.e. within 5% of the larger of the two magnitudes. This is the reference/denominator convention that fixes the acceptance boundary.\n- **Numeric tolerance \u2014 average posterior accuracy (`acc`):** absolute difference \u2264 0.006 (half a printed 2-decimal unit plus rounding slack).\n- **Exact text fields:** target name, target accession (`-` when absent), query name, query accession, and the target description column.\n- **Rejected values:** any non-finite or unparsable numeric value (including `nan`, `inf`, `-inf`, `*`) fails the corresponding check; a negative or out-of-range domain index, or missing fields, also fails.\n\n## Cross-file consistency\nThe query name, accession and length in every `LuxC.domtbl` row must equal the `NAME`, `ACC` and `LENG` of the profile written to `LuxC.hmm`.\n\n## General\nMissing files, unreadable or malformed content, and files failing to parse with a HMMER3-format reader are failed checks, not successful runs. The grader compares parsed scientific content only; it does not compare timestamps, command lines, file byte hashes, HMMER version strings, comment headers in the domain table, or trailing-whitespace/indentation differences.",
+  "reference_seconds": 600,
+  "verifier_seconds": 120
+}

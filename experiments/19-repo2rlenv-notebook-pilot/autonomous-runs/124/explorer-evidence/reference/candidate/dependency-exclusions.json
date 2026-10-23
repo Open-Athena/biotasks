@@ -1,0 +1,10 @@
+{
+  "files": [
+    {
+      "distribution": "pyhmmer",
+      "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+      "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865",
+      "reason": "Bundled test-data copy of the precomputed LuxC profile HMM from the pyhmmer test suite. Its HMM-model body (1204 emitted model lines, 1,115 non-annotation lines after the transient DATE/COM/HMMER3-version header) is byte-identical to the LuxC.hmm artifact this task requires the solver to rebuild from LuxC.sto, so keeping it would expose a near-complete precomputed answer. The analysis never imports or reads it: the imported modules are pyhmmer.easel and pyhmmer.plan7 only, the script builds its own HMM from /inputs/msa/LuxC.sto, and the file is a packaged test fixture, not library code."
+    }
+  ]
+}

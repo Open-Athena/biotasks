@@ -4117,3 +4117,8 @@ The user explicitly authorized100USDmore, raising the aggregate before-credit ce
 
 
 Release-only staging metadata now accepts the explicitly configured aggregate authorization (legacy default retained), so a new release can report the approved200USD rather than a stale hardcoded100USD. This does not change any frozen campaign payload, prompt, scientific contract or worker; alltencontinueusingtheir198-file501fbc2farchives.124releaseauditpassedtheexactsource/inputnotices,installedfixtureexclusion/buildguard,source-awarecontrolsandrecordedsolvercomputation;different-engineportabilityisexcludedfromclaims.
+
+
+## 2026-10-23 UTC: common-factory PyHMMER published with immutable readback
+
+124 exact native bundle e4ae4d73 was publicly released in the personal issue19PyHMMER dataset at107920c0ae798907d709f6151d7d1d3fc983c4cf. All42releasefiles(685,854bytes)passedupstreamstagingverification; forcedanonymousdownloadwithanewcacheverifiedeveryfile/modeandtheoriginaltaskidentity. RightsreviewcoversonlythetwoexactlistedPfam/UniProtinputidentities; originalnotices/accessionsretained. Auditeddeclaredfixtureexclusion,setupretest/nativebuildguardandrecordedsolvercomputation; thisisnotanexhaustivesemanticexposureorcross-engineportabilityclaim. A localreleaseclientfirstlackedtheHarborreader; failedstagingispreservedseparately,thesuccessfulattemptusedtheexistingpinned0.22.0wheel,andnonewmodel/scientificrunwasmade. Selected68byte-matchingoriginaltextrecordsforlatestviewer,plusclearlyderivedharness/releaseverificationmetadata; workerpayloads/promptsstillfrozen.125/126continue,127–132fundedqueued.

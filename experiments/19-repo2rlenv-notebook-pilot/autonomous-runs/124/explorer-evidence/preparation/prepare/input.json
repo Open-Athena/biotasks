@@ -1,0 +1,54 @@
+{
+  "baseline_script": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3 (ipykernel)\n#     language: python\n#     name: python3\n# ---\n\n# # Build an HMM from a multiple sequence alignment\n\nimport pyhmmer\npyhmmer.__version__\n\nalphabet = pyhmmer.easel.Alphabet.amino()\n\n# ## Loading the alignment\n\n# A new HMM can be built from a single sequence, or from a multiple sequence alignment. Let's load an alignment in digital mode so that we can build our HMM. We can use a `MSAFile` to read an alignment from a file in one of the supported formats (such as [Stockholm](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-stockholm), [Clustal](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-clustal), [aligned FASTA](https://www.tbi.univie.ac.at/RNA/ViennaRNA/doc/html/file_formats.html#msa-formats-fasta), *etc*; see the `MSAFile` documentation for the complete list):\n\nwith pyhmmer.easel.MSAFile(\"data/msa/LuxC.sto\", digital=True, alphabet=alphabet) as msa_file:\n    msa = msa_file.read()\n\n# <div class=\"alert alert-info\">\n#\n# Note\n#     \n# In this example, we load a multiple sequence alignment from a file, but if your program produces alignment and you wish to make an HMM out of them, you can instantiate a `TextMSA` object yourself, e.g.:\n#     \n# ```python\n# seq1 = pyhmmer.easel.TextSequence(name=\"seq1\", sequence=\"WVPKQDFT\")\n# seq2 = pyhmmer.easel.TextSequence(name=\"seq2\", sequence=\"WL--PQGE\")\n# msa  = pyhmmer.easel.TextMSA(name=\"msa\", sequences=[seq1, seq2])\n# ```\n#\n# Because we need a `DigitalMSA` to build the HMM, you will have to convert it first:\n#     \n# ```python\n# msa_d = msa.digitize(alphabet) \n# ```\n# </div>\n\n# ## Building an HMM\n#\n# Now that we have a multiple alignment loaded in memory, we can build a pHMM using a `pyhmmer.plan7.Builder`. This also requires a Plan7 background model to compute the transition probabilities.\n\nbuilder = pyhmmer.plan7.Builder(alphabet)\nbackground = pyhmmer.plan7.Background(alphabet)\nhmm, _, _ = builder.build_msa(msa, background)\n\n# <div class=\"alert alert-warning\">\n#\n# Warning\n#     \n# HMMs must always have a name. The `Builder` will attempt to use the `MSA` name, but in the event your alignment file does not contain a name for the whole alignment (for instance, a `#=GF ID` line in a [Stockholm file](https://en.wikipedia.org/wiki/Stockholm_format)), this method will fail:\n#     \n# ```python\n# >>> anonymous_msa = pyhmmer.easel.TextMSA(sequences=[seq1, seq2])\n# >>> builder.build_msa(anonymous_msa)\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n# ValueError: Could not build HMM: Unable to name the HMM.\n# ```    \n#\n# If your alignment is missing a name, you can assign one manually by setting the `MSA.name` property, e.g.:\n#\n# ```python\n# msa.name = \"protein_family_01\"\n# ```\n#     \n# </div>\n\n# We can have a look at the consensus sequence of the HMM with the `consensus` property:\n\nhmm.consensus\n\n# ## Saving the resulting HMM\n\n# Now that we have an HMM, we can save it to a file to avoid having to rebuild it every time. Using the `HMM.write` method lets us write the HMM in ASCII or binary format to an arbitrary file. The resulting file will also be compatible with the `hmmsearch` binary if you wish to use that one instead of PyHMMER.\n\nwith open(\"LuxC.hmm\", \"wb\") as output_file:\n    hmm.write(output_file)\n\n# ## Applying the HMM to a sequence database\n\n# Once a pHMM has been obtained, it can be applied to a sequence database with the `pyhmmer.plan7.Pipeline` object. Let's iterate over the protein sequences in a FASTA to see if our new HMM gets any hits:\n\npipeline = pyhmmer.plan7.Pipeline(alphabet, background=background)\nwith pyhmmer.easel.SequenceFile(\"data/seqs/LuxC.faa\", digital=True, alphabet=alphabet) as seq_file:\n    hits = pipeline.search_hmm(hmm, seq_file)\n\n# We can then query the `TopHits` object to access the domain hits in the sequences:\n\nali = hits[0].domains[0].alignment\nprint(ali)\n\n# Finally, we can save the results in tabular format similar to what `hmmsearch` would have produced:\n\nwith open(\"LuxC.domtbl\", \"wb\") as f:\n    hits.write(f, format=\"domains\")\n",
+  "conversion": {
+    "code_cells": 9,
+    "converter": "jupytext",
+    "converter_version": "1.19.6",
+    "directory_normalizations": [],
+    "documentation_execution_policy": {},
+    "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+    "executable_ast_sha256": "cf5e51ceb70864476356feb013cb27b611299c82768edfe80d96d723f615f182",
+    "executed": false,
+    "format": "py:nomarker",
+    "ignored_cell_editor_metadata": [],
+    "ignored_editor_metadata": {},
+    "ignored_presentation_tags": [],
+    "markdown_cells": 13,
+    "markdown_representation": "line_comments",
+    "ordered_code_equivalence": true,
+    "presentation_normalizations": [],
+    "profile": "python-narrative-v5",
+    "script_sha256": "ef782563dff5d24c1f56d86e0dbbf53a36245109e025754f04a1626530b3382f",
+    "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+    "stored_outputs_used_as_evidence": false
+  },
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "gpu": false,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "source": {
+    "id": "pyhmmer-msa-to-hmm",
+    "license": "MIT",
+    "provenance": {
+      "data_lineage": "Repository LuxC alignment and protein sequences; lineage/terms need source-specific review.",
+      "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+      "notebook": {
+        "license": "MIT",
+        "license_url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/COPYING",
+        "revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+        "sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+        "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+      }
+    },
+    "source_revision": "90d2f28303d9fe795c4e1ffc1e05b9d634319b51",
+    "source_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+    "title": "Build a profile HMM from an alignment and search protein sequences",
+    "url": "https://github.com/althonos/pyhmmer/blob/90d2f28303d9fe795c4e1ffc1e05b9d634319b51/docs/examples/msa_to_hmm.ipynb"
+  }
+}

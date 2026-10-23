@@ -1,0 +1,64 @@
+{
+  "observed_at": "2026-10-23T22:36:30.228073+00:00",
+  "accepted_for_release": true,
+  "native_acceptance": {
+    "bundle_hash": "sha256:e4ae4d73ce54e93a4eadff5108db363ecef7686cfde7054bfff577b13c039d07",
+    "native_trials": [
+      {
+        "agent": "oracle",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:e4ae4d73ce54e93a4eadff5108db363ecef7686cfde7054bfff577b13c039d07",
+        "result_sha256": "c0f1b9dc6ca8a073b3fa6ad35b60e27a2045e0486b680ac9fd600160ce859b4e"
+      },
+      {
+        "agent": "nop",
+        "reward": 0.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:e4ae4d73ce54e93a4eadff5108db363ecef7686cfde7054bfff577b13c039d07",
+        "result_sha256": "49b795378eac70dd8ef7eebfdacd09f6d880e4c9deb98dc07436bfd65e81570e"
+      },
+      {
+        "agent": "terminus-2",
+        "reward": 1.0,
+        "exception_type": null,
+        "bundle_hash": "sha256:e4ae4d73ce54e93a4eadff5108db363ecef7686cfde7054bfff577b13c039d07",
+        "result_sha256": "3aba4b41360cf870cf32aed7fc2cde616af9c7fbedf138faf11c5c56f8e4be5d"
+      }
+    ],
+    "scientific_controls": 18,
+    "source_coverage_review_verified": true,
+    "accepted": true
+  },
+  "source_notebook_sha256": "725d5f0f6d6418e0ea8c5da3a0a3c1904aa702d77798d9373702d4b6cf075ab9",
+  "source_notices_sha256": "ada44fb45260569695180a38fc7b3f41ffa20c857781fdcab134d72bf52974f3",
+  "exact_listed_input_identities_verified": true,
+  "notebook_license": "MIT",
+  "data_notices": [
+    "Pfam CC0-1.0",
+    "UniProt CC-BY-4.0; original accession attribution retained"
+  ],
+  "known_expected_answer_fixture": {
+    "distribution": "pyhmmer",
+    "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+    "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+  },
+  "setup_removal_and_reference_retest_verified": true,
+  "post_removal_installed_candidates_exclude_declared_fixture": true,
+  "native_docker_build_enforces_same_exact_file_removal": true,
+  "task_installation_cache_disabled": true,
+  "native_helper_sha256": "70fed066e43cb198b7ee12ed63c9f6c0381947013d9c4452495bfbe4a0114e02",
+  "solver_trajectory_sha256": "e18fa871bd1a9c938dea4fb4d1537099291dd137c77b932d833b32e1fadaeb2d",
+  "solver_trace_review": "Complete tool commands and observations inspected: solver inspects inputs, package documentation/tests and tool availability, builds the HMM with Builder.build_msa from supplied alignment, searches supplied sequences with hmmsearch, writes computed files and copies its own /tmp outputs into output root. No recorded retrieval/copy of a bundled expected-answer fixture. This is a trajectory audit, not proof of absence of arbitrary covert behavior.",
+  "upstream_data_notice_readback_sha256": "2039f9fac5dd1ccd5474c02b8d5040dc672ef36e251d9a4998d48c0d77e70981",
+  "limitations": [
+    "All workers share GLM model family. Independent implementation uses the same pyhmmer/HMMER engine; no different-engine portability calibration.",
+    "Installed candidate inventory is name/format/test scoped, not an exhaustive semantic/filesystem proof. Native absence of declared fixture follows exact enforced helper and successful builds; no new sandbox created for this audit.",
+    "Source/intake metadata retains earlier rights-review state. Bundled publication_status and reviewed_inputs supply later source-specific review, limited to exact listed identities.",
+    "Computational reproduction does not establish biological validity or contamination-free benchmark.",
+    "Effective model effort/weights unverified; requested high only."
+  ],
+  "scientific_artifacts_edited": false,
+  "new_model_calls": 0,
+  "new_sandboxes": 0
+}

@@ -37,7 +37,8 @@ identity when available. GitHub links pin the checkout revision at build time;
 commit new evidence before building for publication. HTML escapes code and
 disables raw Markdown HTML.
 
-The default selection is the latest validated and published MDAnalysis run, 063.
+The default selection is the latest validated, published and download-verified
+run identified in `current.json`.
 Its prompts and worker inputs are captured run artifacts, and program links pin
 the recorded runtime revision. The solver's first input message is extracted
 verbatim from its trajectory; the selection manifest labels this derivation.
