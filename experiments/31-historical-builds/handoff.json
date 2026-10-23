@@ -3,11 +3,11 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 2,
+  "remote_jobs": 5,
   "remaining": [
-    "Post-bootstrap smoke and fresh checks passed with1200s bounds. Prepare frozen PR792 original-versus-rebuild comparison on retained image; delete after archive readback.",
-    "Run/retain original-versus-rebuild biological comparison if that baseline is available",
-    "Full generation CLI and Docker/Harbor live integration remain outside completed local checks"
+    "Submit frozen PR742 original-versus-rebuild native comparison after preflight on retained image",
+    "Archive/read back comparison and classify inner pytest completion separately from upstream outcome",
+    "Remove PR742 owner-labeled image after any justified controls and verified readback"
   ],
   "local_inputs_retained": [
     {
@@ -38,16 +38,16 @@
     "missing_commands_and_unknown_option_rejected": true
   },
   "active_job": null,
-  "active_checkpoint": "ebe89fa38e3e778b5de0c4024cec3aa69fa8812c",
+  "active_checkpoint": null,
   "active_worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
   "first_stage_cpu_hour_ceiling": 16,
   "all_remote_jobs_terminal": true,
-  "owned_resources_removed": true,
-  "allocated_cpu_hours": 3.2202994445959727,
+  "owned_resources_removed": false,
+  "allocated_cpu_hours": 4.779914999935362,
   "active_max_allocated_cpu_hours": 0,
-  "retained_image_id": null,
-  "retained_image_tag": null,
-  "retention_condition": "Pending frozen MACS PR792 native original-versus-rebuild comparison on this worker; delete after comparison/readback or investigation termination. Not original image bytes.",
+  "retained_image_id": "sha256:ce3fef4f08842cd99b13916a0f9fc89447eb3def5d759a1bc6b55c0ab5ca2c79",
+  "retained_image_tag": "biotasks31-macs-742-image-001:recorded-actions",
+  "retention_condition": "PR742 native comparison pending on same reserved worker; remove labeled image after verified comparison/any independent controls",
   "macs_native_preparation": {
     "manifest": "macs-native-manifest.json",
     "protocol": "macs-native-protocol.md",
@@ -73,5 +73,15 @@
     "owner_images_absent": true,
     "owner_containers_absent": true,
     "allocated_cpu_hours": 0.004332777791553073
+  },
+  "macs_742_reconstruction": {
+    "state": "succeeded_verified",
+    "archive_sha256": "287652b7476e0b1d83053237b0d1cc0826b65ee61dc5c6a85d30987576d7d06d",
+    "allocated_cpu_hours": 1.5596155553393893,
+    "image_id": "sha256:ce3fef4f08842cd99b13916a0f9fc89447eb3def5d759a1bc6b55c0ab5ca2c79",
+    "owner": "biotasks31-macs-742-image-001",
+    "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-0",
+    "smoke_and_fresh_passed": true,
+    "actions_matched": 16
   }
 }
