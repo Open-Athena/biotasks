@@ -1,0 +1,35 @@
+{
+  "number": 107,
+  "observed_at": "2026-10-23T16:51:17.271787+00:00",
+  "original_pipeline_status": "rejected",
+  "state": "factory_controller_rejected",
+  "source_rejection": false,
+  "scientific_acceptance": false,
+  "source_sha256": "9716c6e512d26225b0c6269b49ee01399211ab60b96d523182d66592021000a6",
+  "original_source_and_notices_unchanged": true,
+  "operator_scientific_interventions": 0,
+  "elapsed_pipeline_seconds": 1690.256,
+  "archive_files": 672,
+  "archive_bytes": 200132166,
+  "archive_manifest_sha256": "bb5b27d5e5f451bae582bd7862273e5ab294996a0aafd59dde9b455ea6ddead7",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 3,
+  "failed_attempts": [
+    {
+      "path": "materialization-raw/materialization/1/result.json",
+      "sha256": "a4a76750b565ff6336b3d5e921eed43692cb9ddab449b7200e3e6bc36211054c",
+      "controller_role_failure_before_oracle_execution": true
+    },
+    {
+      "path": "materialization-raw/materialization/2/result.json",
+      "sha256": "906fa47b9b9293663695667e067ee9ebced63b83d0d5d1e186ef39687d739f26",
+      "controller_role_failure_before_oracle_execution": true
+    }
+  ],
+  "defect": "Same original198-file controller defect as106: materializationORACLE18004 is rejected by the three-role cleanup admission guard. Original107runtime was never hot-patched.",
+  "scientific_grading_run": false,
+  "native_trials": 0,
+  "worker_claimed_scratch_reproduction_is_not_controlled_validation": true,
+  "next": "Fresh original-source run on the already-tested general canonical-role fix; no manually edited task or prior generated artifacts supplied."
+}
