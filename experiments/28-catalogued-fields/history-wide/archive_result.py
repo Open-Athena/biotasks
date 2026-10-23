@@ -24,7 +24,7 @@ def read(path):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('action', choices=['prepare', 'publish'])
+    parser.add_argument('action', choices=['prepare', 'publish', 'verify'])
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--slug', required=True)
     args = parser.parse_args()
@@ -116,6 +116,8 @@ def main():
         privacy_check()
     prior = list(api.list_bucket_tree(bucket, prefix=prefix, recursive=True))
     attempt_path = args.state_dir / (run + '-publication-attempt.json')
+    if args.action == 'verify':
+        assert prior, 'Read-only verification cannot create an archive'
     if prior:
         assert attempt_path.exists() and read(attempt_path)['prefix'] == prefix
         assert read(attempt_path).get('bucket', PUBLIC_BUCKET) == bucket
@@ -124,6 +126,10 @@ def main():
     objects = {'manifest.json': manifest_path, **sources}
     known = {f.path for f in prior if f.type == 'file'}
     assert known <= {prefix + '/' + name for name in objects}
+    if args.action == 'verify':
+        assert known == {prefix + '/' + name for name in objects}, 'Read-only verification cannot add missing objects'
+        previous = read(archive_dir / (args.slug + '-receipt.json'))
+        assert previous['manifest_sha256'] == digest and verified_receipt(previous, manifest)
     with TemporaryDirectory(prefix='history-anonymous-', dir=args.state_dir) as temporary:
         for name, path in objects.items():
             if name != 'manifest.json':
@@ -131,6 +137,7 @@ def main():
                 assert original['sha256'] == baseline.sha(path) and original['bytes'] == path.stat().st_size
             remote = prefix + '/' + name
             if remote not in known:
+                assert args.action == 'publish'
                 api.batch_bucket_files(bucket, add=[(str(path), remote)])
             destination = Path(temporary) / name; destination.parent.mkdir(parents=True, exist_ok=True)
             api.download_bucket_files(bucket, [(remote, destination)], raise_on_missing_files=True,
@@ -153,7 +160,11 @@ def main():
         receipt.update(bucket_private_verified=True, anonymous_access_denied=True,
             anonymous_http_status=privacy_check())
     assert verified_receipt(receipt, manifest)
-    (archive_dir / (args.slug + '-receipt.json')).write_text(json.dumps(receipt, indent=2) + '\n')
+    if args.action == 'verify':
+        receipt.update(read_only_fresh_verification=True,
+            verification_source_sha256=baseline.sha(Path(__file__)))
+    suffix = '-fresh-readback.json' if args.action == 'verify' else '-receipt.json'
+    (archive_dir / (args.slug + suffix)).write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt, indent=2))
 
 

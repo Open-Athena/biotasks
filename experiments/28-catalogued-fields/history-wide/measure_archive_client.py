@@ -110,7 +110,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--child', action='store_true')
-    parser.add_argument('--archive-action', choices=['prepare', 'publish'])
+    parser.add_argument('--archive-action', choices=['prepare', 'publish', 'verify'])
     parser.add_argument('--slug')
     parser.add_argument('--max-seconds', type=int, default=120,
         help='Bound archival walltime only, not native/control windows; at most900seconds')
@@ -124,10 +124,15 @@ def main():
     manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if args.archive_action == 'prepare' else None
     publish_bounds = None
     measured_client_versions = None
-    if args.archive_action == 'publish':
+    if args.archive_action in ['publish', 'verify']:
         measured_client_versions = {name: importlib.metadata.version(name) for name in ['huggingface_hub', 'hf_xet']}
-        publish_bounds = bounded_publish_manifest(json.loads((ROOT / 'archives' / (args.slug + '-manifest.json')).read_text()),
-            sha(ROOT / 'archive-client-profile.json'), measured_client_versions)
+        manifest = json.loads((ROOT / 'archives' / (args.slug + '-manifest.json')).read_text())
+        profile_digest = sha(ROOT / 'archive-client-profile.json')
+        if args.archive_action == 'verify':
+            # The read-only client uses today's measured profile even when an
+            # older immutable upload manifest predates that archival field.
+            manifest = {**manifest, 'archive_client_resource_profile_sha256': profile_digest}
+        publish_bounds = bounded_publish_manifest(manifest, profile_digest, measured_client_versions)
     lightweight = manifest_bytes is not None or publish_bounds is not None
     estimate = (200 if publish_bounds else 128 if lightweight else 400) * 1024**2
     assert estimate <= 500 * 1024**2
