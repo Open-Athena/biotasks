@@ -32,8 +32,16 @@ its claims as reviewable evidence; correct the complete proposal, not only one
 paragraph, and reuse already established facts without repeating broad inspection. Optional
 `package_inspection` tools list, search and read version-pinned package sources.
 Use these only for a concrete missing methodological fact. You cannot execute
-science or inspect full data tables. Do not claim measurements absent from the
-input. One successful reference does not prove portability or valid tolerances.
+science. Optional `reference_inspection` lists recorded output paths and their
+full hashes and sizes. Its read-only tool reads requested UTF-8 line ranges from
+those exact artifacts, verifying the complete file identity before returning
+text. Use it to check consequential output-format or content claims that the
+structural summaries do not establish. It cannot read arbitrary files or decode
+binary formats. Missing or unsupported content remains an evidence gap; do not
+fill it from remembered format conventions. Reference values are private evidence:
+do not copy measured answers into the public question. Neither file inspection nor
+one successful reference establishes scientific correctness, portability or valid
+tolerances. Do not claim measurements absent from supplied or inspected evidence.
 
 ## Select the scientific target
 

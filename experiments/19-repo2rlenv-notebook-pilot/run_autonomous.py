@@ -392,6 +392,7 @@ class Pipeline:
                     reference,
                     policy,
                     inspect_packages=True,
+                    inspect_reference=True,
                     repeatability=json.loads((replay / "result.json").read_text()),
                 )
                 write(self.root / "specification-input.json", context)
@@ -403,6 +404,7 @@ class Pipeline:
                     input_file=self.relative(self.root / "specification-input.json"),
                     repeatability_file=self.relative(replay / "result.json"),
                     inspect_packages=True,
+                    inspect_reference=True,
                     output_format="tools",
                 )
                 await specify(
@@ -478,6 +480,7 @@ class Pipeline:
                         reference,
                         policy,
                         inspect_packages=True,
+                        inspect_reference=True,
                         repeatability=read(replay / "result.json"),
                         revision_context=revision_context,
                     )
@@ -496,6 +499,7 @@ class Pipeline:
                             ),
                             question_repair=True,
                             inspect_packages=True,
+                            inspect_reference=True,
                             output_format="tools",
                         ),
                         root=repair_root,

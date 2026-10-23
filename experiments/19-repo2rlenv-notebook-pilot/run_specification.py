@@ -13,6 +13,7 @@ from grading_protocol import ContractText
 from model_profile import native_effort
 from openai import AsyncOpenAI
 from package_inspection import PACKAGE_TOOLS, PackageInspection
+from reference_inspection import REFERENCE_TOOLS, ReferenceInspection
 from reference_stage import stage
 from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
@@ -33,8 +34,9 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
     if config["entrypoint"] != "run_specification.py":
         raise ValueError("Specification cannot launch another stage")
     inspect_packages = config.get("inspect_packages", False)
+    inspect_reference = config.get("inspect_reference", False)
     output_format = config.get("output_format", "json_schema")
-    if inspect_packages:
+    if inspect_packages or inspect_reference:
         if output_format != "tools":
             raise ValueError("Read-only inspection requires native tool calls")
     elif output_format == "tools":
@@ -48,6 +50,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         experiment / config["reference_directory"],
         json.loads((experiment / config["policy_file"]).read_text()),
         inspect_packages=inspect_packages,
+        inspect_reference=inspect_reference,
         repeatability=json.loads((experiment / config["repeatability_file"]).read_text())
         if config.get("repeatability_file")
         else None,
@@ -69,6 +72,22 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         if inspect_packages
         else None
     )
+    references = (
+        ReferenceInspection(
+            experiment / config["reference_directory"] / "trial/outputs",
+            context["reference_inspection"]["files"],
+            deadline,
+        )
+        if inspect_reference
+        else None
+    )
+    extra_tools, extra_handlers = [], {}
+    if inspection:
+        extra_tools.extend(PACKAGE_TOOLS)
+        extra_handlers.update(inspection.handlers)
+    if references:
+        extra_tools.extend(REFERENCE_TOOLS)
+        extra_handlers.update(references.handlers)
     budget = RunBudget(BudgetLedger(root / "model-budget.sqlite", limit_usd="1"), "specify", "1")
     limits = ChatLimits(
         max_output_tokens=None,
@@ -91,6 +110,7 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
         reasoning_effort=native_effort(config),
         output_format=output_format,
         package_inspection_enabled=inspect_packages,
+        reference_inspection_enabled=inspect_reference,
         output_token_policy="No client max_tokens; provider limits/defaults apply.",
         provider_generation_limit_verified=False,
     )
@@ -122,8 +142,8 @@ async def run(config, *, root, endpoint, credential, deadline, complete=None):
             max_requests=config["max_requests"],
             recover_output_limit=False,
             output_format=output_format,
-            extra_tools=PACKAGE_TOOLS if inspection else None,
-            extra_handlers=inspection.handlers if inspection else None,
+            extra_tools=extra_tools or None,
+            extra_handlers=extra_handlers or None,
         )
         if question_repair:
             save_record(root / "question-repair.json", plan.model_dump())

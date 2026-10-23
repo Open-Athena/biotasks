@@ -6,6 +6,7 @@ import json
 from pathlib import Path
 
 from package_inspection import inspection_context, package_catalog
+from reference_inspection import reference_catalog
 
 INPUT_FILES = (
     "provenance.json",
@@ -27,7 +28,13 @@ INPUT_FILES = (
 
 
 def specification_context(
-    run, policy, *, inspect_packages=False, revision_context=None, repeatability=None
+    run,
+    policy,
+    *,
+    inspect_packages=False,
+    inspect_reference=False,
+    revision_context=None,
+    repeatability=None,
 ):
     """Check original evidence hashes and audit lineage, without executing it."""
     manifest = json.loads((run / "artifact-manifest.json").read_text())
@@ -103,6 +110,12 @@ def specification_context(
         )
         context["evidence_boundary"] = context["evidence_boundary"].replace(
             "No tools in this pass.", "Read-only package-source tools are available."
+        )
+    if inspect_reference:
+        context["reference_inspection"] = reference_catalog(observed)
+        context["evidence_boundary"] = (
+            context["evidence_boundary"].replace("No tools in this pass.", "")
+            + " Read-only reference-text inspection is available for the recorded output catalog."
         )
     return context
 

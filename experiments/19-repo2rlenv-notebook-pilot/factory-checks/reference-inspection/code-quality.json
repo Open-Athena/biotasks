@@ -1,0 +1,59 @@
+[
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "experiments/19-repo2rlenv-notebook-pilot/reference_inspection.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_reference_inspection.py",
+      "experiments/19-repo2rlenv-notebook-pilot/specification_inputs.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_specification.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "experiments/19-repo2rlenv-notebook-pilot/reference_inspection.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_reference_inspection.py",
+      "experiments/19-repo2rlenv-notebook-pilot/specification_inputs.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_specification.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ty",
+      "check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/pre-commit",
+      "run",
+      "--all-files"
+    ],
+    "exit_code": 0
+  }
+]
