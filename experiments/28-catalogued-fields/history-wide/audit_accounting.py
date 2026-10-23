@@ -7,6 +7,7 @@ import hashlib
 import json
 from pathlib import Path
 import tarfile
+import tomllib
 
 import cost_guard
 from payload import BASE, ROOT, build
@@ -170,6 +171,13 @@ def audit_repo(state, selected, remaining, client):
         assert unchanged['verified'] and unchanged['before'] == unchanged['after']
     else:
         assert not result['native_exports_manifest_present'] and 'controls_started' not in supervisor
+    verifier_timeouts = {}
+    for original, files in (unchanged['before'] if unchanged_path.exists() else {}).items():
+        task_path = result_dir / 'analysis-control-files' / Path(original).relative_to('/work') / 'task.toml'
+        assert sha(task_path) == files['task.toml']
+        timeout = tomllib.loads(task_path.read_text())['verifier']['timeout_sec']
+        assert timeout == 300
+        verifier_timeouts[task_path.parent.name] = timeout
     controls_path = result_dir / 'fresh-controls.json'
     controls = read(controls_path) if controls_path.exists() else []
     if not controls_path.exists():
@@ -204,6 +212,7 @@ def audit_repo(state, selected, remaining, client):
         'model_accounting': calls, 'started_at': start.isoformat(), 'finished_at': finish.isoformat(),
         'allocated_cpu_hours': str(seconds * 4 / 3600), 'owned_cleanup_verified_empty': True,
         'actual_control_commands_audited': len(controls), 'task_byte_audit_in_assessment': sha(assessment_path),
+        'actual_exported_verifier_timeouts_seconds': verifier_timeouts,
         'archive_receipt_accepted': True, 'original_phase_sha256': result['original_phase_sha256'],
         'archive_manifest_sha256': sha(manifest_path)}
 
