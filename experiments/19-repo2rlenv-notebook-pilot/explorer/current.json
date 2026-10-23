@@ -1,25 +1,27 @@
 {
-  "subtitle": "MDAnalysis \u00b7 adenylate kinase conformational change",
-  "footer": "Source notebook and simulation-input notices are retained. Recorded artifacts; no live model calls.",
-  "seed": "autonomous-cases/mdanalysis-rmsd/seed.json",
-  "notebook": "autonomous-cases/mdanalysis-rmsd/source.ipynb",
-  "converted": "autonomous-runs/063/explorer-evidence/intake/baseline.py",
-  "notebook_title": "MDAnalysis \u00b7 RMSD of atomic structures",
-  "notebook_description": "The pinned tool-repository tutorial analyzes a supplied molecular-dynamics simulation, including all five terminal RMSD analyses.",
-  "task_title": "Quantify the open\u2013closed transition in five RMSD analyses",
-  "instruction": "autonomous-runs/063/explorer-evidence/native/tasks/autonomous-panel-063/instruction.md",
-  "task_manifest": "autonomous-runs/063/explorer-evidence/materialization/manifest.json",
-  "task_config": "autonomous-runs/063/explorer-evidence/native/tasks/autonomous-panel-063/task.toml",
-  "oracle": "autonomous-runs/063/explorer-evidence/native/tasks/autonomous-panel-063/solution/oracle.py",
-  "grader": "autonomous-runs/063/explorer-evidence/grading/grade.py",
-  "review_description": "All five source analyses are retained, with no operator scientific task edits. Sixteen effective final controls passed; native oracle/no-op rewards were 1/0 and one blind GLM solver scored 1. The upstream standard quality-loop label remains unverified. Same-model-family controls and this selected development instance do not establish general factory reliability, broad implementation portability or contamination-free benchmark performance.",
+  "subtitle": "NeuroKit \u00b7 resting ECG and heart-rate variability",
+  "footer": "Pinned source and input notices are retained. Recorded notebook, task and attempt; no live model calls.",
+  "seed": "autonomous-cases/neurokit-hrv/seed.json",
+  "notebook": "autonomous-cases/neurokit-hrv/source.ipynb",
+  "converted": "autonomous-runs/090/explorer-evidence/intake/baseline.py",
+  "notebook_title": "NeuroKit \u00b7 Heart rate variability",
+  "notebook_description": "The pinned tool-repository notebook analyzes an observed resting physiology recording and produces time-domain, frequency-domain, nonlinear and combined HRV tables.",
+  "task_title": "Compute the resting ECG heart-rate variability tables",
+  "instruction": "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/instruction.md",
+  "task_manifest": "autonomous-runs/090/explorer-evidence/materialization/manifest.json",
+  "task_config": "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/task.toml",
+  "oracle": "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/solution/oracle.py",
+  "grader": "autonomous-runs/090/explorer-evidence/grading/grade.py",
+  "review_description": "All four source HRV tables are retained, with no operator scientific task edits. Eighteen final controls behaved as expected; native oracle/no-op rewards were 1/0 and the blind GLM solver scored 1. The upstream standard quality-loop label remains unverified. This selected development example does not establish broad factory reliability, software portability, biomedical validity or contamination-free benchmark performance.",
   "review_files": [
-    "autonomous-runs/063/explorer-evidence/grading/review-repair.json",
-    "autonomous-runs/063/explorer-evidence/grading/final-controls.json",
-    "autonomous-runs/063/explorer-evidence/native/result.json",
-    "autonomous-runs/063/independent-acceptance.json",
-    "autonomous-runs/063/source-notice-and-environment-audit.json",
-    "autonomous-runs/063/hub-download-verification.json"
+    "autonomous-runs/090/explorer-evidence/grading/review-repair.json",
+    "autonomous-runs/090/explorer-evidence/grading/final-controls.json",
+    "autonomous-runs/090/explorer-evidence/native/result.json",
+    "autonomous-runs/090/independent-acceptance.json",
+    "autonomous-runs/090/source-notice-and-environment-audit.json",
+    "autonomous-runs/090/hub-download-verification.json",
+    "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/environment/LICENSE.source",
+    "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/environment/SOURCE-LICENSES.json"
   ],
   "stages": [
     [
@@ -33,7 +35,7 @@
           "Input",
           [
             [
-              "autonomous-cases/mdanalysis-rmsd/source.ipynb",
+              "autonomous-cases/neurokit-hrv/source.ipynb",
               "Actual original notebook JSON"
             ]
           ]
@@ -42,11 +44,11 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/intake/baseline.py",
+              "autonomous-runs/090/explorer-evidence/intake/baseline.py",
               "Converted Python script"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/intake/conversion.json",
+              "autonomous-runs/090/explorer-evidence/intake/conversion.json",
               "Conversion receipt"
             ]
           ]
@@ -57,14 +59,14 @@
       "prepare",
       "02 \u00b7 Select and save terminal results",
       "GLM-5.3 \u00b7 native high requested",
-      "Append exports of existing named terminal results. Setup owns dependencies and input staging; construction must preserve eligible source endpoints that these exports cannot retain.",
+      "Select the four terminal HRV tables and append exports. Setup owns dependencies and input staging; the scientific source remains the evidence.",
       "run_preparation.py",
       [
         [
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/preparation/prepare/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/preparation/prepare/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -73,7 +75,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/preparation/prepare/input.json",
+              "autonomous-runs/090/explorer-evidence/preparation/prepare/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -82,15 +84,15 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/preparation/plan.json",
+              "autonomous-runs/090/explorer-evidence/preparation/plan.json",
               "Submitted export plan"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/preparation/exports.py",
+              "autonomous-runs/090/explorer-evidence/preparation/exports.py",
               "Appended export code"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/preparation/reference.py",
+              "autonomous-runs/090/explorer-evidence/preparation/reference.py",
               "Original script plus exports"
             ]
           ]
@@ -101,14 +103,14 @@
       "worker",
       "03 \u00b7 Prepare and test reference",
       "GLM-5.3 \u00b7 native high requested",
-      "Install the locked environment, stage original inputs and test the unchanged source offline. This run made no scientific source edits.",
+      "Install the locked environment, stage the original recording and test the prepared source offline. The source diff and execution record are available below.",
       "run_reference_setup.py",
       [
         [
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/setup-raw/worker/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/setup-raw/worker/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -117,7 +119,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/setup-raw/worker/input.json",
+              "autonomous-runs/090/explorer-evidence/setup-raw/worker/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -126,31 +128,31 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/setup-raw/outcome.json",
+              "autonomous-runs/090/explorer-evidence/setup-raw/outcome.json",
               "Worker setup outcome"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/candidate/pyproject.toml",
+              "autonomous-runs/090/explorer-evidence/reference/candidate/pyproject.toml",
               "Python dependencies"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/candidate/inputs.json",
+              "autonomous-runs/090/explorer-evidence/reference/candidate/inputs.json",
               "Staged input declarations"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/candidate/analysis.py",
+              "autonomous-runs/090/explorer-evidence/reference/candidate/analysis.py",
               "Prepared analysis script"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/source.diff",
+              "autonomous-runs/090/explorer-evidence/reference/trial/source.diff",
               "Source change record"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/inputs-before.json",
+              "autonomous-runs/090/explorer-evidence/reference/trial/inputs-before.json",
               "Actual input observations"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/result.json",
+              "autonomous-runs/090/explorer-evidence/reference/trial/result.json",
               "Offline execution result"
             ]
           ]
@@ -159,16 +161,20 @@
           "Output artifacts",
           [
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/outputs/ca_core_rmsd.csv",
-              "Actual output \u00b7 ca_core_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/reference/trial/outputs/hrv_frequency.csv",
+              "Actual output \u00b7 hrv_frequency.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/outputs/mass_weighted_rmsd.csv",
-              "Actual output \u00b7 mass_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/reference/trial/outputs/hrv_indices.csv",
+              "Actual output \u00b7 hrv_indices.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/outputs/resid_weighted_rmsd.csv",
-              "Actual output \u00b7 resid_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/reference/trial/outputs/hrv_nonlinear.csv",
+              "Actual output \u00b7 hrv_nonlinear.csv"
+            ],
+            [
+              "autonomous-runs/090/explorer-evidence/reference/trial/outputs/hrv_time.csv",
+              "Actual output \u00b7 hrv_time.csv"
             ]
           ]
         ]
@@ -185,11 +191,11 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/reference.py",
+              "autonomous-runs/090/explorer-evidence/reference/trial/reference.py",
               "Executed reference script"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/reference/trial/environment.txt",
+              "autonomous-runs/090/explorer-evidence/reference/trial/environment.txt",
               "Installed environment"
             ]
           ]
@@ -198,7 +204,7 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/replay/result.json",
+              "autonomous-runs/090/explorer-evidence/replay/result.json",
               "Replay observations"
             ]
           ]
@@ -207,16 +213,20 @@
           "Output artifacts",
           [
             [
-              "autonomous-runs/063/explorer-evidence/replay/replay/trials/1/outputs/ca_core_rmsd.csv",
-              "Actual output \u00b7 ca_core_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/replay/replay/trials/1/outputs/hrv_frequency.csv",
+              "Actual output \u00b7 hrv_frequency.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/replay/replay/trials/1/outputs/mass_weighted_rmsd.csv",
-              "Actual output \u00b7 mass_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/replay/replay/trials/1/outputs/hrv_indices.csv",
+              "Actual output \u00b7 hrv_indices.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/replay/replay/trials/1/outputs/resid_weighted_rmsd.csv",
-              "Actual output \u00b7 resid_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/replay/replay/trials/1/outputs/hrv_nonlinear.csv",
+              "Actual output \u00b7 hrv_nonlinear.csv"
+            ],
+            [
+              "autonomous-runs/090/explorer-evidence/replay/replay/trials/1/outputs/hrv_time.csv",
+              "Actual output \u00b7 hrv_time.csv"
             ]
           ]
         ]
@@ -233,7 +243,7 @@
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/specification/specify/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/specification/specify/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -242,7 +252,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/specification/specify/input.json",
+              "autonomous-runs/090/explorer-evidence/specification/specify/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -251,15 +261,15 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/specification/specification.json",
+              "autonomous-runs/090/explorer-evidence/specification/specification.json",
               "Typed worker proposal"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/specification/task-brief.md",
+              "autonomous-runs/090/explorer-evidence/specification/task-brief.md",
               "Proposed question"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/specification/validation-handoff.md",
+              "autonomous-runs/090/explorer-evidence/specification/validation-handoff.md",
               "Validation handoff"
             ]
           ]
@@ -270,14 +280,14 @@
       "materialize",
       "06 \u00b7 Construct reference, inputs and oracle",
       "GLM-5.3 \u00b7 native high requested",
-      "Produce the task-specific question and executable artifacts. Here the worker recovered the open/closed and backbone-domain endpoints, preserving all five source analyses.",
+      "Construct the task inputs, question and oracle for all four source HRV tables. Record input and oracle identities before validation.",
       "task_materialization.py",
       [
         [
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/materialization-raw/materialize/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/materialization-raw/materialize/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -286,7 +296,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/materialization-raw/materialize/input.json",
+              "autonomous-runs/090/explorer-evidence/materialization-raw/materialize/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -295,11 +305,11 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/materialization-raw/materialization-candidate.json",
+              "autonomous-runs/090/explorer-evidence/materialization-raw/materialization-candidate.json",
               "Complete construction candidate"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/materialization/manifest.json",
+              "autonomous-runs/090/explorer-evidence/materialization/manifest.json",
               "Executed input/reference/oracle inventories"
             ]
           ]
@@ -308,24 +318,20 @@
           "Output artifacts",
           [
             [
-              "autonomous-runs/063/explorer-evidence/materialization/reference/backbone_rmsd.csv",
-              "Actual output \u00b7 backbone_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/materialization/reference/hrv_frequency.csv",
+              "Actual output \u00b7 hrv_frequency.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/materialization/reference/ca_core_rmsd.csv",
-              "Actual output \u00b7 ca_core_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/materialization/reference/hrv_indices.csv",
+              "Actual output \u00b7 hrv_indices.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/materialization/reference/mass_weighted_rmsd.csv",
-              "Actual output \u00b7 mass_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/materialization/reference/hrv_nonlinear.csv",
+              "Actual output \u00b7 hrv_nonlinear.csv"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/materialization/reference/open_closed_backbone_rmsd.csv",
-              "Actual output \u00b7 open_closed_backbone_rmsd.csv"
-            ],
-            [
-              "autonomous-runs/063/explorer-evidence/materialization/reference/resid_weighted_rmsd.csv",
-              "Actual output \u00b7 resid_weighted_rmsd.csv"
+              "autonomous-runs/090/explorer-evidence/materialization/reference/hrv_time.csv",
+              "Actual output \u00b7 hrv_time.csv"
             ]
           ]
         ]
@@ -342,7 +348,7 @@
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/independent/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/grading/independent/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -351,7 +357,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/independent/input.json",
+              "autonomous-runs/090/explorer-evidence/grading/independent/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -360,11 +366,11 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/independent-solution.json",
+              "autonomous-runs/090/explorer-evidence/grading/independent-solution.json",
               "Independent implementation"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/grading/independent-result.json",
+              "autonomous-runs/090/explorer-evidence/grading/independent-result.json",
               "Blind execution observations"
             ]
           ]
@@ -382,7 +388,7 @@
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/grader/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/grading/grader/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -391,7 +397,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/grader/input.json",
+              "autonomous-runs/090/explorer-evidence/grading/grader/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -400,7 +406,7 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/candidate.json",
+              "autonomous-runs/090/explorer-evidence/grading/candidate.json",
               "Initial grader candidate"
             ]
           ]
@@ -418,7 +424,7 @@
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/probes/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/grading/probes/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -427,7 +433,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/probes/input.json",
+              "autonomous-runs/090/explorer-evidence/grading/probes/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -436,7 +442,7 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/probes.json",
+              "autonomous-runs/090/explorer-evidence/grading/probes.json",
               "Submitted probe suite"
             ]
           ]
@@ -444,17 +450,17 @@
       ]
     ],
     [
-      "repair",
-      "10 \u00b7 Repair the candidate",
+      "review",
+      "10 \u00b7 Review the initial candidate",
       "GLM-5.3 \u00b7 native high requested",
-      "The worker corrected inconsistent probe check annotations and clarified which probes used numeric perturbations rather than recomputed wrong workflows. The executed grader and scientific methods remain unchanged; the repair record states the limits of the evidence.",
+      "Review the scientific coverage, public rules, executable controls and evidence before the repair session.",
       "grading_session.py",
       [
         [
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/repair/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/grading/review/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -463,7 +469,43 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/repair/input.json",
+              "autonomous-runs/090/explorer-evidence/grading/review/input.json",
+              "Actual review input JSON"
+            ]
+          ]
+        ],
+        [
+          "Output",
+          [
+            [
+              "autonomous-runs/090/explorer-evidence/grading/review.json",
+              "Initial review and repair feedback"
+            ]
+          ]
+        ]
+      ]
+    ],
+    [
+      "repair",
+      "11 \u00b7 Repair the candidate",
+      "GLM-5.3 \u00b7 native high requested",
+      "Use the initial review and executed controls to repair the generated grader, disclosed rules or annotations within the allowed session. Preserve the source methodology, required endpoints and immutable probe programs.",
+      "grading_session.py",
+      [
+        [
+          "Prompt",
+          [
+            [
+              "autonomous-runs/090/explorer-evidence/grading/repair/system-prompt.md",
+              "Actual system prompt"
+            ]
+          ]
+        ],
+        [
+          "Input",
+          [
+            [
+              "autonomous-runs/090/explorer-evidence/grading/repair/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -472,15 +514,15 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/repair.json",
+              "autonomous-runs/090/explorer-evidence/grading/repair.json",
               "Resolved worker repair"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/grading/final-candidate.json",
+              "autonomous-runs/090/explorer-evidence/grading/final-candidate.json",
               "Final grader candidate"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/grading/repaired-probes.json",
+              "autonomous-runs/090/explorer-evidence/grading/repaired-probes.json",
               "Effective probes"
             ]
           ]
@@ -489,16 +531,16 @@
     ],
     [
       "review-repair",
-      "11 \u00b7 Review and rerun controls",
+      "12 \u00b7 Review and rerun controls",
       "GLM-5.3 \u00b7 native high requested",
-      "Fresh controls and source-coverage review validate the repaired candidate. Sixteen effective final controls passed; earlier control executions are not counted as additional final cases.",
+      "Run fresh controls and source-coverage review on the final candidate. Eighteen effective final controls passed; earlier executions are not additional final cases.",
       "grading_session.py",
       [
         [
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/review-repair/system-prompt.md",
+              "autonomous-runs/090/explorer-evidence/grading/review-repair/system-prompt.md",
               "Actual system prompt"
             ]
           ]
@@ -507,7 +549,7 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/review-repair/input.json",
+              "autonomous-runs/090/explorer-evidence/grading/review-repair/input.json",
               "Actual worker input JSON"
             ]
           ]
@@ -516,15 +558,15 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/grading/final-controls.json",
+              "autonomous-runs/090/explorer-evidence/grading/final-controls.json",
               "Final executed controls"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/grading/review-repair.json",
+              "autonomous-runs/090/explorer-evidence/grading/review-repair.json",
               "Final source and consistency review"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/grading/result.json",
+              "autonomous-runs/090/explorer-evidence/grading/result.json",
               "Scientific validation summary"
             ]
           ]
@@ -533,7 +575,7 @@
     ],
     [
       "native",
-      "12 \u00b7 Native Harbor controls and solver",
+      "13 \u00b7 Native Harbor controls and solver",
       "Harbor + GLM-5.3",
       "Run native oracle/no-op controls and a blind GLM solver attempt in offline CPU task sandboxes. The Attempt tab shows the recorded input, commands and observations.",
       "run_scientific_native.py",
@@ -542,7 +584,7 @@
           "Prompt",
           [
             [
-              "autonomous-runs/063/explorer-evidence/native/solver-input.md",
+              "autonomous-runs/090/explorer-evidence/native/solver-input.md",
               "Actual first solver message, extracted from the recorded trajectory"
             ]
           ]
@@ -551,16 +593,16 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/native/tasks/autonomous-panel-063/instruction.md",
+              "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/instruction.md",
               "Published solver question"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/native/tasks/autonomous-panel-063/task.toml",
+              "autonomous-runs/090/explorer-evidence/native/tasks/autonomous-panel-090/task.toml",
               "Harbor configuration"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/native/terminus-2/autonomous-panel-063-native-terminus-2/config.json",
-              "Recorded Harbor harness configuration"
+              "autonomous-runs/090/explorer-evidence/native/harness-summary.json",
+              "Recorded harness settings (connection details excluded)"
             ]
           ]
         ],
@@ -568,7 +610,7 @@
           "Output",
           [
             [
-              "autonomous-runs/063/explorer-evidence/native/result.json",
+              "autonomous-runs/090/explorer-evidence/native/result.json",
               "Native rewards and cleanup summary"
             ]
           ]
@@ -577,7 +619,7 @@
     ],
     [
       "release",
-      "13 \u00b7 Publish and download-check",
+      "14 \u00b7 Publish and download-check",
       "Programmatic",
       "Publish the accepted bundle to the approved public destination, then force-download its immutable release commit and check file hashes, modes and task identity. No new model call.",
       "publish_scientific_release.py",
@@ -586,11 +628,11 @@
           "Input",
           [
             [
-              "autonomous-runs/063/explorer-evidence/release/manifest.json",
+              "autonomous-runs/090/explorer-evidence/release/manifest.json",
               "Accepted release manifest"
             ],
             [
-              "autonomous-runs/063/explorer-evidence/release/release-files.json",
+              "autonomous-runs/090/explorer-evidence/release/release-files.json",
               "Immutable release file inventory"
             ]
           ]
@@ -616,11 +658,11 @@
           "Output",
           [
             [
-              "autonomous-runs/063/publication.json",
+              "autonomous-runs/090/publication.json",
               "Publication receipt"
             ],
             [
-              "autonomous-runs/063/hub-download-verification.json",
+              "autonomous-runs/090/hub-download-verification.json",
               "Forced immutable download verification"
             ]
           ]
@@ -628,15 +670,17 @@
       ]
     ]
   ],
-  "trajectory_glob": "autonomous-runs/063/explorer-evidence/native/terminus-2/autonomous-panel-063-native-terminus-2/autonomous-panel-063__tku4sHQ/agent/trajectory.json",
-  "native_summary": "autonomous-runs/063/explorer-evidence/native/result.json",
-  "grading_controls": "autonomous-runs/063/explorer-evidence/grading/final-controls.json",
+  "trajectory_glob": "autonomous-runs/090/explorer-evidence/native/terminus-2/autonomous-panel-090-native-terminus-2/autonomous-panel-090__iGnjovY/agent/trajectory.json",
+  "native_summary": "autonomous-runs/090/explorer-evidence/native/result.json",
+  "grading_controls": "autonomous-runs/090/explorer-evidence/grading/final-controls.json",
   "release": {
-    "repository": "gonzalobenegas/biotasks-notebook-pilot-issue-19-mdanalysis",
-    "publication": "autonomous-runs/063/publication.json"
+    "repository": "gonzalobenegas/biotasks-notebook-pilot-issue-19-neurokit",
+    "publication": "autonomous-runs/090/publication.json"
   },
-  "runtime_revision": "88d677c015ad56a6f8cc06e557c6c05b619109a3",
+  "runtime_revision": "a26c9d3b5ef505d2b940c09e679c31549b351328",
   "program_revisions": {
-    "release": "bef9b508fcdcb44487d2a0e0cf5af5725c9f7cdf"
-  }
+    "release": "d09f3e3e"
+  },
+  "trial_result": "autonomous-runs/090/independent-acceptance.json",
+  "trial_result_label": "Independent verification of original native trials"
 }

@@ -1,0 +1,3703 @@
+{
+  "evidence_boundary": "Passing reference and structural audit, plus the supplied finite replay observations. Row-multiset fingerprints describe serialization, not scientific equivalence: row order may encode rank, sequence or alignment. No independent reproduction or calibrated grader. No full data tables in context. Read-only package-source tools are available.",
+  "file_sha256": {
+    "candidate/analysis.py": "78a29e616bd988407ce7d2dc4142f0f6c74a49b00e0d8dd081de6d4a9bcbc9c2",
+    "candidate/inputs.json": "cd8699fce7c9f70cc9849c470149c1f52bf89ee9d3b9db920c7e92986050ac0e",
+    "candidate/pyproject.toml": "9d4ac0bde448bc3c2525c25309f24fe966acd42c6dc22bb0f1ad96ee991b45a4",
+    "inputs/exports.py": "ceac02746999a64e421bfbb25538cfbc13fd8c4625e086113d17062eecf9c85d",
+    "inputs/original.py": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0",
+    "inputs/plan.json": "8e005ae76256245e3147a7a4a9ef48f8ade425beba018783439e184dbcfe9363",
+    "output-audit.json": "ebc9620a73edce2d6861f4ad97c3a5a83d6558307e0b2e20e252dc5743041793",
+    "provenance.json": "ba3b4ef5244a78ce972ca587a18dadc8a6208eba869294cf24dddcf12d7e8d56",
+    "result.json": "061d19cd517425c8078fececd4a004fb8b0c4cf8577ee5dcde7a4d6aaa183305",
+    "trial/environment.txt": "0bb5846659bef7fea896d384ff203fa6a419aacb7af58830cc4aa3fd32692e7a",
+    "trial/inputs-before.json": "031eee75e7aeb307fbbe80df603b69331fdbf00a240ad8c99de857b0c308b29e",
+    "trial/reference.py": "4248b6de37e8cf766c6b599c7d11b0da1d1266c615b8ec9a5049c81c99ac6f10",
+    "trial/result.json": "92c9ac2326c5cdd0809e40fa3a60ef5c7b18e4275f63cb90e1bbc494c53015be",
+    "trial/source.diff": "7e04b328fa5d2938567713d53444644a9f6cf0300c3c618558e5977610403111",
+    "trial/uv.lock": "7573d70d209d54d75812c169f9b16a7534053fdb60242b3d50483206bcae6c13"
+  },
+  "files": {
+    "candidate/analysis.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3\n#     language: python\n#     name: python3\n# ---\n\n# # Heart Rate Variability (HRV)\n\n# NeuroKit2 is the most comprehensive package when it comes to HRV indices, and this example shows how to use NeuroKit2 to compute heart rate variability (HRV) indices in the time-, frequency-, and non-linear domain.\n#\n# For a comprehensive review of the most up-to-date HRV indices, a discussion of their significance in psychology, and a step-by-step guide for HRV analysis using **NeuroKit2**, the [Heart Rate Variability in Psychology: A Review of HRV Indices and an Analysis Tutorial](https://doi.org/10.3390/s21123998) paper is a good place to start. \n\n# ## Compute HRV features\n\n# Load the NeuroKit package\nimport neurokit2 as nk\n\n# Note: this cell is hidden using the \"remove-input\" tag\n# Make bigger images\nimport matplotlib.pyplot as plt\n\n\nplt.rcParams[\"figure.figsize\"] = [15, 5]\nplt.rcParams[\"font.size\"] = 14\n\n# ## Download Dataset\n\n# First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n\ndata = nk.pd.read_csv(\"/inputs/bio_resting_5min_100hz.csv\")  # offline input-path adaptation: read the staged copy of the datasets.\ndata.head()  # Print first 5 rows\n\n# You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n\n# Find peaks\npeaks, info = nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)\n\n# *Note: It is critical that you specify the correct sampling rate of your signal throughout many processing functions, as this allows NeuroKit to have a time reference.*\n\n# This produces two elements, `peaks` which is a DataFrame of same length as the input signal in which occurences of R-peaks are marked with 1 in a list of zeros. `info` is a dictionary of the sample points at which these R-peaks occur. \n#\n# HRV is the temporal variation between consecutive heartbeats (**RR intervals**). Here, we will use `peaks` i.e. occurrences of the heartbeat peaks, as the input argument in the following HRV functions to extract the indices. \n\n# ## Time-Domain Analysis\n\n# First, let's extract the time-domain indices.\n\n# Extract clean EDA and SCR features\nhrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)\nhrv_time\n\n# These features include the RMSSD (square root of the mean of the sum of successive differences between adjacent RR intervals), MeanNN (mean of RR intervals) so on and so forth. You can also visualize the distribution of R-R intervals by specifying `show=True` in [hrv_time()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-time).\n\n# ## Frequency-Domain Analysis\n\n# Now, let's extract the frequency domain features, which involve extracting for example the spectral power density pertaining to different frequency bands. Again, you can visualize the power across frequency bands by specifying `show=True` in [hrv_frequency()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-frequency).\n\nhrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)\nhrv_freq\n\n# ## Non-Linear Domain Analysis\n\n# Now, let's compute the non-linear indices with [hrv_nonlinear()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-nonlinear).\n\nhrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)\nhrv_nonlinear\n\n# This will produce a Poincar\u00e9 plot which plots each RR interval against the next successive one.\n#\n# Note that there exist many more [**complexity indices**](https://neuropsychology.github.io/NeuroKit/functions/complexity.html), that are available in NeuroKit2, and that could be applied to HRV. The ``hrv_nonlinear()`` function only includes the most commonly used indices.\n\n# ## All Domains\n\n# Finally, if you'd like to extract HRV indices from all three domains, you can simply input `peaks` into [hrv()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html), where you can specify `show=True` to visualize the combination of plots depicting the RR intervals distribution, power spectral density for frequency domains, and the poincare scattergram.\n\nhrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)\nhrv_indices\n",
+    "candidate/inputs.json": {
+      "files": [
+        {
+          "local_path": "/inputs/bio_resting_5min_100hz.csv",
+          "source": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv"
+        }
+      ]
+    },
+    "candidate/pyproject.toml": "[project]\nname = \"hrv-reference-setup\"\nversion = \"0.1.0\"\nrequires-python = \">=3.13\"\ndependencies = [\n    \"neurokit2==0.2.13\",\n    \"matplotlib\",\n]\n",
+    "inputs/exports.py": "import os\n\nimport pandas as _pd\n\n_out_dir = \"/work/outputs\"\nos.makedirs(_out_dir, exist_ok=True)\n\n# Save the terminal HRV results produced by the original script.\nhrv_time.to_csv(os.path.join(_out_dir, \"hrv_time.csv\"), index=False)\nhrv_freq.to_csv(os.path.join(_out_dir, \"hrv_frequency.csv\"), index=False)\nhrv_nonlinear.to_csv(os.path.join(_out_dir, \"hrv_nonlinear.csv\"), index=False)\nhrv_indices.to_csv(os.path.join(_out_dir, \"hrv_indices.csv\"), index=False)",
+    "inputs/original.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3\n#     language: python\n#     name: python3\n# ---\n\n# # Heart Rate Variability (HRV)\n\n# NeuroKit2 is the most comprehensive package when it comes to HRV indices, and this example shows how to use NeuroKit2 to compute heart rate variability (HRV) indices in the time-, frequency-, and non-linear domain.\n#\n# For a comprehensive review of the most up-to-date HRV indices, a discussion of their significance in psychology, and a step-by-step guide for HRV analysis using **NeuroKit2**, the [Heart Rate Variability in Psychology: A Review of HRV Indices and an Analysis Tutorial](https://doi.org/10.3390/s21123998) paper is a good place to start. \n\n# ## Compute HRV features\n\n# Load the NeuroKit package\nimport neurokit2 as nk\n\n# Note: this cell is hidden using the \"remove-input\" tag\n# Make bigger images\nimport matplotlib.pyplot as plt\n\n\nplt.rcParams[\"figure.figsize\"] = [15, 5]\nplt.rcParams[\"font.size\"] = 14\n\n# ## Download Dataset\n\n# First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n\ndata = nk.data(\"bio_resting_5min_100hz\")\ndata.head()  # Print first 5 rows\n\n# You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n\n# Find peaks\npeaks, info = nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)\n\n# *Note: It is critical that you specify the correct sampling rate of your signal throughout many processing functions, as this allows NeuroKit to have a time reference.*\n\n# This produces two elements, `peaks` which is a DataFrame of same length as the input signal in which occurences of R-peaks are marked with 1 in a list of zeros. `info` is a dictionary of the sample points at which these R-peaks occur. \n#\n# HRV is the temporal variation between consecutive heartbeats (**RR intervals**). Here, we will use `peaks` i.e. occurrences of the heartbeat peaks, as the input argument in the following HRV functions to extract the indices. \n\n# ## Time-Domain Analysis\n\n# First, let's extract the time-domain indices.\n\n# Extract clean EDA and SCR features\nhrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)\nhrv_time\n\n# These features include the RMSSD (square root of the mean of the sum of successive differences between adjacent RR intervals), MeanNN (mean of RR intervals) so on and so forth. You can also visualize the distribution of R-R intervals by specifying `show=True` in [hrv_time()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-time).\n\n# ## Frequency-Domain Analysis\n\n# Now, let's extract the frequency domain features, which involve extracting for example the spectral power density pertaining to different frequency bands. Again, you can visualize the power across frequency bands by specifying `show=True` in [hrv_frequency()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-frequency).\n\nhrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)\nhrv_freq\n\n# ## Non-Linear Domain Analysis\n\n# Now, let's compute the non-linear indices with [hrv_nonlinear()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-nonlinear).\n\nhrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)\nhrv_nonlinear\n\n# This will produce a Poincar\u00e9 plot which plots each RR interval against the next successive one.\n#\n# Note that there exist many more [**complexity indices**](https://neuropsychology.github.io/NeuroKit/functions/complexity.html), that are available in NeuroKit2, and that could be applied to HRV. The ``hrv_nonlinear()`` function only includes the most commonly used indices.\n\n# ## All Domains\n\n# Finally, if you'd like to extract HRV indices from all three domains, you can simply input `peaks` into [hrv()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html), where you can specify `show=True` to visualize the combination of plots depicting the RR intervals distribution, power spectral density for frequency domains, and the poincare scattergram.\n\nhrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)\nhrv_indices\n",
+    "inputs/plan.json": {
+      "artifacts": [
+        {
+          "description": "Time-domain HRV indices (e.g. RMSSD, MeanNN) for the recording.",
+          "path": "hrv_time.csv",
+          "source_evidence": "Variable `hrv_time`, produced by `nk.hrv_time(peaks, sampling_rate=100, show=True)` in the 'Time-Domain Analysis' section; the narrative states 'let's extract the time-domain indices' and interprets the resulting features (RMSSD, MeanNN) in their own right, so this DataFrame is the endpoint of that analysis branch."
+        },
+        {
+          "description": "Frequency-domain HRV indices (spectral power in frequency bands).",
+          "path": "hrv_frequency.csv",
+          "source_evidence": "Variable `hrv_freq`, produced by `nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)` in the 'Frequency-Domain Analysis' section; the narrative explicitly frames these as the analysis result ('extract the frequency domain features ... spectral power density pertaining to different frequency bands')."
+        },
+        {
+          "description": "Non-linear domain HRV indices (Poincar\u00e9-derived and related metrics).",
+          "path": "hrv_nonlinear.csv",
+          "source_evidence": "Variable `hrv_nonlinear`, produced by `nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)` in the 'Non-Linear Domain Analysis' section; the narrative computes and discusses these as the non-linear analysis outcome, with the Poincar\u00e9 plot as a visualization of the same result."
+        },
+        {
+          "description": "Combined HRV indices across time, frequency and non-linear domains.",
+          "path": "hrv_indices.csv",
+          "source_evidence": "Variable `hrv_indices`, produced by `nk.hrv(peaks, sampling_rate=100, show=True)` in the final 'All Domains' section; the narrative presents it as extracting HRV indices from all three domains, the closing end product of the example."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Raw recording `data` and the R-peak series `peaks`/`info`: inputs and preprocessing for the HRV computation, not independently interpreted results.",
+        "The show=True figures (RR-interval distribution histogram, power spectral density plot, Poincar\u00e9 scattergram): plot-only visualizations whose numeric values are already contained in the exported HRV index tables; no separate numerical export is possible without capturing figure internals, which is not permitted.",
+        "`hrv_indices` intentionally overlaps the three per-domain tables; it is retained because the 'All Domains' section presents the combined extraction as its own final product."
+      ],
+      "explanation": "The notebook's scientific endpoints are the HRV index tables in the three domains (`hrv_time`, `hrv_frequency`, `hrv_nonlinear`), each displayed and narrated as the analysis result of its branch, and the combined all-domains table `hrv_indices` produced by `nk.hrv()` as the final end product. All four are existing named one-row DataFrames still holding their values at script completion. The appended code creates `/work/outputs` and writes each table as CSV with pandas, preserving columns, labels, and row order, with no recomputation or filtering. Plot-only figures (RR-interval distribution, PSD, Poincar\u00e9) are accompanying visualizations whose underlying values are already in these tables and are not separately exportable.",
+      "export_code": "import os\n\nimport pandas as _pd\n\n_out_dir = \"/work/outputs\"\nos.makedirs(_out_dir, exist_ok=True)\n\n# Save the terminal HRV results produced by the original script.\nhrv_time.to_csv(os.path.join(_out_dir, \"hrv_time.csv\"), index=False)\nhrv_freq.to_csv(os.path.join(_out_dir, \"hrv_frequency.csv\"), index=False)\nhrv_nonlinear.to_csv(os.path.join(_out_dir, \"hrv_nonlinear.csv\"), index=False)\nhrv_indices.to_csv(os.path.join(_out_dir, \"hrv_indices.csv\"), index=False)",
+      "unresolved_assumptions": [
+        "Execution must confirm neurokit2 and pandas are installed and the dataset `bio_resting_5min_100hz` downloads during network-enabled setup; file sizes and column sets of the CSVs are unverified here.",
+        "Runtime fit within the reference time limit (four HRV computations on a 5-minute 100 Hz recording) is an execution question; no simplification is applied."
+      ]
+    },
+    "output-audit.json": {
+      "outputs": [
+        {
+          "bytes": 570,
+          "download_hash_verified": true,
+          "file": "hrv_time.csv",
+          "sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "696.3953488372093"
+                ],
+                "finite_numeric": 1,
+                "maximum": 696.3953488372093,
+                "minimum": 696.3953488372093,
+                "name": "HRV_MeanNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b7d7ab154a26fde0a12f987addf966a9cc016a5cee0c6396c5cd363b975629be",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "62.135891206172104"
+                ],
+                "finite_numeric": 1,
+                "maximum": 62.135891206172104,
+                "minimum": 62.135891206172104,
+                "name": "HRV_SDNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "935450512ec679bab329ae1712e25e4a9411a520b427e658e6e5d8503221b8bb",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "10.060727541349376"
+                ],
+                "finite_numeric": 1,
+                "maximum": 10.060727541349376,
+                "minimum": 10.060727541349376,
+                "name": "HRV_SDANN1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "d194a5ebcd98324d7dc2d1b0d5390629258b7f086ec7c31fa60798f922ec6286",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "60.27503600273103"
+                ],
+                "finite_numeric": 1,
+                "maximum": 60.27503600273103,
+                "minimum": 60.27503600273103,
+                "name": "HRV_SDNNI1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "01eed3668cc2098cf8f1295ecebea6a7fd516a11b3926ab0ac4726bd1a03986b",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDANN2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDNNI2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 5
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDANN5",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 6
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDNNI5",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 7
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "69.69798316887554"
+                ],
+                "finite_numeric": 1,
+                "maximum": 69.69798316887554,
+                "minimum": 69.69798316887554,
+                "name": "HRV_RMSSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6b0186c2996762ef59077c790ac070e15e044fc87d9ac59753a0b5d31e99265d",
+                "other": 0,
+                "position": 8
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "69.77910878189152"
+                ],
+                "finite_numeric": 1,
+                "maximum": 69.77910878189152,
+                "minimum": 69.77910878189152,
+                "name": "HRV_SDSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "45dbe5915508c1a420f842ed0dca20c2fb70f23a7fcba921bf182079fb9e2219",
+                "other": 0,
+                "position": 9
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.08922502327151112"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.08922502327151112,
+                "minimum": 0.08922502327151112,
+                "name": "HRV_CVNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6bfc5d95881c50620e737abfd019d6c35e2df7e5f4d6071575cba6d715d1ccea",
+                "other": 0,
+                "position": 10
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.10008392974659035"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.10008392974659035,
+                "minimum": 0.10008392974659035,
+                "name": "HRV_CVSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f0d18d83e4edff2e4df551609780f81937870ae398fd9f60eab992b1f2745c40",
+                "other": 0,
+                "position": 11
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "690.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 690.0,
+                "minimum": 690.0,
+                "name": "HRV_MedianNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4b66cd5f28958ebb724786de207119f3492474fb1990b2231fb05176b1c843a8",
+                "other": 0,
+                "position": 12
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.477999999999994"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.477999999999994,
+                "minimum": 44.477999999999994,
+                "name": "HRV_MadNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "95995f41094ae19acb97bd6d2e9852e3b4b42f7877c3ad944d0df4bc13e176f2",
+                "other": 0,
+                "position": 13
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.06446086956521738"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.06446086956521738,
+                "minimum": 0.06446086956521738,
+                "name": "HRV_MCVNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "1cf1eea85cf349cc388c144067df9a85ed954f3b8916c587e86b0bbd222478b3",
+                "other": 0,
+                "position": 14
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "60.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 60.0,
+                "minimum": 60.0,
+                "name": "HRV_IQRNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "1d60b87bd114ebd01342b395fc233474286079041afe4d3e80396751851a0a6e",
+                "other": 0,
+                "position": 15
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.8915019973478892"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.8915019973478892,
+                "minimum": 0.8915019973478892,
+                "name": "HRV_SDRMSSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "36270cb2a74fb7080b07d7e755eef41b113e196117a9c2797b2b20e08a3e7722",
+                "other": 0,
+                "position": 16
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "660.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 660.0,
+                "minimum": 660.0,
+                "name": "HRV_Prc20NN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "19685181076010ea0ee3f702bae0603dc1056d4a567460649a6fbf429b1efade",
+                "other": 0,
+                "position": 17
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "740.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 740.0,
+                "minimum": 740.0,
+                "name": "HRV_Prc80NN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5c1d1505cb53e5aae3d8f9f37b2d3f85ad17518da4da1a0c602601e8798ca83f",
+                "other": 0,
+                "position": 18
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "14.651162790697676"
+                ],
+                "finite_numeric": 1,
+                "maximum": 14.651162790697676,
+                "minimum": 14.651162790697676,
+                "name": "HRV_pNN50",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2e75aa66fa159510d2a0ee53e6ddffe5777ec07b0e1de0f8ab728f1ba39acc41",
+                "other": 0,
+                "position": 19
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "49.30232558139535"
+                ],
+                "finite_numeric": 1,
+                "maximum": 49.30232558139535,
+                "minimum": 49.30232558139535,
+                "name": "HRV_pNN20",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ced3e4eea40de3fb7f550f8134184fc8884658bd49d298f2c21779f26dbefddb",
+                "other": 0,
+                "position": 20
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "470.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 470.0,
+                "minimum": 470.0,
+                "name": "HRV_MinNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "602dbaeb13795d7a8c8de9db75393d2363071090d0212018d958d3a21b038ac0",
+                "other": 0,
+                "position": 21
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1420.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1420.0,
+                "minimum": 1420.0,
+                "name": "HRV_MaxNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a6412a5b0b58c2a43de23cc49d4736abd9dba0e05f803c105ba77d9ff49659b7",
+                "other": 0,
+                "position": 22
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "7.962962962962963"
+                ],
+                "finite_numeric": 1,
+                "maximum": 7.962962962962963,
+                "minimum": 7.962962962962963,
+                "name": "HRV_HTI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "66cd3c4ef13bdde4456c0782cf8f096cf10c3eac2d2296920768cf2e254e7f6b",
+                "other": 0,
+                "position": 23
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "234.375"
+                ],
+                "finite_numeric": 1,
+                "maximum": 234.375,
+                "minimum": 234.375,
+                "name": "HRV_TINN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "45eb774e86363bce8e8033a4de1df161254cad5ec0dc56807d31dd892c03c344",
+                "other": 0,
+                "position": 24
+              }
+            ],
+            "distinct_limit_per_column": 40000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 1
+          }
+        },
+        {
+          "bytes": 258,
+          "download_hash_verified": true,
+          "file": "hrv_frequency.csv",
+          "sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_ULF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.01731007726584816"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.01731007726584816,
+                "minimum": 0.01731007726584816,
+                "name": "HRV_VLF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "cc7a2dfeeb58f9d6b2297710ec433f004db8227a688c8496d50e6272f6ab021a",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.04802607886179408"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.04802607886179408,
+                "minimum": 0.04802607886179408,
+                "name": "HRV_LF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "dbdd8ac4e37a936ad8d8addb58ce3b8e858cc5f24fd602cecfcfc94f916bc5a9",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.06023186865189019"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.06023186865189019,
+                "minimum": 0.06023186865189019,
+                "name": "HRV_HF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "42dc868028b8d8129752c8eadac220ecd1c4dc2fcf85202b4777ae7e4da40b92",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.011185774793627324"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.011185774793627324,
+                "minimum": 0.011185774793627324,
+                "name": "HRV_VHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8c707a23b88a131ebd5e9475b567333229575f054c83db5b943434a40aea2b8a",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.13675379957315975"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.13675379957315975,
+                "minimum": 0.13675379957315975,
+                "name": "HRV_TP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "13eabbac4032bc669487b7eb1fc777f8ed17d912c8ee1ae7b0455300440d8ed5",
+                "other": 0,
+                "position": 5
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.797353293807977"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.797353293807977,
+                "minimum": 0.797353293807977,
+                "name": "HRV_LFHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0f93ee93d5017a6e0602c28c2c4fdac0503dd9457a547f7e9177c41cf17da77",
+                "other": 0,
+                "position": 6
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.3511864314680439"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.3511864314680439,
+                "minimum": 0.3511864314680439,
+                "name": "HRV_LFn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ed37ad3f8b1ffbc1477bec4148981924c5dd94280beada16ca3760576e84cae0",
+                "other": 0,
+                "position": 7
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.44044018403794105"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.44044018403794105,
+                "minimum": 0.44044018403794105,
+                "name": "HRV_HFn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bbf3566b0583f17c684e0efc36a7a4666e481ddc889de8257538e9389a099a2c",
+                "other": 0,
+                "position": 8
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-2.8095536871398052"
+                ],
+                "finite_numeric": 1,
+                "maximum": -2.8095536871398052,
+                "minimum": -2.8095536871398052,
+                "name": "HRV_LnHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "3b1a4766faa453109add767afbfc11003ec91d610f538009bb88c95bd0e1d88b",
+                "other": 0,
+                "position": 9
+              }
+            ],
+            "distinct_limit_per_column": 100000,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 1
+          }
+        },
+        {
+          "bytes": 1968,
+          "download_hash_verified": true,
+          "file": "hrv_nonlinear.csv",
+          "sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "49.34128100482926"
+                ],
+                "finite_numeric": 1,
+                "maximum": 49.34128100482926,
+                "minimum": 49.34128100482926,
+                "name": "HRV_SD1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0b8dc97a0c16e253c374dec5a7c3d6814fdd943ffdd8f66163b6507c2969856",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "72.59743491590363"
+                ],
+                "finite_numeric": 1,
+                "maximum": 72.59743491590363,
+                "minimum": 72.59743491590363,
+                "name": "HRV_SD2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "0e7baa24a604fbb9b0fb81c542071d3aed108d156da6f4b30aa25b59d64988a8",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.679655983189845"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.679655983189845,
+                "minimum": 0.679655983189845,
+                "name": "HRV_SD1SD2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ff4bed6a0b706e1326d6d10b40488dfe541f30fbb2e7d6958bf6c699532fe0da",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "11253.343335830747"
+                ],
+                "finite_numeric": 1,
+                "maximum": 11253.343335830747,
+                "minimum": 11253.343335830747,
+                "name": "HRV_S",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4a2e3141a3df7e2232fca873c7cd3f7f6464997bca3de1d59f74721bb0781edb",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.4713325928606957"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.4713325928606957,
+                "minimum": 1.4713325928606957,
+                "name": "HRV_CSI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "54c2b1b5f1c5a6d2da0ab5a812f4f34fe5b73c6bd41bbc76c122ec265e6600f0",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "4.758251679217147"
+                ],
+                "finite_numeric": 1,
+                "maximum": 4.758251679217147,
+                "minimum": 4.758251679217147,
+                "name": "HRV_CVI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "d223c0bfa90e64cbd6ceab6ec43b86ee5138e67872f101bed09fa5c28f144036",
+                "other": 0,
+                "position": 5
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "427.25988859940844"
+                ],
+                "finite_numeric": 1,
+                "maximum": 427.25988859940844,
+                "minimum": 427.25988859940844,
+                "name": "HRV_CSI_Modified",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "80062ba02797215adeb9094eb2c67414575cbcd181f6507abb331d82f6a71ead",
+                "other": 0,
+                "position": 6
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5581395348837209"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5581395348837209,
+                "minimum": 0.5581395348837209,
+                "name": "HRV_PIP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "482a4b099ec4709b51b1fb027ad91aaeb43aa427f73dd6d2e8ef4ecead5a3788",
+                "other": 0,
+                "position": 7
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5116883116883117"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5116883116883117,
+                "minimum": 0.5116883116883117,
+                "name": "HRV_IALS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2d54357e90b53a982a504b4246657312f9a4ce272a081924c139aeebaf34d870",
+                "other": 0,
+                "position": 8
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7360406091370558"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7360406091370558,
+                "minimum": 0.7360406091370558,
+                "name": "HRV_PSS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6e865f164681c3d12583a37d8dc89d88c061c33d95859c617c17f027f438440a",
+                "other": 0,
+                "position": 9
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.15"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.15,
+                "minimum": 0.15,
+                "name": "HRV_PAS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5c322a50757b4417443dc0d1a853632b5082c31398ca2c2ca2dcc745555180d5",
+                "other": 0,
+                "position": 10
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.26385224274406"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.26385224274406,
+                "minimum": 50.26385224274406,
+                "name": "HRV_GI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "04cd9936d15d2770d6f04337705ec687ce500775c2a86fcca96dd624366cec0a",
+                "other": 0,
+                "position": 11
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.23572209987396"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.23572209987396,
+                "minimum": 50.23572209987396,
+                "name": "HRV_SI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "89186263b78d54fbd87760e62e24d88f105f3322d69f5f0566bc404c914ca013",
+                "other": 0,
+                "position": 12
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.28115653739895"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.28115653739895,
+                "minimum": 50.28115653739895,
+                "name": "HRV_AI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "da56a13c46909ca3c92f3b5af2aed036e7424d671179bb0186688c6671ab2584",
+                "other": 0,
+                "position": 13
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.675324675324674"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.675324675324674,
+                "minimum": 44.675324675324674,
+                "name": "HRV_PI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "738320ab1e9cd7802d7d6fd9d22f081a1b083eaedd3bed0018fc033bb6641361",
+                "other": 0,
+                "position": 14
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5096928982725528"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5096928982725528,
+                "minimum": 0.5096928982725528,
+                "name": "HRV_C1d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7908c372b8f45d5db8adc99598bb9df79a3e7de9d5129c4a18435884bf7d749c",
+                "other": 0,
+                "position": 15
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.490307101727447"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.490307101727447,
+                "minimum": 0.490307101727447,
+                "name": "HRV_C1a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "80c699fe0a1a5d68ae5cb03e15ec443b7a1b55551feccbb10d658b58be9b7b80",
+                "other": 0,
+                "position": 16
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "35.22623809701072"
+                ],
+                "finite_numeric": 1,
+                "maximum": 35.22623809701072,
+                "minimum": 35.22623809701072,
+                "name": "HRV_SD1d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "85ad13e02828320e9b5bc2659b04aeaa67316207d5d4d57813afe2c3fe260351",
+                "other": 0,
+                "position": 17
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "34.5498420949365"
+                ],
+                "finite_numeric": 1,
+                "maximum": 34.5498420949365,
+                "minimum": 34.5498420949365,
+                "name": "HRV_SD1a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "fa62f9b3277534f23d5840d6062c9a4320b6abe328dab0c5df58954199f643c3",
+                "other": 0,
+                "position": 18
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5209717736499618"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5209717736499618,
+                "minimum": 0.5209717736499618,
+                "name": "HRV_C2d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "842062d35a8dc00e561ce9747be008f5bb8b8920d0306cd682cda60345178195",
+                "other": 0,
+                "position": 19
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.47902822635003806"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.47902822635003806,
+                "minimum": 0.47902822635003806,
+                "name": "HRV_C2a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "41a09fd672b8a03a96df348f5a1989efeeeb8335992fc4ecf4e2b43e8c7acf11",
+                "other": 0,
+                "position": 20
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "52.399648405921354"
+                ],
+                "finite_numeric": 1,
+                "maximum": 52.399648405921354,
+                "minimum": 52.399648405921354,
+                "name": "HRV_SD2d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e8506410aaf544dfc7deff415be66a483f9fff42d7f34026fedeb3fc257fb5e2",
+                "other": 0,
+                "position": 21
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.24603868271298"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.24603868271298,
+                "minimum": 50.24603868271298,
+                "name": "HRV_SD2a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bb0ac4efe77b571cbdcc74e14959eca273f4aad45f6ec79ea27360efe366a9ef",
+                "other": 0,
+                "position": 22
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5174079273534969"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5174079273534969,
+                "minimum": 0.5174079273534969,
+                "name": "HRV_Cd",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a14226df36737554ffaed1b83c8b3858f6a58d7bf72a18a743602fc30bb11b04",
+                "other": 0,
+                "position": 23
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.482592072646503"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.482592072646503,
+                "minimum": 0.482592072646503,
+                "name": "HRV_Ca",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8296ab9e6897527b23be4c10f2f763da4fe5b03e228553755ec4bd06af5d4922",
+                "other": 0,
+                "position": 24
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.64645004662446"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.64645004662446,
+                "minimum": 44.64645004662446,
+                "name": "HRV_SDNNd",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6fcfc898b6fd37de3ddbca88ae2c41e8b9e89a9a6b94cea9a745e39de7d97060",
+                "other": 0,
+                "position": 25
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "43.11818637239822"
+                ],
+                "finite_numeric": 1,
+                "maximum": 43.11818637239822,
+                "minimum": 43.11818637239822,
+                "name": "HRV_SDNNa",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0a4282baef67bf5f320e6b4411cfd1c7a2a96a001cac875d5f654f40a1eb43a",
+                "other": 0,
+                "position": 26
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7413829049877843"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7413829049877843,
+                "minimum": 0.7413829049877843,
+                "name": "HRV_DFA_alpha1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "445333140ab652c911fbbad8e7414ee87ff197539d60a3cd6d334325280d5f67",
+                "other": 0,
+                "position": 27
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "2.37398038596473"
+                ],
+                "finite_numeric": 1,
+                "maximum": 2.37398038596473,
+                "minimum": 2.37398038596473,
+                "name": "HRV_MFDFA_alpha1_Width",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f00c28a3c12466d4f53ccedb61b1d900b064020bb70e85b13fbc80d60f4e91de",
+                "other": 0,
+                "position": 28
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2144704708675143"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2144704708675143,
+                "minimum": 1.2144704708675143,
+                "name": "HRV_MFDFA_alpha1_Peak",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f4c2b93e150fbdd0baebe484b57e84b6adf1bb863c5e20e1f48ccde6d926ad61",
+                "other": 0,
+                "position": 29
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.9125443600194378"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.9125443600194378,
+                "minimum": 0.9125443600194378,
+                "name": "HRV_MFDFA_alpha1_Mean",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "01e8c203f8ed05cae114d780e5c5ba73ec88d1833ee14d3c93a5b303bdec69bb",
+                "other": 0,
+                "position": 30
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.32239508750288337"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.32239508750288337,
+                "minimum": -0.32239508750288337,
+                "name": "HRV_MFDFA_alpha1_Max",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7fc50068d7a720b9e90dd4f2cf956b08e770cd4562866edb78084a808de5c47d",
+                "other": 0,
+                "position": 31
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7504596844298423"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7504596844298423,
+                "minimum": 0.7504596844298423,
+                "name": "HRV_MFDFA_alpha1_Delta",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8615a2a032b1805e853be385015dfeb7881d76b2bcda82310c81a0aff86ab7e0",
+                "other": 0,
+                "position": 32
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.6271813839040548"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.6271813839040548,
+                "minimum": -0.6271813839040548,
+                "name": "HRV_MFDFA_alpha1_Asymmetry",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bc3eacbee7e2af99d6366e78778f02d02e1ae5707216731746e471d654123f6a",
+                "other": 0,
+                "position": 33
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.0022458324357362072"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.0022458324357362072,
+                "minimum": 0.0022458324357362072,
+                "name": "HRV_MFDFA_alpha1_Fluctuation",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6362c1a78f327ab61da2c656cc6f1a4d864e834a30b57a966b716c7e966d799b",
+                "other": 0,
+                "position": 34
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.34771722892713336"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.34771722892713336,
+                "minimum": 0.34771722892713336,
+                "name": "HRV_MFDFA_alpha1_Increment",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ccacd8542f3e606df83db927e3aaedafb90f278373e22fe8fae77984f65d8c78",
+                "other": 0,
+                "position": 35
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.710152116994895"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.710152116994895,
+                "minimum": 0.710152116994895,
+                "name": "HRV_DFA_alpha2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "db9f19850936cc0fd915d67fa33e2b489541234325329bf6c2f5a281e6266509",
+                "other": 0,
+                "position": 36
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.41284999234860686"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.41284999234860686,
+                "minimum": 0.41284999234860686,
+                "name": "HRV_MFDFA_alpha2_Width",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b2a8211118923d96ef761268ec1cfda44e4ac5d90070bbaefd99f15382dc67a2",
+                "other": 0,
+                "position": 37
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.6651894948233759"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.6651894948233759,
+                "minimum": 0.6651894948233759,
+                "name": "HRV_MFDFA_alpha2_Peak",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b40eb37742e78b44d0239a91a1c5c0c34ce1d218a080e8950f03579f3e44eb59",
+                "other": 0,
+                "position": 38
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5283710409471836"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5283710409471836,
+                "minimum": 0.5283710409471836,
+                "name": "HRV_MFDFA_alpha2_Mean",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "96f3af039c928677cd6e78cc19d8dcf24c7c1a6499c3439b0b2fc3b5b9a7ad18",
+                "other": 0,
+                "position": 39
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0,
+                "minimum": 1.0,
+                "name": "HRV_MFDFA_alpha2_Max",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "04ccf7c6c4dcb87c3ef5a52903dff2cd92365e790d641ba8eaa73b21b92ed477",
+                "other": 0,
+                "position": 40
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0750148438699232"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0750148438699232,
+                "minimum": 1.0750148438699232,
+                "name": "HRV_MFDFA_alpha2_Delta",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8d29a9094c26e3c3e0678134b3c67eaaae2b7ded8a017aaa6e2750a44be774ef",
+                "other": 0,
+                "position": 41
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.8313999186432441"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.8313999186432441,
+                "minimum": -0.8313999186432441,
+                "name": "HRV_MFDFA_alpha2_Asymmetry",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "527165a6599fb455e1dadf91c944140f75d87f7943263e50b9bb0e0f4fb15992",
+                "other": 0,
+                "position": 42
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.00013685087673774297"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.00013685087673774297,
+                "minimum": 0.00013685087673774297,
+                "name": "HRV_MFDFA_alpha2_Fluctuation",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e68bb221df1d3248587d443c71a1970334125128cd3ed3b64be7af7f2a46133f",
+                "other": 0,
+                "position": 43
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.012984350110936637"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.012984350110936637,
+                "minimum": 0.012984350110936637,
+                "name": "HRV_MFDFA_alpha2_Increment",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a1f0558373e6afaf502dc100c9ea679f1daf135e2e96f23916ea38864e7348a0",
+                "other": 0,
+                "position": 44
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.1836484532861742"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.1836484532861742,
+                "minimum": 1.1836484532861742,
+                "name": "HRV_ApEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5dd54728180651a0cab6b5a0578ff51bbecd9618ce5ffe8452c42ac67085f114",
+                "other": 0,
+                "position": 45
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2599314579739807"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2599314579739807,
+                "minimum": 1.2599314579739807,
+                "name": "HRV_SampEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "9147cf81748a47234e927f08bee3fe4b17b25b233efc7145491b25e28720cbfa",
+                "other": 0,
+                "position": 46
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "4.282683406115447"
+                ],
+                "finite_numeric": 1,
+                "maximum": 4.282683406115447,
+                "minimum": 4.282683406115447,
+                "name": "HRV_ShanEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "0fb88a251c1a361493d0a77560de02088d78d1c7b46f778becbab9bfd1329843",
+                "other": 0,
+                "position": 47
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0635329445370547"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0635329445370547,
+                "minimum": 1.0635329445370547,
+                "name": "HRV_FuzzyEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5eba4ef6a7a521f42e402933fdaacd6bfc3124a464f6e38197ab3e208b02a6e9",
+                "other": 0,
+                "position": 48
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2668768643889061"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2668768643889061,
+                "minimum": 1.2668768643889061,
+                "name": "HRV_MSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7f4c7d4ed4d9dd7f6c22090261f48e8039a415c992079fc15922f70b54ac8cc5",
+                "other": 0,
+                "position": 49
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.446925274367955"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.446925274367955,
+                "minimum": 1.446925274367955,
+                "name": "HRV_CMSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "343d52371fbd59d9bbf3dce6b4b70b837ecf7f773582d2cd8d842883ad8f7663",
+                "other": 0,
+                "position": 50
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.630370229631"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.630370229631,
+                "minimum": 1.630370229631,
+                "name": "HRV_RCMSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6a9b867d64b02f3ef872fa9b2558cf78c6636a7bbd2d0203a0617c27591eb4a9",
+                "other": 0,
+                "position": 51
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2097521306213086"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2097521306213086,
+                "minimum": 1.2097521306213086,
+                "name": "HRV_CD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "9317d5b7ddd548d3eb3ed2117f0879470738e01043b95a629f96b65c783543d0",
+                "other": 0,
+                "position": 52
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.8563723883918795"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.8563723883918795,
+                "minimum": 1.8563723883918795,
+                "name": "HRV_HFD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "13184ec9be340ddac912903a598664ee89fca13780ce96975f6b0e71a9fac4b9",
+                "other": 0,
+                "position": 53
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.9130710664404325"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.9130710664404325,
+                "minimum": 1.9130710664404325,
+                "name": "HRV_KFD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "93891bf9ec59e858675e76089fabe93eaf2d7dc849fb09a9cb2ccd4df17ce67c",
+                "other": 0,
+                "position": 54
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.8544746504250169"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.8544746504250169,
+                "minimum": 0.8544746504250169,
+                "name": "HRV_LZC",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2f37e1a174357c2b16fb24ae0aae1b98200df0a11224565f4ccc64022d9a5135",
+                "other": 0,
+                "position": 55
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.21261682242990654"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.21261682242990654,
+                "minimum": 0.21261682242990654,
+                "name": "HRV_Symbolic_EqualProb4_0V",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "595c4790e3bf98acfc28f28bd6d3f75596d5aa647928bc43960e62f52124b068",
+                "other": 0,
+                "position": 56
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.48130841121495327"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.48130841121495327,
+                "minimum": 0.48130841121495327,
+                "name": "HRV_Symbolic_EqualProb4_1V",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4f016c25ee59012a94e5072dbee9a2f20dd710642c759b862025e12506c8b103",
+                "other": 0,
+                "position": 57
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.14485981308411214"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.14485981308411214,
+                "minimum": 0.14485981308411214,
+                "name": "HRV_Symbolic_EqualProb4_2LV",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4670f83a011a30e5acc0306a9fbbb63f6fb161f5ce01503982764840a79a5f3e",
+                "other": 0,
+                "position": 58
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.16121495327102803"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.16121495327102803,
+                "minimum": 0.16121495327102803,
+                "name": "HRV_Symbolic_EqualProb4_2UV",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4941cff1fa1175e20f4b3edc0e31c4f08a85741782963e202b133101cda6fbf0",
+                "other": 0,
+                "position": 59
+              }
+            ],
+            "distinct_limit_per_column": 16666,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 1
+          }
+        },
+        {
+          "bytes": 2796,
+          "download_hash_verified": true,
+          "file": "hrv_indices.csv",
+          "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+          "structural_profile": {
+            "columns": [
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "696.3953488372093"
+                ],
+                "finite_numeric": 1,
+                "maximum": 696.3953488372093,
+                "minimum": 696.3953488372093,
+                "name": "HRV_MeanNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b7d7ab154a26fde0a12f987addf966a9cc016a5cee0c6396c5cd363b975629be",
+                "other": 0,
+                "position": 0
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "62.135891206172104"
+                ],
+                "finite_numeric": 1,
+                "maximum": 62.135891206172104,
+                "minimum": 62.135891206172104,
+                "name": "HRV_SDNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "935450512ec679bab329ae1712e25e4a9411a520b427e658e6e5d8503221b8bb",
+                "other": 0,
+                "position": 1
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "10.060727541349376"
+                ],
+                "finite_numeric": 1,
+                "maximum": 10.060727541349376,
+                "minimum": 10.060727541349376,
+                "name": "HRV_SDANN1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "d194a5ebcd98324d7dc2d1b0d5390629258b7f086ec7c31fa60798f922ec6286",
+                "other": 0,
+                "position": 2
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "60.27503600273103"
+                ],
+                "finite_numeric": 1,
+                "maximum": 60.27503600273103,
+                "minimum": 60.27503600273103,
+                "name": "HRV_SDNNI1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "01eed3668cc2098cf8f1295ecebea6a7fd516a11b3926ab0ac4726bd1a03986b",
+                "other": 0,
+                "position": 3
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDANN2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 4
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDNNI2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 5
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDANN5",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 6
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_SDNNI5",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 7
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "69.69798316887554"
+                ],
+                "finite_numeric": 1,
+                "maximum": 69.69798316887554,
+                "minimum": 69.69798316887554,
+                "name": "HRV_RMSSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6b0186c2996762ef59077c790ac070e15e044fc87d9ac59753a0b5d31e99265d",
+                "other": 0,
+                "position": 8
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "69.77910878189152"
+                ],
+                "finite_numeric": 1,
+                "maximum": 69.77910878189152,
+                "minimum": 69.77910878189152,
+                "name": "HRV_SDSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "45dbe5915508c1a420f842ed0dca20c2fb70f23a7fcba921bf182079fb9e2219",
+                "other": 0,
+                "position": 9
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.08922502327151112"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.08922502327151112,
+                "minimum": 0.08922502327151112,
+                "name": "HRV_CVNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6bfc5d95881c50620e737abfd019d6c35e2df7e5f4d6071575cba6d715d1ccea",
+                "other": 0,
+                "position": 10
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.10008392974659035"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.10008392974659035,
+                "minimum": 0.10008392974659035,
+                "name": "HRV_CVSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f0d18d83e4edff2e4df551609780f81937870ae398fd9f60eab992b1f2745c40",
+                "other": 0,
+                "position": 11
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "690.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 690.0,
+                "minimum": 690.0,
+                "name": "HRV_MedianNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4b66cd5f28958ebb724786de207119f3492474fb1990b2231fb05176b1c843a8",
+                "other": 0,
+                "position": 12
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.477999999999994"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.477999999999994,
+                "minimum": 44.477999999999994,
+                "name": "HRV_MadNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "95995f41094ae19acb97bd6d2e9852e3b4b42f7877c3ad944d0df4bc13e176f2",
+                "other": 0,
+                "position": 13
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.06446086956521738"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.06446086956521738,
+                "minimum": 0.06446086956521738,
+                "name": "HRV_MCVNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "1cf1eea85cf349cc388c144067df9a85ed954f3b8916c587e86b0bbd222478b3",
+                "other": 0,
+                "position": 14
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "60.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 60.0,
+                "minimum": 60.0,
+                "name": "HRV_IQRNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "1d60b87bd114ebd01342b395fc233474286079041afe4d3e80396751851a0a6e",
+                "other": 0,
+                "position": 15
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.8915019973478892"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.8915019973478892,
+                "minimum": 0.8915019973478892,
+                "name": "HRV_SDRMSSD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "36270cb2a74fb7080b07d7e755eef41b113e196117a9c2797b2b20e08a3e7722",
+                "other": 0,
+                "position": 16
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "660.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 660.0,
+                "minimum": 660.0,
+                "name": "HRV_Prc20NN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "19685181076010ea0ee3f702bae0603dc1056d4a567460649a6fbf429b1efade",
+                "other": 0,
+                "position": 17
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "740.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 740.0,
+                "minimum": 740.0,
+                "name": "HRV_Prc80NN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5c1d1505cb53e5aae3d8f9f37b2d3f85ad17518da4da1a0c602601e8798ca83f",
+                "other": 0,
+                "position": 18
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "14.651162790697676"
+                ],
+                "finite_numeric": 1,
+                "maximum": 14.651162790697676,
+                "minimum": 14.651162790697676,
+                "name": "HRV_pNN50",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2e75aa66fa159510d2a0ee53e6ddffe5777ec07b0e1de0f8ab728f1ba39acc41",
+                "other": 0,
+                "position": 19
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "49.30232558139535"
+                ],
+                "finite_numeric": 1,
+                "maximum": 49.30232558139535,
+                "minimum": 49.30232558139535,
+                "name": "HRV_pNN20",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ced3e4eea40de3fb7f550f8134184fc8884658bd49d298f2c21779f26dbefddb",
+                "other": 0,
+                "position": 20
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "470.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 470.0,
+                "minimum": 470.0,
+                "name": "HRV_MinNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "602dbaeb13795d7a8c8de9db75393d2363071090d0212018d958d3a21b038ac0",
+                "other": 0,
+                "position": 21
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1420.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1420.0,
+                "minimum": 1420.0,
+                "name": "HRV_MaxNN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a6412a5b0b58c2a43de23cc49d4736abd9dba0e05f803c105ba77d9ff49659b7",
+                "other": 0,
+                "position": 22
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "7.962962962962963"
+                ],
+                "finite_numeric": 1,
+                "maximum": 7.962962962962963,
+                "minimum": 7.962962962962963,
+                "name": "HRV_HTI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "66cd3c4ef13bdde4456c0782cf8f096cf10c3eac2d2296920768cf2e254e7f6b",
+                "other": 0,
+                "position": 23
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "234.375"
+                ],
+                "finite_numeric": 1,
+                "maximum": 234.375,
+                "minimum": 234.375,
+                "name": "HRV_TINN",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "45eb774e86363bce8e8033a4de1df161254cad5ec0dc56807d31dd892c03c344",
+                "other": 0,
+                "position": 24
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 0,
+                "empty": 1,
+                "examples": [],
+                "finite_numeric": 0,
+                "maximum": null,
+                "minimum": null,
+                "name": "HRV_ULF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "af5570f5a1810b7af78caf4bc70a660f0df51e42baf91d4de5b2328de0e83dfc",
+                "other": 0,
+                "position": 25
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.01731007726584816"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.01731007726584816,
+                "minimum": 0.01731007726584816,
+                "name": "HRV_VLF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "cc7a2dfeeb58f9d6b2297710ec433f004db8227a688c8496d50e6272f6ab021a",
+                "other": 0,
+                "position": 26
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.04802607886179408"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.04802607886179408,
+                "minimum": 0.04802607886179408,
+                "name": "HRV_LF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "dbdd8ac4e37a936ad8d8addb58ce3b8e858cc5f24fd602cecfcfc94f916bc5a9",
+                "other": 0,
+                "position": 27
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.06023186865189019"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.06023186865189019,
+                "minimum": 0.06023186865189019,
+                "name": "HRV_HF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "42dc868028b8d8129752c8eadac220ecd1c4dc2fcf85202b4777ae7e4da40b92",
+                "other": 0,
+                "position": 28
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.011185774793627324"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.011185774793627324,
+                "minimum": 0.011185774793627324,
+                "name": "HRV_VHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8c707a23b88a131ebd5e9475b567333229575f054c83db5b943434a40aea2b8a",
+                "other": 0,
+                "position": 29
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.13675379957315975"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.13675379957315975,
+                "minimum": 0.13675379957315975,
+                "name": "HRV_TP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "13eabbac4032bc669487b7eb1fc777f8ed17d912c8ee1ae7b0455300440d8ed5",
+                "other": 0,
+                "position": 30
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.797353293807977"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.797353293807977,
+                "minimum": 0.797353293807977,
+                "name": "HRV_LFHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0f93ee93d5017a6e0602c28c2c4fdac0503dd9457a547f7e9177c41cf17da77",
+                "other": 0,
+                "position": 31
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.3511864314680439"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.3511864314680439,
+                "minimum": 0.3511864314680439,
+                "name": "HRV_LFn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ed37ad3f8b1ffbc1477bec4148981924c5dd94280beada16ca3760576e84cae0",
+                "other": 0,
+                "position": 32
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.44044018403794105"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.44044018403794105,
+                "minimum": 0.44044018403794105,
+                "name": "HRV_HFn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bbf3566b0583f17c684e0efc36a7a4666e481ddc889de8257538e9389a099a2c",
+                "other": 0,
+                "position": 33
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-2.8095536871398052"
+                ],
+                "finite_numeric": 1,
+                "maximum": -2.8095536871398052,
+                "minimum": -2.8095536871398052,
+                "name": "HRV_LnHF",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "3b1a4766faa453109add767afbfc11003ec91d610f538009bb88c95bd0e1d88b",
+                "other": 0,
+                "position": 34
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "49.34128100482926"
+                ],
+                "finite_numeric": 1,
+                "maximum": 49.34128100482926,
+                "minimum": 49.34128100482926,
+                "name": "HRV_SD1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0b8dc97a0c16e253c374dec5a7c3d6814fdd943ffdd8f66163b6507c2969856",
+                "other": 0,
+                "position": 35
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "72.59743491590363"
+                ],
+                "finite_numeric": 1,
+                "maximum": 72.59743491590363,
+                "minimum": 72.59743491590363,
+                "name": "HRV_SD2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "0e7baa24a604fbb9b0fb81c542071d3aed108d156da6f4b30aa25b59d64988a8",
+                "other": 0,
+                "position": 36
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.679655983189845"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.679655983189845,
+                "minimum": 0.679655983189845,
+                "name": "HRV_SD1SD2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ff4bed6a0b706e1326d6d10b40488dfe541f30fbb2e7d6958bf6c699532fe0da",
+                "other": 0,
+                "position": 37
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "11253.343335830747"
+                ],
+                "finite_numeric": 1,
+                "maximum": 11253.343335830747,
+                "minimum": 11253.343335830747,
+                "name": "HRV_S",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4a2e3141a3df7e2232fca873c7cd3f7f6464997bca3de1d59f74721bb0781edb",
+                "other": 0,
+                "position": 38
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.4713325928606957"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.4713325928606957,
+                "minimum": 1.4713325928606957,
+                "name": "HRV_CSI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "54c2b1b5f1c5a6d2da0ab5a812f4f34fe5b73c6bd41bbc76c122ec265e6600f0",
+                "other": 0,
+                "position": 39
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "4.758251679217147"
+                ],
+                "finite_numeric": 1,
+                "maximum": 4.758251679217147,
+                "minimum": 4.758251679217147,
+                "name": "HRV_CVI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "d223c0bfa90e64cbd6ceab6ec43b86ee5138e67872f101bed09fa5c28f144036",
+                "other": 0,
+                "position": 40
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "427.25988859940844"
+                ],
+                "finite_numeric": 1,
+                "maximum": 427.25988859940844,
+                "minimum": 427.25988859940844,
+                "name": "HRV_CSI_Modified",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "80062ba02797215adeb9094eb2c67414575cbcd181f6507abb331d82f6a71ead",
+                "other": 0,
+                "position": 41
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5581395348837209"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5581395348837209,
+                "minimum": 0.5581395348837209,
+                "name": "HRV_PIP",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "482a4b099ec4709b51b1fb027ad91aaeb43aa427f73dd6d2e8ef4ecead5a3788",
+                "other": 0,
+                "position": 42
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5116883116883117"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5116883116883117,
+                "minimum": 0.5116883116883117,
+                "name": "HRV_IALS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2d54357e90b53a982a504b4246657312f9a4ce272a081924c139aeebaf34d870",
+                "other": 0,
+                "position": 43
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7360406091370558"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7360406091370558,
+                "minimum": 0.7360406091370558,
+                "name": "HRV_PSS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6e865f164681c3d12583a37d8dc89d88c061c33d95859c617c17f027f438440a",
+                "other": 0,
+                "position": 44
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.15"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.15,
+                "minimum": 0.15,
+                "name": "HRV_PAS",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5c322a50757b4417443dc0d1a853632b5082c31398ca2c2ca2dcc745555180d5",
+                "other": 0,
+                "position": 45
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.26385224274406"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.26385224274406,
+                "minimum": 50.26385224274406,
+                "name": "HRV_GI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "04cd9936d15d2770d6f04337705ec687ce500775c2a86fcca96dd624366cec0a",
+                "other": 0,
+                "position": 46
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.23572209987396"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.23572209987396,
+                "minimum": 50.23572209987396,
+                "name": "HRV_SI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "89186263b78d54fbd87760e62e24d88f105f3322d69f5f0566bc404c914ca013",
+                "other": 0,
+                "position": 47
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.28115653739895"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.28115653739895,
+                "minimum": 50.28115653739895,
+                "name": "HRV_AI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "da56a13c46909ca3c92f3b5af2aed036e7424d671179bb0186688c6671ab2584",
+                "other": 0,
+                "position": 48
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.675324675324674"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.675324675324674,
+                "minimum": 44.675324675324674,
+                "name": "HRV_PI",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "738320ab1e9cd7802d7d6fd9d22f081a1b083eaedd3bed0018fc033bb6641361",
+                "other": 0,
+                "position": 49
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5096928982725528"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5096928982725528,
+                "minimum": 0.5096928982725528,
+                "name": "HRV_C1d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7908c372b8f45d5db8adc99598bb9df79a3e7de9d5129c4a18435884bf7d749c",
+                "other": 0,
+                "position": 50
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.490307101727447"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.490307101727447,
+                "minimum": 0.490307101727447,
+                "name": "HRV_C1a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "80c699fe0a1a5d68ae5cb03e15ec443b7a1b55551feccbb10d658b58be9b7b80",
+                "other": 0,
+                "position": 51
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "35.22623809701072"
+                ],
+                "finite_numeric": 1,
+                "maximum": 35.22623809701072,
+                "minimum": 35.22623809701072,
+                "name": "HRV_SD1d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "85ad13e02828320e9b5bc2659b04aeaa67316207d5d4d57813afe2c3fe260351",
+                "other": 0,
+                "position": 52
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "34.5498420949365"
+                ],
+                "finite_numeric": 1,
+                "maximum": 34.5498420949365,
+                "minimum": 34.5498420949365,
+                "name": "HRV_SD1a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "fa62f9b3277534f23d5840d6062c9a4320b6abe328dab0c5df58954199f643c3",
+                "other": 0,
+                "position": 53
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5209717736499618"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5209717736499618,
+                "minimum": 0.5209717736499618,
+                "name": "HRV_C2d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "842062d35a8dc00e561ce9747be008f5bb8b8920d0306cd682cda60345178195",
+                "other": 0,
+                "position": 54
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.47902822635003806"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.47902822635003806,
+                "minimum": 0.47902822635003806,
+                "name": "HRV_C2a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "41a09fd672b8a03a96df348f5a1989efeeeb8335992fc4ecf4e2b43e8c7acf11",
+                "other": 0,
+                "position": 55
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "52.399648405921354"
+                ],
+                "finite_numeric": 1,
+                "maximum": 52.399648405921354,
+                "minimum": 52.399648405921354,
+                "name": "HRV_SD2d",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e8506410aaf544dfc7deff415be66a483f9fff42d7f34026fedeb3fc257fb5e2",
+                "other": 0,
+                "position": 56
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "50.24603868271298"
+                ],
+                "finite_numeric": 1,
+                "maximum": 50.24603868271298,
+                "minimum": 50.24603868271298,
+                "name": "HRV_SD2a",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bb0ac4efe77b571cbdcc74e14959eca273f4aad45f6ec79ea27360efe366a9ef",
+                "other": 0,
+                "position": 57
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5174079273534969"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5174079273534969,
+                "minimum": 0.5174079273534969,
+                "name": "HRV_Cd",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a14226df36737554ffaed1b83c8b3858f6a58d7bf72a18a743602fc30bb11b04",
+                "other": 0,
+                "position": 58
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.482592072646503"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.482592072646503,
+                "minimum": 0.482592072646503,
+                "name": "HRV_Ca",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8296ab9e6897527b23be4c10f2f763da4fe5b03e228553755ec4bd06af5d4922",
+                "other": 0,
+                "position": 59
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "44.64645004662446"
+                ],
+                "finite_numeric": 1,
+                "maximum": 44.64645004662446,
+                "minimum": 44.64645004662446,
+                "name": "HRV_SDNNd",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6fcfc898b6fd37de3ddbca88ae2c41e8b9e89a9a6b94cea9a745e39de7d97060",
+                "other": 0,
+                "position": 60
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "43.11818637239822"
+                ],
+                "finite_numeric": 1,
+                "maximum": 43.11818637239822,
+                "minimum": 43.11818637239822,
+                "name": "HRV_SDNNa",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e0a4282baef67bf5f320e6b4411cfd1c7a2a96a001cac875d5f654f40a1eb43a",
+                "other": 0,
+                "position": 61
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7413829049877843"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7413829049877843,
+                "minimum": 0.7413829049877843,
+                "name": "HRV_DFA_alpha1",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "445333140ab652c911fbbad8e7414ee87ff197539d60a3cd6d334325280d5f67",
+                "other": 0,
+                "position": 62
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "2.37398038596473"
+                ],
+                "finite_numeric": 1,
+                "maximum": 2.37398038596473,
+                "minimum": 2.37398038596473,
+                "name": "HRV_MFDFA_alpha1_Width",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f00c28a3c12466d4f53ccedb61b1d900b064020bb70e85b13fbc80d60f4e91de",
+                "other": 0,
+                "position": 63
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2144704708675143"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2144704708675143,
+                "minimum": 1.2144704708675143,
+                "name": "HRV_MFDFA_alpha1_Peak",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "f4c2b93e150fbdd0baebe484b57e84b6adf1bb863c5e20e1f48ccde6d926ad61",
+                "other": 0,
+                "position": 64
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.9125443600194378"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.9125443600194378,
+                "minimum": 0.9125443600194378,
+                "name": "HRV_MFDFA_alpha1_Mean",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "01e8c203f8ed05cae114d780e5c5ba73ec88d1833ee14d3c93a5b303bdec69bb",
+                "other": 0,
+                "position": 65
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.32239508750288337"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.32239508750288337,
+                "minimum": -0.32239508750288337,
+                "name": "HRV_MFDFA_alpha1_Max",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7fc50068d7a720b9e90dd4f2cf956b08e770cd4562866edb78084a808de5c47d",
+                "other": 0,
+                "position": 66
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.7504596844298423"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.7504596844298423,
+                "minimum": 0.7504596844298423,
+                "name": "HRV_MFDFA_alpha1_Delta",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8615a2a032b1805e853be385015dfeb7881d76b2bcda82310c81a0aff86ab7e0",
+                "other": 0,
+                "position": 67
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.6271813839040548"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.6271813839040548,
+                "minimum": -0.6271813839040548,
+                "name": "HRV_MFDFA_alpha1_Asymmetry",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "bc3eacbee7e2af99d6366e78778f02d02e1ae5707216731746e471d654123f6a",
+                "other": 0,
+                "position": 68
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.0022458324357362072"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.0022458324357362072,
+                "minimum": 0.0022458324357362072,
+                "name": "HRV_MFDFA_alpha1_Fluctuation",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6362c1a78f327ab61da2c656cc6f1a4d864e834a30b57a966b716c7e966d799b",
+                "other": 0,
+                "position": 69
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.34771722892713336"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.34771722892713336,
+                "minimum": 0.34771722892713336,
+                "name": "HRV_MFDFA_alpha1_Increment",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "ccacd8542f3e606df83db927e3aaedafb90f278373e22fe8fae77984f65d8c78",
+                "other": 0,
+                "position": 70
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.710152116994895"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.710152116994895,
+                "minimum": 0.710152116994895,
+                "name": "HRV_DFA_alpha2",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "db9f19850936cc0fd915d67fa33e2b489541234325329bf6c2f5a281e6266509",
+                "other": 0,
+                "position": 71
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.41284999234860686"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.41284999234860686,
+                "minimum": 0.41284999234860686,
+                "name": "HRV_MFDFA_alpha2_Width",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b2a8211118923d96ef761268ec1cfda44e4ac5d90070bbaefd99f15382dc67a2",
+                "other": 0,
+                "position": 72
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.6651894948233759"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.6651894948233759,
+                "minimum": 0.6651894948233759,
+                "name": "HRV_MFDFA_alpha2_Peak",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "b40eb37742e78b44d0239a91a1c5c0c34ce1d218a080e8950f03579f3e44eb59",
+                "other": 0,
+                "position": 73
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.5283710409471836"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.5283710409471836,
+                "minimum": 0.5283710409471836,
+                "name": "HRV_MFDFA_alpha2_Mean",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "96f3af039c928677cd6e78cc19d8dcf24c7c1a6499c3439b0b2fc3b5b9a7ad18",
+                "other": 0,
+                "position": 74
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0,
+                "minimum": 1.0,
+                "name": "HRV_MFDFA_alpha2_Max",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "04ccf7c6c4dcb87c3ef5a52903dff2cd92365e790d641ba8eaa73b21b92ed477",
+                "other": 0,
+                "position": 75
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0750148438699232"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0750148438699232,
+                "minimum": 1.0750148438699232,
+                "name": "HRV_MFDFA_alpha2_Delta",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "8d29a9094c26e3c3e0678134b3c67eaaae2b7ded8a017aaa6e2750a44be774ef",
+                "other": 0,
+                "position": 76
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "-0.8313999186432441"
+                ],
+                "finite_numeric": 1,
+                "maximum": -0.8313999186432441,
+                "minimum": -0.8313999186432441,
+                "name": "HRV_MFDFA_alpha2_Asymmetry",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "527165a6599fb455e1dadf91c944140f75d87f7943263e50b9bb0e0f4fb15992",
+                "other": 0,
+                "position": 77
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.00013685087673774297"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.00013685087673774297,
+                "minimum": 0.00013685087673774297,
+                "name": "HRV_MFDFA_alpha2_Fluctuation",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "e68bb221df1d3248587d443c71a1970334125128cd3ed3b64be7af7f2a46133f",
+                "other": 0,
+                "position": 78
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.012984350110936637"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.012984350110936637,
+                "minimum": 0.012984350110936637,
+                "name": "HRV_MFDFA_alpha2_Increment",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "a1f0558373e6afaf502dc100c9ea679f1daf135e2e96f23916ea38864e7348a0",
+                "other": 0,
+                "position": 79
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.1836484532861742"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.1836484532861742,
+                "minimum": 1.1836484532861742,
+                "name": "HRV_ApEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5dd54728180651a0cab6b5a0578ff51bbecd9618ce5ffe8452c42ac67085f114",
+                "other": 0,
+                "position": 80
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2599314579739807"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2599314579739807,
+                "minimum": 1.2599314579739807,
+                "name": "HRV_SampEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "9147cf81748a47234e927f08bee3fe4b17b25b233efc7145491b25e28720cbfa",
+                "other": 0,
+                "position": 81
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "4.282683406115447"
+                ],
+                "finite_numeric": 1,
+                "maximum": 4.282683406115447,
+                "minimum": 4.282683406115447,
+                "name": "HRV_ShanEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "0fb88a251c1a361493d0a77560de02088d78d1c7b46f778becbab9bfd1329843",
+                "other": 0,
+                "position": 82
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.0635329445370547"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.0635329445370547,
+                "minimum": 1.0635329445370547,
+                "name": "HRV_FuzzyEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "5eba4ef6a7a521f42e402933fdaacd6bfc3124a464f6e38197ab3e208b02a6e9",
+                "other": 0,
+                "position": 83
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2668768643889061"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2668768643889061,
+                "minimum": 1.2668768643889061,
+                "name": "HRV_MSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "7f4c7d4ed4d9dd7f6c22090261f48e8039a415c992079fc15922f70b54ac8cc5",
+                "other": 0,
+                "position": 84
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.446925274367955"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.446925274367955,
+                "minimum": 1.446925274367955,
+                "name": "HRV_CMSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "343d52371fbd59d9bbf3dce6b4b70b837ecf7f773582d2cd8d842883ad8f7663",
+                "other": 0,
+                "position": 85
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.630370229631"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.630370229631,
+                "minimum": 1.630370229631,
+                "name": "HRV_RCMSEn",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "6a9b867d64b02f3ef872fa9b2558cf78c6636a7bbd2d0203a0617c27591eb4a9",
+                "other": 0,
+                "position": 86
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.2097521306213086"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.2097521306213086,
+                "minimum": 1.2097521306213086,
+                "name": "HRV_CD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "9317d5b7ddd548d3eb3ed2117f0879470738e01043b95a629f96b65c783543d0",
+                "other": 0,
+                "position": 87
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.8563723883918795"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.8563723883918795,
+                "minimum": 1.8563723883918795,
+                "name": "HRV_HFD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "13184ec9be340ddac912903a598664ee89fca13780ce96975f6b0e71a9fac4b9",
+                "other": 0,
+                "position": 88
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "1.9130710664404325"
+                ],
+                "finite_numeric": 1,
+                "maximum": 1.9130710664404325,
+                "minimum": 1.9130710664404325,
+                "name": "HRV_KFD",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "93891bf9ec59e858675e76089fabe93eaf2d7dc849fb09a9cb2ccd4df17ce67c",
+                "other": 0,
+                "position": 89
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.8544746504250169"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.8544746504250169,
+                "minimum": 0.8544746504250169,
+                "name": "HRV_LZC",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "2f37e1a174357c2b16fb24ae0aae1b98200df0a11224565f4ccc64022d9a5135",
+                "other": 0,
+                "position": 90
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.21261682242990654"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.21261682242990654,
+                "minimum": 0.21261682242990654,
+                "name": "HRV_Symbolic_EqualProb4_0V",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "595c4790e3bf98acfc28f28bd6d3f75596d5aa647928bc43960e62f52124b068",
+                "other": 0,
+                "position": 91
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.48130841121495327"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.48130841121495327,
+                "minimum": 0.48130841121495327,
+                "name": "HRV_Symbolic_EqualProb4_1V",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4f016c25ee59012a94e5072dbee9a2f20dd710642c759b862025e12506c8b103",
+                "other": 0,
+                "position": 92
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.14485981308411214"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.14485981308411214,
+                "minimum": 0.14485981308411214,
+                "name": "HRV_Symbolic_EqualProb4_2LV",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4670f83a011a30e5acc0306a9fbbb63f6fb161f5ce01503982764840a79a5f3e",
+                "other": 0,
+                "position": 93
+              },
+              {
+                "distinct_capped": false,
+                "distinct_nonempty": 1,
+                "empty": 0,
+                "examples": [
+                  "0.16121495327102803"
+                ],
+                "finite_numeric": 1,
+                "maximum": 0.16121495327102803,
+                "minimum": 0.16121495327102803,
+                "name": "HRV_Symbolic_EqualProb4_2UV",
+                "nonfinite_numeric": 0,
+                "ordered_values_sha256": "4941cff1fa1175e20f4b3edc0e31c4f08a85741782963e202b133101cda6fbf0",
+                "other": 0,
+                "position": 94
+              }
+            ],
+            "distinct_limit_per_column": 10526,
+            "duplicate_header_names": false,
+            "format": "delimited",
+            "limitations": [
+              "Numeric ranges use float conversion, not semantic type inference.",
+              "Distinct values use SHA-256 identities and the declared cap.",
+              "Column fingerprints exclude ragged rows; empty fields are included.",
+              "Examples are limited to three values and 256 characters each."
+            ],
+            "ragged_rows": 0,
+            "row_count": 1
+          }
+        }
+      ],
+      "scope": "Structural observations only"
+    },
+    "provenance.json": {
+      "id": "neurokit-hrv",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Source nk.data resting physiology recording, sampled at 100 Hz.",
+        "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+        "notebook": {
+          "license": "MIT",
+          "license_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/LICENSE",
+          "revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+          "sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+          "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+        }
+      },
+      "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "title": "Time-, frequency- and nonlinear-domain heart-rate variability",
+      "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+    },
+    "result.json": {
+      "cleanup_verified": true,
+      "construction_run": false,
+      "finished": 1792741212.6471694,
+      "last_passing_test": {
+        "hashes": {
+          "analysis.py": "78a29e616bd988407ce7d2dc4142f0f6c74a49b00e0d8dd081de6d4a9bcbc9c2",
+          "inputs.json": "cd8699fce7c9f70cc9849c470149c1f52bf89ee9d3b9db920c7e92986050ac0e",
+          "pyproject.toml": "9d4ac0bde448bc3c2525c25309f24fe966acd42c6dc22bb0f1ad96ee991b45a4",
+          "stage-inputs.sh": "82d9390ecf813c28d9a5967283e0670d0a7fc727300098f58879cf8b34b5b881",
+          "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+        },
+        "source_changed": true,
+        "test": 2
+      },
+      "reference_test_requests": 2,
+      "reference_tests": 1,
+      "semantic_fidelity_validated": false,
+      "setup_seconds_remaining": 1739.2359411101788,
+      "solver_run": false,
+      "started": 1792740989.1591132,
+      "status": "reference_executed_requires_review"
+    },
+    "trial/environment.txt": "certifi==2026.10.19\ncharset-normalizer==3.5.2\ncloudpickle==3.1.2\ncontourpy==1.4.0\ncycler==0.12.1\nfonttools==4.67.0\nidna==3.20\njoblib==1.6.0\nkiwisolver==1.5.1\nmatplotlib==3.11.2\nnarwhals==2.27.1\nneurokit2==0.2.13\nnumpy==2.5.4\npackaging==26.3\npandas==2.3.3\npillow==13.0.0\npyparsing==3.3.3\npython-dateutil==3.0.0\npytz==2026.5\npywavelets==1.10.0\nrequests==2.34.2\nscikit-learn==1.9.1\nscipy==1.18.1\nsetuptools==81.0.0\nsix==1.17.0\nthreadpoolctl==3.7.0\ntzdata==2026.5\nurllib3==2.8.0\n",
+    "trial/inputs-before.json": {
+      "files": [
+        {
+          "bytes": 1784368,
+          "input_preview": {
+            "byte_prefix_truncated": true,
+            "compression": "none",
+            "displayed_lines_truncated": true,
+            "sample_sha256": "0b85cb9667e75fd0cb6b52e0e6b709b89526fdcad1d9be2267d0b1eaf02118fb",
+            "sampled_bytes": 4096,
+            "scope": "Byte prefix only; no inferred header, schema or record count.",
+            "status": "utf8_text_prefix",
+            "text": "ECG,PPG,RSP\n0.003766485194893143,-0.1025390625,0.4946524989068091\n-0.01746591697758673,-0.10375976562502318,0.5024827168260766\n-0.015679137008246923,-0.107421875,0.5111024935799695\n-0.0015977050524144634,-0.11085510253907337,0.5187909668065165\n"
+          },
+          "local_path": "/inputs/bio_resting_5min_100hz.csv",
+          "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385",
+          "source": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv"
+        }
+      ]
+    },
+    "trial/reference.py": "# ---\n# jupyter:\n#   jupytext:\n#     text_representation:\n#       extension: .py\n#       format_name: nomarker\n#       format_version: '1.0'\n#       jupytext_version: 1.19.6\n#   kernelspec:\n#     display_name: Python 3\n#     language: python\n#     name: python3\n# ---\n\n# # Heart Rate Variability (HRV)\n\n# NeuroKit2 is the most comprehensive package when it comes to HRV indices, and this example shows how to use NeuroKit2 to compute heart rate variability (HRV) indices in the time-, frequency-, and non-linear domain.\n#\n# For a comprehensive review of the most up-to-date HRV indices, a discussion of their significance in psychology, and a step-by-step guide for HRV analysis using **NeuroKit2**, the [Heart Rate Variability in Psychology: A Review of HRV Indices and an Analysis Tutorial](https://doi.org/10.3390/s21123998) paper is a good place to start. \n\n# ## Compute HRV features\n\n# Load the NeuroKit package\nimport neurokit2 as nk\n\n# Note: this cell is hidden using the \"remove-input\" tag\n# Make bigger images\nimport matplotlib.pyplot as plt\n\n\nplt.rcParams[\"figure.figsize\"] = [15, 5]\nplt.rcParams[\"font.size\"] = 14\n\n# ## Download Dataset\n\n# First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n\ndata = nk.pd.read_csv(\"/inputs/bio_resting_5min_100hz.csv\")  # offline input-path adaptation: read the staged copy of the datasets.\ndata.head()  # Print first 5 rows\n\n# You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n\n# Find peaks\npeaks, info = nk.ecg_peaks(data[\"ECG\"], sampling_rate=100)\n\n# *Note: It is critical that you specify the correct sampling rate of your signal throughout many processing functions, as this allows NeuroKit to have a time reference.*\n\n# This produces two elements, `peaks` which is a DataFrame of same length as the input signal in which occurences of R-peaks are marked with 1 in a list of zeros. `info` is a dictionary of the sample points at which these R-peaks occur. \n#\n# HRV is the temporal variation between consecutive heartbeats (**RR intervals**). Here, we will use `peaks` i.e. occurrences of the heartbeat peaks, as the input argument in the following HRV functions to extract the indices. \n\n# ## Time-Domain Analysis\n\n# First, let's extract the time-domain indices.\n\n# Extract clean EDA and SCR features\nhrv_time = nk.hrv_time(peaks, sampling_rate=100, show=True)\nhrv_time\n\n# These features include the RMSSD (square root of the mean of the sum of successive differences between adjacent RR intervals), MeanNN (mean of RR intervals) so on and so forth. You can also visualize the distribution of R-R intervals by specifying `show=True` in [hrv_time()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-time).\n\n# ## Frequency-Domain Analysis\n\n# Now, let's extract the frequency domain features, which involve extracting for example the spectral power density pertaining to different frequency bands. Again, you can visualize the power across frequency bands by specifying `show=True` in [hrv_frequency()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-frequency).\n\nhrv_freq = nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)\nhrv_freq\n\n# ## Non-Linear Domain Analysis\n\n# Now, let's compute the non-linear indices with [hrv_nonlinear()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html#hrv-nonlinear).\n\nhrv_nonlinear = nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)\nhrv_nonlinear\n\n# This will produce a Poincar\u00e9 plot which plots each RR interval against the next successive one.\n#\n# Note that there exist many more [**complexity indices**](https://neuropsychology.github.io/NeuroKit/functions/complexity.html), that are available in NeuroKit2, and that could be applied to HRV. The ``hrv_nonlinear()`` function only includes the most commonly used indices.\n\n# ## All Domains\n\n# Finally, if you'd like to extract HRV indices from all three domains, you can simply input `peaks` into [hrv()](https://neuropsychology.github.io/NeuroKit/functions/hrv.html), where you can specify `show=True` to visualize the combination of plots depicting the RR intervals distribution, power spectral density for frequency domains, and the poincare scattergram.\n\nhrv_indices = nk.hrv(peaks, sampling_rate=100, show=True)\nhrv_indices\n\n\nimport os\n\nimport pandas as _pd\n\n_out_dir = \"/work/outputs\"\nos.makedirs(_out_dir, exist_ok=True)\n\n# Save the terminal HRV results produced by the original script.\nhrv_time.to_csv(os.path.join(_out_dir, \"hrv_time.csv\"), index=False)\nhrv_freq.to_csv(os.path.join(_out_dir, \"hrv_frequency.csv\"), index=False)\nhrv_nonlinear.to_csv(os.path.join(_out_dir, \"hrv_nonlinear.csv\"), index=False)\nhrv_indices.to_csv(os.path.join(_out_dir, \"hrv_indices.csv\"), index=False)",
+    "trial/result.json": {
+      "artifacts": {
+        "artifacts": [
+          {
+            "bytes": 570,
+            "exists": true,
+            "path": "hrv_time.csv",
+            "sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+          },
+          {
+            "bytes": 258,
+            "exists": true,
+            "path": "hrv_frequency.csv",
+            "sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+          },
+          {
+            "bytes": 1968,
+            "exists": true,
+            "path": "hrv_nonlinear.csv",
+            "sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+          },
+          {
+            "bytes": 2796,
+            "exists": true,
+            "path": "hrv_indices.csv",
+            "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+          }
+        ],
+        "declared_artifacts_present": true,
+        "semantic_fidelity_validated": false
+      },
+      "candidate_sha256": {
+        "analysis.py": "78a29e616bd988407ce7d2dc4142f0f6c74a49b00e0d8dd081de6d4a9bcbc9c2",
+        "inputs.json": "cd8699fce7c9f70cc9849c470149c1f52bf89ee9d3b9db920c7e92986050ac0e",
+        "pyproject.toml": "9d4ac0bde448bc3c2525c25309f24fe966acd42c6dc22bb0f1ad96ee991b45a4",
+        "stage-inputs.sh": "82d9390ecf813c28d9a5967283e0670d0a7fc727300098f58879cf8b34b5b881",
+        "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+      },
+      "execution": {
+        "argv": [
+          "env",
+          "MPLBACKEND=Agg",
+          "/work/venv/bin/python",
+          "/work/reference.py"
+        ],
+        "directory": "/work/run",
+        "elapsed_seconds": 6.182413101196289,
+        "exit_code": 0,
+        "finished": 1792741160.2732253,
+        "label": "command-2b81878e3c89428389552cd7bac75232",
+        "log": "",
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "peak_child_rss_kib": 212564,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792741154.0908122,
+        "timed_out": false,
+        "timeout_seconds": 600
+      },
+      "input_observations": {
+        "files": [
+          {
+            "bytes": 1784368,
+            "input_preview": {
+              "byte_prefix_truncated": true,
+              "compression": "none",
+              "displayed_lines_truncated": true,
+              "sample_sha256": "0b85cb9667e75fd0cb6b52e0e6b709b89526fdcad1d9be2267d0b1eaf02118fb",
+              "sampled_bytes": 4096,
+              "scope": "Byte prefix only; no inferred header, schema or record count.",
+              "status": "utf8_text_prefix",
+              "text": "ECG,PPG,RSP\n0.003766485194893143,-0.1025390625,0.4946524989068091\n-0.01746591697758673,-0.10375976562502318,0.5024827168260766\n-0.015679137008246923,-0.107421875,0.5111024935799695\n-0.0015977050524144634,-0.11085510253907337,0.5187909668065165\n"
+            },
+            "local_path": "/inputs/bio_resting_5min_100hz.csv",
+            "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385",
+            "source": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv"
+          }
+        ]
+      },
+      "inputs_after": {
+        "files": 1,
+        "staged_inputs_verified": true
+      },
+      "reference_tests_remaining": 1,
+      "reference_tests_used": 1,
+      "semantic_fidelity_validated": false,
+      "setup": {
+        "argv": [
+          "sh",
+          "-eu",
+          "/work/setup.sh"
+        ],
+        "directory": "/work",
+        "elapsed_seconds": 4.240195035934448,
+        "exit_code": 0,
+        "finished": 1792741151.348325,
+        "label": "command-b46de9b15dcc4c5ab05453adffab4691",
+        "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 240.2 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 29 packages in 143ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 29 packages in 0.85ms\nDownloading matplotlib (9.4MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading scipy (33.7MiB)\nDownloading pywavelets (4.3MiB)\nDownloading setuptools (1.0MiB)\nDownloading scikit-learn (8.7MiB)\nDownloading numpy (15.9MiB)\nDownloading pillow (6.8MiB)\nDownloading pandas (11.7MiB)\nDownloading fonttools (5.1MiB)\n Downloaded kiwisolver\n Downloaded setuptools\n Downloaded pywavelets\n Downloaded fonttools\n Downloaded pillow\n Downloaded scikit-learn\n Downloaded matplotlib\n Downloaded numpy\n Downloaded pandas\n Downloaded scipy\nPrepared 28 packages in 628ms\nInstalled 28 packages in 895ms\n + certifi==2026.10.19\n + charset-normalizer==3.5.2\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + narwhals==2.27.1\n + neurokit2==0.2.13\n + numpy==2.5.4\n + packaging==26.3\n + pandas==2.3.3\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==3.0.0\n + pytz==2026.5\n + pywavelets==1.10.0\n + requests==2.34.2\n + scikit-learn==1.9.1\n + scipy==1.18.1\n + setuptools==81.0.0\n + six==1.17.0\n + threadpoolctl==3.7.0\n + tzdata==2026.5\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged /inputs/bio_resting_5min_100hz.csv 1784368 bytes\nsha256 6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385\n",
+        "log_sha256": "9e9c9737272dd56066d973e6b75a39ba1a7792eaf0472a4aa7c1b45af935fe78",
+        "peak_child_rss_kib": 79904,
+        "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+        "started": 1792741147.10813,
+        "timed_out": false,
+        "timeout_seconds": 1743
+      },
+      "status": "reference_executed",
+      "test": 2
+    },
+    "trial/source.diff": "--- original.py\n+++ analysis.py\n@@ -35,7 +35,7 @@\n \n # First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.\n \n-data = nk.data(\"bio_resting_5min_100hz\")\n+data = nk.pd.read_csv(\"/inputs/bio_resting_5min_100hz.csv\")  # offline input-path adaptation: read the staged copy of the datasets.\n data.head()  # Print first 5 rows\n \n # You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).\n"
+  },
+  "package_inspection": {
+    "boundary": "Read-only release-source inspection for recorded installed versions. Archives are hash-verified against the retained reference lock. No installation, imports, execution, shell, or arbitrary URLs. Universal wheels contain Python source; sdists are corresponding release source, not evidence of the exact installed binary or its build options. Direct-reference, editable, ambiguous or unparsed records do not authorize a registry fallback or arbitrary URL retrieval. Unavailable source remains an explicit evidence gap.",
+    "packages": {
+      "certifi": {
+        "distribution": {
+          "hash": "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b",
+          "size": 136464,
+          "url": "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.10.19"
+      },
+      "charset-normalizer": {
+        "distribution": {
+          "hash": "sha256:b6b751274acb69d77b3323d6b7dbaa3c7fdfc1eb829b7eb61d262f32e1af9685",
+          "size": 68872,
+          "url": "https://files.pythonhosted.org/packages/fc/ad/d07d7862a62ffa6d79d68074d14823243dd235a77c45262acbf6adeb28bf/charset_normalizer-3.5.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.5.2"
+      },
+      "cloudpickle": {
+        "distribution": {
+          "hash": "sha256:9acb47f6afd73f60dc1df93bb801b472f05ff42fa6c84167d25cb206be1fbf4a",
+          "size": 22228,
+          "url": "https://files.pythonhosted.org/packages/88/39/799be3f2f0f38cc727ee3b4f1445fe6d5e4133064ec2e4115069418a5bb6/cloudpickle-3.1.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.1.2"
+      },
+      "contourpy": {
+        "distribution": {
+          "hash": "sha256:20156f5a1ac4f8ce02656e39a61e82164a3d359796dc8026f75b062783d500e1",
+          "size": 13323726,
+          "url": "https://files.pythonhosted.org/packages/83/5a/a55177dd22553a277388e8a1b3220e92de91bacb28356cdc73caa240121d/contourpy-1.4.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.4.0"
+      },
+      "cycler": {
+        "distribution": {
+          "hash": "sha256:85cef7cff222d8644161529808465972e51340599459b8ac3ccbac5a854e0d30",
+          "size": 8321,
+          "url": "https://files.pythonhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b418c53d245aae6/cycler-0.12.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.12.1"
+      },
+      "fonttools": {
+        "distribution": {
+          "hash": "sha256:4304f03ed7f4ba000a8dcc941ad854bfa52e2f3b6112b8f099b6f431cf98e701",
+          "size": 1213142,
+          "url": "https://files.pythonhosted.org/packages/3d/61/4161946319472aaa9b897bd18ad5108a5b10f5ebaa503d921a001ac4fff9/fonttools-4.67.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "4.67.0"
+      },
+      "idna": {
+        "distribution": {
+          "hash": "sha256:ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+          "size": 69583,
+          "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.20"
+      },
+      "joblib": {
+        "distribution": {
+          "hash": "sha256:3dbbf9f6e4b592a2357b854608e980fe6390d131d7a82f011a377ef2ebef7aba",
+          "size": 306115,
+          "url": "https://files.pythonhosted.org/packages/18/53/84099323c2ec4be98d935f63c033ac4151ee83836ca1050ede3b3aadf155/joblib-1.6.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.6.0"
+      },
+      "kiwisolver": {
+        "distribution": {
+          "hash": "sha256:f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a",
+          "size": 104395,
+          "url": "https://files.pythonhosted.org/packages/ba/07/bd78e6a8fae171ea041ef5bba3ed21a003522fa088834b069b1909981f30/kiwisolver-1.5.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.5.1"
+      },
+      "matplotlib": {
+        "distribution": {
+          "hash": "sha256:cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4",
+          "size": 32660610,
+          "url": "https://files.pythonhosted.org/packages/e7/c8/9aa712a0afb882649424dd8de8ad9aa6235e796e84c6052e8f6dc1598d0d/matplotlib-3.11.2.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "3.11.2"
+      },
+      "narwhals": {
+        "distribution": {
+          "hash": "sha256:d057df13f5852b8e157596e82eb5e955fad267425df5e420e0ee9863da483b31",
+          "size": 483211,
+          "url": "https://files.pythonhosted.org/packages/d1/89/5d4c86da1130d9059681e5b6cd7645df5c10279a6a079c5c37dcb2cc6f3f/narwhals-2.27.1-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.27.1"
+      },
+      "neurokit2": {
+        "distribution": {
+          "hash": "sha256:25f1414214e832341312b8f0deeaeeefb6d01e9b14d8723b71c67e99e0430c4c",
+          "size": 688906,
+          "url": "https://files.pythonhosted.org/packages/0f/ff/ae9c9be371b3a80b970be811a0bd223a28c6259d0530763aee09bf6a9219/neurokit2-0.2.13-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "0.2.13"
+      },
+      "numpy": {
+        "distribution": {
+          "hash": "sha256:9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a",
+          "size": 20866315,
+          "url": "https://files.pythonhosted.org/packages/95/b0/c7453d0b6e2073c3264468b106ee1563750cecc910965e67357e3698c83e/numpy-2.5.4.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.5.4"
+      },
+      "packaging": {
+        "distribution": {
+          "hash": "sha256:d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+          "size": 129956,
+          "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "26.3"
+      },
+      "pandas": {
+        "distribution": {
+          "hash": "sha256:e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b",
+          "size": 4495223,
+          "url": "https://files.pythonhosted.org/packages/33/01/d40b85317f86cf08d853a4f495195c73815fdf205eef3993821720274518/pandas-2.3.3.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "2.3.3"
+      },
+      "pillow": {
+        "distribution": {
+          "hash": "sha256:cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510",
+          "size": 47058631,
+          "url": "https://files.pythonhosted.org/packages/ce/a4/9cc30690a394a8305e8be4c9036aa16d0dfddadd09079860b582f562496d/pillow-13.0.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "13.0.0"
+      },
+      "pyparsing": {
+        "distribution": {
+          "hash": "sha256:ece8c00a69cf01b45d0b1dedabb469c90d8caf996d4fda40f147627a122849a4",
+          "size": 126420,
+          "url": "https://files.pythonhosted.org/packages/38/bb/d215ee7c73b61497b28a5503f9f53523f294fcc936762b7caf90e0c1c2b5/pyparsing-3.3.3-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.3.3"
+      },
+      "python-dateutil": {
+        "distribution": {
+          "hash": "sha256:3c79630202e4152c6add678446984236efe4f57e84d8e892aab0637bab82e9fd",
+          "size": 94659,
+          "url": "https://files.pythonhosted.org/packages/5a/17/cebee01d1c0c1441174cf0456ddc91b280d79acb65340c05e41d77866ee8/python_dateutil-3.0.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.0.0"
+      },
+      "pytz": {
+        "distribution": {
+          "hash": "sha256:e658af3757f9e26a9d25dd2aff38335acd92bc9104f890a894b2c1ba28311b03",
+          "size": 506342,
+          "url": "https://files.pythonhosted.org/packages/4f/ef/c66110d46fb800dda0bf33164182dfadabe26a90e4476844d502a23dca8e/pytz-2026.5-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.5"
+      },
+      "pywavelets": {
+        "distribution": {
+          "hash": "sha256:f3cb8640225a8f3fdcbc3f6f3bd112c78927c9407cbfa65a5ff303990a6a3e32",
+          "size": 3948163,
+          "url": "https://files.pythonhosted.org/packages/25/84/a9e80e33eb114e78bd2f1829a90d72d8d4d660109c721a8aa2f0d58d7592/pywavelets-1.10.0.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.10.0"
+      },
+      "requests": {
+        "distribution": {
+          "hash": "sha256:2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+          "size": 73075,
+          "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.34.2"
+      },
+      "scikit-learn": {
+        "distribution": {
+          "hash": "sha256:629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977",
+          "size": 7786908,
+          "url": "https://files.pythonhosted.org/packages/d2/eb/eaf5e07fcc0da7149b0e084f24e54edd7441b9a89ce7e034032ae97fe3a0/scikit_learn-1.9.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.9.1"
+      },
+      "scipy": {
+        "distribution": {
+          "hash": "sha256:52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307",
+          "size": 30781235,
+          "url": "https://files.pythonhosted.org/packages/7e/74/66de6258867beb2ef08f35f9f2ac017a52cacd5081714d239ff1a442d458/scipy-1.18.1.tar.gz"
+        },
+        "kind": "sdist",
+        "version": "1.18.1"
+      },
+      "setuptools": {
+        "distribution": {
+          "hash": "sha256:fdd925d5c5d9f62e4b74b30d6dd7828ce236fd6ed998a08d81de62ce5a6310d6",
+          "size": 1062021,
+          "url": "https://files.pythonhosted.org/packages/e1/e3/c164c88b2e5ce7b24d667b9bd83589cf4f3520d97cad01534cd3c4f55fdb/setuptools-81.0.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "81.0.0"
+      },
+      "six": {
+        "distribution": {
+          "hash": "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274",
+          "size": 11050,
+          "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "1.17.0"
+      },
+      "threadpoolctl": {
+        "distribution": {
+          "hash": "sha256:cd8b60b5641b45c67bbf73c64c843235fc2d8a480c87389f52f5dbee893b86be",
+          "size": 26362,
+          "url": "https://files.pythonhosted.org/packages/43/3f/f88a53f60a472b46f4023f56d204dd7de33d34c5d2acbfa0d70a674e639e/threadpoolctl-3.7.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "3.7.0"
+      },
+      "tzdata": {
+        "distribution": {
+          "hash": "sha256:b683bd1b6659ddcd810ff02ad09ba821d4bf1065072805063eb35c49617905ac",
+          "size": 347996,
+          "url": "https://files.pythonhosted.org/packages/94/21/1e5995a1c920cce14e4bffae20c665ec10e7ed03ab25e006cd741092b718/tzdata-2026.5-py2.py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2026.5"
+      },
+      "urllib3": {
+        "distribution": {
+          "hash": "sha256:0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+          "size": 135717,
+          "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl"
+        },
+        "kind": "universal_wheel",
+        "version": "2.8.0"
+      }
+    },
+    "unparsed_environment_records": []
+  },
+  "repeatability_observations": {
+    "all_output_differences_limited_to_table_serialization_or_row_order": true,
+    "all_outputs_byte_identical_to_original": true,
+    "cleanup_verified": true,
+    "comparison_rules_validated": false,
+    "construction_run": false,
+    "finished": 1792741246.6098278,
+    "limitations": "Finite repeated runs, not a grading contract or portability proof. Fresh processes/workspaces share the rebuilt environment and caches; base image tag is reused, not an immutable image digest.",
+    "model_calls": 0,
+    "output_observations": [
+      [
+        {
+          "baseline_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+          "byte_identical": true,
+          "path": "hrv_time.csv",
+          "replay_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+        },
+        {
+          "baseline_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+          "byte_identical": true,
+          "path": "hrv_frequency.csv",
+          "replay_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+        },
+        {
+          "baseline_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+          "byte_identical": true,
+          "path": "hrv_nonlinear.csv",
+          "replay_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+        },
+        {
+          "baseline_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+          "byte_identical": true,
+          "path": "hrv_indices.csv",
+          "replay_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ],
+      [
+        {
+          "baseline_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f",
+          "byte_identical": true,
+          "path": "hrv_time.csv",
+          "replay_sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+        },
+        {
+          "baseline_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959",
+          "byte_identical": true,
+          "path": "hrv_frequency.csv",
+          "replay_sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+        },
+        {
+          "baseline_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279",
+          "byte_identical": true,
+          "path": "hrv_nonlinear.csv",
+          "replay_sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+        },
+        {
+          "baseline_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9",
+          "byte_identical": true,
+          "path": "hrv_indices.csv",
+          "replay_sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+        }
+      ]
+    ],
+    "reference_tests": 2,
+    "semantic_fidelity_validated": false,
+    "solver_run": false,
+    "started": 1792741212.6748283,
+    "status": "repeatability_observed_requires_comparison_review"
+  },
+  "retained_evidence": {
+    "trial/uv.lock": {
+      "bytes": 206603,
+      "reason": "Full lock retained as evidence; exact resolved package versions are supplied in trial/environment.txt. Wheel URLs and hashes are omitted from model context.",
+      "sha256": "7573d70d209d54d75812c169f9b16a7534053fdb60242b3d50483206bcae6c13"
+    }
+  },
+  "task_policy": {
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission.",
+    "reference_timeout_seconds": 600,
+    "reward": "binary; all required checks must pass",
+    "sandbox": {
+      "cpus": 4,
+      "disk_gib": 10,
+      "gpu": false,
+      "memory_gib": 8
+    },
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "solver_and_verifier_network": "offline",
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "verifier_timeout_seconds": 120
+  }
+}

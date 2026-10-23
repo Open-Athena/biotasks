@@ -1,0 +1,36 @@
+{
+  "artifacts": [
+    {
+      "description": "Time-domain HRV indices (e.g. RMSSD, MeanNN) for the recording.",
+      "path": "hrv_time.csv",
+      "source_evidence": "Variable `hrv_time`, produced by `nk.hrv_time(peaks, sampling_rate=100, show=True)` in the 'Time-Domain Analysis' section; the narrative states 'let's extract the time-domain indices' and interprets the resulting features (RMSSD, MeanNN) in their own right, so this DataFrame is the endpoint of that analysis branch."
+    },
+    {
+      "description": "Frequency-domain HRV indices (spectral power in frequency bands).",
+      "path": "hrv_frequency.csv",
+      "source_evidence": "Variable `hrv_freq`, produced by `nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)` in the 'Frequency-Domain Analysis' section; the narrative explicitly frames these as the analysis result ('extract the frequency domain features ... spectral power density pertaining to different frequency bands')."
+    },
+    {
+      "description": "Non-linear domain HRV indices (Poincar\u00e9-derived and related metrics).",
+      "path": "hrv_nonlinear.csv",
+      "source_evidence": "Variable `hrv_nonlinear`, produced by `nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)` in the 'Non-Linear Domain Analysis' section; the narrative computes and discusses these as the non-linear analysis outcome, with the Poincar\u00e9 plot as a visualization of the same result."
+    },
+    {
+      "description": "Combined HRV indices across time, frequency and non-linear domains.",
+      "path": "hrv_indices.csv",
+      "source_evidence": "Variable `hrv_indices`, produced by `nk.hrv(peaks, sampling_rate=100, show=True)` in the final 'All Domains' section; the narrative presents it as extracting HRV indices from all three domains, the closing end product of the example."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Raw recording `data` and the R-peak series `peaks`/`info`: inputs and preprocessing for the HRV computation, not independently interpreted results.",
+    "The show=True figures (RR-interval distribution histogram, power spectral density plot, Poincar\u00e9 scattergram): plot-only visualizations whose numeric values are already contained in the exported HRV index tables; no separate numerical export is possible without capturing figure internals, which is not permitted.",
+    "`hrv_indices` intentionally overlaps the three per-domain tables; it is retained because the 'All Domains' section presents the combined extraction as its own final product."
+  ],
+  "explanation": "The notebook's scientific endpoints are the HRV index tables in the three domains (`hrv_time`, `hrv_frequency`, `hrv_nonlinear`), each displayed and narrated as the analysis result of its branch, and the combined all-domains table `hrv_indices` produced by `nk.hrv()` as the final end product. All four are existing named one-row DataFrames still holding their values at script completion. The appended code creates `/work/outputs` and writes each table as CSV with pandas, preserving columns, labels, and row order, with no recomputation or filtering. Plot-only figures (RR-interval distribution, PSD, Poincar\u00e9) are accompanying visualizations whose underlying values are already in these tables and are not separately exportable.",
+  "export_code": "import os\n\nimport pandas as _pd\n\n_out_dir = \"/work/outputs\"\nos.makedirs(_out_dir, exist_ok=True)\n\n# Save the terminal HRV results produced by the original script.\nhrv_time.to_csv(os.path.join(_out_dir, \"hrv_time.csv\"), index=False)\nhrv_freq.to_csv(os.path.join(_out_dir, \"hrv_frequency.csv\"), index=False)\nhrv_nonlinear.to_csv(os.path.join(_out_dir, \"hrv_nonlinear.csv\"), index=False)\nhrv_indices.to_csv(os.path.join(_out_dir, \"hrv_indices.csv\"), index=False)",
+  "unresolved_assumptions": [
+    "Execution must confirm neurokit2 and pandas are installed and the dataset `bio_resting_5min_100hz` downloads during network-enabled setup; file sizes and column sets of the CSVs are unverified here.",
+    "Runtime fit within the reference time limit (four HRV computations on a 5-minute 100 Hz recording) is an execution question; no simplification is applied."
+  ]
+}

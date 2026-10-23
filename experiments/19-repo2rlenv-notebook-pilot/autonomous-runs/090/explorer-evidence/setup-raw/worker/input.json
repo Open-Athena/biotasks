@@ -1,0 +1,108 @@
+{
+  "limits": {
+    "base_image": "python:3.13.13-slim-bookworm",
+    "campaign_seconds": 7200,
+    "gpu": false,
+    "max_requests": null,
+    "max_tests": 2,
+    "network": "Internet during setup only; reference is offline",
+    "reference_seconds": 600,
+    "request_timeout_seconds": 600,
+    "setup_seconds": 1800,
+    "task_cpus": 4,
+    "task_disk_gib": 10,
+    "task_memory_gib": 8
+  },
+  "paths": {
+    "exports.py": "/work/frozen/exports.py",
+    "original.py": "/work/frozen/original.py",
+    "plan.json": "/work/frozen/plan.json",
+    "setup": "/work/setup"
+  },
+  "preparation": {
+    "conversion": {
+      "code_cells": 8,
+      "converter": "jupytext",
+      "converter_version": "1.19.6",
+      "directory_normalizations": [],
+      "documentation_execution_policy": {},
+      "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+      "executable_ast_sha256": "d281128db21f3f7154412d9569b2804904d91522a4040938025c2a91531c84b1",
+      "executed": false,
+      "format": "py:nomarker",
+      "ignored_cell_editor_metadata": [],
+      "ignored_editor_metadata": {},
+      "ignored_presentation_tags": [
+        {
+          "cell_index": 4,
+          "tags": [
+            "remove-input"
+          ]
+        }
+      ],
+      "markdown_cells": 18,
+      "markdown_representation": "line_comments",
+      "ordered_code_equivalence": true,
+      "presentation_normalizations": [],
+      "profile": "python-narrative-v5",
+      "script_sha256": "ca70f4196402ccbf531e8e6b69b5d147340d2c9675610c5025256cbc66ac89e0",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "stored_outputs_used_as_evidence": false
+    },
+    "plan": {
+      "artifacts": [
+        {
+          "description": "Time-domain HRV indices (e.g. RMSSD, MeanNN) for the recording.",
+          "path": "hrv_time.csv",
+          "source_evidence": "Variable `hrv_time`, produced by `nk.hrv_time(peaks, sampling_rate=100, show=True)` in the 'Time-Domain Analysis' section; the narrative states 'let's extract the time-domain indices' and interprets the resulting features (RMSSD, MeanNN) in their own right, so this DataFrame is the endpoint of that analysis branch."
+        },
+        {
+          "description": "Frequency-domain HRV indices (spectral power in frequency bands).",
+          "path": "hrv_frequency.csv",
+          "source_evidence": "Variable `hrv_freq`, produced by `nk.hrv_frequency(peaks, sampling_rate=100, show=True, normalize=True)` in the 'Frequency-Domain Analysis' section; the narrative explicitly frames these as the analysis result ('extract the frequency domain features ... spectral power density pertaining to different frequency bands')."
+        },
+        {
+          "description": "Non-linear domain HRV indices (Poincar\u00e9-derived and related metrics).",
+          "path": "hrv_nonlinear.csv",
+          "source_evidence": "Variable `hrv_nonlinear`, produced by `nk.hrv_nonlinear(peaks, sampling_rate=100, show=True)` in the 'Non-Linear Domain Analysis' section; the narrative computes and discusses these as the non-linear analysis outcome, with the Poincar\u00e9 plot as a visualization of the same result."
+        },
+        {
+          "description": "Combined HRV indices across time, frequency and non-linear domains.",
+          "path": "hrv_indices.csv",
+          "source_evidence": "Variable `hrv_indices`, produced by `nk.hrv(peaks, sampling_rate=100, show=True)` in the final 'All Domains' section; the narrative presents it as extracting HRV indices from all three domains, the closing end product of the example."
+        }
+      ],
+      "disposition": "prepare",
+      "excluded_outputs": [
+        "Raw recording `data` and the R-peak series `peaks`/`info`: inputs and preprocessing for the HRV computation, not independently interpreted results.",
+        "The show=True figures (RR-interval distribution histogram, power spectral density plot, Poincar\u00e9 scattergram): plot-only visualizations whose numeric values are already contained in the exported HRV index tables; no separate numerical export is possible without capturing figure internals, which is not permitted.",
+        "`hrv_indices` intentionally overlaps the three per-domain tables; it is retained because the 'All Domains' section presents the combined extraction as its own final product."
+      ],
+      "explanation": "The notebook's scientific endpoints are the HRV index tables in the three domains (`hrv_time`, `hrv_frequency`, `hrv_nonlinear`), each displayed and narrated as the analysis result of its branch, and the combined all-domains table `hrv_indices` produced by `nk.hrv()` as the final end product. All four are existing named one-row DataFrames still holding their values at script completion. The appended code creates `/work/outputs` and writes each table as CSV with pandas, preserving columns, labels, and row order, with no recomputation or filtering. Plot-only figures (RR-interval distribution, PSD, Poincar\u00e9) are accompanying visualizations whose underlying values are already in these tables and are not separately exportable.",
+      "export_code": "import os\n\nimport pandas as _pd\n\n_out_dir = \"/work/outputs\"\nos.makedirs(_out_dir, exist_ok=True)\n\n# Save the terminal HRV results produced by the original script.\nhrv_time.to_csv(os.path.join(_out_dir, \"hrv_time.csv\"), index=False)\nhrv_freq.to_csv(os.path.join(_out_dir, \"hrv_frequency.csv\"), index=False)\nhrv_nonlinear.to_csv(os.path.join(_out_dir, \"hrv_nonlinear.csv\"), index=False)\nhrv_indices.to_csv(os.path.join(_out_dir, \"hrv_indices.csv\"), index=False)",
+      "unresolved_assumptions": [
+        "Execution must confirm neurokit2 and pandas are installed and the dataset `bio_resting_5min_100hz` downloads during network-enabled setup; file sizes and column sets of the CSVs are unverified here.",
+        "Runtime fit within the reference time limit (four HRV computations on a 5-minute 100 Hz recording) is an execution question; no simplification is applied."
+      ]
+    },
+    "source": {
+      "id": "neurokit-hrv",
+      "license": "MIT",
+      "provenance": {
+        "data_lineage": "Source nk.data resting physiology recording, sampled at 100 Hz.",
+        "data_redistribution_review": "Not established independently; generated task bundles and staged data remain private pending review.",
+        "notebook": {
+          "license": "MIT",
+          "license_url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/LICENSE",
+          "revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+          "sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+          "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+        }
+      },
+      "source_revision": "ff419d983568ef492eb8d229af643c0ef0100b32",
+      "source_sha256": "478c706ad92fb919d576871c96dd6e5b2712962bbf9a858ecfe89cbf8923a1c4",
+      "title": "Time-, frequency- and nonlinear-domain heart-rate variability",
+      "url": "https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb"
+    }
+  }
+}

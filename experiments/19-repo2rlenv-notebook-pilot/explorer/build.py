@@ -170,7 +170,7 @@ if profile.get("trajectory_glob"):
 attempt_html = "<h2>Blind solver attempt</h2>"
 if native_summary:
     solver = native_summary["solver"]
-    attempt_html += f"<p>{html.escape(solver['agent'])} · {html.escape(profile.get('solver_model', 'GLM-5.3'))} · reward <strong>{html.escape(str(solver['reward']))}</strong>. The task environment was an offline CPU sandbox; the complete trial result is below.</p>"
+    attempt_html += f"<p>{html.escape(solver['agent'])} · {html.escape(profile.get('solver_model', 'GLM-5.3'))} · reward <strong>{html.escape(str(solver['reward']))}</strong>. The task environment was an offline CPU sandbox; recorded attempt evidence is below.</p>"
 else:
     attempt_html += "<p>No blind solver attempt is recorded for this selected task yet.</p>"
 for step in trajectory["steps"]:
@@ -200,7 +200,10 @@ if trajectory_path:
         f'<p><a href="{BASE}{trajectory_path.relative_to(ROOT)}">Full recorded trajectory</a></p>'
     )
     for name in ["result.json", "verifier/report.json"]:
-        attempt_html += artifact(str((trajectory_path.parent.parent / name).relative_to(EXP)), name)
+        selected = profile.get("trial_result") if name == "result.json" else None
+        selected = selected or str((trajectory_path.parent.parent / name).relative_to(EXP))
+        label = profile.get("trial_result_label") if name == "result.json" else None
+        attempt_html += artifact(selected, label or Path(selected).name)
 review_html = "<h2>Validation and release</h2>"
 if profile.get("grading_controls"):
     controls = evidence_json(profile["grading_controls"])

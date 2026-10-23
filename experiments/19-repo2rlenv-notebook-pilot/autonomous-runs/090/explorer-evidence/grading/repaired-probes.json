@@ -1,0 +1,201 @@
+{
+  "concerns": [
+    "The public statement 'columns are identified by name; their order in the file is free' is ambiguous for hrv_indices.csv, whose column set is described as a specific concatenation of the three per-domain column sets. The column-order probe therefore reorders only the three per-domain tables; if the grader constrains the combined table's order as well, that freedom would need clarification.",
+    "The 1e-9 relative tolerance is far below plausible run-to-run or implementation-choice variability of NeuroKit2 HRV computations, so fine algorithmic-equivalence differences are not detectable through this contract. Probes therefore target clearly wrong values, non-finite text representations, empty-field semantics and the tolerance boundary rather than legitimate-but-different method variants, which cannot be validated without rerun access to the raw input."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "time_domain_indices",
+        "combined_indices_table"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,,,,,69.69798316887554"
+        },
+        {
+          "path": "hrv_time.csv",
+          "quote": ",690.0,44.477999999999994,0.06446086956521738,60.0,0.8915019973478892,660.0,740.0,14.651162790697676,49.30232558139535,470.0,1420.0,7.962962962962963,234.375"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "time-value-perturbation",
+      "rationale": "Changes five populated time-domain values (HRV_MeanNN to 700.0, HRV_RMSSD to 70.0, HRV_MedianNN to 700.0, HRV_HTI to 8.0, HRV_TINN to 240.0) in hrv_time.csv and identically in hrv_indices.csv. These edits preserve table shape, column set, emptiness pattern and cross-table equality intentionally, isolating violation of the numeric value rule (all five changes exceed the |x-r| <= max(1e-9|r|,1e-12) bound): the time_domain_indices check fails because the per-domain values are wrong, and combined_indices_table fails because the same wrong values appear in the combined file. Example: reference HRV_MeanNN 696.3953488372093 vs 700.0.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\nEDITS = {\n    \"HRV_MeanNN\": 700.0,      # wrong mean RR\n    \"HRV_RMSSD\": 70.0,        # plausible but wrong short-term variability\n    \"HRV_MedianNN\": 700.0,    # wrong median\n    \"HRV_HTI\": 8.0,           # wrong triangular index\n    \"HRV_TINN\": 240.0,        # wrong triangular interpolation\n}\n\n# Apply identically to the per-domain table and the combined table so the only\n# failing rules are the value checks for these two files (cross-table equality kept).\nfor name in [\"hrv_time.csv\", \"hrv_indices.csv\"]:\n    h, r = load(name)\n    for col, val in EDITS.items():\n        i = h.index(col)\n        assert r[i] != \"\", (name, col)\n        r[i] = repr(val)\n    save(name, h, r)\nprint(\"time_value_perturbation: edited\", len(EDITS), \"time-domain values in both tables\")"
+    },
+    {
+      "check_ids": [
+        "frequency_domain_indices",
+        "combined_indices_table"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_frequency.csv",
+          "quote": "HRV_ULF,HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF"
+        },
+        {
+          "path": "hrv_frequency.csv",
+          "quote": ",0.01731007726584816,0.04802607886179408,0.06023186865189019,0.011185774793627324,0.13675379957315975,0.797353293807977,0.3511864314680439,0.44044018403794105,-2.8095536871398052"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "freq-value-perturbation",
+      "rationale": "Shifts four populated frequency-domain values in hrv_frequency.csv (HRV_HF to 0.065, HRV_LFHF to 0.8, HRV_LFn to 0.36, HRV_LnHF to -2.6) with identical propagation into hrv_indices.csv so cross-table equality stays intact and table shape/emptiness (HRV_ULF stays empty) is preserved. All four new values violate the numeric tolerance against the reference (e.g. reference HRV_HF 0.06023186865189019 vs 0.065), so frequency_domain_indices fails and the same defect propagates into combined_indices_table; cross_table_consistency is preserved by design.",
+      "script": "import csv, os\n\ndef BASE():\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\nEDITS = {\n    \"HRV_HF\": 0.065,    # wrong high-frequency power\n    \"HRV_LFHF\": 0.8,    # wrong LF/HF ratio\n    \"HRV_LFn\": 0.36,    # wrong normalized low-frequency power\n    \"HRV_LnHF\": -2.6,   # wrong log high-frequency power\n}\n\n# propagate identically to the combined table so cross-table equality is kept\nfor name in [\"hrv_frequency.csv\", \"hrv_indices.csv\"]:\n    h, r = load(name)\n    for col, val in EDITS.items():\n        i = h.index(col)\n        assert r[i] != \"\", (name, col)\n        r[i] = repr(val)\n    save(name, h, r)\nprint(\"freq_value_perturbation: edited\", len(EDITS), \"frequency values in both tables\")"
+    },
+    {
+      "check_ids": [
+        "nonlinear_domain_indices",
+        "combined_indices_table"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_nonlinear.csv",
+          "quote": "49.34128100482926,72.59743491590363,0.679655983189845,11253.343335830747,1.4713325928606957,4.758251679217147,427.25988859940844"
+        },
+        {
+          "path": "hrv_nonlinear.csv",
+          "quote": "HRV_Symbolic_EqualProb4_0V,HRV_Symbolic_EqualProb4_1V,HRV_Symbolic_EqualProb4_2LV,HRV_Symbolic_EqualProb4_2UV"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "nonlinear-value-perturbation",
+      "rationale": "Alters seven populated nonlinear-domain values covering distinct method families (Poincare SD1/SD2/S, DFA_alpha1, entropies ApEn/SampEn, symbolic-dynamics word proportion HRV_Symbolic_EqualProb4_2LV) in hrv_nonlinear.csv and identically in hrv_indices.csv. The nonlinear table has no empty columns in the reference, so this probe keeps shape, columns, emptiness and cross-table equality intact while making each edited value exceed the 1e-9 relative tolerance (e.g. reference HRV_SD1 49.34128100482926 vs 48.0). nonlinear_domain_indices fails on the per-domain values and combined_indices_table fails on the same wrong values in the combined file.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\nEDITS = {\n    \"HRV_SD1\": 48.0, \"HRV_SD2\": 73.0, \"HRV_S\": 11000.0,   # wrong Poincare geometry\n    \"HRV_DFA_alpha1\": 0.8,                                # wrong short-term DFA\n    \"HRV_ApEn\": 1.1, \"HRV_SampEn\": 1.3,                   # wrong entropies\n    \"HRV_Symbolic_EqualProb4_2LV\": 0.5,                    # wrong word-family proportion\n}\n\nheader, row = load(\"hrv_nonlinear.csv\")\nfor col, val in EDITS.items():\n    i = header.index(col)\n    assert row[i] != \"\", col\n    row[i] = repr(val)\n# perturb also in the combined table so cross-table consistency stays intact\nh2, r2 = load(\"hrv_indices.csv\")\nfor col, val in EDITS.items():\n    i2 = h2.index(col)\n    assert r2[i2] != \"\", col\n    r2[i2] = repr(val)\nsave(\"hrv_nonlinear.csv\", header, row)\nsave(\"hrv_indices.csv\", h2, r2)\nprint(\"nonlinear_value_perturbation: edited\", len(EDITS), \"nonlinear values in both tables\")"
+    },
+    {
+      "check_ids": [
+        "time_domain_indices",
+        "combined_indices_table",
+        "cross_table_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD"
+        },
+        {
+          "path": "hrv_time.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103,,,,,69.69798316887554"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "nonfinite-value-perturbation",
+      "rationale": "Writes the literal text NaN into four populated time-domain cells (HRV_MeanNN, HRV_SDNN, HRV_RMSSD, HRV_HTI) in hrv_time.csv and identically in hrv_indices.csv. The contract explicitly requires either an empty field or a finite floating-point number, and explicitly forbids NaN/non-numeric text in a value cell, so time_domain_indices and combined_indices_table must fail; because the shared columns are no longer finite numbers, the cross_table_consistency condition ('both carry a finite number equal within the rule') is also necessarily violated even though both files were changed consistently. Shape, column set and record counts are preserved.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\nBAD = \"NaN\"\nCOLS = [\"HRV_MeanNN\", \"HRV_SDNN\", \"HRV_RMSSD\", \"HRV_HTI\"]\n\nh, r = load(\"hrv_time.csv\")\nfor c in COLS:\n    i = h.index(c)\n    assert r[i] != \"\", c\n    r[i] = BAD\nsave(\"hrv_time.csv\", h, r)\n\nhi, ri = load(\"hrv_indices.csv\")\nfor c in COLS:\n    i = hi.index(c)\n    assert ri[i] != \"\", c\n    ri[i] = BAD\nsave(\"hrv_indices.csv\", hi, ri)\nprint(\"nonfinite_value_perturbation: wrote NaN in\", len(COLS), \"time cells (both tables)\")"
+    },
+    {
+      "check_ids": [
+        "time_domain_indices",
+        "combined_indices_table"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "696.3953488372093,62.135891206172104,10.060727541349376,60.27503600273103"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "tolerance-boundary-value",
+      "rationale": "Tests the numeric tolerance boundary: HRV_MeanNN is shifted by a relative error of 1e-5 (696.3953488372093 -> 696.402313...), four orders of magnitude beyond the permitted relative tolerance of 1e-9 and far above the 1e-12 absolute floor, while every other aspect of the submission (shape, columns, emptiness, all other values, cross-table equality between hrv_time.csv and hrv_indices.csv) is unchanged. A grader that implements (or loosens) the tolerance incorrectly would accept a small-but-out-of-tolerance value; this probe must fail time_domain_indices and combined_indices_table (the same shifted value is written to both files consistently, so cross_table_consistency is preserved).",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\ntarget = \"HRV_MeanNN\"\nnew = 696.3953488372093 * (1 + 1e-5)   # relative error 1e-5 >> 1e-9\n\nh, r = load(\"hrv_time.csv\")\ni = h.index(target)\nold = float(r[i])\nassert abs(new - old) > max(1e-9 * abs(old), 1e-12)\nr[i] = repr(new)\nsave(\"hrv_time.csv\", h, r)\n\nhi, ri = load(\"hrv_indices.csv\")\nj = hi.index(target)\nri[j] = repr(new)\nsave(\"hrv_indices.csv\", hi, ri)\nprint(\"tolerance_boundary_value: MeanNN shifted by relative 1e-5 (beyond 1e-9 rule)\")"
+    },
+    {
+      "check_ids": [
+        "combined_indices_table",
+        "cross_table_consistency"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5"
+        },
+        {
+          "path": "hrv_indices.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "combined-cross-consistency",
+      "rationale": "Changes only HRV_MeanNN in hrv_indices.csv (to 700.0) while leaving hrv_time.csv, hrv_frequency.csv and hrv_nonlinear.csv untouched. This breaks the structural cross_table_consistency requirement that the combined table must agree with the per-domain tables within the same numeric rule (696.3953488372093 vs 700.0 in the submission's own files), and additionally the combined_indices_table check fails because the combined value no longer matches the reference. All shape, column-set and per-domain values remain valid, isolating the cross-file and combined-table defects. The trailing print message saying 'keeps cross-table equality' is a typo in the script text; the edit is intended and does break that equality.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\ntarget = \"HRV_MeanNN\"\nnew = \"700.0\"   # wrong in the combined table only\n\nh, r = load(\"hrv_time.csv\")\ni = h.index(target)\nassert r[i] != \"\"\n\nhi, ri = load(\"hrv_indices.csv\")\nj = hi.index(target)\nassert float(ri[j]) == float(r[i]), (ri[j], r[i])\nri[j] = new\nsave(\"hrv_indices.csv\", hi, ri)\nprint(\"combined_cross_consistency: MeanNN changed only in the combined table (breaks cross-table equality)\")"
+    },
+    {
+      "check_ids": [
+        "combined_indices_table",
+        "frequency_domain_indices",
+        "time_domain_indices"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": ",,,,69.69798316887554"
+        },
+        {
+          "path": "hrv_frequency.csv",
+          "quote": "HRV_ULF,HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF"
+        },
+        {
+          "path": "hrv_frequency.csv",
+          "quote": ",0.01731007726584816,0.04802607886179408,0.06023186865189019"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "empty-field-zero-substitution",
+      "rationale": "Fills every column that the reference leaves empty with the numeric value 0.0: HRV_SDANN2/SDNNI2 (2-minute windows cannot fit a ~5-minute recording), HRV_SDANN5/SDNNI5 (5-minute window), and HRV_ULF (band integrating to exactly zero power). The contract states emptiness is scientific content and a numeric 0 is not a valid substitute (the 'left empty rather than 0' and 'reported empty rather than 0' rules), so time_domain_indices, frequency_domain_indices and combined_indices_table must fail. The substitution is applied consistently across per-domain and combined tables, so cross_table_consistency itself remains satisfied (both sides carry the same finite 0.0) while the emptiness mismatch against the reference fails.",
+      "script": "import csv, os\n\ndef BASE():\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\n# These columns are empty in the reference (\"not defined\"). Filling them with 0\n# (windows that cannot fit the recording, ULF band integrating to exactly zero)\n# is exactly the substitution the contract forbids.\nTIME_EMPTY = [\"HRV_SDANN2\",\"HRV_SDNNI2\",\"HRV_SDANN5\",\"HRV_SDNNI5\"]\nFREQ_EMPTY = [\"HRV_ULF\"]\n\nPLANS = {\n    \"hrv_time.csv\": TIME_EMPTY,\n    \"hrv_frequency.csv\": FREQ_EMPTY,\n    \"hrv_indices.csv\": TIME_EMPTY + FREQ_EMPTY,\n}\nfor name, cols in PLANS.items():\n    h, r = load(name)\n    for col in cols:\n        i = h.index(col)\n        assert r[i] == \"\", (name, col)\n        r[i] = \"0.0\"\n    save(name, h, r)\nprint(\"empty_field_zero_substitution: filled 5 reference-empty columns with 0.0 in three tables\")"
+    },
+    {
+      "check_ids": [
+        "combined_indices_table",
+        "cross_table_consistency",
+        "frequency_domain_indices",
+        "nonlinear_domain_indices",
+        "time_domain_indices"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2,HRV_SDANN5,HRV_SDNNI5,HRV_RMSSD,HRV_SDSD"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "float-format-alternative",
+      "rationale": "Valid representation control: rewrites every populated cell of all four CSVs as a %.17g decimal string (a different byte encoding from the reference's repr-style output) while preserving column names, column order, row structure, and empty fields exactly. Every '%.17g' representation round-trips to the identical float64 value (verified locally over all 180 populated cells), so all numeric comparisons are exact and every scientific check plus the cross-table consistency check must pass; this confirms the grader accepts any finite float text representation, not only the reference's byte-identical encoding.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\ndef fmt(x):\n    # round-trip 17-significant-digit representation, distinct CSV encoding\n    return \"%.17g\" % x\n\nchanged = 0\nfor name in [\"hrv_time.csv\", \"hrv_frequency.csv\", \"hrv_nonlinear.csv\", \"hrv_indices.csv\"]:\n    h, r = load(name)\n    out = []\n    for v in r:\n        if v == \"\":\n            out.append(\"\")\n        else:\n            out.append(fmt(float(v)))\n            changed += 1\n    save(name, h, out)\nprint(\"float_format_alternative: rewrote\", changed, \"populated cells in %.17g\")"
+    },
+    {
+      "check_ids": [
+        "combined_indices_table",
+        "frequency_domain_indices",
+        "nonlinear_domain_indices",
+        "time_domain_indices"
+      ],
+      "evidence": [
+        {
+          "path": "hrv_time.csv",
+          "quote": "HRV_MeanNN,HRV_SDNN,HRV_SDANN1,HRV_SDNNI1,HRV_SDANN2,HRV_SDNNI2"
+        },
+        {
+          "path": "hrv_frequency.csv",
+          "quote": "HRV_ULF,HRV_VLF,HRV_LF,HRV_HF,HRV_VHF,HRV_TP,HRV_LFHF,HRV_LFn,HRV_HFn,HRV_LnHF"
+        }
+      ],
+      "focus": "lazy_output",
+      "kind": "valid_alternative",
+      "name": "column-order-alternative",
+      "rationale": "Valid representation control for the contract's stated freedom that 'columns are identified by name; their order in the file is free': the header (and correspondingly the data row) of hrv_time.csv, hrv_frequency.csv and hrv_nonlinear.csv is reversed while every value, emptiness pattern, column set and row count is unchanged. hrv_indices.csv is deliberately left in its reference order because its requirement is worded as a specific concatenation of the three column sets. The three per-domain scientific checks and combined_indices_table must pass under the stated name-based identification; cross_table_consistency also remains satisfied because it compares by column name across files.",
+      "script": "import csv, os\n\ndef BASE():\n    # prefer the copied submission root (cwd); fall back for local testing\n    if os.path.exists(\"hrv_time.csv\"):\n        return \".\"\n    return \"/case/submission\"\n\ndef load(name):\n    with open(os.path.join(BASE(), name), newline=\"\") as fh:\n        rows = list(csv.reader(fh))\n    assert len(rows) == 2, (name, len(rows))\n    assert len(rows[0]) == len(rows[1]) == len(set(rows[0])), name\n    return rows[0], rows[1]\n\ndef save(name, header, row):\n    with open(os.path.join(BASE(), name), \"w\", newline=\"\") as fh:\n        w = csv.writer(fh, lineterminator=\"\\n\")\n        w.writerow(header)\n        w.writerow(row)\n\n# reverse header order in the three per-domain tables; keep combined as-is:\n# same population/emptiness, exact same values, only differing column order.\nfor name in [\"hrv_time.csv\", \"hrv_frequency.csv\", \"hrv_nonlinear.csv\"]:\n    h, r = load(name)\n    pairs = list(zip(h, r))\n    pairs.reverse()\n    save(name, [p[0] for p in pairs], [p[1] for p in pairs])\n    print(name, \"header reversed\")"
+    }
+  ]
+}

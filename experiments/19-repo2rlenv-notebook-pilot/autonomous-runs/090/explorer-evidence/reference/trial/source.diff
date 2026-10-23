@@ -1,0 +1,11 @@
+--- original.py
++++ analysis.py
+@@ -35,7 +35,7 @@
+ 
+ # First, let's download the resting rate data (sampled at 100Hz) using `nk.data()`.
+ 
+-data = nk.data("bio_resting_5min_100hz")
++data = nk.pd.read_csv("/inputs/bio_resting_5min_100hz.csv")  # offline input-path adaptation: read the staged copy of the datasets.
+ data.head()  # Print first 5 rows
+ 
+ # You can see that it consists of three different signals, pertaining to ECG, PPG (an alternative determinant of heart rate as compared to ECG), and RSP (respiration). Now, let's extract the ECG signal in the shape of a vector (i.e., a one-dimensional array), and find the peaks using [ecg_peaks()](https://neuropsychology.github.io/NeuroKit/functions/ecg.html#ecg-peaks).

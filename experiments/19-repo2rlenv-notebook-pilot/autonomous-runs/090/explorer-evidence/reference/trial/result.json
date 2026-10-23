@@ -1,0 +1,107 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 570,
+        "exists": true,
+        "path": "hrv_time.csv",
+        "sha256": "4da5b39c6b59c52576201d9534822e520f2a8e4b5167c06e83a6174db347310f"
+      },
+      {
+        "bytes": 258,
+        "exists": true,
+        "path": "hrv_frequency.csv",
+        "sha256": "81749e0b404a7d3e2821a065cf952547bc02a4c08a4356508a0e887b682f4959"
+      },
+      {
+        "bytes": 1968,
+        "exists": true,
+        "path": "hrv_nonlinear.csv",
+        "sha256": "8afda790b4fb63cca4ce57cbe0fa510a0f8618a0a4ebd6dd4ef14519ac02d279"
+      },
+      {
+        "bytes": 2796,
+        "exists": true,
+        "path": "hrv_indices.csv",
+        "sha256": "e2dc559a09f799377f4981cd57ba5dade9d889d63a23e52d4dab92a882f875c9"
+      }
+    ],
+    "declared_artifacts_present": true,
+    "semantic_fidelity_validated": false
+  },
+  "candidate_sha256": {
+    "analysis.py": "78a29e616bd988407ce7d2dc4142f0f6c74a49b00e0d8dd081de6d4a9bcbc9c2",
+    "inputs.json": "cd8699fce7c9f70cc9849c470149c1f52bf89ee9d3b9db920c7e92986050ac0e",
+    "pyproject.toml": "9d4ac0bde448bc3c2525c25309f24fe966acd42c6dc22bb0f1ad96ee991b45a4",
+    "stage-inputs.sh": "82d9390ecf813c28d9a5967283e0670d0a7fc727300098f58879cf8b34b5b881",
+    "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "directory": "/work/run",
+    "elapsed_seconds": 6.182413101196289,
+    "exit_code": 0,
+    "finished": 1792741160.2732253,
+    "label": "command-2b81878e3c89428389552cd7bac75232",
+    "log": "",
+    "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "peak_child_rss_kib": 212564,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792741154.0908122,
+    "timed_out": false,
+    "timeout_seconds": 600
+  },
+  "input_observations": {
+    "files": [
+      {
+        "bytes": 1784368,
+        "input_preview": {
+          "byte_prefix_truncated": true,
+          "compression": "none",
+          "displayed_lines_truncated": true,
+          "sample_sha256": "0b85cb9667e75fd0cb6b52e0e6b709b89526fdcad1d9be2267d0b1eaf02118fb",
+          "sampled_bytes": 4096,
+          "scope": "Byte prefix only; no inferred header, schema or record count.",
+          "status": "utf8_text_prefix",
+          "text": "ECG,PPG,RSP\n0.003766485194893143,-0.1025390625,0.4946524989068091\n-0.01746591697758673,-0.10375976562502318,0.5024827168260766\n-0.015679137008246923,-0.107421875,0.5111024935799695\n-0.0015977050524144634,-0.11085510253907337,0.5187909668065165\n"
+        },
+        "local_path": "/inputs/bio_resting_5min_100hz.csv",
+        "sha256": "6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385",
+        "source": "https://raw.githubusercontent.com/neuropsychology/NeuroKit/ff419d983568ef492eb8d229af643c0ef0100b32/data/bio_resting_5min_100hz.csv"
+      }
+    ]
+  },
+  "inputs_after": {
+    "files": 1,
+    "staged_inputs_verified": true
+  },
+  "reference_tests_remaining": 1,
+  "reference_tests_used": 1,
+  "semantic_fidelity_validated": false,
+  "setup": {
+    "argv": [
+      "sh",
+      "-eu",
+      "/work/setup.sh"
+    ],
+    "directory": "/work",
+    "elapsed_seconds": 4.240195035934448,
+    "exit_code": 0,
+    "finished": 1792741151.348325,
+    "label": "command-b46de9b15dcc4c5ab05453adffab4691",
+    "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 240.2 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 29 packages in 143ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 29 packages in 0.85ms\nDownloading matplotlib (9.4MiB)\nDownloading kiwisolver (1.4MiB)\nDownloading scipy (33.7MiB)\nDownloading pywavelets (4.3MiB)\nDownloading setuptools (1.0MiB)\nDownloading scikit-learn (8.7MiB)\nDownloading numpy (15.9MiB)\nDownloading pillow (6.8MiB)\nDownloading pandas (11.7MiB)\nDownloading fonttools (5.1MiB)\n Downloaded kiwisolver\n Downloaded setuptools\n Downloaded pywavelets\n Downloaded fonttools\n Downloaded pillow\n Downloaded scikit-learn\n Downloaded matplotlib\n Downloaded numpy\n Downloaded pandas\n Downloaded scipy\nPrepared 28 packages in 628ms\nInstalled 28 packages in 895ms\n + certifi==2026.10.19\n + charset-normalizer==3.5.2\n + cloudpickle==3.1.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + joblib==1.6.0\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + narwhals==2.27.1\n + neurokit2==0.2.13\n + numpy==2.5.4\n + packaging==26.3\n + pandas==2.3.3\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==3.0.0\n + pytz==2026.5\n + pywavelets==1.10.0\n + requests==2.34.2\n + scikit-learn==1.9.1\n + scipy==1.18.1\n + setuptools==81.0.0\n + six==1.17.0\n + threadpoolctl==3.7.0\n + tzdata==2026.5\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged /inputs/bio_resting_5min_100hz.csv 1784368 bytes\nsha256 6a33ff8ae229f608354563044ff4a4d1c4e927c817e9269a4dec6173abefc385\n",
+    "log_sha256": "9e9c9737272dd56066d973e6b75a39ba1a7792eaf0472a4aa7c1b45af935fe78",
+    "peak_child_rss_kib": 79904,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792741147.10813,
+    "timed_out": false,
+    "timeout_seconds": 1743
+  },
+  "status": "reference_executed",
+  "test": 2
+}
