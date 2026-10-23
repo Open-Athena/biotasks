@@ -47,3 +47,7 @@ Prepared terminal accounting and a bounded archive reader for the existing contr
 ## 2026-10-23 — positive controls, incomplete dependency receipt
 
 The existing control handle succeeded in 586.168 seconds (0.651298 allocated CPU-hours). Hash-verified the 44,324-byte archive and all reported outputs. Nop0/oracle1, 1 F2P repaired, 10 P2P passing in both arms, oracle exit0, twelve files unchanged. Both verifier logs show successful offline-cache editable rebuilds. The supervisor captured no wheel receipt, and nested archive inspection found no executed receipt line; preserved this provenance gap rather than inventing dependency versions or rerunning. See `control-diagnosis.md`. Reconciled CPU allocation and reserved 1/6 CPU-hour for later cleanup. No model calls.
+
+## 2026-10-23 — archival and owned cleanup verified
+
+All sixteen reviewed reconstruction/control snapshot objects passed anonymous HF readback (receipt on #33 branch). The journal then submitted one reserved ownership-gated cleanup attempt. It succeeded in 13.45 seconds, 0.007472 CPU-hours; the 623-byte output archive was downloaded and hash-verified. The cleanup receipt proves no owned images or containers remain and cleanup tools were removed. Total #34 allocation is 2.211349 CPU-hours. The small cleanup archive remains durably local pending HF preservation. Dependency receipt capture remains unresolved; no rerun was launched.
