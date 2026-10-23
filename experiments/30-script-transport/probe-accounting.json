@@ -1,5 +1,5 @@
 {
-  "scope": "All three original probe handles; no resubmission; synthetic Docker evidence, not PR recovery",
+  "scope": "All submitted original probe handles; no resubmission; synthetic Docker evidence, not PR recovery",
   "runs": [
     {
       "job_id": "/exedev/biotasks30-transport-001",
@@ -74,13 +74,38 @@
       },
       "result_log_sha256": "7add1824889605e41741f6304c76301d9fd624520c85593978def41676f4ca1f",
       "result_path": "attempts/003/result.json"
+    },
+    {
+      "job_id": "/exedev/biotasks30-transport-004",
+      "state": "succeeded",
+      "tasks": [
+        {
+          "state": "succeeded",
+          "attempts": 1,
+          "exit_code": 0,
+          "started_utc": "2026-10-23T17:04:29.906000+00:00",
+          "finished_utc": "2026-10-23T17:04:44.829000+00:00",
+          "allocated_cpu": 2.0,
+          "attempt_seconds": 14.92300009727478,
+          "allocated_attempt_cpu_hours": 0.0082905556095971
+        }
+      ],
+      "checkpoint": "4f2fad236fadb20650afe6d1d56d6afdf1bbd17a",
+      "payload_sha256": {
+        "remote_probe.py": "1c14cffac3d2f83ec3b87f1b22235f4c5a9e91e1683b649c1f68092aae6ddfaa",
+        "original_docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+        "candidate_docker.py": "fed64fdffe68249fc1c24f89849181f8da3890b778ee8b6e783a6cd533a9c522",
+        "docker-tool.json": "3400f3b5b214105b9efe2cf2bb7dc6a7e02a372735121594eec39731023c14e2"
+      },
+      "result_log_sha256": "e5df7d154a6fa7a2358ee2861c2a031e2979e76a79457b268300a31a1711f0db",
+      "result_path": "attempts/004/result.json"
     }
   ],
   "all_terminal": true,
   "one_attempt_each": true,
-  "allocated_attempt_cpu_hours": 0.04612722211413914,
+  "allocated_attempt_cpu_hours": 0.05441777772373624,
   "model_calls": 0,
   "model_cost_usd": 0,
   "new_capacity": false,
-  "cleanup": "001 failed before first Docker process/container creation; 002 and003 verify owned containers absent and tool files removed. Shared immutable input image retained."
+  "cleanup": "001 failed before first Docker process/container creation; 002/003/004 results verify owned containers absent and tool files removed. Shared immutable input image retained."
 }
