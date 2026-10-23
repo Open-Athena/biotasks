@@ -1,0 +1,89 @@
+{
+  "repo": "macs3-project/MACS",
+  "pr": 742,
+  "selection": "First completed native census row with removed compiled extensions and collection errors in both stages; static check confirms no new files in source/test patches",
+  "base_sha": "26f6709ede9d69e7a4091c7e89fb0639006a6f8e",
+  "head_sha": "b0e3a8a28778e8f99a0cc2713e18d4be121c3922",
+  "original_archive_sha256": "9c5a19b814006b3df98d085de203807b165c6849fa4f81cd7b85f915812e7d43",
+  "original_stage_members": [
+    {
+      "path": "native-observations/batch-0003/exec-0004-pr-742.json.gz",
+      "sha256": "6db32c00619d7e66fffa4424bc6a93d964628b1686190d7aecfc99b2f6a83494"
+    },
+    {
+      "path": "native-observations/batch-0003/exec-0005-pr-742.json.gz",
+      "sha256": "cdaac5777d2039989a9b97ba27d6fa4223bdcc95ea2663b82f5275725cf180d1"
+    }
+  ],
+  "commands": [
+    "cd /workspace && python -m pytest -v test/test_CallPeakUnit.py test/test_ScoreTrack.py"
+  ],
+  "rebuild_cmds": [
+    "apt-get update -qq && apt-get install -y git build-essential curl ca-certificates zlib1g-dev",
+    "cd /workspace && git submodule update --init --recursive",
+    "pip install numpy>=1.25 Cython>=3.0 scipy pandas anndata hmmlearn scikit-learn pytest psutil",
+    "cd /workspace && pip install -e ."
+  ],
+  "arms": [
+    {
+      "name": "original",
+      "stages": {
+        "pre": {
+          "sha256": "945c644462054145ac7c0873e419db6915a048fa5f42d8809f5e78d58f0f7717",
+          "bytes": 17377
+        },
+        "post": {
+          "sha256": "1cee32dc02ae99d96d35331ace647e1aa3b90a83cba3f5f2d292dd996da6e8f5",
+          "bytes": 21572
+        }
+      }
+    },
+    {
+      "name": "rebuild",
+      "stages": {
+        "pre": {
+          "sha256": "ee00f8f5873354cc699c66032c39aa88c137dfd7fe827ce59a21dd5b3c0bd243",
+          "bytes": 17690
+        },
+        "post": {
+          "sha256": "e2df7bd30cbe65ccf5a8ed283b5efba6a925672e75b6dee31081b3d407d76864",
+          "bytes": 21885
+        }
+      }
+    }
+  ],
+  "files": {
+    "source.patch": {
+      "sha256": "0ec14f9c773b8e97791be9bef70e369a53b8df2dd38ad4ffb9d421f234e05301",
+      "bytes": 4125
+    },
+    "test.patch": {
+      "sha256": "34a811df9dbdc6f49164668922dc97ff6fd6d5442eb1e1662928099c1d017a9d",
+      "bytes": 16868
+    },
+    "original-pre.sh": {
+      "sha256": "945c644462054145ac7c0873e419db6915a048fa5f42d8809f5e78d58f0f7717",
+      "bytes": 17377
+    },
+    "original-post.sh": {
+      "sha256": "1cee32dc02ae99d96d35331ace647e1aa3b90a83cba3f5f2d292dd996da6e8f5",
+      "bytes": 21572
+    },
+    "rebuild-pre.sh": {
+      "sha256": "ee00f8f5873354cc699c66032c39aa88c137dfd7fe827ce59a21dd5b3c0bd243",
+      "bytes": 17690
+    },
+    "rebuild-post.sh": {
+      "sha256": "e2df7bd30cbe65ccf5a8ed283b5efba6a925672e75b6dee31081b3d407d76864",
+      "bytes": 21885
+    }
+  },
+  "default_off_original_stage_parity": true,
+  "baseline_scripts_exactly_regenerated": true,
+  "transport": "unchanged argv; all scripts below128KiB",
+  "selection_limit": "Static compatibility screen only; native base-stage collection has not been retested after rebuild",
+  "original_stage_pre_collection_errors": 2,
+  "original_stage_post_collection_errors": 2,
+  "model_calls": 0,
+  "live_execution": false
+}
