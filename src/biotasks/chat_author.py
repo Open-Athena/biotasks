@@ -313,7 +313,7 @@ class GLMChatAuthor:
                         and failure["http_status"] == 400
                         and self.context_recovery_notice is not None
                         and self.output_format == "tools"
-                        and "shell" in names
+                        and names - {"submit_artifact", "revise_artifact"}
                     ):
                         reduced = _restart_context(messages, self.context_recovery_notice)
                         if reduced is not None:
@@ -393,7 +393,7 @@ class GLMChatAuthor:
                 if (
                     self.context_recovery_notice is not None
                     and self.output_format == "tools"
-                    and "shell" in names
+                    and names - {"submit_artifact", "revise_artifact"}
                     and (max_turns is None or turn < max_turns)
                 ):
                     reduced = _restart_context(messages, self.context_recovery_notice)

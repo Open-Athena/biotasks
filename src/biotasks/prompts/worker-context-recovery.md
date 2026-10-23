@@ -11,8 +11,12 @@ not new tool executions. Do not assume a candidate passed unless its recorded
 controller feedback says so. Do not repeat completed side effects merely because
 the conversation restarted.
 
-Reinspect files in your supplied working directory as needed to recover useful
-code and observations. Prior scratch files are exploratory evidence, not accepted
+Use the tools actually supplied in this stage to recover useful observations.
+A read-only inspection stage has no shell or writable workspace; use only its
+cataloged package/reference tools. Text files may contain a single enormous line:
+use column windows as well as line ranges, and respect explicit slice metadata.
+Do not repeat a bulk read that fills the context. When a working directory is
+supplied, prior scratch files are exploratory evidence, not accepted
 answers or proof of correctness. Continue toward submitting the required complete
 artifact or a supported blocked disposition. Do not reconstruct the whole earlier
 conversation, weaken the scientific contract, or invent missing observations.

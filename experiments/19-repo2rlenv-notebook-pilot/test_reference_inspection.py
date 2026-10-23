@@ -4,6 +4,7 @@ import asyncio
 import hashlib
 import json
 import time
+from copy import deepcopy
 
 import pytest
 from reference_inspection import ReferenceInspection, reference_catalog
@@ -30,6 +31,40 @@ def test_full_identity_and_requested_lines_without_execution(tmp_path):
     assert result["lines"] == [{"line": n, "text": "value"} for n in range(301, 306)]
     assert (tmp_path / "result.py").read_bytes() == content
     assert sorted(p.name for p in tmp_path.iterdir()) == ["result.py"]
+
+
+def test_compact_single_line_has_explicit_windows_and_allows_full_read(tmp_path):
+    text = json.dumps({"records": ["évidence" * 1000, "terminal"]}, ensure_ascii=False)
+    content = text.encode()
+    source = inspector(tmp_path, content, "compact.json")
+    first = json.loads(asyncio.run(source.read_reference_file("compact.json")))
+    assert first["lines"] == [{"line": 1, "text": text[:1000]}]
+    assert first["line_characters"] == {"1": len(text)} and first["sliced_lines"] == [1]
+    assert first["bytes"] == len(content) and first["total_lines"] == 1
+    second = json.loads(
+        asyncio.run(source.read_reference_file("compact.json", start_column=1001, end_column=None))
+    )
+    assert first["lines"][0]["text"] + second["lines"][0]["text"] == text
+    assert second["sha256"] == first["sha256"] and second["sliced_lines"] == [1]
+    full = json.loads(asyncio.run(source.read_reference_file("compact.json", end_column=None)))
+    assert full["lines"] == [{"line": 1, "text": text}] and full["sliced_lines"] == []
+
+
+@pytest.mark.parametrize(
+    "columns",
+    [
+        {"start_column": 0},
+        {"end_column": True},
+        {"start_column": True},
+        {"start_column": 3, "end_column": 2},
+    ],
+)
+def test_invalid_column_window_returns_no_content(tmp_path, columns):
+    source = inspector(tmp_path)
+    value = json.loads(
+        asyncio.run(source.handlers["read_reference_file"](path="nested/result.txt", **columns))
+    )
+    assert "error" in value and "lines" not in value
 
 
 @pytest.mark.parametrize("change", ["same_size", "different_size", "missing", "directory"])
@@ -113,13 +148,16 @@ def test_expired_campaign_is_not_converted_to_retryable_tool_error(tmp_path):
 
 
 @pytest.mark.parametrize("inspect_packages", [False, True])
-def test_specification_worker_reads_recorded_reference_then_submits(tmp_path, inspect_packages):
+@pytest.mark.parametrize("recover_context", [False, True])
+def test_specification_worker_reads_recorded_reference_then_submits(
+    tmp_path, inspect_packages, recover_context
+):
     from run_specification import run
     from specification_inputs import INPUT_FILES, specification_context
 
     reference = tmp_path / "reference"
     reference.mkdir()
-    content = b"FORMAT 1\nNAME observed\n"
+    content = b"FORMAT 1" + (b" observed" * 3000 if recover_context else b"") + b"\nNAME observed\n"
     output = record("result.txt", content)
     values = {path: {} if path.endswith(".json") else "" for path in INPUT_FILES}
     values.update(
@@ -168,18 +206,37 @@ def test_specification_worker_reads_recorded_reference_then_submits(tmp_path, in
     calls = []
 
     async def complete(payload):
-        calls.append(payload)
+        calls.append(deepcopy(payload))
         names = {item["function"]["name"] for item in payload["tools"]}
         expected = {"read_reference_file", "submit_artifact", "revise_artifact"}
         if inspect_packages:
             expected.update({"list_package_files", "search_package", "read_package_file"})
         assert names == expected
         if len(calls) == 1:
-            name, args = "read_reference_file", {"path": "result.txt", "end_line": 1}
+            name, args = (
+                "read_reference_file",
+                {
+                    "path": "result.txt",
+                    "end_line": 1,
+                    "end_column": None,
+                },
+            )
         else:
-            reply = json.loads(payload["messages"][-1]["content"])
-            assert reply["sha256"] == output["sha256"]
-            assert reply["lines"] == [{"line": 1, "text": "FORMAT 1"}]
+            if len(calls) == 2:
+                reply = json.loads(payload["messages"][-1]["content"])
+                assert reply["sha256"] == output["sha256"]
+                assert reply["lines"] == [{"line": 1, "text": content.splitlines()[0].decode()}]
+                if recover_context:
+
+                    class Rejected(Exception):
+                        status_code = 400
+                        body = {"error": {"message": "maximum context length exceeded"}}
+
+                    raise Rejected()
+            else:
+                assert payload["messages"][:2] == calls[0]["messages"]
+                assert "read-only inspection stage" in payload["messages"][-1]["content"]
+                assert not any(message.get("tool_calls") for message in payload["messages"])
             name, args = (
                 "submit_artifact",
                 {
@@ -231,10 +288,15 @@ def test_specification_worker_reads_recorded_reference_then_submits(tmp_path, in
             complete=complete,
         )
     )
-    assert len(calls) == 2
+    assert len(calls) == (3 if recover_context else 2)
     result = json.loads((root / "result.json").read_text())
     assert result["reference_inspection_enabled"]
     assert result["package_inspection_enabled"] is inspect_packages
     assert not result["scientific_analysis_executed"] and not result["construction_run"]
     assert (reference / "trial/outputs/result.txt").read_bytes() == content
     assert (root / "specify/artifact-stage/trace/1/tool-result.json").exists()
+    if recover_context:
+        failure = json.loads((root / "specify/artifact-stage/trace/2/failure.json").read_text())
+        assert failure["failure_category"] == "provider_context_length"
+        assert result["request_states"] == {"response_received": 2, "http_error_received": 1}
+        assert result["model_request_slots_used"] == 3

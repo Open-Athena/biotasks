@@ -1048,7 +1048,10 @@ class ContextRejected(Exception):
 
 
 @pytest.mark.parametrize("failure", ["context_rejection", "truncated_response"])
-def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path, failure):
+@pytest.mark.parametrize("inspection_tool", ["shell", "read_reference_file"])
+def test_explicit_context_recovery_preserves_candidates_and_accounting(
+    tmp_path, failure, inspection_tool
+):
     payloads, actions = [], []
 
     async def complete(payload):
@@ -1057,14 +1060,19 @@ def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path,
         if index == 4:
             if failure == "context_rejection":
                 raise ContextRejected()
-            result = reply("shell", {"value": 999}, finish="length", call_id="partial")
+            result = reply(inspection_tool, {"value": 999}, finish="length", call_id="partial")
             result["usage"] = {
                 "prompt_tokens": 261844,
                 "completion_tokens": 300,
                 "total_tokens": 262144,
             }
             return result
-        name = {1: "submit_artifact", 2: "revise_artifact", 3: "shell", 5: "revise_artifact"}[index]
+        name = {
+            1: "submit_artifact",
+            2: "revise_artifact",
+            3: inspection_tool,
+            5: "revise_artifact",
+        }[index]
         return reply(name, {"value": index}, call_id=str(index))
 
     async def handler(**arguments):
@@ -1088,7 +1096,7 @@ def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path,
     )
     args = options(
         tmp_path,
-        {name: handler for name in ("shell", "submit_artifact", "revise_artifact")},
+        {name: handler for name in (inspection_tool, "submit_artifact", "revise_artifact")},
         turns=5,
     )
     result = asyncio.run(author(**args))

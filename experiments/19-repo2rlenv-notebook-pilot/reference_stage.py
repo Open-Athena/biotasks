@@ -48,7 +48,7 @@ async def stage(
     prompt = files("biotasks.prompts").joinpath(prompt_name + ".md").read_text()
     recovery_notice = (
         files("biotasks.prompts").joinpath("worker-context-recovery.md").read_text()
-        if shell is not None
+        if shell is not None or extra_tools
         else None
     )
     empty_retry_notice = (

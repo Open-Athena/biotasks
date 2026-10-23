@@ -1,0 +1,29 @@
+{
+  "recorded_at": "2026-10-23T11:13:56.856970+00:00",
+  "purpose": "General compact-text inspection and existing-context-recovery coverage for read-only tool stages.",
+  "change": "Reference text supports inclusive Unicode column windows, default1\u20131000 per selected line, reporting full line lengths and sliced line IDs. Larger windows and end_column:null remain available; no API token/input/response cap was added. Full-file hash/size verification still precedes returning any fragment.",
+  "recovery": "Reuse the existing explicit context restart for inspection-tool sessions as well as shell sessions. Keep original instructions, latest candidate/patch/feedback chain, request ledger and deadline; do not replay completed actions or execute partial responses. No recovery for unchanged original input, authentication/server/uncertain transport failures or preparation-only sessions.",
+  "checks": {
+    "related_passed": 63,
+    "related_seconds": 3.63,
+    "ordinary_package_passed": 176,
+    "ordinary_package_seconds": 16.07,
+    "distinct_total": 239,
+    "combined_wall_seconds": 21.85,
+    "peak_rss_kib": 142344,
+    "quality": "Root/explicit experimental Ruff and format,ty,required hooks passed."
+  },
+  "development_failures": "Recovery fixture initially had no history large enough to reduce; then it retained mutable payload references. Updated the synthetic large-observation fixture and copied captured requests. One format adjustment followed. Original live task/source/artifacts were unchanged.",
+  "live_validation": false,
+  "frozen_cohorts015_and016_changed": false,
+  "new_model_calls": 0,
+  "new_hosts": 0,
+  "checked_files": {
+    "experiments/19-repo2rlenv-notebook-pilot/reference_inspection.py": "81a929e8a5acfb290c904f4610deacecf7c150907a32b75d2a0d6772dd1124b8",
+    "experiments/19-repo2rlenv-notebook-pilot/reference_stage.py": "cb5158155d50d7d2fee2952d53c26c4c895eb5ec3c939c776afc28f4ee2e2689",
+    "experiments/19-repo2rlenv-notebook-pilot/test_reference_inspection.py": "7179d5a99ebedd9e58546252e88d993d27e1b3a66921470e1f62379bf01ddfee",
+    "src/biotasks/chat_author.py": "0a65f4c1e7f4e75d9fa6a8795bffcf687cfb980d9a3861f2bdfdd9969de02e52",
+    "src/biotasks/prompts/worker-context-recovery.md": "004df19013a31a1837810ca96d57e55eb5b3436a2bc8ec6d7faab5aeb5eefc6b",
+    "tests/test_chat_author.py": "204b9d57a8212a31970a42bfd5109e4af68ef128020b923817af1a72e9b616b0"
+  }
+}

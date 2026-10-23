@@ -1,0 +1,26 @@
+{
+  "campaign": 99,
+  "classification": "single_line_reference_read_overflowed_context",
+  "original_failure_unchanged": true,
+  "scientific_acceptance": null,
+  "source_rejection": false,
+  "request_before_failure": 5,
+  "prior_prompt_tokens": 50278,
+  "tool_name": "read_reference_file",
+  "arguments": {
+    "end_line": 60,
+    "path": "processed_spectra.json",
+    "start_line": 1
+  },
+  "returned_lines": 1,
+  "total_file_lines": 1,
+  "tool_output_characters": 6177500,
+  "tool_record_bytes": 6377587,
+  "tool_record_sha256": "1fcb10cb6ba35eae89a16aa7546521250ac79a50973034df605bfe1d5c735001",
+  "failed_next_request": 6,
+  "failed_next_request_bytes": 6564698,
+  "evidence": "Sealed original manifest and two original response/tool records independently read back and checksum-verified; full archive not downloaded.",
+  "factory_gap": "Line-only inspection returned a complete compact JSON line of over six million characters. Read-only stages were excluded from existing context-restart eligibility.",
+  "new_model_calls": 0,
+  "task_bytes_changed": false
+}
