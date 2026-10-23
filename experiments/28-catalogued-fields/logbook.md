@@ -464,3 +464,8 @@ This proves an upstream transport failure mechanism consistent with nine termina
 
 
 Published argument-transport attribution comment6358928373with exact comment readback, unchanged concise issue body and OPEN/agent-generated verification. The comment separates the synthetic upstream mechanism from actual per-PR replay, and recorded direct-status/data flags from public release readiness. Cobrapy original06:29:55metadata now reaches512entries/168paired starts160returns/11emissions/eight original execution exceptions, still11calls/$0.349488and no controls. An authoritative06:31:17query confirms the same first handle RUNNING; a second600-second foreground event observer waits without APIpolling, files or native/model actions.
+
+
+Completed-native Cobrapy ledger records519entered+71backlog=590identities, zero assumed suitability for backlog. Its stop_reason is the frozen orchestration gate insufficient_remaining_native_stage_time_for_new_batch:1260seconds (21minutes) must remain before a new batch. This is our declared scheduling boundary, not an upstream rejection or model-budget exhaustion. The completed-native06:38:48source/contract snapshot has170validation starts/326unique refs/all12exports. All326exact root notices are prepared in20.37seconds/12,966,976bytes and hash/length verified, one notice hash throughout. Terminal binding/source-data eligibility still pending.
+
+At06:44:26the original controls have20completed, one running and three unstarted; no reward is inferred from CLI status. The original300-second-verifier/one-hour allocation remains unchanged. The second600-second event observer previously expired0without receipt and left no process/files; no restart.
