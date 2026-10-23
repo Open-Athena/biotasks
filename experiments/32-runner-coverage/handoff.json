@@ -3,12 +3,12 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 2,
+  "remote_jobs": 3,
   "remaining": [
-    "Deleted-target comparison complete with zero recovered tasks; missing historical chemap dependency remains, no per-PR repair",
-    "Exercise separate strict-pytest completion/SGR candidate on frozen live cases; outer-only candidate remains insufficient",
-    "Determine safe generic targeting and runner support design",
-    "Run predeclared comparisons; report static coverage separately from task recovery"
+    "MNE full-suite smoke still times out at 1200 seconds after partial progress; no native PR validation or image",
+    "Live acceptance of default-off targeting and strict completion candidates remains unproven",
+    "SAMtools composite C/Perl/shell parser contract remains design-only; original log audit confirms collisions",
+    "Review whether further bounded experiments justify implementation; no production promotion"
   ],
   "local_inputs_retained": [
     {
@@ -67,9 +67,8 @@
     "native_and_exported": true,
     "scope": "Synthetic plain/SGR expected-status fixtures; no original task regrading"
   },
-  "all_remote_jobs_terminal": false,
-  "active_checkpoint": "4b3bc6569a0fe2d59fce1a8fd1285df1efe67897",
-  "allocated_cpu_hours": 0.7212466663784451,
+  "all_remote_jobs_terminal": true,
+  "allocated_cpu_hours": 2.162482221921285,
   "owned_resources_removed": true,
   "completion_gate": {
     "ready_for_live_acceptance": false,
@@ -121,9 +120,6 @@
     "archive_verified": true,
     "cleanup_verified": true
   },
-  "active_job": "/exedev/biotasks32-mne-longcheck-001",
-  "active_worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-1",
-  "active_max_allocated_cpu_hours": 5,
   "samtools_contract": {
     "head": "735c9c39fcffc22bc4085f5071bbb9cab70d16bd",
     "evidence": "samtools-contract-results.json",
@@ -133,10 +129,17 @@
     "adapter_implemented": false
   },
   "mne_longcheck": {
-    "state": "submitted",
-    "max_allocated_cpu_hours": 5,
+    "state": "failed_smoke_timeout",
+    "attempts": 1,
+    "allocated_cpu_hours": 1.44123555554284,
     "post_check_timeout_seconds": 1200,
     "original_timeout_seconds": 300,
+    "progress_at_timeout_percent": 61,
+    "replay_actions_matched": 12,
+    "native_pr_validation_run": false,
+    "retained_image": null,
+    "archive_readback_verified": true,
+    "cleanup_verified": true,
     "model_calls": 0
   },
   "samtools_original_runner_audit": {

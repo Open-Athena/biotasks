@@ -44,7 +44,7 @@ def main():
                 target.write_bytes(data)
                 target.chmod(0o600)
             members.append({'path': member.name, 'bytes': len(data), 'sha256': sha(target)})
-    report = json.loads((dest / 'mne-longcheck-result.json').read_text())
+    report = json.loads((dest / 'mne-recorded-result.json').read_text())
     assert report['run_id'] == 'biotasks32-mne-longcheck-001' and report['model_calls'] == 0
     assert report['payload_sha256'] == '99cf1811aa3d2165f925072492f8a360ffff7b8d6460972279fe26f80e739f4f'
     assert report['post_bootstrap_timeout_seconds'] == 1200 and report['original_post_bootstrap_timeout_seconds'] == 300
