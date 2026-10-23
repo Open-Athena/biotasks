@@ -10,6 +10,7 @@ import importlib.util
 import json
 import math
 from pathlib import Path
+import re
 import shutil
 import sys
 import tarfile
@@ -76,10 +77,11 @@ def reconcile_identities(identities, ledger, observations):
     raw = ledger.get('backlog_pr_numbers', identities)
     if ledger.get('state') != 'running':
         assert raw == pending
+    entered_set = set(entered_all)
     return {'native_unique_returned_count': len(returned_all),
         'native_returned_appearances': returned_appearances,
         'native_list_available': any(row['native_list_available'] for row in batches),
-        'returned_but_unentered_pr_numbers': [n for n in identities if n in returned_all and n not in set(entered_all)],
+        'returned_but_unentered_pr_numbers': [n for n in identities if n in returned_all and n not in entered_set],
         'native_entered_pr_numbers': entered_all, 'native_discovery_omitted_pr_numbers': omitted_all,
         'backlog_count': len(pending), 'backlog_sha256': hashlib.sha256(json.dumps(pending).encode()).hexdigest(),
         'original_parent_backlog_count': len(raw),
@@ -225,6 +227,15 @@ def assess(state, selected):
     extracted = result / 'analysis-control-files'; extracted.mkdir(exist_ok=True)
     observations, hashes, bootstrap, exports = scan_phase(phase, extracted) if phase.exists() else ({}, {}, [], [])
     coverage = reconcile_identities(identities, ledger, observations)
+    for batch in coverage['batches']:
+        log = result / f"history-batch-{batch['index']:04d}.log"
+        batch['original_cli_log_sha256'] = sha(log) if log.exists() else None
+        if log.exists() and batch['native_cli_exit_code'] not in (None, 0, 1):
+            with log.open('rb') as source:
+                source.seek(max(0, log.stat().st_size - 16384))
+                tail = source.read().decode('utf-8', errors='replace')
+            found = re.findall(r'^([A-Za-z_][A-Za-z_0-9]*(?:Error|Exception)):', tail, re.MULTILINE)
+            batch['original_cli_exception_type'] = found[-1] if found else None
     unchanged = read(result / 'fresh-task-files-unchanged.json', {})
     if exports:
         assert unchanged.get('verified') and unchanged['before'] == unchanged['after'] == hashes
@@ -246,6 +257,7 @@ def assess(state, selected):
     decisions = [e for e in events if e['event'] == 'native_decision']
     cpu = sum((Decimal(str((stamp(a['finished_at']) - stamp(a['started_at'])).total_seconds())) * 4 / 3600 for a in record['attempts']), Decimal('0'))
     output = {'checked_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'assessment_source_sha256': sha(Path(__file__)),
         'scope': 'Original history evidence only; read-only accounting and exact pinned-parser/grade consistency audit. No tests, task changes, normalization, regrading, model calls or baseline-result mixing.',
         'repo': selected['repo'], 'field': selected['field_label'], 'ref': selected['ref'], 'run_id': run,
         'wrapper_state': record['state'], 'native_parent_state': ledger.get('state'),
@@ -253,6 +265,8 @@ def assess(state, selected):
         'frozen_history_identities': len(identities), 'coverage': coverage, 'bootstrap': bootstrap,
         'native_skip_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'skip')),
         'native_error_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'error')),
+        'campaign_reservation_failures': [e for e in events if e['event'] == 'campaign_reservation_unavailable'
+            or (e['event'] == 'campaign_cost_reservation' and not e['allowed'])],
         'native_emission_events': [e['name'] for e in decisions if e['outcome'] == 'emit'],
         'native_exports_manifest_present': len(exports), 'task_controls': tasks,
         'raw_primary_verified_tasks': sum(t['raw_primary_verified'] for t in tasks),
