@@ -1,0 +1,917 @@
+{
+  "scope": "Input/scheduling plan only; no task rebuilt or executed",
+  "sources": [
+    {
+      "path": "history-wide/results/matchms__matchms.json",
+      "sha256": "792ab86ed6e57ac5bdb798e33c8a69923540b27fa0d7d14edada7e0768f001ed"
+    },
+    {
+      "path": "archives/drafts/matchms__matchms-unpublished-private-manifest.json",
+      "sha256": "4ff06d76008e38f1679413e9b5615b4e8e68537c23e3a98915ed35c1521ca2db"
+    },
+    {
+      "path": "history-wide/results/OHIF__Viewers.json",
+      "sha256": "55b445f3293407b12c020c764072cc4a27ed84fa95f59f747e46587e672c9c4c"
+    },
+    {
+      "path": "archives/OHIF__Viewers-manifest.json",
+      "sha256": "b91cf20fb8682b0e21fd6ec89567bb1c9ee5431850c48b30ae6c8cd54f5aa4b0"
+    },
+    {
+      "path": "history-wide/results/scverse__scanpy.json",
+      "sha256": "c6a71e159276d1695747d6b9eebf7fef409ad83777cd2d9fe695bce79be006c6"
+    },
+    {
+      "path": "archives/scverse__scanpy-manifest.json",
+      "sha256": "338729ce28d5e51433eb092cf107ed90763d24e05ed375dee87f3b437e95afac"
+    }
+  ],
+  "original_unstarted_commands": 14,
+  "proposed_control_commands": 20,
+  "why_more_than_unstarted": "Two partly completed pairs need both controls on the reconstructed image (16 scheduling commands); Scanpy needs two arms with both controls (4 more).",
+  "repositories": [
+    {
+      "repo": "matchms/matchms",
+      "slug": "matchms__matchms",
+      "unstarted": [
+        {
+          "task": "matchms__matchms-671",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-675",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-675",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-70",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-70",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-98",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "matchms__matchms-98",
+          "agent": "oracle",
+          "state": "unstarted"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "matchms__matchms-671",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": 0.0,
+              "state": "completed"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/solution/patch.diff",
+              "bytes": 1473,
+              "mode": "0o644",
+              "sha256": "6bf393146b6c24fa79efb08b38a8ac7d6ce064829fb774c2e21752058c8f0435"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/tests/p2p.json",
+              "bytes": 2661,
+              "mode": "0o644",
+              "sha256": "a43c3f91ae7ab0c50151eb00ccef8a63e7ae4d6cfd2c36af9dc6266f79cbc772"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/tests/f2p.json",
+              "bytes": 101,
+              "mode": "0o644",
+              "sha256": "8b0402135bf6acca57fc1ebed203d8fc45eb4902fd6065d8a612aa7cd3803057"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/tests/test.sh",
+              "bytes": 5314,
+              "mode": "0o755",
+              "sha256": "d70185e07c45e8f54af05a8fda69ab0596744d654f143b76ecd9708c22c5559c"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/instruction.md",
+              "bytes": 549,
+              "mode": "0o644",
+              "sha256": "a31534c6a60c30923ece3ccde4e22f1ca73cdde325a1a047bfdd95a064cff86a"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/environment/Dockerfile",
+              "bytes": 2425,
+              "mode": "0o644",
+              "sha256": "fb51733b797379c87e4af64763a1a876f307e7251d41871c83804a709c3d72df"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-671/task.toml",
+              "bytes": 4535,
+              "mode": "0o644",
+              "sha256": "a94c64643c28975519eafea88346c9586fff8ac5b8bb09d1cbbdb64e46fcf302"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "matchms__matchms-675",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/solution/patch.diff",
+              "bytes": 3654,
+              "mode": "0o644",
+              "sha256": "57b1fc33b5522e68ea8071fd57a339c424cb1f8e0360a1336fad274d345423cd"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/tests/p2p.json",
+              "bytes": 2098,
+              "mode": "0o644",
+              "sha256": "adcd42029ec5c68c8ce556d2fca7fac2830758208df68606c9dfcf438c19fe7d"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/tests/f2p.json",
+              "bytes": 198,
+              "mode": "0o644",
+              "sha256": "1e836e1de4cdd3eaab24adf45b243a815643bb729a05ecd2fefbdf64a23601f0"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/tests/test.sh",
+              "bytes": 4797,
+              "mode": "0o755",
+              "sha256": "baf6a46c655104bd659f8b046806c7a618bb4e771805f3ec1e801a858971ab59"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/instruction.md",
+              "bytes": 1302,
+              "mode": "0o644",
+              "sha256": "8e35de39c03646465261a1d2cdb486d2a93fb30fba19d57c544a83ec27b0667f"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/environment/Dockerfile",
+              "bytes": 2425,
+              "mode": "0o644",
+              "sha256": "411c8cff15e08340697f3bed5ad242d9ab9ab07ee57af07440fd106c10a0bf14"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-675/task.toml",
+              "bytes": 4087,
+              "mode": "0o644",
+              "sha256": "29171c281a74bca4834d3a1a83db31e8980ed53d3d504cfb1ca59173397d6402"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "matchms__matchms-70",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/solution/patch.diff",
+              "bytes": 3125,
+              "mode": "0o644",
+              "sha256": "8c341415cd1d222128e239f25e8955f4186680d271634de6766afc3333e198a8"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/tests/p2p.json",
+              "bytes": 236,
+              "mode": "0o644",
+              "sha256": "8d24c5c94b3b1b3ce677d7452ecdc76768b1351fd6b1c7401475ae0e40df61f7"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/tests/f2p.json",
+              "bytes": 86,
+              "mode": "0o644",
+              "sha256": "e6d0f02425ec032b8153684803cf34f68b420bba5780db787575aabb55c44a01"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/tests/test.sh",
+              "bytes": 4234,
+              "mode": "0o755",
+              "sha256": "a34434725669154d7d24296385e2573df017bba4d0ec2c3a40cc354b0e77f6c7"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/instruction.md",
+              "bytes": 431,
+              "mode": "0o644",
+              "sha256": "4ae7e750a69b0a2c33951e38ec27f7f56baba397b36955e317fe15e8495cf688"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/environment/Dockerfile",
+              "bytes": 2425,
+              "mode": "0o644",
+              "sha256": "7fd8c39c3d1d90d3294d7da6098a2979aff144f9d077ca0feb864aa178c9ae16"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-70/task.toml",
+              "bytes": 2078,
+              "mode": "0o644",
+              "sha256": "5f9171c3256e2ac5f7172ee867c33fca3222de16a679d1decd75cfcabf682906"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "matchms__matchms-98",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/solution/patch.diff",
+              "bytes": 12435,
+              "mode": "0o644",
+              "sha256": "12cab9fbd8a8c6778ffb1aaadfd3a0864d6cef4e4329206431133a4d2aff0a67"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/tests/p2p.json",
+              "bytes": 387,
+              "mode": "0o644",
+              "sha256": "358c40bbca33a6488ab8cccce319587612ff8d3ecb663546ce30af55025d9552"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/tests/f2p.json",
+              "bytes": 380,
+              "mode": "0o644",
+              "sha256": "6335b142e620e77a2ea889759f35bd144c112cd42f4e43976cb634201c7f3b3a"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/tests/test.sh",
+              "bytes": 9026,
+              "mode": "0o755",
+              "sha256": "1dd956350acf90a76c3cfa460213d31b6079157777709eeecd6e39b3331dffad"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/instruction.md",
+              "bytes": 358,
+              "mode": "0o644",
+              "sha256": "5b9d179111cf7738db51d6ea5b32a17e251d6f6d4c8c2691ee6a69b164b9c5cb"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/environment/Dockerfile",
+              "bytes": 2425,
+              "mode": "0o644",
+              "sha256": "7c6e7cc71114ca78a4b12b3b914161d5cae7712696fb0d1539878fdb5266b8ac"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/matchms__matchms/matchms__matchms-98/task.toml",
+              "bytes": 2497,
+              "mode": "0o644",
+              "sha256": "cda395d270011aa75025b95542ec240b377b46056f5ecf424a0e52eed1f61ce4"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        }
+      ],
+      "reconstruction_records": [
+        {
+          "path": "bootstrap/matchms__matchms/50baefdb0ce9__74ba7084/Dockerfile",
+          "bytes": 608,
+          "mode": "0o644",
+          "sha256": "b27f4c7c4e5ec07854b8f20c57fa12403e2c17c6bc00b33288d464efdc23938d"
+        },
+        {
+          "path": "bootstrap/matchms__matchms/50baefdb0ce9__74ba7084/bootstrap.json",
+          "bytes": 1718,
+          "mode": "0o644",
+          "sha256": "4bcc065eba98723c88fc1910ed15b152eaf15fa4d274d6304108a1cf8dccd22b"
+        }
+      ],
+      "original_phase": {
+        "path": "evidence/phase-artifacts.tar.gz",
+        "sha256": "cfc3ed314afee7c2cde05e4bd1216ac4f144c92a834aa490632d87062d294150",
+        "bytes": 4363679
+      },
+      "retention": "protected local originals; public curated archive is insufficient"
+    },
+    {
+      "repo": "OHIF/Viewers",
+      "slug": "OHIF__Viewers",
+      "unstarted": [
+        {
+          "task": "OHIF__Viewers-6334",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6339",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6339",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6346",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6346",
+          "agent": "oracle",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6352",
+          "agent": "nop",
+          "state": "unstarted"
+        },
+        {
+          "task": "OHIF__Viewers-6352",
+          "agent": "oracle",
+          "state": "unstarted"
+        }
+      ],
+      "tasks": [
+        {
+          "task": "OHIF__Viewers-6334",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": 0.0,
+              "state": "completed"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/solution/patch.diff",
+              "bytes": 7400,
+              "mode": "0o644",
+              "sha256": "510f97f2d399d09fd0066f962bd98986895d215bbe34b348018cb326b8878b3a"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/tests/p2p.json",
+              "bytes": 221537,
+              "mode": "0o644",
+              "sha256": "f9976645aa862486cc8da01e1ac750ebabfceb72450dbaaf4c821996f47c4933"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/tests/f2p.json",
+              "bytes": 1346,
+              "mode": "0o644",
+              "sha256": "0d1f36d3889520a9bd1d82d962c67be7011c5b9f306dc00b683b67931f9918b3"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/tests/test.sh",
+              "bytes": 12807,
+              "mode": "0o755",
+              "sha256": "e1c73fc76074782dc93419740fb528246f1d03838aff7de31a56ef70af06f1de"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/instruction.md",
+              "bytes": 2913,
+              "mode": "0o644",
+              "sha256": "3c78df05cef5c1a90a321482d223060bc2cdcb54a0f11b0909206146ad6679b7"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/environment/Dockerfile",
+              "bytes": 2422,
+              "mode": "0o644",
+              "sha256": "2b2e0fc42d895b445cef06e88c0b7ce2fb91bf31af8ec2230609d986643f3363"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6334/task.toml",
+              "bytes": 227433,
+              "mode": "0o644",
+              "sha256": "74712ec3d651e059e362c53643acc192e3a3905ad2f888a78d8c7c5a842991cc"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "OHIF__Viewers-6339",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/solution/patch.diff",
+              "bytes": 3641,
+              "mode": "0o644",
+              "sha256": "f152efb04fbfea00eb20bf3d40077fbe12fdace767fc8de1ee65bee3a163b1d4"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/tests/p2p.json",
+              "bytes": 224003,
+              "mode": "0o644",
+              "sha256": "023512d097721b7eabf4efc0a2efff7b1375f598fb520c757d09553caa520838"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/tests/f2p.json",
+              "bytes": 673,
+              "mode": "0o644",
+              "sha256": "840bb8e1c04654b5e9e4b07b710ed397e543a743e3b831bce3838bdc52f72b37"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/tests/test.sh",
+              "bytes": 4841,
+              "mode": "0o755",
+              "sha256": "0550a51ad8d7846de0483718b5e1630e7afd020fed6156f4c0e049de4d5a4577"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/instruction.md",
+              "bytes": 1495,
+              "mode": "0o644",
+              "sha256": "d2e77861adbd970310323358fa94e24c0f216de3141007e7b8a771e768a3a0e0"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/environment/Dockerfile",
+              "bytes": 2422,
+              "mode": "0o644",
+              "sha256": "ffd24ff9bd029d5417943c350150b29a9fd34dc678344fb4f1280ba8ecc8ba61"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6339/task.toml",
+              "bytes": 229271,
+              "mode": "0o644",
+              "sha256": "ce35115da08c1e6c2410ae07c2c09e9f86bf31738ac140f80c358e382781f91b"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "OHIF__Viewers-6346",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/solution/patch.diff",
+              "bytes": 13021,
+              "mode": "0o644",
+              "sha256": "1e9c83e0dc918ade73de48ab62607c6e6b4b822153cb0c646987398e6b116ddc"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/tests/p2p.json",
+              "bytes": 226145,
+              "mode": "0o644",
+              "sha256": "0571dc170c4670a00027381dff35cb0b01801a10037f4f38dd1011dcb17ec2c7"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/tests/f2p.json",
+              "bytes": 674,
+              "mode": "0o644",
+              "sha256": "29f62196cd3eff9cd3d47212c76188713e27c8df1bee4ed1444d5cc0fef289c8"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/tests/test.sh",
+              "bytes": 14271,
+              "mode": "0o755",
+              "sha256": "346922b6d66b38dc342230a90e536bd9a2b38f9b4cc6a357ec98bd9f84f73d6a"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/instruction.md",
+              "bytes": 4291,
+              "mode": "0o644",
+              "sha256": "90a5a5e307a2aa2aed90b579ca3b3f4550a7746ab3185d6e677dbb8cc0fa1c90"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/environment/Dockerfile",
+              "bytes": 2422,
+              "mode": "0o644",
+              "sha256": "92cedad6fc02dd240063fa379a6aaf23fc612d40fa68dac6429eefb94a679103"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6346/task.toml",
+              "bytes": 231400,
+              "mode": "0o644",
+              "sha256": "e8c0e70bcdf7ef09169a8033b8460832fde93165ae26578798c01f08b9d5a185"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        },
+        {
+          "task": "OHIF__Viewers-6352",
+          "original_controls": {
+            "nop": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            },
+            "oracle": {
+              "exception": null,
+              "reward": null,
+              "state": "unstarted"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/solution/patch.diff",
+              "bytes": 66375,
+              "mode": "0o644",
+              "sha256": "e9bc760664de2491c69e2e775ce24d11b061fafd178bf479852b88aba17fccb9"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/tests/p2p.json",
+              "bytes": 226698,
+              "mode": "0o644",
+              "sha256": "0dc545623caee67697668aac9f1c9d03773f367afa3357e736f632d7de1112e2"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/tests/f2p.json",
+              "bytes": 339,
+              "mode": "0o644",
+              "sha256": "9c14906fd8369ce3ad2aaa4fac289d2e67c2db32775fb439dafaf094fe789706"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/tests/test.sh",
+              "bytes": 12901,
+              "mode": "0o755",
+              "sha256": "5afa7ae103932b263b352ff9e6ae3991b76b1cf1fd4793166b265d4df4512aca"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/instruction.md",
+              "bytes": 3190,
+              "mode": "0o644",
+              "sha256": "bd9ea889e2d098f2a63aaf0e00fb2d247f16a9fe943f192dd204926ea0529148"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/environment/Dockerfile",
+              "bytes": 2422,
+              "mode": "0o644",
+              "sha256": "a419d409dc8b9bf3f5bfdf721db80b112b2516daea22830af795a7b0e3dda375"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/OHIF__Viewers/OHIF__Viewers-6352/task.toml",
+              "bytes": 231639,
+              "mode": "0o644",
+              "sha256": "b2107f99b32609993dee5ca8ea98bc145ceeb3a216397312f17477098f6e9767"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300
+          ],
+          "run_both_controls_per_arm": true
+        }
+      ],
+      "reconstruction_records": [
+        {
+          "path": "bootstrap/OHIF__Viewers/4965e280cada__74ba7084/Dockerfile",
+          "bytes": 1837,
+          "mode": "0o644",
+          "sha256": "08b05ba860dd07415891290675ad6aa410d5c8ed7f1bfd90a69f02d2d4296460"
+        },
+        {
+          "path": "bootstrap/OHIF__Viewers/4965e280cada__74ba7084/bootstrap.json",
+          "bytes": 2977,
+          "mode": "0o644",
+          "sha256": "c53fe124a2e0b859e90c47c79ce54b221398fc3906253d96ef2dd7893960e82b"
+        }
+      ],
+      "original_phase": {
+        "path": "evidence/phase-artifacts.tar.gz",
+        "sha256": "324f865921439533867d507676baaa457a7200ae357ea4ac75750dc306a11836",
+        "bytes": 8730760
+      },
+      "retention": "verified public full-original archive"
+    },
+    {
+      "repo": "scverse/scanpy",
+      "slug": "scverse__scanpy",
+      "unstarted": [],
+      "tasks": [
+        {
+          "task": "scverse__scanpy-4389",
+          "original_controls": {
+            "nop": {
+              "exception": "VerifierTimeoutError",
+              "reward": null,
+              "state": "completed"
+            },
+            "oracle": {
+              "exception": "VerifierTimeoutError",
+              "reward": null,
+              "state": "completed"
+            }
+          },
+          "original_files": [
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/solution/patch.diff",
+              "bytes": 1066,
+              "mode": "0o644",
+              "sha256": "1eb741ba2872abd3e370257adf9d358ac1b331f6b0dcd7f970a878ef2b01aab1"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/solution/solve.sh",
+              "bytes": 170,
+              "mode": "0o755",
+              "sha256": "eaa30741085fbac54d8ef28325d8ff50f2eb021233738dca0d653b93edfc1893"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/tests/verifier.py",
+              "bytes": 25401,
+              "mode": "0o644",
+              "sha256": "154ce5cbff54463ad7c08756abd22d198e17bd7ae3ff6ccdf994f5bf16ad021b"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/tests/p2p.json",
+              "bytes": 595,
+              "mode": "0o644",
+              "sha256": "6f8ee19182ad6b989d24adce7b477d8716ee43eb6e81fa51e3868616522ed86d"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/tests/f2p.json",
+              "bytes": 138,
+              "mode": "0o644",
+              "sha256": "e38fa5d4e5c7994d28dc4007c9938200cf817ea5bcb4fd4ec0113c54afcd6b30"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/tests/test.sh",
+              "bytes": 12277,
+              "mode": "0o755",
+              "sha256": "5dba69b6097324737de875a3a0ce5cc8a239c068d207d1ab42923038442b45cc"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/instruction.md",
+              "bytes": 452,
+              "mode": "0o644",
+              "sha256": "a80b9d50657cb6f0071b857be53b42bfc7822f49f26f20f840125be25dee9a11"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/environment/Dockerfile",
+              "bytes": 2424,
+              "mode": "0o644",
+              "sha256": "d72cd2dcd61e8fc3d063f49aecd19824a383bc2eea492e53b8fb0d44f3d79202"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/environment/docker-compose.yaml",
+              "bytes": 684,
+              "mode": "0o644",
+              "sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1"
+            },
+            {
+              "path": "outputs/scverse__scanpy/scverse__scanpy-4389/task.toml",
+              "bytes": 2527,
+              "mode": "0o644",
+              "sha256": "ec08fb89c0f53e86895503319b08252ceeccab7d85abb4cca48c2fd924ced2b0"
+            }
+          ],
+          "proposed_arms_seconds": [
+            300,
+            1200
+          ],
+          "run_both_controls_per_arm": true
+        }
+      ],
+      "reconstruction_records": [
+        {
+          "path": "bootstrap/scverse__scanpy/903925920218__74ba7084/Dockerfile",
+          "bytes": 1719,
+          "mode": "0o644",
+          "sha256": "44a4ddcf4badae81298648ed0e22edbb26b182fe6b4e651421ee4bd56644ed90"
+        },
+        {
+          "path": "bootstrap/scverse__scanpy/903925920218__74ba7084/bootstrap.json",
+          "bytes": 3163,
+          "mode": "0o644",
+          "sha256": "6d53a729633dba2446ecda313b5e519b94d55bef170e0dbcaba541a6dff90ef7"
+        }
+      ],
+      "original_phase": {
+        "path": "evidence/phase-artifacts.tar.gz",
+        "sha256": "52eab704e777aeb5f1b78e5447668ea8c91eee574926b60bb740edaf57355f1c",
+        "bytes": 432611
+      },
+      "retention": "verified public full-original archive"
+    }
+  ]
+}
