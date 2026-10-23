@@ -1,0 +1,44 @@
+{
+  "observation_only": true,
+  "bootstrap_records": [
+    {
+      "path": "/work/bootstrap/matchms__matchms/50baefdb0ce9__74ba7084/bootstrap.json",
+      "sha256": "4bcc065eba98723c88fc1910ed15b152eaf15fa4d274d6304108a1cf8dccd22b",
+      "bootstrap": {
+        "repo": "matchms/matchms",
+        "ref": "50baefdb0ce9401aac55cc2a09d07421dd684481",
+        "language": "python",
+        "rebuild_cmds": [
+          "pip install pdm-backend",
+          "pip install -e /workspace",
+          "pip install pytest pytest-cov pytest-benchmark testfixtures ms_entropy"
+        ],
+        "test_cmds": [
+          "cd /workspace && python -m pytest -v"
+        ],
+        "smoke_passed": true,
+        "verify_passed": true,
+        "verify_detail": "exit=0; dlocks in the child.\n    self.pid = os.fork()\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n========== 1444 passed, 2 skipped, 1537 warnings in 172.02s (0:02:52) ==========",
+        "iterations": 6,
+        "image_digest": "sha256:bc4672c096b1f9d546dcf2ed247c59c9566a8048cf37b06965a46a79ed321468",
+        "image_tag": "local/r2e-bootstrap/matchms__matchms:50baefdb0ce9"
+      }
+    }
+  ],
+  "pr966_descriptor": {
+    "path": "/work/native-observations/batch-0000/discovery-pr-966.json.gz",
+    "original_gzip_sha256": "eab1368ceb1c625e646f2017d25bb9eae6cf077c0dcec36dfca68c86cac5076e",
+    "fields": {
+      "number": 966,
+      "title": "Speedup filters",
+      "createdAt": null,
+      "mergedAt": "2026-09-24T10:50:10Z",
+      "headRefOid": "67d283f37ae9bc35031f2924f33523ee04661f9c",
+      "baseRefName": "development"
+    }
+  },
+  "checked_utc": "2026-10-23T04:04:08.607025+00:00",
+  "run_id": "biotasks28-history-matchms-matchms-001",
+  "read_only": true,
+  "scope": "Original saved bootstrap and one retained descriptor only; no tests, model calls or environment change."
+}

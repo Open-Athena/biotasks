@@ -90,6 +90,9 @@ def main():
                     'parsed_count': len(statuses[stage]),
                     'collection_error_marker': bool(re.search(r'errors? during collection', outcome[stage + '_log'], re.I)),
                     'missing_module_marker': 'ModuleNotFoundError' in outcome[stage + '_log'],
+                    'missing_module_names': sorted(set(re.findall(
+                        r'''ModuleNotFoundError: No module named ['"]([^'"]+)['"]''',
+                        outcome[stage + '_log']))),
                     'attribute_spec_marker': 'AttributeError: __spec__' in outcome[stage + '_log'],
                     'removed_compiled_extensions': re.findall(r'^Removing (.*\.so)$', outcome[stage + '_log'], re.M)}
                     for stage in ['pre', 'post']}})
@@ -100,6 +103,8 @@ def main():
         'pairs_with_pre_collection_errors': sum(row['stages']['pre']['collection_error_marker'] for row in rows),
         'pairs_with_post_collection_errors': sum(row['stages']['post']['collection_error_marker'] for row in rows),
         'pairs_with_removed_compiled_extensions': sum(any(v['removed_compiled_extensions'] for v in row['stages'].values()) for row in rows),
+        'missing_module_stage_appearances': dict(Counter(name for row in rows
+            for stage in row['stages'].values() for name in stage['missing_module_names'])),
         'outcomes': rows}
     (ROOT / 'results' / (args.slug + '-native-pytest-census.json')).write_text(json.dumps(output, indent=2) + '\n')
     print(json.dumps({k:v for k,v in output.items() if k != 'outcomes'}, indent=2))

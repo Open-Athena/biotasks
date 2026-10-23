@@ -16,6 +16,10 @@ The problem spans several boundaries. Removing a date filter fixed neither unsup
 
 The remaining five original runs and final full-cohort evidence are still pending. Current and September results remain separate even though their costs share the approved issue ceiling.
 
+The September run is a historical comparator, not a controlled causal estimate of changing only a date filter. The history campaign starts a fresh upstream bootstrap for each repository, with the same approved source/refs/settings but new model responses and dependency acquisition. PR identities are frozen; descriptors are fetched at each native invocation and retained at that time. There is no exact native dependency freeze or image replay. Differences between the two runs must therefore retain bootstrap/environment and sampling limits alongside window/coverage differences.
+
+A live Matchms observation adds a useful distinction without changing the accepted-result count: its saved fixed-ref bootstrap reports a clean fresh run of 1,444 passed/2 skipped, but the first returned pair (PR966) fails collection before testing on both sides with missing `chemap`. The retained descriptor says that PR targets `development`; the saved bootstrap identifies a fixed commit. This establishes a compatibility failure at the reached PR base, not that the agent never installed a working environment. It does not establish the direction or cause of dependency drift. Original outcome/bootstrap hashes and source notices for that exact base/head are retained for terminal reconciliation; no installation or rerun was performed.
+
 ## SAMtools filtering is not a language-neutral suitability test
 
 The unchanged default `require_new_test_funcs=True` applies to every language. The pinned `_NEW_TEST_FUNC_RE` recognizes Python definitions/classes, Go test functions and JavaScript/TypeScript `it`/`test`/`describe` forms. It does not recognize C/CTest/Perl or fixture-driven regression cases. The pinned generic log dispatcher likewise has no C/CTest/Perl parser. These source facts constrain the meaning of a negative result for a C tool whose tests include Perl/shell and expected-output fixtures.

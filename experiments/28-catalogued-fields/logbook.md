@@ -344,3 +344,16 @@ Original Matchms read-only03:49:29snapshot reaches native validation: first invo
 
 
 The03:51:35original Matchms snapshot confirms OSError/errno7 on PR958,957,948 in three separate native invocations, without new model calls or entered retries. Fourth invocation is active; no export/independent control observed yet. Public comment6356971303 records the verified SAMtools filter/parser coverage caveat and these provisional exceptions, with exact readback, unchanged five-result body and OPEN/agent-generated checks. Numerical totals remain the five accepted terminal results, not active snapshots.
+
+
+### Matchms live environment boundary and original-result wait
+
+Authoritative original Matchms handle is RUNNING/one attempt at03:56:33UTC. A bounded foreground read-only inotify observer then waits for its terminal receipt, without model calls, submission, API polling or local intensive work; receipt absence is not treated as current job-state proof or a restart reason. The same original serial service continues handling the real job. No second control plane is started.
+
+Read-only04:01:55metadata shows34candidate entries,23paired starts/17returns and six original OSError/errno7 exceptions (958,957,948,937,908,903), with only the original6bootstrapcalls/$0.165093recorded. No controls observed. Parent401backlog checkpoint is not a terminal count while an invocation remains active.
+
+One original returned pair was read and hashed at04:02:56UTC: PR966 returns noF2P/noP2P because both pre/post logs collect0tests with ModuleNotFoundError:chemap. Original gzipSHAa04bd5205f82f6f883b5d58bd7824a008760e5f1106db868b511f923b130e895 and both full-log hashes are retained; excerpt/record hashes must match the terminal phase before final claims. This is a missing dependency at the reached historical base, not evidence of an ineffective code fix.
+
+Read-only04:04:08saved-bootstrap detail confirms this setup actually passed a fresh command at its fixed50baefdb ref:1444passed/2skipped in172.02seconds, shell exit0. Original saved rebuild commands install pdm-backend, editable workspace and pytest extras. PR966's retained descriptor targets development, head67d283f3/base591b1486; chronology/direction of dependency drift is not inferred. Both exact root Apache2notices are retained byte-identical for eventual review. No missing package is installed and no test or model rerun occurs. Read-only native pytest census now records exact missing module names in future reports; previous MACS census is preserved unchanged.
+
+Provisional interpretation also distinguishes the separate September comparator from a causal date-filter study: the new history run has fresh upstream bootstrap responses/dependency acquisition, execution-time descriptors and no exact native image freeze. Full history coverage and actual recorded outcomes, rather than an isolated date-filter effect or unmeasured task suitability, remain the research endpoint.
