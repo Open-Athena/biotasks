@@ -1,0 +1,64 @@
+{
+  "checked_utc": "2026-10-23T06:23:11.656419+00:00",
+  "scope": "Read-only source/forwarding/record binding for synthetic upstream CLI transport probe. Not actual failed-command reconstruction or retry, and no native repair.",
+  "probe_sha256": "80efe8d8a1850e99af9b2baa603f4b1e78d66467d28d3c08e45efa649f54902b",
+  "original_upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "installed_probe_sources_match_pinned_local_source": true,
+  "source_sha256": {
+    "/work/upstream/src/repo2rlenv/bootstrap/docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+    "/work/upstream/src/repo2rlenv/pipelines/pr_runtime_validate.py": "1f8349718bc93315bf3e5cbb10d5823c832539a8ef680b5ee169e4562de3ea49"
+  },
+  "resource_wrapper_sha256": "c7a827152f22d478137bf69487e8505a34cd8ec06a8b9a61a4874e2f72a30f66",
+  "observer_sha256": "1887bc351914be356ce3508f2248a20bb04880b4dddebd0939c275fea8297f96",
+  "wrapper_and_observer_match_original_submitted_payload": true,
+  "resource_wrapper_exec_argv_forwarded_unchanged": true,
+  "resource_wrapper_only_caps_container_creation": true,
+  "synthetic_probe_execution": "Outer observation enters the existing trusted controller via approved Docker exec. Within the mechanism test, pinned upstream _run invokes /bin/true directly: no Docker/resource wrapper or real PR script is executed.",
+  "recorded_completed_matchms_exec_commands": 848,
+  "largest_completed_command_records": [
+    {
+      "member": "native-observations/batch-0005/exec-0018-pr-903.json.gz",
+      "command_utf8_bytes": 124330,
+      "command_sha256": "127bae5f4a127c78bfaefb19140c5bb8006e0a071d30e86d1216fbe393ed35ad",
+      "exit_code": 0
+    },
+    {
+      "member": "native-observations/batch-0011/exec-0159-pr-110.json.gz",
+      "command_utf8_bytes": 113044,
+      "command_sha256": "e85b42b1d4149bd7c709d5e24821be91546d7cbed7fa95afca65f171bf402697",
+      "exit_code": 0
+    },
+    {
+      "member": "native-observations/batch-0011/exec-0158-pr-110.json.gz",
+      "command_utf8_bytes": 104397,
+      "command_sha256": "119bc65393431844a12315f03cec8441fd12af337bff28c7ad930eb4baf8a1bb",
+      "exit_code": 0
+    },
+    {
+      "member": "native-observations/batch-0000/exec-0016-pr-958.json.gz",
+      "command_utf8_bytes": 103780,
+      "command_sha256": "9385d98820fcce06e6603c83921f3c3f9bc1cd29c505bf1775493b3b1c42a099",
+      "exit_code": 0
+    },
+    {
+      "member": "native-observations/batch-0002/exec-0024-pr-948.json.gz",
+      "command_utf8_bytes": 99571,
+      "command_sha256": "64b152cdbab8a59520d9b221f426438d2918a24c61e0aafa2de53ac046878c23",
+      "exit_code": 0
+    }
+  ],
+  "original_terminal_errno7_counts": [
+    {
+      "repo": "matchms/matchms",
+      "original_errno7_validation_exceptions": 10,
+      "source_assessment_sha256": "792ab86ed6e57ac5bdb798e33c8a69923540b27fa0d7d14edada7e0768f001ed"
+    },
+    {
+      "repo": "macs3-project/MACS",
+      "original_errno7_validation_exceptions": 9,
+      "source_assessment_sha256": "12dbc24bf781994a29d053282dc3903e986f2283e14df8a62fb3daba3c9114b1"
+    }
+  ],
+  "interpretation": "Pinned upstream embeds complete patches into one bash -lc argument and passes it to subprocess.run. Its _run catches TimeoutExpired, not OSError. A 140427-byte synthetic argument raises errno7 directly on the actual controller kernel, without our resource wrapper. This demonstrates a native transport limitation consistent with original exceptions; missing failed-command bytes prevent exact per-PR size/threshold replay. Source selection, CPU quota and bootstrap dependencies do not remove this transport mechanism.",
+  "future_comparison_only": "A deterministic script/patch transport using stdin or files could address the argument-size boundary. Not implemented or applied to this campaign."
+}

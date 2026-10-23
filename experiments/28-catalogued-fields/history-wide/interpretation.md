@@ -34,6 +34,14 @@ The read-only [filter census](results/samtools__samtools-filter-census.json) bin
 
 Pinned source evidence is retained in `../preflight/upstream-source/src/repo2rlenv/pipelines/pr_runtime.py`, `spec/options.py` and `log_parsers/__init__.py`; their exact hashes and the original phase hash are included in the census. Native validation calls that same dispatcher. This source inspection and recorded metadata do not add model calls or alter rewards.
 
+## Argument-size failure is supported by an upstream transport mechanism
+
+The pinned native `DockerSandbox.exec` sends the entire script as one argument to `docker exec ... bash -lc`; `_build_stage_script` embeds both patches in that script. `_run` catches subprocess timeouts but leaves `OSError` uncaught. Our submitted resource wrapper forwards `exec` arguments unchanged, and the observer calls the original executor with the unchanged command before recording the result. Exact installed and pinned-source hashes match.
+
+A tiny synthetic probe in the existing original Cobrapy controller uses those pinned upstream functions but invokes `/bin/true` directly, bypassing Docker and our resource wrapper inside the mechanism test. A 1,451-byte generated script argument returns exit0; a 140,427-byte argument raises `OSError/errno7`. No actual PR, patch, test, model, build, pipeline change or retry occurs. The outer observation enters the existing trusted controller using the approved Docker access. [Probe](task-reviews/upstream-argument-transport-probe-20261023.json) and [source/forwarding binding](task-reviews/upstream-argument-transport-source-binding-20261023.json) retain the exact source hashes and inputs.
+
+This demonstrates a limitation already present in the pinned upstream CLI transport on this runtime, consistent with the original nine MACS and ten Matchms argument-limit exceptions. All 848 returned Matchms command records remain inspectable; their largest argument is 124,330 bytes. Failed-command bytes were not captured, so the synthetic mechanism is not an exact replay or per-PR threshold measurement. It does not establish that every exception has identical input size. A subsequent controlled change could transport scripts/patches via stdin or files instead of one argument. No such repair is applied here.
+
 ## What a subsequent automated-pipeline experiment would need to measure
 
 A future experiment should declare its supported test runners before counting candidate coverage. It should compare the current filter with deterministic runner-aware discovery on a frozen set, keeping rejects and unavailable metadata explicit. Source acquisition and large-diff/command transport need bounded failure handling and reproducible inputs. Bootstrap completion, historical reset/rebuild behavior and the lifetime of timed-out commands need their own observable contracts; a reusable image is insufficient if validation removes its generated extensions.
