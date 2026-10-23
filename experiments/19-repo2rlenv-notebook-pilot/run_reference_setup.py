@@ -254,30 +254,101 @@ class Remote:
 
     async def network(self, blocked):
         self.remaining(45)
-        await asyncio.to_thread(
-            self.sandbox.update_network_settings, network_block_all=blocked, request_timeout=30
-        )
-        await asyncio.to_thread(self.sandbox.refresh_data, request_timeout=15)
-        if self.sandbox.network_block_all is not blocked:
-            raise RuntimeError("Provider network policy differs from requested state")
-        result = await self.command(
-            ["python", "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
-            30,
-            f"network-{self.operation}",
-        )
-        probes = json.loads(result["log"])
-        if result["exit_code"] or probes != [
-            {"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS
-        ]:
-            raise RuntimeError("Network probe did not establish the required state")
-        save_record(
-            self.root / "network" / f"{self.operation}.json",
-            {
-                "blocked": blocked,
-                "probes": probes,
-                "limitations": "Representative outbound TCP probes, not exhaustive attestation",
-            },
-        )
+        control_deadline = min(time.time() + 45, self.deadline - 15)
+        path = self.root / "network" / ("control-" + uuid.uuid4().hex + ".json")
+        record = {
+            "blocked": blocked,
+            "started": time.time(),
+            "control_deadline": control_deadline,
+            "state": "uncertain",
+            "events": [],
+        }
+        save_record(path, record)
+        self.uncertain = True
+
+        async def control(kind, **kwargs):
+            seconds = min(
+                30 if kind == "update_network_settings" else 15, int(control_deadline - time.time())
+            )
+            if seconds < 1:
+                raise TimeoutError("Network reconciliation exhausted its original allowance")
+            event = {"operation": kind, "request_timeout": seconds, "started": time.time()}
+            record["events"].append(event)
+            save_record(path, record)
+            try:
+                await asyncio.to_thread(
+                    getattr(self.sandbox, kind), request_timeout=seconds, **kwargs
+                )
+            except BaseException as error:
+                event["error_type"] = type(error).__name__
+                raise
+            finally:
+                event["finished"] = time.time()
+                save_record(path, record)
+            if time.time() >= control_deadline:
+                raise TimeoutError("Network response arrived after its original allowance")
+
+        def recoverable(error):
+            return getattr(error, "status_code", None) not in {401, 403} and (
+                transient_connection_error(error)
+            )
+
+        async def read_state():
+            for attempt in range(2):
+                try:
+                    await control("refresh_data")
+                    observed = self.sandbox.network_block_all
+                    if type(observed) is not bool:
+                        raise RuntimeError("Provider did not return a boolean network policy")
+                    record["events"][-1]["observed_blocked"] = observed
+                    save_record(path, record)
+                    return observed
+                except Exception as error:
+                    if attempt or not recoverable(error):
+                        raise
+
+        try:
+            try:
+                await control("update_network_settings", network_block_all=blocked)
+            except Exception as error:
+                if not recoverable(error):
+                    raise
+                # Only the same idempotent provider setting may be repeated. Read
+                # first: a lost response can still mean the update took effect.
+                if await read_state() is not blocked:
+                    try:
+                        await control("update_network_settings", network_block_all=blocked)
+                    except Exception as retry_error:
+                        if not recoverable(retry_error):
+                            raise
+                    if await read_state() is not blocked:
+                        raise RuntimeError("Provider network policy remains unconfirmed") from None
+            else:
+                if await read_state() is not blocked:
+                    raise RuntimeError("Provider network policy differs from requested state")
+            self.uncertain = False
+            result = await self.command(
+                ["python", "-c", "TARGETS = " + repr(TARGETS) + "\n" + PROBE],
+                30,
+                f"network-{self.operation}",
+            )
+            probes = json.loads(result["log"])
+            record["probes"] = probes
+            if result["exit_code"] or probes != [
+                {"host": h, "port": p, "reachable": not blocked} for h, p in TARGETS
+            ]:
+                raise RuntimeError("Network probe did not establish the required state")
+            record.update(
+                state="verified",
+                limitations="Representative outbound TCP probes, not exhaustive attestation",
+            )
+        except BaseException as error:
+            self.uncertain = True
+            record["error_type"] = type(error).__name__
+            raise
+        finally:
+            record["finished"] = time.time()
+            save_record(path, record)
 
 
 async def run(config, *, root, deadline, endpoint, credential, provider=None, complete=None):

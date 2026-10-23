@@ -1,0 +1,20 @@
+{
+  "observed_at": "2026-10-23T00:26:56.504028+00:00",
+  "trigger": "Original provider network-update failures in baseline054 and followup072; neither is a scientific source rejection.",
+  "behavior": "Read back after transient network-setting response loss. Repeat the same idempotent setting at most once only after confirmed mismatch. No scientific command is reexecuted.",
+  "bounds": "Original45second control allowance and absolute campaign deadline unchanged;401/403 are not retried; unresolved state blocks further execution. Representative TCP probes remain mandatory.",
+  "validation": {
+    "kind": "Synthetic provider and reference-control regression checks; no live recovery claim",
+    "tests": 50,
+    "passed": 50,
+    "seconds": 2.63,
+    "peak_rss_kib": 134000,
+    "files": [
+      "test_network_reconciliation.py",
+      "test_command_receipt_recovery.py",
+      "test_reference_setup.py"
+    ],
+    "ruff": "lint and format passed"
+  },
+  "already_frozen_campaigns": "071 and073 are unchanged and do not include this recovery."
+}
