@@ -1,0 +1,44 @@
+--- executed-scanpy-driver
++++ frozen-ohif-driver
+@@ -26,7 +26,7 @@
+ from recorded_replay import replay_recorded_actions
+ 
+ ROOT = Path(__file__).resolve().parent
+-OWNER = 'biotasks29-scanpy-recorded-001'
++OWNER = 'biotasks29-ohif-recorded-001'
+ LABEL = 'org.open-athena.biotasks.owner=' + OWNER
+ TAG = OWNER + ':recorded-actions'
+ TOOLS = ROOT / 'replay-tools'
+@@ -135,11 +135,11 @@
+     OUT.mkdir(parents=True, exist_ok=True)
+     try:
+         payload_bytes = (ROOT / 'replay.json').read_bytes()
+-        assert digest(payload_bytes) == '4ded2238dc93ad6106e0c74f8c12727d82fab8d9b15bf6a53d478843de0d5d37'
++        assert digest(payload_bytes) == '64fc31936710af94a03d83128e6fe65a0bf144c5cc13cb89beb08520dfa4fe4c'
+         payload = json.loads(payload_bytes)
+         REPORT['payload_sha256'] = digest(payload_bytes)
+-        assert payload['repo'] == 'scverse/scanpy'
+-        assert payload['ref'] == '903925920218f829f3cad4f9f4730c086267ee53'
++        assert payload['repo'] == 'OHIF/Viewers'
++        assert payload['ref'] == '4965e280cada2202a99f9dd0212a8465865b49f7'
+         pins = json.loads((ROOT / 'source-pins.json').read_text())
+         for name, sha in pins.items():
+             assert digest((ROOT / name).read_bytes()) == sha
+@@ -204,7 +204,7 @@
+         assert inspected['Config']['Labels']['org.open-athena.biotasks.owner'] == OWNER
+         REPORT['retained_image_id'] = inspected['Id']
+         REPORT['retained_image_tag'] = TAG
+-        REPORT['retention_condition'] = 'Pending frozen Scanpy Harbor controls on this worker; delete after controls or investigation termination. Not original image bytes.'
++        REPORT['retention_condition'] = 'Pending frozen OHIF Harbor controls on this worker; delete after controls or investigation termination. Not original image bytes.'
+     except Exception as error:
+         REPORT['error_type'] = type(error).__name__
+         REPORT['error'] = str(error)[:500]
+@@ -213,7 +213,7 @@
+             cleanup()
+         finally:
+             REPORT['finished'] = time.time()
+-            (OUT / 'scanpy-recorded-result.json').write_text(json.dumps(REPORT, indent=2) + '\n')
++            (OUT / 'ohif-recorded-result.json').write_text(json.dumps(REPORT, indent=2) + '\n')
+             print('BIOTASKS29_RESULT=' + json.dumps(REPORT), flush=True)
+     assert REPORT.get('cleanup_verified') and not REPORT.get('error'), 'Inspect preserved evidence; no repair/retry'
+ 

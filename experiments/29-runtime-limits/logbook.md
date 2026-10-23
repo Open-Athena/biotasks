@@ -99,3 +99,7 @@ Submitted `biotasks29-openms-checkout-001` from `8d081003` on existing reserved 
 Archive `07468d27c3942c5eb992a256f20498af482477eae07646aaea1877319c1c5024` (9,938 bytes) was downloaded and verified with all output hashes. Both owned containers and their checkouts are absent; downloaded tools are removed and cleanup has no errors. Cumulative measured #29 allocation is 1.1882488890488943 CPU-hours across nine terminal jobs. The separate Scanpy control handle remains active; its maximum reservation is unchanged.
 
 OpenMS acquisition evidence published in https://github.com/Open-Athena/biotasks/issues/29#issuecomment-6372914685, with exact body/comment readback verified and issue left open. No pipeline promoted and no automatic bootstrap continuation.
+
+### 2026-10-23 — Checkpoint OHIF recorded full-checkout replay
+
+Prepared the executed Scanpy replay driver for unchanged OHIF actions with identity-only driver changes. Restores full-checkout upstream copy semantics instead of editing Dockerignore or installation commands. All18recorded BASH exits0; masked pipeline failures remain possible. Budget reserves8CPU-hours plus all9.6667activeScanpy-control hours and1.18825terminal usage under32. No models/new capacity. Controls remain a separately checkpointed next stage after verified image reconstruction.
