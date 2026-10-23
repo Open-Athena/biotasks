@@ -80,7 +80,7 @@ TEST_TOOL = {
     "type": "function",
     "function": {
         "name": "test_reference",
-        "description": "Build the current recipe, stage original inputs, then test frozen exports plus analysis offline. Consumes one reference-test allowance even if setup fails.",
+        "description": "Build the current recipe, stage original inputs, then test frozen exports plus analysis offline. A computation slot is consumed when the reference is dispatched, including failed or uncertain dispatches. Candidate validation, build and staging failures use the existing setup/time budgets without consuming a computation slot.",
         "parameters": {"type": "object", "properties": {}, "additionalProperties": False},
     },
 }
