@@ -1,10 +1,12 @@
-# Current ten-notebook development round
+# Frozen ten-notebook development panel
 
 The user reconfirmed Python-only on 22 October 2026. The four R sources in issue18 remain deferred. This later Python panel is deliberately selected development material; it is not a validated ten-notebook pipeline or a held-out benchmark. Original source pins and prior failures remain unchanged.
 
-One frozen runtime and prompt set will be used across all ten. Two campaigns may run concurrently on previously approved reserved Iris CPUs, with one offline CPU Daytona task per campaign. Current resource, time, network and repair boundaries remain unchanged. No notebook-specific scientific methods or task instructions are supplied by the operator.
+The completed 054–063 round used one frozen runtime and prompt set across all ten. It produced two scientifically and natively validated tasks, NeuroKit and MDAnalysis. The other outcomes include source limitations, unresolved generated candidates and infrastructure failures; they are not eight successful source rejections. See the [preserved round results](progress.json).
 
-| Domain | Original notebook | New campaign |
+Later factory revisions and reruns remain separate experiments on the same original panel. Their individual successes must not be combined into a common-version success rate. The [current completion audit](../../completion-audit-current.json) records remaining gaps. Two campaigns may run concurrently on previously approved reserved Iris CPUs, with one offline CPU Daytona task per campaign. No notebook-specific scientific methods or task instructions are supplied by the operator.
+
+| Domain | Original notebook | Baseline campaign |
 | --- | --- | --- |
 | Proteomics | [pyteomics-filtering](https://github.com/levitsky/pyteomics/blob/a133667b090e41c645ed682861b73d98bef2d045/doc/source/_static/filtering.ipynb) | 054 |
 | Physiology | [neurokit-hrv](https://github.com/neuropsychology/NeuroKit/blob/ff419d983568ef492eb8d229af643c0ef0100b32/docs/examples/ecg_hrv/ecg_hrv.ipynb) | 055 |
@@ -21,4 +23,4 @@ A validated task requires all eligible scientific branches, independent executab
 
 Finish the frozen round before modifying the factory. Use cross-notebook failures to justify general changes, then rerun affected cases and regressions on the next version. Record all original outcomes, per-stage times, controls, solver rewards and intervention counts. A reasonable result must do useful generation work across several domains; rejecting everything is not sufficient. Do not replace failures merely to improve the apparent rate.
 
-See [the machine-readable plan](plan.json) and [receipt-based budget reconciliation](budget-reconciliation.json). Configurations are prepared, not submitted; individual reservations and dispatch receipts determine execution state. Private notebooks and biological inputs stay private until their specific redistribution terms are reviewed.
+The [initial machine-readable plan](plan.json), [freeze](freeze.json), dispatch receipts and [receipt-based budget reconciliation](budget-reconciliation.json) remain preserved. Statements that configurations were prepared but not submitted describe the planning checkpoint; [round results](progress.json) record their subsequent execution. The older [original-panel baseline](original-panel-baseline.json) describes 034–043, not the 054–063 round. Private notebooks and biological inputs stay private until their specific redistribution terms are reviewed.
