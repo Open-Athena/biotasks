@@ -1,6 +1,6 @@
 # Interpreting the history-wide experiment
 
-This is a provisional interpretation of six assessed original results (five accepted archives and Matchms retention pending), not the final ten-repository conclusion. `cohort-summary.json`, exact assessments, archive receipts and accounting records control all numerical claims. Remaining results, active costs, independent grades and final audits must not be filled in from these observations. The official native core is pinned to `27d04ee8203cd5b2f20c3997d13836e5f5b64238`; findings do not establish behavior of a newer upstream revision.
+This is a provisional interpretation of seven assessed original results (six accepted archives and Matchms retention pending), not the final ten-repository conclusion. `cohort-summary.json`, exact assessments, archive receipts and accounting records control all numerical claims. Remaining results, active costs, independent grades and final audits must not be filled in from these observations. The official native core is pinned to `27d04ee8203cd5b2f20c3997d13836e5f5b64238`; findings do not establish behavior of a newer upstream revision.
 
 ## What the current evidence establishes
 
@@ -14,7 +14,9 @@ The problem spans several boundaries. Removing a date filter fixed neither unsup
 | OpenMS | Source checkout, before any model call or PR entry | The original 60-second acquisition timeout leaves all 5,671 identities backlog; no selection, model or test-quality conclusion. |
 | LAMMPS | 20 bootstrap actions, no saved setup or PR entry | Accepted Bash inputs retained trailing protocol tokens/simulated output and four build/configuration commands timed out. All 3,367 identities remain backlog. |
 
-The remaining four original runs and final full-cohort evidence are still pending. Current and September results remain separate even though their costs share the approved issue ceiling.
+| Cobrapy | 519 entries, 170 pairs started/161 returned, 12 exports | All 12 tracked-test controls succeed; two oracle commands are clean. The other ten retain exactly their base controls’ untracked failures. All 24 controls complete; 71 PRs remain backlog under the declared 21-minute new-batch time guard. |
+
+The remaining three original runs and final full-cohort evidence are still pending. Current and September results remain separate even though their costs share the approved issue ceiling.
 
 The September run is a historical comparator, not a controlled causal estimate of changing only a date filter. The history campaign starts a fresh upstream bootstrap for each repository, with the same approved source/refs/settings but new model responses and dependency acquisition. PR identities are frozen; descriptors are fetched at each native invocation and retained at that time. There is no exact native dependency freeze or image replay. Differences between the two runs must therefore retain bootstrap/environment and sampling limits alongside window/coverage differences.
 
@@ -25,6 +27,12 @@ The terminal Matchms result qualifies a failure-only reading of the campaign: 58
 All 58 original contracts have nonempty, disjoint F2P/P2P test-ID sets; 32 packages track one F2P ID and the rest track 2–8. Each tracks 1–74 P2P IDs. These contract sizes and control successes do not independently establish instruction sufficiency, biological validity or solver difficulty. The runtime [equivalence and contract census](results/matchms__matchms-full-runtime-equivalence.json) verifies the original hashes without running or changing tests.
 
 Matchms's100omissions all occur in one native listing pass: each original base-SHA `gh api --jq` call fails with “invalid character 'S' looking for beginning of value” and upstream drops the PR. The raw HTTP reply was not retained, so its origin and any authentication/rate-limit explanation are unproven.96of these identities had appeared in an earlier returned list before an abort but were never entered. Thus431unique returned/1126appearances,335entered,100omitted and zero backlog are consistent, overlapping observations rather than additive categories. Exact original warnings match all100omitted IDs. A scalable acquisition layer must keep this distinction visible; no lookup retry or transport repair was introduced here.
+
+## Cobrapy separates tracked success from an entirely clean command
+
+The original saved bootstrap has false smoke/fresh flags, yet twelve targeted native exports pass the original independent tracked-test contract. Every base F2P test fails, every base P2P test passes, and the oracle satisfies both tracked sets. All 24 controls complete under unchanged settings. PR1482/1497 have clean oracle commands; the other ten have identical base/oracle untracked-failure sets, with no new untracked failure. Matchms’s five unclean positive pairs likewise retain exactly their base untracked failures. The stricter clean-command metric is useful context, not a replacement for the declared primary contract or proof that the target fix regresses those tests.
+
+Cobrapy’s 71 backlogged identities are an orchestration limit: the frozen wrapper requires 1,260 seconds before starting another batch, and this gate ends native generation after 519 entries. No lower date cutoff or suitability result is inferred for the remaining IDs. The twelve packages are new relative to September and distinct by exact runtime bytes; no semantic or biological-difficulty deduplication is asserted. Exact original source/contract bindings, 326 notices/340 base-head uses, complete $0.349488 response charges and resource/serial-control inputs are audited. Public retention verifies 382 objects/2,449 members anonymously; adapted model fixtures and a simulated dFBA documentation figure retain source notices, without asserting task-dataset release or exact-image portability.
 
 ## SAMtools filtering is not a language-neutral suitability test
 
