@@ -105,3 +105,7 @@ OpenMS acquisition evidence published in https://github.com/Open-Athena/biotasks
 Prepared the executed Scanpy replay driver for unchanged OHIF actions with identity-only driver changes. Restores full-checkout upstream copy semantics instead of editing Dockerignore or installation commands. All18recorded BASH exits0; masked pipeline failures remain possible. Budget reserves8CPU-hours plus all9.6667activeScanpy-control hours and1.18825terminal usage under32. No models/new capacity. Controls remain a separately checkpointed next stage after verified image reconstruction.
 
 Submitted biotasks29-ohif-recorded-001 from7871df26on existing reserved worker marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-2. Payload matches preflight. Full8CPU-hour OHIF plus9.6667Scanpy reservations and terminal1.18825 remain under32. No new capacity/model calls. Results/archive/cleanup pending; the original failed Dockerfile reconstruction remains unchanged.
+
+### 2026-10-23 — Prepare gated Scanpy image cleanup
+
+Prepared a dedicated cleanup-only job for the recorded Scanpy image, not yet submitted. It requires terminal controls, archive hash readback, unchanged task files and removed control resources, targets the original worker, checks the retained tag/image identity and refuses image users before deletion. Only ownership-labeled images are eligible. Maximum1/6CPU-hour remains budgeted with the full8-hour OHIF reservation. Three entrypoints syntax-checked; remote cleanup execution remains pending.
