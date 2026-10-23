@@ -5,10 +5,10 @@
   "model_calls": 0,
   "remote_jobs": 0,
   "remaining": [
-    "Implement an opt-in deterministic rebuild hook through native validation and export, with reset/patch/rebuild failures guarded",
-    "Exercise integrated hook and graded verifier path with compiled fixture",
-    "Freeze one original extension-removal case and establish a reproducible recorded baseline without manual repairs",
-    "Run and archive baseline/candidate MACS controls if baseline is executable"
+    "Guard exported reset failures without rejecting legitimate new test files",
+    "Exercise candidate full native outcome and graded exported verifier",
+    "Freeze one original extension-removal case and establish recorded baseline reconstruction",
+    "Run and archive original/candidate MACS comparisons if baseline is executable"
   ],
   "local_inputs_retained": [
     {
@@ -23,5 +23,14 @@
     "all_passed": true,
     "scope": "Pinned shell builders with synthetic C library and research adapter; not integrated pipeline or MACS recovery",
     "temporary_directory_removed": true
+  },
+  "candidate": {
+    "path": "historical-rebuild.patch",
+    "opt_in": "replay_bootstrap_rebuild",
+    "default": false,
+    "compiled_cases_passed": 12,
+    "default_script_parity": true,
+    "static_patch_check": true,
+    "ready_for_live_run": false
   }
 }

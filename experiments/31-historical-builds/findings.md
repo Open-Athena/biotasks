@@ -38,3 +38,9 @@ These are mechanism checks, not an integrated candidate or MACS recovery. The ex
 ## Current status
 
 No generic lifecycle patch has been applied to a repository pipeline and no live repository run has been launched. This issue remains open. Original archived evidence is retained locally under ignored `inputs-private/` while the investigation needs it; the verified public archive remains its durable backing. No `/tmp` evidence or additional model/cloud spend was created.
+
+## Opt-in candidate, not yet ready for live comparison
+
+`historical-rebuild.patch` adds `replay_bootstrap_rebuild=False`, passes recorded bootstrap commands to native validation and exported verification, and records the procedure in exported metadata. Enabled native setup checks checkout/patch/build completion before parsing; disabled script output is byte-identical in the exercised cases. Export installs a zero reward before rebuilding to avoid retaining an old success if the build is interrupted.
+
+The same 12 compiled cases pass through candidate builders (rather than the earlier script adapter). Source parsing and patch application against pinned sources also pass. A first fixture attempt caught a list-index error in candidate generation; it was corrected and the failed resource record is retained. Full configuration execution, graded-verifier checks and fail-closed handling of exported test reset remain unverified. Do not use this candidate for a live recovery claim yet.

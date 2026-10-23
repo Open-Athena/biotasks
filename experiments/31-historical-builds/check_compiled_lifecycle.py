@@ -4,6 +4,7 @@ The opt-in rebuild adapter here is a mechanism experiment, not an integrated
 pipeline patch. Only absolute sandbox paths are remapped for local execution.
 """
 import ast
+import argparse
 import hashlib
 import json
 import os
@@ -43,6 +44,9 @@ def adapt(script, commands, exported=False):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--candidate', action='store_true')
+    args = parser.parse_args()
     provenance = json.loads((ROOT / 'provenance.json').read_text())
     for entry in provenance['files']:
         assert hashlib.sha256((ROOT / entry['path']).read_bytes()).hexdigest() == entry['sha256']
@@ -50,6 +54,18 @@ def main():
     exported = {'_DIFF_HEADER_RE': re.compile(r'^diff --git a/(.+) b/(.+)$', re.MULTILINE)}
     load_functions(ROOT / 'upstream/pipelines/pr_runtime_validate.py', ['_heredoc_apply', '_build_stage_script'], native)
     load_functions(ROOT / 'upstream/pipelines/pr_runtime.py', ['_path_prelude_for_language', '_files_in_patch', 'build_eval_script'], exported)
+    candidate_native = dict(native)
+    candidate_export = dict(exported)
+    helper = {'shlex': shlex}
+    if args.candidate:
+        load_functions(ROOT / 'candidate/pipelines/runtime_rebuild.py', ['rebuild_script'], helper)
+        candidate_native['rebuild_script'] = helper['rebuild_script']
+        candidate_export['rebuild_script'] = helper['rebuild_script']
+        load_functions(ROOT / 'candidate/pipelines/pr_runtime_validate.py', ['_build_stage_script'], candidate_native)
+        load_functions(ROOT / 'candidate/pipelines/pr_runtime.py', ['build_eval_script'], candidate_export)
+        # Default-off must retain the exact original generated script.
+        assert native['_build_stage_script']('base', apply_patch=None, apply_test_patch=None, test_cmds=['true']) == candidate_native['_build_stage_script']('base', apply_patch=None, apply_test_patch=None, test_cmds=['true'])
+        assert exported['build_eval_script']('base', '', ['true']) == candidate_export['build_eval_script']('base', '', ['true'])
     results = []
     with tempfile.TemporaryDirectory(prefix='biotasks31-compiled-') as temp:
         root = Path(temp)
@@ -96,7 +112,10 @@ def main():
                             (repo/'fixture.so').write_bytes(bootstrap_bytes)
                         script = exported['build_eval_script'](base, '', ['python3 check.py'])
                     if mode == 'rebuild':
-                        script = adapt(script, [build], kind=='export')
+                        if args.candidate:
+                            script = candidate_native['_build_stage_script'](base, apply_patch=patch if side=='oracle' else None, apply_test_patch=None, test_cmds=['python3 check.py'], rebuild_cmds=[build]) if kind=='native' else candidate_export['build_eval_script'](base, '', ['python3 check.py'], rebuild_cmds=[build])
+                        else:
+                            script = adapt(script, [build], kind=='export')
                     logs = root/'logs'/'verifier'
                     logs.mkdir(parents=True, exist_ok=True)
                     for f in logs.iterdir():
@@ -119,15 +138,23 @@ def main():
             git('reset','--hard',base)
             git('clean','-fdx')
             script = native['_build_stage_script'](base,apply_patch=None,apply_test_patch=None,test_cmds=['python3 check.py']) if kind=='native' else exported['build_eval_script'](base,'',['python3 check.py'])
-            script = adapt(script,['false\nprintf SHOULD_NOT_RUN'],kind=='export').replace('/workspace',str(repo)).replace('/logs/verifier',str(logs))
+            if args.candidate:
+                cmds = ['false\nprintf SHOULD_NOT_RUN']
+                script = candidate_native['_build_stage_script'](base, apply_patch=None, apply_test_patch=None, test_cmds=['python3 check.py'], rebuild_cmds=cmds) if kind=='native' else candidate_export['build_eval_script'](base, '', ['python3 check.py'], rebuild_cmds=cmds)
+            else:
+                script = adapt(script,['false\nprintf SHOULD_NOT_RUN'],kind=='export')
+            script = script.replace('/workspace',str(repo)).replace('/logs/verifier',str(logs))
             r = run(['bash','-c',script])
-            assert r.returncode != 0 and 'R2E_REBUILD_FAILED' in r.stderr
+            assert r.returncode != 0
+            if not args.candidate or kind=='export':
+                assert 'R2E_REBUILD_FAILED' in r.stderr
             assert 'SHOULD_NOT_RUN' not in r.stdout and 'IMPORT ' not in r.stdout
             assert 'R2E_START_TEST_OUTPUT' not in r.stdout
             results.append({'kind':kind,'mode':'failed_rebuild','script_exit':r.returncode,'tests_started':False,'failure_guard':True})
         compiler = run(['cc','--version'],check=True).stdout.splitlines()[0]
     report={'scope':'Synthetic C shared library; pinned native/export shell builders, local path mapping and optional research rebuild adapter. No Docker, model, biological PR, full pipeline or Harbor execution.','compiler':compiler,'cases':results,'case_count':len(results),'all_assertions_passed':True,'temporary_directory_removed':not root.exists(),'limits':['Export uses upstream binary reward fallback, not graded parser','Fixture has no dependency installation or historical dependency drift','Adapter is not wired through pipeline configuration/export metadata','No MACS recovery claim']}
-    (ROOT/'compiled-lifecycle-results.json').write_text(json.dumps(report,indent=2)+'\n')
+    report['implementation'] = 'candidate builders' if args.candidate else 'research script adapter'
+    (ROOT/('candidate-lifecycle-results.json' if args.candidate else 'compiled-lifecycle-results.json')).write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'cases':len(results),'all_assertions_passed':True,'temporary_directory_removed':not root.exists()}))
 
 

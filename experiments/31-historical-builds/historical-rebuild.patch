@@ -1,0 +1,188 @@
+--- a/src/repo2rlenv/pipelines/pr_runtime.py
++++ b/src/repo2rlenv/pipelines/pr_runtime.py
+@@ -432,6 +432,9 @@
+     return f'export PATH="{joined}:$PATH"\n'
+ 
+ 
++from repo2rlenv.pipelines.runtime_rebuild import rebuild_script
++
++
+ def build_eval_script(
+     base_commit: str,
+     test_patch: str,
+@@ -440,6 +443,7 @@
+     language: str | None = None,
+     fail_to_pass: list[str] | None = None,
+     pass_to_pass: list[str] | None = None,
++    rebuild_cmds: list[str] | None = None,
+ ) -> str:
+     """Build the `tests/test.sh` content that Harbor runs after the model patch.
+ 
+@@ -496,6 +500,7 @@
+             "fi\n"
+         )
+     )
++    rebuild = "" if rebuild_cmds is None else rebuild_script(rebuild_cmds, exported=True)
+     head = (
+         "#!/bin/bash\n"
+         "set -uxo pipefail\n"
+@@ -508,6 +513,7 @@
+         "mkdir -p /logs/verifier\n"
+         f"{reset} || true\n"  # tolerate test files that didn't exist at base
+         f"{apply_guard}"
++        f"{rebuild}"
+         # Capture the suite output so the verifier can parse per-test status.
+         # `( ... )` subshell + redirect keeps the whole `a && b` block's output;
+         # pipefail preserves the real test exit code.
+@@ -836,6 +842,11 @@
+         self.input = input
+         self.options = options
+         self.bootstrap = bootstrap
++        self.rebuild_cmds = None
++        if options.replay_bootstrap_rebuild:
++            if not bootstrap.rebuild_cmds:
++                raise ValueError("replay_bootstrap_rebuild requires recorded bootstrap rebuild_cmds")
++            self.rebuild_cmds = list(bootstrap.rebuild_cmds)
+         self._progress_cb = None
+ 
+     def set_progress_callback(self, cb) -> None:
+@@ -950,6 +961,7 @@
+                         test_cmds=targeted_cmds,
+                         language=self.bootstrap.language.value,
+                         timeout=self.options.validation_timeout_sec,
++                        rebuild_cmds=self.rebuild_cmds,
+                     )
+                     fail_to_pass = outcome.fail_to_pass
+                     pass_to_pass = outcome.pass_to_pass
+@@ -1110,6 +1122,7 @@
+             language=self.bootstrap.language.value,
+             fail_to_pass=fail_to_pass,
+             pass_to_pass=pass_to_pass,
++            rebuild_cmds=self.rebuild_cmds,
+         )
+         # Use image_tag for local-only bootstraps (Docker can resolve locally),
+         # image_digest only when the image is in a registry that BuildKit can
+@@ -1147,6 +1160,8 @@
+                 # go to reward-details.json (eval signal — Harbor's reward.json
+                 # schema is flat-numeric-only). See _pr_runtime_verifier.py.
+                 "reward_mode": "graded",
++                **({"rebuild_cmds": self.rebuild_cmds, "rebuild_stage": "after_patches_before_tests"}
++                   if self.rebuild_cmds is not None else {}),
+             },
+             # Difficulty + coverage metadata so consumers can slice train/eval
+             # by hardness and judge regression-guard strength (p2p_count == 0
+--- a/src/repo2rlenv/pipelines/pr_runtime_validate.py
++++ b/src/repo2rlenv/pipelines/pr_runtime_validate.py
+@@ -18,6 +18,8 @@
+ from __future__ import annotations
+ 
+ import logging
++
++from repo2rlenv.pipelines.runtime_rebuild import rebuild_script
+ from dataclasses import dataclass, field
+ 
+ from repo2rlenv.bootstrap.docker import DockerSandbox
+@@ -49,6 +51,7 @@
+     apply_patch: str | None,
+     apply_test_patch: str | None,
+     test_cmds: list[str],
++    rebuild_cmds: list[str] | None = None,
+ ) -> str:
+     """Build the shell script for one validation stage (pre-fix or post-fix).
+ 
+@@ -75,6 +78,14 @@
+         parts.append(_heredoc_apply(apply_patch))
+     if apply_test_patch and apply_test_patch.strip():
+         parts.append(_heredoc_apply(apply_test_patch))
++    if rebuild_cmds is not None:
++        # Fail closed during checkout/patching, but retain failing tests as
++        # expected F2P evidence. Remove the original ignored clean error.
++        parts[0] = "set -euxo pipefail"
++        parts[2] += " || exit $?"
++        parts[4] = parts[4].removesuffix(" || true")
++        parts.append(rebuild_script(rebuild_cmds))
++        parts.append("set +e")
+     # Emit the markers to STDOUT via echo — NOT `: 'MARKER'`. With `set -x`,
+     # a `:` no-op is traced to STDERR as `+ : MARKER`, while the test runner
+     # writes to STDOUT. Slicing between stderr-only markers captured zero test
+@@ -212,6 +223,7 @@
+     test_cmds: list[str],
+     language: str | None = None,
+     timeout: int = 600,
++    rebuild_cmds: list[str] | None = None,
+ ) -> ValidationOutcome:
+     """Run the two-stage validation and return the resulting outcome.
+ 
+@@ -243,12 +255,19 @@
+         apply_patch=None,
+         apply_test_patch=test_patch,
+         test_cmds=test_cmds,
++        rebuild_cmds=rebuild_cmds,
+     )
+     logger.info("validate_pr: running pre-fix stage at %s", base_commit[:12])
+     pre = sandbox.exec(pre_script, timeout=timeout)
+     # Parse the FULL output — a real suite emits 100k+ chars of per-test lines;
+     # truncating to 20k elided the test section and zeroed F2P detection.
+     pre_log = pre.truncated(max_chars=5_000_000)
++    if rebuild_cmds is not None and (
++        pre.exit_code != 0
++        or "R2E_START_TEST_OUTPUT" not in pre.stdout.splitlines()
++        or "R2E_END_TEST_OUTPUT" not in pre.stdout.splitlines()
++    ):
++        return ValidationOutcome(status="failed", reason="pre stage incomplete or setup/rebuild failed", pre_log=pre_log,)
+     pre_status = parse_logs(test_cmds, _slice_test_output(pre_log), language=language)
+ 
+     # If the test_patch itself failed to apply, no point continuing.
+@@ -265,10 +284,17 @@
+         apply_patch=patch,
+         apply_test_patch=test_patch,
+         test_cmds=test_cmds,
++        rebuild_cmds=rebuild_cmds,
+     )
+     logger.info("validate_pr: running post-fix stage")
+     post = sandbox.exec(post_script, timeout=timeout)
+     post_log = post.truncated(max_chars=5_000_000)
++    if rebuild_cmds is not None and (
++        post.exit_code != 0
++        or "R2E_START_TEST_OUTPUT" not in post.stdout.splitlines()
++        or "R2E_END_TEST_OUTPUT" not in post.stdout.splitlines()
++    ):
++        return ValidationOutcome(status="failed", reason="post stage incomplete or setup/rebuild failed", pre_log=pre_log, post_log=post_log,)
+     post_status = parse_logs(test_cmds, _slice_test_output(post_log), language=language)
+ 
+     if "error: patch failed" in post_log.lower() or "patch does not apply" in post_log.lower():
+--- a/src/repo2rlenv/spec/options.py
++++ b/src/repo2rlenv/spec/options.py
+@@ -54,6 +54,8 @@
+     min_fail_to_pass: int = 1
+     validation_timeout_sec: int = 600  # per-PR cap on the two test runs
+     skip_validation: bool = False  # emit candidates without F2P/P2P (debug / fast iteration)
++
++    replay_bootstrap_rebuild: bool = False  # opt-in historical build experiment
+ 
+     # --- Quality (SWE-bench Lite-style sampling) ---
+     lite_filter: bool = False
+--- /dev/null
++++ b/src/repo2rlenv/pipelines/runtime_rebuild.py
+@@ -0,0 +1,21 @@
++"""Opt-in deterministic replay of recorded bootstrap build commands."""
++import shlex
++
++
++def rebuild_script(commands: list[str], *, exported: bool = False) -> str:
++    if not commands or any(not c.strip() or '\x00' in c for c in commands):
++        raise ValueError('Expected nonempty recorded rebuild commands without NUL')
++    # Running a separate shell avoids Bash disabling errexit in a subshell
++    # whose status is checked by an `if` or `||` expression.
++    script = 'bash -euo pipefail -c ' + shlex.quote('\n'.join(commands))
++    if exported:
++        # Install a failure verdict before work begins: failed/timed-out builds
++        # must not inherit a previous verification's positive reward.
++        return (
++            'echo 0.0 > /logs/verifier/reward.txt\n'
++            'echo \'{"reward":0.0,"resolved":false,"parse_status":"rebuild_incomplete"}\' > /logs/verifier/reward-details.json\n'
++            + script + '\nR2E_REBUILD_RC=$?\n'
++            + 'if [ "$R2E_REBUILD_RC" -ne 0 ]; then\n'
++            + '  echo R2E_REBUILD_FAILED >&2\n  exit "$R2E_REBUILD_RC"\nfi\n'
++        )
++    return script + '\n'
