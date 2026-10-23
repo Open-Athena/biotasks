@@ -17,6 +17,34 @@ def sha256(path):
         return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
+def load_dependency_exclusions(directory, recorded):
+    """Bind the declared removals to the successful cleaned reference environment."""
+    from dependency_assets import validate_manifest
+
+    declaration = "candidate/dependency-exclusions.json"
+    if declaration not in recorded:
+        if (directory / declaration).exists():
+            raise ValueError("Unrecorded dependency exclusion declaration")
+        return None  # Historical recipe: no removal policy was declared.
+    for name in [
+        declaration,
+        "trial/dependency_assets.py",
+        "trial/dependency-exclusions-applied.json",
+    ]:
+        if name not in recorded or sha256(directory / name) != recorded[name]:
+            raise ValueError("Dependency exclusion evidence identity mismatch")
+    value = validate_manifest(
+        json.loads((directory / declaration).read_text()), require_reason=True
+    )
+    receipt = json.loads((directory / "trial/dependency-exclusions-applied.json").read_text())
+    expected = [
+        {key: item[key] for key in ("distribution", "path", "sha256")} for item in value["files"]
+    ]
+    if receipt != {"files": expected, "excluded_files_absent": True}:
+        raise ValueError("Dependency exclusions do not match the successful environment")
+    return value
+
+
 def load_snapshot(directory, prepared):
     directory = directory.resolve()
     manifest = json.loads((directory / "artifact-manifest.json").read_text())
@@ -29,9 +57,18 @@ def load_snapshot(directory, prepared):
             raise ValueError("Reference evidence identity mismatch: " + item["path"])
         recorded[item["path"]] = item["sha256"]
     required = {
-        "candidate/pyproject.toml", "candidate/system-packages.json", "candidate/stage-inputs.sh",
-        "candidate/analysis.py", "trial/reference.py", "trial/uv.lock", "trial/environment.txt",
-        "trial/inputs-before.json", "trial/result.json", "inputs/plan.json", "inputs/original.py", "inputs/exports.py",
+        "candidate/pyproject.toml",
+        "candidate/system-packages.json",
+        "candidate/stage-inputs.sh",
+        "candidate/analysis.py",
+        "trial/reference.py",
+        "trial/uv.lock",
+        "trial/environment.txt",
+        "trial/inputs-before.json",
+        "trial/result.json",
+        "inputs/plan.json",
+        "inputs/original.py",
+        "inputs/exports.py",
     }
     if not required <= recorded.keys():
         raise ValueError("Incomplete frozen reference evidence")
@@ -55,7 +92,14 @@ def load_snapshot(directory, prepared):
         raise ValueError("Output inventory differs from preparation")
     packages = json.loads((directory / "candidate/system-packages.json").read_text())
     validate_environment((directory / "candidate/pyproject.toml").read_text(), packages)
-    return {"directory": directory, "hashes": recorded, "outputs": expected, "system_packages": packages}
+    exclusions = load_dependency_exclusions(directory, recorded)
+    return {
+        "directory": directory,
+        "hashes": recorded,
+        "outputs": expected,
+        "system_packages": packages,
+        "dependency_exclusions": exclusions,
+    }
 
 
 def compare_inventory(expected, actual):
@@ -65,9 +109,13 @@ def compare_inventory(expected, actual):
     if len(after) != len(actual) or set(after) != set(before):
         raise ValueError("Replay changed the declared output inventory")
     return [
-        {"path": name, "byte_identical": after[name].get("exists", False)
-         and after[name].get("sha256") == item["sha256"],
-         "baseline_sha256": item["sha256"], "replay_sha256": after[name].get("sha256")}
+        {
+            "path": name,
+            "byte_identical": after[name].get("exists", False)
+            and after[name].get("sha256") == item["sha256"],
+            "baseline_sha256": item["sha256"],
+            "replay_sha256": after[name].get("sha256"),
+        }
         for name, item in before.items()
     ]
 
@@ -77,9 +125,18 @@ async def replay_reference(*, remote, snapshot, root, config):
     source = snapshot["directory"]
     save_record(root / "frozen-inputs.json", {"sha256": snapshot["hashes"]})
     setup = root / "setup.sh"
-    setup.write_text(setup_script(snapshot["system_packages"], verify_inputs=False, locked=True))
+    setup.write_text(
+        setup_script(
+            snapshot["system_packages"],
+            verify_inputs=False,
+            locked=True,
+            dependency_cleanup=snapshot.get("dependency_exclusions") is not None,
+        )
+    )
     initialized = await remote.command(
-        ["mkdir", "-p", "/work/environment", "/work/cache", "/inputs"], 30, "replay-initialize",
+        ["mkdir", "-p", "/work/environment", "/work/cache", "/inputs"],
+        30,
+        "replay-initialize",
     )
     if initialized["exit_code"]:
         raise RuntimeError("Replay initialization failed")
@@ -93,8 +150,16 @@ async def replay_reference(*, remote, snapshot, root, config):
         (source / "trial/inputs-before.json", "/work/expected-inputs.json"),
     ]:
         await remote.upload(local, target)
+    if snapshot.get("dependency_exclusions") is not None:
+        await remote.upload(
+            source / "candidate/dependency-exclusions.json",
+            "/work/environment/dependency-exclusions.json",
+        )
+        await remote.upload(source / "trial/dependency_assets.py", "/work/dependency_assets.py")
     await remote.network(False)
-    built = await remote.command(["sh", "-eu", "/work/setup.sh"], config["setup_seconds"], "replay-setup")
+    built = await remote.command(
+        ["sh", "-eu", "/work/setup.sh"], config["setup_seconds"], "replay-setup"
+    )
     save_record(root / "setup-result.json", built)
     if built["exit_code"]:
         raise RuntimeError("Frozen setup failed; no automatic repair or resolution")
@@ -102,6 +167,11 @@ async def replay_reference(*, remote, snapshot, root, config):
         await remote.download("/work/environment/" + name, root / name)
         if sha256(root / name) != snapshot["hashes"]["trial/" + name]:
             raise RuntimeError("Resolved replay environment differs from the reference: " + name)
+    if snapshot.get("dependency_exclusions") is not None:
+        name = "dependency-exclusions-applied.json"
+        await remote.download("/work/environment/" + name, root / name)
+        if sha256(root / name) != snapshot["hashes"]["trial/" + name]:
+            raise RuntimeError("Replay dependency removal differs from the reference")
     await remote.network(True)
     trials = []
     for number in range(1, config["max_tests"] + 1):
@@ -109,26 +179,37 @@ async def replay_reference(*, remote, snapshot, root, config):
         trial.mkdir(parents=True)
         reset = await remote.command(
             ["sh", "-eu", "-c", "rm -rf /work/run /work/outputs; mkdir /work/run /work/outputs"],
-            30, f"replay-reset-{number}",
+            30,
+            f"replay-reset-{number}",
         )
         if reset["exit_code"]:
             raise RuntimeError("Cannot establish a fresh replay workspace")
         # Restore immutable controller inputs on every invocation.
-        for name, target in [("trial/reference.py", "/work/reference.py"),
-                             ("inputs/plan.json", "/work/plan.json"),
-                             ("trial/inputs-before.json", "/work/expected-inputs.json")]:
+        for name, target in [
+            ("trial/reference.py", "/work/reference.py"),
+            ("inputs/plan.json", "/work/plan.json"),
+            ("trial/inputs-before.json", "/work/expected-inputs.json"),
+        ]:
             await remote.upload(source / name, target)
-        await remote.helper(["verify-staging", "/work/expected-inputs.json"], f"replay-inputs-before-{number}")
+        await remote.helper(
+            ["verify-staging", "/work/expected-inputs.json"], f"replay-inputs-before-{number}"
+        )
         record = {"status": "incomplete", "number": number}
         try:
             record["execution"] = await remote.command(
                 ["env", "MPLBACKEND=Agg", "/work/venv/bin/python", "/work/reference.py"],
-                config["reference_seconds"], f"replay-reference-{number}", cwd="/work/run",
+                config["reference_seconds"],
+                f"replay-reference-{number}",
+                cwd="/work/run",
             )
             await remote.upload(source / "trial/inputs-before.json", "/work/expected-inputs.json")
-            await remote.helper(["verify-staging", "/work/expected-inputs.json"], f"replay-inputs-after-{number}")
+            await remote.helper(
+                ["verify-staging", "/work/expected-inputs.json"], f"replay-inputs-after-{number}"
+            )
             await remote.upload(source / "inputs/plan.json", "/work/plan.json")
-            inventory = await remote.helper(["inventory", "/work/plan.json"], f"replay-inventory-{number}")
+            inventory = await remote.helper(
+                ["inventory", "/work/plan.json"], f"replay-inventory-{number}"
+            )
             record["artifacts"] = inventory
             for item in inventory["artifacts"]:
                 if not item["exists"]:
@@ -140,23 +221,32 @@ async def replay_reference(*, remote, snapshot, root, config):
                     raise RuntimeError("Replay artifact download identity mismatch")
             if record["execution"]["exit_code"] or not inventory["declared_artifacts_present"]:
                 raise RuntimeError("Reference replay failed; preserve evidence without repair")
-            record["comparison_to_original"] = compare_inventory(snapshot["outputs"], inventory["artifacts"])
-            observe_tables(record["comparison_to_original"], source / "trial/outputs", trial / "outputs")
+            record["comparison_to_original"] = compare_inventory(
+                snapshot["outputs"], inventory["artifacts"]
+            )
+            observe_tables(
+                record["comparison_to_original"], source / "trial/outputs", trial / "outputs"
+            )
             if trials:
-                record["comparison_to_previous"] = compare_inventory(trials[-1]["artifacts"]["artifacts"], inventory["artifacts"])
+                record["comparison_to_previous"] = compare_inventory(
+                    trials[-1]["artifacts"]["artifacts"], inventory["artifacts"]
+                )
             record["status"] = "executed"
             trials.append(record)
         finally:
             save_record(trial / "result.json", record)
     observation = {
         "status": "repeatability_observed_requires_comparison_review",
-        "reference_tests": len(trials), "model_calls": 0,
+        "reference_tests": len(trials),
+        "model_calls": 0,
         "all_outputs_byte_identical_to_original": all(
             item["byte_identical"] for trial in trials for item in trial["comparison_to_original"]
         ),
         "all_output_differences_limited_to_table_serialization_or_row_order": all(
-            item["byte_identical"] or item.get("table_observation", {}).get("same_header_and_row_multiset", False)
-            for trial in trials for item in trial["comparison_to_original"]
+            item["byte_identical"]
+            or item.get("table_observation", {}).get("same_header_and_row_multiset", False)
+            for trial in trials
+            for item in trial["comparison_to_original"]
         ),
         "output_observations": [trial["comparison_to_original"] for trial in trials],
         "comparison_rules_validated": False,

@@ -8,6 +8,19 @@ does not prove the public contract complete or scientifically validated.
 You also receive the current public
 scientific question, source evidence, approved policy and execution limits.
 
+Also account for every supplied `source_operations` ID in `operation_coverage`.
+Group IDs sharing the same role and explanation. `result` entries name requested
+output `artifact_paths`; `supplied_input` entries name explicit intermediate input
+files. Other roles (`support`, `presentation`, `diagnostic`, `not_executed`) have
+empty paths and source-backed reasons. `redundant` additionally names a retained
+`counterpart_id` and explains the actual projection with unchanged operation,
+entities, state and parameters; all other entries set counterpart_id to null.
+No absent/cyclic/different-call-target counterpart is accepted. This syntactic
+inventory is not a runtime DAG or a scientific eligibility judgment. Matching
+call names do not prove redundancy. Do not hide independent analyses as support
+or diagnostics; unnamed results still need scientific accounting. Earlier worker
+exclusions and drafts remain claims to check against the original source.
+
 Your job is to turn this existing work into a complete submission for controlled
 execution. Preserve its scientific scope and reuse the supplied programs where
 appropriate. Do not start another exploratory investigation, invent numerical

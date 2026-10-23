@@ -27,6 +27,11 @@ The user message is JSON. `files` maps evidence-relative paths to contents;
   artifact identities, schemas and structural checks. Previews are not full data.
 
 `task_policy` gives scope, resources, network and reward requirements.
+`source_operations` inventories literal call sites in the original source,
+including nested or conditional calls. It is not an executed dependency graph
+or a judgment about which calls are scientific endpoints. Use it with the
+narrative to check that excluded/unnamed branches have not been overlooked;
+construction must provide an explicit source-operation coverage ledger.
 Optional `revision_context` supplies a prior proposal and review feedback. Treat
 its claims as reviewable evidence; correct the complete proposal, not only one
 paragraph, and reuse already established facts without repeating broad inspection. Optional

@@ -17,6 +17,22 @@ def relative_paths(paths):
             raise ValueError("Expected normalized relative artifact path")
 
 
+class OperationUse(StrictModel):
+    operation_ids: list[str]
+    role: Literal[
+        "result",
+        "supplied_input",
+        "support",
+        "redundant",
+        "presentation",
+        "diagnostic",
+        "not_executed",
+    ]
+    artifact_paths: list[str]
+    counterpart_id: str | None
+    rationale: str = Field(min_length=1)
+
+
 class Materialization(StrictModel):
     disposition: Literal["ready", "blocked"]
     instruction: str
@@ -29,6 +45,9 @@ class Materialization(StrictModel):
     derive_code: str
     oracle_code: str
     rationale: str = Field(min_length=1)
+    # Historical artifacts remain readable. Current construction validates this
+    # against a controller-generated inventory of every original source call.
+    operation_coverage: list[OperationUse] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def valid_bundle(self):

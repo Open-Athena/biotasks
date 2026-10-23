@@ -9,6 +9,28 @@ from specification_inputs import specification_context
 from specification_protocol import TaskSpecification
 
 
+def current_config(tmp_path, name):
+    """Freeze today's controller input, without replacing historical evidence."""
+    experiment = Path(__file__).parent
+    config = json.loads((experiment / name).read_text())
+    context = specification_context(
+        experiment / config["reference_directory"],
+        json.loads((experiment / config["policy_file"]).read_text()),
+        inspect_packages=config.get("inspect_packages", False),
+        inspect_reference=config.get("inspect_reference", False),
+        repeatability=json.loads((experiment / config["repeatability_file"]).read_text())
+        if config.get("repeatability_file")
+        else None,
+        revision_context=json.loads((experiment / config["revision_context_file"]).read_text())
+        if config.get("revision_context_file")
+        else None,
+    )
+    target = tmp_path / "current-input.json"
+    target.write_text(json.dumps(context))
+    config["input_file"] = str(target)
+    return config
+
+
 @pytest.fixture
 def run(tmp_path):
     source = Path(__file__).parent / "setup-runs/001"
@@ -98,9 +120,7 @@ def test_one_call_preserves_response_without_running_downstream(tmp_path, mode, 
             ]
         }
 
-    config = json.loads(
-        (Path(__file__).parent / "specification-diagnostic-config.json").read_text()
-    )
+    config = current_config(tmp_path, "specification-diagnostic-config.json")
     config["output_format"] = output_format
     root = tmp_path / "specification"
     coroutine = run(
@@ -275,7 +295,7 @@ def test_submission_only_revision_receives_rejection_feedback(tmp_path):
             ]
         }
 
-    config = json.loads((Path(__file__).parent / "specification-config.json").read_text())
+    config = current_config(tmp_path, "specification-config.json")
     assert config["output_format"] == "tools" and not config["inspect_packages"]
     root = tmp_path / "submission-only"
     asyncio.run(

@@ -17,7 +17,7 @@ def test_preserve_scientific_review_and_repeatability(tmp_path):
         },
         "repeatability": {"comparison_rules_validated": False},
         "policy": {},
-        "source_evidence": {},
+        "source_evidence": {"inputs/original.py": "result = analyze(data)\n"},
         "reference_observations": {},
         "paths": {},
     }
@@ -26,6 +26,7 @@ def test_preserve_scientific_review_and_repeatability(tmp_path):
     assert result["repeatability"] == context["repeatability"]
     assert "validation_handoff" not in result["specification"]
     assert context["specification"]["validation_handoff"] == "Later mutation suite"
+    assert result["source_operations"]["operations"][0]["function"] == "analyze"
 
 
 def test_shell_waits_for_controlled_candidate_execution():

@@ -53,6 +53,7 @@ class FakeRemote:
             "/work/setup/system-packages.json": b"[]",
             "/work/setup/stage-inputs.sh": b"",
             "/work/setup/inputs.json": b'{"files": []}',
+            "/work/setup/dependency-exclusions.json": b'{"files": []}\n',
         }
         self.events = []
         self.blocked = False
@@ -76,6 +77,9 @@ class FakeRemote:
         if label.startswith("setup-"):
             self.files["/work/environment/uv.lock"] = b"version = 1\n"
             self.files["/work/environment/environment.txt"] = b""
+            self.files["/work/environment/dependency-exclusions-applied.json"] = (
+                b'{"files": [], "excluded_files_absent": true}\n'
+            )
             self.files["/work/setup-inputs.json"] = b'{"files": []}'
             if self.setup_failure:
                 return {"exit_code": 1, "log": "Missing dependency"}
@@ -117,6 +121,17 @@ def session(tmp_path, remote=None):
         reference_seconds=10,
         max_tests=1,
     )
+
+
+def test_import_inventory_describes_conditional_imports_without_executing():
+    from reference_setup import import_inventory
+
+    source = "import never_installed\nif False:\n    from absent_package import Draw\ndef f():\n    import another_absent\n"
+    assert import_inventory(source) == [
+        {"line": 1, "statement": "import never_installed", "context": ["module"]},
+        {"line": 3, "statement": "from absent_package import Draw", "context": ["module", "If"]},
+        {"line": 5, "statement": "import another_absent", "context": ["module", "FunctionDef"]},
+    ]
 
 
 @pytest.mark.parametrize("trailing_newline", [False, True])

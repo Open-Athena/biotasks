@@ -39,6 +39,13 @@ streaming all rows, arrays or mismatches into the conversation.
   and input staging failures before that dispatch do not consume one. Use
   inexpensive file, manifest and import checks with `shell` first.
   Read the returned logs and receipts to diagnose setup failures.
+  Before spending a full reference dispatch, check the staged input lookups from
+  the actual reference directory `/work/run`, and test the source imports,
+  including imports that occur late in the script. `source_imports` supplies
+  literal statements with source locations and conditional/function context;
+  it is not a verified dependency manifest. Use focused import checks to discover
+  missing shared libraries as well as Python packages. Respect source-required
+  configuration and conditional imports; do not change source to satisfy a check.
   A definite exception in the appended exports can use preparation's one unused
   validation repair. The preparation worker owns that correction; never edit
   exports yourself. If the tool reports `exports_corrected_requires_retest`,
@@ -91,6 +98,23 @@ Keep one small setup directory with these files:
   test in the current workspace does not establish a clean rebuild. Preserve
   every required system package in the submitted recipe; do not rely on inherited
   installation state or cached builds.
+- `dependency-exclusions.json`: `{"files": []}` if no unused answer asset was
+  established. Otherwise, each item needs `distribution` (installed distribution
+  name), `path` (exact distribution-relative file path), the observed `sha256`,
+  and `reason` explaining actual answer-match evidence and why the original
+  analysis does not need the file. Inspect likely bundled examples/test/result
+  assets; a suggestive filename or a compatible wheel is insufficient evidence
+  of actual installed answer exposure. If necessary, inspect actual terminal
+  outputs after a controlled test, then declare exclusions and retest within
+  the remaining allowance. Do not remove required inputs, code needed by the
+  analysis, distribution metadata or original notices/licenses. Declare removals
+  here rather than hiding deletion commands in analysis or input staging. The
+  controller checks installed ownership and content identities, removes exactly
+  the declared files in each fresh environment, and records a receipt. A changed
+  declaration requires a fresh passing reference test. The later solver image
+  applies the same removals without retaining installer-cache or backup copies.
+  Report unresolved exposure or exhausted validation allowance honestly; do not
+  claim an exhaustive audit of every package from a limited inspection.
 - `stage-inputs.sh`: a POSIX shell recipe that stages the original inputs and
   needed caches. It runs with the resolved Python environment on PATH. It must
   not rewrite the submitted setup files. An empty

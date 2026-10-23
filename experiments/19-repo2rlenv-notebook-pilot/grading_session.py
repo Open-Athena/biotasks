@@ -35,6 +35,7 @@ from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
 from run_reference_setup import COMMAND_RETURN_ALLOWANCE_SECONDS, OperationBudgetExceeded
+from source_operations import operation_inventory
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -121,7 +122,12 @@ class GradingSession:
         source = self.snapshot["directory"]
         setup = self.root / "setup.sh"
         setup.write_text(
-            setup_script(self.snapshot["system_packages"], verify_inputs=False, locked=True)
+            setup_script(
+                self.snapshot["system_packages"],
+                verify_inputs=False,
+                locked=True,
+                dependency_cleanup=self.snapshot.get("dependency_exclusions") is not None,
+            )
         )
         staging = self.root / "no-input-staging.sh"
         staging.write_text(
@@ -157,6 +163,14 @@ class GradingSession:
             (staging, "/work/stage-inputs.sh"),
         ]:
             await self.remote.upload(local, target)
+        if self.snapshot.get("dependency_exclusions") is not None:
+            await self.remote.upload(
+                source / "candidate/dependency-exclusions.json",
+                "/work/environment/dependency-exclusions.json",
+            )
+            await self.remote.upload(
+                source / "trial/dependency_assets.py", "/work/dependency_assets.py"
+            )
         await self.remote.network(False)
         built = await self.build_environment()
         save_record(self.root / "setup-result.json", built)
@@ -166,6 +180,11 @@ class GradingSession:
             await self.remote.download("/work/environment/" + name, self.root / name)
             if sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]:
                 raise RuntimeError("Grading environment differs from the reference")
+        if self.snapshot.get("dependency_exclusions") is not None:
+            name = "dependency-exclusions-applied.json"
+            await self.remote.download("/work/environment/" + name, self.root / name)
+            if sha256(self.root / name) != self.snapshot["hashes"]["trial/" + name]:
+                raise RuntimeError("Grading dependency removal differs from the reference")
         root = Path(
             self.snapshot.get(
                 "restored_outputs_root",
@@ -462,6 +481,15 @@ async def run_grading(
         "verifier_seconds": config["verifier_seconds"],
         "reference_seconds": config["reference_seconds"],
     }
+    for name in (
+        "candidate/dependency-exclusions.json",
+        "trial/dependency-exclusions-applied.json",
+    ):
+        if name in snapshot["hashes"]:
+            context["source_evidence"][name] = (reference / name).read_text()
+    context["source_operations"] = operation_inventory(
+        context["source_evidence"]["inputs/original.py"]
+    )
     if "materialization" in snapshot:
         context["materialization"] = snapshot["materialization"]
         # The executed task supersedes speculative specification-stage plans.

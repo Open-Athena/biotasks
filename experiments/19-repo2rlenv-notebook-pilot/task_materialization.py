@@ -15,6 +15,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
+from source_operations import check_operation_coverage, operation_inventory
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -71,6 +72,7 @@ def materialization_context(context, source, seconds):
         "repeatability": context.get("repeatability"),
         "policy": context["policy"],
         "source_evidence": context["source_evidence"],
+        "source_operations": operation_inventory(context["source_evidence"]["inputs/original.py"]),
         "reference_observations": context["reference_observations"],
         "paths": context["paths"],
         "original_inputs": json.loads((source / "trial/inputs-before.json").read_text()),
@@ -110,6 +112,7 @@ async def run_materialization(
     async def validate(candidate):
         if candidate.disposition == "blocked":
             return
+        check_operation_coverage(candidate, context["source_operations"])
         folder = root / "materialization" / str(len(attempts) + 1)
         folder.mkdir(parents=True)
         record = candidate.model_dump()

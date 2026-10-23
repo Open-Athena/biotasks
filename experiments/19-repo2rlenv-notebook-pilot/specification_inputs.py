@@ -7,6 +7,7 @@ from pathlib import Path
 
 from package_inspection import inspection_context, package_catalog
 from reference_inspection import reference_catalog
+from source_operations import operation_inventory
 
 INPUT_FILES = (
     "provenance.json",
@@ -41,7 +42,15 @@ def specification_context(
     originals = {item["path"]: item for item in manifest["files"]}
     files = {}
     hashes = {}
-    for path in INPUT_FILES:
+    optional = [
+        name
+        for name in (
+            "candidate/dependency-exclusions.json",
+            "trial/dependency-exclusions-applied.json",
+        )
+        if name in originals
+    ]
+    for path in (*INPUT_FILES, *optional):
         content = (run / path).read_bytes()
         digest = hashlib.sha256(content).hexdigest()
         # The audit and provenance snapshot were preserved separately from
@@ -87,6 +96,7 @@ def specification_context(
             }
         },
         "task_policy": policy,
+        "source_operations": operation_inventory(files["inputs/original.py"]),
         "evidence_boundary": (
             "One passing reference test and structural output audit. No full data tables "
             "in this context, no independent scientific reproduction, repeatability "

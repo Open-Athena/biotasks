@@ -322,6 +322,15 @@ class Pipeline:
                     "intake", "unsupported_conversion_profile", str(intake / "rejection.json")
                 )
             policy = self.config["task_policy"]
+            policy = {**policy}
+            policy.setdefault(
+                "supplied_intermediates",
+                "Allowed with explicit notebook derivation, source identities and stable alignment; preserve substantial source-faithful downstream analysis and withhold its requested answers. Derived assignments are not biological ground truth.",
+            )
+            policy.setdefault(
+                "dependency_answers",
+                "GLM must inspect actual installed answer fixtures, declare only verified unused answer-file exclusions with content identities and reasons, and validate the cleaned environment. Preserve required data, scientific methods and original notices; do not expose answer copies through caches or backups.",
+            )
             write(self.root / "policy.json", policy)
             prep, setup_raw, reference = [
                 self.root / p for p in ("preparation", "setup-raw", "reference")

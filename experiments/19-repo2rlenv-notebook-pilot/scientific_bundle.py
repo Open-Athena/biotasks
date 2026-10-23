@@ -98,6 +98,16 @@ def package(
     )
     project = (environment / "candidate/pyproject.toml").read_text()
     validate_environment(project, packages)
+    from reference_replay import load_dependency_exclusions
+
+    environment_manifest = (
+        json.loads((environment / "artifact-manifest.json").read_text())
+        if (environment / "artifact-manifest.json").exists()
+        else {"files": []}
+    )
+    exclusions = load_dependency_exclusions(
+        environment, {item["path"]: item["sha256"] for item in environment_manifest["files"]}
+    )
     # This infrastructure wrapper never authors scientific task code or values.
     docker = ["FROM python:3.13.13-slim-bookworm", "ENV DEBIAN_FRONTEND=noninteractive"]
     if packages:
@@ -108,8 +118,8 @@ def package(
         )
     docker += [
         "COPY pyproject.toml uv.lock /opt/task-environment/",
-        f"RUN python -m pip install --disable-pip-version-check uv=={UV_VERSION}",
-        "RUN UV_PROJECT_ENVIRONMENT=/opt/venv UV_PYTHON_DOWNLOADS=never uv sync "
+        f"RUN python -m pip install --no-cache-dir --disable-pip-version-check uv=={UV_VERSION}",
+        "RUN UV_NO_CACHE=1 UV_PROJECT_ENVIRONMENT=/opt/venv UV_PYTHON_DOWNLOADS=never uv sync "
         "--project /opt/task-environment --locked --no-dev --no-install-project "
         "--python /usr/local/bin/python",
         'ENV PATH="/opt/venv/bin:$PATH"',
@@ -119,6 +129,16 @@ def package(
         " && ln -s /workspace/inputs /inputs && ln -s /workspace/outputs /outputs",
         "WORKDIR /workspace",
     ]
+    if exclusions is not None:
+        # Private reasons can contain reference observations. Do not put them,
+        # the deletion recipe, or a backup answer into the solver filesystem.
+        docker += [
+            "COPY dependency_assets.py dependency-exclusions.json /opt/task-environment/",
+            "RUN /opt/venv/bin/python /opt/task-environment/dependency_assets.py "
+            "/opt/task-environment/dependency-exclusions.json /opt/task-environment/exclusions-applied.json "
+            "&& rm /opt/task-environment/dependency_assets.py /opt/task-environment/dependency-exclusions.json "
+            "/opt/task-environment/exclusions-applied.json",
+        ]
     assets = {
         "environment/Dockerfile": TaskFile.text("\n".join(docker) + "\n"),
         "environment/pyproject.toml": TaskFile.text(project),
@@ -137,6 +157,19 @@ def package(
             "#!/bin/sh\nset -eu\npython /tests/verify.py\n", executable=True
         ),
     }
+    if exclusions is not None:
+        assets["environment/dependency_assets.py"] = TaskFile(
+            (environment / "trial/dependency_assets.py").read_bytes()
+        )
+        public_manifest = {
+            "files": [
+                {key: item[key] for key in ("distribution", "path", "sha256")}
+                for item in exclusions["files"]
+            ]
+        }
+        assets["environment/dependency-exclusions.json"] = TaskFile.text(
+            json.dumps(public_manifest, indent=2) + "\n"
+        )
     if attribution is not None:
         # Attribution is frozen before native trials, so the released executable
         # bundle identity includes the notices rather than adding them afterward.

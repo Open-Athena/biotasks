@@ -90,6 +90,23 @@ Return a complete structured artifact:
   Account for each eligible source endpoint: identify its source computation and
   corresponding requested output, including any source-faithful recovery. Explain
   scientific exclusions separately from limits of the preparation export inventory.
+- `operation_coverage`: account for every ID in the controller's `source_operations`
+  inventory exactly once; group IDs when their roles and explanation agree.
+  These are syntactic call sites, not an executed DAG or preselected endpoints.
+  Use `result` for calls producing requested scientific outputs and name their
+  `artifact_paths`; use `supplied_input` for an explicitly supplied intermediate
+  and name its input files. Classify other calls as `support`, `presentation`,
+  `diagnostic` or `not_executed`, with source-backed reasons and empty paths.
+  Use `redundant` only for a result genuinely obtainable from a retained result
+  or supplied input; give its `counterpart_id`, empty paths and the projection
+  argument (same operation, entities, input state and parameters). Otherwise
+  `counterpart_id` is null. The controller rejects absent IDs, missing output
+  provenance, cycles and counterparts with different literal call targets.
+  Matching call targets alone do not establish redundancy: differing arguments,
+  state or populations still need scientific assessment. An unnamed or subset
+  result without a retained counterpart cannot be dismissed as an API example.
+  Do not use `support` or `diagnostic` to hide an independent scientific branch.
+  The ledger is private evidence for independent review, not proof of coverage.
 
 Validate cell/entity alignment explicitly. Prefer original stable identifiers or
 explicit composite keys for supplied metadata; avoid making the solver reconstruct

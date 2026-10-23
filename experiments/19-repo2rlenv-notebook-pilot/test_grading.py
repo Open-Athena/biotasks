@@ -896,7 +896,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         return value
 
     monkeypatch.setattr(module, "stage", fake_stage)
-    inspection_snapshot = {}
+    inspection_snapshot = {"hashes": {}}
     if inspect_review:
         import hashlib
 

@@ -29,12 +29,19 @@ def test_syntax_failure_is_a_repairable_schema_error():
 
 def test_recovered_draft_refuses_changed_code(tmp_path):
     import json
+
     from task_materialization import recovered_author_files
 
     (tmp_path / "oracle.py").write_text("pass")
-    (tmp_path / "manifest.json").write_text(json.dumps({"files": [{
-        "path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()
-    }]}))
+    (tmp_path / "manifest.json").write_text(
+        json.dumps(
+            {
+                "files": [
+                    {"path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()}
+                ]
+            }
+        )
+    )
     assert recovered_author_files(tmp_path)["files"] == {"oracle.py": "pass"}
     (tmp_path / "oracle.py").write_text("fail")
     with pytest.raises(ValueError, match="identity"):
@@ -90,13 +97,28 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         derive_code="pass",
         oracle_code="pass",
         rationale="Synthetic fixture",
+        operation_coverage=[
+            dict(
+                operation_ids=["call-1-9"],
+                role="result",
+                artifact_paths=["value.txt"],
+                counterpart_id=None,
+                rationale="Source analysis result.",
+            )
+        ],
     )
     prior = tmp_path / "prior"
     prior.mkdir()
     (prior / "oracle.py").write_text("pass")
-    (prior / "manifest.json").write_text(json.dumps({"files": [{
-        "path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()
-    }]}))
+    (prior / "manifest.json").write_text(
+        json.dumps(
+            {
+                "files": [
+                    {"path": "oracle.py", "bytes": 4, "sha256": hashlib.sha256(b"pass").hexdigest()}
+                ]
+            }
+        )
+    )
     uploads = []
 
     async def upload(local, remote):
@@ -123,6 +145,8 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         raise AssertionError("Synthetic author needs no shell")
 
     async def complete(payload):
+        model_input = json.loads(payload["messages"][1]["content"])
+        assert model_input["source_operations"]["operations"][0]["function"] == "analyze"
         tool_names = {t["function"]["name"] for t in payload["tools"]}
         expected_tools = {"submit_artifact", "revise_artifact"}
         if mode != "finalize":
@@ -170,14 +194,17 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
                     "validation_handoff": "Later grader plan",
                 },
                 "policy": {},
-                "source_evidence": {},
+                "source_evidence": {"inputs/original.py": "result = analyze(data)\n"},
                 "reference_observations": {},
                 "paths": {},
             },
             root=root,
-            config={"reference_seconds": 600, "request_timeout_seconds": 600,
-                    **({"prior_author_files": str(prior)} if mode != "fresh" else {}),
-                    **({"authoring_mode": "construct"} if mode == "construct_with_prior" else {})},
+            config={
+                "reference_seconds": 600,
+                "request_timeout_seconds": 600,
+                **({"prior_author_files": str(prior)} if mode != "fresh" else {}),
+                **({"authoring_mode": "construct"} if mode == "construct_with_prior" else {}),
+            },
             endpoint="unused",
             credential="unused",
             deadline=time.time() + 60,
@@ -185,7 +212,8 @@ def test_materialization_controller_preserves_candidate_and_checks_downloads(tmp
         )
     )
     assert json.loads((root / "materialize/input.json").read_text())["specification"] == {
-        "task_brief": "Synthetic question", "review": "Observed scientific uncertainty"
+        "task_brief": "Synthetic question",
+        "review": "Observed scientific uncertainty",
     }
     assert result["oracle_executed"]
     assert not result["numerical_comparison_validated"]

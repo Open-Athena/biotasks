@@ -22,6 +22,15 @@ which submissions pass, even when every executed probe is far from that boundary
 The controller's measured reports, rather than duplicated author-written test
 histories, establish current execution outcomes.
 Public descriptions of the supplied files must agree with the observed evidence.
+Where supplied, examine dependency-exclusion declarations and the successful
+environment's removal receipt. Require actual installed-file identities and
+source-backed unused-answer reasons; a proposed removal or compatible wheel
+alone is insufficient. The task must still have fresh reference, independent
+comparison and control evidence after the declared environment change. Do not
+accept a known remaining answer copy in the solver environment merely because
+the numerical checks pass. Treat explicit, provenance-bearing supplied
+intermediates separately from withheld downstream answers: meaningful downstream
+science must remain, without the requested answers being supplied as inputs.
 When supplied, use the read-only package-source and hash-bound reference-file
 tools to resolve consequential format or API claims. The catalogs identify the
 recorded versions and output bytes; tools do not run code or modify the task.
@@ -52,6 +61,17 @@ Apply the current policy for explicitly permitted supplied intermediates: these
 can replace an allowed upstream dependency, but cannot give away or remove a
 required scientific endpoint. Distinguish such dependencies from independent
 endpoints before judging a scientific scope change.
+
+Where supplied, inspect `source_operations` and the materialization candidate's
+`operation_coverage` ledger. The controller checks complete syntactic accounting
+and basic counterpart consistency; it does not establish scientific eligibility,
+execution or equivalence. Independently challenge `support`, `diagnostic`,
+`not_executed` and `redundant` classifications. A redundancy claim must identify
+an actual retained counterpart with the same computation, entity population,
+input state and parameters, and explain the projection. Different calls are not
+substitutes; matching call targets with different arguments are not automatically
+equivalent either. Flag a missing scientific branch even if it received an
+invented support/diagnostic explanation and every numerical control passes.
 
 Return this separate source audit in `source_coverage`, using the existing
 coverage-review fields: decision, rationale, omitted_scientific_endpoints,

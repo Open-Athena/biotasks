@@ -1,5 +1,6 @@
 """Controller-owned Python environment setup; never execute during preparation."""
 
+import json
 import re
 import shlex
 import tomllib
@@ -56,6 +57,7 @@ def setup_script(
     has_staging: bool = True,
     verify_inputs: bool = True,
     locked: bool = False,
+    dependency_cleanup: bool = False,
 ) -> str:
     lines = ["#!/bin/sh", "set -eu", "cd /work", "export DEBIAN_FRONTEND=noninteractive"]
     if system_packages:
@@ -68,6 +70,7 @@ def setup_script(
         f"python -m pip install --disable-pip-version-check uv=={UV_VERSION}",
         "export UV_PROJECT_ENVIRONMENT=/work/venv",
         "export UV_PYTHON_DOWNLOADS=never",
+        *(["export UV_NO_CACHE=1"] if dependency_cleanup else []),
         *(
             []
             if locked
@@ -79,6 +82,11 @@ def setup_script(
         "rm -f /work/setup-inputs.json",
         "sh -eu /work/stage-inputs.sh",
     ]
+    if dependency_cleanup:
+        lines.append(
+            "python /work/dependency_assets.py /work/environment/dependency-exclusions.json "
+            "/work/environment/dependency-exclusions-applied.json"
+        )
     if not has_staging and verify_inputs:
         lines.append("printf '%s\\n' '{\"files\": []}' > /work/setup-inputs.json")
     if verify_inputs:
@@ -87,13 +95,23 @@ def setup_script(
 
 
 def write_environment(directory: Path, plan, *, verify_inputs: bool = True) -> None:
+    from dependency_assets import validate_manifest
+
     validate_environment(plan.pyproject_toml, plan.system_packages)
+    exclusions = validate_manifest(
+        getattr(plan, "dependency_exclusions", {"files": []}), require_reason=True
+    )
     (directory / "pyproject.toml").write_text(plan.pyproject_toml)
     (directory / "stage-inputs.sh").write_text(plan.stage_inputs_sh)
+    (directory / "dependency-exclusions.json").write_text(json.dumps(exclusions, indent=2) + "\n")
+    (directory / "dependency_assets.py").write_bytes(
+        Path(__file__).with_name("dependency_assets.py").read_bytes()
+    )
     (directory / "setup.sh").write_text(
         setup_script(
             plan.system_packages,
             has_staging=bool(plan.stage_inputs_sh.strip()),
             verify_inputs=verify_inputs,
+            dependency_cleanup=True,
         )
     )

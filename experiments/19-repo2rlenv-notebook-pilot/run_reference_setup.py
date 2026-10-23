@@ -518,7 +518,14 @@ async def run(
                 repair_exports=bounded_repair if repair_exports is not None else None,
             )
             await session.initialize()
+            from reference_setup import import_inventory
+
             context = {
+                "source_imports": {
+                    "analysis": import_inventory(prepared.baseline),
+                    "exports": import_inventory(prepared.exports),
+                    "scope": "Literal source statements and locations only; dynamic imports, native libraries and availability remain unverified.",
+                },
                 "preparation": {
                     "source": prepared.context["source"],
                     "conversion": prepared.context["conversion"],
@@ -529,6 +536,7 @@ async def run(
                     "exports.py": "/work/frozen/exports.py",
                     "plan.json": "/work/frozen/plan.json",
                     "setup": "/work/setup",
+                    "reference_cwd": "/work/run",
                 },
                 "limits": {
                     **target,

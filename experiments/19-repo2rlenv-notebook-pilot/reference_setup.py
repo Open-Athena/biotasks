@@ -28,6 +28,29 @@ def digest(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def import_inventory(source):
+    """Annotate literal imports without importing a module or running the source."""
+    rows = []
+
+    def visit(node, context):
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            rows.append(
+                {
+                    "line": node.lineno,
+                    "statement": ast.get_source_segment(source, node),
+                    "context": context,
+                }
+            )
+        nested = context
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.If, ast.Try)):
+            nested = [*context, type(node).__name__]
+        for child in ast.iter_child_nodes(node):
+            visit(child, nested)
+
+    visit(ast.parse(source), ["module"])
+    return rows
+
+
 def runtime_export_feedback(prepared, analysis: str, script: str, record: dict):
     """Identify a definite Python exception reached from the appended exports.
 
@@ -121,6 +144,7 @@ class SetupRecipe:
     pyproject_toml: str
     system_packages: list[str]
     stage_inputs_sh: str
+    dependency_exclusions: dict
 
 
 CANDIDATE_FILES = (
@@ -129,6 +153,7 @@ CANDIDATE_FILES = (
     "system-packages.json",
     "stage-inputs.sh",
     "inputs.json",
+    "dependency-exclusions.json",
 )
 TEST_TOOL = {
     "type": "function",
@@ -141,12 +166,23 @@ TEST_TOOL = {
 
 
 def inspect_candidate(directory: Path, prepared: PreparedReference):
-    files = {name: (directory / name).read_bytes() for name in CANDIDATE_FILES}
+    from dependency_assets import validate_manifest
+
+    files = {
+        name: (directory / name).read_bytes()
+        for name in CANDIDATE_FILES
+        if name != "dependency-exclusions.json" or (directory / name).exists()
+    }
+    # Historical recipes had no exclusion declaration. Absence means no removal.
+    files.setdefault("dependency-exclusions.json", b'{"files": []}\n')
     packages = json.loads(files["system-packages.json"])
     if not isinstance(packages, list) or any(not isinstance(p, str) for p in packages):
         raise ValueError("system-packages.json must be an array of strings")
     recipe = SetupRecipe(
-        files["pyproject.toml"].decode(), packages, files["stage-inputs.sh"].decode()
+        files["pyproject.toml"].decode(),
+        packages,
+        files["stage-inputs.sh"].decode(),
+        validate_manifest(json.loads(files["dependency-exclusions.json"]), require_reason=True),
     )
     validate_environment(recipe.pyproject_toml, recipe.system_packages)
     inventory = json.loads(files["inputs.json"])
@@ -283,6 +319,8 @@ class SetupSession:
                 "python",
                 "-c",
                 "from pathlib import Path; import sys; "
+                + "declaration = Path('/work/setup/dependency-exclusions.json'); "
+                + "declaration.write_text('{\"files\": []}\\n') if not declaration.exists() else None; "
                 + "paths = "
                 + repr(["/work/setup/" + n for n in CANDIDATE_FILES])
                 + "; "
@@ -345,6 +383,8 @@ class SetupSession:
                 ("pyproject.toml", "environment/pyproject.toml"),
                 ("stage-inputs.sh", "stage-inputs.sh"),
                 ("setup.sh", "setup.sh"),
+                ("dependency-exclusions.json", "environment/dependency-exclusions.json"),
+                ("dependency_assets.py", "dependency_assets.py"),
             ]:
                 await self.remote.upload(directory / name, "/work/" + target)
             setup = await self.setup_command(
@@ -375,6 +415,10 @@ class SetupSession:
                 ("uv.lock", "environment/uv.lock"),
                 ("environment.txt", "environment/environment.txt"),
                 ("inputs-before.json", "setup-inputs.json"),
+                (
+                    "dependency-exclusions-applied.json",
+                    "environment/dependency-exclusions-applied.json",
+                ),
             ]:
                 await self.remote.download("/work/" + source, directory / name)
             await self.remote.command(

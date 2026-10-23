@@ -13,8 +13,9 @@ def save(path, value):
 
 
 @pytest.mark.parametrize("question_revision", [False, True])
+@pytest.mark.parametrize("exclusions", [False, True])
 def test_bundle_keeps_answers_private_and_requires_exact_controls(
-    tmp_path, monkeypatch, question_revision
+    tmp_path, monkeypatch, question_revision, exclusions
 ):
     materialized, grading, environment = [
         tmp_path / p for p in ("materialized", "grading", "environment")
@@ -102,6 +103,35 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     )
     (environment / "trial").mkdir()
     (environment / "trial/uv.lock").write_text("fixture")
+    if exclusions:
+        entry = dict(
+            distribution="fixture",
+            path="fixture/tests/expected.txt",
+            sha256="a" * 64,
+            reason="PRIVATE observed expected output; unused fixture",
+        )
+        save(environment / "candidate/dependency-exclusions.json", {"files": [entry]})
+        save(
+            environment / "trial/dependency-exclusions-applied.json",
+            {
+                "files": [{key: entry[key] for key in ("distribution", "path", "sha256")}],
+                "excluded_files_absent": True,
+            },
+        )
+        (environment / "trial/dependency_assets.py").write_text("# Frozen helper fixture\n")
+        save(
+            environment / "artifact-manifest.json",
+            {
+                "files": [
+                    {
+                        "path": path.relative_to(environment).as_posix(),
+                        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+                    }
+                    for path in environment.rglob("*")
+                    if path.is_file()
+                ]
+            },
+        )
     options = dict(
         materialization=materialized,
         grading=grading,
@@ -120,6 +150,17 @@ def test_bundle_keeps_answers_private_and_requires_exact_controls(
     assert "`/workspace/inputs/`" in instruction
     assert "`/workspace/outputs/`" in instruction
     assert "COPY inputs/ /workspace/inputs/" in (task / "environment/Dockerfile").read_text()
+    if exclusions:
+        docker = (task / "environment/Dockerfile").read_text()
+        assert "UV_NO_CACHE=1" in docker and "--no-cache-dir" in docker
+        assert "/opt/venv/bin/python /opt/task-environment/dependency_assets.py" in docker
+        assert "&& rm /opt/task-environment/dependency_assets.py" in docker
+        public_manifest = (task / "environment/dependency-exclusions.json").read_text()
+        assert "PRIVATE" not in public_manifest
+        assert "reason" not in json.loads(public_manifest)["files"][0]
+        assert (task / "environment/dependency_assets.py").read_bytes() == (
+            environment / "trial/dependency_assets.py"
+        ).read_bytes()
     assert "/workspace/outputs" in (task / "tests/verify.py").read_text()
     assert (task / "solution/oracle.py").exists()
     assert (task / "environment/LICENSE.source").read_text() == "Fixture source notice\n"
