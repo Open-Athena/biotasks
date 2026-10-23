@@ -1,0 +1,5 @@
+🤖 Submitted the frozen MACS PR792 original-versus-rebuild comparison from checkpoint `52f57a92`. The driver invokes the actual pinned original and patched validators in separate 1.5-CPU/6-GiB containers from the same verified reconstructed image. Original eight test targets, parser, argv transport and 600-second stage timeout are unchanged. Rebuild commands retain their literal syntax; no dependency or task-specific repairs.
+
+Before submission, four stage scripts regenerated exactly, default-off parity and source hashes verified, and four no-Docker fixtures checked failure/timeout/deadline/stage-integrity guards. The existing reserved image worker has headroom. One attempt is bounded to 9,000 seconds at 4 allocated CPUs/16 GiB, at most 10 CPU-hours; cumulative maximum is 12.49975 under 16. Zero model calls/new capacity. Outcomes, archive readback and cleanup remain pending.
+
+[Driver and checks](https://github.com/Open-Athena/biotasks/tree/52f57a92/experiments/31-historical-builds). This is native validation; no new task exports or independent control success is claimed.

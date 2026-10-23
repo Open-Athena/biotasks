@@ -1,0 +1,61 @@
+{
+  "issue": {
+    "body": "Can rebuilding after historical resets restore correct-revision code without per-task repairs? Follow-up to #28, initially scoped to MACS; investigation remains open.\n\n**Candidate evidence:** an opt-in hook replays recorded bootstrap commands after patch application in native validation and exported verification. Twelve compiled lifecycle checks, seven graded-export checks and six complete native-validator checks pass. The native check produces the expected F2P/P2P sets; pre/post build failures stop validation. Default-off outcomes and commands match upstream.\n\n**Integration:** the complete patched upstream package loads configuration, constructs the registered pipeline, builds tasks and writes Harbor files for default/on/off settings. Missing rebuild commands and unknown options are rejected. No external calls occur in these checks. This is synthetic local evidence, not biological recovery or a full generation CLI/Docker/Harbor run; the dependency environment is recorded and is not upstream's full locked environment.\n\n**Reconstruction result:** all 16 recorded MACS actions replayed unchanged. The original 300-second smoke check timed out; a separate arm changed only smoke/fresh limits to 1,200 seconds. Both checks then exited 0 in roughly seven minutes, each reporting 4,924 passed and 348 skipped. Payload and actual base image match across arms; installed dependencies may still drift. This establishes a usable reconstructed environment, not PR792 validity. [Timing evidence](https://github.com/Open-Athena/biotasks/blob/9c2071e6/experiments/31-historical-builds/macs-longcheck-diagnosis.json).\n\n**Native comparison submitted:** PR792 original versus recorded-command rebuild, using separate fresh containers from the same reconstructed image. Original eight test targets, argv transport, parser and 600-second stage timeout remain fixed; only the opt-in rebuild intervention differs. Outcomes are pending. [Protocol](https://github.com/Open-Athena/biotasks/blob/52f57a92/experiments/31-historical-builds/macs-native-protocol.md).\n\n**Remaining and budget:** collect native outcomes, verify exported controls if recovery is claimed, then remove the retained image. Two terminal reconstruction attempts used 2.49975 allocated CPU-hours; the submitted comparison reserves at most 10 more under the 16-hour ceiling. Zero model calls or new capacity. Reconstruction archives are verified; comparison cleanup/readback remain pending. No production change promoted.\n\n[Native outcomes](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/native-outcome-results.json) \u00b7 [Package integration](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/package-integration-results.json) \u00b7 [Frozen MACS case](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/macs-case.json) \u00b7 [Full scope](https://github.com/Open-Athena/biotasks/blob/6c03d407/experiments/31-historical-builds/issue-scope.md). Detailed logs remain in comments.\n",
+    "labels": [
+      {
+        "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+        "name": "agent-generated",
+        "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+        "color": "5319E7"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374113948",
+    "html_url": "https://github.com/Open-Athena/biotasks/issues/31#issuecomment-6374113948",
+    "issue_url": "https://api.github.com/repos/Open-Athena/biotasks/issues/31",
+    "id": 6374113948,
+    "node_id": "IC_kwDOU1dZq88AAAABe-1CnA",
+    "user": {
+      "login": "gonzalobenegas",
+      "id": 5766420,
+      "node_id": "MDQ6VXNlcjU3NjY0MjA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5766420?u=d059be1b75c6ff8174b109722e0ec05a66ed29c1&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gonzalobenegas",
+      "html_url": "https://github.com/gonzalobenegas",
+      "followers_url": "https://api.github.com/users/gonzalobenegas/followers",
+      "following_url": "https://api.github.com/users/gonzalobenegas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gonzalobenegas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gonzalobenegas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gonzalobenegas/subscriptions",
+      "organizations_url": "https://api.github.com/users/gonzalobenegas/orgs",
+      "repos_url": "https://api.github.com/users/gonzalobenegas/repos",
+      "events_url": "https://api.github.com/users/gonzalobenegas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gonzalobenegas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-23T20:30:00Z",
+    "updated_at": "2026-10-23T20:30:00Z",
+    "author_association": "MEMBER",
+    "body": "\ud83e\udd16 Submitted the frozen MACS PR792 original-versus-rebuild comparison from checkpoint `52f57a92`. The driver invokes the actual pinned original and patched validators in separate 1.5-CPU/6-GiB containers from the same verified reconstructed image. Original eight test targets, parser, argv transport and 600-second stage timeout are unchanged. Rebuild commands retain their literal syntax; no dependency or task-specific repairs.\n\nBefore submission, four stage scripts regenerated exactly, default-off parity and source hashes verified, and four no-Docker fixtures checked failure/timeout/deadline/stage-integrity guards. The existing reserved image worker has headroom. One attempt is bounded to 9,000 seconds at 4 allocated CPUs/16 GiB, at most 10 CPU-hours; cumulative maximum is 12.49975 under 16. Zero model calls/new capacity. Outcomes, archive readback and cleanup remain pending.\n\n[Driver and checks](https://github.com/Open-Athena/biotasks/tree/52f57a92/experiments/31-historical-builds). This is native validation; no new task exports or independent control success is claimed.\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374113948/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  }
+}
