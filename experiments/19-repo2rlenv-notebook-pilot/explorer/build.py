@@ -94,7 +94,11 @@ def files(prefix, *names):
 stages = profile["stages"]
 stage_ids = [item[0] for item in stages]
 if len(set(stage_ids)) != len(stage_ids) or set(stage_ids) & {
-    "notebook", "task", "attempt", "pipeline", "review"
+    "notebook",
+    "task",
+    "attempt",
+    "pipeline",
+    "review",
 }:
     raise ValueError("Pipeline stage IDs must be unique and distinct from view IDs")
 
