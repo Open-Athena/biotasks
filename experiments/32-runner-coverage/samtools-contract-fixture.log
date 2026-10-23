@@ -1,0 +1,27 @@
+test_sort:
+	samtools sort fixture-a
+
+	synthetic failure
+.. failed ...
+
+test_sort:
+	samtools sort -@ 2 fixture-b
+.. ok
+
+test_expected:
+	samtools fixture-c
+
+.. expected failure
+
+test_unexpected:
+	samtools fixture-d
+.. unexpected pass
+
+
+Number of tests:
+    total            .. 4
+    passed           .. 1
+    failed           .. 1
+    expected failure .. 1
+    unexpected pass  .. 1
+
