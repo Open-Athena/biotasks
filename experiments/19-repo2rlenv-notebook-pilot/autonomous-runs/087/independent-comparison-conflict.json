@@ -1,0 +1,77 @@
+{
+  "candidate_sha256": "f7a1ed86ffc417ecdf57d610959792b9b836f52649b19d08e9a64072e292922e",
+  "failed_controls": [
+    {
+      "candidate_sha256": "f7a1ed86ffc417ecdf57d610959792b9b836f52649b19d08e9a64072e292922e",
+      "execution": {
+        "grader": {
+          "exit_code": 0,
+          "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+          "stderr": "",
+          "stdout": ""
+        },
+        "report": {
+          "checks": [
+            {
+              "id": "cell_table_schema",
+              "message": "clustering and UMAP tables are structurally valid",
+              "passed": true
+            },
+            {
+              "id": "de_table_schema",
+              "message": "DE table is structurally valid",
+              "passed": true
+            },
+            {
+              "id": "cell_identity_alignment",
+              "message": "cell identity, coverage and cross-file ordering consistent",
+              "passed": true
+            },
+            {
+              "id": "leiden_partitions",
+              "message": "leiden: partition differs (inconsistent cells: 1974; label bijection exists: no); leiden_res_0.02: partition differs (inconsistent cells: 12; label bijection exists: yes); leiden_res_0.50: partition differs (inconsistent cells: 1618; label bijection exists: no); leiden_res_2.00: partition differs (inconsistent cells: 1212; label bijection exists: no)",
+              "passed": false
+            },
+            {
+              "id": "cell_type_annotation",
+              "message": "5544 cells with a different cell_type_lvl1 annotation (e.g. row 1, cell AAACCCAAGGCCTAGA-1-s1d1: reference Monocytes, submission Erythroid)",
+              "passed": false
+            },
+            {
+              "id": "umap_embedding",
+              "message": "2D UMAP coordinates within the acceptance limit for every cell",
+              "passed": true
+            },
+            {
+              "id": "de_marker_table",
+              "message": "not evaluable: leiden_res_0.50 partition does not correspond to the reference, so DE groups cannot be aligned to reference groups",
+              "passed": false
+            },
+            {
+              "id": "de_statistics",
+              "message": "not evaluable: leiden_res_0.50 partition does not correspond to the reference, so DE statistics cannot be compared per gene",
+              "passed": false
+            }
+          ],
+          "passed": false
+        },
+        "status": "executed",
+        "submission_before": {
+          "clustering_cell_types.csv": "66c982709c2d6d230de31e86230fe0dcd2570fccce83d5fec10809d7da19b273",
+          "rank_genes_groups.csv": "fc40a83286bb46d3bca7418f5a9121c75429c6d7ea15055d30185a08b6e5ac1b",
+          "umap_embedding.csv": "7fbe879320035f244e82de8e5f7aa59927e77965f66f2462915959fe34f954d0"
+        },
+        "submission_sha256": {
+          "clustering_cell_types.csv": "66c982709c2d6d230de31e86230fe0dcd2570fccce83d5fec10809d7da19b273",
+          "rank_genes_groups.csv": "fc40a83286bb46d3bca7418f5a9121c75429c6d7ea15055d30185a08b6e5ac1b",
+          "umap_embedding.csv": "7fbe879320035f244e82de8e5f7aa59927e77965f66f2462915959fe34f954d0"
+        }
+      },
+      "kind": "alternative",
+      "omitted": null,
+      "passed_control": false,
+      "probe": null
+    }
+  ],
+  "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved"
+}
