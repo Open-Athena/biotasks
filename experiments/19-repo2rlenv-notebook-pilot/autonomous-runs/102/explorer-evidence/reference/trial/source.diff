@@ -1,0 +1,37 @@
+--- original.py
++++ analysis.py
+@@ -1,3 +1,7 @@
++# Offline input-path adaptation (setup stage): the three remote URLs
++# were staged verbatim into /inputs during network-enabled setup, so the
++# reads below point at those byte-identical local copies. No other change.
++
+ # ---
+ # jupyter:
+ #   jupytext:
+@@ -31,7 +35,7 @@
+ # This approach makes use of the `narrowPeak` schema for bioframe.read_table . 
+ 
+ ctcf_peaks = bioframe.read_table(
+-    "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz",
++    "/inputs/ENCFF401MQL.bed.gz",
+     schema="narrowPeak",
+ )
+ ctcf_peaks[0:5]
+@@ -39,7 +43,7 @@
+ # ## Get CTCF motifs from JASPAR
+ 
+ ### CTCF motif: http://jaspar.genereg.net/matrix/MA0139.1/
+-jaspar_url = "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/"
++jaspar_url = "/inputs/"
+ jaspar_motif_file = "MA0139.1.tsv.gz"
+ ctcf_motifs = bioframe.read_table(
+     jaspar_url + jaspar_motif_file, schema="jaspar", skiprows=1
+@@ -116,7 +120,7 @@
+ # do any of our peaks overlap blacklisted genomic regions?
+ 
+ blacklist = bioframe.read_table(
+-    "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz",
++    "/inputs/ENCFF356LFX.bed.gz",
+     schema="bed3",
+ )
+ blacklist[0:3]

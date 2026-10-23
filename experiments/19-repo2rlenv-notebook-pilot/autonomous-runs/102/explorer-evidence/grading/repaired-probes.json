@@ -1,0 +1,233 @@
+{
+  "concerns": [
+    "Peak groups are keyed by (chrom,start,end) but File 2 is compared as a multiset over all rows, so fragments belonging to two distinct input groups with identical coordinates would be indistinguishable in the reference output. Every (chrom,start,end) key in this reference file is unique (verified over all 40557 rows), so multiplicity arising from coordinate-colliding groups cannot arise in practice; no probe depends on distinguishing this case, and any such collision would produce identical expected rows anyway.",
+    "Tie-breaking among several overlapping motifs with the maximum pval (first pair in ascending peak-record then motif-record order) is enforced by comparing the resolved motif identity exactly; a tie-break deviation is detected whenever it changes a reported output value. A dedicated tie-specific mutation is not constructible from the reference outputs alone because the output does not record whether the selected winner was tied, so coverage here is limited to observable output differences (as stated publicly).",
+    "The no-motif sentinel may be written as -1, -1.0 or an empty pval_2 field for a legitimately no-motif row, per the public equivalence rule. A dedicated valid-alternative probe exercising only the empty-field sentinel encoding for a no-motif row is not present in the frozen suite; the grader implements the same accept rule for both forms (verified locally), so acceptance of that encoding does not depend on probe evidence.",
+    "No numeric tolerance is granted for fc or pval_2 beyond exact parsed-decimal equality; the only tolerance-like boundary is the value-based textual equivalence (trailing zeros, optional decimal point, optional leading '+' sign, 0 vs 0.0), which is the explicitly stated and tested representation rule. Compared value magnitudes differ by at least 1e-6 at the nearest boundary in this data, so no intra-value tolerance gap arises.",
+    "Chromosome-label renaming is tested only indirectly (exact-text comparisons against unaltered labels in all probes); a dedicated canonicalization probe was judged redundant given the exact-text rules and the coordinate/identity mutations already present. Since fragments in both checks are compared as multisets over full rows, the peak-table probes that change coordinates or row multiplicity (reassign-motif-shift, fragment-widen, drop-fragment) necessarily fail both peaks_blacklist_fragments and peaks_motif_assignment; their annotations state both effects.",
+    "Representation-only variants that remain untested by the frozen suite are rejected only when they carry exponents, underscores or padded whitespace (e.g. '5e0', '1_0', ' 700E-2 '); leading-'+'-signed tokens such as '+5' are accepted as the same value, per the stated rule. Rejection of the excluded forms was verified directly in unit checks rather than through reference-copy mutations."
+  ],
+  "disposition": "ready",
+  "probes": [
+    {
+      "check_ids": [
+        "motifs_per_peak_counts"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/motifs_per_peak.csv",
+          "quote": "motifs_per_peak\\n0\\n0\\n0\\n0\\n..."
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "swap-counts",
+      "rationale": "Two adjacent input peak records whose overlapping-motif counts differ get their counts exchanged. Both values are valid counts that appear in the reference (0 and 1, both present in the file), so row count, row identity and structure stay intact, but the element-wise identifiability of the per-peak count sequence with the peaks-file record order is disrupted, which is exactly the scientific result of check motifs_per_peak_counts.",
+      "script": "import csv\npath = \"motifs_per_peak.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"motifs_per_peak\"], rows[0]\n# adjacent data rows whose counts differ -> element-wise sequence no longer\n# matches the per-peak reference sequence\ni = None\nfor k in range(1, len(rows) - 1):\n    if rows[k][0] != rows[k + 1][0]:\n        i = k\n        break\nassert i is not None\nassert int(rows[i][0]) != int(rows[i + 1][0])\nrows[i][0], rows[i + 1][0] = rows[i + 1][0], rows[i][0]\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "motifs_per_peak_structure",
+        "motifs_per_peak_counts"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/motifs_per_peak.csv",
+          "quote": "40588 lines total (1 header + 40587 data rows), single column, every token a plain nonnegative decimal integer (verified with str.isdigit()); maximum count is 17."
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "count-nonint",
+      "rationale": "Replaces two counts with tokens that are not plain nonnegative decimal integers: a whitespace-padded scientific-notation token and an embedded-letter token. This breaks the File 1 structural rule (each data row holds one nonnegative integer written in plain decimal, no rounding or fractions) and also makes the element-wise exact-integer comparison against the reference sequence fail, so both the structure and counts checks must fail.",
+      "script": "import csv\npath = \"motifs_per_peak.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"motifs_per_peak\"]\nassert len(rows) == 40588\nk, j = None, None\nfor idx, r in enumerate(rows[1:], 1):\n    if k is None and r[0] == \"0\":\n        k = idx\n    if j is None and r[0] != \"0\" and \".\" not in r[0]:\n        j = idx\nassert k is not None and j is not None and k != j\nassert int(rows[j][0]) >= 1\nrows[k][0] = \" 700E-2 \"       # whitespace + scientific notation\nrows[j][0] = \"8overlap\"        # non-decimal token\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "motifs_per_peak_counts"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/motifs_per_peak.csv",
+          "quote": "Counts 0 occurs 5766 times, 2 occurs 5733 times; the first occurrence of 0 is data row 1 and the first occurrence of 2 is data row 16 (file line 17)."
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "count-perturb",
+      "rationale": "One zero-count peak record gains one motif (0 -> 1, an invented overlap) and one peak with exactly two overlapping motifs loses one (2 -> 1, a missed overlap). Both mutated values remain valid plain integers, so only the element-wise scientific comparison of motifs_per_peak_counts fails; the header, row count, and integer format all remain correct.",
+      "script": "import csv\npath = \"motifs_per_peak.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"motifs_per_peak\"], rows[0]\nassert len(rows) == 40588, len(rows)\nfor r in rows[1:]:\n    assert len(r) == 1 and str(int(r[0])) == r[0].strip()\nvals = [int(r[0]) for r in rows[1:]]\nk = vals.index(0)          # first zero-count peak\nj = vals.index(2)          # first peak with exactly two motifs\nrows[k + 1][0] = str(vals[k] + 1)     # 0 -> 1 : motif count invented\nrows[j + 1][0] = str(vals[j] - 1)     # 2 -> 1 : an overlap missed\nassert int(rows[k + 1][0]) == 1 and int(rows[j + 1][0]) == 1\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+ (file line 9, the first row with a complete assigned-motif field set)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-strand-flip",
+      "rationale": "A peak with an assigned motif keeps its fragment coordinates, fc, motif coordinates, pval and row identity; only strand_2 is flipped from '+' to '-'. The File 2 assignment rule requires that strands '-' and '+' are not interchanged, so peaks_motif_assignment fails while the fragment multiset, row count and file structure remain valid, testing that this check is separable from peaks_blacklist_fragments.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"], rows[0]\ni = next(k for k, r in enumerate(rows[1:], 1)\n         if r[8] == \"+\" and r[7] not in (\"\", \"-1.0\"))\nr = rows[i]\nassert all(r[j] != \"\" for j in (4, 5, 6, 7, 8))\nrows[i][8] = \"-\"\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows(rows)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_motif_assignment",
+        "peaks_blacklist_fragments"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+\nchr9,124777201,124777571,45.22599,chr9,124777400,124777419,450.0,+"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "reassign-motif-shift",
+      "rationale": "The reference assigns the same motif (chr9,124777400,124777419,450.0,+) to fragments of two distinct peak groups: chr9,124777413,124777783 (fc 5.06479) and chr9,124777201,124777571 (fc 45.22599). One fragment is given the other peak group's fc and a shifted motif start coordinate (124777401), and one fully duplicated fragment row is appended. The rows keep 9 parseable, well-formed fields, but the peak-group fc inheritance and the exact motif identity of peaks_motif_assignment are wrong, and the appended duplicate row adds an extra (chrom,start,end) fragment beyond the expected multiset, so peaks_blacklist_fragments also fails ('1 extra fragments submitted'); the duplicate row explicitly probes multiplicity enforcement in the fragment multiset.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\ni = data.index([\"chr9\",\"124777413\",\"124777783\",\"5.06479\",\n                 \"chr9\",\"124777400\",\"124777419\",\"450.0\",\"+\"])\nassert data[i][0] == \"chr9\"\n# give this fragment the other peak group's fc and a shifted motif coordinate\ndata[i][3] = \"45.22599\"\ndata[i][5] = str(int(data[i][5]) + 1)\nassert data[i][5] == \"124777401\"\n# append a duplicated fragment row (unsupported extra row with wrong content)\ndata.append(list(data[i]))\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,-1.0, (the first no-motif row)\nchr12,54379625,54380042,627.60723,chr12,54379835,54379854,564.0,- (the last data row, a complete assigned-motif row from a different peak group)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "motif-identity",
+      "rationale": "A peak with no assigned motif in the reference (fragment coordinates and fc preserved exactly) is annotated with the full motif field tuple of a different peak group's row (chrom_2/start_2/end_2/pval_2/strand_2 taken from a verified existing assignment). This invents an assignment where the reference has none, violating the absence/presence clause of peaks_motif_assignment, while all five motif fields are present and parseable so the pattern itself is not detectable structurally.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\n# a row without an assigned motif (motif fields empty, pval_2 sentinel)\ni = next(k for k, r in enumerate(data)\n         if r[0] == \"chr19\" and r[4] == \"\" and r[7] == \"-1.0\" and r[8] == \"\")\n# a row with a full assigned motif from a different peak group\nj = next(k for k, r in enumerate(data)\n         if r[0] == \"chr12\" and r[1] == \"54379625\" and r[7] == \"564.0\" and r[8] == \"-\")\nassert i != j\nsrc = data[j]\nassert all(src[q] != \"\" for q in (4, 5, 6, 7, 8))\nfor q in (4, 5, 6, 7, 8):\n    data[i][q] = src[q]\nassert data[i][8] == \"-\" and data[i][7] == \"564.0\"\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_table_structure",
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+ (first row with a complete assigned-motif field set; all five motif fields nonempty)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "blank-sentinel-partial",
+      "rationale": "A row that in the reference carries a complete assigned motif loses only its pval_2 (set to empty) while chrom_2/start_2/end_2/strand_2 stay present. This creates a partial motif-field pattern, which the File 2 rules explicitly reject: the row-validity rules make peaks_table_structure fail (the designed signal), and because table content checks depend on parsed rows, peaks_blacklist_fragments and peaks_motif_assignment also fail (cascade: 'pval_2: empty field where a finite number is required'). It additionally corrupts the assignment itself: the reference expects a real pval here, and the rule states that changing any cell that distinguishes a scientific difference (an assigned motif's pval, or the absence/presence of an assignment) is a rejection.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\ni = next(k for k, r in enumerate(data)\n         if r[8] in (\"+\", \"-\") and r[7] not in (\"\", \"-1.0\") and r[4] != \"\")\nr = data[i]\nassert all(r[j] != \"\" for j in (4, 5, 6, 7, 8))\nr[7] = \"\"      # blank only pval_2 -> partial motif-field pattern\nassert r[4] != \"\" and r[8] != \"\"\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_table_structure",
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "Header: chrom,start,end,fc,chrom_2,start_2,end_2,pval_2,strand_2; 40557 data rows, every one with exactly 9 fields (awk NF check reports only 9); last row is chr12,54379625,54380042,627.60723,chr12,54379835,54379854,564.0,-"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "truncated-row",
+      "rationale": "The last data row (a verified full 9-field row bearing an assigned motif) has its final field removed, producing an 8-field ragged row. This directly violates the File 2 structural rule that every data row has exactly 9 fields, so peaks_table_structure fails (the designed signal). The header and all other rows are untouched; peaks_blacklist_fragments and peaks_motif_assignment also fail as a cascade, since the table with a ragged row is unusable for row content comparison ('peak table unusable: data row 40558 has 8 fields; expected 9').",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\nassert data[-1][8] in (\"+\", \"-\")\ndata[-1] = data[-1][:8]      # 8 fields -> ragged row\nassert len(data[-1]) == 8\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_table_structure",
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr19,48309541,48309911,5.04924,,,,-1.0, (a no-motif row with a finite decimal fc)\nchr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+ (an assigned-motif row whose pval_2 is finite)"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "nonfinite-values",
+      "rationale": "Replaces one peak's fc with NaN and one assigned motif's pval_2 with inf. The File 2 rules state that values must be finite and that NaN and infinities are failures of the affected checks, so peaks_table_structure fails on the row-validity rule (the designed signal isolating the finiteness requirement at the row level). Because table content checks depend on parsed rows, peaks_blacklist_fragments and peaks_motif_assignment also fail (cascade: 'unparseable or invalid row content: fc: value is not a finite number (NaN/Inf)'), while the rows keep exactly 9 comma-separated fields and all other values.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\ni = next(k for k, r in enumerate(data) if r[0] == \"chr19\" and r[4] == \"\")\nj = next(k for k, r in enumerate(data)\n         if r[8] == \"+\" and r[7] not in (\"\", \"-1.0\") and r[4] != \"\")\nassert i != j\ndata[i][3] = \"NaN\"\ndata[j][7] = \"inf\"\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+ (after running this script locally the only diff against the reference is chr9,124777413,124777783,0.506479,chr9,124777400,124777419,455.0,+)"
+        }
+      ],
+      "focus": "numeric_tolerance",
+      "kind": "wrong_solution",
+      "name": "fc-pval-perturb",
+      "rationale": "One peak's fc value is rescaled (5.06479 -> 0.506479, a genuine change of the fold-enrichment value, not a textual reformatting) and that same row's assigned motif pval score is altered by 5 (450.0 -> 455.0). Both mutated cells remain finite, parseable decimals in well-formed 9-field rows, but they differ in value from the exactly parsed reference, violating the 'no rescaling, no rounding, no invented values' clauses of peaks_motif_assignment: the peak's fc and the assigned motif's pval are both wrong.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\na_i = [k for k, r in enumerate(data) if r[0] == \"chr9\" and r[7] == \"450.0\" and r[8] == \"+\"]\nassert a_i\ni = a_i[0]\nv = float(data[i][3])\ndata[i][3] = str(v / 10.0)          # fc rescaled to a different value\nassert float(data[i][3]) != v\np = float(data[i][7])\ndata[i][7] = str(p + 5.0)           # motif pval altered\nassert float(data[i][7]) != p\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr9,124777413,124777783,5.06479,chr9,124777400,124777419,450.0,+\nchr9,124777201,124777571,45.22599,chr9,124777400,124777419,450.0,+ (two overlapping surviving fragments of one blacklist-split peak group on chr9, spanning 124777201-124777571 and 124777413-124777783)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "fragment-widen",
+      "rationale": "A peak group that was split by blacklist removal into several fragments has one surviving fragment's end coordinate widened by one base (124777783 -> 124777784), handing back one blacklist-removed base. The (chrom,start,end) fragment multiset is therefore no longer the set of maximal surviving sub-intervals, so peaks_blacklist_fragments fails (the designed signal for the base-level blacklist-filtering result), while the fragment's fc and assigned-motif fields are untouched and the row count and file structure are preserved. peaks_motif_assignment also fails, because its full-row multiset includes the fragment coordinates, so the mutated end coordinate creates one missing and one extra full row; the mutation is therefore detectable in both checks, with the fragment-check failure being the designed blacklist-filtering signal rather than an independence proof.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\n# all fragments unique by (chrom,start,end) in this reference\nassert len({(r[0], int(r[1]), int(r[2])) for r in data}) == len(data)\n# find a peak group split into several fragments: two rows with identical\n# chrom and identical assigned-motif fields but overlapping spans\nfrom collections import defaultdict\nsig = defaultdict(list)\nfor k, r in enumerate(data):\n    if r[4]:\n        sig[(r[0], r[4], r[5], r[6], r[7], r[8])].append(k)\npair = []\nfor v in sig.values():\n    if len(v) < 2:\n        continue\n    for a in range(len(v)):\n        for b in range(a + 1, len(v)):\n            ra, rb = data[v[a]], data[v[b]]\n            if (int(ra[1]) <= int(rb[1]) < int(ra[2])\n                    or int(rb[1]) <= int(ra[1]) < int(rb[2])):\n                pair.append((v[a], v[b]))\nassert pair, \"no split peak group with overlapping fragments found\"\ni = pair[0][0]\nold = int(data[i][2])\ndata[i][2] = str(old + 1)\nassert int(data[i][2]) == old + 1\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "chr16,50248791,50249161,5.08249,,,,-1.0, (one of 5765 no-motif rows; the file has 40557 unique data rows)"
+        }
+      ],
+      "focus": "general",
+      "kind": "wrong_solution",
+      "name": "drop-fragment",
+      "rationale": "Removes exactly one surviving fragment row (chr16,50248791,50249161), so one peak group that should have survived blacklist filtering with one fragment silently disappears. This is a missing-fragment failure for peaks_blacklist_fragments (the rules explicitly reject submissions with missing fragments) while every remaining row stays byte-identical, testing that the multiset comparison requires completeness, not just the absence of extra rows. peaks_motif_assignment also fails ('1 reference rows missing') because the dropped row is absent from its full-row multiset as well.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nassert rows[0] == [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\n                   \"end_2\",\"pval_2\",\"strand_2\"]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\ntarget = [k for k, r in enumerate(data)\n          if r[0] == \"chr16\" and r[1] == \"50248791\" and r[2] == \"50249161\"]\nassert len(target) == 1, target\ndel data[target[0]]\nassert len(data) == 40556\nwith open(path, \"w\", newline=\"\") as fh:\n    csv.writer(fh, lineterminator=\"\\n\").writerows([rows[0]] + data)\n"
+    },
+    {
+      "check_ids": [
+        "peaks_table_structure",
+        "peaks_blacklist_fragments",
+        "peaks_motif_assignment"
+      ],
+      "evidence": [
+        {
+          "path": "reference_outputs/peaks_with_strongest_motif_blacklist_filtered.csv",
+          "quote": "40557 data rows (9 fields each, all whole lines unique), 5765 of which carry the no-assignment encoding with pval_2=-1.0 and empty chrom_2/start_2/end_2/strand_2; verified locally that after this script's transformations the data-row multiset is value-identical to the reference modulo row order, the sentinel form (-1 vs -1.0) and trailing zeros."
+        }
+      ],
+      "focus": "general",
+      "kind": "valid_alternative",
+      "name": "representation-freedoms",
+      "rationale": "Uses only representation freedoms the public contract explicitly grants: (1) the no-assignment pval_2 sentinel is written as -1 instead of -1.0 (both parse to -1 and are stated accepted equivalent encodings of the same 'no motif p-value to report' state); (2) two decimal values are written with an extra trailing zero, which the rules explicitly do not distinguish since both forms parse to the same decimal value; (3) the data-row order is reversed, since row order is not a scientific target and rows are compared as a multiset. No value, identity, assignment or fragment interval is changed, so all five checks should still pass.",
+      "script": "import csv\npath = \"peaks_with_strongest_motif_blacklist_filtered.csv\"\nwith open(path, newline=\"\") as fh:\n    rows = list(csv.reader(fh))\nhdr = [\"chrom\",\"start\",\"end\",\"fc\",\"chrom_2\",\"start_2\",\"end_2\",\"pval_2\",\"strand_2\"]\nassert rows[0] == hdr, rows[0]\ndata = rows[1:]\nassert all(len(r) == 9 for r in data)\nassert len(data) == 40557, len(data)\nsent = [r for r in data if r[7] == \"-1.0\"]\nassert len(sent) == 5765, len(sent)\nassert all(r[4] == \"\" and r[5] == \"\" and r[6] == \"\" and r[8] == \"\" for r in sent)\n\nout = []\nfor r in data:\n    r = list(r)\n    if r[7] == \"-1.0\":\n        # equivalent encoding of the no-assignment sentinel: -1 instead of -1.0\n        r[7] = \"-1\"\n    out.append(r)\n# trailing-zero decimal forms parse to the same value and are not distinguished\ni = next(k for k, r in enumerate(out) if r[0] == \"chr19\" and r[7] == \"-1\" and \".\" in r[3])\nout[i][3] = out[i][3] + \"0\"\nj = next(k for k, r in enumerate(out) if r[0] == \"chr9\" and r[7] == \"450.0\")\nout[j][7] = out[j][7] + \"0\"\n# row order is not a scientific target: reverse the data row order\nout.reverse()\nwith open(path, \"w\", newline=\"\") as fh:\n    w = csv.writer(fh, lineterminator=\"\\n\")\n    w.writerow(hdr)\n    w.writerows(out)\n"
+    }
+  ]
+}

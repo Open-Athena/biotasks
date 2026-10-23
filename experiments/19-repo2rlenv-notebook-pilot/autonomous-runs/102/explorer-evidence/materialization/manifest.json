@@ -1,0 +1,62 @@
+{
+  "derivation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "",
+    "stdout": ""
+  },
+  "inputs": [
+    {
+      "bytes": 8211,
+      "path": "ENCFF356LFX.bed.gz",
+      "sha256": "a9d086ce90ca67f933b29adfbff56ea768bbce2ec4b0d51e2d405e5a1d61bb56"
+    },
+    {
+      "bytes": 649474,
+      "path": "ENCFF401MQL.bed.gz",
+      "sha256": "c0bfc8ded835fdc1f1a06884ffb08f5347a0546c11757f7cc18185b49b9ffcd5"
+    },
+    {
+      "bytes": 7698065,
+      "path": "MA0139.1.tsv.gz",
+      "sha256": "b1bbdac330cfc78c9ac9a826d1ca2bfdb22ec2cc21c789404adc0c11acbd4510"
+    }
+  ],
+  "oracle": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "/task/oracle.py:70: Pandas4Warning: The inplace keyword in DataFrame.rename is deprecated and will be removed in a future version (PDEP-8).\nSee https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.\n  df_peaks_maxmotif.rename(columns={i: i.split(\"_\")[0]}, inplace=True)\n",
+    "stdout": ""
+  },
+  "oracle_isolation": {
+    "exit_code": 0,
+    "process_policy": "Remaining child processes are terminated when this call returns; use foreground execution with an explicit timeout.",
+    "stderr": "",
+    "stdout": "isolated\n"
+  },
+  "oracle_outputs": [
+    {
+      "bytes": 81200,
+      "path": "motifs_per_peak.csv",
+      "sha256": "842a5c4b2c167c755972771933589dc5682651300c032cead9b7115e85477d85"
+    },
+    {
+      "bytes": 2507463,
+      "path": "peaks_with_strongest_motif_blacklist_filtered.csv",
+      "sha256": "41d968a3fcfefd47fc6c6c8675220a25ab73805c20f4a644f30ef2cfe837fcb3"
+    }
+  ],
+  "reference": [
+    {
+      "bytes": 81200,
+      "path": "motifs_per_peak.csv",
+      "sha256": "842a5c4b2c167c755972771933589dc5682651300c032cead9b7115e85477d85"
+    },
+    {
+      "bytes": 2507463,
+      "path": "peaks_with_strongest_motif_blacklist_filtered.csv",
+      "sha256": "41d968a3fcfefd47fc6c6c8675220a25ab73805c20f4a644f30ef2cfe837fcb3"
+    }
+  ],
+  "status": "executed_requires_scientific_validation"
+}

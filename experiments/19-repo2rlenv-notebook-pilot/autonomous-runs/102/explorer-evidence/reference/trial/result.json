@@ -1,0 +1,127 @@
+{
+  "artifacts": {
+    "artifacts": [
+      {
+        "bytes": 2507463,
+        "exists": true,
+        "path": "peaks_with_strongest_motif_blacklist_filtered.csv",
+        "sha256": "41d968a3fcfefd47fc6c6c8675220a25ab73805c20f4a644f30ef2cfe837fcb3"
+      },
+      {
+        "bytes": 81200,
+        "exists": true,
+        "path": "motifs_per_peak.csv",
+        "sha256": "842a5c4b2c167c755972771933589dc5682651300c032cead9b7115e85477d85"
+      }
+    ],
+    "declared_artifacts_present": true,
+    "semantic_fidelity_validated": false
+  },
+  "candidate_sha256": {
+    "analysis.py": "95e94288e123451c9fd26d0293ba1df4e6fc588a3f9f12a07ebf5a5c93e4c957",
+    "inputs.json": "978327535747ee740395ce90f13fbf2de9fde7eaa86a059ce079a5fb05f2b1af",
+    "pyproject.toml": "6c5529ab43ab49457b2bb560bdde6d937767043c5d759b2438b89285864aaca9",
+    "stage-inputs.sh": "c61e036b87be28e6dd92d7fdb9d0e57b806733fff5a60a905ea28fef5873cfda",
+    "system-packages.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+  },
+  "execution": {
+    "argv": [
+      "env",
+      "MPLBACKEND=Agg",
+      "/work/venv/bin/python",
+      "/work/reference.py"
+    ],
+    "directory": "/work/run",
+    "elapsed_seconds": 5.009141445159912,
+    "exit_code": 0,
+    "finished": 1792754294.386388,
+    "label": "command-e8a9043ead2d4c6592100303ebb6127e",
+    "log": "/work/reference.py:84: ChainedAssignmentError: A value is being set on a copy of a DataFrame or Series through chained assignment using an inplace method.\nSuch inplace method never works to update the original DataFrame or Series, because the intermediate object on which we are setting values always behaves as a copy (due to Copy-on-Write).\n\nFor example, when doing 'df[col].method(value, inplace=True)', try using 'df.method({col: value}, inplace=True)' instead, to perform the operation inplace on the original object, or try to avoid an inplace operation using 'df[col] = df[col].method(value)'.\n\nSee the documentation for a more detailed explanation: https://pandas.pydata.org/docs/dev/user_guide/migration.html#copy-on-write-cow\n  df_peaks_maxmotif[\"pval_2\"].replace(-1, np.nan, inplace=True)\n/work/reference.py:156: Pandas4Warning: The inplace keyword in DataFrame.rename is deprecated and will be removed in a future version (PDEP-8).\nSee https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.\n  df_peaks_maxmotif.rename(columns={i: i.split(\"_\")[0]}, inplace=True)\nfraction of peaks without motifs 0.14\n",
+    "log_sha256": "9f0ae47a31e6d8dfea3e298c87fcd72e19041417faa45cce63b9ac3dedee4269",
+    "peak_child_rss_kib": 432388,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792754289.3772466,
+    "timed_out": false,
+    "timeout_seconds": 600
+  },
+  "input_observations": {
+    "files": [
+      {
+        "bytes": 649474,
+        "input_preview": {
+          "byte_prefix_truncated": true,
+          "compression": "gzip",
+          "displayed_lines_truncated": true,
+          "sample_sha256": "d2fed372267b567e395e40f3ca8c0602ade9c25073a644f0c82f69a37394e291",
+          "sampled_bytes": 4096,
+          "scope": "Byte prefix only; no inferred header, schema or record count.",
+          "status": "utf8_text_prefix",
+          "text": "chr19\t48309541\t48309911\t.\t1000\t.\t5.04924\t-1.00000\t0.00438\t185\nchr4\t130563716\t130564086\t.\t993\t.\t5.05052\t-1.00000\t0.00432\t185\nchr1\t200622507\t200622877\t.\t591\t.\t5.05489\t-1.00000\t0.00400\t185\nchr5\t112848447\t112848817\t.\t869\t.\t5.05841\t-1.00000\t0.00441\t185\nchr1\t145960616\t145960986\t.\t575\t.\t5.05955\t-1.00000\t0.00439\t185\n"
+        },
+        "local_path": "/inputs/ENCFF401MQL.bed.gz",
+        "sha256": "c0bfc8ded835fdc1f1a06884ffb08f5347a0546c11757f7cc18185b49b9ffcd5",
+        "source": "https://www.encodeproject.org/files/ENCFF401MQL/@@download/ENCFF401MQL.bed.gz"
+      },
+      {
+        "bytes": 8211,
+        "input_preview": {
+          "byte_prefix_truncated": true,
+          "compression": "gzip",
+          "displayed_lines_truncated": true,
+          "sample_sha256": "660947dd1a3705a944a9db19231ef5f6abbf79051870e0de557969f2593f4095",
+          "sampled_bytes": 4096,
+          "scope": "Byte prefix only; no inferred header, schema or record count.",
+          "status": "utf8_text_prefix",
+          "text": "chr1\t628903\t635104\nchr1\t5850087\t5850571\nchr1\t8909610\t8910014\nchr1\t9574580\t9574997\nchr1\t32043823\t32044203\n"
+        },
+        "local_path": "/inputs/ENCFF356LFX.bed.gz",
+        "sha256": "a9d086ce90ca67f933b29adfbff56ea768bbce2ec4b0d51e2d405e5a1d61bb56",
+        "source": "https://www.encodeproject.org/files/ENCFF356LFX/@@download/ENCFF356LFX.bed.gz"
+      },
+      {
+        "bytes": 7698065,
+        "input_preview": {
+          "byte_prefix_truncated": true,
+          "compression": "gzip",
+          "displayed_lines_truncated": true,
+          "sample_sha256": "4269fa7d968bbd8dec326e86de626e33e69347005baad57321fbebcd0d8bbbf2",
+          "sampled_bytes": 4096,
+          "scope": "Byte prefix only; no inferred header, schema or record count.",
+          "status": "utf8_text_prefix",
+          "text": "chr1\t10470\t10489\tCTCF\t803\t390\t-\nchr1\t11163\t11182\tCTCF\t811\t406\t-\nchr1\t11222\t11241\tCTCF\t959\t804\t-\nchr1\t11280\t11299\tCTCF\t939\t728\t-\nchr1\t11339\t11358\tCTCF\t837\t455\t-\n"
+        },
+        "local_path": "/inputs/MA0139.1.tsv.gz",
+        "sha256": "b1bbdac330cfc78c9ac9a826d1ca2bfdb22ec2cc21c789404adc0c11acbd4510",
+        "source": "http://expdata.cmmt.ubc.ca/JASPAR/downloads/UCSC_tracks/2022/hg38/MA0139.1.tsv.gz"
+      }
+    ]
+  },
+  "inputs_after": {
+    "files": 3,
+    "staged_inputs_verified": true
+  },
+  "reference_tests_remaining": 1,
+  "reference_tests_used": 1,
+  "semantic_fidelity_validated": false,
+  "setup": {
+    "argv": [
+      "sh",
+      "-eu",
+      "/work/setup.sh"
+    ],
+    "directory": "/work",
+    "elapsed_seconds": 4.880470275878906,
+    "exit_code": 0,
+    "finished": 1792754286.4776719,
+    "label": "command-a2d7d61adc904ff38cefd98c30b3a497",
+    "log": "Collecting uv==0.12.21\n  Downloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (11 kB)\nDownloading uv-0.12.21-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (20.4 MB)\n   \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501 20.4/20.4 MB 216.3 MB/s  0:00:00\nInstalling collected packages: uv\nSuccessfully installed uv-0.12.21\nWARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nResolved 21 packages in 159ms\nUsing CPython 3.13.13 interpreter at: /usr/local/bin/python\nCreating virtual environment at: venv\nResolved 21 packages in 1ms\nDownloading kiwisolver (1.4MiB)\nDownloading fonttools (5.1MiB)\nDownloading pillow (6.8MiB)\nDownloading matplotlib (9.4MiB)\nDownloading numpy (15.9MiB)\nDownloading pandas (11.4MiB)\n Downloaded kiwisolver\n Downloaded fonttools\n Downloaded pillow\n Downloaded matplotlib\n Downloaded numpy\n Downloaded pandas\nPrepared 20 packages in 290ms\nInstalled 20 packages in 470ms\n + bioframe==0.8.0\n + certifi==2026.10.19\n + charset-normalizer==3.5.2\n + contourpy==1.4.0\n + cycler==0.12.1\n + fonttools==4.67.0\n + idna==3.20\n + kiwisolver==1.5.1\n + matplotlib==3.11.2\n + numpy==2.5.4\n + packaging==26.3\n + pandas==3.1.0\n + pillow==13.0.0\n + pyparsing==3.3.3\n + python-dateutil==3.0.0\n + pyyaml==6.0.3\n + requests==2.34.2\n + six==1.17.0\n + tzdata==2026.5\n + urllib3==2.8.0\nUsing Python 3.13.13 environment at: venv\nstaged /inputs/ENCFF401MQL.bed.gz (649474 bytes)\nstaged /inputs/ENCFF356LFX.bed.gz (8211 bytes)\nstaged /inputs/MA0139.1.tsv.gz (7698065 bytes)\n",
+    "log_sha256": "632dff78f5e5361b6edadfe2b0212523d9e2f0a445c2608d5f57339f1f42ca0b",
+    "peak_child_rss_kib": 78112,
+    "rss_limitations": "Maximum child RSS, not aggregate sandbox or simultaneous-process memory",
+    "started": 1792754281.5972016,
+    "timed_out": false,
+    "timeout_seconds": 1768
+  },
+  "status": "reference_executed",
+  "test": 1
+}

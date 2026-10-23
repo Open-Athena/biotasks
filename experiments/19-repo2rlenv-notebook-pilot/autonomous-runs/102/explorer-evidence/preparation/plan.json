@@ -1,0 +1,26 @@
+{
+  "artifacts": [
+    {
+      "description": "CTCF ChIP-seq peaks (HFF, ENCODE ENCFF401MQL) with the strongest overlapping JASPAR MA0139.1 CTCF motif per peak (chrom/start/end/fc for the peak, chrom_2/start_2/end_2/pval_2/strand_2 for the motif), after subtracting \u00b11 kb around ENCODE blacklist regions (ENCFF356LFX).",
+      "path": "peaks_with_strongest_motif_blacklist_filtered.csv",
+      "source_evidence": "The closing narrative declares this the end product: 'we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering for proximity to blacklisted regions'. The original script produces it in the variable df_peaks_maxmotif_clean via bioframe.subtract(df_peaks_maxmotif, bioframe.expand(blacklist, 1000)) after selecting and renaming peak/motif columns, and it survives to script completion (displayed by df_peaks_maxmotif_clean.iloc[7:15])."
+    },
+    {
+      "description": "Count of overlapping CTCF motifs for each ChIP-seq peak (one row per peak), the distribution behind the log-scale histogram and the printed fraction of peaks without motifs.",
+      "path": "motifs_per_peak.csv",
+      "source_evidence": "The narrative interprets this quantity in its own right: 'There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs', followed by the histogram and the printed 'fraction of peaks without motifs'. The original script computes it in the named variable motifs_per_peak = df_peaks_motifs.groupby([index_1])[index_2].count().values, before any later in-place mutation of df_peaks_motifs (which only fills pval_2), so the counts retain their intended values at completion."
+    }
+  ],
+  "disposition": "prepare",
+  "excluded_outputs": [
+    "Reverse question ('how many motifs overlap a ChIP-seq peak?'): the cumulative overlap-probability curve is computed entirely inside the plt.plot call (cumsum and normalization on df_motifs_peaks), so no eligible stored result exists; extracting it would require new scientific computation.",
+    "Blacklist distance histogram and df_peaks_maxmotif's peak-strength vs motif-strength scatter: these are qualitative diagnostics supporting the analysis decisions (and the shown correlation is computed inline in the plot title), not independent endpoints; the final filtered table supersedes them.",
+    "df_peaks_motifs, df_peaks_maxmotif, df_motifs_peaks and the raw inputs (ctcf_peaks, ctcf_motifs, blacklist) are intermediates or inputs consumed by the final table and are not exported."
+  ],
+  "explanation": "The notebook's terminal scientific product is df_peaks_maxmotif_clean: CTCF ChIP-seq peaks, each with its strongest overlapping JASPAR motif, after removing peaks within 1 kb of ENCODE blacklist regions (narrative: 'there it is! we now have a dataframe containing positions of CTCF ChIP peaks, including the strongest motif underlying that peak, and after conservative filtering'). An independent interpretive finding is the distribution of overlapping motif counts per peak (narrative: 'There are often multiple motifs overlapping one ChIP-seq peak, and a substantial number of peaks without motifs'), held intact in the named variable motifs_per_peak. The appended code only serializes these two existing results to CSV under /work/outputs; no analysis is recomputed or modified.",
+  "export_code": "import os\n\nos.makedirs(\"/work/outputs\", exist_ok=True)\n\n# Final result: peaks with their strongest motif, blacklist-filtered\ndf_peaks_maxmotif_clean.to_csv(\n    \"/work/outputs/peaks_with_strongest_motif_blacklist_filtered.csv\",\n    index=False,\n)\n\n# Distribution of overlapping motif counts per peak (supports the\n# \"peaks without motifs\" finding shown in the histogram and printed fraction)\npd.DataFrame({\"motifs_per_peak\": motifs_per_peak}).to_csv(\n    \"/work/outputs/motifs_per_peak.csv\",\n    index=False,\n)",
+  "unresolved_assumptions": [
+    "The three remote downloads (ENCODE peaks, JASPAR motif track, ENCODE blacklist) succeed during network-enabled setup; offline execution adaptation is owned by the execution stage.",
+    "df_peaks_maxmotif_clean is a pandas DataFrame at completion, so to_csv serializes it unchanged; any bioframe-specific dtypes (e.g., nullable Float64 for pval/fc) are assumed to round-trip through CSV adequately, which execution can verify."
+  ]
+}

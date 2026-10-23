@@ -1,0 +1,30 @@
+{
+  "passed": true,
+  "checks": [
+    {
+      "id": "peaks_table_structure",
+      "passed": true,
+      "message": "file present with the required header and 9 fields per row; all rows satisfy the row-validity rules"
+    },
+    {
+      "id": "motifs_per_peak_structure",
+      "passed": true,
+      "message": "file present with the required single-column header; all count tokens are plain decimal integers"
+    },
+    {
+      "id": "motifs_per_peak_counts",
+      "passed": true,
+      "message": "motif counts per peak record match the reference exactly, position by position"
+    },
+    {
+      "id": "peaks_blacklist_fragments",
+      "passed": true,
+      "message": "surviving fragment intervals (chrom, start, end) match the reference multiset with multiplicity"
+    },
+    {
+      "id": "peaks_motif_assignment",
+      "passed": true,
+      "message": "all rows match the reference multiset: peak fc, assigned motif coordinates, pval_2 and strand_2 agree exactly"
+    }
+  ]
+}

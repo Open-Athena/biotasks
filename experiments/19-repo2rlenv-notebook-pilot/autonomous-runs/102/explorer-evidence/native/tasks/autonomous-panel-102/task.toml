@@ -1,0 +1,39 @@
+schema_version = "1.3"
+artifacts = []
+
+[task]
+name = "biotasks/autonomous-panel-102"
+
+[metadata.repo2env]
+recipe = "notebook-artifact-reproduction"
+recipe_version = "feda2e44cd920e7bb1d65063172200f1c21d594a"
+reward_kinds = [
+    "binary",
+]
+scope = "scientific task with explicit supplied intermediates"
+bundle_hash = "sha256:13ae55a2dbb761fdd7366f537eefa7eb0cd52e2eebf90380f272f2779a262f3a"
+
+[metadata.repo2env.evaluation]
+schema_version = "1"
+status = "unverified"
+stage = "generation"
+reason_codes = [
+    "validation_not_run",
+]
+detail = "Generated task; validation has not been established."
+provenance = "unknown"
+subject_bundle_hash = "sha256:13ae55a2dbb761fdd7366f537eefa7eb0cd52e2eebf90380f272f2779a262f3a"
+evidence = []
+
+[environment]
+cpus = 4
+memory_mb = 8192
+build_timeout_sec = 600
+network_mode = "no-network"
+storage_mb = 10240
+
+[agent]
+timeout_sec = 600
+
+[verifier]
+timeout_sec = 120
