@@ -1,0 +1,49 @@
+{
+  "observed_at": "2026-10-23T05:03:44.228912+00:00",
+  "pipeline_status": "rejected",
+  "classification": "Unresolved generated probe classification under the frozen repair contract; not a source rejection.",
+  "source_reference_and_fresh_replay_completed": true,
+  "reason": "The unchanged within-tolerance probe was labeled wrong_solution. The independent review and repair worker identified a valid alternative, but the frozen schema could not change its kind. The worker declined rather than falsifying the grader or public tolerance.",
+  "original_repair_path": "grading/repair.json",
+  "original_repair_sha256": "58bba460ce7436338efb4a14a941dd8c8c0fb69ffa4b4ac22415f37ba06451e8",
+  "controls_by_candidate": {
+    "8f662f43643b9c5a6a54311aca2c554a9feeeaf7eb71cbee8b02872842722932": {
+      "executed": 17,
+      "passed": 12,
+      "failed_probes": [
+        "intensity-filter-boundary",
+        "record-order-swap",
+        "score-just-below-tolerance",
+        "cross-precursors-swap",
+        "middle-peak-removed"
+      ]
+    },
+    "e5535bd7ecb0b28243440802d1506dde5267446084e39362ef7cd0d43579a90a": {
+      "executed": 17,
+      "passed": 16,
+      "failed_probes": [
+        "score-just-below-tolerance"
+      ]
+    },
+    "3e179b6fc3a77e0bf0210c5fae917bf9cc0c18d7b24668b4ab60a70df4f32ec3": {
+      "executed": 17,
+      "passed": 15,
+      "failed_probes": [
+        "score-just-below-tolerance",
+        "record-order-swap"
+      ]
+    },
+    "7eebafeaf83c0e58d6d202eefa06981f3f8e9f51ea14c74ea6c8c5b710cf1938": {
+      "executed": 17,
+      "passed": 16,
+      "failed_probes": [
+        "score-just-below-tolerance"
+      ]
+    }
+  },
+  "original_controls_changed": false,
+  "operator_scientific_edits": 0,
+  "candidate_fix": "General optional explicit classification correction with immutable mutations, retained per-check negative coverage, fresh controls and independent review. Tested locally, not applied to this run.",
+  "scientific_acceptance": false,
+  "new_native_trials": 0
+}

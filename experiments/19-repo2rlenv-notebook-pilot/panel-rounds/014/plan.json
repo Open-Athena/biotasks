@@ -1,0 +1,57 @@
+{
+  "prepared_at": "2026-10-23T05:01:34.133057+00:00",
+  "purpose": "Fresh original-source regressions on the combined general cleanup, setup-preflight and reviewed probe-classification repair candidate. Preserve the superseded unsubmitted round013 inputs.",
+  "records": [
+    {
+      "number": 86,
+      "baseline_number": 60,
+      "id": "pyhmmer-msa-to-hmm",
+      "domain": "Protein sequence analysis",
+      "config_file": "autonomous-runs/086/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "transferred_from": 84
+    },
+    {
+      "number": 87,
+      "baseline_number": 59,
+      "id": "scanpy-clustering",
+      "domain": "Transcriptomics",
+      "config_file": "autonomous-runs/087/configuration.json",
+      "reserved_usd": "1.00",
+      "state": "reserved_not_submitted",
+      "transferred_from": 85
+    }
+  ],
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "concurrency": {
+    "iris_hosts_max": 2,
+    "daytona_sandboxes_total_max": 2,
+    "daytona_sandboxes_per_campaign_max": 1
+  },
+  "model": "glm-5.3",
+  "reasoning_effort_requested": "high",
+  "preparation_max_requests": 2,
+  "reference_tests_max": 2,
+  "new_hosts": 0,
+  "submitted": false,
+  "supersedes_unsubmitted_round": "013",
+  "basis": "Metabolomics082 finished repair_blocked because the frozen annotation schema could not express its independently reviewed kind correction; no scientific rules or artifacts were changed manually."
+}
