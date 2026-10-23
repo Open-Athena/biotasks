@@ -56,7 +56,7 @@ def main():
         exception=trial.get('exception_info')
         rows.append({'task':control['task'],'agent':control['agent'],'verifier_timeout_seconds':control['verifier_timeout_seconds'],
                      'state':control['state'],'wrapper_exit':control.get('exit_code'),'trial_record_present':bool(trial),'reward_details_present':bool(details),
-                     'exception_type':exception.get('type') if isinstance(exception,dict) else type(exception).__name__ if exception else None,
+                     'exception_type':exception.get('exception_type') if isinstance(exception,dict) else type(exception).__name__ if exception else None,
                      'exception_present':bool(exception),'reward':(verifier.get('rewards') or {}).get('reward'),
                      'parse_status':d.get('parse_status'),'resolved':d.get('resolved'),'command_resolved':d.get('command_resolved'),
                      'test_exit_code':d.get('exit_code'),'f2p_passed':d.get('f2p_passed'),'f2p_total':d.get('f2p_total'),

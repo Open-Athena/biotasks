@@ -48,9 +48,15 @@ with connect_controller(config_file=args.config) as endpoint:
             assert prior['record_verified'] and prior['owned_containers_absent'] and prior['tools_removed'] and not prior['cleanup_errors']
             terminal=json.loads((ROOT/'campaign-accounting.json').read_text())
             assert terminal['all_terminal'] and 'biotasks31-macs-742-native-001' in terminal['jobs']
+            assert 'biotasks31-macs-742-controls-001' in terminal['jobs']
             assert terminal['allocated_cpu_hours']+1/6<=16
             assert is_job_finished(client.job(JobName.from_string('/exedev/biotasks31-macs-742-native-001')).status().state)
+            assert is_job_finished(client.job(JobName.from_string('/exedev/biotasks31-macs-742-controls-001')).status().state)
             assert prior['archive_sha256']==json.loads((ROOT/'macs-742-native-accounting.json').read_text())['output_archive']['sha256']
+            controls=json.loads((ROOT/'macs-742-control-results.json').read_text())
+            controls_account=json.loads((ROOT/'macs-742-controls-accounting.json').read_text())
+            assert controls['archive_sha256']==controls_account['output_archive']['sha256']
+            assert controls['owned_control_resources_removed'] and controls['retained_reconstruction_image']=='biotasks31-macs-742-image-001:recorded-actions'
             assert all(is_job_finished(j.state) for j in client.list_jobs(prefix='/exedev/biotasks31-',limit=100)), 'Another #31 job active'
             target_worker=json.loads((ROOT/'run-private/biotasks31-macs-742-image-001/submission.json').read_text())['worker_id']
             workers=client.list_workers(query=controller_pb2.Controller.WorkerQuery(limit=500))
