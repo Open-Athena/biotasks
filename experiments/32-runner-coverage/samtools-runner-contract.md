@@ -1,0 +1,17 @@
+# SAMtools runner support is a separate integration problem
+
+At the frozen head of sampled PR1605 (`735c9c39fcffc22bc4085f5071bbb9cab70d16bd`), the pinned Repo2RLEnv detector returns `unknown` for `make test`, `make check`, `perl test/test.pl` and the direct Perl invocation. The six-diff census already showed missed added Perl calls. Relaxing the new-function filter does not supply a runner/parser contract.
+
+The [native Perl helper](https://github.com/samtools/samtools/blob/735c9c39fcffc22bc4085f5071bbb9cab70d16bd/test/test.pl#L222) prints its caller's function name and command before reporting a result. This is custom output, not TAP. A single function contains multiple test commands, and the driver invokes some functions both normally and with two threads. A dictionary keyed only by a heading such as `test_sort` would collapse distinct tests. The logged command is not automatically a stable identity either: source/bin directories and temporary paths occur in commands, and command edits can differ between revisions.
+
+The [report functions and final summary](https://github.com/samtools/samtools/blob/735c9c39fcffc22bc4085f5071bbb9cab70d16bd/test/test.pl#L402) distinguish ordinary pass/failure, expected failure and unexpected pass. Unexpected passes make the runner exit nonzero. `check_samtools_contract.py` executes these original report helpers and summary on four synthetic outcomes, verifying all four counts, exit1, and repeated headings. It does not execute the full harness or biological commands. The original source files are retained privately with hashes; the small resulting log is synthetic.
+
+The [Makefile test target](https://github.com/samtools/samtools/blob/735c9c39fcffc22bc4085f5071bbb9cab70d16bd/Makefile#L231) runs C test binaries and shell regression scripts as well as Perl. A Perl-only parser or replacement command would omit some of that contract. Treat this as a composite runner, not generic pytest or TAP. A successful Perl summary is not evidence that the entire make target finished.
+
+## Requirements for an executable adapter
+
+Use an explicit runner contract at the pipeline level, with runner-specific result extraction. Require stable unique case identities and reject collisions or incomplete records; do not use last-write-wins headings, ordinal positions or an unexamined command hash as cross-revision test IDs. Define expected-failure/unexpected-pass semantics explicitly and retain their native counts. Gate acceptance on final completion, exit status and reconciliation of emitted case counts with the runner summary. Preserve the other C/shell components of the recorded command or report a separately scoped experiment rather than claim equivalent coverage.
+
+Before admitting a new test convention, verify a representative original base/head pair with complete native outcomes and independent exported controls. Compiled binary freshness is also required; #31's historical rebuild work is relevant but is not already validated for SAMtools. No dependency/test-command repairs, synthetic-repository result promotion, or inference that all219rejected PRs would yield valid tasks.
+
+This investigation establishes a concrete support gap and an adapter contract, not an implemented generic Perl adapter or recovered task. A quick recognition regex alone would move PRs past a filter without resolving execution, identity or grading correctness. Full biological execution remains outstanding.
