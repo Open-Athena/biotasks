@@ -143,6 +143,7 @@ def copy_diagnostics(root, destination=Path("/evidence/autonomous-summary")):
         "materialization-raw/materialized/instruction.md",
         "materialization-raw/materialized/rationale.md",
         "grading/result.json",
+        "grading/setup-admission.json",
         "grading/cleanup.json",
         "grading/final-candidate.json",
         "grading/final-controls.json",

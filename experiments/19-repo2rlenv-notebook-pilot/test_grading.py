@@ -95,6 +95,104 @@ def test_exhausted_shell_budget_is_terminal(tmp_path, monkeypatch):
     assert remote.operation == 0
 
 
+@pytest.mark.parametrize("available", [1700, 4000])
+def test_environment_setup_uses_time_left_and_dispatches_once(tmp_path, monkeypatch, available):
+    import hashlib
+    from types import SimpleNamespace
+
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    dispatched = []
+    log = b"synthetic environment setup completed\n"
+
+    class Worker:
+        def upload(self, *args):
+            pass
+
+        def exec(self, argv, **kwargs):
+            dispatched.append(argv)
+            receipt = {
+                "argv": json.loads(argv[-4]),
+                "timeout_seconds": int(argv[-3]),
+                "directory": argv[-2],
+                "label": argv[-1],
+                "exit_code": 0,
+                "timed_out": False,
+                "log_sha256": hashlib.sha256(log).hexdigest(),
+            }
+            return SimpleNamespace(stdout=json.dumps(receipt), checked=lambda *args: None)
+
+        def download(self, path, target):
+            assert path.endswith(".log")
+            target.write_bytes(log)
+
+    remote = Remote(Worker(), SimpleNamespace(), tmp_path / "remote", 100 + 15 + available, 1)
+    config = {"setup_seconds": 1800, "reference_seconds": 600, "verifier_seconds": 120}
+    session = GradingSession(
+        remote=remote, snapshot={"outputs": []}, root=tmp_path / "session", config=config
+    )
+    reply = asyncio.run(session.build_environment())
+    expected = 1645 if available == 1700 else 1800
+    assert reply["exit_code"] == 0 and reply["timeout_seconds"] == expected
+    assert len(dispatched) == remote.operation == 1 and not remote.uncertain
+    record = json.loads((tmp_path / "remote/operations/0001/operation.json").read_text())
+    assert (
+        record["seconds"] == expected and record["reconciliation_deadline"] <= remote.deadline - 15
+    )
+    assert config == {"setup_seconds": 1800, "reference_seconds": 600, "verifier_seconds": 120}
+    admission = tmp_path / "session/setup-admission.json"
+    assert admission.exists() == (available == 1700)
+    if admission.exists():
+        record = json.loads(admission.read_text())
+        assert record["initial_command_dispatched"] is False
+        assert record["effective_timeout_seconds"] == expected
+        assert record["return_allowance_seconds"] == 55
+        assert record["campaign_deadline_extended"] is False
+
+
+def test_environment_setup_does_not_retry_uncertain_dispatch(tmp_path):
+    from grading_session import GradingSession
+
+    attempts = []
+
+    class Remote:
+        async def command(self, *args):
+            attempts.append(args)
+            raise TimeoutError("dispatched command outcome unknown")
+
+    session = GradingSession(
+        remote=Remote(),
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"setup_seconds": 1800},
+    )
+    with pytest.raises(TimeoutError, match="outcome unknown"):
+        asyncio.run(session.build_environment())
+    assert len(attempts) == 1
+    assert not (tmp_path / "session/setup-admission.json").exists()
+
+
+def test_environment_setup_requires_time_for_existing_return_margin(tmp_path, monkeypatch):
+    import run_reference_setup
+    from grading_session import GradingSession
+    from run_reference_setup import OperationBudgetExceeded, Remote
+
+    monkeypatch.setattr(run_reference_setup.time, "time", lambda: 100.0)
+    remote = Remote(None, None, tmp_path / "remote", 170, 1)
+    session = GradingSession(
+        remote=remote,
+        snapshot={"outputs": []},
+        root=tmp_path / "session",
+        config={"setup_seconds": 1800},
+    )
+    with pytest.raises(OperationBudgetExceeded):
+        asyncio.run(session.build_environment())
+    assert remote.operation == 0 and not remote.uncertain
+
+
 def test_grader_author_can_inspect_before_candidate_submission(tmp_path):
     from grading_session import GradingSession
 

@@ -1,7 +1,7 @@
-The provider rejected the previous request because the conversation exceeded its
-context window. That rejected request executed no tools. The original instructions
-and input are unchanged. Earlier exploratory conversation has been removed from
-this context; its full requests, responses and tool results remain in the audit
+The provider could not complete the previous request within its token/context
+limit. No tool from that rejected or incomplete response was executed. The
+original instructions and input are unchanged. Earlier exploratory conversation
+has been removed from this context; its full requests, responses and tool results remain in the audit
 trace. This is not a fresh execution allowance: the same deadline, request ledger,
 controller state and workspace continue.
 

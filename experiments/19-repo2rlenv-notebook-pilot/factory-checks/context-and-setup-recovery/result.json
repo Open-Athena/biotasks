@@ -1,0 +1,48 @@
+{
+  "recorded_at": "2026-10-23T08:04:16.558383+00:00",
+  "purpose": "General prospective fixes for observed context exhaustion and setup admission stops; no notebook-specific scientific code.",
+  "context_recovery": {
+    "reuse": "Existing explicit context restart used after provider HTTP400; extend it to received length responses in shell-enabled tool sessions.",
+    "retained": "Original system/user input, latest complete artifact/revision chain, full raw trace, live workspace, request ledger and absolute deadline.",
+    "guards": "Never execute a partial response. No restart when the conversation cannot shrink, a turn is unavailable, no notice is supplied, or the interface is not shell/tool enabled. No new token, byte or request caps."
+  },
+  "setup_time_admission": {
+    "reuse": "Existing OperationBudgetExceeded certifies refusal before dispatch. Only environment setup may retry that refused request with a shorter timeout.",
+    "bounds": "Effective timeout does not exceed the configured setup maximum or available absolute time minus the existing return allowance of 55 seconds. Scientific reference, solver and verifier timeouts are unchanged.",
+    "guards": "An uncertain dispatched command or ordinary setup failure is never retried by this mechanism. Preserve the setup-admission receipt in full and bounded diagnostics."
+  },
+  "tests": {
+    "focused_transport": {
+      "passed": 85,
+      "seconds": 2.73,
+      "peak_rss_kib": 64364
+    },
+    "setup_grading_orchestration": {
+      "passed": 132,
+      "seconds": 4.22,
+      "peak_rss_kib": 137184
+    },
+    "package_preparation_specification_inspection": {
+      "passed": 231,
+      "seconds": 18.71,
+      "peak_rss_kib": 114000
+    },
+    "distinct_total": 363,
+    "overlap": "The 85 focused transport tests are included in the broader selection of 231 tests; the other 132 tests are disjoint."
+  },
+  "code_quality": "Ruff/format for root and explicit experimental files, ty and required pre-commit all pass.",
+  "recorded_conversation": "recorded-conversation-check.json: the archived conversation with 90 messages reduced to 3 while preserving the original first 2. No new model call, deleted-sandbox recovery or reduced token-count measurement.",
+  "frozen_cohort014_changed": false,
+  "new_model_calls": 0,
+  "new_cloud_resources": 0,
+  "live_recovery_validated": false,
+  "checked_files": {
+    "src/biotasks/chat_author.py": "20b36e054e225fba208e697754eafaecb467a7a6f5628cd0952a7ff7cc564819",
+    "src/biotasks/prompts/worker-context-recovery.md": "494a17a5e5fdce74b6464cc5c5c2e4eda54edf1cfa0d38e7d21ce577b0c17677",
+    "tests/test_chat_author.py": "b53b4d18f853161435d6efd433d8062b239d92b4a929f997de1aa1117c6c8eb9",
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "25c1557ab9b6d580e8fe2e34b3952a62a71eb762703a5f9b212b6c30b0938eb5",
+    "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py": "c8cf625935b989f98097b485cf3112e29201051f3d08a45123e7de692dca0e67",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "56860e67cbdc110f24f0298e13990281b8666d25e1fe2ed6f2bc03df69d0d68d",
+    "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py": "62acef51f3e49f2df7c9834ce59917f016367ddb63e61a0d1d10d13cedfc7aa2"
+  }
+}

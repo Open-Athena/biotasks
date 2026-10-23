@@ -390,6 +390,29 @@ class GLMChatAuthor:
             if not isinstance(choice, dict):
                 raise IncompleteCompletion("Malformed model choice")
             if choice.get("finish_reason") == "length":
+                if (
+                    self.context_recovery_notice is not None
+                    and self.output_format == "tools"
+                    and "shell" in names
+                    and (max_turns is None or turn < max_turns)
+                ):
+                    reduced = _restart_context(messages, self.context_recovery_notice)
+                    if reduced is not None:
+                        # The received response and its consumed request remain
+                        # recorded. Never append or execute its partial action.
+                        # Reuse the existing context recovery; completed tool
+                        # effects and all original execution bounds stay put.
+                        event(
+                            "context_restarted",
+                            reason="completion_length",
+                            incomplete_call_id=call_id,
+                            previous_messages=len(messages),
+                            retained_messages=len(reduced),
+                            actions_executed=0,
+                            allowance_reset=False,
+                        )
+                        messages = reduced
+                        continue
                 raise OutputTokenLimit("Response reached its output-token limit; no tool executed")
             if choice.get("finish_reason") not in {"stop", "tool_calls"}:
                 raise IncompleteCompletion("Incomplete model response; no tool executed")

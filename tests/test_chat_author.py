@@ -1047,14 +1047,23 @@ class ContextRejected(Exception):
     body = {"error": {"message": "maximum context length exceeded PRIVATE_PROVIDER_DETAIL"}}
 
 
-def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path):
+@pytest.mark.parametrize("failure", ["context_rejection", "truncated_response"])
+def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path, failure):
     payloads, actions = [], []
 
     async def complete(payload):
         payloads.append(deepcopy(payload))
         index = len(payloads)
         if index == 4:
-            raise ContextRejected()
+            if failure == "context_rejection":
+                raise ContextRejected()
+            result = reply("shell", {"value": 999}, finish="length", call_id="partial")
+            result["usage"] = {
+                "prompt_tokens": 261844,
+                "completion_tokens": 300,
+                "total_tokens": 262144,
+            }
+            return result
         name = {1: "submit_artifact", 2: "revise_artifact", 3: "shell", 5: "revise_artifact"}[index]
         return reply(name, {"value": index}, call_id=str(index))
 
@@ -1070,6 +1079,10 @@ def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path)
         tmp_path,
         complete,
         requests=5,
+        token_allowance=None,
+        max_output_tokens=None,
+        max_input_bytes=None,
+        max_response_bytes=None,
         context_recovery_notice="Explicit context restart",
         tool_output_chars=None,
     )
@@ -1090,17 +1103,89 @@ def test_explicit_context_recovery_preserves_candidates_and_accounting(tmp_path)
     assert [m["tool_call_id"] for m in recovered if m["role"] == "tool"] == ["1", "2"]
     assert "exploratory output" not in json.dumps(recovered)
     assert "exploratory output" in (tmp_path / "trace/3/tool-result.json").read_text()
+    assert all("max_tokens" not in payload for payload in payloads)
+    assert (tmp_path / "trace/4/response.json").exists() == (failure == "truncated_response")
     assert args["budget"].settlements == ["1", "2", "3", "4", "5"]
     with sqlite3.connect(ledger.path) as db:
         assert db.execute("SELECT state FROM calls ORDER BY id").fetchall() == [
             ("response_received",),
             ("response_received",),
             ("response_received",),
-            ("http_error_received",),
+            ("http_error_received" if failure == "context_rejection" else "response_received",),
             ("response_received",),
         ]
     events = [json.loads(line) for line in (tmp_path / "trace.jsonl").read_text().splitlines()]
     assert [e for e in events if e["kind"] == "context_restarted"][0]["allowance_reset"] is False
+
+
+def test_length_context_restart_does_not_retry_an_unchanged_context(tmp_path):
+    from biotasks.chat_author import OutputTokenLimit
+
+    calls, actions = [], []
+
+    async def complete(payload):
+        calls.append(deepcopy(payload))
+        if len(calls) == 1:
+            return reply("shell", call_id="completed")
+        return reply("shell", finish="length", call_id="incomplete")
+
+    async def shell():
+        actions.append("completed once")
+        return "stored observation " * 3000
+
+    author, ledger = make_author(
+        tmp_path, complete, context_recovery_notice="Resume files", tool_output_chars=None
+    )
+    with pytest.raises(OutputTokenLimit):
+        asyncio.run(
+            author(
+                **options(
+                    tmp_path,
+                    {"shell": shell, "submit_artifact": committed, "revise_artifact": committed},
+                )
+            )
+        )
+    assert len(calls) == 3 and actions == ["completed once"]
+    assert calls[2]["messages"][:2] == calls[0]["messages"]
+    assert "stored observation" not in json.dumps(calls[2]["messages"])
+    assert all(m.get("tool_calls") is None for m in calls[2]["messages"])
+    with sqlite3.connect(ledger.path) as db:
+        assert (
+            db.execute("SELECT state FROM calls ORDER BY id").fetchall()
+            == [("response_received",)] * 3
+        )
+
+
+@pytest.mark.parametrize("mode", ["no_notice", "no_remaining_turn", "no_shell"])
+def test_length_recovery_requires_explicit_shell_context_and_remaining_turn(tmp_path, mode):
+    from biotasks.chat_author import OutputTokenLimit
+
+    calls = []
+
+    async def complete(payload):
+        calls.append(deepcopy(payload))
+        if len(calls) == 1:
+            return reply("shell" if mode != "no_shell" else "submit_artifact")
+        return reply("shell", finish="length", call_id="partial")
+
+    async def observation():
+        return "Previous observation " * 3000
+
+    author, _ = make_author(
+        tmp_path,
+        complete,
+        context_recovery_notice=None if mode == "no_notice" else "Resume",
+        tool_output_chars=None,
+    )
+    handlers = {"submit_artifact": observation, "revise_artifact": committed}
+    if mode != "no_shell":
+        handlers["shell"] = observation
+    with pytest.raises(OutputTokenLimit):
+        asyncio.run(
+            author(**options(tmp_path, handlers, turns=2 if mode == "no_remaining_turn" else 4))
+        )
+    assert len(calls) == 2
+    assert '"kind": "context_restarted"' not in (tmp_path / "trace.jsonl").read_text()
 
 
 @pytest.mark.parametrize("failure", [ContextRejected, TimeoutError])

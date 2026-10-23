@@ -34,7 +34,7 @@ from repo2rlenv.campaigns.budget import BudgetLedger
 from repo2rlenv.execution.lifecycle import save_record
 from repo2rlenv.quality.loop.client import RunBudget
 from repo2rlenv.tasksmith.author.budget import AuthorBudget
-from run_reference_setup import OperationBudgetExceeded
+from run_reference_setup import COMMAND_RETURN_ALLOWANCE_SECONDS, OperationBudgetExceeded
 
 from biotasks.chat_author import ChatLimits
 from biotasks.inference_gate import Allowance, RequestLedger
@@ -76,6 +76,31 @@ class GradingSession:
 
     async def command(self, argv, seconds, label):
         return await self.remote.command(argv, seconds, label)
+
+    async def build_environment(self):
+        requested = self.config["setup_seconds"]
+        argv = ["sh", "-eu", "/work/setup.sh"]
+        try:
+            return await self.command(argv, requested, "grading-environment")
+        except OperationBudgetExceeded as error:
+            # This exception proves refusal before dispatch. Use only the
+            # remaining setup time, retaining the existing return allowance.
+            # A lost response or an executed setup failure must not be retried.
+            effective = min(requested, error.available_seconds - COMMAND_RETURN_ALLOWANCE_SECONDS)
+            if effective < 1:
+                raise
+            save_record(
+                self.root / "setup-admission.json",
+                {
+                    "requested_timeout_seconds": requested,
+                    "effective_timeout_seconds": effective,
+                    "available_seconds_before_return_allowance": error.available_seconds,
+                    "return_allowance_seconds": COMMAND_RETURN_ALLOWANCE_SECONDS,
+                    "initial_command_dispatched": False,
+                    "campaign_deadline_extended": False,
+                },
+            )
+            return await self.command(argv, effective, "grading-environment")
 
     async def helper(self, args, seconds, label):
         # Always restore controller code; workers never author or edit this helper.
@@ -133,9 +158,7 @@ class GradingSession:
         ]:
             await self.remote.upload(local, target)
         await self.remote.network(False)
-        built = await self.command(
-            ["sh", "-eu", "/work/setup.sh"], self.config["setup_seconds"], "grading-environment"
-        )
+        built = await self.build_environment()
         save_record(self.root / "setup-result.json", built)
         if built["exit_code"]:
             raise RuntimeError("Locked grading environment setup failed")

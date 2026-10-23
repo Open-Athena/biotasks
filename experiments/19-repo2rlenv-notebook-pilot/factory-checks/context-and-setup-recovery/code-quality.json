@@ -1,0 +1,57 @@
+[
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ty",
+      "check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/pre-commit",
+      "run",
+      "--all-files"
+    ],
+    "exit_code": 0
+  }
+]

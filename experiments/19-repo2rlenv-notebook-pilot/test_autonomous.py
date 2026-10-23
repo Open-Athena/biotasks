@@ -85,6 +85,18 @@ def test_final_review_is_preserved_separately_from_initial_review(tmp_path):
     assert m.read(destination / "grading/review-repair.json") == final
 
 
+@pytest.mark.parametrize("stage", ["grading", "grading-question-repair"])
+def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, stage):
+    root = tmp_path / "run"
+    path = root / stage / "setup-admission.json"
+    m.write(path, {"initial_command_dispatched": False, "effective_timeout_seconds": 100})
+    original = path.read_bytes()
+    destination = tmp_path / "diagnostics"
+    m.copy_diagnostics(root, destination)
+    assert (destination / path.relative_to(root)).read_bytes() == original
+    assert path.read_bytes() == original
+
+
 @pytest.mark.parametrize(
     "failure",
     [
