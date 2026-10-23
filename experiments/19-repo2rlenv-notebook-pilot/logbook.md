@@ -4070,3 +4070,6 @@ Original whole-bootstrap intervals5530/502seconds rounded up enclose all serial 
 
 
 123submitted from frozen198-file501fbc2f after all earlier086–122hosts were authoritatively terminal and cleanup proofs verified. Original116source/seed bytes unchanged; no prior generated task/diagnostic answer or manual scientific edit. Preexisting activehosts0; atmost1active task sandbox for this campaign. Original resources/time/model/test/repair bounds and total100USDholds remain. See panel-rounds/023 and autonomous-runs/123/submission.json.
+
+
+Authenticated active123metadata shows16base manual packages; the one introduced package is explicitly declared before/after setup, with no unrecorded additions. The first controlled reference test passes and one computation slot remains. Clean replay and specification subsequently completed; construction is running. Preserve exact captured receipt hashes for later sealed-original crosscheck; this is live setup/replay progress, not task acceptance/native/publication. See autonomous-runs/123/setup-observation.json.
