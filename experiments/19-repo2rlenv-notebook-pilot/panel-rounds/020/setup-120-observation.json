@@ -1,0 +1,72 @@
+{
+  "observed_at": "2026-10-23T18:04:05.319721+00:00",
+  "campaign": 120,
+  "status": "live_setup_nonempty_exclusion_and_reference_pass_observed",
+  "scientific_acceptance": null,
+  "publication_ready": false,
+  "source": "Read-only live host metadata copied/checksum-verified; complete sealed original-archive crosscheck still required.",
+  "no_operator_scientific_artifact_edits": true,
+  "trials": [
+    {
+      "test": 1,
+      "status": "candidate_invalid",
+      "reference_tests_used": 0,
+      "reference_tests_remaining": 2,
+      "semantic_fidelity_validated": false,
+      "original_result_sha256": "0ef2dc53a0f908e636640c1e124b9f261708cf365a4b6a66e6172fb49884fcf1"
+    },
+    {
+      "test": 2,
+      "status": "reference_failed",
+      "reference_tests_used": 1,
+      "reference_tests_remaining": 1,
+      "semantic_fidelity_validated": false,
+      "original_result_sha256": "0e33649fb06a5f51ff81b62a401148bd690e14f01658f0d410746718348f3680",
+      "execution": {
+        "exit_code": 1,
+        "elapsed_seconds": 0.21514511108398438,
+        "timed_out": false
+      }
+    },
+    {
+      "test": 3,
+      "status": "reference_executed",
+      "reference_tests_used": 2,
+      "reference_tests_remaining": 0,
+      "semantic_fidelity_validated": false,
+      "original_result_sha256": "57ea069f69a0a4fe27724c5855fdb9c093832ffbb4c697c5fe526717d8febb25",
+      "execution": {
+        "exit_code": 0,
+        "elapsed_seconds": 0.36788058280944824,
+        "timed_out": false
+      }
+    }
+  ],
+  "nonempty_removal": {
+    "files": [
+      {
+        "distribution": "pyhmmer",
+        "path": "pyhmmer/tests/data/hmms/txt/LuxC.hmm",
+        "sha256": "e7a4dd57c83fb17cc12640f20c4f02f126d8230b16d6c6ef596bf791c8075865"
+      }
+    ],
+    "excluded_files_absent": true,
+    "original_receipt_sha256": "1bcd03502ca2068b98168e1b288992a652776252e6838f40ef763e361ab4caca",
+    "glms_own_asset_review_sha256": "8a489ed0256c8ddb258cfdef5fd07c4b009276d1191612a88b52f4baf6a3d40e",
+    "claims": "GLM identified a dependency-bundled prebuilt requested-model partial answer and justified it as unused. Actual controlled reference completed with the declared file absent. Independent scientific review/native validation remain pending."
+  },
+  "post_removal_catalog": {
+    "installed_files_inspected": 372,
+    "candidate_files": 96,
+    "summary_sha256": "5e1dce0c1f910d5ed7f859effc3a8cd8e76d77d7a3a512404901322a1a3cc50d",
+    "not_exhaustive_semantic_audit": true
+  },
+  "bounds": "One pre-dispatch candidate validation failure did not spend a computation test. Two actual full-reference dispatches used: generated staging-path failure then passing offline computation. No extra test or repair allowance.",
+  "remaining_gates": [
+    "Clean replay",
+    "Independent scientific fidelity/scope and answer-exposure review",
+    "Executable grading and native controls/solver",
+    "Complete sealed original archive and provider cleanup",
+    "Rights/notices and release/anonymous immutable download"
+  ]
+}
