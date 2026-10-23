@@ -43,7 +43,9 @@ retain their complete-checkout archive because they may need prior evidence.
 A single host has a two-hour campaign deadline plus the established cleanup
 allowance, and at most one Daytona sandbox at a time. Each of five sandbox stages
 reserves $1 before creation ($5 total); reservations are conservative allowances,
-not invoices. These are within the standing $100 authorization. GLM-5.3 requests
+not invoices. The aggregate authorization, reconciled holds and available balance
+are recorded in `aggregate-budget.json`; a new submission requires a funded slot.
+GLM-5.3 requests
 native `high` reasoning; the served effective effort is unverified. Preparation
 has one initial call and at most one correction after programmatic validation
 rejects its response. Both responses and the validation feedback are preserved;
