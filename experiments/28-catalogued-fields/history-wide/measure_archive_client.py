@@ -40,13 +40,15 @@ def lightweight_manifest_inputs(state, slug):
     source = state / ('biotasks28-history-' + slug.lower().replace('__', '-') + '-001-results')
     paths = [source / name for name in review['reviewed_files']]
     assert all(p.parent == source and p.is_file() for p in paths)
-    assert sum(p.stat().st_size for p in paths) <= 16 * 1024**2
+    if sum(p.stat().st_size for p in paths) > 16 * 1024**2:
+        return None
     total = 0
     phase = source / 'phase-artifacts.tar.gz'
     with tarfile.open(phase, 'r|gz') as archive:
         for member in archive:
             total += member.size
-            assert total <= 16 * 1024**2
+            if total > 16 * 1024**2:
+                return None
     return total
 
 
@@ -91,14 +93,17 @@ def main():
     parser.add_argument('--child', action='store_true')
     parser.add_argument('--archive-action', choices=['prepare', 'publish'])
     parser.add_argument('--slug')
+    parser.add_argument('--max-seconds', type=int, default=120,
+        help='Bound archival walltime only, not native/control windows; at most900seconds')
     args = parser.parse_args()
     if args.archive_action:
         assert args.slug in {r['slug'] for r in json.loads((ROOT.parent / 'cohort.json').read_text())}
     if args.child:
         child(args.state_dir, args.archive_action, args.slug); return
     assert bool(args.archive_action) == bool(args.slug)
-    lightweight = args.archive_action == 'prepare'
-    manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if lightweight else None
+    assert 30 <= args.max_seconds <= 900
+    manifest_bytes = lightweight_manifest_inputs(args.state_dir, args.slug) if args.archive_action == 'prepare' else None
+    lightweight = args.archive_action == 'prepare' and manifest_bytes is not None
     estimate = (128 if lightweight else 400) * 1024**2
     assert estimate <= 500 * 1024**2
     assert available() >= max(int(2.5 * 1024**3), estimate + 2 * 1024**3) and os.getloadavg()[0] < 1.5
@@ -131,7 +136,7 @@ def main():
                         stopped = 'Node memory/load stop threshold'
                     elif sampled_peak > 480 * 1024:
                         stopped = 'Child RSS leaves insufficient room for supervisor under500MiB'
-                    elif time.monotonic() - before > 120:
+                    elif time.monotonic() - before > args.max_seconds:
                         stopped = 'Bounded archive-client check walltime'
                     if stopped:
                         os.killpg(process.pid, signal.SIGTERM); break
@@ -146,8 +151,9 @@ def main():
         report = {'started_utc': started, 'finished_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'duration_seconds': time.monotonic() - before, 'exit_code': code, 'stop_reason': stopped,
             'estimated_working_set_mib': estimate // 1024**2, 'child_peak_rss_kib': peak,
-            'resource_classification': 'bounded lightweight manifest scan' if lightweight else 'intensive archive transfer',
+            'resource_classification': 'bounded lightweight manifest scan' if lightweight else 'intensive archive scan/transfer',
             'heavy_lock_required': not lightweight, 'bounded_manifest_expanded_bytes': manifest_bytes,
+            'walltime_limit_seconds': args.max_seconds,
             'parent_peak_rss_kib': parent_peak, 'combined_peak_upper_bound_kib': peak + parent_peak,
             'parent_initial_exec_peak_kib': parent_initial_peak,
             'parent_raw_rusage_including_launch_history_kib': resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,

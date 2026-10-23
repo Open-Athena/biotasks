@@ -11,6 +11,7 @@ import tomllib
 
 import cost_guard
 from payload import BASE, ROOT, build
+from retention import PUBLIC_BUCKET, verified_receipt
 
 
 def read(path):
@@ -121,7 +122,7 @@ def audit_repo(state, selected, remaining, client):
     result = read(assessment_path)
     manifest_path = ROOT / 'archives' / (selected['slug'] + '-manifest.json')
     manifest = read(manifest_path); published = read(ROOT / 'archives' / (selected['slug'] + '-receipt.json'))
-    assert published['anonymous_download_verified'] and sha(manifest_path) == published['manifest_sha256']
+    assert verified_receipt(published, manifest) and sha(manifest_path) == published['manifest_sha256']
     assert terminal['readback_verified'] and terminal['billing']['cost_complete'] and not terminal['billing']['unresolved_calls']
     assert receipt['job_id'] == '/exedev/' + run and receipt['repo_ref'] == selected['ref']
     assert not receipt['new_capacity'] and receipt['attempts_allowed'] == 1
@@ -214,6 +215,8 @@ def audit_repo(state, selected, remaining, client):
         'actual_control_commands_audited': len(controls), 'task_byte_audit_in_assessment': sha(assessment_path),
         'actual_exported_verifier_timeouts_seconds': verifier_timeouts,
         'archive_receipt_accepted': True, 'original_phase_sha256': result['original_phase_sha256'],
+        'archive_bucket': published.get('bucket', PUBLIC_BUCKET),
+        'archive_visibility': published.get('visibility', 'public'),
         'archive_manifest_sha256': sha(manifest_path)}
 
 

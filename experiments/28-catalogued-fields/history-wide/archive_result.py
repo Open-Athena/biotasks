@@ -10,6 +10,8 @@ from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
 
+from retention import PUBLIC_BUCKET, route, verified_receipt
+
 ROOT = Path(__file__).resolve().parent
 BASE = ROOT.parent
 spec = importlib.util.spec_from_file_location('baseline_archive', BASE / 'archive_result.py')
@@ -36,7 +38,8 @@ def main():
     assert terminal['supervisor']['cleanup']['verified_empty']
     source = args.state_dir / (run + '-results')
     review_path = ROOT / 'publication-reviews' / (args.slug + '.json')
-    review = read(review_path); assert review['repo'] == selected['repo'] and review['public_eligible']
+    review = read(review_path); assert review['repo'] == selected['repo']
+    bucket, visibility = route(review)
     sources = {}
     for name in review['reviewed_files']:
         assert name == Path(name).name and name not in ['provider-usage-before.json', 'provider-usage-after.json', 'outputs.tar.zst']
@@ -76,6 +79,7 @@ def main():
             'created_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
             'publication_checkpoint': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
             'archive_client_resource_profile_sha256': baseline.sha(profile_path),
+            'archive_bucket': bucket, 'archive_visibility': visibility,
             'native_execution_checkpoint': read(provenance_path)['source_checkpoint'],
             'retention': 'Retain while referenced; no automatic deletion.', 'files': files}
         manifest_path.write_text(json.dumps(manifest, indent=2) + '\n')
@@ -83,6 +87,8 @@ def main():
             'original_phase_members': sum(len(f.get('members', [])) for f in files), 'manifest_sha256': baseline.sha(manifest_path)}))
         return
     manifest = read(manifest_path); digest = baseline.sha(manifest_path)
+    assert manifest.get('archive_bucket', PUBLIC_BUCKET) == bucket
+    assert manifest.get('archive_visibility', 'public') == visibility
     if 'archive_client_resource_profile_sha256' in manifest:
         assert manifest['archive_client_resource_profile_sha256'] == baseline.sha(profile_path)
     subprocess.run(['git', 'ls-files', '--error-unmatch', str(manifest_path)], capture_output=True, check=True)
@@ -91,13 +97,26 @@ def main():
     prefix = 'research/28-catalogued-fields/' + capture_date + '/' + digest
     from huggingface_hub import HfApi
     from huggingface_hub.utils import disable_progress_bars
+    from huggingface_hub.errors import HfHubHTTPError
     disable_progress_bars(); api = HfApi()
-    prior = list(api.list_bucket_tree('open-athena/biotasks', prefix=prefix, recursive=True))
+    def privacy_check():
+        assert api.bucket_info(bucket).private is True
+        try:
+            api.bucket_info(bucket, token=False)
+        except HfHubHTTPError as error:
+            status = error.response.status_code
+            assert status in [401, 403, 404]
+            return status
+        raise AssertionError('Anonymous access to restricted bucket succeeded')
+    if visibility == 'private':
+        privacy_check()
+    prior = list(api.list_bucket_tree(bucket, prefix=prefix, recursive=True))
     attempt_path = args.state_dir / (run + '-publication-attempt.json')
     if prior:
         assert attempt_path.exists() and read(attempt_path)['prefix'] == prefix
+        assert read(attempt_path).get('bucket', PUBLIC_BUCKET) == bucket
     else:
-        attempt_path.write_text(json.dumps({'prefix': prefix, 'manifest_sha256': digest}, indent=2) + '\n')
+        attempt_path.write_text(json.dumps({'prefix': prefix, 'bucket': bucket, 'manifest_sha256': digest}, indent=2) + '\n')
     objects = {'manifest.json': manifest_path, **sources}
     known = {f.path for f in prior if f.type == 'file'}
     assert known <= {prefix + '/' + name for name in objects}
@@ -108,21 +127,28 @@ def main():
                 assert original['sha256'] == baseline.sha(path) and original['bytes'] == path.stat().st_size
             remote = prefix + '/' + name
             if remote not in known:
-                api.batch_bucket_files('open-athena/biotasks', add=[(str(path), remote)])
+                api.batch_bucket_files(bucket, add=[(str(path), remote)])
             destination = Path(temporary) / name; destination.parent.mkdir(parents=True, exist_ok=True)
-            api.download_bucket_files('open-athena/biotasks', [(remote, destination)], raise_on_missing_files=True, token=False)
+            api.download_bucket_files(bucket, [(remote, destination)], raise_on_missing_files=True,
+                token=False if visibility == 'public' else None)
             assert destination.stat().st_size == path.stat().st_size and baseline.sha(destination) == baseline.sha(path)
             if path.name == 'phase-artifacts.tar.gz':
                 assert baseline.members(destination) == next(r['members'] for r in manifest['files'] if r['path'] == name)
             destination.unlink()
-    receipt = {'verified_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'bucket': 'open-athena/biotasks',
-        'prefix': prefix, 'manifest_sha256': digest, 'anonymous_download_verified': True,
+    receipt = {'verified_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'bucket': bucket,
+        'prefix': prefix, 'manifest_sha256': digest, 'visibility': visibility,
+        'anonymous_download_verified': visibility == 'public',
+        'authenticated_download_verified': visibility == 'private',
         'verified_objects': len(objects), 'verified_archive_members': sum(len(f.get('members', [])) for f in manifest['files']),
         'overwrites': False, 'temporary_readbacks_removed': True, 'retention': manifest['retention'],
         'publication_tool_checkpoint': subprocess.check_output(['git', 'rev-parse', 'HEAD'], text=True).strip(),
         'archive_client_resource_profile_sha256': baseline.sha(profile_path),
         'xet_client': 'hf_xet ' + importlib.metadata.version('hf_xet'),
         'client': 'huggingface_hub ' + importlib.metadata.version('huggingface_hub')}
+    if visibility == 'private':
+        receipt.update(bucket_private_verified=True, anonymous_access_denied=True,
+            anonymous_http_status=privacy_check())
+    assert verified_receipt(receipt, manifest)
     (archive_dir / (args.slug + '-receipt.json')).write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps(receipt, indent=2))
 

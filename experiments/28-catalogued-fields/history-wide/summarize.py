@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 
 from assess_history import verified
+from retention import PUBLIC_BUCKET, verified_receipt
 
 ROOT = Path(__file__).resolve().parent
 
@@ -54,7 +55,7 @@ def summarize(root):
         assert len(result['task_controls']) == result['native_exports_manifest_present']
         manifest_path = root / 'archives' / (slug + '-manifest.json')
         manifest, receipt = read(manifest_path), read(root / 'archives' / (slug + '-receipt.json'))
-        archive_ok = bool(manifest and receipt and receipt['anonymous_download_verified']
+        archive_ok = bool(manifest and receipt and verified_receipt(receipt, manifest)
             and sha(manifest_path) == receipt['manifest_sha256'])
         if archive_ok and result['original_phase_sha256'] is not None:
             phase = next(r for r in manifest['files'] if r['path'] == 'evidence/phase-artifacts.tar.gz')
@@ -104,6 +105,8 @@ def summarize(root):
                 for t in result['task_controls'] for a,v in t['controls'].items() if v.get('exception') or v.get('reward') is None],
             actual_cost_usd=str(known) if known is not None else None, allocated_cpu_hours=str(allocated),
             archive_accepted=archive_ok, accounting_accepted=accounting_ok,
+            archive_bucket=receipt.get('bucket', PUBLIC_BUCKET) if receipt else None,
+            archive_visibility=receipt.get('visibility', 'public') if receipt else None,
             evidence_accepted=bool(archive_ok and accounting_ok and known is not None and result['owned_cleanup_empty']))
         rows.append(row)
     accepted = [r for r in rows if r['evidence_accepted']]
