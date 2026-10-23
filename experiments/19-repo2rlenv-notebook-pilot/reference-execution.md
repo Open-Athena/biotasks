@@ -17,10 +17,10 @@ independent numerical reproduction and cross-notebook generality remain untested
 | Conversion (programmatic) | Pinned original notebook JSON. | Pinned Jupytext `py:nomarker` conversion; preserve Markdown as comments; check source code order and syntax. No notebook execution. | `baseline.py` and conversion receipt. Implemented for the admitted Python profile. |
 | Preparation (GLM, no tools) | Complete baseline script, provenance, conversion receipt and intended execution limits. No data contents, stored notebook outputs or images. | Select terminal scientific results already held in original named variables or object fields; add code to save those values. | `export_code` only, one `artifacts` inventory, explanation, excluded outputs and unresolved assumptions. Runs 009 and 010 pass static source/export review; setup run 001 executes the reviewed exports successfully. |
 | Preparation checks (programmatic) | Complete worker response and untouched baseline. | Append export code to the untouched baseline; validate JSON Schema, combined Python syntax and unique output-relative paths; save response and compute diff. Execute nothing. | Script and diff ready for inspection. These checks do not prove scientific fidelity. |
-| Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. Prompt updated; not run on the new contract. |
+| Scientific review (separate GLM call) | Original script/narrative, proposed script, diff and inventory. | Check endpoint eligibility, exclusions, faithful saving and unchanged science against the original source. | Approve, revise or reject with specific findings. This review does not replace executable reproduction or downstream scientific controls. |
 | Environment and input setup (tool-enabled execution worker) | Reviewed preparation output, original source/provenance and available environment instructions. | Inspect dependencies, build and test the environment, download original inputs, configure caches and offline paths; preserve recipe, lockfile, hashes and changes. | Recipe, uv lock/environment records, staged-file hashes, failed/successful trial evidence and an outcome requiring scientific review. Implemented; setup run 001 passed its first controller test. |
 | Scientific execution (programmatic) | Prepared environment, staged original inputs and reviewed script. | Run the ordinary script offline, CPU-only, with the agreed resource/time limits; record outputs, logs, timing and failures. | Measured reference evidence from the setup worker’s controller-owned test_reference tool. Run 001: 147.5 seconds, 4.94 GiB peak child RSS, all three declared exports produced. |
-| Coverage and task specification (GLM, read-only tools) | Source, preparation inventory, executed reference, output audit, task policy and version-pinned package catalog. | Review coverage/fidelity; draft the pinned reference recipe and output schemas with open solver tool choice. Optional package inspection resolves concrete ambiguities. No shell or scientific execution. | Submit a review, public draft and short validation handoff, or a focused evidence request with empty brief. [Current input and contract](specification-inputs/011/README.md). Executable validation must establish public comparison rules before solving. |
+| Coverage and task specification (GLM, read-only tools) | Source, preparation inventory, executed reference, output audit, task policy and version-pinned package catalog. | Review coverage/fidelity; draft the pinned reference recipe and output schemas with open solver tool choice. Optional package/reference inspection resolves concrete ambiguities. No shell or scientific execution. | Submit a review, public draft and short validation handoff, or a focused evidence request with empty brief. [Recorded input example](specification-inputs/011/README.md); [canonical prompt](../../src/biotasks/prompts/notebook-task-specification.md). Executable validation must establish public comparison rules before solving. |
 
 The current converter admits ordinary Python nbformat-4 sources. Unsupported
 kernel-dependent syntax/state is rejected; other languages need separate
@@ -138,7 +138,7 @@ Upstream's final-report tool schema/size limits still apply; scripts and logs
 are files rather than fields in that report. Session 001 made 93 model calls and
 one complete reference test; its owned sandbox was cleaned up.
 
-## Existing evidence and next step
+## Historical single-case preparation/setup evidence
 
 Runs 009 and 010 select explicit cell-result fields, UMAP and full ranked marker
 results, excluding the unwanted supporting diagnostics/intermediates. Run 010
@@ -154,13 +154,14 @@ preceding full-script response contract. The
 [historical execution record](https://github.com/Open-Athena/biotasks/blob/2e1fb637ed0a8dad48e4e8ef9017e49e765d9575/experiments/19-repo2rlenv-notebook-pilot/reference-execution.md)
 describes scientific runs under a superseded workflow.
 
-The latest preparation remains unchanged. The first setup/reference session
+That preparation remained unchanged. The first setup/reference session
 passed, and source/export review plus output integrity/structure checks are
 satisfactory for this notebook. No further setup prompt changes or replacement
-session were needed. Task construction, comparisons, Harbor validation, solving
-and publication remain downstream work. No viewer update or downstream execution
-accompanies this iteration. Cold-image reconstruction and repeat-run stability
-remain untested; consult the run review before interpreting its evidence.
+session were needed for that iteration. Those records alone do not establish task
+construction, scientific comparisons, Harbor validation, solving or publication.
+No viewer update or downstream execution accompanied that iteration. Cold-image
+reconstruction and repeat-run stability were not established by the setup session;
+consult the run review before interpreting its evidence.
 
 ## Reference repeatability before grading
 
@@ -173,4 +174,10 @@ it does not itself validate a grader. See [configuration](reference-replay.json)
 [Replay 001](replay-runs/001/README.md) completed both offline runs in 223.60 s and
 178.18 s. Every output file matched the original reference byte-for-byte. Zero
 model calls and verified cleanup. This establishes observed repeatability for
-these runs; grading rules and wrong-output controls remain unvalidated.
+these runs; the replay records alone do not validate grading rules or wrong-output controls.
+
+The [autonomous controller](run_autonomous.py) subsequently implements the
+reference stages followed by task construction, scientific controls and native
+Harbor trials. Its run-specific manifests and validation records establish how
+far each candidate actually progressed. The historical examples above must not
+be substituted for those candidate-specific gates.
