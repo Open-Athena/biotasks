@@ -63,3 +63,5 @@ The shared selector chooses the two surviving changed test files instead of mne/
 ### 2026-10-23 — Checkpoint frozen MNE replay
 
 Prepared the previously executed Scanpy recorded-action driver for frozen MNE inputs, with only identity/output changes and a shorter3,900-second work deadline. Syntax-check four entrypoints, verify the replay helper byte identity, and regenerate the original Dockerfile exactly from the unchanged12actions. Maximum5allocatedCPU-hours plus prior0.22337 fits #32ceiling10; no model calls or per-task repair. Original smoke/fresh semantics and300-second command limits remain fixed. Retention/cleanup obligations are in mne-replay-protocol.md. Submission is a separate stage.
+
+Submitted biotasks32-mne-recorded-001 from661d4071on existing reserved worker marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-1. Payload hashes match preflight; zero models/new capacity. Full5CPU-hour reservation remains under #32ceiling with prior actual usage. Results, archive readback and owned-resource cleanup are pending; do not resubmit this handle.
