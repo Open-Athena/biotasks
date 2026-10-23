@@ -42,6 +42,14 @@ def reconcile_identities(identities, ledger, observations):
         events = actual.get('events', [])
         returned = actual.get('returned')
         entered = [e['pr'] for e in events if e['event'] == 'candidate_entered']
+        decision_prs, current_pr = set(), None
+        for event in events:
+            if event['event'] == 'candidate_entered':
+                current_pr = event['pr']
+            elif event['event'] == 'native_decision':
+                assert current_pr in entered
+                assert current_pr not in decision_prs
+                decision_prs.add(current_pr)
         assert len(set(entered)) == len(entered)
         assert set(entered) <= set(returned or []) <= set(chosen)
         if 'native_entered_pr_numbers' in row:
@@ -56,6 +64,7 @@ def reconcile_identities(identities, ledger, observations):
             'native_cli_exit_code': row.get('exit_code'), 'selected_count': len(chosen),
             'native_list_available': returned is not None, 'native_returned': len(returned) if returned is not None else None,
             'entered': len(entered), 'native_discovery_omitted': len(omitted),
+            'entered_without_native_decision': [n for n in entered if n not in decision_prs],
             'paired_started': sum(e['event'] == 'validation_start' for e in events),
             'validation_result_files': len(actual.get('validations', [])),
             'decisions': dict(Counter(e['outcome'] + ':' + e.get('reason', '') for e in events if e['event'] == 'native_decision')),
