@@ -41,3 +41,7 @@ Inventoried18accounted output archives across #29/#30/#32. Sixteen had matching 
 ## 2026-10-23 — non-Matchms evidence archived
 
 Published thirteen reviewed #29/#32 non-Matchms execution archives with accounting and matching source notices in append-only HF snapshot `research/33-unattended-validation/2026-10-23/db8604c842f593aef5ebac94103de7de4363d72851fb655150fdb1c49733a6bd`. All50objects passed anonymous download/checksum and recursive archive-member verification. Owned transfer cache/readbacks were removed; no overwrite. Five raw Matchms archives remain protected locally, pending curated-summary retention. No new remote compute/model calls; storage billing remains unreconciled under the existing$10reservation.
+
+## 2026-10-23 — follow-up retention milestone
+
+Published whitelisted scalar Matchms outcomes/provenance for #29/#30/#32 under HF snapshot `research/33-unattended-validation/2026-10-23/c89055424187380fb21b47a335ab4946bf60f30d86d863ca4ef35d09bb559572`; all5objects passed anonymous checksum readback. No raw logs, patches or fixture data included. Removed verified staging. Together with prior snapshots,21eligible full archives are public and five raw Matchms archives remain protected locally with exact path/hash retention records. This completes initial #29–#32 eligible-evidence preservation, not public release of the restricted originals or retention of future #34 outputs.
