@@ -1,0 +1,96 @@
+{
+  "number": 125,
+  "observed_at": "2026-10-23T23:59:54.434025+00:00",
+  "original_pipeline_status": "infrastructure_failed",
+  "terminal_host_state": "FAILED",
+  "audited_state": "incomplete_comparison_diagnosis_timeout",
+  "scientific_acceptance": false,
+  "source_rejected_as_broken": false,
+  "source_quality_conclusion": null,
+  "operator_interventions": 0,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 6894.32,
+  "error_type": "TimeoutError",
+  "original_archive_files": 1486,
+  "original_archive_bytes": 330346324,
+  "original_archive_manifest_sha256": "32b80a834de24bacef102ec36a5b06855f191c1b8fccf1df25d50ffcfdb61569",
+  "all_original_files_hash_size_mode_verified": true,
+  "complete_root_export_verified": true,
+  "original_root_files": 54,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 4,
+  "initial_control_cases": 9,
+  "final_controls_passed": false,
+  "quality_diagnosis_allowances_consumed": 1,
+  "diagnosis_model_request_slots_used": 4,
+  "diagnosis_request_states": {
+    "response_received": 3,
+    "uncertain": 1
+  },
+  "native_run": false,
+  "solver_run": false,
+  "published": false,
+  "rejection": null,
+  "cause": "Source execution, clean replay and construction completed. The independent implementation agreed on the processed spectrum library, greedy-cosine matrix and top-match table, but differed in 11 of 1,605,289 discrete modified-cosine matched-peak counts. The factory did not establish which implementation or contract was responsible. Its bounded comparison-diagnosis worker timed out after three received responses and one retained uncertain request, at about115pipeline minutes including the cleanup reserve. No fresh repaired candidate/native/solver or scientific rejection was established. This is incomplete validation, not evidence of a broken notebook.",
+  "comparison_conflict": {
+    "candidate_sha256": "9b347fea8535ad378f17befdf1ae951d7f9a08f10e9b4dbd6b454e86977532b6",
+    "failed_controls": [
+      {
+        "candidate_sha256": "9b347fea8535ad378f17befdf1ae951d7f9a08f10e9b4dbd6b454e86977532b6",
+        "execution": {
+          "grader": {
+            "exit_code": 0,
+            "process_policy": "Foreground execution only; all processes belonging to this dedicated sandbox worker role are stopped before the call returns.",
+            "role_process_cleanup_verified": true,
+            "stderr": "",
+            "stdout": "",
+            "timed_out": false
+          },
+          "report": {
+            "checks": [
+              {
+                "id": "processed_spectra_library",
+                "message": "processed library matches the reference: 1267 spectra with matching identifiers, precursor m/z, charge, metadata, and peak m/z and normalized intensities under the declared serialization rules",
+                "passed": true
+              },
+              {
+                "id": "modified_cosine_matrices",
+                "message": "modified_cosine_scores.npz: modified_cosine_matches differs in 11 of 1605289 entries (matched-peak counts are compared exactly); examples: [399,98]: got 8 want 7; [528,382]: got 13 want 14; [592,106]: got 10 want 9",
+                "passed": false
+              },
+              {
+                "id": "cosine_greedy_matrices",
+                "message": "cosine_greedy_scores.npz: identifiers, indices, cosine_greedy_score (within 5e-12) and cosine_greedy_matches (exact) match the reference greedy-cosine computation at tolerance 0.005",
+                "passed": true
+              },
+              {
+                "id": "query_best_matches",
+                "message": "top-10 modified-cosine matches for the position-98 query match the reference selection, ordering, matrix entries and SMILES",
+                "passed": true
+              }
+            ],
+            "passed": false
+          },
+          "status": "executed",
+          "submission_before": {
+            "best_matches_poorly_matching.csv": "953a4e6964b6944db5f7787d825a94b1d7046eeac261ceb5a34c71d07bccb8da",
+            "cosine_greedy_scores.npz": "167cbd72b28d7cd554055616aef2ef6fac3ea450ea29e4fa7dca4f7b2c27039f",
+            "modified_cosine_scores.npz": "04a5422bf7e18879568c3977d5554e10553d53a0c2cf4a49812bdc52dff3af20",
+            "processed_spectra.json": "95a15a6e2b7d3df842e054b7190500ae72535a5d513889443e5c326f06db30a3"
+          },
+          "submission_sha256": {
+            "best_matches_poorly_matching.csv": "953a4e6964b6944db5f7787d825a94b1d7046eeac261ceb5a34c71d07bccb8da",
+            "cosine_greedy_scores.npz": "167cbd72b28d7cd554055616aef2ef6fac3ea450ea29e4fa7dca4f7b2c27039f",
+            "modified_cosine_scores.npz": "04a5422bf7e18879568c3977d5554e10553d53a0c2cf4a49812bdc52dff3af20",
+            "processed_spectra.json": "95a15a6e2b7d3df842e054b7190500ae72535a5d513889443e5c326f06db30a3"
+          }
+        },
+        "kind": "alternative",
+        "omitted": null,
+        "passed_control": false,
+        "probe": null
+      }
+    ],
+    "reason": "Reference/oracle and other basic controls pass, but the independent comparison is unresolved"
+  }
+}
