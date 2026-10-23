@@ -4081,3 +4081,10 @@ Original001and017whole terminal intervals, exact original lifecycle/resource byt
 
 
 124submitted with198runtimefilehashes exactly equal to123 (generalcode501fbc2f); originalPyHMMER source/seed/notices unchanged120. Dispatcher verified only123was live among086–123andallotherterminalcleanup proofs;atmost2hosts/2sandboxes. No prior generated task or diagnostic answer supplied, and no extra source/method/test/repair/time allowance. Holds99.75USD,unallocated0.25unchangedafterlaunch. See panel-rounds/024/freeze-124.json and autonomous-runs/124/submission.json.
+
+
+## 2026-10-23 UTC: common-factory COBRApy rejected, setup boundary verified
+
+123completed unchanged-source reference/replay/construction, then source-aware review rejected an omitted distinct paired-perturbation branch and defective wrong-answer probes (12/13 expected outcomes met; some mutations masked value checks with structural failures). This is a generated task rejection, not a broken-source finding or scientific acceptance. Preserve the full1230-file original archive (24,589,979bytes),58originalrootfiles,4original/freshcleanup checks and terminalSUCCEEDEDhost. All5live setup observations nowmatchsealedoriginalbytes; the new manual package was declared and clean replay passed. No manual science fix/native/solver/release. See panel-rounds/023/result-123.json.
+
+The original2588second whole-bootstrap interval encloses all serial sandboxes/cleanup. Full4CPU/8GiB/10GiB charging plus0.10USD roundedUPto0.25USD retains0.50USD, releasing0.50USD; total99.25USDholds and0.75unallocated, no credits/invoice assumption.124is the only live campaign on the same198-file runtime and has reached grading. Preserve its freeze while assessing both domains; no new model stage, repair or task-specific prompt patch was introduced.

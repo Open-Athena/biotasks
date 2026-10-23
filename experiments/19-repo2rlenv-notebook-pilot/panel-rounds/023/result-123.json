@@ -1,0 +1,62 @@
+{
+  "number": 123,
+  "observed_at": "2026-10-23T21:39:00.024553+00:00",
+  "original_pipeline_status": "rejected",
+  "terminal_host_state": "SUCCEEDED",
+  "audited_state": "generated_scope_and_probe_validation_rejection",
+  "scientific_acceptance": false,
+  "native_run": false,
+  "solver_run": false,
+  "publication_ready": false,
+  "source_rejected_as_broken": false,
+  "source_quality_conclusion": null,
+  "operator_scientific_edits": 0,
+  "elapsed_pipeline_seconds": 2409.666,
+  "original_archive_files": 1230,
+  "original_archive_bytes": 24589979,
+  "original_archive_manifest_sha256": "2dfb3d6f2e3013e7c128e6279fd48577c17727d4dc9d4a2c9e3eeaa1895c759b",
+  "all_original_files_hash_size_mode_verified": true,
+  "original_and_fresh_cleanup_verified": true,
+  "cleanup_stages": 4,
+  "complete_root_export_verified": true,
+  "review_decision": "blocked",
+  "source_coverage_decision": "reject",
+  "control_cases": 13,
+  "controls_expected_outcomes_met": 12,
+  "final_controls_passed": false,
+  "cause": "Original source executed and clean replay passed. Generated task omitted a distinct paired-perturbation branch by incorrectly claiming other result tables superseded it. Review also found a wrong expected-check inventory and mutation scripts whose delimiter/nonfinite errors masked scientific-value checks. Final gate rejected the task; this is a generated-task failure, not evidence of broken source.",
+  "system_package_guard_live_validation": "All five captured setup receipts match the sealed originals: introduced manual package declared before/after setup, first reference passed with one slot remaining; clean replay completed. This validates that setup boundary, not scientific acceptance.",
+  "evidence": {
+    "pipeline.json": {
+      "path": "pipeline.json",
+      "sha256": "43c468f4a0615eb478f3dbc62ac8422fc91e9151b6c7d10acf6ce84bd897f28e",
+      "bytes": 2768,
+      "mode": 420
+    },
+    "grading/review.json": {
+      "path": "grading/review.json",
+      "sha256": "3385df9336aea55e205f6f24c9566b620c4f2cf9f960e58b7286b958bbf41c7a",
+      "bytes": 10969,
+      "mode": 384
+    },
+    "grading/result.json": {
+      "path": "grading/result.json",
+      "sha256": "eb66d1ccbd04aa7f415be4c8b0fb603ce91ef49fc2e7138c6c83a4c82c86cbdb",
+      "bytes": 440,
+      "mode": 384
+    },
+    "grading/final-controls.json": {
+      "path": "grading/final-controls.json",
+      "sha256": "0c3c9cac76303e1fd0a1c7152459cc05d7ac2caefb9d8f9c1761a6231dba23b3",
+      "bytes": 61016,
+      "mode": 384
+    },
+    "reference/candidate/system-packages.json": {
+      "path": "reference/candidate/system-packages.json",
+      "sha256": "fc9ad3cf29a9985d36c31576374140f95dbbf92e08d4f12b40c0f2b74e7d78c0",
+      "bytes": 14,
+      "mode": 420
+    }
+  },
+  "repair_for_this_frozen_run": false
+}
