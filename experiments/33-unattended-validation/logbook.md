@@ -85,3 +85,7 @@ At 23:23:22 UTC the resumed controller authoritatively observed the same fixed h
 ## 2026-10-23 — final comparison validity gate
 
 Added a post-run evidence summarizer that verifies all eight journal stages, exact archive/HF/cleanup bindings, one-attempt accounting and the live restart proof. Scientific acceptance is reported separately from lifecycle completion. It also requires matching wheel filename/version/hash/size sets and matching Python/platform across the two control receipts; satisfying the same version ranges alone is insufficient to establish the same control environment. Four synthetic checks accept equal records and reject missing receipts, changed wheel bytes or changed interpreter evidence. This reporting check does not alter task execution, grading, dependencies or the currently running controller. No live result is available yet.
+
+## 2026-10-23 — durable-bundle follow-up filed
+
+Filed #35 as a subissue for reproducing controls after original daemon cleanup. The first completed MACS task refers to a worker-local image ID that cleanup removed; logs alone do not establish a portable runnable bundle. Read-only assessment on its own branch found native registry and inline-recipe distribution interfaces in the pinned upstream source, including `prepare_dataset_for_push`. Favor those before adding distribution code. No new execution allocation, task variant, package execution or upload was made. The existing confirmation remains the sole active remote run.
