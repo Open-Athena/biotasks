@@ -1,0 +1,130 @@
+{
+  "scope": "Local Bash subprocess comparison of exact exec methods with Docker argv adapter; no Docker daemon, model, PR or container validation.",
+  "cases": [
+    {
+      "case": "empty",
+      "exit_code": 0,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "quotes_unicode",
+      "exit_code": 0,
+      "stdout_sha256": "a0b170bf75211828197b02f3f78cd641d9cae1cb5ed1ffe96bef4513ffb6966c",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "trailing_newlines",
+      "exit_code": 0,
+      "stdout_sha256": "d25a40aa4f234dff3cf60d2afe65a6596d7232e6603ef7cf36984836fd6046aa",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "stdin_eof",
+      "exit_code": 0,
+      "stdout_sha256": "c297dc29728d50fd786c7303124d325f850a12d98776cf36683a90039ebca3b6",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "heredoc",
+      "exit_code": 0,
+      "stdout_sha256": "1a156e30e097501aaa7249ea43156be1a3407b9fa5a9d5c34e7e9ccde7a97f43",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "pipefail",
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "explicit_exit",
+      "exit_code": 17,
+      "stdout_sha256": "762069bc07a6e1b5df123a5ae7bd91c10daa04694fbaa17fba0cd6a8dcce8f22",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "trap_exit",
+      "exit_code": 7,
+      "stdout_sha256": "4fb0c8020cc7830bf853866396c368fe886fad3d8fa5ec11e3bd3082eb35478c",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "function",
+      "exit_code": 0,
+      "stdout_sha256": "a03f1d611645eb53ad16c1af546ca0792dc884505bab57ede80f4dad6b911d3a",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "errexit",
+      "exit_code": 1,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "nounset",
+      "exit_code": 127,
+      "stdout_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "initial_status",
+      "exit_code": 0,
+      "stdout_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "login_shell",
+      "exit_code": 0,
+      "stdout_sha256": "66b347869cd5e407f0cc4248d2059979cef00e34d6459cd7a15ab30af429c135",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "cwd_persists_inside_command",
+      "exit_code": 0,
+      "stdout_sha256": "bace16f2c9fc848bb0408d1be0a13eec9ec593cc430e1626fad611f22995f6e1",
+      "baseline_candidate_match": true
+    },
+    {
+      "case": "large_literal_payload",
+      "command_bytes": 1240044,
+      "payload_sha256": "cf1a0ebdc7ec221a3af26ef42246018aba9c65ee05077125822060cf838e959d",
+      "original_errno": 7,
+      "candidate_exit_code": 0,
+      "exact_payload": true
+    },
+    {
+      "case": "baseline_timeout",
+      "exit_code": 124
+    },
+    {
+      "case": "candidate_timeout",
+      "exit_code": 124
+    },
+    {
+      "case": "baseline_nul_rejected",
+      "passed": true
+    },
+    {
+      "case": "candidate_nul_rejected",
+      "passed": true
+    },
+    {
+      "case": "dead_sandbox_rejected",
+      "passed": true
+    }
+  ],
+  "candidate_max_argument_bytes": 92,
+  "candidate_max_stdin_bytes": 1240044,
+  "temporary_paths_removed": true,
+  "sources": {
+    "upstream/bootstrap/docker.py": "1247d545142f7f61fb410b2728c4e86e0037360aab9d873ef30c01ed83a7be59",
+    "candidate/docker.py": "fed64fdffe68249fc1c24f89849181f8da3890b778ee8b6e783a6cd533a9c522"
+  },
+  "limits": [
+    "No Docker daemon tested",
+    "Inherited Docker exec descendant cancellation not fixed or verified",
+    "BASH_EXECUTION_STRING and shell diagnostic prefixes differ",
+    "No live PR recovery"
+  ]
+}
