@@ -20,6 +20,21 @@ The emitted environment Dockerfile also resets/cleans, and the exported verifier
 
 Before a live MACS comparison, exercise a tiny compiled fixture through all relevant reset/patch/rebuild boundaries, then freeze one original removal case and reconstruct both arms from the same base image. Record source commit, import path, compiled artifact provenance, rebuild success and test completion. A successful fixture is mechanism evidence only; full MACS positive controls remain required for a recovery claim.
 
+## Compiled lifecycle mechanism check
+
+`check_compiled_lifecycle.py` executes the pinned upstream native-stage and exported-verifier builders against a synthetic C shared library. It verifies source hashes before AST-loading only those functions. Local execution remaps the absolute sandbox/log paths into an owned temporary directory; it does not install/import the upstream package or run Docker/Harbor.
+
+Twelve cases pass explicit assertions:
+
+- Original native and exported reset/clean paths remove the bootstrap library; neither nop nor oracle imports it successfully.
+- A research adapter runs the same deterministic compiler command after source patches and before tests. Both paths then import value 1 from the base source and value 2 from the patched source; nop fails and oracle passes. Binary hashes distinguish the two builds.
+- An explicit negative control restores the fixed-ref bootstrap binary after reset. The exported nop then passes incorrectly despite unfixed source. Retaining compiled files is therefore not a valid substitute for rebuilding in this fixture.
+- A multiline rebuild starting with `false` stops both paths before tests, even when followed by a successful command. The adapter uses a separate `bash -euo pipefail -c` process and explicitly checks its status: wrapping a `set -e` subshell in an `||` list would suppress errexit.
+
+The final run took under one second and peaked below 25 MiB RSS; all temporary fixture files were removed. It uses no biological data, model calls or remote capacity. Exact results and resource accounting are in `compiled-lifecycle-results.json` and `compiled-lifecycle-resources.txt`.
+
+These are mechanism checks, not an integrated candidate or MACS recovery. The export check uses upstream's binary-reward fallback, not the graded parser. The adapter does not yet cover reset/patch failure guards, configuration plumbing, emitted metadata, dependency drift or full native validation outcomes. Those remain required before a live comparison.
+
 ## Current status
 
-No generic lifecycle patch has been applied or live run launched. This issue remains open. Original archived evidence is retained locally under ignored `inputs-private/` while the investigation needs it; the verified public archive remains its durable backing. No `/tmp` evidence or additional model/cloud spend was created.
+No generic lifecycle patch has been applied to a repository pipeline and no live repository run has been launched. This issue remains open. Original archived evidence is retained locally under ignored `inputs-private/` while the investigation needs it; the verified public archive remains its durable backing. No `/tmp` evidence or additional model/cloud spend was created.

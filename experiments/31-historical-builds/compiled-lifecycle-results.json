@@ -1,0 +1,149 @@
+{
+  "scope": "Synthetic C shared library; pinned native/export shell builders, local path mapping and optional research rebuild adapter. No Docker, model, biological PR, full pipeline or Harbor execution.",
+  "compiler": "cc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0",
+  "cases": [
+    {
+      "kind": "native",
+      "mode": "baseline",
+      "side": "nop",
+      "script_exit": 0,
+      "import_succeeded": false,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": null,
+      "output": "HEAD is now at db89e8c Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
+      "reward": null
+    },
+    {
+      "kind": "native",
+      "mode": "baseline",
+      "side": "oracle",
+      "script_exit": 0,
+      "import_succeeded": false,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": null,
+      "output": "HEAD is now at db89e8c Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nR2E_END_TEST_OUTPUT\n",
+      "reward": null
+    },
+    {
+      "kind": "native",
+      "mode": "rebuild",
+      "side": "nop",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": "3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9",
+      "output": "HEAD is now at db89e8c Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nR2E_END_TEST_OUTPUT\n",
+      "reward": null
+    },
+    {
+      "kind": "native",
+      "mode": "rebuild",
+      "side": "oracle",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": true,
+      "stale_false_positive": false,
+      "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
+      "output": "HEAD is now at db89e8c Base revision\nRemoving fixture.so\nR2E_START_TEST_OUTPUT\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nR2E_END_TEST_OUTPUT\n",
+      "reward": null
+    },
+    {
+      "kind": "native",
+      "mode": "failed_rebuild",
+      "script_exit": 1,
+      "tests_started": false,
+      "failure_guard": true
+    },
+    {
+      "kind": "export",
+      "mode": "baseline",
+      "side": "nop",
+      "script_exit": 0,
+      "import_succeeded": false,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": null,
+      "output": "no test files to reset\n+ python3 check.py\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nno test files to reset\n",
+      "reward": "0.0"
+    },
+    {
+      "kind": "export",
+      "mode": "baseline",
+      "side": "oracle",
+      "script_exit": 0,
+      "import_succeeded": false,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": null,
+      "output": "no test files to reset\n+ python3 check.py\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 3, in <module>\n    lib=ctypes.CDLL(str(p))\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 361, in __init__\n    self._handle = self._load_library(name, mode, handle, winmode)\n                   ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/home/exedev/miniforge3/lib/python3.13/ctypes/__init__.py\", line 403, in _load_library\n    return _dlopen(name, mode)\nOSError: <fixture>/workspace/fixture.so: cannot open shared object file: No such file or directory\nno test files to reset\n",
+      "reward": "0.0"
+    },
+    {
+      "kind": "export",
+      "mode": "rebuild",
+      "side": "nop",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": false,
+      "stale_false_positive": false,
+      "binary_sha256": "3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9",
+      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 1 SHA256 3052e32cdb743ccf439c317cab73a90314a0e95787ea54c8e417fe21a46df6b9\nTraceback (most recent call last):\n  File \"<fixture>/workspace/check.py\", line 6, in <module>\n    assert v == 2\n           ^^^^^^\nAssertionError\nno test files to reset\n",
+      "reward": "0.0"
+    },
+    {
+      "kind": "export",
+      "mode": "rebuild",
+      "side": "oracle",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": true,
+      "stale_false_positive": false,
+      "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
+      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nno test files to reset\n",
+      "reward": "1.0"
+    },
+    {
+      "kind": "export",
+      "mode": "preserve_stale",
+      "side": "nop",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": true,
+      "stale_false_positive": true,
+      "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
+      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nno test files to reset\n",
+      "reward": "1.0"
+    },
+    {
+      "kind": "export",
+      "mode": "preserve_stale",
+      "side": "oracle",
+      "script_exit": 0,
+      "import_succeeded": true,
+      "test_passed": true,
+      "stale_false_positive": false,
+      "binary_sha256": "9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0",
+      "output": "no test files to reset\n+ python3 check.py\nIMPORT <fixture>/workspace/fixture.so VALUE 2 SHA256 9fa6d1bc931018ed60f7c889b57b71ae0fb6f4f8e20e45b5c1dad023ae7b77a0\nFIXTURE_PASS\nno test files to reset\n",
+      "reward": "1.0"
+    },
+    {
+      "kind": "export",
+      "mode": "failed_rebuild",
+      "script_exit": 1,
+      "tests_started": false,
+      "failure_guard": true
+    }
+  ],
+  "case_count": 12,
+  "all_assertions_passed": true,
+  "temporary_directory_removed": true,
+  "limits": [
+    "Export uses upstream binary reward fallback, not graded parser",
+    "Fixture has no dependency installation or historical dependency drift",
+    "Adapter is not wired through pipeline configuration/export metadata",
+    "No MACS recovery claim"
+  ]
+}
