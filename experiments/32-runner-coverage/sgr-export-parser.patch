@@ -1,0 +1,11 @@
+--- a/src/repo2rlenv/pipelines/_pr_runtime_verifier.py
++++ b/src/repo2rlenv/pipelines/_pr_runtime_verifier.py
+@@ -92,7 +92,7 @@
+     if not log:
+         return out
+     for raw in log.split("\n"):
+-        line = raw.strip()
++        line = re.sub(r"\x1b\[[0-9;:]*m", "", raw).strip()
+         if not line:
+             continue
+         line = _PYTEST_XDIST_PREFIX_RE.sub("", line, count=1)

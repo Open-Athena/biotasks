@@ -19,6 +19,8 @@ def parser(path):
 def main():
     old = parser(ROOT / 'upstream/log_parsers/pytest_parser.py')
     new = parser(ROOT / 'candidate/pytest_parser.py')
+    old_export = parser(ROOT / 'upstream/pipelines/_pr_runtime_verifier.py')
+    new_export = parser(ROOT / 'candidate/_pr_runtime_verifier.py')
     fixtures = [
         ('verbose_pass', 'tests/test_x.py::test_a PASSED [25%]', {'tests/test_x.py::test_a': 'PASSED'}),
         ('verbose_fail', 'tests/test_x.py::test_b FAILED [50%]', {'tests/test_x.py::test_b': 'FAILED'}),
@@ -35,12 +37,15 @@ def main():
     ]
     results = []
     for name, text, expected in fixtures:
+        assert old_export(text) == new_export(text) == expected, name
         assert old(text) == new(text) == expected, (name, old(text), new(text))
         # Actual SGR foreground/reset sequences, including styles surrounding IDs/statuses.
         colored = '\x1b[32m' + text.replace(' PASSED', ' \x1b[1;32mPASSED').replace(' FAILED', ' \x1b[31mFAILED') + '\x1b[0m'
+        assert new_export(colored) == expected, (name, new_export(colored))
         assert new(colored) == expected, (name, new(colored))
         results.append({'case': name, 'expected': expected,
-                        'original_colored': old(colored), 'candidate_colored': new(colored)})
+                        'original_colored': old(colored), 'candidate_colored': new(colored),
+                        'original_export_colored': old_export(colored), 'candidate_export_colored': new_export(colored)})
     sequence = 'tests/test_x.py::test_a PASSED [100%]\nFAILED tests/test_x.py::test_a - error'
     assert new(sequence) == {'tests/test_x.py::test_a': 'FAILED'}
     # Removing colors does not establish completion: a timed-out partial log can still parse.
@@ -60,7 +65,7 @@ def main():
     narrow = fn(['cd /workspace && python -m pytest -v'], ['mne/tests/test_example.py'])
     assert narrow == ['cd /workspace && python -m pytest -v mne/tests/test_example.py']
     out = {'scope': 'Synthetic expected-status fixtures and exact pinned targeting functions; no task execution/regrading',
-           'fixtures': results, 'last_write_wins_preserved': True,
+           'fixtures': results, 'native_export_expected_status_parity': True, 'last_write_wins_preserved': True,
            'partial_log_still_parseable_not_acceptable_as_complete': True,
            'broad_command_preserved': broad, 'pathless_command_targeted': narrow,
            'targeting_function_source_sha256': hashlib.sha256(src.encode()).hexdigest(),
