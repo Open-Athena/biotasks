@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-10-23T09:15:52.212179+00:00",
+  "change": "Run the existing separate semantic review during submission validation inside the same quality-repair worker. Return rejected semantic findings as ordinary submission feedback; retain the same scientific gate, controls, immutable probes and deadline.",
+  "review_identity": "Every review attempt has distinct trace directory and AuthorBudget operation/receipt paths. Request scopes and global bounds remain unchanged.",
+  "checks": {
+    "passed": 128,
+    "seconds": 4.78,
+    "peak_rss_kib": 136872,
+    "selection": [
+      "test_grading.py",
+      "test_autonomous.py",
+      "test_grading_resume.py",
+      "test_reference.py"
+    ]
+  },
+  "regressions": [
+    "Executable success cannot commit a semantically rejected repair.",
+    "The same repair worker can correct a private claim and resubmit with unchanged science.",
+    "A worker that reports blocked after semantic feedback remains rejected.",
+    "Independent-comparison conflict stays terminal and is not shown as a mandatory-pass target.",
+    "Separate review attempts cannot overwrite traces or reuse ledger operation identifiers."
+  ],
+  "code_quality": "Ruff lint/format,ty and required pre-commit passed;see code-quality.json.",
+  "development_failures": [
+    "A mistyped test filename collected no tests.",
+    "The synthetic ledger fixture initially reserved zero, which upstream correctly rejects; it now reserves a small fake amount and settles zero.",
+    "A blocked-result fixture initially expected a key that the existing blocked path omits; assertion corrected."
+  ],
+  "live_validation": false,
+  "frozen_cohort014_changed": false,
+  "new_model_calls": 0,
+  "new_cloud_resources": 0,
+  "checked_files": {
+    "experiments/19-repo2rlenv-notebook-pilot/grading_session.py": "490014843906898683a6996f72109e36558e146035e42704ce94221eb4dfb522",
+    "experiments/19-repo2rlenv-notebook-pilot/test_grading.py": "26597a4c5c3368f822293f4edb5ec77bd1646801fa48f7374d49272b4ec10af5",
+    "src/biotasks/prompts/notebook-grader-author.md": "6010dc6b19cd4e88036813ebb5a1026bf9f1ea31417b1393d9b85bfa51329452"
+  }
+}

@@ -625,7 +625,7 @@ async def run_grading(
         )
         complete = completion_transport(client)
 
-    async def call(schema, name, prompt, inputs, validate=None, shell=None):
+    async def call(schema, name, prompt, inputs, validate=None, shell=None, *, record_name=None):
         if name == "grader" and draft is not None:
             inputs = {**inputs, "prior_worker_draft": draft}
             shell = None
@@ -634,9 +634,13 @@ async def run_grading(
             name=name,
             prompt_name=prompt,
             context=inputs,
-            root=root / name,
+            root=root / (record_name or name),
             ledger=ledger,
-            budget=AuthorBudget(budget, root / "charges", name),
+            budget=AuthorBudget(
+                budget,
+                root / "charges" / (record_name or name),
+                record_name or name,
+            ),
             complete=complete,
             deadline=deadline,
             limits=limits,
@@ -896,7 +900,14 @@ async def run_grading(
         author_input_control_summary = None
         check_description_updates = []
 
-        async def review(name):
+        async def review(
+            name,
+            *,
+            reviewed_candidate=None,
+            reviewed_probes=None,
+            descriptions=None,
+            record_name=None,
+        ):
             async def validate_review(value):
                 check_review_source_coverage(value)
                 if value.decision == "accept_for_packaging" and (
@@ -912,16 +923,19 @@ async def run_grading(
                 "notebook-grader-review",
                 {
                     **context,
-                    "candidate": candidate.model_dump(),
-                    "probes": probes.model_dump(),
+                    "candidate": (reviewed_candidate or candidate).model_dump(),
+                    "probes": (reviewed_probes or probes).model_dump(),
                     "initial_probes": initial_probes.model_dump(),
                     "initial_checks": [check.model_dump() for check in session.frozen_checks],
-                    "check_description_updates": check_description_updates,
+                    "check_description_updates": check_description_updates
+                    if descriptions is None
+                    else descriptions,
                     "controls": session.last_controls,
                     "control_summary": control_summary(session.last_controls),
                     "author_input_control_summary": author_input_control_summary,
                 },
                 validate_review,
+                record_name=record_name,
             )
 
         initial_probes = probes
@@ -933,8 +947,12 @@ async def run_grading(
             and config.get("allow_quality_repair", True)
         ):
             repair_base = candidate.model_copy(deep=True)
+            repair_assessment = None
+            repair_review_attempt = 0
 
             async def validate_repair(value):
+                nonlocal repair_assessment, repair_review_attempt
+                repair_assessment = None
                 bound = bind_repair_checks(
                     value, session.frozen_checks, prior_candidate=repair_base
                 )
@@ -942,6 +960,36 @@ async def run_grading(
                 if corrected.disposition == "ready":
                     session.frozen_probes = corrected_probes
                 await session.validate_candidate(corrected)
+                if corrected.disposition == "blocked" or session.independent_conflict:
+                    return
+                # Keep the existing repair worker alive until both executable
+                # controls and semantic review validate this exact submission.
+                # A rejected review is ordinary submission feedback, not a new
+                # repair campaign or an override of the scientific gate.
+                repair_review_attempt += 1
+                checked = await review(
+                    "review-repair",
+                    reviewed_candidate=corrected,
+                    reviewed_probes=corrected_probes,
+                    descriptions=[item.model_dump() for item in bound.check_descriptions],
+                    record_name="review-repair"
+                    if repair_review_attempt == 1
+                    else f"review-repair-{repair_review_attempt:03}",
+                )
+                save_record(
+                    root / "repair-submission-reviews" / f"{repair_review_attempt:03}.json",
+                    {
+                        "candidate": corrected.model_dump(),
+                        "probes": corrected_probes.model_dump(),
+                        "review": checked.model_dump(),
+                    },
+                )
+                if checked.decision != "accept_for_packaging":
+                    raise ValueError(
+                        "Semantic validation rejected this repair submission: "
+                        + json.dumps(checked.model_dump())
+                    )
+                repair_assessment = checked
 
             author_input_control_summary = control_summary(session.last_controls)
             repair_submission = await call(
@@ -971,7 +1019,9 @@ async def run_grading(
                 return {"status": "repair_blocked", "grader_construction_run": True}
             if blocker := comparison_blocker():
                 return blocker
-            assessment = await review("review-repair")
+            if repair_assessment is None:
+                raise RuntimeError("Repair submission lacks semantic validation")
+            assessment = repair_assessment
             save_record(root / "review-repair.json", assessment.model_dump())
         save_record(root / "final-controls.json", session.last_controls)
         save_record(root / "final-candidate.json", candidate.model_dump())

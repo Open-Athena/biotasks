@@ -520,7 +520,15 @@ def test_probe_preflight_separates_mutation_from_acceptance(
     ],
 )
 def test_orchestration_separates_probe_author_and_gates_acceptance(
-    tmp_path, monkeypatch, repair, derived, resume, reuse_probes, contract_only, comparison_conflict
+    tmp_path,
+    monkeypatch,
+    repair,
+    derived,
+    resume,
+    reuse_probes,
+    contract_only,
+    comparison_conflict,
+    semantic_feedback=False,
 ):
     import grading_session as module
 
@@ -668,6 +676,9 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     monkeypatch.setattr(module, "GradingSession", Session)
 
     repair_input_summaries = []
+    repair_reviews = []
+    review_roots = []
+    review_charge_operations = []
 
     async def fake_stage(**kwargs):
         name = kwargs["name"]
@@ -712,6 +723,10 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 assert commands[-1] == ["chmod", "700", "/work/task-inputs"]
             value = suite
         elif name.startswith("review"):
+            review_roots.append(kwargs["root"])
+            operation = kwargs["budget"].reserve(0.001, "Synthetic review response")
+            kwargs["budget"].settle(operation, 0)
+            review_charge_operations.append(operation)
             assert inputs["control_summary"] == module.control_summary(inputs["controls"])
             assert "inputs/original.py" in inputs["source_evidence"]
             assert "inputs/plan.json" in inputs["source_evidence"]
@@ -725,6 +740,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             }
             assert inputs["initial_probes"] == suite.model_dump()
             if name == "review-repair":
+                repair_reviews.append(inputs["candidate"])
                 assert inputs["author_input_control_summary"] == repair_input_summaries[-1]
                 assert inputs["author_input_control_summary"] != inputs["control_summary"]
                 assert inputs["probes"]["concerns"] == ["Updated synthetic concern"]
@@ -761,10 +777,21 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         source_coverage=source_coverage,
                     )
                 )
+            semantic_rejection = (
+                semantic_feedback and name == "review-repair" and len(repair_reviews) == 1
+            )
             value = module.Review(
-                decision="revise" if repair and name == "review" else "accept_for_packaging",
+                decision="blocked"
+                if semantic_rejection and semantic_feedback == "blocked"
+                else "revise"
+                if (repair and name == "review") or semantic_rejection
+                else "accept_for_packaging",
                 rationale="fixture",
-                issues=["repair fixture"] if repair and name == "review" else [],
+                issues=["Unsupported calibration claim"]
+                if semantic_rejection
+                else ["repair fixture"]
+                if repair and name == "review"
+                else [],
                 source_coverage=source_coverage,
             )
         else:
@@ -796,6 +823,18 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 else c
             )
         if kwargs.get("validate"):
+            if name == "repair" and semantic_feedback:
+                with pytest.raises(ValueError, match="Unsupported calibration claim"):
+                    await kwargs["validate"](value)
+                # Executable success must not finalize a semantically rejected
+                # submission. The same repair worker receives the feedback and
+                # submits a corrected explanation, with science unchanged.
+                assert not (tmp_path / "final-candidate.json").exists()
+                if semantic_feedback == "blocked":
+                    value.disposition = "blocked"
+                    value.rationale = "Scientific evidence requires work outside this repair"
+                else:
+                    value.rationale = "Supported comparison; no unsupported measurement claim"
             await kwargs["validate"](value)
         return value
 
@@ -828,6 +867,13 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
+    if semantic_feedback == "blocked":
+        assert result["status"] == "repair_blocked"
+        assert not result.get("final_controls_passed", False)
+        assert not (tmp_path / "final-candidate.json").exists()
+        assert calls == ["independent", "grader", "probes", "review", "repair", "review-repair"]
+        assert len(repair_reviews) == 1
+        return
     if comparison_conflict:
         initial = (
             ["contract"]
@@ -873,6 +919,20 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         expected = ["independent", "probes", "review"]
         assert json.loads((tmp_path / "candidate.json").read_text()) == c.model_dump()
         assert not (tmp_path / "repair.json").exists()
+    if semantic_feedback:
+        expected.append("review-repair")
+        assert len(repair_reviews) == 2
+        assert len(set(review_roots)) == len(review_roots) == 3
+        assert len(set(review_charge_operations)) == len(review_charge_operations) == 3
+        assert len(list((tmp_path / "charges").glob("*/1.json"))) == 3
+        assert repair_reviews[0]["rationale"] != repair_reviews[1]["rationale"]
+        for field in ("checks", "grader_code", "instruction"):
+            assert repair_reviews[0][field] == repair_reviews[1][field]
+        records = sorted((tmp_path / "repair-submission-reviews").glob("*.json"))
+        assert [json.loads(p.read_text())["review"]["decision"] for p in records] == [
+            "revise",
+            "accept_for_packaging",
+        ]
     assert calls == expected
     assert result["status"] == (
         "grader_requires_further_work"
@@ -880,7 +940,27 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         else "grader_candidate_validated"
     )
     assert not result["harbor_packaging_validated"] and not result["software_portability_validated"]
-    assert json.loads((tmp_path / "final-candidate.json").read_text()) == c.model_dump()
+    expected_candidate = c.model_dump()
+    if semantic_feedback:
+        expected_candidate["rationale"] = "Supported comparison; no unsupported measurement claim"
+    assert json.loads((tmp_path / "final-candidate.json").read_text()) == expected_candidate
+
+
+@pytest.mark.parametrize("semantic_feedback", [True, "blocked"])
+def test_semantic_rejection_returns_to_existing_repair_worker(
+    tmp_path, monkeypatch, semantic_feedback
+):
+    test_orchestration_separates_probe_author_and_gates_acceptance(
+        tmp_path,
+        monkeypatch,
+        repair=True,
+        derived=True,
+        resume=False,
+        reuse_probes=False,
+        contract_only=False,
+        comparison_conflict=False,
+        semantic_feedback=semantic_feedback,
+    )
 
 
 def test_outer_termination_reaps_generated_process_group(tmp_path):

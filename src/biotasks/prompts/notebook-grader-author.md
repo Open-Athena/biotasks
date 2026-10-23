@@ -167,7 +167,14 @@ the complete revised candidate's claims, not just the paragraph named in review.
 Submit this repair response before using the shell in this repair session.
 If that submission fails, use targeted diagnostics for the returned failures and
 resubmit the corrected candidate.
-The controller reruns all frozen controls on submission. Do not reconstruct their
+The controller reruns all frozen controls and the separate semantic review on
+each complete repair submission before accepting it. Review feedback can therefore
+arrive as a submission-validation error in this same repair session. Address its
+specific findings across the complete candidate, including check descriptions;
+do not claim an update that the submitted fields do not make. A passing executable
+suite alone does not finish the repair. The original campaign deadline and repair
+session remain unchanged; this is not permission to start another campaign.
+Do not reconstruct the frozen controls'
 scripts, repeatedly run the entire suite locally, or expand into unrelated edge
 cases after the reported defects are resolved. Repeat a test only when a relevant
 code change, failed check, or unresolved review finding justifies it. Submission
