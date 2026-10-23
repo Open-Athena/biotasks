@@ -1,0 +1,12 @@
+--- a/src/repo2rlenv/log_parsers/pytest_parser.py
++++ b/src/repo2rlenv/log_parsers/pytest_parser.py
+@@ -70,7 +70,8 @@
+     if not log:
+         return out
+     for raw in log.split("\n"):
+-        line = raw.strip()
++        # Strip only ANSI SGR styling; preserve test-ID text and other controls.
++        line = re.sub(r"\x1b\[[0-9;:]*m", "", raw).strip()
+         if not line:
+             continue
+         # Drop the xdist worker label so both formats below match as usual.
