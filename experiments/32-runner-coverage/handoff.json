@@ -6,7 +6,7 @@
   "remote_jobs": 1,
   "remaining": [
     "Deleted-target comparison complete with zero recovered tasks; missing historical chemap dependency remains, no per-PR repair",
-    "Exercise completion and native/export parser candidate together on frozen live cases",
+    "Fix and verify inner runner exit/setup failure handling before combining completion and native/export parser candidates on frozen live cases",
     "Determine safe generic targeting and runner support design",
     "Run predeclared comparisons; report static coverage separately from task recovery"
   ],
@@ -70,5 +70,17 @@
   "all_remote_jobs_terminal": true,
   "active_checkpoint": "d3de9d30996afb8ac1d4dae8786be18b37287545",
   "allocated_cpu_hours": 0.22336555533938937,
-  "owned_resources_removed": true
+  "owned_resources_removed": true,
+  "completion_gate": {
+    "ready_for_live_acceptance": false,
+    "outer_only_fixture_cases": 7,
+    "actual_shell_cases": 5,
+    "inner_failure_codes_still_accepted": [
+      2,
+      124,
+      137
+    ],
+    "evidence": "inner-exit-results.json",
+    "no_original_rewards_changed": true
+  }
 }

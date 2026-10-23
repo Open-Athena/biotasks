@@ -1,0 +1,244 @@
+{
+  "scope": "Actual Bash/Git execution with synthetic runner output through original/candidate validator; not biological task validation",
+  "cases": [
+    {
+      "inner_exit": 0,
+      "original": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 0,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 0,
+            "end_marker_present": true
+          }
+        ]
+      },
+      "outer_completion_candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 0,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 0,
+            "end_marker_present": true
+          }
+        ]
+      }
+    },
+    {
+      "inner_exit": 1,
+      "original": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 1,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 1,
+            "end_marker_present": true
+          }
+        ]
+      },
+      "outer_completion_candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 1,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 1,
+            "end_marker_present": true
+          }
+        ]
+      }
+    },
+    {
+      "inner_exit": 2,
+      "original": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 2,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 2,
+            "end_marker_present": true
+          }
+        ]
+      },
+      "outer_completion_candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 2,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 2,
+            "end_marker_present": true
+          }
+        ]
+      }
+    },
+    {
+      "inner_exit": 124,
+      "original": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 124,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 124,
+            "end_marker_present": true
+          }
+        ]
+      },
+      "outer_completion_candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 124,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 124,
+            "end_marker_present": true
+          }
+        ]
+      }
+    },
+    {
+      "inner_exit": 137,
+      "original": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 137,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 137,
+            "end_marker_present": true
+          }
+        ]
+      },
+      "outer_completion_candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": [
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 137,
+            "end_marker_present": true
+          },
+          {
+            "outer_exit": 0,
+            "requested_inner_exit": 137,
+            "end_marker_present": true
+          }
+        ]
+      }
+    }
+  ],
+  "temporary_directory_removed": true,
+  "finding": "Outer exit and marker presence do not enforce inner test-command completion; test exit 2, 124 and 137 are swallowed and accepted on parseable partial lines",
+  "model_calls": 0,
+  "remote_jobs": 0
+}

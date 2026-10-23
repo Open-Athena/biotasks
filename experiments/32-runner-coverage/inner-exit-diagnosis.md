@@ -1,0 +1,11 @@
+# Outer shell completion does not prove runner completion
+
+`check_inner_exit.py` executes the pinned original stage script and the current outer-completion candidate in actual Bash/Git fixture workspaces. The fixture runner deliberately emits one FAIL_TO_PASS-shaped result and one stable passing result, then exits with a chosen status. This is synthetic test output, not a biological case or regrading of original evidence.
+
+Both original and candidate validation return `verified` for inner exit codes 0, 1, 2, 124 and 137. In all cases, the outer shell exits 0 and prints the end marker. The source uses `set -uxo pipefail`, runs the test block, and then successfully executes `set -x` and the final `echo`; the last command masks the earlier test exit. Therefore the current `completion-gate.patch` rejects client/outer timeouts and missing markers, but does not enforce the test runner's completion status. The earlier seven scripted-sandbox checks remain valid for their narrower cases and are not overwritten.
+
+The same source does not enable `errexit` for reset/patch setup. Command-level failure checks and precise runner exit semantics need to be addressed before claiming a complete native execution. Parsing useful-looking lines, SGR normalization, marker presence, and outer exit 0 are each insufficient on their own.
+
+The next candidate must preserve the test block's status explicitly, fail closed on setup failures, check ordered stage markers, and distinguish ordinary test failures from runner interruption/collection/internal errors. Native acceptance and exported grading must use compatible completion semantics. Runner conventions differ; do not silently assume every nonzero code means an ordinary test failure or claim generic non-Python support from pytest-only evidence. Keep test IDs and expected base failures intact. Preserve existing candidate/results as historical evidence; new checks must include real shell execution, not only supplied exit fields.
+
+No live pipeline, original reward, dependency, task or biological test was changed. Five local cases completed in a bounded fixture; its temporary directory was removed. No model calls or remote jobs were made by this diagnostic. The completion candidate is not ready for a live task-acceptance claim until this gap is resolved.
