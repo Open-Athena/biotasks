@@ -1,0 +1,7 @@
+# Matchms existing-export controls 001
+
+Original reconstruction succeeded, and its 4,967-byte Iris archive was downloaded and SHA-verified. The log records successful package installation and 1,446 collected tests; this is not task validity. Reconstructed package versions may drift from the deleted original image. Original source commit and all task files remain unchanged.
+
+Run eight controls serially (nop/oracle for four original exports) on the exact reconstruction worker. Four allocated CPUs, 16 GiB RAM/disk, 8,700-second job bound, at most 9.667 allocated CPU-hours; prior reconstruction consumed 0.12725, so this fits within #29's cumulative 32 CPU-hour bound. No new capacity, model calls or credentials in the job. No automatic retries. Original Harbor 0.6.6 setup and Docker resource wrapper are copied unchanged. Controller: 1 CPU/4 GiB; task: 1 CPU/6 GiB; image builds: 1.5 CPU/6 GiB. Archive and cleanup have the final 300 seconds.
+
+The owned reconstruction image is verified by digest/label, then temporarily given the exact original bootstrap tag, only if absent, so task Dockerfiles need no edits. Remove that alias after controls. Keep the uniquely owned reconstruction image until result archive readback; then explicitly delete its images/cache by ownership label. Task containers, task images and shared volume are removed by the original scoped cleanup helper. Raw Matchms packages/results stay in private storage unless separately curated for publication.
