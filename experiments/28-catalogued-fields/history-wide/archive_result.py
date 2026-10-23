@@ -49,6 +49,10 @@ def main():
         'history-protocol.md': ROOT / 'execution-protocol.md',
         'reference-payload-manifest.json': ROOT / 'payload-manifest.json',
         'candidate-identities.json': ROOT / 'candidate-identities' / (args.slug + '.json')})
+    if visibility == 'private':
+        sources.update({'restricted-retention-addendum.md': ROOT / 'restricted-retention-addendum.md',
+            'source-data-review.json': ROOT / 'publication-reviews' / (args.slug + '-data-review.json'),
+            'private-bucket-visibility-proof.json': ROOT / 'restricted-retention-bucket.json'})
     provenance_path = ROOT / 'submission-provenance' / (args.slug + '.json')
     sources['submission-provenance.json'] = provenance_path
     for path in (BASE / 'preflight/licenses').glob(args.slug + '--*'):

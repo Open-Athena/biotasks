@@ -1,0 +1,11 @@
+# Restricted original-evidence retention
+
+The frozen native execution protocol and every native/task/control input remain unchanged. This addendum concerns archival eligibility only. Matchms original task patches contain data-specific noncommercial and unresolved external-spectrum terms despite Apache-2.0 repository root notices. Scientific outcomes are preserved as produced; no task or fixture is edited, regenerated or removed from the cohort.
+
+Keep those original bytes in the dedicated private `open-athena/biotasks-restricted` HF bucket, using an append-only manifest-derived prefix. Publish only eligible metadata, hashes, notices and research conclusions. Protected retention does not clear downstream commercial use or constitute a public task/image/dataset release.
+
+Private evidence requires the same exact object size/SHA256 and archive-member path/size/mode/SHA256 checks as public evidence, using fresh authenticated downloads. Actual authenticated bucket metadata must report private visibility, and anonymous requests must receive401/403/404 before and after transfer. Network errors or HTTP500 are not privacy proof. Receipts explicitly distinguish authenticated verification from anonymous verification; private archives never claim anonymous byte readback. All previous public archives retain their original anonymous checks.
+
+Credential values, whole-account billing snapshots and transport caches remain excluded from either route. Retain original scientific phase/log/control bytes until final all-ten audits and verified archival retention; remove only owned redundant wrappers/account snapshots after their proof is committed. Keep exact paths and cleanup conditions in the protected handoff if retention work is still pending.
+
+The local archival walltime may be explicitly bounded up to900seconds to accommodate hundreds of serial notice objects. The400MiB estimate,500MiB ceiling, node headroom/load checks, single transfer, foreground supervision and nonblocking intensive-work lock remain. Small manifest scans retain the lightweight exception; larger scans use the intensive guard. No native budget, timeout, model call, CPU allocation, test, parser, patch or reward changes are authorized by this addendum.
