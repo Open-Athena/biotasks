@@ -1,0 +1,121 @@
+{
+  "scope": "Synthetic expected-status fixtures and exact pinned targeting functions; no task execution/regrading",
+  "fixtures": [
+    {
+      "case": "verbose_pass",
+      "expected": {
+        "tests/test_x.py::test_a": "PASSED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_a": "PASSED"
+      }
+    },
+    {
+      "case": "verbose_fail",
+      "expected": {
+        "tests/test_x.py::test_b": "FAILED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_b": "FAILED"
+      }
+    },
+    {
+      "case": "summary_error",
+      "expected": {
+        "tests/test_x.py": "ERROR"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py": "ERROR"
+      }
+    },
+    {
+      "case": "summary_failure",
+      "expected": {
+        "tests/test_x.py::test_b": "FAILED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_b": "FAILED"
+      }
+    },
+    {
+      "case": "skip",
+      "expected": {
+        "tests/test_x.py:42": "SKIPPED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py:42": "SKIPPED"
+      }
+    },
+    {
+      "case": "parameter",
+      "expected": {
+        "tests/test_x.py::test_a[FAILED - x]": "PASSED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_a[FAILED - x]": "PASSED"
+      }
+    },
+    {
+      "case": "xdist",
+      "expected": {
+        "tests/test_x.py::test_a": "PASSED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_a": "PASSED"
+      }
+    },
+    {
+      "case": "skip_reason",
+      "expected": {
+        "tests/test_x.py::test_a": "SKIPPED"
+      },
+      "original_colored": {},
+      "candidate_colored": {
+        "tests/test_x.py::test_a": "SKIPPED"
+      }
+    },
+    {
+      "case": "summary_counts",
+      "expected": {},
+      "original_colored": {},
+      "candidate_colored": {}
+    },
+    {
+      "case": "unittest_footer",
+      "expected": {},
+      "original_colored": {},
+      "candidate_colored": {}
+    },
+    {
+      "case": "incomplete_line",
+      "expected": {},
+      "original_colored": {},
+      "candidate_colored": {}
+    },
+    {
+      "case": "empty",
+      "expected": {},
+      "original_colored": {},
+      "candidate_colored": {}
+    }
+  ],
+  "last_write_wins_preserved": true,
+  "partial_log_still_parseable_not_acceptable_as_complete": true,
+  "broad_command_preserved": "cd /workspace && python -m pytest -v mne/",
+  "pathless_command_targeted": [
+    "cd /workspace && python -m pytest -v mne/tests/test_example.py"
+  ],
+  "targeting_function_source_sha256": "0b748a897f1802fcaf4b59ab7ed54092c8715745b5dff14813c6389b1e134535",
+  "limitations": [
+    "SGR normalization does not prove runner completion",
+    "No live MNE result or SAMtools suitability claim",
+    "Broader terminal control sequences intentionally not normalized"
+  ]
+}

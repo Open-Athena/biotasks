@@ -1,0 +1,156 @@
+{
+  "scope": "Synthetic sandbox results through exact validation logic with real pinned pytest parser; no Docker/test execution or original reward changes",
+  "cases": [
+    {
+      "case": "complete_pair",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      }
+    },
+    {
+      "case": "pre_timeout_with_marker",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "pre-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 1
+      }
+    },
+    {
+      "case": "post_timeout_with_marker",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "post-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 2
+      }
+    },
+    {
+      "case": "pre_missing_end",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "pre-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 1
+      }
+    },
+    {
+      "case": "post_missing_end",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "post-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 2
+      }
+    },
+    {
+      "case": "missing_start",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "pre-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 1
+      }
+    },
+    {
+      "case": "stage_failed_with_marker",
+      "baseline": {
+        "status": "verified",
+        "reason": "",
+        "f2p": [
+          "tests/test_x.py::test_fix"
+        ],
+        "p2p": [
+          "tests/test_x.py::test_stable"
+        ],
+        "calls": 2
+      },
+      "candidate": {
+        "status": "failed",
+        "reason": "pre-fix validation command incomplete (exit or missing markers)",
+        "f2p": [],
+        "p2p": [],
+        "calls": 1
+      }
+    }
+  ]
+}
