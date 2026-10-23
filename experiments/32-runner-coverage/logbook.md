@@ -15,3 +15,7 @@ Checkpoint `7e54cb90` runs seven synthetic sandbox-result cases through exact or
 ## 2026-10-23 — native/export parser parity
 
 Extended the SGR candidate to the standalone exported pytest parser as a separate minimal patch. Leaving it native-only would allow discovery to recognize colored statuses while exported grading still misreads them. Verified exact upstream standalone source hash, and exercised all 12 expected-status cases in both native and exported parser variants. Plain-output baseline parity and colored candidate parity pass; no test IDs are renamed. Completion remains a separate gate and no historical task was regraded. Resources are recorded in `parser-export-resources.txt`; no model/remote calls or temporary inputs were needed.
+
+### Cross-issue live targeting evidence
+
+#30's frozen Matchms958 comparison removes transport errno7 but still collects zero tests. The test patch deletes two paths that the unchanged target selector passes to pytest. The exact diagnosis and log hashes are pinned at `4862b97e:experiments/30-script-transport/live-diagnosis.json`. No input was repaired and no extra #32 run was launched. Add this frozen case to the general diff-aware targeting comparison; do not infer recovery before execution. The issue body and marked comment were read back exactly after publication.
