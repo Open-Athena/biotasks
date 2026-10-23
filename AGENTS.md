@@ -194,8 +194,8 @@ is unavailable. Run only one substantial command at a time, with one worker,
 Set `POLARS_MAX_THREADS`, `RAYON_NUM_THREADS`, `OMP_NUM_THREADS`, `MKL_NUM_THREADS`,
 `OPENBLAS_NUM_THREADS`, and `NUMEXPR_NUM_THREADS` to 1. Monitor the first minute;
 stop if available memory falls below 2 GiB or load exceeds 2.5. Record start/end,
-exit status, and peak RSS. Avoid eager full-data sorting/grouping, detached work,
-and per-minute polling loops. Stop only this task's subprocesses and verify none
+exit status, and peak RSS. Avoid eager full-data sorting/grouping, detached
+intensive work, and per-minute polling loops. Stop only this task's subprocesses and verify none
 remain. Ask before unplanned cloud spend. Do not spawn agents or start other
 Codex tasks without explicit authorization for that concurrency.
 
