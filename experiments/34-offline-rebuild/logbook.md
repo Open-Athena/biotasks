@@ -35,3 +35,7 @@ Prepared candidate packaging that requires verified reconstruction evidence, bin
 ## 2026-10-23 — reconstruction verified; controls checkpoint
 
 One reconstruction attempt succeeded in 1,397.321 seconds, 1.552579 allocated CPU-hours. All 16 recorded actions matched, smoke and fresh-image checks passed; fresh check reported 4,924 passed/348 skipped. Verified the 64,599-byte archive and all retained stream hashes. Owned build containers/tools were removed; only the bound reconstruction image remains. Packaged the twelve-file offline candidate against its exact digest and independently verified every archive member. Original nine non-Dockerfile assets remain unchanged. Reconciled the four-hour reconstruction reservation and booked at most four CPU-hours for controls under the shared budget, preserving cleanup allowance. No model calls. Control submission remains separate.
+
+## 2026-10-23 — offline controls running
+
+Control preflight passed on the original reserved worker with the verified reconstruction digest and candidate archive. Submitted one attempt from checkpoint `1ac19916`; authoritative observation at 22:38:05 UTC reports running. It preserves original Harbor commands, 300-second verifier timeout, resource wrapper and task egress guard. Maximum four CPU-hours reserved; actual usage pending. No model calls or retries. Do not resubmit the handle after interrupted observation; inspect its terminal archive and dependency receipt before any result claim.
