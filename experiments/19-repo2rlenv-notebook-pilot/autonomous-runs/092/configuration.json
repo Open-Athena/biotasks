@@ -1,0 +1,29 @@
+{
+  "campaign": "autonomous-panel-092",
+  "entrypoint": "run_autonomous.py",
+  "notebook_file": "transfer/bioframe/source.ipynb",
+  "campaign_seconds": 7200,
+  "cleanup_seconds": 300,
+  "daytona_budget_usd": "5.00",
+  "task_policy": {
+    "sandbox": {
+      "cpus": 4,
+      "memory_gib": 8,
+      "disk_gib": 10,
+      "gpu": false
+    },
+    "reference_timeout_seconds": 600,
+    "solver_timeout_seconds": 600,
+    "solver_timeout_status": "Provisional; separately revisitable before solver execution",
+    "verifier_timeout_seconds": 120,
+    "solver_and_verifier_network": "offline",
+    "software_choice": "Open: alternative tools are allowed if outputs meet the validated public contract; broad implementation independence is not promised.",
+    "reward": "binary; all required checks must pass",
+    "target": "A realistic scientific analysis task with verifiable outputs, rather than reproducing every implementation detail of the notebook.",
+    "specification_scope": "Draft scientific question, supplied input derivations, selected output schemas and proposed comparison rules. Validate rules before solving.",
+    "endpoint_recovery": "Preparation remains append-only. Construction may recover required scientific endpoints by faithful recomputation of unchanged original source calls on the same original inputs and required state, with separate provenance and independent validation. No invented analysis, broken-source repair, changed methods/inputs or silent endpoint omission."
+  },
+  "seed_file": "transfer/bioframe/seed.json",
+  "reasoning_effort": "high",
+  "source_notices_file": "transfer/bioframe/source-license-evidence-autonomous.json"
+}
