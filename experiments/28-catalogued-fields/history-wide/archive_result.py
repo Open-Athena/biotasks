@@ -49,6 +49,13 @@ def main():
     sources['submission-provenance.json'] = provenance_path
     for path in (BASE / 'preflight/licenses').glob(args.slug + '--*'):
         sources['source-notices/' + path.name] = path
+    for relative in review.get('additional_source_notices', []):
+        relative_path = Path(relative)
+        assert not relative_path.is_absolute() and '..' not in relative_path.parts
+        assert relative_path.parts[0] == args.slug
+        path = ROOT / 'source-notices' / relative_path
+        assert path.is_file() and path.resolve().is_relative_to((ROOT / 'source-notices').resolve())
+        sources['source-notices/history/' + relative] = path
     sources['source-notices/Repo2RLEnv-LICENSE'] = BASE / 'preflight/licenses/huggingface__Repo2RLEnv--LICENSE'
     archive_dir = ROOT / 'archives'; archive_dir.mkdir(exist_ok=True)
     manifest_path = archive_dir / (args.slug + '-manifest.json')

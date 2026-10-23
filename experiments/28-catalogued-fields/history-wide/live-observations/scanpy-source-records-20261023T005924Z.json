@@ -1,0 +1,128 @@
+{
+  "repo": "scverse/scanpy",
+  "validation_sources": [
+    {
+      "pr": 4395,
+      "base_commit": "fc4dbecdd760a2aca7717deab75953d8a135519d",
+      "source_patch_sha256": "84f8a7eb9dc352137be09130355e1300ad941a002e6af6d9b7080121be2eaabc",
+      "test_patch_sha256": "7e058422ec74bd73b7bad85b11e01508726a36dba0b77c654cf3e89294603724",
+      "native_descriptor": {
+        "number": 4395,
+        "base_sha": "fc4dbecdd760a2aca7717deab75953d8a135519d",
+        "head_sha": "d90cd836ba898f9d61f83f314af165d707b65c60",
+        "url": "https://github.com/scverse/scanpy/pull/4395",
+        "changed_files": [
+          "src/scanpy/plotting/legacy/_anndata.py",
+          "src/scanpy/plotting/legacy/_stacked_violin.py",
+          "src/scanpy/preprocessing/_normalization.py",
+          "tests/plotting/legacy/_images/3.11/ranked_genes_violin/expected.png",
+          "tests/plotting/legacy/_images/3.11/ranked_genes_violin_not_raw/expected.png",
+          "tests/plotting/legacy/_images/3.11/stacked_violin/expected.png",
+          "tests/plotting/legacy/_images/3.11/stacked_violin_no_cat_obs/expected.png",
+          "tests/plotting/legacy/_images/3.11/stacked_violin_std_scale_group/expected.png",
+          "tests/plotting/legacy/_images/3.11/stacked_violin_std_scale_var_dict/expected.png",
+          "tests/plotting/legacy/_images/3.11/stacked_violin_swap_axes_pbmc68k_reduced/expected.png",
+          "tests/plotting/legacy/_images/3.11/violin_multi_panel_with_groupby/expected.png",
+          "tests/plotting/legacy/_images/3.11/violin_multi_panel_with_layer/expected.png",
+          "tests/plotting/legacy/_images/3.11/violin_ncols_with_groupby/expected.png",
+          "tests/plotting/legacy/_images/pbmc3k/3.11/violin_2/expected.png",
+          "tests/plotting/legacy/test_pbmc3k.py",
+          "tests/plotting/legacy/test_plotting.py",
+          "tests/test_read_10x.py"
+        ]
+      }
+    },
+    {
+      "pr": 4389,
+      "base_commit": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
+      "source_patch_sha256": "1eb741ba2872abd3e370257adf9d358ac1b331f6b0dcd7f970a878ef2b01aab1",
+      "test_patch_sha256": "41025c715619a867f14a5f51882a28cb8e6d2c7bc8426a1c01a56d7ea6a4d771",
+      "native_descriptor": {
+        "number": 4389,
+        "base_sha": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
+        "head_sha": "ea5858ca608e600ebcbc338595c736993666b0db",
+        "url": "https://github.com/scverse/scanpy/pull/4389",
+        "changed_files": [
+          "docs/release-notes/4389.fix.md",
+          "src/scanpy/preprocessing/_combat.py",
+          "tests/test_combat.py",
+          "tests/test_embedding_density.py",
+          "tests/test_neighbors.py",
+          "tests/test_preprocessing.py",
+          "tests/test_rank_genes_groups.py",
+          "tests/test_score_genes.py"
+        ]
+      }
+    },
+    {
+      "pr": 4333,
+      "base_commit": "a656a33b080a5c1f64b01e841daad76f35f5ec5f",
+      "source_patch_sha256": "368c00f96d2141f55ca4ec6dd1f51c36ce0bcc0aa8456b643e548d67001c1823",
+      "test_patch_sha256": "aab3bcfeb6b81b7c2f031874c23575b444198c7ce0c40392773bcd6e0a92eb8f",
+      "native_descriptor": {
+        "number": 4333,
+        "base_sha": "a656a33b080a5c1f64b01e841daad76f35f5ec5f",
+        "head_sha": "a2729d89b5e7f61a1d9fcb41fb515a3a16742cd7",
+        "url": "https://github.com/scverse/scanpy/pull/4333",
+        "changed_files": [
+          "docs/release-notes/4333.feat.md",
+          "docs/tutorials/basics/clustering-2017.ipynb",
+          "pyproject.toml",
+          "src/scanpy/_docs.py",
+          "src/scanpy/_settings/presets.py",
+          "src/scanpy/_utils/__init__.py",
+          "src/scanpy/experimental/pp/_normalization.py",
+          "src/scanpy/get/_aggregated.py",
+          "src/scanpy/get/get.py",
+          "src/scanpy/preprocessing/_docs.py",
+          "src/scanpy/preprocessing/_highly_variable_genes.py",
+          "src/scanpy/preprocessing/_pca/__init__.py",
+          "src/scanpy/preprocessing/_scale.py",
+          "src/scanpy/preprocessing/_simple.py",
+          "src/scanpy/tools/_ingest.py",
+          "src/scanpy/tools/_rank_genes_groups.py",
+          "tests/test_ingest.py",
+          "tests/test_normalization.py",
+          "tests/test_pca.py",
+          "tests/test_rank_genes_groups.py",
+          "tests/test_scaling.py"
+        ]
+      }
+    }
+  ],
+  "exported_task_inventory": [
+    {
+      "task": "scverse__scanpy-4389",
+      "members": [
+        "environment/Dockerfile",
+        "environment/docker-compose.yaml",
+        "instruction.md",
+        "solution/patch.diff",
+        "solution/solve.sh",
+        "task.toml",
+        "tests/f2p.json",
+        "tests/p2p.json",
+        "tests/test.sh",
+        "tests/verifier.py"
+      ],
+      "patch_paths": {
+        "solution/patch.diff": [
+          "a/docs/release-notes/4389.fix.md b/docs/release-notes/4389.fix.md",
+          "a/src/scanpy/preprocessing/_combat.py b/src/scanpy/preprocessing/_combat.py"
+        ]
+      }
+    }
+  ],
+  "parent_state": "running",
+  "parent_batch_states": [
+    {
+      "index": 0,
+      "state": "running"
+    }
+  ],
+  "controls_metadata_present": false,
+  "checked_utc": "2026-10-23T00:59:24.020090+00:00",
+  "run_id": "biotasks28-history-scverse-scanpy-001",
+  "read_only": true,
+  "scope": "Original recorded source refs and patch-path metadata for archival preparation only; no test execution, source changes, regeneration or grading."
+}

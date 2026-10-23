@@ -68,7 +68,12 @@ def main():
             'outputs/example/metadata/index.json': b'{}',
             'native-observations/batch-0000/validation-001-pr-1.json.gz': gzip.compress(json.dumps({
                 'status': 'failed', 'reason': 'fixture original validation',
-                'fail_to_pass': [], 'pass_to_pass': ['kept']}).encode())}
+                'fail_to_pass': [], 'pass_to_pass': ['kept']}).encode()),
+            'native-observations/batch-0000/exec-0001-pr-1.json.gz': gzip.compress(json.dumps({
+                'command': 'echo R2E_START_TEST_OUTPUT\npytest\necho R2E_END_TEST_OUTPUT',
+                'result': {'exit_code': 124, 'duration_sec': 600.1,
+                    'stdout': 'R2E_START_TEST_OUTPUT\ntests/test.py::test_fix PASSED\n',
+                    'stderr': '[timeout after 600s]'}}).encode())}
         with tarfile.open(phase, 'w:gz') as archive:
             for name, raw in files.items():
                 member = tarfile.TarInfo(name); member.size = len(raw); archive.addfile(member, io.BytesIO(raw))
@@ -77,6 +82,9 @@ def main():
         assert observations['batch-0000']['validations'] == [{
             'file': 'native-observations/batch-0000/validation-001-pr-1.json.gz',
             'status': 'failed', 'reason': 'fixture original validation', 'f2p': 0, 'p2p': 1}]
+        stage = observations['batch-0000']['stage_exec'][0]
+        assert stage['pr'] == 1 and stage['exit_code'] == 124 and stage['stderr_timeout_marker']
+        assert not stage['stdout_end_marker'] and stage['duration_sec'] == 600.1
         assert exports == ['outputs/example/example-1']
         assert set(hashes) == {'/work/outputs/example/example-1'}
         assert hashes['/work/outputs/example/example-1']['tests/f2p.json'] == hashlib.sha256(b'["fix"]').hexdigest()

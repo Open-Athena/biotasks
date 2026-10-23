@@ -171,7 +171,7 @@ def scan_phase(path, extracted):
             parts = relative.parts
             source = archive.extractfile(member)
             if len(parts) == 3 and parts[0] == 'native-observations':
-                batch = observations.setdefault(parts[1], {'events': [], 'returned': None, 'validations': []})
+                batch = observations.setdefault(parts[1], {'events': [], 'returned': None, 'validations': [], 'stage_exec': []})
                 if parts[-1] == 'events.jsonl':
                     assert member.size < 16 * 1024**2
                     batch['events'] = [json.loads(line) for line in source if line.strip()]
@@ -185,6 +185,20 @@ def scan_phase(path, extracted):
                     value = json.loads(raw)
                     batch['validations'].append({'file': member.name, 'status': value['status'],
                         'reason': value.get('reason'), 'f2p': len(value['fail_to_pass']), 'p2p': len(value['pass_to_pass'])})
+                elif parts[-1].startswith('exec-') and parts[-1].endswith('.json.gz'):
+                    with gzip.GzipFile(fileobj=source) as compressed:
+                        raw = compressed.read(32 * 1024**2 + 1)
+                    assert len(raw) <= 32 * 1024**2
+                    value = json.loads(raw)
+                    if 'R2E_START_TEST_OUTPUT' in value['command']:
+                        found = re.search(r'-pr-(\d+)\.json\.gz$', parts[-1]); assert found
+                        result = value['result']
+                        batch['stage_exec'].append({'file': member.name, 'pr': int(found[1]),
+                            'command_sha256': hashlib.sha256(value['command'].encode()).hexdigest(),
+                            'exit_code': result['exit_code'], 'duration_sec': result['duration_sec'],
+                            'stderr_timeout_marker': '[timeout after ' in result['stderr'],
+                            'stdout_end_marker': 'R2E_END_TEST_OUTPUT' in result['stdout'],
+                            'stdout_bytes': len(result['stdout'].encode()), 'stderr_bytes': len(result['stderr'].encode())})
             elif parts[0] == 'bootstrap' and relative.name == 'bootstrap.json':
                 assert member.size < 1024**2
                 value = json.load(source)
@@ -252,6 +266,8 @@ def assess(state, selected):
         tasks.append({'task': name, 'also_exported_in_september_baseline': name in baseline_exports,
             'raw_primary_verified': primary,
             'strict_clean_verified': bool(primary and controls['oracle']['reward_details'].get('command_resolved')),
+            'native_stage_timeouts': sum(e['exit_code'] == 124 and e['stderr_timeout_marker'] for b in observations.values()
+                for e in b.get('stage_exec', []) if str(e['pr']) == name.rsplit('-', 1)[-1]),
             'controls': controls})
     events = [e for b in observations.values() for e in b['events']]
     decisions = [e for e in events if e['event'] == 'native_decision']
@@ -267,6 +283,8 @@ def assess(state, selected):
         'native_error_reasons': dict(Counter(e['reason'] for e in decisions if e['outcome'] == 'error')),
         'native_validation_results': [dict(batch=name, **value)
             for name, observed in sorted(observations.items()) for value in observed['validations']],
+        'native_stage_executions': [dict(batch=name, **value)
+            for name, observed in sorted(observations.items()) for value in observed.get('stage_exec', [])],
         'campaign_reservation_failures': [e for e in events if e['event'] == 'campaign_reservation_unavailable'
             or (e['event'] == 'campaign_cost_reservation' and not e['allowed'])],
         'native_emission_events': [e['name'] for e in decisions if e['outcome'] == 'emit'],

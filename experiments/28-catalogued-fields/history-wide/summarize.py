@@ -87,6 +87,8 @@ def summarize(root):
             native_skip_reasons=result['native_skip_reasons'], native_error_reasons=result['native_error_reasons'],
             entered_without_decision=sum(len(r['entered_without_native_decision']) for r in coverage['batches']),
             paired_started=pairs_started, paired_completed=pairs_completed,
+            native_stage_timeouts=sum(r['exit_code'] == 124 and r['stderr_timeout_marker'] for r in result.get('native_stage_executions', [])),
+            exports_with_native_stage_timeouts=sum(t.get('native_stage_timeouts', 0) > 0 for t in result['task_controls']),
             exports=result['native_exports_manifest_present'], primary_verified=primary, strict_clean_verified=clean,
             baseline_overlap_exports=overlap, baseline_overlap_primary_verified=overlap_verified,
             controls_started=sum('command' in r for r in controls),

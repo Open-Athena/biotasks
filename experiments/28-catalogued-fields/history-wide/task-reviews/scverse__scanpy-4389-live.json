@@ -1,0 +1,59 @@
+{
+  "checked_utc": "2026-10-23T01:08:50.903404+00:00",
+  "task": "scverse__scanpy-4389",
+  "status": "Provisional original emitted-task review; terminal archive and independent controls pending",
+  "source": {
+    "original_task_file_sha256": {
+      "tests/f2p.json": "e38fa5d4e5c7994d28dc4007c9938200cf817ea5bcb4fd4ec0113c54afcd6b30",
+      "tests/p2p.json": "6f8ee19182ad6b989d24adce7b477d8716ee43eb6e81fa51e3868616522ed86d",
+      "tests/test.sh": "5dba69b6097324737de875a3a0ce5cc8a239c068d207d1ab42923038442b45cc",
+      "instruction.md": "a80b9d50657cb6f0071b857be53b42bfc7822f49f26f20f840125be25dee9a11",
+      "environment/Dockerfile": "d72cd2dcd61e8fc3d063f49aecd19824a383bc2eea492e53b8fb0d44f3d79202",
+      "task.toml": "ec08fb89c0f53e86895503319b08252ceeccab7d85abb4cca48c2fd924ced2b0"
+    },
+    "original_read_only_contract_capture_sha256": "f5410ed7c169954d359c080527fe25a94577c796d730b9a6346d308012cff2f0",
+    "original_native_stage_observation_sha256": "6b43663d33365d697ff710d2d5528b58c03066618b5d27e19512f76ddd3d64e0",
+    "base_commit": "7ad567d9f7ca52b23b0ffb964e486034ef14283e",
+    "pr_url": "https://github.com/scverse/scanpy/pull/4389"
+  },
+  "tracked_f2p": [
+    "tests/test_combat.py::test_categorical_covariates[covariates0]",
+    "tests/test_combat.py::test_categorical_covariates[covariates1]"
+  ],
+  "tracked_p2p_count": 10,
+  "biological_input_lineage": {
+    "tracked_f2p": "Simulated expression-like matrix and categorical batch/condition/donor covariates; seeded NumPy RNG0,600rows/10features,3batches,known treatment-effect vector. No observed biological sample input in these two F2P parameterizations.",
+    "assertion": "Upstream test checks preservation of the known simulated treatment effect after batch correction with atol0.2; unchanged.",
+    "other_tests": "The six-module command includes mixed fixtures and pbmc68k_reduced references. Actual complete-suite execution/data lineage is not inferred from those references; no observed dataset blob is among the ten emitted task members."
+  },
+  "native_validation": {
+    "original_status": "verified",
+    "pre_and_post_commands_both_timed_out_at_seconds": 600,
+    "pre_parsed_statuses": {
+      "PASSED": 595,
+      "FAILED": 6,
+      "ERROR": 3,
+      "SKIPPED": 2
+    },
+    "post_parsed_statuses": {
+      "PASSED": 12,
+      "ERROR": 3
+    },
+    "original_partial_log_f2p_p2p_reproduced_with_pinned_native_parser": true,
+    "independent_control_result_available": false,
+    "interpretation": "Native verified permits F2P/P2P computed from incomplete timed-out commands. This is evidence for two parsed F2P transitions, not completed-suite or independent-control success."
+  },
+  "problem_statement": {
+    "instruction_title": "Pre 2.0 janitor work",
+    "instruction_scope": "Broad codebase cleanup and improving preprocessing/tools test coverage.",
+    "task_metadata_description": "test: cover untested pp/tl paths, fixing categorical covariates in `pp.combat`",
+    "interpretation": "The broad linked-issue instruction does not name the categorical-covariate fix that supplies both tracked F2P cases. It may underspecify the target; no solver or semantic benchmark was run and no task text was edited."
+  },
+  "execution_and_retention_limits": {
+    "verifier_timeout_sec": 300.0,
+    "image_mode": "local_only",
+    "image_visibility": "private",
+    "interpretation": "Local-only image use is the preserved experiment setting; no registry/image release or exact-image replay is established, and this does not show that upstream cannot publish images."
+  },
+  "task_environment_parser_patch_test_model_changes": false
+}

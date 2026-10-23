@@ -28,6 +28,7 @@ def main():
             'reward_details': {'parse_status': 'ok', 'command_resolved': False}}
         oracle_trial = deepcopy(base_trial); oracle_trial['reward'] = 1
         task = {'task': 'fixture', 'raw_primary_verified': True, 'strict_clean_verified': False,
+            'native_stage_timeouts': 2,
             'also_exported_in_september_baseline': True,
             'controls': {'nop': base_trial, 'oracle': oracle_trial}}
         for row in cohort:
@@ -45,6 +46,7 @@ def main():
                 'wrapper_state': 'SUCCEEDED', 'native_parent_state': 'bounded_with_backlog',
                 'native_parent_stop_reason': 'fixture', 'native_skip_reasons': {}, 'native_error_reasons': {},
                 'owned_cleanup_empty': True}
+            result['native_stage_executions'] = [{'exit_code': 124, 'stderr_timeout_marker': True} for _ in range(2)] if good else []
             result_path = root / 'results' / (slug + '.json'); save(result_path, result)
             manifest = root / 'archives' / (slug + '-manifest.json')
             save(manifest, {'files': [{'path': 'evidence/phase-artifacts.tar.gz', 'sha256': 'fixture-phase'}]})
@@ -58,6 +60,8 @@ def main():
         assert complete['strict_clean_tasks_with_accepted_evidence'] == 0
         assert complete['primary_verified_tasks_with_accepted_evidence'] == 1
         assert complete['new_to_baseline_primary_verified_with_accepted_evidence'] == 0
+        assert complete['repositories'][0]['native_stage_timeouts'] == 2
+        assert complete['repositories'][0]['exports_with_native_stage_timeouts'] == 1
         missing = root / 'results/9.json'; original = missing.read_bytes(); missing.unlink()
         partial = summarize(root)
         assert not partial['all_ten_result_evidence_complete'] and partial['cost_per_verified_task_usd'] is None
