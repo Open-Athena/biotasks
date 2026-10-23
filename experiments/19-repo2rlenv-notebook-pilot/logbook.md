@@ -4101,3 +4101,8 @@ Round025tracksalltenpreviouslyapprovedPythondomains, reusing123rejection/124live
 
 
 Alltenapprovedsourcesnowhavefrozenpayloadsforcommon501fbc2f:123/124existingoriginalruns,125submitted,126fundedqueued,and127–132explicitlyunfunded/notlaunched. Everyactualpayloadarchive/sourcehashwasrechecked; all198runtimefilemaps areidentical, including allpackagedprompts. See panel-rounds/025/cohort-freeze.json and runtime-identity.json. Thischangesno worker/science/allowanceorbudget andisnotanexecutionclaim. Originalsourceassetsfor127–132arealsoverifiedagainsttheirprior submission-boundpayloads,notcopiedfromgeneratedtasks. Twoinitiallocalpreparationattemptsfailedbeforemutations(syntax/missingassumedpayloadpath);thecorrectedmetadatahelperresolvesoriginalpayloadsbymanifestidentity. Finalcohortverificationpassed.
+
+
+## 2026-10-23 UTC: user authorizes another100USD; complete frozen cohort funded
+
+The user explicitly authorized100USDmore, raising the aggregate before-credit ceiling from100to200USD. Reserve1USDfor each already-frozen127–132 original source campaign, retaining every existing hold; total conservative holds106USD,94USDunallocated, not aninvoiceorcreditsclaim. Alltenactualpayload runtime maps remainidentical198files/501fbc2f; frozen receipts areunchanged.126–132arefundedqueuedbehind124/125, withatmosttwohosts/sandboxes. Noresource/time/model/test/repair/concurrencyallowanceorscientificartifactchanged. Stopadditionalbudget-reclamationworkfornow;preserveitsaudits. See panel-rounds/025/funding-127-132.json.
