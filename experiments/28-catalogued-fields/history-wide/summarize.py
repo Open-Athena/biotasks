@@ -137,13 +137,15 @@ def main():
         'All ten repositories remain visible. Pending is not zero yield or free. '
         'Unique native-returned PRs differ from repeated metadata appearances; '
         'the frozen inventory is not a suitable-task or validated-task denominator. '
+        'Entered, discovery-omitted and backlog identities partition that inventory. '
+        'A PR returned earlier can still be omitted by a later listing before entry. '
         'History evidence stays separate from the September baseline.', '',
-        '| Repository | Inventory | Unique returned | Entered | Backlog | Paired started/completed | Exports | Tracked verified | Clean verified | Terminal USD | Evidence accepted |',
-        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |']
+        '| Repository | Inventory | Unique returned | Entered | Discovery omitted | Backlog | Paired started/completed | Exports | Tracked verified | Clean verified | Terminal USD | Evidence accepted |',
+        '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |']
     def display(value):
         return '—' if value is None else str(value)
     for row in result['repositories']:
-        cells = [row.get(k) for k in ['repo', 'history_inventory', 'native_unique_returned', 'native_entered', 'native_backlog']]
+        cells = [row.get(k) for k in ['repo', 'history_inventory', 'native_unique_returned', 'native_entered', 'original_discovery_omitted', 'native_backlog']]
         cells += [display(row.get('paired_started')) + '/' + display(row.get('paired_completed'))]
         cells += [row.get(k) for k in ['exports', 'primary_verified', 'strict_clean_verified', 'actual_cost_usd', 'evidence_accepted']]
         lines.append('| ' + ' | '.join(display(value) for value in cells) + ' |')
