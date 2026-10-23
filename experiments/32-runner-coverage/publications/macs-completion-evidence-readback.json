@@ -1,0 +1,61 @@
+{
+  "issue": {
+    "body": "How much `pr_runtime` validation coverage is lost through test recognition, command selection and output parsing? Follow-up to #28. Investigation remains open.\n\n**Live result:** excluding deleted test paths removes Matchms PR958's missing-file error, but both stages then fail collection because historical code imports missing `chemap`; no task is recovered. PR671 retains its original 1 fail-to-pass and 30 pass-to-pass tests. [Evidence](https://github.com/Open-Athena/biotasks/blob/40a80ef0/experiments/32-runner-coverage/target-live-diagnosis.json).\n\n**Candidates:** a default-off literal pytest targeting policy passes selection and package-routing checks. A separate completion gate detects hidden inner pytest errors in native and exported fixture runs. The frozen MACS PR792 comparison now confirms a real upstream stage returned outer exit 0 despite pytest collection errors; the candidate gate itself remains untested on that live case. Neither candidate has recovered a biological task. [MACS evidence](https://github.com/Open-Athena/biotasks/blob/d4626f80/experiments/31-historical-builds/macs-native-diagnosis.json). An original SAMtools `make test` run confirms the parser gap: 523 case-heading occurrences use only 29 names (`test_sort` repeats 36 times), while the Perl summary counts 1,052 cases and other make components follow. It needs stable case identities and a composite C/Perl/shell contract. [Original log audit](https://github.com/Open-Athena/biotasks/blob/22fe6841/experiments/32-runner-coverage/samtools-native-log-audit.json) \u00b7 [Completion checks](https://github.com/Open-Athena/biotasks/blob/ae0ef75b/experiments/32-runner-coverage/pytest-completion-protocol.md) \u00b7 [SAMtools contract](https://github.com/Open-Athena/biotasks/blob/a236dc9d/experiments/32-runner-coverage/samtools-runner-contract.md).\n\n**MNE:** the unchanged replay matched 12 recorded bootstrap exits of 127, then its full-suite smoke check timed out at 300 seconds after 28% progress. It produced no image or PR14445 validation. One comparison is now running with only the exact smoke/fresh limits raised to 1,200 seconds; its outcome is pending. [Protocol](https://github.com/Open-Athena/biotasks/blob/4b3bc656/experiments/32-runner-coverage/mne-longcheck-protocol.md).\n\n**Next:** read back the MNE result; assess live targeting, parser and completion behavior with frozen cases and complete positive controls before any recovery claim. The two prior jobs used 0.72125 allocated CPU-hours; the active comparison reserves at most 5 more under the 10-hour ceiling. Zero model calls or new capacity. Prior archives and cleanup are verified; current cleanup is pending. No production change promoted. Detailed logs remain in comments.\n",
+    "labels": [
+      {
+        "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+        "name": "agent-generated",
+        "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+        "color": "5319E7"
+      }
+    ],
+    "state": "OPEN"
+  },
+  "comment": {
+    "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374352468",
+    "html_url": "https://github.com/Open-Athena/biotasks/issues/32#issuecomment-6374352468",
+    "issue_url": "https://api.github.com/repos/Open-Athena/biotasks/issues/32",
+    "id": 6374352468,
+    "node_id": "IC_kwDOU1dZq88AAAABe_DmVA",
+    "user": {
+      "login": "gonzalobenegas",
+      "id": 5766420,
+      "node_id": "MDQ6VXNlcjU3NjY0MjA=",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5766420?u=d059be1b75c6ff8174b109722e0ec05a66ed29c1&v=4",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/gonzalobenegas",
+      "html_url": "https://github.com/gonzalobenegas",
+      "followers_url": "https://api.github.com/users/gonzalobenegas/followers",
+      "following_url": "https://api.github.com/users/gonzalobenegas/following{/other_user}",
+      "gists_url": "https://api.github.com/users/gonzalobenegas/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/gonzalobenegas/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/gonzalobenegas/subscriptions",
+      "organizations_url": "https://api.github.com/users/gonzalobenegas/orgs",
+      "repos_url": "https://api.github.com/users/gonzalobenegas/repos",
+      "events_url": "https://api.github.com/users/gonzalobenegas/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/gonzalobenegas/received_events",
+      "type": "User",
+      "user_view_type": "public",
+      "site_admin": false
+    },
+    "created_at": "2026-10-23T20:43:15Z",
+    "updated_at": "2026-10-23T20:43:15Z",
+    "author_association": "MEMBER",
+    "body": "\ud83e\udd16 Cross-issue evidence from the frozen MACS PR792 comparison: the original pre/post stages and rebuilt pre stage returned outer shell exit 0 while pytest reported collection errors. The rebuilt post stage passed 364 tests, but the base stage could not collect a test because the frozen test patch imports a module introduced only by the PR. Both native validators returned zero fail-to-pass tests. This confirms the completion gap under real historical inputs; #32\u2019s strict pytest completion candidate has only fixture validation so far and was not inserted into this comparison. [Verified diagnosis](https://github.com/Open-Athena/biotasks/blob/d4626f80/experiments/31-historical-builds/macs-native-diagnosis.json).\n",
+    "reactions": {
+      "url": "https://api.github.com/repos/Open-Athena/biotasks/issues/comments/6374352468/reactions",
+      "total_count": 0,
+      "+1": 0,
+      "-1": 0,
+      "laugh": 0,
+      "hooray": 0,
+      "confused": 0,
+      "heart": 0,
+      "rocket": 0,
+      "eyes": 0
+    },
+    "performed_via_github_app": null,
+    "minimized": null,
+    "pin": null
+  }
+}
