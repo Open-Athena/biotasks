@@ -1,0 +1,13 @@
+{
+  "body": "How much validation coverage is lost through test recognition, command selection and output parsing? Follow-up to #28.\n\n**Current findings:** A predeclared six-PR SAMtools sample contains four PRs adding net Perl test invocations; the pinned recognizer counts zero for all six. All test-path sets agree with retained descriptors, but current diff bytes are not claimed identical to original unretained diffs. SGR normalization passes 12 explicit parser fixtures; two targeting checks reproduce preservation of MNE\u2019s broad path.\n\n**Remaining work:** Next: evaluate general runner/targeting changes and complete execution checks before live recovery claims. Seven synthetic validation cases show the pinned validator accepting six incomplete/error cases; a candidate completion guard rejects them while preserving the complete pair. This is mechanism evidence, not regrading of original tasks.\n\n**Boundaries:** original baselines remain immutable; use only justified general changes and upstream\u2019s built-in model calls, with no added per-task LLM/Codex repair loop. No remote/native jobs or model calls have been launched in this follow-up. Execution requires a checkpointed cumulative allowance; #28\u2019s unused ceiling is not a fresh budget. A mechanism test does not establish task recovery or production readiness.\n\n[Evidence](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/sample-findings.json) \u00b7 [Full comparison scope and success criteria](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/issue-scope.md) \u00b7 [Logbook](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/logbook.md). Detailed investigation updates are in comments.\n",
+  "labels": [
+    {
+      "id": "LA_kwDOU1dZq88AAAAC5-HoiQ",
+      "name": "agent-generated",
+      "description": "Issue or PR with an agent-authored body, including human-reviewed drafts.",
+      "color": "5319E7"
+    }
+  ],
+  "state": "OPEN",
+  "title": "Research: assess pr_runtime test selection and parser coverage"
+}

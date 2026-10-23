@@ -1,0 +1,9 @@
+🤖 Initial investigation is published on the permanent research branch at `0a875d9c899e4a1c4015c1e1ce47c96711ee1745`.
+
+A predeclared six-PR SAMtools sample contains four PRs adding net Perl test invocations; the pinned recognizer counts zero for all six. All test-path sets agree with retained descriptors, but current diff bytes are not claimed identical to original unretained diffs. SGR normalization passes 12 explicit parser fixtures; two targeting checks reproduce preservation of MNE’s broad path.
+
+Parser normalization alone is insufficient: partial timed-out logs can still contain apparent failure-to-pass transitions. The completion comparison uses exact native logic with synthetic executor outcomes and the real pinned pytest parser. Original rewards remain untouched. Raw sampled diffs stay local because they contain biological fixtures; public findings contain source URLs, paths, refs and hashes only.
+
+Next: evaluate general runner/targeting changes and complete execution checks before live recovery claims. Seven synthetic validation cases show the pinned validator accepting six incomplete/error cases; a candidate completion guard rejects them while preserving the complete pair. This is mechanism evidence, not regrading of original tasks.
+
+[Evidence](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/sample-findings.json) · [Scope](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/issue-scope.md) · [Logbook](https://github.com/Open-Athena/biotasks/blob/0a875d9c899e4a1c4015c1e1ce47c96711ee1745/experiments/32-runner-coverage/logbook.md). All changes remain research-only; no promotion to main, live task repair or model spend. The issue remains open.
