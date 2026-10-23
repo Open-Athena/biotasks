@@ -531,6 +531,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     semantic_feedback=False,
     independent_repair=False,
     inspect_review=False,
+    question_defect=False,
 ):
     import grading_session as module
 
@@ -811,6 +812,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         rationale="Cannot accept",
                         issues=[],
                         source_coverage=source_coverage,
+                        question_issues=[],
                     )
                 )
             controls[0]["passed_control"] = original
@@ -821,6 +823,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                         rationale="Cannot excuse a substantive defect",
                         issues=["An acceptance boundary is not publicly defined"],
                         source_coverage=source_coverage,
+                        question_issues=[],
                     )
                 )
             semantic_rejection = (
@@ -830,7 +833,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 decision="blocked"
                 if semantic_rejection and semantic_feedback == "blocked"
                 else "revise"
-                if (repair and name == "review") or semantic_rejection
+                if (repair and name == "review") or semantic_rejection or question_defect
                 else "accept_for_packaging",
                 rationale="fixture",
                 issues=["Unsupported calibration claim"]
@@ -839,6 +842,14 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
                 if repair and name == "review"
                 else [],
                 source_coverage=source_coverage,
+                question_issues=[
+                    {
+                        "quote": "Scientific question",
+                        "evidence": "Recorded toy source contradicts this claim",
+                    }
+                ]
+                if question_defect
+                else [],
             )
         else:
             if name == "repair":
@@ -932,6 +943,12 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
             complete=object(),
         )
     )
+    if question_defect:
+        assert result["status"] == "public_question_defect"
+        assert calls == ["independent", "grader", "probes", "review"]
+        assert (tmp_path / "public-question-defect.json").is_file()
+        assert not (tmp_path / "repair.json").exists()
+        return
     if semantic_feedback == "blocked":
         assert result["status"] == "repair_blocked"
         assert not result.get("final_controls_passed", False)

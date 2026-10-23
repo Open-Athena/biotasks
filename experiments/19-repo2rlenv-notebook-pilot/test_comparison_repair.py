@@ -64,6 +64,16 @@ def test_only_public_requirement_and_prior_code_reach_independent_worker(context
     assert record["grader_candidate"] == before["grader_candidate"]
 
 
+def test_semantic_question_evidence_cannot_request_independent_code_changes(context):
+    context["allowed_targets"] = ["public_question"]
+    with pytest.raises(ValueError, match="recorded repair targets"):
+        validate_diagnosis(diagnosis(), context)
+    corrected = diagnosis(
+        target="public_question", instruction="Source-defined question", independent_issues=[]
+    )
+    assert validate_diagnosis(corrected, context).target == "public_question"
+
+
 @pytest.mark.parametrize(
     "field,value",
     [

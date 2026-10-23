@@ -39,6 +39,10 @@ class ComparisonRepair(StrictModel):
 def validate_diagnosis(value, context):
     """Code feedback may quote only information already visible to its author."""
     value = ComparisonRepair.model_validate(value)
+    if value.disposition == "ready" and value.target not in context.get(
+        "allowed_targets", ["public_question", "independent_solution"]
+    ):
+        raise ValueError("This evidence permits only the recorded repair targets")
     if value.target == "independent_solution":
         instruction = context["materialization_candidate"]["instruction"]
         code = context["independent_solution"]["code"]

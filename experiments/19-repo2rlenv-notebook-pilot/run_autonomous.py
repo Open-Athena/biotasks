@@ -473,7 +473,8 @@ class Pipeline:
                     credential=self.credential,
                 )
                 if (
-                    result["status"] == "independent_comparison_unresolved"
+                    result["status"]
+                    in {"independent_comparison_unresolved", "public_question_defect"}
                     and not (grade / "repair.json").exists()
                 ):
                     from comparison_repair import independent_repair_record, validate_diagnosis
@@ -481,7 +482,9 @@ class Pipeline:
 
                     revision_context = repair_context(mat, grade)
                     self.receipt["quality_repair"] = {
-                        "kind": "comparison_diagnosis",
+                        "kind": "public_question_diagnosis"
+                        if result["status"] == "public_question_defect"
+                        else "comparison_diagnosis",
                         "allowance_consumed": True,
                         "original_materialization": self.relative(mat),
                         "original_grading": self.relative(grade),

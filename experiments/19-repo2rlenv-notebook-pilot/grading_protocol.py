@@ -110,15 +110,25 @@ class Probes(StrictModel):
         return self
 
 
+class PublicQuestionIssue(StrictModel):
+    quote: str = Field(min_length=1)
+    evidence: str = Field(min_length=1)
+
+
 class Review(StrictModel):
     decision: Literal["accept_for_packaging", "revise", "blocked"]
     rationale: str = Field(min_length=1)
     issues: list[str]
     # Legacy records remain readable; new live reviews must supply this audit.
     source_coverage: CoverageReview | None = None
+    # Historical records omit this field; new inspection-enabled reviews must
+    # explicitly assess the base question separately from the grader addendum.
+    question_issues: list[PublicQuestionIssue] = Field(default_factory=list)
 
 
 def check_review_source_coverage(review):
+    if review.decision == "accept_for_packaging" and review.question_issues:
+        raise ValueError("Acceptance requires no unresolved public-question defects")
     if review.source_coverage is None:
         raise ValueError("Review must independently audit original-source endpoint coverage")
     if review.decision == "accept_for_packaging" and review.source_coverage.decision != "approve":

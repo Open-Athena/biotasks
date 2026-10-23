@@ -1,0 +1,98 @@
+[
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "."
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "check",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "experiments/19-repo2rlenv-notebook-pilot/comparison_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/question_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_comparison_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_question_semantics.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ruff",
+      "format",
+      "--check",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_protocol.py",
+      "experiments/19-repo2rlenv-notebook-pilot/grading_session.py",
+      "experiments/19-repo2rlenv-notebook-pilot/comparison_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/question_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/run_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_comparison_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_question_semantics.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/ty",
+      "check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/pre-commit",
+      "run",
+      "--all-files"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      "/tmp/biotasks19-recovery-runtime-20261021/huggingface-Repo2RLEnv-5555443/.venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--tb=short",
+      "experiments/19-repo2rlenv-notebook-pilot/test_question_semantics.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_question_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_autonomous.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_comparison_repair.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_grading_resume.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_review_inspection.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_scientific_bundle.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_scientific_feedback.py",
+      "experiments/19-repo2rlenv-notebook-pilot/test_scientific_publication.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "command": [
+      ".venv/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "--tb=short",
+      "tests"
+    ],
+    "exit_code": 0
+  }
+]

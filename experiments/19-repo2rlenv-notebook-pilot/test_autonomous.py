@@ -107,6 +107,7 @@ def test_setup_time_admission_receipt_survives_bounded_diagnostics(tmp_path, sta
         "grading",
         "native",
         "question",
+        "question-semantic",
         "question-blocked",
         "question-failed",
         "question-used",
@@ -188,7 +189,12 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             if root.name == "grading":
                 m.write(
                     root / "result.json",
-                    {"status": "independent_comparison_unresolved", "cleanup_verified": True},
+                    {
+                        "status": "public_question_defect"
+                        if failure == "question-semantic"
+                        else "independent_comparison_unresolved",
+                        "cleanup_verified": True,
+                    },
                 )
                 if failure == "question-used":
                     m.write(root / "repair.json", {"original": "already consumed"})
@@ -208,9 +214,10 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                 assert config["materialization_directory"].endswith(
                     "materialization-question-repair"
                 )
-            assert (
-                m.read(tmp_path / "run/grading/result.json")["status"]
-                == "independent_comparison_unresolved"
+            assert m.read(tmp_path / "run/grading/result.json")["status"] == (
+                "public_question_defect"
+                if failure == "question-semantic"
+                else "independent_comparison_unresolved"
             )
             assert m.read(tmp_path / config["frozen_grader_file"])["grader_candidate"] == {
                 "grader": "unchanged"
@@ -257,7 +264,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
     def native(config, *, root):
         assert config["reasoning_effort"] == "high"
         called.append("native")
-        if failure == "question":
+        if failure in {"question", "question-semantic"}:
             assert config["grading_directory"].endswith("grading-comparison-repair")
             assert config["materialization_directory"].endswith("materialization-question-repair")
         recorded = m.read(tmp_path / config["attribution_file"])
@@ -306,6 +313,14 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
                     tmp_path / "run/materialization/candidate.json"
                 ),
                 "independent_solution": {"code": "old_implementation()"},
+                **(
+                    {
+                        "allowed_targets": ["public_question"],
+                        "semantic_question_review": {"question_issues": ["toy defect"]},
+                    }
+                    if failure == "question-semantic"
+                    else {}
+                ),
             },
         )
 
@@ -363,6 +378,7 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             "grading": "rejected",
             "native": "infrastructure_failed",
             "question": "validated",
+            "question-semantic": "validated",
             "question-blocked": "rejected",
             "question-failed": "rejected",
             "question-used": "rejected",
@@ -384,7 +400,9 @@ def test_orchestrator_preserves_terminal_distinctions(tmp_path, monkeypatch, fai
             assert receipt["quality_repair"]["allowance_consumed"]
         else:
             assert "quality_repair" not in receipt
-        completed = failure in {"question", "independent-repair"}
+        completed = failure in {"question", "question-semantic", "independent-repair"}
+        if failure == "question-semantic":
+            assert receipt["quality_repair"]["kind"] == "public_question_diagnosis"
         assert receipt["daytona_reserved_usd"] == (5 if completed else 4)
         assert len(receipt["stages"]) == (7 if completed else 6)
     else:

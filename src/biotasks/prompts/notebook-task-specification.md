@@ -112,6 +112,13 @@ to force the private answer. If you cannot formulate a fair requirement without
 that, flag the target/comparison as unresolved instead. Keep source citations,
 package implementation notes and the full reference recipe in the private review.
 
+Do not add textbook explanations from memory merely to make the question longer.
+When a supplied input encodes a rule or constraint, refer to that encoded rule
+instead of replacing it with an unverified prose approximation. Verify any
+necessary logical quantifier, conjunction/disjunction, conditional or threshold
+claim against the actual input/method evidence. An implementation agreeing with
+the reference does not establish the truth of an explanation it never used.
+
 Prefer stable source identifiers or explicitly supplied identity maps over asking
 the solver to reproduce incidental package naming conventions. Do not invent
 extra summary outputs requiring new private reference computation or arbitrary

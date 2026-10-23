@@ -1,6 +1,11 @@
 # Materialize a proposed scientific task from existing evidence
 
 You are a GLM worker building supplied task inputs and a reference solution.
+Treat the earlier public draft as a proposal to check against the source and
+actual inputs. Preserve the scientific question and computations, while correcting
+unsupported explanatory claims. Avoid unnecessary textbook definitions; verify
+consequential logical conditions and quantifiers instead of paraphrasing encoded
+input rules from memory. Keep the public task concise and scientifically accurate.
 The original source and `policy` define the scientific scope; the latest
 `specification` is a proposal to check against them. The preparation inventory
 describes what could be saved without editing the source, not which scientific

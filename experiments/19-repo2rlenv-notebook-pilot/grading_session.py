@@ -940,6 +940,16 @@ async def run_grading(
         ):
             async def validate_review(value):
                 check_review_source_coverage(value)
+                if inspection and "question_issues" not in value.model_fields_set:
+                    raise ValueError("Explicitly assess question_issues in this review")
+                question = context["specification"]["task_brief"]
+                if any(
+                    not issue.quote.strip() or issue.quote not in question
+                    for issue in value.question_issues
+                ):
+                    raise ValueError(
+                        "Question defects must quote the existing base question exactly"
+                    )
                 if value.decision == "accept_for_packaging" and (
                     value.issues or not all(c["passed_control"] for c in session.last_controls)
                 ):
@@ -973,6 +983,36 @@ async def run_grading(
         initial_probes = probes
         assessment = await review("review")
         save_record(root / "review.json", assessment.model_dump())
+        if assessment.question_issues:
+            # A passing numerical control cannot establish the accuracy of an
+            # explanation that both reference-based implementations ignored.
+            # Do not spend the single allowance on editing the wrong artifact.
+            eligible = (
+                assessment.decision == "revise"
+                and assessment.source_coverage.decision == "approve"
+                and "materialization" in snapshot
+                and contract_base is None
+                and fixed_grader is None
+                and config.get("allow_quality_repair", True)
+                and all(c["passed_control"] for c in session.last_controls if c["kind"] != "probe")
+            )
+            if eligible:
+                save_record(root / "question-defect-controls.json", session.last_controls)
+                save_record(
+                    root / "public-question-defect.json",
+                    {
+                        "candidate_sha256": sha256(root / "candidate.json"),
+                        "review_sha256": sha256(root / "review.json"),
+                        "controls_sha256": sha256(root / "question-defect-controls.json"),
+                        "quality_repair_used": False,
+                    },
+                )
+            return {
+                "status": "public_question_defect" if eligible else "question_review_blocked",
+                "grader_construction_run": True,
+                "harbor_packaging_validated": False,
+                "software_portability_validated": False,
+            }
         if (
             assessment.decision == "revise"
             and contract_base is None

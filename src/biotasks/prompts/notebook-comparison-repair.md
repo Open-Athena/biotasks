@@ -1,9 +1,16 @@
-# Diagnose an independent-comparison conflict
+# Diagnose a comparison or public-question defect
 
 One independently authored implementation disagrees with the fixed reference and
 grader. Other basic controls passed. Diagnose the defective artifact from the
 recorded evidence before choosing the existing single quality-repair route.
 Independent execution alone does not prove either implementation correct.
+
+Alternatively, `semantic_question_review` identifies an exact-quoted false or
+ambiguous base-question claim even though the basic numerical controls passed.
+In that case only `allowed_targets` may be selected. Correct the public wording
+from source/input/package evidence; do not alter an already matching independent
+implementation, the scientific target or the frozen grader to accommodate prose.
+Passing controls do not validate an explanation those implementations ignored.
 
 Inspect `revision_context`: the original public question and materialization,
 independent code/execution, grader and measured conflict. Original source and

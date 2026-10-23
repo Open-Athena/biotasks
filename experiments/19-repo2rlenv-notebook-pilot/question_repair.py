@@ -5,7 +5,7 @@ import json
 import shutil
 from pathlib import Path
 
-from grading_protocol import ContractText
+from grading_protocol import ContractText, Review, check_review_source_coverage
 from materialization_inputs import load_materialized
 from repo2rlenv.quality.loop.models import Edit
 
@@ -24,17 +24,19 @@ def write(path, value):
 
 
 def repair_context(materialization, grading):
-    """Only the first, cleaned-up, otherwise passing independent conflict qualifies."""
+    """Bind an unused repair to original controls and a recorded defect."""
     materialization, grading = Path(materialization), Path(grading)
     candidate, execution = load_materialized(materialization)
     result = read(grading / "result.json")
     if (
-        result.get("status") != "independent_comparison_unresolved"
+        result.get("status") not in {"independent_comparison_unresolved", "public_question_defect"}
         or result.get("cleanup_verified") is not True
         or (grading / "repair.json").exists()
         or (materialization / "question-revision.json").exists()
     ):
         raise ValueError("Question repair needs an unused allowance and verified cleanup")
+    if result["status"] == "public_question_defect":
+        return semantic_question_context(candidate, execution, grading)
     conflict = read(grading / "independent-comparison-conflict.json")
     grader = read(grading / "candidate.json")
     matches = [
@@ -63,6 +65,61 @@ def repair_context(materialization, grading):
         "independent_solution": read(grading / "independent-solution.json"),
         "independent_execution": read(grading / "independent-result.json"),
         "comparison_conflict": conflict,
+    }
+
+
+def semantic_question_context(candidate, execution, grading):
+    defect = read(grading / "public-question-defect.json")
+    for name, key in (
+        ("candidate.json", "candidate_sha256"),
+        ("review.json", "review_sha256"),
+        ("question-defect-controls.json", "controls_sha256"),
+    ):
+        if record(grading / name)["sha256"] != defect[key]:
+            raise ValueError("Public-question defect evidence identity changed")
+    if defect["quality_repair_used"] is not False:
+        raise ValueError("The one quality-repair allowance is already consumed")
+    review = Review.model_validate(read(grading / "review.json"))
+    check_review_source_coverage(review)
+    if (
+        review.decision != "revise"
+        or review.source_coverage.decision != "approve"
+        or not review.question_issues
+        or any(
+            not i.quote.strip() or i.quote not in candidate["instruction"]
+            for i in review.question_issues
+        )
+    ):
+        raise ValueError(
+            "Question correction requires source-approved, exact-quoted review evidence"
+        )
+    grader = read(grading / "candidate.json")
+    matches = [
+        p
+        for p in (grading / "grading/candidates").glob("*/candidate.json")
+        if record(p)["sha256"] == defect["candidate_sha256"] and read(p) == grader
+    ]
+    if len(matches) != 1:
+        raise ValueError("Question defect has no unique retained grader candidate")
+    controls = read(grading / "question-defect-controls.json")
+    basics = [row for row in controls if row["kind"] != "probe"]
+    if (
+        basics != read(matches[0].parent / "controls.json")
+        or not {"reference", "recomputed", "empty", "misplaced", "missing", "alternative"}
+        <= {row["kind"] for row in basics}
+        or any(row.get("passed_control") is not True for row in basics)
+        or any(row["candidate_sha256"] != defect["candidate_sha256"] for row in controls)
+    ):
+        raise ValueError("Question correction requires original passing basic controls")
+    return {
+        "materialization_candidate": candidate,
+        "materialization_execution": execution,
+        "grader_candidate": grader,
+        "controls": controls,
+        "independent_solution": read(grading / "independent-solution.json"),
+        "independent_execution": read(grading / "independent-result.json"),
+        "semantic_question_review": review.model_dump(),
+        "allowed_targets": ["public_question"],
     }
 
 

@@ -6,6 +6,17 @@ execution reports. This is an LLM review, not the reward or an independent
 scientific recomputation. Return `accept_for_packaging`, `revise` or `blocked`,
 a concise rationale, and actionable issues with evidence.
 
+Always supply `question_issues`, including an empty list when none are found.
+Use it only for defects in the base public question: each entry contains an exact
+`quote` from that question and supporting `evidence`. Keep addendum/grader/probe
+defects in `issues`. A false or ambiguous base question remains a defect even
+when all numerical controls pass; implementations may have ignored that prose.
+Acceptance requires both issue lists empty. Do not excuse a false explanatory
+claim as harmless merely because a particular library call produces correct data.
+Check necessary logical quantifiers, conjunctions/disjunctions, conditionals and
+threshold meanings against source/input/package evidence. Prefer referring to
+an encoded rule over introducing an unsupported natural-language approximation.
+
 An undefined public comparison convention is a contract defect if it can change
 which submissions pass, even when every executed probe is far from that boundary.
 The controller's measured reports, rather than duplicated author-written test
@@ -51,6 +62,16 @@ control passes. Adding a grader check cannot recover an omitted scientific
 branch; if restoring it needs different task construction/reference outputs,
 block the candidate rather than approving a smaller task. This source audit
 does not establish native isolation, solver performance or publication rights.
+
+A selected-population result is not ineligible merely because the source has no
+full-population version. A subset is redundant only when the retained result
+covers the same operation, entities, input state and parameters so that the
+omitted result is actually obtainable as a projection. Different operations,
+entity types, interaction orders or inputs are not interchangeable merely
+because another output is larger. Unnamed/discarded status alone is not an
+exclusion after faithful source recomputation is permitted. Audit diagnostic or
+API-demonstration exclusions from their scientific role, without relying on those
+invalid grounds or dismissing a false coverage claim as loose wording.
 
 Check that all eligible scientific outputs are covered, the public contract
 matches executable checks, numerical comparisons have a defensible
