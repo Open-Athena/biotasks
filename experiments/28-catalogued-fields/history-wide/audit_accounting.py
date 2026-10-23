@@ -113,7 +113,7 @@ def audit_calls(records, remaining):
         'per_call_reservations_recomputed': True, 'batches': reports}
 
 
-def audit_repo(state, selected, remaining, client):
+def audit_repo(state, selected, remaining, client, *, retention_required=True):
     run = 'biotasks28-history-' + selected['slug'].lower().replace('__', '-') + '-001'
     terminal = read(state / (run + '-terminal.json'))
     receipt = read(state / (run + '-receipt.json'))
@@ -121,8 +121,13 @@ def audit_repo(state, selected, remaining, client):
     assessment_path = ROOT / 'results' / (selected['slug'] + '.json')
     result = read(assessment_path)
     manifest_path = ROOT / 'archives' / (selected['slug'] + '-manifest.json')
-    manifest = read(manifest_path); published = read(ROOT / 'archives' / (selected['slug'] + '-receipt.json'))
-    assert verified_receipt(published, manifest) and sha(manifest_path) == published['manifest_sha256']
+    manifest = read(manifest_path)
+    published_path = ROOT / 'archives' / (selected['slug'] + '-receipt.json')
+    published = read(published_path) if published_path.exists() else None
+    archive_ok = published is not None
+    if archive_ok:
+        assert verified_receipt(published, manifest) and sha(manifest_path) == published['manifest_sha256']
+    assert archive_ok or not retention_required, 'Verified retention is required for full accounting'
     assert terminal['readback_verified'] and terminal['billing']['cost_complete'] and not terminal['billing']['unresolved_calls']
     assert receipt['job_id'] == '/exedev/' + run and receipt['repo_ref'] == selected['ref']
     assert not receipt['new_capacity'] and receipt['attempts_allowed'] == 1
@@ -217,9 +222,9 @@ def audit_repo(state, selected, remaining, client):
         'original_controls_unstarted': sum('command' not in row for row in controls),
         'task_byte_audit_in_assessment': sha(assessment_path),
         'actual_exported_verifier_timeouts_seconds': verifier_timeouts,
-        'archive_receipt_accepted': True, 'original_phase_sha256': result['original_phase_sha256'],
-        'archive_bucket': published.get('bucket', PUBLIC_BUCKET),
-        'archive_visibility': published.get('visibility', 'public'),
+        'archive_receipt_accepted': archive_ok, 'original_phase_sha256': result['original_phase_sha256'],
+        'archive_bucket': (published or manifest).get('bucket', manifest.get('archive_bucket', PUBLIC_BUCKET)),
+        'archive_visibility': (published or manifest).get('visibility', manifest.get('archive_visibility', 'public')),
         'archive_manifest_sha256': sha(manifest_path)}
 
 
@@ -228,6 +233,8 @@ def main():
     parser.add_argument('--state-dir', type=Path, required=True)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--slug', help='Audit one terminal repository; never declare the cohort complete')
+    parser.add_argument('--execution-only', action='store_true',
+        help='Audit original execution/cost/resource records separately; never assert full retention/accounting acceptance')
     args = parser.parse_args()
     cohort = read(BASE / 'cohort.json'); assert len(cohort) == 10
     if args.slug:
@@ -248,7 +255,7 @@ def main():
                         remaining -= Decimal(prior['billing']['actual_cost_usd'])
                         previous_finish = stamp(prior['attempts'][0]['finished_at'])
                     continue
-                row = audit_repo(args.state_dir, selected, remaining, client)
+                row = audit_repo(args.state_dir, selected, remaining, client, retention_required=not args.execution_only)
                 assert previous_finish is None or datetime.datetime.fromisoformat(row['started_at']) >= previous_finish
                 previous_finish = datetime.datetime.fromisoformat(row['finished_at'])
                 remaining -= Decimal(row['model_accounting']['actual_cost_usd'])
@@ -257,17 +264,21 @@ def main():
                 print(json.dumps(row), flush=True)
                 if args.slug:
                     break
-    complete = len(reports) == 10 and not args.slug
+    execution_complete = len(reports) == 10 and not args.slug
+    complete = execution_complete and not args.execution_only
     output = {'checked_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(),
         'audit_source_sha256': sha(Path(__file__)), 'all_ten_accounting_audited': complete,
+        'all_ten_execution_audited': execution_complete,
+        'execution_only': args.execution_only,
+        'retention_acceptance_complete': all(row['archive_receipt_accepted'] for row in reports),
         'scope': 'Original payload/source/charges/reservations/serial controls/terminal handles/resources/retention accounting. Scientific assessment, fresh archive recheck, lifecycle cleanup and publication remain separate.',
         'repositories': reports}
-    if complete:
+    if execution_complete:
         cpu = sum((Decimal(r['allocated_cpu_hours']) for r in reports), Decimal('0'))
         assert cpu <= 100
         output.update(history_actual_cost_usd=str(Decimal('94.024714') - remaining),
             total_issue_actual_cost_usd=str(Decimal('100') - remaining), history_allocated_cpu_hours=str(cpu))
-    target = ROOT / 'accounting' / ((args.slug or 'all-ten') + '.json')
+    target = ROOT / 'accounting' / ((args.slug or 'all-ten') + ('-execution-only' if args.execution_only else '') + '.json')
     target.parent.mkdir(exist_ok=True); target.write_text(json.dumps(output, indent=2) + '\n')
 
 
