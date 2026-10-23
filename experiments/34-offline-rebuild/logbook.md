@@ -71,3 +71,7 @@ The checkpointed controller verified all frozen inputs, performed preflight and 
 ## 2026-10-23 — real controller restart verified
 
 At 23:17:41 UTC the confirmation handle was running. Stopped only the sleeping local controller, then resumed it from the identical journal/submission in session6070. At 23:23:22 the same handle was authoritatively running, without a new submission. Updated continuation metadata to place first-comparison successes under `prior_completed_comparison`; none is presented as a result of the currently running confirmation. Final control/receipt/cleanup outcomes remain unverified.
+
+## 2026-10-23 — unattended confirmation complete
+
+The combined run succeeded with one attempt and2.213634 allocated CPU-hours. Both control receipts were captured, hash-verified and tied to their build intervals; dependency versions/hashes/Python/platform match exactly. Nop0/oracle1,1 F2P repaired,10 P2P preserved, oracle exit0 and twelve unchanged files. Ten HF objects passed anonymous readback. The controller then submitted and verified one owned cleanup attempt (0.004734 CPU-hours), exited0 and passed completed reinvocation without journal changes. Total allocation4.429718 CPU-hours, all CPU reservations reconciled, zero model calls. See `confirmation-diagnosis.md`; exact image portability remains #35's open question. Final small cleanup archive is being preserved separately.
