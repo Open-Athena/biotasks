@@ -8,14 +8,17 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import io
 import json
+import re
+import tokenize
 from importlib.metadata import version
 from pathlib import Path
 
 import jupytext
 
 MAX_SOURCE_BYTES = 16 * 1024 * 1024
-PROFILE = "python-narrative-v2"
+PROFILE = "python-narrative-v5"
 
 
 class UnsupportedNotebook(ValueError):
@@ -40,9 +43,82 @@ def _python_tree(source: str) -> ast.Module:
             "Source requires unsupported Python execution semantics"
         ) from error
     for node in ast.walk(tree):
-        if isinstance(node, ast.Name) and node.id in {"get_ipython", "In", "Out"}:
+        if isinstance(node, ast.Name) and node.id in {"get_ipython", "In", "Out", "_dh"}:
             raise UnsupportedNotebook("Interactive kernel state is outside this conversion profile")
     return tree
+
+
+def _literal_directory(directive: str) -> str:
+    """Accept one literal POSIX path; never expand variables, globs or history."""
+    argument = directive[len("%cd") :].strip()
+    if argument.startswith(("'", '"')):
+        if len(argument) < 2 or argument[-1] != argument[0]:
+            raise UnsupportedNotebook("Directory change requires one literal path")
+        path = argument[1:-1]
+    else:
+        path = argument
+        if " " in path:
+            raise UnsupportedNotebook("Quote literal directory paths containing spaces")
+    if not re.fullmatch(r"[\w./ -]+", path) or path.startswith("-"):
+        raise UnsupportedNotebook("Directory change requires one literal path, without options")
+    return path
+
+
+def _script_directives(source: str, cell: int) -> tuple[str, list[dict], list[dict]]:
+    """Normalize supported directives only at the start of a logical statement.
+
+    Token positions distinguish a real directive from the same text inside a
+    multiline string, modulo expression or continued statement. Literal directory
+    changes retain their position in the program. No source code runs here.
+    """
+    lines = source.splitlines(keepends=True)
+    changes = []
+    directories = []
+    try:
+        tokens = list(tokenize.generate_tokens(io.StringIO(source).readline))
+    except (tokenize.TokenError, IndentationError) as error:
+        raise UnsupportedNotebook("Cannot tokenize notebook code") from error
+    directive_lines = set()
+    statement_start = True
+    for token in tokens:
+        if token.type == tokenize.NEWLINE:
+            statement_start = True
+        elif token.type not in {
+            tokenize.NL,
+            tokenize.COMMENT,
+            tokenize.INDENT,
+            tokenize.DEDENT,
+            tokenize.ENDMARKER,
+        }:
+            if (
+                statement_start
+                and token.type == tokenize.OP
+                and token.string == "%"
+                and token.start[1] == 0
+            ):
+                directive_lines.add(token.start[0])
+            statement_start = False
+    for number in sorted(directive_lines):
+        line = lines[number - 1].rstrip("\r\n")
+        words = line.split()
+        if words == ["%matplotlib", "inline"] or (number == 1 and words == ["%%time"]):
+            changes.append({"cell_index": cell, "line": number, "directive": line})
+            lines[number - 1] = "# Notebook presentation directive: " + line + "\n"
+        elif words and words[0] == "%cd":
+            path = _literal_directory(line)
+            # No new module/global binding that could overwrite analysis values.
+            replacement = f"__import__('os').chdir({path!r})"
+            lines[number - 1] = replacement + "\n"
+            directories.append(
+                {
+                    "cell_index": cell,
+                    "line": number,
+                    "directive": line,
+                    "path": path,
+                    "replacement": replacement,
+                }
+            )
+    return "".join(lines), changes, directories
 
 
 def export_python(path: Path) -> tuple[str, dict]:
@@ -55,19 +131,10 @@ def export_python(path: Path) -> tuple[str, dict]:
     if path.stat().st_size > MAX_SOURCE_BYTES:
         raise UnsupportedNotebook("Source exceeds the bounded intake size")
     raw = path.read_bytes()
-    try:
-        notebook = json.loads(raw)
-    except (ValueError, UnicodeDecodeError) as error:
-        raise UnsupportedNotebook("Source is not valid notebook JSON") from error
-    if not isinstance(notebook, dict) or not isinstance(notebook.get("cells"), list):
-        raise UnsupportedNotebook("Expected a notebook object with a cell list")
+    notebook = json.loads(raw)
     if notebook.get("nbformat") != 4:
         raise UnsupportedNotebook("Only nbformat 4 is supported")
     metadata = notebook.get("metadata", {})
-    if not isinstance(metadata, dict) or any(
-        not isinstance(metadata.get(name, {}), dict) for name in ("kernelspec", "language_info")
-    ):
-        raise UnsupportedNotebook("Notebook language metadata must be objects")
     languages = {
         str(value).lower()
         for value in (
@@ -78,7 +145,16 @@ def export_python(path: Path) -> tuple[str, dict]:
     }
     if languages != {"python"}:
         raise UnsupportedNotebook("This profile requires an unambiguous Python language")
-    allowed_metadata = {"kernelspec", "language_info", "widgets", "mystnb", "toc", "jupytext"}
+    allowed_metadata = {
+        "kernelspec",
+        "language_info",
+        "widgets",
+        "mystnb",
+        "toc",
+        "jupytext",
+        "celltoolbar",
+        "vscode",
+    }
     if set(metadata) - allowed_metadata:
         raise UnsupportedNotebook("Notebook metadata needs a supported conversion profile")
     # File-pairing formats describe documentation synchronization, not code.
@@ -94,32 +170,28 @@ def export_python(path: Path) -> tuple[str, dict]:
     # MyST's build-time execution switch does not change the notebook program.
     # Preserve and explicitly record it, rather than adopting it as a skip rule.
     myst = metadata.get("mystnb", {})
-    if (
-        not isinstance(myst, dict)
-        or set(myst) - {"execution_mode"}
-        or (myst.get("execution_mode") is not None and not isinstance(myst["execution_mode"], str))
-        or myst.get("execution_mode")
-        not in {
-            None,
-            "off",
-            "auto",
-            "force",
-            "cache",
-            "inline",
-        }
-    ):
+    if set(myst) - {"execution_mode"} or myst.get("execution_mode") not in {
+        None,
+        "off",
+        "auto",
+        "force",
+        "cache",
+        "inline",
+    }:
         raise UnsupportedNotebook("Unsupported documentation execution directives")
     code: list[str] = []
     cells: list[dict] = []
     markdown_count = 0
-    for cell in notebook["cells"]:
-        if not isinstance(cell, dict) or not isinstance(cell.get("metadata", {}), dict):
-            raise UnsupportedNotebook("Notebook cells and their metadata must be objects")
+    normalizations = []
+    directories = []
+    editor_cells = []
+    presentation_tags = []
+    for cell_index, cell in enumerate(notebook.get("cells", [])):
         if cell.get("cell_type") not in {"code", "markdown", "raw"}:
             raise UnsupportedNotebook("Unknown cell type")
         if cell["cell_type"] == "raw":
             continue
-        text = _text(cell.get("source"))
+        text = _text(cell["source"])
         if cell["cell_type"] == "markdown":
             cells.append(
                 dict(cell_type="markdown", source=text, metadata={}, id=f"source-{len(cells)}")
@@ -127,8 +199,36 @@ def export_python(path: Path) -> tuple[str, dict]:
             markdown_count += 1
             continue
         cell_metadata = cell.get("metadata", {})
-        if set(cell_metadata) - {"collapsed", "scrolled", "trusted", "execution"}:
+        if set(cell_metadata) - {
+            "collapsed",
+            "scrolled",
+            "trusted",
+            "execution",
+            "editable",
+            "deletable",
+            "tags",
+        }:
             raise UnsupportedNotebook("Code-cell execution directives are unsupported")
+        if "tags" in cell_metadata:
+            tags = cell_metadata["tags"]
+            if not isinstance(tags, list) or any(
+                not isinstance(tag, str) or tag != "remove-input" for tag in tags
+            ):
+                raise UnsupportedNotebook("Code-cell execution directives are unsupported")
+            # Jupyter Book remove-input hides rendered source, not its execution.
+            presentation_tags.append({"cell_index": cell_index, "tags": tags})
+        editor_metadata = {
+            key: cell_metadata[key] for key in ("editable", "deletable") if key in cell_metadata
+        }
+        if any(type(value) is not bool for value in editor_metadata.values()):
+            raise UnsupportedNotebook("Cell editor metadata must contain booleans")
+        if editor_metadata:
+            # Notebook format defines these as editing/deletion permissions,
+            # not execution controls. Preserve them in the receipt, not the script.
+            editor_cells.append({"cell_index": cell_index, "metadata": editor_metadata})
+        text, changes, directory_changes = _script_directives(text, cell_index)
+        normalizations.extend(changes)
+        directories.extend(directory_changes)
         code.append(text)
         cells.append(
             dict(
@@ -142,6 +242,16 @@ def export_python(path: Path) -> tuple[str, dict]:
         )
     if not code:
         raise UnsupportedNotebook("No executable cells")
+    if directories:
+        # A binding in any cell could change the conversion's builtin call.
+        for cell in notebook.get("cells", []):
+            if cell["cell_type"] == "code" and any(
+                token.type == tokenize.NAME and token.string == "__import__"
+                for token in tokenize.generate_tokens(io.StringIO(_text(cell["source"])).readline)
+            ):
+                raise UnsupportedNotebook(
+                    "Directory conversion requires an unshadowed import builtin"
+                )
     baseline_tree = _python_tree("\n\n".join(code) + "\n")
     # Retain narrative in place as line comments. Raw cells, stored outputs and
     # formatting directives must not become executable statements.
@@ -180,6 +290,14 @@ def export_python(path: Path) -> tuple[str, dict]:
         "markdown_cells": markdown_count,
         "markdown_representation": "line_comments",
         "ordered_code_equivalence": True,
+        "equivalence_basis": "Python statements after recorded presentation and directory normalization",
+        "presentation_normalizations": normalizations,
+        "directory_normalizations": directories,
+        "ignored_editor_metadata": {
+            key: metadata[key] for key in ("celltoolbar", "vscode") if key in metadata
+        },
+        "ignored_cell_editor_metadata": editor_cells,
+        "ignored_presentation_tags": presentation_tags,
         "documentation_execution_policy": myst,
         "stored_outputs_used_as_evidence": False,
         "executed": False,

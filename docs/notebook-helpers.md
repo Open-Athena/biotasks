@@ -16,15 +16,19 @@ script, receipt = export_python(Path("analysis.ipynb"))
 Path("analysis.py").write_text(script, encoding="utf-8")
 ```
 
-The `python-narrative-v2` profile accepts nbformat 4 with an unambiguous Python
+The `python-narrative-v5` profile accepts nbformat 4 with an unambiguous Python
 language declaration. Jupytext exports ordinary code and retains Markdown cells
 as line comments in source order, without cell markers. Raw cells, saved outputs
 and presentation metadata are excluded from the script. Conversion never runs
 source code, installs dependencies or treats cached output as fresh evidence.
 
 The exporter compares ordered executable Python syntax trees before accepting
-its result. Kernel magics, interactive history, top-level await, unsupported
-execution directives and unknown code-cell metadata are rejected. Documentation
+its result. Interactive history, top-level await, unsupported execution directives and
+unknown code-cell metadata are rejected. The converter records a small explicit
+normalization profile: `%matplotlib inline` and a leading `%%time` become
+comments, while a literal `%cd` becomes a directory change at the same position.
+Other magics remain unsupported. Presentation/editor metadata is recorded; it
+does not authorize skipping or changing code. Documentation
 execution policy and Jupytext file-pairing metadata are recorded without adopting
 them as instructions to skip or alter analysis. Unsupported or malformed inputs
 raise `UnsupportedNotebook`; admission failure does not establish poor scientific
@@ -121,11 +125,23 @@ model access or a ready-to-run authoring command.
 The adapter preserves requests, responses, full tool results and provider usage
 in caller-selected trace storage. Provider HTTP failures retain safe categories;
 raw private error bodies are not copied into public failure receipts. Incomplete
-responses cannot execute tools or silently trigger another generation. The caller
+responses cannot execute tools. Recovery is opt-in: caller-provided notices can
+allow one empty-response retry, one classified generation retry and one missing
+required-tool retry per author instance. An explicit context recovery can keep
+the original instructions and latest complete candidate/patch chain after a
+recognized context rejection or output-limit stop following tool work. It must
+reduce the conversation and retains complete original traces. Context recovery
+does not replay a transport-uncertain call. The separate opt-in generation retry
+may repeat pure generation after a timeout or normalized model-connection
+failure: the backend outcome remains unknown, the original attempted slot and
+bookkeeping hold remain retained, and no completed tool action is replayed.
+These options use the same request ledger, caller deadline
+and turn allowance; none are enabled by default. The transport does not decide
+whether a preparation, grading or solver stage should permit them. The caller
 owns artifact validation: a successful model response is not a passing scientific
 test or a reason to weaken a comparator.
 
-`ChatLimits()` requests medium reasoning and leaves extra input-byte, response-byte,
+`ChatLimits()` requests native high reasoning and leaves extra input-byte, response-byte,
 completion-token and tool-preview caps unset. The request timeout defaults to
 600 seconds and every author has a finite caller-supplied deadline. Explicit caps
 remain supported and must agree with the ledger; provider context limits still
@@ -137,7 +153,10 @@ reasoning and are not automatically safe for public upload.
 
 The prompt library includes terminal-export preparation, reference setup,
 scientific specification, construction/finalization, independent implementation,
-grader authoring, probe generation, review and acceptance-text repair. Inspect
+grader authoring, probe generation, review, comparison diagnosis and explicit
+recovery notices. Source-backed question defects and independent-implementation
+defects are distinct; the external controller must bind evidence, restrict repair
+targets and run fresh executable controls. Prompts do not enforce those gates. Inspect
 actual assets with `biotasks prompts list` and `biotasks prompts show NAME`.
 Templates describe worker contracts but do not implement their schemas or
 execution boundaries. The CLI only reads templates; it does not launch workers.

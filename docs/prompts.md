@@ -33,6 +33,12 @@ Use a listed name without the `.md` extension.
 | [notebook-grader-review](../src/biotasks/prompts/notebook-grader-review.md) | Review the contract, grader and actual executed controls |
 | [notebook-grader-contract-repair](../src/biotasks/prompts/notebook-grader-contract-repair.md) | Correct acceptance prose while executable grading stays fixed |
 
+Additional assets include `notebook-comparison-repair` for source-grounded
+question/independent-implementation diagnosis, and four `worker-*` notices for
+explicit context, empty-response, generation and required-tool recovery. A
+caller must choose and enforce their stage policy; packaging a notice does not
+automatically enable a retry.
+
 These are prompt assets, not implemented workflows. The CLI does not inspect
 repositories, render prompts, call models, orchestrate workers, execute reference
 solutions or validate generated tasks. Reading a template does not establish its

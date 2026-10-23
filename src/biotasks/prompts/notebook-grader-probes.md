@@ -13,6 +13,16 @@ scientific workflow or duplicate a grader implementation. Select records from
 the existing result files and change their saved values or representation. Do not
 search the filesystem for analysis scripts or attempt to reconstruct raw inputs.
 
+Batch related inspections. Once you have evidence for a mutation, write its
+script and move on rather than repeatedly checking the same records. Prefer
+deterministic selection from the copied output using explicit predicates and
+assertions over manually transcribing complete records into scripts. Save
+observations and scripts in the working directory so they can be reused.
+Submit when the required coverage is present: the controller already executes
+every script on a fresh copy. If preflight finds a defect, use its recorded
+failure to correct that defect; do not restart discovery or repeat successful
+checks without new evidence.
+
 Return a suite using the supplied schema. Each probe has a stable name, kind
 (`wrong_solution` or `valid_alternative`), focus, rationale, source citations,
 Python `script`, and `check_ids` identifying its intended checks. Cover every
@@ -30,8 +40,11 @@ cannot be tested, report the evidence gap; do not treat a known limitation in th
 contract as proof that arbitrary additions are scientifically valid.
 
 The controller starts each probe from a fresh copy of the reference outputs at
-`/case/submission`. Your script is Python, executed offline in that directory
-with the pinned environment. Modify only these copied output files. Do not touch
+`/case/submission`. Your script is Python, executed offline with the pinned
+environment in that directory, which is already the output root. Resolve the declared relative output paths
+directly there, as described by `artifact_interface`; do not prepend `outputs/`.
+The controller separately tests an extra output-directory layer.
+Modify only these copied output files. Do not touch
 grading assets or expected references, inspect other processes, invoke another
 interpreter, or create background processes. No original biological inputs or
 scientific rerun are needed here. A probe must exit 0 and change at least one
@@ -42,6 +55,10 @@ copied outputs and checks successful execution and an actual mutation. This
 preflight does not run or expose the grader. If a script fails, repair the script
 using that execution evidence; preserve its intended challenge. Only after this
 preflight are the scripts frozen and evaluated against the grader.
+Preflight checks execution and mutation, not whether the resulting submission
+meets the task contract. A deliberate deletion or rename is a mutation; the
+grader determines whether that submission is acceptable. Prefer scientific
+mutations over redundant missing-file controls.
 
 Wrong-result controls should remain plausible, parseable outputs whenever the
 intended defect is scientific: incorrect identities, result values, assignments,
@@ -58,8 +75,17 @@ be justified, explain the blocker instead of inventing an equivalence.
 
 For wrong_solution probes, `check_ids` lists checks expected to fail; each must
 actually fail for the control to count. For valid_alternative probes, all grader
-checks must pass. Your controls are frozen before the grader is repaired. Do not
+checks must pass. Choose the kind from the complete mutated submission and the
+public rule: changing a number within an explicitly permitted tolerance is a
+valid alternative, not a wrong result merely because the saved value differs.
+Your mutation programs are frozen before the grader is repaired. Do not
 make them easier just because the implementation rejects or accepts them incorrectly.
+
+List only checks necessarily violated by the intended edit, as justified by the
+public rule. Changing an artifact does not imply every check involving it fails:
+identities, ordering or relations between consistently edited files may remain
+valid. Do not copy all check IDs associated with a modified file. Explain which
+scientific requirement the mutation violates and which relations it preserves.
 
 If blocked, submit `disposition: "blocked"` and explain the evidence gap in the
 private rationale/concerns. Ready artifacts use `disposition: "ready"`. A blocked

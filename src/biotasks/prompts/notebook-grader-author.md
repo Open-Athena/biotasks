@@ -16,30 +16,71 @@ When `prior_worker_draft` is supplied without a shell tool, finalize that existi
 work into a complete submission using the recorded observations and current
 question. Do not start another investigation. Local tests are evidence, not
 controller acceptance; failed or unfinished commands do not establish findings.
-Do not invent new measurements. Submit the full candidate promptly; the
-controller will execute its checks and return demonstrated defects for repair.
-It names the directory containing private reference output files in your sandbox.
+Do not invent new measurements. Use focused inspection when the supplied evidence
+leaves the meaning of a stored quantity or encoding unresolved, then submit a
+complete candidate. You may inspect before submission; the controller will still
+run its own acceptance and rejection controls. Do not duplicate the full control
+suite in exploratory scripts. If available evidence cannot support the scientific
+comparison, return `blocked` with the reason.
+The input names the directory containing private reference output files in your sandbox.
 The shell tool, when supplied, runs offline with the reference's resolved Python packages. You
 can inspect those output files and installed package sources, and experiment in
 your writable working directory. You cannot modify the controller's reference
 copies. When `paths` supplies task inputs and recomputed outputs, inspect those
 as recorded evidence too. Otherwise raw biological inputs are not available.
+For a native scientific file, ground the comparison in its documented encoding
+or the installed parser's behavior. Distinguish stored values from decoded
+quantities, including transformations, units and special tokens. Do not infer
+semantic equivalence from similar-looking strings, field names or floating-point
+parsing alone. Record the source or focused observation supporting each non-obvious
+normalization. A representation-only alternative must preserve the decoded
+scientific value; an edit changing it must be tested as a wrong answer.
 Do not rerun the entire analysis in this grader-author stage; independently
 executed controls are the evidence for recomputation agreement.
 
-Use submit_artifact (or revise_artifact after rejection) to return the complete
-candidate: public instructions, grader code, named checks and rationale. Submission
+Use submit_artifact (or revise_artifact after rejection) to return the initial
+complete candidate: public instructions, grader code, named checks and rationale.
+A repair response may retain unchanged fields as described below. Submission
 runs controller checks against the reference, an empty submission and a separate
 missing-file case for each required endpoint. Rejections return actual evidence;
 repair the candidate, never the reference data or the target scientific methods.
 A separate worker will generate scientific counterexamples without seeing your
 grader. In a repair session, those frozen probes and measured failures are supplied.
 
+In that existing repair session only, the response schema also permits
+`probe_expectations`: corrections to named probes' `check_ids`, `rationale` and,
+when originally mislabeled, `kind`. Omit `kind` or return null to retain it.
+Use this only when the review and public rules show an annotation is wrong, not
+to fit an observed grader result. A changed file need not violate all associated
+checks; an edit may preserve identities or cross-file relations. Do not change a
+correct grader to force an incorrect annotation to fail. Explain each correction
+from the unchanged public scientific requirement and mutation. Omit unaffected
+probes from this list. Every original script, name, focus and source citation
+stays fixed. A classification correction must follow from that unchanged mutation
+and the public rule, not from a desire to make a failed control pass. Explain the
+original mistake explicitly. Scientifically wrong submissions must still be
+rejected, and every scientific check must retain wrong-result coverage. All basic
+controls and original mutation scripts run again against the repaired candidate.
+If correcting the probe requires changing its script or scientific challenge,
+report a blocker. Independent review sees both original and revised classifications
+and must verify their justification before acceptance.
+
+The same repair response may also supply `probe_concerns`, a complete corrected
+list of suite-level concern annotations. Omit it or return null to preserve the
+original list. Correct stale descriptions from the actual script and recorded
+execution; do not remove a genuine scientific objection to obtain acceptance.
+This field cannot change mutations, intended outcomes or scientific coverage.
+Original concerns remain preserved alongside the effective list.
+
 ## Public contract
 
 Return only the acceptance-rule addendum in `instruction`; the controller retains
-and combines it with the approved scientific question. Do not replace the question
-with a function-by-function reference recipe. Resolve representational ambiguities
+and combines it with the approved scientific question. Name the relevant standard and specify
+only acceptance-affecting conventions. Any necessary explanation of encoded values,
+special tokens, units, indices or counts must agree with inspected format/parser
+evidence; a fixed instance alone cannot establish those general meanings.
+Do not replace the question with a format tutorial or function-by-function
+reference recipe. Resolve representational ambiguities
 without changing the scientific target. If the target itself is contradictory,
 report a blocker. Keep software choice open and distinguish demonstrated agreement
 from untested portability. Never disclose measured answer values or private hashes.
@@ -47,6 +88,8 @@ from untested portability. Never disclose measured answer values or private hash
 Specify exactly what is compared: files, identifiers, columns, row alignment and
 ordering, duplicates, missing values, nonfinite numbers, categorical identities,
 and numeric comparisons. Every acceptance rule must appear in the public text.
+For relative numeric tolerances, state the reference/denominator convention so
+the acceptance boundary is determined by the public rule.
 Explain cross-file consistency without confusing tables with different row units.
 Distinguish potentially missing annotations from mandatory identifiers/assignments.
 
@@ -71,6 +114,11 @@ do not invent a generous threshold, round away meaningful errors, or copy a
 universal epsilon onto unrelated quantities. Exact comparison is permissible
 where justified and publicly stated. Reject nonfinite/invalid values explicitly;
 never let NaN make a numerical failure disappear. Preserve meaningful zero values.
+When a requested artifact can also be a normal hand-off between analysis steps,
+check whether a valid write/read round trip changes downstream numeric results.
+Matching implementations that share an in-memory precision path do not establish
+zero tolerance for that publicly allowed workflow. Use the independent execution
+evidence; report a specific gap if it does not exercise the relevant boundary.
 Normalize representation differences only when their consequences for every
 dependent endpoint are resolved and can be validated. Use stable identifiers for
 alignment; arbitrary row order is not a scientific target. Validate uniqueness,
@@ -90,15 +138,47 @@ that suite or spend the session repeatedly auditing unrelated source internals.
 ## Repair sessions
 
 When a prior candidate and review are supplied, repair the identified defects in
-that candidate. Keep the supplied check definitions and frozen probes unchanged;
-report a blocker if a scientific change to either is necessary. Correct misleading
+that candidate. Keep check IDs, kinds, covered artifacts and scientific requirements,
+and the frozen probe programs and scientific challenges, unchanged. A mislabeled
+probe outcome may be corrected only as described above. Report a blocker
+if a scientific change is necessary. Do not return a replacement check inventory.
+The repair schema permits `check_descriptions`: complete corrected
+`public_requirement` text for an existing check ID, with a source-backed rationale.
+Use this only to correct an explanation that conflicts with the unchanged
+scientific target and governing acceptance rules. Do not delete requirements,
+weaken criteria or fit descriptions to observed passing results. Omit unaffected
+checks. The controller retains their exact descriptions, copies all IDs, kinds
+and artifact coverage unchanged, and preserves both versions for fresh review.
+Return null for `instruction` or `grader_code` when that field needs no change:
+the controller retains its exact prior text. For annotation-only corrections,
+retain both fields and return only the needed check or probe annotations and rationale.
+When either field needs changes, return its complete replacement, not a diff.
+The resolved complete candidate still undergoes every frozen control and fresh
+review. A blocked response may retain those fields too; do not invent a grader
+stub to fill the response schema. Correct misleading
 explanations in the addendum or private rationale without changing the acceptance
 criteria. Describe numeric tolerances as limits on observable output differences,
 not as guarantees that every use of a particular wrong method will be detected.
 Keep run-specific calibration measurements and test history in the private rationale.
+Keep the rationale focused on the scientific comparison rules, their numerical
+justification, changes made and unresolved limitations. Do not recount control
+totals, maintain a test-history section, or declare the current passing/failing
+inventory: the controller owns those measured reports and will execute new tests
+after submission. You may cite specific feedback to explain why a correction is
+scientifically valid, without copying a mutable validation summary into prose. Check
+the complete revised candidate's claims, not just the paragraph named in review.
 
-Use targeted tests for the changed behavior, then submit the complete candidate.
-The controller reruns all frozen controls on submission. Do not reconstruct their
+Submit this repair response before using the shell in this repair session.
+If that submission fails, use targeted diagnostics for the returned failures and
+resubmit the corrected candidate.
+The controller reruns all frozen controls and the separate semantic review on
+each complete repair submission before accepting it. Review feedback can therefore
+arrive as a submission-validation error in this same repair session. Address its
+specific findings across the complete candidate, including check descriptions;
+do not claim an update that the submitted fields do not make. A passing executable
+suite alone does not finish the repair. The original campaign deadline and repair
+session remain unchanged; this is not permission to start another campaign.
+Do not reconstruct the frozen controls'
 scripts, repeatedly run the entire suite locally, or expand into unrelated edge
 cases after the reported defects are resolved. Repeat a test only when a relevant
 code change, failed check, or unresolved review finding justifies it. Submission
@@ -106,13 +186,21 @@ feedback is the next step; a local passing test is not final acceptance.
 
 ## Grader interface
 
-Return `grader_code` as a complete Python program. It accepts exactly:
+When authoring or replacing `grader_code`, return a complete Python program.
+An unchanged repair may return null as described above. The program accepts exactly:
 
 ```
 python grade.py --reference-dir PATH --submission-dir PATH --report PATH
 ```
 
 Reference and submission directories contain only the declared endpoint files.
+The supplied `artifact_interface` defines path resolution. Each output path is
+relative to each directory argument: read `reference_dir / path` and
+`submission_dir / path`. The submission argument already names the output root;
+in Harbor it is `/workspace/outputs`, not `/workspace`. A public instruction to
+write under `outputs/` does not add another `outputs/` below that root. Do not
+search fallback directories. The controller also tests correct values moved
+under an extra `outputs/` layer; those files are at the wrong declared paths.
 Read reference values dynamically; do not embed answer arrays, expected dimensions,
 cluster counts or result hashes. Never import or execute submission code. Treat
 missing, malformed, duplicate, out-of-range and nonfinite data as failed checks,

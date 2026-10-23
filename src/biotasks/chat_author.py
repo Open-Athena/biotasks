@@ -4,6 +4,11 @@ The caller supplies an async, no-retry transport and controller tool handlers.
 This module does not choose a task, validate its science, or launch a sandbox.
 Only the approved free GLM model is supported; monetary receipts are zero while
 every attempted HTTP request consumes a durable RequestLedger slot.
+
+An explicit generation-retry notice enables one retry after a timeout or typed
+model connection failure per author instance. The callback must not execute
+tools or other external actions itself.
+The uncertain request/hold is retained; tool history and original bounds remain.
 """
 
 from __future__ import annotations
@@ -28,11 +33,25 @@ class AuthorBudget(Protocol):
 
 
 class IncompleteCompletion(RuntimeError):
-    """A preserved response must not execute tools or be silently regenerated."""
+    """A preserved response cannot execute tools; recovery must be explicit."""
 
 
 class OutputTokenLimit(IncompleteCompletion):
     """A received and accounted response stopped at the provider's token limit."""
+
+
+class ModelConnectionError(ConnectionError):
+    """The model SDK lost its connection before returning any complete response.
+
+    A transport adapter raises this only around its pure generation request;
+    arbitrary tool, filesystem and controller errors must not be normalized here.
+    """
+
+    def __init__(self, sdk_error_type: str = "APIConnectionError"):
+        if sdk_error_type not in {"APIConnectionError", "APITimeoutError"}:
+            raise ValueError("Unsupported model SDK connection failure")
+        self.sdk_error_type = sdk_error_type
+        super().__init__("Model SDK connection failed")
 
 
 def provider_failure(error: BaseException) -> dict[str, Any]:
@@ -42,14 +61,20 @@ def provider_failure(error: BaseException) -> dict[str, Any]:
         "request_slot_retained": True,
         "failure_category": "transport_uncertain",
     }
+    if isinstance(error, ModelConnectionError):
+        record["sdk_error_type"] = error.sdk_error_type
     status = getattr(error, "status_code", None)
     if type(status) is not int or not 400 <= status <= 599:
         return record
     record["http_status"] = status
     record["failure_category"] = "provider_http_error"
     body = getattr(error, "body", None)
+    # Classify the provider's error, not arbitrary echoed request/input text.
+    detail = body.get("error", body) if isinstance(body, dict) else None
+    if isinstance(detail, dict):
+        detail = {key: detail.get(key) for key in ("message", "code", "type")}
     try:
-        text = json.dumps(body, ensure_ascii=False).lower()
+        text = json.dumps(detail, ensure_ascii=False).lower()
     except (TypeError, ValueError):
         text = ""
     if any(
@@ -75,6 +100,32 @@ def provider_failure(error: BaseException) -> dict[str, Any]:
     return record
 
 
+def _restart_context(messages: list[dict[str, Any]], notice: str) -> list[dict[str, Any]] | None:
+    """Keep original instructions and the latest complete candidate/patch chain."""
+    artifacts: list[dict[str, Any]] = []
+    for index, message in enumerate(messages[2:], start=2):
+        calls = message.get("tool_calls", [])
+        if message.get("role") != "assistant" or len(calls) != 1:
+            continue
+        name = calls[0]["function"]["name"]
+        if name not in {"submit_artifact", "revise_artifact"}:
+            continue
+        if index + 1 >= len(messages):
+            continue
+        feedback = messages[index + 1]
+        if feedback.get("role") != "tool" or feedback.get("tool_call_id") != calls[0]["id"]:
+            continue
+        if name == "submit_artifact":
+            artifacts = []
+        artifacts.extend([message, feedback])
+    reduced = messages[:2] + [{"role": "user", "content": notice}] + artifacts
+    if len(json.dumps(reduced, ensure_ascii=False)) >= len(
+        json.dumps(messages, ensure_ascii=False)
+    ):
+        return None
+    return reduced
+
+
 @dataclass(frozen=True)
 class ChatLimits:
     max_output_tokens: int | None = None
@@ -82,7 +133,7 @@ class ChatLimits:
     max_input_bytes: int | None = None
     max_response_bytes: int | None = None
     tool_output_chars: int | None = None
-    reasoning_effort: str = "medium"
+    reasoning_effort: str = "high"
 
     def __post_init__(self):
         for key, value in asdict(self).items():
@@ -90,7 +141,7 @@ class ChatLimits:
                 continue
             if key != "reasoning_effort" and (type(value) is not int or value < 1):
                 raise ValueError(f"{key} must be a positive integer")
-        if self.reasoning_effort not in {"low", "medium", "high"}:
+        if self.reasoning_effort not in {"low", "medium", "high", "max"}:
             raise ValueError("Unsupported reasoning effort")
 
 
@@ -105,6 +156,10 @@ class GLMChatAuthor:
         deadline: float,
         limits: ChatLimits,
         output_format: str = "tools",
+        context_recovery_notice: str | None = None,
+        empty_response_retry_notice: str | None = None,
+        generation_retry_notice: str | None = None,
+        missing_tool_retry_notice: str | None = None,
     ):
         if not math.isfinite(deadline) or deadline <= time.time():
             raise ValueError("A finite future deadline is required")
@@ -115,6 +170,22 @@ class GLMChatAuthor:
             raise ValueError("Output tokens exceed the request ledger allowance")
         if output_format not in {"tools", "json_schema", "json_unconstrained"}:
             raise ValueError("Unsupported artifact output format")
+        if context_recovery_notice is not None and not context_recovery_notice.strip():
+            raise ValueError("Context recovery requires an explicit notice")
+        if empty_response_retry_notice is not None and not empty_response_retry_notice.strip():
+            raise ValueError("Empty-response retry requires an explicit notice")
+        if generation_retry_notice is not None and not generation_retry_notice.strip():
+            raise ValueError("Generation retry requires an explicit notice")
+        if missing_tool_retry_notice is not None and not missing_tool_retry_notice.strip():
+            raise ValueError("Missing-tool recovery requires an explicit notice")
+        self.context_recovery_notice = context_recovery_notice
+        self.empty_response_retry_notice = empty_response_retry_notice
+        self.generation_retry_notice = generation_retry_notice
+        self.missing_tool_retry_notice = missing_tool_retry_notice
+        # One allowance for this stage instance, including upstream resubmissions.
+        self.empty_response_retries_used = 0
+        self.generation_retries_used = 0
+        self.missing_tool_retries_used = 0
         self.output_format = output_format
         self.complete, self.save_record = complete, save_record
         self.ledger, self.scope, self.deadline, self.limits = ledger, scope, deadline, limits
@@ -237,11 +308,53 @@ class GLMChatAuthor:
                 # Never log raw SDK exception text, endpoints or response bodies.
                 if "http_status" in failure:
                     self.ledger.finish(call_id, "http_error_received")
+                    if (
+                        failure["failure_category"] == "provider_context_length"
+                        and failure["http_status"] == 400
+                        and self.context_recovery_notice is not None
+                        and self.output_format == "tools"
+                        and names - {"submit_artifact", "revise_artifact"}
+                    ):
+                        reduced = _restart_context(messages, self.context_recovery_notice)
+                        if reduced is not None:
+                            budget.settle(operation, 0.0)
+                            event(
+                                "context_restarted",
+                                rejected_call_id=call_id,
+                                previous_messages=len(messages),
+                                retained_messages=len(reduced),
+                                allowance_reset=False,
+                            )
+                            messages = reduced
+                            continue
                     raise RuntimeError(
                         "Model provider rejected the request; inspect the retained receipt"
                     ) from None
                 if isinstance(exc, asyncio.CancelledError):
                     raise
+                if (
+                    isinstance(exc, (TimeoutError, ModelConnectionError))
+                    and self.generation_retry_notice is not None
+                    and self.generation_retries_used == 0
+                    and (max_turns is None or turn < max_turns)
+                    and time.time() < self.deadline
+                ):
+                    # Only pure model generation is repeated. No response from
+                    # this attempt reached tool dispatch; prior actions/results
+                    # stay in the conversation. The original request and its
+                    # bookkeeping hold remain uncertain, never refunded.
+                    self.generation_retries_used += 1
+                    messages.append({"role": "user", "content": self.generation_retry_notice})
+                    event(
+                        "generation_retry_requested",
+                        uncertain_call_id=call_id,
+                        error_type=type(exc).__name__,
+                        retry_number=self.generation_retries_used,
+                        backend_outcome="unknown",
+                        actions_executed=0,
+                        allowance_reset=False,
+                    )
+                    continue
                 raise RuntimeError("Model transport failed; inspect the retained receipt") from None
             if self.limits.max_response_bytes is not None and (
                 len(json.dumps(response, ensure_ascii=False).encode())
@@ -277,12 +390,63 @@ class GLMChatAuthor:
             if not isinstance(choice, dict):
                 raise IncompleteCompletion("Malformed model choice")
             if choice.get("finish_reason") == "length":
+                if (
+                    self.context_recovery_notice is not None
+                    and self.output_format == "tools"
+                    and names - {"submit_artifact", "revise_artifact"}
+                    and (max_turns is None or turn < max_turns)
+                ):
+                    reduced = _restart_context(messages, self.context_recovery_notice)
+                    if reduced is not None:
+                        # The received response and its consumed request remain
+                        # recorded. Never append or execute its partial action.
+                        # Reuse the existing context recovery; completed tool
+                        # effects and all original execution bounds stay put.
+                        event(
+                            "context_restarted",
+                            reason="completion_length",
+                            incomplete_call_id=call_id,
+                            previous_messages=len(messages),
+                            retained_messages=len(reduced),
+                            actions_executed=0,
+                            allowance_reset=False,
+                        )
+                        messages = reduced
+                        continue
                 raise OutputTokenLimit("Response reached its output-token limit; no tool executed")
             if choice.get("finish_reason") not in {"stop", "tool_calls"}:
                 raise IncompleteCompletion("Incomplete model response; no tool executed")
             message = choice.get("message", {})
             if not isinstance(message, dict) or message.get("role") != "assistant":
                 raise IncompleteCompletion("Expected an assistant message")
+            content = message.get("content")
+            empty = (
+                (content is None or (isinstance(content, str) and not content.strip()))
+                and message.get("tool_calls") in (None, [])
+                and message.get("function_call") is None
+                and not message.get("refusal")
+            )
+            if empty:
+                if (
+                    self.empty_response_retry_notice is not None
+                    and self.empty_response_retries_used == 0
+                    and (max_turns is None or turn < max_turns)
+                ):
+                    self.empty_response_retries_used += 1
+                    # Keep the raw response, but never put an invalid assistant
+                    # tool message into the next provider request. All completed
+                    # actions and feedback remain in their original order.
+                    messages.append({"role": "user", "content": self.empty_response_retry_notice})
+                    event(
+                        "empty_response_retry_requested",
+                        empty_call_id=call_id,
+                        response=str(request_root / "response.json"),
+                        retry_number=self.empty_response_retries_used,
+                        allowance_reset=False,
+                        actions_executed=0,
+                    )
+                    continue
+                raise IncompleteCompletion("Empty model response; no tool executed")
             if self.output_format in {"json_schema", "json_unconstrained"}:
                 if (
                     message.get("refusal")
@@ -324,6 +488,39 @@ class GLMChatAuthor:
                 )
                 continue
             calls = message.get("tool_calls")
+            if (
+                calls in (None, [])
+                and message.get("function_call") is None
+                and not message.get("refusal")
+                and isinstance(content, str)
+                and content.strip()
+                and self.missing_tool_retry_notice is not None
+                and self.missing_tool_retries_used == 0
+                and (max_turns is None or turn < max_turns)
+            ):
+                # A received text-only reply dispatched no action. Preserve it
+                # and request the proper artifact protocol, without replaying
+                # completed work or resetting the caller's execution bounds.
+                self.missing_tool_retries_used += 1
+                assistant = {"role": "assistant", "content": content}
+                for field in ("reasoning", "reasoning_content"):
+                    if field in message:
+                        assistant[field] = message[field]
+                messages.append(assistant)
+                messages.append({"role": "user", "content": self.missing_tool_retry_notice})
+                self.save_record(
+                    request_root / "failure.json",
+                    {"failure_category": "missing_tool_action", "actions_executed": 0},
+                )
+                event(
+                    "missing_tool_retry_requested",
+                    call_id=call_id,
+                    response=str(request_root / "response.json"),
+                    retry_number=self.missing_tool_retries_used,
+                    actions_executed=0,
+                    allowance_reset=False,
+                )
+                continue
             if message.get("refusal") or not isinstance(calls, list) or len(calls) != 1:
                 raise IncompleteCompletion("Expected one tool action; no tool executed")
             call = calls[0]
