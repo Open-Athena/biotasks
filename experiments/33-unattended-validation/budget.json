@@ -1,0 +1,25 @@
+{
+  "scope": "Incremental work authorized October 23, 2026 under issue 33; prior issues' completed spending excluded",
+  "user_limit_exclusive_usd": 100,
+  "operating_ceiling_usd": 90,
+  "unused_margin_usd": 10,
+  "recorded_paid_cost_usd": 0,
+  "outstanding_reservations_usd": 10,
+  "new_model_calls": 0,
+  "paid_model_execution_enabled": false,
+  "admission_rule": "Before enabling paid model execution, verify model pricing and maximum request cost; atomically reserve a conservative bound, then reconcile provider-reported actual usage. Stop if accrued cost plus outstanding reservations plus the proposed bound exceeds 90 USD or cost is unknown.",
+  "per_repository_settings": "Preserve official bootstrap settings: Sonnet 4.6 through OpenRouter, temperature 0.2, 2048 output-token cap, 20 calls, 5 USD estimated repository stop threshold; global admission remains required.",
+  "additional_reserved_cpu_hour_ceiling": 32,
+  "additional_allocated_cpu_hours": 0,
+  "new_paid_capacity_allowed": false,
+  "events": [
+    {
+      "kind": "storage_reservation",
+      "service": "HF public research bucket",
+      "maximum_incremental_usd": 10,
+      "scope": "Bounded eligible research archival within existing public plan; no plan/add-on purchase or new paid storage tier. First snapshot under 1 MiB. Retain this conservative reservation until billing is reconciled.",
+      "pricing_reference": "https://huggingface.co/docs/hub/en/storage-limits",
+      "actual_billed_usd": null
+    }
+  ]
+}

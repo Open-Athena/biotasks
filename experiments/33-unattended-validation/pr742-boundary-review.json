@@ -1,0 +1,42 @@
+{
+  "task": "macs3-project__MACS-742",
+  "upstream_revision": "27d04ee8203cd5b2f20c3997d13836e5f5b64238",
+  "guard_source_sha256": "699296bb4a391a3d77931191f9d76d8b46a6ebc9fdc2d898e8978997f56f4d43",
+  "task_compose_sha256": "3839efc539745cb431fbc5b737b6209ce2b3d4c3749fa99c0f0e3a746862a2d1",
+  "resource_wrapper_sha256": "05e4fd884d49a366e172ea15b4d24770fe2d418c9e40636fc13047aa335e3955",
+  "task_blocks_hosts": [
+    "pypi.org",
+    "pypi.python.org",
+    "files.pythonhosted.org",
+    "github.com",
+    "api.github.com",
+    "raw.githubusercontent.com",
+    "codeload.github.com",
+    "objects.githubusercontent.com"
+  ],
+  "wrapper_preserves_task_compose_chain": true,
+  "native_export_difference": "Native validation has no generated task Compose overlay; exported Harbor task retains upstream PyPI/GitHub blackholes.",
+  "finding": "The added recorded rebuild needs a PyPI download inside a task that intentionally blackholes PyPI. This explains the refused dependency connection in both archived controls.",
+  "evidence_limit": "Source and frozen-config attribution plus existing execution logs; no new live DNS probe or successful offline rebuild is claimed.",
+  "license_correction": "GitHub null license metadata was not evidence that MACS had no usable source notice. Exact PR742 base/head BSD-3-Clause notices were already preserved in issue 28.",
+  "notices": [
+    {
+      "ref": "26f6709ede9d69e7a4091c7e89fb0639006a6f8e",
+      "notice_path": "source-notices/history/macs3-project__MACS/26f6709ede9d69e7a4091c7e89fb0639006a6f8e--LICENSE",
+      "sha256": "6b642122b1286229372eaef08c353b76f3bfa687e6c2057339229c1293a96ddc",
+      "bytes": 1526,
+      "license": "BSD-3-Clause",
+      "bound_to_prior_public_manifest": true
+    },
+    {
+      "ref": "b0e3a8a28778e8f99a0cc2713e18d4be121c3922",
+      "notice_path": "source-notices/history/macs3-project__MACS/b0e3a8a28778e8f99a0cc2713e18d4be121c3922--LICENSE",
+      "sha256": "6b642122b1286229372eaef08c353b76f3bfa687e6c2057339229c1293a96ddc",
+      "bytes": 1526,
+      "license": "BSD-3-Clause",
+      "bound_to_prior_public_manifest": true
+    }
+  ],
+  "model_calls": 0,
+  "remote_jobs": 0
+}
