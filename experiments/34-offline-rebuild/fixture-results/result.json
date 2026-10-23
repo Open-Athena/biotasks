@@ -1,0 +1,121 @@
+{
+  "fixture": "synthetic C extension, no biological data",
+  "plan": {
+    "base_commit": "0000000000000000000000000000000000000000",
+    "target_distribution": "biotasks-offline-fixture",
+    "pyproject_sha256": "3c0cbf5da6c15a298adced6404ff9bc658a53ca68dad0e04d156f8f8940b0fb6",
+    "build_requirements": [
+      "setuptools==80.9.0",
+      "wheel==0.45.1"
+    ],
+    "build_backend": "setuptools.build_meta",
+    "limitations": [
+      "Static requirements only; backend-requested dependencies may remain unavailable.",
+      "Preparation must resolve for the runtime Python and platform.",
+      "No source distributions, target-project wheels, or automatic repair."
+    ]
+  },
+  "wheels": [
+    {
+      "filename": "setuptools-80.9.0-py3-none-any.whl",
+      "name": "setuptools",
+      "version": "80.9.0",
+      "tags": [
+        "py3-none-any"
+      ],
+      "bytes": 1201486,
+      "sha256": "062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922"
+    },
+    {
+      "filename": "wheel-0.45.1-py3-none-any.whl",
+      "name": "wheel",
+      "version": "0.45.1",
+      "tags": [
+        "py3-none-any"
+      ],
+      "bytes": 72494,
+      "sha256": "708e7481cc80179af0e556bbf0cc00b8444c7321e2700b8d8580231d13017248"
+    }
+  ],
+  "records": [
+    {
+      "name": "prepare",
+      "command": [
+        "/home/exedev/miniforge3/bin/python",
+        "-m",
+        "pip",
+        "download",
+        "--index-url",
+        "https://pypi.org/simple",
+        "--only-binary=:all:",
+        "--dest",
+        "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/34/experiments/34-offline-rebuild/private/biotasks34-compiled-objjgd1f/wheels",
+        "setuptools==80.9.0",
+        "wheel==0.45.1"
+      ],
+      "exit_code": 0,
+      "seconds": 0.4654722213745117,
+      "log_sha256": "82691316f09edb166e42c5e54953381943f998c6e5fbfeed96c1531c45bc00f7"
+    },
+    {
+      "name": "venv",
+      "command": [
+        "/home/exedev/miniforge3/bin/python",
+        "-m",
+        "venv",
+        "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/34/experiments/34-offline-rebuild/private/biotasks34-compiled-objjgd1f/venv"
+      ],
+      "exit_code": 0,
+      "seconds": 1.6738078594207764,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "empty-cache",
+      "command": [
+        "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/34/experiments/34-offline-rebuild/private/biotasks34-compiled-objjgd1f/venv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        "."
+      ],
+      "exit_code": 1,
+      "seconds": 0.5172879695892334,
+      "log_sha256": "920e99bb9b5c4e59ac1ba614e2f285072ff837ffae84bc40ed8d32cbe82ea370"
+    },
+    {
+      "name": "prepared-cache",
+      "command": [
+        "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/34/experiments/34-offline-rebuild/private/biotasks34-compiled-objjgd1f/venv/bin/python",
+        "-m",
+        "pip",
+        "install",
+        "-e",
+        "."
+      ],
+      "exit_code": 0,
+      "seconds": 1.6755585670471191,
+      "log_sha256": "234319dcb7a359e5f513b64594b05c93097dea7e45d5b9f581a9392acdec9446"
+    },
+    {
+      "name": "compiled-import",
+      "command": [
+        "/home/exedev/.codex/worktrees/8ea0/biotasks/.research-worktrees/34/experiments/34-offline-rebuild/private/biotasks34-compiled-objjgd1f/venv/bin/python",
+        "-c",
+        "import offline_probe; assert offline_probe.answer() == 42; print(offline_probe.__file__)"
+      ],
+      "exit_code": 0,
+      "seconds": 0.0323183536529541,
+      "log_sha256": "a9de5a731d18d09b12de6d189e6e4d4fb522d95814ad47bb640cdbd47751ee28"
+    }
+  ],
+  "same_install_command_both_arms": true,
+  "build_isolation_preserved": true,
+  "empty_cache_failed": true,
+  "prepared_cache_compiled_import": true,
+  "operating_system_network_isolation": false,
+  "limitation": "Pip index disabled; no Docker egress-guard or MACS validation in this fixture.",
+  "model_calls": 0,
+  "remote_jobs": 0,
+  "owned_temporary_directory_removed": true
+}

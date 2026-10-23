@@ -52,7 +52,7 @@ def inspect_wheel(path: Path, *, target_distribution: str):
             raise ValueError('duplicate wheel member')
         if any(n.startswith('/') or '..' in n.split('/') for n in names):
             raise ValueError('unsafe wheel path')
-        metadata = [i for i in entries if i.filename.endswith('.dist-info/METADATA')]
+        metadata = [i for i in entries if i.filename.endswith('.dist-info/METADATA') and len(i.filename.split('/')) == 2]
         if len(metadata) != 1 or metadata[0].file_size > 1024**2:
             raise ValueError('invalid wheel metadata')
         message = BytesParser().parsebytes(archive.read(metadata[0]))

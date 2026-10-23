@@ -27,6 +27,8 @@ with TemporaryDirectory(prefix='biotasks34-wheel-check-') as tmp:
             z.writestr('example-1.0.dist-info/METADATA', f'Metadata-Version: 2.1\nName: {name}\nVersion: 1.0\n')
         return p
     good = wheel('example-1.0-py3-none-any.whl', 'example')
+    with ZipFile(good, 'a') as z:
+        z.writestr('vendor/other-2.0.dist-info/METADATA', 'Name: other\nVersion: 2.0\n')
     assert inspect_wheel(good, target_distribution='target-project')['name'] == 'example'
     checks.append('dependency metadata inspected without execution')
     bad = wheel('target_project-1.0-py3-none-any.whl', 'target-project')
