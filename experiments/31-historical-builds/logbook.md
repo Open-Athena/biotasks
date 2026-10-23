@@ -75,3 +75,7 @@ One successful Iris attempt used0.716219 CPU-hours. Verified 16,173-byte archive
 Prepared a cleanup-only job for the original MACS reconstruction image. It gates on terminal native comparison, verified archive readback, no positive F2P, no exported controls, and exact image tag/ID/owner on the original worker. Only labeled images are eligible and any container using the image blocks removal. Syntax checks pass; submission and remote cleanup are still pending.
 
 Submitted `biotasks31-macs-image-cleanup-001` from `ebe89fa3` on original worker0. Exact image ID, no container users and owner label are required. At most0.166667 CPU-hours, still below16. Cleanup archive/readback pending.
+
+### 2026-10-23 — MACS image cleanup verified
+
+Cleanup-only job succeeded in7.799s at2 allocated CPUs,0.004333 CPU-hours. Downloaded and verified 298-byte archive SHA256 `1c434f42a9cfbdbb28e9f257831d7c2febeb70fbf3c1c4128f20179814f9777f`. It removed only image `sha256:979804eec3d64fffcff3cabf5eda15b04c6a4e1143051bf024ff66ac05312797` with the recorded owner; remaining labeled images and containers are empty and tools removed. Four terminal jobs total3.220299 CPU-hours, zero models, no retained remote resource. The native comparison remains negative for PR792, while the general opt-in hook has only synthetic integration proof.
