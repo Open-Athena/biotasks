@@ -122,25 +122,26 @@ def prepare(args):
     print(json.dumps({'objects':len(files)+1,'bytes':sum(r['bytes'] for r in files),'manifest_sha256':sha(path)}))
 
 
-def publish():
-    for name in ('followup-evidence-manifest.json', 'followup-public-review.json', 'preserve_followup_evidence.py'):
+def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execution_archives'):
+    assert stem in ('followup', 'matchms-summary')
+    for name in (f'{stem}-evidence-manifest.json', f'{stem}-public-review.json', 'preserve_followup_evidence.py'):
         subprocess.run(['git', 'ls-files', '--error-unmatch', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)
         subprocess.run(['git', 'diff', '--exit-code', 'HEAD', '--', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)
     profile = json.loads((ROOT / 'archive-client-profile.json').read_text())
     os.environ.update(profile['environment'])
-    cache = ROOT / 'private/hf-followup-cache'
+    cache = ROOT / f'private/hf-{stem}-cache'
     assert not cache.exists(), 'Inspect previous owned transfer cache before reuse'
     os.environ['HF_XET_CACHE'] = str(cache)
     from huggingface_hub import HfApi
     from huggingface_hub.utils import disable_progress_bars
     disable_progress_bars()
-    manifest_path = ROOT / 'followup-evidence-manifest.json'
+    manifest_path = ROOT / f'{stem}-evidence-manifest.json'
     m = json.loads(manifest_path.read_text())
     assert m['visibility'] == 'public' and m['bucket'] == BUCKET
-    review = json.loads((ROOT / 'followup-public-review.json').read_text())
-    assert review['public_eligible'] is True and review['approved_scope'] == 'thirteen_non_matchms_followup_execution_archives'
-    assert sha(ROOT / 'followup-public-review.json') == next(r['sha256'] for r in m['files'] if r['path'] == 'public-eligibility-review.json')
-    objects = [('manifest.json', manifest_path, None)] + [(r['path'], ROOT / 'private/followup-snapshot' / r['path'], r) for r in m['files']]
+    review = json.loads((ROOT / f'{stem}-public-review.json').read_text())
+    assert review['public_eligible'] is True and review['approved_scope'] == approved_scope
+    assert sha(ROOT / f'{stem}-public-review.json') == next(r['sha256'] for r in m['files'] if r['path'] == 'public-eligibility-review.json')
+    objects = [('manifest.json', manifest_path, None)] + [(r['path'], ROOT / f'private/{stem}-snapshot' / r['path'], r) for r in m['files']]
     # All inputs are checked before any external mutation.
     for name, path, row in objects:
         if row:
@@ -151,7 +152,7 @@ def publish():
     api = HfApi()
     assert api.bucket_info(BUCKET).private is False
     known = {f.path for f in api.list_bucket_tree(BUCKET, prefix=prefix, recursive=True) if f.type == 'file'}
-    attempt = ROOT / 'private/followup-publication-attempt.json'
+    attempt = ROOT / f'private/{stem}-publication-attempt.json'
     if known:
         assert attempt.exists() and json.loads(attempt.read_text())['prefix'] == prefix
     else:
@@ -159,7 +160,7 @@ def publish():
     assert known <= {prefix + '/' + name for name, _, _ in objects}
     receipt_rows = []
     try:
-        with tempfile.TemporaryDirectory(prefix='followup-hf-readback-', dir=ROOT / 'private') as td:
+        with tempfile.TemporaryDirectory(prefix=f'{stem}-hf-readback-', dir=ROOT / 'private') as td:
             for name, path, row in objects:
                 remote = prefix + '/' + name
                 if remote not in known:
@@ -180,7 +181,7 @@ def publish():
                'overwrites': False, 'owned_cache_and_readbacks_removed': True, 'model_calls': 0,
                'client': {name: importlib.metadata.version(name) for name in ('huggingface_hub', 'hf_xet')},
                'verified_utc': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'retention': m['retention']}
-    (ROOT / 'followup-evidence-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
+    (ROOT / f'{stem}-evidence-receipt.json').write_text(json.dumps(receipt, indent=2) + '\n')
     print(json.dumps({k: v for k, v in receipt.items() if k != 'objects'}))
 
 
