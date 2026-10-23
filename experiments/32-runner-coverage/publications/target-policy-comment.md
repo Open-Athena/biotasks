@@ -1,0 +1,3 @@
+🤖 The [standalone targeting candidate](https://github.com/Open-Athena/biotasks/blob/ff6c3de0/experiments/32-runner-coverage/targeting-design.md) now passes 26 bounded selection checks. Default-off commands retain exact bytes; enabled selection preserves known flags/values and explicit files/node IDs, rejects ambiguous shell syntax and unknown option arity, and marks changed-file selection as reduced scope. The recorded MNE command shape is covered.
+
+No generated command or biological test ran. Native/export integration, deletion-filter wiring, configuration checks and a frozen MNE comparison remain outstanding. No new model calls, remote jobs or task-recovery claim.
