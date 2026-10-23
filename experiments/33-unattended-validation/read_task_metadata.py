@@ -1,5 +1,8 @@
 """Read exact exported metadata and build identities from retained evidence."""
 import hashlib
+import gzip
+import io
+import re
 import json
 import os
 from pathlib import Path
@@ -18,7 +21,7 @@ def run(baseline, matchms_originals):
     os.environ.update(profile['environment'])
     ledger=json.loads((ROOT/'task-file-ledger.json').read_text())
     tasks={t['task']:t for t in ledger['tasks']}
-    result={};sources=[]
+    result={};sources=[];heads={}
     with tempfile.TemporaryDirectory(prefix='task-metadata-',dir=ROOT/'private') as tmp:
         tmp=Path(tmp);os.environ['HF_XET_CACHE']=str(tmp/'cache')
         from huggingface_hub import HfApi
@@ -43,12 +46,30 @@ def run(baseline, matchms_originals):
                 paths[member]=local
                 sources.append(dict(repo=slug,member=member,sha256=spec['sha256'],bytes=spec['bytes'],
                     source='protected local original' if private else 'verified public HF download'))
+            phase_spec=next(f for f in data['files'] if f['path']=='evidence/phase-artifacts.tar.gz')
+            member_specs={f['path']:f for f in phase_spec['members']}
             build_rows=[json.loads(line) for line in paths['evidence/bounded-builds.jsonl'].read_text().splitlines() if line]
             with tarfile.open(paths['evidence/phase-artifacts.tar.gz'],'r|gz') as bundle:
                 total=0
                 for item in bundle:
                     total+=item.size
                     assert total<256*1024**2
+                    match=re.search(r'/discovery-pr-(\d+)\.json\.gz$',item.name)
+                    if match and slug+'-'+match[1] in tasks:
+                        assert item.isfile() and item.size<8*1024**2
+                        compressed=bundle.extractfile(item).read()
+                        spec=member_specs[item.name]
+                        assert hashlib.sha256(compressed).hexdigest()==spec['sha256']
+                        with gzip.GzipFile(fileobj=io.BytesIO(compressed)) as content:
+                            decoded=content.read(8*1024**2+1)
+                        assert len(decoded)<=8*1024**2
+                        discovery=json.loads(decoded)
+                        assert discovery['number']==int(match[1])
+                        head=discovery['headRefOid']
+                        assert re.fullmatch('[0-9a-f]{40}',head)
+                        key=slug+'-'+match[1]
+                        if key in heads:assert heads[key]['head_commit']==head
+                        heads[key]={'head_commit':head,'discovery_member':item.name,'discovery_member_sha256':spec['sha256']}
                     if not item.name.startswith('outputs/') or not item.name.endswith('/task.toml'):continue
                     assert item.isfile() and item.size<2*1024**2
                     task=Path(item.name).parts[2]
@@ -66,8 +87,12 @@ def run(baseline, matchms_originals):
                         original_runtime_builds=[{k:r.get(k) for k in ['dockerfile_sha256','image','image_id','exit_code']} for r in builds],
                         task_toml_sha256=spec['sha256'])
     assert set(result)==set(tasks)
+    assert set(heads)==set(tasks), 'Missing original head evidence'
+    for key,head in heads.items():
+        result[key].update(head)
+        result[key]['head_status']='verified original discovery record; not current API state'
     report=dict(tasks=result,sources=sources,count=len(result),owned_downloads_removed=not tmp.exists(),
-        scope='Actual task metadata bytes and original build records verified; no task execution or source-head inference')
+        scope='Actual task metadata bytes and original build records verified; original discovery head records verified; no task execution or current-head substitution')
     (ROOT/'task-source-image-metadata.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps({'tasks':len(result),'with_runtime_builds':sum(bool(t['original_runtime_builds']) for t in result.values()),'downloads_removed':not tmp.exists()}))
 
