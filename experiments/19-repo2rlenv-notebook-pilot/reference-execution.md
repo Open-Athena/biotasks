@@ -44,6 +44,15 @@ are outside the exported targets. Do not add computation for exporting results:
 no new filtering, ranking, aggregation, scaling or reconstruction of plotting
 internals. Do not turn a previously unnamed expression into a new variable.
 
+These constraints apply to preparation's terminal-result exports. The later
+specification/construction stages may explicitly supply a notebook-derived
+intermediate as a task input, with source identities, derivation and stable
+alignment, when substantial unchanged downstream analysis remains and its
+requested answers are withheld. GLM owns this reviewed scope decision and its
+input construction. It does not permit changing the original scientific source,
+hiding an unrunnable reference, silently omitting a branch or adding test/repair
+allowances.
+
 Cover independent scientific outcomes in one task, not every tutorial section
 or processing step. Classify results from the source narrative and interpretation:
 preparatory statistics and diagnostics supporting other results are not extra

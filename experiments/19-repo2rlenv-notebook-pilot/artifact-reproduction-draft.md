@@ -118,17 +118,27 @@ covers both branches and receives one overall reward. Each branch has its own
 artifact checks for diagnosis. Shared preparation can serve both branches within
 the same attempt.
 
-For v1, the solver starts from the **original inputs used by the source
-notebook**. These may already be processed data if that is where the notebook
-itself starts; we do not reconstruct upstream analyses outside the source.
-Preserve filtering or subsampling already present in the source analysis, but
-do not add input reductions or new starting checkpoints to make a candidate fit.
-Those adaptations are deferred beyond v1. Every branch's required endpoint
-must be produced by the solver, rather than supplied as an input answer.
-The remaining task-design choices concern **how each endpoint is represented**.
+The original inputs and unchanged notebook computation establish the reference.
+These inputs may already be processed data if that is where the notebook itself
+starts; we do not reconstruct upstream analyses outside the source. Preserve
+filtering or subsampling already present in the source analysis; new input
+reductions remain deferred. Do not introduce a checkpoint to hide a source that
+cannot pass the full reference execution and resource gate.
 
-Existing execution logs can support diagnosis. Adding intermediate exports is
-outside this version. Reject a candidate if any original analysis branch fails
+The task may explicitly supply a notebook-derived intermediate as an input when
+GLM records its derivation, source identities and stable entity alignment, and
+substantial source-faithful downstream analysis remains. Distinguish derived
+assignments from biological ground truth. This is a reviewed scope decision:
+account for the upstream computation and every affected scientific branch, and
+withhold the requested downstream answers. Supplying a whole requested endpoint
+or silently erasing an independent branch is not justified by this permission.
+The worker chooses and constructs these inputs; operators do not design a
+seed-specific checkpoint. Freeze their provenance and scientific contract before
+validation, and revalidate any permitted change within the existing allowances.
+
+Existing execution logs can support diagnosis. Preparation still exports only
+selected terminal results; deriving approved input intermediates belongs to the
+later specification/construction stages. Reject a candidate if any original analysis branch fails
 to execute, or any required eligible endpoint cannot be reproduced and graded
 within the overall budget. Ineligible outputs are excluded by the selection rule,
 not as a way to hide an execution or grading failure. The factory does not silently drop branches or split the notebook into
@@ -204,7 +214,8 @@ These are logical stages, not necessarily separate agents or one LLM call each.
    runtime, failures and resource-fit evidence.
 3. **Review coverage and specify the single task.** A separate GLM pass reviews
    completeness against the original source and scripts, then freezes the
-   endpoint inventory. Specify the source's original inputs and representations
+   endpoint inventory. Specify the source's original inputs, any approved
+   notebook-derived intermediate inputs with their provenance, and representations
    of all required endpoints, then write instructions grounded in the execution.
    Retain all eligible endpoints, explicit exclusions and the source's computation.
    Measurements from reduced inputs or a different execution plan do not establish eligibility.
@@ -252,10 +263,11 @@ worker and review step use the following boundary:
 
 Recorded diffs make these distinctions reviewable; a worker's claim that a
 change is “setup” is insufficient. If it changes the scientific computation,
-reject the seed under the v1 policy. Adding an input reduction or starting
-checkpoint is outside v1, including as a response to resource exhaustion.
-If explored later, it would be a separate design variant requiring data lineage,
-full branch coverage and fresh reference/control runs. These rules apply to
+reject the seed under the v1 policy. New input reductions and checkpoints that
+hide an unrunnable original reference remain outside v1. Explicit intermediate
+task inputs are permitted under the provenance, alignment, downstream-science
+and answer-withholding requirements above; they do not authorize source repair,
+silent branch omission or extra validation allowances. These rules apply to
 GLM-generated changes and to the human operating the factory.
 
 If the intended environment or inputs cannot be established within budget,
@@ -572,13 +584,17 @@ checks recorded scientific/native evidence; publication additionally requires
 input-term review, visibility/isolation checks and independent immutable readback.
 Earlier single-case evidence does not establish reliability across the development panel.
 
-## 8. A small experiment that would test the idea
+## 8. Feasibility and the current development panel
 
-Use one notebook with its original inputs and produce one task covering its
+The initial feasibility experiment uses one notebook with its original inputs
+and produces one task covering its
 eligible terminal results. Execute all original scientific branches and explain
 any branches without eligible outputs. Reject it if the complete reference cannot fit the
 resource and ten-minute computation limits; do not reduce inputs or introduce
-a starting checkpoint to rescue it.
+a checkpoint to rescue an original reference that fails this gate. An otherwise
+eligible task may explicitly supply a provenance-bound intermediate under the
+policy above while retaining substantial downstream science and withholding its
+answers.
 Convert it to plain scripts, then have GLM inventory and explain its endpoints
 using the scripts and source narrative, with one source-backed endpoint inventory, explicit exclusions and a separate
 completeness review. Do not hardcode an analysis
@@ -593,16 +609,31 @@ and any required adaptations. Keep seed rejection distinct from solver failure.
 One successful development case would establish feasibility, not generality;
 later testing should freeze the rules before trying other notebook domains.
 
+The current extension assesses roughly ten diverse Python notebooks; R support
+is deferred. Freeze the general factory, prompts and policies for a comparison
+round, run seeds independently within the agreed concurrency/resource/spending
+limits, and preserve every original result before making general improvements
+and rerunning. Do not supply a previous generated task, hand-authored scientific
+fix or notebook-specific method patch to rescue a seed.
+
+Report scientifically validated tasks, supported source/input/admission
+rejections, generated-candidate failures and incomplete infrastructure outcomes
+separately, together with runtime and required adaptations. A generated failure
+is not evidence that a notebook is scientifically broken. The panel is a
+development set; repeated tuning on it does not establish held-out reliability.
+Single-case successes and checks of controller mechanics do not establish
+scientific fidelity across the panel.
+
 ## 9. Working defaults and remaining choices
 
 | Question | Working default | Trade-off |
 | --- | --- | --- |
 | How close must reproduction be? | Reproduce the pinned reference workflow; solver tools remain open if they meet the validated output contract. Do not promise universal implementation independence. | Easier to define than “same biological conclusion,” but may reject scientifically reasonable alternative analyses. |
-| Where may a task start? | Use the original inputs used by the source notebook. Defer added reductions and new starting checkpoints beyond v1. | Keeps extraction simple and preserves the source workflow, but excludes analyses that need adaptation to fit. |
-| Which endpoints are included? | Include every eligible scientific endpoint. Preparation saves accessible named results; construction may recover missing results by faithfully rerunning unchanged source computations on the same inputs and required state. | Separate provenance and independent validation are required for recovered results. No invented analysis, source repair, intermediate or full-state fallback. |
+| Where may a task start? | Use original inputs, or explicitly supplied notebook-derived intermediates with recorded derivation and alignment, substantial unchanged downstream analysis and withheld answers. New input reductions remain deferred. | Can stabilize the task boundary while reducing the upstream work asked of the solver; the scope change and every affected branch require review. It does not rescue an original reference that fails its execution/resource gate. |
+| Which endpoints are included? | Include every eligible scientific endpoint in the reviewed scope. Preparation saves accessible named results; construction may recover missing results by faithfully rerunning unchanged source computations on the same inputs and required state. | Separate provenance and independent validation are required for recovered results and supplied intermediates. No invented analysis, source repair, silent branch omission or replacement of requested endpoints by mixed-state exports. |
 | What about endpoints presented as plots? | Save eligible existing results only; exclude plot-only results rather than reconstructing plotting internals. | Less custom code, but some displayed scientific results will not become graded targets. |
 | What about results that vary between valid runs? | Accept documented tolerances or equivalent representations only after executable controls distinguish conforming results from meaningful mistakes. Reject the notebook for v1 if any required endpoint lacks a validated comparison. | Allows justified variation while excluding candidates whose grading remains unreliable or unvalidated within budget. |
-| How much source adaptation is acceptable? | Preserve an untouched converted baseline; permit bounded environment/input setup, path configuration and faithful exports. Reject candidates requiring scientific changes, added reductions or new checkpoints. | Keeps the first version focused on runnable sources; unresolved setup failures remain distinct from code defects. |
+| How much source adaptation is acceptable? | Preserve an untouched converted baseline; permit bounded environment/input setup, path configuration, faithful exports and approved explicit intermediate task inputs. Reject candidates requiring scientific changes, added reductions or hidden answer inputs. | Keeps the first version focused on runnable sources; unresolved setup failures remain distinct from code defects. |
 | How automatic should grading be? | Reusable comparators first; GLM proposes semantic configuration and controls. Validate conforming alternatives and consequential mistakes before freezing the contract. | Unusual outputs may require custom generated checks or rejection. |
 | How are computation and agent time limited? | Allow up to ten minutes for the complete reference computation. Choose total agent time separately; the current ten-minute solver allowance can be extended later. | Avoids rejecting runnable analyses solely to fit the current agent budget; near-limit computations need additional agent time for a useful capability assessment. |
 
@@ -610,5 +641,6 @@ Candidate-specific choices remain: which supported source to try, and the
 endpoint schemas and comparison rules justified by that source. The factory's
 workers should propose these from evidence through version-controlled prompts.
 Record them before validation; a failed solver attempt does not silently change
-them. Input reductions and new starting checkpoints are deferred beyond v1.
+them. New input reductions remain deferred; explicit intermediate inputs follow
+the reviewed scope and provenance requirements above and cannot supply requested answers.
 Broader format support and detailed profiling can also remain deferred.
