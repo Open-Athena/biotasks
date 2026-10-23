@@ -75,6 +75,9 @@ def advance(plan, journal_path, adapter):
     verify(stage, evidence) checks stage-specific semantic gates, not just hashes.
     """
     journal_path = Path(journal_path)
+    stages = tuple(plan.get('stages', STAGES))
+    if not stages or len(stages) != len(set(stages)):
+        raise ValueError('Stage names must be nonempty and unique')
     with controller_lock(journal_path):
         verify_bindings(plan['inputs'])
         if journal_path.exists():
@@ -85,13 +88,13 @@ def advance(plan, journal_path, adapter):
             journal = dict(plan_sha256=identity(plan), run_id=plan['run_id'], stages=[], events=[])
             atomic_write(journal_path, journal)
         for index, record in enumerate(journal['stages']):
-            if record['stage'] != STAGES[index]:
+            if record['stage'] != stages[index]:
                 raise ValueError('Noncontiguous journal stages')
             verify_bindings(record['evidence'])
             adapter.verify(record['stage'], record['evidence'])
-        if len(journal['stages']) == len(STAGES):
+        if len(journal['stages']) == len(stages):
             return 'complete'
-        stage = STAGES[len(journal['stages'])]
+        stage = stages[len(journal['stages'])]
         # Observation failure propagates without deleting the intent or advancing.
         observation = adapter.probe(stage)
         if observation['state'] == 'ready':

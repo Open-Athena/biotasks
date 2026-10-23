@@ -112,6 +112,12 @@ class ResumeChecks(unittest.TestCase):
         with self.assertRaises(RuntimeError): self.step()
         self.assertEqual(self.adapter.calls, ['candidate_verified'])
 
+    def test_explicit_stage_plan_is_resumed_without_default_stages(self):
+        self.plan['stages'] = ['inputs_verified', 'submission_recorded']
+        for _ in range(4): self.step()
+        self.assertEqual(self.step(), 'complete')
+        self.assertEqual(self.adapter.calls, self.plan['stages'])
+
 
 if __name__ == '__main__':
     unittest.main()

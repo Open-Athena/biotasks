@@ -122,9 +122,15 @@ def prepare(args):
     print(json.dumps({'objects':len(files)+1,'bytes':sum(r['bytes'] for r in files),'manifest_sha256':sha(path)}))
 
 
-def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execution_archives'):
-    assert stem in ('followup', 'matchms-summary', 'offline', 'offline-cleanup')
-    for name in (f'{stem}-evidence-manifest.json', f'{stem}-public-review.json', 'preserve_followup_evidence.py'):
+def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execution_archives', generated_manifest=False):
+    assert stem in ('followup', 'matchms-summary', 'offline', 'offline-cleanup', 'confirmation')
+    assert not generated_manifest or stem == 'confirmation'
+    checkpointed = [f'{stem}-public-review.json', 'preserve_followup_evidence.py']
+    if generated_manifest:
+        checkpointed.append('preserve_confirmation.py')
+    else:
+        checkpointed.append(f'{stem}-evidence-manifest.json')
+    for name in checkpointed:
         subprocess.run(['git', 'ls-files', '--error-unmatch', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)
         subprocess.run(['git', 'diff', '--exit-code', 'HEAD', '--', str(ROOT / name)], cwd=ROOT, check=True, capture_output=True)
     profile = json.loads((ROOT / 'archive-client-profile.json').read_text())
@@ -138,6 +144,12 @@ def publish(stem='followup', approved_scope='thirteen_non_matchms_followup_execu
     manifest_path = ROOT / f'{stem}-evidence-manifest.json'
     m = json.loads(manifest_path.read_text())
     assert m['visibility'] == 'public' and m['bucket'] == BUCKET
+    if generated_manifest:
+        assert m['issue'] == 33 and m['source_issue'] == 34 and m['repo'] == 'macs3-project/MACS'
+        assert m['run_id'] == 'biotasks34-macs-742-confirm-001'
+        assert m['automatic_generation_policy'] == approved_scope
+        assert len(m['files']) <= 16 and sum(r['bytes'] for r in m['files']) < 4 * 1024**2
+        assert all(r['path'].startswith(('evidence/', 'provenance/', 'source-notices/')) or r['path'] == 'public-eligibility-review.json' for r in m['files'])
     review = json.loads((ROOT / f'{stem}-public-review.json').read_text())
     assert review['public_eligible'] is True and review['approved_scope'] == approved_scope
     assert sha(ROOT / f'{stem}-public-review.json') == next(r['sha256'] for r in m['files'] if r['path'] == 'public-eligibility-review.json')

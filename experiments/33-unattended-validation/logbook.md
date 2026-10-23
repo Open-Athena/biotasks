@@ -65,3 +65,9 @@ The real journal now contains all eight stage receipts: frozen candidate, adopte
 ## 2026-10-23 — cleanup archive preserved
 
 The six-object cleanup metadata snapshot (15,218 bytes) passed complete anonymous HF readback under its own append-only prefix. No external temporary archive now remains unpreserved for the first #34 comparison. Transfer caches/readbacks were removed automatically. Snapshot staging remains small and is retained because the current journal rechecks staged file bindings; deleting it requires updating the completed-stage verification contract rather than silently breaking resume. Original private archives remain local as verified evidence. No model calls, remote runs or new reservations.
+
+## 2026-10-23 — unattended confirmation admitted
+
+Completed the first-submission controller: fixed-handle submit, five-minute observations, terminal accounting, bounded readback, reviewed-family snapshot generation, add-only HF upload/readback and ownership-gated cleanup. It uses the existing journal with explicit stage names and durable intent recovery; nine interruption/transition checks pass. New parser code reproduces the prior verified pair and refuses duplicate arms. Generated manifests are output evidence; their committed generator and eligibility policy enforce the fixed public MACS source family, notice digests, nested text/credential scan and four-MiB/sixteen-file bound, avoiding a human manifest-commit step. Default archive publication keeps its previous gate.
+
+Booked eight CPU-hours for one combined job and 1/6 hour for later cleanup. Worst-case child allocation is 10.378016 hours including prior work, below twelve; the epic ceiling remains thirty-two. Model execution stays disabled. No preflight/submission has occurred at this checkpoint. The same command can resume after interruption without new handles or task repair.
