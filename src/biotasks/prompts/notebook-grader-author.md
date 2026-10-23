@@ -75,8 +75,12 @@ Original concerns remain preserved alongside the effective list.
 ## Public contract
 
 Return only the acceptance-rule addendum in `instruction`; the controller retains
-and combines it with the approved scientific question. Do not replace the question
-with a function-by-function reference recipe. Resolve representational ambiguities
+and combines it with the approved scientific question. Name the relevant standard and specify
+only acceptance-affecting conventions. Any necessary explanation of encoded values,
+special tokens, units, indices or counts must agree with inspected format/parser
+evidence; a fixed instance alone cannot establish those general meanings.
+Do not replace the question with a format tutorial or function-by-function
+reference recipe. Resolve representational ambiguities
 without changing the scientific target. If the target itself is contradictory,
 report a blocker. Keep software choice open and distinguish demonstrated agreement
 from untested portability. Never disclose measured answer values or private hashes.

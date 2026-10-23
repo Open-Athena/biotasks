@@ -530,6 +530,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     comparison_conflict,
     semantic_feedback=False,
     independent_repair=False,
+    inspect_review=False,
 ):
     import grading_session as module
 
@@ -541,6 +542,7 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
     config.pop("resume_probe_draft_directory", None)
     config.pop("resume_contract_directory", None)
     config.pop("contract_feedback_file", None)
+    config["inspect_review_evidence"] = inspect_review
     frozen_grader = resume == "frozen"
     if frozen_grader:
         resume = False
@@ -702,6 +704,19 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         name = kwargs["name"]
         inputs = kwargs["context"]
         calls.append(name)
+        if inspect_review and name in {"review", "review-repair"}:
+            assert "package_inspection" in inputs and "reference_inspection" in inputs
+            assert "shell" not in kwargs or kwargs["shell"] is None
+            response = json.loads(
+                await kwargs["extra_handlers"]["read_reference_file"](path="value.txt")
+            )
+            assert response["lines"] == [{"line": 1, "text": "1"}]
+            assert "read_reference_file" in [
+                item["function"]["name"] for item in kwargs["extra_tools"]
+            ]
+        else:
+            assert not kwargs.get("extra_tools") and not kwargs.get("extra_handlers")
+            assert "reference_inspection" not in inputs and "package_inspection" not in inputs
         if name != "independent":
             assert inputs["artifact_interface"] == module.artifact_interface(["value.txt"])
         if derived and name not in {"independent", "probes"}:
@@ -870,11 +885,30 @@ def test_orchestration_separates_probe_author_and_gates_acceptance(
         return value
 
     monkeypatch.setattr(module, "stage", fake_stage)
+    inspection_snapshot = {}
+    if inspect_review:
+        import hashlib
+
+        outputs = tmp_path / "original-outputs"
+        outputs.mkdir()
+        (outputs / "value.txt").write_bytes(b"1")
+        reference = HERE / config["reference_directory"]
+        inspection_snapshot = {
+            "hashes": {
+                name: hashlib.sha256((reference / name).read_bytes()).hexdigest()
+                for name in ("trial/uv.lock", "trial/environment.txt")
+            },
+            "restored_outputs_root": str(outputs),
+            "outputs": [
+                {"path": "value.txt", "bytes": 1, "sha256": hashlib.sha256(b"1").hexdigest()}
+            ],
+        }
     result = asyncio.run(
         module.run_grading(
             remote=None,
             snapshot={
                 "directory": HERE / config["reference_directory"],
+                **inspection_snapshot,
                 **(
                     {
                         "materialization": {

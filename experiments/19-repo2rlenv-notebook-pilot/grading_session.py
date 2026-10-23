@@ -637,7 +637,17 @@ async def run_grading(
         )
         complete = completion_transport(client)
 
-    async def call(schema, name, prompt, inputs, validate=None, shell=None, *, record_name=None):
+    async def call(
+        schema,
+        name,
+        prompt,
+        inputs,
+        validate=None,
+        shell=None,
+        *,
+        record_name=None,
+        inspection=None,
+    ):
         if name == "grader" and draft is not None:
             inputs = {**inputs, "prior_worker_draft": draft}
             shell = None
@@ -661,6 +671,8 @@ async def run_grading(
             shell=shell,
             shell_timeout_sec=config["reference_seconds"],
             recover_output_limit=False,
+            extra_tools=inspection.tools if inspection else None,
+            extra_handlers=inspection.handlers if inspection else None,
         )
 
     try:
@@ -912,6 +924,11 @@ async def run_grading(
 
         author_input_control_summary = None
         check_description_updates = []
+        inspection = None
+        if config.get("inspect_review_evidence", False):
+            from review_inspection import ReviewInspection
+
+            inspection = ReviewInspection(snapshot, root / "review-inspection", deadline)
 
         async def review(
             name,
@@ -936,6 +953,7 @@ async def run_grading(
                 "notebook-grader-review",
                 {
                     **context,
+                    **(inspection.context if inspection else {}),
                     "candidate": (reviewed_candidate or candidate).model_dump(),
                     "probes": (reviewed_probes or probes).model_dump(),
                     "initial_probes": initial_probes.model_dump(),
@@ -949,6 +967,7 @@ async def run_grading(
                 },
                 validate_review,
                 record_name=record_name,
+                inspection=inspection,
             )
 
         initial_probes = probes

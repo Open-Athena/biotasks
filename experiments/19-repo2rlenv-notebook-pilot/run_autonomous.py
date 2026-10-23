@@ -260,6 +260,7 @@ class Pipeline:
             reasoning_effort=self.reasoning_effort,
             max_requests=None,
             max_tests=2,
+            **({"inspect_review_evidence": True} if entrypoint == "run_notebook_grader.py" else {}),
             **extra,
         )
 

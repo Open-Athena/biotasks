@@ -44,6 +44,8 @@ def check_config(config):
     native_effort(config)
     if "allow_quality_repair" in config and type(config["allow_quality_repair"]) is not bool:
         raise ValueError("allow_quality_repair must be boolean")
+    if "inspect_review_evidence" in config and type(config["inspect_review_evidence"]) is not bool:
+        raise ValueError("inspect_review_evidence must be boolean")
     if config.get("entrypoint") not in {
         "run_reference_setup.py",
         "run_reference_replay.py",
