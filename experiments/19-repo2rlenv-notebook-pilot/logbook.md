@@ -3891,3 +3891,7 @@ Cohort014is now entirely terminal and clean: two independently validated tasks(0
 ## 2026-10-23 UTC: reference inspection exercised in live workers
 
 Read-only streaming of the two active specification traces confirms096used the new reference-file tool twice for recorded HMM/domain-table artifacts;103used it once for a recorded result table. Returned size/hash identities are present in the recorded tool results. This supports the evidence-access mechanism, not task acceptance or correctness. No extra model calls, scientific computation, source edits or operator task hints were introduced. See factory-checks/reference-inspection/live-round015-observation.json.
+
+## 2026-10-23 UTC: independent-implementation defect exposes repair ownership gap
+
+103is terminal after seven of eight basic controls passed; only the independently authored alternative failed. The diagnostic GLM traced the disagreement to its implementation of the public transformation convention and declined to change a question it found correct. This is a generated-independent-solution failure, not a source rejection; the operator did not recompute or repair the science. Preserve all fifty-one bounded originals privately, including the detailed diagnosis, and four original/fresh cleanup checks. A prospective general route should repair the defective independent implementation under the existing one quality-repair allowance, transmitting only exact public-question and prior-worker-code quotes rather than oracle answers or private diagnostic reasoning. Current015payloads stay frozen.
