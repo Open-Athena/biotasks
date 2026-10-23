@@ -329,3 +329,12 @@ The ten-row report now accepts five terminal results at$3.190194history/$9.16548
 
 
 Published the concise five-result summary and detailed LAMMPS comment6356803363 with exact readback, OPEN and agent-generated verification. Removed only LAMMPS enclosing/account duplicates after committed archive/audit proof (three files/203673bytes); original scientific phase/log hashes remain unchanged for final all-ten audit. No extra native work or /tmp artifact was introduced.
+
+
+### Test-convention coverage interpretation while Matchms runs
+
+Fresh original Matchms query03:43:52UTC confirms RUNNING/oneattempt and the same single lightweight control service. Read-only03:44:18snapshot now shows a saved Python bootstrap after6upstream calls/$0.165093 with smoke/fresh flags true and native first100descriptor transport completed. No native PRentry or independent grade was observed at that instant; parent checkpoint cost/backlog remains stale during the active batch.
+
+Source review of unchanged native defaults identifies a material SAMtools coverage caveat. Default require_new_test_funcs=True applies across languages, but the new-function regex recognizes Python/Go/JS constructs, not C/CTest/Perl/fixture-driven cases; generic native log dispatch has no C/CTest/Perl parser. A bounded read-only census binds all219original no_new_test_funcs decisions to their exact invocation's retained descriptors, whose test paths include Perl/C/shell/expected-output fixtures. Example PR1777 test/regression.sh plus CRAM expected outputs, PR1772 test/test.pl plus expected output. Full filtered diffs were not retained; descriptor paths do not prove actual added regressions or a false-negative rate. Do not relabel219PRs as suitable. No filter/runner/parser/command was changed and no candidate rerun.
+
+`history-wide/interpretation.md` records this source-supported limitation beside the other five accepted failure boundaries and marks the synthesis provisional. It prepares final interpretation of the actual full cohort, without changing success criteria or filling pending rows. A future automated-pipeline comparison would need declared runner coverage, observable acquisition/transport/bootstrap/reset/rebuild/timeout boundaries and completed independent controls; those changes are not implemented in this frozen experiment.

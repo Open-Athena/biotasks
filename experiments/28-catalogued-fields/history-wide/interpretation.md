@@ -1,0 +1,35 @@
+# Interpreting the history-wide experiment
+
+This is a provisional interpretation of five accepted original results, not the final ten-repository conclusion. `cohort-summary.json`, exact assessments, archive receipts and accounting records control all numerical claims. Remaining results, active costs, independent grades and final audits must not be filled in from these observations. The official native core is pinned to `27d04ee8203cd5b2f20c3997d13836e5f5b64238`; findings do not establish behavior of a newer upstream revision.
+
+## What the current evidence establishes
+
+The problem spans several boundaries. Removing a date filter fixed neither unsupported test conventions nor installation/lifecycle/transport limits. Full discovery is complete, but most discovered PRs have not been validated. A wrapper's SUCCEEDED state means the bounded job recorded outputs and cleaned up; it does not establish a saved environment, native test success, export quality or an independent reward.
+
+| Original result | Reached boundary | Interpretation supported by original evidence |
+| --- | --- | --- |
+| SAMtools | 735 entries, no paired validation | 734 native filter decisions and one decoding exception; no task-suitability census. Default test-function recognition is a material coverage limitation. |
+| Scanpy | 39 entries, five pairs started/four returned, one export | The export's native decision uses partial timed-out logs. Both independent controls timed out without rewards; no independently verified task. |
+| MACS | 157 entries, 35 pairs started/26 returned, no exports | The agent eventually installed the package, then native validation removed compiled extensions and often encountered collection errors. Nine command-size exceptions and six diff-fetch failures are separate transport boundaries. |
+| OpenMS | Source checkout, before any model call or PR entry | The original 60-second acquisition timeout leaves all 5,671 identities backlog; no selection, model or test-quality conclusion. |
+| LAMMPS | 20 bootstrap actions, no saved setup or PR entry | Accepted Bash inputs retained trailing protocol tokens/simulated output and four build/configuration commands timed out. All 3,367 identities remain backlog. |
+
+The remaining five original runs and final full-cohort evidence are still pending. Current and September results remain separate even though their costs share the approved issue ceiling.
+
+## SAMtools filtering is not a language-neutral suitability test
+
+The unchanged default `require_new_test_funcs=True` applies to every language. The pinned `_NEW_TEST_FUNC_RE` recognizes Python definitions/classes, Go test functions and JavaScript/TypeScript `it`/`test`/`describe` forms. It does not recognize C/CTest/Perl or fixture-driven regression cases. The pinned generic log dispatcher likewise has no C/CTest/Perl parser. These source facts constrain the meaning of a negative result for a C tool whose tests include Perl/shell and expected-output fixtures.
+
+The read-only [filter census](results/samtools__samtools-filter-census.json) binds all 219 original `no_new_test_funcs` decisions to the descriptors retained in their own native invocations. Those file lists include Perl, C, shell and expected-output paths: for example PR1777 changes `test/regression.sh` and CRAM expected-output files, and PR1772 changes `test/test.pl` plus an expected-output fixture. Extension appearances are not distinct PR counts, and descriptors do not retain the full filtered diff or prove a new regression case was added. Therefore this is a demonstrated capability mismatch and a reason to qualify the denominator, not a measured count of false negatives or evidence that changing one option would produce valid tasks. No filter was changed and no filtered candidate was rerun.
+
+Pinned source evidence is retained in `../preflight/upstream-source/src/repo2rlenv/pipelines/pr_runtime.py`, `spec/options.py` and `log_parsers/__init__.py`; their exact hashes and the original phase hash are included in the census. Native validation calls that same dispatcher. This source inspection and recorded metadata do not add model calls or alter rewards.
+
+## What a subsequent automated-pipeline experiment would need to measure
+
+A future experiment should declare its supported test runners before counting candidate coverage. It should compare the current filter with deterministic runner-aware discovery on a frozen set, keeping rejects and unavailable metadata explicit. Source acquisition and large-diff/command transport need bounded failure handling and reproducible inputs. Bootstrap completion, historical reset/rebuild behavior and the lifetime of timed-out commands need their own observable contracts; a reusable image is insufficient if validation removes its generated extensions.
+
+Native paired validation should distinguish a completed runner command from partial log parsing. The current Scanpy export shows why nonempty F2P parsed from two timeouts cannot establish task validity. Independent controls must retain actual rewards, command resolution, missing outputs and timeout status separately; an unavailable reward is not zero. Resource or timeout changes would need a controlled comparison because this experiment fixes a 1.5-CPU native quota, 600-second native-stage limits and 300-second generated independent verifier limits.
+
+Model action parsing also needs a separately measured contract. LAMMPS demonstrates failures after BASH acceptance, unlike an INVALID-action result; sanitizing a response externally would change the experiment. The current run contains no such repair. Any future upstream change, resource comparison or automatic bootstrap alternative should be checkpointed as a new experiment rather than silently mixed into this cohort.
+
+The current serial orchestration does automate discovery batches, call/cost guards, backlog, original-result capture and owned cleanup. The research evidence does not yet establish a reliable production task factory, exact-image replay, a released task dataset or solver performance. These limits must remain in the final conclusion even if additional exports appear.
