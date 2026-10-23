@@ -3,9 +3,9 @@
   "status": "active_investigation",
   "main_base": "2a1950d239f1ada467c35393991dac87debe35f7",
   "model_calls": 0,
-  "remote_jobs": 12,
+  "remote_jobs": 13,
   "remaining": [
-    "Remove OHIF recorded image after verified positive controls; Scanpy controls remain active",
+    "Observe Scanpy controls, verify archive and remove retained Scanpy image after readback",
     "Observe original Scanpy PR4389 controls (300/1200s nop/oracle), verify archive, then clean the retained recorded-replay image",
     "OpenMS checkout comparison completed and read back; MMseqs2 bootstrap comparison still needs separate model allowance"
   ],
@@ -64,7 +64,7 @@
     "owned_resources_removed": true,
     "model_calls": 0
   },
-  "allocated_cpu_hours_so_far": 2.9466488889853157,
+  "allocated_cpu_hours_so_far": 2.9606183334191636,
   "first_stage_cpu_hour_ceiling": 32,
   "ohif_reconstruction": {
     "docker_build_exit": 0,
@@ -77,14 +77,13 @@
   "all_remote_jobs_terminal": false,
   "active_checkpoint": "65cfc8b59ffb35b856e60ca667098955c344480b",
   "owned_resources_removed": false,
-  "allocated_cpu_hours": 2.9466488889853157,
+  "allocated_cpu_hours": 2.9606183334191636,
   "active_job": "/exedev/biotasks29-scanpy-controls-001",
   "active_worker": "marin-tpu-v4-reserved-32-us-central2-b-20261023-1755-6e8581d8-worker-0",
   "retained_image": "biotasks29-scanpy-recorded-001:recorded-actions",
   "retention_condition": "Pending original Scanpy controls; remove image after archive readback",
   "active_jobs": [
-    "/exedev/biotasks29-scanpy-controls-001",
-    "/exedev/biotasks29-ohif-recorded-cleanup-001"
+    "/exedev/biotasks29-scanpy-controls-001"
   ],
   "openms_checkpoint": "8d0810037b8abecc9f297df5e3fb9b0ae66d3e87",
   "openms_checkout": {
@@ -119,8 +118,7 @@
     "maximum_cpu_hours": 0.16666666666666666
   },
   "retained_images": [
-    "biotasks29-scanpy-recorded-001:recorded-actions",
-    "biotasks29-ohif-recorded-001:recorded-actions"
+    "biotasks29-scanpy-recorded-001:recorded-actions"
   ],
   "ohif_controls": {
     "state": "succeeded_verified",
@@ -129,11 +127,15 @@
     "clean_oracle_commands": 4,
     "files_unchanged": 40,
     "owned_control_resources_removed": true,
-    "reconstruction_image_cleanup_pending": true
+    "reconstruction_image_cleanup_pending": false
   },
   "ohif_cleanup": {
-    "state": "submitted",
+    "state": "succeeded_verified",
     "worker": "marin-tpu-v4-reserved-64-us-central2-b-20261019-0055-7c2d425d-worker-2",
-    "max_allocated_cpu_hours": 0.16666666666666666
+    "max_allocated_cpu_hours": 0.16666666666666666,
+    "allocated_cpu_hours": 0.013969444433848063,
+    "archive_readback_verified": true,
+    "owner_images_absent": true,
+    "owner_containers_absent": true
   }
 }
